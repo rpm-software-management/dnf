@@ -2,8 +2,8 @@
 # Italian translation of yum.
 # Copyright (C) 2008 Red Hat, Inc.
 # This file is distributed under the same license as the yum package.
-# 
-# 
+#
+#
 # Silvio Pierro <perplesso82@gmail.com>, 2008.
 # Gianluca Busiello <busiello@ceinge.unina.it>, 2008.
 # mario_santagiuliana <mario@marionline.it>, 2009.
@@ -203,7 +203,8 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"L'importazione automatica delle chiavi è disabilitata in modalità non interattiva.\n"
+"L'importazione automatica delle chiavi è disabilitata in modalità non "
+"interattiva.\n"
 "Usare \"-y\" per abilitarla."
 
 #: ../cli.py:592 ../cli.py:626
@@ -239,6 +240,7 @@ msgid "No Packages marked for Update"
 msgstr "Nessun pacchetto marcato per l'aggiornamento"
 
 #: ../cli.py:770
+#, python-format
 msgid "%d packages marked for Distribution Synchronization"
 msgstr "%d pacchetti marcati per la Distribution Synchronization"
 
@@ -297,7 +299,8 @@ msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
-"Attenzione: la versione 3.0.x di yum non fa match correttamente sui filename.\n"
+"Attenzione: la versione 3.0.x di yum non fa match correttamente sui "
+"filename.\n"
 " Si può usare \"%s*/%s%s\" e/o \"%s*bin/%s%s\" per avere questo comportamento"
 
 #: ../cli.py:1011
@@ -360,7 +363,9 @@ msgstr "Attenzione: Il gruppo %s non esiste."
 
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
-msgstr "Nessun pacchetto in alcun gruppo richiesto è disponibile per l'installazione o l'aggiornamento"
+msgstr ""
+"Nessun pacchetto in alcun gruppo richiesto è disponibile per l'installazione "
+"o l'aggiornamento"
 
 #: ../cli.py:1148
 #, python-format
@@ -395,7 +400,8 @@ msgstr "Esclusione del pacchetto non comparabile %s.%s"
 #: ../cli.py:1245
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "Nessun altro %s installato, inserimento in lista per potenziale installazione"
+msgstr ""
+"Nessun altro %s installato, inserimento in lista per potenziale installazione"
 
 #: ../cli.py:1265
 msgid "Plugin Options"
@@ -761,7 +767,8 @@ msgstr "Altro       : "
 
 #: ../output.py:956
 msgid "There was an error calculating total download size"
-msgstr "Si è verificato un errore nel calcolo della dimensione totale di download"
+msgstr ""
+"Si è verificato un errore nel calcolo della dimensione totale di download"
 
 #: ../output.py:961
 #, python-format
@@ -780,7 +787,9 @@ msgstr "Dimensione installata: %s"
 
 #: ../output.py:984
 msgid "There was an error calculating installed size"
-msgstr "Si è verificato un errore nel calcolo della dimensione del pacchetto installato"
+msgstr ""
+"Si è verificato un errore nel calcolo della dimensione del pacchetto "
+"installato"
 
 #: ../output.py:1029
 msgid "Reinstalling"
@@ -905,11 +914,13 @@ msgstr "due"
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
+"seconds\n"
 "to exit.\n"
 msgstr ""
 "\n"
-" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi per uscire.\n"
+" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi per "
+"uscire.\n"
 
 #: ../output.py:1267
 msgid "user interrupt"
@@ -1096,11 +1107,11 @@ msgstr "Output della scriptlet:"
 msgid "Errors:"
 msgstr "Errori:"
 
+# queste sotto sono etichette a fianco della lista di pacchetti
+# per lo storico delle transazioni
 #. Note that these don't use _simple_pkg() because we are showing what
 #. happened to them in the transaction ... not the difference between the
 #. version in the transaction and now.
-# queste sotto sono etichette a fianco della lista di pacchetti
-# per lo storico delle transazioni
 #: ../output.py:1637 ../output.py:1638
 msgid "Install"
 msgstr "Install"
@@ -1215,7 +1226,8 @@ msgstr "--> Esecuzione del controllo di transazione"
 
 #: ../output.py:1830
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr "--> Riavvio della risoluzione delle dipendenze con i nuovi cambiamenti."
+msgstr ""
+"--> Riavvio della risoluzione delle dipendenze con i nuovi cambiamenti."
 
 #: ../output.py:1835
 msgid "--> Finished Dependency Resolution"
@@ -1300,12 +1312,15 @@ msgstr "--> Controllo conflitto: %s va in conflitto con %s"
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Inizializzazione della transazione con i pacchetti selezionati. Attendere prego."
+msgstr ""
+"--> Inizializzazione della transazione con i pacchetti selezionati. "
+"Attendere prego."
 
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> Download degli header per %s per impacchettarli nel set di transazione."
+msgstr ""
+"---> Download degli header per %s per impacchettarli nel set di transazione."
 
 #: ../utils.py:94
 msgid "Running"
@@ -1387,8 +1402,12 @@ msgstr ""
 "%s"
 
 #: ../utils.py:201 ../yummain.py:107
-msgid "Another app is currently holding the yum lock; exiting as configured by exit_on_lock"
-msgstr "Un'altra applicazione sta bloccando l'esecuzione di yum; arresto come configurato da exit_on_lock"
+msgid ""
+"Another app is currently holding the yum lock; exiting as configured by "
+"exit_on_lock"
+msgstr ""
+"Un'altra applicazione sta bloccando l'esecuzione di yum; arresto come "
+"configurato da exit_on_lock"
 
 #: ../utils.py:260
 #, python-format
@@ -1438,7 +1457,8 @@ msgstr "Occorre avere i privilegi di root per eseguire questo comando."
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to download\n"
+"However, you do not have any GPG public keys installed. You need to "
+"download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1451,8 +1471,10 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Il controllo dei pacchetti via chiavi GPG è abilitato. Questa è una buona cosa.\n"
-"Tuttavia, non ci sono chiavi pubbliche GPG installate: è necessario scaricare\n"
+"Il controllo dei pacchetti via chiavi GPG è abilitato. Questa è una buona "
+"cosa.\n"
+"Tuttavia, non ci sono chiavi pubbliche GPG installate: è necessario "
+"scaricare\n"
 "le chiavi dei repository che si desidera utilizzare ed installarle.\n"
 "Per importare una chiave pubblica GPG eseguire il comando:\n"
 "    rpm --import public.gpg.key\n"
@@ -1513,7 +1535,8 @@ msgid ""
 msgstr ""
 "Non ci sono repository abilitati.\n"
 " Esegui \"yum repolist all\" per vedere la lista dei repository.\n"
-" E' possibile abilitare i repository desiderati con yum-config-manager --enable <repo>"
+" E' possibile abilitare i repository desiderati con yum-config-manager --"
+"enable <repo>"
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
@@ -1627,7 +1650,8 @@ msgstr "Creazione dei file di cache per i metadati."
 
 #: ../yumcommands.py:546
 msgid "This may take a while depending on the speed of this computer"
-msgstr "L'operazione impiegherà del tempo che dipende dalla velocità del computer"
+msgstr ""
+"L'operazione impiegherà del tempo che dipende dalla velocità del computer"
 
 #: ../yumcommands.py:567
 msgid "Metadata Cache Created"
@@ -1898,8 +1922,11 @@ msgid "Check for problems in the rpmdb"
 msgstr "Identifica gli errori nell'rpmdb"
 
 #: ../yummain.py:103
-msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Un'altra applicazione sta bloccando l'esecuzione di yum; in attesa che esca..."
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"Un'altra applicazione sta bloccando l'esecuzione di yum; in attesa che "
+"esca..."
 
 #. Depsolve stage
 #: ../yummain.py:151
@@ -1996,7 +2023,9 @@ msgstr "TSINFO: il pacchetto %s richiede che %s sia marcato per la rimozione"
 #: ../yum/depsolve.py:393
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
-msgstr "TSINFO: Verrà reso obsoleto %s sostituendolo con %s per risolvere una dipendenza."
+msgstr ""
+"TSINFO: Verrà reso obsoleto %s sostituendolo con %s per risolvere una "
+"dipendenza."
 
 #: ../yum/depsolve.py:396
 #, python-format
@@ -2006,7 +2035,8 @@ msgstr "TSINFO: Aggiornamento di %s per risolvere dip."
 #: ../yum/depsolve.py:404
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
-msgstr "Impossibile trovare un percorso di aggiornamento per dipendenze per: %s"
+msgstr ""
+"Impossibile trovare un percorso di aggiornamento per dipendenze per: %s"
 
 #: ../yum/depsolve.py:435
 #, python-format
@@ -2022,12 +2052,15 @@ msgstr "%s è nei pacchetti fornitori ma è già installato, viene rimosso."
 #: ../yum/depsolve.py:493
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "Potenziale risoluzione del pacchetto %s ha una instanza più nuova in ts."
+msgstr ""
+"Potenziale risoluzione del pacchetto %s ha una instanza più nuova in ts."
 
 #: ../yum/depsolve.py:504
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "Potenziale risoluzione del pacchetto %s ha una istanza più recente installata."
+msgstr ""
+"Potenziale risoluzione del pacchetto %s ha una istanza più recente "
+"installata."
 
 #: ../yum/depsolve.py:522
 #, python-format
@@ -2235,8 +2268,12 @@ msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "Il programma %s%s%s si trova nel pacchetto yum-utils."
 
 #: ../yum/__init__.py:906
-msgid "There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them."
-msgstr "Ci sono transazioni non completate. Considerare di lanciare prima yum-complete-transaction per portarle a termine."
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr ""
+"Ci sono transazioni non completate. Considerare di lanciare prima yum-"
+"complete-transaction per portarle a termine."
 
 #: ../yum/__init__.py:985
 #, python-format
@@ -2271,11 +2308,12 @@ msgstr "    %s da %s"
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr "** Trovati %d problemi pre-esistenti nel rpmdb, l'output di 'yum check' è:"
+msgstr ""
+"** Trovati %d problemi pre-esistenti nel rpmdb, l'output di 'yum check' è:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
-msgstr "Attenione: RPMDB modificato al di fuori di yum."
+msgstr "Attenzione: RPMDB modificato al di fuori di yum."
 
 #: ../yum/__init__.py:1267
 msgid "missing requires"
@@ -2286,8 +2324,11 @@ msgid "installed conflict"
 msgstr "conflitto installato"
 
 #: ../yum/__init__.py:1366
-msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr "Attenzione: errori in scriptlet o altri errori non fatali sono avvenuti durante la transazione."
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr ""
+"Attenzione: errori in scriptlet o altri errori non fatali sono avvenuti "
+"durante la transazione."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
@@ -2342,8 +2383,12 @@ msgstr "Impossibile creare il lock su %s: %s"
 
 #: ../yum/__init__.py:1698
 #, python-format
-msgid "Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata"
-msgstr "Il pacchetto non corrisponde al download desiderato. Suggerimento: eseguire yum --enablerepo=%s clean metadata"
+msgid ""
+"Package does not match intended download. Suggestion: run yum --enablerepo=%"
+"s clean metadata"
+msgstr ""
+"Il pacchetto non corrisponde al download desiderato. Suggerimento: eseguire "
+"yum --enablerepo=%s clean metadata"
 
 #: ../yum/__init__.py:1714
 msgid "Could not perform checksum"
@@ -2380,8 +2425,11 @@ msgstr "L'header non è completo."
 
 #: ../yum/__init__.py:1899
 #, python-format
-msgid "Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr "Header non presente in cache locale e modalità solo-cache abilitata. Impossibile scaricare %s"
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr ""
+"Header non presente in cache locale e modalità solo-cache abilitata. "
+"Impossibile scaricare %s"
 
 #: ../yum/__init__.py:1954
 #, python-format
@@ -2439,8 +2487,12 @@ msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Nessuna corrispondenza %s.%s %s:%s-%s dall'aggiornamento"
 
 #: ../yum/__init__.py:2433
-msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
-msgstr "searchPackages() verrà eliminato in una futura versione di yum. In sostituzione usare searchGenerator(). \n"
+msgid ""
+"searchPackages() will go away in a future version of "
+"Yum.                      Use searchGenerator() instead. \n"
+msgstr ""
+"searchPackages() verrà eliminato in una futura versione di yum. In "
+"sostituzione usare searchGenerator(). \n"
 
 #: ../yum/__init__.py:2472
 #, python-format
@@ -2552,13 +2604,19 @@ msgstr "Il pacchetto %s è reso obsoleto da %s, che è già installato"
 
 #: ../yum/__init__.py:3296
 #, python-format
-msgid "Package %s is obsoleted by %s, but obsoleting package does not provide for requirements"
-msgstr "Il pacchetto %s è reso obsoleto da %s, ma quest'ultimo non fornisce i provide richiesti"
+msgid ""
+"Package %s is obsoleted by %s, but obsoleting package does not provide for "
+"requirements"
+msgstr ""
+"Il pacchetto %s è reso obsoleto da %s, ma quest'ultimo non fornisce i "
+"provide richiesti"
 
 #: ../yum/__init__.py:3299
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr "Il pacchetto %s è reso obsoleto da %s, tentativo di installare %s al suo posto"
+msgstr ""
+"Il pacchetto %s è reso obsoleto da %s, tentativo di installare %s al suo "
+"posto"
 
 #: ../yum/__init__.py:3307
 #, python-format
@@ -2568,7 +2626,8 @@ msgstr "Il pacchetto %s è già aggiornato all'ultima versione"
 #: ../yum/__init__.py:3321
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "Il pacchetto corrispondente a %s è già installato. Controllo aggiornamenti."
+msgstr ""
+"Il pacchetto corrispondente a %s è già installato. Controllo aggiornamenti."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:3424
@@ -2633,17 +2692,25 @@ msgstr "localinstall del deltarpm fallito: %s. Verrà ignorato."
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "Impossibile aggiungere il pacchetto %s alla transazione. Architettura non compatibile: %s"
+msgstr ""
+"Impossibile aggiungere il pacchetto %s alla transazione. Architettura non "
+"compatibile: %s"
 
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
-msgstr "Impossibile installare il pacchetto %s. E' reso obsoleto dal pacchetto installato %s"
+msgstr ""
+"Impossibile installare il pacchetto %s. E' reso obsoleto dal pacchetto "
+"installato %s"
 
 #: ../yum/__init__.py:3774
 #, python-format
-msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
-msgstr "Non è possibile aggiornare il pacchetto %s perchè non è installato. Eseguire yum install per installarlo."
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"Non è possibile aggiornare il pacchetto %s perchè non è installato. Eseguire "
+"yum install per installarlo."
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
@@ -2672,12 +2739,16 @@ msgstr "Impossibile aprire il file: %s. Verrà ignorato."
 
 #: ../yum/__init__.py:3886
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Problema nella reinstallazione: nessun pacchetto corrispondente per la rimozione"
+msgstr ""
+"Problema nella reinstallazione: nessun pacchetto corrispondente per la "
+"rimozione"
 
 #: ../yum/__init__.py:3912
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
-msgstr "Problema nella reinstallazione: nessun pacchetto corrispondente a %s per l'installazione"
+msgstr ""
+"Problema nella reinstallazione: nessun pacchetto corrispondente a %s per "
+"l'installazione"
 
 #: ../yum/__init__.py:4018
 msgid "No package(s) available to downgrade"
@@ -2767,11 +2838,14 @@ msgstr "Chiave importata correttamente"
 #: ../yum/__init__.py:4338
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate ma non sono corrette per questo pacchetto.\n"
-"Controllare che le URL delle chiavi di questo repository siano configurate correttamente."
+"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
+"ma non sono corrette per questo pacchetto.\n"
+"Controllare che le URL delle chiavi di questo repository siano configurate "
+"correttamente."
 
 #: ../yum/__init__.py:4347
 msgid "Import of key(s) didn't help, wrong key(s)?"
@@ -2794,11 +2868,14 @@ msgstr "Importazione chiave fallita"
 #: ../yum/__init__.py:4394
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate ma non sono corrette.\n"
-"Controllare che le URL delle chiavi di questo repository siano configurate correttamente."
+"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
+"ma non sono corrette.\n"
+"Controllare che le URL delle chiavi di questo repository siano configurate "
+"correttamente."
 
 #: ../yum/__init__.py:4521
 msgid "Unable to find a suitable mirror."
@@ -2860,8 +2937,10 @@ msgstr "Caricamento del plugin \"%s\""
 
 #: ../yum/plugins.py:322
 #, python-format
-msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr "Esistono due o più plugin con nome \"%s\" nel percorso di ricerca dei plugin"
+msgid ""
+"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+"Esistono due o più plugin con nome \"%s\" nel percorso di ricerca dei plugin"
 
 #: ../yum/plugins.py:342
 #, python-format
@@ -2918,7 +2997,8 @@ msgstr "Controllo md5 dell'RPM %s fallito"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Non è stato possibile aprire in lettura il database RPM. Forse è gia in uso?"
+msgstr ""
+"Non è stato possibile aprire in lettura il database RPM. Forse è gia in uso?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
@@ -2980,7 +3060,9 @@ msgstr "Errore nell'apertura dell'rpm %s - errore %s"
 #~ msgstr "Dipendenza mancante: %s è necessario per il pacchetto %s"
 
 #~ msgid "Matching packages for package list to user args"
-#~ msgstr "Ricerca corrispondenza degli argomenti dell'utente nella lista dei pacchetti"
+#~ msgstr ""
+#~ "Ricerca corrispondenza degli argomenti dell'utente nella lista dei "
+#~ "pacchetti"
 
 #~ msgid ""
 #~ "\n"
@@ -3015,14 +3097,21 @@ msgstr "Errore nell'apertura dell'rpm %s - errore %s"
 #~ msgid "Finished"
 #~ msgstr "Finito"
 
-#~ msgid "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
-#~ msgstr "getInstalledPackageObject() è deprecato, usare self.rpmdb.searchPkgTuple().\n"
+#~ msgid ""
+#~ "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple"
+#~ "().\n"
+#~ msgstr ""
+#~ "getInstalledPackageObject() è deprecato, usare self.rpmdb.searchPkgTuple"
+#~ "().\n"
 
 #~ msgid "Parsing package install arguments"
 #~ msgstr "Analisi degli argomenti di installazione dei pacchetti"
 
-#~ msgid "Failure finding best provider of %s for %s, exceeded maximum loop length"
-#~ msgstr "Ricerca di un provider migliore di %s fallita per %s, superata la massima lunghezza del ciclo"
+#~ msgid ""
+#~ "Failure finding best provider of %s for %s, exceeded maximum loop length"
+#~ msgstr ""
+#~ "Ricerca di un provider migliore di %s fallita per %s, superata la massima "
+#~ "lunghezza del ciclo"
 
 #~ msgid "Comparing best: %s to po: %s"
 #~ msgstr "Comparando meglio: %s in po: %s"
@@ -3049,7 +3138,9 @@ msgstr "Errore nell'apertura dell'rpm %s - errore %s"
 #~ msgstr "bestpkg %s condivide piu del prefisso del nome con %s"
 
 #~ msgid "Invalid versioned dependency string, try quoting it."
-#~ msgstr "Stringa di versione della dipendenza non valida, provare a metterla tra virgolette."
+#~ msgstr ""
+#~ "Stringa di versione della dipendenza non valida, provare a metterla tra "
+#~ "virgolette."
 
 #~ msgid "Package %s conflicts with %s."
 #~ msgstr "Il pacchetto %s va in conflitto con %s."
