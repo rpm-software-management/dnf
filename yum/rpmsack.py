@@ -625,7 +625,7 @@ class RPMDBPackageSack(PackageSackBase):
         misc.unlink_f(self._cachedir + "/version")
         misc.unlink_f(self._cachedir + '/conflicts')
         misc.unlink_f(self._cachedir + '/file-requires')
-        misc.unlink_f(self._cachedir + '/yumdb-package-checksums')
+        misc.unlink_f(self._cachedir + '/pkgtups-checksums')
         #  We have a couple of options here, we can:
         #
         # . Ignore it and continue - least invasive, least likely to get any
@@ -709,8 +709,8 @@ class RPMDBPackageSack(PackageSackBase):
             data = self._trans_cache_store['file-requires']
             self._write_file_requires(rpmdbv, data)
 
-        if 'yumdb-package-checksums' in self._trans_cache_store:
-            data = self._trans_cache_store['yumdb-package-checksums']
+        if 'pkgtups-checksums' in self._trans_cache_store:
+            data = self._trans_cache_store['pkgtups-checksums']
             self._write_package_checksums(rpmdbv, data)
 
         self._trans_cache_store = {}
@@ -889,18 +889,19 @@ class RPMDBPackageSack(PackageSackBase):
         """ As simpleVersion() et. al. requires it, we "cache" this yumdb data
             as part of our rpmdb cache. We cache it with rpmdb data, even
             though someone _could_ use yumdb to alter it without changing the
-            rpmdb ... don't do that. """
+            rpmdb ... don't do that.
+            NOTE: This is also used as a cache of pkgtups in the rpmdb. """
         if not self.__cache_rpmdb__:
             return
 
-        if not os.path.exists(self._cachedir + '/yumdb-package-checksums'):
+        if not os.path.exists(self._cachedir + '/pkgtups-checksums'):
             return
 
         def _read_str(fo):
             return fo.readline()[:-1]
 
         rpmdbv = self.simpleVersion(main_only=True)[0]
-        fo = open(self._cachedir + '/yumdb-package-checksums')
+        fo = open(self._cachedir + '/pkgtups-checksums')
         frpmdbv = fo.readline()
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
             return
@@ -919,7 +920,10 @@ class RPMDBPackageSack(PackageSackBase):
 
                 T = _read_str(fo)
                 D = _read_str(fo)
-                checksum_data[pkgtup] = (T, D)
+                if T == '-':
+                    checksum_data[pkgtup] = None
+                else:
+                    checksum_data[pkgtup] = (T, D)
 
             if fo.readline() != '': # Should be EOF
                 return
@@ -931,6 +935,9 @@ class RPMDBPackageSack(PackageSackBase):
              return checksum_data
 
         for pkgtup in checksum_data:
+            if checksum_data[pkgtup] is None:
+                continue
+
             (n, a, e, v, r) = pkgtup
             pkg = self.searchNevra(n, e, v, r, a)
             if not pkg:
@@ -948,24 +955,26 @@ class RPMDBPackageSack(PackageSackBase):
         if not self.__cache_rpmdb__:
             return
 
-        self._trans_cache_store['yumdb-package-checksums'] = pkg_checksum_tups
+        self._trans_cache_store['pkgtups-checksums'] = pkg_checksum_tups
 
     def _write_package_checksums(self, rpmdbversion, data):
         if not os.access(self._cachedir, os.W_OK):
             return
 
         pkg_checksum_tups = data
-        fo = open(self._cachedir + '/yumdb-package-checksums.tmp', 'w')
+        fo = open(self._cachedir + '/pkgtups-checksums.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
         fo.write("%u\n" % len(pkg_checksum_tups))
         for pkgtup, TD in sorted(pkg_checksum_tups):
             for var in pkgtup:
                 fo.write("%s\n" % var)
+            if TD is None:
+                TD = ('-', '-')
             for var in TD:
                 fo.write("%s\n" % var)
         fo.close()
-        os.rename(self._cachedir + '/yumdb-package-checksums.tmp',
-                  self._cachedir + '/yumdb-package-checksums')
+        os.rename(self._cachedir + '/pkgtups-checksums.tmp',
+                  self._cachedir + '/pkgtups-checksums')
 
     def _get_cached_simpleVersion_main(self):
         """ Return the cached string of the main rpmdbv. """
