@@ -497,7 +497,7 @@ class TransactionData:
         txmbr.current_state = TS_INSTALL
         txmbr.output_state =  TS_UPDATED
         txmbr.po.state = TS_UPDATED
-        txmbr.ts_state = None # FIXME: should use a real state here.
+        txmbr.ts_state = 'ud'
         txmbr.relatedto.append((updating_po, 'updatedby'))
         txmbr.updated_by.append(updating_po)
         self.add(txmbr)
@@ -529,7 +529,7 @@ class TransactionData:
         txmbr.current_state = TS_INSTALL
         txmbr.output_state =  TS_OBSOLETED
         txmbr.po.state = TS_OBSOLETED
-        txmbr.ts_state = None # FIXME: should use a real state here.
+        txmbr.ts_state = 'od'
         txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
         txmbr.obsoleted_by.append(obsoleting_po)
         self.add(txmbr)

@@ -376,6 +376,16 @@ class Depsolve(object):
         self.verbose_logger.log(logginglevels.DEBUG_2, _('Mode for pkg providing %s: %s'), 
             niceformatneed, needmode)
 
+        if needmode in ['ud', 'od']: # the thing it needs is being updated or obsoleted away 
+            # try to update the requiring package in hopes that all this problem goes away :(
+            self.verbose_logger.log(logginglevels.DEBUG_2, _('Trying to update %s to resolve dep'), requiringPo)
+            txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
+            if not txmbrs:
+                msg = self._err_missing_requires(requiringPo, requirement)
+                self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
+                return self._requiringFromTransaction(requiringPo, requirement, errorlist)
+            checkdeps = 1
+            
         if needmode in ['e']:
             self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),
                 requiringPo, needname)
@@ -384,11 +394,10 @@ class Depsolve(object):
             checkdeps = 1
         
         if needmode in ['i', 'u']:
-            length = len(self.tsInfo)
-            self.update(name=name, epoch=epoch, version=ver, release=rel,
-                        requiringPo=requiringPo)
+            newupdates = self.update(name=name, epoch=epoch, version=ver, release=rel,
+                                     requiringPo=requiringPo)
             txmbrs = self.tsInfo.getMembersWithState(requiringPo.pkgtup, TS_REMOVE_STATES)
-            if len(self.tsInfo) != length and txmbrs:
+            if newupdates and txmbrs:
                 if txmbrs[0].output_state == TS_OBSOLETED:
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: Obsoleting %s with %s to resolve dep.'),
                                             requiringPo, txmbrs[0].obsoleted_by[0])
@@ -795,8 +804,11 @@ class Depsolve(object):
                     dscb_ts_state = 'd'
                 if dscb_ts_state == 'u' and txmbr.reinstall:
                     dscb_ts_state = 'r'
-                if dscb_ts_state == 'u' and not txmbr.updates:
-                    dscb_ts_state = 'i'
+                if dscb_ts_state == 'u':
+                    if txmbr.output_state == TS_OBSOLETING:
+                        dscb_ts_state = 'o'
+                    elif not txmbr.updates:
+                        dscb_ts_state = 'i'
                 self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
             self.verbose_logger.log(logginglevels.DEBUG_2,
                                     _("Checking deps for %s") %(txmbr,))

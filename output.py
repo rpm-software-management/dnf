@@ -1988,15 +1988,17 @@ class DepSolveProgressCallBack:
 
     def pkgAdded(self, pkgtup, mode):
         modedict = { 'i': _('installed'),
-                     'u': _('updated'),
-                     'o': _('obsoleted'),
+                     'u': _('an update'),
                      'e': _('erased'),
                      'r': _('reinstalled'),
-                     'd': _('downgraded')}
+                     'd': _('a downgrade'),
+                     'o': _('obsoleting'),
+                     'ud': _('updated'),
+                     'od': _('obsoleted'),}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('---> Package %s.%s %s:%s-%s set to be %s'), n, a, e, v, r,
+            _('---> Package %s.%s %s:%s-%s will be %s'), n, a, e, v, r,
             modeterm)
         
     def start(self):
@@ -2172,7 +2174,7 @@ def _pkgname_ui(ayum, pkgname, ts_states=None):
     if ts_states is None:
         #  Note 'd' is a placeholder for downgrade, and
         # 'r' is a placeholder for reinstall. Neither exist atm.
-        ts_states = ('d', 'e', 'i', 'r', 'u')
+        ts_states = ('d', 'e', 'i', 'r', 'u', 'od', 'ud')
 
     matches = []
     def _cond_add(po):
