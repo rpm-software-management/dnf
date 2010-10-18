@@ -21,6 +21,19 @@ The Yum RPM software updater.
 import os
 import os.path
 import rpm
+
+def _rpm_ver_atleast(vertup):
+    """ Check if rpm is at least the current vertup. Can return False/True/None
+        as rpm hasn't had version info for a long time. """
+    if not hasattr(rpm, '__version_info__'):
+        return None
+    try:
+        # 4.8.x rpm used strings for the tuple members, so convert.
+        vi = tuple([ int(num) for num in rpm.__version_info__])
+        return vi >= vertup
+    except:
+        return None # Something went wrong...
+
 import re
 import types
 import errno
@@ -85,6 +98,7 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 #  Don't do it at init time, or we'll get multiple additions if you create
 # multiple YumBase() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
+
 
 class _YumPreBaseConf:
     """This is the configuration interface for the YumBase configuration.
