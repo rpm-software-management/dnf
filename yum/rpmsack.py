@@ -593,12 +593,34 @@ class RPMDBPackageSack(PackageSackBase):
         return pkgobjlist
 
     def _uncached_returnConflictPackages(self):
+        """ Load the packages which have conflicts from the rpmdb, newer
+            versions of rpm have an index here so this is as fast as
+            cached (we test rpm version at cache write time). """
+
         if self._cached_conflicts_data is None:
-            ret = []
-            for pkg in self.returnPackages():
-                if len(pkg.conflicts):
-                    ret.append(pkg)
-            self._cached_conflicts_data = ret
+            result = {}
+            ts = self.readOnlyTS()
+            mi = ts.dbMatch('conflictname')
+
+            for hdr in mi:
+                if hdr['name'] == 'gpg-pubkey': # Just in case...
+                    continue
+
+                po = self._makePackageObject(hdr, mi.instance())
+                result[po.pkgid] = po
+                if po._has_hdr:
+                    continue # Unlikely, but, meh...
+
+                po.hdr = hdr
+                po._has_hdr = True
+                po.conflicts
+                po._has_hdr = False
+                del po.hdr
+            self._cached_conflicts_data = result.values()
+
+            if self.auto_close:
+                self.ts.close()
+
         return self._cached_conflicts_data
 
     def _write_conflicts_new(self, pkgs, rpmdbv):
@@ -1139,7 +1161,6 @@ class RPMDBPackageSack(PackageSackBase):
         del mi
         if self.auto_close:
             self.ts.close()
-
 
     def _header_from_index(self, idx):
         """returns a package header having been given an index"""

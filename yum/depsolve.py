@@ -38,7 +38,7 @@ import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from yum import _
+from yum import _, _rpm_ver_atleast
 
 try:
     assert max(2, 4) == 4
@@ -1104,6 +1104,10 @@ class Depsolve(object):
                         continue
                     ret.append( (po, self._prco_req_nfv2req(r, f, v),
                                  conflicting_po) )
+
+        if _rpm_ver_atleast((4, 9, 0)):
+            return ret # Don't need the conflicts cache anymore
+
         self.rpmdb.transactionCacheConflictPackages(cpkgs)
         return ret
 
