@@ -401,7 +401,7 @@ class OperationsTests(_DepsolveTestsBase):
     """
 
     def runOperation(self, args, installed=[], available=[],
-                     confs={}):
+                     confs={}, multi_cmds=False):
         """Sets up and runs the depsolver. args[0] must be a valid yum command
         ("install", "update", ...). It might be followed by pkg names as on the
         yum command line. The pkg objects in installed are added to self.rpmdb and
@@ -430,9 +430,18 @@ class OperationsTests(_DepsolveTestsBase):
             po.repoid = po.repo.id
             self.depsolver._pkgSack.addPackage(po)
 
-        self.depsolver.basecmd = args[0]
-        self.depsolver.extcmds = args[1:]
-        res, msg = self.depsolver.doCommands()
+        if not multi_cmds:
+            self.depsolver.basecmd = args[0]
+            self.depsolver.extcmds = args[1:]
+            res, msg = self.depsolver.doCommands()
+        else:
+            for nargs in args:
+                self.depsolver.basecmd = nargs[0]
+                self.depsolver.extcmds = nargs[1:]
+                res, msg = self.depsolver.doCommands()
+                if res != 2:
+                    return res, msg
+
         self.tsInfo = depsolver.tsInfo
         if res!=2:
             return res, msg

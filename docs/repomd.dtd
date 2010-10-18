@@ -1,0 +1,53 @@
+<!--
+    This is DTD for repomd.xml files used by yum.
+
+	Author:
+		Miroslav Suchý <msuchy@redhat.com>
+
+	Date: 2010-01-29
+
+    The FPI for repomd.xml DTD is:
+		"-//Red Hat//repomd.xml DTD 1.0//EN"
+
+	Typical usage:
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE repomd PUBLIC "-//Red Hat//repomd.xml DTD 1.0//EN" "http:///miroslav.suchy.cz/spacewalk/repomd.dtd">
+	<repomd>
+	...
+	</repomd>
+
+-->
+<!ELEMENT repomd (revision | data)+>
+<!ATTLIST repomd 
+	xmlns CDATA "http://linux.duke.edu/metadata/repo"
+	xmlns:rpm CDATA "http://linux.duke.edu/metadata/rpm"
+>
+
+<!ELEMENT revision (#PCDATA)>
+<!ELEMENT data (location | checksum | timestamp | open-checksum | open-size | size | database_version)+>
+<!ATTLIST data 
+	type (other_db | other | filelists_db | filelists | primary_db | primary | group | prestodelta | group_gz) #REQUIRED 
+>
+
+<!ELEMENT location EMPTY>
+<!ATTLIST location
+    href CDATA #REQUIRED
+	base CDATA #IMPLIED
+>
+
+<!ELEMENT checksum (#PCDATA)>
+<!ATTLIST checksum
+    type NMTOKEN #REQUIRED
+>
+
+<!ELEMENT timestamp (#PCDATA)>
+
+<!ELEMENT open-checksum (#PCDATA)>
+<!ATTLIST open-checksum
+    type NMTOKEN #REQUIRED
+>
+
+<!ELEMENT size (#PCDATA)>
+<!ELEMENT open-size (#PCDATA)>
+
+<!ELEMENT database_version (#PCDATA)>

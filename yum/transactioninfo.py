@@ -646,7 +646,9 @@ class TransactionData:
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
-                pkg_checksum_tups.append((pkg.pkgtup, csum))
+            #  We need all the pkgtups, so we even save the ones without a
+            # checksum.
+            pkg_checksum_tups.append((pkg.pkgtup, csum))
             main.update(pkg, csum)
 
         self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
