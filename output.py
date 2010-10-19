@@ -1900,9 +1900,9 @@ to exit.
         """ Shows the user a list of data about the history, from the point
             of a package(s) instead of via. transactions. """
         tids = self.history.search(extcmds)
+        limit = None
         if not tids:
-            self.logger.critical(_('Bad package(s), given (nothing found)'))
-            return 1, ['Failed history package-list']
+            limit = 20
 
         all_uistates = self._history_state2uistate
 
@@ -1913,7 +1913,10 @@ to exit.
                      utf8_width_fill(_("Package"), 53, 53))
         print "-" * 79
         fmt = "%6u | %s | %-50s"
-        for old in self.history.old(tids):
+        num = 0
+        for old in self.history.old(tids, limit=limit):
+            if limit is not None and num and (num +len(old.trans_data)) > limit:
+                break
             last = None
 
             # Copy and paste from list ... uh.
@@ -1935,9 +1938,10 @@ to exit.
                 lmark = '>'
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
-                x,m,u = yum.packages.parsePackages([hpkg], extcmds)
-                if not x and not m:
-                    continue
+                if limit is None:
+                    x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                    if not x and not m:
+                        continue
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
                 uistate = utf8_width_fill(uistate, 14)
@@ -1963,6 +1967,7 @@ to exit.
                     if hpkg.state in ('Updated', 'Downgrade'):
                         last = hpkg
 
+                num += 1
                 print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
 
         # And, again, copy and paste...
