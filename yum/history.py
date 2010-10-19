@@ -1176,12 +1176,25 @@ class YumHistory:
             return set()
 
         data = _setupHistorySearchSQL(patterns, ignore_case)
-        (need_full, patterns, fields, names) = data
+        (need_full, npatterns, fields, names) = data
 
         ret = []
         pkgtupids = set()
-        for row in self._yieldSQLDataList(patterns, fields, ignore_case):
-            pkgtupids.add(row[0])
+
+        if npatterns:
+            for row in self._yieldSQLDataList(npatterns, fields, ignore_case):
+                pkgtupids.add(row[0])
+        else:
+            # Too many patterns, *sigh*
+            pat_max = PATTERNS_MAX
+            if not need_full:
+                pat_max = PATTERNS_INDEXED_MAX
+            for npatterns in yum.misc.seq_max_split(patterns, pat_max):
+                data = _setupHistorySearchSQL(npatterns, ignore_case)
+                (need_full, nps, fields, names) = data
+                assert nps
+                for row in self._yieldSQLDataList(nps, fields, ignore_case):
+                    pkgtupids.add(row[0])
 
         sql =  """SELECT tid FROM trans_data_pkgs WHERE pkgtupid IN """
         sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
