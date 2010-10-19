@@ -4236,23 +4236,20 @@ class YumBase(depsolve.Depsolve):
         key_installed = False
 
         self.logger.info(_('Retrieving GPG key from %s') % keyurl)
-
+       
         # Go get the GPG key from the given URL
         try:
             url = misc.to_utf8(keyurl)
             if repo is None:
-                rawkey = urlgrabber.urlread(url, limit=9999)
+                opts = {limit:9999}
+                text = 'global/gpgkey'
             else:
                 #  If we have a repo. use the proxy etc. configuration for it.
                 # In theory we have a global proxy config. too, but meh...
                 # external callers should just update.
-                ug = URLGrabber(bandwidth = repo.bandwidth,
-                                retry = repo.retries,
-                                throttle = repo.throttle,
-                                progress_obj = repo.callback,
-                                proxies=repo.proxy_dict)
-                ug.opts.user_agent = default_grabber.opts.user_agent
-                rawkey = ug.urlread(url, text=repo.id + "/gpgkey")
+                opts = repo._default_grabopts()
+                text = repo.id + '/gpgkey'
+            rawkey = urlgrabber.urlread(url, **opts)
 
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
