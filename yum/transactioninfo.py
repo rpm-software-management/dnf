@@ -667,7 +667,8 @@ class TransactionData:
             for pkg in self.rpmdb.searchNevra(name=obs_n):
                 if pkg.obsoletedBy([txmbr.po]):
                     self.addObsoleted(pkg, txmbr.po)
-                    
+                    txmbr.output_state = TS_OBSOLETING
+                    txmbr.po.state = TS_OBSOLETING
 
 
 class ConditionalTransactionData(TransactionData):
