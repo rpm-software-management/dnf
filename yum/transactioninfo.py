@@ -83,7 +83,7 @@ class TransactionData:
         self.debug = 0
         self.changed = False
         self.installonlypkgs = []
-        
+        self.state_counter = 0
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
         self.rpmdb = None
@@ -266,6 +266,7 @@ class TransactionData:
         self.pkgdict[txmember.pkgtup].append(txmember)
         self._namedict.setdefault(txmember.name, []).append(txmember)
         self.changed = True
+        self.state_counter += 1
         if self._isLocalPackage(txmember):
             self.localSack.addPackage(txmember.po)
         elif isinstance(txmember.po, YumAvailablePackageSqlite):
@@ -306,6 +307,7 @@ class TransactionData:
         if not self._namedict[pkgtup[0]]:
             del self._namedict[pkgtup[0]]
         self.changed = True        
+        self.state_counter += 1
     
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""
@@ -419,7 +421,8 @@ class TransactionData:
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
-
+        
+        self.findObsoletedByThisMember(txmbr)
         self.add(txmbr)
         return txmbr
 
@@ -470,6 +473,7 @@ class TransactionData:
             txmbr.updates.append(oldpo)
             
         self.add(txmbr)
+        self.findObsoletedByThisMember(txmbr)
         return txmbr
 
     def addDowngrade(self, po, oldpo):
@@ -654,6 +658,18 @@ class TransactionData:
         self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
 
         return main
+    
+    def findObsoletedByThisMember(self, txmbr):
+        """addObsoleted() pkgs for anything that this txmbr will obsolete"""
+        # this is mostly to keep us in-line with what will ACTUALLY happen
+        # when rpm hits the obsoletes, whether we added them or not
+        for obs_n in txmbr.po.obsoletes_names:
+            for pkg in self.rpmdb.searchNevra(name=obs_n):
+                if pkg.obsoletedBy([txmbr.po]):
+                    self.addObsoleted(pkg, txmbr.po)
+                    txmbr.output_state = TS_OBSOLETING
+                    txmbr.po.state = TS_OBSOLETING
+
 
 class ConditionalTransactionData(TransactionData):
     """A transaction data implementing conditional package addition"""

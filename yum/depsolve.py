@@ -376,7 +376,24 @@ class Depsolve(object):
         self.verbose_logger.log(logginglevels.DEBUG_2, _('Mode for pkg providing %s: %s'), 
             niceformatneed, needmode)
 
-        if needmode in ['ud', 'od']: # the thing it needs is being updated or obsoleted away 
+        if needmode in ['ud']: # the thing it needs is being updated or obsoleted away 
+            # try to update the requiring package in hopes that all this problem goes away :(
+            self.verbose_logger.log(logginglevels.DEBUG_2, _('Trying to update %s to resolve dep'), requiringPo)
+            # if the required pkg was updated, not obsoleted, then try to
+            # only update the requiring po
+            origobs = self.conf.obsoletes
+            self.conf.obsoletes = 0
+            txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
+            self.conf.obsoletes = origobs
+            if not txmbrs:
+                txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
+                if not txmbrs:
+                    msg = self._err_missing_requires(requiringPo, requirement)
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
+                    return self._requiringFromTransaction(requiringPo, requirement, errorlist)
+            checkdeps = 1
+
+        if needmode in ['od']: # the thing it needs is being updated or obsoleted away 
             # try to update the requiring package in hopes that all this problem goes away :(
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Trying to update %s to resolve dep'), requiringPo)
             txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
@@ -385,6 +402,7 @@ class Depsolve(object):
                 self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
                 return self._requiringFromTransaction(requiringPo, requirement, errorlist)
             checkdeps = 1
+
             
         if needmode in ['e']:
             self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),

@@ -560,10 +560,7 @@ class SimpleObsoletesTests(OperationsTests):
         res, msg = self.runOperation(['install', 'dapl-2.0.15'], rps, aps)
 
         self.assert_(res=='ok', msg)
-        # This will almost certainly fail, but it's pretty weird:
-        self.assertResult((all['arp3'], all['aoop1'], all['aoop2']))
-        # FIXME: Optimally we'd get:
-        # self.assertResult((all['arp3'], all['arp4']))
+        self.assertResult((all['arp3'], all['arp4']))
     def testRLDaplMessWeirdUp1(self):
         rps, aps, ret, all = self._helperRLDaplMess()
         res, msg = self.runOperation(['update', 'dapl-1.2.1.1-7'], rps, aps)
@@ -582,10 +579,7 @@ class SimpleObsoletesTests(OperationsTests):
         res, msg = self.runOperation(['update', 'dapl-2.0.15'], rps, aps)
 
         self.assert_(res=='ok', msg)
-        # This will almost certainly fail, but it's pretty weird:
-        self.assertResult((all['arp3'], all['aoop1'], all['aoop2']))
-        # FIXME: Optimally we'd get:
-        # self.assertResult((all['arp3'], all['arp4']))
+        self.assertResult((all['arp3'], all['arp4']))
 
     def testRLDaplFixUpdateNotInstall(self):
         rps, aps, ret, all = self._helperRLDaplMess()

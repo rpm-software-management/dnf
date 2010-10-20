@@ -91,7 +91,7 @@ _yum()
         # Recognize additional commands and aliases
         for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
             groupupdate grouperase localinstall localupdate whatprovides ; do
-            [ ${COMP_WORDS[i]} = $c ] && cmd=$c && break
+            [[ ${COMP_WORDS[i]} == $c ]] && cmd=$c && break
         done
     done
 
