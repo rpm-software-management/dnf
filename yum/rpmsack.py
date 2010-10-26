@@ -375,6 +375,7 @@ class RPMDBPackageSack(PackageSackBase):
         ts = self.readOnlyTS()
         result = {}
         
+        name = os.path.normpath(name)
         mi = ts.dbMatch('basenames', name)
         for hdr in mi:
             if hdr['name'] == 'gpg-pubkey':

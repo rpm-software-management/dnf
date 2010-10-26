@@ -898,6 +898,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         glob = True
         file_glob = True
         querytype = 'glob'
+        name = os.path.normpath(name)
         dirname  = os.path.dirname(name)
         filename = os.path.basename(name)
         if strict or not misc.re_glob(name):
