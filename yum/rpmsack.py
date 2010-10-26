@@ -282,18 +282,24 @@ class RPMDBPackageSack(PackageSackBase):
         rpmdbfname  = self.root + "/var/lib/rpm/Packages"
         self._cached_rpmdb_mtime = os.path.getmtime(rpmdbfname)
 
+        def _safe_del(x, y):
+            """ Make sure we never traceback here, because it screws our yumdb
+                if we do. """
+            # Maybe use x.pop(y, None) ?
+            if y in x:
+                del x[y]
+
         precache = []
         for txmbr in txmbrs:
             self._pkgnames_loaded.discard(txmbr.name)
-            if txmbr.name in self._name2pkg:
-                del self._name2pkg[txmbr.name]
+            _safe_del(self._name2pkg, txmbr.name)
 
             if txmbr.output_state in constants.TS_INSTALL_STATES:
                 self._pkgname_fails.discard(txmbr.name)
                 precache.append(txmbr)
             if txmbr.output_state in constants.TS_REMOVE_STATES:
-                del self._idx2pkg[txmbr.po.idx]
-                del self._tup2pkg[txmbr.pkgtup]
+                _safe_del(self._idx2pkg, txmbr.po.idx)
+                _safe_del(self._tup2pkg, txmbr.pkgtup)
 
         for txmbr in precache:
             (n, a, e, v, r) = txmbr.pkgtup
@@ -301,6 +307,7 @@ class RPMDBPackageSack(PackageSackBase):
             if not pkg:
                 # Wibble?
                 self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums)")
+                continue
 
             pkg = pkg[0]
             csum = txmbr.po.returnIdSum()

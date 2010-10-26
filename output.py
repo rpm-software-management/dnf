@@ -2239,7 +2239,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
     #  Installing things have pkg objects passed to the events, so only need to
     # lookup for erased/obsoleted.
-    def pkgname_ui(self, pkgname, ts_states=('e', None)):
+    def pkgname_ui(self, pkgname, ts_states=('e', 'od', 'ud', None)):
         """ Get more information on a simple pkgname, if we can. """
         return _pkgname_ui(self.ayum, pkgname, ts_states)
 
