@@ -845,6 +845,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
     @catchSqliteException
     def _search_primary_files(self, name):
         querytype = 'glob'
+        name = os.path.normpath(name)
         if not misc.re_glob(name):
             querytype = '='        
         results = []
