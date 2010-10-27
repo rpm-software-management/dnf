@@ -2312,7 +2312,8 @@ class YumBase(depsolve.Depsolve):
         return results
     
     # pre 3.2.10 API used to always showdups, so that's the default atm.
-    def searchGenerator(self, fields, criteria, showdups=True, keys=False):
+    def searchGenerator(self, fields, criteria, showdups=True, keys=False, 
+                                             searchtags=True, searchrpmdb=True):
         """Generator method to lighten memory load for some searches.
            This is the preferred search function to use. Setting keys to True
            will use the search keys that matched in the sorting, and return
@@ -2358,41 +2359,45 @@ class YumBase(depsolve.Depsolve):
 
                 if len(tmpvalues) > 0:
                     sorted_lists[count].append((po, tmpkeys, tmpvalues))
-        results2sorted_lists(tmpres, sorted_lists)
-
-        tmpres = self.rpmdb.searchPrimaryFieldsMultipleStrings(fields,
-                                                               real_crit_lower,
-                                                               lowered=True)
-        # close our rpmdb connection so we can ctrl-c, kthxbai
-        self.closeRpmDB()
 
         results2sorted_lists(tmpres, sorted_lists)
-        del tmpres
 
-        tmpres = self.searchPackageTags(real_crit_lower)
-        
+        if searchrpmdb:
+            tmpres = self.rpmdb.searchPrimaryFieldsMultipleStrings(fields,
+                                                                   real_crit_lower,
+                                                                   lowered=True)
+            # close our rpmdb connection so we can ctrl-c, kthxbai
+            self.closeRpmDB()
+
+            results2sorted_lists(tmpres, sorted_lists)
+            del tmpres
+
         results_by_pkg = {} # pkg=[list_of_tuples_of_values]
-        
-        for pkg in tmpres:
-            count = 0
-            matchkeys = []
-            tagresults = []
-            for (match, taglist) in tmpres[pkg]:
-                count += len(taglist)
-                matchkeys.append(rcl2c[match])
-                tagresults.extend(taglist)
-                if pkg not in results_by_pkg:
-                    results_by_pkg[pkg] = []
-                results_by_pkg[pkg].append((matchkeys, tagresults))
+        if searchtags:
+            tmpres = self.searchPackageTags(real_crit_lower)
+            
+            
+            for pkg in tmpres:
+                count = 0
+                matchkeys = []
+                tagresults = []
+                for (match, taglist) in tmpres[pkg]:
+                    count += len(taglist)
+                    matchkeys.append(rcl2c[match])
+                    tagresults.extend(taglist)
+                    if pkg not in results_by_pkg:
+                        results_by_pkg[pkg] = []
+                    results_by_pkg[pkg].append((matchkeys, tagresults))
 
-        del tmpres
+            del tmpres
 
-        # do the ones we already have
-        for item in sorted_lists.values():
-            for pkg, k, v in item:
-                if pkg not in results_by_pkg:
-                    results_by_pkg[pkg] = []
-                results_by_pkg[pkg].append((k,v))
+        if sorted_lists.values():
+            # do the ones we already have
+            for item in sorted_lists.values():
+                for pkg, k, v in item:
+                    if pkg not in results_by_pkg:
+                        results_by_pkg[pkg] = []
+                    results_by_pkg[pkg].append((k,v))
 
         # take our existing dict-by-pkg and make the dict-by-count for 
         # this bizarro sorted_lists format
