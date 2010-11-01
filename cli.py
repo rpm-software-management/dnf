@@ -619,6 +619,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             to not being installed, tell the user. """
         # always_output is a wart due to update/remove not producing the
         # same output.
+        # if it is a grouppattern then none of this is going to make any sense
+        # skip it.
+        if  arg[0] == '@':
+            return
         matches = self.doPackageLists(patterns=[arg], ignore_case=False)
         if (matches.installed or (not matches.available and
                                   self.returnInstalledPackagesByDep(arg))):
