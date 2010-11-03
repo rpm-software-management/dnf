@@ -4791,7 +4791,7 @@ class YumBase(depsolve.Depsolve):
         return verify_package
 
     def save_ts(self, filename=None, auto=False):
-        """saves out a transaction to .yumts file to be loaded later"""
+        """saves out a transaction to .yumtx file to be loaded later"""
         
         if self.tsInfo._unresolvedMembers:
             if auto:
@@ -4800,8 +4800,8 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError(_("Dependencies not solved. Will not save unresolved transaction."))
         
         if not filename:
-            prefix = 'yum_save_ts-%s' % time.strftime('%Y-%m-%d-%H-%M')
-            fd,filename = tempfile.mkstemp(suffix='.ts', prefix=prefix)
+            prefix = 'yum_save_tx-%s' % time.strftime('%Y-%m-%d-%H-%M')
+            fd,filename = tempfile.mkstemp(suffix='.yumtx', prefix=prefix)
             f = os.fdopen(fd, 'w')
         else:
             f = open(filename, 'w')
@@ -4828,12 +4828,13 @@ class YumBase(depsolve.Depsolve):
 
         
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None):
-        """loads a transaction from a .yumts file"""
+        """loads a transaction from a .yumtx file"""
         # check rpmversion - if not match throw a fit
         # check repoversions  (and repos)- if not match throw a fit
         # load each txmbr - if pkgs being updated don't exist, bail w/error
         # setup any ts flags
         # setup cmds for history/yumdb to know about
+        # return txmbrs loaded
         try:
             data = open(filename, 'r').readlines()
         except (IOError, OSError), e:
@@ -4999,4 +5000,4 @@ class YumBase(depsolve.Depsolve):
                 msg += _(" aborting.")
                 raise Errors.YumBaseError(msg)
             
-
+        return self.tsInfo.getMembers()

@@ -1462,8 +1462,9 @@ class LoadTransactionCommand(YumCommand):
             base.load_ts(load_file)
         except yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
-        return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo))]
+        return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo.getMembers()))]
+
 
     def needTs(self, base, basecmd, extcmds):
-        return False
+        return True
 
