@@ -1440,3 +1440,30 @@ class CheckRpmdbCommand(YumCommand):
     def needTs(self, base, basecmd, extcmds):
         return False
 
+class LoadTransactionCommand(YumCommand):
+    def getNames(self):
+        return ['load-transaction', 'load-ts']
+
+    def getUsage(self):
+        return "filename"
+
+    def getSummary(self):
+        return _("load a saved transaction from filename")
+
+    def doCommand(self, base, basecmd, extcmds):
+        if not extcmds:
+            base.logger.critical(_("No saved transaction file specified."))
+            raise cli.CliError
+        
+        load_file = extcmds[0]
+        self.doneCommand(base, _("loading transaction from %s") % load_file)
+        
+        try:
+            base.load_ts(load_file)
+        except yum.Errors.YumBaseError, e:
+            return 1, [to_unicode(e)]
+        return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo))]
+
+    def needTs(self, base, basecmd, extcmds):
+        return False
+

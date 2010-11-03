@@ -740,6 +740,9 @@ class YumConf(StartupConf):
                                     parse_default=True)
     exit_on_lock = BoolOption(False)
     
+    loadts_ignoremissing = BoolOption(False)
+    loadts_ignorerpm = BoolOption(False)
+    
     _reposlist = []
 
     def dump(self):

@@ -43,7 +43,7 @@ import fnmatch
 import logging
 import logging.config
 import operator
-
+import tempfile
 
 import yum.i18n
 _ = yum.i18n._
@@ -178,6 +178,7 @@ class YumBase(depsolve.Depsolve):
         self._pkgSack = None
         self._lockfile = None
         self._tags = None
+        self._ts_save_file = None
         self.skipped_packages = []   # packages skip by the skip-broken code
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
@@ -414,7 +415,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
-
+                
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
@@ -1000,6 +1001,8 @@ class YumBase(depsolve.Depsolve):
                 restring.append(_('Trying to remove "%s", which is protected') %
                                 pkgname)
 
+        if rescode == 2:
+            self.save_ts(auto=True)
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return rescode, restring
 
@@ -1372,6 +1375,13 @@ class YumBase(depsolve.Depsolve):
         # invalid cache).
         self.rpmdb.transactionResultVersion(frpmdbv)
 
+        # transaction has started - all bets are off on our saved ts file
+        try:
+            os.unlink(self._ts_save_file)
+        except (IOError, OSError), e:
+            pass
+        self._ts_save_file = None
+        
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
@@ -1411,6 +1421,7 @@ class YumBase(depsolve.Depsolve):
                 except (IOError, OSError), e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
+        
         # drop out the rpm cache so we don't step on bad hdr indexes
         self.rpmdb.dropCachedDataPostTransaction(list(self.tsInfo))
         self.plugins.run('posttrans')
@@ -2928,7 +2939,7 @@ class YumBase(depsolve.Depsolve):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag')
+                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
@@ -4682,6 +4693,7 @@ class YumBase(depsolve.Depsolve):
         newrepo = yumRepo.YumRepository(repoid)
         newrepo.name = repoid
         newrepo.basecachedir = self.conf.cachedir
+
         var_convert = kwargs.get('variable_convert', True)
         
         if baseurls:
@@ -4777,4 +4789,214 @@ class YumBase(depsolve.Depsolve):
         """ Callback to call a plugin hook for pkg.verify(). """
         self.plugins.run('verify_package', verify_package=verify_package)
         return verify_package
+
+    def save_ts(self, filename=None, auto=False):
+        """saves out a transaction to .yumts file to be loaded later"""
+        
+        if self.tsInfo._unresolvedMembers:
+            if auto:
+                self.logger.critical(_("Dependencies not solved. Will not save unresolved transaction."))
+                return
+            raise Errors.YumBaseError(_("Dependencies not solved. Will not save unresolved transaction."))
+        
+        if not filename:
+            prefix = 'yum_save_ts-%s' % time.strftime('%Y-%m-%d-%H-%M')
+            fd,filename = tempfile.mkstemp(suffix='.ts', prefix=prefix)
+            f = os.fdopen(fd, 'w')
+        else:
+            f = open(filename, 'w')
+        
+        self._ts_save_file = filename
+        
+        msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
+        msg += "%s\n" % self.ts.getTsFlags()
+        msg += "%s\n" % len(self.repos.listEnabled())
+        for r in self.repos.listEnabled():
+            msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+        msg += "%s\n" % len(self.tsInfo.getMembers())
+        for txmbr in self.tsInfo.getMembers():
+            msg += txmbr._dump()
+        try:
+            f.write(msg)
+            f.close()
+        except (IOError, OSError), e:
+            self._ts_save_file = None
+            if auto:
+                self.logger.critical(_("Could not save transaction file %s: %s") % (filename, str(e)))
+            else:
+                raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, str(e)))
+
+        
+    def load_ts(self, filename, ignorerpm=None, ignoremissing=None):
+        """loads a transaction from a .yumts file"""
+        # check rpmversion - if not match throw a fit
+        # check repoversions  (and repos)- if not match throw a fit
+        # load each txmbr - if pkgs being updated don't exist, bail w/error
+        # setup any ts flags
+        # setup cmds for history/yumdb to know about
+        try:
+            data = open(filename, 'r').readlines()
+        except (IOError, OSError), e:
+            raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, str(e)))
+            
+
+        if ignorerpm is None:
+            ignorerpm = self.conf.loadts_ignorerpm
+        if ignoremissing is None:
+            ignoremissing = self.conf.loadts_ignoremissing
+            
+        # data format
+        # 0 == rpmdb version
+        # 1 == tsflags
+        # 2 == numrepos
+        # 3:numrepos = repos
+        # 3+numrepos = num pkgs
+        # 3+numrepos+1 -> EOF= txmembers
+        
+        # rpm db ver
+        rpmv = data[0].strip()
+        if rpmv != str(self.rpmdb.simpleVersion(main_only=True)[0]):
+            msg = _("rpmdb ver mismatched saved transaction version, ")
+            if ignorerpm:
+                msg += _(" ignoring, as requested.")
+                self.logger.critical(_(msg))
+            else:
+                msg += _(" aborting.")
+                raise Errors.YumBaseError(msg)
+        
+        # tsflags
+        # FIXME - probably should let other tsflags play nicely together
+        #         so someone can add --nogpgcheck or --nodocs or --nodiskspace or some nonsense and have it work
+        try:
+            tsflags = int(data[1].strip())
+        except (ValueError, IndexError), e:
+            msg = _("cannot find tsflags or tsflags not integer.")
+            raise Errors.YumBaseError(msg)
+
+        self.ts.setFlags(tsflags)
+        
+        # repos
+        numrepos = int(data[2].strip())
+        repos = []
+        rindex=3+numrepos
+        for r in data[3:rindex]:
+            repos.append(r.strip().split(':'))
+
+        # pkgs/txmbrs
+        numpkgs = int(data[rindex].strip())
+
+        pkgstart = rindex + 1
+        
+        pkgcount = 0
+        pkgprob = False
+        curpkg = None
+        for l in data[pkgstart:]:
+            l = l.rstrip()
+            # our main txmbrs
+            if l.startswith('mbr:'):
+                if curpkg:
+                    self.tsInfo.add(curpkg)
+                    if curpkg in self.tsInfo._unresolvedMembers and not missingany:
+                        self.tsInfo._unresolvedMembers.remove(curpkg)
+
+                missingany = False
+                pkgtup, current_state = l.split(':')[1].strip().split(' ')
+                current_state = int(current_state.strip())
+                pkgtup = tuple(pkgtup.strip().split(','))
+                try:
+                    if current_state == TS_INSTALL:
+                        po = self.getInstalledPackageObject(pkgtup)
+                    elif current_state == TS_AVAILABLE:
+                        po = self.getPackageObject(pkgtup)
+                    else:
+                        msg = _("Found txmbr in unknown current state: %s" % current_state)
+                        raise Errors.YumBaseError(msg)
+                except Errors.YumBaseError, e:
+                    missingany = True
+                    msg = _("Could not find txmbr: %s in state %s" % (str(pkgtup), current_state))
+                    if not ignoremissing:
+                        raise Errors.YumBaseError(msg)
+                    else:
+                        self.logger.critical(msg)
+                else:
+                    pkgcount += 1
+                    curpkg = transactioninfo.TransactionMember(po)
+                    curpkg.current_state = current_state
+                    continue
+
+            l = l.strip()
+            k,v = l.split(':', 1)
+            v = v.lstrip()
+            # attributes of our txmbrs
+            if k in ('isDep', 'reinstall'):
+                v = v.strip().lower()
+                if v == 'false':
+                    setattr(curpkg, k, False)
+                elif v == 'true':
+                    setattr(curpkg, k, True)
+            elif k in ('output_state'):
+                setattr(curpkg, k, int(v.strip()))
+            elif k in ('groups'):
+                curpkg.groups.extend(v.split(' '))
+            # the relationships to our main txmbrs
+            elif k in ('updated_by', 'obsoleted_by', 'downgraded_by', 
+                       'downgrades', 'updates', 'obsoletes', 'depends_on'):
+                for pkgspec in v.strip().split(' '):
+                    pkgtup, origin  = pkgspec.split('@')
+                    try:
+                        if origin == 'i':
+                            po = self.getInstalledPackageObject(tuple(pkgtup.split(',')))
+                        else:
+                            po = self.getPackageObject(tuple(pkgtup.split(',')))
+                    except Errors.YumBaseError, e:
+                        msg = _("Could not find txmbr: %s from origin: %s" % (str(pkgtup), origin))
+                        self.logger.critical(msg)
+                        missingany = True
+                    else:
+                        curlist = getattr(curpkg, k)
+                        curlist.append(po)
+                        setattr(curpkg, k, curlist)
+            elif k in ('relatedto'):
+                for item in v.split(' '):
+                    pkgspec, rel = item.split(':')
+                    pkgtup,origin = pkgspec.split('@')
+                    try:
+                        if origin == 'i':
+                            po = self.getInstalledPackageObject(tuple(pkgtup.split(',')))
+                        else:
+                            po = self.getPackageObject(tuple(pkgtup.split(',')))
+                    except Errors.YumBaseError, e:
+                        msg = _("Could not find txmbr: %s from origin: %s" % (str(pkgtup), origin))
+                        self.logger.critical(msg)
+                        missingany = True
+                    else:
+                        curlist = getattr(curpkg, k)
+                        curlist.append((po,rel))
+                        setattr(curpkg, k, curlist)
+                        
+            # the plain strings
+            else: #ts_state, reason
+                setattr(curpkg, k, v.strip())
+            
+            if missingany:
+                pkgprob = True
+                
+        # make sure we get the last one in!
+        self.tsInfo.add(curpkg)
+        if curpkg in self.tsInfo._unresolvedMembers:
+            self.tsInfo._unresolvedMembers.remove(curpkg)
+
+            
+        if numpkgs != pkgcount:
+            pkgprob = True
+            
+        if pkgprob:
+            msg = _("Transaction members, relations are missing or ts has been modified,")
+            if ignoremissing:
+                msg += _(" ignoring, as requested. You must redepsolve!")
+                self.logger.critical(msg)
+            else:
+                msg += _(" aborting.")
+                raise Errors.YumBaseError(msg)
+            
 

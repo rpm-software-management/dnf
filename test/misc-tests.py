@@ -93,6 +93,7 @@ class MiscTests(DepsolveTests):
     
     def resolveCode(self,skip = False):
         solver = YumBase()
+        solver.save_ts = save_ts
         solver.conf = FakeConf()
         solver.arch.setup_arch('x86_64')
         solver.conf.skip_broken = skip

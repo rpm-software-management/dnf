@@ -805,6 +805,7 @@ class Depsolve(object):
 
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
+        
         return (2, [_('Success - deps resolved')])
 
     def _resolveRequires(self, errors):

@@ -213,6 +213,8 @@ def main(args):
         if not base._rpmdb_warn_checks(out=verbose_logger.info, warn=False):
             verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
         return_code = result
+        if base._ts_save_file:
+            verbose_logger.info(_("Your transaction was saved, rerun it with: yum load-transaction %s") % base._ts_save_file)
     else:
         verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
 

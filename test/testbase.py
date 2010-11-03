@@ -27,6 +27,10 @@ from rpmUtils.transaction import initReadOnlyTransaction
 def _(msg):
     return msg
 
+# dummy save_ts to avoid lots of errors
+def save_ts(*args, **kwargs):
+    pass
+
 class FakeConf(object):
 
     def __init__(self):
@@ -358,9 +362,9 @@ class DepsolveTests(_DepsolveTestsBase):
     def resetTsInfo(self):
         self.tsInfo = transactioninfo.TransactionData()
         
-
     def resolveCode(self):
         solver = YumBase()
+        solver.save_ts  = save_ts
         solver.conf = FakeConf()
         solver.arch.setup_arch('x86_64')
         solver.tsInfo = solver._tsInfo = self.tsInfo
@@ -409,6 +413,7 @@ class OperationsTests(_DepsolveTestsBase):
         requirements from.
         """
         depsolver = YumBaseCli()
+        depsolver.save_ts = save_ts
         depsolver.arch.setup_arch('x86_64')
         self.rpmdb = depsolver.rpmdb = FakeRpmDb()
         self.xsack = depsolver._pkgSack  = packageSack.PackageSack()
