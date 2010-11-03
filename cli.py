@@ -622,7 +622,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # same output.
         # if it is a grouppattern then none of this is going to make any sense
         # skip it.
-        if  arg[0] == '@':
+        if not arg or arg[0] == '@':
             return
         matches = self.doPackageLists(patterns=[arg], ignore_case=False)
         if (matches.installed or (not matches.available and
