@@ -1575,7 +1575,7 @@ class _RPMVerifyPackageFile(YUMVerifyPackageFile):
         if vflags & _RPMVERIFY_DIGEST:
             self.digest    = (csum_type, filetuple[12])
 
-        if self.ftype == 'symlnk' and vflags & _RPMVERIFY_LINKTO:
+        if self.ftype == 'symlink' and vflags & _RPMVERIFY_LINKTO:
             self.readlink = fi.FLink() # fi.foo is magic, don't think about it
         elif vflags & _RPMVERIFY_LINKTO:
             self.readlink = ''
