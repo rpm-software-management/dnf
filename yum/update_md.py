@@ -26,7 +26,7 @@ import sys
 from yum.i18n import utf8_text_wrap, to_utf8
 from yum.yumRepo import YumRepository
 from yum.packages import FakeRepository
-from yum.misc import to_xml, decompress
+from yum.misc import to_xml, decompress, repo_gen_decompress
 from yum.misc import cElementTree_iterparse as iterparse 
 import Errors
 
@@ -438,7 +438,7 @@ class UpdateMetadata(object):
                 md = obj.retrieveMD(mdtype)
                 if not md:
                     raise UpdateNoticeException()
-                unfile = decompress(md)
+                unfile = repo_gen_decompress(md, 'updateinfo.xml')
                 infile = open(unfile, 'rt')
         elif isinstance(obj, FakeRepository):
             raise Errors.RepoMDError, "No updateinfo for local pkg"
