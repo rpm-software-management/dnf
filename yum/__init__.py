@@ -1057,7 +1057,7 @@ class YumBase(depsolve.Depsolve):
             # and skip-broken shouldn't care too much about speed.
             self.rpmdb.transactionReset()
             self.installedFileRequires = None # Kind of hacky
-            self.verbose_logger.debug(_("Skip-broken round %i"), count)
+            self.verbose_logger.debug("SKIPBROKEN: ########### Round %i ################" , count)
             self._printTransaction()        
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
@@ -1114,7 +1114,7 @@ class YumBase(depsolve.Depsolve):
                 self._checkUpdatedLeftovers() # Cleanup updated leftovers
                 rescode, restring = self.resolveDeps()
         if rescode != 1:
-            self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
+            self.verbose_logger.debug("SKIPBROKEN: took %i rounds ", count)
             self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
             skipped_list = [p for p in skipped_po]
             skipped_list.sort()
@@ -1228,14 +1228,14 @@ class YumBase(depsolve.Depsolve):
                   TS_AVAILABLE  : "available",
                   TS_UPDATED    : "updated"}
 
-        self.verbose_logger.log(logginglevels.DEBUG_2,"TSINFO: Current Transaction : %i member(s) " % len(self.tsInfo))
+        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN: Current Transaction : %i member(s) " % len(self.tsInfo))
         for txmbr in sorted(self.tsInfo):
-            msg = "  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
+            msg = "SKIPBROKEN:  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
             self.verbose_logger.log(logginglevels.DEBUG_2, msg)
             for po,rel in sorted(txmbr.relatedto):
-                msg = "                   %s : %s" % (rel,po)
+                msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-                
+        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))
                                     
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
@@ -1246,6 +1246,10 @@ class YumBase(depsolve.Depsolve):
             for pkg in (txmbr.updates + txmbr.obsoletes):
                 toRemove.add(pkg)
                 self._getDepsToRemove(pkg, deptree, toRemove)
+            # Remove related packages    
+            for (relative, relation) in txmbr.relatedto:
+                toRemove.add(relative)
+                self._getDepsToRemove(relative, deptree, toRemove)                
         self._getDepsToRemove(po, deptree, toRemove)
 
     def _getDepsToRemove(self,po, deptree, toRemove):

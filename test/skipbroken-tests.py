@@ -598,7 +598,24 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(u1, oldpo=i2)
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([i1,i2])
-        
+ 
+    def testDowngrade1(self):
+        '''
+        bar require foolib=2.0 provided by foo-1.2
+        foo-1.2 is downgraded to foo-1.1 there only contains foolib=1.0
+        so bar requirement is broken and the downgrade should be removed from
+        transaction
+        '''
+        i1 = self.instPackage('foo', '1.2')
+        i1.addProvides('foolib', 'EQ', ('0', '2', '0'))
+        i2 = self.instPackage('bar', '1.0')
+        i2.addRequires('foolib', 'EQ', ('0', '2', '0'))
+        d1 = self.repoPackage('foo', '1.1')
+        d1.addProvides('foolib', 'EQ', ('0', '1', '0'))
+        self.tsInfo.addDowngrade(d1, oldpo=i1)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult([i1, i2])
+       
 
     def testMissingfileReqIptabes(self):    
         '''

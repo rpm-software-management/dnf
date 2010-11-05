@@ -131,15 +131,17 @@ class DepSolveProgressCallBack:
     
     def pkgAdded(self, pkgtup, mode):
         modedict = { 'i': _('installed'),
-                     'u': _('updated'),
-                     'od': _('obsoleted'),
-                     'o': _('obsoleting'),
+                     'u': _('an update'),
                      'e': _('erased'),
-                     'ud':_('update'),}
+                     'r': _('reinstalled'),
+                     'd': _('a downgrade'),
+                     'o': _('obsoleting'),
+                     'ud': _('updated'),
+                     'od': _('obsoleted'),}
         (n, a, e, v, r) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('---> Package %s.%s %s:%s-%s set to be %s'), n, a, e, v, r,
+            _('---> Package %s.%s %s:%s-%s will be %s'), n, a, e, v, r,
             modeterm)
         
     def start(self):
