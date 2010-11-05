@@ -75,7 +75,7 @@ class UpdateNotice(object):
     def __setitem__(self, item, val):
         self._md[item] = val
 
-    def text(self, skip_data=('files', 'summary', 'solution')):
+    def text(self, skip_data=('files', 'summary', 'rights', 'solution')):
         head = """
 ===============================================================================
   %(title)s
