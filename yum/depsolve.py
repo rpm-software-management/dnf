@@ -407,8 +407,9 @@ class Depsolve(object):
         if needmode in ['e']:
             self.verbose_logger.log(logginglevels.DEBUG_2, _('TSINFO: %s package requiring %s marked as erase'),
                 requiringPo, needname)
-            txmbr = self.tsInfo.addErase(requiringPo)
-            txmbr.setAsDep(po=inst_po)
+            txmbrs = self.remove(po=requiringPo)
+            for txmbr in txmbrs:
+                txmbr.setAsDep(po=inst_po)
             checkdeps = 1
         
         if needmode in ['i', 'u']:

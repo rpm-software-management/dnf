@@ -51,6 +51,7 @@ class FakeConf(object):
         self.uid = 0
         self.groupremove_leaf_only = False
         self.protected_packages = []
+        self.clean_requirements_on_remove = True
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""
@@ -116,6 +117,10 @@ class FakePackage(packages.YumAvailablePackage):
         self.prco['obsoletes'].append((name, flag, evr))
     def addFile(self, name, ftype='file'):
         self.files[ftype].append(name)
+    def required_packages(self):
+        return []
+    def requiring_packages(self):
+        return []
 
 class _Container(object):
     pass
