@@ -934,7 +934,10 @@ class YumBase(depsolve.Depsolve):
 
         (rescode, restring) = self.resolveDeps()
         self._limit_installonly_pkgs()
-        
+        # if enabled clean up requirments when removing the things which brought them in.
+        if self.conf.clean_requirements_on_remove:
+            self.verbose_logger.log(logginglevels.INFO_2, _('--> Finding unneeded leftover dependencies'))
+            self._remove_old_deps()
         #  We _must_ get rid of all the used tses before we go on, so that C-c
         # works for downloads / mirror failover etc.
         kern_pkgtup = None
@@ -1057,7 +1060,7 @@ class YumBase(depsolve.Depsolve):
             # and skip-broken shouldn't care too much about speed.
             self.rpmdb.transactionReset()
             self.installedFileRequires = None # Kind of hacky
-            self.verbose_logger.debug(_("Skip-broken round %i"), count)
+            self.verbose_logger.debug("SKIPBROKEN: ########### Round %i ################" , count)
             self._printTransaction()        
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
@@ -1114,7 +1117,7 @@ class YumBase(depsolve.Depsolve):
                 self._checkUpdatedLeftovers() # Cleanup updated leftovers
                 rescode, restring = self.resolveDeps()
         if rescode != 1:
-            self.verbose_logger.debug(_("Skip-broken took %i rounds "), count)
+            self.verbose_logger.debug("SKIPBROKEN: took %i rounds ", count)
             self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
             skipped_list = [p for p in skipped_po]
             skipped_list.sort()
@@ -1228,14 +1231,14 @@ class YumBase(depsolve.Depsolve):
                   TS_AVAILABLE  : "available",
                   TS_UPDATED    : "updated"}
 
-        self.verbose_logger.log(logginglevels.DEBUG_2,"TSINFO: Current Transaction : %i member(s) " % len(self.tsInfo))
+        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN: Current Transaction : %i member(s) " % len(self.tsInfo))
         for txmbr in sorted(self.tsInfo):
-            msg = "  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
+            msg = "SKIPBROKEN:  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
             self.verbose_logger.log(logginglevels.DEBUG_2, msg)
             for po,rel in sorted(txmbr.relatedto):
-                msg = "                   %s : %s" % (rel,po)
+                msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-                
+        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))
                                     
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
@@ -1246,6 +1249,10 @@ class YumBase(depsolve.Depsolve):
             for pkg in (txmbr.updates + txmbr.obsoletes):
                 toRemove.add(pkg)
                 self._getDepsToRemove(pkg, deptree, toRemove)
+            # Remove related packages    
+            for (relative, relation) in txmbr.relatedto:
+                toRemove.add(relative)
+                self._getDepsToRemove(relative, deptree, toRemove)                
         self._getDepsToRemove(po, deptree, toRemove)
 
     def _getDepsToRemove(self,po, deptree, toRemove):
@@ -5001,3 +5008,56 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.YumBaseError(msg)
             
         return self.tsInfo.getMembers()
+
+    def _remove_old_deps(self):
+        """take the set of pkgs being removed and remove any pkgs which are:
+           1. not required anymore
+           2. marked as a 'dep' in the 'reason' in the yumdb. """
+        found_leaves = set()
+        checked = set()
+        beingremoved = [ t.po for t in self.tsInfo.getMembersWithState(output_states=TS_REMOVE_STATES) ]
+        for pkg in beingremoved: # for each package required by the pkg being removed
+            #print 'removal: %s' % pkg.name
+            for required in pkg.required_packages():
+                #if required in checked:
+                #    continue # if we've already checked it, skip it.
+                #checked.add(required)
+                if required.yumdb_info.get('reason', '') != 'dep': # if the required pkg is not a dep, then skip it
+                    continue
+                if required in beingremoved:
+                    continue
+                still_needed = False
+                for requiring in required.requiring_packages(): # so we have required deps - look at all the pkgs which require them
+                    if requiring == required: # if they are self-requiring skip them
+                        continue
+                    if requiring not in beingremoved: # if the requiring pkg is not in the list of pkgs being removed then it is still needed
+                        still_needed = True
+                        break
+                # go through the stuff in the ts to be installed - make sure none of that needs the required pkg, either.
+                for (provn,provf,provevr) in required.provides:
+                    if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
+                        still_needed = True
+                        break
+                for fn in required.filelist + required.dirlist:
+                    if self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys():
+                        still_needed = True
+                        break
+                            
+                    #for tbi_pkg in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
+                    #   for reqtuple in tbi_pkg.po.requires:
+                    #        if required.provides_for(reqtuple):
+                    #            still_needed = True
+                    #            break
+                
+                if not still_needed:
+                    print '---> Marking %s to be removed - no longer needed by %s' % (required.name, pkg.name)
+                    txmbrs = self.remove(po=required)
+
+                    for txmbr in txmbrs:
+                        txmbr.setAsDep(po=pkg)
+                        if txmbr.po not in beingremoved:
+                            beingremoved.append(txmbr.po)
+                        found_leaves.add(txmbr)
+        self.verbose_logger.log(logginglevels.INFO_2, "Found and removing %s unneeded dependencies" % len(found_leaves))
+        
+                    

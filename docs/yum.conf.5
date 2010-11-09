@@ -555,6 +555,16 @@ be downloaded. The updates list is what is printed when you run "yum update",
 Default is `normal'.
 See color_list_installed_older for possible values.
 
+
+.IP
+\fBclean_requirements_on_remove \fR
+When removing packages (by removal, update or obsoletion) go through each
+package's dependencies. If any of them are no longer required by any other 
+package then also mark them to be removed.
+Boolean (1, 0, True, False, yes,no) Defaults to False
+
+
+
 .SH "[repository] OPTIONS"
 .LP 
 The repository section(s) take the following form:
