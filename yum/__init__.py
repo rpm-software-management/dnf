@@ -418,6 +418,9 @@ class YumBase(depsolve.Depsolve):
                 
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
+                    if not hasattr(thisrepo, opt):
+                        msg = "Repo %s did not have a %s attr. before setopt"
+                        self.logger.warning(msg % (thisrepo.id, opt))
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
                     
             if validate and not validate(thisrepo):

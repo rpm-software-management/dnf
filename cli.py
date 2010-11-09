@@ -230,6 +230,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             # now set  all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:
+                    if not hasattr(self.conf, opt):
+                        msg ="Main config did not have a %s attr. before setopt"
+                        self.logger.warning(msg % opt)
                     setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
         except yum.Errors.ConfigError, e:
