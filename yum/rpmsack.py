@@ -78,8 +78,32 @@ class RPMInstalledPackage(YumInstalledPackage):
                                # Also note that pkg.no_value raises KeyError.
 
         return val
+    
+    def requiring_packages(self):
+        """return list of installed pkgs requiring this package"""
+        pkgset = set()
+        for (reqn, reqf, reqevr) in self.provides:
+            for pkg in self.rpmdb.getRequires(reqn,reqf,reqevr):
+                if pkg != self:
+                    pkgset.add(pkg)
+                
+        for fn in self.filelist + self.dirlist:
+            for pkg in self.rpmdb.getRequires(fn, None, (None, None, None)):
+                if pkg != self:
+                    pkgset.add(pkg)
+                
+        return list(pkgset)
+        
 
-
+    def required_packages(self):
+        pkgset = set()
+        for (reqn, reqf, reqevr) in self.requires:
+            for pkg in self.rpmdb.getProvides(reqn, reqf, reqevr):
+                if pkg != self:
+                    pkgset.add(pkg)
+        
+        return list(pkgset)
+        
 class RPMDBProblem:
     '''
     Represents a problem in the rpmdb, from the check_*() functions.

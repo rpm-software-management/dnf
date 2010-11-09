@@ -743,6 +743,7 @@ class YumConf(StartupConf):
     loadts_ignoremissing = BoolOption(False)
     loadts_ignorerpm = BoolOption(False)
     
+    clean_requirements_on_remove = BoolOption(False)
     _reposlist = []
 
     def dump(self):
