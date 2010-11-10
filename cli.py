@@ -1358,7 +1358,9 @@ class YumOptionParser(OptionParser):
         try:
             args = _filtercmdline(
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
-                        ('-c', '-d', '-e', '--installroot',
+                        ('-c', '--config', '-d', '--debuglevel',
+                         '-e', '--errorlevel',
+                         '--installroot',
                          '--disableplugin', '--enableplugin', '--releasever',
                          '--setopt'), 
                         args)
