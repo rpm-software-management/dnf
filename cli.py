@@ -250,6 +250,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # apply some of the options to self.conf
         (opts, self.cmds) = self.optparser.setupYumConfig(args=args)
 
+        #  Check that firstParse didn't miss anything, and warn the user if it
+        # did ... because this is really magic, and unexpected.
+        if opts.quiet:
+            opts.debuglevel = 0
+        if opts.verbose:
+            opts.debuglevel = opts.errorlevel = 6
+        if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
+            self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
+        if opts.conffile != pc.fn:
+            self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
+
         if opts.version:
             self.conf.cache = 1
             yum_progs = self.run_with_package_names
