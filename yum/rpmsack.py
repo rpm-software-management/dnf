@@ -40,6 +40,7 @@ import yum.depsolve
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
+        self._has_hdr = True
         YumInstalledPackage.__init__(self, rpmhdr, yumdb=rpmdb.yumdb)
         # NOTE: We keep summary/description/url because it doesn't add much
         # and "yum search" uses them all.
@@ -636,6 +637,10 @@ class RPMDBPackageSack(PackageSackBase):
 
             for hdr in mi:
                 if hdr['name'] == 'gpg-pubkey': # Just in case...
+                    continue
+
+                if not hdr[rpm.RPMTAG_CONFLICTNAME]:
+                    # Pre. rpm-4.9.x the above dbMatch() does nothing.
                     continue
 
                 po = self._makePackageObject(hdr, mi.instance())
