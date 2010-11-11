@@ -914,7 +914,7 @@ class Depsolve(object):
         for req in sorted(txmbr_reqs, key=self._sort_req_key):
             if req[0].startswith('rpmlib('):
                 continue
-            if req in oldreqs and self.rpmdb.getProvides(*req):
+            if req in oldreqs:
                 continue
             
             self.verbose_logger.log(logginglevels.DEBUG_2, _("looking for %s as a requirement of %s"), req, txmbr)
