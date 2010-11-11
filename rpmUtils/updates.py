@@ -190,14 +190,16 @@ class Updates:
                         (flag, version, pkgtup) )
 
         obsdict = {} # obseleting package -> [obsoleted package]
-        pkgdict = self.makeNADict(pkglist, 1)
 
         for pkgtup in pkglist:
-            (name, arch, epoch, ver, rel) = pkgtup
+            name = pkgtup[0]
             for obs_flag, obs_version, obsoleting in self._obsoletes_by_name.get(name, []):
                 if obs_flag in [None, 0] and name == obsoleting[0]: continue
                 if rpmUtils.miscutils.rangeCheck( (name, obs_flag, obs_version), pkgtup):
                     obsdict.setdefault(obsoleting, []).append(pkgtup)
+
+        if not obsdict:
+            return {}
 
         obslist = obsdict.keys()
         if newest:
@@ -693,17 +695,22 @@ class Updates:
            compared to each other for highest version only foo.i386 and 
            foo.i386 will be compared"""
         highdict = {}
+        done = False
         for pkgtup in tuplelist:
             (n, a, e, v, r) = pkgtup
             if (n, a) not in highdict:
                 highdict[(n, a)] = pkgtup
             else:
                 pkgtup2 = highdict[(n, a)]
+                done = True
                 (n2, a2, e2, v2, r2) = pkgtup2
                 rc = rpmUtils.miscutils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
                     highdict[(n, a)] = pkgtup
         
+        if not done:
+            return tuplelist
+
         return highdict.values()
 
             
