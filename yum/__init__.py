@@ -2066,7 +2066,7 @@ class YumBase(depsolve.Depsolve):
         return self._cleanFiles(exts, 'pkgdir', 'package')
 
     def cleanSqlite(self):
-        exts = ['sqlite', 'sqlite.bz2']
+        exts = ['sqlite', 'sqlite.bz2', 'sqlite-journal']
         return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
