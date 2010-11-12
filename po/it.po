@@ -13,9 +13,9 @@ msgstr ""
 "Project-Id-Version: yum-it 3.2.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2001-02-17 02:12+0100\n"
+"PO-Revision-Date: 2010-11-12 18:16+0100\n"
 "Last-Translator: Guido Grazioli <guido.grazioli@gmail.com>\n"
-"Language-Team: Italian <fedora-trans-it@redhat.com>\n"
+"Language-Team: Italian <trans-it@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -587,65 +587,67 @@ msgstr "Dic"
 msgid "Trying other mirror."
 msgstr "Connessione ad un altro mirror in corso."
 
+# occhio alla formattazione con gli spazi in tutte le voci sotto, è il
+# riepilogo degli attributi di un pacchetto
 #: ../output.py:579
 #, python-format
 msgid "Name        : %s%s%s"
-msgstr "Nome : %s%s%s"
+msgstr "Nome         : %s%s%s"
 
 #: ../output.py:580
 #, python-format
 msgid "Arch        : %s"
-msgstr "Arch : %s"
+msgstr "Arch         : %s"
 
 #: ../output.py:582
 #, python-format
 msgid "Epoch       : %s"
-msgstr "Epoch : %s"
+msgstr "Epoch        : %s"
 
 #: ../output.py:583
 #, python-format
 msgid "Version     : %s"
-msgstr "Versione : %s"
+msgstr "Versione     : %s"
 
 #: ../output.py:584
 #, python-format
 msgid "Release     : %s"
-msgstr "Rilascio : %s"
+msgstr "Rilascio     : %s"
 
 #: ../output.py:585
 #, python-format
 msgid "Size        : %s"
-msgstr "Dimensione : %s"
+msgstr "Dimensione   : %s"
 
 #: ../output.py:586 ../output.py:890
 #, python-format
 msgid "Repo        : %s"
-msgstr "Repo        : %s"
+msgstr "Repo         : %s"
 
 #: ../output.py:588
 #, python-format
 msgid "From repo   : %s"
-msgstr "Dal repo  : %s"
+msgstr "Dal repo     : %s"
 
 #: ../output.py:590
 #, python-format
 msgid "Committer   : %s"
-msgstr "Committer  : %s"
+msgstr "Committer    : %s"
 
 #: ../output.py:591
 #, python-format
 msgid "Committime  : %s"
-msgstr "Data commit : %s"
+msgstr "Data commit  : %s"
 
 #: ../output.py:592
 #, python-format
 msgid "Buildtime   : %s"
-msgstr "Data build : %s"
+msgstr "Data build   : %s"
 
 #: ../output.py:594
 #, python-format
 msgid "Install time: %s"
-msgstr "Data inst.: %s"
+msgstr "Data inst.   : %s"
 
 #: ../output.py:602
 #, python-format
@@ -655,24 +657,24 @@ msgstr "Installato da: %s"
 #: ../output.py:609
 #, python-format
 msgid "Changed by  : %s"
-msgstr "Modificato da : %s"
+msgstr "Modificato da: %s"
 
 #: ../output.py:610
 msgid "Summary     : "
-msgstr "Sommario: "
+msgstr "Sommario     : "
 
 #: ../output.py:612 ../output.py:903
 #, python-format
 msgid "URL         : %s"
-msgstr "URL         : %s"
+msgstr "URL          : %s"
 
 #: ../output.py:613
 msgid "License     : "
-msgstr "Licenza: "
+msgstr "Licenza      : "
 
 #: ../output.py:614 ../output.py:900
 msgid "Description : "
-msgstr "Descrizione : "
+msgstr "Descrizione  : "
 
 #: ../output.py:682
 msgid "y"
@@ -919,7 +921,7 @@ msgid ""
 "to exit.\n"
 msgstr ""
 "\n"
-" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi per "
+" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi\nper "
 "uscire.\n"
 
 #: ../output.py:1267
@@ -1260,7 +1262,7 @@ msgid ""
 "    Requires: %s"
 msgstr ""
 "\n"
-"    richiede: %s"
+"    Richiede: %s"
 
 #: ../output.py:1875
 #, python-format
@@ -1278,7 +1280,7 @@ msgid ""
 "        %s"
 msgstr ""
 "\n"
-" %s"
+"        %s"
 
 #: ../output.py:1882
 msgid ""
@@ -1286,7 +1288,7 @@ msgid ""
 "        Not found"
 msgstr ""
 "\n"
-" Non trovato"
+"        Non trovato"
 
 #. These should be the only three things we care about:
 #: ../output.py:1897
@@ -1308,7 +1310,7 @@ msgstr "Disponibile"
 #: ../output.py:1944 ../output.py:1949
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
-msgstr "--> Controllo conflitto: %s va in conflitto con %s"
+msgstr "--> Analisi conflitto: %s va in conflitto con %s"
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
@@ -1320,7 +1322,7 @@ msgstr ""
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr ""
-"---> Download degli header per %s per impacchettarli nel set di transazione."
+"---> Download dell'header per includere %s nel set di transazione."
 
 #: ../utils.py:94
 msgid "Running"
@@ -1340,7 +1342,7 @@ msgstr "Zombie"
 
 #: ../utils.py:98
 msgid "Traced/Stopped"
-msgstr "Tracciato/Arrestato"
+msgstr "Traced/Interrotto"
 
 #: ../utils.py:99 ../yumcommands.py:972
 msgid "Unknown"
@@ -1471,18 +1473,16 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Il controllo dei pacchetti via chiavi GPG è abilitato. Questa è una buona "
-"cosa.\n"
-"Tuttavia, non ci sono chiavi pubbliche GPG installate: è necessario "
-"scaricare\n"
-"le chiavi dei repository che si desidera utilizzare ed installarle.\n"
+"Il controllo dei pacchetti via chiavi GPG è abilitato. Ottima scelta.\n"
+"Tuttavia, non ci sono chiavi pubbliche GPG installate: è necessario scaricare\n"
+"installare le chiavi dei repository che si desidera utilizzare.\n"
 "Per importare una chiave pubblica GPG eseguire il comando:\n"
 "    rpm --import public.gpg.key\n"
 "\n"
 "\n"
 "In alternativa è possibile specificare gli indirizzi delle chiavi dei\n"
 "repository nell'opzione 'gpgkey' dei relativi file di configurazione; yum\n"
-"la installerà automaticamente.\n"
+"le installerà automaticamente.\n"
 "\n"
 "Per altre informazioni contattare il supporto della distribuzione.\n"
 
@@ -1534,7 +1534,7 @@ msgid ""
 " You can enable repos with yum-config-manager --enable <repo>"
 msgstr ""
 "Non ci sono repository abilitati.\n"
-" Esegui \"yum repolist all\" per vedere la lista dei repository.\n"
+" Eseguire \"yum repolist all\" per vedere la lista dei repository.\n"
 " E' possibile abilitare i repository desiderati con yum-config-manager --"
 "enable <repo>"
 
@@ -1568,7 +1568,7 @@ msgstr "Sincronizza i pacchetti installati con le ultime versioni disponibili"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
-msgstr "Impostazione processo di DIstribution Synchronization"
+msgstr "Impostazione processo di Distribution Synchronization"
 
 #: ../yumcommands.py:288
 msgid "Display details about a package or group of packages"
@@ -1699,7 +1699,7 @@ msgstr "Determina quale pacchetto soddisfa la dipendenza specificata"
 
 #: ../yumcommands.py:751
 msgid "Searching Packages for Dependency:"
-msgstr "Ricerca dei pacchetti per dipendenze:"
+msgstr "Ricerca dei pacchetti per le dipendenze:"
 
 #: ../yumcommands.py:765
 msgid "Run an interactive yum shell"
@@ -2036,7 +2036,7 @@ msgstr "TSINFO: Aggiornamento di %s per risolvere dip."
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr ""
-"Impossibile trovare un percorso di aggiornamento per dipendenze per: %s"
+"Impossibile trovare un percorso di aggiornamento delle dipendenze per: %s"
 
 #: ../yum/depsolve.py:435
 #, python-format
@@ -2053,13 +2053,13 @@ msgstr "%s è nei pacchetti fornitori ma è già installato, viene rimosso."
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr ""
-"Potenziale risoluzione del pacchetto %s ha una instanza più nuova in ts."
+"Il potenziale pacchetto risolutore %s ha già una più recente istanza in ts."
 
 #: ../yum/depsolve.py:504
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr ""
-"Potenziale risoluzione del pacchetto %s ha una istanza più recente "
+"Il potenziale pacchetto risolutore %s ha una più recente istanza già "
 "installata."
 
 #: ../yum/depsolve.py:522
@@ -2070,12 +2070,12 @@ msgstr "%s è gia nel set delle transazioni (ts), verrà saltato"
 #: ../yum/depsolve.py:571
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
-msgstr "TSINFO: %s marcato come update per %s"
+msgstr "TSINFO: %s marcato come aggiornamento per %s"
 
 #: ../yum/depsolve.py:580
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
-msgstr "TSINFO: %s marcato come installa per %s"
+msgstr "TSINFO: %s marcato come da installare per %s"
 
 #: ../yum/depsolve.py:690 ../yum/depsolve.py:780
 msgid "Success - empty transaction"
@@ -2087,7 +2087,7 @@ msgstr "Riavvio del ciclo"
 
 #: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
-msgstr "Processo delle dipendenze terminato"
+msgstr "Elaborazione delle dipendenze terminata"
 
 #: ../yum/depsolve.py:774
 #, python-format
@@ -2106,7 +2106,7 @@ msgstr "Controllo delle dipendenze per %s"
 #: ../yum/depsolve.py:888
 #, python-format
 msgid "looking for %s as a requirement of %s"
-msgstr "ricerca di %s come un requisito di %s"
+msgstr "ricerca di %s come requisito di %s"
 
 #: ../yum/depsolve.py:1119
 #, python-format
@@ -2174,16 +2174,17 @@ msgstr "doConfigSetup() verrà eliminato in una futura versione di yum.\n"
 #: ../yum/__init__.py:453
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
-msgstr "Repository %r: errore nella lettura dela configurazione: %s"
+msgstr "Repository %r: errore nella lettura della configurazione: %s"
 
 #: ../yum/__init__.py:459
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
-msgstr "Nella configurazione non è presente il nome nel repo %r, uso dell'id"
+msgstr ""
+"Nella configurazione non è presente il nome del repo %r, viene usato l'id"
 
 #: ../yum/__init__.py:497
 msgid "plugins already initialised"
-msgstr "plugin già inizializzato"
+msgstr "plugin già inizializzati"
 
 #: ../yum/__init__.py:504
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
@@ -2203,12 +2204,12 @@ msgstr "doSackSetup() verrà eliminato in una futura versione di yum.\n"
 
 #: ../yum/__init__.py:607
 msgid "Setting up Package Sacks"
-msgstr "Settaggio pacchetti sack"
+msgstr "Impostazione dei Package Sack"
 
 #: ../yum/__init__.py:652
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
-msgstr "l'oggetto repo per il repository %s manca del metodo _resetSack\n"
+msgstr "l'oggetto repo per il repository %s non dispone del metodo _resetSack\n"
 
 #: ../yum/__init__.py:653
 msgid "therefore this repo cannot be reset.\n"
@@ -2233,12 +2234,12 @@ msgstr "Scaricamento metadati del gruppo"
 #: ../yum/__init__.py:760
 #, python-format
 msgid "Adding group file from repository: %s"
-msgstr "Aggiunta file di gruppo dal repository: %s"
+msgstr "Aggiunta file group dal repository: %s"
 
 #: ../yum/__init__.py:769
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Fallita l'aggiunta di file di gruppi per repository: %s - %s"
+msgstr "Errore durante l'aggiunta del file groups per il repository: %s - %s"
 
 #: ../yum/__init__.py:775
 msgid "No Groups Available in any repository"
@@ -2256,7 +2257,7 @@ msgstr "Aggiunta tag dal repository: %s"
 #: ../yum/__init__.py:806
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr "Errore aggiungendo i Pgg Tags per il repository: %s - %s"
+msgstr "Errore aggiungendo i Pkg Tags per il repository: %s - %s"
 
 #: ../yum/__init__.py:884
 msgid "Importing additional filelist information"
@@ -2272,13 +2273,13 @@ msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr ""
-"Ci sono transazioni non completate. Considerare di lanciare prima yum-"
+"Ci sono transazioni non completate. Si consiglia di eseguire prima yum-"
 "complete-transaction per portarle a termine."
 
 #: ../yum/__init__.py:985
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
-msgstr "Tentativo di reimozione di \"%s\", che è protetto"
+msgstr "Tentativo di rimozione di \"%s\", che è protetto"
 
 #. Kind of hacky
 #: ../yum/__init__.py:1044
@@ -2289,7 +2290,7 @@ msgstr "Ciclo skip-broken %i"
 #: ../yum/__init__.py:1101
 #, python-format
 msgid "Skip-broken took %i rounds "
-msgstr "Raggiunti %i cicli skip-broken"
+msgstr "Raggiunti %i cicli di skip-broken "
 
 #: ../yum/__init__.py:1102
 msgid ""
@@ -2297,7 +2298,7 @@ msgid ""
 "Packages skipped because of dependency problems:"
 msgstr ""
 "\n"
-"Pacchetti ignorati a causa di problemi di dipendenza:"
+"Pacchetti ignorati a causa di problemi di dipendenze:"
 
 #: ../yum/__init__.py:1106
 #, python-format
@@ -2327,8 +2328,8 @@ msgstr "conflitto installato"
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Attenzione: errori in scriptlet o altri errori non fatali sono avvenuti "
-"durante la transazione."
+"Attenzione: durante la transazione si sono verificati errori di scriptlet "
+"o altri errori non fatali."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
@@ -2392,7 +2393,7 @@ msgstr ""
 
 #: ../yum/__init__.py:1714
 msgid "Could not perform checksum"
-msgstr "Non è possibile calcolare il checksum"
+msgstr "Non è stato possibile calcolare il checksum"
 
 #: ../yum/__init__.py:1717
 msgid "Package does not match checksum"
@@ -2484,7 +2485,7 @@ msgstr "Più di una corrispondenza identica nel sack per %s"
 #: ../yum/__init__.py:2139
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
-msgstr "Nessuna corrispondenza %s.%s %s:%s-%s dall'aggiornamento"
+msgstr "Nessuna corrispondenza per %s.%s %s:%s-%s dall'aggiornamento"
 
 #: ../yum/__init__.py:2433
 msgid ""
@@ -2502,7 +2503,7 @@ msgstr "Ricerca dei pacchetti %d"
 #: ../yum/__init__.py:2476
 #, python-format
 msgid "searching package %s"
-msgstr "Ricerca del pacchetto %s"
+msgstr "ricerca del pacchetto %s"
 
 #: ../yum/__init__.py:2488
 msgid "searching in file entries"
@@ -2531,7 +2532,7 @@ msgstr "Il gruppo %s non esiste"
 #: ../yum/__init__.py:2639 ../yum/__init__.py:2766
 #, python-format
 msgid "package %s was not marked in group %s"
-msgstr "Il pacchetto %s non è stato marcato nel gruppo %s"
+msgstr "il pacchetto %s non è stato contrassegnato nel gruppo %s"
 
 #: ../yum/__init__.py:2686
 #, python-format
@@ -2566,7 +2567,7 @@ msgstr "Flag di versione non valido"
 
 #: ../yum/__init__.py:3145
 msgid "Package Object was not a package object instance"
-msgstr "L'oggetto Package non era un'istanza dell'oggetto pacchetto"
+msgstr "Package Object non è un'istanza di un oggetto package"
 
 #: ../yum/__init__.py:3149
 msgid "Nothing specified to install"
@@ -2621,7 +2622,7 @@ msgstr ""
 #: ../yum/__init__.py:3307
 #, python-format
 msgid "Package %s already installed and latest version"
-msgstr "Il pacchetto %s è già aggiornato all'ultima versione"
+msgstr "Il pacchetto %s è già installato e aggiornato all'ultima versione"
 
 #: ../yum/__init__.py:3321
 #, python-format
@@ -2632,7 +2633,7 @@ msgstr ""
 #. update everything (the easy case)
 #: ../yum/__init__.py:3424
 msgid "Updating Everything"
-msgstr "Aggiornamento sistema"
+msgstr "Aggiornamento completo"
 
 #: ../yum/__init__.py:3448 ../yum/__init__.py:3577 ../yum/__init__.py:3604
 #: ../yum/__init__.py:3630
@@ -2781,7 +2782,7 @@ msgstr "Recupero chiavi GPG da %s"
 
 #: ../yum/__init__.py:4238
 msgid "GPG key retrieval failed: "
-msgstr "Recupero chiavi GPG fallito: "
+msgstr "Recupero chiave GPG fallito: "
 
 #: ../yum/__init__.py:4244
 #, python-format
@@ -2791,7 +2792,7 @@ msgstr "Chiave GPG non valida da %s: %s"
 #: ../yum/__init__.py:4253
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
-msgstr "Analisi chiave GPG fallita: la chiave non ha valore %s"
+msgstr "Analisi chiave GPG fallita: la chiave non ha il valore %s"
 
 #: ../yum/__init__.py:4267
 #, python-format
@@ -2803,8 +2804,8 @@ msgid ""
 msgstr ""
 "Importazione chiave GPG 0x%s:\n"
 " Id utente : %s\n"
-"Pacchetto: %s (%s)\n"
-" Da : %s"
+" Pacchetto : %s (%s)\n"
+" Da        : %s"
 
 #: ../yum/__init__.py:4275
 #, python-format
@@ -2815,7 +2816,7 @@ msgid ""
 msgstr ""
 "Importazione chiave GPG 0x%s:\n"
 " Id utente: \"%s\"\n"
-" Da : %s"
+" Da       : %s"
 
 #: ../yum/__init__.py:4307
 #, python-format
@@ -2844,7 +2845,7 @@ msgid ""
 msgstr ""
 "Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
 "ma non sono corrette per questo pacchetto.\n"
-"Controllare che le URL delle chiavi di questo repository siano configurate "
+"Controllare che gli URL delle chiavi di questo repository siano configurati "
 "correttamente."
 
 #: ../yum/__init__.py:4347
@@ -2874,7 +2875,7 @@ msgid ""
 msgstr ""
 "Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
 "ma non sono corrette.\n"
-"Controllare che le URL delle chiavi di questo repository siano configurate "
+"Controllare che gli URL delle chiavi di questo repository siano configurati "
 "correttamente."
 
 #: ../yum/__init__.py:4521
@@ -2883,7 +2884,7 @@ msgstr "Impossibile trovare un mirror adatto."
 
 #: ../yum/__init__.py:4523
 msgid "Errors were encountered while downloading packages."
-msgstr "Sono stati riscontrati degli errori durante il download dei pacchetti."
+msgstr "Si sono verificati degli errori durante il download dei pacchetti."
 
 #: ../yum/__init__.py:4573
 #, python-format
@@ -2912,7 +2913,7 @@ msgstr "Nessun plugin corrisponde a: %s"
 #: ../yum/plugins.py:258
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
-msgstr "Plugin \"%s\" non caricato, perchè è disabilitato"
+msgstr "Il plugin \"%s\" non è stato caricato, perchè è disabilitato"
 
 #. Give full backtrace:
 #: ../yum/plugins.py:270
@@ -2940,7 +2941,7 @@ msgstr "Caricamento del plugin \"%s\""
 msgid ""
 "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
-"Esistono due o più plugin con nome \"%s\" nel percorso di ricerca dei plugin"
+"Esiste più di un plugin con nome \"%s\" nel percorso di ricerca dei plugin"
 
 #: ../yum/plugins.py:342
 #, python-format
@@ -2952,7 +2953,7 @@ msgstr "File di configurazione %s non trovato"
 #: ../yum/plugins.py:345
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr "Non posso trovare il file di configurazione per il plugin %s"
+msgstr "Impossibile trovare il file di configurazione per il plugin %s"
 
 #: ../yum/plugins.py:507
 msgid "registration of commands not supported"
