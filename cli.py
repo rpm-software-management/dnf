@@ -1171,29 +1171,39 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         installed, available = self.doGroupLists(uservisible=uservisible,
                                                  patterns=userlist)
         
-        if len(installed) > 0:
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                _('Installed Groups:'))
-            for group in installed:
-                if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                            '   %s (%s)', group.ui_name,
-                                            group.groupid)
-                else:
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                            '   %s', group.ui_name)
-        
-        if len(available) > 0:
-            self.verbose_logger.log(yum.logginglevels.INFO_2,
-                _('Available Groups:'))
-            for group in available:
-                if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                            '   %s (%s)', group.ui_name,
-                                            group.groupid)
-                else:
-                    self.verbose_logger.log(yum.logginglevels.INFO_2,
-                                            '   %s', group.ui_name)
+        def _out_grp(sect, group):
+            if not done:
+                self.verbose_logger.log(yum.logginglevels.INFO_2, sect)
+            msg = '   %s' % group.ui_name
+            if self.verbose_logger.isEnabledFor(yum.logginglevels.DEBUG_3):
+                msg += ' (%s)' % group.groupid
+            if group.langonly:
+                msg += ' [%s]' % group.langonly
+            self.verbose_logger.log(yum.logginglevels.INFO_2, '%s', msg)
+
+        done = False
+        for group in installed:
+            if group.langonly: continue
+            _out_grp(_('Installed Groups:'), group)
+            done = True
+
+        done = False
+        for group in installed:
+            if not group.langonly: continue
+            _out_grp(_('Installed Language Groups:'), group)
+            done = True
+
+        done = False
+        for group in available:
+            if group.langonly: continue
+            _out_grp(_('Available Groups:'), group)
+            done = True
+
+        done = False
+        for group in available:
+            if not group.langonly: continue
+            _out_grp(_('Available Language Groups:'), group)
+            done = True
 
         return 0, [_('Done')]
     
