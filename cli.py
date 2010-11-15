@@ -627,7 +627,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if matches:
             msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
                                      ", ".join(matches))
-            self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
+            self.verbose_logger.log(yum.logginglevels.INFO_2, to_unicode(msg))
 
     def _checkMaybeYouMeant(self, arg, always_output=True):
         """ If the update/remove argument doesn't match with case, or due
