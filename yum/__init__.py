@@ -4250,6 +4250,11 @@ class YumBase(depsolve.Depsolve):
                     done = True
         for pkg in transaction.trans_data:
             if pkg.state == 'Obsoleting':
+                #  Note that obsoleting can mean anything, so if this is part of
+                # something else, it should be done by now (so do nothing).
+                if self.tsInfo.getMembers(pkg.pkgtup):
+                    continue
+                #  If not it should be an install/obsolete ... so remove it.
                 if self.remove(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:
