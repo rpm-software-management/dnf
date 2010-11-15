@@ -1,53 +1,73 @@
 # Russian translation of yum.
 # Copyright (C) 2010 yum's COPYRIGHT HOLDER
 # This file is distributed under the same license as the yum package.
-# 
+#
 # Vladimir Bormotov <bor@insight.donbass.com>, 2002
 # Grigory Bakunov <black@asplinux.ru>, 2002, 2003
 # Timur Malikin <sora_tm@mail.ru>, 2010
 # Misha Shnurapet <shnurapet@fedoraproject.org>, 2010
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: yum\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-07 10:36+0800\n"
+"PO-Revision-Date: 2010-11-15 13:02+0800\n"
 "Last-Translator: Misha Shnurapet <shnurapet@fedoraproject.org>\n"
-"Language-Team: ru <fedora-localization@www.russianfedora.ru>\n"
+"Language-Team: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.1\n"
 
-#: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
+#: ../callback.py:48
+#: ../output.py:1027
+#: ../yum/rpmtrans.py:72
 msgid "Updating"
 msgstr "Обновление"
 
-#: ../callback.py:49 ../yum/rpmtrans.py:73
+#: ../callback.py:49
+#: ../yum/rpmtrans.py:73
 msgid "Erasing"
 msgstr "Удаление"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1026
-#: ../output.py:1919 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
+#: ../callback.py:50
+#: ../callback.py:51
+#: ../callback.py:53
+#: ../output.py:1026
+#: ../output.py:1919
+#: ../yum/rpmtrans.py:74
+#: ../yum/rpmtrans.py:75
 #: ../yum/rpmtrans.py:77
 msgid "Installing"
 msgstr "Установка"
 
-#: ../callback.py:52 ../callback.py:58 ../output.py:1640 ../yum/rpmtrans.py:76
+#: ../callback.py:52
+#: ../callback.py:58
+#: ../output.py:1640
+#: ../yum/rpmtrans.py:76
 msgid "Obsoleted"
 msgstr "Исключено"
 
-#: ../callback.py:54 ../output.py:1157 ../output.py:1518 ../output.py:1647
+#: ../callback.py:54
+#: ../output.py:1157
+#: ../output.py:1518
+#: ../output.py:1647
 msgid "Updated"
 msgstr "Обновлено"
 
-#: ../callback.py:55 ../output.py:1517
+#: ../callback.py:55
+#: ../output.py:1517
 msgid "Erased"
 msgstr "Удалено"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
-#: ../output.py:1517 ../output.py:1519 ../output.py:1891
+#: ../callback.py:56
+#: ../callback.py:57
+#: ../callback.py:59
+#: ../output.py:1155
+#: ../output.py:1517
+#: ../output.py:1519
+#: ../output.py:1891
 msgid "Installed"
 msgstr "Установлено"
 
@@ -69,11 +89,14 @@ msgstr "Ошибка: неверный выходной статус: %s для 
 msgid "Erased: %s"
 msgstr "Удален: %s"
 
-#: ../callback.py:217 ../output.py:1028 ../output.py:1894
+#: ../callback.py:217
+#: ../output.py:1028
+#: ../output.py:1894
 msgid "Removing"
 msgstr "Удаление"
 
-#: ../callback.py:219 ../yum/rpmtrans.py:78
+#: ../callback.py:219
+#: ../yum/rpmtrans.py:78
 msgid "Cleanup"
 msgstr "Очистка"
 
@@ -90,12 +113,15 @@ msgstr "Настройка репозиториев"
 msgid "Reading repository metadata in from local files"
 msgstr "Чтение локальных метаданных для репозиториев"
 
-#: ../cli.py:234 ../utils.py:254
+#: ../cli.py:234
+#: ../utils.py:254
 #, python-format
 msgid "Config Error: %s"
 msgstr "Ошибка конфигурации: %s"
 
-#: ../cli.py:237 ../cli.py:1403 ../utils.py:257
+#: ../cli.py:237
+#: ../cli.py:1403
+#: ../utils.py:257
 #, python-format
 msgid "Options Error: %s"
 msgstr "Ошибка опции: %s"
@@ -159,15 +185,18 @@ msgstr "Загрузка пакетов:"
 msgid "Error Downloading Packages:\n"
 msgstr "Ошибка загрузки пакетов:\n"
 
-#: ../cli.py:474 ../yum/__init__.py:4559
+#: ../cli.py:474
+#: ../yum/__init__.py:4559
 msgid "Running rpm_check_debug"
 msgstr "Запуск rpm_check_debug"
 
-#: ../cli.py:483 ../yum/__init__.py:4568
+#: ../cli.py:483
+#: ../yum/__init__.py:4568
 msgid "ERROR You need to update rpm to handle:"
 msgstr "ОШИБКА Вам необходимо обновить rpm:"
 
-#: ../cli.py:485 ../yum/__init__.py:4571
+#: ../cli.py:485
+#: ../yum/__init__.py:4571
 msgid "ERROR with rpm_check_debug vs depsolve:"
 msgstr "ОШИБКА в rpm_check_debug и разрешении зависимостей:"
 
@@ -204,25 +233,34 @@ msgstr ""
 "Отмена автоматического импорта ключей во время запуска без контроля.\n"
 "Используйте \"-y\" для игнорирования."
 
-#: ../cli.py:592 ../cli.py:626
+#: ../cli.py:592
+#: ../cli.py:626
 msgid "  * Maybe you meant: "
 msgstr "  * Возможно, вы имели в виду: "
 
-#: ../cli.py:609 ../cli.py:617
+#: ../cli.py:609
+#: ../cli.py:617
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "Пакет(ы) %s%s%s доступны, но не установлены."
 
-#: ../cli.py:623 ../cli.py:656 ../cli.py:810
+#: ../cli.py:623
+#: ../cli.py:656
+#: ../cli.py:810
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Пакет %s%s%s недоступен."
 
-#: ../cli.py:663 ../cli.py:875
+#: ../cli.py:663
+#: ../cli.py:875
 msgid "Package(s) to install"
 msgstr "Пакет(ы) для установки"
 
-#: ../cli.py:666 ../cli.py:667 ../cli.py:816 ../cli.py:850 ../cli.py:876
+#: ../cli.py:666
+#: ../cli.py:667
+#: ../cli.py:816
+#: ../cli.py:850
+#: ../cli.py:876
 #: ../yumcommands.py:179
 msgid "Nothing to do"
 msgstr "Выполнять нечего"
@@ -353,7 +391,10 @@ msgstr "Доступные коллекции:"
 msgid "Done"
 msgstr "Выполнено"
 
-#: ../cli.py:1118 ../cli.py:1136 ../cli.py:1142 ../yum/__init__.py:3069
+#: ../cli.py:1118
+#: ../cli.py:1136
+#: ../cli.py:1142
+#: ../yum/__init__.py:3069
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Внимание: коллекции %s не существует."
@@ -367,7 +408,8 @@ msgstr "Во всех указанных коллекциях пакеты дл�
 msgid "%d Package(s) to Install"
 msgstr "%d Пакет(ы) для установки"
 
-#: ../cli.py:1158 ../yum/__init__.py:3081
+#: ../cli.py:1158
+#: ../yum/__init__.py:3081
 #, python-format
 msgid "No group named %s exists"
 msgstr "Коллекции с названием %s не существует"
@@ -611,7 +653,8 @@ msgstr "Выпуск: %s"
 msgid "Size        : %s"
 msgstr "Объем: %s"
 
-#: ../output.py:586 ../output.py:890
+#: ../output.py:586
+#: ../output.py:890
 #, python-format
 msgid "Repo        : %s"
 msgstr "Источник: %s"
@@ -655,7 +698,8 @@ msgstr "Изменил: %s"
 msgid "Summary     : "
 msgstr "Аннотация: "
 
-#: ../output.py:612 ../output.py:903
+#: ../output.py:612
+#: ../output.py:903
 #, python-format
 msgid "URL         : %s"
 msgstr "Ссылка: %s"
@@ -664,7 +708,8 @@ msgstr "Ссылка: %s"
 msgid "License     : "
 msgstr "Лицензия: "
 
-#: ../output.py:614 ../output.py:900
+#: ../output.py:614
+#: ../output.py:900
 msgid "Description : "
 msgstr "Описание: "
 
@@ -773,7 +818,8 @@ msgstr "Общий размер: %s"
 msgid "Total download size: %s"
 msgstr "Объем загрузки: %s"
 
-#: ../output.py:968 ../output.py:988
+#: ../output.py:968
+#: ../output.py:988
 #, python-format
 msgid "Installed size: %s"
 msgstr "Будет установлено: %s"
@@ -802,7 +848,8 @@ msgstr "Обновление зависимостей"
 msgid "Removing for dependencies"
 msgstr "Удаление зависимостей"
 
-#: ../output.py:1040 ../output.py:1159
+#: ../output.py:1040
+#: ../output.py:1159
 msgid "Skipped (dependency problems)"
 msgstr "Пропущено (ошибка зависимостей)"
 
@@ -894,7 +941,7 @@ msgstr "Неудача"
 #. Delta between C-c's so we treat as exit
 #: ../output.py:1245
 msgid "two"
-msgstr "два"
+msgstr "двух"
 
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
@@ -908,8 +955,8 @@ msgid ""
 "to exit.\n"
 msgstr ""
 "\n"
-" Текущая закачка отменена, %sвызвано (ctrl-c) повторите%s в течении %s%s%s секунд\n"
-"для выхода.\n"
+" Текущая загрузка отменена, %sпрервите (ctrl-c) повторно%s в течение %s%s%s секунд,\n"
+"чтобы выйти.\n"
 
 #: ../output.py:1267
 msgid "user interrupt"
@@ -959,7 +1006,8 @@ msgstr "Передан(ы) неверный код действий или па�
 msgid "ID"
 msgstr "ID"
 
-#: ../output.py:1381 ../output.py:1699
+#: ../output.py:1381
+#: ../output.py:1699
 msgid "Login user"
 msgstr "Вход пользователя"
 
@@ -967,15 +1015,18 @@ msgstr "Вход пользователя"
 msgid "Date and time"
 msgstr "Дата и время"
 
-#: ../output.py:1383 ../output.py:1701
+#: ../output.py:1383
+#: ../output.py:1701
 msgid "Action(s)"
 msgstr "Действия"
 
-#: ../output.py:1384 ../output.py:1702
+#: ../output.py:1384
+#: ../output.py:1702
 msgid "Altered"
 msgstr "Изменено"
 
-#: ../output.py:1431 ../output.py:1760
+#: ../output.py:1431
+#: ../output.py:1760
 msgid "No transaction ID given"
 msgstr "Код действия не задан"
 
@@ -991,11 +1042,13 @@ msgstr "Указанный код действия не найден"
 msgid "Found more than one transaction ID!"
 msgstr "Указано более одной операции!"
 
-#: ../output.py:1491 ../output.py:1770
+#: ../output.py:1491
+#: ../output.py:1770
 msgid "No transaction ID, or package, given"
 msgstr "Не задан код действия или пакет"
 
-#: ../output.py:1518 ../output.py:1645
+#: ../output.py:1518
+#: ../output.py:1645
 msgid "Downgraded"
 msgstr "Откачено"
 
@@ -1019,7 +1072,8 @@ msgstr "Код операции   :"
 msgid "Begin time     :"
 msgstr "Время начала   :"
 
-#: ../output.py:1557 ../output.py:1559
+#: ../output.py:1557
+#: ../output.py:1559
 msgid "Begin rpmdb    :"
 msgstr "Начало rpmdb   :"
 
@@ -1032,7 +1086,8 @@ msgstr "(%s секунд)"
 msgid "End time       :"
 msgstr "Конечное время :"
 
-#: ../output.py:1577 ../output.py:1579
+#: ../output.py:1577
+#: ../output.py:1579
 msgid "End rpmdb      :"
 msgstr "Конец rpmdb    :"
 
@@ -1040,7 +1095,9 @@ msgstr "Конец rpmdb    :"
 msgid "User           :"
 msgstr "Пользователь   :"
 
-#: ../output.py:1582 ../output.py:1584 ../output.py:1586
+#: ../output.py:1582
+#: ../output.py:1584
+#: ../output.py:1586
 msgid "Return-Code    :"
 msgstr "Код возврата   :"
 
@@ -1092,7 +1149,8 @@ msgstr "Ошибки:"
 #. Note that these don't use _simple_pkg() because we are showing what
 #. happened to them in the transaction ... not the difference between the
 #. version in the transaction and now.
-#: ../output.py:1637 ../output.py:1638
+#: ../output.py:1637
+#: ../output.py:1638
 msgid "Install"
 msgstr "Установка "
 
@@ -1212,7 +1270,8 @@ msgstr "--> Перепроверка зависимостей с новыми п
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Проверка зависимостей окончена"
 
-#: ../output.py:1840 ../output.py:1845
+#: ../output.py:1840
+#: ../output.py:1845
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Обработка зависимостей: %s для пакета: %s"
@@ -1284,7 +1343,8 @@ msgstr "Заменил"
 msgid "Available"
 msgstr "Доступно"
 
-#: ../output.py:1944 ../output.py:1949
+#: ../output.py:1944
+#: ../output.py:1949
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Обработка конфликта: %s конфликтует с %s"
@@ -1318,7 +1378,8 @@ msgstr "Зомби"
 msgid "Traced/Stopped"
 msgstr "Трассировано/Остановлено"
 
-#: ../utils.py:99 ../yumcommands.py:972
+#: ../utils.py:99
+#: ../yumcommands.py:972
 msgid "Unknown"
 msgstr "Неизвестно"
 
@@ -1346,7 +1407,8 @@ msgstr "    Запущено : %s — %s назад"
 msgid "    State  : %s, pid: %d"
 msgstr "    Статус   : %s, pid: %d"
 
-#: ../utils.py:143 ../yummain.py:42
+#: ../utils.py:143
+#: ../yummain.py:42
 msgid ""
 "\n"
 "\n"
@@ -1356,7 +1418,8 @@ msgstr ""
 "\n"
 "Выход по запросу пользователя"
 
-#: ../utils.py:149 ../yummain.py:48
+#: ../utils.py:149
+#: ../yummain.py:48
 msgid ""
 "\n"
 "\n"
@@ -1366,7 +1429,8 @@ msgstr ""
 "\n"
 "Выход из-за разрыва связи"
 
-#: ../utils.py:151 ../yummain.py:50
+#: ../utils.py:151
+#: ../yummain.py:50
 #, python-format
 msgid ""
 "\n"
@@ -1377,7 +1441,8 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../utils.py:201 ../yummain.py:107
+#: ../utils.py:201
+#: ../yummain.py:107
 msgid "Another app is currently holding the yum lock; exiting as configured by exit_on_lock"
 msgstr "Другое приложение удерживает данные yum; выход согласно exit_on_lock"
 
@@ -1391,25 +1456,33 @@ msgstr "Ошибка PluginExit: %s"
 msgid "Yum Error: %s"
 msgstr "Ошибка Yum: %s"
 
-#: ../utils.py:315 ../yummain.py:134 ../yummain.py:173
+#: ../utils.py:315
+#: ../yummain.py:134
+#: ../yummain.py:173
 #, python-format
 msgid "Error: %s"
 msgstr "Ошибка: %s"
 
-#: ../utils.py:319 ../yummain.py:177
+#: ../utils.py:319
+#: ../yummain.py:177
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " Вы можете попробовать --skip-broken чтобы обойти проблему"
 
-#: ../utils.py:321 ../yummain.py:179 ../yummain.py:212
+#: ../utils.py:321
+#: ../yummain.py:179
+#: ../yummain.py:212
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " Вы можете попробовать запустить: rpm -Va --nofiles --nodigest"
 
-#: ../utils.py:328 ../yummain.py:144 ../yummain.py:186
+#: ../utils.py:328
+#: ../yummain.py:144
+#: ../yummain.py:186
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Неизвестная ошибка(ошибки): Код выхода: %d:"
 
-#: ../utils.py:334 ../yummain.py:192
+#: ../utils.py:334
+#: ../yummain.py:192
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1417,7 +1490,8 @@ msgstr ""
 "\n"
 "Зависимости разрешены"
 
-#: ../utils.py:349 ../yummain.py:215
+#: ../utils.py:349
+#: ../yummain.py:215
 msgid "Complete!"
 msgstr "Готово!"
 
@@ -1518,7 +1592,8 @@ msgstr "Установка пакета(ов) в систему"
 msgid "Setting up Install Process"
 msgstr "Подготовка к установке"
 
-#: ../yumcommands.py:212 ../yumcommands.py:234
+#: ../yumcommands.py:212
+#: ../yumcommands.py:234
 msgid "[PACKAGE...]"
 msgstr "[ПАКЕТ...]"
 
@@ -1559,7 +1634,9 @@ msgid "Updated Packages"
 msgstr "Обновленные пакеты"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:361 ../yumcommands.py:368 ../yumcommands.py:655
+#: ../yumcommands.py:361
+#: ../yumcommands.py:368
+#: ../yumcommands.py:655
 msgid "Obsoleting Packages"
 msgstr "Исключенные пакеты"
 
@@ -1687,11 +1764,13 @@ msgstr "Поиск зависимостей:"
 msgid "Display the configured software repositories"
 msgstr "Отобразить сконфигурированные репозитории ПО"
 
-#: ../yumcommands.py:877 ../yumcommands.py:878
+#: ../yumcommands.py:877
+#: ../yumcommands.py:878
 msgid "enabled"
 msgstr "включено"
 
-#: ../yumcommands.py:904 ../yumcommands.py:905
+#: ../yumcommands.py:904
+#: ../yumcommands.py:905
 msgid "disabled"
 msgstr "отключено"
 
@@ -1780,11 +1859,14 @@ msgstr "Исключено из репозитория   : "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1006 ../yumcommands.py:1035
+#: ../yumcommands.py:1006
+#: ../yumcommands.py:1035
 msgid "repo id"
 msgstr "Идентификатор репозитория"
 
-#: ../yumcommands.py:1023 ../yumcommands.py:1024 ../yumcommands.py:1042
+#: ../yumcommands.py:1023
+#: ../yumcommands.py:1024
+#: ../yumcommands.py:1042
 msgid "status"
 msgstr "состояние"
 
@@ -1928,7 +2010,8 @@ msgstr "Поиск набора пакетов для зависимости: %s
 msgid "Member: %s"
 msgstr "Член: %s"
 
-#: ../yum/depsolve.py:219 ../yum/depsolve.py:754
+#: ../yum/depsolve.py:219
+#: ../yum/depsolve.py:754
 #, python-format
 msgid "%s converted to install"
 msgstr "%s преобразован для установки"
@@ -2033,14 +2116,15 @@ msgstr "TSINFO: %s отмечен как обновление для %s"
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: Отмечен %s чтобы установить %s"
 
-#: ../yum/depsolve.py:690 ../yum/depsolve.py:780
+#: ../yum/depsolve.py:690
+#: ../yum/depsolve.py:780
 msgid "Success - empty transaction"
 msgstr "Успешно — пустой сценарий"
 
-#: ../yum/depsolve.py:729 ../yum/depsolve.py:744
-#, fuzzy
+#: ../yum/depsolve.py:729
+#: ../yum/depsolve.py:744
 msgid "Restarting Loop"
-msgstr "Цикл перезапуска"
+msgstr "Перезапуск цикла"
 
 #: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
@@ -2070,7 +2154,8 @@ msgstr "поиск %s требуется для %s"
 msgid "Running compare_providers() for %s"
 msgstr "Запуск compare_providers() для %s"
 
-#: ../yum/depsolve.py:1146 ../yum/depsolve.py:1152
+#: ../yum/depsolve.py:1146
+#: ../yum/depsolve.py:1152
 #, python-format
 msgid "better arch in po %s"
 msgstr "Лучший архив в %s"
@@ -2350,7 +2435,8 @@ msgstr "Пакет не совпадает с контрольной суммо�
 msgid "package fails checksum but caching is enabled for %s"
 msgstr "проверка контрольной суммы неудачна, но кэширование включено для %s"
 
-#: ../yum/__init__.py:1772 ../yum/__init__.py:1801
+#: ../yum/__init__.py:1772
+#: ../yum/__init__.py:1801
 #, python-format
 msgid "using local copy of %s"
 msgstr "использование локальной копии %s"
@@ -2461,14 +2547,19 @@ msgstr "Результат совпадений: %s"
 msgid "No group data available for configured repositories"
 msgstr "Для настроенных репозиториев данных коллекций нет"
 
-#: ../yum/__init__.py:2608 ../yum/__init__.py:2627 ../yum/__init__.py:2658
-#: ../yum/__init__.py:2664 ../yum/__init__.py:2746 ../yum/__init__.py:2750
+#: ../yum/__init__.py:2608
+#: ../yum/__init__.py:2627
+#: ../yum/__init__.py:2658
+#: ../yum/__init__.py:2664
+#: ../yum/__init__.py:2746
+#: ../yum/__init__.py:2750
 #: ../yum/__init__.py:3095
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Коллекции с названием %s не существует"
 
-#: ../yum/__init__.py:2639 ../yum/__init__.py:2766
+#: ../yum/__init__.py:2639
+#: ../yum/__init__.py:2766
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "пакет %s не отмечен в коллекции %s"
@@ -2495,7 +2586,8 @@ msgstr "Кортеж пакетов %s не найден в наборе пак�
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "Кортеж пакетов %s не найден в базе RPM"
 
-#: ../yum/__init__.py:2868 ../yum/__init__.py:2873
+#: ../yum/__init__.py:2868
+#: ../yum/__init__.py:2873
 #, python-format
 msgid "No Package found for %s"
 msgstr "Пакет %s не найден"
@@ -2505,20 +2597,22 @@ msgid "Invalid version flag"
 msgstr "Неверная версия флага"
 
 #: ../yum/__init__.py:3145
-#, fuzzy
 msgid "Package Object was not a package object instance"
-msgstr "Объект пакета не являлся экземпляром объекта пакета"
+msgstr ""
 
 #: ../yum/__init__.py:3149
 msgid "Nothing specified to install"
 msgstr "Ничего не отмечено для установки"
 
-#: ../yum/__init__.py:3168 ../yum/__init__.py:3992
+#: ../yum/__init__.py:3168
+#: ../yum/__init__.py:3992
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Проверка виртуального провайдера или файлового провайдера для %s"
 
-#: ../yum/__init__.py:3174 ../yum/__init__.py:3504 ../yum/__init__.py:3684
+#: ../yum/__init__.py:3174
+#: ../yum/__init__.py:3504
+#: ../yum/__init__.py:3684
 #: ../yum/__init__.py:3998
 #, python-format
 msgid "No Match for argument: %s"
@@ -2568,13 +2662,16 @@ msgstr "Пакет %s уже установлен. Проверка обновл
 msgid "Updating Everything"
 msgstr "Полное обновление"
 
-#: ../yum/__init__.py:3448 ../yum/__init__.py:3577 ../yum/__init__.py:3604
+#: ../yum/__init__.py:3448
+#: ../yum/__init__.py:3577
+#: ../yum/__init__.py:3604
 #: ../yum/__init__.py:3630
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Устаревший и уже необновляемый пакет: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3489 ../yum/__init__.py:3680
+#: ../yum/__init__.py:3489
+#: ../yum/__init__.py:3680
 #, python-format
 msgid "%s"
 msgstr "%s"
@@ -2589,7 +2686,8 @@ msgstr "Пакет уже устарел: %s.%s %s:%s-%s"
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Устаревший необновляемый пакет: %s"
 
-#: ../yum/__init__.py:3608 ../yum/__init__.py:3634
+#: ../yum/__init__.py:3608
+#: ../yum/__init__.py:3634
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Необновленный пакет, который был обновлен ранее: %s.%s %s:%s-%s"
@@ -2613,7 +2711,9 @@ msgstr "Исключение %s из списка действий"
 msgid "Cannot open: %s. Skipping."
 msgstr "Невозможно открыть: %s. Пропуск."
 
-#: ../yum/__init__.py:3747 ../yum/__init__.py:3859 ../yum/__init__.py:3935
+#: ../yum/__init__.py:3747
+#: ../yum/__init__.py:3859
+#: ../yum/__init__.py:3935
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Проверка %s: %s"
@@ -2623,7 +2723,9 @@ msgstr "Проверка %s: %s"
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr "Нельзя произвести localinstall deltarpm %s. Пропуск."
 
-#: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
+#: ../yum/__init__.py:3760
+#: ../yum/__init__.py:3862
+#: ../yum/__init__.py:3938
 #, python-format
 msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Невозможно добавить пакет %s в список действий. Несовместимая архитектура: %s"
@@ -2638,7 +2740,9 @@ msgstr "Установка пакета %s невозможна. Его заме
 msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
 msgstr "Пакет %s не установлен, невозможно обновить его. Запустите yum install для его установки."
 
-#: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
+#: ../yum/__init__.py:3803
+#: ../yum/__init__.py:3867
+#: ../yum/__init__.py:3943
 #, python-format
 msgid "Excluding %s"
 msgstr "Исключаем %s"
@@ -2658,7 +2762,8 @@ msgstr "%s отмечен как обновление для %s"
 msgid "%s: does not update installed package."
 msgstr "%s: не обновляет установленный пакет."
 
-#: ../yum/__init__.py:3856 ../yum/__init__.py:3932
+#: ../yum/__init__.py:3856
+#: ../yum/__init__.py:3932
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Невозможно открыть файл %s. Пропуск."
@@ -2691,7 +2796,8 @@ msgstr "Пакеты недоступны: %s"
 msgid "Only Upgrade available on package: %s"
 msgstr "Только переход к следующей версии доступен для пакета: %s"
 
-#: ../yum/__init__.py:4149 ../yum/__init__.py:4186
+#: ../yum/__init__.py:4149
+#: ../yum/__init__.py:4186
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Ошибка отката версии: %s"
@@ -2753,7 +2859,8 @@ msgstr "Не установлен ключ"
 msgid "Key import failed (code %d)"
 msgstr "Неудача импорта ключа (code %d)"
 
-#: ../yum/__init__.py:4333 ../yum/__init__.py:4389
+#: ../yum/__init__.py:4333
+#: ../yum/__init__.py:4389
 msgid "Key imported successfully"
 msgstr "Импорт ключа успешно завершен"
 
@@ -2821,7 +2928,8 @@ msgstr "Невозможно задать кэш-папку: %s"
 msgid "Loaded plugins: "
 msgstr "Загружены модули: "
 
-#: ../yum/plugins.py:222 ../yum/plugins.py:228
+#: ../yum/plugins.py:222
+#: ../yum/plugins.py:228
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "Нет модуля: %s"
@@ -2918,8 +3026,10 @@ msgstr "Невозможно открыть базу RPM для чтения. В
 msgid "Got an empty Header, something has gone wrong"
 msgstr "Получен пустой заголовок, что-то не так"
 
-#: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
-#: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
+#: ../rpmUtils/oldUtils.py:253
+#: ../rpmUtils/oldUtils.py:260
+#: ../rpmUtils/oldUtils.py:263
+#: ../rpmUtils/oldUtils.py:266
 #, python-format
 msgid "Damaged Header %s"
 msgstr "Поврежденный заголовок %s"
