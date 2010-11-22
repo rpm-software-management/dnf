@@ -945,7 +945,7 @@ class YumBase(depsolve.Depsolve):
         # works for downloads / mirror failover etc.
         kern_pkgtup = None
         if rescode == 2 and self.conf.protected_packages:
-            kern_pkgtup = misc.get_running_kernel_pkgtup(self.rpmdb.ts)
+            kern_pkgtup =misc.get_running_kernel_pkgtup(self.rpmdb.readOnlyTS())
         self.rpmdb.ts = None
 
         # do the skip broken magic, if enabled and problems exist
