@@ -2766,6 +2766,9 @@ class YumBase(depsolve.Depsolve):
             if 'optional' in package_types:
                 pkgs.extend(thisgroup.optional_packages)
 
+            if not pkgs:
+                self.logger.critical(_('Warning: Group %s does not have any packages.'), thisgroup.groupid)
+
             for pkg in pkgs:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
