@@ -51,6 +51,7 @@ class FakeConf(object):
         self.uid = 0
         self.groupremove_leaf_only = False
         self.protected_packages = []
+        self.protected_multilib = False
         self.clean_requirements_on_remove = True
 
 class FakeSack:

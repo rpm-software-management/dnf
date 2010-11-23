@@ -738,6 +738,7 @@ class YumConf(StartupConf):
 
     protected_packages = ListOption("yum, glob:/etc/yum/protected.d/*.conf",
                                     parse_default=True)
+    protected_multilib = BoolOption(True)
     exit_on_lock = BoolOption(False)
     
     loadts_ignoremissing = BoolOption(False)

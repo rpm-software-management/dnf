@@ -961,6 +961,40 @@ class YumBase(depsolve.Depsolve):
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
 
+        txmbrs = []
+        if rescode == 2 and self.conf.protected_multilib and self.arch.multilib:
+            txmbrs = self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES)
+        vers = {}
+        for txmbr in txmbrs:
+            #  In theory we could skip noarch packages here, but it's really
+            # fast and there are some edge cases where it'll help.
+            if txmbr.name not in vers:
+                vers[txmbr.name] = [txmbr.po]
+                continue
+            vers[txmbr.name].append(txmbr.po)
+
+        fine = []
+        xrestring = []
+        for pkgname in vers:
+            if len(vers[pkgname]) <= 1:
+                # We have to go govelling through the rpmdb data to get
+                for pkg in self.rpmdb.searchNames([pkgname]):
+                    if self.tsInfo.getMembersWithState(pkg.pkgtup,
+                                                       TS_REMOVE_STATES):
+                        continue
+                    vers[pkgname].append(pkg)
+
+            # If all the versions are equal, we should be fine.
+            first = vers[pkgname][0]
+            for other in vers[pkgname][1:]:
+                if first.verEQ(other):
+                    continue
+                msg = _('Protected multilib versions: %s != %s')
+                xrestring.append(msg % (first, other))
+        if xrestring:
+            rescode = 1
+            restring = xrestring
+
         #  This is a version of the old "protect-packages" plugin, it allows
         # you to erase duplicates and do remove+install.
         #  But we don't allow you to turn it off!:)
