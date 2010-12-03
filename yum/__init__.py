@@ -1868,6 +1868,7 @@ class YumBase(depsolve.Depsolve):
         beg_download = time.time()
         i = 0
         local_size = 0
+        done_repos = set()
         for po in remote_pkgs:
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
@@ -1910,6 +1911,14 @@ class YumBase(depsolve.Depsolve):
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
                                                               local_size)
+                if po.repoid not in done_repos:
+                    #  Check a single package per. repo. ... to give a hint to
+                    # the user on big downloads.
+                    result, errmsg = self.sigCheckPkg(po)
+                    if result != 0:
+                        self.verbose_logger.warn("%s", errmsg)
+                done_repos.add(po.repoid)
+
             except Errors.RepoError, e:
                 adderror(po, str(e))
             else:
