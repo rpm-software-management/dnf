@@ -182,6 +182,7 @@ class YumBase(depsolve.Depsolve):
         self.skipped_packages = []   # packages skip by the skip-broken code
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self._override_sigchecks = False
         self._repos = RepoStorage(self)
         self.repo_setopts = {} # since we have to use repo_setopts in base and 
                                # not in cli - set it up as empty so no one
@@ -2009,7 +2010,10 @@ class YumBase(depsolve.Depsolve):
                   might help.
             - 2 - Fatal GPG verification error, give up.
         '''
-        if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+        if self._override_sigchecks:
+            check = False
+            hasgpgkey = 0
+        elif hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
