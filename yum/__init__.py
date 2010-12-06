@@ -1524,6 +1524,9 @@ class YumBase(depsolve.Depsolve):
                         po.yumdb_info.from_repo_timestamp = lp_mtime
                     except: pass
 
+                if rpo.xattr_origin_url is not None:
+                    po.yumdb_info.origin_url = rpo.xattr_origin_url
+
                 if not hasattr(rpo.repo, 'repoXML'):
                     continue
 
@@ -2090,6 +2093,7 @@ class YumBase(depsolve.Depsolve):
             if local:
                 filelist.extend([txmbr.po.localHdr()])
             else:
+                txmbr.po.xattr_origin_url # Load this, before we rm the file.
                 filelist.extend([txmbr.po.localPkg(), txmbr.po.localHdr()])
 
         # now remove them
