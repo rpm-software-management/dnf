@@ -1455,7 +1455,8 @@ class YumBase(depsolve.Depsolve):
                                           errors=errors)
 
                           
-        if not self.conf.keepcache:
+        if (not self.conf.keepcache and
+            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.cleanUsedHeadersPackages()
         
         for i in ('ts_all_fn', 'ts_done_fn'):
