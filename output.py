@@ -1353,7 +1353,52 @@ to exit.
         except KeyError:
             return to_unicode(str(uid))
 
+    @staticmethod
+    def _historyRangeRTIDs(old, tid):
+        ''' Convert a user "TID" string of 2..4 into: (2, 4). '''
+        def str2int(x):
+            try:
+                return int(x)
+            except ValueError:
+                return None
+
+        if '..' not in tid:
+            return None
+        btid, etid = tid.split('..', 2)
+        btid = str2int(btid)
+        if btid > old.tid:
+            return None
+        elif btid <= 0:
+            return None
+        etid = str2int(etid)
+        if etid > old.tid:
+            return None
+
+        # Have a range ... do a "merged" transaction.
+        if btid > etid:
+            btid, etid = etid, btid
+        return (btid, etid)
+
+    def _historyRangeTIDs(self, rtids):
+        ''' Convert a list of ranged tid typles into all the tids needed, Eg.
+            [(2,4), (6,8)] == [2, 3, 4, 6, 7, 8]. '''
+        tids = set()
+        last_end = -1 # This just makes displaying it easier...
+        for mtid in sorted(rtids):
+            if mtid[0] < last_end:
+                self.logger.warn(_('Skipping merged transaction %d to %d, as it overlaps' % (mtid[0], mtid[1])))
+                continue # Don't do overlapping
+            last_end = mtid[1]
+            for num in range(mtid[0], mtid[1] + 1):
+                tids.add(num)
+        return tids
+
     def _history_list_transactions(self, extcmds):
+        old = self.history.last()
+        if old is None:
+            self.logger.critical(_('No transactions'))
+            return None, None
+
         tids = set()
         pats = []
         usertids = extcmds[1:]
@@ -1367,6 +1412,10 @@ to exit.
                 int(tid)
                 tids.add(tid)
             except ValueError:
+                rtid = self._historyRangeRTIDs(old, tid)
+                if rtid:
+                    tids.update(self._historyRangeTIDs([rtid]))
+                    continue
                 pats.append(tid)
         if pats:
             tids.update(self.history.search(pats))
@@ -1493,22 +1542,10 @@ to exit.
             return 1, ['Failed history info']
 
         for tid in extcmds[1:]:
-            if '..' in tid:
-                btid, etid = tid.split('..', 2)
-                btid = str2int(btid)
-                if btid > old.tid:
-                    btid = None
-                elif btid <= 0:
-                    btid = None
-                etid = str2int(etid)
-                if etid > old.tid:
-                    etid = None
-                if btid is not None and etid is not None:
-                    # Have a range ... do a "merged" transaction.
-                    if btid > etid:
-                        btid, etid = etid, btid
-                    mtids.add((btid, etid))
-                    continue
+            if self._historyRangeRTIDs(old, tid):
+                # Have a range ... do a "merged" transaction.
+                mtids.add(self._historyRangeRTIDs(old, tid))
+                continue
             elif str2int(tid) is not None:
                 tids.add(str2int(tid))
                 continue
@@ -1518,14 +1555,7 @@ to exit.
         utids = tids.copy()
         if mtids:
             mtids = sorted(mtids)
-            last_end = -1 # This just makes displaying it easier...
-            for mtid in mtids:
-                if mtid[0] < last_end:
-                    self.logger.warn(_('Skipping merged transaction %d to %d, as it overlaps', mtid[0], mtid[1]))
-                    continue # Don't do overlapping
-                last_end = mtid[1]
-                for num in range(mtid[0], mtid[1] + 1):
-                    tids.add(num)
+            tids.update(self._historyRangeTIDs(mtids))
 
         if not tids and len(extcmds) < 2:
             old = self.history.last(complete_transactions_only=False)
