@@ -1527,19 +1527,14 @@ class YumBase(depsolve.Depsolve):
                 if rpo.xattr_origin_url is not None:
                     po.yumdb_info.origin_url = rpo.xattr_origin_url
 
-                if not hasattr(rpo.repo, 'repoXML'):
-                    continue
-
-                md = rpo.repo.repoXML
-                if md and md.revision is not None:
-                    po.yumdb_info.from_repo_revision  = str(md.revision)
-                if md:
-                    po.yumdb_info.from_repo_timestamp = str(md.timestamp)
+                if hasattr(rpo.repo, 'repoXML'):
+                    md = rpo.repo.repoXML
+                    if md and md.revision is not None:
+                        po.yumdb_info.from_repo_revision  = str(md.revision)
+                    if md:
+                        po.yumdb_info.from_repo_timestamp = str(md.timestamp)
 
                 loginuid = misc.getloginuid()
-                if loginuid is None:
-                    continue
-                loginuid = str(loginuid)
                 if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
                     if txmbr.updates:
                         opo = txmbr.updates[0]
@@ -1549,9 +1544,10 @@ class YumBase(depsolve.Depsolve):
                         opo = po
                     if 'installed_by' in opo.yumdb_info:
                         po.yumdb_info.installed_by = opo.yumdb_info.installed_by
-                    po.yumdb_info.changed_by = loginuid
-                else:
-                    po.yumdb_info.installed_by = loginuid
+                    if loginuid is not None:
+                        po.yumdb_info.changed_by = str(loginuid)
+                elif loginuid is not None:
+                    po.yumdb_info.installed_by = str(loginuid)
 
         # Remove old ones after installing new ones, so we can copy values.
         for txmbr in self.tsInfo:
