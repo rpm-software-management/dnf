@@ -2278,6 +2278,15 @@ class YumCliRPMCallBack(RPMBaseCallback):
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
         process = self.action[action]
+
+        if not hasattr(self, '_max_action_wid'):
+            wid1 = 0
+            for val in self.action.values():
+                wid_val = utf8_width(val)
+                if wid1 < wid_val:
+                    wid1 = wid_val
+            self._max_action_wid = wid1
+        wid1 = self._max_action_wid
         
         if type(package) not in types.StringTypes:
             pkgname = str(package)
@@ -2292,7 +2301,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
-                                              pkgname=pkgname)
+                                              pkgname=pkgname, wid1=wid1)
             msg = fmt % (utf8_width_fill(process, wid1, wid1),
                          utf8_width_fill(pkgname, wid2, wid2))
             if msg != self.lastmsg:
@@ -2308,7 +2317,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True,
-                 pkgname=None):
+                 pkgname=None, wid1=15):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
         fmt_done = "%" + size + "s/%" + size + "s"
@@ -2322,7 +2331,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             pnl = utf8_width(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
-        overhead += 19          # Length of begining
+        overhead +=  2+ wid1 +2 # Length of begining ("  " action " :")
         overhead +=  1          # Space between pn and done
         overhead +=  2          # Ends for progress
         overhead +=  1          # Space for end
@@ -2353,7 +2362,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             bar = fmt_bar % (self.mark * marks, )
             fmt = "  %s: %s " + bar + " " + done
             wid2 = pnl
-        return fmt, 15, wid2
+        return fmt, wid1, wid2
 
 
 def progressbar(current, total, name=None):
