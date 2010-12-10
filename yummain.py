@@ -38,6 +38,26 @@ def main(args):
 
     yum.misc.setup_locale(override_time=True)
 
+    def exception2msg(e):
+        """ DIE python DIE! Which one works:
+            to_unicode(e.value); unicode(e); str(e); 
+            Call this so you don't have to care. """
+        try:
+            return to_unicode(e.value)
+        except:
+            pass
+
+        try:
+            return unicode(e)
+        except:
+            pass
+
+        try:
+            return str(e)
+        except:
+            pass
+        return "<exception failed to convert to text>"
+
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
         if unlock(): return 200
@@ -47,7 +67,7 @@ def main(args):
         if e.errno == 32:
             logger.critical(_('\n\nExiting on Broken Pipe'))
         else:
-            logger.critical(_('\n\n%s') % str(e))
+            logger.critical(_('\n\n%s') % exception2msg(e))
         if unlock(): return 200
         return 1
 
@@ -56,14 +76,14 @@ def main(args):
 
         Log the plugin's exit message if one was supplied.
         ''' # ' xemacs hack
-        exitmsg = str(e)
+        exitmsg = exception2msg(e)
         if exitmsg:
             logger.warn('\n\n%s', exitmsg)
         if unlock(): return 200
         return 1
 
     def exFatal(e):
-        logger.critical('\n\n%s', to_unicode(e.value))
+        logger.critical('\n\n%s', exception2msg(e.value))
         if unlock(): return 200
         return 1
 
@@ -96,8 +116,8 @@ def main(args):
         try:
             base.doLock()
         except Errors.LockError, e:
-            if "%s" %(e.msg,) != lockerr:
-                lockerr = "%s" %(e.msg,)
+            if exception2msg(e) != lockerr:
+                lockerr = exception2msg(e)
                 logger.critical(lockerr)
             if not base.conf.exit_on_lock:
                 logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
@@ -117,7 +137,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [unicode(e)]
+        resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:
@@ -158,7 +178,7 @@ def main(args):
         return exPluginExit(e)
     except Errors.YumBaseError, e:
         result = 1
-        resultmsgs = [unicode(e)]
+        resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
         return exUserCancel()
     except IOError, e:

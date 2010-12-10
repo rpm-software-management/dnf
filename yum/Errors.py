@@ -65,7 +65,7 @@ class YumRPMTransError(YumBaseError):
 
 class LockError(YumBaseError):
     def __init__(self, errno, msg, pid=0):
-        YumBaseError.__init__(self)
+        YumBaseError.__init__(self, msg)
         self.errno = errno
         self.msg = msg
         self.pid = pid
