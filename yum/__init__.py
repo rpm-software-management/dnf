@@ -780,7 +780,9 @@ class YumBase(depsolve.Depsolve):
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our compressed file
             if groupfile:
-                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml')
+                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
+                                                     cached=repo.cache)
+                # Do we want a RepoError here?
                 
             try:
                 self._comps.add(groupfile)
@@ -819,7 +821,8 @@ class YumBase(depsolve.Depsolve):
                 try:
                     tag_md = repo.retrieveMD('pkgtags')
                     tag_sqlite  = misc.repo_gen_decompress(tag_md,
-                                                           'pkgtags.sqlite')
+                                                           'pkgtags.sqlite',
+                                                           cached=repo.cache)
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
                 except (Errors.RepoError, Errors.PkgTagsError), e:
