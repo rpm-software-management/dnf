@@ -31,32 +31,12 @@ from yum import _
 from yum.i18n import to_unicode, utf8_width
 import yum.misc
 import cli
-from utils import suppress_keyboard_interrupt_message, show_lock_owner
+from utils import suppress_keyboard_interrupt_message, show_lock_owner, exception2msg
 
 def main(args):
     """This does all the real work"""
 
     yum.misc.setup_locale(override_time=True)
-
-    def exception2msg(e):
-        """ DIE python DIE! Which one works:
-            to_unicode(e.value); unicode(e); str(e); 
-            Call this so you don't have to care. """
-        try:
-            return to_unicode(e.value)
-        except:
-            pass
-
-        try:
-            return unicode(e)
-        except:
-            pass
-
-        try:
-            return str(e)
-        except:
-            pass
-        return "<exception failed to convert to text>"
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
