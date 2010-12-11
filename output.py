@@ -1228,12 +1228,15 @@ Downgrade %5.5s Package(s)
     def setupKeyImportCallbacks(self):
         confirm_func = self._cli_confirm_gpg_key_import
         gpg_import_func = self.getKeyForRepo
+        gpgca_import_func = self.getCAKeyForRepo
         if hasattr(self, 'prerepoconf'):
             self.prerepoconf.confirm_func = confirm_func
             self.prerepoconf.gpg_import_func = gpg_import_func
+            self.prerepoconf.gpgca_import_func = gpgca_import_func
         else:
             self.repos.confirm_func = confirm_func
             self.repos.gpg_import_func = gpg_import_func
+            self.repos.gpgca_import_func = gpgca_import_func
 
     def interrupt_callback(self, cbobj):
         '''Handle CTRL-C's during downloads

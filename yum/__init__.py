@@ -85,6 +85,7 @@ from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str
 
 import string
+import StringIO
 
 from weakref import proxy as weakref
 
@@ -135,6 +136,7 @@ class _YumPreRepoConf:
         self.interrupt_callback = None
         self.confirm_func = None
         self.gpg_import_func = None
+        self.gpgca_import_func = None
         self.cachedir = None
         self.cache = None
 
@@ -415,7 +417,13 @@ class YumBase(depsolve.Depsolve):
             else:
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
-                
+                # repos are ver/arch specific so add $basearch/$releasever
+                self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
+                     % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
+                        self.yumvar.get('releasever', '$releasever')))
+                thisrepo.base_persistdir = self.conf._repos_persistdir
+
+
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     if not hasattr(thisrepo, opt):
@@ -575,6 +583,7 @@ class YumBase(depsolve.Depsolve):
             self.repos.setInterruptCallback(prerepoconf.interrupt_callback)
             self.repos.confirm_func = prerepoconf.confirm_func
             self.repos.gpg_import_func = prerepoconf.gpg_import_func
+            self.repos.gpgca_import_func = prerepoconf.gpgca_import_func
             if prerepoconf.cachedir is not None:
                 self.repos.setCacheDir(prerepoconf.cachedir)
             if prerepoconf.cache is not None:
@@ -4309,15 +4318,16 @@ class YumBase(depsolve.Depsolve):
         self.conf.obsoletes = old_conf_obs
         return done
 
-    def _retrievePublicKey(self, keyurl, repo=None):
+    def _retrievePublicKey(self, keyurl, repo=None, getSig=True):
         """
         Retrieve a key file
         @param keyurl: url to the key to retrieve
         Returns a list of dicts with all the keyinfo
         """
         key_installed = False
-
-        self.logger.info(_('Retrieving GPG key from %s') % keyurl)
+        
+        msg = _('Retrieving key from %s') % keyurl
+        self.verbose_logger.log(logginglevels.INFO_2, msg)
        
         # Go get the GPG key from the given URL
         try:
@@ -4336,6 +4346,33 @@ class YumBase(depsolve.Depsolve):
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
+                                      
+        # check for a .asc file accompanying it - that's our gpg sig on the key
+        # suck it down and do the check
+        sigfile = None
+        valid_sig = False
+        if getSig and repo and repo.gpgcakey:
+            self.getCAKeyForRepo(repo, callback=repo.confirm_func)
+            try:
+                url = misc.to_utf8(keyurl + '.asc')
+                opts = repo._default_grabopts()
+                text = repo.id + '/gpgkeysig'
+                sigfile = urlgrabber.urlopen(url, **opts)
+
+            except urlgrabber.grabber.URLGrabError, e:
+                sigfile = None
+
+            if sigfile:
+                if not misc.valid_detached_sig(sigfile, 
+                                    StringIO.StringIO(rawkey), repo.gpgcadir):
+                    #if we decide we want to check, even though the sig failed
+                    # here is where we would do that
+                    raise Errors.YumBaseError(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
+                else:
+                    msg = _('GPG key signature verified against CA Key(s)')
+                    self.verbose_logger.log(logginglevels.INFO_2, msg)
+                    valid_sig = True
+            
         # Parse the key
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
@@ -4352,29 +4389,31 @@ class YumBase(depsolve.Depsolve):
                       _('GPG key parsing failed: key does not have value %s') + info
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
+            thiskey['valid_sig'] = valid_sig
+            thiskey['has_sig'] = bool(sigfile)
             keys.append(thiskey)
         
         return keys
 
-    def _getKeyImportMessage(self, info, keyurl):
+    def _getKeyImportMessage(self, info, keyurl, keytype='GPG'):
         msg = None
         if keyurl.startswith("file:"):
             fname = keyurl[len("file:"):]
             pkgs = self.rpmdb.searchFiles(fname)
             if pkgs:
                 pkgs = sorted(pkgs)[-1]
-                msg = (_('Importing GPG key 0x%s:\n'
+                msg = (_('Importing %s key 0x%s:\n'
                          ' Userid : %s\n'
                          ' Package: %s (%s)\n'
                          ' From   : %s') %
-                       (info['hexkeyid'], to_unicode(info['userid']),
+                       (keytype, info['hexkeyid'], to_unicode(info['userid']),
                         pkgs, pkgs.ui_from_repo,
                         keyurl.replace("file://","")))
         if msg is None:
-            msg = (_('Importing GPG key 0x%s:\n'
+            msg = (_('Importing %s key 0x%s:\n'
                      ' Userid: "%s"\n'
                      ' From  : %s') %
-                   (info['hexkeyid'], to_unicode(info['userid']),
+                   (keytype, info['hexkeyid'], to_unicode(info['userid']),
                     keyurl.replace("file://","")))
         self.logger.critical("%s", msg)
 
@@ -4405,24 +4444,34 @@ class YumBase(depsolve.Depsolve):
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
                         keyurl, info['hexkeyid']))
                     continue
-
-                # Try installing/updating GPG key
-                self._getKeyImportMessage(info, keyurl)
-                rc = False
-                if self.conf.assumeyes:
-                    rc = True
-                elif fullaskcb:
-                    rc = fullaskcb({"po": po, "userid": info['userid'],
-                                    "hexkeyid": info['hexkeyid'], 
-                                    "keyurl": keyurl,
-                                    "fingerprint": info['fingerprint'],
-                                    "timestamp": info['timestamp']})
-                elif askcb:
-                    rc = askcb(po, info['userid'], info['hexkeyid'])
-
-                if not rc:
-                    raise Errors.YumBaseError, _("Not installing key")
                 
+                if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
+                    key_installed = True
+                else:
+                    # Try installing/updating GPG key
+                    self._getKeyImportMessage(info, keyurl)
+                    rc = False
+                    if self.conf.assumeyes:
+                        rc = True
+                        
+                    # grab the .sig/.asc for the keyurl, if it exists
+                    # if it does check the signature on the key
+                    # if it is signed by one of our ca-keys for this repo or the global one
+                    # then rc = True
+                    # else ask as normal.
+
+                    elif fullaskcb:
+                        rc = fullaskcb({"po": po, "userid": info['userid'],
+                                        "hexkeyid": info['hexkeyid'], 
+                                        "keyurl": keyurl,
+                                        "fingerprint": info['fingerprint'],
+                                        "timestamp": info['timestamp']})
+                    elif askcb:
+                        rc = askcb(po, info['userid'], info['hexkeyid'])
+
+                    if not rc:
+                        raise Errors.YumBaseError, _("Not installing key")
+                    
                 # Import the key
                 ts = self.rpmdb.readOnlyTS()
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
@@ -4446,43 +4495,55 @@ class YumBase(depsolve.Depsolve):
             self.logger.info(_("Import of key(s) didn't help, wrong key(s)?"))
             raise Errors.YumBaseError, errmsg
     
-    def getKeyForRepo(self, repo, callback=None):
+    def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
         Retrieve a key for a repository If needed, prompt for if the key should
         be imported using callback
         
         @param repo: Repository object to retrieve the key of.
+        @param destdir: destination of the gpg pub ring
+        @param keyurl_list: list of urls for gpg keys
+        @param is_cakey: bool - are we pulling in a ca key or not
         @param callback: Callback function to use for asking for verification
                           of a key. Takes a dictionary of key info.
         """
-        keyurls = repo.gpgkey
+
         key_installed = False
-        for keyurl in keyurls:
-            keys = self._retrievePublicKey(keyurl, repo)
+        for keyurl in keyurl_list:
+            keys = self._retrievePublicKey(keyurl, repo, getSig=not is_cakey)
             for info in keys:
                 # Check if key is already installed
-                if info['keyid'] in misc.return_keyids_from_pubring(repo.gpgdir):
+                if hex(int(info['keyid']))[2:-1].upper() in misc.return_keyids_from_pubring(destdir):
                     self.logger.info(_('GPG key at %s (0x%s) is already imported') % (
                         keyurl, info['hexkeyid']))
+                    key_installed = True
                     continue
 
                 # Try installing/updating GPG key
-                self._getKeyImportMessage(info, keyurl)
-                rc = False
-                if self.conf.assumeyes:
-                    rc = True
-                elif callback:
-                    rc = callback({"repo": repo, "userid": info['userid'],
-                                    "hexkeyid": info['hexkeyid'], "keyurl": keyurl,
-                                    "fingerprint": info['fingerprint'],
-                                    "timestamp": info['timestamp']})
+                if is_cakey:
+                    keytype = 'CA'
+                else:
+                    keytype = 'GPG'
+
+                if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
+                    key_installed = True
+                else:
+                    self._getKeyImportMessage(info, keyurl, keytype)
+                    rc = False
+                    if self.conf.assumeyes:
+                        rc = True
+                    elif callback:
+                        rc = callback({"repo": repo, "userid": info['userid'],
+                                        "hexkeyid": info['hexkeyid'], "keyurl": keyurl,
+                                        "fingerprint": info['fingerprint'],
+                                        "timestamp": info['timestamp']})
 
 
-                if not rc:
-                    raise Errors.YumBaseError, _("Not installing key for repo %s") % repo
+                    if not rc:
+                        raise Errors.YumBaseError, _("Not installing key for repo %s") % repo
                 
                 # Import the key
-                result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=repo.gpgdir)
+                result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
                     raise Errors.YumBaseError, _('Key import failed')
                 self.logger.info(_('Key imported successfully'))
@@ -4494,6 +4555,29 @@ class YumBase(depsolve.Depsolve):
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
+
+    def getKeyForRepo(self, repo, callback=None):
+        """
+        Retrieve a key for a repository If needed, prompt for if the key should
+        be imported using callback
+        
+        @param repo: Repository object to retrieve the key of.
+        @param callback: Callback function to use for asking for verification
+                          of a key. Takes a dictionary of key info.
+        """
+        self._getAnyKeyForRepo(repo, repo.gpgdir, repo.gpgkey, is_cakey=False, callback=callback)
+
+    def getCAKeyForRepo(self, repo, callback=None):
+        """
+        Retrieve a key for a repository If needed, prompt for if the key should
+        be imported using callback
+        
+        @param repo: Repository object to retrieve the key of.
+        @param callback: Callback function to use for asking for verification
+                          of a key. Takes a dictionary of key info.
+        """
+
+        self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True, callback=callback)
 
     def _limit_installonly_pkgs(self):
         """ Limit packages based on conf.installonly_limit, if any of the
@@ -4772,6 +4856,7 @@ class YumBase(depsolve.Depsolve):
         newrepo.gpgcheck = self.conf.gpgcheck
         newrepo.repo_gpgcheck = self.conf.repo_gpgcheck
         newrepo.basecachedir = self.conf.cachedir
+        newrepo.base_persistdir = self.conf._repos_persistdir
 
         for key in kwargs.keys():
             if not hasattr(newrepo, key): continue # skip the ones which aren't vars

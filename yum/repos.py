@@ -32,9 +32,12 @@ class _wrap_ayum_getKeyForRepo:
         we have a seperate class).
         A "better" fix might be to explicitly pass the YumBase instance to
         the callback ... API change! """
-    def __init__(self, ayum):
+    def __init__(self, ayum, ca=False):
         self.ayum = weakref(ayum)
+        self.ca = ca
     def __call__(self, repo, callback=None):
+        if self.ca:
+            return self.ayum.getCAKeyForRepo(repo, callback)
         return self.ayum.getKeyForRepo(repo, callback)
 
 class RepoStorage:
@@ -57,6 +60,7 @@ class RepoStorage:
         # even quasi-useful
         # defaults to what is probably sane-ish
         self.gpg_import_func = _wrap_ayum_getKeyForRepo(ayum)
+        self.gpgca_import_func = _wrap_ayum_getKeyForRepo(ayum, ca=True)
         self.confirm_func = None
 
         # This allow listEnabled() to be O(1) most of the time.
@@ -77,7 +81,8 @@ class RepoStorage:
 
         for repo in repos:
             repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,
-                   gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func)
+                   gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func,
+                   gpgca_import_func = self.gpgca_import_func)
             # if we come back from setup NOT enabled then mark as disabled
             # so nothing else touches us
             if not repo.enabled:

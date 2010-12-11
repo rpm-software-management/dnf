@@ -255,6 +255,7 @@ class YumRepository(Repository, config.RepoConf):
                                  # config is very, very old
         # throw in some stubs for things that will be set by the config class
         self.basecachedir = ""
+        self.base_persistdir = ""
         self.cost = 1000
         self.copy_local = 0
         # holder for stuff we've grabbed
@@ -273,6 +274,7 @@ class YumRepository(Repository, config.RepoConf):
 
         # callbacks for gpg key importing and confirmation
         self.gpg_import_func = None
+        self.gpgca_import_func = None
         self.confirm_func = None
 
         #  The reason we want to turn this off are things like repoids
@@ -368,7 +370,8 @@ class YumRepository(Repository, config.RepoConf):
         # we exclude all vars which start with _ or are in this list:
         excluded_vars = ('mediafunc', 'sack', 'metalink_data', 'grab', 
                          'grabfunc', 'repoXML', 'cfg', 'retrieved',
-                        'mirrorlistparsed', 'gpg_import_func', 'failure_obj',
+                        'mirrorlistparsed', 'gpg_import_func', 
+                        'gpgca_import_func', 'failure_obj',
                         'callback', 'confirm_func', 'groups_added', 
                         'interrupt_callback', 'id', 'mirror_failure_obj',
                         'repo_config_age', 'groupsfilename', 'copy_local', 
@@ -541,12 +544,15 @@ class YumRepository(Repository, config.RepoConf):
         """make the necessary dirs, if possible, raise on failure"""
 
         cachedir = os.path.join(self.basecachedir, self.id)
+        persistdir = os.path.join(self.base_persistdir, self.id)
         pkgdir = os.path.join(cachedir, 'packages')
         hdrdir = os.path.join(cachedir, 'headers')
         self.setAttribute('_dir_setup_cachedir', cachedir)
         self.setAttribute('_dir_setup_pkgdir', pkgdir)
         self.setAttribute('_dir_setup_hdrdir', hdrdir)
-        self.setAttribute('_dir_setup_gpgdir', self.cachedir + '/gpgdir')
+        self.setAttribute('_dir_setup_persistdir', persistdir)
+        self.setAttribute('_dir_setup_gpgdir', persistdir + '/gpgdir')
+        self.setAttribute('_dir_setup_gpgcadir', persistdir + '/gpgcadir')
 
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('_dir_setup_metadata_cookie', cookie)
@@ -554,6 +560,14 @@ class YumRepository(Repository, config.RepoConf):
         for dir in [self.cachedir, self.pkgdir]:
             self._dirSetupMkdir_p(dir)
 
+        # persistdir is really root-only but try the make anyway and just
+        # catch the exception
+        for dir in [self.persistdir]:
+            try:
+                self._dirSetupMkdir_p(dir)
+            except Errors.RepoError, e:
+                pass
+                
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
         self._preload_md_from_system_cache('repomd.xml')
@@ -583,12 +597,16 @@ class YumRepository(Repository, config.RepoConf):
             self._dirSetupMkdir_p(val)
         return ret
     cachedir = property(lambda self: self._dirGetAttr('cachedir'))
+    persistdir = property(lambda self: self._dirGetAttr('persistdir'))
+
     pkgdir   = property(lambda self: self._dirGetAttr('pkgdir'),
                         lambda self, x: self._dirSetAttr('pkgdir', x))
     hdrdir   = property(lambda self: self._dirGetAttr('hdrdir'),
                         lambda self, x: self._dirSetAttr('hdrdir', x))
     gpgdir   = property(lambda self: self._dirGetAttr('gpgdir'),
                         lambda self, x: self._dirSetAttr('gpgdir', x))
+    gpgcadir   = property(lambda self: self._dirGetAttr('gpgcadir'),  
+                        lambda self, x: self._dirSetAttr('gpgcadir', x))
     metadata_cookie = property(lambda self: self._dirGetAttr('metadata_cookie'))
 
     def baseurlSetup(self):
@@ -947,11 +965,12 @@ class YumRepository(Repository, config.RepoConf):
             fo.close()
             del fo
 
-    def setup(self, cache, mediafunc = None, gpg_import_func=None, confirm_func=None):
+    def setup(self, cache, mediafunc = None, gpg_import_func=None, confirm_func=None, gpgca_import_func=None):
         try:
             self.cache = cache
             self.mediafunc = mediafunc
             self.gpg_import_func = gpg_import_func
+            self.gpgca_import_func = gpgca_import_func
             self.confirm_func = confirm_func
         except Errors.RepoError, e:
             raise
@@ -1451,7 +1470,6 @@ class YumRepository(Repository, config.RepoConf):
                                        size=102400)
             except URLGrabError, e:
                 raise URLGrabError(-1, 'Error finding signature for repomd.xml for %s: %s' % (self, e))
-
             valid = misc.valid_detached_sig(result, filepath, self.gpgdir)
             if not valid and self.gpg_import_func:
                 try:
