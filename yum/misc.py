@@ -431,6 +431,8 @@ def getgpgkeyinfo(rawkey, multiple=False):
             'timestamp': key.public_key.timestamp,
             'fingerprint' : key.public_key.fingerprint,
             'raw_key' : key.raw_key,
+            'has_sig' : False,
+            'valid_sig': False,
         }
 
         # Retrieve the timestamp from the matching signature packet 
@@ -542,8 +544,14 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
     if gpghome and os.path.exists(gpghome):
         os.environ['GNUPGHOME'] = gpghome
 
-    sig = open(sig_file, 'r')
-    signed_text = open(signed_file, 'r')
+    if hasattr(sig_file, 'read'):
+        sig = sig_file
+    else:
+        sig = open(sig_file, 'r')
+    if hasattr(signed_file, 'read'):
+        signed_text = signed_file
+    else:
+        signed_text = open(signed_file, 'r')
     plaintext = None
     ctx = gpgme.Context()
 
@@ -552,6 +560,8 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
     except gpgme.GpgmeError, e:
         return False
     else:
+        if not sigs:
+            return False
         # is there ever a case where we care about a sig beyond the first one?
         thissig = sigs[0]
         if not thissig:
