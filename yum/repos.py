@@ -110,6 +110,7 @@ class RepoStorage:
             repoobj.quick_enable_disable = self.quick_enable_disable
         else:
             self._cache_enabled_repos = None
+        repoobj._override_sigchecks = self.ayum._override_sigchecks
 
     def delete(self, repoid):
         if repoid in self.repos:

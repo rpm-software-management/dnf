@@ -1497,12 +1497,11 @@ class YumOptionParser(OptionParser):
 
             # Disable all gpg key checking, if requested.
             if opts.nogpgcheck:
-                self.base.conf.gpgcheck      = False
-                self.base.conf.repo_gpgcheck = False
-                self.base.conf.localpkg_gpgcheck = False                
+                #  Altering the normal configs. doesn't work too well, esp. with
+                # regard to dynamically enabled repos.
+                self._override_sigchecks = True
                 for repo in self.base.repos.listEnabled():
-                    repo.gpgcheck      = False
-                    repo.repo_gpgcheck = False
+                    repo._override_sigchecks = True
                             
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)

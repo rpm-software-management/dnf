@@ -300,12 +300,14 @@ _yum()
 
     $split && return 0
 
-    COMPREPLY=( $( compgen -W '--help --tolerant --cacheonly --config
-        --randomwait --debuglevel --showduplicates --errorlevel --rpmverbosity
-        --quiet --verbose --assumeyes --version --installroot --enablerepo
+    local opts='--help --tolerant --cacheonly --config --randomwait
+        --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
+        --verbose --assumeyes --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
-        --nogpgcheck --disableplugin --enableplugin --skip-broken --color
-        --releasever --setopt ${cmds[@]}' -- "$cur" ) )
+        --nogpgcheck --skip-broken --color --releasever --setopt'
+    [[ $COMP_LINE == *--noplugins* ]] || \
+        opts="$opts --disableplugin --enableplugin"
+    COMPREPLY=( $( compgen -W '$opts ${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 

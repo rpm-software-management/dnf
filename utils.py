@@ -129,6 +129,27 @@ def show_lock_owner(pid, logger):
     return ps
 
 
+def exception2msg(e):
+    """ DIE python DIE! Which one works:
+        to_unicode(e.value); unicode(e); str(e); 
+        Call this so you don't have to care. """
+    try:
+        return to_unicode(e.value)
+    except:
+        pass
+
+    try:
+        return unicode(e)
+    except:
+        pass
+
+    try:
+        return str(e)
+    except:
+        pass
+    return "<exception failed to convert to text>"
+
+
 class YumUtilBase(YumBaseCli):
     def __init__(self,name,ver,usage):
         YumBaseCli.__init__(self)
@@ -154,7 +175,7 @@ class YumUtilBase(YumBaseCli):
         if e.errno == 32:
             self.logger.critical(_('\n\nExiting on Broken Pipe'))
         else:
-            self.logger.critical(_('\n\n%s') % str(e))
+            self.logger.critical(_('\n\n%s') % exception2msg(e))
         if self.unlock(): return 200
         return 1
 
@@ -163,14 +184,14 @@ class YumUtilBase(YumBaseCli):
 
         Log the plugin's exit message if one was supplied.
         ''' # ' xemacs hack
-        exitmsg = str(e)
+        exitmsg = exception2msg(e)
         if exitmsg:
             self.logger.warn('\n\n%s', exitmsg)
         if self.unlock(): return 200
         return 1
 
     def exFatal(self, e):
-        self.logger.critical('\n\n%s', to_unicode(e.value))
+        self.logger.critical('\n\n%s', exception2msg(e))
         if self.unlock(): return 200
         return 1
         
@@ -196,8 +217,8 @@ class YumUtilBase(YumBaseCli):
             try:
                 self.doLock()
             except Errors.LockError, e:
-                if "%s" %(e.msg,) != lockerr:
-                    lockerr = "%s" %(e.msg,)
+                if exception2msg(e) != lockerr:
+                    lockerr = exception2msg(e)
                     self.logger.critical(lockerr)
                 if not self.conf.exit_on_lock:
                     self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
@@ -257,16 +278,16 @@ class YumUtilBase(YumBaseCli):
                     setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
         except Errors.ConfigError, e:
-            self.logger.critical(_('Config Error: %s'), e)
+            self.logger.critical(_('Config Error: %s'), exception2msg(e))
             sys.exit(1)
         except ValueError, e:
-            self.logger.critical(_('Options Error: %s'), e)
+            self.logger.critical(_('Options Error: %s'), exception2msg(e))
             sys.exit(1)
         except plugins.PluginYumExit, e:
-            self.logger.critical(_('PluginExit Error: %s'), e)
+            self.logger.critical(_('PluginExit Error: %s'), exception2msg(e))
             sys.exit(1)
         except Errors.YumBaseError, e:
-            self.logger.critical(_('Yum Error: %s'), e)
+            self.logger.critical(_('Yum Error: %s'), exception2msg(e))
             sys.exit(1)
             
         # update usage in case plugins have added commands
@@ -294,7 +315,7 @@ class YumUtilBase(YumBaseCli):
             self._getRepos(doSetup = True)
             self._getSacks()
         except Errors.YumBaseError, msg:
-            self.logger.critical(str(msg))
+            self.logger.critical(exception2msg(msg))
             sys.exit(1)
 
     def doUtilBuildTransaction(self, unfinished_transactions_check=True):
@@ -304,7 +325,7 @@ class YumUtilBase(YumBaseCli):
             return self.exPluginExit(e)
         except Errors.YumBaseError, e:
             result = 1
-            resultmsgs = [unicode(e)]
+            resultmsgs = [exception2msg(e)]
         except KeyboardInterrupt:
             return self.exUserCancel()
         except IOError, e:

@@ -41,6 +41,13 @@ import urlparse
 urlparse.uses_fragment.append("media")
 from urlgrabber.grabber import URLGrabber, URLGrabError
 
+try:
+    import xattr
+    if not hasattr(xattr, 'get'):
+        xattr = None # This is a "newer" API.
+except ImportError:
+    xattr = None
+
 # For verify
 import pwd
 import grp
@@ -879,7 +886,32 @@ class YumAvailablePackage(PackageObject, RpmBase):
         self._verify_local_pkg_cache = nst
 
         return True
-        
+
+    # See: http://www.freedesktop.org/wiki/CommonExtendedAttributes
+    def _localXattrUrl(self):
+        """ Get the user.xdg.origin.url value from the local pkg. ... if it's
+            present. We cache this so we can access it after the file has been
+            deleted (keepcache=False). """
+
+        if xattr is None:
+            return None
+
+        if hasattr(self, '__cached_localXattrUrl'):
+            return getattr(self, '__cached_localXattrUrl')
+
+        if not self.verifyLocalPkg():
+            return None
+
+        try:
+            ret = xattr.get(self.localPkg(), 'user.xdg.origin.url')
+        except: # Documented to be "EnvironmentError", but make sure
+            return None
+
+        setattr(self, '__cached_localXattrUrl', ret)
+        return ret
+
+    xattr_origin_url = property(lambda x: x._localXattrUrl())
+
     def prcoPrintable(self, prcoTuple):
         """convert the prco tuples into a nicer human string"""
         warnings.warn('prcoPrintable() will go away in a future version of Yum.\n',

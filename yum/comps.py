@@ -503,7 +503,10 @@ class Comps(object):
             
         if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
-            infile = open(srcfile, 'rt')
+            try:
+                infile = open(srcfile, 'rt')
+            except IOError, e:
+                raise CompsException, 'open(%s): #%u %s' % (srcfile, e.errno, e.strerror)
         else:
             # srcfile is a file object
             infile = srcfile

@@ -184,6 +184,7 @@ class YumBase(depsolve.Depsolve):
         self.skipped_packages = []   # packages skip by the skip-broken code
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self._override_sigchecks = False
         self._repos = RepoStorage(self)
         self.repo_setopts = {} # since we have to use repo_setopts in base and 
                                # not in cli - set it up as empty so no one
@@ -788,7 +789,9 @@ class YumBase(depsolve.Depsolve):
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our compressed file
             if groupfile:
-                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml')
+                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
+                                                     cached=repo.cache)
+                # Do we want a RepoError here?
                 
             try:
                 self._comps.add(groupfile)
@@ -827,7 +830,8 @@ class YumBase(depsolve.Depsolve):
                 try:
                     tag_md = repo.retrieveMD('pkgtags')
                     tag_sqlite  = misc.repo_gen_decompress(tag_md,
-                                                           'pkgtags.sqlite')
+                                                           'pkgtags.sqlite',
+                                                           cached=repo.cache)
                     # feed it into _tags.add()
                     self._tags.add(repo.id, tag_sqlite)
                 except (Errors.RepoError, Errors.PkgTagsError), e:
@@ -1463,7 +1467,8 @@ class YumBase(depsolve.Depsolve):
                                           errors=errors)
 
                           
-        if not self.conf.keepcache:
+        if (not self.conf.keepcache and
+            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.cleanUsedHeadersPackages()
         
         for i in ('ts_all_fn', 'ts_done_fn'):
@@ -1531,19 +1536,17 @@ class YumBase(depsolve.Depsolve):
                         po.yumdb_info.from_repo_timestamp = lp_mtime
                     except: pass
 
-                if not hasattr(rpo.repo, 'repoXML'):
-                    continue
+                if rpo.xattr_origin_url is not None:
+                    po.yumdb_info.origin_url = rpo.xattr_origin_url
 
-                md = rpo.repo.repoXML
-                if md and md.revision is not None:
-                    po.yumdb_info.from_repo_revision  = str(md.revision)
-                if md:
-                    po.yumdb_info.from_repo_timestamp = str(md.timestamp)
+                if hasattr(rpo.repo, 'repoXML'):
+                    md = rpo.repo.repoXML
+                    if md and md.revision is not None:
+                        po.yumdb_info.from_repo_revision  = str(md.revision)
+                    if md:
+                        po.yumdb_info.from_repo_timestamp = str(md.timestamp)
 
                 loginuid = misc.getloginuid()
-                if loginuid is None:
-                    continue
-                loginuid = str(loginuid)
                 if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
                     if txmbr.updates:
                         opo = txmbr.updates[0]
@@ -1553,9 +1556,10 @@ class YumBase(depsolve.Depsolve):
                         opo = po
                     if 'installed_by' in opo.yumdb_info:
                         po.yumdb_info.installed_by = opo.yumdb_info.installed_by
-                    po.yumdb_info.changed_by = loginuid
-                else:
-                    po.yumdb_info.installed_by = loginuid
+                    if loginuid is not None:
+                        po.yumdb_info.changed_by = str(loginuid)
+                elif loginuid is not None:
+                    po.yumdb_info.installed_by = str(loginuid)
 
         # Remove old ones after installing new ones, so we can copy values.
         for txmbr in self.tsInfo:
@@ -1876,6 +1880,7 @@ class YumBase(depsolve.Depsolve):
         beg_download = time.time()
         i = 0
         local_size = 0
+        done_repos = set()
         for po in remote_pkgs:
             #  Recheck if the file is there, works around a couple of weird
             # edge cases.
@@ -1918,6 +1923,14 @@ class YumBase(depsolve.Depsolve):
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
                                                               local_size)
+                if po.repoid not in done_repos:
+                    #  Check a single package per. repo. ... to give a hint to
+                    # the user on big downloads.
+                    result, errmsg = self.sigCheckPkg(po)
+                    if result != 0:
+                        self.verbose_logger.warn("%s", errmsg)
+                done_repos.add(po.repoid)
+
             except Errors.RepoError, e:
                 adderror(po, str(e))
             else:
@@ -2018,7 +2031,10 @@ class YumBase(depsolve.Depsolve):
                   might help.
             - 2 - Fatal GPG verification error, give up.
         '''
-        if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+        if self._override_sigchecks:
+            check = False
+            hasgpgkey = 0
+        elif hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
@@ -2085,6 +2101,7 @@ class YumBase(depsolve.Depsolve):
             if local:
                 filelist.extend([txmbr.po.localHdr()])
             else:
+                txmbr.po.xattr_origin_url # Load this, before we rm the file.
                 filelist.extend([txmbr.po.localPkg(), txmbr.po.localHdr()])
 
         # now remove them
