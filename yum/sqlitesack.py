@@ -932,10 +932,14 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         # Check to make sure the DB data matches, this should always pass but
         # we've had weird errors. So check it for a bit.
         for repo in self.filelistsdb:
+            # Only check each repo. once ... the libguestfs check :).
+            if hasattr(repo, '_checked_filelists_pkgs'):
+                continue
             pri_pkgs = self._sql_MD_pkg_num('primary',   repo)
             fil_pkgs = self._sql_MD_pkg_num('filelists', repo)
             if pri_pkgs != fil_pkgs:
                 raise Errors.RepoError
+            repo._checked_filelists_pkgs = True
 
         sql_params = []
         dirname_check = ""
