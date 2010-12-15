@@ -2644,6 +2644,7 @@ class YumBase(depsolve.Depsolve):
                 else:
                     arg_taglist = taglist_provonly
 
+                arg_regex = re.compile(fnmatch.translate(arg))
                 for po in where:
                     searchlist = []
                     tmpvalues = []
@@ -2657,7 +2658,7 @@ class YumBase(depsolve.Depsolve):
                             searchlist.append(tagdata)
                     
                     for item in searchlist:
-                        if fnmatch.fnmatch(item, arg):
+                        if arg_regex.match(item):
                             tmpvalues.append(item)
                 
                     if len(tmpvalues) > 0:
