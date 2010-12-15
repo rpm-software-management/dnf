@@ -2642,6 +2642,10 @@ class YumBase(depsolve.Depsolve):
                 usedDepString = False
                 where = self.rpmdb
                 
+                if not arg or arg[0] not in ('*', '?', '/'):
+                    # Can't be a file/dir. so don't check those.
+                    taglist = ['provides_names']
+
                 for po in where:
                     searchlist = []
                     tmpvalues = []
