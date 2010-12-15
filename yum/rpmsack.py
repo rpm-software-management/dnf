@@ -409,6 +409,10 @@ class RPMDBPackageSack(PackageSackBase):
         
         name = os.path.normpath(name)
         mi = ts.dbMatch('basenames', name)
+        # Note that globs can't be done. As of 4.8.1:
+        #   mi.pattern('basenames', rpm.RPMMIRE_GLOB, name)
+        # ...produces no results.
+
         for hdr in mi:
             if hdr['name'] == 'gpg-pubkey':
                 continue
