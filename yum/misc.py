@@ -611,8 +611,6 @@ def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    prefix = prefix
-
     if reuse:
         # check for /var/tmp/yum-username-* - 
         prefix = '%s%s-' % (prefix, username)
