@@ -20,6 +20,7 @@ import pwd
 import fnmatch
 import bz2
 import gzip
+import shutil
 _available_compression = ['gz', 'bz2']
 try:
     import lzma
@@ -496,7 +497,7 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
-def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None):
+def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_copy=True):
     # FIXME - cachedir can be removed from this method when we break api
     if gpgme is None:
         return False
@@ -519,6 +520,30 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None):
     # ultimately trust the key or pygpgme is definitionally stupid
     k = ctx.get_key(keyid)
     gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
+    
+    if make_ro_copy:
+
+        rodir = gpgdir + '-ro'
+        if not os.path.exists(rodir):
+            os.makedirs(rodir, mode=0755)
+            for f in glob.glob(gpgdir + '/*'):
+                basename = os.path.basename(f)
+                ro_f = rodir + '/' + basename
+                shutil.copy(f, ro_f)
+                os.chmod(ro_f, 0755)
+            fp = open(rodir + '/gpg.conf', 'w', 0755)
+            # yes it is this stupid, why do you ask?
+            opts="""lock-never    
+no-auto-check-trustdb    
+trust-model direct
+no-expensive-trust-checks
+no-permission-warning         
+preserve-permissions
+"""
+            fp.write(opts)
+            fp.close()
+
+        
     return True
     
 def return_keyids_from_pubring(gpgdir):
@@ -541,7 +566,9 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
     if gpgme is None:
         return False
 
-    if gpghome and os.path.exists(gpghome):
+    if gpghome:
+        if not os.path.exists(gpghome):
+            return False
         os.environ['GNUPGHOME'] = gpghome
 
     if hasattr(sig_file, 'read'):
@@ -573,7 +600,7 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
 
     return False
 
-def getCacheDir(tmpdir='/var/tmp', reuse=True):
+def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
     
@@ -584,11 +611,11 @@ def getCacheDir(tmpdir='/var/tmp', reuse=True):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    prefix = 'yum-'
+    prefix = prefix
 
     if reuse:
         # check for /var/tmp/yum-username-* - 
-        prefix = 'yum-%s-' % username    
+        prefix = '%s%s-' % (prefix, username)
         dirpath = '%s/%s*' % (tmpdir, prefix)
         cachedirs = sorted(glob.glob(dirpath))
         for thisdir in cachedirs:
