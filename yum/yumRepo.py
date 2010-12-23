@@ -551,8 +551,11 @@ class YumRepository(Repository, config.RepoConf):
         self.setAttribute('_dir_setup_pkgdir', pkgdir)
         self.setAttribute('_dir_setup_hdrdir', hdrdir)
         self.setAttribute('_dir_setup_persistdir', persistdir)
-        self.setAttribute('_dir_setup_gpgdir', persistdir + '/gpgdir')
-        self.setAttribute('_dir_setup_gpgcadir', persistdir + '/gpgcadir')
+        ext=''
+        if os.geteuid() != 0:
+            ext = '-ro'
+        self.setAttribute('_dir_setup_gpgdir', persistdir + '/gpgdir' + ext)
+        self.setAttribute('_dir_setup_gpgcadir', persistdir + '/gpgcadir' + ext)
 
         cookie = self.cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('_dir_setup_metadata_cookie', cookie)

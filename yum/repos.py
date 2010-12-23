@@ -220,7 +220,7 @@ class RepoStorage:
         for repo in self.repos.values():
             repo.old_base_cache_dir = repo.basecachedir
             repo.basecachedir = cachedir
-            
+
 
     def setProgressBar(self, obj):
         """sets the progress bar for downloading files from repos"""

@@ -658,6 +658,14 @@ option (above). If a GPG key is required to install a package from a
 repository, all keys specified for that repository will be installed.
 
 .IP
+\fBgpgcakey\fR
+A URL pointing to the ASCII-armored CA key file for the repository. This is a normal 
+gpg public key - but this key will be used to validate detached signatures of all
+other keys. The idea is you are asked to confirm import for this key. After that any other 
+gpg key needed for package or repository verification, if it has a detached signature which matches this
+key will be automatically imported without user confirmation.
+
+.IP
 \fBexclude\fR
 Same as the [main] \fBexclude\fR option but only for this repository.
 Substitution variables, described below, are honored here.
