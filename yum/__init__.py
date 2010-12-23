@@ -2559,10 +2559,7 @@ class YumBase(depsolve.Depsolve):
     
     def searchPackageProvides(self, args, callback=None,
                               callback_has_matchfor=False):
-        
-        matches = {}
-        for arg in args:
-            arg = to_unicode(arg)
+        def _arg_data(arg):
             if not misc.re_glob(arg):
                 isglob = False
                 if arg[0] != '/':
@@ -2572,7 +2569,14 @@ class YumBase(depsolve.Depsolve):
             else:
                 isglob = True
                 canBeFile = misc.re_filename(arg)
-                
+
+            return isglob, canBeFile
+
+        matches = {}
+        for arg in args:
+            arg = to_unicode(arg)
+            isglob, canBeFile = _arg_data(arg)
+
             if not isglob:
                 usedDepString = True
                 where = self.returnPackagesByDep(arg)
@@ -2620,16 +2624,9 @@ class YumBase(depsolve.Depsolve):
         
         # installed rpms, too
         taglist = ['filelist', 'dirnames', 'provides_names']
+        taglist_provonly = ['provides_names']
         for arg in args:
-            if not misc.re_glob(arg):
-                isglob = False
-                if arg[0] != '/':
-                    canBeFile = False
-                else:
-                    canBeFile = True
-            else:
-                isglob = True
-                canBeFile = True
+            isglob, canBeFile = _arg_data(arg)
             
             if not isglob:
                 where = self.returnInstalledPackagesByDep(arg)
@@ -2650,11 +2647,17 @@ class YumBase(depsolve.Depsolve):
             else:
                 usedDepString = False
                 where = self.rpmdb
-                
+
+                if canBeFile:
+                    arg_taglist = taglist
+                else:
+                    arg_taglist = taglist_provonly
+
+                arg_regex = re.compile(fnmatch.translate(arg))
                 for po in where:
                     searchlist = []
                     tmpvalues = []
-                    for tag in taglist:
+                    for tag in arg_taglist:
                         tagdata = getattr(po, tag)
                         if tagdata is None:
                             continue
@@ -2664,7 +2667,7 @@ class YumBase(depsolve.Depsolve):
                             searchlist.append(tagdata)
                     
                     for item in searchlist:
-                        if fnmatch.fnmatch(item, arg):
+                        if arg_regex.match(item):
                             tmpvalues.append(item)
                 
                     if len(tmpvalues) > 0:

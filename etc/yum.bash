@@ -72,6 +72,106 @@ _yum_binrpmfiles()
     COMPREPLY=( $( compgen -W '"${COMPREPLY[@]}"' -X '*.nosrc.rpm' ) )
 }
 
+_yum_baseopts()
+{
+    local opts='--help --tolerant --cacheonly --config --randomwait
+        --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
+        --verbose --assumeyes --version --installroot --enablerepo
+        --disablerepo --exclude --disableexcludes --obsoletes --noplugins
+        --nogpgcheck --skip-broken --color --releasever --setopt'
+    [[ $COMP_LINE == *--noplugins* ]] || \
+        opts="$opts --disableplugin --enableplugin"
+    printf %s "$opts"
+}
+
+# arguments:
+#   1 = current word to be completed
+#   2 = previous word
+# return 0 if no more completions should be sought, 1 otherwise
+_yum_complete_baseopts()
+{
+    local split=false
+    type _split_longopt &>/dev/null && _split_longopt && split=true
+
+    case $2 in
+
+        -d|--debuglevel|-e|--errorlevel)
+            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$1" ) )
+            return 0
+            ;;
+
+        --rpmverbosity)
+            COMPREPLY=( $( compgen -W 'info critical emergency error warn
+                debug' -- "$1" ) )
+            return 0
+            ;;
+
+        -c|--config)
+            COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$1" ) )
+            return 0
+            ;;
+
+        --installroot|--downloaddir)
+            COMPREPLY=( $( compgen -d -- "$1" ) )
+            return 0
+            ;;
+
+        --enablerepo)
+            _yum_repolist disabled "$1"
+            return 0
+            ;;
+
+        --disablerepo)
+            _yum_repolist enabled "$1"
+            return 0
+            ;;
+
+        --disableexcludes)
+            _yum_repolist all "$1"
+            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$1" ) )
+            return 0
+            ;;
+
+        --enableplugin)
+            _yum_plugins 0 "$1"
+            return 0
+            ;;
+
+        --disableplugin)
+            _yum_plugins 1 "$1"
+            return 0
+            ;;
+
+        --color)
+            COMPREPLY=( $( compgen -W 'always auto never' -- "$1" ) )
+            return 0
+            ;;
+
+        -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever|--cve|\
+        --bz|--advisory|--tmprepo|--verify-filenames|--setopt)
+            return 0
+            ;;
+
+        --download-order)
+            COMPREPLY=( $( compgen -W 'default smallestfirst largestfirst' \
+                -- "$1" ) )
+            return 0
+            ;;
+
+        --override-protection)
+            _yum_list installed "$1"
+            return 0
+            ;;
+
+        --verify-configuration-files)
+            COMPREPLY=( $( compgen -W '1 0' -- "$1" ) )
+            return 0
+            ;;
+    esac
+
+    $split && return 0 || return 1
+}
+
 _yum()
 {
     COMPREPLY=()
@@ -219,95 +319,9 @@ _yum()
             ;;
     esac
 
-    local split=false
-    type _split_longopt &>/dev/null && _split_longopt && split=true
+    _yum_complete_baseopts "$cur" "$prev" && return 0
 
-    case $prev in
-
-        -d|--debuglevel|-e|--errorlevel)
-            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
-            return 0
-            ;;
-
-        --rpmverbosity)
-            COMPREPLY=( $( compgen -W 'info critical emergency error warn
-                debug' -- "$cur" ) )
-            return 0
-            ;;
-
-        -c|--config)
-            COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$cur" ) )
-            return 0
-            ;;
-
-        --installroot|--downloaddir)
-            COMPREPLY=( $( compgen -d -- "$cur" ) )
-            return 0
-            ;;
-
-        --enablerepo)
-            _yum_repolist disabled "$cur"
-            return 0
-            ;;
-
-        --disablerepo)
-            _yum_repolist enabled "$cur"
-            return 0
-            ;;
-
-        --disableexcludes)
-            _yum_repolist all "$cur"
-            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$cur" ) )
-            return 0
-            ;;
-
-        --enableplugin)
-            _yum_plugins 0 "$cur"
-            return 0
-            ;;
-
-        --disableplugin)
-            _yum_plugins 1 "$cur"
-            return 0
-            ;;
-
-        --color)
-            COMPREPLY=( $( compgen -W 'always auto never' -- "$cur" ) )
-            return 0
-            ;;
-
-        -R|--randomwait|-x|--exclude|-h|--help|--version|--releasever|--cve|\
-        --bz|--advisory|--tmprepo|--verify-filenames|--setopt)
-            return 0
-            ;;
-
-        --download-order)
-            COMPREPLY=( $( compgen -W 'default smallestfirst largestfirst' \
-                -- "$cur" ) )
-            return 0
-            ;;
-
-        --override-protection)
-            _yum_list installed "$cur"
-            return 0
-            ;;
-
-        --verify-configuration-files)
-            COMPREPLY=( $( compgen -W '1 0' -- "$cur" ) )
-            return 0
-            ;;
-    esac
-
-    $split && return 0
-
-    local opts='--help --tolerant --cacheonly --config --randomwait
-        --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
-        --verbose --assumeyes --version --installroot --enablerepo
-        --disablerepo --exclude --disableexcludes --obsoletes --noplugins
-        --nogpgcheck --skip-broken --color --releasever --setopt'
-    [[ $COMP_LINE == *--noplugins* ]] || \
-        opts="$opts --disableplugin --enableplugin"
-    COMPREPLY=( $( compgen -W '$opts ${cmds[@]}' -- "$cur" ) )
+    COMPREPLY=( $( compgen -W '$( _yum_baseopts ) ${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 
