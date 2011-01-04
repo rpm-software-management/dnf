@@ -22,6 +22,21 @@ Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: yum-skip-broken
 Conflicts: rpm >= 5-0
+# Zif is a re-implementation of yum in C, however:
+#
+# 1. There is no co-operation/etc. with us.
+# 2. It touches our private data directly.
+#
+# ...both of which mean that even if there were _zero_ bugs in zif, we'd
+# never be able to change anything after the first user started using it. And
+# of course:
+#
+# 3. Users will never be able to tell that it isn't weird yum bugs, when they
+# hit them (and we'll probably never be able to debug them, without becoming
+# zif experts).
+#
+# ...so we have two sane choices: i) Conflict with it. 2) Stop developing yum.
+Conflicts: zif
 Obsoletes: yum-skip-broken <= 1.1.18
 Obsoletes: yum-basearchonly <= 1.1.9
 Obsoletes: yum-allow-downgrade < 1.1.20-0
