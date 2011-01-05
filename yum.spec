@@ -20,7 +20,6 @@ Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
 Requires: pygpgme
 Prereq: /sbin/chkconfig, /sbin/service, coreutils
-Conflicts: yum-skip-broken
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:
 #
