@@ -979,6 +979,9 @@ class YumBase(depsolve.Depsolve):
             txmbrs = self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES)
         vers = {}
         for txmbr in txmbrs:
+            if self.allowedMultipleInstalls(txmbr.po):
+                continue # Just allow these, it's easier.
+
             #  In theory we could skip noarch packages here, but it's really
             # fast and there are some edge cases where it'll help.
             if txmbr.name not in vers:
@@ -997,7 +1000,8 @@ class YumBase(depsolve.Depsolve):
                         continue
                     vers[pkgname].append(pkg)
 
-            # If all the versions are equal, we should be fine.
+            #  If we have multiple packages, they should be of different arches
+            # and so if all the versions are equal, we should be fine.
             first = vers[pkgname][0]
             for other in vers[pkgname][1:]:
                 if first.verEQ(other):
