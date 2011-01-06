@@ -1674,11 +1674,13 @@ class YumBase(depsolve.Depsolve):
     def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
-        # if we're not root then we don't lock - just return nicely
+        # if we're not root then lock the cache
         if self.conf.uid != 0:
-            return
-            
-        root = self.conf.installroot
+            root = self.conf.cachedir
+            # Don't want <cachedir>/var/run/yum.pid ... just: <cachedir>/yum.pid
+            lockfile = os.path.basename(lockfile)
+        else:
+            root = self.conf.installroot
         lockfile = root + '/' + lockfile # lock in the chroot
         lockfile = os.path.normpath(lockfile) # get rid of silly preceding extra /
         
@@ -1720,8 +1722,14 @@ class YumBase(depsolve.Depsolve):
         #  Note that we can get here from __del__, so if we haven't created
         # YumBase.conf we don't want to do so here as creating stuff inside
         # __del__ is bad.
-        if hasattr(self, 'preconf') or self.conf.uid != 0:
+        if hasattr(self, 'preconf'):
             return
+
+        #  Obviously, we can't lock random places as non-root, but we still want
+        # to get rid of our lock file. Given we now have _lockfile I'm pretty
+        # sure nothing should ever pass lockfile in here anyway.
+        if self.conf.uid != 0:
+            lockfile = None
         
         if lockfile is not None:
             root = self.conf.installroot
