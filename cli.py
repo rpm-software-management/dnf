@@ -1023,8 +1023,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             matching = []
 
         for (po, keys, matched_value) in matching:
-            if len(keys) <= len(mkeys) or po in pos:
-                continue # Don't print stuff from N/S...
+            #  Don't print matches for "a", "b", "c" on N+S+D when we already
+            # matched that on just N+S.
+            if len(keys) <= len(mkeys):
+                continue
+             #  Just print the highest level of full matches, when we did
+             # minimal matches. Ie. "A", "B" match N+S, just print the
+             # "A", "B", "C", "D" full match, and not the "B", "C", "D" matches.
+            if mkeys and len(keys) < len(okeys):
+                continue
 
             if keys != okeys:
                 if akeys:
