@@ -1506,7 +1506,7 @@ class YumOptionParser(OptionParser):
             if opts.nogpgcheck:
                 #  Altering the normal configs. doesn't work too well, esp. with
                 # regard to dynamically enabled repos.
-                self._override_sigchecks = True
+                self.base._override_sigchecks = True
                 for repo in self.base.repos.listEnabled():
                     repo._override_sigchecks = True
                             
