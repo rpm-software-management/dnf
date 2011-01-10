@@ -53,8 +53,14 @@ class PackageTagDB(object):
         # open it and leave a cursor in place for the db
         self._conn = sqlite.connect(sqlite_file)
         self.cur = self._conn.cursor()
-        self.count = self._sql_exec("select count(*) from packagetags",)
-        
+
+    def _getTagsCount(self):
+        ''' Unused, so no need to cache. '''
+        for n in self._sql_exec("select count(*) from packagetags",):
+            return n[0]
+
+    count = property(fget=lambda self: self._getTagsCount(),
+                     doc="Number of entries in the pkgtag DB")
         
     @catchSqliteException
     def _sql_exec(self, sql, *args):
