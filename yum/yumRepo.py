@@ -678,7 +678,12 @@ class YumRepository(Repository, config.RepoConf):
             url = parser.varReplace(url, self.yumvar)
             if url[-1] != '/':
                 url= url + '/'
-            (s,b,p,q,f,o) = urlparse.urlparse(url)
+            try:
+                # This started throwing ValueErrors, BZ 666826
+                (s,b,p,q,f,o) = urlparse.urlparse(url)
+            except:
+                s = 'blah'
+
             if s not in ['http', 'ftp', 'file', 'https']:
                 skipped = url
                 continue
