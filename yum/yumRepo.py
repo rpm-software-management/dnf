@@ -681,7 +681,7 @@ class YumRepository(Repository, config.RepoConf):
             try:
                 # This started throwing ValueErrors, BZ 666826
                 (s,b,p,q,f,o) = urlparse.urlparse(url)
-            except:
+            except (ValueError, IndexError, KeyError), e:
                 s = 'blah'
 
             if s not in ['http', 'ftp', 'file', 'https']:
