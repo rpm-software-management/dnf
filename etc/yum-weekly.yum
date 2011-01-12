@@ -1,0 +1,4 @@
+clean packages
+clean expire-cache
+ts run
+exit

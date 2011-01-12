@@ -19,7 +19,6 @@ Requires: urlgrabber >= 3.9.2
 Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
 Requires: pygpgme
-Prereq: /sbin/chkconfig, /sbin/service, coreutils
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:
 #
@@ -59,12 +58,30 @@ Group: Applications/System
 Requires: yum = %{version}-%{release}
 Requires: dbus-python
 Requires: pygobject2
-Prereq: /sbin/chkconfig 
-Prereq: /sbin/service
+Requires(preun): /sbin/chkconfig 
+Requires(preun): /sbin/service
+Requires(postun): /sbin/chkconfig 
+Requires(postun): /sbin/service
+
 
 %description updatesd
 yum-updatesd provides a daemon which checks for available updates and 
 can notify you when they are available via email, syslog or dbus. 
+
+
+%package cron
+Summary: Files needed to run yum updates as a cron job
+Group: System Environment/Base
+Requires: yum >= 3.0 vixie-cron crontabs yum-downloadonly findutils
+Requires(post): /sbin/chkconfig
+Requires(post): /sbin/service
+Requires(preun): /sbin/chkconfig
+Requires(preun): /sbin/service
+Requires(postun): /sbin/service
+
+%description cron
+These are the files needed to run yum updates as a cron job.
+Install this package if you want auto yum updates nightly via cron.
 
 %prep
 %setup -q
@@ -103,6 +120,50 @@ if [ $1 = 0 ]; then
 fi
 exit 0
 
+
+%post cron
+# Make sure chkconfig knows about the service
+/sbin/chkconfig --add yum-cron
+# if an upgrade:
+if [ "$1" -ge "1" ]; then
+# if there's a /etc/rc.d/init.d/yum file left, assume that there was an
+# older instance of yum-cron which used this naming convention.  Clean 
+# it up, do a conditional restart
+ if [ -f /etc/init.d/yum ]; then 
+# was it on?
+  /sbin/chkconfig yum
+  RETVAL=$?
+  if [ $RETVAL = 0 ]; then
+# if it was, stop it, then turn on new yum-cron
+   /sbin/service yum stop 1> /dev/null 2>&1
+   /sbin/service yum-cron start 1> /dev/null 2>&1
+   /sbin/chkconfig yum-cron on
+  fi
+# remove it from the service list
+  /sbin/chkconfig --del yum
+ fi
+fi 
+exit 0
+
+%preun cron
+# if this will be a complete removeal of yum-cron rather than an upgrade,
+# remove the service from chkconfig control
+if [ $1 = 0 ]; then
+ /sbin/chkconfig --del yum-cron
+ /sbin/service yum-cron stop 1> /dev/null 2>&1
+fi
+exit 0
+
+%postun cron
+# If there's a yum-cron package left after uninstalling one, do a
+# conditional restart of the service
+if [ "$1" -ge "1" ]; then
+ /sbin/service yum-cron condrestart 1> /dev/null 2>&1
+fi
+exit 0
+
+
+
 %files -f %{name}.lang
 %defattr(-, root, root)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
@@ -128,6 +189,19 @@ exit 0
 %{_mandir}/man*/yum.*
 %{_mandir}/man*/yum-shell*
 
+
+%files cron
+%defattr(-,root,root)
+%doc COPYING
+%{_sysconfdir}/cron.daily/0yum.cron
+%{_sysconfdir}/yum/yum-daily.yum
+%{_sysconfdir}/yum/yum-weekly.yum
+%{_sysconfdir}/rc.d/init.d/yum-cron
+%config(noreplace) %{_sysconfdir}/sysconfig/yum-cron
+
+
+
+
 %files updatesd
 %defattr(-, root, root)
 %config(noreplace) %{_sysconfdir}/yum/yum-updatesd.conf
@@ -138,6 +212,10 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Wed Jan 12 2011 Seth Vidal <skvidal at fedoraproject.org>
+- put yum-cron back into yum and make the subpkg. Thanks To Alec Habig for
+  maintaining this so well for so long.
+
 * Fri Jul 30 2010 Seth Vidal <skvidal at fedoraproject.org>
 - 3.2.28
 

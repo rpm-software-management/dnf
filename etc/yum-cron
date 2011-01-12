@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+# yum-cron           This shell script enables the automatic use of YUM
+#
+# Author:       Seth Vidal <skvidal@phy.duke.edu>
+#
+# chkconfig:	- 50 01
+#
+# description:  Enable daily run of yum, a program updater.
+# processname:  yum-cron
+# config: /etc/yum/yum-daily.yum
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+test -f /etc/sysconfig/yum-cron && . /etc/sysconfig/yum-cron
+
+lockfile=/var/lock/subsys/yum-cron
+tslock=/var/lock/yum-cron.lock/ts.lock
+yumcronpid=/var/lock/yum-cron.lock/pidfile
+
+RETVAL=0
+
+start() {
+	echo -n $"Enabling nightly yum update: "
+	touch "$lockfile" && success || failure
+	RETVAL=$?
+	echo
+}
+
+stop() {
+	echo -n $"Disabling nightly yum update: "
+	if [ -f "$yumcronpid" -a "$SERVICE_WAITS" = "yes" ]; then
+	  yum_done=0
+	  if [ ! -f $tslock ]; then
+	    # No transaction yet in progress, just kill it
+	    kill `cat $yumcronpid > /dev/null 2>&1` > /dev/null 2>&1
+	    yum_done=1
+	  fi
+	  if [ $yum_done -eq 0 ]; then
+	    echo -n $"Waiting for yum "
+	    if [ -z "$SERVICE_WAIT_TIME" ]; then
+	      SERVICE_WAIT_TIME=300
+	    fi
+	    start=`date +%s`
+	    end=`expr $start + $SERVICE_WAIT_TIME`
+	    while [ `date +%s` -le $end ]
+	    do
+	      sleep 5
+	      if [ ! -f "$tslock" ]; then
+		yum_done=1
+	        break
+	      fi
+	    done
+	    if [ $yum_done -eq 1 ]; then
+	      echo -n " ok "
+	    else
+	      echo -n " failed "
+	    fi
+	  fi
+	fi
+	rm -f "$lockfile" && success || failure
+	RETVAL=$?
+	echo
+}
+
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop) 
+	stop
+	;;
+  restart|force-reload)
+	restart
+	;;
+  reload)
+	;;
+  condrestart)
+	[ -f "$lockfile" ] && restart
+	;;
+  status)
+	if [ -f $lockfile ]; then
+		echo $"Nightly yum update is enabled."
+		RETVAL=0
+	else
+		echo $"Nightly yum update is disabled."
+		RETVAL=3
+	fi
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+	exit 1
+esac
+
+exit $RETVAL
