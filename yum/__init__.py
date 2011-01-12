@@ -1289,7 +1289,7 @@ class YumBase(depsolve.Depsolve):
         for txmbr in sorted(self.tsInfo):
             msg = "SKIPBROKEN:  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
             self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-            for po,rel in set(sorted(txmbr.relatedto)):
+            for po,rel in sorted(set(txmbr.relatedto)):
                 msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
         self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))

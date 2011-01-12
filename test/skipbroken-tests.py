@@ -669,7 +669,7 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(u7, oldpo=i7)
         self.assertEquals('ok', *self.resolveCode(skip=True))
         # uncomment this line and the test will fail and you can see the output
-        #self.assertResult([i1])
+        self.assertResult([i1])
         
     
     
