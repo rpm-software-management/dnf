@@ -638,6 +638,38 @@ class SkipBrokenTests(DepsolveTests):
         self.tsInfo.addUpdate(u1, oldpo=i1)
         self.assertEquals('empty', *self.resolveCode(skip=True))
         self.assertResult([i1,i2])
+
+    def testTransactionOutput(self):
+        '''  
+        Test that skip-broken transaction dump output dont show the 
+        dependon: xxx once.
+        '''
+        i1 = self.repoPackage('bar1', '1')
+        i1.addRequires('foo1', 'EQ', ('0', '1', '0'))
+        i1.addRequires('foo2', 'EQ', ('0', '1', '0'))
+        i1.addRequires('foo3', 'EQ', ('0', '1', '0'))
+        i1.addRequires('foo4', 'EQ', ('0', '1', '0'))
+        i1.addRequires('foo5', 'EQ', ('0', '1', '0'))
+        i1.addRequires('foo6', 'EQ', ('0', '1', '0'))
+        i2 = self.repoPackage('fooA', '1')
+        i2.addProvides('foo1', 'EQ', ('0', '1', '0'))
+        i3 = self.repoPackage('fooB', '1')
+        i3.addProvides('foo2', 'EQ', ('0', '1', '0'))
+        i4 = self.repoPackage('fooC', '1')
+        i4.addProvides('foo3', 'EQ', ('0', '1', '0'))
+        i5 = self.repoPackage('fooD', '1')
+        i5.addProvides('foo4', 'EQ', ('0', '1', '0'))
+        i6 = self.repoPackage('fooE', '1')
+        i6.addProvides('foo5', 'EQ', ('0', '1', '0'))
+        i7 = self.instPackage('fooF', '1')
+        i7.addProvides('foo6', 'EQ', ('0', '1', '0'))
+        u7 = self.instPackage('fooF', '2')
+        u7.addProvides('foo6', 'EQ', ('0', '2', '0'))
+        self.tsInfo.addInstall(i1)
+        self.tsInfo.addUpdate(u7, oldpo=i7)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        # uncomment this line and the test will fail and you can see the output
+        #self.assertResult([i1])
         
     
     
