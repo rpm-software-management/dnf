@@ -799,9 +799,9 @@ class Depsolve(object):
                     continue
                 done.add((po, err))
                 self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _("%s from %s has depsolving problems") % (po, po.repoid))
+                    "SKIPBROKEN: %s from %s has depsolving problems" % (po, po.repoid))
                 err = err.replace('\n', '\n  --> ')
-                self.verbose_logger.log(logginglevels.DEBUG_4,"  --> %s" % err)
+                self.verbose_logger.log(logginglevels.DEBUG_4,"SKIPBROKEN:  --> %s" % err)
             return (1, errors)
 
         if not len(self.tsInfo):
