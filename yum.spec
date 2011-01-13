@@ -72,7 +72,7 @@ can notify you when they are available via email, syslog or dbus.
 %package cron
 Summary: Files needed to run yum updates as a cron job
 Group: System Environment/Base
-Requires: yum >= 3.0 vixie-cron crontabs yum-downloadonly findutils
+Requires: yum >= 3.0 vixie-cron crontabs yum-plugin-downloadonly findutils
 Requires(post): /sbin/chkconfig
 Requires(post): /sbin/service
 Requires(preun): /sbin/chkconfig
