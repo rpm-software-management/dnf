@@ -194,8 +194,8 @@ exit 0
 %defattr(-,root,root)
 %doc COPYING
 %{_sysconfdir}/cron.daily/0yum.cron
-%{_sysconfdir}/yum/yum-daily.yum
-%{_sysconfdir}/yum/yum-weekly.yum
+%config(noreplace) %{_sysconfdir}/yum/yum-daily.yum
+%config(noreplace) %{_sysconfdir}/yum/yum-weekly.yum
 %{_sysconfdir}/rc.d/init.d/yum-cron
 %config(noreplace) %{_sysconfdir}/sysconfig/yum-cron
 
