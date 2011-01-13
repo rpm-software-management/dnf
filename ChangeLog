@@ -1,5 +1,13 @@
 2011-01-13  Seth Vidal <skvidal@fedoraproject.org>
 
+	* yum.spec: fix plugin name to be correct
+
+2011-01-13  Seth Vidal <skvidal@fedoraproject.org>
+
+	* ChangeLog: merge changelog
+
+2011-01-13  Seth Vidal <skvidal@fedoraproject.org>
+
 	* yum.spec, yum/__init__.py: - mark as 3.2.29 in spec and init - update fixme in update() so that
 	it is in the right place and explains a bit better   - partial fix
 	commented out but didn't want to introduce a change so late
