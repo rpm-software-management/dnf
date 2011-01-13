@@ -91,7 +91,7 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
-__version__ = '3.2.28'
+__version__ = '3.2.29'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
@@ -3754,15 +3754,22 @@ class YumBase(depsolve.Depsolve):
                     
             # check to see if the pkg we want to install is not _quite_ the newest
             # one but still technically an update over what is installed.
-            #FIXME - potentially do the comparables thing from what used to
-            #        be in cli.installPkgs() to see what we should be comparing
-            #        it to of what is installed. in the meantime name.arch is
-            #        most likely correct
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
             if pot_updated and self.allowedMultipleInstalls(available_pkg):
                 # only compare against the newest of what's installed for kernel
                 pot_updated = sorted(pot_updated)[-1:]
-
+#FIXME - potentially do the comparables thing from what used to
+#        be in cli.installPkgs() to see what we should be comparing
+#        it to of what is installed. in the meantime name.arch is
+#        most likely correct
+# this is sorta a fix - but it shouldn't be only for localPackages
+#            else:
+#                if available_pkg in self.localPackages:
+#                    # if we got here the potentially updated is not a matching arch
+#                    # and we're goofed up in a localPackage that someone wants to apply for some odd reason
+#                    # so we go for name-only update match and check
+#                    pot_updated = self.rpmdb.searchNevra(name=available_pkg.name)
+            
             for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %

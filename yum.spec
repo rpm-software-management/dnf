@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.28
+Version: 3.2.29
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
