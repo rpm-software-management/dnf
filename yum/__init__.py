@@ -1690,7 +1690,7 @@ class YumBase(depsolve.Depsolve):
                 fd = open(lockfile, 'r')
             except (IOError, OSError), e:
                 msg = _("Could not open lock %s: %s") % (lockfile, e)
-                raise Errors.LockError(1, msg)
+                raise Errors.LockError(errno.EPERM, msg)
                 
             try: oldpid = int(fd.readline())
             except ValueError:
@@ -1707,7 +1707,7 @@ class YumBase(depsolve.Depsolve):
                     else:
                         # Whoa. What the heck happened?
                         msg = _('Unable to check if PID %s is active') % oldpid
-                        raise Errors.LockError(1, msg, oldpid)
+                        raise Errors.LockError(errno.EPERM, msg, oldpid)
                 else:
                     # Another copy seems to be running.
                     msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
@@ -1752,7 +1752,7 @@ class YumBase(depsolve.Depsolve):
             if not msg.errno == errno.EEXIST: 
                 # Whoa. What the heck happened?
                 errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
-                raise Errors.LockError(msg.errno, errmsg, contents)
+                raise Errors.LockError(msg.errno, errmsg, int(contents))
             return 0
         else:
             os.write(fd, contents)
