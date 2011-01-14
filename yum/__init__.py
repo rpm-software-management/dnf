@@ -1674,8 +1674,11 @@ class YumBase(depsolve.Depsolve):
     def doLock(self, lockfile = YUM_PID_FILE):
         """perform the yum locking, raise yum-based exceptions, not OSErrors"""
         
-        # if we're not root then lock the cache
         if self.conf.uid != 0:
+            #  If we are a user, assume we are using the root cache ... so don't
+            # bother locking.
+            if self.conf.cache:
+                return
             root = self.conf.cachedir
             # Don't want <cachedir>/var/run/yum.pid ... just: <cachedir>/yum.pid
             lockfile = os.path.basename(lockfile)
