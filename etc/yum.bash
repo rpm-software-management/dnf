@@ -176,9 +176,13 @@ _yum()
 {
     COMPREPLY=()
     local yum=$1
-    local cur
-    type _get_cword &>/dev/null && cur=`_get_cword` || cur=$2
-    local prev=$3
+    local cur prev
+    local -a words
+    if type _get_comp_words_by_ref &>/dev/null ; then
+        _get_comp_words_by_ref cur prev words
+    else
+        cur=$2 prev=$3 words=("${COMP_WORDS[@]}")
+    fi
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
         groupinfo groupinstall grouplist groupremove help history info install
@@ -186,12 +190,12 @@ _yum()
         shell update upgrade version )
 
     local i c cmd subcmd
-    for (( i=1; i < ${#COMP_WORDS[@]}-1; i++ )) ; do
-        [[ -n $cmd ]] && subcmd=${COMP_WORDS[i]} && break
+    for (( i=1; i < ${#words[@]}-1; i++ )) ; do
+        [[ -n $cmd ]] && subcmd=${words[i]} && break
         # Recognize additional commands and aliases
         for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
             groupupdate grouperase localinstall localupdate whatprovides ; do
-            [[ ${COMP_WORDS[i]} == $c ]] && cmd=$c && break
+            [[ ${words[i]} == $c ]] && cmd=$c && break
         done
     done
 
