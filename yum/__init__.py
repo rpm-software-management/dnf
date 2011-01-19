@@ -1437,10 +1437,11 @@ class YumBase(depsolve.Depsolve):
         self.rpmdb.transactionResultVersion(frpmdbv)
 
         # transaction has started - all bets are off on our saved ts file
-        try:
-            os.unlink(self._ts_save_file)
-        except (IOError, OSError), e:
-            pass
+        if self._ts_save_file is not None:
+            try:
+                os.unlink(self._ts_save_file)
+            except (IOError, OSError), e:
+                pass
         self._ts_save_file = None
         
         errors = self.ts.run(cb.callback, '')
