@@ -4561,16 +4561,25 @@ class YumBase(depsolve.Depsolve):
                         keyurl, info['hexkeyid']))
                     key_installed = True
                     continue
-
                 # Try installing/updating GPG key
                 if is_cakey:
+                    # know where the 'imported_cakeys' file is
+                    ikf = repo.base_persistdir + '/imported_cakeys'
                     keytype = 'CA'
+                    cakeys  = []
+                    try:
+                        cakeys_d = open(ikf, 'r').read()
+                        cakeys = cakeys_d.split('\n')
+                    except (IOError, OSError):
+                        pass
+                    if str(info['hexkeyid']) in cakeys:
+                        key_installed = True
                 else:
                     keytype = 'GPG'
-
-                if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
-                    key_installed = True
-                else:
+                    if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
+                        key_installed = True
+                        
+                if not key_installed:
                     self._getKeyImportMessage(info, keyurl, keytype)
                     rc = False
                     if self.conf.assumeyes:
@@ -4591,7 +4600,18 @@ class YumBase(depsolve.Depsolve):
                     raise Errors.YumBaseError, _('Key import failed')
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
-
+                # write out the key id to imported_cakeys in the repos basedir
+                if is_cakey and key_installed:
+                    if info['hexkeyid'] not in cakeys:
+                        ikfo = open(ikf, 'a')
+                        try:
+                            ikfo.write(info['hexkeyid']+'\n')
+                            ikfo.flush()
+                            ikfo.close()
+                        except (IOError, OSError):
+                            # maybe a warning - but in general this is not-critical, just annoying to the user
+                            pass
+                        
         if not key_installed:
             raise Errors.YumBaseError, \
                   _('The GPG keys listed for the "%s" repository are ' \
