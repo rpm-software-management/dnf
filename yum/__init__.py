@@ -349,7 +349,10 @@ class YumBase(depsolve.Depsolve):
 
         # who are we:
         self.conf.uid = os.geteuid()
-        
+        # repos are ver/arch specific so add $basearch/$releasever
+        self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
+               % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
+                  self.yumvar.get('releasever', '$releasever')))        
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         self.plugins.run('init')
@@ -418,10 +421,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
-                # repos are ver/arch specific so add $basearch/$releasever
-                self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
-                     % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
-                        self.yumvar.get('releasever', '$releasever')))
+
                 thisrepo.base_persistdir = self.conf._repos_persistdir
 
 
