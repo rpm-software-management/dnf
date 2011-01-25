@@ -1486,7 +1486,12 @@ class YumBase(depsolve.Depsolve):
 
         
         # drop out the rpm cache so we don't step on bad hdr indexes
-        self.rpmdb.dropCachedDataPostTransaction(list(self.tsInfo))
+        if (self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) or
+            resultobject.return_code):
+            self.rpmdb.dropCachedData()
+        else:
+            self.rpmdb.dropCachedDataPostTransaction(list(self.tsInfo))
+
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
