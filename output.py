@@ -1936,6 +1936,9 @@ to exit.
             of a package(s) instead of via. transactions. """
         tids = self.history.search(extcmds)
         limit = None
+        if extcmds and not tids:
+            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            return 1, ['Failed history packages-list']
         if not tids:
             limit = 20
 

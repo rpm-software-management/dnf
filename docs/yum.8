@@ -73,7 +73,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
-.I \fR * history [info|list|summary|redo|undo|new|addon-info] 
+.I \fR * history [info|list|packages-list|summary|redo|undo|new|addon-info] 
 .br
 .I \fR * check
 .br 
@@ -316,8 +316,12 @@ The undo/redo commands take either a transaction id or the keyword last and
 an offset from the last transaction (Eg. if you've done 250 transactions,
 "last" refers to transaction 250, and "last-4" refers to transaction 246).
 
+The addon-info command takes a transaction ID, and the packages-list command
+takes a package (with wildcards).
+
 In "history list" output the Altered column also gives some extra information
-if there was something not good with the transaction.
+if there was something not good with the transaction (this is also shown at the
+end of the package column in the packages-list command).
 
 .I \fB>\fR - The rpmdb was changed, outside yum, after the transaction.
 .br
