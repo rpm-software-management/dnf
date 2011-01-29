@@ -1619,6 +1619,18 @@ to exit.
 
             self._historyInfoCmd(mobj)
 
+    def _hpkg2from_repo(self, hpkg):
+        """ Given a pkg, find the ipkg.ui_from_repo ... if none, then
+            get an apkg. ... and put a ? in there. """
+        ipkgs = self.rpmdb.searchPkgTuple(hpkg.pkgtup)
+        if not ipkgs:
+            apkgs = self.pkgSack.searchPkgTuple(hpkg.pkgtup)
+            if not apkgs:
+                return '?'
+            return '@?' + str(apkgs[0].repoid)
+
+        return ipkgs[0].ui_from_repo
+
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
 
@@ -1631,7 +1643,8 @@ to exit.
                                           _pkg_states_available.values())])[-1]
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
-        def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False):
+        def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
+                        pkg_max_len=0):
             prefix = " " * prefix_len
             if was_installed:
                 _pkg_states = _pkg_states_installed
@@ -1655,7 +1668,9 @@ to exit.
             else:
                 (hibeg, hiend) = self._highlight('normal')
             state = utf8_width_fill(state, _pkg_states['maxlen'])
-            print "%s%s%s%s %s" % (prefix, hibeg, state, hiend, hpkg)
+            print "%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
+                                        pkg_max_len, hpkg,
+                                        self._hpkg2from_repo(hpkg))
 
         if type(old.tid) == type([]):
             print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
@@ -1732,24 +1747,31 @@ to exit.
                     print _("Additional non-default information stored: %d" 
                                 % len(non_default))
 
-        print _("Transaction performed with:")
+        if old.trans_with:
+            # This is _possible_, but not common
+            print _("Transaction performed with:")
+            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_with))
         for hpkg in old.trans_with:
-            _simple_pkg(hpkg, 4, was_installed=True)
+            _simple_pkg(hpkg, 4, was_installed=True, pkg_max_len=pkg_max_len)
         print _("Packages Altered:")
         self.historyInfoCmdPkgsAltered(old, pats)
 
         if old.trans_skip:
             print _("Packages Skipped:")
+            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
         for hpkg in old.trans_skip:
-            _simple_pkg(hpkg, 4)
+            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len)
 
         if old.rpmdb_problems:
             print _("Rpmdb Problems:")
         for prob in old.rpmdb_problems:
             key = "%s%s: " % (" " * 4, prob.problem)
             print self.fmtKeyValFill(key, prob.text)
+            if prob.packages:
+                pkg_max_len = max((len(str(hpkg)) for hpkg in prob.packages))
             for hpkg in prob.packages:
-                _simple_pkg(hpkg, 8, was_installed=True, highlight=hpkg.main)
+                _simple_pkg(hpkg, 8, was_installed=True, highlight=hpkg.main,
+                            pkg_max_len=pkg_max_len)
 
         if old.output:
             print _("Scriptlet output:")
@@ -1783,10 +1805,13 @@ to exit.
         # version in the transaction and now.
         all_uistates = self._history_state2uistate
         maxlen = 0
+        pkg_max_len = 0
         for hpkg in old.trans_data:
             uistate = all_uistates.get(hpkg.state, hpkg.state)
             if maxlen < len(uistate):
                 maxlen = len(uistate)
+            if pkg_max_len < len(str(hpkg)):
+                pkg_max_len = len(str(hpkg))
 
         for hpkg in old.trans_data:
             prefix = " " * 4
@@ -1813,18 +1838,18 @@ to exit.
                   hpkg.state == 'Update'):
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
             elif (last is not None and
                   last.state == 'Downgrade' and last.name == hpkg.name and
                   hpkg.state == 'Downgraded'):
                 ln = len(hpkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
             else:
                 last = None
                 if hpkg.state in ('Updated', 'Downgrade'):
                     last = hpkg
-                print "%s%s%s%s %s" % (prefix, hibeg, uistate, hiend, cn)
+            print "%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
+                                        pkg_max_len, cn,
+                                        self._hpkg2from_repo(hpkg))
 
     def historySummaryCmd(self, extcmds):
         tids, printall = self._history_list_transactions(extcmds)
