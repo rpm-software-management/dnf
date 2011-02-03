@@ -1069,6 +1069,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             
         if self.sourcerpm:
             msg += """    <rpm:sourcerpm>%s</rpm:sourcerpm>\n""" % misc.to_xml(self.sourcerpm)
+        else: # b/c yum 2.4.3 and OLD y-m-p willgfreak out if it is not there.
+            msg += """    <rpm:sourcerpm/>\n"""
+        
         msg +="""    <rpm:header-range start="%s" end="%s"/>""" % (self.hdrstart,
                                                                self.hdrend)
         msg += self._dump_pco('provides')
