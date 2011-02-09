@@ -110,12 +110,14 @@ class TransactionWrapper:
         """tests the ts we've setup, takes a callback function and a conf dict 
            for flags and what not"""
     
+        origflags = self.getTsFlags()
         self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
         # FIXME GARBAGE - remove once this is reimplemented elsehwere
         # KEEPING FOR API COMPLIANCE ONLY
         if conf.get('diskspacecheck') == 0:
             self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
         tserrors = self.ts.run(cb.callback, '')
+        self.ts.setFlags(origflags)
     
         reserrors = []
         if tserrors:
