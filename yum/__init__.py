@@ -4804,6 +4804,12 @@ class YumBase(depsolve.Depsolve):
     
     def _doTestTransaction(self,callback,display=None):
         ''' Do the RPM test transaction '''
+        self.initActionTs()
+        # save our dsCallback out
+        dscb = self.dsCallback
+        self.dsCallback = None # dumb, dumb dumb dumb!
+        self.populateTs( keepold=0 ) # sigh
+
         # This can be overloaded by a subclass.    
         if self.conf.rpm_check_debug:
             self.verbose_logger.log(logginglevels.INFO_2, 
@@ -4833,14 +4839,7 @@ class YumBase(depsolve.Depsolve):
         # overwrite the default display class
         if display:
             testcb.display = display
-        # clean out the ts b/c we have to give it new paths to the rpms 
-        del self.ts
   
-        self.initActionTs()
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs( keepold=0 ) # sigh
         tserrors = self.ts.test( testcb, conf=tsConf )
         del testcb
   
@@ -4870,10 +4869,6 @@ class YumBase(depsolve.Depsolve):
 
     def _run_rpm_check_debug(self):
         results = []
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs(test=1)
         self.ts.check()
         for prob in self.ts.problems():
             #  Newer rpm (4.8.0+) has problem objects, older have just strings.
@@ -4881,7 +4876,6 @@ class YumBase(depsolve.Depsolve):
             # now just be compatible.
             results.append(to_str(prob))
 
-        self.dsCallback = dscb
         return results
 
     def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):

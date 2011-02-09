@@ -504,6 +504,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return 1
         
+        self.initActionTs()
+        # save our dsCallback out
+        dscb = self.dsCallback
+        self.dsCallback = None # dumb, dumb dumb dumb!
+        self.populateTs(keepold=0) # sigh
+
         if self.conf.rpm_check_debug:
             rcd_st = time.time()
             self.verbose_logger.log(yum.logginglevels.INFO_2, 
@@ -537,12 +543,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             
         
         testcb = RPMTransaction(self, test=True)
-        
-        self.initActionTs()
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs(keepold=0) # sigh
         tserrors = self.ts.test(testcb)
         del testcb
 
