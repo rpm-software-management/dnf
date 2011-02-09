@@ -210,7 +210,7 @@ def main(args):
     except IOError, e:
         return exIOError(e)
 
-    # rpm_check_debug failed.
+    # rpm ts.check() failed.
     if type(return_code) == type((0,)) and len(return_code) == 2:
         (result, resultmsgs) = return_code
         for msg in resultmsgs:

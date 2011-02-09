@@ -510,30 +510,29 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs(keepold=0) # sigh
 
-        if self.conf.rpm_check_debug:
-            rcd_st = time.time()
-            self.verbose_logger.log(yum.logginglevels.INFO_2, 
-                 _('Running rpm_check_debug'))
-            msgs = self.ts.check()
-            if msgs:
-                rpmlib_only = True
-                for msg in msgs:
-                    if msg.startswith('rpmlib('):
-                        continue
-                    rpmlib_only = False
-                if rpmlib_only:
-                    print _("ERROR You need to update rpm to handle:")
-                else:
-                    print _('ERROR with rpm_check_debug vs depsolve:')
+        rcd_st = time.time()
+        self.verbose_logger.log(yum.logginglevels.INFO_2, 
+             _('Running Transaction Check'))
+        msgs = self.ts.check()
+        if msgs:
+            rpmlib_only = True
+            for msg in msgs:
+                if msg.startswith('rpmlib('):
+                    continue
+                rpmlib_only = False
+            if rpmlib_only:
+                print _("ERROR You need to update rpm to handle:")
+            else:
+                print _('ERROR with transaction check vs depsolve:')
 
-                for msg in msgs:
-                    print to_utf8(msg)
+            for msg in msgs:
+                print to_utf8(msg)
 
-                if rpmlib_only:
-                    return 1, [_('RPM needs to be updated')]
-                return 1, [_('Please report this error in %s') % self.conf.bugtracker_url]
+            if rpmlib_only:
+                return 1, [_('RPM needs to be updated')]
+            return 1, [_('Please report this error in %s') % self.conf.bugtracker_url]
 
-            self.verbose_logger.debug('rpm_check_debug time: %0.3f' % (time.time() - rcd_st))
+        self.verbose_logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
 
         tt_st = time.time()            
         self.verbose_logger.log(yum.logginglevels.INFO_2,

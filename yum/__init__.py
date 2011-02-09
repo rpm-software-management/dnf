@@ -4811,25 +4811,24 @@ class YumBase(depsolve.Depsolve):
         self.populateTs( keepold=0 ) # sigh
 
         # This can be overloaded by a subclass.    
-        if self.conf.rpm_check_debug:
-            self.verbose_logger.log(logginglevels.INFO_2, 
-                 _('Running rpm_check_debug'))
-            msgs = self.ts.check()
-            if msgs:
-                rpmlib_only = True
-                for msg in msgs:
-                    if msg.startswith('rpmlib('):
-                        continue
-                    rpmlib_only = False
-                if rpmlib_only:
-                    retmsgs = [_("ERROR You need to update rpm to handle:")]
-                    retmsgs.extend(msgs)
-                    raise Errors.YumRPMCheckError, retmsgs
-                retmsgs = [_('ERROR with rpm_check_debug vs depsolve:')]
-                retmsgs.extend(msgs) 
-                retmsgs.append(_('Please report this error at %s') 
-                                             % self.conf.bugtracker_url)
-                raise Errors.YumRPMCheckError,retmsgs
+        self.verbose_logger.log(logginglevels.INFO_2, 
+                 _('Running Transaction Check'))
+        msgs = self.ts.check()
+        if msgs:
+            rpmlib_only = True
+            for msg in msgs:
+                if msg.startswith('rpmlib('):
+                    continue
+                rpmlib_only = False
+            if rpmlib_only:
+                retmsgs = [_("ERROR You need to update rpm to handle:")]
+                retmsgs.extend(msgs)
+                raise Errors.YumRPMCheckError, retmsgs
+            retmsgs = [_('ERROR with transaction check vs depsolve:')]
+            retmsgs.extend(msgs) 
+            retmsgs.append(_('Please report this error at %s') 
+                                         % self.conf.bugtracker_url)
+            raise Errors.YumRPMCheckError,retmsgs
         
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure

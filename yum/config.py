@@ -691,6 +691,7 @@ class YumConf(StartupConf):
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
     # Time in seconds (1 day). NOTE: This isn't used when using metalinks
     mirrorlist_expire = SecondsOption(60 * 60 * 24)
+    # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
     skip_broken = BoolOption(False)
