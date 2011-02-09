@@ -98,6 +98,9 @@ class TransactionWrapper:
     def isTsFlagSet(self, flag):
         val = self.getTsFlags()
         return bool(flag & val)
+
+    def setScriptFd(self, fd):
+        self.ts.scriptFd = fd.fileno()
         
 #    def addProblemFilter(self, filt):
 #        curfilter = self.ts.setProbFilter(0)
