@@ -514,7 +514,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             rcd_st = time.time()
             self.verbose_logger.log(yum.logginglevels.INFO_2, 
                  _('Running rpm_check_debug'))
-            msgs = self._run_rpm_check_debug()
+            msgs = self.ts.check()
             if msgs:
                 rpmlib_only = True
                 for msg in msgs:

@@ -13,6 +13,7 @@
 
 import rpm
 import miscutils
+from yum.i18n import to_str
 
 read_ts = None
 ts = None
@@ -23,7 +24,6 @@ class TransactionWrapper:
     def __init__(self, root='/'):
         self.ts = rpm.TransactionSet(root)
         self._methods = ['dbMatch',
-                         'check',
                          'order',
                          'addErase',
                          'addInstall',
@@ -53,6 +53,17 @@ class TransactionWrapper:
             self.ts.closeDB()
             self.ts = None
             self.open = False
+
+    def check(self):
+        results = []
+        self.ts.check()
+        for prob in self.ts.problems():
+            #  Newer rpm (4.8.0+) has problem objects, older have just strings.
+            #  Should probably move to using the new objects, when we can. For
+            # now just be compatible.
+            results.append(to_str(prob))
+
+        return results
 
     def __getattr__(self, attr):
         if attr in self._methods:
