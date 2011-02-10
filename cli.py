@@ -540,6 +540,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if not self.conf.diskspacecheck:
             self.tsInfo.probFilterFlags.append(rpm.RPMPROB_FILTER_DISKSPACE)
             
+        self.ts.order() # order the transaction
+        self.ts.clean() # release memory not needed beyond this point
         
         testcb = RPMTransaction(self, test=True)
         tserrors = self.ts.test(testcb)
@@ -554,7 +556,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                  self.errorSummary(errstring)
         self.verbose_logger.log(yum.logginglevels.INFO_2,
              _('Transaction Test Succeeded'))
-        del self.ts
         
         self.verbose_logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
         
@@ -562,11 +563,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         signal.signal(signal.SIGQUIT, signal.SIG_DFL)
         
         ts_st = time.time()
-        self.initActionTs() # make a new, blank ts to populate
-        self.populateTs(keepold=0) # populate the ts
-        self.ts.check() #required for ordering
-        self.ts.order() # order
-        self.ts.clean() # release memory not needed beyond this point
 
         # put back our depcheck callback
         self.dsCallback = dscb
