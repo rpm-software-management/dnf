@@ -36,7 +36,7 @@ import rpmUtils.miscutils
 def safe_iterparse(filename):
     """ Works like iterparse, but hides XML errors (prints a warning). """
     try:
-        for event, elem in safe_iterparse(filename):
+        for event, elem in iterparse(filename):
             yield event, elem
     except SyntaxError: # Bad XML
         print >> sys.stderr, "File is not valid XML:", filename
