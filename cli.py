@@ -566,6 +566,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.populateTs(keepold=0) # populate the ts
         self.ts.check() #required for ordering
         self.ts.order() # order
+        self.ts.clean() # release memory not needed beyond this point
 
         # put back our depcheck callback
         self.dsCallback = dscb
