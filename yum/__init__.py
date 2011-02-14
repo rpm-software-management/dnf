@@ -1440,7 +1440,7 @@ class YumBase(depsolve.Depsolve):
             # write the saved transaction data to the addon location in history
             # so we can pull it back later if we need to
             savetx_msg = open(self._ts_save_file, 'r').read()
-            self.history.write_addon_data('txfile', savetx_msg)
+            self.history.write_addon_data('saved_tx', savetx_msg)
 
             try:
                 os.unlink(self._ts_save_file)
