@@ -1435,9 +1435,13 @@ class YumBase(depsolve.Depsolve):
         # will be we store what we thought, not what happened (so it'll be an
         # invalid cache).
         self.rpmdb.transactionResultVersion(frpmdbv)
-
         # transaction has started - all bets are off on our saved ts file
         if self._ts_save_file is not None:
+            # write the saved transaction data to the addon location in history
+            # so we can pull it back later if we need to
+            savetx_msg = open(self._ts_save_file, 'r').read()
+            self.history.write_addon_data('txfile', savetx_msg)
+
             try:
                 os.unlink(self._ts_save_file)
             except (IOError, OSError), e:
