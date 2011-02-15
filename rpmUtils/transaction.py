@@ -23,8 +23,7 @@ ts = None
 class TransactionWrapper:
     def __init__(self, root='/'):
         self.ts = rpm.TransactionSet(root)
-        self._methods = ['dbMatch',
-                         'order',
+        self._methods = ['order',
                          'addErase',
                          'addInstall',
                          'run',
@@ -60,6 +59,17 @@ class TransactionWrapper:
             results.append(to_str(prob))
 
         return results
+
+    def dbMatch(self, *args, **kwds):
+        if 'patterns' in kwds:
+            patterns = kwds.pop('patterns')
+        else:
+            patterns = []
+
+        mi = self.ts.dbMatch(*args, **kwds)
+        for (tag, tp, pat) in patterns:
+            mi.pattern(tag, tp, pat)
+        return mi
 
     def __getattr__(self, attr):
         if attr in self._methods:
