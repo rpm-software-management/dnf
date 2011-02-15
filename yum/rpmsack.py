@@ -1204,28 +1204,6 @@ class RPMDBPackageSack(PackageSackBase):
         if self.auto_close:
             self.ts.close()
 
-    def _header_from_index(self, idx):
-        """returns a package header having been given an index"""
-        warnings.warn('_header_from_index() will go away in a future version of Yum.\n',
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        ts = self.readOnlyTS()
-        try:
-            mi = ts.dbMatch(0, idx)
-        except (TypeError, StopIteration), e:
-            #FIXME: raise some kind of error here
-            print 'No index matching %s found in rpmdb, this is bad' % idx
-            yield None # it should REALLY not be returning none - this needs to be right
-        else:
-            hdr = mi.next()
-            yield hdr
-            del hdr
-
-        del mi
-        if self.auto_close:
-            self.ts.close()
-
-
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''List of matching packages, to zero or more of NEVRA.'''
         if name is not None and name in self._pkgname_fails:
