@@ -234,7 +234,7 @@ class RPMDBPackageSack(PackageSackBase):
                 self._simple_pkgtup_list = csumpkgtups.keys()
 
         if not self._simple_pkgtup_list:
-            for (hdr, mi) in self._all_packages():
+            for (hdr, mi) in self._get_packages():
                 self._simple_pkgtup_list.append(self._hdr2pkgTuple(hdr))
             
         return self._simple_pkgtup_list
@@ -607,7 +607,7 @@ class RPMDBPackageSack(PackageSackBase):
 
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
-            for hdr, idx in self._all_packages():
+            for hdr, idx in self._get_packages():
                 if self._match_repattern(rpats, hdr, ignore_case):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
@@ -1168,7 +1168,7 @@ class RPMDBPackageSack(PackageSackBase):
         if not lowered:
             searchstrings = map(lambda x: x.lower(), searchstrings)
         ret = []
-        for hdr, idx in self._all_packages():
+        for hdr, idx in self._get_packages():
             n = self._find_search_fields(fields, searchstrings, hdr)
             if n > 0:
                 ret.append((self._makePackageObject(hdr, idx), n))
@@ -1190,16 +1190,17 @@ class RPMDBPackageSack(PackageSackBase):
         return [ self._makePackageObject(h, mi) for (h, mi) in ts.returnLeafNodes(headers=True) ]
         
     # Helper functions
-    def _all_packages(self):
-        '''Generator that yield (header, index) for all packages
+    def _get_packages(self, *args, **kwds):
+        '''dbMatch() wrapper generator that yields (header, index) for matches
         '''
         ts = self.readOnlyTS()
-        mi = ts.dbMatch()
 
-        for hdr in mi:
-            if hdr['name'] != 'gpg-pubkey':
-                yield (hdr, mi.instance())
+        mi = ts.dbMatch(*args, **kwds)
+        for h in mi:
+            if h['name'] != 'gpg-pubkey':
+                yield (h, mi.instance())
         del mi
+
         if self.auto_close:
             self.ts.close()
 
@@ -1323,7 +1324,7 @@ class RPMDBPackageSack(PackageSackBase):
     def getHdrList(self):
         warnings.warn('getHdrList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-        return [ hdr for hdr, idx in self._all_packages() ]
+        return [ hdr for hdr, idx in self._get_packages() ]
 
     def getNameArchPkgList(self):
         warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
