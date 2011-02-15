@@ -3430,7 +3430,6 @@ class YumBase(depsolve.Depsolve):
                 pkgs = po.obsoletedBy(pkgs, limit=1)
                 if pkgs:
                     already_obs = pkgs[0]
-                    continue
 
                 if already_obs:
                     self.verbose_logger.warning(_('Package %s is obsoleted by %s which is already installed'), 
