@@ -378,54 +378,36 @@ class RPMDBPackageSack(PackageSackBase):
         pass
 
     def searchAll(self, name, query_type='like'):
-        ts = self.readOnlyTS()
         result = {}
 
         # check provides
         tag = self.DEP_TABLE['provides'][0]
-        mi = ts.dbMatch()
-        mi.pattern(tag, rpm.RPMMIRE_GLOB, name)
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            pkg = self._makePackageObject(hdr, mi.instance())
+        mi = self._get_packages(patterns=[(tag, rpm.RPMMIRE_GLOB, name)])
+        for hdr, idx in mi:
+            pkg = self._makePackageObject(hdr, idx)
             result.setdefault(pkg.pkgid, pkg)
-        del mi
 
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
             result.setdefault(pkg.pkgid, pkg)
         
-        if self.auto_close:
-            self.ts.close()
-
         return result.values()
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
 
-        ts = self.readOnlyTS()
         result = {}
         
         name = os.path.normpath(name)
-        mi = ts.dbMatch('basenames', name)
         # Note that globs can't be done. As of 4.8.1:
         #   mi.pattern('basenames', rpm.RPMMIRE_GLOB, name)
         # ...produces no results.
 
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            pkg = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in self._get_packages('basenames', name):
+            pkg = self._makePackageObject(hdr, idx)
             result.setdefault(pkg.pkgid, pkg)
-        del mi
 
-        result = result.values()
-
-        if self.auto_close:
-            self.ts.close()
-
-        return result
+        return result.values()
         
     def searchPrco(self, name, prcotype):
 
@@ -438,21 +420,15 @@ class RPMDBPackageSack(PackageSackBase):
         if misc.re_glob(n):
             glob = True
             
-        ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
-        mi = ts.dbMatch(tag, misc.to_utf8(n))
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            po = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in self._get_packages(tag, misc.to_utf8(n)):
+            po = self._makePackageObject(hdr, idx)
             if not glob:
                 if po.checkPrco(prcotype, (n, f, (e,v,r))):
                     result[po.pkgid] = po
             else:
                 result[po.pkgid] = po
-        del mi
-
 
         # If it's not a provides or filename, we are done
         if prcotype == 'provides' and name[0] == '/':
@@ -462,9 +438,6 @@ class RPMDBPackageSack(PackageSackBase):
         
         result = result.values()
         self._cache[prcotype][name] = result
-
-        if self.auto_close:
-            self.ts.close()
 
         return result
 
@@ -636,18 +609,13 @@ class RPMDBPackageSack(PackageSackBase):
 
         if self._cached_conflicts_data is None:
             result = {}
-            ts = self.readOnlyTS()
-            mi = ts.dbMatch('conflictname')
 
-            for hdr in mi:
-                if hdr['name'] == 'gpg-pubkey': # Just in case...
-                    continue
-
+            for hdr, idx in self._get_packages('conflictname'):
                 if not hdr[rpm.RPMTAG_CONFLICTNAME]:
                     # Pre. rpm-4.9.x the above dbMatch() does nothing.
                     continue
 
-                po = self._makePackageObject(hdr, mi.instance())
+                po = self._makePackageObject(hdr, idx)
                 result[po.pkgid] = po
                 if po._has_hdr:
                     continue # Unlikely, but, meh...
@@ -658,9 +626,6 @@ class RPMDBPackageSack(PackageSackBase):
                 po._has_hdr = False
                 del po.hdr
             self._cached_conflicts_data = result.values()
-
-            if self.auto_close:
-                self.ts.close()
 
         return self._cached_conflicts_data
 
@@ -1233,18 +1198,16 @@ class RPMDBPackageSack(PackageSackBase):
 
         ts = self.readOnlyTS()
         if name is not None:
-            mi = ts.dbMatch('name', name)
+            mi = self._get_packages('name', name)
         elif arch is not None:
-            mi = ts.dbMatch('arch', arch)
+            mi = self._get_packages('arch', arch)
         else:
-            mi = ts.dbMatch()
+            mi = self._get_packages()
             self._completely_loaded = True
 
         done = False
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            po = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in mi:
+            po = self._makePackageObject(hdr, idx)
             #  We create POs out of all matching names, even if we don't return
             # them.
             self._pkgnames_loaded.add(po.name)
@@ -1255,9 +1218,6 @@ class RPMDBPackageSack(PackageSackBase):
                     break
             else:
                 ret.append(po)
-
-        if self.auto_close:
-            self.ts.close()
 
         if not done and name is not None:
             self._pkgname_fails.add(name)
