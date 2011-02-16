@@ -625,7 +625,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                      ", ".join(matches))
             self.verbose_logger.log(yum.logginglevels.INFO_2, to_unicode(msg))
 
-    def _checkMaybeYouMeant(self, arg, always_output=True):
+    def _checkMaybeYouMeant(self, arg, always_output=True, rpmdb_only=False):
         """ If the update/remove argument doesn't match with case, or due
             to not being installed, tell the user. """
         # always_output is a wart due to update/remove not producing the
@@ -634,7 +634,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # skip it.
         if not arg or arg[0] == '@':
             return
-        matches = self.doPackageLists(patterns=[arg], ignore_case=False)
+        
+        pkgnarrow='all'
+        if rpmdb_only:
+            pkgnarrow='installed'
+        
+        matches = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=[arg], ignore_case=False)
         if (matches.installed or (not matches.available and
                                   self.returnInstalledPackagesByDep(arg))):
             return # Found a match so ignore
@@ -647,7 +652,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return
 
         # No package name, so do the maybeYouMeant thing here too
-        matches = self.doPackageLists(patterns=[arg], ignore_case=True)
+        matches = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=[arg], ignore_case=True)
         if not matches.installed and matches.available:
             self.verbose_logger.log(yum.logginglevels.INFO_2,
                 _('Package(s) %s%s%s available, but not installed.'),
@@ -818,7 +823,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for arg in userlist:
             rms = self.remove(pattern=arg)
             if not rms:
-                self._checkMaybeYouMeant(arg, always_output=False)
+                self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
             all_rms.extend(rms)
         
         if all_rms:
