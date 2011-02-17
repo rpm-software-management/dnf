@@ -220,8 +220,12 @@ class Depsolve(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
+                # grab essential data for callback use in hdr-like form
+                minhdr = {}
+                for item in ['epoch', 'name', 'version', 'release', 'arch']:
+                    minhdr[item] = hdr[item]
                 
-                self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)
+                self.ts.addInstall(hdr, (minhdr, rpmfile), txmbr.ts_state)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
