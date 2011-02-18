@@ -574,6 +574,11 @@ class YumBase(depsolve.Depsolve):
 
             self.getReposFromConfig()
 
+        #  For rhnplugin, and in theory other stuff, calling
+        # .getReposFromConfig() recurses back into this function but only once.
+        # This means that we have two points on the stack leaving the above call
+        # but only one of them can do the repos setup. BZ 678043.
+        if hasattr(self, 'prerepoconf'):
             # Recursion
             prerepoconf = self.prerepoconf
             del self.prerepoconf
