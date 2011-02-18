@@ -626,13 +626,14 @@ class CheckUpdateCommand(YumCommand):
         checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
+        obscmds = ['obsoletes'] + extcmds
         base.extcmds.insert(0, 'updates')
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
             if (base.conf.obsoletes or
                 base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
-                typl = base.returnPkgLists(['obsoletes'])
+                typl = base.returnPkgLists(obscmds)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
