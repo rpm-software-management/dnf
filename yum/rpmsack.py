@@ -71,9 +71,15 @@ class RPMInstalledPackage(YumInstalledPackage):
         # Prevent access of __foo__, _cached_foo etc from loading the header 
         if varname.startswith('_'):
             raise AttributeError, "%s has no attribute %s" % (self, varname)
-            
-        self.hdr = val = self._get_hdr()
-        self._has_hdr = True
+
+        if varname != 'hdr': # Don't cache the hdr, unless explicitly requested
+            #  Note that we don't even cache the .blah value, but looking up the
+            # header is _really_ fast so it's not obvious any of it is worth it.
+            # This is different to prco etc. data, which is loaded separately.
+            val = self._get_hdr()
+        else:
+            self.hdr = val = self._get_hdr()
+            self._has_hdr = True
         if varname != 'hdr':   #  This is unusual, for anything that happens
             val = val[varname] # a lot we should preload at __init__.
                                # Also note that pkg.no_value raises KeyError.
