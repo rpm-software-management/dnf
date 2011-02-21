@@ -4484,17 +4484,20 @@ class YumBase(depsolve.Depsolve):
         be imported using askcb.
         
         @param po: Package object to retrieve the key of.
-        @param askcb: Callback function to use for asking for verification.
+        @param askcb: Callback function to use for asking for permission to
+                      import a key. This is verification, but also "choice".
                       Takes arguments of the po, the userid for the key, and
                       the keyid.
-        @param fullaskcb: Callback function to use for asking for verification
-                          of a key. Differs from askcb in that it gets passed
-                          a dictionary so that we can expand the values passed.
+        @param fullaskcb: Callback function to use for asking for permission to
+                          import a key. This is verification, but also "choice".
+                          Differs from askcb in that it gets passed a
+                          dictionary so that we can expand the values passed.
         """
         repo = self.repos.getRepo(po.repoid)
         keyurls = repo.gpgkey
         key_installed = False
 
+        user_cb_fail = False
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl, repo)
 
@@ -4531,7 +4534,8 @@ class YumBase(depsolve.Depsolve):
                         rc = askcb(po, info['userid'], info['hexkeyid'])
 
                     if not rc:
-                        raise Errors.YumBaseError, _("Not installing key")
+                        user_cb_fail = True
+                        continue
                     
                 # Import the key
                 ts = self.rpmdb.readOnlyTS()
@@ -4541,6 +4545,9 @@ class YumBase(depsolve.Depsolve):
                           _('Key import failed (code %d)') % result
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
+
+        if not key_installed and user_cb_fail:
+            raise Errors.YumBaseError, _("Didn't install any keys")
 
         if not key_installed:
             raise Errors.YumBaseError, \
@@ -4565,11 +4572,13 @@ class YumBase(depsolve.Depsolve):
         @param destdir: destination of the gpg pub ring
         @param keyurl_list: list of urls for gpg keys
         @param is_cakey: bool - are we pulling in a ca key or not
-        @param callback: Callback function to use for asking for verification
-                          of a key. Takes a dictionary of key info.
+        @param callback: Callback function to use for asking for permission to
+                         import a key. This is verification, but also "choice".
+                         Takes a dictionary of key info.
         """
 
         key_installed = False
+        user_cb_fail = False
         for keyurl in keyurl_list:
             keys = self._retrievePublicKey(keyurl, repo, getSig=not is_cakey)
             for info in keys:
@@ -4610,7 +4619,8 @@ class YumBase(depsolve.Depsolve):
 
 
                     if not rc:
-                        raise Errors.YumBaseError, _("Not installing key for repo %s") % repo
+                        user_cb_fail = True
+                        continue
                 
                 # Import the key
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
@@ -4629,7 +4639,10 @@ class YumBase(depsolve.Depsolve):
                         except (IOError, OSError):
                             # maybe a warning - but in general this is not-critical, just annoying to the user
                             pass
-                        
+
+        if not key_installed and user_cb_fail:
+            raise Errors.YumBaseError, _("Didn't install any keys for repo %s") % repo
+
         if not key_installed:
             raise Errors.YumBaseError, \
                   _('The GPG keys listed for the "%s" repository are ' \
