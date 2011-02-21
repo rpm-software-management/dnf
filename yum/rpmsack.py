@@ -42,11 +42,6 @@ class RPMInstalledPackage(YumInstalledPackage):
     def __init__(self, rpmhdr, index, rpmdb):
         self._has_hdr = True
         YumInstalledPackage.__init__(self, rpmhdr, yumdb=rpmdb.yumdb)
-        # NOTE: We keep summary/description/url because it doesn't add much
-        # and "yum search" uses them all.
-        self.url       = rpmhdr['url']
-        # Also keep sourcerpm for pirut/etc.
-        self.sourcerpm = rpmhdr['sourcerpm']
 
         self.idx   = index
         self.rpmdb = rpmdb

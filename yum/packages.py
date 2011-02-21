@@ -1246,18 +1246,32 @@ class YumHeaderPackage(YumAvailablePackage):
         self.ver = self.version
         self.rel = self.release
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
-        # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
-        self.summary = self.hdr['summary'] or ''
-        self.summary = misc.share_data(self.summary.replace('\n', ''))
-        self.description = self.hdr['description'] or ''
-        self.description = misc.share_data(self.description)
+        self._loaded_summary = None
+        self._loaded_description = None
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
         self.packagesize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False
-        
+
+    def _loadSummary(self):
+        # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
+        if self._loaded_summary is None:
+            summary = self._get_hdr()['summary'] or ''
+            summary = misc.share_data(summary.replace('\n', ''))
+            self._loaded_summary = summary
+        return self._loaded_summary
+    summary = property(lambda x: x._loadSummary())
+
+    def _loadDescription(self):
+        if self._loaded_description is None:
+            description = self._get_hdr()['description'] or ''
+            description = misc.share_data(description)
+            self._loaded_description = description
+        return self._loaded_description
+    description = property(lambda x: x._loadDescription())
+
     def __str__(self):
         if self.epoch == '0':
             val = '%s-%s-%s.%s' % (self.name, self.version, self.release,
