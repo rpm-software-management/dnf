@@ -4821,7 +4821,7 @@ class YumBase(depsolve.Depsolve):
         # This can be overloaded by a subclass.    
         self.verbose_logger.log(logginglevels.INFO_2, 
                  _('Running Transaction Check'))
-        msgs = self.ts.check()
+        msgs = self._run_rpm_check()
         if msgs:
             rpmlib_only = True
             for msg in msgs:
@@ -4873,6 +4873,17 @@ class YumBase(depsolve.Depsolve):
         if display:
             cb.display = display
         self.runTransaction( cb=cb )
+
+    def _run_rpm_check(self):
+        results = []
+        self.ts.check()
+        for prob in self.ts.problems():
+            #  Newer rpm (4.8.0+) has problem objects, older have just strings.
+            #  Should probably move to using the new objects, when we can. For
+            # now just be compatible.
+            results.append(to_str(prob))
+
+        return results
 
     def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
         """add and enable a repo with just a baseurl/mirrorlist and repoid
