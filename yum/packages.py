@@ -1845,7 +1845,6 @@ class YumInstalledPackage(YumHeaderPackage):
                 my_mode = my_st.st_mode
                 if 'ghost' in ftypes: #  This is what rpm does, although it
                     my_mode &= 0777   # doesn't usually get here.
-                    mode    &= 0777
                 if check_perms and pf.verify_mode and my_mode != pf.mode:
                     prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
                     prob.database_value = pf.mode
