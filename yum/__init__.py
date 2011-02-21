@@ -1029,6 +1029,11 @@ class YumBase(depsolve.Depsolve):
         for txmbr in txmbrs:
             if kern_pkgtup is not None and txmbr.pkgtup == kern_pkgtup:
                 pass
+            elif kern_pkgtup is not None and txmbr.name == kern_pkgtup[0]:
+                #  We don't care if they've explicitly set protected on the
+                # kernel package. Because we don't allow you to uninstall the
+                # running one so it has _special_ semantics anyway.
+                continue
             elif txmbr.name not in protected:
                 continue
             if txmbr.name not in bad_togo:
