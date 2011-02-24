@@ -402,11 +402,10 @@ class RPMTransaction:
     
     
     def _transStart(self, bytes, total, h):
-        if bytes == 6:
-            self.total_actions = total
-            if self.test: return
-            self.trans_running = True
-            self.ts_all() # write out what transaction will do
+        self.total_actions = total
+        if self.test: return
+        self.trans_running = True
+        self.ts_all() # write out what transaction will do
 
     def _transProgress(self, bytes, total, h):
         pass
