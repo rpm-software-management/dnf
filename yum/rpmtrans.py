@@ -174,7 +174,7 @@ class RPMTransaction:
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         self.trans_running = False
-        self.filehandles = {}
+        self.fd = None
         self.total_actions = 0
         self.total_installed = 0
         self.complete_actions = 0
@@ -254,12 +254,6 @@ class RPMTransaction:
 
         return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
 
-    def _makeHandle(self, hdr):
-        handle = '%s:%s.%s-%s-%s' % (hdr['epoch'], hdr['name'], hdr['version'],
-          hdr['release'], hdr['arch'])
-
-        return handle
-    
     def ts_done(self, package, action):
         """writes out the portions of the transaction which have completed"""
         
@@ -425,18 +419,16 @@ class RPMTransaction:
         hdr = None
         if h is not None:
             hdr, rpmloc = h[0], h[1]
-            handle = self._makeHandle(hdr)
             try:
-                fd = os.open(rpmloc, os.O_RDONLY)
-            except OSError, e:
+                self.fd = file(rpmloc)
+            except IOError, e:
                 self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
             else:
-                self.filehandles[handle]=fd
                 if self.trans_running:
                     self.total_installed += 1
                     self.complete_actions += 1
                     self.installed_pkg_names.append(hdr['name'])
-                return fd
+                return self.fd.fileno()
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
             
@@ -444,9 +436,8 @@ class RPMTransaction:
         hdr = None
         if h is not None:
             hdr, rpmloc = h[0], h[1]
-            handle = self._makeHandle(hdr)
-            os.close(self.filehandles[handle])
-            fd = 0
+            self.fd.close()
+            self.fd = None
             if self.test: return
             if self.trans_running:
                 pkgtup = self._dopkgtup(hdr)
