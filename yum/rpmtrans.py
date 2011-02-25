@@ -178,7 +178,7 @@ class RPMTransaction:
         self.total_actions = 0
         self.total_installed = 0
         self.complete_actions = 0
-        self.installed_pkg_names = []
+        self.installed_pkg_names = set()
         self.total_removed = 0
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
@@ -426,7 +426,7 @@ class RPMTransaction:
                 if self.trans_running:
                     self.total_installed += 1
                     self.complete_actions += 1
-                    self.installed_pkg_names.append(hdr['name'])
+                    self.installed_pkg_names.add([hdr['name']])
                 return self.fd.fileno()
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
