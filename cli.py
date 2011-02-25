@@ -73,6 +73,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.yum_cli_commands = {}
+        self.use_txmbr_in_callback = True
         self.registerCommand(yumcommands.InstallCommand())
         self.registerCommand(yumcommands.UpdateCommand())
         self.registerCommand(yumcommands.InfoCommand())
