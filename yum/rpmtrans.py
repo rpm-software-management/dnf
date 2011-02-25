@@ -25,6 +25,7 @@ import types
 import sys
 from yum.constants import *
 from yum import _
+from yum.transactioninfo import TransactionMember
 import misc
 import tempfile
 
@@ -258,7 +259,9 @@ class RPMTransaction:
     # the exact txmbr but we always have a name, so return (name, txmbr)
     # tuples so callers have less twists to deal with.
     def _getTxmbr(self, cbkey):
-        if isinstance(cbkey, tuple):
+        if isinstance(cbkey, TransactionMember):
+            return (cbkey.name, cbkey)
+        elif isinstance(cbkey, tuple):
             pkgtup = self._dopkgtup(cbkey[0])
             txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
             # if this is not one, somebody screwed up

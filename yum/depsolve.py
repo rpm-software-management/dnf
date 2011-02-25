@@ -69,6 +69,8 @@ class Depsolve(object):
         self._ts = None
         self._tsInfo = None
         self.dsCallback = None
+        # Callback-style switch, default to legacy (hdr, file) mode
+        self.use_txmbr_in_callback = False
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
 
@@ -220,8 +222,13 @@ class Depsolve(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
+                # New-style callback with just txmbr instead of full headers?
+                if self.use_txmbr_in_callback:
+                    cbkey = txmbr
+                else:
+                    cbkey = (hdr, rpmfile)
                 
-                self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)
+                self.ts.addInstall(hdr, cbkey, txmbr.ts_state)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
