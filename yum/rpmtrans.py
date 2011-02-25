@@ -254,6 +254,21 @@ class RPMTransaction:
 
         return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
 
+    # Find out txmbr based on the callback key. On erasures we dont know
+    # the exact txmbr but we always have a name, so return (name, txmbr)
+    # tuples so callers have less twists to deal with.
+    def _getTxmbr(self, cbkey):
+        if isinstance(cbkey, tuple):
+            pkgtup = self._dopkgtup(cbkey[0])
+            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            # if this is not one, somebody screwed up
+            assert len(txmbrs) == 1
+            return (txmbrs[0].name, txmbrs[0])
+        elif isinstance(cbkey, basestring):
+            return (cbkey, None)
+        else:
+            return (None, None)
+
     def ts_done(self, package, action):
         """writes out the portions of the transaction which have completed"""
         
@@ -415,9 +430,9 @@ class RPMTransaction:
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
-        hdr = None
-        if h is not None:
-            hdr, rpmloc = h[0], h[1]
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
+            rpmloc = txmbr.po.localPkg()
             try:
                 self.fd = file(rpmloc)
             except IOError, e:
@@ -426,48 +441,41 @@ class RPMTransaction:
                 if self.trans_running:
                     self.total_installed += 1
                     self.complete_actions += 1
-                    self.installed_pkg_names.add([hdr['name']])
+                    self.installed_pkg_names.add(name)
                 return self.fd.fileno()
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
             
     def _instCloseFile(self, bytes, total, h):
-        hdr = None
-        if h is not None:
-            hdr, rpmloc = h[0], h[1]
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
             self.fd.close()
             self.fd = None
             if self.test: return
             if self.trans_running:
-                pkgtup = self._dopkgtup(hdr)
-                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-                for txmbr in txmbrs:
-                    self.display.filelog(txmbr.po, txmbr.output_state)
-                    self._scriptout(txmbr.po)
-                    # NOTE: We only do this for install, not erase atm.
-                    #       because we don't get pkgtup data for erase (this 
-                    #       includes "Updated" pkgs).
-                    pid   = self.base.history.pkg2pid(txmbr.po)
-                    state = self.base.history.txmbr2state(txmbr)
-                    self.base.history.trans_data_pid_end(pid, state)
-                    self.ts_done(txmbr.po, txmbr.output_state)
+                self.display.filelog(txmbr.po, txmbr.output_state)
+                self._scriptout(txmbr.po)
+                # NOTE: We only do this for install, not erase atm.
+                #       because we don't get pkgtup data for erase (this 
+                #       includes "Updated" pkgs).
+                pid   = self.base.history.pkg2pid(txmbr.po)
+                state = self.base.history.txmbr2state(txmbr)
+                self.base.history.trans_data_pid_end(pid, state)
+                self.ts_done(txmbr.po, txmbr.output_state)
     
     def _instProgress(self, bytes, total, h):
-        if h is not None:
-            # If h is a string, we're repackaging.
+        name, txmbr = self._getTxmbr(h)
+        if name is not None:
+            # If we only have a name, we're repackaging.
             # Why the RPMCALLBACK_REPACKAGE_PROGRESS flag isn't set, I have no idea
-            if type(h) == type(""):
-                self.display.event(h, 'repackaging',  bytes, total,
+            if txmbr is None:
+                self.display.event(name, 'repackaging',  bytes, total,
                                 self.complete_actions, self.total_actions)
-
             else:
-                hdr, rpmloc = h[0], h[1]
-                pkgtup = self._dopkgtup(hdr)
-                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-                for txmbr in txmbrs:
-                    action = txmbr.output_state
-                    self.display.event(txmbr.po, action, bytes, total,
-                                self.complete_actions, self.total_actions)
+                action = txmbr.output_state
+                self.display.event(txmbr.po, action, bytes, total,
+                            self.complete_actions, self.total_actions)
+
     def _unInstStart(self, bytes, total, h):
         pass
         
@@ -475,20 +483,21 @@ class RPMTransaction:
         pass
     
     def _unInstStop(self, bytes, total, h):
+        name, txmbr = self._getTxmbr(h)
         self.total_removed += 1
         self.complete_actions += 1
-        if h not in self.installed_pkg_names:
-            self.display.filelog(h, TS_ERASE)
+        if name not in self.installed_pkg_names:
+            self.display.filelog(name, TS_ERASE)
             action = TS_ERASE
         else:
             action = TS_UPDATED                    
         
-        self.display.event(h, action, 100, 100, self.complete_actions,
+        self.display.event(name, action, 100, 100, self.complete_actions,
                             self.total_actions)
-        self._scriptout(h)
+        self._scriptout(name)
         
         if self.test: return # and we're done
-        self.ts_done(h, action)
+        self.ts_done(name, action)
         
         
     def _rePackageStart(self, bytes, total, h):
@@ -501,20 +510,16 @@ class RPMTransaction:
         pass
         
     def _cpioError(self, bytes, total, h):
-        hdr, rpmloc = h[0], h[1]
-        pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-        for txmbr in txmbrs:
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
             txmbr.output_state = TS_FAILED
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
     def _unpackError(self, bytes, total, h):
-        hdr, rpmloc = h[0], h[1]
-        pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-        for txmbr in txmbrs:
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
             txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
             self.display.errorlog(msg)
@@ -522,35 +527,24 @@ class RPMTransaction:
             # right behavior should be
                 
     def _scriptError(self, bytes, total, h):
-        if not isinstance(h, types.TupleType):
-            # fun with install/erase transactions, see rhbz#484729
-            h = (h, None)
-        hdr, rpmloc = h[0], h[1]
-        remove_hdr = False # if we're in a clean up/remove then hdr will not be an rpm.hdr
-        if not isinstance(hdr, rpm.hdr):
-            txmbrs = [hdr]
-            remove_hdr = True
+        # "bytes" carries the failed scriptlet tag,
+        # "total" carries fatal/non-fatal status
+        scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
+
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is None:
+            package_name = name
         else:
-            pkgtup = self._dopkgtup(hdr)
-            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            package_name = txmbr.po
             
-        for pkg in txmbrs:
-            # "bytes" carries the failed scriptlet tag,
-            # "total" carries fatal/non-fatal status
-            scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
-            if remove_hdr:
-                package_name = pkg
-            else:
-                package_name = pkg.po
-                
-            if total:
-                msg = ("Error in %s scriptlet in rpm package %s" % 
-                        (scriptlet_name, package_name))
-                if not remove_hdr:        
-                    pkg.output_state = TS_FAILED
-            else:
-                msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
-                       (scriptlet_name, package_name))
-            self.display.errorlog(msg)
-            # FIXME - what else should we do here? raise a failure and abort?
+        if total:
+            msg = ("Error in %s scriptlet in rpm package %s" % 
+                    (scriptlet_name, package_name))
+            if txmbr is not None:        
+                txmbr.output_state = TS_FAILED
+        else:
+            msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
+                   (scriptlet_name, package_name))
+        self.display.errorlog(msg)
+        # FIXME - what else should we do here? raise a failure and abort?
     
