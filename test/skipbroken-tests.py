@@ -1,7 +1,10 @@
 import unittest
 import logging
 import sys
+import re
 from testbase import *
+
+REGEX_PKG = re.compile(r"(\d*):?(.*)-(.*)-(.*)\.(.*)$")
 
 class SkipBrokenTests(DepsolveTests):
     ''' Test cases to test skip-broken'''
@@ -20,6 +23,36 @@ class SkipBrokenTests(DepsolveTests):
         po = FakePackage(name, version, release, epoch, arch, repo=self.repo)
         self.rpmdb.addPackage(po)
         return po
+
+    def _pkgstr_to_nevra(self, pkg_str):
+        '''
+        Get a nevra from from a epoch:name-version-release.arch string
+        @param pkg_str: package string
+        '''
+        res = REGEX_PKG.search(pkg_str)
+        if res:
+            (e,n,v,r,a) = res.groups()
+            if e == "": 
+                e = "0"
+            return (n,e,v,r,a)   
+        else: 
+            raise AttributeError("Illegal package string : %s" % pkg_str)
+
+    def repoString(self, pkg_str):
+        ''' 
+        Add an available package from a epoch:name-version-release.arch string
+        '''
+        (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
+        return self.repoPackage(n,v,r,e,a)   
+                
+            
+    def instString(self, pkg_str):
+        ''' 
+        Add an installed package from a epoch:name-version-release.arch string
+        '''
+        (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
+        return self.instPackage(n,v,r,e,a)   
+
            
     def testMissingReqNoSkip(self):
         ''' install fails,  because of missing req.
@@ -671,6 +704,35 @@ class SkipBrokenTests(DepsolveTests):
         # uncomment this line and the test will fail and you can see the output
         # self.assertResult([i1])
         
+    def test_conflict_looping(self):
+        ''' 
+        Skip-broken is looping
+        https://bugzilla.redhat.com/show_bug.cgi?id=681806
+        '''
+        members = [] # the result after the transaction
+        # Installed package conflicts with u1
+        i0 = self.instString('kde-l10n-4.6.0-3.fc15.1.noarch')
+        i0.addConflicts('kdepim', 'GT', ('6', '4.5.9', '0'))
+        members.append(i0)
+        i1 = self.instString('6:kdepim-4.5.94.1-1.fc14.x86_64')
+        u1 = self.repoString('7:kdepim-4.4.10-1.fc15.x86_64')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        # u1 should be removed, because of the conflict
+        members.append(i1)
+        i2 = self.instString('6:kdepim-libs-4.5.94.1-1.fc14.x86_64')
+        u2 = self.repoString('7:kdepim-libs-4.4.10-1.fc15.x86_64')
+        self.tsInfo.addUpdate(u2, oldpo=i2)
+        members.append(u2)
+        i3 = self.instString('kdepim-runtime-libs-4.5.94.1-2.fc14.x86_64')
+        u3 = self.repoString('1:kdepim-runtime-libs-4.4.10-2.fc15.x86_64')
+        self.tsInfo.addUpdate(u3, oldpo=i3)
+        members.append(u3)
+        i4 = self.instString('kdepim-runtime-4.5.94.1-2.fc14.x86_64')
+        u4 = self.repoString('1:kdepim-runtime-4.4.10-2.fc15.x86_64')
+        self.tsInfo.addUpdate(u4, oldpo=i4)
+        members.append(u4)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
     
     
     def resolveCode(self,skip = False):

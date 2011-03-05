@@ -680,11 +680,12 @@ class Depsolve(object):
         if len(self.tsInfo) != length and txmbrs:
             return CheckDeps, errormsgs
 
-        msg = '%s conflicts with %s' % (name, conflicting_po.name)
+        msg = '%s conflicts with %s' % (name, str(conflicting_po))
         errormsgs.append(msg)
         self.verbose_logger.log(logginglevels.DEBUG_1, msg)
         CheckDeps = False
-        self.po_with_problems.add((po,None,errormsgs[-1]))
+        # report the conflicting po, so skip-broken can remove it
+        self.po_with_problems.add((po,conflicting_po,errormsgs[-1]))
         return CheckDeps, errormsgs
 
     def _undoDepInstalls(self):
