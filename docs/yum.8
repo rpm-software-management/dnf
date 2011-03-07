@@ -406,7 +406,11 @@ Doesn't limit packages to their latest versions in the info, list and search
 commands (will also affect plugins which use the doPackageLists() API).
 .IP "\fB\-\-installroot=root\fP" 
 Specifies an alternative installroot, relative to which all packages will be
-installed.
+installed. Think of this like doing "chroot <root> yum" except using
+\-\-installroot allows yum to work before the chroot is created.
+Note: You may also want to use the option \-\-releasever=/ when creating the
+installroot as otherwise the $releasever value is taken from the rpmdb within
+the installroot (and thus. will be empty, before creation).
 .br
 Configuration Option: \fBinstallroot\fP
 .IP "\fB\-\-enablerepo=repoidglob\fP"
@@ -462,9 +466,11 @@ Configuration Option: \fBskip_broken\fP
 .br
 .IP "\fB\-\-releasever=version\fP"
 Pretend the current release version is the given string. This is very useful
-when combined with \-\-installroot. Note that with the default upstream cachedir,
-of /var/cache/yum, using this option will corrupt your cache (and you can use
-$releasever in your cachedir configuration to stop this).
+when combined with \-\-installroot. You can also use \-\-releasever=/ to take
+the releasever information from outside the installroot.
+Note that with the default upstream cachedir, of /var/cache/yum, using this
+option will corrupt your cache (and you can use $releasever in your cachedir
+configuration to stop this).
 .PP 
 .IP "\fB\-t, \-\-tolerant\fP"
 This option currently does nothing.
