@@ -45,6 +45,11 @@ import yumcommands
 
 from yum.i18n import to_unicode, to_utf8
 
+#  This is for yum-utils/yumdownloader in RHEL-5, where it isn't importing this
+# directly but did do "from cli import *", and we did have this in 3.2.22. I
+# just _love_ how python re-exports these by default.
+from yum.packages import parsePackages
+
 def sigquit(signum, frame):
     """ SIGQUIT handler for the yum cli. """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
