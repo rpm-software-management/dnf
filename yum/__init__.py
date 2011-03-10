@@ -3956,11 +3956,17 @@ class YumBase(depsolve.Depsolve):
                 if (po.arch != installed_pkg.arch and
                     (isMultiLibArch(po.arch) or
                      isMultiLibArch(installed_pkg.arch))):
-                    installpkgs.append(po)
+                    if updateonly:
+                        self.logger.warning(_('Package %s.%s not installed, cannot update it. Run yum install to install it instead.'), po.name, po.arch)
+                    else:
+                        installpkgs.append(po)
                 else:
                     donothingpkgs.append(po)
             elif self.allowedMultipleInstalls(po):
-                installpkgs.append(po)
+                if updateonly:
+                    self.logger.warning(_('Package %s.%s not installed, cannot update it. Run yum install to install it instead.'), po.name, po.arch)
+                else:
+                    installpkgs.append(po)
             else:
                 donothingpkgs.append(po)
 
