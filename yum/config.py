@@ -1051,10 +1051,24 @@ def writeRawRepoFile(repo,only=None):
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)
     for name,value in repo.iteritems():
+        if value is None: # Proxy
+            continue
+
+        if only is not None and name not in only:
+            continue
+
         option = repo.optionobj(name)
-        if option.default != value or name in cfgOptions :
-            if only == None or name in only:
-                ini[section_id][name] = option.tostring(value)
+        ovalue = option.tostring(value)
+        #  If the value is the same, but just interpreted ... when we don't want
+        # to keep the interpreted values.
+        if (name in ini[section_id] and
+            ovalue == varReplace(ini[section_id][name], yumvar)):
+            ovalue = ini[section_id][name]
+
+        if name not in cfgOptions and option.default == value:
+            continue
+
+        ini[section_id][name] = ovalue
     fp =file(repo.repofile,"w")               
     fp.write(str(ini))
     fp.close()
