@@ -191,7 +191,7 @@ def main(args):
             logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
         if not base.conf.skip_broken:
             verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
-        warn_checks()
+        rpmdb_warn_checks()
         if unlock(): return 200
         return 1
     elif result == 2:
@@ -223,7 +223,7 @@ def main(args):
         (result, resultmsgs) = return_code
         for msg in resultmsgs:
             logger.critical("%s", msg)
-        warn_checks()
+        rpmdb_warn_checks()
         return_code = result
         if base._ts_save_file:
             verbose_logger.info(_("Your transaction was saved, rerun it with: yum load-transaction %s") % base._ts_save_file)
