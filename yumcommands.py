@@ -283,7 +283,7 @@ class InfoCommand(YumCommand):
         return ['info']
 
     def getUsage(self):
-        return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
+        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
 
     def getSummary(self):
         return _("Display details about a package or group of packages")
