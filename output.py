@@ -810,13 +810,13 @@ class YumOutput:
         """take a list of findDeps results and 'pretty print' the output"""
         
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
-        for pkg in results:
+        for pkg in sorted(results):
             print _("package: %s") % pkg.compactPrint()
             if len(results[pkg]) == 0:
                 print _("  No dependencies for this package")
                 continue
 
-            for req in results[pkg]:
+            for req in sorted(results[pkg]):
                 reqlist = results[pkg][req] 
                 print _("  dependency: %s") % prco_tuple_to_string(req)
                 if not reqlist:

@@ -253,7 +253,10 @@ on groups, files, provides, filelists and rpm files just like the "install" comm
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
-dependencies for the given packages.
+dependencies for the given packages. As of 3.2.30 it now just shows the latest
+version of each package that matches (this can be changed by
+using --showduplicates) and it only shows the newest providers (which can be
+changed by using --verbose).
 .IP
 .IP "\fBrepolist\fP"
 Produces a list of configured repositories. The default is to list all
