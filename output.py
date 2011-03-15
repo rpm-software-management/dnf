@@ -809,6 +809,7 @@ class YumOutput:
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
         
+        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         for pkg in results:
             print _("package: %s") % pkg.compactPrint()
             if len(results[pkg]) == 0:
@@ -822,7 +823,12 @@ class YumOutput:
                     print _("   Unsatisfied dependency")
                     continue
                 
-                for po in reqlist:
+                seen = {}
+                for po in reversed(sorted(reqlist)):
+                    key = (po.name, po.arch)
+                    if not verb and key in seen:
+                        continue
+                    seen[key] = po
                     print "   provider: %s" % po.compactPrint()
 
     def format_number(self, number, SI=0, space=' '):
