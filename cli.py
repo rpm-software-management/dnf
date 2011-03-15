@@ -1070,13 +1070,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                           os.path.exists(arg))):
                 thispkg = yum.packages.YumUrlPackage(self, self.ts, arg)
                 pkgs.append(thispkg)
+            elif self.conf.showdupesfromrepos:
+                pkgs.extend(self.pkgSack.returnPackages(patterns=[arg]))
             else:                
-                ematch, match, unmatch = self.pkgSack.matchPackageNames([arg])
-                for po in ematch + match:
-                    pkgs.append(po)
+                try:
+                    pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
+                except yum.Errors.PackageSackError:
+                    pass
                 
-            results = self.findDeps(pkgs)
-            self.depListOutput(results)
+        results = self.findDeps(pkgs)
+        self.depListOutput(results)
 
         return 0, []
 
