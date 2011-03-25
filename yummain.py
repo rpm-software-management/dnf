@@ -79,7 +79,7 @@ def main(args):
     def rpmdb_warn_checks():
         try:
             probs = base._rpmdb_warn_checks(out=verbose_logger.info, warn=False)
-        except YumBaseError, e:
+        except Errors.YumBaseError, e:
             # This is mainly for PackageSackError from rpmdb.
             verbose_logger.info(_(" Yum checks failed: %s"), exception2msg(e))
             probs = []
