@@ -757,6 +757,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             installed version is older or newer. We allow "selection" but not
             local packages (use tmprepo, or something). """
 
+        level = 'diff'
+        if userlist and userlist[0] in ('full', 'diff', 'different'):
+            level = userlist[0]
+            userlist = userlist[1:]
+            if level == 'different':
+                level = 'diff'
+
         dupdates = []
         ipkgs = {}
         for pkg in sorted(self.rpmdb.returnPackages(patterns=userlist)):
@@ -794,8 +801,31 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
             ipkg = ipkgs[ipkgname]
             apkg = apkgs[ipkgname]
-            if ipkg.verEQ(apkg):
+            if ipkg.verEQ(apkg): # Latest installed == Latest avail.
+                if level == 'diff':
+                    continue
+
+                # level == full: do reinstalls if checksum doesn't match.
+                #                do removals, if older installed versions.
+                for napkg in self.rpmdb.searchNames([ipkgname]):
+                    if (not self.allowedMultipleInstalls(apkg) and
+                        not napkg.verEQ(ipkg)):
+                        dupdates.extend(self.remove(po=napkg))
+                        continue
+
+                    nayi = napkg.yumdb_info
+                    for apkg in self.pkgSack.searchPkgTuple(napkg.pkgtup):
+                        if ('checksum_type' in nayi and
+                            'checksum_data' in nayi and
+                            nayi.checksum_type == apkg.checksum_type and
+                            nayi.checksum_data == apkg.pkgId):
+                            found = True
+                            break
+                    if found:
+                        continue
+                    dupdates.extend(self.reinstall(pkgtup=napkg.pkgtup))
                 continue
+
             if self.allowedMultipleInstalls(apkg):
                 found = False
                 for napkg in self.rpmdb.searchNames([apkg.name]):
