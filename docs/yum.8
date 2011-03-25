@@ -132,6 +132,11 @@ is done by either obsoleting, upgrading or downgrading as appropriate. This will
 package FOO installed at version 4, and the latest available is only
 version 3, then this command will \fBdowngrade\fP FOO to version 3.
 
+If you give the optional argument "full", then the command will also reinstall
+packages where the install checksum and the available checksum do not match. And
+remove old packages (can be used to sync. rpmdb versions). The optional argument
+"different" can be used to specify the default operation.
+
 This command does not perform operations on groups, local packages or negative
 selections.
 .IP 
