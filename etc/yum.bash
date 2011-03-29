@@ -213,10 +213,9 @@ _yum()
             ;;
 
         clean)
-            if [ "$prev" = clean ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -W 'expire-cache packages headers
                     metadata cache dbcache all' -- "$cur" ) )
-            fi
             return 0
             ;;
 
@@ -250,15 +249,14 @@ _yum()
             ;;
 
         help)
-            if [ "$prev" = help ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -W '${cmds[@]}' -- "$cur" ) )
-            fi
             return 0
             ;;
 
         history)
             case $prev in
-                history)
+                $cmd)
                     COMPREPLY=( $( compgen -W 'info list summary undo redo
                         new addon-info package-list' -- "$cur" ) )
                     ;;
@@ -290,10 +288,9 @@ _yum()
             ;;
 
         list)
-            if [ "$prev" = list ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -W 'all available updates installed
                     extras obsoletes recent' -- "$cur" ) )
-            fi
             return 0
             ;;
 
@@ -303,16 +300,14 @@ _yum()
             ;;
 
         repolist)
-            if [ "$prev" = repolist ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -W 'all enabled disabled' -- "$cur" ) )
-            fi
             return 0
             ;;
 
         shell)
-            if [ "$prev" = shell ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
-            fi
             return 0
             ;;
 
@@ -322,10 +317,9 @@ _yum()
             return 0
             ;;
         version)
-            if [ "$prev" = version ] ; then
+            [ "$prev" = "$cmd" ] && \
                 COMPREPLY=( $( compgen -W 'all installed available nogroups
                     grouplist groupinfo' -- "$cur" ) )
-            fi
             return 0
             ;;
     esac
