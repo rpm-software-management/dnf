@@ -2830,9 +2830,7 @@ class YumBase(depsolve.Depsolve):
             if 'optional' in package_types:
                 pkgs.extend(thisgroup.optional_packages)
 
-            if not pkgs:
-                self.logger.critical(_('Warning: Group %s does not have any packages.'), thisgroup.groupid)
-
+            old_txmbrs = len(txmbrs_used)
             for pkg in pkgs:
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
@@ -2850,6 +2848,7 @@ class YumBase(depsolve.Depsolve):
             if enable_group_conditionals is not None: # has to be this way so we can set it to False
                 group_conditionals = enable_group_conditionals
 
+            count_cond_test = 0
             if group_conditionals:
                 for condreq, cond in thisgroup.conditional_packages.iteritems():
                     if self.isPackageInstalled(cond):
@@ -2882,10 +2881,15 @@ class YumBase(depsolve.Depsolve):
                                 pkgs = use
                                
                         pkgs = packagesNewestByName(pkgs)
+                        count_cond_test += len(pkgs)
 
                         if cond not in self.tsInfo.conditionals:
                             self.tsInfo.conditionals[cond] = []
                         self.tsInfo.conditionals[cond].extend(pkgs)
+            if len(txmbrs_used) == old_txmbrs:
+                self.logger.critical(_('Warning: Group %s does not have any packages.'), thisgroup.groupid)
+                if count_cond_test:
+                    self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'), count_cond_test)
         return txmbrs_used
 
     def deselectGroup(self, grpid, force=False):
