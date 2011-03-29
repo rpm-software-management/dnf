@@ -221,7 +221,7 @@ _yum()
 
         deplist)
             COMPREPLY=( $( compgen -f -o plusdirs -X '!*.[rs]pm' -- "$cur" ) )
-            [[ "$cur" == */* ]] || _yum_list all "$cur"
+            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list all "$cur"
             return 0
             ;;
 
@@ -234,7 +234,7 @@ _yum()
 
         downgrade|reinstall)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* ]] || _yum_list installed "$cur"
+            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list installed "$cur"
             return 0
             ;;
 
@@ -283,7 +283,7 @@ _yum()
 
         install)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* ]] || _yum_list available "$cur"
+            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list available "$cur"
             return 0
             ;;
 
@@ -313,7 +313,7 @@ _yum()
 
         update|upgrade)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* ]] || _yum_list updates "$cur"
+            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list updates "$cur"
             return 0
             ;;
         version)
