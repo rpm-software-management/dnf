@@ -226,13 +226,20 @@ _yum()
             return 0
             ;;
 
+        distro-sync|distribution-synchronization)
+            [ "$prev" = "$cmd" ] && \
+                COMPREPLY=( $( compgen -W 'full different' -- "$cur" ) )
+            _yum_list installed "$cur"
+            return 0
+            ;;
+
         downgrade|reinstall)
             _yum_binrpmfiles "$cur"
             [[ "$cur" == */* ]] || _yum_list installed "$cur"
             return 0
             ;;
 
-        erase|remove|distro-sync|distribution-synchronization)
+        erase|remove)
             _yum_list installed "$cur"
             return 0
             ;;
