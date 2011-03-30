@@ -23,9 +23,13 @@ gnome\-packagekit application\&.
 .br 
 .I \fR * update [package1] [package2] [\&.\&.\&.]
 .br 
+.I \fR * update-to [package1] [package2] [\&.\&.\&.]
+.br 
 .I \fR * check\-update
 .br 
 .I \fR * upgrade [package1] [package2] [\&.\&.\&.] 
+.br
+.I \fR * upgrade-to [package1] [package2] [\&.\&.\&.] 
 .br
 .I \fR * distribution-synchronization [package1] [package2] [\&.\&.\&.] 
 .br
@@ -112,6 +116,16 @@ If the main obsoletes configure option is true (default) or the \-\-obsoletes
 flag is present \fByum\fP will include package 
 obsoletes in its calculations - this makes it better for distro\-version 
 changes, for example: upgrading from somelinux 8.0 to somelinux 9.
+
+Note that "\fBupdate\fP" works on installed packages first, and only if there
+are no matches does it look for available packages. The difference is most
+noticable when you do "\fBupdate\fP foo-1-2" which will act exactly as
+"\fBupdate\fP foo" if foo-1-2 is installed. You can use the "\fBupdate-to\fP"
+if you'd prefer that nothing happen in the above case.
+.IP 
+.IP "\fBupdate-to\fP"
+This command works like "\fBupdate\fP" but always specifies the version of the
+package we want to update to.
 .IP 
 .IP "\fBcheck\-update\fP"
 Implemented so you could know if your machine had any updates that needed to
@@ -124,6 +138,10 @@ Running in verbose mode also shows obsoletes.
 .IP "\fBupgrade\fP"
 Is the same as the update command with the \-\-obsoletes flag set. See update 
 for more details.
+.IP 
+.IP "\fBupgrade-to\fP"
+This command works like "\fBupgrade\fP" but always specifies the version of the
+package we want to update to.
 .IP 
 .IP "\fBdistribution\-synchronization\fP or \fBdistro\-sync\fP"
 Synchronizes the installed package set with the latest packages available, this
