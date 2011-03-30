@@ -24,6 +24,7 @@ import re
 import fnmatch
 import misc
 from packages import parsePackages
+import rpmUtils.miscutils
 from rpmUtils.miscutils import compareEVR
 
 class PackageSackVersion:
@@ -702,6 +703,10 @@ class PackageSack(PackageSackBase):
     def getProvides(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching provides }"""
         self._checkIndexes(failure='build')
+        if version is None:
+            version = (None, None, None)
+        elif type(version) in (str, type(None), unicode):
+            version = rpmUtils.miscutils.stringToVersion(version)
         result = { }
         for po in self.provides.get(name, []):
             hits = po.matchingPrcos('provides', (name, flags, version))
@@ -716,6 +721,10 @@ class PackageSack(PackageSackBase):
     def getRequires(self, name, flags=None, version=(None, None, None)):
         """return dict { packages -> list of matching requires }"""
         self._checkIndexes(failure='build')
+        if version is None:
+            version = (None, None, None)
+        elif type(version) in (str, type(None), unicode):
+            version = rpmUtils.miscutils.stringToVersion(version)
         result = { }
         for po in self.requires.get(name, []):
             hits = po.matchingPrcos('requires', (name, flags, version))

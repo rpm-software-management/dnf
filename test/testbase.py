@@ -18,6 +18,8 @@ from yum.rpmsack import RPMDBPackageSack as _rpmdbsack
 import inspect
 from rpmUtils import arch
 from rpmUtils.transaction import initReadOnlyTransaction
+import rpmUtils.miscutils
+
 
 #############################################################
 ### Helper classes ##########################################
@@ -320,6 +322,8 @@ class FakeRpmDb(packageSack.PackageSack):
         # convert flags & version for unversioned reqirements
         if not version:
             version=(None, None, None)
+        if type(version) in (str, type(None), unicode):
+            version = rpmUtils.miscutils.stringToVersion(version)
         if flags == '0':
             flags=None
         for po in self.provides.get(name, []):
