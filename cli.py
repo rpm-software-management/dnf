@@ -713,7 +713,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
         
-    def updatePkgs(self, userlist, quiet=0):
+    def updatePkgs(self, userlist, quiet=0, update_to=False):
         """take user commands and populate transaction wrapper with 
            packages to be updated"""
         
@@ -740,7 +740,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     userlist.remove(item)
                 
             for arg in userlist:
-                if not self.update(pattern=arg):
+                if not self.update(pattern=arg, update_to=update_to):
                     self._checkMaybeYouMeant(arg)
 
         if len(self.tsInfo) > oldcount:

@@ -3005,9 +3005,28 @@ class YumBase(depsolve.Depsolve):
 
         if not depstring:
             return []
-        results = self.pkgSack.searchProvides(depstring)
-        return results
-        
+
+        # parse the string out
+        #  either it is 'dep (some operator) e:v-r'
+        #  or /file/dep
+        #  or packagename
+        if type(depstring) == types.TupleType:
+            (depname, depflags, depver) = depstring
+        else:
+            depname = depstring
+            depflags = None
+            depver = None
+
+            if depstring[0] != '/':
+                # not a file dep - look at it for being versioned
+                dep_split = depstring.split()
+                if len(dep_split) == 3:
+                    depname, flagsymbol, depver = dep_split
+                    if not flagsymbol in SYMBOLFLAGS:
+                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                    depflags = SYMBOLFLAGS[flagsymbol]
+
+        return self.pkgSack.getProvides(depname, depflags, depver).keys()
 
     def returnPackageByDep(self, depstring):
         """Pass in a generic [build]require string and this function will 
@@ -3563,7 +3582,7 @@ class YumBase(depsolve.Depsolve):
             txmbr.reason = 'dep'
         return txmbr
 
-    def update(self, po=None, requiringPo=None, **kwargs):
+    def update(self, po=None, requiringPo=None, update_to=False, **kwargs):
         """try to mark for update the item(s) specified. 
             po is a package object - if that is there, mark it for update,
             if possible
@@ -3634,26 +3653,37 @@ class YumBase(depsolve.Depsolve):
             if kwargs['pattern'] and kwargs['pattern'][0] == '@':
                 return self._at_groupinstall(kwargs['pattern'])
 
-            (e, m, u) = self.rpmdb.matchPackageNames([kwargs['pattern']])
-            instpkgs.extend(e)
-            instpkgs.extend(m)
+            arg = kwargs['pattern']
+            if not update_to:
+                instpkgs  = self.rpmdb.returnPackages(patterns=[arg])
+            else:
+                availpkgs = self.pkgSack.returnPackages(patterns=[arg])
 
-            if u:
+            if not instpkgs and not availpkgs:
                 depmatches = []
-                arg = u[0]
                 try:
-                    depmatches = self.returnInstalledPackagesByDep(arg)
+                    if update_to:
+                        depmatches = self.returnPackagesByDep(arg)
+                    else:
+                        depmatches = self.returnInstalledPackagesByDep(arg)
                 except yum.Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
-                
-                instpkgs.extend(depmatches)
+
+                if update_to:
+                    availpkgs.extend(depmatches)
+                else:
+                    instpkgs.extend(depmatches)
 
             #  Always look for available packages, it doesn't seem to do any
             # harm (apart from some time). And it fixes weird edge cases where
             # "update a" (which requires a new b) is different from "update b"
             try:
-                pats = [kwargs['pattern']]
-                m = self.pkgSack.returnNewestByNameArch(patterns=pats)
+                if update_to:
+                    m = []
+                else:
+                    pats = [kwargs['pattern']]
+                    # pats += list(set([pkg.name for pkg in instpkgs]))
+                    m = self.pkgSack.returnNewestByNameArch(patterns=pats)
             except Errors.PackageSackError:
                 m = []
             availpkgs.extend(m)

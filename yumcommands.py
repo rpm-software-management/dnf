@@ -207,7 +207,7 @@ class InstallCommand(YumCommand):
 
 class UpdateCommand(YumCommand):
     def getNames(self):
-        return ['update']
+        return ['update', 'update-to']
 
     def getUsage(self):
         return _("[PACKAGE...]")
@@ -223,7 +223,7 @@ class UpdateCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Update Process"))
         try:
-            return base.updatePkgs(extcmds)
+            return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -691,7 +691,7 @@ class SearchCommand(YumCommand):
 
 class UpgradeCommand(YumCommand):
     def getNames(self):
-        return ['upgrade']
+        return ['upgrade', 'upgrade-to']
 
     def getUsage(self):
         return 'PACKAGE...'
@@ -708,7 +708,7 @@ class UpgradeCommand(YumCommand):
         base.conf.obsoletes = 1
         self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
-            return base.updatePkgs(extcmds)
+            return base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
