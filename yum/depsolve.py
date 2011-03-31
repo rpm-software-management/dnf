@@ -350,6 +350,7 @@ class Depsolve(object):
             providers = self.rpmdb.getProvides(needname, needflags, needversion)
 
         for inst_po in providers:
+            self._working_po = inst_po # store the last provider
             inst_str = '%s.%s %s:%s-%s' % inst_po.pkgtup
             (i_n, i_a, i_e, i_v, i_r) = inst_po.pkgtup
             self.verbose_logger.log(logginglevels.DEBUG_2,
@@ -753,6 +754,7 @@ class Depsolve(object):
 
 
             # check global FileRequires
+            self._working_po = None # reset the working po
             if CheckRemoves:
                 CheckRemoves = False
                 for po, dep in self._checkFileRequires():
@@ -766,6 +768,7 @@ class Depsolve(object):
                     continue
 
             # check Conflicts
+            self._working_po = None # reset the working po
             if CheckInstalls:
                 CheckInstalls = False
                 for conflict in self._checkConflicts():
