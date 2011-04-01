@@ -1434,7 +1434,8 @@ class YumOptionParser(OptionParser):
                          '-e', '--errorlevel',
                          '--installroot',
                          '--disableplugin', '--enableplugin', '--releasever',
-                         '--setopt'), 
+                         '--setopt',
+                         '--'),
                         args)
         except ValueError, arg:
             self.base.usage()
