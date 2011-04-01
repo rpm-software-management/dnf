@@ -256,6 +256,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # apply some of the options to self.conf
         (opts, self.cmds) = self.optparser.setupYumConfig(args=args)
 
+        if opts.version:
+            opts.quiet = True
+            opts.verbose = False
+
         #  Check that firstParse didn't miss anything, and warn the user if it
         # did ... because this is really magic, and unexpected.
         if opts.quiet:
