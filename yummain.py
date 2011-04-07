@@ -61,7 +61,7 @@ def main(args):
         if exitmsg:
             logger.warn('\n\n%s', exitmsg)
         if unlock(): return 200
-        return e.exitstatus
+        return 1
 
     def exFatal(e):
         logger.critical('\n\n%s', exception2msg(e.value))

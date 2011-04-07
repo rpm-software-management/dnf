@@ -63,7 +63,7 @@ from yum.i18n import utf8_width
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
 # then the minor number must be incremented.
-API_VERSION = '2.7'
+API_VERSION = '2.6'
 
 class DeprecatedInt(int):
     '''
@@ -107,10 +107,9 @@ SLOTS = sorted(SLOT_TO_CONDUIT.keys())
 class PluginYumExit(Exception):
     '''Used by plugins to signal that yum should stop
     '''
-    def __init__(self, value="", translation_domain="", exitstatus=1):
+    def __init__(self, value="", translation_domain=""):
         self.value = value
         self.translation_domain = translation_domain
-        self.exitstatus = exitstatus
     def __str__(self):
         if self.translation_domain:
             return gettext.dgettext(self.translation_domain, self.value)
