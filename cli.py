@@ -1434,8 +1434,7 @@ class YumOptionParser(OptionParser):
                          '-e', '--errorlevel',
                          '--installroot',
                          '--disableplugin', '--enableplugin', '--releasever',
-                         '--setopt',
-                         '--'),
+                         '--setopt'),
                         args)
         except ValueError, arg:
             self.base.usage()
@@ -1699,6 +1698,7 @@ def _filtercmdline(novalopts, valopts, args):
 
     Will raise ValueError if there was a problem parsing the command line.
     '''
+    # ' xemacs syntax hack
     out = []
     args = list(args)       # Make a copy because this func is destructive
 
@@ -1708,6 +1708,9 @@ def _filtercmdline(novalopts, valopts, args):
             opt, _ = a.split('=', 1)
             if opt in valopts:
                 out.append(a)
+
+        elif a == '--':
+            out.append(a)
 
         elif a in novalopts:
             out.append(a)
