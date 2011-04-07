@@ -497,11 +497,9 @@ class RpmBase(object):
             else:
                 pri_only = False
 
-            files = self.returnFileEntries('file', pri_only) + \
-                    self.returnFileEntries('dir', pri_only) + \
-                    self.returnFileEntries('ghost', pri_only)
-            if reqtuple[0] in files:
-                return True
+            for ftype in ('file', 'dir', 'ghost'):
+                if reqtuple[0] in self.returnFileEntries(ftype, pri_only):
+                    return True
         
         return False
         
