@@ -1132,7 +1132,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         raise NotImplementedError()
                     
     def _dump_requires(self):
-        """returns deps in format"""
+        """returns deps in XML format"""
         mylist = self._requires_with_pre()
 
         msg = ""
