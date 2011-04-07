@@ -1151,8 +1151,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if name.startswith('rpmlib('):
                 continue
             # this drops out requires that the pkg provides for itself.
-            if name in self.provides_names or name in self.filelist + \
-                                                self.dirlist + self.ghostlist:
+            if name in self.provides_names or \
+                    (name.startswith('/') and \
+                         (name in self.filelist or name in self.dirlist or
+                          name in self.ghostlist)):
                 if not flags:
                     continue
                 else:
