@@ -733,6 +733,82 @@ class SkipBrokenTests(DepsolveTests):
         members.append(u4)
         self.assertEquals('ok', *self.resolveCode(skip=True))
         self.assertResult(members)
+
+    def test_skipbroken_001(self):
+        ''' 
+        this will pass
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult(members)
+
+
+    def test_skipbroken_002(self):
+        ''' 
+        this will pass
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        # this is just junk to make the transaction big
+        i1 = self.instString('afoobar-0.4.12-2.fc12.noarch')
+        u1 = self.repoString('afoobar-0.4.14-1.fc14.noarch')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        members.append(u1)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
+
+    def test_skipbroken_003(self):
+        ''' 
+        this will fail, because of a bug in the skip-broken code.
+        it will remove the wrong package (zfoobar) instead of openssl.
+        the problem is that self._working_po is not set with the right value
+        when checking file requires for installed packages after the transaction
+        if resolved. (_resolveRequires)
+        if fails because self._working_po contains the last package processed in the transaction
+        zfoobar, so it will be removed.
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        
+        This should not fail anymore, after the the self._working_po is reset in depsolver
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        # this is just junk to make the transaction big
+        i1 = self.instString('zfoobar-0.4.12-2.fc12.noarch')
+        u1 = self.repoString('zfoobar-0.4.14-1.fc14.noarch')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        members.append(u1)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
     
     
     def resolveCode(self,skip = False):

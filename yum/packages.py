@@ -497,11 +497,9 @@ class RpmBase(object):
             else:
                 pri_only = False
 
-            files = self.returnFileEntries('file', pri_only) + \
-                    self.returnFileEntries('dir', pri_only) + \
-                    self.returnFileEntries('ghost', pri_only)
-            if reqtuple[0] in files:
-                return True
+            for ftype in ('file', 'dir', 'ghost'):
+                if reqtuple[0] in self.returnFileEntries(ftype, pri_only):
+                    return True
         
         return False
         
@@ -1132,7 +1130,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         raise NotImplementedError()
                     
     def _dump_requires(self):
-        """returns deps in format"""
+        """returns deps in XML format"""
         mylist = self._requires_with_pre()
 
         msg = ""
@@ -1153,8 +1151,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if name.startswith('rpmlib('):
                 continue
             # this drops out requires that the pkg provides for itself.
-            if name in self.provides_names or name in self.filelist + \
-                                                self.dirlist + self.ghostlist:
+            if name in self.provides_names or \
+                    (name.startswith('/') and \
+                         (name in self.filelist or name in self.dirlist or
+                          name in self.ghostlist)):
                 if not flags:
                     continue
                 else:

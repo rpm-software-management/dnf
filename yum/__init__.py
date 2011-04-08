@@ -1125,6 +1125,9 @@ class YumBase(depsolve.Depsolve):
             self.rpmdb.transactionReset()
             self.installedFileRequires = None # Kind of hacky
             self.verbose_logger.debug("SKIPBROKEN: ########### Round %i ################" , count)
+            if count == 30: # Failsafe, to avoid endless looping
+                self.verbose_logger.debug('SKIPBROKEN: Too many loops ')
+                break
             self._printTransaction()        
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
@@ -1140,7 +1143,7 @@ class YumBase(depsolve.Depsolve):
                 for skip in skipped:
                     skipped_po.add(skip)
                     # make sure we get the compat arch packages skip from pkgSack and up too.
-                    if skip not in removed_from_sack and skip.repoid == 'installed':
+                    if skip not in removed_from_sack and skip.repoid != 'installed':
                         _remove_from_sack(skip)
             # Nothing was removed, so we still got a problem
              # the first time we get here we reset the resolved members of
