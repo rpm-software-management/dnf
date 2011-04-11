@@ -318,6 +318,13 @@ is not registered.
 Path to the SSL client certificate yum should use to connect to repos/remote sites
 Defaults to none.
 
+Note that if you are using curl compiled against NSS (default in Fedora/RHEL),
+curl treats sslclientcert values with the same basename as _identical_. This
+version of yum will check that this isn't true and output an error when the
+repositories "foo" and "bar" violate this, like so:
+
+sslclientcert basename shared between foo and bar
+
 .IP
 \fBsslclientkey \fR
 Path to the SSL client key yum should use to connect to repos/remote sites
