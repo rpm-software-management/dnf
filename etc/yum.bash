@@ -9,16 +9,14 @@ _yum_list()
         # Try to strip in between headings like "Available Packages" - would
         # be nice if e.g. -d 0 did that for us.  This will obviously only work
         # for English :P
-        COMPREPLY=( "${COMPREPLY[@]}"
-            $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
-                sed -ne '/^Available /d' -e '/^Installed /d' -e '/^Updated /d' \
-                -e 's/[[:space:]].*//p' ) )
+        COMPREPLY+=( $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
+            sed -ne '/^Available /d' -e '/^Installed /d' -e '/^Updated /d' \
+            -e 's/[[:space:]].*//p' ) )
     else
         # Drop first line (e.g. "Updated Packages") - would be nice if e.g.
         # -d 0 did that for us.
-        COMPREPLY=( "${COMPREPLY[@]}"
-            $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
-                sed -ne 1d -e 's/[[:space:]].*//p' ) )
+        COMPREPLY+=( $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
+            sed -ne 1d -e 's/[[:space:]].*//p' ) )
     fi
 }
 
@@ -31,7 +29,7 @@ _yum_repolist()
     #       (for now --noplugins is used to get rid of "Loaded plugins: ...")
     # Drop first ("repo id      repo name") and last ("repolist: ...") rows -
     # would be nice if e.g. -d 0 did that for us.
-    COMPREPLY=( "${COMPREPLY[@]}"
+    COMPREPLY+=(
         $( compgen -W "$( ${yum:-yum} --noplugins -C repolist $1 2>/dev/null | \
             sed -ne '/^repo\s\{1,\}id/d' -e '/^repolist:/d' \
             -e 's/[[:space:]].*//p' )" -- "$2" ) )
@@ -56,18 +54,16 @@ _yum_plugins()
 {
     local val
     [ $1 = 1 ] && val='\(1\|yes\|true\|on\)' || val='\(0\|no\|false\|off\)'
-    COMPREPLY=( "${COMPREPLY[@]}"
-        $( compgen -W '$( command grep -il "^\s*enabled\s*=\s*$val" \
-            /etc/yum/pluginconf.d/*.conf 2>/dev/null \
-            | sed -ne "s|^.*/\([^/]\{1,\}\)\.conf$|\1|p" )' -- "$2" ) )
+    COMPREPLY+=( $( compgen -W '$( command grep -il "^\s*enabled\s*=\s*$val" \
+        /etc/yum/pluginconf.d/*.conf 2>/dev/null \
+        | sed -ne "s|^.*/\([^/]\{1,\}\)\.conf$|\1|p" )' -- "$2" ) )
 }
 
 # arguments:
 #   1 = current word to be completed
 _yum_binrpmfiles()
 {
-    COMPREPLY=( "${COMPREPLY[@]}"
-        $( compgen -f -o plusdirs -X '!*.rpm' -- "$1" ) )
+    COMPREPLY+=( $( compgen -f -o plusdirs -X '!*.rpm' -- "$1" ) )
     COMPREPLY=( $( compgen -W '"${COMPREPLY[@]}"' -X '*.src.rpm' ) )
     COMPREPLY=( $( compgen -W '"${COMPREPLY[@]}"' -X '*.nosrc.rpm' ) )
 }
@@ -80,7 +76,7 @@ _yum_baseopts()
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --skip-broken --color --releasever --setopt'
     [[ $COMP_LINE == *--noplugins* ]] || \
-        opts="$opts --disableplugin --enableplugin"
+        opts+=" --disableplugin --enableplugin"
     printf %s "$opts"
 }
 
