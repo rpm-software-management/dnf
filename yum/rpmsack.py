@@ -37,6 +37,26 @@ import constants
 
 import yum.depsolve
 
+def _open_no_umask(*args):
+    """ Annoying people like to set umask's for root, which screws everything
+        up for user readable stuff. """
+    oumask = os.umask(0777)
+    try:
+        ret = open(*args)
+    finally:
+        os.umask(oumask)
+
+    return ret
+
+def _iopen(*args):
+    """ IOError wrapper BS for open, stupid exceptions. """
+    try:
+        ret = open(*args)
+    except IOError, e:
+        return None, e
+    return ret, None
+
+
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
@@ -635,7 +655,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         conflicts_fname = self._cachedir + '/conflicts'
-        fo = open(conflicts_fname + '.tmp', 'w')
+        fo = _open_no_umask(conflicts_fname + '.tmp', 'w')
         fo.write("%s\n" % rpmdbv)
         fo.write("%u\n" % len(pkgs))
         for pkg in sorted(pkgs):
@@ -677,10 +697,9 @@ class RPMDBPackageSack(PackageSackBase):
             return fo.readline()[:-1]
 
         conflict_fname = self._cachedir + '/conflicts'
-        if not os.path.exists(conflict_fname):
+        fo, e = _iopen(conflict_fname)
+        if fo is None:
             return None
-
-        fo = open(conflict_fname)
         frpmdbv = fo.readline()
         rpmdbv = self.simpleVersion(main_only=True)[0]
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
@@ -766,11 +785,12 @@ class RPMDBPackageSack(PackageSackBase):
             return fo.readline()[:-1]
 
         assert self.__cache_rpmdb__
-        if not os.path.exists(self._cachedir + '/file-requires'):
+
+        fo, e = _iopen(self._cachedir + '/file-requires')
+        if fo is None:
             return None, None
 
         rpmdbv = self.simpleVersion(main_only=True)[0]
-        fo = open(self._cachedir + '/file-requires')
         frpmdbv = fo.readline()
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
             return None, None
@@ -889,7 +909,7 @@ class RPMDBPackageSack(PackageSackBase):
         if installedUnresolvedFileRequires:
             return
 
-        fo = open(self._cachedir + '/file-requires.tmp', 'w')
+        fo = _open_no_umask(self._cachedir + '/file-requires.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
 
         fo.write("%u\n" % len(installedFileRequires))
@@ -923,14 +943,14 @@ class RPMDBPackageSack(PackageSackBase):
         if not self.__cache_rpmdb__:
             return
 
-        if not os.path.exists(self._cachedir + '/pkgtups-checksums'):
-            return
-
         def _read_str(fo):
             return fo.readline()[:-1]
 
+        fo, e = _iopen(self._cachedir + '/pkgtups-checksums')
+        if fo is None:
+            return
+
         rpmdbv = self.simpleVersion(main_only=True)[0]
-        fo = open(self._cachedir + '/pkgtups-checksums')
         frpmdbv = fo.readline()
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
             return
@@ -991,7 +1011,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         pkg_checksum_tups = data
-        fo = open(self._cachedir + '/pkgtups-checksums.tmp', 'w')
+        fo = _open_no_umask(self._cachedir + '/pkgtups-checksums.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
         fo.write("%u\n" % len(pkg_checksum_tups))
         for pkgtup, TD in sorted(pkg_checksum_tups):
@@ -1024,7 +1044,10 @@ class RPMDBPackageSack(PackageSackBase):
             nmtime = os.path.getmtime(rpmdbvfname)
             omtime = os.path.getmtime(rpmdbfname)
             if omtime <= nmtime:
-                rpmdbv = open(rpmdbvfname).readline()[:-1]
+                fo, e = _iopen(rpmdbvfname)
+                if fo is None:
+                    return None
+                rpmdbv = fo.readline()[:-1]
                 self._have_cached_rpmdbv_data  = rpmdbv
         return self._have_cached_rpmdbv_data
 
@@ -1057,7 +1080,7 @@ class RPMDBPackageSack(PackageSackBase):
             except (IOError, OSError), e:
                 return
 
-        fo = open(rpmdbvfname + ".tmp", "w")
+        fo = _open_no_umask(rpmdbvfname + ".tmp", "w")
         fo.write(self._have_cached_rpmdbv_data)
         fo.write('\n')
         fo.close()
@@ -1694,7 +1717,8 @@ class RPMDBAdditionalDataPackage(object):
 
         # Default write()+rename()... hardlink -c can still help.
         misc.unlink_f(fn + '.tmp')
-        fo = open(fn + '.tmp', 'w')
+
+        fo = _open_no_umask(fn + '.tmp', 'w')
         try:
             fo.write(value)
         except (OSError, IOError), e:
@@ -1727,7 +1751,9 @@ class RPMDBAdditionalDataPackage(object):
                 self._auto_cache(attr, self._yumdb_cache[key], fn, info)
                 return self._read_cached_data[attr]
 
-        fo = open(fn, 'r')
+        fo, e = _iopen(fn)
+        if fo is None: # This really sucks, don't do that.
+            return '<E:%d>' % e.errno
         value = fo.read()
         fo.close()
         del fo
