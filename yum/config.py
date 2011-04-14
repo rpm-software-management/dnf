@@ -746,6 +746,13 @@ class YumConf(StartupConf):
     loadts_ignorerpm = BoolOption(False)
     
     clean_requirements_on_remove = BoolOption(False)
+
+
+    history_list_view = SelectionOption('single-user-commands',
+                                        ('single-user-commands', 'users',
+                                         'commands'),
+                                     mapper={'cmds'          : 'commands',
+                                             'default' :'single-user-commands'})
     _reposlist = []
 
     def dump(self):

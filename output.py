@@ -1441,24 +1441,53 @@ to exit.
         if tids is None:
             return 1, ['Failed history list']
 
+        limit = 20
+        if printall:
+            limit = None
+
+        old_tids = self.history.old(tids, limit=limit)
+        done = 0
+        if self.conf.history_list_view == 'users':
+            uids = [1,2]
+        elif self.conf.history_list_view == 'commands':
+            uids = [1]
+        else:
+            assert self.conf.history_list_view == 'single-user-commands'
+            uids = set()
+            blanks = 0
+            for old in old_tids:
+                if not printall and done >= limit:
+                    break
+
+                done += 1
+                if old.cmdline is None:
+                    blanks += 1
+                uids.add(old.loginuid)
+            if len(uids) == 1 and blanks > (done / 2):
+                uids.add('blah')
+
         fmt = "%s | %s | %s | %s | %s"
+        if len(uids) == 1:
+            name = _("Command line")
+        else:
+            name = _("Login user")
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(_("Login user"), 24, 24),
+                     utf8_width_fill(name, 24, 24),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
                      utf8_width_fill(_("Altered"), 7, 7))
         print "-" * 79
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
-        limit = 20
-        if printall:
-            limit = None
-        for old in self.history.old(tids, limit=limit):
+        for old in old_tids:
             if not printall and done >= limit:
                 break
 
             done += 1
-            name = self._pwd_ui_username(old.loginuid, 24)
+            if len(uids) == 1:
+                name = old.cmdline or ''
+            else:
+                name = self._pwd_ui_username(old.loginuid, 24)
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)

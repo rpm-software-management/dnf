@@ -357,6 +357,19 @@ normally be necessary to add packages here. Not that this is also used for the
 packages to look for in \-\-version. Defaults to rpm, yum, yum-metadata-parser.
 
 .IP
+\fBhistory_list_view \fR
+Which column of information to display in the "yum history list" command. There
+are currently three options: users, cmds (or commands), auto.
+
+Older versions of yum acted like "users", which always outputs the user who
+initiated the yum transaction. You can now specify "commands" which will instead
+always output the command line of the transaction. You can also specify
+"single-user-commands" which will display the users if there are more than one,
+otherwise it will display the command line.
+
+You can also specify "default" which currently selects "single-user-commands".
+
+.IP
 \fBcommands\fR
 List of functional commands to run if no functional commands are specified
 on the command line (eg. "update foo bar baz quux").  None of the short options
