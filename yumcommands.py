@@ -33,6 +33,15 @@ from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
 import yum.config
 
+def _err_mini_usage(base, basecmd):
+    if basecmd not in base.yum_cli_commands:
+        base.usage()
+        return
+    cmd = base.yum_cli_commands[basecmd]
+    txt = base.yum_cli_commands["help"]._makeOutput(cmd)
+    base.logger.critical(_(' Mini usage:\n'))
+    base.logger.critical(txt)
+
 def checkRootUID(base):
     """
     Verify that the program is being run by the root user.
@@ -68,19 +77,19 @@ def checkPackageArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError
 
 def checkItemArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need an item to match'))
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError
 
 def checkGroupArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need a group or list of groups'))
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError    
 
 def checkCleanArg(base, basecmd, extcmds):
@@ -94,7 +103,7 @@ def checkCleanArg(base, basecmd, extcmds):
     for cmd in extcmds:
         if cmd not in VALID_ARGS:
             base.logger.critical(_('Error: invalid clean argument: %r') % cmd)
-            base.usage()
+            _err_mini_usage(base, basecmd)
             raise cli.CliError
 
 def checkShellArg(base, basecmd, extcmds):
