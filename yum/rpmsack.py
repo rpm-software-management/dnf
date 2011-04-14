@@ -343,6 +343,18 @@ class RPMDBPackageSack(PackageSackBase):
             if txmbr.output_state in constants.TS_INSTALL_STATES:
                 self._pkgname_fails.discard(txmbr.name)
                 precache.append(txmbr)
+                if txmbr.reinstall:
+                    #  For reinstall packages we have:
+                    #
+                    # 1. one txmbr: the new install.
+                    # 2. two rpmdb entries: the new; the old;
+                    #
+                    # ...so we need to remove the old one, given only the new
+                    # one.
+                    ipo = self._tup2pkg[txmbr.pkgtup]
+                    _safe_del(self._idx2pkg, ipo.idx)
+                    _safe_del(self._tup2pkg, txmbr.pkgtup)
+
             if txmbr.output_state in constants.TS_REMOVE_STATES:
                 _safe_del(self._idx2pkg, txmbr.po.idx)
                 _safe_del(self._tup2pkg, txmbr.pkgtup)
