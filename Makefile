@@ -77,8 +77,9 @@ pylint:
 pylint-short:
 	@pylint -r n --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES) 2>/dev/null
 
+ChangeLog: changelog
 changelog:
-	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
+	git log --since=2007-05-16 --pretty --numstat --summary | git2cl | cat > ChangeLog
 
 testnewbehavior:
 	@NEW_BEHAVIOR=1 nosetests -i ".*test" test
