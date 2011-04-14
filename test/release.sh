@@ -17,7 +17,7 @@ function ebanner
 function utst
 {
    bbanner "Testing (user):" $@
-   $@
+   "$@"
    ebanner "Does that look fine? For (user):" $@
    sleep 8
 }
@@ -25,7 +25,7 @@ function utst
 function stst
 {
    bbanner "Testing (root):" $@
-   sudo $@
+   sudo "$@"
    ebanner "Does that look fine? For (root):" $@
    sleep 8
 }
@@ -34,36 +34,52 @@ stst yum version nogroups
 utst yum version nogroups
 stst yum history list
 stst yum history new
+stst yum history new
 
 utst yum list zzuf
 
+stst yum version nogroups
 stst yum install zzuf
+stst yum version nogroups
 stst yum reinstall zzuf
+stst yum version nogroups
 stst yum remove zzuf
-stst yum install yourmom
+stst yum version nogroups
+stst yum install yourmom || true
 stst yum install -y zzuf | tee /tmp/yum-release-testing-install-y-zzuf
 stst cat /tmp/yum-release-testing-install-y-zzuf
+stst yum version nogroups
 stst yum remove -y zzuf | tee /tmp/yum-release-testing-remove-y-zzuf
 stst cat /tmp/yum-release-testing-remove-y-zzuf
+stst yum version nogroups
 
 stst yum history list
 
-stst yum localinstall
-stst yum localinstall yourmom
+stst yum localinstall || true
+stst yum localinstall yourmom  || true
 
 stst yum list updates
 stst yum list obsoletes
 stst yum list available
 stst yum list installed
-stst yum check-update
-# stst yum update
+stst yum check-update || true
+
+echo | stst yum update || true
 
 stst yum groupinstall 'News Server'
 stst yum groupremove 'News Server'
+stst yum groupinstall -y 'News Server'
+stst yum groupremove --setopt=clean_requirements_on_remove=true -y 'News Server'
+# News server has a bunch of deps.
+stst yum groupinstall -y 'News Server'
+
+stst yum history undo last-4 -y
+
+stst yum history list
 
 utst yum grouplist
 utst yum grouplist not_a_group
-utst yum groupinfo
+utst yum groupinfo || true
 utst yum groupinfo not_a_group
 
 stst yum info zzuf
@@ -74,14 +90,11 @@ utst yum makecache
 stst yum clean all
 utst yum clean all
 
-stst yum -d0 -e0 install
+stst yum -d0 -e0 install || true
 
 utst yum --version
 
-
-stst yum search
-utst yum search
-
+utst yum search || true
 
 stst yum provides zzuf
 stst yum provides /usr/bin/zzuf
@@ -97,30 +110,39 @@ stst yum deplist yum
 utst yum deplist zzuf
 
 
+echo
+echo
 python -c 'print "=" * 79'
 python -c 'print "*" * 79'
-echo "Done, good to do a release."
+echo "Done, good to do a release. Running git2cl:"
+make changelog || true
 python -c 'print "*" * 79'
 python -c 'print "=" * 79'
 echo "
-edit yum/__init__.py __version__ 
-edit *.spec versions
-git ci
-git push
+  Make sure you have edited yum/__init__.py:__version__ 
+                            *.spec versions
 
-make changelog
-git ci
+  If not check --version again.
+
+  ChangeLog has been updated, check with git diff, then:
+
+git commit
 git push
 
 git tag -a yum-#-#-#
 git push --tags
 
-stick it in rawhide.
+make archive
 
-update webpage
+  Stick a build in rawhide.
 
-upload tarball to yum.baseurl.org:/srv/projects/yum/web/download/x.y
+  Update webpages:
+    Main wiki page.
+    /whatsnew
+    /releases
 
-Send email to user and devel mailing list.
+  Upload tarball to yum.baseurl.org:/srv/projects/yum/web/download/x.y
+
+  Send email to user and devel mailing list.
 "
 python -c 'print "=" * 79'
