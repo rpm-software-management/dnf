@@ -109,6 +109,16 @@ utst yum resolvedep /usr/bin/zzcat
 stst yum deplist yum
 utst yum deplist zzuf
 
+echo
+echo
+python -c 'print "*" * 79'
+echo "Running 'make check', this should work but meh:"
+python -c 'print "*" * 79'
+make check
+echo
+echo
+
+sleep 8
 
 echo
 echo
