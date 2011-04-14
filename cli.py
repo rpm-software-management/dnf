@@ -1237,6 +1237,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         installed, available = self.doGroupLists(uservisible=uservisible,
                                                  patterns=userlist)
         
+        if not installed and not available:
+            self.logger.error(_('Warning: No groups match: %s'),
+                              ", ".join(userlist))
+            return 0, []
+
         def _out_grp(sect, group):
             if not done:
                 self.verbose_logger.log(yum.logginglevels.INFO_2, sect)
