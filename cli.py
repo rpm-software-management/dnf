@@ -574,6 +574,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         ts_st = time.time()
 
+        #  Reinstalls broke in: 7115478c527415cb3c8317456cdf50024de89a94 ... 
+        # I assume there's a "better" fix, but this fixes reinstalls and lets
+        # other options continue as is (and they seem to work).
+        have_reinstalls = False
+        for txmbr in self.tsInfo.getMembers():
+            if txmbr.reinstall:
+                have_reinstalls = True
+                break
+        if have_reinstalls:
+            self.initActionTs() # make a new, blank ts to populate
+            self.populateTs(keepold=0) # populate the ts
+            self.ts.check() #required for ordering
+            self.ts.order() # order
+            self.ts.clean() # release memory not needed beyond this point
+
         # put back our depcheck callback
         self.dsCallback = dscb
         # setup our rpm ts callback
