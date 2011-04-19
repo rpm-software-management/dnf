@@ -40,7 +40,7 @@ import yum.depsolve
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
-    oumask = os.umask(0)
+    oumask = os.umask(022)
     try:
         ret = open(*args)
     finally:
