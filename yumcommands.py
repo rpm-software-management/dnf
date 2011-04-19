@@ -982,7 +982,7 @@ class RepoListCommand(YumCommand):
                     elif repo.mirrorlist:
                         out += [base.fmtKeyValFill(_("Repo-mirrors : "),
                                                    repo.mirrorlist)]
-                    if enabled and repo.urls:
+                    if enabled and repo.urls and not baseurls:
                         url = repo.urls[0]
                         if len(repo.urls) > 1:
                             url += ' (%d more)' % (len(repo.urls) - 1)
