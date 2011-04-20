@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.4.0
+Version: 3.4.1
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -212,7 +212,11 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
-* Thu Apr 14 2010 James Antill <james at fedoraproject.org>
+* Wed Apr 20 2011 James Antill <james at fedoraproject.org>
+- 3.4.1
+- umask bug fix.
+
+* Thu Apr 14 2011 James Antill <james at fedoraproject.org>
 - 3.4.0
 
 * Wed Jan 12 2011 Seth Vidal <skvidal at fedoraproject.org>

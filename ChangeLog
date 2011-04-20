@@ -1,3 +1,17 @@
+2011-04-19  James Antill <james@and.org>
+
+	* yum/rpmsack.py: Fix forced umask settings for yumdb/etc., 0 =>
+	022.
+
+2011-04-19  James Antill <james@and.org>
+
+	* yumcommands.py: Don't show first url for mirrors, if we are using
+	baseurl. BZ 697885.
+
+2011-04-15  James Antill <james@and.org>
+
+	* ChangeLog: Update changelog
+
 2011-04-14  James Antill <james@and.org>
 
 	* docs/yum.8, docs/yum.conf.5, output.py, yum/config.py:  Add history_list_view, and change default to single-user-commands.
