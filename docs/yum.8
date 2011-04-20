@@ -77,7 +77,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
-.I \fR * history [info|list|packages-list|summary|redo|undo|new|addon-info] 
+.I \fR * history [info|list|packages-list|summary|addon-info|redo|undo|rollback|new] 
 .br
 .I \fR * check
 .br 
@@ -331,16 +331,21 @@ and so takes sub-commands:
 .IP "\fBhistory\fP"
 The history command allows the user to view what has happened in past
 transactions (assuming the history_record config. option is set). You can use
-info/list/summary to view what happened, undo/redo to act on that information
-and new to start a new history file.
+info/list/packages-list/summary to view what happened, undo/redo/rollback to act
+on that information and new to start a new history file.
 
 The info/list/summary commands take either a transaction id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
 
-The undo/redo commands take either a transaction id or the keyword last and
-an offset from the last transaction (Eg. if you've done 250 transactions,
+The packages-list command takes a package  (with wildcards, as in
+\fBSpecifying package names\fP).
+
+The undo/redo/rollback commands take either a transaction id or the keyword last
+and an offset from the last transaction (Eg. if you've done 250 transactions,
 "last" refers to transaction 250, and "last-4" refers to transaction 246).
+The undo/redo commands will act on the specified transaction, while the rollback
+command will undo all transactions upto the point of the specified transaction.
 
 The addon-info command takes a transaction ID, and the packages-list command
 takes a package (with wildcards).

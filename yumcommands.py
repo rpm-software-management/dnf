@@ -1350,7 +1350,7 @@ class HistoryCommand(YumCommand):
         return ['history']
 
     def getUsage(self):
-        return "[info|list|summary|addon-info|package-list|redo|undo|new]"
+        return "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
 
     def getSummary(self):
         return _("Display, or use, the transaction history")
@@ -1375,11 +1375,52 @@ class HistoryCommand(YumCommand):
         if base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
+    def _hcmd_rollback(self, base, extcmds):
+        force = False
+        if len(extcmds) > 1 and extcmds[1] == 'force':
+            force = True
+            extcmds = extcmds[:]
+            extcmds.pop(0)
+
+        old = base._history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history rollback, no transaction']
+        last = base.history.last()
+        if last is None:
+            return 1, ['Failed history rollback, no last?']
+        if old.tid == last.tid:
+            return 0, ['Rollback to current, nothing to do']
+
+        mobj = None
+        for tid in base.history.old(range(old.tid + 1, last.tid + 1)):
+            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
+                if tid.altered_lt_rpmdb:
+                    msg = "Transaction history is incomplete, before %u."
+                else:
+                    msg = "Transaction history is incomplete, after %u."
+                print msg % tid.tid
+                print " You can use 'history rollback force', to try anyway."
+                return 1, ['Failed history rollback, incomplete']
+
+            if mobj is None:
+                mobj = yum.history.YumMergedHistoryTransaction(tid)
+            else:
+                mobj.merge(tid)
+
+        tm = time.ctime(old.beg_timestamp)
+        print "Rollback to transaction %u, from %s" % (old.tid, tm)
+        print base.fmtKeyValFill("  Undoing the following transactions: ",
+                                 ", ".join((str(x) for x in mobj.tid)))
+        base.historyInfoCmdPkgsAltered(mobj)
+        if base.history_undo(mobj):
+            return 2, ["Rollback to transaction %u" % (old.tid,)]
+
     def _hcmd_new(self, base, extcmds):
         base.history._create_db_file()
 
     def doCheck(self, base, basecmd, extcmds):
         cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new',
+                'rollback',
                 'addon', 'addon-info',
                 'pkg', 'pkgs', 'pkg-list', 'pkgs-list',
                 'package', 'package-list', 'packages', 'packages-list')
@@ -1387,7 +1428,7 @@ class HistoryCommand(YumCommand):
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'new'):
+        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
         elif not os.access(base.history._db_file, os.R_OK):
@@ -1415,6 +1456,8 @@ class HistoryCommand(YumCommand):
             ret = self._hcmd_undo(base, extcmds)
         elif vcmd in ('redo', 'repeat'):
             ret = self._hcmd_redo(base, extcmds)
+        elif vcmd == 'rollback':
+            ret = self._hcmd_rollback(base, extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(base, extcmds)
 
@@ -1426,7 +1469,7 @@ class HistoryCommand(YumCommand):
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
-        return vcmd in ('repeat', 'redo', 'undo')
+        return vcmd in ('repeat', 'redo', 'undo', 'rollback')
 
 
 class CheckRpmdbCommand(YumCommand):
