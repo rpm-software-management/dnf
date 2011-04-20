@@ -1391,6 +1391,9 @@ to exit.
         if etid > old.tid:
             return None
 
+        if btid is None or etid is None:
+            return None
+
         # Have a range ... do a "merged" transaction.
         if btid > etid:
             btid, etid = etid, btid
