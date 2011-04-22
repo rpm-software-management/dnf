@@ -5,6 +5,9 @@
 #   2 = current word to be completed
 _yum_list()
 {
+    # Fail fast for things that look like paths.
+    [[ $2 == */* || $2 == [.~]* ]] && return
+
     if [ "$1" = all ] ; then
         # Try to strip in between headings like "Available Packages" - would
         # be nice if e.g. -d 0 did that for us.  This will obviously only work
@@ -217,7 +220,7 @@ _yum()
 
         deplist)
             COMPREPLY=( $( compgen -f -o plusdirs -X '!*.[rs]pm' -- "$cur" ) )
-            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list all "$cur"
+            _yum_list all "$cur"
             return 0
             ;;
 
@@ -230,7 +233,7 @@ _yum()
 
         downgrade|reinstall)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list installed "$cur"
+            _yum_list installed "$cur"
             return 0
             ;;
 
@@ -279,7 +282,7 @@ _yum()
 
         install)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list available "$cur"
+            _yum_list available "$cur"
             return 0
             ;;
 
@@ -309,7 +312,7 @@ _yum()
 
         update|upgrade)
             _yum_binrpmfiles "$cur"
-            [[ "$cur" == */* || "$cur" == ~* ]] || _yum_list updates "$cur"
+            _yum_list updates "$cur"
             return 0
             ;;
         version)
