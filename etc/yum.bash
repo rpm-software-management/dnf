@@ -95,60 +95,57 @@ _yum_transactions()
 # return 0 if no more completions should be sought, 1 otherwise
 _yum_complete_baseopts()
 {
-    local cur=$1 prev=$2 split=false # cur,prev for _split_longopt
-    declare -F _split_longopt &>/dev/null && _split_longopt && split=true
-
-    case $prev in
+    case $2 in
 
         -d|--debuglevel|-e|--errorlevel)
-            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
+            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$1" ) )
             return 0
             ;;
 
         --rpmverbosity)
             COMPREPLY=( $( compgen -W 'info critical emergency error warn
-                debug' -- "$cur" ) )
+                debug' -- "$1" ) )
             return 0
             ;;
 
         -c|--config)
-            COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$cur" ) )
+            COMPREPLY=( $( compgen -f -o plusdirs -X "!*.conf" -- "$1" ) )
             return 0
             ;;
 
         --installroot|--downloaddir)
-            COMPREPLY=( $( compgen -d -- "$cur" ) )
+            COMPREPLY=( $( compgen -d -- "$1" ) )
             return 0
             ;;
 
         --enablerepo)
-            _yum_repolist disabled "$cur"
+            _yum_repolist disabled "$1"
             return 0
             ;;
 
         --disablerepo)
-            _yum_repolist enabled "$cur"
+            _yum_repolist enabled "$1"
             return 0
             ;;
 
         --disableexcludes)
-            _yum_repolist all "$cur"
-            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$cur" ) )
+            _yum_repolist all "$1"
+            COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$1" ) )
             return 0
             ;;
 
         --enableplugin)
-            _yum_plugins 0 "$cur"
+            _yum_plugins 0 "$1"
             return 0
             ;;
 
         --disableplugin)
-            _yum_plugins 1 "$cur"
+            _yum_plugins 1 "$1"
             return 0
             ;;
 
         --color)
-            COMPREPLY=( $( compgen -W 'always auto never' -- "$cur" ) )
+            COMPREPLY=( $( compgen -W 'always auto never' -- "$1" ) )
             return 0
             ;;
 
@@ -159,35 +156,31 @@ _yum_complete_baseopts()
 
         --download-order)
             COMPREPLY=( $( compgen -W 'default smallestfirst largestfirst' \
-                -- "$cur" ) )
+                -- "$1" ) )
             return 0
             ;;
 
         --override-protection)
-            _yum_list installed "$cur"
+            _yum_list installed "$1"
             return 0
             ;;
 
         --verify-configuration-files)
-            COMPREPLY=( $( compgen -W '1 0' -- "$cur" ) )
+            COMPREPLY=( $( compgen -W '1 0' -- "$1" ) )
             return 0
             ;;
     esac
 
-    $split && return 0 || return 1
+    return 1
 }
 
 _yum()
 {
     COMPREPLY=()
-    local yum=$1
-    local cur prev
-    local -a words
-    if declare -F _get_comp_words_by_ref &>/dev/null ; then
+    local yum=$1 cur=$2 prev=$3 words=("${COMP_WORDS[@]}")
+    declare -F _get_comp_words_by_ref &>/dev/null && \
         _get_comp_words_by_ref -n = cur prev words
-    else
-        cur=$2 prev=$3 words=("${COMP_WORDS[@]}")
-    fi
+
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
         groupinfo groupinstall grouplist groupremove help history info install
@@ -337,7 +330,12 @@ _yum()
             ;;
     esac
 
+    local split=false
+    declare -F _split_longopt &>/dev/null && _split_longopt && split=true
+
     _yum_complete_baseopts "$cur" "$prev" && return 0
+
+    $split && return 0
 
     COMPREPLY=( $( compgen -W '$( _yum_baseopts ) ${cmds[@]}' -- "$cur" ) )
 } &&
