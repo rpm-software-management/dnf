@@ -90,7 +90,7 @@ _yum_baseopts()
 _yum_complete_baseopts()
 {
     local split=false
-    type _split_longopt &>/dev/null && _split_longopt && split=true
+    declare -F _split_longopt &>/dev/null && _split_longopt && split=true
 
     case $2 in
 
@@ -177,7 +177,7 @@ _yum()
     local yum=$1
     local cur prev
     local -a words
-    if type _get_comp_words_by_ref &>/dev/null ; then
+    if declare -F _get_comp_words_by_ref &>/dev/null ; then
         _get_comp_words_by_ref cur prev words
     else
         cur=$2 prev=$3 words=("${COMP_WORDS[@]}")
