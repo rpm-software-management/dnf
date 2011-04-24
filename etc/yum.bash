@@ -83,6 +83,12 @@ _yum_baseopts()
     printf %s "$opts"
 }
 
+_yum_transactions()
+{
+    COMPREPLY+=( $( compgen -W "$( $yum -d 0 -C history 2>/dev/null | \
+        sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" -- "$cur" ) )
+}
+
 # arguments:
 #   1 = current word to be completed
 #   2 = previous word
@@ -261,14 +267,23 @@ _yum()
             fi
             case $subcmd in
                 undo|redo|repeat|addon|addon-info|rollback)
-                    COMPREPLY=( $( compgen -W "last $( $yum -d 0 -C history \
-                        2>/dev/null | \
-                        sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
+                    _yum_transactions
+                    COMPREPLY=( $( compgen -W "${COMPREPLY[@]} last" \
                         -- "$cur" ) )
                     ;;
                 package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
                 packages-list)
                     _yum_list available "$cur"
+                    ;;
+                info|list|summary)
+                    _yum_transactions
+                    if [[ $subcmd != info ]] ; then
+                        COMPREPLY=( $( compgen -W "${COMPREPLY[@]} all" \
+                            -- "$cur" ) )
+                        [[ $cur != all ]] && _yum_list available "$cur"
+                    else
+                        _yum_list available "$cur"
+                    fi
                     ;;
             esac
             return 0
