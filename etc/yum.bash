@@ -269,7 +269,7 @@ _yum()
             case $subcmd in
                 package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
                 packages-list)
-                    _yum_list installed "$cur"
+                    _yum_list available "$cur"
                     ;;
             esac
             return 0
