@@ -254,19 +254,18 @@ _yum()
             ;;
 
         history)
-            case $prev in
-                $cmd)
-                    COMPREPLY=( $( compgen -W 'info list summary undo redo
-                        new addon-info package-list' -- "$cur" ) )
-                    ;;
+            if [[ $prev == $cmd ]] ; then
+                COMPREPLY=( $( compgen -W 'info list summary undo redo new
+                    addon-info package-list' -- "$cur" ) )
+                return 0
+            fi
+            case $subcmd in
                 undo|redo|repeat|addon|addon-info)
                     COMPREPLY=( $( compgen -W "last $( $yum -d 0 -C history \
                         2>/dev/null | \
                         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" \
                         -- "$cur" ) )
                     ;;
-            esac
-            case $subcmd in
                 package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
                 packages-list)
                     _yum_list available "$cur"
