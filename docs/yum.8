@@ -341,11 +341,20 @@ no arguments. list can be passed the keyword "all" to list all the transactions.
 The packages-list command takes a package  (with wildcards, as in
 \fBSpecifying package names\fP).
 
-The undo/redo/rollback commands take either a transaction id or the keyword last
-and an offset from the last transaction (Eg. if you've done 250 transactions,
-"last" refers to transaction 250, and "last-4" refers to transaction 246).
-The undo/redo commands will act on the specified transaction, while the rollback
-command will undo all transactions upto the point of the specified transaction.
+The undo/redo/rollback commands take either a single transaction id or the
+keyword last and an offset from the last transaction (Eg. if you've done 250
+transactions, "last" refers to transaction 250, and "last-4" refers to
+transaction 246).
+
+The undo/redo commands act on the specified transaction, undo'ing or repeating
+the work of that transaction. While the rollback command will undo all
+transactions upto the point of the specified transaction. For example, if you
+have 3 transactions, where package A; B and C where installed respectively.
+Then "undo 1" will try to remove pacakge A, "redo 1" will try to install package
+A (if it is not still installed), and "rollback 1" will try to remove packages
+B and C. Note that after a "rollback 1" you will have a fourth transaction,
+although the ending rpmdb version (see: yum version) should be the same in
+transactions 1 and 4.
 
 The addon-info command takes a transaction ID, and the packages-list command
 takes a package (with wildcards).
