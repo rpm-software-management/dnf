@@ -1017,6 +1017,10 @@ class RepoListCommand(YumCommand):
                         out += [base.fmtKeyValFill(_("Repo-excluded: "),
                                                    ui_excludes_num)]
 
+                    if repo.repofile:
+                        out += [base.fmtKeyValFill(_("Repo-filename: "),
+                                                   repo.repofile)]
+
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
                                             "\n".join(map(misc.to_unicode, out)))
