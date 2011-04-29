@@ -726,7 +726,10 @@ class YumBase(depsolve.Depsolve):
         if self.conf.debuglevel >= 7:
             self._up.debug = 1
         
-        if self.conf.obsoletes:
+        if hasattr(self, '_up_obs_hack'):
+            self._up.rawobsoletes = self._up_obs_hack.rawobsoletes
+            del self._up_obs_hack
+        elif self.conf.obsoletes:
             obs_init = time.time()    
             #  Note: newest=True here is semi-required for repos. with multiple
             # versions. The problem is that if pkgA-2 _accidentally_ obsoletes
@@ -3183,7 +3186,23 @@ class YumBase(depsolve.Depsolve):
     def _pkg2obspkg(self, po):
         """ Given a package return the package it's obsoleted by and so
             we should install instead. Or None if there isn't one. """
-        thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
+        if self._up is not None:
+            thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
+        else:
+            #  This is pretty hacky, but saves a huge amount of time for small
+            # ops.
+            if not self.conf.obsoletes:
+                return None
+
+            if not hasattr(self, '_up_obs_hack'):
+                obs_init = time.time()
+                up = rpmUtils.updates.Updates([], [])
+                up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
+                self.verbose_logger.debug('Obs Init time: %0.3f' % (time.time()
+                                                                    - obs_init))
+                self._up_obs_hack = up
+            thispkgobsdict = self._up_obs_hack.checkForObsolete([po.pkgtup])
+
         if po.pkgtup in thispkgobsdict:
             obsoleting  = thispkgobsdict[po.pkgtup]
             oobsoleting = []
@@ -3316,10 +3335,19 @@ class YumBase(depsolve.Depsolve):
                     installed_pkg =  self.getInstalledPackageObject(inst_tup)
                     yield installed_pkg
         else:
-            for obs_n in po.obsoletes_names:
-                for pkg in self.rpmdb.searchNevra(name=obs_n):
-                    if pkg.obsoletedBy([po]):
-                        yield pkg
+            for pkg in self._find_obsoletees_direct(po):
+                yield pkg
+
+    def _find_obsoletees_direct(self, po):
+        """ Return the pkgs. that are obsoleted by the po we pass in. This works
+            directly on the package data, for two reasons:
+            1. Consulting .up. has a slow setup for small/fast ops.
+            2. We need this work even if obsoletes are turned off, because rpm
+               will be doing it for us. """
+        for obs_n in po.obsoletes_names:
+            for pkg in self.rpmdb.searchNevra(name=obs_n):
+                if pkg.obsoletedBy([po]):
+                    yield pkg
 
     def _add_prob_flags(self, *flags):
         """ Add all of the passed flags to the tsInfo.probFilterFlags array. """
@@ -3466,7 +3494,8 @@ class YumBase(depsolve.Depsolve):
                     continue
             
             # make sure this shouldn't be passed to update:
-            if po.pkgtup in self.up.updating_dict:
+            if (self.rpmdb.searchNames([po.name]) and
+                po.pkgtup in self.up.updating_dict):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
                 continue
@@ -3474,7 +3503,9 @@ class YumBase(depsolve.Depsolve):
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.
-            obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
+            obsoleting_pkg = None
+            if self.conf.obsoletes:
+                obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
             if obsoleting_pkg is not None:
                 # this is not a definitive check but it'll make sure we don't
                 # pull in foo.i586 when foo.x86_64 already obsoletes the pkg and
@@ -3543,8 +3574,9 @@ class YumBase(depsolve.Depsolve):
                     break
             
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
-            if po.pkgtup in self.up.getObsoletesList(name=po.name):
-                for obsoletee in self._find_obsoletees(po):
+            obs_pkgs = list(self._find_obsoletees_direct(po))
+            if obs_pkgs:
+                for obsoletee in obs_pkgs:
                     txmbr = self.tsInfo.addObsoleting(po, obsoletee)
                     self.tsInfo.addObsoleted(obsoletee, po)
                     tx_return.append(txmbr)
