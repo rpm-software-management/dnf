@@ -31,11 +31,12 @@ import warnings
 from subprocess import Popen, PIPE
 from rpmUtils import RpmUtilsError
 import rpmUtils.miscutils
-from rpmUtils.miscutils import flagToString, stringToVersion
+from rpmUtils.miscutils import flagToString, stringToVersion, compareVerOnly
 import Errors
 import errno
 import struct
 from constants import *
+from operator import itemgetter
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -1139,7 +1140,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if hasattr(self, '_collapse_libc_requires') and self._collapse_libc_requires:
             libc_requires = filter(lambda x: x[0].startswith('libc.so.6'), mylist)
             if libc_requires:
-                best = sorted(libc_requires)[-1]
+                print libc_requires
+                rest = sorted(libc_requires, cmp=compareVerOnly, key=itemgetter(0))
+                best = rest.pop()
+                if best[0].startswith('libc.so.6()'):
+                    best = rest.pop()
                 newlist = []
                 for i in mylist:
                     if i[0].startswith('libc.so.6') and i != best:
