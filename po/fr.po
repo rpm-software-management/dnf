@@ -1,25 +1,21 @@
-# translation of yum.master.po to fr_FR
-# Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
-# Johan Cwiklinski <johan@x-tnd.be>, 2008.
-# Thomas Canniot <mrtom@fedoraproject.org>, 2008, 2009, 2010.
-# Michaël Ughetto <telimektar1er@gmail.com>, 2008.
-# Thomas Canniot <thomas.canniot@mrtomlinux.org>, 2009, 2010.
-# Pablo Martin-Gomez <pablo.martin-gomez@laposte.net>, 2010.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: yum.master\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-12 18:34+0200\n"
-"Last-Translator: Thomas Canniot <mrtom@fedoraproject.org>\n"
-"Language-Team: French <trans-fr@lists.fedoraproject.org>\n"
+"PO-Revision-Date: 2011-05-04 14:58+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: French (http://www.transifex.net/projects/p/yum/team/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 1.1\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -146,7 +142,9 @@ msgstr ""
 
 #: ../cli.py:404
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "Tentative d'exécution de la transaction mais aucune tâche à effectuer. Sortie."
+msgstr ""
+"Tentative d'exécution de la transaction mais aucune tâche à effectuer. "
+"Sortie."
 
 #: ../cli.py:451
 msgid "Exiting on user Command"
@@ -360,7 +358,9 @@ msgstr "Attention : le groupe %s n'existe pas."
 
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
-msgstr "Aucun paquet disponible pour installation ou mise à jour dans les groupes demandés"
+msgstr ""
+"Aucun paquet disponible pour installation ou mise à jour dans les groupes "
+"demandés"
 
 #: ../cli.py:1148
 #, python-format
@@ -395,7 +395,8 @@ msgstr "Rejet du paquet non comparable %s.%s"
 #: ../cli.py:1245
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr "Pas d'autre %s installé, ajout à la liste pour installation potentielle"
+msgstr ""
+"Pas d'autre %s installé, ajout à la liste pour installation potentielle"
 
 #: ../cli.py:1265
 msgid "Plugin Options"
@@ -447,7 +448,8 @@ msgstr "niveau de déboguage pour la sortie"
 
 #: ../cli.py:1469
 msgid "show duplicates, in repos, in list/search commands"
-msgstr "afficher les doublons, dans les dépôts, pour les commandes list/search"
+msgstr ""
+"afficher les doublons, dans les dépôts, pour les commandes list/search"
 
 #: ../cli.py:1471
 msgid "error output level"
@@ -491,7 +493,9 @@ msgstr "exclut des paquets par nom ou caractère générique"
 
 #: ../cli.py:1497
 msgid "disable exclude from main, for a repo or for everything"
-msgstr "désactive l'exclusion pour le dépôt principal, pour un dépôt particulier ou pour tout"
+msgstr ""
+"désactive l'exclusion pour le dépôt principal, pour un dépôt particulier ou "
+"pour tout"
 
 #: ../cli.py:1500
 msgid "enable obsoletes processing during updates"
@@ -523,7 +527,9 @@ msgstr "contrôle l'utilisation de la couleur"
 
 #: ../cli.py:1516
 msgid "set value of $releasever in yum config and repo files"
-msgstr "configuration de la valeur de $releasever dans le fichier de configuration de yum et dans les fichiers des dépôts."
+msgstr ""
+"configuration de la valeur de $releasever dans le fichier de configuration "
+"de yum et dans les fichiers des dépôts."
 
 #: ../cli.py:1518
 msgid "set arbitrary config and repo options"
@@ -761,7 +767,9 @@ msgstr "Autre           :"
 
 #: ../output.py:956
 msgid "There was an error calculating total download size"
-msgstr "Une erreur est survenue pendant le calcul de la taille totale des téléchargements"
+msgstr ""
+"Une erreur est survenue pendant le calcul de la taille totale des "
+"téléchargements"
 
 #: ../output.py:961
 #, python-format
@@ -780,7 +788,9 @@ msgstr "Taille d'installation : %s"
 
 #: ../output.py:984
 msgid "There was an error calculating installed size"
-msgstr "Une erreur est survenue pendant le calcul de la taille des données installées"
+msgstr ""
+"Une erreur est survenue pendant le calcul de la taille des données "
+"installées"
 
 #: ../output.py:1029
 msgid "Reinstalling"
@@ -1206,7 +1216,9 @@ msgstr "--> Lancement de la transaction de test"
 
 #: ../output.py:1830
 msgid "--> Restarting Dependency Resolution with new changes."
-msgstr "--> Redémarrage de la résolution des dépendances avec les nouveaux changements."
+msgstr ""
+"--> Redémarrage de la résolution des dépendances avec les nouveaux "
+"changements."
 
 #: ../output.py:1835
 msgid "--> Finished Dependency Resolution"
@@ -1291,12 +1303,15 @@ msgstr "--> Traitement du conflit : %s entre en conflit avec %s"
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Peuplement du jeu de transaction avec les paquets sélectionnés. Merci de patienter."
+msgstr ""
+"--> Peuplement du jeu de transaction avec les paquets sélectionnés. Merci de"
+" patienter."
 
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "--> Téléchargement de l'en-tête de %s pour l'ajouter à la transaction."
+msgstr ""
+"--> Téléchargement de l'en-tête de %s pour l'ajouter à la transaction."
 
 #: ../utils.py:94
 msgid "Running"
@@ -1378,8 +1393,12 @@ msgstr ""
 "%s"
 
 #: ../utils.py:201 ../yummain.py:107
-msgid "Another app is currently holding the yum lock; exiting as configured by exit_on_lock"
-msgstr "Une autre application verrouille actuellement l'utilisation de yum ; fermeture en cours conformément à la configuration de exit_on_lock"
+msgid ""
+"Another app is currently holding the yum lock; exiting as configured by "
+"exit_on_lock"
+msgstr ""
+"Une autre application verrouille actuellement l'utilisation de yum ; "
+"fermeture en cours conformément à la configuration de exit_on_lock"
 
 #: ../utils.py:260
 #, python-format
@@ -1398,7 +1417,8 @@ msgstr "Erreur : %s"
 
 #: ../utils.py:319 ../yummain.py:177
 msgid " You could try using --skip-broken to work around the problem"
-msgstr " Vous pouvez essayer d'utiliser --skip-broken pour contourner le problème"
+msgstr ""
+" Vous pouvez essayer d'utiliser --skip-broken pour contourner le problème"
 
 #: ../utils.py:321 ../yummain.py:179 ../yummain.py:212
 msgid " You could try running: rpm -Va --nofiles --nodigest"
@@ -1532,7 +1552,8 @@ msgstr "Configuration du processus de mise à jour"
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr "Synchronisation des paquets installés vers leurs versions les plus précentes"
+msgstr ""
+"Synchronisation des paquets installés vers leurs versions les plus précentes"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
@@ -1613,11 +1634,13 @@ msgstr "Génère le cache des méta données"
 
 #: ../yumcommands.py:545
 msgid "Making cache files for all metadata files."
-msgstr "Création des fichiers de cache pour tous les fichiers de méta données."
+msgstr ""
+"Création des fichiers de cache pour tous les fichiers de méta données."
 
 #: ../yumcommands.py:546
 msgid "This may take a while depending on the speed of this computer"
-msgstr "Cela peut prendre du temps en fonction de la vitesse de cet ordinateur"
+msgstr ""
+"Cela peut prendre du temps en fonction de la vitesse de cet ordinateur"
 
 #: ../yumcommands.py:567
 msgid "Metadata Cache Created"
@@ -1887,8 +1910,11 @@ msgid "Check for problems in the rpmdb"
 msgstr "Recherche des problèmes dans RPMDB"
 
 #: ../yummain.py:103
-msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Une autre application verrouille actuellement l'utilisation de yum ; attente de déverrouillage..."
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"Une autre application verrouille actuellement l'utilisation de yum ; attente"
+" de déverrouillage..."
 
 #. Depsolve stage
 #: ../yummain.py:151
@@ -1995,7 +2021,8 @@ msgstr "TSINFO : Mise à jour de %s pour la résolution des dépendances."
 #: ../yum/depsolve.py:404
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
-msgstr "Impossible de trouver un chemin de mise à jour pour la dépendance de : %s"
+msgstr ""
+"Impossible de trouver un chemin de mise à jour pour la dépendance de : %s"
 
 #: ../yum/depsolve.py:435
 #, python-format
@@ -2011,12 +2038,16 @@ msgstr "%s est dans les paquets fournis mais est déjà installé, suppression."
 #: ../yum/depsolve.py:493
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr "ts contient une version plus récente du paquet %s susceptible de résoudre la dépendance."
+msgstr ""
+"ts contient une version plus récente du paquet %s susceptible de résoudre la"
+" dépendance."
 
 #: ../yum/depsolve.py:504
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr "Le paquet susceptible de résoudre la dépedence %s est déjà installé dans une version plus récente."
+msgstr ""
+"Le paquet susceptible de résoudre la dépedence %s est déjà installé dans une"
+" version plus récente."
 
 #: ../yum/depsolve.py:522
 #, python-format
@@ -2135,7 +2166,9 @@ msgstr "Dépôt %r : erreur lors de l'analyse de la configuration : %s"
 #: ../yum/__init__.py:459
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
-msgstr "Il manque le nom du dépôt %r dans la configuration, utilisation de l'identifiant"
+msgstr ""
+"Il manque le nom du dépôt %r dans la configuration, utilisation de "
+"l'identifiant"
 
 #: ../yum/__init__.py:497
 msgid "plugins already initialised"
@@ -2224,8 +2257,12 @@ msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "Le programme %s%s%s est présent dans le paquet yum-utils."
 
 #: ../yum/__init__.py:906
-msgid "There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them."
-msgstr "Il reste des transactions non terminées. Vous devriez envisager de lancer de yum-complete-transaction pour les terminer."
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr ""
+"Il reste des transactions non terminées. Vous devriez envisager de lancer de"
+" yum-complete-transaction pour les terminer."
 
 #: ../yum/__init__.py:985
 #, python-format
@@ -2260,11 +2297,14 @@ msgstr "    %s depuis %s"
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr "** %d problèmes RPMDB pré-existants trouvés, la sortie de « yum check » est la suivante :"
+msgstr ""
+"** %d problèmes RPMDB pré-existants trouvés, la sortie de « yum check » est "
+"la suivante :"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
-msgstr "Avertissement : RPMDB a été modifiée par une autre application que yum."
+msgstr ""
+"Avertissement : RPMDB a été modifiée par une autre application que yum."
 
 #: ../yum/__init__.py:1267
 msgid "missing requires"
@@ -2275,8 +2315,10 @@ msgid "installed conflict"
 msgstr "conflit installé"
 
 #: ../yum/__init__.py:1366
-msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr "Attention : scriptlet ou autres erreurs non fatales pendant la transaction."
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr ""
+"Attention : scriptlet ou autres erreurs non fatales pendant la transaction."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
@@ -2331,8 +2373,12 @@ msgstr "Impossible de créer le verrou sur %s : %s"
 
 #: ../yum/__init__.py:1698
 #, python-format
-msgid "Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata"
-msgstr "Le paquet ne correspond pas au téléchargement attendu. Suggestion : exécutez yum --enablerepo=%s clean metadata"
+msgid ""
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
+msgstr ""
+"Le paquet ne correspond pas au téléchargement attendu. Suggestion : exécutez"
+" yum --enablerepo=%s clean metadata"
 
 #: ../yum/__init__.py:1714
 msgid "Could not perform checksum"
@@ -2345,7 +2391,9 @@ msgstr "Le paquet ne correspond pas à sa somme de contrôle"
 #: ../yum/__init__.py:1769
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "Le paquet ne correspond pas à la somme de contrôle mais le cache est activé pour %s"
+msgstr ""
+"Le paquet ne correspond pas à la somme de contrôle mais le cache est activé "
+"pour %s"
 
 #: ../yum/__init__.py:1772 ../yum/__init__.py:1801
 #, python-format
@@ -2369,8 +2417,11 @@ msgstr "L'en-tête est incomplet."
 
 #: ../yum/__init__.py:1899
 #, python-format
-msgid "Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr "L'en-tête n'est pas dans le cache et le mode cache uniquement est activé. Impossible de télécharger %s"
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr ""
+"L'en-tête n'est pas dans le cache et le mode cache uniquement est activé. "
+"Impossible de télécharger %s"
 
 #: ../yum/__init__.py:1954
 #, python-format
@@ -2428,8 +2479,12 @@ msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Rien ne correspond à %s.%s %s:%s-%s dans la mise à jour"
 
 #: ../yum/__init__.py:2433
-msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
-msgstr "searchPackages() sera supprimé dans une future version de Yum.                      Utilisez searchGenerator() à la place. \n"
+msgid ""
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
+msgstr ""
+"searchPackages() sera supprimé dans une future version de Yum."
+"                      Utilisez searchGenerator() à la place. \n"
 
 #: ../yum/__init__.py:2472
 #, python-format
@@ -2509,11 +2564,11 @@ msgstr "L'objet paquet n'était pas une instance correcte d'objet paquet"
 msgid "Nothing specified to install"
 msgstr "Rien de spécifié pour installation"
 
-# Aucune idée
 #: ../yum/__init__.py:3168 ../yum/__init__.py:3992
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
-msgstr "Recherche de correspondance virtuelle ou de correspondance fichier pour %s"
+msgstr ""
+"Recherche de correspondance virtuelle ou de correspondance fichier pour %s"
 
 #: ../yum/__init__.py:3174 ../yum/__init__.py:3504 ../yum/__init__.py:3684
 #: ../yum/__init__.py:3998
@@ -2542,13 +2597,19 @@ msgstr "Le paquet %s est rendu obsolète par %s qui est déjà installé"
 
 #: ../yum/__init__.py:3296
 #, python-format
-msgid "Package %s is obsoleted by %s, but obsoleting package does not provide for requirements"
-msgstr "Le paquet %s est rendu obsolète par %s, mais l'obsolescence n'affecte pas les dépendances"
+msgid ""
+"Package %s is obsoleted by %s, but obsoleting package does not provide for "
+"requirements"
+msgstr ""
+"Le paquet %s est rendu obsolète par %s, mais l'obsolescence n'affecte pas "
+"les dépendances"
 
 #: ../yum/__init__.py:3299
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr "Le paquet %s est rendu obsolète par %s, tentative d'installation de %s à la place"
+msgstr ""
+"Le paquet %s est rendu obsolète par %s, tentative d'installation de %s à la "
+"place"
 
 #: ../yum/__init__.py:3307
 #, python-format
@@ -2558,7 +2619,9 @@ msgstr "Le paquet %s est déjà installé dans sa dernière version"
 #: ../yum/__init__.py:3321
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr "Le paquet qui correspond à %s est déjà installé. Recherche d'une mise à jour."
+msgstr ""
+"Le paquet qui correspond à %s est déjà installé. Recherche d'une mise à "
+"jour."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:3424
@@ -2569,7 +2632,9 @@ msgstr "Mise à jour complète"
 #: ../yum/__init__.py:3630
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr "Pas de mise à jour des paquets qui ont déjà été rendus obsolètes : %s.%s %s:%s-%s"
+msgstr ""
+"Pas de mise à jour des paquets qui ont déjà été rendus obsolètes : %s.%s "
+"%s:%s-%s"
 
 #: ../yum/__init__.py:3489 ../yum/__init__.py:3680
 #, python-format
@@ -2589,7 +2654,8 @@ msgstr "Pas de mise à jour du paquet qui est obsolète : %s"
 #: ../yum/__init__.py:3608 ../yum/__init__.py:3634
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr "Pas de mise à jour des paquets qui ont déjà été mis à jour : %s.%s %s:%s-%s"
+msgstr ""
+"Pas de mise à jour des paquets qui ont déjà été mis à jour : %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3697
 msgid "No package matched to remove"
@@ -2622,18 +2688,27 @@ msgstr "Impossible d'exécuter localinstall sur le deltarpm : %s. Omission."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "Impossible d'ajouter le paquet %s à la transaction. Architecture incompatible : %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgstr ""
+"Impossible d'ajouter le paquet %s à la transaction. Architecture "
+"incompatible : %s"
 
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
-msgstr "Impossible d'installer le paquet %s. Il est rendu obsolète par le paquet %s installé"
+msgstr ""
+"Impossible d'installer le paquet %s. Il est rendu obsolète par le paquet %s "
+"installé"
 
 #: ../yum/__init__.py:3774
 #, python-format
-msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
-msgstr "Le paquet %s n'est pas installé, il est impossible de le mettre à jour. Lancez plutôt yum install pour l'installer."
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"Le paquet %s n'est pas installé, il est impossible de le mettre à jour. "
+"Lancez plutôt yum install pour l'installer."
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
@@ -2662,18 +2737,19 @@ msgstr "Impossible d'ouvrir le fichier : %s. Omission."
 
 #: ../yum/__init__.py:3886
 msgid "Problem in reinstall: no package matched to remove"
-msgstr "Problème dans la ré-installation : aucun paquet correspondant à supprimer"
+msgstr ""
+"Problème dans la ré-installation : aucun paquet correspondant à supprimer"
 
 #: ../yum/__init__.py:3912
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
-msgstr "Problème dans la ré-installation : aucun paquet %s correspondant à installer"
+msgstr ""
+"Problème dans la ré-installation : aucun paquet %s correspondant à installer"
 
 #: ../yum/__init__.py:4018
 msgid "No package(s) available to downgrade"
 msgstr "Aucun paquet disponible pour rétrogradation"
 
-# Je suis pas sûr d'avoir bien compris la chaîne originale
 #: ../yum/__init__.py:4026
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
@@ -2766,7 +2842,8 @@ msgstr ""
 
 #: ../yum/__init__.py:4347
 msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "L'import de la (des) clé(s) n'a pas résolu le problème, mauvaise(s) clé(s) ?"
+msgstr ""
+"L'import de la (des) clé(s) n'a pas résolu le problème, mauvaise(s) clé(s) ?"
 
 #: ../yum/__init__.py:4366
 #, python-format
@@ -2837,12 +2914,14 @@ msgstr "L'extension « %s » ne peut pas être importé"
 #: ../yum/plugins.py:277
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
-msgstr "Le module complémentaire « %s » ne spécifie pas la version de l'API requise"
+msgstr ""
+"Le module complémentaire « %s » ne spécifie pas la version de l'API requise"
 
 #: ../yum/plugins.py:282
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
-msgstr "Le module complémentaire « %s » requiert l'API %s. L'API supportée est %s."
+msgstr ""
+"Le module complémentaire « %s » requiert l'API %s. L'API supportée est %s."
 
 #: ../yum/plugins.py:315
 #, python-format
@@ -2852,7 +2931,9 @@ msgstr "Chargement du module complémentaire « %s »"
 #: ../yum/plugins.py:322
 #, python-format
 msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr "Au moins deux modules complémentaires avec le même nom « %s » existent dans le chemin de recherche des modules complémentaires"
+msgstr ""
+"Au moins deux modules complémentaires avec le même nom « %s » existent dans "
+"le chemin de recherche des modules complémentaires"
 
 #: ../yum/plugins.py:342
 #, python-format
@@ -2864,7 +2945,9 @@ msgstr "Fichier de configuration %s non trouvé"
 #: ../yum/plugins.py:345
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr "Impossible de trouver le fichier de configuration pour le module complémentaire %s"
+msgstr ""
+"Impossible de trouver le fichier de configuration pour le module "
+"complémentaire %s"
 
 #: ../yum/plugins.py:507
 msgid "registration of commands not supported"
@@ -2909,7 +2992,9 @@ msgstr "Échec du contrôle MD5 pour le RPM %s"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Impossible de lire la base de données RPM. Peut être est-elle déjà utilisée ?"
+msgstr ""
+"Impossible de lire la base de données RPM. Peut être est-elle déjà utilisée "
+"?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
@@ -2925,99 +3010,3 @@ msgstr "En-tête endommagé %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Erreur d'ouverture du rpm %s - erreur %s"
-
-#~ msgid "Finished Transaction Test"
-#~ msgstr "Transaction de test terminée"
-
-#~ msgid "Repo       : %s"
-#~ msgstr "Dépôt         : %s"
-
-#~ msgid "URL        : %s"
-#~ msgstr "URL        : %s"
-
-#~ msgid "License    : %s"
-#~ msgstr "Licence       : %s"
-
-#~ msgid "Description: "
-#~ msgstr "Description :"
-
-#~ msgid ""
-#~ "Remove    %5.5s Package(s)\n"
-#~ "Reinstall %5.5s Package(s)\n"
-#~ "Downgrade %5.5s Package(s)\n"
-#~ msgstr ""
-#~ "Supprimer    %5.5s paquet(s)\n"
-#~ "Réinstaller %5.5s paquet(s)\n"
-#~ "Déclasser %5.5s paquet(s)\n"
-
-#~ msgid "Weird"
-#~ msgstr "Bizarre"
-
-#~ msgid ""
-#~ " You could try running: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-#~ msgstr ""
-#~ " Vous pouvez essayer d'exécuter : package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-
-#~ msgid "Potential match for %s from %s"
-#~ msgstr "Correspondance potentielle pour %s depuis %s"
-
-#~ msgid "Matched %s to require for %s"
-#~ msgstr "Correspondance %s trouvée pour %s "
-
-#~ msgid "Unresolvable requirement %s for %s"
-#~ msgstr "Impossible de résoudre le prérequis  %s pour %s"
-
-#~ msgid "Missing Dependency: %s is needed by package %s"
-#~ msgstr "Dépendance manquante : %s est requis par le paquet %s"
-
-#~ msgid "Matching packages for package list to user args"
-#~ msgstr "Liste des paquets correspondant à la demande de l'utilisateur"
-
-#~ msgid ""
-#~ "\n"
-#~ "Transaction Summary\n"
-#~ "%s\n"
-#~ "Install  %5.5s Package(s)         \n"
-#~ "Update   %5.5s Package(s)         \n"
-#~ "Remove   %5.5s Package(s)         \n"
-#~ msgstr ""
-#~ "\n"
-#~ "Résumé de la transaction\n"
-#~ "%s\n"
-#~ "Installation  %5.5s paquet(s)         \n"
-#~ "Mise à jour   %5.5s paquet(s)         \n"
-#~ "Suppression   %5.5s paquet(s)         \n"
-
-#~ msgid "excluding for cost: %s from %s"
-#~ msgstr "exclusion pour coût : %s depuis %s"
-
-#~ msgid "Excluding Packages in global exclude list"
-#~ msgstr "Exclusion des paquets de la liste globale d'exclusion"
-
-#~ msgid "Excluding Packages from %s"
-#~ msgstr "Exclusion des paquets depuis %s"
-
-#~ msgid "Reducing %s to included packages only"
-#~ msgstr "Réduction de %s aux paquets inclus uniquement"
-
-#~ msgid "Removing unmatched package %s"
-#~ msgstr "Suppression du paquet non concordant %s"
-
-#~ msgid "Finished"
-#~ msgstr "Terminé"
-
-#~ msgid "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple().\n"
-#~ msgstr "getInstalledPackageObject() sera supprimé, utilisez self.rpmdb.searchPkgTuple().\n"
-
-#~ msgid "Parsing package install arguments"
-#~ msgstr "Traitement des options d'installation des paquets"
-
-#~ msgid "po %s obsoletes best: %s"
-#~ msgstr "%s rend obsolète %s"
-
-#~ msgid "Invalid versioned dependency string, try quoting it."
-#~ msgstr "Chaîne de version de dépendance invalide, essai entre guillemets."

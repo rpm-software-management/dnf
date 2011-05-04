@@ -1,20 +1,21 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the YUM package.
-#
-# Yuri Chornoivan <yurchor@ukr.net>, 2010.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-11-21 16:33+0200\n"
-"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
-"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"PO-Revision-Date: 2011-05-04 14:58+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Ukrainian (http://www.transifex.net/projects/p/yum/team/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.1\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -242,7 +243,8 @@ msgstr "%d пакунків позначено для виконання син�
 
 #: ../cli.py:773
 msgid "No Packages marked for Distribution Synchronization"
-msgstr "Для виконання синхронізації дистрибутивів не позначено жодного пакунка"
+msgstr ""
+"Для виконання синхронізації дистрибутивів не позначено жодного пакунка"
 
 #: ../cli.py:787
 #, python-format
@@ -295,8 +297,7 @@ msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
-"Попередження: у версіях 3.0.x yum відповідність назв файлів встановлюється з "
-"помилками.\n"
+"Попередження: у версіях 3.0.x yum відповідність назв файлів встановлюється з помилками.\n"
 " Щоб знайти відповідники, вам слід скористатися «%s*/%s%s» і/або «%s*bin/%s%s»."
 
 #: ../cli.py:1011
@@ -359,7 +360,8 @@ msgstr "Попередження: групи з назвою %s не існує.
 
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
-msgstr "У жодній з вказаних груп немає пакунків для встановлення або оновлення"
+msgstr ""
+"У жодній з вказаних груп немає пакунків для встановлення або оновлення"
 
 #: ../cli.py:1148
 #, python-format
@@ -483,7 +485,8 @@ msgstr ""
 
 #: ../cli.py:1492
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr "вимкнути одне або декілька сховищ (можна використовувати шаблони заміни)"
+msgstr ""
+"вимкнути одне або декілька сховищ (можна використовувати шаблони заміни)"
 
 #: ../cli.py:1495
 msgid "exclude package(s) by name or glob"
@@ -523,7 +526,8 @@ msgstr "визначає, чи слід використовувати розф�
 
 #: ../cli.py:1516
 msgid "set value of $releasever in yum config and repo files"
-msgstr "встановити значення $releasever у налаштуванні yum config and repo files"
+msgstr ""
+"встановити значення $releasever у налаштуванні yum config and repo files"
 
 #: ../cli.py:1518
 msgid "set arbitrary config and repo options"
@@ -904,13 +908,11 @@ msgstr "два"
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
-"seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
 msgstr ""
 "\n"
-" Поточне звантаження скасовано, %sперервіть роботу (ctrl-c) ще раз%s "
-"протягом %s%s%s секунд,\n"
+" Поточне звантаження скасовано, %sперервіть роботу (ctrl-c) ще раз%s протягом %s%s%s секунд,\n"
 "щоб завершити операцію.\n"
 
 #: ../output.py:1267
@@ -1437,8 +1439,7 @@ msgstr ""
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1451,22 +1452,18 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 "\n"
-"Вами було увімкнено перевірку пакунків за допомогою ключів GPG. Це "
-"правильний крок. \n"
-"Але у вашій системі не встановлено жодного відкритого ключа GPG. Вам слід "
-"звантажити\n"
+"Вами було увімкнено перевірку пакунків за допомогою ключів GPG. Це правильний крок. \n"
+"Але у вашій системі не встановлено жодного відкритого ключа GPG. Вам слід звантажити\n"
 "ключі до пакунків, які ви бажаєте встановити і встановити ці ключі.\n"
 "Виконати встановлення можна за допомогою команди:\n"
 "    rpm --import public.gpg.key\n"
 "\n"
 "\n"
 "Крім того, ви можете вказати адресу URL ключа, яким бажаєте скористатися\n"
-"для сховища за допомогою параметра «gpgkey» у розділі налаштувань сховища, "
-"yum \n"
+"для сховища за допомогою параметра «gpgkey» у розділі налаштувань сховища, yum \n"
 "встановить потрібні ключі автоматично.\n"
 "\n"
-"Докладніші відомості може бути отримано з довідки до вашого дистрибутива або "
-"від\n"
+"Докладніші відомості може бути отримано з довідки до вашого дистрибутива або від\n"
 "постачальника пакунків.\n"
 
 #: ../yumcommands.py:70
@@ -1518,8 +1515,7 @@ msgid ""
 msgstr ""
 "Не увімкнено жодного сховища.\n"
 " Для перегляду списку всіх сховищ віддайте команду «yum repolist all».\n"
-" Увімкнути сховище можна за допомогою команди yum-config-manager --enable <"
-"repo>"
+" Увімкнути сховище можна за допомогою команди yum-config-manager --enable <repo>"
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
@@ -1547,7 +1543,8 @@ msgstr "Налаштування процесу оновлення"
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr "Синхронізація встановлених пакунків з найсвіжішими доступними версіями"
+msgstr ""
+"Синхронізація встановлених пакунків з найсвіжішими доступними версіями"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
@@ -1904,8 +1901,10 @@ msgid "Check for problems in the rpmdb"
 msgstr "Пошук проблем у rpmdb"
 
 #: ../yummain.py:103
-msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "Зараз yum блокує стороння програма. Зачекаємо на завершення її роботи..."
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"Зараз yum блокує стороння програма. Зачекаємо на завершення її роботи..."
 
 #. Depsolve stage
 #: ../yummain.py:151
@@ -2003,7 +2002,8 @@ msgstr "TSINFO: пакунок %s, потрібний для %s, позначе�
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr ""
-"TSINFO: %s стає застарілим після встановлення %s для розв’язання залежностей."
+"TSINFO: %s стає застарілим після встановлення %s для розв’язання "
+"залежностей."
 
 #: ../yum/depsolve.py:396
 #, python-format
@@ -2155,7 +2155,8 @@ msgstr "Сховище %r: помилка під час обробки нала�
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr ""
-"Для сховища %r у налаштуваннях не вказано назви, використовуємо ідентифікатор"
+"Для сховища %r у налаштуваннях не вказано назви, використовуємо "
+"ідентифікатор"
 
 #: ../yum/__init__.py:497
 msgid "plugins already initialised"
@@ -2285,8 +2286,8 @@ msgstr "    %s з %s"
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr ""
-"** Знайдено %d проблем rpmdb, які вже існували, командою «yum check» виведено "
-"такі дані:"
+"** Знайдено %d проблем rpmdb, які вже існували, командою «yum check» "
+"виведено такі дані:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
@@ -2301,7 +2302,8 @@ msgid "installed conflict"
 msgstr "конфлікт встановлення"
 
 #: ../yum/__init__.py:1366
-msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Попередження: під час виконання операції сталися помилки виконання скриптів "
 "та інші некритичні помилки."
@@ -2360,8 +2362,8 @@ msgstr "Не вдалося створити блокування %s: %s "
 #: ../yum/__init__.py:1698
 #, python-format
 msgid ""
-"Package does not match intended download. Suggestion: run yum --enablerepo=%"
-"s clean metadata"
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
 msgstr ""
 "Пакунок не відповідає тому, який програма має намір звантажити. Пропозиція: "
 "віддайте команду yum -enablerepo=%s clean metadata"
@@ -2464,8 +2466,8 @@ msgstr "Немає відповідників %s.%s %s:%s-%s з оновленн
 
 #: ../yum/__init__.py:2433
 msgid ""
-"searchPackages() will go away in a future version of "
-"Yum.                      Use searchGenerator() instead. \n"
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
 msgstr ""
 "searchPackages() буде усунуто у майбутніх версіях Yum.                      "
 "Використовуйте краще searchGenerator(). \n"
@@ -2666,15 +2668,16 @@ msgstr "Не вдалося виконати локальне встановле
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Не вдалося додати пакунок %s до операції. Несумісна архітектура: %s"
 
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
-"Не вдалося встановити пакунок %s. Він є застарілим після встановлення пакунка "
-"%s"
+"Не вдалося встановити пакунок %s. Він є застарілим після встановлення "
+"пакунка %s"
 
 #: ../yum/__init__.py:3774
 #, python-format
@@ -2728,7 +2731,8 @@ msgstr "Немає доступних для зниження версії па�
 #: ../yum/__init__.py:4026
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr "Пакунок %s можна встановлювати паралельно з іншими версіями, пропускаємо"
+msgstr ""
+"Пакунок %s можна встановлювати паралельно з іншими версіями, пропускаємо"
 
 #: ../yum/__init__.py:4072
 #, python-format
@@ -2809,12 +2813,10 @@ msgstr "Ключ успішно імпортовано"
 #: ../yum/__init__.py:4338
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Ключі GPG зі списку сховища «%s» вже встановлено, але вони є некоректними для "
-"цього пакунка.\n"
+"Ключі GPG зі списку сховища «%s» вже встановлено, але вони є некоректними для цього пакунка.\n"
 "Перевірте, чи правильно вказано адреси URL для цього сховища."
 
 #: ../yum/__init__.py:4347
@@ -2838,8 +2840,7 @@ msgstr "Помилка імпортування ключа"
 #: ../yum/__init__.py:4394
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 "Ключі GPG зі списку сховища «%s» вже встановлено, але вони є некоректними.\n"
@@ -2981,30 +2982,3 @@ msgstr "Пошкоджений заголовок %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Помилка під час відкриття rpm %s — помилка %s"
-
-#~ msgid "Repo       : %s"
-#~ msgstr "Сховище     : %s"
-
-#~ msgid "URL        : %s"
-#~ msgstr "Адреса      : %s"
-
-#~ msgid "Description: "
-#~ msgstr "Опис        : "
-
-#~ msgid ""
-#~ "Remove    %5.5s Package(s)\n"
-#~ "Reinstall %5.5s Package(s)\n"
-#~ "Downgrade %5.5s Package(s)\n"
-#~ msgstr ""
-#~ "Вилучення        %5.5s пакунків\n"
-#~ "Перевстановлення %5.5s пакунків\n"
-#~ "Зниження версії  %5.5s пакунків\n"
-
-#~ msgid "Weird"
-#~ msgstr "Дивно"
-
-#~ msgid "Potential match for %s from %s"
-#~ msgstr "Потенційний відповідник %s з %s"
-
-#~ msgid "Matched %s to require for %s"
-#~ msgstr "%s відповідає потрібному для %s"

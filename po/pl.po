@@ -1,17 +1,21 @@
-# translation of pl.po to Polish
-# Piotr Drąg <piotrdrag@gmail.com>, 2008.
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: pl\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-08-23 19:38+0200\n"
-"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <trans-pl@lists.fedoraproject.org>\n"
+"PO-Revision-Date: 2011-05-04 14:58+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Polish (http://www.transifex.net/projects/p/yum/team/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -197,8 +201,7 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"Odmawianie automatycznego zaimportowania kluczy podczas nienadzorowanego "
-"uruchomienia.\n"
+"Odmawianie automatycznego zaimportowania kluczy podczas nienadzorowanego uruchomienia.\n"
 "Należy użyć \"-y\", aby wymusić."
 
 #: ../cli.py:592 ../cli.py:626
@@ -430,7 +433,8 @@ msgstr "toleruje błędy"
 
 #: ../cli.py:1457
 msgid "run entirely from system cache, don't update cache"
-msgstr "uruchamia wyłącznie z pamięci podręcznej systemu i nie aktualizuje jej"
+msgstr ""
+"uruchamia wyłącznie z pamięci podręcznej systemu i nie aktualizuje jej"
 
 #: ../cli.py:1460
 msgid "config file location"
@@ -905,13 +909,11 @@ msgstr "dwóch"
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
-"seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
 msgstr ""
 "\n"
-" Obecne pobieranie zostało anulowane, należy %sprzerwać (Ctrl-C) ponownie%s "
-"w ciągu %s%s%s sekund, aby zakończyć pracę.\n"
+" Obecne pobieranie zostało anulowane, należy %sprzerwać (Ctrl-C) ponownie%s w ciągu %s%s%s sekund, aby zakończyć pracę.\n"
 
 #: ../output.py:1267
 msgid "user interrupt"
@@ -1293,12 +1295,14 @@ msgstr "--> Przetwarzanie konfliktów: %s jest w konflikcie z %s"
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> Układanie zestawu transakcji z wybranymi pakietami. Proszę czekać."
+msgstr ""
+"--> Układanie zestawu transakcji z wybranymi pakietami. Proszę czekać."
 
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> Pobieranie nagłówka dla %s do umieszczenia w zestawie transakcji."
+msgstr ""
+"---> Pobieranie nagłówka dla %s do umieszczenia w zestawie transakcji."
 
 #: ../utils.py:94
 msgid "Running"
@@ -1435,8 +1439,7 @@ msgstr "Należy być zalogowanym jako root, aby wykonać to polecenie."
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1510,10 +1513,8 @@ msgid ""
 " You can enable repos with yum-config-manager --enable <repo>"
 msgstr ""
 "Brak włączonych repozytoriów.\n"
-" Wykonanie polecenia \"yum repolist all\" wyświetli wszystkie posiadane "
-"repozytoria.\n"
-" Można włączyć repozytoria za pomocą polecenia yum-config-manager --enable "
-"<repo>"
+" Wykonanie polecenia \"yum repolist all\" wyświetli wszystkie posiadane repozytoria.\n"
+" Można włączyć repozytoria za pomocą polecenia yum-config-manager --enable <repo>"
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
@@ -1899,7 +1900,8 @@ msgstr "Proszę sprawdzić, czy występują problemy w bazie danych RPM"
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
 msgstr ""
-"Inna aplikacja obecnie blokuje program yum. Oczekiwanie na jej zakończenie..."
+"Inna aplikacja obecnie blokuje program yum. Oczekiwanie na jej "
+"zakończenie..."
 
 #. Depsolve stage
 #: ../yummain.py:151
@@ -1927,7 +1929,8 @@ msgstr "Ustawianie zestawów transakcji przed włączeniem klasy konfiguracji"
 #: ../yum/depsolve.py:151
 #, python-format
 msgid "Invalid tsflag in config file: %s"
-msgstr "Nieprawidłowa flaga zestawu transakcji tsflag w pliku konfiguracji: %s"
+msgstr ""
+"Nieprawidłowa flaga zestawu transakcji tsflag w pliku konfiguracji: %s"
 
 #: ../yum/depsolve.py:162
 #, python-format
@@ -2140,8 +2143,7 @@ msgstr "Najlepszy porządek: %s"
 
 #: ../yum/__init__.py:214
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
-msgstr ""
-"doConfigSetup() zostanie usunięte w przyszłych wersjach programu yum.\n"
+msgstr "doConfigSetup() zostanie usunięte w przyszłych wersjach programu yum.\n"
 
 #: ../yum/__init__.py:453
 #, python-format
@@ -2189,8 +2191,7 @@ msgstr "więc to repozytorium nie może zostać przywrócone.\n"
 
 #: ../yum/__init__.py:658
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
-msgstr ""
-"doUpdateSetup() zostanie usunięte w przyszłych wersjach programu yum.\n"
+msgstr "doUpdateSetup() zostanie usunięte w przyszłych wersjach programu yum.\n"
 
 #: ../yum/__init__.py:670
 msgid "Building updates object"
@@ -2230,7 +2231,8 @@ msgstr "Dodawanie znaczników z repozytorium: %s"
 #: ../yum/__init__.py:806
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr "Dodanie znaczników pakietów dla repozytorium nie powiodło się: %s - %s"
+msgstr ""
+"Dodanie znaczników pakietów dla repozytorium nie powiodło się: %s - %s"
 
 #: ../yum/__init__.py:884
 msgid "Importing additional filelist information"
@@ -2302,7 +2304,8 @@ msgstr "zainstalowano konflikt"
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Ostrzeżenie: podczas transakcji wystąpił skrypt lub inne nie krytyczne błędy."
+"Ostrzeżenie: podczas transakcji wystąpił skrypt lub inne nie krytyczne "
+"błędy."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
@@ -2358,8 +2361,8 @@ msgstr "Nie można utworzyć blokady na %s: %s "
 #: ../yum/__init__.py:1698
 #, python-format
 msgid ""
-"Package does not match intended download. Suggestion: run yum --enablerepo=%"
-"s clean metadata"
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
 msgstr ""
 "Pakiet nie zgadza się z zamierzonym pobieraniem. Sugestia: proszę wykonać "
 "polecenie yum --enablerepo=%s clean metadata"
@@ -2464,11 +2467,11 @@ msgstr "Nic nie pasuje do %s.%s %s:%s-%s z aktualizacji"
 
 #: ../yum/__init__.py:2433
 msgid ""
-"searchPackages() will go away in a future version of "
-"Yum.                      Use searchGenerator() instead. \n"
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
 msgstr ""
-"searchPackages()  zostanie usunięte w przyszłych wersjach programu "
-"yum.                      Zamiast tego należy użyć searchGenerator(). \n"
+"searchPackages()  zostanie usunięte w przyszłych wersjach programu yum."
+"                      Zamiast tego należy użyć searchGenerator(). \n"
 
 #: ../yum/__init__.py:2472
 #, python-format
@@ -2666,15 +2669,16 @@ msgstr "Nie można lokalnie zainstalować pakietu RPM delta: %s. Pomijanie."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "Nie można dodać pakietu %s do transakcji. Niezgodna architektura: %s"
 
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
-"Nie można zainstalować pakietu %s. Został zastąpiony zainstalowanym pakietem "
-"%s"
+"Nie można zainstalować pakietu %s. Został zastąpiony zainstalowanym pakietem"
+" %s"
 
 #: ../yum/__init__.py:3774
 #, python-format
@@ -2682,8 +2686,8 @@ msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr ""
-"Pakiet %s nie jest zainstalowany, nie można go zaktualizować. Proszę wykonać "
-"polecenie yum install, aby go zainstalować."
+"Pakiet %s nie jest zainstalowany, nie można go zaktualizować. Proszę wykonać"
+" polecenie yum install, aby go zainstalować."
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
@@ -2713,8 +2717,8 @@ msgstr "Nie można otworzyć pliku: %s. Pomijanie."
 #: ../yum/__init__.py:3886
 msgid "Problem in reinstall: no package matched to remove"
 msgstr ""
-"Podczas ponownego instalowania wystąpił problem: brak pasujących pakietów do "
-"usunięcia"
+"Podczas ponownego instalowania wystąpił problem: brak pasujących pakietów do"
+" usunięcia"
 
 #: ../yum/__init__.py:3912
 #, python-format
@@ -2812,14 +2816,11 @@ msgstr "Klucz został pomyślnie zaimportowany"
 #: ../yum/__init__.py:4338
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Klucze GPG wyświetlone dla repozytorium \"%s\" są już zainstalowane, ale nie "
-"są poprawne dla tego pakietu.\n"
-"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne "
-"adresy URL do kluczy."
+"Klucze GPG wyświetlone dla repozytorium \"%s\" są już zainstalowane, ale nie są poprawne dla tego pakietu.\n"
+"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne adresy URL do kluczy."
 
 #: ../yum/__init__.py:4347
 msgid "Import of key(s) didn't help, wrong key(s)?"
@@ -2842,14 +2843,11 @@ msgstr "Zaimportowanie klucza nie powiodło się"
 #: ../yum/__init__.py:4394
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Klucze GPG wyświetlone dla repozytorium \"%s\" są już zainstalowane, ale nie "
-"są poprawne.\n"
-"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne "
-"adresy URL do kluczy."
+"Klucze GPG wyświetlone dla repozytorium \"%s\" są już zainstalowane, ale nie są poprawne.\n"
+"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne adresy URL do kluczy."
 
 #: ../yum/__init__.py:4521
 msgid "Unable to find a suitable mirror."
@@ -2911,8 +2909,7 @@ msgstr "Wczytywanie wtyczki \"%s\""
 
 #: ../yum/plugins.py:322
 #, python-format
-msgid ""
-"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
 "Istnieją dwie lub więcej wtyczek o nazwie \"%s\" w ścieżce wyszukiwania "
 "wtyczek"

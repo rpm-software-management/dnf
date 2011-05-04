@@ -1,21 +1,21 @@
-# Swedish messages for yum
-# Copyright © 2009-2010 Free Software Foundation
-# This file is distributed under the same license as the yum package.
-# Göran Uddeborg <goeran@uddeborg.se>, 2009-2010.
-#
-# $Id: yum.po,v 1.14 2010-10-21 21:26:32+02 göran Exp $
-#
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: yum\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-10-21 21:26+0200\n"
-"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
-"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"PO-Revision-Date: 2011-05-04 14:58+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Swedish (http://www.transifex.net/projects/p/yum/team/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: sv\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -294,8 +294,7 @@ msgid ""
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
 "Varing: versionerna 3.0.x av yum matchade felaktigt mot filnamn.\n"
-" Du kan använda \"%s*/%s%s\" och/eller \"%s*bin/%s%s\" för att få detta "
-"beteende"
+" Du kan använda \"%s*/%s%s\" och/eller \"%s*bin/%s%s\" för att få detta beteende"
 
 #: ../cli.py:1011
 #, python-format
@@ -904,8 +903,7 @@ msgstr "två"
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
-"seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
 msgstr ""
 "\n"
@@ -1383,8 +1381,8 @@ msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
 msgstr ""
-"Ett annat program håller för närvarande yum-låset, avslutar som konfigurerad "
-"av exit_on_lock"
+"Ett annat program håller för närvarande yum-låset, avslutar som konfigurerad"
+" av exit_on_lock"
 
 #: ../utils.py:260
 #, python-format
@@ -1434,8 +1432,7 @@ msgstr "Du måste vara root för att utföra detta kommando."
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1538,7 +1535,8 @@ msgstr "Förbereder uppdateringsprocessen"
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr "Synkroniser installerade paket med de senaste tillgängliga versionerna"
+msgstr ""
+"Synkroniser installerade paket med de senaste tillgängliga versionerna"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
@@ -2275,7 +2273,9 @@ msgstr "    %s från %s"
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr "** Hittade %d redan befintliga tidigare rpmdb-problem, ”yum check”-utdata följer:"
+msgstr ""
+"** Hittade %d redan befintliga tidigare rpmdb-problem, ”yum check”-utdata "
+"följer:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
@@ -2350,11 +2350,11 @@ msgstr "Kunde inte skapa lås av %s: %s "
 #: ../yum/__init__.py:1698
 #, python-format
 msgid ""
-"Package does not match intended download. Suggestion: run yum --enablerepo="
-"%s clean metadata"
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
 msgstr ""
-"Paketet matchar inte den avsedda hämtningen.  Förslag: kör yum --enablerepo="
-"%s clean metadata"
+"Paketet matchar inte den avsedda hämtningen.  Förslag: kör yum "
+"--enablerepo=%s clean metadata"
 
 #: ../yum/__init__.py:1714
 msgid "Could not perform checksum"
@@ -2367,7 +2367,8 @@ msgstr "Paketet stämmer inte med kontrollsumman"
 #: ../yum/__init__.py:1769
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr "paketet misslyckas med kontrollsumman men cachning är aktiverat för %s"
+msgstr ""
+"paketet misslyckas med kontrollsumman men cachning är aktiverat för %s"
 
 #: ../yum/__init__.py:1772 ../yum/__init__.py:1801
 #, python-format
@@ -2394,8 +2395,8 @@ msgstr "Huvudet är inte komplett."
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
-"Huvudet finns inte i den lokala cachen och endast-cache-läget är aktiverat.  "
-"Kan inte hämta %s"
+"Huvudet finns inte i den lokala cachen och endast-cache-läget är aktiverat."
+"  Kan inte hämta %s"
 
 #: ../yum/__init__.py:1954
 #, python-format
@@ -2427,8 +2428,6 @@ msgstr "Det går inte att ta bort %s"
 msgid "%s removed"
 msgstr "%s borttaget"
 
-# Första %s blir ett oöversatt engelskt ord.
-# Felrapporterat: http://yum.baseurl.org/ticket/41
 #: ../yum/__init__.py:2058
 #, python-format
 msgid "Cannot remove %s file %s"
@@ -2456,11 +2455,11 @@ msgstr "Ingenting matchar %s.%s %s:%s-%s från uppdateringarna"
 
 #: ../yum/__init__.py:2433
 msgid ""
-"searchPackages() will go away in a future version of Yum.                    "
-"  Use searchGenerator() instead. \n"
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
 msgstr ""
-"searchPackages() kommer att försvinna i en framtida version av Yum.          "
-"            Använd searchGenerator() istället. \n"
+"searchPackages() kommer att försvinna i en framtida version av Yum."
+"                      Använd searchGenerator() istället. \n"
 
 #: ../yum/__init__.py:2472
 #, python-format
@@ -2657,7 +2656,8 @@ msgstr "Det går inte att lokalinstallera deltarpm: %s.  Hoppar över."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Kan inte lägga till paket %s till transaktionen.  Inte en kompatibel "
 "arkitektur: %s"
@@ -2665,7 +2665,9 @@ msgstr ""
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
-msgstr "Det går inte att installera paketet %s.  Det är fasas ut av det installerade paketet %s"
+msgstr ""
+"Det går inte att installera paketet %s.  Det är fasas ut av det installerade"
+" paketet %s"
 
 #: ../yum/__init__.py:3774
 #, python-format
@@ -2798,12 +2800,10 @@ msgstr "Nyckelimport lyckades"
 #: ../yum/__init__.py:4338
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG-nycklarna uppräknade för förrådet \"%s\" är redan installerade men de är "
-"inte korrekta för detta paket.\n"
+"GPG-nycklarna uppräknade för förrådet \"%s\" är redan installerade men de är inte korrekta för detta paket.\n"
 "Kontrollera att de rätta nyckel-URL:erna är konfigurerade för detta förråd."
 
 #: ../yum/__init__.py:4347
@@ -2827,12 +2827,10 @@ msgstr "Nyckelimport misslyckades"
 #: ../yum/__init__.py:4394
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG-nycklarna uppräknade för förrådet \"%s\" är redan installerade men de är "
-"inte korrekta.\n"
+"GPG-nycklarna uppräknade för förrådet \"%s\" är redan installerade men de är inte korrekta.\n"
 "Kontrollera att rätt nyckel-URL:ar är konfigurerade för detta förråd."
 
 #: ../yum/__init__.py:4521
@@ -2895,8 +2893,7 @@ msgstr "Läser in insticksmodulen \"%s\""
 
 #: ../yum/plugins.py:322
 #, python-format
-msgid ""
-"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
 "Två eller flera insticksmoduler med namnet \"%s\" finns i sökvägen för "
 "insticksmoduler"
@@ -2957,7 +2954,8 @@ msgstr "RPM %s misslyckas med md5-kontroll"
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
 msgstr ""
-"Det gick inte att öppna RPM-databasen för läsning.  Kanske den redan används?"
+"Det gick inte att öppna RPM-databasen för läsning.  Kanske den redan "
+"används?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"

@@ -8,49 +8,49 @@ msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2011-05-04 14:58+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2011-03-25 06:10+0000\n"
+"Last-Translator: sweta <swkothar@redhat.com>\n"
+"Language-Team: Gujarati (http://www.transifex.net/projects/p/yum/team/gu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
+"Language: gu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
-msgstr ""
+msgstr "સુધારી રહ્યા છે"
 
 #: ../callback.py:49 ../yum/rpmtrans.py:73
 msgid "Erasing"
-msgstr ""
+msgstr "દૂર કરી રહ્યા છે"
 
 #: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1026
 #: ../output.py:1919 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
 #: ../yum/rpmtrans.py:77
 msgid "Installing"
-msgstr ""
+msgstr "સ્થાપિત કરી રહ્યા છે"
 
 #: ../callback.py:52 ../callback.py:58 ../output.py:1640 ../yum/rpmtrans.py:76
 msgid "Obsoleted"
-msgstr ""
+msgstr "અપ્રચલિત થયેલ"
 
 #: ../callback.py:54 ../output.py:1157 ../output.py:1518 ../output.py:1647
 msgid "Updated"
-msgstr ""
+msgstr "સુધારેલ"
 
 #: ../callback.py:55 ../output.py:1517
 msgid "Erased"
-msgstr ""
+msgstr "દૂર કરેલ"
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
 #: ../output.py:1517 ../output.py:1519 ../output.py:1891
 msgid "Installed"
-msgstr ""
+msgstr "સ્થાપિત થયેલ"
 
 #: ../callback.py:130
 msgid "No header - huh?"
-msgstr "Sem cabeçalho - hã?"
+msgstr ""
 
 #: ../callback.py:168
 msgid "Repackage"
@@ -59,48 +59,48 @@ msgstr ""
 #: ../callback.py:189
 #, python-format
 msgid "Error: invalid output state: %s for %s"
-msgstr ""
+msgstr "ભૂલ: અયોગ્ય આઉટપુટ સ્થિતિ: %s માટે %s"
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
-msgstr ""
+msgstr "દૂર કરેલ: %s"
 
 #: ../callback.py:217 ../output.py:1028 ../output.py:1894
 msgid "Removing"
-msgstr ""
+msgstr "દૂર કરી રહ્યા છે"
 
 #: ../callback.py:219 ../yum/rpmtrans.py:78
 msgid "Cleanup"
-msgstr ""
+msgstr "સાફ કરો"
 
 #: ../cli.py:108
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr ""
+msgstr "આદેશ \"%s\" પહેલેથી જ વ્યાખ્યાયિત થયેલ છે"
 
 #: ../cli.py:120
 msgid "Setting up repositories"
-msgstr ""
+msgstr "રિપોઝીટરીઓને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../cli.py:131
 msgid "Reading repository metadata in from local files"
-msgstr ""
+msgstr "સ્થાનિય ફાઇલોમાંથી રિપોઝીટરી મેટાડેટાને વાંચી રહ્યા છે"
 
 #: ../cli.py:234 ../utils.py:254
 #, python-format
 msgid "Config Error: %s"
-msgstr ""
+msgstr "રૂપરેખાંકન ભૂલ: %s"
 
 #: ../cli.py:237 ../cli.py:1403 ../utils.py:257
 #, python-format
 msgid "Options Error: %s"
-msgstr "Erro nas Opções: %s"
+msgstr "વિકલ્પો ભૂલ: %s"
 
 #: ../cli.py:267
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr ""
+msgstr "  સ્થાપિત થયેલ: %s-%s પર %s"
 
 #: ../cli.py:269
 #, python-format
@@ -114,16 +114,16 @@ msgstr ""
 
 #: ../cli.py:310
 msgid "You need to give some command"
-msgstr ""
+msgstr "તમારે અમુક આદેશને આપવાની જરૂર છે"
 
 #: ../cli.py:324
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr ""
+msgstr "આવો આદેશ નથી: %s. મહેરબાની કરીને %s --help વાપરો"
 
 #: ../cli.py:354
 msgid "Disk Requirements:\n"
-msgstr ""
+msgstr "ડિસ્ક જરૂરિયાતો:\n"
 
 #: ../cli.py:356
 #, python-format
@@ -137,6 +137,8 @@ msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr ""
+"ભૂલ સારાંશ\n"
+"-------------\n"
 
 #: ../cli.py:404
 msgid "Trying to run the transaction but nothing to do. Exiting."
@@ -144,19 +146,19 @@ msgstr ""
 
 #: ../cli.py:451
 msgid "Exiting on user Command"
-msgstr ""
+msgstr "વપરાશકર્તા આદેશ પર બહાર નીકળી રહ્યા છે"
 
 #: ../cli.py:455
 msgid "Downloading Packages:"
-msgstr ""
+msgstr "પેકેજોને ડાઉનલોડ કરી રહ્યા છે:"
 
 #: ../cli.py:460
 msgid "Error Downloading Packages:\n"
-msgstr ""
+msgstr "પેકેજોને ડાઉનલોડ કરતી વખતે ભૂલ:\n"
 
 #: ../cli.py:474 ../yum/__init__.py:4559
 msgid "Running rpm_check_debug"
-msgstr ""
+msgstr "rpm_check_debug ચાલી રહ્યુ છે"
 
 #: ../cli.py:483 ../yum/__init__.py:4568
 msgid "ERROR You need to update rpm to handle:"
@@ -168,12 +170,12 @@ msgstr ""
 
 #: ../cli.py:491
 msgid "RPM needs to be updated"
-msgstr ""
+msgstr "RPM ને સુધારવાની જરૂર છે"
 
 #: ../cli.py:492
 #, python-format
 msgid "Please report this error in %s"
-msgstr ""
+msgstr "મહેરબાની કરીને %s માં આ ભૂલનો અહેવાલ કરો"
 
 #: ../cli.py:498
 msgid "Running Transaction Test"
@@ -204,30 +206,30 @@ msgstr ""
 #: ../cli.py:609 ../cli.py:617
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
-msgstr ""
+msgstr "પેકેજ(ઓ) %s%s%s ઉપલબ્ધ છે, પરંતુ સ્થાપિત થયેલ છે."
 
 #: ../cli.py:623 ../cli.py:656 ../cli.py:810
 #, python-format
 msgid "No package %s%s%s available."
-msgstr ""
+msgstr "પેકેજ %s%s%s ઉપલબ્ધ નથી."
 
 #: ../cli.py:663 ../cli.py:875
 msgid "Package(s) to install"
-msgstr ""
+msgstr "સ્થાપિત કરવા માટે પેકેજ (ઓ)"
 
 #: ../cli.py:666 ../cli.py:667 ../cli.py:816 ../cli.py:850 ../cli.py:876
 #: ../yumcommands.py:179
 msgid "Nothing to do"
-msgstr ""
+msgstr "કંઇ કરવાનુ નથી"
 
 #: ../cli.py:701
 #, python-format
 msgid "%d packages marked for Update"
-msgstr ""
+msgstr "સુધારવા માટે %d પેકેજો ચિહ્નિત થયેલ છે"
 
 #: ../cli.py:704
 msgid "No Packages marked for Update"
-msgstr ""
+msgstr "સુધારવા માટે પેકેજો ચિહ્નિત થયેલ નથી"
 
 #: ../cli.py:770
 #, python-format
@@ -241,11 +243,11 @@ msgstr ""
 #: ../cli.py:787
 #, python-format
 msgid "%d packages marked for removal"
-msgstr ""
+msgstr "દૂર કરવા માટે %d પેકેજો ચિહ્નિત થયેવ છે"
 
 #: ../cli.py:790
 msgid "No Packages marked for removal"
-msgstr ""
+msgstr "દૂર કરવા માટે પેકેજો ચિહ્નિત થયેલ નથી"
 
 #: ../cli.py:815
 msgid "Package(s) to downgrade"
@@ -254,20 +256,20 @@ msgstr ""
 #: ../cli.py:840
 #, python-format
 msgid " (from %s)"
-msgstr ""
+msgstr " (%s માંથી)"
 
 #: ../cli.py:841
 #, python-format
 msgid "Installed package %s%s%s%s not available."
-msgstr ""
+msgstr "સ્થાપિત થયેલ પેકેજ %s%s%s%s ઉપલબ્ધ નથી."
 
 #: ../cli.py:849
 msgid "Package(s) to reinstall"
-msgstr ""
+msgstr "પુન:સ્થાપિત કરવા માટે પેકેજ (ઓ)"
 
 #: ../cli.py:862
 msgid "No Packages Provided"
-msgstr ""
+msgstr "પેકેજો પૂરા પાડેલ નથી"
 
 #: ../cli.py:945
 #, python-format
@@ -277,7 +279,7 @@ msgstr ""
 #: ../cli.py:952
 #, python-format
 msgid "Warning: No matches found for: %s"
-msgstr ""
+msgstr "ચેતવણી: તેની માટે બંધબેસતુ મળ્યુ નથી: %s"
 
 #: ../cli.py:955
 msgid "No Matches found"
@@ -293,7 +295,7 @@ msgstr ""
 #: ../cli.py:1011
 #, python-format
 msgid "No Package Found for %s"
-msgstr ""
+msgstr "%s માટે પેકેજ મળ્યુ નથી"
 
 #: ../cli.py:1021
 msgid "Cleaning repos: "
@@ -301,23 +303,23 @@ msgstr ""
 
 #: ../cli.py:1026
 msgid "Cleaning up Everything"
-msgstr ""
+msgstr "બધુ જ સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1042
 msgid "Cleaning up Headers"
-msgstr ""
+msgstr "હેડરો સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1045
 msgid "Cleaning up Packages"
-msgstr ""
+msgstr "પેકેજો સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1048
 msgid "Cleaning up xml metadata"
-msgstr ""
+msgstr "xml મેટાડેટા સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1051
 msgid "Cleaning up database cache"
-msgstr ""
+msgstr "ડેટાબેઝ કેશ સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1054
 msgid "Cleaning up expire-cache metadata"
@@ -329,15 +331,15 @@ msgstr ""
 
 #: ../cli.py:1060
 msgid "Cleaning up plugins"
-msgstr ""
+msgstr "પ્લગઇનને સાફ કરી રહ્યા છે"
 
 #: ../cli.py:1085
 msgid "Installed Groups:"
-msgstr ""
+msgstr "સ્થાપિત થયેલ જૂથો:"
 
 #: ../cli.py:1097
 msgid "Available Groups:"
-msgstr ""
+msgstr "ઉપલબ્ધ જૂથો:"
 
 #: ../cli.py:1107
 msgid "Done"
@@ -346,16 +348,16 @@ msgstr ""
 #: ../cli.py:1118 ../cli.py:1136 ../cli.py:1142 ../yum/__init__.py:3069
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr ""
+msgstr "ચેતવણી: જૂથ %s અસ્તિત્વ ધરાવતુ નથી."
 
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
-msgstr ""
+msgstr "સ્થાપિત અથવા સુધારવા ઉપલબ્ધ કોઇપણ સૂચિત થયેલ જૂથમાં પેકેજો નથી"
 
 #: ../cli.py:1148
 #, python-format
 msgid "%d Package(s) to Install"
-msgstr ""
+msgstr "સ્થાપિત કરવા માટે %d પેકેજ(ઓ)"
 
 #: ../cli.py:1158 ../yum/__init__.py:3081
 #, python-format
@@ -364,17 +366,17 @@ msgstr ""
 
 #: ../cli.py:1164
 msgid "No packages to remove from groups"
-msgstr ""
+msgstr "જૂથોમાંથી દૂર કરવા માટે પેકેજો નથી"
 
 #: ../cli.py:1166
 #, python-format
 msgid "%d Package(s) to remove"
-msgstr ""
+msgstr "દૂર કરવા માટે %d પેકેજ(ઓ)"
 
 #: ../cli.py:1208
 #, python-format
 msgid "Package %s is already installed, skipping"
-msgstr ""
+msgstr "પેકેજ %s પહેલેથી જ સ્થાપિત થયેલ છે, છોડી રહ્યા છે"
 
 #: ../cli.py:1219
 #, python-format
@@ -389,12 +391,12 @@ msgstr ""
 
 #: ../cli.py:1265
 msgid "Plugin Options"
-msgstr ""
+msgstr "પ્લગઇન વિકલ્પો"
 
 #: ../cli.py:1273
 #, python-format
 msgid "Command line error: %s"
-msgstr ""
+msgstr "આદેશ વાક્ય ભૂલ: %s"
 
 #: ../cli.py:1287
 #, python-format
@@ -403,6 +405,9 @@ msgid ""
 "\n"
 "%s: %s option requires an argument"
 msgstr ""
+"\n"
+"\n"
+"%s: %s વિકલ્પને દલીલની જરૂર છે"
 
 #: ../cli.py:1340
 msgid "--color takes one of: auto, always, never"
@@ -422,7 +427,7 @@ msgstr ""
 
 #: ../cli.py:1460
 msgid "config file location"
-msgstr ""
+msgstr "રૂપરેખાંકન ફાઇલ સ્થાન"
 
 #: ../cli.py:1463
 msgid "maximum command wait time"
@@ -430,7 +435,7 @@ msgstr ""
 
 #: ../cli.py:1465
 msgid "debugging output level"
-msgstr ""
+msgstr "ડિબગીંગ આઉટપુટ લેવલ"
 
 #: ../cli.py:1469
 msgid "show duplicates, in repos, in list/search commands"
@@ -438,11 +443,11 @@ msgstr ""
 
 #: ../cli.py:1471
 msgid "error output level"
-msgstr ""
+msgstr "ભૂલ આઉટપુટ લેવલ"
 
 #: ../cli.py:1474
 msgid "debugging output level for rpm"
-msgstr ""
+msgstr "rpm માટે ડિબગીંગ આઉટપુટ લેવલ"
 
 #: ../cli.py:1477
 msgid "quiet operation"
@@ -454,23 +459,24 @@ msgstr ""
 
 #: ../cli.py:1481
 msgid "answer yes for all questions"
-msgstr ""
+msgstr "બધા પ્રશ્ર્નો માટે જવાબ હાં"
 
 #: ../cli.py:1483
 msgid "show Yum version and exit"
-msgstr ""
+msgstr "Yum આવૃત્તિ બતાવો અને બહાર નીકળો"
 
 #: ../cli.py:1484
 msgid "set install root"
-msgstr ""
+msgstr "સ્થાપન રુટ સુયોજિત કરો"
 
 #: ../cli.py:1488
 msgid "enable one or more repositories (wildcards allowed)"
-msgstr ""
+msgstr "એક અથવા વધારે રિપોઝીટરીઓને સક્રિય કરો (વાઇલ્ડકાર્ડને પરવાનગી આપેલ છે)"
 
 #: ../cli.py:1492
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr ""
+"એક અથવા વધારે રિપોઝીટરીઓને નિષ્ક્રિય કરો (વાઇલ્ડકાર્ડને પરવાનગી આપેલ છે)"
 
 #: ../cli.py:1495
 msgid "exclude package(s) by name or glob"
@@ -486,7 +492,7 @@ msgstr ""
 
 #: ../cli.py:1502
 msgid "disable Yum plugins"
-msgstr ""
+msgstr "Yum પ્લગઇનને નિષ્ક્રિય કરો"
 
 #: ../cli.py:1504
 msgid "disable gpg signature checking"
@@ -494,11 +500,11 @@ msgstr ""
 
 #: ../cli.py:1506
 msgid "disable plugins by name"
-msgstr ""
+msgstr "નામ પ્રમાણે પ્લગઇનને નિષ્ક્રિય કરો"
 
 #: ../cli.py:1509
 msgid "enable plugins by name"
-msgstr ""
+msgstr "નામ પ્રમાણે પ્લગઇનને સક્રિય કરો"
 
 #: ../cli.py:1512
 msgid "skip packages with depsolving problems"
@@ -518,60 +524,60 @@ msgstr ""
 
 #: ../output.py:305
 msgid "Jan"
-msgstr ""
+msgstr "જાન્યુઆરી"
 
 #: ../output.py:305
 msgid "Feb"
-msgstr ""
+msgstr "ફેબ્રુઆરી"
 
 #: ../output.py:305
 msgid "Mar"
-msgstr ""
+msgstr "માર્ચ"
 
 #: ../output.py:305
 msgid "Apr"
-msgstr ""
+msgstr "એપ્રિલ"
 
 #: ../output.py:305
 msgid "May"
-msgstr ""
+msgstr "મે"
 
 #: ../output.py:305
 msgid "Jun"
-msgstr ""
+msgstr "જુન"
 
 #: ../output.py:306
 msgid "Jul"
-msgstr ""
+msgstr "જુલાઇ"
 
 #: ../output.py:306
 msgid "Aug"
-msgstr ""
+msgstr "ઑગસ્ટ"
 
 #: ../output.py:306
 msgid "Sep"
-msgstr ""
+msgstr "સપ્ટેમ્બર"
 
 #: ../output.py:306
 msgid "Oct"
-msgstr ""
+msgstr "ઑક્ટોમ્બર"
 
 #: ../output.py:306
 msgid "Nov"
-msgstr ""
+msgstr "નવેમ્બર"
 
 #: ../output.py:306
 msgid "Dec"
-msgstr ""
+msgstr "ડિસેમ્બર"
 
 #: ../output.py:316
 msgid "Trying other mirror."
-msgstr ""
+msgstr "બીજા મિરર માટે પ્રયત્ન કરી રહ્યા છે."
 
 #: ../output.py:579
 #, python-format
 msgid "Name        : %s%s%s"
-msgstr ""
+msgstr "નામ        : %s%s%s"
 
 #: ../output.py:580
 #, python-format
@@ -586,7 +592,7 @@ msgstr ""
 #: ../output.py:583
 #, python-format
 msgid "Version     : %s"
-msgstr ""
+msgstr "આવૃત્તિ     : %s"
 
 #: ../output.py:584
 #, python-format
@@ -596,7 +602,7 @@ msgstr ""
 #: ../output.py:585
 #, python-format
 msgid "Size        : %s"
-msgstr ""
+msgstr "માપ        : %s"
 
 #: ../output.py:586 ../output.py:890
 #, python-format
@@ -640,40 +646,40 @@ msgstr ""
 
 #: ../output.py:610
 msgid "Summary     : "
-msgstr ""
+msgstr "સારાંશ     : "
 
 #: ../output.py:612 ../output.py:903
 #, python-format
 msgid "URL         : %s"
-msgstr ""
+msgstr "URL         : %s"
 
 #: ../output.py:613
 msgid "License     : "
-msgstr ""
+msgstr "લાઇસન્સ     : "
 
 #: ../output.py:614 ../output.py:900
 msgid "Description : "
-msgstr ""
+msgstr "વર્ણન : "
 
 #: ../output.py:682
 msgid "y"
-msgstr ""
+msgstr "y"
 
 #: ../output.py:682
 msgid "yes"
-msgstr ""
+msgstr "હાં"
 
 #: ../output.py:683
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../output.py:683
 msgid "no"
-msgstr ""
+msgstr "નાં"
 
 #: ../output.py:687
 msgid "Is this ok [y/N]: "
-msgstr ""
+msgstr "શું આ બરાબર છે [y/N]: "
 
 #: ../output.py:775
 #, python-format
@@ -681,37 +687,39 @@ msgid ""
 "\n"
 "Group: %s"
 msgstr ""
+"\n"
+"જૂથ: %s"
 
 #: ../output.py:779
 #, python-format
 msgid " Group-Id: %s"
-msgstr ""
+msgstr " જૂથ-Id: %s"
 
 #: ../output.py:784
 #, python-format
 msgid " Description: %s"
-msgstr ""
+msgstr " વર્ણન: %s"
 
 #: ../output.py:786
 msgid " Mandatory Packages:"
-msgstr ""
+msgstr " ફરજિયાત પેકેજો:"
 
 #: ../output.py:787
 msgid " Default Packages:"
-msgstr ""
+msgstr " મૂળભૂત પેકેજો:"
 
 #: ../output.py:788
 msgid " Optional Packages:"
-msgstr ""
+msgstr " વૈકલ્પિક પેકેજો:"
 
 #: ../output.py:789
 msgid " Conditional Packages:"
-msgstr ""
+msgstr " શરતી પેકેજો:"
 
 #: ../output.py:809
 #, python-format
 msgid "package: %s"
-msgstr ""
+msgstr "પેકેજ: %s"
 
 #: ../output.py:811
 msgid "  No dependencies for this package"
@@ -733,16 +741,16 @@ msgstr ""
 #: ../output.py:906
 #, python-format
 msgid "License     : %s"
-msgstr ""
+msgstr "લાઇસન્સ     : %s"
 
 #: ../output.py:909
 #, python-format
 msgid "Filename    : %s"
-msgstr ""
+msgstr "ફાઇલનામ    : %s"
 
 #: ../output.py:913
 msgid "Other       : "
-msgstr ""
+msgstr "બીજા       : "
 
 #: ../output.py:956
 msgid "There was an error calculating total download size"
@@ -751,17 +759,17 @@ msgstr ""
 #: ../output.py:961
 #, python-format
 msgid "Total size: %s"
-msgstr ""
+msgstr "કુલ માપ: %s"
 
 #: ../output.py:964
 #, python-format
 msgid "Total download size: %s"
-msgstr ""
+msgstr "કુલ ડાઉનલોડ માપ: %s"
 
 #: ../output.py:968 ../output.py:988
 #, python-format
 msgid "Installed size: %s"
-msgstr ""
+msgstr "સ્થાપિત થયેલ માપ: %s"
 
 #: ../output.py:984
 msgid "There was an error calculating installed size"
@@ -769,7 +777,7 @@ msgstr ""
 
 #: ../output.py:1029
 msgid "Reinstalling"
-msgstr ""
+msgstr "પુન:સ્થાપિત કરી રહ્યા છે"
 
 #: ../output.py:1030
 msgid "Downgrading"
@@ -793,23 +801,23 @@ msgstr ""
 
 #: ../output.py:1063
 msgid "Package"
-msgstr ""
+msgstr "પેકેજ"
 
 #: ../output.py:1063
 msgid "Arch"
-msgstr "Arq."
+msgstr ""
 
 #: ../output.py:1064
 msgid "Version"
-msgstr "Versão"
+msgstr "આવૃત્તિ"
 
 #: ../output.py:1064
 msgid "Repository"
-msgstr ""
+msgstr "રિપોઝીટરી"
 
 #: ../output.py:1065
 msgid "Size"
-msgstr ""
+msgstr "માપ"
 
 #: ../output.py:1077
 #, python-format
@@ -851,7 +859,7 @@ msgstr ""
 
 #: ../output.py:1153
 msgid "Removed"
-msgstr ""
+msgstr "દૂર કરેલ"
 
 #: ../output.py:1154
 msgid "Dependency Removed"
@@ -871,12 +879,12 @@ msgstr ""
 
 #: ../output.py:1161
 msgid "Failed"
-msgstr ""
+msgstr "નિષ્ફળ"
 
 #. Delta between C-c's so we treat as exit
 #: ../output.py:1245
 msgid "two"
-msgstr ""
+msgstr "બે"
 
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
@@ -896,39 +904,39 @@ msgstr ""
 
 #: ../output.py:1285
 msgid "Total"
-msgstr ""
+msgstr "કુલ"
 
 #: ../output.py:1307
 msgid "I"
-msgstr ""
+msgstr "I"
 
 #: ../output.py:1308
 msgid "O"
-msgstr ""
+msgstr "O"
 
 #: ../output.py:1309
 msgid "E"
-msgstr ""
+msgstr "E"
 
 #: ../output.py:1310
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: ../output.py:1311
 msgid "D"
-msgstr ""
+msgstr "D"
 
 #: ../output.py:1312
 msgid "U"
-msgstr ""
+msgstr "U"
 
 #: ../output.py:1323
 msgid "<unset>"
-msgstr ""
+msgstr "<unset>"
 
 #: ../output.py:1324
 msgid "System"
-msgstr ""
+msgstr "સિસ્ટમ"
 
 #: ../output.py:1368
 msgid "Bad transaction IDs, or package(s), given"
@@ -936,7 +944,7 @@ msgstr ""
 
 #: ../output.py:1380
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../output.py:1381 ../output.py:1699
 msgid "Login user"
@@ -944,11 +952,11 @@ msgstr ""
 
 #: ../output.py:1382
 msgid "Date and time"
-msgstr ""
+msgstr "તારીખ અને સમય"
 
 #: ../output.py:1383 ../output.py:1701
 msgid "Action(s)"
-msgstr ""
+msgstr "ક્રિયા (ઓ)"
 
 #: ../output.py:1384 ../output.py:1702
 msgid "Altered"
@@ -980,7 +988,7 @@ msgstr ""
 
 #: ../output.py:1519
 msgid "Not installed"
-msgstr ""
+msgstr "સ્થાપિત થયેલ નથી"
 
 #: ../output.py:1520
 msgid "Older"
@@ -1005,7 +1013,7 @@ msgstr ""
 #: ../output.py:1573
 #, python-format
 msgid "(%s seconds)"
-msgstr ""
+msgstr "(%s સેકંડ)"
 
 #: ../output.py:1574
 msgid "End time       :"
@@ -1017,7 +1025,7 @@ msgstr ""
 
 #: ../output.py:1580
 msgid "User           :"
-msgstr ""
+msgstr "વપરાશકર્તા           :"
 
 #: ../output.py:1582 ../output.py:1584 ../output.py:1586
 msgid "Return-Code    :"
@@ -1029,15 +1037,15 @@ msgstr ""
 
 #: ../output.py:1584
 msgid "Failure:"
-msgstr ""
+msgstr "નિષ્ફળતા:"
 
 #: ../output.py:1586
 msgid "Success"
-msgstr ""
+msgstr "સફળતા"
 
 #: ../output.py:1589
 msgid "Command Line   :"
-msgstr ""
+msgstr "આદેશ વાક્ય   :"
 
 #: ../output.py:1597
 #, python-format
@@ -1058,7 +1066,7 @@ msgstr ""
 
 #: ../output.py:1612
 msgid "Rpmdb Problems:"
-msgstr ""
+msgstr "Rpmdb સમસ્યાઓ:"
 
 #: ../output.py:1620
 msgid "Scriptlet output:"
@@ -1066,7 +1074,7 @@ msgstr ""
 
 #: ../output.py:1626
 msgid "Errors:"
-msgstr ""
+msgstr "ભૂલો:"
 
 #. Note that these don't use _simple_pkg() because we are showing what
 #. happened to them in the transaction ... not the difference between the
@@ -1085,11 +1093,11 @@ msgstr ""
 
 #: ../output.py:1642
 msgid "Erase"
-msgstr ""
+msgstr "ભૂંસી નાખો"
 
 #: ../output.py:1643
 msgid "Reinstall"
-msgstr ""
+msgstr "પુન:સ્થાપિત કરો"
 
 #: ../output.py:1644
 msgid "Downgrade"
@@ -1097,36 +1105,36 @@ msgstr ""
 
 #: ../output.py:1646
 msgid "Update"
-msgstr ""
+msgstr "સુધારવું"
 
 #: ../output.py:1700
 msgid "Time"
-msgstr ""
+msgstr "સમય"
 
 #: ../output.py:1726
 msgid "Last day"
-msgstr ""
+msgstr "છેલ્લો દિવસ"
 
 #: ../output.py:1727
 msgid "Last week"
-msgstr ""
+msgstr "છેલ્લુ અઠવાડિયું"
 
 #: ../output.py:1728
 msgid "Last 2 weeks"
-msgstr ""
+msgstr "છેલ્લા 2 અઠવાડિયાઓ"
 
 #. US default :p
 #: ../output.py:1729
 msgid "Last 3 months"
-msgstr ""
+msgstr "છેલ્લા 3 મહિનાઓ"
 
 #: ../output.py:1730
 msgid "Last 6 months"
-msgstr ""
+msgstr "છેલ્લા 6 મહિનાઓ"
 
 #: ../output.py:1731
 msgid "Last year"
-msgstr ""
+msgstr "છેલ્લુ વર્ષ"
 
 #: ../output.py:1732
 msgid "Over a year ago"
@@ -1143,32 +1151,32 @@ msgstr ""
 
 #: ../output.py:1781
 msgid "Available additional history information:"
-msgstr ""
+msgstr "ઉપલબ્ધ વધારાની ઇતિહાસ જાણકારી:"
 
 #: ../output.py:1793
 #, python-format
 msgid "%s: No additional data found by this name"
-msgstr ""
+msgstr "%s: આ નામ પ્રમાણે વધારાની માહિતી મળી નથી"
 
 #: ../output.py:1809
 msgid "installed"
-msgstr ""
+msgstr "સ્થાપિત થયેલ"
 
 #: ../output.py:1810
 msgid "updated"
-msgstr ""
+msgstr "સુધારેલ"
 
 #: ../output.py:1811
 msgid "obsoleted"
-msgstr ""
+msgstr "અપ્રચલિત થયેલ"
 
 #: ../output.py:1812
 msgid "erased"
-msgstr ""
+msgstr "ભૂંસી નાખેલ"
 
 #: ../output.py:1813
 msgid "reinstalled"
-msgstr ""
+msgstr "પુન:સ્થાપિત થયેલ"
 
 #: ../output.py:1814
 msgid "downgraded"
@@ -1199,7 +1207,7 @@ msgstr ""
 #: ../output.py:1850
 #, python-format
 msgid "---> Keeping package: %s"
-msgstr ""
+msgstr "---> પેકેજને રાખી રહ્યા છે: %s"
 
 #: ../output.py:1853
 #, python-format
@@ -1209,7 +1217,7 @@ msgstr ""
 #: ../output.py:1864
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "પેકેજ: %s"
 
 #: ../output.py:1866
 #, python-format
@@ -1224,6 +1232,8 @@ msgid ""
 "\n"
 "    %s: %s (%s)"
 msgstr ""
+"\n"
+"    %s: %s (%s)"
 
 #: ../output.py:1880
 #, python-format
@@ -1231,12 +1241,16 @@ msgid ""
 "\n"
 "        %s"
 msgstr ""
+"\n"
+"        %s"
 
 #: ../output.py:1882
 msgid ""
 "\n"
 "        Not found"
 msgstr ""
+"\n"
+"        મળ્યુ નથી"
 
 #. These should be the only three things we care about:
 #: ../output.py:1897
@@ -1253,7 +1267,7 @@ msgstr ""
 
 #: ../output.py:1917
 msgid "Available"
-msgstr ""
+msgstr "ઉપલબ્ધ"
 
 #: ../output.py:1944 ../output.py:1949
 #, python-format
@@ -1271,7 +1285,7 @@ msgstr ""
 
 #: ../utils.py:94
 msgid "Running"
-msgstr ""
+msgstr "ચાલી રહ્યુ છે"
 
 #: ../utils.py:95
 msgid "Sleeping"
@@ -1291,7 +1305,7 @@ msgstr ""
 
 #: ../utils.py:99 ../yumcommands.py:972
 msgid "Unknown"
-msgstr ""
+msgstr "અજ્ઞાત"
 
 #: ../utils.py:110
 msgid "  The other application is: PackageKit"
@@ -1305,7 +1319,7 @@ msgstr ""
 #: ../utils.py:115
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr ""
+msgstr "    મેમરી : %5s RSS (%5sB VSZ)"
 
 #: ../utils.py:120
 #, python-format
@@ -1338,6 +1352,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"\n"
+"\n"
+"%s"
 
 #: ../utils.py:201 ../yummain.py:107
 msgid ""
@@ -1348,17 +1365,17 @@ msgstr ""
 #: ../utils.py:260
 #, python-format
 msgid "PluginExit Error: %s"
-msgstr ""
+msgstr "PluginExit ભૂલ: %s"
 
 #: ../utils.py:263
 #, python-format
 msgid "Yum Error: %s"
-msgstr ""
+msgstr "Yum ભૂલ: %s"
 
 #: ../utils.py:315 ../yummain.py:134 ../yummain.py:173
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "ભૂલ: %s"
 
 #: ../utils.py:319 ../yummain.py:177
 msgid " You could try using --skip-broken to work around the problem"
@@ -1381,11 +1398,11 @@ msgstr ""
 
 #: ../utils.py:349 ../yummain.py:215
 msgid "Complete!"
-msgstr ""
+msgstr "સમાપ્ત!"
 
 #: ../yumcommands.py:43
 msgid "You need to be root to perform this command."
-msgstr ""
+msgstr "આ આદેશને ચલાવવા માટે તમારે રુટમાં હોવુ જરૂરી છે."
 
 #: ../yumcommands.py:50
 msgid ""
@@ -1454,27 +1471,27 @@ msgstr ""
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
-msgstr ""
+msgstr "PACKAGE..."
 
 #: ../yumcommands.py:192
 msgid "Install a package or packages on your system"
-msgstr ""
+msgstr "તમારી સિસ્ટમ પર પેકેજ અથવા પેકેજોને સ્થાપિત કરો"
 
 #: ../yumcommands.py:201
 msgid "Setting up Install Process"
-msgstr ""
+msgstr "સ્થાપન પ્રક્રિયાને સુયોજિત કરી રહ્યા છે"
 
 #: ../yumcommands.py:212 ../yumcommands.py:234
 msgid "[PACKAGE...]"
-msgstr ""
+msgstr "[PACKAGE...]"
 
 #: ../yumcommands.py:215
 msgid "Update a package or packages on your system"
-msgstr ""
+msgstr "તમારી સિસ્ટમ પર પેકેજ અથવા પેકેજોને સુધારવું"
 
 #: ../yumcommands.py:223
 msgid "Setting up Update Process"
-msgstr ""
+msgstr "સુધારવાની પ્રક્રિયાને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
@@ -1490,28 +1507,28 @@ msgstr ""
 
 #: ../yumcommands.py:337
 msgid "Installed Packages"
-msgstr ""
+msgstr "સ્થાપિત થયેલ પેકેજો"
 
 #: ../yumcommands.py:345
 msgid "Available Packages"
-msgstr ""
+msgstr "ઉપલબ્ધ પેકેજો"
 
 #: ../yumcommands.py:349
 msgid "Extra Packages"
-msgstr ""
+msgstr "વધારાનાં પેકેજો"
 
 #: ../yumcommands.py:353
 msgid "Updated Packages"
-msgstr ""
+msgstr "સુધારેલ પેકેજો"
 
 #. This only happens in verbose mode
 #: ../yumcommands.py:361 ../yumcommands.py:368 ../yumcommands.py:655
 msgid "Obsoleting Packages"
-msgstr ""
+msgstr "પેકેજોને અપ્રચલિત કરી રહ્યા છે"
 
 #: ../yumcommands.py:370
 msgid "Recently Added Packages"
-msgstr ""
+msgstr "હમણાંજ ઉમેરેલ પેકેજો"
 
 #: ../yumcommands.py:377
 msgid "No matching Packages to list"
@@ -1527,11 +1544,11 @@ msgstr ""
 
 #: ../yumcommands.py:410
 msgid "Setting up Remove Process"
-msgstr ""
+msgstr "દૂર કરવાની પ્રક્રિયાને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:424
 msgid "Setting up Group Process"
-msgstr ""
+msgstr "જૂથ પ્રક્રિયાને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:430
 msgid "No Groups on which to run command"
@@ -1539,19 +1556,19 @@ msgstr ""
 
 #: ../yumcommands.py:443
 msgid "List available package groups"
-msgstr ""
+msgstr "ઉપલબ્ધ પેકેજ જૂથોની યાદી કરો"
 
 #: ../yumcommands.py:463
 msgid "Install the packages in a group on your system"
-msgstr ""
+msgstr "તમારી સિસ્ટમ પર જૂથમાં પેકેજોને સ્થાપિત કરો"
 
 #: ../yumcommands.py:486
 msgid "Remove the packages in a group from your system"
-msgstr ""
+msgstr "તમારી સિસ્ટમમાંથી જૂથમાં પેકેજોને દૂર કરો"
 
 #: ../yumcommands.py:514
 msgid "Display details about a package group"
-msgstr ""
+msgstr "પેકેજ જૂથ વિશે વિગતોને દર્શાવો"
 
 #: ../yumcommands.py:539
 msgid "Generate the metadata cache"
@@ -1559,7 +1576,7 @@ msgstr ""
 
 #: ../yumcommands.py:545
 msgid "Making cache files for all metadata files."
-msgstr ""
+msgstr "બધી મેટાડેટા ફાઇલો માટે કેશ ફાઇલો બનાવી રહ્યા છે."
 
 #: ../yumcommands.py:546
 msgid "This may take a while depending on the speed of this computer"
@@ -1567,11 +1584,11 @@ msgstr ""
 
 #: ../yumcommands.py:567
 msgid "Metadata Cache Created"
-msgstr ""
+msgstr "મેટાડેટા કેશ બનાવી"
 
 #: ../yumcommands.py:581
 msgid "Remove cached data"
-msgstr ""
+msgstr "કેશ થયેલ માહિતીને દૂર કરો"
 
 #: ../yumcommands.py:602
 msgid "Find what package provides the given value"
@@ -1579,7 +1596,7 @@ msgstr ""
 
 #: ../yumcommands.py:622
 msgid "Check for available package updates"
-msgstr ""
+msgstr "ઉપલબ્ધ પેકેજ સુધારાઓ માટે ચકાસો"
 
 #: ../yumcommands.py:675
 msgid "Search package details for the given string"
@@ -1587,7 +1604,7 @@ msgstr ""
 
 #: ../yumcommands.py:681
 msgid "Searching Packages: "
-msgstr ""
+msgstr "પેકેજોને શોધી રહ્યા છે: "
 
 #: ../yumcommands.py:698
 msgid "Update packages taking obsoletes into account"
@@ -1595,15 +1612,15 @@ msgstr ""
 
 #: ../yumcommands.py:707
 msgid "Setting up Upgrade Process"
-msgstr ""
+msgstr "અદ્યતન બનાવવાની પ્રક્રિયા સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:721
 msgid "Install a local RPM"
-msgstr ""
+msgstr "સ્થાનિય RPM ને સ્થાપિત કરો"
 
 #: ../yumcommands.py:729
 msgid "Setting up Local Package Process"
-msgstr ""
+msgstr "સ્થાનિય પેકેજ પ્રક્રિયાને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:748
 msgid "Determine which package provides the given dependency"
@@ -1619,7 +1636,7 @@ msgstr ""
 
 #: ../yumcommands.py:771
 msgid "Setting up Yum Shell"
-msgstr ""
+msgstr "Yum Shell ને સુયોજિત કરી રહ્યા છીએ"
 
 #: ../yumcommands.py:789
 msgid "List a package's dependencies"
@@ -1631,15 +1648,15 @@ msgstr ""
 
 #: ../yumcommands.py:811
 msgid "Display the configured software repositories"
-msgstr ""
+msgstr "રૂપરેખાંકિત થયેલ સોફ્ટવેર રિપોઝીટરીઓને દર્શાવો"
 
 #: ../yumcommands.py:877 ../yumcommands.py:878
 msgid "enabled"
-msgstr ""
+msgstr "સક્રિય"
 
 #: ../yumcommands.py:904 ../yumcommands.py:905
 msgid "disabled"
-msgstr ""
+msgstr "નિષ્ક્રિય"
 
 #: ../yumcommands.py:921
 msgid "Repo-id      : "
@@ -1732,11 +1749,11 @@ msgstr ""
 
 #: ../yumcommands.py:1023 ../yumcommands.py:1024 ../yumcommands.py:1042
 msgid "status"
-msgstr ""
+msgstr "પરિસ્થિતિ"
 
 #: ../yumcommands.py:1036
 msgid "repo name"
-msgstr ""
+msgstr "રિપોઝીટરી નામ"
 
 #: ../yumcommands.py:1073
 msgid "Display a helpful usage message"
@@ -1745,7 +1762,7 @@ msgstr ""
 #: ../yumcommands.py:1107
 #, python-format
 msgid "No help available for %s"
-msgstr ""
+msgstr "%s માટે ઉપલબ્ધ મદદ નથી"
 
 #: ../yumcommands.py:1112
 msgid ""
@@ -1767,7 +1784,7 @@ msgstr ""
 
 #: ../yumcommands.py:1151
 msgid "reinstall a package"
-msgstr ""
+msgstr "પેકેજને પુન:સ્થાપિત કરો"
 
 #: ../yumcommands.py:1170
 msgid "Setting up Downgrade Process"
@@ -1783,19 +1800,19 @@ msgstr ""
 
 #: ../yumcommands.py:1230
 msgid " Yum version groups:"
-msgstr ""
+msgstr " Yum આવૃત્તિ જૂથો:"
 
 #: ../yumcommands.py:1240
 msgid " Group   :"
-msgstr ""
+msgstr " જૂથ   :"
 
 #: ../yumcommands.py:1241
 msgid " Packages:"
-msgstr ""
+msgstr " પેકેજો:"
 
 #: ../yumcommands.py:1270
 msgid "Installed:"
-msgstr ""
+msgstr "સ્થાપિત થયેલ:"
 
 #: ../yumcommands.py:1278
 msgid "Group-Installed:"
@@ -1803,11 +1820,11 @@ msgstr ""
 
 #: ../yumcommands.py:1287
 msgid "Available:"
-msgstr ""
+msgstr "ઉપલબ્ધ:"
 
 #: ../yumcommands.py:1296
 msgid "Group-Available:"
-msgstr ""
+msgstr "જૂથ-ઉપલબ્ધ:"
 
 #: ../yumcommands.py:1335
 msgid "Display, or use, the transaction history"
@@ -1824,7 +1841,7 @@ msgstr ""
 
 #: ../yumcommands.py:1413
 msgid "Check for problems in the rpmdb"
-msgstr ""
+msgstr "rpmdb માં સમસ્યાઓ માટે ચકાસો"
 
 #: ../yummain.py:103
 msgid ""
@@ -1864,7 +1881,7 @@ msgstr ""
 #: ../yum/depsolve.py:205
 #, python-format
 msgid "Member: %s"
-msgstr ""
+msgstr "સભ્ય: %s"
 
 #: ../yum/depsolve.py:219 ../yum/depsolve.py:754
 #, python-format
@@ -1879,7 +1896,7 @@ msgstr ""
 #: ../yum/depsolve.py:242
 #, python-format
 msgid "Removing Package %s"
-msgstr ""
+msgstr "પેકેજ %s ને દૂર કરી રહ્યા છે"
 
 #: ../yum/depsolve.py:264
 #, python-format
@@ -1977,7 +1994,7 @@ msgstr ""
 
 #: ../yum/depsolve.py:729 ../yum/depsolve.py:744
 msgid "Restarting Loop"
-msgstr ""
+msgstr "લુપ પુન:શરૂ કરી રહ્યા છે"
 
 #: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
@@ -2005,7 +2022,7 @@ msgstr ""
 #: ../yum/depsolve.py:1119
 #, python-format
 msgid "Running compare_providers() for %s"
-msgstr ""
+msgstr "%s માટે compare_providers() ચલાવી રહ્યા છે"
 
 #: ../yum/depsolve.py:1146 ../yum/depsolve.py:1152
 #, python-format
@@ -2027,7 +2044,7 @@ msgstr ""
 #: ../yum/depsolve.py:1264
 #, python-format
 msgid "common sourcerpm %s and %s"
-msgstr ""
+msgstr "સામાન્ય sourcerpm %s અને %s"
 
 #: ../yum/depsolve.py:1268
 #, python-format
@@ -2047,7 +2064,7 @@ msgstr ""
 #: ../yum/depsolve.py:1309
 #, python-format
 msgid " Winner: %s"
-msgstr ""
+msgstr " વિજેતા: %s"
 
 #: ../yum/depsolve.py:1314
 #, python-format
@@ -2075,7 +2092,7 @@ msgstr ""
 
 #: ../yum/__init__.py:497
 msgid "plugins already initialised"
-msgstr ""
+msgstr "પ્લગઇન પહેલેથી જ પ્રારંભ થયેલ છે"
 
 #: ../yum/__init__.py:504
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
@@ -2083,7 +2100,7 @@ msgstr ""
 
 #: ../yum/__init__.py:515
 msgid "Reading Local RPMDB"
-msgstr ""
+msgstr "સ્થાનિય RPMDB ને વાંચી રહ્યા છે"
 
 #: ../yum/__init__.py:538
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
@@ -2120,12 +2137,12 @@ msgstr ""
 
 #: ../yum/__init__.py:734
 msgid "Getting group metadata"
-msgstr ""
+msgstr "જૂથ મેટાડેટાને મેળવી રહ્યા છે"
 
 #: ../yum/__init__.py:760
 #, python-format
 msgid "Adding group file from repository: %s"
-msgstr ""
+msgstr "રિપોઝીટરી માથી જૂથ ફાઇલને ઉમેરી રહ્યા છે: %s"
 
 #: ../yum/__init__.py:769
 #, python-format
@@ -2134,7 +2151,7 @@ msgstr ""
 
 #: ../yum/__init__.py:775
 msgid "No Groups Available in any repository"
-msgstr ""
+msgstr "કોઇપણ રિપોઝીટરીમાં જૂથો ઉપલબ્ધ નથી"
 
 #: ../yum/__init__.py:787
 msgid "Getting pkgtags metadata"
@@ -2143,7 +2160,7 @@ msgstr ""
 #: ../yum/__init__.py:797
 #, python-format
 msgid "Adding tags from repository: %s"
-msgstr ""
+msgstr "રિપોઝીટરીમાંથી ટૅગને ઉમેરી રહ્યા છે: %s"
 
 #: ../yum/__init__.py:806
 #, python-format
@@ -2152,7 +2169,7 @@ msgstr ""
 
 #: ../yum/__init__.py:884
 msgid "Importing additional filelist information"
-msgstr ""
+msgstr "વધારાની ફાઇલયાદી જાણકારીને આયાત કરી રહ્યા છે"
 
 #: ../yum/__init__.py:898
 #, python-format
@@ -2168,7 +2185,7 @@ msgstr ""
 #: ../yum/__init__.py:985
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
-msgstr ""
+msgstr "\"%s\" દૂર કરવા માટે પ્રયત્ન કરી રહ્યા છે, કે જે સુરક્ષિત થયેલ છે"
 
 #. Kind of hacky
 #: ../yum/__init__.py:1044
@@ -2246,13 +2263,13 @@ msgstr ""
 #: ../yum/__init__.py:1597
 #, python-format
 msgid "Could not open lock %s: %s"
-msgstr ""
+msgstr "તાળુ %s ને ખોલી શક્યા નહિં: %s"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1614
 #, python-format
 msgid "Unable to check if PID %s is active"
-msgstr "Não é possível verificar se o PID %s está activo"
+msgstr "ચકાસવાનું અસમર્થ જો PID %s સક્રિય છે"
 
 #. Another copy seems to be running.
 #: ../yum/__init__.py:1618
@@ -2289,7 +2306,7 @@ msgstr ""
 #: ../yum/__init__.py:1772 ../yum/__init__.py:1801
 #, python-format
 msgid "using local copy of %s"
-msgstr ""
+msgstr "%s ની સ્થાનિક નકલને વાપરી રહ્યા છે"
 
 #: ../yum/__init__.py:1813
 #, python-format
@@ -2301,7 +2318,7 @@ msgstr ""
 
 #: ../yum/__init__.py:1862
 msgid "Header is not complete."
-msgstr ""
+msgstr "હેડર પૂર્ણ નથી."
 
 #: ../yum/__init__.py:1899
 #, python-format
@@ -2312,12 +2329,12 @@ msgstr ""
 #: ../yum/__init__.py:1954
 #, python-format
 msgid "Public key for %s is not installed"
-msgstr ""
+msgstr "%s માટે સાર્વજનિક કી સ્થાપિત થયેલ નથી"
 
 #: ../yum/__init__.py:1958
 #, python-format
 msgid "Problem opening package %s"
-msgstr ""
+msgstr "પેકેજ %s ને ખોલી રહ્યા હોય ત્યારે સમસ્યા"
 
 #: ../yum/__init__.py:1966
 #, python-format
@@ -2327,17 +2344,17 @@ msgstr ""
 #: ../yum/__init__.py:1970
 #, python-format
 msgid "Package %s is not signed"
-msgstr ""
+msgstr "પેકેજ %s હસ્તાક્ષર થયેલ નથી"
 
 #: ../yum/__init__.py:2008
 #, python-format
 msgid "Cannot remove %s"
-msgstr ""
+msgstr "%s ને દૂર કરી શકાતુ નથી"
 
 #: ../yum/__init__.py:2012
 #, python-format
 msgid "%s removed"
-msgstr ""
+msgstr "%s દૂર થયેલ છે"
 
 #: ../yum/__init__.py:2058
 #, python-format
@@ -2352,7 +2369,7 @@ msgstr ""
 #: ../yum/__init__.py:2064
 #, python-format
 msgid "%d %s files removed"
-msgstr ""
+msgstr "%d %s ફાઇલો દૂર થયેલ છે"
 
 #: ../yum/__init__.py:2133
 #, python-format
@@ -2373,12 +2390,12 @@ msgstr ""
 #: ../yum/__init__.py:2472
 #, python-format
 msgid "Searching %d packages"
-msgstr ""
+msgstr "%d પેકેજોને શોધી રહ્યા છે"
 
 #: ../yum/__init__.py:2476
 #, python-format
 msgid "searching package %s"
-msgstr ""
+msgstr "પેકેજ %s ને શોધી રહ્યા છે"
 
 #: ../yum/__init__.py:2488
 msgid "searching in file entries"
@@ -2395,14 +2412,14 @@ msgstr ""
 
 #: ../yum/__init__.py:2577
 msgid "No group data available for configured repositories"
-msgstr ""
+msgstr "રૂપરેખાંકિત થયેલ રિપોઝીટરીઓ માટે ઉપલબ્ધ જૂથ માહિતી નથી"
 
 #: ../yum/__init__.py:2608 ../yum/__init__.py:2627 ../yum/__init__.py:2658
 #: ../yum/__init__.py:2664 ../yum/__init__.py:2746 ../yum/__init__.py:2750
 #: ../yum/__init__.py:3095
 #, python-format
 msgid "No Group named %s exists"
-msgstr ""
+msgstr "નામ થયેલ જૂથ %s અસ્તિત્વ ધરાવતુ નથી"
 
 #: ../yum/__init__.py:2639 ../yum/__init__.py:2766
 #, python-format
@@ -2412,12 +2429,12 @@ msgstr ""
 #: ../yum/__init__.py:2686
 #, python-format
 msgid "Adding package %s from group %s"
-msgstr ""
+msgstr "જૂથ %s માંથી પેકેજ %s ને ઉમેરી રહ્યા છે"
 
 #: ../yum/__init__.py:2690
 #, python-format
 msgid "No package named %s available to be installed"
-msgstr ""
+msgstr "સ્થાપિત કરવા માટે નામ થયેલ પેકેજ %s ઉપલબ્ધ નથી"
 
 #. This can happen due to excludes after .up has
 #. happened.
@@ -2434,11 +2451,11 @@ msgstr ""
 #: ../yum/__init__.py:2868 ../yum/__init__.py:2873
 #, python-format
 msgid "No Package found for %s"
-msgstr ""
+msgstr "%s માટે પેકેજ મળ્યુ નથી"
 
 #: ../yum/__init__.py:2901
 msgid "Invalid version flag"
-msgstr ""
+msgstr "અયોગ્ય આવૃત્તિ ફ્લેગ"
 
 #: ../yum/__init__.py:3145
 msgid "Package Object was not a package object instance"
@@ -2446,7 +2463,7 @@ msgstr ""
 
 #: ../yum/__init__.py:3149
 msgid "Nothing specified to install"
-msgstr ""
+msgstr "સ્થાપિત કરવા માટે કઇ જ સ્પષ્ટ થયેલ નથી"
 
 #: ../yum/__init__.py:3168 ../yum/__init__.py:3992
 #, python-format
@@ -2462,11 +2479,11 @@ msgstr ""
 #: ../yum/__init__.py:3250
 #, python-format
 msgid "Package %s installed and not available"
-msgstr ""
+msgstr "પેકેજ %s સ્થાપિત થયેલ છે અને ઉપલબ્ધ નથી"
 
 #: ../yum/__init__.py:3253
 msgid "No package(s) available to install"
-msgstr ""
+msgstr "સ્થાપિત કરવા માટે પેકેજ (ઓ) ઉપલબ્ધ નથી"
 
 #: ../yum/__init__.py:3265
 #, python-format
@@ -2503,7 +2520,7 @@ msgstr ""
 #. update everything (the easy case)
 #: ../yum/__init__.py:3424
 msgid "Updating Everything"
-msgstr ""
+msgstr "બધુ જ સુધારી રહ્યા છે"
 
 #: ../yum/__init__.py:3448 ../yum/__init__.py:3577 ../yum/__init__.py:3604
 #: ../yum/__init__.py:3630
@@ -2514,22 +2531,22 @@ msgstr ""
 #: ../yum/__init__.py:3489 ../yum/__init__.py:3680
 #, python-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #: ../yum/__init__.py:3566
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
+msgstr "પેકેજ પહેલેથી જ અપ્રચલિત થયેલ છે: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3599
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
-msgstr ""
+msgstr "પેકેજને સુધારી રહ્યા નથી કે જે અપ્રચલિત થયેલ છે: %s"
 
 #: ../yum/__init__.py:3608 ../yum/__init__.py:3634
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr ""
+msgstr "પેકેજને સુધારી રહ્યા નથી કે જે પહેલેથી જ સુધારેલ છે: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3697
 msgid "No package matched to remove"
@@ -2553,7 +2570,7 @@ msgstr ""
 #: ../yum/__init__.py:3747 ../yum/__init__.py:3859 ../yum/__init__.py:3935
 #, python-format
 msgid "Examining %s: %s"
-msgstr ""
+msgstr "%s નું પરિક્ષણ કરી રહ્યા છે: %s"
 
 #: ../yum/__init__.py:3751
 #, python-format
@@ -2596,7 +2613,7 @@ msgstr ""
 #: ../yum/__init__.py:3821
 #, python-format
 msgid "%s: does not update installed package."
-msgstr ""
+msgstr "%s: સ્થાપિત પેકેજોને સુધારાતુ નથી."
 
 #: ../yum/__init__.py:3856 ../yum/__init__.py:3932
 #, python-format
@@ -2624,7 +2641,7 @@ msgstr ""
 #: ../yum/__init__.py:4072
 #, python-format
 msgid "No Match for available package: %s"
-msgstr ""
+msgstr "ઉપલબ્ધ પેકેજ માટે બંધબેસતુ નથી: %s"
 
 #: ../yum/__init__.py:4079
 #, python-format
@@ -2639,7 +2656,7 @@ msgstr ""
 #: ../yum/__init__.py:4218
 #, python-format
 msgid "Retrieving GPG key from %s"
-msgstr ""
+msgstr "%s માંથી GPG કીને મેળવી રહ્યા છે"
 
 #: ../yum/__init__.py:4238
 msgid "GPG key retrieval failed: "
@@ -2648,7 +2665,7 @@ msgstr ""
 #: ../yum/__init__.py:4244
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
-msgstr ""
+msgstr "%s માંથી અયોગ્ય GPG કી: %s"
 
 #: ../yum/__init__.py:4253
 #, python-format
@@ -2679,7 +2696,7 @@ msgstr ""
 
 #: ../yum/__init__.py:4326
 msgid "Not installing key"
-msgstr ""
+msgstr "કીને સ્થાપિત કરી રહ્યા નથી"
 
 #: ../yum/__init__.py:4332
 #, python-format
@@ -2709,7 +2726,7 @@ msgstr ""
 #: ../yum/__init__.py:4383
 #, python-format
 msgid "Not installing key for repo %s"
-msgstr ""
+msgstr "રિપો %s માટે કીને સ્થાપિત કરી રહ્યા નથી"
 
 #: ../yum/__init__.py:4388
 msgid "Key import failed"
@@ -2742,12 +2759,12 @@ msgstr ""
 #: ../yum/__init__.py:4700
 #, python-format
 msgid "Could not set cachedir: %s"
-msgstr ""
+msgstr "cachedir ને સુયોજિત કરી શક્યા નહિં: %s"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:208
 msgid "Loaded plugins: "
-msgstr ""
+msgstr "લોડ થયેલ પ્લગઇન: "
 
 #: ../yum/plugins.py:222 ../yum/plugins.py:228
 #, python-format
@@ -2763,7 +2780,7 @@ msgstr ""
 #: ../yum/plugins.py:270
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
-msgstr ""
+msgstr "પ્લગઇન \"%s\" ને આયાત કરી શકાતુ નથી"
 
 #: ../yum/plugins.py:277
 #, python-format
@@ -2778,7 +2795,7 @@ msgstr ""
 #: ../yum/plugins.py:315
 #, python-format
 msgid "Loading \"%s\" plugin"
-msgstr ""
+msgstr "\"%s\" પ્લગઇનને લાવી રહ્યા છે"
 
 #: ../yum/plugins.py:322
 #, python-format
@@ -2788,18 +2805,18 @@ msgstr ""
 #: ../yum/plugins.py:342
 #, python-format
 msgid "Configuration file %s not found"
-msgstr ""
+msgstr "રૂપરેખાંકન ફાઇલ %s મળ્યુ નથી"
 
 #. for
 #. Configuration files for the plugin not found
 #: ../yum/plugins.py:345
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr ""
+msgstr "પ્લગઇન %s માટે રૂપરેખાંકન ફાઇલ શોધવામાં અસમર્થ"
 
 #: ../yum/plugins.py:507
 msgid "registration of commands not supported"
-msgstr ""
+msgstr "આદેશોનું રજીસ્ટ્રેશન આધારભૂત નથી"
 
 #: ../yum/rpmsack.py:102
 msgid "has missing requires of"
@@ -2831,28 +2848,28 @@ msgstr ""
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
 msgid "Header cannot be opened or does not match %s, %s."
-msgstr "O cabeçalho não pôde ser aberto ou não corresponde ao %s, %s."
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:53
 #, python-format
 msgid "RPM %s fails md5 check"
-msgstr "O RPM %s falha no código MD5"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Não foi ler a base de dados do RPM. Talvez já esteja a ser usada?"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
-msgstr "Foi obtido um cabeçalho vazio; algo se passa de errado"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
 #: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
 #, python-format
 msgid "Damaged Header %s"
-msgstr "Cabeçalho %s Danificado"
+msgstr ""
 
 #: ../rpmUtils/oldUtils.py:281
 #, python-format
 msgid "Error opening rpm %s - error %s"
-msgstr "Erro ao abrir o RPM %s - erro %s"
+msgstr ""

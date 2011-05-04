@@ -1,26 +1,21 @@
-# translation of yum to italian
-# Italian translation of yum.
-# Copyright (C) 2008 Red Hat, Inc.
-# This file is distributed under the same license as the yum package.
-#
-#
-# Silvio Pierro <perplesso82@gmail.com>, 2008.
-# Gianluca Busiello <busiello@ceinge.unina.it>, 2008.
-# mario_santagiuliana <mario@marionline.it>, 2009.
-# Guido Grazioli <guido.grazioli@gmail.com>, 2009-2010.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: yum-it 3.2.8\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-11-12 18:16+0100\n"
-"Last-Translator: Guido Grazioli <guido.grazioli@gmail.com>\n"
-"Language-Team: Italian <trans-it@lists.fedoraproject.org>\n"
+"PO-Revision-Date: 2011-05-04 14:59+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Italian (http://www.transifex.net/projects/p/yum/team/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 0.3\n"
+"Language: it\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -203,8 +198,7 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"L'importazione automatica delle chiavi è disabilitata in modalità non "
-"interattiva.\n"
+"L'importazione automatica delle chiavi è disabilitata in modalità non interattiva.\n"
 "Usare \"-y\" per abilitarla."
 
 #: ../cli.py:592 ../cli.py:626
@@ -299,8 +293,7 @@ msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
-"Attenzione: la versione 3.0.x di yum non fa match correttamente sui "
-"filename.\n"
+"Attenzione: la versione 3.0.x di yum non fa match correttamente sui filename.\n"
 " Si può usare \"%s*/%s%s\" e/o \"%s*bin/%s%s\" per avere questo comportamento"
 
 #: ../cli.py:1011
@@ -364,8 +357,8 @@ msgstr "Attenzione: Il gruppo %s non esiste."
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
 msgstr ""
-"Nessun pacchetto in alcun gruppo richiesto è disponibile per l'installazione "
-"o l'aggiornamento"
+"Nessun pacchetto in alcun gruppo richiesto è disponibile per l'installazione"
+" o l'aggiornamento"
 
 #: ../cli.py:1148
 #, python-format
@@ -401,7 +394,8 @@ msgstr "Esclusione del pacchetto non comparabile %s.%s"
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
-"Nessun altro %s installato, inserimento in lista per potenziale installazione"
+"Nessun altro %s installato, inserimento in lista per potenziale "
+"installazione"
 
 #: ../cli.py:1265
 msgid "Plugin Options"
@@ -587,8 +581,6 @@ msgstr "Dic"
 msgid "Trying other mirror."
 msgstr "Connessione ad un altro mirror in corso."
 
-# occhio alla formattazione con gli spazi in tutte le voci sotto, è il
-# riepilogo degli attributi di un pacchetto
 #: ../output.py:579
 #, python-format
 msgid "Name        : %s%s%s"
@@ -833,7 +825,6 @@ msgstr "Versione"
 msgid "Repository"
 msgstr "Repository"
 
-# poco spazio, va come intestazione nella tabella di riepilogo
 #: ../output.py:1065
 msgid "Size"
 msgstr "Dim."
@@ -916,13 +907,12 @@ msgstr "due"
 #, python-format
 msgid ""
 "\n"
-" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s "
-"seconds\n"
+" Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
 msgstr ""
 "\n"
-" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi\nper "
-"uscire.\n"
+" Download interrotto, %spremi nuovamente (ctrl-c)%s entro %s%s%s secondi\n"
+"per uscire.\n"
 
 #: ../output.py:1267
 msgid "user interrupt"
@@ -932,32 +922,26 @@ msgstr "interruzione utente"
 msgid "Total"
 msgstr "Totale"
 
-# abbreviazione di Install
 #: ../output.py:1307
 msgid "I"
 msgstr "I"
 
-# abbreviazione di Obsolete
 #: ../output.py:1308
 msgid "O"
 msgstr "O"
 
-# Erase
 #: ../output.py:1309
 msgid "E"
 msgstr "E"
 
-# Remove
 #: ../output.py:1310
 msgid "R"
 msgstr "R"
 
-# Downgrade
 #: ../output.py:1311
 msgid "D"
 msgstr "D"
 
-# Update
 #: ../output.py:1312
 msgid "U"
 msgstr "U"
@@ -990,7 +974,6 @@ msgstr "Data e ora"
 msgid "Action(s)"
 msgstr "Azione/i"
 
-# intestazione nel senso di "numero di pacchetti lavorati"
 #: ../output.py:1384 ../output.py:1702
 msgid "Altered"
 msgstr "Modifiche"
@@ -1109,8 +1092,6 @@ msgstr "Output della scriptlet:"
 msgid "Errors:"
 msgstr "Errori:"
 
-# queste sotto sono etichette a fianco della lista di pacchetti
-# per lo storico delle transazioni
 #. Note that these don't use _simple_pkg() because we are showing what
 #. happened to them in the transaction ... not the difference between the
 #. version in the transaction and now.
@@ -1321,8 +1302,7 @@ msgstr ""
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr ""
-"---> Download dell'header per includere %s nel set di transazione."
+msgstr "---> Download dell'header per includere %s nel set di transazione."
 
 #: ../utils.py:94
 msgid "Running"
@@ -1459,8 +1439,7 @@ msgstr "Occorre avere i privilegi di root per eseguire questo comando."
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -1535,8 +1514,7 @@ msgid ""
 msgstr ""
 "Non ci sono repository abilitati.\n"
 " Eseguire \"yum repolist all\" per vedere la lista dei repository.\n"
-" E' possibile abilitare i repository desiderati con yum-config-manager --"
-"enable <repo>"
+" E' possibile abilitare i repository desiderati con yum-config-manager --enable <repo>"
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
@@ -1607,7 +1585,6 @@ msgstr "Nessun pacchetto presente in lista"
 msgid "List a package or groups of packages"
 msgstr "Elenca un pacchetto o un gruppo di pacchetti"
 
-# queste sotto sono le descrizioni dei comandi:  yum --help
 #: ../yumcommands.py:403
 msgid "Remove a package or packages from your system"
 msgstr "Elimina uno o più pacchetti dal sistema"
@@ -1907,7 +1884,6 @@ msgstr "Group-Available:"
 msgid "Display, or use, the transaction history"
 msgstr "Visualizza e gestisci la cronologia delle transazioni"
 
-# qui history rimane cosi' perchè intende il comando
 #: ../yumcommands.py:1363
 #, python-format
 msgid "Invalid history sub-command, use: %s."
@@ -2328,8 +2304,8 @@ msgstr "conflitto installato"
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Attenzione: durante la transazione si sono verificati errori di scriptlet "
-"o altri errori non fatali."
+"Attenzione: durante la transazione si sono verificati errori di scriptlet o "
+"altri errori non fatali."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
@@ -2385,8 +2361,8 @@ msgstr "Impossibile creare il lock su %s: %s"
 #: ../yum/__init__.py:1698
 #, python-format
 msgid ""
-"Package does not match intended download. Suggestion: run yum --enablerepo=%"
-"s clean metadata"
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
 msgstr ""
 "Il pacchetto non corrisponde al download desiderato. Suggerimento: eseguire "
 "yum --enablerepo=%s clean metadata"
@@ -2489,8 +2465,8 @@ msgstr "Nessuna corrispondenza per %s.%s %s:%s-%s dall'aggiornamento"
 
 #: ../yum/__init__.py:2433
 msgid ""
-"searchPackages() will go away in a future version of "
-"Yum.                      Use searchGenerator() instead. \n"
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
 msgstr ""
 "searchPackages() verrà eliminato in una futura versione di yum. In "
 "sostituzione usare searchGenerator(). \n"
@@ -2692,7 +2668,8 @@ msgstr "localinstall del deltarpm fallito: %s. Verrà ignorato."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Impossibile aggiungere il pacchetto %s alla transazione. Architettura non "
 "compatibile: %s"
@@ -2710,8 +2687,8 @@ msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr ""
-"Non è possibile aggiornare il pacchetto %s perchè non è installato. Eseguire "
-"yum install per installarlo."
+"Non è possibile aggiornare il pacchetto %s perchè non è installato. Eseguire"
+" yum install per installarlo."
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
@@ -2839,14 +2816,11 @@ msgstr "Chiave importata correttamente"
 #: ../yum/__init__.py:4338
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
-"ma non sono corrette per questo pacchetto.\n"
-"Controllare che gli URL delle chiavi di questo repository siano configurati "
-"correttamente."
+"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate ma non sono corrette per questo pacchetto.\n"
+"Controllare che gli URL delle chiavi di questo repository siano configurati correttamente."
 
 #: ../yum/__init__.py:4347
 msgid "Import of key(s) didn't help, wrong key(s)?"
@@ -2869,14 +2843,11 @@ msgstr "Importazione chiave fallita"
 #: ../yum/__init__.py:4394
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate "
-"ma non sono corrette.\n"
-"Controllare che gli URL delle chiavi di questo repository siano configurati "
-"correttamente."
+"Le chiavi GPG elencate per il repository \"%s\" sono attualmente installate ma non sono corrette.\n"
+"Controllare che gli URL delle chiavi di questo repository siano configurati correttamente."
 
 #: ../yum/__init__.py:4521
 msgid "Unable to find a suitable mirror."
@@ -2938,8 +2909,7 @@ msgstr "Caricamento del plugin \"%s\""
 
 #: ../yum/plugins.py:322
 #, python-format
-msgid ""
-"Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
 "Esiste più di un plugin con nome \"%s\" nel percorso di ricerca dei plugin"
 
@@ -3015,142 +2985,3 @@ msgstr "Header %s danneggiato"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "Errore nell'apertura dell'rpm %s - errore %s"
-
-#~ msgid "Repo       : %s"
-#~ msgstr "Repo       : %s"
-
-#~ msgid "URL        : %s"
-#~ msgstr "URL        : %s"
-
-#~ msgid "Description: "
-#~ msgstr "Descrizione: "
-
-#~ msgid ""
-#~ "Remove    %5.5s Package(s)\n"
-#~ "Reinstall %5.5s Package(s)\n"
-#~ "Downgrade %5.5s Package(s)\n"
-#~ msgstr ""
-#~ "Elimina    %5.5s pacchetto/i\n"
-#~ "Reinstalla %5.5s pacchetto/i\n"
-#~ "Downgrade  %5.5s pacchetto/i\n"
-
-#~ msgid "Weird"
-#~ msgstr "Weird"
-
-#~ msgid "Potential match for %s from %s"
-#~ msgstr "Corrispondenza potenziale per %s da %s"
-
-#~ msgid "Matched %s to require for %s"
-#~ msgstr "Individuato %s come dipendenza per %s"
-
-#~ msgid "Finished Transaction Test"
-#~ msgstr "Test di transazione terminato"
-
-#~ msgid ""
-#~ " You could try running: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes\n"
-#~ "                        rpm -Va --nofiles --nodigest"
-#~ msgstr ""
-#~ " Provare a lanciare: package-cleanup --problems\n"
-#~ "                        package-cleanup --dupes"
-
-#~ msgid "Unresolvable requirement %s for %s"
-#~ msgstr "Requisito %s non risolvibile per %s"
-
-#~ msgid "Missing Dependency: %s is needed by package %s"
-#~ msgstr "Dipendenza mancante: %s è necessario per il pacchetto %s"
-
-#~ msgid "Matching packages for package list to user args"
-#~ msgstr ""
-#~ "Ricerca corrispondenza degli argomenti dell'utente nella lista dei "
-#~ "pacchetti"
-
-#~ msgid ""
-#~ "\n"
-#~ "Transaction Summary\n"
-#~ "%s\n"
-#~ "Install  %5.5s Package(s)         \n"
-#~ "Update   %5.5s Package(s)         \n"
-#~ "Remove   %5.5s Package(s)         \n"
-#~ msgstr ""
-#~ "\n"
-#~ "Riepilogo della transazione\n"
-#~ "%s\n"
-#~ "Installazione di %5.5s Pacchetto(i)\n"
-#~ "Aggiornamento di %5.5s Pacchetto(i)\n"
-#~ "Rimozione di     %5.5s Pacchetto(i)\n"
-
-#~ msgid "excluding for cost: %s from %s"
-#~ msgstr "escludendo per costo: %s da %s"
-
-#~ msgid "Excluding Packages in global exclude list"
-#~ msgstr "Esclusione pacchetti nella lista globale di esclusione"
-
-#~ msgid "Excluding Packages from %s"
-#~ msgstr "Esclusione dei pacchetti da %s"
-
-#~ msgid "Reducing %s to included packages only"
-#~ msgstr "Riduzione %s ai soli pacchetti inclusi"
-
-#~ msgid "Removing unmatched package %s"
-#~ msgstr "Rimozione pacchetto non corrispondente %s"
-
-#~ msgid "Finished"
-#~ msgstr "Finito"
-
-#~ msgid ""
-#~ "getInstalledPackageObject() will go away, use self.rpmdb.searchPkgTuple"
-#~ "().\n"
-#~ msgstr ""
-#~ "getInstalledPackageObject() è deprecato, usare self.rpmdb.searchPkgTuple"
-#~ "().\n"
-
-#~ msgid "Parsing package install arguments"
-#~ msgstr "Analisi degli argomenti di installazione dei pacchetti"
-
-#~ msgid ""
-#~ "Failure finding best provider of %s for %s, exceeded maximum loop length"
-#~ msgstr ""
-#~ "Ricerca di un provider migliore di %s fallita per %s, superata la massima "
-#~ "lunghezza del ciclo"
-
-#~ msgid "Comparing best: %s to po: %s"
-#~ msgstr "Comparando meglio: %s in po: %s"
-
-#~ msgid "Same: best %s == po: %s"
-#~ msgstr "Idendico: meglio %s == po: %s"
-
-#~ msgid "po %s obsoletes best: %s"
-#~ msgstr "po %s è reso piu obsoleto: %s"
-
-#~ msgid "po %s shares a sourcerpm with %s"
-#~ msgstr "po %s condivide sourcerpm con %s"
-
-#~ msgid "best %s shares a sourcerpm with %s"
-#~ msgstr "best %s condivide un sourcerpm con %s"
-
-#~ msgid "po %s shares more of the name prefix with %s"
-#~ msgstr "po %s condivide più del prefisso del nome con %s"
-
-#~ msgid "po %s has a shorter name than best %s"
-#~ msgstr "po %s ha un nome piu corto del migliore %s"
-
-#~ msgid "bestpkg %s shares more of the name prefix with %s"
-#~ msgstr "bestpkg %s condivide piu del prefisso del nome con %s"
-
-#~ msgid "Invalid versioned dependency string, try quoting it."
-#~ msgstr ""
-#~ "Stringa di versione della dipendenza non valida, provare a metterla tra "
-#~ "virgolette."
-
-#~ msgid "Package %s conflicts with %s."
-#~ msgstr "Il pacchetto %s va in conflitto con %s."
-
-#~ msgid "Looking for Obsoletes for %s"
-#~ msgstr "Ricerca di obsoleti per %s"
-
-#~ msgid "unable to find newer package for %s"
-#~ msgstr "non riesco a trovare un pacchetto piu nuovo per %s"
-
-#~ msgid "TSINFO: Updating %s to resolve conflict."
-#~ msgstr "TSINFO: %s aggiornato per risolvere conflitti."

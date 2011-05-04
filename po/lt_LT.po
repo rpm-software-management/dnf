@@ -8,127 +8,127 @@ msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2011-05-04 14:58+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2011-04-17 12:38+0000\n"
+"Last-Translator: aurisc4 <aurisc4@gmail.com>\n"
+"Language-Team: Lithuanian (Lithuania) (http://www.transifex.net/projects/p/yum/team/lt_LT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language: lt_LT\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
-msgstr ""
+msgstr "Atnaujinama"
 
 #: ../callback.py:49 ../yum/rpmtrans.py:73
 msgid "Erasing"
-msgstr ""
+msgstr "Šalinama"
 
 #: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1026
 #: ../output.py:1919 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
 #: ../yum/rpmtrans.py:77
 msgid "Installing"
-msgstr ""
+msgstr "Diegiama"
 
 #: ../callback.py:52 ../callback.py:58 ../output.py:1640 ../yum/rpmtrans.py:76
 msgid "Obsoleted"
-msgstr ""
+msgstr "Pažymėta pasenusiu"
 
 #: ../callback.py:54 ../output.py:1157 ../output.py:1518 ../output.py:1647
 msgid "Updated"
-msgstr ""
+msgstr "Atnaujinta"
 
 #: ../callback.py:55 ../output.py:1517
 msgid "Erased"
-msgstr ""
+msgstr "Pašalinta"
 
 #: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
 #: ../output.py:1517 ../output.py:1519 ../output.py:1891
 msgid "Installed"
-msgstr ""
+msgstr "Įdiegta"
 
 #: ../callback.py:130
 msgid "No header - huh?"
-msgstr "Sem cabeçalho - hã?"
+msgstr "Nėra antraštės - keista?"
 
 #: ../callback.py:168
 msgid "Repackage"
-msgstr ""
+msgstr "Perpakuoti"
 
 #: ../callback.py:189
 #, python-format
 msgid "Error: invalid output state: %s for %s"
-msgstr ""
+msgstr "Klaida: neteisinga išvesties būsena: %s %s"
 
 #: ../callback.py:212
 #, python-format
 msgid "Erased: %s"
-msgstr ""
+msgstr "Pašalinta: %s"
 
 #: ../callback.py:217 ../output.py:1028 ../output.py:1894
 msgid "Removing"
-msgstr ""
+msgstr "Šalinama"
 
 #: ../callback.py:219 ../yum/rpmtrans.py:78
 msgid "Cleanup"
-msgstr ""
+msgstr "Valymas"
 
 #: ../cli.py:108
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr ""
+msgstr "Komanda „%s“ jau apibrėžta"
 
 #: ../cli.py:120
 msgid "Setting up repositories"
-msgstr ""
+msgstr "Nustatomos saugyklos"
 
 #: ../cli.py:131
 msgid "Reading repository metadata in from local files"
-msgstr ""
+msgstr "Skaitoma saugyklų informacija iš vietinių failų"
 
 #: ../cli.py:234 ../utils.py:254
 #, python-format
 msgid "Config Error: %s"
-msgstr ""
+msgstr "Konfigūracijos klaida: %s"
 
 #: ../cli.py:237 ../cli.py:1403 ../utils.py:257
 #, python-format
 msgid "Options Error: %s"
-msgstr "Erro nas Opções: %s"
+msgstr "Parinkčių klaida: %s"
 
 #: ../cli.py:267
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr ""
+msgstr "  Įdiegta: %s-%s %s"
 
 #: ../cli.py:269
 #, python-format
 msgid "  Built    : %s at %s"
-msgstr ""
+msgstr "  Sukurta  : %s %s"
 
 #: ../cli.py:271
 #, python-format
 msgid "  Committed: %s at %s"
-msgstr ""
+msgstr "  Pateikta : %s %s"
 
 #: ../cli.py:310
 msgid "You need to give some command"
-msgstr ""
+msgstr "Reikia pateikti kokią nors komandą"
 
 #: ../cli.py:324
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr ""
+msgstr "Nėra komandos: %s. Naudokite %s --help"
 
 #: ../cli.py:354
 msgid "Disk Requirements:\n"
-msgstr ""
+msgstr "Disko reikalavimai:\n"
 
 #: ../cli.py:356
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr ""
+msgstr "  Reikia bent %dMB daugiau vietos failų sistemoje %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
@@ -137,151 +137,155 @@ msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr ""
+"Klaidos santrauka\n"
+"-------------\n"
 
 #: ../cli.py:404
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr ""
+msgstr "Bandoma paleisti transakciją, bet nėra veiksmų. Išeinama."
 
 #: ../cli.py:451
 msgid "Exiting on user Command"
-msgstr ""
+msgstr "Išeinama po naudotojo komandos"
 
 #: ../cli.py:455
 msgid "Downloading Packages:"
-msgstr ""
+msgstr "Parsiunčiami paketai:"
 
 #: ../cli.py:460
 msgid "Error Downloading Packages:\n"
-msgstr ""
+msgstr "Klaida parsiunčiant paketus:\n"
 
 #: ../cli.py:474 ../yum/__init__.py:4559
 msgid "Running rpm_check_debug"
-msgstr ""
+msgstr "Vykdoma rpm_check_debug"
 
 #: ../cli.py:483 ../yum/__init__.py:4568
 msgid "ERROR You need to update rpm to handle:"
-msgstr ""
+msgstr "KLAIDA Reikia atnaujinti rpm norint apdoroti:"
 
 #: ../cli.py:485 ../yum/__init__.py:4571
 msgid "ERROR with rpm_check_debug vs depsolve:"
-msgstr ""
+msgstr "KLAIDA su rpm_check_debug prieš depsolve:"
 
 #: ../cli.py:491
 msgid "RPM needs to be updated"
-msgstr ""
+msgstr "RPM turi būti atnaujintas"
 
 #: ../cli.py:492
 #, python-format
 msgid "Please report this error in %s"
-msgstr ""
+msgstr "Praneškite apie šią klaidą adresu %s"
 
 #: ../cli.py:498
 msgid "Running Transaction Test"
-msgstr ""
+msgstr "Vykdomas transakcijos tikrinimas"
 
 #: ../cli.py:514
 msgid "Transaction Check Error:\n"
-msgstr ""
+msgstr "Transakcijos tikrinimo klaida:\n"
 
 #: ../cli.py:521
 msgid "Transaction Test Succeeded"
-msgstr ""
+msgstr "Transakcijos tikrinimas sėkmingas"
 
 #: ../cli.py:543
 msgid "Running Transaction"
-msgstr ""
+msgstr "Vykdoma transakcija"
 
 #: ../cli.py:573
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
+"Atsisakoma automatiškai importuoti raktus, kai vykdoma neprižiūrint.\n"
+"Naudokite „-y“ veiksenos pakeitimui."
 
 #: ../cli.py:592 ../cli.py:626
 msgid "  * Maybe you meant: "
-msgstr ""
+msgstr "  * Gal turėjote omenyje:"
 
 #: ../cli.py:609 ../cli.py:617
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
-msgstr ""
+msgstr "Paketas(-ai) %s%s%s prieinami, bet neįdiegti."
 
 #: ../cli.py:623 ../cli.py:656 ../cli.py:810
 #, python-format
 msgid "No package %s%s%s available."
-msgstr ""
+msgstr "Nėra prieinamo paketo %s%s%s."
 
 #: ../cli.py:663 ../cli.py:875
 msgid "Package(s) to install"
-msgstr ""
+msgstr "Paketas(-ai) diegimui"
 
 #: ../cli.py:666 ../cli.py:667 ../cli.py:816 ../cli.py:850 ../cli.py:876
 #: ../yumcommands.py:179
 msgid "Nothing to do"
-msgstr ""
+msgstr "Nėra ką atlikti"
 
 #: ../cli.py:701
 #, python-format
 msgid "%d packages marked for Update"
-msgstr ""
+msgstr "%d paketas(-ai) pažymėti atnaujinimui"
 
 #: ../cli.py:704
 msgid "No Packages marked for Update"
-msgstr ""
+msgstr "Nėra paketų, pažymėtų atnaujinimui"
 
 #: ../cli.py:770
 #, python-format
 msgid "%d packages marked for Distribution Synchronization"
-msgstr ""
+msgstr "%d paketas(-ai) pažymėtas(-i) distribucijos sinchronizavimui"
 
 #: ../cli.py:773
 msgid "No Packages marked for Distribution Synchronization"
-msgstr ""
+msgstr "Nėra paketų, pažymėtų distribucijos sinchronizavimui"
 
 #: ../cli.py:787
 #, python-format
 msgid "%d packages marked for removal"
-msgstr ""
+msgstr "%d paketas(-ai) pažymėtas(-i) pašalinimui"
 
 #: ../cli.py:790
 msgid "No Packages marked for removal"
-msgstr ""
+msgstr "Nėra paketų, pažymėtų pašalinimui"
 
 #: ../cli.py:815
 msgid "Package(s) to downgrade"
-msgstr ""
+msgstr "Paketas(-ai) grąžinimui"
 
 #: ../cli.py:840
 #, python-format
 msgid " (from %s)"
-msgstr ""
+msgstr " (iš %s)"
 
 #: ../cli.py:841
 #, python-format
 msgid "Installed package %s%s%s%s not available."
-msgstr ""
+msgstr "Įdiegtas paketas %s%s%s%s neprieinamas."
 
 #: ../cli.py:849
 msgid "Package(s) to reinstall"
-msgstr ""
+msgstr "Paketas(-ai) pakartotiniam diegimui"
 
 #: ../cli.py:862
 msgid "No Packages Provided"
-msgstr ""
+msgstr "Nėra pateiktų paketų"
 
 #: ../cli.py:945
 #, python-format
 msgid "Matched: %s"
-msgstr ""
+msgstr "Atitinka: %s"
 
 #: ../cli.py:952
 #, python-format
 msgid "Warning: No matches found for: %s"
-msgstr ""
+msgstr "Įspėjimas: nerasta atitikmenų: %s"
 
 #: ../cli.py:955
 msgid "No Matches found"
-msgstr ""
+msgstr "Nerasta atitikmenų"
 
 #: ../cli.py:995
 #, python-format
@@ -289,112 +293,114 @@ msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
 msgstr ""
+"Įspėjimas: 3.0.x yum versijos klaidinga tapatina failų pavadinimus.\n"
+" Galite naudoti „%s*/%s%s“ ir/arba „%s*bin/%s%s“ tai veiksenai gauti"
 
 #: ../cli.py:1011
 #, python-format
 msgid "No Package Found for %s"
-msgstr ""
+msgstr "Nerasta paketų užklausai %s"
 
 #: ../cli.py:1021
 msgid "Cleaning repos: "
-msgstr ""
+msgstr "Išvalomos saugyklos:"
 
 #: ../cli.py:1026
 msgid "Cleaning up Everything"
-msgstr ""
+msgstr "Išvaloma viskas"
 
 #: ../cli.py:1042
 msgid "Cleaning up Headers"
-msgstr ""
+msgstr "Išvalomos antraštės"
 
 #: ../cli.py:1045
 msgid "Cleaning up Packages"
-msgstr ""
+msgstr "Išvalomi paketai"
 
 #: ../cli.py:1048
 msgid "Cleaning up xml metadata"
-msgstr ""
+msgstr "Išvalomi xml metaduomenys"
 
 #: ../cli.py:1051
 msgid "Cleaning up database cache"
-msgstr ""
+msgstr "Išvalomas duomenų bazės podėlis"
 
 #: ../cli.py:1054
 msgid "Cleaning up expire-cache metadata"
-msgstr ""
+msgstr "Išvalomas pasenę podėlio metaduomenys"
 
 #: ../cli.py:1057
 msgid "Cleaning up cached rpmdb data"
-msgstr ""
+msgstr "Išvalomi podėlio rpmdb duomenys"
 
 #: ../cli.py:1060
 msgid "Cleaning up plugins"
-msgstr ""
+msgstr "Išvalomi įskiepiai"
 
 #: ../cli.py:1085
 msgid "Installed Groups:"
-msgstr ""
+msgstr "Įdiegto grupės:"
 
 #: ../cli.py:1097
 msgid "Available Groups:"
-msgstr ""
+msgstr "Prieinamos grupės:"
 
 #: ../cli.py:1107
 msgid "Done"
-msgstr ""
+msgstr "Atlikta"
 
 #: ../cli.py:1118 ../cli.py:1136 ../cli.py:1142 ../yum/__init__.py:3069
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr ""
+msgstr "Įspėjimas: nėra grupės %s."
 
 #: ../cli.py:1146
 msgid "No packages in any requested group available to install or update"
-msgstr ""
+msgstr "Nėra paketų diegimui ar atnaujinimui jokioje pageidaujamoje grupėje"
 
 #: ../cli.py:1148
 #, python-format
 msgid "%d Package(s) to Install"
-msgstr ""
+msgstr "%d diegtinas(-i) paketai(-ai)"
 
 #: ../cli.py:1158 ../yum/__init__.py:3081
 #, python-format
 msgid "No group named %s exists"
-msgstr ""
+msgstr "Nėra grupės %s"
 
 #: ../cli.py:1164
 msgid "No packages to remove from groups"
-msgstr ""
+msgstr "Nėra paketų pašalinimui iš grupių"
 
 #: ../cli.py:1166
 #, python-format
 msgid "%d Package(s) to remove"
-msgstr ""
+msgstr "%d paketas(-ai) pašalinimui"
 
 #: ../cli.py:1208
 #, python-format
 msgid "Package %s is already installed, skipping"
-msgstr ""
+msgstr "Paketas %s jau įdiegtas, praleidžiama"
 
 #: ../cli.py:1219
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
-msgstr ""
+msgstr "Atmetami nepalyginami paketai %s.%s"
 
 #. we've not got any installed that match n or n+a
 #: ../cli.py:1245
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
-msgstr ""
+msgstr "Nėra įdiegto kito %s, įtraukiama į sąrašą galimam diegimui"
 
 #: ../cli.py:1265
 msgid "Plugin Options"
-msgstr ""
+msgstr "Įskiepių parinktys"
 
 #: ../cli.py:1273
 #, python-format
 msgid "Command line error: %s"
-msgstr ""
+msgstr "Komandinės eilutės klaida: %s"
 
 #: ../cli.py:1287
 #, python-format
@@ -403,277 +409,281 @@ msgid ""
 "\n"
 "%s: %s option requires an argument"
 msgstr ""
+"\n"
+"\n"
+"%s: %s parinktis reikalauja argumento"
 
 #: ../cli.py:1340
 msgid "--color takes one of: auto, always, never"
-msgstr ""
+msgstr "--color gali būti: auto, always, never"
 
 #: ../cli.py:1450
 msgid "show this help message and exit"
-msgstr ""
+msgstr "rodyti šį pagalbos pranešimą ir išeiti"
 
 #: ../cli.py:1454
 msgid "be tolerant of errors"
-msgstr ""
+msgstr "toleruoti klaidas"
 
 #: ../cli.py:1457
 msgid "run entirely from system cache, don't update cache"
-msgstr ""
+msgstr "vykdyti tik iš sistemos podėlio jo neatnaujinant"
 
 #: ../cli.py:1460
 msgid "config file location"
-msgstr ""
+msgstr "konfigūracijos failo vieta"
 
 #: ../cli.py:1463
 msgid "maximum command wait time"
-msgstr ""
+msgstr "didžiausias komandos laukimo laikas"
 
 #: ../cli.py:1465
 msgid "debugging output level"
-msgstr ""
+msgstr "derinimo išvesties lygmuo"
 
 #: ../cli.py:1469
 msgid "show duplicates, in repos, in list/search commands"
-msgstr ""
+msgstr "rodyti dublikatus saugyklose, sąrašo/paieškos komandose"
 
 #: ../cli.py:1471
 msgid "error output level"
-msgstr ""
+msgstr "klaidų išvesties lygmuo"
 
 #: ../cli.py:1474
 msgid "debugging output level for rpm"
-msgstr ""
+msgstr "derinimo išvesties lygmuo rpm komandai"
 
 #: ../cli.py:1477
 msgid "quiet operation"
-msgstr ""
+msgstr "tyli operacija"
 
 #: ../cli.py:1479
 msgid "verbose operation"
-msgstr ""
+msgstr "išsami operacija"
 
 #: ../cli.py:1481
 msgid "answer yes for all questions"
-msgstr ""
+msgstr "atsakyti „taip“ į visus klausimus"
 
 #: ../cli.py:1483
 msgid "show Yum version and exit"
-msgstr ""
+msgstr "rodyti Yum versiją ir išeiti"
 
 #: ../cli.py:1484
 msgid "set install root"
-msgstr ""
+msgstr "nustatyti diegimo šaknį"
 
 #: ../cli.py:1488
 msgid "enable one or more repositories (wildcards allowed)"
-msgstr ""
+msgstr "leisti vieną ar daugiau saugyklų (leidžiami pakaitos simboliai)"
 
 #: ../cli.py:1492
 msgid "disable one or more repositories (wildcards allowed)"
-msgstr ""
+msgstr "drausti vieną ar daugiau saugyklų (leidžiami pakaitos simboliai)"
 
 #: ../cli.py:1495
 msgid "exclude package(s) by name or glob"
-msgstr ""
+msgstr "išskirti paketą(-us) pagal pavadinimą arba globalų vardą"
 
 #: ../cli.py:1497
 msgid "disable exclude from main, for a repo or for everything"
-msgstr ""
+msgstr "drausti iškyrimą iš pagrindinio saugyklai arba viskam"
 
 #: ../cli.py:1500
 msgid "enable obsoletes processing during updates"
-msgstr ""
+msgstr "leisti pasenusių apdorojimą atnaujinimo metu"
 
 #: ../cli.py:1502
 msgid "disable Yum plugins"
-msgstr ""
+msgstr "drausti Yum įskiepius"
 
 #: ../cli.py:1504
 msgid "disable gpg signature checking"
-msgstr ""
+msgstr "drausti gpg parašo tikrinimą"
 
 #: ../cli.py:1506
 msgid "disable plugins by name"
-msgstr ""
+msgstr "drausti įskiepius pagal pavadinimą"
 
 #: ../cli.py:1509
 msgid "enable plugins by name"
-msgstr ""
+msgstr "leisti įskiepius pagal pavadinimą"
 
 #: ../cli.py:1512
 msgid "skip packages with depsolving problems"
-msgstr ""
+msgstr "praleisti paketus su priklausomybių tikrinimo problemomis"
 
 #: ../cli.py:1514
 msgid "control whether color is used"
-msgstr ""
+msgstr "valdyti, ar naudojama spalva"
 
 #: ../cli.py:1516
 msgid "set value of $releasever in yum config and repo files"
 msgstr ""
+"nustatyti $releasever reikšmę yum konfigūracijoje ir saugyklų failuose"
 
 #: ../cli.py:1518
 msgid "set arbitrary config and repo options"
-msgstr ""
+msgstr "nustatyti savavališkas konfigūracijos ir saugyklų parinktis"
 
 #: ../output.py:305
 msgid "Jan"
-msgstr ""
+msgstr "Sau"
 
 #: ../output.py:305
 msgid "Feb"
-msgstr ""
+msgstr "Vas"
 
 #: ../output.py:305
 msgid "Mar"
-msgstr ""
+msgstr "Kov"
 
 #: ../output.py:305
 msgid "Apr"
-msgstr ""
+msgstr "Bal"
 
 #: ../output.py:305
 msgid "May"
-msgstr ""
+msgstr "Ge"
 
 #: ../output.py:305
 msgid "Jun"
-msgstr ""
+msgstr "Bir"
 
 #: ../output.py:306
 msgid "Jul"
-msgstr ""
+msgstr "Lie"
 
 #: ../output.py:306
 msgid "Aug"
-msgstr ""
+msgstr "Rug"
 
 #: ../output.py:306
 msgid "Sep"
-msgstr ""
+msgstr "Rgs"
 
 #: ../output.py:306
 msgid "Oct"
-msgstr ""
+msgstr "Spa"
 
 #: ../output.py:306
 msgid "Nov"
-msgstr ""
+msgstr "Lap"
 
 #: ../output.py:306
 msgid "Dec"
-msgstr ""
+msgstr "Gr"
 
 #: ../output.py:316
 msgid "Trying other mirror."
-msgstr ""
+msgstr "Bandoma kita dubliuojamoji tinklavietė"
 
 #: ../output.py:579
 #, python-format
 msgid "Name        : %s%s%s"
-msgstr ""
+msgstr "Pavadinimas : %s%s%s"
 
 #: ../output.py:580
 #, python-format
 msgid "Arch        : %s"
-msgstr ""
+msgstr "Architektūra: %s"
 
 #: ../output.py:582
 #, python-format
 msgid "Epoch       : %s"
-msgstr ""
+msgstr "Epocha      : %s"
 
 #: ../output.py:583
 #, python-format
 msgid "Version     : %s"
-msgstr ""
+msgstr "Versija     : %s"
 
 #: ../output.py:584
 #, python-format
 msgid "Release     : %s"
-msgstr ""
+msgstr "Leidimas    : %s"
 
 #: ../output.py:585
 #, python-format
 msgid "Size        : %s"
-msgstr ""
+msgstr "Dydis       : %s"
 
 #: ../output.py:586 ../output.py:890
 #, python-format
 msgid "Repo        : %s"
-msgstr ""
+msgstr "Saugykla    : %s"
 
 #: ../output.py:588
 #, python-format
 msgid "From repo   : %s"
-msgstr ""
+msgstr "Iš saugyklos   : %s"
 
 #: ../output.py:590
 #, python-format
 msgid "Committer   : %s"
-msgstr ""
+msgstr "Pateikėjas  : %s"
 
 #: ../output.py:591
 #, python-format
 msgid "Committime  : %s"
-msgstr ""
+msgstr "Pateikta    : %s"
 
 #: ../output.py:592
 #, python-format
 msgid "Buildtime   : %s"
-msgstr ""
+msgstr "Sukūrimo laikas: %s"
 
 #: ../output.py:594
 #, python-format
 msgid "Install time: %s"
-msgstr ""
+msgstr "Įdiegimo laikas: %s"
 
 #: ../output.py:602
 #, python-format
 msgid "Installed by: %s"
-msgstr ""
+msgstr "Įdiegė      : %s"
 
 #: ../output.py:609
 #, python-format
 msgid "Changed by  : %s"
-msgstr ""
+msgstr "Pakeitė     : %s"
 
 #: ../output.py:610
 msgid "Summary     : "
-msgstr ""
+msgstr "Santrauka   : "
 
 #: ../output.py:612 ../output.py:903
 #, python-format
 msgid "URL         : %s"
-msgstr ""
+msgstr "URL         : %s"
 
 #: ../output.py:613
 msgid "License     : "
-msgstr ""
+msgstr "Licencija   : "
 
 #: ../output.py:614 ../output.py:900
 msgid "Description : "
-msgstr ""
+msgstr "Aprašymas   : "
 
 #: ../output.py:682
 msgid "y"
-msgstr ""
+msgstr "t"
 
 #: ../output.py:682
 msgid "yes"
-msgstr ""
+msgstr "taip"
 
 #: ../output.py:683
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #: ../output.py:683
 msgid "no"
-msgstr ""
+msgstr "ne"
 
 #: ../output.py:687
 msgid "Is this ok [y/N]: "
-msgstr ""
+msgstr "Ar tai tinka [t/N]: "
 
 #: ../output.py:775
 #, python-format
@@ -681,140 +691,142 @@ msgid ""
 "\n"
 "Group: %s"
 msgstr ""
+"\n"
+"Grupė: %s"
 
 #: ../output.py:779
 #, python-format
 msgid " Group-Id: %s"
-msgstr ""
+msgstr " Grupės id: %s"
 
 #: ../output.py:784
 #, python-format
 msgid " Description: %s"
-msgstr ""
+msgstr " Aprašymas: %s"
 
 #: ../output.py:786
 msgid " Mandatory Packages:"
-msgstr ""
+msgstr " Privalomi paketai:"
 
 #: ../output.py:787
 msgid " Default Packages:"
-msgstr ""
+msgstr " Numatytieji paketai:"
 
 #: ../output.py:788
 msgid " Optional Packages:"
-msgstr ""
+msgstr " Papildomi paketai:"
 
 #: ../output.py:789
 msgid " Conditional Packages:"
-msgstr ""
+msgstr " Sąlyginiai paketai:"
 
 #: ../output.py:809
 #, python-format
 msgid "package: %s"
-msgstr ""
+msgstr "paketas: %s"
 
 #: ../output.py:811
 msgid "  No dependencies for this package"
-msgstr ""
+msgstr "  Šis paketas neturi priklausomybių"
 
 #: ../output.py:816
 #, python-format
 msgid "  dependency: %s"
-msgstr ""
+msgstr "  priklausomybė: %s"
 
 #: ../output.py:818
 msgid "   Unsatisfied dependency"
-msgstr ""
+msgstr "   Nepatenkinta priklausomybė"
 
 #: ../output.py:891
 msgid "Matched from:"
-msgstr ""
+msgstr "Atitinka:"
 
 #: ../output.py:906
 #, python-format
 msgid "License     : %s"
-msgstr ""
+msgstr "Licencija   : %s"
 
 #: ../output.py:909
 #, python-format
 msgid "Filename    : %s"
-msgstr ""
+msgstr "Failo pavadinimas: %s"
 
 #: ../output.py:913
 msgid "Other       : "
-msgstr ""
+msgstr "Kita        : "
 
 #: ../output.py:956
 msgid "There was an error calculating total download size"
-msgstr ""
+msgstr "Įvyko klaida skaičiuojant visą parsiuntimo dydį"
 
 #: ../output.py:961
 #, python-format
 msgid "Total size: %s"
-msgstr ""
+msgstr "Visas dydis: %s"
 
 #: ../output.py:964
 #, python-format
 msgid "Total download size: %s"
-msgstr ""
+msgstr "Visas parsiuntimo dydis: %s"
 
 #: ../output.py:968 ../output.py:988
 #, python-format
 msgid "Installed size: %s"
-msgstr ""
+msgstr "Įdiegimo dydis: %s"
 
 #: ../output.py:984
 msgid "There was an error calculating installed size"
-msgstr ""
+msgstr "Įvyko klaida skaičiuojant įdiegimo dydį"
 
 #: ../output.py:1029
 msgid "Reinstalling"
-msgstr ""
+msgstr "Perdiegiama"
 
 #: ../output.py:1030
 msgid "Downgrading"
-msgstr ""
+msgstr "Grąžinama"
 
 #: ../output.py:1031
 msgid "Installing for dependencies"
-msgstr ""
+msgstr "Diegiamos priklausomybės"
 
 #: ../output.py:1032
 msgid "Updating for dependencies"
-msgstr ""
+msgstr "Atnaujinama priklausomybėms"
 
 #: ../output.py:1033
 msgid "Removing for dependencies"
-msgstr ""
+msgstr "Šalinama dėl priklausomybių"
 
 #: ../output.py:1040 ../output.py:1159
 msgid "Skipped (dependency problems)"
-msgstr ""
+msgstr "Praleista (priklausomybių problemos)"
 
 #: ../output.py:1063
 msgid "Package"
-msgstr ""
+msgstr "Paketas"
 
 #: ../output.py:1063
 msgid "Arch"
-msgstr "Arq."
+msgstr "Architektūra"
 
 #: ../output.py:1064
 msgid "Version"
-msgstr "Versão"
+msgstr "Versija"
 
 #: ../output.py:1064
 msgid "Repository"
-msgstr ""
+msgstr "Saugykla"
 
 #: ../output.py:1065
 msgid "Size"
-msgstr ""
+msgstr "Dydis"
 
 #: ../output.py:1077
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
-msgstr ""
+msgstr "      pakeičiama  %s%s%s.%s %s\n"
 
 #: ../output.py:1086
 #, python-format
@@ -823,60 +835,63 @@ msgid ""
 "Transaction Summary\n"
 "%s\n"
 msgstr ""
+"\n"
+"Transakcijos santrauka\n"
+"%s\n"
 
 #: ../output.py:1097
 #, python-format
 msgid "Install   %5.5s Package(s)\n"
-msgstr ""
+msgstr "Įdiegti   %5.5s pektą(-us)\n"
 
 #: ../output.py:1101
 #, python-format
 msgid "Upgrade   %5.5s Package(s)\n"
-msgstr ""
+msgstr "Atnaujinti %5.5s paketą(-us)\n"
 
 #: ../output.py:1105
 #, python-format
 msgid "Remove    %5.5s Package(s)\n"
-msgstr ""
+msgstr "Pašalinti %5.5s paketą(-us)\n"
 
 #: ../output.py:1109
 #, python-format
 msgid "Reinstall %5.5s Package(s)\n"
-msgstr ""
+msgstr "Perdiegti %5.5s paketą„-u)\n"
 
 #: ../output.py:1113
 #, python-format
 msgid "Downgrade %5.5s Package(s)\n"
-msgstr ""
+msgstr "Grąžinti %5.5s paketą(-us)\n"
 
 #: ../output.py:1153
 msgid "Removed"
-msgstr ""
+msgstr "Pašalinta"
 
 #: ../output.py:1154
 msgid "Dependency Removed"
-msgstr ""
+msgstr "Priklausomybė pašalinta"
 
 #: ../output.py:1156
 msgid "Dependency Installed"
-msgstr ""
+msgstr "Priklausomybė įdiegta"
 
 #: ../output.py:1158
 msgid "Dependency Updated"
-msgstr ""
+msgstr "Priklausomybė atnaujinta"
 
 #: ../output.py:1160
 msgid "Replaced"
-msgstr ""
+msgstr "Pakeista"
 
 #: ../output.py:1161
 msgid "Failed"
-msgstr ""
+msgstr "Nepavyko"
 
 #. Delta between C-c's so we treat as exit
 #: ../output.py:1245
 msgid "two"
-msgstr ""
+msgstr "du"
 
 #. For translators: This is output like:
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
@@ -889,327 +904,331 @@ msgid ""
 " Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds\n"
 "to exit.\n"
 msgstr ""
+"\n"
+" Dabartinis parsiuntimas atšauktas, %snutraukite (ctrl-c) vėl%s per %s%s%s sekundes\n"
+"išėjimui.\n"
 
 #: ../output.py:1267
 msgid "user interrupt"
-msgstr ""
+msgstr "naudotojo nutraukimas"
 
 #: ../output.py:1285
 msgid "Total"
-msgstr ""
+msgstr "Iš viso"
 
 #: ../output.py:1307
 msgid "I"
-msgstr ""
+msgstr "I"
 
 #: ../output.py:1308
 msgid "O"
-msgstr ""
+msgstr "O"
 
 #: ../output.py:1309
 msgid "E"
-msgstr ""
+msgstr "E"
 
 #: ../output.py:1310
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: ../output.py:1311
 msgid "D"
-msgstr ""
+msgstr "D"
 
 #: ../output.py:1312
 msgid "U"
-msgstr ""
+msgstr "U"
 
 #: ../output.py:1323
 msgid "<unset>"
-msgstr ""
+msgstr "<atstatyti>"
 
 #: ../output.py:1324
 msgid "System"
-msgstr ""
+msgstr "Sistema"
 
 #: ../output.py:1368
 msgid "Bad transaction IDs, or package(s), given"
-msgstr ""
+msgstr "Pateikti blogi transakcijų ID arba paketai"
 
 #: ../output.py:1380
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: ../output.py:1381 ../output.py:1699
 msgid "Login user"
-msgstr ""
+msgstr "Prisijungęs naudotojas"
 
 #: ../output.py:1382
 msgid "Date and time"
-msgstr ""
+msgstr "Data ir laikas"
 
 #: ../output.py:1383 ../output.py:1701
 msgid "Action(s)"
-msgstr ""
+msgstr "Veiksmas(-ai)"
 
 #: ../output.py:1384 ../output.py:1702
 msgid "Altered"
-msgstr ""
+msgstr "Pakeista"
 
 #: ../output.py:1431 ../output.py:1760
 msgid "No transaction ID given"
-msgstr ""
+msgstr "Nepateiktas transakcijos ID"
 
 #: ../output.py:1457
 msgid "Bad transaction ID given"
-msgstr ""
+msgstr "Pateiktas blogas transakcijos ID"
 
 #: ../output.py:1462
 msgid "Not found given transaction ID"
-msgstr ""
+msgstr "Nerastas pateiktas transakcijos ID"
 
 #: ../output.py:1470
 msgid "Found more than one transaction ID!"
-msgstr ""
+msgstr "Rastas daugiau nei vienas transakcijos ID!"
 
 #: ../output.py:1491 ../output.py:1770
 msgid "No transaction ID, or package, given"
-msgstr ""
+msgstr "Nepateiktas transakcijos ID arba paketas"
 
 #: ../output.py:1518 ../output.py:1645
 msgid "Downgraded"
-msgstr ""
+msgstr "Grąžintas"
 
 #: ../output.py:1519
 msgid "Not installed"
-msgstr ""
+msgstr "Neįdiegtas"
 
 #: ../output.py:1520
 msgid "Older"
-msgstr ""
+msgstr "Senesnis"
 
 #: ../output.py:1520
 msgid "Newer"
-msgstr ""
+msgstr "Naujesnis"
 
 #: ../output.py:1552
 msgid "Transaction ID :"
-msgstr ""
+msgstr "Transakcijos ID:"
 
 #: ../output.py:1554
 msgid "Begin time     :"
-msgstr ""
+msgstr "Pradžios laikas:"
 
 #: ../output.py:1557 ../output.py:1559
 msgid "Begin rpmdb    :"
-msgstr ""
+msgstr "Pradėti rpmdb  :"
 
 #: ../output.py:1573
 #, python-format
 msgid "(%s seconds)"
-msgstr ""
+msgstr "(%s sekundės)"
 
 #: ../output.py:1574
 msgid "End time       :"
-msgstr ""
+msgstr "Pabaigos laikas:"
 
 #: ../output.py:1577 ../output.py:1579
 msgid "End rpmdb      :"
-msgstr ""
+msgstr "Baigti rpmdb   :"
 
 #: ../output.py:1580
 msgid "User           :"
-msgstr ""
+msgstr "Naudotojas     :"
 
 #: ../output.py:1582 ../output.py:1584 ../output.py:1586
 msgid "Return-Code    :"
-msgstr ""
+msgstr "Grąžinimo kodas:"
 
 #: ../output.py:1582
 msgid "Aborted"
-msgstr ""
+msgstr "Nutraukta"
 
 #: ../output.py:1584
 msgid "Failure:"
-msgstr ""
+msgstr "Klaida:"
 
 #: ../output.py:1586
 msgid "Success"
-msgstr ""
+msgstr "Sėkminga"
 
 #: ../output.py:1589
 msgid "Command Line   :"
-msgstr ""
+msgstr "Komandų eilutė :"
 
 #: ../output.py:1597
 #, python-format
 msgid "Additional non-default information stored: %d"
-msgstr ""
+msgstr "Išsaugota papildoma nenumatyta informacija: %d"
 
 #: ../output.py:1600
 msgid "Transaction performed with:"
-msgstr ""
+msgstr "Transakcija atlikta su:"
 
 #: ../output.py:1603
 msgid "Packages Altered:"
-msgstr ""
+msgstr "Pakeisti paketai:"
 
 #: ../output.py:1607
 msgid "Packages Skipped:"
-msgstr ""
+msgstr "Praleisti paketai:"
 
 #: ../output.py:1612
 msgid "Rpmdb Problems:"
-msgstr ""
+msgstr "Rpmdb problemos:"
 
 #: ../output.py:1620
 msgid "Scriptlet output:"
-msgstr ""
+msgstr "Scenarijaus išvestis:"
 
 #: ../output.py:1626
 msgid "Errors:"
-msgstr ""
+msgstr "Klaidos:"
 
 #. Note that these don't use _simple_pkg() because we are showing what
 #. happened to them in the transaction ... not the difference between the
 #. version in the transaction and now.
 #: ../output.py:1637 ../output.py:1638
 msgid "Install"
-msgstr ""
+msgstr "Įdiegti"
 
 #: ../output.py:1639
 msgid "Dep-Install"
-msgstr ""
+msgstr "Įdiegti priklausomybes"
 
 #: ../output.py:1641
 msgid "Obsoleting"
-msgstr ""
+msgstr "Pažymima pasenusiu"
 
 #: ../output.py:1642
 msgid "Erase"
-msgstr ""
+msgstr "Pašalinti"
 
 #: ../output.py:1643
 msgid "Reinstall"
-msgstr ""
+msgstr "Perdiegti"
 
 #: ../output.py:1644
 msgid "Downgrade"
-msgstr ""
+msgstr "Grąžinti"
 
 #: ../output.py:1646
 msgid "Update"
-msgstr ""
+msgstr "Atnaujinti"
 
 #: ../output.py:1700
 msgid "Time"
-msgstr ""
+msgstr "Laikas"
 
 #: ../output.py:1726
 msgid "Last day"
-msgstr ""
+msgstr "Vakar"
 
 #: ../output.py:1727
 msgid "Last week"
-msgstr ""
+msgstr "Praėjusią savaitę"
 
 #: ../output.py:1728
 msgid "Last 2 weeks"
-msgstr ""
+msgstr "Praėjusias 2 savaites"
 
 #. US default :p
 #: ../output.py:1729
 msgid "Last 3 months"
-msgstr ""
+msgstr "Praėjusius 3 mėnesius"
 
 #: ../output.py:1730
 msgid "Last 6 months"
-msgstr ""
+msgstr "Praėjusius 6 mėnesius"
 
 #: ../output.py:1731
 msgid "Last year"
-msgstr ""
+msgstr "Praėjusiais metais"
 
 #: ../output.py:1732
 msgid "Over a year ago"
-msgstr ""
+msgstr "Daugiau nei prieš metus"
 
 #: ../output.py:1774
 #, python-format
 msgid "No Transaction %s found"
-msgstr ""
+msgstr "Nerasta transakcija %s"
 
 #: ../output.py:1780
 msgid "Transaction ID:"
-msgstr ""
+msgstr "Transakcijos ID:"
 
 #: ../output.py:1781
 msgid "Available additional history information:"
-msgstr ""
+msgstr "Prieinama papildoma istorijos informacija:"
 
 #: ../output.py:1793
 #, python-format
 msgid "%s: No additional data found by this name"
-msgstr ""
+msgstr "%s: nerasta papildomų duomenų su šiuo pavadinimu"
 
 #: ../output.py:1809
 msgid "installed"
-msgstr ""
+msgstr "įdiegta"
 
 #: ../output.py:1810
 msgid "updated"
-msgstr ""
+msgstr "atnaujinta"
 
 #: ../output.py:1811
 msgid "obsoleted"
-msgstr ""
+msgstr "pažymėta pasenusiu"
 
 #: ../output.py:1812
 msgid "erased"
-msgstr ""
+msgstr "pašalinta"
 
 #: ../output.py:1813
 msgid "reinstalled"
-msgstr ""
+msgstr "perdiegta"
 
 #: ../output.py:1814
 msgid "downgraded"
-msgstr ""
+msgstr "grąžinta"
 
 #: ../output.py:1818
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr ""
+msgstr "---> Paketas %s.%s %s:%s-%s nustatytas į %s"
 
 #: ../output.py:1825
 msgid "--> Running transaction check"
-msgstr ""
+msgstr "--> Vykdomas transakcijos tikrinimas"
 
 #: ../output.py:1830
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr ""
+"--> Iš naujo paleidžiamas priklausomybių sprendimas su naujais pakeitimais"
 
 #: ../output.py:1835
 msgid "--> Finished Dependency Resolution"
-msgstr ""
+msgstr "--> Baigtas priklausomybių sprendimas"
 
 #: ../output.py:1840 ../output.py:1845
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
-msgstr ""
+msgstr "--> Apdorojama priklausomybė: %s paketui: %s"
 
 #: ../output.py:1850
 #, python-format
 msgid "---> Keeping package: %s"
-msgstr ""
+msgstr "---> Paliekamas paketas: %s"
 
 #: ../output.py:1853
 #, python-format
 msgid "--> Unresolved Dependency: %s"
-msgstr ""
+msgstr "--> Nerasta priklausomybė: %s"
 
 #: ../output.py:1864
 #, python-format
 msgid "Package: %s"
-msgstr ""
+msgstr "Paketas: %s"
 
 #: ../output.py:1866
 #, python-format
@@ -1217,6 +1236,8 @@ msgid ""
 "\n"
 "    Requires: %s"
 msgstr ""
+"\n"
+"    Reikalauja: %s"
 
 #: ../output.py:1875
 #, python-format
@@ -1224,6 +1245,8 @@ msgid ""
 "\n"
 "    %s: %s (%s)"
 msgstr ""
+"\n"
+"    %s: %s (%s)"
 
 #: ../output.py:1880
 #, python-format
@@ -1231,91 +1254,95 @@ msgid ""
 "\n"
 "        %s"
 msgstr ""
+"\n"
+"        %s"
 
 #: ../output.py:1882
 msgid ""
 "\n"
 "        Not found"
 msgstr ""
+"\n"
+"        Nerasta"
 
 #. These should be the only three things we care about:
 #: ../output.py:1897
 msgid "Updated By"
-msgstr ""
+msgstr "Atnaujino"
 
 #: ../output.py:1898
 msgid "Downgraded By"
-msgstr ""
+msgstr "Grąžino"
 
 #: ../output.py:1899
 msgid "Obsoleted By"
-msgstr ""
+msgstr "Pažymėjo pasenusiu"
 
 #: ../output.py:1917
 msgid "Available"
-msgstr ""
+msgstr "Prieinamas"
 
 #: ../output.py:1944 ../output.py:1949
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
-msgstr ""
+msgstr "--> Sprendžiamas konfliktas: %s konfliktuoja su %s"
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr ""
+msgstr "--> Tęsiama transakcija su pasirinktais paketais. Palaukite."
 
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr ""
+msgstr "---> Grąžinama %s antraštė įpakavimui į transakcijos aibę."
 
 #: ../utils.py:94
 msgid "Running"
-msgstr ""
+msgstr "Vykdoma"
 
 #: ../utils.py:95
 msgid "Sleeping"
-msgstr ""
+msgstr "Miegama"
 
 #: ../utils.py:96
 msgid "Uninterruptible"
-msgstr ""
+msgstr "Nepertraukiama"
 
 #: ../utils.py:97
 msgid "Zombie"
-msgstr ""
+msgstr "Zombis"
 
 #: ../utils.py:98
 msgid "Traced/Stopped"
-msgstr ""
+msgstr "Sekamas/Sustabdytas"
 
 #: ../utils.py:99 ../yumcommands.py:972
 msgid "Unknown"
-msgstr ""
+msgstr "Nežinomas"
 
 #: ../utils.py:110
 msgid "  The other application is: PackageKit"
-msgstr ""
+msgstr "  Kita programa yra: PackageKit"
 
 #: ../utils.py:112
 #, python-format
 msgid "  The other application is: %s"
-msgstr ""
+msgstr "  Kita programa yra: %s"
 
 #: ../utils.py:115
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr ""
+msgstr "  Atmintis : %5s RSS (%5sB VSZ)"
 
 #: ../utils.py:120
 #, python-format
 msgid "    Started: %s - %s ago"
-msgstr ""
+msgstr "   Paleista: %s - prieš %s"
 
 #: ../utils.py:122
 #, python-format
 msgid "    State  : %s, pid: %d"
-msgstr ""
+msgstr "    Būsena : %s, pid: %d"
 
 #: ../utils.py:143 ../yummain.py:42
 msgid ""
@@ -1323,6 +1350,9 @@ msgid ""
 "\n"
 "Exiting on user cancel"
 msgstr ""
+"\n"
+"\n"
+"Išeinama naudotojui nutraukus"
 
 #: ../utils.py:149 ../yummain.py:48
 msgid ""
@@ -1330,6 +1360,9 @@ msgid ""
 "\n"
 "Exiting on Broken Pipe"
 msgstr ""
+"\n"
+"\n"
+"Išeinama dėl nutraukto konvejerio"
 
 #: ../utils.py:151 ../yummain.py:50
 #, python-format
@@ -1338,54 +1371,61 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
+"\n"
+"\n"
+"%s"
 
 #: ../utils.py:201 ../yummain.py:107
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
 msgstr ""
+"Kita programa šiuo metu turi yum užraktą; išeinama, kaip nustatyta parametru"
+" exit_on_lock"
 
 #: ../utils.py:260
 #, python-format
 msgid "PluginExit Error: %s"
-msgstr ""
+msgstr "PluginExit klaida: %s"
 
 #: ../utils.py:263
 #, python-format
 msgid "Yum Error: %s"
-msgstr ""
+msgstr "Yum klaida: %s"
 
 #: ../utils.py:315 ../yummain.py:134 ../yummain.py:173
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Klaida: %s"
 
 #: ../utils.py:319 ../yummain.py:177
 msgid " You could try using --skip-broken to work around the problem"
-msgstr ""
+msgstr " Galite mėginti --skip-broken problemai apeiti"
 
 #: ../utils.py:321 ../yummain.py:179 ../yummain.py:212
 msgid " You could try running: rpm -Va --nofiles --nodigest"
-msgstr ""
+msgstr " Galite pamėginti paleisti: rpm -Va --nofiles --nodigest"
 
 #: ../utils.py:328 ../yummain.py:144 ../yummain.py:186
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
-msgstr ""
+msgstr "Nežinoma(-os) klaida(-os): išėjimo kodas: %d:"
 
 #: ../utils.py:334 ../yummain.py:192
 msgid ""
 "\n"
 "Dependencies Resolved"
 msgstr ""
+"\n"
+"Išspręstos priklausomybės"
 
 #: ../utils.py:349 ../yummain.py:215
 msgid "Complete!"
-msgstr ""
+msgstr "Baigta!"
 
 #: ../yumcommands.py:43
 msgid "You need to be root to perform this command."
-msgstr ""
+msgstr "Jūs turite būti root šiai komandai atlikti."
 
 #: ../yumcommands.py:50
 msgid ""
@@ -1403,47 +1443,61 @@ msgid ""
 "\n"
 "For more information contact your distribution or package provider.\n"
 msgstr ""
+"\n"
+"Jūs įjungėte paketų tikrinimą naudojant GPG raktus. Tai yra gerai. \n"
+"Tačiau jūs neturite įdiegę jokių GPG viešų raktų. Jums reikia parsiūsti\n"
+"ir įdiegti raktus paketams, kuriuos jūs norite įdiegti.\n"
+"Tą galite padaryti įvykdydami komandą:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Jūs taip pat galite nurodyti rakto url, kurį norite naudoti\n"
+"saugyklai „gpgkey“ parinktyje saugyklos sekcijoje ir yum \n"
+"jį jums įdiegs.\n"
+"\n"
+"Daugiau informacijos gausite susisiekę su jūsų distribucijos ar paketo tiekėju.\n"
 
 #: ../yumcommands.py:70
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
-msgstr ""
+msgstr "Klaida: %s reikia perduoti paketų sąrašą"
 
 #: ../yumcommands.py:76
 msgid "Error: Need an item to match"
-msgstr ""
+msgstr "Klaida: reikia atitikimens"
 
 #: ../yumcommands.py:82
 msgid "Error: Need a group or list of groups"
-msgstr ""
+msgstr "Klaida: reikia grupės arba grupių sąrašo"
 
 #: ../yumcommands.py:91
 #, python-format
 msgid "Error: clean requires an option: %s"
-msgstr ""
+msgstr "Klaida: clean reikalauja parinkties: %s"
 
 #: ../yumcommands.py:96
 #, python-format
 msgid "Error: invalid clean argument: %r"
-msgstr ""
+msgstr "Klaida: netinkamas clean argumentas: %r"
 
 #: ../yumcommands.py:109
 msgid "No argument to shell"
-msgstr ""
+msgstr "Nėra argumento apvalkalui"
 
 #: ../yumcommands.py:111
 #, python-format
 msgid "Filename passed to shell: %s"
-msgstr ""
+msgstr "Failo pavadinimas, perduotas apvalkalui: %s"
 
 #: ../yumcommands.py:115
 #, python-format
 msgid "File %s given as argument to shell does not exist."
-msgstr ""
+msgstr "Failas %s, perduotas kaip argumentas apvalkalui, neegzistuoja."
 
 #: ../yumcommands.py:121
 msgid "Error: more than one file given as argument to shell."
 msgstr ""
+"Klaida: daugiau nei vienas failas perduotas kaip argumentas apvalkalui."
 
 #: ../yumcommands.py:138
 msgid ""
@@ -1451,301 +1505,304 @@ msgid ""
 " Run \"yum repolist all\" to see the repos you have.\n"
 " You can enable repos with yum-config-manager --enable <repo>"
 msgstr ""
+"Nėra įjungtų saugyklų.\n"
+" Paleiskite „yum repolist all“ visam saugyklų sąrašui gauti.\n"
+" Jūs galite įjungti saugyklas su yum-config-manager --enable <saugykla>"
 
 #: ../yumcommands.py:189
 msgid "PACKAGE..."
-msgstr ""
+msgstr "PAKETAS..."
 
 #: ../yumcommands.py:192
 msgid "Install a package or packages on your system"
-msgstr ""
+msgstr "Įdiegti paketą arba paketus jūsų sistemoje"
 
 #: ../yumcommands.py:201
 msgid "Setting up Install Process"
-msgstr ""
+msgstr "Nustatomas diegimo procesas"
 
 #: ../yumcommands.py:212 ../yumcommands.py:234
 msgid "[PACKAGE...]"
-msgstr ""
+msgstr "[PAKETAS...]"
 
 #: ../yumcommands.py:215
 msgid "Update a package or packages on your system"
-msgstr ""
+msgstr "Atnaujinti paketą arba paketus jūsų sistemoje"
 
 #: ../yumcommands.py:223
 msgid "Setting up Update Process"
-msgstr ""
+msgstr "Nustatomas atnaujinimo procesas"
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr ""
+msgstr "Sinchronizuoti įdiegtus paketus į naujausias prieinamas versijas"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
-msgstr ""
+msgstr "Nustatomas distribucijos sinchronizacijos procesas"
 
 #: ../yumcommands.py:288
 msgid "Display details about a package or group of packages"
-msgstr ""
+msgstr "Rodyti informaciją apie paketą arba paketų grupę"
 
 #: ../yumcommands.py:337
 msgid "Installed Packages"
-msgstr ""
+msgstr "Įdiegti paketai"
 
 #: ../yumcommands.py:345
 msgid "Available Packages"
-msgstr ""
+msgstr "Prieinami paketai"
 
 #: ../yumcommands.py:349
 msgid "Extra Packages"
-msgstr ""
+msgstr "Papildomi paketai"
 
 #: ../yumcommands.py:353
 msgid "Updated Packages"
-msgstr ""
+msgstr "Atnaujinti paketai"
 
 #. This only happens in verbose mode
 #: ../yumcommands.py:361 ../yumcommands.py:368 ../yumcommands.py:655
 msgid "Obsoleting Packages"
-msgstr ""
+msgstr "Paketai žymimi pasenusiais"
 
 #: ../yumcommands.py:370
 msgid "Recently Added Packages"
-msgstr ""
+msgstr "Neseniai pridėti paketai"
 
 #: ../yumcommands.py:377
 msgid "No matching Packages to list"
-msgstr ""
+msgstr "Nėra atitinkančių paketų išvardinimui"
 
 #: ../yumcommands.py:391
 msgid "List a package or groups of packages"
-msgstr ""
+msgstr "Išvardinti paketus arba paketų grupes"
 
 #: ../yumcommands.py:403
 msgid "Remove a package or packages from your system"
-msgstr ""
+msgstr "Pašalinti paketą arba paketus iš sistemos"
 
 #: ../yumcommands.py:410
 msgid "Setting up Remove Process"
-msgstr ""
+msgstr "Nustatomas šalinimo procesas"
 
 #: ../yumcommands.py:424
 msgid "Setting up Group Process"
-msgstr ""
+msgstr "Nustatomas grupės procesas"
 
 #: ../yumcommands.py:430
 msgid "No Groups on which to run command"
-msgstr ""
+msgstr "Nėra grupių, kurioms vykdyti komandą"
 
 #: ../yumcommands.py:443
 msgid "List available package groups"
-msgstr ""
+msgstr "Išvardinti prieinamas paketų grupes"
 
 #: ../yumcommands.py:463
 msgid "Install the packages in a group on your system"
-msgstr ""
+msgstr "Įdiegti grupės paketus jūsų sistemoje"
 
 #: ../yumcommands.py:486
 msgid "Remove the packages in a group from your system"
-msgstr ""
+msgstr "Pašalinti grupės paketus iš jūsų sistemos"
 
 #: ../yumcommands.py:514
 msgid "Display details about a package group"
-msgstr ""
+msgstr "Parodyti informaciją apie paketų grupę"
 
 #: ../yumcommands.py:539
 msgid "Generate the metadata cache"
-msgstr ""
+msgstr "Generuoti metaduomenų podėlį"
 
 #: ../yumcommands.py:545
 msgid "Making cache files for all metadata files."
-msgstr ""
+msgstr "Kuriami podėlio failai visiems metaduomenų failams."
 
 #: ../yumcommands.py:546
 msgid "This may take a while depending on the speed of this computer"
-msgstr ""
+msgstr "Tai gali užtrukti priklausomai nuo šio kompiuterio greičio"
 
 #: ../yumcommands.py:567
 msgid "Metadata Cache Created"
-msgstr ""
+msgstr "Metaduomenų podėlis sukurtas"
 
 #: ../yumcommands.py:581
 msgid "Remove cached data"
-msgstr ""
+msgstr "Pašalinti podėlio duomenis"
 
 #: ../yumcommands.py:602
 msgid "Find what package provides the given value"
-msgstr ""
+msgstr "Rasti, kuris paketas teikia pateiktą reikšmę"
 
 #: ../yumcommands.py:622
 msgid "Check for available package updates"
-msgstr ""
+msgstr "Tikrinti prieinamus paketų atnaujinimus"
 
 #: ../yumcommands.py:675
 msgid "Search package details for the given string"
-msgstr ""
+msgstr "Ieškoti paketų informacijos pateiktai eilutei"
 
 #: ../yumcommands.py:681
 msgid "Searching Packages: "
-msgstr ""
+msgstr "Ieškoma paketų:"
 
 #: ../yumcommands.py:698
 msgid "Update packages taking obsoletes into account"
-msgstr ""
+msgstr "Atnaujinti paketus įvertinant pasenusius"
 
 #: ../yumcommands.py:707
 msgid "Setting up Upgrade Process"
-msgstr ""
+msgstr "Nustatomas atnaujinimo procesas"
 
 #: ../yumcommands.py:721
 msgid "Install a local RPM"
-msgstr ""
+msgstr "Įdiegti vietinį RPM"
 
 #: ../yumcommands.py:729
 msgid "Setting up Local Package Process"
-msgstr ""
+msgstr "Nustatomas vietinio paketo procesas"
 
 #: ../yumcommands.py:748
 msgid "Determine which package provides the given dependency"
-msgstr ""
+msgstr "Nustatyti, kuris paketas teikia pateiktą priklausomybę"
 
 #: ../yumcommands.py:751
 msgid "Searching Packages for Dependency:"
-msgstr ""
+msgstr "Ieškoti paketų priklausomybei:"
 
 #: ../yumcommands.py:765
 msgid "Run an interactive yum shell"
-msgstr ""
+msgstr "Paleisti interaktyvų yum apvalkalą"
 
 #: ../yumcommands.py:771
 msgid "Setting up Yum Shell"
-msgstr ""
+msgstr "Nustatomas Yum apvalkalas"
 
 #: ../yumcommands.py:789
 msgid "List a package's dependencies"
-msgstr ""
+msgstr "Išvardinti paketo priklausomybes"
 
 #: ../yumcommands.py:795
 msgid "Finding dependencies: "
-msgstr ""
+msgstr "Randamos priklausomybės:"
 
 #: ../yumcommands.py:811
 msgid "Display the configured software repositories"
-msgstr ""
+msgstr "Rodyti nustatytas programinės įrangos saugyklas"
 
 #: ../yumcommands.py:877 ../yumcommands.py:878
 msgid "enabled"
-msgstr ""
+msgstr "įjungta"
 
 #: ../yumcommands.py:904 ../yumcommands.py:905
 msgid "disabled"
-msgstr ""
+msgstr "išjungta"
 
 #: ../yumcommands.py:921
 msgid "Repo-id      : "
-msgstr ""
+msgstr "Saugyklos id : "
 
 #: ../yumcommands.py:922
 msgid "Repo-name    : "
-msgstr ""
+msgstr "Saugyklos pavadinimas: "
 
 #: ../yumcommands.py:925
 msgid "Repo-status  : "
-msgstr ""
+msgstr "Saugyklos būsena: "
 
 #: ../yumcommands.py:928
 msgid "Repo-revision: "
-msgstr ""
+msgstr "Saugyklos poversijis: "
 
 #: ../yumcommands.py:932
 msgid "Repo-tags    : "
-msgstr ""
+msgstr "Saugyklos žymos: "
 
 #: ../yumcommands.py:938
 msgid "Repo-distro-tags: "
-msgstr ""
+msgstr "Saugyklos distribucijos žymos: "
 
 #: ../yumcommands.py:943
 msgid "Repo-updated : "
-msgstr ""
+msgstr "Saugykla atnaujinta: "
 
 #: ../yumcommands.py:945
 msgid "Repo-pkgs    : "
-msgstr ""
+msgstr "Saugyklos paketai: "
 
 #: ../yumcommands.py:946
 msgid "Repo-size    : "
-msgstr ""
+msgstr "Saugyklos dydis: "
 
 #: ../yumcommands.py:953
 msgid "Repo-baseurl : "
-msgstr ""
+msgstr "Saugyklos bazinis url: "
 
 #: ../yumcommands.py:961
 msgid "Repo-metalink: "
-msgstr ""
+msgstr "Saugyklos metasaitas: "
 
 #: ../yumcommands.py:965
 msgid "  Updated    : "
-msgstr ""
+msgstr "  Atnaujinta : "
 
 #: ../yumcommands.py:968
 msgid "Repo-mirrors : "
-msgstr ""
+msgstr "Saugyklos tinklavietės: "
 
 #: ../yumcommands.py:978
 #, python-format
 msgid "Never (last: %s)"
-msgstr ""
+msgstr "Niekada (paskutinis: %s)"
 
 #: ../yumcommands.py:980
 #, python-format
 msgid "Instant (last: %s)"
-msgstr ""
+msgstr "Neatdėliotinas (paskutinis: %s)"
 
 #: ../yumcommands.py:983
 #, python-format
 msgid "%s second(s) (last: %s)"
-msgstr ""
+msgstr "%s sekundė(s) (paskutinis: %s)"
 
 #: ../yumcommands.py:985
 msgid "Repo-expire  : "
-msgstr ""
+msgstr "Saugykla pasensta: "
 
 #: ../yumcommands.py:988
 msgid "Repo-exclude : "
-msgstr ""
+msgstr "Saugykla išskiria: "
 
 #: ../yumcommands.py:992
 msgid "Repo-include : "
-msgstr ""
+msgstr "Saugykla įtraukia: "
 
 #: ../yumcommands.py:996
 msgid "Repo-excluded: "
-msgstr ""
+msgstr "Saugykloje išskirta: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
 #: ../yumcommands.py:1006 ../yumcommands.py:1035
 msgid "repo id"
-msgstr ""
+msgstr "Saugyklos id"
 
 #: ../yumcommands.py:1023 ../yumcommands.py:1024 ../yumcommands.py:1042
 msgid "status"
-msgstr ""
+msgstr "būsena"
 
 #: ../yumcommands.py:1036
 msgid "repo name"
-msgstr ""
+msgstr "saugyklos pavadinimas"
 
 #: ../yumcommands.py:1073
 msgid "Display a helpful usage message"
-msgstr ""
+msgstr "Parodyti naudingą naudojimo pranešimą"
 
 #: ../yumcommands.py:1107
 #, python-format
 msgid "No help available for %s"
-msgstr ""
+msgstr "Nėra pagalbos veiksmui %s"
 
 #: ../yumcommands.py:1112
 msgid ""
@@ -1753,6 +1810,9 @@ msgid ""
 "\n"
 "aliases: "
 msgstr ""
+"\n"
+"\n"
+"alternatyvūs vardai: "
 
 #: ../yumcommands.py:1114
 msgid ""
@@ -1760,81 +1820,84 @@ msgid ""
 "\n"
 "alias: "
 msgstr ""
+"\n"
+"\n"
+"alternatyvus vardas: "
 
 #: ../yumcommands.py:1143
 msgid "Setting up Reinstall Process"
-msgstr ""
+msgstr "Nustatomas perdiegimo procesas"
 
 #: ../yumcommands.py:1151
 msgid "reinstall a package"
-msgstr ""
+msgstr "perdiegti paketą"
 
 #: ../yumcommands.py:1170
 msgid "Setting up Downgrade Process"
-msgstr ""
+msgstr "Nustatomas grąžinimo procesas"
 
 #: ../yumcommands.py:1177
 msgid "downgrade a package"
-msgstr ""
+msgstr "grąžinti paketą"
 
 #: ../yumcommands.py:1191
 msgid "Display a version for the machine and/or available repos."
-msgstr ""
+msgstr "Parodyti mašinos ir prieinamų saugyklų versiją."
 
 #: ../yumcommands.py:1230
 msgid " Yum version groups:"
-msgstr ""
+msgstr "Yum versijų grupės:"
 
 #: ../yumcommands.py:1240
 msgid " Group   :"
-msgstr ""
+msgstr " Grupė   :"
 
 #: ../yumcommands.py:1241
 msgid " Packages:"
-msgstr ""
+msgstr "  Paketai:"
 
 #: ../yumcommands.py:1270
 msgid "Installed:"
-msgstr ""
+msgstr "  Įdiegti:"
 
 #: ../yumcommands.py:1278
 msgid "Group-Installed:"
-msgstr ""
+msgstr "Įdiegti per grupes:"
 
 #: ../yumcommands.py:1287
 msgid "Available:"
-msgstr ""
+msgstr "Prieinami:"
 
 #: ../yumcommands.py:1296
 msgid "Group-Available:"
-msgstr ""
+msgstr "Prieinami per grupes:"
 
 #: ../yumcommands.py:1335
 msgid "Display, or use, the transaction history"
-msgstr ""
+msgstr "Parodyti arba naudoti transakcijų istoriją"
 
 #: ../yumcommands.py:1363
 #, python-format
 msgid "Invalid history sub-command, use: %s."
-msgstr ""
+msgstr "Netinkama istorijos po-komanda, naudokite: %s."
 
 #: ../yumcommands.py:1370
 msgid "You don't have access to the history DB."
-msgstr ""
+msgstr "Jūs neturite priėjimo prie istorijos DB."
 
 #: ../yumcommands.py:1413
 msgid "Check for problems in the rpmdb"
-msgstr ""
+msgstr "Ieškoti problemų rpmdb"
 
 #: ../yummain.py:103
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr ""
+msgstr "Kita programa turi yum užraktą; laukiama jos pabaigos..."
 
 #. Depsolve stage
 #: ../yummain.py:151
 msgid "Resolving Dependencies"
-msgstr ""
+msgstr "Spredžiamos priklausomybės"
 
 #: ../yummain.py:269
 msgid ""
@@ -1842,180 +1905,183 @@ msgid ""
 "\n"
 "Exiting on user cancel."
 msgstr ""
+"\n"
+"\n"
+"Išeinama po naudotojo atšaukimo."
 
 #: ../yum/depsolve.py:82
 msgid "doTsSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doTsSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/depsolve.py:97
 msgid "Setting up TransactionSets before config class is up"
-msgstr ""
+msgstr "Nustatoma TransactionSets prieš konfigūracijos klasės pakrovimą"
 
 #: ../yum/depsolve.py:151
 #, python-format
 msgid "Invalid tsflag in config file: %s"
-msgstr ""
+msgstr "Netinkama tsflag konfigūracijos faile: %s"
 
 #: ../yum/depsolve.py:162
 #, python-format
 msgid "Searching pkgSack for dep: %s"
-msgstr ""
+msgstr "Ieškoma pkgSack priklausomybei: %s"
 
 #: ../yum/depsolve.py:205
 #, python-format
 msgid "Member: %s"
-msgstr ""
+msgstr "Narys: %s"
 
 #: ../yum/depsolve.py:219 ../yum/depsolve.py:754
 #, python-format
 msgid "%s converted to install"
-msgstr ""
+msgstr "%s pakeistas diegimui"
 
 #: ../yum/depsolve.py:226
 #, python-format
 msgid "Adding Package %s in mode %s"
-msgstr ""
+msgstr "Pridedamas paketas %s veiksenoje %s"
 
 #: ../yum/depsolve.py:242
 #, python-format
 msgid "Removing Package %s"
-msgstr ""
+msgstr "Šalinamas paketas %s"
 
 #: ../yum/depsolve.py:264
 #, python-format
 msgid "%s requires: %s"
-msgstr ""
+msgstr "%s reikalauja: %s"
 
 #: ../yum/depsolve.py:305
 #, python-format
 msgid "%s requires %s"
-msgstr ""
+msgstr "%s reikalauja %s"
 
 #: ../yum/depsolve.py:332
 msgid "Needed Require has already been looked up, cheating"
-msgstr ""
+msgstr "Reikalingo reikalavimo jau ieškota, apgaunama"
 
 #: ../yum/depsolve.py:342
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
-msgstr ""
+msgstr "Reikalavimas nėra paketo pavadinimas. Ieškoma: %s"
 
 #: ../yum/depsolve.py:349
 #, python-format
 msgid "Potential Provider: %s"
-msgstr ""
+msgstr "Potencialus tiekėjas: %s"
 
 #: ../yum/depsolve.py:372
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
-msgstr ""
+msgstr "Veiksena %s %s tiekėjui : %s"
 
 #: ../yum/depsolve.py:376
 #, python-format
 msgid "Mode for pkg providing %s: %s"
-msgstr ""
+msgstr "Veiksena paketui, teikiančiam %s: %s"
 
 #: ../yum/depsolve.py:380
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
-msgstr ""
+msgstr "TSINFO: %s paketas, reikalaujantis %s pažymėtas pašalinimui"
 
 #: ../yum/depsolve.py:393
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
-msgstr ""
+msgstr "TSINFO: %s žymimas pasenusiu su %s, siekiant išspręsti priklausomybę."
 
 #: ../yum/depsolve.py:396
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
-msgstr ""
+msgstr "TSINFO: Atnaujinamas %s, siekiant išspręsti priklausomybę."
 
 #: ../yum/depsolve.py:404
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
-msgstr ""
+msgstr "Nepavyko rasti priklausomybės atnaujinimo kelio: %s"
 
 #: ../yum/depsolve.py:435
 #, python-format
 msgid "Quick matched %s to require for %s"
-msgstr ""
+msgstr "Greitas atitikmuo %s %s reikalavimui"
 
 #. is it already installed?
 #: ../yum/depsolve.py:477
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
-msgstr ""
+msgstr "%s yra teikiančių paketų sąraše, bet jis jau įdiegtas, pašalinama."
 
 #: ../yum/depsolve.py:493
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
-msgstr ""
+msgstr "Potencialiai sprendžiantis paketas %s ts turi naujesnį variantą."
 
 #: ../yum/depsolve.py:504
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
-msgstr ""
+msgstr "Potencialiai sprendžiantis paketas %s turi įdiegtą naujesnį variantą."
 
 #: ../yum/depsolve.py:522
 #, python-format
 msgid "%s already in ts, skipping this one"
-msgstr ""
+msgstr "%s jau ts, praleidžiama"
 
 #: ../yum/depsolve.py:571
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
-msgstr ""
+msgstr "TSINFO: pažymima %s kaip %s atnaujinimą"
 
 #: ../yum/depsolve.py:580
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
-msgstr ""
+msgstr "TSINFO: pažymima %s kaip %s diegimą"
 
 #: ../yum/depsolve.py:690 ../yum/depsolve.py:780
 msgid "Success - empty transaction"
-msgstr ""
+msgstr "Sėkminga - tuščia transakcija"
 
 #: ../yum/depsolve.py:729 ../yum/depsolve.py:744
 msgid "Restarting Loop"
-msgstr ""
+msgstr "Iš naujo paleidžiamas ciklas"
 
 #: ../yum/depsolve.py:760
 msgid "Dependency Process ending"
-msgstr ""
+msgstr "Užbaigiamas priklausomybių procesas"
 
 #: ../yum/depsolve.py:774
 #, python-format
 msgid "%s from %s has depsolving problems"
-msgstr ""
+msgstr "%s iš %s turi priklausomybių problemų"
 
 #: ../yum/depsolve.py:781
 msgid "Success - deps resolved"
-msgstr ""
+msgstr "Sėkminga - priklausomybės išspręstos"
 
 #: ../yum/depsolve.py:802
 #, python-format
 msgid "Checking deps for %s"
-msgstr ""
+msgstr "Ieškoma %s priklausomybių"
 
 #: ../yum/depsolve.py:888
 #, python-format
 msgid "looking for %s as a requirement of %s"
-msgstr ""
+msgstr "ieškoma %s kaip %s reikalavimo"
 
 #: ../yum/depsolve.py:1119
 #, python-format
 msgid "Running compare_providers() for %s"
-msgstr ""
+msgstr "%s vykdoma compare_providers()"
 
 #: ../yum/depsolve.py:1146 ../yum/depsolve.py:1152
 #, python-format
 msgid "better arch in po %s"
-msgstr ""
+msgstr "po %s geresnė architektūra"
 
 #: ../yum/depsolve.py:1244
 #, python-format
 msgid "%s obsoletes %s"
-msgstr ""
+msgstr "%s žymi pasenusiu %s"
 
 #: ../yum/depsolve.py:1256
 #, python-format
@@ -2023,248 +2089,256 @@ msgid ""
 "archdist compared %s to %s on %s\n"
 "  Winner: %s"
 msgstr ""
+"archdist palygino %s su %s vietoje %s\n"
+"  Nugalėtojas: %s"
 
 #: ../yum/depsolve.py:1264
 #, python-format
 msgid "common sourcerpm %s and %s"
-msgstr ""
+msgstr "bendras išeities rpm %s ir %s"
 
 #: ../yum/depsolve.py:1268
 #, python-format
 msgid "base package %s is installed for %s"
-msgstr ""
+msgstr "bazinis paketas %s įdiegtas paketui %s"
 
 #: ../yum/depsolve.py:1274
 #, python-format
 msgid "common prefix of %s between %s and %s"
-msgstr ""
+msgstr "bendras priešdėlis %s abiems %s ir %s"
 
 #: ../yum/depsolve.py:1305
 #, python-format
 msgid "requires minimal: %d"
-msgstr ""
+msgstr "reikalauja mažiausiai: %d"
 
 #: ../yum/depsolve.py:1309
 #, python-format
 msgid " Winner: %s"
-msgstr ""
+msgstr " Nugalėtojas: %s"
 
 #: ../yum/depsolve.py:1314
 #, python-format
 msgid " Loser(with %d): %s"
-msgstr ""
+msgstr " Pralaimėtojas (su %d): %s"
 
 #: ../yum/depsolve.py:1330
 #, python-format
 msgid "Best Order: %s"
-msgstr ""
+msgstr "Geriausia tvarka: %s"
 
 #: ../yum/__init__.py:214
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doConfigSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:453
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
-msgstr ""
+msgstr "Saugykla %r: klaida skaitant konfigūraciją: %s"
 
 #: ../yum/__init__.py:459
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
-msgstr ""
+msgstr "Saugyklai %r trūksta pavadinimo konfigūracijoje, naudojamas id"
 
 #: ../yum/__init__.py:497
 msgid "plugins already initialised"
-msgstr ""
+msgstr "įskiepiai jau pakrauti"
 
 #: ../yum/__init__.py:504
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doRpmDBSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:515
 msgid "Reading Local RPMDB"
-msgstr ""
+msgstr "Skaitoma vietinė RPMDB"
 
 #: ../yum/__init__.py:538
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doRepoSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:577
 msgid "doSackSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doSackSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:607
 msgid "Setting up Package Sacks"
-msgstr ""
+msgstr "Nustatomos paketų aibės"
 
 #: ../yum/__init__.py:652
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
-msgstr ""
+msgstr "saugyklos objektui %s trūksta metodo _resetSack\n"
 
 #: ../yum/__init__.py:653
 msgid "therefore this repo cannot be reset.\n"
-msgstr ""
+msgstr "todėl ši saugykla negali būti išjungta.\n"
 
 #: ../yum/__init__.py:658
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doUpdateSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:670
 msgid "Building updates object"
-msgstr ""
+msgstr "Kuriami atnaujinimo objektai"
 
 #: ../yum/__init__.py:709
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
-msgstr ""
+msgstr "doGroupSetup() bus pašalinta ateities Yum versijose.\n"
 
 #: ../yum/__init__.py:734
 msgid "Getting group metadata"
-msgstr ""
+msgstr "Gaunami grupės metaduomenys"
 
 #: ../yum/__init__.py:760
 #, python-format
 msgid "Adding group file from repository: %s"
-msgstr ""
+msgstr "Pridedamas grupės failas iš saugyklos: %s"
 
 #: ../yum/__init__.py:769
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
-msgstr ""
+msgstr "Nepavyko pridėti grupių failo saugyklai: %s - %s"
 
 #: ../yum/__init__.py:775
 msgid "No Groups Available in any repository"
-msgstr ""
+msgstr "Nėra prieinamų grupių jokioje saugykloje"
 
 #: ../yum/__init__.py:787
 msgid "Getting pkgtags metadata"
-msgstr ""
+msgstr "Gaunami pkgtags metaduomenys"
 
 #: ../yum/__init__.py:797
 #, python-format
 msgid "Adding tags from repository: %s"
-msgstr ""
+msgstr "Pridedamos žymos iš saugyklos: %s"
 
 #: ../yum/__init__.py:806
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr ""
+msgstr "Nepavyko pridėti paketų žymų saugyklai: %s - %s"
 
 #: ../yum/__init__.py:884
 msgid "Importing additional filelist information"
-msgstr ""
+msgstr "Importuojama papildoma failų sąrašų informacija"
 
 #: ../yum/__init__.py:898
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
-msgstr ""
+msgstr "Programa %s%s%s rasta yum-utils pakete."
 
 #: ../yum/__init__.py:906
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr ""
+"Yra likusių nebaigtų transakcijų. Jūs turbūt norite paleisti yum-complete-"
+"transaction joms užbaigti."
 
 #: ../yum/__init__.py:985
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
-msgstr ""
+msgstr "Bandoma pašalinti „%s“, kuris yra apsaugotas"
 
 #. Kind of hacky
 #: ../yum/__init__.py:1044
 #, python-format
 msgid "Skip-broken round %i"
-msgstr ""
+msgstr "Praleidžiami neveikiantys, roundas %i"
 
 #: ../yum/__init__.py:1101
 #, python-format
 msgid "Skip-broken took %i rounds "
-msgstr ""
+msgstr "Neveikiančių praleidimas truko %i raundus"
 
 #: ../yum/__init__.py:1102
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
 msgstr ""
+"\n"
+"Paketai, praleisti dėl priklausomybių problemų:"
 
 #: ../yum/__init__.py:1106
 #, python-format
 msgid "    %s from %s"
-msgstr ""
+msgstr "    %s iš %s"
 
 #. FIXME: _N()
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr ""
+msgstr "** Rasta %d esamų rpmdb problemų, „yum check“ išvestis:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
-msgstr ""
+msgstr "Įspėjimas: RPMDB pakeista už yum ribų."
 
 #: ../yum/__init__.py:1267
 msgid "missing requires"
-msgstr ""
+msgstr "trūksta reikalavimų"
 
 #: ../yum/__init__.py:1268
 msgid "installed conflict"
-msgstr ""
+msgstr "įdiegtas konfliktas"
 
 #: ../yum/__init__.py:1366
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
+"Įspėjimas: scenarijaus arba kitos negalutinės klaidos įvyko transakcijos "
+"metu."
 
 #: ../yum/__init__.py:1376
 msgid "Transaction couldn't start:"
-msgstr ""
+msgstr "Transakcijos paleisti nepavyko:"
 
 #. should this be 'to_unicoded'?
 #: ../yum/__init__.py:1379
 msgid "Could not run transaction."
-msgstr ""
+msgstr "Nepavyko paleisti transakcijos."
 
 #: ../yum/__init__.py:1392
 #, python-format
 msgid "Failed to remove transaction file %s"
-msgstr ""
+msgstr "Nepavyko pašalinti transakcijos failo %s"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1424
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr ""
+msgstr "%s turėjo būti įdiegtas, bet nebuvo!"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
 #: ../yum/__init__.py:1486
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr ""
+msgstr "%s turėjo būti pašalintas, bet nebuvo!"
 
 #: ../yum/__init__.py:1597
 #, python-format
 msgid "Could not open lock %s: %s"
-msgstr ""
+msgstr "Nepavyko atverti užrakto %s: %s"
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1614
 #, python-format
 msgid "Unable to check if PID %s is active"
-msgstr "Não é possível verificar se o PID %s está activo"
+msgstr "Nepavyksta patikrinti, ar PID %s yra aktyvus"
 
 #. Another copy seems to be running.
 #: ../yum/__init__.py:1618
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
-msgstr ""
+msgstr "Esamas užraktas %s: kito kopija veikia kaip pid %s."
 
 #. Whoa. What the heck happened?
 #: ../yum/__init__.py:1653
 #, python-format
 msgid "Could not create lock at %s: %s "
-msgstr ""
+msgstr "Nepavyko sukurti užrakto %s: %s"
 
 #: ../yum/__init__.py:1698
 #, python-format
@@ -2272,24 +2346,26 @@ msgid ""
 "Package does not match intended download. Suggestion: run yum "
 "--enablerepo=%s clean metadata"
 msgstr ""
+"Paketai nesutampa su pageidautu parsiuntimu. Pasiūlymas: paleisti yum "
+"--enablerepo=%s clean metadata"
 
 #: ../yum/__init__.py:1714
 msgid "Could not perform checksum"
-msgstr ""
+msgstr "Nepavyko patikrinti kontrolinės sumos"
 
 #: ../yum/__init__.py:1717
 msgid "Package does not match checksum"
-msgstr ""
+msgstr "Paketo kontrolinė suma nesutampa"
 
 #: ../yum/__init__.py:1769
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
-msgstr ""
+msgstr "paketo kontrolinė suma nesutampa, bet %s podėlis yra įjungtas"
 
 #: ../yum/__init__.py:1772 ../yum/__init__.py:1801
 #, python-format
 msgid "using local copy of %s"
-msgstr ""
+msgstr "naudojama vietinė %s kopija"
 
 #: ../yum/__init__.py:1813
 #, python-format
@@ -2298,185 +2374,192 @@ msgid ""
 "    * free   %s\n"
 "    * needed %s"
 msgstr ""
+"Nepakanka vietos parsiuntimų kataloge %s\n"
+"    * laisva %s\n"
+"    * reikia %s"
 
 #: ../yum/__init__.py:1862
 msgid "Header is not complete."
-msgstr ""
+msgstr "Antraštė nepilna."
 
 #: ../yum/__init__.py:1899
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
+"Antraštė ne vietiniame podėlyje, o tik podėlio veiksena yra įjungta. "
+"Negalima parsiūsti %s"
 
 #: ../yum/__init__.py:1954
 #, python-format
 msgid "Public key for %s is not installed"
-msgstr ""
+msgstr "%s viešas raktas neįdiegtas"
 
 #: ../yum/__init__.py:1958
 #, python-format
 msgid "Problem opening package %s"
-msgstr ""
+msgstr "Problema atveriant paketą %s"
 
 #: ../yum/__init__.py:1966
 #, python-format
 msgid "Public key for %s is not trusted"
-msgstr ""
+msgstr "%s viešasis raktas nepatikimas"
 
 #: ../yum/__init__.py:1970
 #, python-format
 msgid "Package %s is not signed"
-msgstr ""
+msgstr "Paketas %s nepasirašytas"
 
 #: ../yum/__init__.py:2008
 #, python-format
 msgid "Cannot remove %s"
-msgstr ""
+msgstr "Nepavyksta pašalinti %s"
 
 #: ../yum/__init__.py:2012
 #, python-format
 msgid "%s removed"
-msgstr ""
+msgstr "%s pašalintas"
 
 #: ../yum/__init__.py:2058
 #, python-format
 msgid "Cannot remove %s file %s"
-msgstr ""
+msgstr "Nepavyksta pašalinti %s failo %s"
 
 #: ../yum/__init__.py:2062
 #, python-format
 msgid "%s file %s removed"
-msgstr ""
+msgstr "%s failas %s pašalintas"
 
 #: ../yum/__init__.py:2064
 #, python-format
 msgid "%d %s files removed"
-msgstr ""
+msgstr "%d %s failai pašalinti"
 
 #: ../yum/__init__.py:2133
 #, python-format
 msgid "More than one identical match in sack for %s"
-msgstr ""
+msgstr "Daugiau nei vienas identiškas atitikmuo ieškomam %s"
 
 #: ../yum/__init__.py:2139
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
-msgstr ""
+msgstr "Nėra %s.%s %s:%s-%s atitikmenų atnaujinime"
 
 #: ../yum/__init__.py:2433
 msgid ""
 "searchPackages() will go away in a future version of Yum."
 "                      Use searchGenerator() instead. \n"
 msgstr ""
+"searchPackages() bus pašalinta ateities Yum versijose.                      "
+"Naudokite searchGenerator(). \n"
 
 #: ../yum/__init__.py:2472
 #, python-format
 msgid "Searching %d packages"
-msgstr ""
+msgstr "Ieškoma %d paketų"
 
 #: ../yum/__init__.py:2476
 #, python-format
 msgid "searching package %s"
-msgstr ""
+msgstr "ieškoma paketo %s"
 
 #: ../yum/__init__.py:2488
 msgid "searching in file entries"
-msgstr ""
+msgstr "ieškoma failų įrašuose"
 
 #: ../yum/__init__.py:2495
 msgid "searching in provides entries"
-msgstr ""
+msgstr "ieškoma teikimo įrašuose"
 
 #: ../yum/__init__.py:2528
 #, python-format
 msgid "Provides-match: %s"
-msgstr ""
+msgstr "Teikimo atitikmuo: %s"
 
 #: ../yum/__init__.py:2577
 msgid "No group data available for configured repositories"
-msgstr ""
+msgstr "Nėra prieinamų grupių duomenų nustatytose saugyklose"
 
 #: ../yum/__init__.py:2608 ../yum/__init__.py:2627 ../yum/__init__.py:2658
 #: ../yum/__init__.py:2664 ../yum/__init__.py:2746 ../yum/__init__.py:2750
 #: ../yum/__init__.py:3095
 #, python-format
 msgid "No Group named %s exists"
-msgstr ""
+msgstr "Nėra grupės %s"
 
 #: ../yum/__init__.py:2639 ../yum/__init__.py:2766
 #, python-format
 msgid "package %s was not marked in group %s"
-msgstr ""
+msgstr "paketas %s nebuvo pažymėtas grupėje %s"
 
 #: ../yum/__init__.py:2686
 #, python-format
 msgid "Adding package %s from group %s"
-msgstr ""
+msgstr "Pridedamas paketas %s iš grupės %s"
 
 #: ../yum/__init__.py:2690
 #, python-format
 msgid "No package named %s available to be installed"
-msgstr ""
+msgstr "Nėra paketo %s, prieinamo diegimui"
 
 #. This can happen due to excludes after .up has
 #. happened.
 #: ../yum/__init__.py:2794
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
-msgstr ""
+msgstr "Nepavyksta rasti paketų rinkinio %s krepšyje"
 
 #: ../yum/__init__.py:2813
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
-msgstr ""
+msgstr "Nepavyksta rasti paketų rinkinio %s rpmdb"
 
 #: ../yum/__init__.py:2868 ../yum/__init__.py:2873
 #, python-format
 msgid "No Package found for %s"
-msgstr ""
+msgstr "Nerastas paketas %s"
 
 #: ../yum/__init__.py:2901
 msgid "Invalid version flag"
-msgstr ""
+msgstr "Netinkamas versijos požymis"
 
 #: ../yum/__init__.py:3145
 msgid "Package Object was not a package object instance"
-msgstr ""
+msgstr "Paketo objektas nebuvo paketo objekto egzempliorius"
 
 #: ../yum/__init__.py:3149
 msgid "Nothing specified to install"
-msgstr ""
+msgstr "Nieko nenurodyta įdiegti"
 
 #: ../yum/__init__.py:3168 ../yum/__init__.py:3992
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
-msgstr ""
+msgstr "Tikrinamas virtualus tiekimas arba failo tiekimas %s"
 
 #: ../yum/__init__.py:3174 ../yum/__init__.py:3504 ../yum/__init__.py:3684
 #: ../yum/__init__.py:3998
 #, python-format
 msgid "No Match for argument: %s"
-msgstr ""
+msgstr "Nėra atitikmens argumentui: %s"
 
 #: ../yum/__init__.py:3250
 #, python-format
 msgid "Package %s installed and not available"
-msgstr ""
+msgstr "Paketas %s įdiegtas ir neprieinamas"
 
 #: ../yum/__init__.py:3253
 msgid "No package(s) available to install"
-msgstr ""
+msgstr "Nėra paketo(-ų), prieinamo diegimui"
 
 #: ../yum/__init__.py:3265
 #, python-format
 msgid "Package: %s  - already in transaction set"
-msgstr ""
+msgstr "Paketas: %s - jau transakcijos aibėje"
 
 #: ../yum/__init__.py:3291
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
-msgstr ""
+msgstr "Paketas %s yra pažymėtas pasenusiu paketo %s, kuris jau įdiegtas"
 
 #: ../yum/__init__.py:3296
 #, python-format
@@ -2484,92 +2567,96 @@ msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
 "requirements"
 msgstr ""
+"Paketas %s pažymėtas pasenusiu paketo %s, bet žymėjimas pasenusiu neatitinka"
+" reikalavimų"
 
 #: ../yum/__init__.py:3299
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr ""
+msgstr "Paketas %s pažymėtas pasenusiu paketo %s, todėl bandoma įdiegti %s"
 
 #: ../yum/__init__.py:3307
 #, python-format
 msgid "Package %s already installed and latest version"
-msgstr ""
+msgstr "Paketas %s jau įdiegtas ir paskutinės versijos"
 
 #: ../yum/__init__.py:3321
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
-msgstr ""
+msgstr "Paketas, atitinkantis %s, jau įdiegtas. Tikrinamas atnaujinimas."
 
 #. update everything (the easy case)
 #: ../yum/__init__.py:3424
 msgid "Updating Everything"
-msgstr ""
+msgstr "Atnaujinti viską"
 
 #: ../yum/__init__.py:3448 ../yum/__init__.py:3577 ../yum/__init__.py:3604
 #: ../yum/__init__.py:3630
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
+msgstr "Neatnaujinamas paketas, kuris jau yra pasenęs: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3489 ../yum/__init__.py:3680
 #, python-format
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #: ../yum/__init__.py:3566
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
+msgstr "Paketas jau yra pasenęs: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3599
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
-msgstr ""
+msgstr "Neatnaujinamas paketas, kuris yra pasenęs: %s"
 
 #: ../yum/__init__.py:3608 ../yum/__init__.py:3634
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr ""
+msgstr "Neatnaujinamas paketas, kuris jau yra atnaujintas: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3697
 msgid "No package matched to remove"
-msgstr ""
+msgstr "Nėra paketo atitikmens pašalinimui"
 
 #: ../yum/__init__.py:3703
 #, python-format
 msgid "Skipping the running kernel: %s"
-msgstr ""
+msgstr "Praleidžiama ir vykdomas branduolys: %s"
 
 #: ../yum/__init__.py:3709
 #, python-format
 msgid "Removing %s from the transaction"
-msgstr ""
+msgstr "Pašalinamas %s iš transakcijos"
 
 #: ../yum/__init__.py:3744
 #, python-format
 msgid "Cannot open: %s. Skipping."
-msgstr ""
+msgstr "Nepavyksta atverti: %s. Praleidžiama."
 
 #: ../yum/__init__.py:3747 ../yum/__init__.py:3859 ../yum/__init__.py:3935
 #, python-format
 msgid "Examining %s: %s"
-msgstr ""
+msgstr "Tikrinama %s: %s"
 
 #: ../yum/__init__.py:3751
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
-msgstr ""
+msgstr "Nepavyksta vietinis deltarpm diegimas: %s. Praleidžiama."
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
 msgid ""
 "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
+"Nepavyksta pridėti paketo %s į transakciją. Nesuderinama architektūra: %s"
 
 #: ../yum/__init__.py:3766
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
+"Nepavyksta įdiegti paketo %s. Jis pažymėtas pasenusiu įdiegto paketo %s"
 
 #: ../yum/__init__.py:3774
 #, python-format
@@ -2577,83 +2664,85 @@ msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr ""
+"Paketas %s neįdiegtas, negalima jo atnaujinti. Paleiskite yum install jo "
+"įdiegimui."
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
 msgid "Excluding %s"
-msgstr ""
+msgstr "Išskiriamas %s"
 
 #: ../yum/__init__.py:3808
 #, python-format
 msgid "Marking %s to be installed"
-msgstr ""
+msgstr "Žymimas %s įdiegimui"
 
 #: ../yum/__init__.py:3814
 #, python-format
 msgid "Marking %s as an update to %s"
-msgstr ""
+msgstr "Žymimas %s kaip %s atnaujinimas"
 
 #: ../yum/__init__.py:3821
 #, python-format
 msgid "%s: does not update installed package."
-msgstr ""
+msgstr "%s: neatnaujina įdiegto paketo."
 
 #: ../yum/__init__.py:3856 ../yum/__init__.py:3932
 #, python-format
 msgid "Cannot open file: %s. Skipping."
-msgstr ""
+msgstr "Nepavyksta atverti failo: %s. Praleidžiama."
 
 #: ../yum/__init__.py:3886
 msgid "Problem in reinstall: no package matched to remove"
-msgstr ""
+msgstr "Perdiegimo problema: nėra paketo atitikmens pašalinimui"
 
 #: ../yum/__init__.py:3912
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
-msgstr ""
+msgstr "Perdiegimo problema: nėra paketo %s atitikmens diegimui"
 
 #: ../yum/__init__.py:4018
 msgid "No package(s) available to downgrade"
-msgstr ""
+msgstr "Nėra paketo(-ų) grąžinimui"
 
 #: ../yum/__init__.py:4026
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
-msgstr ""
+msgstr "Paketas %s leidžia daugkartinius diegimus, praleidžiama"
 
 #: ../yum/__init__.py:4072
 #, python-format
 msgid "No Match for available package: %s"
-msgstr ""
+msgstr "Nėra atitikmens prieinamam paketui: %s"
 
 #: ../yum/__init__.py:4079
 #, python-format
 msgid "Only Upgrade available on package: %s"
-msgstr ""
+msgstr "Tik atnaujinimas yra prieinamas paketui: %s"
 
 #: ../yum/__init__.py:4149 ../yum/__init__.py:4186
 #, python-format
 msgid "Failed to downgrade: %s"
-msgstr ""
+msgstr "Nepavyko grąžinti: %s"
 
 #: ../yum/__init__.py:4218
 #, python-format
 msgid "Retrieving GPG key from %s"
-msgstr ""
+msgstr "Gaunamas GPG raktas iš %s"
 
 #: ../yum/__init__.py:4238
 msgid "GPG key retrieval failed: "
-msgstr ""
+msgstr "GPG rakto gavimas nepavyko: "
 
 #: ../yum/__init__.py:4244
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
-msgstr ""
+msgstr "Netinkamas GPG raktas iš %s: %s"
 
 #: ../yum/__init__.py:4253
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
-msgstr ""
+msgstr "GPG rakto skaitymas nepavyko: raktas neturi %s reikšmės"
 
 #: ../yum/__init__.py:4267
 #, python-format
@@ -2663,6 +2752,10 @@ msgid ""
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
+"Importuojamas GPG raktas 0x%s:\n"
+" Naudotojo id: %s\n"
+" Paketas     : %s (%s)\n"
+" Iš          : %s"
 
 #: ../yum/__init__.py:4275
 #, python-format
@@ -2671,24 +2764,27 @@ msgid ""
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
+"Importuojamas GPG raktas 0x%s:\n"
+" Naudotojo id: „%s“\n"
+" Iš          : %s"
 
 #: ../yum/__init__.py:4307
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
-msgstr ""
+msgstr "GPG raktas iš %s (0x%s) jau įdiegtas"
 
 #: ../yum/__init__.py:4326
 msgid "Not installing key"
-msgstr ""
+msgstr "Neįdiegiamas raktas"
 
 #: ../yum/__init__.py:4332
 #, python-format
 msgid "Key import failed (code %d)"
-msgstr ""
+msgstr "Rakto importas neapvyko (kodas %d)"
 
 #: ../yum/__init__.py:4333 ../yum/__init__.py:4389
 msgid "Key imported successfully"
-msgstr ""
+msgstr "Raktas sėkmingai importuotas"
 
 #: ../yum/__init__.py:4338
 #, python-format
@@ -2696,24 +2792,26 @@ msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
+"GPG raktai, išvardinti „%s“ saugyklai, jau yra įdiegti, bet nėra teisingi šiam paketui.\n"
+"Patikrinkite, ar teisingi URL yra nustatyti šiai saugyklai."
 
 #: ../yum/__init__.py:4347
 msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr ""
+msgstr "Rakto(-ų) importas nepadėjo, neteisingas(-i) raktas(-ai)?"
 
 #: ../yum/__init__.py:4366
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
-msgstr ""
+msgstr "GPG raktas iš %s (0x%s) jau importuotas"
 
 #: ../yum/__init__.py:4383
 #, python-format
 msgid "Not installing key for repo %s"
-msgstr ""
+msgstr "Neįdiegiamas raktas saugyklai %s"
 
 #: ../yum/__init__.py:4388
 msgid "Key import failed"
-msgstr ""
+msgstr "Rakto importas nepavyko"
 
 #: ../yum/__init__.py:4394
 #, python-format
@@ -2721,138 +2819,142 @@ msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
+"GPG raktai, išvardinti „%s“ saugyklai, jau yra įdiegti, bet nėra teisingi.\n"
+"Patikrinkite, ar teisingi URL yra nustatyti šiai saugyklai."
 
 #: ../yum/__init__.py:4521
 msgid "Unable to find a suitable mirror."
-msgstr ""
+msgstr "Nepavyksta rasti tinkamos dubliuojančios tinklavietės."
 
 #: ../yum/__init__.py:4523
 msgid "Errors were encountered while downloading packages."
-msgstr ""
+msgstr "Kilo klaidų parsiunčiant paketus."
 
 #: ../yum/__init__.py:4573
 #, python-format
 msgid "Please report this error at %s"
-msgstr ""
+msgstr "Praneškite apie šią klaidą adresu %s"
 
 #: ../yum/__init__.py:4597
 msgid "Test Transaction Errors: "
-msgstr ""
+msgstr "Transakcijos testavimo klaidos: "
 
 #: ../yum/__init__.py:4700
 #, python-format
 msgid "Could not set cachedir: %s"
-msgstr ""
+msgstr "Nepavyko nustatyti podėlio katalogo: %s"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:208
 msgid "Loaded plugins: "
-msgstr ""
+msgstr "Įkelti įskiepiai: "
 
 #: ../yum/plugins.py:222 ../yum/plugins.py:228
 #, python-format
 msgid "No plugin match for: %s"
-msgstr ""
+msgstr "Nėra įskiepio atitikmens : %s"
 
 #: ../yum/plugins.py:258
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
-msgstr ""
+msgstr "Neįkeliamas įskiepis „%s“, nes jis išjungtas"
 
 #. Give full backtrace:
 #: ../yum/plugins.py:270
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
-msgstr ""
+msgstr "Įskiepis „%s“ negali būti importuotas"
 
 #: ../yum/plugins.py:277
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
-msgstr ""
+msgstr "Įskiepis „%s“ nenurodo reikalingos API versijos"
 
 #: ../yum/plugins.py:282
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
-msgstr ""
+msgstr "Įskiepis „%s“ reikalauja API %s. Palaikoma API yra %s."
 
 #: ../yum/plugins.py:315
 #, python-format
 msgid "Loading \"%s\" plugin"
-msgstr ""
+msgstr "Įkeliamas įskiepis „%s“"
 
 #: ../yum/plugins.py:322
 #, python-format
 msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
+"Vienas ar daugiau įskiepių pavadinimu „%s“ yra įskiepių ieškojimo kelyje"
 
 #: ../yum/plugins.py:342
 #, python-format
 msgid "Configuration file %s not found"
-msgstr ""
+msgstr "Konfigūracijos failas %s nerastas"
 
 #. for
 #. Configuration files for the plugin not found
 #: ../yum/plugins.py:345
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
-msgstr ""
+msgstr "Nepavyksta rasti konfigūracijos failo įskiepiui %s"
 
 #: ../yum/plugins.py:507
 msgid "registration of commands not supported"
-msgstr ""
+msgstr "komandų registravimas nepalaikomas"
 
 #: ../yum/rpmsack.py:102
 msgid "has missing requires of"
-msgstr ""
+msgstr "turi trūkstamų reikalavimų"
 
 #: ../yum/rpmsack.py:105
 msgid "has installed conflicts"
-msgstr ""
+msgstr "turi įdiegtų konfliktų"
 
 #: ../yum/rpmsack.py:114
 #, python-format
 msgid "%s is a duplicate with %s"
-msgstr ""
+msgstr "%s yra %s dublikatas"
 
 #: ../yum/rpmsack.py:122
 #, python-format
 msgid "%s is obsoleted by %s"
-msgstr ""
+msgstr "%s yra apžymėtas pasenusio paketo %s"
 
 #: ../yum/rpmsack.py:130
 #, python-format
 msgid "%s provides %s but it cannot be found"
-msgstr ""
+msgstr "%s teikia %s, bet nepavyksta jo rasti"
 
 #: ../yum/rpmtrans.py:79
 msgid "Repackaging"
-msgstr ""
+msgstr "Perpakuojama"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
 msgid "Header cannot be opened or does not match %s, %s."
-msgstr "O cabeçalho não pôde ser aberto ou não corresponde ao %s, %s."
+msgstr "Antraštė negali būti atverta ir neatitinka %s, %s."
 
 #: ../rpmUtils/oldUtils.py:53
 #, python-format
 msgid "RPM %s fails md5 check"
-msgstr "O RPM %s falha no código MD5"
+msgstr "RPM %s neatitinka md5 tikrinimo"
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "Não foi ler a base de dados do RPM. Talvez já esteja a ser usada?"
+msgstr ""
+"Nepavyksta atverti RPM duomenų bazės skaitymui. Galbūt ji jau naudojama?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
-msgstr "Foi obtido um cabeçalho vazio; algo se passa de errado"
+msgstr "Gauta tuščia antraštė, kažkas nepavyko"
 
 #: ../rpmUtils/oldUtils.py:253 ../rpmUtils/oldUtils.py:260
 #: ../rpmUtils/oldUtils.py:263 ../rpmUtils/oldUtils.py:266
 #, python-format
 msgid "Damaged Header %s"
-msgstr "Cabeçalho %s Danificado"
+msgstr "Sugadinta antraštė %s"
 
 #: ../rpmUtils/oldUtils.py:281
 #, python-format
 msgid "Error opening rpm %s - error %s"
-msgstr "Erro ao abrir o RPM %s - erro %s"
+msgstr "Klaida atveriant rpm %s - klaida %s"

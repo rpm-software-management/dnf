@@ -1,20 +1,21 @@
+# SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# A S Alam <aalam@users.sf.net>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: Yum\n"
+"Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2010-09-09 10:29+0530\n"
-"Last-Translator: A S Alam <aalam@users.sf.net>\n"
-"Language-Team: Punjabi/Panjabi <punjabi-users@lists.sf.net>\n"
+"PO-Revision-Date: 2011-03-22 15:15+0000\n"
+"Last-Translator: aalam <apreet.alam@gmail.com>\n"
+"Language-Team: Panjabi (Punjabi) <punjabi-users@lists.sf.net>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 1.0\n"
+"Language: pa\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
 msgid "Updating"
@@ -99,17 +100,17 @@ msgstr "ਚੋਣ ਗਲਤੀ: %s"
 #: ../cli.py:267
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr " ਇੰਸਟਾਲ ਕੀਤਾ:%s-%s %s ਉੱਤੇ "
+msgstr "   ਇੰਸਟਾਲ ਕੀਤਾ:%s-%s %s ਉੱਤੇ "
 
 #: ../cli.py:269
 #, python-format
 msgid "  Built    : %s at %s"
-msgstr " ਬਿਲਡ: %s %s ਉੱਤੇ "
+msgstr " ਬਿਲਡ   : %s %s ਉੱਤੇ "
 
 #: ../cli.py:271
 #, python-format
 msgid "  Committed: %s at %s"
-msgstr " ਕਮਿਟ ਕੀਤਾ: %s %s ਉੱਤੇ"
+msgstr "  ਕਮਿਟ ਕੀਤਾ: %s %s ਉੱਤੇ"
 
 #: ../cli.py:310
 msgid "You need to give some command"
@@ -127,7 +128,7 @@ msgstr "ਡਿਸਕ ਲੋੜਾਂ:\n"
 #: ../cli.py:356
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr " ਘੱਟੋ-ਘੱਟ %dMB ਹੋਰ ਖਾਲੀ ਥਾਂ %s ਫਾਇਲ ਸਿਸਟਮ ਉੱਤੇ ਚਾਹੀਦੀ ਹੈ।\n"
+msgstr "   ਘੱਟੋ-ਘੱਟ %dMB ਹੋਰ ਖਾਲੀ ਥਾਂ %s ਫਾਇਲ ਸਿਸਟਮ ਉੱਤੇ ਚਾਹੀਦੀ ਹੈ।\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
@@ -141,7 +142,9 @@ msgstr ""
 
 #: ../cli.py:404
 msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ, ਪਰ ਕੁਝ ਵੀ ਕਰਨ ਲਈ ਨਹੀਂ ਹੈ। ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
+msgstr ""
+"ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ, ਪਰ ਕੁਝ ਵੀ ਕਰਨ ਲਈ ਨਹੀਂ ਹੈ। ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ"
+" ਹੈ।"
 
 #: ../cli.py:451
 msgid "Exiting on user Command"
@@ -285,7 +288,7 @@ msgid "No Matches found"
 msgstr "ਕੋਈ ਮਿਲਦਾ ਨਹੀਂ"
 
 #: ../cli.py:995
-#, python-format, fuzzy
+#, python-format
 msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
 " You can use \"%s*/%s%s\" and/or \"%s*bin/%s%s\" to get that behaviour"
@@ -517,11 +520,8 @@ msgid "set value of $releasever in yum config and repo files"
 msgstr "ਯੱਮ ਸੰਰਚਨਾ ਤੇ ਰਿਪੋ ਫਾਇਲਾਂ 'ਚ $releasever ਦਾ ਮੁੱਲ ਸੈੱਟ ਕਰੋ"
 
 #: ../cli.py:1518
-#, fuzzy
 msgid "set arbitrary config and repo options"
 msgstr ""
-"ਯੱਮ ਸੰਰਚਨਾ ਤੇ ਰਿਪੋ ਫਾਇਲਾਂ 'ਚ \n"
-"ਦਾ ਮੁੱਲ ਸੈੱਟ ਕਰੋ"
 
 #: ../output.py:305
 msgid "Jan"
@@ -1285,12 +1285,14 @@ msgstr "--> ਅਪਵਾਦ ਹੱਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ: %
 
 #: ../output.py:1953
 msgid "--> Populating transaction set with selected packages. Please wait."
-msgstr "--> ਚੁਣੇ ਪੈਕੇਜਾਂ ਲਈ ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ ਪਾਪੂਲੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ। ਉਡੀਕੋ ਜੀ।"
+msgstr ""
+"--> ਚੁਣੇ ਪੈਕੇਜਾਂ ਲਈ ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ ਪਾਪੂਲੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ। ਉਡੀਕੋ ਜੀ।"
 
 #: ../output.py:1957
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
-msgstr "---> ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ 'ਚ ਪੈਕ ਕਰਨ ਲਈ %s ਵਾਸਤੇ ਹੈੱਡਰ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
+msgstr ""
+"---> ਟਰਾਂਸੈਕਸ਼ਨ ਸੈੱਟ 'ਚ ਪੈਕ ਕਰਨ ਲਈ %s ਵਾਸਤੇ ਹੈੱਡਰ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
 
 #: ../utils.py:94
 msgid "Running"
@@ -1372,8 +1374,12 @@ msgstr ""
 "%s"
 
 #: ../utils.py:201 ../yummain.py:107
-msgid "Another app is currently holding the yum lock; exiting as configured by exit_on_lock"
-msgstr "ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਨ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ;  exit_on_lock ਵਲੋਂ ਸੰਰਚਨਾ ਮੁਤਾਬਕ ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
+msgid ""
+"Another app is currently holding the yum lock; exiting as configured by "
+"exit_on_lock"
+msgstr ""
+"ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਨ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ;  exit_on_lock ਵਲੋਂ ਸੰਰਚਨਾ ਮੁਤਾਬਕ "
+"ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../utils.py:260
 #, python-format
@@ -1510,7 +1516,8 @@ msgstr "ਅੱਪਡੇਟ ਕਾਰਵਾਈ ਸੈੱਟਅੱਪ ਕੀਤੀ
 
 #: ../yumcommands.py:237
 msgid "Synchronize installed packages to the latest available versions"
-msgstr "ਸਭ ਇੰਸਟਾਲ ਕੀਤੇ ਪੈਕੇਜਾਂ ਨੂੰ ਸਭ ਤੋਂ ਨਵੇਂ ਉਪਲੱਬਧ ਵਰਜਨਾਂ ਨਾਲ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰੋ"
+msgstr ""
+"ਸਭ ਇੰਸਟਾਲ ਕੀਤੇ ਪੈਕੇਜਾਂ ਨੂੰ ਸਭ ਤੋਂ ਨਵੇਂ ਉਪਲੱਬਧ ਵਰਜਨਾਂ ਨਾਲ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰੋ"
 
 #: ../yumcommands.py:245
 msgid "Setting up Distribution Synchronization Process"
@@ -1865,8 +1872,10 @@ msgid "Check for problems in the rpmdb"
 msgstr "rpmdb ਵਿੱਚ ਸਮੱਸਿਆ ਲਈ ਚੈੱਕ ਕਰੋ"
 
 #: ../yummain.py:103
-msgid "Another app is currently holding the yum lock; waiting for it to exit..."
-msgstr "ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਣ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ; ਉਸ ਨੂੰ ਬੰਦ ਹੋਣ ਤੱਕ ਉਡੀਕ ਜਾਰੀ..."
+msgid ""
+"Another app is currently holding the yum lock; waiting for it to exit..."
+msgstr ""
+"ਹਾਲੇ ਕੋਈ ਹੋਰ ਐਪਲੀਕੇਸ਼ਣ ਯੱਮ ਲਾਕ ਵਰਤ ਰਹੀ ਹੈ; ਉਸ ਨੂੰ ਬੰਦ ਹੋਣ ਤੱਕ ਉਡੀਕ ਜਾਰੀ..."
 
 #. Depsolve stage
 #: ../yummain.py:151
@@ -2200,8 +2209,12 @@ msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "ਪਰੋਗਰਾਮ %s%s%s ਨੂੰ yum-utils ਪੈਕੇਜ 'ਚ ਲੱਭਿਆ ਜਾ ਸਕਦਾ ਹੈ।"
 
 #: ../yum/__init__.py:906
-msgid "There are unfinished transactions remaining. You might consider running yum-complete-transaction first to finish them."
-msgstr "ਅਧੂਰੀਆਂ ਟਰਾਂਸੈਕਸ਼ਨ ਬਾਕੀ ਹਨ। ਤੁਹਾਨੂੰ ਉਹਨਾਂ ਨੂੰ ਪੂਰਾ ਕਰਨ ਵਾਸਤੇ yum-complete-transaction ਚਲਾਉ ਬਾਰੇ ਸੋਚਣਾ ਚਾਹੀਦਾ ਹੈ।"
+msgid ""
+"There are unfinished transactions remaining. You might consider running yum-"
+"complete-transaction first to finish them."
+msgstr ""
+"ਅਧੂਰੀਆਂ ਟਰਾਂਸੈਕਸ਼ਨ ਬਾਕੀ ਹਨ। ਤੁਹਾਨੂੰ ਉਹਨਾਂ ਨੂੰ ਪੂਰਾ ਕਰਨ ਵਾਸਤੇ yum-complete-"
+"transaction ਚਲਾਉ ਬਾਰੇ ਸੋਚਣਾ ਚਾਹੀਦਾ ਹੈ।"
 
 #: ../yum/__init__.py:985
 #, python-format
@@ -2236,7 +2249,9 @@ msgstr "   %s %s ਤੋਂ"
 #: ../yum/__init__.py:1251
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
-msgstr "** %d ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦਾ rpmdb ਸਮੱਸਿਆਵਾਂ ਲੱਭੀਆਂ, 'yum check' ਆਉਟਪੁੱਟ ਅੱਗੇ ਦਿੱਤੀ ਹੈ:"
+msgstr ""
+"** %d ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦਾ rpmdb ਸਮੱਸਿਆਵਾਂ ਲੱਭੀਆਂ, 'yum check' ਆਉਟਪੁੱਟ ਅੱਗੇ "
+"ਦਿੱਤੀ ਹੈ:"
 
 #: ../yum/__init__.py:1255
 msgid "Warning: RPMDB altered outside of yum."
@@ -2251,7 +2266,8 @@ msgid "installed conflict"
 msgstr "ਇੰਸਟਾਲ ਨਾਲ ਟਕਰਾ"
 
 #: ../yum/__init__.py:1366
-msgid "Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 
 #: ../yum/__init__.py:1376
@@ -2307,7 +2323,9 @@ msgstr "%s ਲਈ ਲਾਕ ਬਣਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ: %s
 
 #: ../yum/__init__.py:1698
 #, python-format
-msgid "Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata"
+msgid ""
+"Package does not match intended download. Suggestion: run yum "
+"--enablerepo=%s clean metadata"
 msgstr ""
 
 #: ../yum/__init__.py:1714
@@ -2345,7 +2363,8 @@ msgstr "ਹੈੱਡਰ ਪੂਰਾ ਨਹੀਂ ਹੈ।"
 
 #: ../yum/__init__.py:1899
 #, python-format
-msgid "Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr ""
 
 #: ../yum/__init__.py:1954
@@ -2404,7 +2423,9 @@ msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr ""
 
 #: ../yum/__init__.py:2433
-msgid "searchPackages() will go away in a future version of Yum.                      Use searchGenerator() instead. \n"
+msgid ""
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
 msgstr ""
 
 #: ../yum/__init__.py:2472
@@ -2517,13 +2538,16 @@ msgstr "ਪੈਕੇਜ %s ਨੂੰ %s ਵਲੋਂ ਬਰਤਰਫ਼ ਕੀ�
 
 #: ../yum/__init__.py:3296
 #, python-format
-msgid "Package %s is obsoleted by %s, but obsoleting package does not provide for requirements"
+msgid ""
+"Package %s is obsoleted by %s, but obsoleting package does not provide for "
+"requirements"
 msgstr "%s ਪੈਕੇਜ %s ਨਾਲ ਬਦਲ ਦਿੱਤਾ ਗਿਆ, ਪਰ ਬਦਲਿਆ ਗਿਆ ਪੈਕੇਜ ਲੋੜ ਪੂਰੀ ਨਹੀਂ ਕਰਦਾ"
 
 #: ../yum/__init__.py:3299
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr "%s ਪੈਕੇਜ %s ਨਾਲ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ, %s ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
+msgstr ""
+"%s ਪੈਕੇਜ %s ਨਾਲ ਬਰਤਰਫ਼ ਕੀਤਾ ਗਿਆ, %s ਇੰਸਟਾਲ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/__init__.py:3307
 #, python-format
@@ -2564,7 +2588,8 @@ msgstr "ਪੈਕੇਜ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਰ�
 #: ../yum/__init__.py:3608 ../yum/__init__.py:3634
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr "ਪੈਕੇਜ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ, ਇਹ ਪਹਿਲਾਂ ਹੀ ਅੱਪਡੇਟ ਹੈ: %s.%s %s:%s-%s"
+msgstr ""
+"ਪੈਕੇਜ ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ, ਇਹ ਪਹਿਲਾਂ ਹੀ ਅੱਪਡੇਟ ਹੈ: %s.%s %s:%s-%s"
 
 #: ../yum/__init__.py:3697
 msgid "No package matched to remove"
@@ -2597,8 +2622,10 @@ msgstr "deltarpm localinstall ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ: %s�
 
 #: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
 #, python-format
-msgid "Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਲਈ %s ਪੈਕੇਜ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ। %s: ਢਾਂਚੇ ਨਾਲ ਅਨੁਕੂਲ ਨਹੀਂ ਹੈ"
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgstr ""
+"ਟਰਾਂਸੈਕਸ਼ਨ ਲਈ %s ਪੈਕੇਜ ਜੋੜਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ। %s: ਢਾਂਚੇ ਨਾਲ ਅਨੁਕੂਲ ਨਹੀਂ ਹੈ"
 
 #: ../yum/__init__.py:3766
 #, python-format
@@ -2607,8 +2634,12 @@ msgstr ""
 
 #: ../yum/__init__.py:3774
 #, python-format
-msgid "Package %s not installed, cannot update it. Run yum install to install it instead."
-msgstr "ਪੈਕੇਜ %s ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ, ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ। ਇਸ ਦੀ ਬਜਾਏ ਇਸ ਨੂੰ ਇੰਸਟਾਲ ਕਰਨ ਲਈ yum install ਚਲਾਓ।"
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"ਪੈਕੇਜ %s ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ, ਅੱਪਡੇਟ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਦਾ। ਇਸ ਦੀ ਬਜਾਏ ਇਸ ਨੂੰ ਇੰਸਟਾਲ "
+"ਕਰਨ ਲਈ yum install ਚਲਾਓ।"
 
 #: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
 #, python-format
@@ -2872,7 +2903,8 @@ msgstr ""
 
 #: ../rpmUtils/oldUtils.py:151
 msgid "Could not open RPM database for reading. Perhaps it is already in use?"
-msgstr "RPM ਡਾਟਾਬੇਸ ਪੜ੍ਹਨ ਲਈ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਸ਼ਾਇਦ ਪਹਿਲਾਂ ਹੀ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ?"
+msgstr ""
+"RPM ਡਾਟਾਬੇਸ ਪੜ੍ਹਨ ਲਈ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ। ਸ਼ਾਇਦ ਪਹਿਲਾਂ ਹੀ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ?"
 
 #: ../rpmUtils/oldUtils.py:183
 msgid "Got an empty Header, something has gone wrong"
@@ -2888,24 +2920,3 @@ msgstr "ਖਰਾਬ ਹੋਇਆ ਹੈੱਡਰ %s"
 #, python-format
 msgid "Error opening rpm %s - error %s"
 msgstr "rpm %s ਖੋਲ੍ਹਣ ਦੌਰਾਨ ਗਲਤੀ - ਗਲਤੀ %s"
-
-#~ msgid "Repo       : %s"
-#~ msgstr "ਰਿਪੋ       : %s"
-
-#~ msgid "URL        : %s"
-#~ msgstr "URL        : %s"
-
-#~ msgid "Description: "
-#~ msgstr "ਵੇਰਵਾ: "
-
-#~ msgid ""
-#~ "Remove    %5.5s Package(s)\n"
-#~ "Reinstall %5.5s Package(s)\n"
-#~ "Downgrade %5.5s Package(s)\n"
-#~ msgstr ""
-#~ "ਹਟਾਏ    %5.5s ਪੈਕੇਜ\n"
-#~ "ਮੁੜ-ਇੰਸਟਾਲ %5.5s ਪੈਕੇਜ\n"
-#~ "ਡਾਊਨਗਰੇਡ %5.5s ਪੈਕੇਜ\n"
-
-#~ msgid "Weird"
-#~ msgstr "ਸਮੱਸਿਆ"
