@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
-"POT-Creation-Date: 2010-08-17 10:15-0400\n"
-"PO-Revision-Date: 2011-05-04 14:58+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-05-04 11:17-0400\n"
+"PO-Revision-Date: 2011-05-04 15:18+0000\n"
+"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,34 +17,34 @@ msgstr ""
 "Language: sr\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: ../callback.py:48 ../output.py:1027 ../yum/rpmtrans.py:72
+#: ../callback.py:48 ../output.py:1037 ../yum/rpmtrans.py:73
 msgid "Updating"
 msgstr "Ажурирам"
 
-#: ../callback.py:49 ../yum/rpmtrans.py:73
+#: ../callback.py:49 ../yum/rpmtrans.py:74
 msgid "Erasing"
 msgstr "Бришем"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1026
-#: ../output.py:1919 ../yum/rpmtrans.py:74 ../yum/rpmtrans.py:75
-#: ../yum/rpmtrans.py:77
+#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1036
+#: ../output.py:2216 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "Инсталирам"
 
-#: ../callback.py:52 ../callback.py:58 ../output.py:1640 ../yum/rpmtrans.py:76
+#: ../callback.py:52 ../callback.py:58 ../output.py:1838 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "Превазиђени"
 
-#: ../callback.py:54 ../output.py:1157 ../output.py:1518 ../output.py:1647
+#: ../callback.py:54 ../output.py:1167 ../output.py:1684 ../output.py:1845
 msgid "Updated"
 msgstr "Ажурирани"
 
-#: ../callback.py:55 ../output.py:1517
+#: ../callback.py:55 ../output.py:1683
 msgid "Erased"
 msgstr "Обрисани"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1155
-#: ../output.py:1517 ../output.py:1519 ../output.py:1891
+#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1165
+#: ../output.py:1683 ../output.py:1685 ../output.py:2188
 msgid "Installed"
 msgstr "Инсталирани"
 
@@ -66,73 +66,73 @@ msgstr "Грешка: погрешно излазно стање: %s за %s"
 msgid "Erased: %s"
 msgstr "Обрисано: %s"
 
-#: ../callback.py:217 ../output.py:1028 ../output.py:1894
+#: ../callback.py:217 ../output.py:1038 ../output.py:2191
 msgid "Removing"
 msgstr "Уклањам"
 
-#: ../callback.py:219 ../yum/rpmtrans.py:78
+#: ../callback.py:219 ../yum/rpmtrans.py:79
 msgid "Cleanup"
 msgstr "Чишћење"
 
-#: ../cli.py:108
+#: ../cli.py:115
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Наредба „%s“ је већ дефинисана"
 
-#: ../cli.py:120
+#: ../cli.py:127
 msgid "Setting up repositories"
 msgstr "Постављам ризнице"
 
-#: ../cli.py:131
+#: ../cli.py:138
 msgid "Reading repository metadata in from local files"
 msgstr "Читам метаподатке ризница из локалних датотека"
 
-#: ../cli.py:234 ../utils.py:254
+#: ../cli.py:245 ../utils.py:281
 #, python-format
 msgid "Config Error: %s"
 msgstr "Грешка при подешавању: %s"
 
-#: ../cli.py:237 ../cli.py:1403 ../utils.py:257
+#: ../cli.py:248 ../cli.py:1578 ../utils.py:284
 #, python-format
 msgid "Options Error: %s"
 msgstr "Грешка у опцијама: %s"
 
-#: ../cli.py:267
+#: ../cli.py:293
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Инсталиран : %s-%s %s"
 
-#: ../cli.py:269
+#: ../cli.py:295
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Направио/ла: %s %s"
 
-#: ../cli.py:271
+#: ../cli.py:297
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Објавио/ла : %s %s"
 
-#: ../cli.py:310
+#: ../cli.py:336
 msgid "You need to give some command"
 msgstr "Морате да унесете неку команду"
 
-#: ../cli.py:324
+#: ../cli.py:350
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr ""
 
-#: ../cli.py:354
+#: ../cli.py:400
 msgid "Disk Requirements:\n"
 msgstr "Захтеви диска:\n"
 
-#: ../cli.py:356
+#: ../cli.py:402
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr ""
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:361
+#: ../cli.py:407
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -140,60 +140,60 @@ msgstr ""
 "Сажетак грешака\n"
 "-------------\n"
 
-#: ../cli.py:404
+#: ../cli.py:450
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "Покушавам да извршим трансакцију али нема шта да се ради. Излазим."
 
-#: ../cli.py:451
+#: ../cli.py:497
 msgid "Exiting on user Command"
 msgstr "Излазим на команду корисника"
 
-#: ../cli.py:455
+#: ../cli.py:501
 msgid "Downloading Packages:"
 msgstr "Преузимам пакете:"
 
-#: ../cli.py:460
+#: ../cli.py:506
 msgid "Error Downloading Packages:\n"
 msgstr "Грешка при преузимању пакета:\n"
 
-#: ../cli.py:474 ../yum/__init__.py:4559
-msgid "Running rpm_check_debug"
-msgstr "Извршавам rpm_check_debug"
+#: ../cli.py:525 ../yum/__init__.py:4902
+msgid "Running Transaction Check"
+msgstr ""
 
-#: ../cli.py:483 ../yum/__init__.py:4568
+#: ../cli.py:534 ../yum/__init__.py:4911
 msgid "ERROR You need to update rpm to handle:"
 msgstr ""
 
-#: ../cli.py:485 ../yum/__init__.py:4571
-msgid "ERROR with rpm_check_debug vs depsolve:"
-msgstr "ГРЕШКА са rpm_check_debug у односу на depsolve:"
+#: ../cli.py:536 ../yum/__init__.py:4914
+msgid "ERROR with transaction check vs depsolve:"
+msgstr ""
 
-#: ../cli.py:491
+#: ../cli.py:542
 msgid "RPM needs to be updated"
 msgstr ""
 
-#: ../cli.py:492
+#: ../cli.py:543
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Пријавите ову грешку у %s"
 
-#: ../cli.py:498
+#: ../cli.py:549
 msgid "Running Transaction Test"
 msgstr "Извршавам проверу трансакције"
 
-#: ../cli.py:514
+#: ../cli.py:561
 msgid "Transaction Check Error:\n"
 msgstr "Грешка при провери трансакције:\n"
 
-#: ../cli.py:521
+#: ../cli.py:568
 msgid "Transaction Test Succeeded"
 msgstr "Провера трансакције је успела"
 
-#: ../cli.py:543
+#: ../cli.py:600
 msgid "Running Transaction"
 msgstr "Извршавам трансакцију"
 
-#: ../cli.py:573
+#: ../cli.py:630
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -201,93 +201,114 @@ msgstr ""
 "Одбијам да аутоматски увезем кључеве када се извршавање не надгледа.\n"
 "За превазилажење овога користите „-y“."
 
-#: ../cli.py:592 ../cli.py:626
+#: ../cli.py:649 ../cli.py:692
 msgid "  * Maybe you meant: "
 msgstr "  * Можда сте мислили: "
 
-#: ../cli.py:609 ../cli.py:617
+#: ../cli.py:675 ../cli.py:683
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "%s%s%s пакет је доступан, али није инсталиран."
 
-#: ../cli.py:623 ../cli.py:656 ../cli.py:810
+#: ../cli.py:689 ../cli.py:722 ../cli.py:908
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Не постоји доступан пакет %s%s%s."
 
-#: ../cli.py:663 ../cli.py:875
+#: ../cli.py:729 ../cli.py:973
 msgid "Package(s) to install"
 msgstr "Пакет(и) који ће се инсталирати"
 
-#: ../cli.py:666 ../cli.py:667 ../cli.py:816 ../cli.py:850 ../cli.py:876
-#: ../yumcommands.py:179
+#: ../cli.py:732 ../cli.py:733 ../cli.py:914 ../cli.py:948 ../cli.py:974
+#: ../yumcommands.py:189
 msgid "Nothing to do"
 msgstr "Нема шта да се ради"
 
-#: ../cli.py:701
+#: ../cli.py:767
 #, python-format
 msgid "%d packages marked for Update"
 msgstr "%d пакети означени за ажурирање"
 
-#: ../cli.py:704
+#: ../cli.py:770
 msgid "No Packages marked for Update"
 msgstr "Нема пакета означених за ажурирање"
 
-#: ../cli.py:770
+#: ../cli.py:866
 #, python-format
 msgid "%d packages marked for Distribution Synchronization"
 msgstr ""
 
-#: ../cli.py:773
+#: ../cli.py:869
 msgid "No Packages marked for Distribution Synchronization"
 msgstr ""
 
-#: ../cli.py:787
+#: ../cli.py:885
 #, python-format
 msgid "%d packages marked for removal"
 msgstr "%d пакети означени за уклањање"
 
-#: ../cli.py:790
+#: ../cli.py:888
 msgid "No Packages marked for removal"
 msgstr "Нема пакета означених за уклањање"
 
-#: ../cli.py:815
+#: ../cli.py:913
 msgid "Package(s) to downgrade"
 msgstr "Пакет(и) који ће се уназадити"
 
-#: ../cli.py:840
+#: ../cli.py:938
 #, python-format
 msgid " (from %s)"
 msgstr ""
 
-#: ../cli.py:841
+#: ../cli.py:939
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr ""
 
-#: ../cli.py:849
+#: ../cli.py:947
 msgid "Package(s) to reinstall"
 msgstr "Пакет(и) који ће се поново инсталирати"
 
-#: ../cli.py:862
+#: ../cli.py:960
 msgid "No Packages Provided"
 msgstr "Ниједан пакет није добављен"
 
-#: ../cli.py:945
+#: ../cli.py:1058
+#, python-format
+msgid "N/S Matched: %s"
+msgstr ""
+
+#: ../cli.py:1075
+#, python-format
+msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
+msgstr ""
+
+#: ../cli.py:1077
+#, python-format
+msgid ""
+"  Full name and summary matches %sonly%s, use \"search all\" for everything."
+msgstr ""
+
+#: ../cli.py:1095
 #, python-format
 msgid "Matched: %s"
 msgstr ""
 
-#: ../cli.py:952
+#: ../cli.py:1102
+#, python-format
+msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
+msgstr ""
+
+#: ../cli.py:1106
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Упозорење: није нађено подударање за %s"
 
-#: ../cli.py:955
+#: ../cli.py:1109
 msgid "No Matches found"
 msgstr "Нису пронађена подударања"
 
-#: ../cli.py:995
+#: ../cli.py:1152
 #, python-format
 msgid ""
 "Warning: 3.0.x versions of yum would erroneously match against filenames.\n"
@@ -296,116 +317,129 @@ msgstr ""
 "Упозорење: 3.0.x yum верзије би грешком вршиле подударање са називима датотека.\n"
 " Можете употребити „%s*/%s%s“ и/или „%s*bin/%s%s“ да бисте добили такво понашање"
 
-#: ../cli.py:1011
+#: ../cli.py:1168
 #, python-format
 msgid "No Package Found for %s"
 msgstr "Нису пронађени пакети за %s"
 
-#: ../cli.py:1021
+#: ../cli.py:1178
 msgid "Cleaning repos: "
 msgstr ""
 
-#: ../cli.py:1026
+#: ../cli.py:1183
 msgid "Cleaning up Everything"
 msgstr "Чистим све"
 
-#: ../cli.py:1042
+#: ../cli.py:1199
 msgid "Cleaning up Headers"
 msgstr "Чистим заглавља"
 
-#: ../cli.py:1045
+#: ../cli.py:1202
 msgid "Cleaning up Packages"
 msgstr "Чистим пакете"
 
-#: ../cli.py:1048
+#: ../cli.py:1205
 msgid "Cleaning up xml metadata"
 msgstr "Чистим xml метаподатке"
 
-#: ../cli.py:1051
+#: ../cli.py:1208
 msgid "Cleaning up database cache"
 msgstr "Чистим кеш базе података"
 
-#: ../cli.py:1054
+#: ../cli.py:1211
 msgid "Cleaning up expire-cache metadata"
 msgstr "Чистим expire-cache метаподатке"
 
-#: ../cli.py:1057
+#: ../cli.py:1214
 msgid "Cleaning up cached rpmdb data"
 msgstr ""
 
-#: ../cli.py:1060
+#: ../cli.py:1217
 msgid "Cleaning up plugins"
 msgstr "Чистим додатке"
 
-#: ../cli.py:1085
+#: ../cli.py:1241
+#, python-format
+msgid "Warning: No groups match: %s"
+msgstr ""
+
+#: ../cli.py:1258
 msgid "Installed Groups:"
 msgstr "Инсталиране групе:"
 
-#: ../cli.py:1097
+#: ../cli.py:1264
+msgid "Installed Language Groups:"
+msgstr ""
+
+#: ../cli.py:1270
 msgid "Available Groups:"
 msgstr "Доступне групе:"
 
-#: ../cli.py:1107
+#: ../cli.py:1276
+msgid "Available Language Groups:"
+msgstr ""
+
+#: ../cli.py:1279
 msgid "Done"
 msgstr "Урађено"
 
-#: ../cli.py:1118 ../cli.py:1136 ../cli.py:1142 ../yum/__init__.py:3069
+#: ../cli.py:1290 ../cli.py:1308 ../cli.py:1314 ../yum/__init__.py:3265
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Упозорење: група %s не постоји."
 
-#: ../cli.py:1146
+#: ../cli.py:1318
 msgid "No packages in any requested group available to install or update"
 msgstr ""
 "Нема доступних пакета за инсталацију или ажурирање у свим захтеваним групама"
 
-#: ../cli.py:1148
+#: ../cli.py:1320
 #, python-format
 msgid "%d Package(s) to Install"
 msgstr "%d пакет(и) за инсталацију"
 
-#: ../cli.py:1158 ../yum/__init__.py:3081
+#: ../cli.py:1330 ../yum/__init__.py:3277
 #, python-format
 msgid "No group named %s exists"
 msgstr "Не постоји група под именом %s"
 
-#: ../cli.py:1164
+#: ../cli.py:1336
 msgid "No packages to remove from groups"
 msgstr "Нема пакета за уклањање из група"
 
-#: ../cli.py:1166
+#: ../cli.py:1338
 #, python-format
 msgid "%d Package(s) to remove"
 msgstr "%d  пакет(и) за уклањање"
 
-#: ../cli.py:1208
+#: ../cli.py:1380
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "Пакет %s је већ инсталиран, прескачем га"
 
-#: ../cli.py:1219
+#: ../cli.py:1391
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Уклањам неупоредив пакет %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1245
+#: ../cli.py:1417
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
 "Не постоји инсталиран други %s, додајем га у списак за потенцијалну "
 "инсталацију"
 
-#: ../cli.py:1265
+#: ../cli.py:1437
 msgid "Plugin Options"
 msgstr "Опције додатка"
 
-#: ../cli.py:1273
+#: ../cli.py:1445
 #, python-format
 msgid "Command line error: %s"
 msgstr "Грешка командне линије: %s"
 
-#: ../cli.py:1287
+#: ../cli.py:1461
 #, python-format
 msgid ""
 "\n"
@@ -416,279 +450,285 @@ msgstr ""
 "\n"
 "%s: %s опција захтева аргумент"
 
-#: ../cli.py:1340
+#: ../cli.py:1515
 msgid "--color takes one of: auto, always, never"
 msgstr "--color прима један од следећих: auto, always, never"
 
-#: ../cli.py:1450
+#. We have a relative installroot ... haha
+#: ../cli.py:1590
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr ""
+
+#: ../cli.py:1636
 msgid "show this help message and exit"
 msgstr "прикажи ову помоћну поруку и изађи"
 
-#: ../cli.py:1454
+#: ../cli.py:1640
 msgid "be tolerant of errors"
 msgstr "буди толерантан на грешке"
 
-#: ../cli.py:1457
+#: ../cli.py:1643
 msgid "run entirely from system cache, don't update cache"
 msgstr ""
 
-#: ../cli.py:1460
+#: ../cli.py:1646
 msgid "config file location"
 msgstr "место датотеке подешавања"
 
-#: ../cli.py:1463
+#: ../cli.py:1649
 msgid "maximum command wait time"
 msgstr "најдуже време чекања на команду"
 
-#: ../cli.py:1465
+#: ../cli.py:1651
 msgid "debugging output level"
 msgstr "ниво излазног приказа за проналажење грешака"
 
-#: ../cli.py:1469
+#: ../cli.py:1655
 msgid "show duplicates, in repos, in list/search commands"
 msgstr ""
 "приказуј дупликате, у ризницама, у командама за излиставање/претраживање"
 
-#: ../cli.py:1471
+#: ../cli.py:1657
 msgid "error output level"
 msgstr "ниво излазног приказа грешака"
 
-#: ../cli.py:1474
+#: ../cli.py:1660
 msgid "debugging output level for rpm"
 msgstr ""
 
-#: ../cli.py:1477
+#: ../cli.py:1663
 msgid "quiet operation"
 msgstr "тиха радња"
 
-#: ../cli.py:1479
+#: ../cli.py:1665
 msgid "verbose operation"
 msgstr "опширна радња"
 
-#: ../cli.py:1481
+#: ../cli.py:1667
 msgid "answer yes for all questions"
 msgstr "одговори са да на сва питања"
 
-#: ../cli.py:1483
+#: ../cli.py:1669
 msgid "show Yum version and exit"
 msgstr "прикажи Yum верзију и изађи"
 
-#: ../cli.py:1484
+#: ../cli.py:1670
 msgid "set install root"
 msgstr "постави корени директоријум инсталације"
 
-#: ../cli.py:1488
+#: ../cli.py:1674
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "укључи једну или више ризница (скраћенице су дозвољене)"
 
-#: ../cli.py:1492
+#: ../cli.py:1678
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "искључи једну или више ризница (скраћенице су дозвољене)"
 
-#: ../cli.py:1495
+#: ../cli.py:1681
 msgid "exclude package(s) by name or glob"
 msgstr "изузми пакет(е) по имену или глобу"
 
-#: ../cli.py:1497
+#: ../cli.py:1683
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "искључи изузимање из главног скупа, за ризницу или за све"
 
-#: ../cli.py:1500
+#: ../cli.py:1686
 msgid "enable obsoletes processing during updates"
 msgstr "укључи обраду застарелих пакета у току ажурирања"
 
-#: ../cli.py:1502
+#: ../cli.py:1688
 msgid "disable Yum plugins"
 msgstr "искључи додатке за Yum"
 
-#: ../cli.py:1504
+#: ../cli.py:1690
 msgid "disable gpg signature checking"
 msgstr "искључи проверу gpg потписа"
 
-#: ../cli.py:1506
+#: ../cli.py:1692
 msgid "disable plugins by name"
 msgstr "искључи додатке по имену"
 
-#: ../cli.py:1509
+#: ../cli.py:1695
 msgid "enable plugins by name"
 msgstr "укључи додатке по имену"
 
-#: ../cli.py:1512
+#: ../cli.py:1698
 msgid "skip packages with depsolving problems"
 msgstr "прескочи пакете који имају проблема са решавањем зависности"
 
-#: ../cli.py:1514
+#: ../cli.py:1700
 msgid "control whether color is used"
 msgstr "контролише да ли се користи боја"
 
-#: ../cli.py:1516
+#: ../cli.py:1702
 msgid "set value of $releasever in yum config and repo files"
 msgstr ""
 
-#: ../cli.py:1518
+#: ../cli.py:1704
 msgid "set arbitrary config and repo options"
 msgstr ""
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "Jan"
 msgstr "јан"
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "Feb"
 msgstr "феб"
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "Mar"
 msgstr "мар"
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "Apr"
 msgstr "апр"
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "May"
 msgstr "мај"
 
-#: ../output.py:305
+#: ../output.py:307
 msgid "Jun"
 msgstr "јун"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Jul"
 msgstr "јул"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Aug"
 msgstr "авг"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Sep"
 msgstr "сеп"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Oct"
 msgstr "окт"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Nov"
 msgstr "нов"
 
-#: ../output.py:306
+#: ../output.py:308
 msgid "Dec"
 msgstr "дец"
 
-#: ../output.py:316
+#: ../output.py:318
 msgid "Trying other mirror."
 msgstr "Покушавам други одраз."
 
-#: ../output.py:579
+#: ../output.py:581
 #, python-format
 msgid "Name        : %s%s%s"
 msgstr ""
 
-#: ../output.py:580
+#: ../output.py:582
 #, python-format
 msgid "Arch        : %s"
 msgstr ""
 
-#: ../output.py:582
+#: ../output.py:584
 #, python-format
 msgid "Epoch       : %s"
 msgstr ""
 
-#: ../output.py:583
+#: ../output.py:585
 #, python-format
 msgid "Version     : %s"
 msgstr ""
 
-#: ../output.py:584
+#: ../output.py:586
 #, python-format
 msgid "Release     : %s"
 msgstr ""
 
-#: ../output.py:585
+#: ../output.py:587
 #, python-format
 msgid "Size        : %s"
 msgstr ""
 
-#: ../output.py:586 ../output.py:890
+#: ../output.py:588 ../output.py:900
 #, python-format
 msgid "Repo        : %s"
 msgstr "Ризница     : %s"
 
-#: ../output.py:588
+#: ../output.py:590
 #, python-format
 msgid "From repo   : %s"
 msgstr ""
 
-#: ../output.py:590
+#: ../output.py:592
 #, python-format
 msgid "Committer   : %s"
 msgstr ""
 
-#: ../output.py:591
+#: ../output.py:593
 #, python-format
 msgid "Committime  : %s"
 msgstr ""
 
-#: ../output.py:592
+#: ../output.py:594
 #, python-format
 msgid "Buildtime   : %s"
 msgstr ""
 
-#: ../output.py:594
+#: ../output.py:596
 #, python-format
 msgid "Install time: %s"
 msgstr ""
 
-#: ../output.py:602
+#: ../output.py:604
 #, python-format
 msgid "Installed by: %s"
 msgstr ""
 
-#: ../output.py:609
+#: ../output.py:611
 #, python-format
 msgid "Changed by  : %s"
 msgstr ""
 
-#: ../output.py:610
+#: ../output.py:612
 msgid "Summary     : "
 msgstr ""
 
-#: ../output.py:612 ../output.py:903
+#: ../output.py:614 ../output.py:913
 #, python-format
 msgid "URL         : %s"
 msgstr "УРЛ         : %s"
 
-#: ../output.py:613
+#: ../output.py:615
 msgid "License     : "
 msgstr ""
 
-#: ../output.py:614 ../output.py:900
+#: ../output.py:616 ../output.py:910
 msgid "Description : "
 msgstr "Опис        : "
 
-#: ../output.py:682
+#: ../output.py:684
 msgid "y"
 msgstr "d"
 
-#: ../output.py:682
+#: ../output.py:684
 msgid "yes"
 msgstr "da"
 
-#: ../output.py:683
+#: ../output.py:685
 msgid "n"
 msgstr "n"
 
-#: ../output.py:683
+#: ../output.py:685
 msgid "no"
 msgstr "ne"
 
-#: ../output.py:687
+#: ../output.py:689
 msgid "Is this ok [y/N]: "
 msgstr "Да ли је ово у реду [d/N]: "
 
-#: ../output.py:775
+#: ../output.py:777
 #, python-format
 msgid ""
 "\n"
@@ -697,141 +737,146 @@ msgstr ""
 "\n"
 "Група: %s"
 
-#: ../output.py:779
+#: ../output.py:781
 #, python-format
 msgid " Group-Id: %s"
 msgstr " ИБ групе: %s"
 
-#: ../output.py:784
+#: ../output.py:786
 #, python-format
 msgid " Description: %s"
 msgstr " Опис: %s"
 
-#: ../output.py:786
+#: ../output.py:788
+#, python-format
+msgid " Language: %s"
+msgstr ""
+
+#: ../output.py:790
 msgid " Mandatory Packages:"
 msgstr " Обавезни пакети:"
 
-#: ../output.py:787
+#: ../output.py:791
 msgid " Default Packages:"
 msgstr " Подразумевани пакети:"
 
-#: ../output.py:788
+#: ../output.py:792
 msgid " Optional Packages:"
 msgstr " Изборни пакети:"
 
-#: ../output.py:789
+#: ../output.py:793
 msgid " Conditional Packages:"
 msgstr " Условљени пакети:"
 
-#: ../output.py:809
+#: ../output.py:814
 #, python-format
 msgid "package: %s"
 msgstr "пакет: %s"
 
-#: ../output.py:811
+#: ../output.py:816
 msgid "  No dependencies for this package"
 msgstr "  Не постоје зависности овог пакета"
 
-#: ../output.py:816
+#: ../output.py:821
 #, python-format
 msgid "  dependency: %s"
 msgstr "  зависност: %s"
 
-#: ../output.py:818
+#: ../output.py:823
 msgid "   Unsatisfied dependency"
 msgstr "   Незадовољена зависност"
 
-#: ../output.py:891
+#: ../output.py:901
 msgid "Matched from:"
 msgstr "Повезан из  :"
 
-#: ../output.py:906
+#: ../output.py:916
 #, python-format
 msgid "License     : %s"
 msgstr "Лиценца     : %s"
 
-#: ../output.py:909
+#: ../output.py:919
 #, python-format
 msgid "Filename    : %s"
 msgstr "Име датотеке: %s"
 
-#: ../output.py:913
+#: ../output.py:923
 msgid "Other       : "
 msgstr "Остало      : "
 
-#: ../output.py:956
+#: ../output.py:966
 msgid "There was an error calculating total download size"
 msgstr "Догодила се грешка при рачунању укупне величине за преузимање"
 
-#: ../output.py:961
+#: ../output.py:971
 #, python-format
 msgid "Total size: %s"
 msgstr "Укупна величина: %s"
 
-#: ../output.py:964
+#: ../output.py:974
 #, python-format
 msgid "Total download size: %s"
 msgstr "Укупна величина за преузимање: %s"
 
-#: ../output.py:968 ../output.py:988
+#: ../output.py:978 ../output.py:998
 #, python-format
 msgid "Installed size: %s"
 msgstr ""
 
-#: ../output.py:984
+#: ../output.py:994
 msgid "There was an error calculating installed size"
 msgstr ""
 
-#: ../output.py:1029
+#: ../output.py:1039
 msgid "Reinstalling"
 msgstr ""
 
-#: ../output.py:1030
+#: ../output.py:1040
 msgid "Downgrading"
 msgstr ""
 
-#: ../output.py:1031
+#: ../output.py:1041
 msgid "Installing for dependencies"
 msgstr "Инсталирам због зависности"
 
-#: ../output.py:1032
+#: ../output.py:1042
 msgid "Updating for dependencies"
 msgstr "Ажурирам због зависности"
 
-#: ../output.py:1033
+#: ../output.py:1043
 msgid "Removing for dependencies"
 msgstr "Уклањам због зависности"
 
-#: ../output.py:1040 ../output.py:1159
+#: ../output.py:1050 ../output.py:1169
 msgid "Skipped (dependency problems)"
 msgstr "Прескочено (проблеми са зависностима)"
 
-#: ../output.py:1063
+#: ../output.py:1073 ../output.py:2022
 msgid "Package"
 msgstr "Пакет"
 
-#: ../output.py:1063
+#: ../output.py:1073
 msgid "Arch"
 msgstr "Архитектура"
 
-#: ../output.py:1064
+#: ../output.py:1074
 msgid "Version"
 msgstr "Верзија"
 
-#: ../output.py:1064
+#: ../output.py:1074
 msgid "Repository"
 msgstr "Ризница"
 
-#: ../output.py:1065
+#: ../output.py:1075
 msgid "Size"
 msgstr "Величина"
 
-#: ../output.py:1077
+#: ../output.py:1087
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr ""
 
-#: ../output.py:1086
+#: ../output.py:1096
 #, python-format
 msgid ""
 "\n"
@@ -839,57 +884,57 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: ../output.py:1097
+#: ../output.py:1107
 #, python-format
 msgid "Install   %5.5s Package(s)\n"
 msgstr ""
 
-#: ../output.py:1101
+#: ../output.py:1111
 #, python-format
 msgid "Upgrade   %5.5s Package(s)\n"
 msgstr ""
 
-#: ../output.py:1105
+#: ../output.py:1115
 #, python-format
 msgid "Remove    %5.5s Package(s)\n"
 msgstr ""
 
-#: ../output.py:1109
+#: ../output.py:1119
 #, python-format
 msgid "Reinstall %5.5s Package(s)\n"
 msgstr ""
 
-#: ../output.py:1113
+#: ../output.py:1123
 #, python-format
 msgid "Downgrade %5.5s Package(s)\n"
 msgstr ""
 
-#: ../output.py:1153
+#: ../output.py:1163
 msgid "Removed"
 msgstr "Уклоњено"
 
-#: ../output.py:1154
+#: ../output.py:1164
 msgid "Dependency Removed"
 msgstr "Зависност уклоњена"
 
-#: ../output.py:1156
+#: ../output.py:1166
 msgid "Dependency Installed"
 msgstr "Зависност инсталирана"
 
-#: ../output.py:1158
+#: ../output.py:1168
 msgid "Dependency Updated"
 msgstr "Зависност ажурирана"
 
-#: ../output.py:1160
+#: ../output.py:1170
 msgid "Replaced"
 msgstr "Замењено"
 
-#: ../output.py:1161
+#: ../output.py:1171
 msgid "Failed"
 msgstr "Неуспех"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1245
+#: ../output.py:1258
 msgid "two"
 msgstr "два"
 
@@ -897,7 +942,7 @@ msgstr "два"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1256
+#: ../output.py:1269
 #, python-format
 msgid ""
 "\n"
@@ -905,435 +950,475 @@ msgid ""
 "to exit.\n"
 msgstr ""
 
-#: ../output.py:1267
+#: ../output.py:1280
 msgid "user interrupt"
 msgstr "прекид од стране корисника"
 
-#: ../output.py:1285
+#: ../output.py:1298
 msgid "Total"
 msgstr "Укупно"
 
-#: ../output.py:1307
+#: ../output.py:1320
 msgid "I"
 msgstr ""
 
-#: ../output.py:1308
+#: ../output.py:1321
 msgid "O"
 msgstr ""
 
-#: ../output.py:1309
+#: ../output.py:1322
 msgid "E"
 msgstr ""
 
-#: ../output.py:1310
+#: ../output.py:1323
 msgid "R"
 msgstr ""
 
-#: ../output.py:1311
+#: ../output.py:1324
 msgid "D"
 msgstr ""
 
-#: ../output.py:1312
+#: ../output.py:1325
 msgid "U"
 msgstr ""
 
-#: ../output.py:1323
+#: ../output.py:1339
 msgid "<unset>"
 msgstr ""
 
-#: ../output.py:1324
+#: ../output.py:1340
 msgid "System"
 msgstr ""
 
-#: ../output.py:1368
+#: ../output.py:1409
+#, python-format
+msgid "Skipping merged transaction %d to %d, as it overlaps"
+msgstr ""
+
+#: ../output.py:1419 ../output.py:1590
+msgid "No transactions"
+msgstr ""
+
+#: ../output.py:1444 ../output.py:2011
 msgid "Bad transaction IDs, or package(s), given"
 msgstr ""
 
-#: ../output.py:1380
-msgid "ID"
+#: ../output.py:1482
+msgid "Command line"
 msgstr ""
 
-#: ../output.py:1381 ../output.py:1699
+#: ../output.py:1484 ../output.py:1906
 msgid "Login user"
 msgstr ""
 
-#: ../output.py:1382
+#. REALLY Needs to use columns!
+#: ../output.py:1485 ../output.py:2020
+msgid "ID"
+msgstr ""
+
+#: ../output.py:1487
 msgid "Date and time"
 msgstr ""
 
-#: ../output.py:1383 ../output.py:1701
+#: ../output.py:1488 ../output.py:1908 ../output.py:2021
 msgid "Action(s)"
 msgstr ""
 
-#: ../output.py:1384 ../output.py:1702
+#: ../output.py:1489 ../output.py:1909
 msgid "Altered"
 msgstr ""
 
-#: ../output.py:1431 ../output.py:1760
+#: ../output.py:1536
 msgid "No transaction ID given"
 msgstr ""
 
-#: ../output.py:1457
+#: ../output.py:1562 ../output.py:1970
 msgid "Bad transaction ID given"
 msgstr ""
 
-#: ../output.py:1462
+#: ../output.py:1567
 msgid "Not found given transaction ID"
 msgstr ""
 
-#: ../output.py:1470
+#: ../output.py:1575
 msgid "Found more than one transaction ID!"
 msgstr ""
 
-#: ../output.py:1491 ../output.py:1770
+#: ../output.py:1616 ../output.py:1978
 msgid "No transaction ID, or package, given"
 msgstr ""
 
-#: ../output.py:1518 ../output.py:1645
+#: ../output.py:1684 ../output.py:1843
 msgid "Downgraded"
 msgstr ""
 
-#: ../output.py:1519
+#: ../output.py:1685
 msgid "Not installed"
 msgstr ""
 
-#: ../output.py:1520
+#: ../output.py:1686
 msgid "Older"
 msgstr ""
 
-#: ../output.py:1520
+#: ../output.py:1686
 msgid "Newer"
 msgstr ""
 
-#: ../output.py:1552
+#: ../output.py:1722 ../output.py:1724
 msgid "Transaction ID :"
 msgstr ""
 
-#: ../output.py:1554
+#: ../output.py:1726
 msgid "Begin time     :"
 msgstr ""
 
-#: ../output.py:1557 ../output.py:1559
+#: ../output.py:1729 ../output.py:1731
 msgid "Begin rpmdb    :"
 msgstr ""
 
-#: ../output.py:1573
+#: ../output.py:1747
 #, python-format
-msgid "(%s seconds)"
+msgid "(%u seconds)"
 msgstr ""
 
-#: ../output.py:1574
+#: ../output.py:1749
+#, python-format
+msgid "(%u minutes)"
+msgstr ""
+
+#: ../output.py:1751
+#, python-format
+msgid "(%u hours)"
+msgstr ""
+
+#: ../output.py:1753
+#, python-format
+msgid "(%u days)"
+msgstr ""
+
+#: ../output.py:1754
 msgid "End time       :"
 msgstr ""
 
-#: ../output.py:1577 ../output.py:1579
+#: ../output.py:1757 ../output.py:1759
 msgid "End rpmdb      :"
 msgstr ""
 
-#: ../output.py:1580
+#: ../output.py:1762 ../output.py:1764
 msgid "User           :"
 msgstr ""
 
-#: ../output.py:1582 ../output.py:1584 ../output.py:1586
+#: ../output.py:1768 ../output.py:1771 ../output.py:1773 ../output.py:1775
+#: ../output.py:1777
 msgid "Return-Code    :"
 msgstr ""
 
-#: ../output.py:1582
+#: ../output.py:1768 ../output.py:1773
 msgid "Aborted"
 msgstr ""
 
-#: ../output.py:1584
+#: ../output.py:1771
+msgid "Failures:"
+msgstr ""
+
+#: ../output.py:1775
 msgid "Failure:"
 msgstr ""
 
-#: ../output.py:1586
+#: ../output.py:1777
 msgid "Success"
 msgstr ""
 
-#: ../output.py:1589
+#: ../output.py:1782 ../output.py:1784
 msgid "Command Line   :"
-msgstr ""
-
-#: ../output.py:1597
-#, python-format
-msgid "Additional non-default information stored: %d"
-msgstr ""
-
-#: ../output.py:1600
-msgid "Transaction performed with:"
-msgstr ""
-
-#: ../output.py:1603
-msgid "Packages Altered:"
-msgstr ""
-
-#: ../output.py:1607
-msgid "Packages Skipped:"
-msgstr ""
-
-#: ../output.py:1612
-msgid "Rpmdb Problems:"
-msgstr ""
-
-#: ../output.py:1620
-msgid "Scriptlet output:"
-msgstr ""
-
-#: ../output.py:1626
-msgid "Errors:"
-msgstr ""
-
-#. Note that these don't use _simple_pkg() because we are showing what
-#. happened to them in the transaction ... not the difference between the
-#. version in the transaction and now.
-#: ../output.py:1637 ../output.py:1638
-msgid "Install"
-msgstr ""
-
-#: ../output.py:1639
-msgid "Dep-Install"
-msgstr ""
-
-#: ../output.py:1641
-msgid "Obsoleting"
-msgstr ""
-
-#: ../output.py:1642
-msgid "Erase"
-msgstr ""
-
-#: ../output.py:1643
-msgid "Reinstall"
-msgstr ""
-
-#: ../output.py:1644
-msgid "Downgrade"
-msgstr ""
-
-#: ../output.py:1646
-msgid "Update"
-msgstr ""
-
-#: ../output.py:1700
-msgid "Time"
-msgstr ""
-
-#: ../output.py:1726
-msgid "Last day"
-msgstr ""
-
-#: ../output.py:1727
-msgid "Last week"
-msgstr ""
-
-#: ../output.py:1728
-msgid "Last 2 weeks"
-msgstr ""
-
-#. US default :p
-#: ../output.py:1729
-msgid "Last 3 months"
-msgstr ""
-
-#: ../output.py:1730
-msgid "Last 6 months"
-msgstr ""
-
-#: ../output.py:1731
-msgid "Last year"
-msgstr ""
-
-#: ../output.py:1732
-msgid "Over a year ago"
-msgstr ""
-
-#: ../output.py:1774
-#, python-format
-msgid "No Transaction %s found"
-msgstr ""
-
-#: ../output.py:1780
-msgid "Transaction ID:"
-msgstr ""
-
-#: ../output.py:1781
-msgid "Available additional history information:"
 msgstr ""
 
 #: ../output.py:1793
 #, python-format
+msgid "Additional non-default information stored: %d"
+msgstr ""
+
+#. This is _possible_, but not common
+#: ../output.py:1798
+msgid "Transaction performed with:"
+msgstr ""
+
+#: ../output.py:1802
+msgid "Packages Altered:"
+msgstr ""
+
+#: ../output.py:1806
+msgid "Packages Skipped:"
+msgstr ""
+
+#: ../output.py:1812
+msgid "Rpmdb Problems:"
+msgstr ""
+
+#: ../output.py:1823
+msgid "Scriptlet output:"
+msgstr ""
+
+#: ../output.py:1829
+msgid "Errors:"
+msgstr ""
+
+#: ../output.py:1835 ../output.py:1836
+msgid "Install"
+msgstr ""
+
+#: ../output.py:1837
+msgid "Dep-Install"
+msgstr ""
+
+#: ../output.py:1839
+msgid "Obsoleting"
+msgstr ""
+
+#: ../output.py:1840
+msgid "Erase"
+msgstr ""
+
+#: ../output.py:1841
+msgid "Reinstall"
+msgstr ""
+
+#: ../output.py:1842
+msgid "Downgrade"
+msgstr ""
+
+#: ../output.py:1844
+msgid "Update"
+msgstr ""
+
+#: ../output.py:1907
+msgid "Time"
+msgstr ""
+
+#: ../output.py:1933
+msgid "Last day"
+msgstr ""
+
+#: ../output.py:1934
+msgid "Last week"
+msgstr ""
+
+#: ../output.py:1935
+msgid "Last 2 weeks"
+msgstr ""
+
+#. US default :p
+#: ../output.py:1936
+msgid "Last 3 months"
+msgstr ""
+
+#: ../output.py:1937
+msgid "Last 6 months"
+msgstr ""
+
+#: ../output.py:1938
+msgid "Last year"
+msgstr ""
+
+#: ../output.py:1939
+msgid "Over a year ago"
+msgstr ""
+
+#: ../output.py:1982
+#, python-format
+msgid "No Transaction %s found"
+msgstr ""
+
+#: ../output.py:1988
+msgid "Transaction ID:"
+msgstr ""
+
+#: ../output.py:1989
+msgid "Available additional history information:"
+msgstr ""
+
+#: ../output.py:2001
+#, python-format
 msgid "%s: No additional data found by this name"
 msgstr ""
 
-#: ../output.py:1809
+#: ../output.py:2104
 msgid "installed"
 msgstr "инсталиран"
 
-#: ../output.py:1810
-msgid "updated"
-msgstr "ажуриран"
+#: ../output.py:2105
+msgid "an update"
+msgstr ""
 
-#: ../output.py:1811
-msgid "obsoleted"
-msgstr "превазиђен"
-
-#: ../output.py:1812
+#: ../output.py:2106
 msgid "erased"
 msgstr "обрисан"
 
-#: ../output.py:1813
+#: ../output.py:2107
 msgid "reinstalled"
 msgstr ""
 
-#: ../output.py:1814
-msgid "downgraded"
+#: ../output.py:2108
+msgid "a downgrade"
 msgstr ""
 
-#: ../output.py:1818
-#, python-format
-msgid "---> Package %s.%s %s:%s-%s set to be %s"
-msgstr "---> Пакет %s.%s %s:%s-%s постављен да буде %s"
+#: ../output.py:2109
+msgid "obsoleting"
+msgstr ""
 
-#: ../output.py:1825
+#: ../output.py:2110
+msgid "updated"
+msgstr "ажуриран"
+
+#: ../output.py:2111
+msgid "obsoleted"
+msgstr "превазиђен"
+
+#: ../output.py:2115
+#, python-format
+msgid "---> Package %s.%s %s:%s-%s will be %s"
+msgstr ""
+
+#: ../output.py:2122
 msgid "--> Running transaction check"
 msgstr "--> Извршава се провера трансакције"
 
-#: ../output.py:1830
+#: ../output.py:2127
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> Поновно покретање разрешавања зависности са новим променама."
 
-#: ../output.py:1835
+#: ../output.py:2132
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Завршено је разрешавање зависности"
 
-#: ../output.py:1840 ../output.py:1845
+#: ../output.py:2137 ../output.py:2142
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Обрађујем зависност: %s за пакет: %s"
 
-#: ../output.py:1850
+#: ../output.py:2147
 #, python-format
 msgid "---> Keeping package: %s"
 msgstr ""
 
-#: ../output.py:1853
+#: ../output.py:2150
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Неразрешена зависност: %s"
 
-#: ../output.py:1864
+#: ../output.py:2161
 #, python-format
 msgid "Package: %s"
 msgstr ""
 
-#: ../output.py:1866
+#: ../output.py:2163
 #, python-format
 msgid ""
 "\n"
 "    Requires: %s"
 msgstr ""
 
-#: ../output.py:1875
+#: ../output.py:2172
 #, python-format
 msgid ""
 "\n"
 "    %s: %s (%s)"
 msgstr ""
 
-#: ../output.py:1880
+#: ../output.py:2177
 #, python-format
 msgid ""
 "\n"
 "        %s"
 msgstr ""
 
-#: ../output.py:1882
+#: ../output.py:2179
 msgid ""
 "\n"
 "        Not found"
 msgstr ""
 
 #. These should be the only three things we care about:
-#: ../output.py:1897
+#: ../output.py:2194
 msgid "Updated By"
 msgstr ""
 
-#: ../output.py:1898
+#: ../output.py:2195
 msgid "Downgraded By"
 msgstr ""
 
-#: ../output.py:1899
+#: ../output.py:2196
 msgid "Obsoleted By"
 msgstr ""
 
-#: ../output.py:1917
+#: ../output.py:2214
 msgid "Available"
 msgstr ""
 
-#: ../output.py:1944 ../output.py:1949
+#: ../output.py:2241 ../output.py:2246
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Сукоб при обради: %s се сукоби са %s"
 
-#: ../output.py:1953
+#: ../output.py:2250
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr ""
 "--> Попуњавам скуп трансакције са изабраним пакетима. Молим вас, сачекајте."
 
-#: ../output.py:1957
+#: ../output.py:2254
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> Преузимам заглавље за %s ради паковања у скуп трансакције."
 
-#: ../utils.py:94
+#: ../utils.py:99
 msgid "Running"
 msgstr "Извршава се"
 
-#: ../utils.py:95
+#: ../utils.py:100
 msgid "Sleeping"
 msgstr "Успаван"
 
-#: ../utils.py:96
+#: ../utils.py:101
 msgid "Uninterruptible"
 msgstr ""
 
-#: ../utils.py:97
+#: ../utils.py:102
 msgid "Zombie"
 msgstr "Зомби"
 
-#: ../utils.py:98
+#: ../utils.py:103
 msgid "Traced/Stopped"
 msgstr "Праћен/заустављен"
 
-#: ../utils.py:99 ../yumcommands.py:972
+#: ../utils.py:104 ../yumcommands.py:993
 msgid "Unknown"
 msgstr "Непознат"
 
-#: ../utils.py:110
+#: ../utils.py:115
 msgid "  The other application is: PackageKit"
 msgstr "  Други програм је: PackageKit"
 
-#: ../utils.py:112
+#: ../utils.py:117
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  Други програм је: %s"
 
-#: ../utils.py:115
+#: ../utils.py:120
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Меморија: %5s RSS (%5sБ VSZ)"
 
-#: ../utils.py:120
+#: ../utils.py:125
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Покренут: %s - %s раније"
 
-#: ../utils.py:122
+#: ../utils.py:127
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Стање   : %s, pid: %d"
 
-#: ../utils.py:143 ../yummain.py:42
+#: ../utils.py:170 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
@@ -1343,7 +1428,7 @@ msgstr ""
 "\n"
 "Излазим када корисник откаже"
 
-#: ../utils.py:149 ../yummain.py:48
+#: ../utils.py:176 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
@@ -1353,7 +1438,7 @@ msgstr ""
 "\n"
 "Излазим када се сломи цев"
 
-#: ../utils.py:151 ../yummain.py:50
+#: ../utils.py:178 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
@@ -1361,42 +1446,42 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ../utils.py:201 ../yummain.py:107
+#: ../utils.py:228 ../yummain.py:123
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
 msgstr ""
 
-#: ../utils.py:260
+#: ../utils.py:287
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr ""
 
-#: ../utils.py:263
+#: ../utils.py:290
 #, python-format
 msgid "Yum Error: %s"
 msgstr ""
 
-#: ../utils.py:315 ../yummain.py:134 ../yummain.py:173
+#: ../utils.py:342 ../yummain.py:150 ../yummain.py:189
 #, python-format
 msgid "Error: %s"
 msgstr "Грешка: %s"
 
-#: ../utils.py:319 ../yummain.py:177
+#: ../utils.py:346 ../yummain.py:193
 msgid " You could try using --skip-broken to work around the problem"
 msgstr ""
 " Можете да пробате употребу --skip-broken опције ради заобилажења проблема"
 
-#: ../utils.py:321 ../yummain.py:179 ../yummain.py:212
+#: ../utils.py:348 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr ""
 
-#: ../utils.py:328 ../yummain.py:144 ../yummain.py:186
+#: ../utils.py:355 ../yummain.py:160 ../yummain.py:201
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Непозната грешка(е): излазни код: %d:"
 
-#: ../utils.py:334 ../yummain.py:192
+#: ../utils.py:361 ../yummain.py:207
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1404,15 +1489,19 @@ msgstr ""
 "\n"
 "Зависности су разрешене"
 
-#: ../utils.py:349 ../yummain.py:215
+#: ../utils.py:376 ../yummain.py:231
 msgid "Complete!"
 msgstr "Завршено!"
 
-#: ../yumcommands.py:43
+#: ../yumcommands.py:42
+msgid " Mini usage:\n"
+msgstr ""
+
+#: ../yumcommands.py:52
 msgid "You need to be root to perform this command."
 msgstr "Морате бити root корисник да бисте извршили ову команду."
 
-#: ../yumcommands.py:50
+#: ../yumcommands.py:59
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
@@ -1442,353 +1531,353 @@ msgstr ""
 "\n"
 "За више информација контактирајте добављача ваше дистрибуције или пакета.\n"
 
-#: ../yumcommands.py:70
+#: ../yumcommands.py:79
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Грешка: потребно је да додате списак пакета за %s"
 
-#: ../yumcommands.py:76
+#: ../yumcommands.py:85
 msgid "Error: Need an item to match"
 msgstr "Грешка: потребно је придружити ставку"
 
-#: ../yumcommands.py:82
+#: ../yumcommands.py:91
 msgid "Error: Need a group or list of groups"
 msgstr "Грешка: потребна је група или списак група"
 
-#: ../yumcommands.py:91
+#: ../yumcommands.py:100
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Грешка: clean захтева опцију: %s"
 
-#: ../yumcommands.py:96
+#: ../yumcommands.py:105
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Грешка: погрешан clean аргумент:%r"
 
-#: ../yumcommands.py:109
+#: ../yumcommands.py:118
 msgid "No argument to shell"
 msgstr "Не постоји аргумент за командно окружење"
 
-#: ../yumcommands.py:111
+#: ../yumcommands.py:120
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Име датотеке је прослеђено командном окружењу: %s"
 
-#: ../yumcommands.py:115
+#: ../yumcommands.py:124
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr ""
 "Не постоји датотека %s, која је прослеђена као аргумент командном окружењу."
 
-#: ../yumcommands.py:121
+#: ../yumcommands.py:130
 msgid "Error: more than one file given as argument to shell."
 msgstr ""
 "Грешка: више од једне датотеке је прослеђено као аргумент командном "
 "окружењу."
 
-#: ../yumcommands.py:138
+#: ../yumcommands.py:147
 msgid ""
 "There are no enabled repos.\n"
 " Run \"yum repolist all\" to see the repos you have.\n"
 " You can enable repos with yum-config-manager --enable <repo>"
 msgstr ""
 
-#: ../yumcommands.py:189
+#: ../yumcommands.py:199
 msgid "PACKAGE..."
 msgstr "ПАКЕТ..."
 
-#: ../yumcommands.py:192
+#: ../yumcommands.py:202
 msgid "Install a package or packages on your system"
 msgstr "Инсталирајте пакет или пакете на ваш систем"
 
-#: ../yumcommands.py:201
+#: ../yumcommands.py:211
 msgid "Setting up Install Process"
 msgstr "Постављам процес инсталације"
 
-#: ../yumcommands.py:212 ../yumcommands.py:234
+#: ../yumcommands.py:222 ../yumcommands.py:244
 msgid "[PACKAGE...]"
 msgstr "[ПАКЕТ...]"
 
-#: ../yumcommands.py:215
+#: ../yumcommands.py:225
 msgid "Update a package or packages on your system"
 msgstr "Ажурирај пакет или пакете на вашем систему"
 
-#: ../yumcommands.py:223
+#: ../yumcommands.py:233
 msgid "Setting up Update Process"
 msgstr "Постављам процес ажурирања"
 
-#: ../yumcommands.py:237
+#: ../yumcommands.py:247
 msgid "Synchronize installed packages to the latest available versions"
 msgstr ""
 
-#: ../yumcommands.py:245
+#: ../yumcommands.py:255
 msgid "Setting up Distribution Synchronization Process"
 msgstr ""
 
-#: ../yumcommands.py:288
+#: ../yumcommands.py:298
 msgid "Display details about a package or group of packages"
 msgstr "Прикажи детаље о сваком пакету или групи пакета"
 
-#: ../yumcommands.py:337
+#: ../yumcommands.py:347
 msgid "Installed Packages"
 msgstr "Инсталирани пакети"
 
-#: ../yumcommands.py:345
+#: ../yumcommands.py:355
 msgid "Available Packages"
 msgstr "Доступни пакети"
 
-#: ../yumcommands.py:349
+#: ../yumcommands.py:359
 msgid "Extra Packages"
 msgstr "Додатни пакети"
 
-#: ../yumcommands.py:353
+#: ../yumcommands.py:363
 msgid "Updated Packages"
 msgstr "Ажурирани пакети"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:361 ../yumcommands.py:368 ../yumcommands.py:655
+#: ../yumcommands.py:371 ../yumcommands.py:378 ../yumcommands.py:666
 msgid "Obsoleting Packages"
 msgstr "Превазиђени пакети"
 
-#: ../yumcommands.py:370
+#: ../yumcommands.py:380
 msgid "Recently Added Packages"
 msgstr "Недавно додати пакети"
 
-#: ../yumcommands.py:377
+#: ../yumcommands.py:387
 msgid "No matching Packages to list"
 msgstr "Не постоје одговарајући пакети за излиставање"
 
-#: ../yumcommands.py:391
+#: ../yumcommands.py:401
 msgid "List a package or groups of packages"
 msgstr "Излистај пакете или групе пакета"
 
-#: ../yumcommands.py:403
+#: ../yumcommands.py:413
 msgid "Remove a package or packages from your system"
 msgstr "Уклоните пакет или пакете са вашег система"
 
-#: ../yumcommands.py:410
+#: ../yumcommands.py:420
 msgid "Setting up Remove Process"
 msgstr "Постављам процес уклањања"
 
-#: ../yumcommands.py:424
+#: ../yumcommands.py:434
 msgid "Setting up Group Process"
 msgstr "Постављам процес за групе"
 
-#: ../yumcommands.py:430
+#: ../yumcommands.py:440
 msgid "No Groups on which to run command"
 msgstr "Не постоји група над којом се може извршити команда"
 
-#: ../yumcommands.py:443
+#: ../yumcommands.py:453
 msgid "List available package groups"
 msgstr "Излистај доступне групе пакета"
 
-#: ../yumcommands.py:463
+#: ../yumcommands.py:473
 msgid "Install the packages in a group on your system"
 msgstr "Инсталирајте пакете у групи на вашем систему"
 
-#: ../yumcommands.py:486
+#: ../yumcommands.py:496
 msgid "Remove the packages in a group from your system"
 msgstr "Уклоните пакете у групи са вашег система"
 
-#: ../yumcommands.py:514
+#: ../yumcommands.py:524
 msgid "Display details about a package group"
 msgstr "Прикажи детаље о групи пакета"
 
-#: ../yumcommands.py:539
+#: ../yumcommands.py:549
 msgid "Generate the metadata cache"
 msgstr "Направи кеш са метаподацима"
 
-#: ../yumcommands.py:545
+#: ../yumcommands.py:555
 msgid "Making cache files for all metadata files."
 msgstr "Правим кеш датотеке за све датотеке са метаподацима."
 
-#: ../yumcommands.py:546
+#: ../yumcommands.py:556
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Ово може да потраје у зависности од брзине вашег рачунара"
 
-#: ../yumcommands.py:567
+#: ../yumcommands.py:577
 msgid "Metadata Cache Created"
 msgstr "Направљен је кеш са метаподацима"
 
-#: ../yumcommands.py:581
+#: ../yumcommands.py:591
 msgid "Remove cached data"
 msgstr "Уклони кеширане податке"
 
-#: ../yumcommands.py:602
+#: ../yumcommands.py:612
 msgid "Find what package provides the given value"
 msgstr "Пронађи који пакет пружа дату вредност"
 
-#: ../yumcommands.py:622
+#: ../yumcommands.py:632
 msgid "Check for available package updates"
 msgstr "Проверите да ли су доступна ажурирања пакета"
 
-#: ../yumcommands.py:675
+#: ../yumcommands.py:686
 msgid "Search package details for the given string"
 msgstr "Претражите детаље о пакету за задату ниску"
 
-#: ../yumcommands.py:681
+#: ../yumcommands.py:692
 msgid "Searching Packages: "
 msgstr "Претражујем пакете: "
 
-#: ../yumcommands.py:698
+#: ../yumcommands.py:709
 msgid "Update packages taking obsoletes into account"
 msgstr "Ажурирајте пакете узимајући превазиђене у обзир"
 
-#: ../yumcommands.py:707
+#: ../yumcommands.py:718
 msgid "Setting up Upgrade Process"
 msgstr "Постављам процес надградње"
 
-#: ../yumcommands.py:721
+#: ../yumcommands.py:736
 msgid "Install a local RPM"
 msgstr "Инсталирај локални RPM"
 
-#: ../yumcommands.py:729
+#: ../yumcommands.py:744
 msgid "Setting up Local Package Process"
 msgstr "Постављам процес локалних пакета"
 
-#: ../yumcommands.py:748
+#: ../yumcommands.py:763
 msgid "Determine which package provides the given dependency"
 msgstr "Одреди који пакети пружају дату зависност"
 
-#: ../yumcommands.py:751
+#: ../yumcommands.py:766
 msgid "Searching Packages for Dependency:"
 msgstr "Претражујем пакете у потрази за зависностима:"
 
-#: ../yumcommands.py:765
+#: ../yumcommands.py:780
 msgid "Run an interactive yum shell"
 msgstr "Извршавај интерактивно yum командно окружење"
 
-#: ../yumcommands.py:771
+#: ../yumcommands.py:786
 msgid "Setting up Yum Shell"
 msgstr "Постављам yum командно окружење"
 
-#: ../yumcommands.py:789
+#: ../yumcommands.py:804
 msgid "List a package's dependencies"
 msgstr "Излистај зависности пакета"
 
-#: ../yumcommands.py:795
+#: ../yumcommands.py:810
 msgid "Finding dependencies: "
 msgstr "Тражим зависности: "
 
-#: ../yumcommands.py:811
+#: ../yumcommands.py:826
 msgid "Display the configured software repositories"
 msgstr "Прикажи подешене софтверске ризнице"
 
-#: ../yumcommands.py:877 ../yumcommands.py:878
+#: ../yumcommands.py:892 ../yumcommands.py:893
 msgid "enabled"
 msgstr "укључена"
 
-#: ../yumcommands.py:904 ../yumcommands.py:905
+#: ../yumcommands.py:919 ../yumcommands.py:920
 msgid "disabled"
 msgstr "искључена"
 
-#: ../yumcommands.py:921
+#: ../yumcommands.py:936
 msgid "Repo-id      : "
 msgstr ""
 
-#: ../yumcommands.py:922
+#: ../yumcommands.py:937
 msgid "Repo-name    : "
 msgstr ""
 
-#: ../yumcommands.py:925
+#: ../yumcommands.py:940
 msgid "Repo-status  : "
 msgstr ""
 
-#: ../yumcommands.py:928
+#: ../yumcommands.py:943
 msgid "Repo-revision: "
 msgstr "Ревизија ризнице     : "
 
-#: ../yumcommands.py:932
+#: ../yumcommands.py:947
 msgid "Repo-tags    : "
 msgstr ""
 
-#: ../yumcommands.py:938
+#: ../yumcommands.py:953
 msgid "Repo-distro-tags: "
 msgstr "Дистро ознаке ризнице: "
 
-#: ../yumcommands.py:943
+#: ../yumcommands.py:958
 msgid "Repo-updated : "
 msgstr ""
 
-#: ../yumcommands.py:945
+#: ../yumcommands.py:960
 msgid "Repo-pkgs    : "
 msgstr ""
 
-#: ../yumcommands.py:946
+#: ../yumcommands.py:961
 msgid "Repo-size    : "
 msgstr ""
 
-#: ../yumcommands.py:953
+#: ../yumcommands.py:968 ../yumcommands.py:989
 msgid "Repo-baseurl : "
 msgstr ""
 
-#: ../yumcommands.py:961
+#: ../yumcommands.py:976
 msgid "Repo-metalink: "
 msgstr "Металинк ризнице     : "
 
-#: ../yumcommands.py:965
+#: ../yumcommands.py:980
 msgid "  Updated    : "
 msgstr "  Ажурирано          : "
 
-#: ../yumcommands.py:968
+#: ../yumcommands.py:983
 msgid "Repo-mirrors : "
 msgstr ""
 
-#: ../yumcommands.py:978
+#: ../yumcommands.py:999
 #, python-format
 msgid "Never (last: %s)"
 msgstr ""
 
-#: ../yumcommands.py:980
+#: ../yumcommands.py:1001
 #, python-format
 msgid "Instant (last: %s)"
 msgstr ""
 
-#: ../yumcommands.py:983
+#: ../yumcommands.py:1004
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr ""
 
-#: ../yumcommands.py:985
+#: ../yumcommands.py:1006
 msgid "Repo-expire  : "
 msgstr ""
 
-#: ../yumcommands.py:988
+#: ../yumcommands.py:1009
 msgid "Repo-exclude : "
 msgstr ""
 
-#: ../yumcommands.py:992
+#: ../yumcommands.py:1013
 msgid "Repo-include : "
 msgstr ""
 
-#: ../yumcommands.py:996
+#: ../yumcommands.py:1017
 msgid "Repo-excluded: "
 msgstr ""
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1006 ../yumcommands.py:1035
+#: ../yumcommands.py:1027 ../yumcommands.py:1056
 msgid "repo id"
 msgstr "репо id"
 
-#: ../yumcommands.py:1023 ../yumcommands.py:1024 ../yumcommands.py:1042
+#: ../yumcommands.py:1044 ../yumcommands.py:1045 ../yumcommands.py:1063
 msgid "status"
 msgstr "статус"
 
-#: ../yumcommands.py:1036
+#: ../yumcommands.py:1057
 msgid "repo name"
 msgstr "репо име"
 
-#: ../yumcommands.py:1073
+#: ../yumcommands.py:1094
 msgid "Display a helpful usage message"
 msgstr "Прикажи корисну поруку о употреби"
 
-#: ../yumcommands.py:1107
+#: ../yumcommands.py:1128
 #, python-format
 msgid "No help available for %s"
 msgstr "Није доступна помоћ за %s"
 
-#: ../yumcommands.py:1112
+#: ../yumcommands.py:1133
 msgid ""
 "\n"
 "\n"
@@ -1798,7 +1887,7 @@ msgstr ""
 "\n"
 "псеудоними: "
 
-#: ../yumcommands.py:1114
+#: ../yumcommands.py:1135
 msgid ""
 "\n"
 "\n"
@@ -1808,84 +1897,117 @@ msgstr ""
 "\n"
 "псеудоним: "
 
-#: ../yumcommands.py:1143
+#: ../yumcommands.py:1164
 msgid "Setting up Reinstall Process"
 msgstr "Постављам процес поновне инсталације"
 
-#: ../yumcommands.py:1151
+#: ../yumcommands.py:1172
 msgid "reinstall a package"
 msgstr "поновно инсталирам пакет"
 
-#: ../yumcommands.py:1170
+#: ../yumcommands.py:1191
 msgid "Setting up Downgrade Process"
 msgstr "Постављам процес уназађивања"
 
-#: ../yumcommands.py:1177
+#: ../yumcommands.py:1198
 msgid "downgrade a package"
 msgstr "уназади пакет"
 
-#: ../yumcommands.py:1191
+#: ../yumcommands.py:1212
 msgid "Display a version for the machine and/or available repos."
 msgstr ""
 
-#: ../yumcommands.py:1230
+#: ../yumcommands.py:1251
 msgid " Yum version groups:"
 msgstr ""
 
-#: ../yumcommands.py:1240
+#: ../yumcommands.py:1261
 msgid " Group   :"
 msgstr ""
 
-#: ../yumcommands.py:1241
+#: ../yumcommands.py:1262
 msgid " Packages:"
 msgstr ""
 
-#: ../yumcommands.py:1270
+#: ../yumcommands.py:1291
 msgid "Installed:"
 msgstr ""
 
-#: ../yumcommands.py:1278
+#: ../yumcommands.py:1299
 msgid "Group-Installed:"
 msgstr ""
 
-#: ../yumcommands.py:1287
+#: ../yumcommands.py:1308
 msgid "Available:"
 msgstr ""
 
-#: ../yumcommands.py:1296
+#: ../yumcommands.py:1317
 msgid "Group-Available:"
 msgstr ""
 
-#: ../yumcommands.py:1335
+#: ../yumcommands.py:1356
 msgid "Display, or use, the transaction history"
 msgstr ""
 
-#: ../yumcommands.py:1363
+#: ../yumcommands.py:1428
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr ""
 
-#: ../yumcommands.py:1370
+#: ../yumcommands.py:1435
 msgid "You don't have access to the history DB."
 msgstr ""
 
-#: ../yumcommands.py:1413
+#: ../yumcommands.py:1483
 msgid "Check for problems in the rpmdb"
 msgstr ""
 
-#: ../yummain.py:103
+#: ../yumcommands.py:1510
+msgid "load a saved transaction from filename"
+msgstr ""
+
+#: ../yumcommands.py:1514
+msgid "No saved transaction file specified."
+msgstr ""
+
+#: ../yumcommands.py:1518
+#, python-format
+msgid "loading transaction from %s"
+msgstr ""
+
+#: ../yumcommands.py:1524
+#, python-format
+msgid "Transaction loaded from %s with %s members"
+msgstr ""
+
+#. This is mainly for PackageSackError from rpmdb.
+#: ../yummain.py:84
+#, python-format
+msgid " Yum checks failed: %s"
+msgstr ""
+
+#: ../yummain.py:114
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
 msgstr ""
 "Неки други програм тренутно држи yum закључаним; чекам да тај програм "
 "изађе..."
 
+#: ../yummain.py:120
+msgid "Can't create lock file; exiting"
+msgstr ""
+
 #. Depsolve stage
-#: ../yummain.py:151
+#: ../yummain.py:167
 msgid "Resolving Dependencies"
 msgstr "Разрешавам зависности"
 
-#: ../yummain.py:269
+#: ../yummain.py:229
+#, python-format
+msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
+msgstr ""
+
+#: ../yummain.py:285
 msgid ""
 "\n"
 "\n"
@@ -1895,181 +2017,189 @@ msgstr ""
 "\n"
 "Излазим када корисник откаже."
 
-#: ../yum/depsolve.py:82
+#: ../yum/depsolve.py:84
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr "doTsSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/depsolve.py:97
+#: ../yum/depsolve.py:99
 msgid "Setting up TransactionSets before config class is up"
 msgstr "Постављам TransactionSets пре него што се подигне класа подешавања"
 
-#: ../yum/depsolve.py:151
+#: ../yum/depsolve.py:153
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Погрешан tsflag у датотеци подешавања: %s"
 
-#: ../yum/depsolve.py:162
+#: ../yum/depsolve.py:164
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "Претражујем pkgSack за зависност: %s"
 
-#: ../yum/depsolve.py:205
+#: ../yum/depsolve.py:207
 #, python-format
 msgid "Member: %s"
 msgstr "Члан: %s"
 
-#: ../yum/depsolve.py:219 ../yum/depsolve.py:754
+#: ../yum/depsolve.py:221 ../yum/depsolve.py:793
 #, python-format
 msgid "%s converted to install"
 msgstr "%s пребачен за инсталацију"
 
-#: ../yum/depsolve.py:226
+#: ../yum/depsolve.py:233
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "Додајем пакет %s у начину рада %s"
 
-#: ../yum/depsolve.py:242
+#: ../yum/depsolve.py:249
 #, python-format
 msgid "Removing Package %s"
 msgstr "Уклањам пакет %s"
 
-#: ../yum/depsolve.py:264
+#: ../yum/depsolve.py:271
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s захтева: %s"
 
-#: ../yum/depsolve.py:305
+#: ../yum/depsolve.py:312
 #, python-format
 msgid "%s requires %s"
 msgstr ""
 
-#: ../yum/depsolve.py:332
+#: ../yum/depsolve.py:339
 msgid "Needed Require has already been looked up, cheating"
 msgstr "Потребан захтев је већ потражен, обмањујем"
 
-#: ../yum/depsolve.py:342
+#: ../yum/depsolve.py:349
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "Потребан захтев није име пакета. Тражим: %s"
 
-#: ../yum/depsolve.py:349
+#: ../yum/depsolve.py:357
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Могући снабдевач: %s"
 
-#: ../yum/depsolve.py:372
+#: ../yum/depsolve.py:380
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "Режим је %s за снабдевача %s: %s"
 
-#: ../yum/depsolve.py:376
+#: ../yum/depsolve.py:384
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Режим за пакет који снабдева %s: %s"
 
-#: ../yum/depsolve.py:380
+#. the thing it needs is being updated or obsoleted away
+#. try to update the requiring package in hopes that all this problem goes
+#. away :(
+#: ../yum/depsolve.py:389 ../yum/depsolve.py:406
+#, python-format
+msgid "Trying to update %s to resolve dep"
+msgstr ""
+
+#: ../yum/depsolve.py:400 ../yum/depsolve.py:410
+#, python-format
+msgid "No update paths found for %s. Failure!"
+msgstr ""
+
+#: ../yum/depsolve.py:416
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: %s пакет захтева да %s буде означен за брисање"
 
-#: ../yum/depsolve.py:393
+#: ../yum/depsolve.py:429
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: мењам %s са %s ради разрешавања зависности."
 
-#: ../yum/depsolve.py:396
+#: ../yum/depsolve.py:432
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: ажурирам %s ради разрешавања зависности."
 
-#: ../yum/depsolve.py:404
+#: ../yum/depsolve.py:440
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Не могу да пронађем путању ажурирања за зависност за: %s"
 
-#: ../yum/depsolve.py:435
+#: ../yum/depsolve.py:471
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "Брзо повезивање пакета %s као захтева за %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:477
+#: ../yum/depsolve.py:513
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s је у пруженим пакетима али је већ инсталиран, уклањам га."
 
-#: ../yum/depsolve.py:493
+#: ../yum/depsolve.py:529
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "Потенцијално разрешавање пакета %s има новији примерак у ts-у."
 
-#: ../yum/depsolve.py:504
+#: ../yum/depsolve.py:540
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "Потенцијално разрешавање пакета %s има инсталиран новији примерак."
 
-#: ../yum/depsolve.py:522
+#: ../yum/depsolve.py:558
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s је већ у ts-у, прескачем га"
 
-#: ../yum/depsolve.py:571
+#: ../yum/depsolve.py:607
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: означавам %s као ажурирање за %s"
 
-#: ../yum/depsolve.py:580
+#: ../yum/depsolve.py:616
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: означавам %s као инсталацију за %s"
 
-#: ../yum/depsolve.py:690 ../yum/depsolve.py:780
+#: ../yum/depsolve.py:727 ../yum/depsolve.py:819
 msgid "Success - empty transaction"
 msgstr "Успех - празна трансакција"
 
-#: ../yum/depsolve.py:729 ../yum/depsolve.py:744
+#: ../yum/depsolve.py:767 ../yum/depsolve.py:783
 msgid "Restarting Loop"
 msgstr "Поново покрећем петљу"
 
-#: ../yum/depsolve.py:760
+#: ../yum/depsolve.py:799
 msgid "Dependency Process ending"
 msgstr "Завршетак процеса зависности"
 
-#: ../yum/depsolve.py:774
-#, python-format
-msgid "%s from %s has depsolving problems"
-msgstr "%s из %s има проблема са разрешавањем зависности"
-
-#: ../yum/depsolve.py:781
+#: ../yum/depsolve.py:821
 msgid "Success - deps resolved"
 msgstr "Успех - зависности су разрешене"
 
-#: ../yum/depsolve.py:802
+#: ../yum/depsolve.py:845
 #, python-format
 msgid "Checking deps for %s"
 msgstr "Проверавам зависности за %s"
 
-#: ../yum/depsolve.py:888
+#: ../yum/depsolve.py:931
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "тражим %s као захтев за %s"
 
-#: ../yum/depsolve.py:1119
+#: ../yum/depsolve.py:1169
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "Покрећем compare_providers() за %s"
 
-#: ../yum/depsolve.py:1146 ../yum/depsolve.py:1152
+#: ../yum/depsolve.py:1196 ../yum/depsolve.py:1202
 #, python-format
 msgid "better arch in po %s"
 msgstr "боља архитектура у пакету %s"
 
-#: ../yum/depsolve.py:1244
+#: ../yum/depsolve.py:1298
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s превазилази %s"
 
-#: ../yum/depsolve.py:1256
+#: ../yum/depsolve.py:1310
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -2078,142 +2208,142 @@ msgstr ""
 "archdist упоредио %s са %s на %s\n"
 "  Победник: %s"
 
-#: ../yum/depsolve.py:1264
+#: ../yum/depsolve.py:1318
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "заједнички изворни rpm %s и %s"
 
-#: ../yum/depsolve.py:1268
+#: ../yum/depsolve.py:1322
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr ""
 
-#: ../yum/depsolve.py:1274
+#: ../yum/depsolve.py:1328
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "заједнички префикс %s између %s и %s"
 
-#: ../yum/depsolve.py:1305
+#: ../yum/depsolve.py:1359
 #, python-format
 msgid "requires minimal: %d"
 msgstr ""
 
-#: ../yum/depsolve.py:1309
+#: ../yum/depsolve.py:1363
 #, python-format
 msgid " Winner: %s"
 msgstr ""
 
-#: ../yum/depsolve.py:1314
+#: ../yum/depsolve.py:1368
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr ""
 
-#: ../yum/depsolve.py:1330
+#: ../yum/depsolve.py:1384
 #, python-format
 msgid "Best Order: %s"
 msgstr "Најбољи редослед: %s"
 
-#: ../yum/__init__.py:214
+#: ../yum/__init__.py:232
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:453
+#: ../yum/__init__.py:480
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr ""
 
-#: ../yum/__init__.py:459
+#: ../yum/__init__.py:486
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "Ризници %r недостаје име у подешавањима, користим id"
 
-#: ../yum/__init__.py:497
+#: ../yum/__init__.py:524
 msgid "plugins already initialised"
 msgstr "већ иницијализовани додаци"
 
-#: ../yum/__init__.py:504
+#: ../yum/__init__.py:531
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmDBSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:515
+#: ../yum/__init__.py:542
 msgid "Reading Local RPMDB"
 msgstr "Читам локални RPMDB"
 
-#: ../yum/__init__.py:538
+#: ../yum/__init__.py:565
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:577
+#: ../yum/__init__.py:628
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:607
+#: ../yum/__init__.py:658
 msgid "Setting up Package Sacks"
 msgstr "Постављам групе пакета"
 
-#: ../yum/__init__.py:652
+#: ../yum/__init__.py:703
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "репо објекту за репо %s недостаје a _resetSack метода\n"
 
-#: ../yum/__init__.py:653
+#: ../yum/__init__.py:704
 msgid "therefore this repo cannot be reset.\n"
 msgstr "због тога се овај репо не може вратити на почетну поставку.\n"
 
-#: ../yum/__init__.py:658
+#: ../yum/__init__.py:709
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:670
+#: ../yum/__init__.py:721
 msgid "Building updates object"
 msgstr "Изграђујем објекат ажурирања"
 
-#: ../yum/__init__.py:709
+#: ../yum/__init__.py:760
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() неће бити присутна у будућим верзијама Yum-а.\n"
 
-#: ../yum/__init__.py:734
+#: ../yum/__init__.py:785
 msgid "Getting group metadata"
 msgstr "Добављам метаподатке групе"
 
-#: ../yum/__init__.py:760
+#: ../yum/__init__.py:811
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Додајем датотеку групе из ризнице: %s"
 
-#: ../yum/__init__.py:769
+#: ../yum/__init__.py:822
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Није успело додавање датотеке групе за ризницу: %s - %s"
 
-#: ../yum/__init__.py:775
+#: ../yum/__init__.py:828
 msgid "No Groups Available in any repository"
 msgstr "Не постоји група која је доступна у било којој ризници"
 
-#: ../yum/__init__.py:787
+#: ../yum/__init__.py:840
 msgid "Getting pkgtags metadata"
 msgstr ""
 
-#: ../yum/__init__.py:797
+#: ../yum/__init__.py:850
 #, python-format
 msgid "Adding tags from repository: %s"
 msgstr ""
 
-#: ../yum/__init__.py:806
+#: ../yum/__init__.py:861
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
 msgstr ""
 
-#: ../yum/__init__.py:884
+#: ../yum/__init__.py:939
 msgid "Importing additional filelist information"
 msgstr "Увозим додатне информације о списковима датотека"
 
-#: ../yum/__init__.py:898
+#: ../yum/__init__.py:953
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr ""
 
-#: ../yum/__init__.py:906
+#: ../yum/__init__.py:961
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
@@ -2221,23 +2351,21 @@ msgstr ""
 "Остале су недовршене трансакције. Можда би прво требало да извршите yum-"
 "complete-transaction да бисте их завршили."
 
-#: ../yum/__init__.py:985
+#: ../yum/__init__.py:978
+msgid "--> Finding unneeded leftover dependencies"
+msgstr ""
+
+#: ../yum/__init__.py:1032
+#, python-format
+msgid "Protected multilib versions: %s != %s"
+msgstr ""
+
+#: ../yum/__init__.py:1086
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
 msgstr ""
 
-#. Kind of hacky
-#: ../yum/__init__.py:1044
-#, python-format
-msgid "Skip-broken round %i"
-msgstr "Skip-broken етапа %i"
-
-#: ../yum/__init__.py:1101
-#, python-format
-msgid "Skip-broken took %i rounds "
-msgstr "Skip-broken је завршен у %i етапа "
-
-#: ../yum/__init__.py:1102
+#: ../yum/__init__.py:1206
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -2245,115 +2373,115 @@ msgstr ""
 "\n"
 "Пакети су прескочени због проблема са зависностима:"
 
-#: ../yum/__init__.py:1106
+#: ../yum/__init__.py:1210
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s из %s"
 
 #. FIXME: _N()
-#: ../yum/__init__.py:1251
+#: ../yum/__init__.py:1359
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr ""
 
-#: ../yum/__init__.py:1255
+#: ../yum/__init__.py:1363
 msgid "Warning: RPMDB altered outside of yum."
 msgstr ""
 
-#: ../yum/__init__.py:1267
+#: ../yum/__init__.py:1375
 msgid "missing requires"
 msgstr ""
 
-#: ../yum/__init__.py:1268
+#: ../yum/__init__.py:1376
 msgid "installed conflict"
 msgstr ""
 
-#: ../yum/__init__.py:1366
+#: ../yum/__init__.py:1493
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Упозорење: дошло је до грешке у скриптици или неке друге некритичне грешке "
 "током трансакције."
 
-#: ../yum/__init__.py:1376
+#: ../yum/__init__.py:1503
 msgid "Transaction couldn't start:"
 msgstr ""
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1379
+#: ../yum/__init__.py:1506
 msgid "Could not run transaction."
 msgstr ""
 
-#: ../yum/__init__.py:1392
+#: ../yum/__init__.py:1520
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Није успело уклањање датотеке трансакције %s"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1424
+#: ../yum/__init__.py:1558
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr ""
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1486
+#: ../yum/__init__.py:1619
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr ""
 
-#: ../yum/__init__.py:1597
+#: ../yum/__init__.py:1736
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr ""
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1614
+#: ../yum/__init__.py:1753
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Нисам у могућности да проверим да ли је PID %s активан"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1618
+#: ../yum/__init__.py:1757
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Постоји закључавање %s: друга копија се извршава као pid %s."
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1653
+#: ../yum/__init__.py:1798
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr ""
 
-#: ../yum/__init__.py:1698
+#: ../yum/__init__.py:1843
 #, python-format
 msgid ""
 "Package does not match intended download. Suggestion: run yum "
 "--enablerepo=%s clean metadata"
 msgstr ""
 
-#: ../yum/__init__.py:1714
+#: ../yum/__init__.py:1859
 msgid "Could not perform checksum"
 msgstr "Не могу да извршим контролу суме"
 
-#: ../yum/__init__.py:1717
+#: ../yum/__init__.py:1862
 msgid "Package does not match checksum"
 msgstr "Пакет нема одговарајући контролну суму"
 
-#: ../yum/__init__.py:1769
+#: ../yum/__init__.py:1914
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 "пакет нема одговарајућу вредност контролне суме или је за %s укључено "
 "кеширање"
 
-#: ../yum/__init__.py:1772 ../yum/__init__.py:1801
+#: ../yum/__init__.py:1917 ../yum/__init__.py:1947
 #, python-format
 msgid "using local copy of %s"
 msgstr "користим локални %s умножак"
 
-#: ../yum/__init__.py:1813
+#: ../yum/__init__.py:1959
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -2364,11 +2492,11 @@ msgstr ""
 "    * слободно је %s\n"
 "    * потребно је %s"
 
-#: ../yum/__init__.py:1862
+#: ../yum/__init__.py:2020
 msgid "Header is not complete."
 msgstr "Заглавље није потпуно."
 
-#: ../yum/__init__.py:1899
+#: ../yum/__init__.py:2057
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
@@ -2376,62 +2504,62 @@ msgstr ""
 "Заглавље није у локалном кешу и само начин рада са кеширањем је укључен. Не "
 "могу да преузмем %s"
 
-#: ../yum/__init__.py:1954
+#: ../yum/__init__.py:2115
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Јавни кључ за %s није инсталиран"
 
-#: ../yum/__init__.py:1958
+#: ../yum/__init__.py:2119
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Проблем са отварањем пакета %s"
 
-#: ../yum/__init__.py:1966
+#: ../yum/__init__.py:2127
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Јавни кључ за %s није поверљив"
 
-#: ../yum/__init__.py:1970
+#: ../yum/__init__.py:2131
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Пакет %s није потписан"
 
-#: ../yum/__init__.py:2008
+#: ../yum/__init__.py:2170
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Не могу да уклоним %s"
 
-#: ../yum/__init__.py:2012
+#: ../yum/__init__.py:2174
 #, python-format
 msgid "%s removed"
 msgstr "%s је уклоњен"
 
-#: ../yum/__init__.py:2058
+#: ../yum/__init__.py:2220
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Не могу да уклоним %s датотеку %s"
 
-#: ../yum/__init__.py:2062
+#: ../yum/__init__.py:2224
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s датотека %s је уклоњена"
 
-#: ../yum/__init__.py:2064
+#: ../yum/__init__.py:2226
 #, python-format
 msgid "%d %s files removed"
 msgstr "%d %s датотеке су уклоњене"
 
-#: ../yum/__init__.py:2133
+#: ../yum/__init__.py:2295
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Постоји више од једног идентичног слагања у групи за %s"
 
-#: ../yum/__init__.py:2139
+#: ../yum/__init__.py:2301
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Ништа се не слаже са %s.%s %s:%s-%s из ажурирања"
 
-#: ../yum/__init__.py:2433
+#: ../yum/__init__.py:2600
 msgid ""
 "searchPackages() will go away in a future version of Yum."
 "                      Use searchGenerator() instead. \n"
@@ -2439,210 +2567,221 @@ msgstr ""
 "searchPackages() неће бити присутна у будућим Yum верзијама."
 "                      Уместо ње користите searchGenerator(). \n"
 
-#: ../yum/__init__.py:2472
+#: ../yum/__init__.py:2643
 #, python-format
 msgid "Searching %d packages"
 msgstr "Претражујем %d пакете"
 
-#: ../yum/__init__.py:2476
+#: ../yum/__init__.py:2647
 #, python-format
 msgid "searching package %s"
 msgstr "тражим пакет %s"
 
-#: ../yum/__init__.py:2488
+#: ../yum/__init__.py:2659
 msgid "searching in file entries"
 msgstr "тражим у уносима датотека"
 
-#: ../yum/__init__.py:2495
+#: ../yum/__init__.py:2666
 msgid "searching in provides entries"
 msgstr "тражим у уносима достављача"
 
-#: ../yum/__init__.py:2528
+#: ../yum/__init__.py:2692
 #, python-format
 msgid "Provides-match: %s"
 msgstr "Доставља-слагање: %s"
 
-#: ../yum/__init__.py:2577
+#: ../yum/__init__.py:2747
 msgid "No group data available for configured repositories"
 msgstr "Нема доступних података о групама за подешене ризнице"
 
-#: ../yum/__init__.py:2608 ../yum/__init__.py:2627 ../yum/__init__.py:2658
-#: ../yum/__init__.py:2664 ../yum/__init__.py:2746 ../yum/__init__.py:2750
-#: ../yum/__init__.py:3095
+#: ../yum/__init__.py:2778 ../yum/__init__.py:2797 ../yum/__init__.py:2828
+#: ../yum/__init__.py:2834 ../yum/__init__.py:2923 ../yum/__init__.py:2927
+#: ../yum/__init__.py:3291
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Не постоји група под именом %s"
 
-#: ../yum/__init__.py:2639 ../yum/__init__.py:2766
+#: ../yum/__init__.py:2809 ../yum/__init__.py:2943
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "пакет %s није означен у групи %s"
 
-#: ../yum/__init__.py:2686
+#: ../yum/__init__.py:2857
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Додајем пакет %s из групе %s"
 
-#: ../yum/__init__.py:2690
+#: ../yum/__init__.py:2861
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Ниједан пакет под именом %s није доступан за инсталацију"
 
+#: ../yum/__init__.py:2911
+#, python-format
+msgid "Warning: Group %s does not have any packages."
+msgstr ""
+
+#: ../yum/__init__.py:2913
+#, python-format
+msgid "Group %s does have %u conditional packages, which may get installed."
+msgstr ""
+
 #. This can happen due to excludes after .up has
 #. happened.
-#: ../yum/__init__.py:2794
+#: ../yum/__init__.py:2971
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "Група пакета %s није нађена у packagesack-у"
 
-#: ../yum/__init__.py:2813
+#: ../yum/__init__.py:2990
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr ""
 
-#: ../yum/__init__.py:2868 ../yum/__init__.py:2873
+#: ../yum/__init__.py:3047 ../yum/__init__.py:3097
+#, python-format
+msgid "Invalid version flag from: %s"
+msgstr ""
+
+#: ../yum/__init__.py:3064 ../yum/__init__.py:3069
 #, python-format
 msgid "No Package found for %s"
 msgstr "Нема пронађених пакета за %s"
 
-#: ../yum/__init__.py:2901
-msgid "Invalid version flag"
-msgstr "Погрешна ознака верзије"
-
-#: ../yum/__init__.py:3145
+#: ../yum/__init__.py:3344
 msgid "Package Object was not a package object instance"
 msgstr "Објекат пакета није био примерак објекта пакета"
 
-#: ../yum/__init__.py:3149
+#: ../yum/__init__.py:3348
 msgid "Nothing specified to install"
 msgstr "Није одређено ништа за инсталацију"
 
-#: ../yum/__init__.py:3168 ../yum/__init__.py:3992
+#: ../yum/__init__.py:3367 ../yum/__init__.py:4220
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Проверавам виртуелну доставу или доставу датотеке за %s"
 
-#: ../yum/__init__.py:3174 ../yum/__init__.py:3504 ../yum/__init__.py:3684
-#: ../yum/__init__.py:3998
+#: ../yum/__init__.py:3373 ../yum/__init__.py:3713 ../yum/__init__.py:3906
+#: ../yum/__init__.py:4226
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Не постоји слагање за аргумент: %s"
 
-#: ../yum/__init__.py:3250
+#: ../yum/__init__.py:3449
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Пакет %s је инсталиран и није доступан"
 
-#: ../yum/__init__.py:3253
+#: ../yum/__init__.py:3452
 msgid "No package(s) available to install"
 msgstr "Нема пакета доступних за инсталацију"
 
-#: ../yum/__init__.py:3265
+#: ../yum/__init__.py:3464
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Пакет: %s  - већ је у скупу трансакције"
 
-#: ../yum/__init__.py:3291
+#: ../yum/__init__.py:3489
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr ""
 
-#: ../yum/__init__.py:3296
+#: ../yum/__init__.py:3494
 #, python-format
 msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
 "requirements"
 msgstr ""
 
-#: ../yum/__init__.py:3299
+#: ../yum/__init__.py:3497
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "Пакет %s је замењен пакетом %s, покушавам да наместо инсталирам %s"
 
-#: ../yum/__init__.py:3307
+#: ../yum/__init__.py:3505
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "Већ је инсталирана најновија верзија пакета %s"
 
-#: ../yum/__init__.py:3321
+#: ../yum/__init__.py:3519
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr ""
 "Пакет који се поклапа са %s је већ инсталиран. Проверавам за новију верзију."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:3424
+#: ../yum/__init__.py:3622
 msgid "Updating Everything"
 msgstr "Ажурирам све"
 
-#: ../yum/__init__.py:3448 ../yum/__init__.py:3577 ../yum/__init__.py:3604
-#: ../yum/__init__.py:3630
+#: ../yum/__init__.py:3646 ../yum/__init__.py:3786 ../yum/__init__.py:3816
+#: ../yum/__init__.py:3852
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Не ажурирам пакете који су већ превазиђени: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3489 ../yum/__init__.py:3680
+#: ../yum/__init__.py:3691 ../yum/__init__.py:3902
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:3566
+#: ../yum/__init__.py:3775
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Пакет је већ превазиђен: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3599
+#: ../yum/__init__.py:3811
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr ""
 
-#: ../yum/__init__.py:3608 ../yum/__init__.py:3634
+#: ../yum/__init__.py:3820 ../yum/__init__.py:3856
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Не ажурирам пакете који су већ ажурирани: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3697
+#: ../yum/__init__.py:3919
 msgid "No package matched to remove"
 msgstr "Ниједан пакет није одређен за уклањање"
 
-#: ../yum/__init__.py:3703
+#: ../yum/__init__.py:3925
 #, python-format
 msgid "Skipping the running kernel: %s"
 msgstr ""
 
-#: ../yum/__init__.py:3709
+#: ../yum/__init__.py:3931
 #, python-format
 msgid "Removing %s from the transaction"
 msgstr ""
 
-#: ../yum/__init__.py:3744
+#: ../yum/__init__.py:3966
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr ""
 
-#: ../yum/__init__.py:3747 ../yum/__init__.py:3859 ../yum/__init__.py:3935
+#: ../yum/__init__.py:3969 ../yum/__init__.py:4087 ../yum/__init__.py:4163
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Испитујем %s: %s"
 
-#: ../yum/__init__.py:3751
+#: ../yum/__init__.py:3973
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr ""
 
-#: ../yum/__init__.py:3760 ../yum/__init__.py:3862 ../yum/__init__.py:3938
+#: ../yum/__init__.py:3982 ../yum/__init__.py:4090 ../yum/__init__.py:4166
 #, python-format
 msgid ""
 "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr ""
 "Не могу да додам пакет %s у трансакцију. Архитектура није усаглашена: %s"
 
-#: ../yum/__init__.py:3766
+#: ../yum/__init__.py:3988
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
 
-#: ../yum/__init__.py:3774
+#: ../yum/__init__.py:3996
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -2651,120 +2790,138 @@ msgstr ""
 "Пакет %s није инсталиран, не могу да га ажурирам. Извршите yum инсталацију "
 "да бисте га инсталирали."
 
-#: ../yum/__init__.py:3803 ../yum/__init__.py:3867 ../yum/__init__.py:3943
+#: ../yum/__init__.py:4015 ../yum/__init__.py:4022
+#, python-format
+msgid ""
+"Package %s.%s not installed, cannot update it. Run yum install to install it"
+" instead."
+msgstr ""
+
+#: ../yum/__init__.py:4031 ../yum/__init__.py:4095 ../yum/__init__.py:4171
 #, python-format
 msgid "Excluding %s"
 msgstr "Изузимам %s"
 
-#: ../yum/__init__.py:3808
+#: ../yum/__init__.py:4036
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Означавам %s за инсталацију"
 
-#: ../yum/__init__.py:3814
+#: ../yum/__init__.py:4042
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Означавам %s као ажурирање за %s"
 
-#: ../yum/__init__.py:3821
+#: ../yum/__init__.py:4049
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: не ажурира инсталирани пакет."
 
-#: ../yum/__init__.py:3856 ../yum/__init__.py:3932
+#: ../yum/__init__.py:4084 ../yum/__init__.py:4160
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Не могу да отворим датотеку: %s. Прескачем је."
 
-#: ../yum/__init__.py:3886
+#: ../yum/__init__.py:4114
 msgid "Problem in reinstall: no package matched to remove"
 msgstr ""
 "Проблем при поновној инсталацији: ниједан пакет није одређен за уклањање"
 
-#: ../yum/__init__.py:3912
+#: ../yum/__init__.py:4140
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr ""
 
-#: ../yum/__init__.py:4018
+#: ../yum/__init__.py:4246
 msgid "No package(s) available to downgrade"
 msgstr "Нема пакета доступних за уназађивање"
 
-#: ../yum/__init__.py:4026
+#: ../yum/__init__.py:4254
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "Пакету %s су дозвољене многоструке инсталације, прескачем га"
 
-#: ../yum/__init__.py:4072
+#: ../yum/__init__.py:4300
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Нема доступног одговарајућег пакета: %s"
 
-#: ../yum/__init__.py:4079
+#: ../yum/__init__.py:4307
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Само је надградња доступна за пакет: %s"
 
-#: ../yum/__init__.py:4149 ../yum/__init__.py:4186
+#: ../yum/__init__.py:4377 ../yum/__init__.py:4414
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr ""
 
-#: ../yum/__init__.py:4218
+#: ../yum/__init__.py:4451
 #, python-format
-msgid "Retrieving GPG key from %s"
-msgstr "Добављам GPG кључ са %s"
+msgid "Retrieving key from %s"
+msgstr ""
 
-#: ../yum/__init__.py:4238
+#: ../yum/__init__.py:4469
 msgid "GPG key retrieval failed: "
 msgstr "Добављање GPG кључа није успело: "
 
-#: ../yum/__init__.py:4244
+#. if we decide we want to check, even though the sig failed
+#. here is where we would do that
+#: ../yum/__init__.py:4492
+#, python-format
+msgid "GPG key signature on key %s does not match CA Key for repo: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4494
+msgid "GPG key signature verified against CA Key(s)"
+msgstr ""
+
+#: ../yum/__init__.py:4502
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr ""
 
-#: ../yum/__init__.py:4253
+#: ../yum/__init__.py:4511
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Рашчлањивање GPG кључа није успело: кључ нема вредност %s"
 
-#: ../yum/__init__.py:4267
+#: ../yum/__init__.py:4527
 #, python-format
 msgid ""
-"Importing GPG key 0x%s:\n"
+"Importing %s key 0x%s:\n"
 " Userid : %s\n"
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
 
-#: ../yum/__init__.py:4275
+#: ../yum/__init__.py:4535
 #, python-format
 msgid ""
-"Importing GPG key 0x%s:\n"
+"Importing %s key 0x%s:\n"
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
 
-#: ../yum/__init__.py:4307
+#: ../yum/__init__.py:4569
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG кључ на %s (0x%s) је већ инсталиран"
 
-#: ../yum/__init__.py:4326
-msgid "Not installing key"
-msgstr "Не инсталирам кључ"
-
-#: ../yum/__init__.py:4332
+#: ../yum/__init__.py:4606
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Није успео увоз кључа (код %d)"
 
-#: ../yum/__init__.py:4333 ../yum/__init__.py:4389
+#: ../yum/__init__.py:4607 ../yum/__init__.py:4690
 msgid "Key imported successfully"
 msgstr "Кључ је успешно увезен"
 
-#: ../yum/__init__.py:4338
+#: ../yum/__init__.py:4611
+msgid "Didn't install any keys"
+msgstr ""
+
+#: ../yum/__init__.py:4615
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -2773,136 +2930,189 @@ msgstr ""
 "GPG кључеви излистани за „%s“ ризницу су већ инсталирани али нису одговарајући за овај пакет.\n"
 "Проверите да ли су подешени одговарајући УРЛ-ови кључева за ову ризницу."
 
-#: ../yum/__init__.py:4347
+#: ../yum/__init__.py:4624
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Увоз кључа(кључева) није помогао, погрешан кључ(кључеви)?"
 
-#: ../yum/__init__.py:4366
+#: ../yum/__init__.py:4648
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "GPG кључ на %s (0x%s) је већ увезен"
 
-#: ../yum/__init__.py:4383
-#, python-format
-msgid "Not installing key for repo %s"
-msgstr "Не инсталирам кључ за ризницу %s"
-
-#: ../yum/__init__.py:4388
+#: ../yum/__init__.py:4689
 msgid "Key import failed"
 msgstr "Није успео увоз кључа"
 
-#: ../yum/__init__.py:4394
+#: ../yum/__init__.py:4705
+#, python-format
+msgid "Didn't install any keys for repo %s"
+msgstr ""
+
+#: ../yum/__init__.py:4709
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 
-#: ../yum/__init__.py:4521
+#: ../yum/__init__.py:4859
 msgid "Unable to find a suitable mirror."
 msgstr "Не могу да пронађем одговарајући одраз."
 
-#: ../yum/__init__.py:4523
+#: ../yum/__init__.py:4861
 msgid "Errors were encountered while downloading packages."
 msgstr "Појавиле су се грешке за време преузимања пакета."
 
-#: ../yum/__init__.py:4573
+#: ../yum/__init__.py:4916
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Пријавите ову грешку код %s"
 
-#: ../yum/__init__.py:4597
+#: ../yum/__init__.py:4933
 msgid "Test Transaction Errors: "
 msgstr "Грешке при провери трансакције: "
 
-#: ../yum/__init__.py:4700
+#: ../yum/__init__.py:5033
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr ""
 
+#: ../yum/__init__.py:5083 ../yum/__init__.py:5085
+msgid "Dependencies not solved. Will not save unresolved transaction."
+msgstr ""
+
+#: ../yum/__init__.py:5110 ../yum/__init__.py:5112
+#, python-format
+msgid "Could not save transaction file %s: %s"
+msgstr ""
+
+#: ../yum/__init__.py:5126
+#, python-format
+msgid "Could not access/read saved transaction %s : %s"
+msgstr ""
+
+#: ../yum/__init__.py:5145
+msgid "rpmdb ver mismatched saved transaction version, "
+msgstr ""
+
+#: ../yum/__init__.py:5147
+msgid " ignoring, as requested."
+msgstr ""
+
+#: ../yum/__init__.py:5150 ../yum/__init__.py:5285
+msgid " aborting."
+msgstr ""
+
+#: ../yum/__init__.py:5159
+msgid "cannot find tsflags or tsflags not integer."
+msgstr ""
+
+#: ../yum/__init__.py:5198
+#, python-format
+msgid "Found txmbr in unknown current state: %s"
+msgstr ""
+
+#: ../yum/__init__.py:5202
+#, python-format
+msgid "Could not find txmbr: %s in state %s"
+msgstr ""
+
+#: ../yum/__init__.py:5238 ../yum/__init__.py:5255
+#, python-format
+msgid "Could not find txmbr: %s from origin: %s"
+msgstr ""
+
+#: ../yum/__init__.py:5280
+msgid "Transaction members, relations are missing or ts has been modified,"
+msgstr ""
+
+#: ../yum/__init__.py:5282
+msgid " ignoring, as requested. You must redepsolve!"
+msgstr ""
+
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:208
+#: ../yum/plugins.py:209
 msgid "Loaded plugins: "
 msgstr "Учитани додаци: "
 
-#: ../yum/plugins.py:222 ../yum/plugins.py:228
+#: ../yum/plugins.py:223 ../yum/plugins.py:229
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "Не постоји слагање за додатак: %s"
 
-#: ../yum/plugins.py:258
+#: ../yum/plugins.py:259
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
 msgstr "Не учитавам додатак „%s“ пошто је искључен"
 
 #. Give full backtrace:
-#: ../yum/plugins.py:270
+#: ../yum/plugins.py:271
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
 msgstr "Додатак „%s“ не може да буде увезен"
 
-#: ../yum/plugins.py:277
+#: ../yum/plugins.py:278
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr "Додатак „%s“ не одређује верзију захтеваног API-а"
 
-#: ../yum/plugins.py:282
+#: ../yum/plugins.py:283
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr "Додатак „%s“ захтева API %s. Подржани API је %s."
 
-#: ../yum/plugins.py:315
+#: ../yum/plugins.py:316
 #, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "Учитавам „%s“ додатак"
 
-#: ../yum/plugins.py:322
+#: ../yum/plugins.py:323
 #, python-format
 msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr ""
 "У путањи за претраживање додатака постоје два или више додатака под именом "
 "„%s“"
 
-#: ../yum/plugins.py:342
+#: ../yum/plugins.py:343
 #, python-format
 msgid "Configuration file %s not found"
 msgstr "Датотека подешавања %s није пронађена"
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:345
+#: ../yum/plugins.py:346
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr "Не могу да пронађем датотеку подешавања за додатак %s"
 
-#: ../yum/plugins.py:507
+#: ../yum/plugins.py:508
 msgid "registration of commands not supported"
 msgstr "регистрација команди није подржана"
 
-#: ../yum/rpmsack.py:102
+#: ../yum/rpmsack.py:148
 msgid "has missing requires of"
 msgstr ""
 
-#: ../yum/rpmsack.py:105
+#: ../yum/rpmsack.py:151
 msgid "has installed conflicts"
 msgstr ""
 
-#: ../yum/rpmsack.py:114
+#: ../yum/rpmsack.py:160
 #, python-format
 msgid "%s is a duplicate with %s"
 msgstr ""
 
-#: ../yum/rpmsack.py:122
+#: ../yum/rpmsack.py:168
 #, python-format
 msgid "%s is obsoleted by %s"
 msgstr ""
 
-#: ../yum/rpmsack.py:130
+#: ../yum/rpmsack.py:176
 #, python-format
 msgid "%s provides %s but it cannot be found"
 msgstr ""
 
-#: ../yum/rpmtrans.py:79
+#: ../yum/rpmtrans.py:80
 msgid "Repackaging"
 msgstr "Поновно паковање"
 
