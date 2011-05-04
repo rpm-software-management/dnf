@@ -1140,10 +1140,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if hasattr(self, '_collapse_libc_requires') and self._collapse_libc_requires:
             libc_requires = filter(lambda x: x[0].startswith('libc.so.6'), mylist)
             if libc_requires:
-                print libc_requires
                 rest = sorted(libc_requires, cmp=compareVerOnly, key=itemgetter(0))
                 best = rest.pop()
-                if best[0].startswith('libc.so.6()'):
+                if best[0].startswith('libc.so.6()'): # rpmvercmp will sort this one as 'highest' so we need to remove it from the list
                     best = rest.pop()
                 newlist = []
                 for i in mylist:
