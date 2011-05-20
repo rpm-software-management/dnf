@@ -5127,9 +5127,13 @@ class YumBase(depsolve.Depsolve):
         
         msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
         msg += "%s\n" % self.ts.getTsFlags()
-        msg += "%s\n" % len(self.repos.listEnabled())
-        for r in self.repos.listEnabled():
-            msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+        if self.tsInfo.pkgSack is None: # rm Transactions don't have pkgSack
+            msg += "0\n"
+        else:
+            msg += "%s\n" % len(self.repos.listEnabled())
+            for r in self.repos.listEnabled():
+                msg += "%s:%s:%s\n" % (r.id, len(r.sack), r.repoXML.revision)
+
         msg += "%s\n" % len(self.tsInfo.getMembers())
         for txmbr in self.tsInfo.getMembers():
             msg += txmbr._dump()
