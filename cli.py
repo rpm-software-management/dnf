@@ -1143,17 +1143,23 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         cb = self.matchcallback_verbose
         matching = self.searchPackageProvides(args, callback=cb,
                                               callback_has_matchfor=True)
-        self.conf.showdupesfromrepos = old_sdup
-        
         if len(matching) == 0:
+            #  Try to be a bit clever, for commands, and python modules.
+            # Maybe want something so we can do perl/etc. too?
+            paths = set(sys.path + os.environ['PATH'].split(':'))
+            nargs = []
             for arg in args:
-                if '*' in arg or (arg and arg[0] == '/'):
+                if yum.misc.re_filename(arg) or yum.misc.re_glob(arg):
                     continue
-                self.logger.warning(_('Warning: 3.0.x versions of yum would erroneously match against filenames.\n You can use "%s*/%s%s" and/or "%s*bin/%s%s" to get that behaviour'),
-                                    self.term.MODE['bold'], arg,
-                                    self.term.MODE['normal'],
-                                    self.term.MODE['bold'], arg,
-                                    self.term.MODE['normal'])
+                for path in paths:
+                    if not path:
+                        continue
+                    nargs.append("%s/%s" % (path, arg))
+            matching = self.searchPackageProvides(nargs, callback=cb,
+                                                  callback_has_matchfor=True)
+        self.conf.showdupesfromrepos = old_sdup
+
+        if len(matching) == 0:
             return 0, ['No Matches found']
         
         return 0, []
