@@ -189,9 +189,10 @@ def main(args):
             prefix = _('Error: %s')
             prefix2nd = (' ' * (utf8_width(prefix) - 2))
             logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
-        if not base.conf.skip_broken:
-            verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
-        rpmdb_warn_checks()
+        if base._depsolving_failed:
+            if not base.conf.skip_broken:
+                verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
+            rpmdb_warn_checks()
         if unlock(): return 200
         return 1
     elif result == 2:

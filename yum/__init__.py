@@ -1000,6 +1000,10 @@ class YumBase(depsolve.Depsolve):
         if self.tsInfo.pkgSack is not None: # rm Transactions don't have pkgSack
             self.tsInfo.pkgSack.dropCachedData()
 
+        # FIXME: This is horrible, see below and yummain. Maybe create a real
+        #        rescode object? :(
+        self._depsolving_failed = rescode == 1
+
         txmbrs = []
         if rescode == 2 and self.conf.protected_multilib and self.arch.multilib:
             txmbrs = self.tsInfo.getMembersWithState(None, TS_INSTALL_STATES)
@@ -1036,6 +1040,7 @@ class YumBase(depsolve.Depsolve):
                 xrestring.append(msg % (first, other))
         if xrestring:
             rescode = 1
+            self._depsolving_failed = False
             restring = xrestring
 
         #  This is a version of the old "protect-packages" plugin, it allows
@@ -1088,6 +1093,7 @@ class YumBase(depsolve.Depsolve):
             for pkgname in sorted(bad_togo):
                 restring.append(_('Trying to remove "%s", which is protected') %
                                 pkgname)
+            self._depsolving_failed = False
 
         if rescode == 2:
             self.save_ts(auto=True)
