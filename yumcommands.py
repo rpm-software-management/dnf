@@ -158,7 +158,7 @@ class YumCommand:
 
     def doneCommand(self, base, msg, *args):
         if not self.done_command_once:
-            base.verbose_logger.log(logginglevels.INFO_2, msg, *args)
+            base.verbose_logger.info(msg, *args)
         self.done_command_once = True
 
     def getNames(self):
@@ -1060,14 +1060,14 @@ class RepoListCommand(YumCommand):
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                base.verbose_logger.log(logginglevels.INFO_2,"%s %s",
+                base.verbose_logger.info("%s %s",
                                         txt_rid, txt_rnam)
             else:
-                base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                base.verbose_logger.info("%s %s %s",
                                         txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    base.verbose_logger.log(logginglevels.INFO_2, "%s %s",
+                    base.verbose_logger.info("%s %s",
                                             utf8_width_fill(rid, id_len),
                                             utf8_width_fill(rname, nm_len,
                                                             nm_len))
@@ -1075,7 +1075,7 @@ class RepoListCommand(YumCommand):
 
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
-                base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
+                base.verbose_logger.info("%s %s %s%s",
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
@@ -1144,8 +1144,7 @@ class HelpCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         if extcmds[0] in base.yum_cli_commands:
             command = base.yum_cli_commands[extcmds[0]]
-            base.verbose_logger.log(logginglevels.INFO_2,
-                    self._makeOutput(command))
+            base.verbose_logger.info(self._makeOutput(command))
         return 0, []
 
     def needTs(self, base, basecmd, extcmds):
