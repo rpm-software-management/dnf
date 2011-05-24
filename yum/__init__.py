@@ -2691,9 +2691,7 @@ class YumBase(depsolve.Depsolve):
                 where = self.returnInstalledPackagesByDep(arg)
                 usedDepString = True
                 for po in where:
-                    tmpvalues = []
-                    msg = _('Provides-match: %s') % to_unicode(arg)
-                    tmpvalues.append(msg)
+                    tmpvalues = [arg]
 
                     if len(tmpvalues) > 0:
                         if callback:
