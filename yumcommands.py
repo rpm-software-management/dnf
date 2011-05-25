@@ -71,6 +71,7 @@ will install it for you.
 For more information contact your distribution or package provider.
 """)
                 base.logger.critical(msg)
+                base.logger.critical(_("Problem repository: %s"), repo)
                 raise cli.CliError
 
 def checkPackageArg(base, basecmd, extcmds):
