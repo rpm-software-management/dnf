@@ -945,7 +945,7 @@ def stat_f(filename):
     try:
         return os.stat(filename)
     except OSError, e:
-        if e.errno != errno.ENOENT:
+        if e.errno not in (errno.ENOENT, errno.ENOTDIR):
             raise
         return None
 
