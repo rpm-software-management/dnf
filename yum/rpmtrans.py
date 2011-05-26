@@ -272,21 +272,58 @@ class RPMTransaction:
         else:
             return (None, None)
 
+    def _fn_rm_installroot(self, filename):
+        """ Remove the installroot from the filename. """
+        # to handle us being inside a chroot at this point
+        # we hand back the right path to those 'outside' of the chroot() calls
+        # but we're using the right path inside.
+        if self.base.conf.installroot == '/':
+            return filename
+
+        return filename.replace(os.path.normpath(self.base.conf.installroot),'')
+
+    def ts_done_open(self):
+        """ Open the transaction done file, must be started outside the
+            chroot. """
+
+        if self.test: return False
+
+        if hasattr(self, '_ts_done'):
+            return True
+
+        self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir,
+                                                      self._ts_time)
+        ts_done_fn = self._fn_rm_installroot(self.ts_done_fn)
+
+        try:
+            self._ts_done = open(ts_done_fn, 'w')
+        except (IOError, OSError), e:
+            self.display.errorlog('could not open ts_done file: %s' % e)
+            self._ts_done = None
+            return False
+        self._fdSetCloseOnExec(self._ts_done.fileno())
+        return True
+
+    def ts_done_write(self, msg):
+        """ Write some data to the transaction done file. """
+        if self._ts_done is None:
+            return
+
+        try:
+            self._ts_done.write(msg)
+            self._ts_done.flush()
+        except (IOError, OSError), e:
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            self.display.errorlog('could not write to ts_done file: %s' % e)
+            self._ts_done = None
+            misc.unlink_f(self.ts_done_fn)
+
     def ts_done(self, package, action):
         """writes out the portions of the transaction which have completed"""
         
-        if self.test: return
+        if not self.ts_done_open(): return
     
-        if not hasattr(self, '_ts_done'):
-            self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir, self._ts_time)
-            
-            try:
-                self._ts_done = open(self.ts_done_fn, 'w')
-            except (IOError, OSError), e:
-                self.display.errorlog('could not open ts_done file: %s' % e)
-                return
-            self._fdSetCloseOnExec(self._ts_done.fileno())
-        
         # walk back through self._te_tuples
         # make sure the package and the action make some kind of sense
         # write it out and pop(0) from the list
@@ -322,14 +359,7 @@ class RPMTransaction:
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
 
-        try:
-            self._ts_done.write(msg)
-            self._ts_done.flush()
-        except (IOError, OSError), e:
-            #  Having incomplete transactions is probably worse than having
-            # nothing.
-            del self._ts_done
-            misc.unlink_f(self.ts_done_fn)
+        self.ts_done_write(msg)
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -361,17 +391,15 @@ class RPMTransaction:
         self._ts_time = time.strftime('%Y-%m-%d.%H:%M.%S')
         tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
         self.ts_all_fn = tsfn
-        # to handle us being inside a chroot at this point
-        # we hand back the right path to those 'outside' of the chroot() calls
-        # but we're using the right path inside.
-        if self.base.conf.installroot != '/':
-            tsfn = tsfn.replace(os.path.normpath(self.base.conf.installroot),'')
+        tsfn = self._fn_rm_installroot(tsfn)
+
         try:
             if not os.path.exists(os.path.dirname(tsfn)):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
         except (IOError, OSError), e:
             self.display.errorlog('could not open ts_all file: %s' % e)
+            self._ts_done = None
             return
 
         try:
@@ -383,7 +411,9 @@ class RPMTransaction:
         except (IOError, OSError), e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
+            self.display.errorlog('could not write to ts_all file: %s' % e)
             misc.unlink_f(tsfn)
+            self._ts_done = None
 
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
@@ -424,6 +454,7 @@ class RPMTransaction:
         if self.test: return
         self.trans_running = True
         self.ts_all() # write out what transaction will do
+        self.ts_done_open()
 
     def _transProgress(self, bytes, total, h):
         pass
