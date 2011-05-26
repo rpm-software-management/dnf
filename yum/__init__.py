@@ -2782,7 +2782,7 @@ class YumBase(depsolve.Depsolve):
         
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = True
@@ -2801,7 +2801,7 @@ class YumBase(depsolve.Depsolve):
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = False
@@ -2832,13 +2832,13 @@ class YumBase(depsolve.Depsolve):
         """
 
         if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
         
         txmbrs_used = []
         thesegroups = self.comps.return_groups(grpid)
      
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         package_types = self.conf.group_package_types
         if group_package_types:
@@ -2927,11 +2927,11 @@ class YumBase(depsolve.Depsolve):
             in the group(s) are force removed from the transaction. """
         
         if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
             
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
         
         for thisgroup in thesegroups:
             thisgroup.selected = False
@@ -3311,7 +3311,7 @@ class YumBase(depsolve.Depsolve):
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % grpid
+            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
         pkgnames = set()
         for thisgroup in thesegroups:
             pkgnames.update(thisgroup.packages)
