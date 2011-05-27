@@ -998,7 +998,11 @@ def setup_locale(override_codecs=True, override_time=False):
 
 
 def get_my_lang_code():
-    mylang = locale.getlocale(locale.LC_MESSAGES)
+    try:
+        mylang = locale.getlocale(locale.LC_MESSAGES)
+    except ValueError, e:
+        # This is RHEL-5 python crack, Eg. en_IN can't be parsed properly
+        mylang = (None, None)
     if mylang == (None, None): # odd :)
         mylang = 'C'
     else:
