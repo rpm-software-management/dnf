@@ -1072,7 +1072,7 @@ class YumRepository(Repository, config.RepoConf):
         # completely different repo. from last time ... ergo. we can't revert.
         #  We still want the old data, so we don't download twice. So we
         # pretend everything is good until the revert.
-        if self.timestamp_check:
+        if not self.timestamp_check:
             raise Errors.RepoError, "Can't download or revert repomd.xml"
 
         if 'old_repo_XML' not in self._oldRepoMDData:
