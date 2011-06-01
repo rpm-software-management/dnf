@@ -430,9 +430,10 @@ class YumRepository(Repository, config.RepoConf):
 
         self._proxy_dict = {} # zap it
         proxy_string = None
-        if self.proxy not in [None, '_none_']:
+        empty = (None, '_none_', '')
+        if self.proxy not in empty:
             proxy_string = '%s' % self.proxy
-            if self.proxy_username is not None:
+            if self.proxy_username not in empty:
                 proxy_parsed = urlparse.urlsplit(self.proxy, allow_fragments=0)
                 proxy_proto = proxy_parsed[0]
                 proxy_host = proxy_parsed[1]
@@ -445,7 +446,7 @@ class YumRepository(Repository, config.RepoConf):
                 proxy_string = '%s://%s@%s%s' % (proxy_proto,
                         self.proxy_username, proxy_host, proxy_rest)
 
-                if self.proxy_password is not None:
+                if self.proxy_password not in empty:
                     proxy_string = '%s://%s:%s@%s%s' % (proxy_proto,
                               self.proxy_username, self.proxy_password,
                               proxy_host, proxy_rest)
