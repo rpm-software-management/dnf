@@ -4491,7 +4491,7 @@ class YumBase(depsolve.Depsolve):
         try:
             url = misc.to_utf8(keyurl)
             if repo is None:
-                opts = {limit:9999}
+                opts = {'limit':9999}
                 text = 'global/gpgkey'
             else:
                 #  If we have a repo. use the proxy etc. configuration for it.
