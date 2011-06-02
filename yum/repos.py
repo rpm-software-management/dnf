@@ -110,7 +110,12 @@ class RepoStorage:
             repoobj.quick_enable_disable = self.quick_enable_disable
         else:
             self._cache_enabled_repos = None
-        repoobj._override_sigchecks = self.ayum._override_sigchecks
+        #  At least pulp reuses RepoStorage but doesn't have a "real" YumBase()
+        # so we can't guarantee new YumBase() attrs. exist.
+        if not hasattr(self.ayum, '_override_sigchecks'):
+            repoobj._override_sigchecks = False
+        else:
+            repoobj._override_sigchecks = self.ayum._override_sigchecks
 
     def delete(self, repoid):
         if repoid in self.repos:
