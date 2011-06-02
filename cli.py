@@ -448,7 +448,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # just make sure there's not, well, nothing to do
         if len(self.tsInfo) == 0:
             self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
-            return 1
+            return -1
 
         # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
         #       gain. But it's probably doom to have a different code path.
@@ -495,7 +495,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if self._promptWanted():
             if not self.userconfirm():
                 self.verbose_logger.info(_('Exiting on user Command'))
-                return 1
+                return -1
 
         self.verbose_logger.log(yum.logginglevels.INFO_2,
             _('Downloading Packages:'))
@@ -512,7 +512,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
-            return 1
+            return -1
         
         self.initActionTs()
         # save our dsCallback out
