@@ -1048,7 +1048,9 @@ class YumOutput:
             pkglist_lines.append((action, lines))
 
         for (action, pkglist) in [(_('Skipped (dependency problems)'),
-                                   self.skipped_packages),]:
+                                   self.skipped_packages),
+                                  (_('Not installed'), self._not_found_i.values()),
+                                  (_('Not available'), self._not_found_a.values())]:
             lines = []
             for po in pkglist:
                 a_wid = _add_line(lines, data, a_wid, po)

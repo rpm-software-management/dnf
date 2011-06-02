@@ -274,6 +274,15 @@ class PackageObject(object):
     def __str__(self):
         return self.ui_envra
 
+    def printVer(self):
+        """returns a printable version string - including epoch, if it's set"""
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+
+        return ver
+
     def verCMP(self, other):
         """ Compare package to another one, only rpm-version ordering. """
         if not other:
@@ -353,6 +362,36 @@ class PackageObject(object):
         for (csumtype, csum, csumid) in self.checksums:
             if csumid:
                 return (csumtype, csum)
+
+
+_not_found_repo = FakeRepository('-')
+_not_found_repo.cost = 0
+class YumNotFoundPackage(PackageObject):
+
+    def __init__(self, pkgtup):
+        self.name    = pkgtup[0]
+        self.arch    = pkgtup[1]
+        self.epoch   = pkgtup[2]
+        self.version = pkgtup[3]
+        self.release = pkgtup[4]
+        self.pkgtup  = pkgtup
+
+        self.size = 0
+        self._checksums = [] # (type, checksum, id(0,1)
+
+        self.repo = _not_found_repo
+        self.repoid = _not_found_repo.id
+
+    # Fakeout output.py that it's a real pkg. ...
+    def _ui_from_repo(self):
+        """ This just returns '-' """
+        return self.repoid
+    ui_from_repo = property(fget=lambda self: self._ui_from_repo())
+
+    def verifyLocalPkg(self):
+        """check the package checksum vs the localPkg
+           return True if pkg is good, False if not"""
+        return False
 
 #  This is the virtual base class of actual packages, it basically requires a
 # repo. even though it doesn't set one up in it's __init__. It also doesn't have

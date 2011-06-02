@@ -79,7 +79,7 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 from packages import parsePackages, comparePoEVR
 from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
-from packages import YumUrlPackage
+from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
 from yum.i18n import to_unicode, to_str
@@ -182,6 +182,8 @@ class YumBase(depsolve.Depsolve):
         self._tags = None
         self._ts_save_file = None
         self.skipped_packages = []   # packages skip by the skip-broken code
+        self._not_found_a = {}
+        self._not_found_i = {}
         self.logger = logging.getLogger("yum.YumBase")
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
         self._override_sigchecks = False
@@ -1224,6 +1226,27 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.info("Skip-broken could not solve problems")
             return 1, orig_restring
         return rescode, restring
+
+    def _add_not_found(self, pkgs, nevra_dict):
+        if pkgs:
+            return None
+
+        pkgtup = (nevra_dict['name'], nevra_dict['arch'],
+                  nevra_dict['epoch'], nevra_dict['version'],
+                  nevra_dict['release'])
+        if None in pkgtup:
+            return None
+        return pkgtup
+    def _add_not_found_a(self, pkgs, nevra_dict):
+        pkgtup = self._add_not_found(pkgs, nevra_dict)
+        if pkgtup is None:
+            return
+        self._not_found_a[pkgtup] = YumNotFoundPackage(pkgtup)
+    def _add_not_found_i(self, pkgs, nevra_dict):
+        pkgtup = self._add_not_found(pkgs, nevra_dict)
+        if pkgtup is None:
+            return
+        self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
 
     def _checkMissingObsoleted(self):
         """ 
@@ -2973,6 +2996,7 @@ class YumBase(depsolve.Depsolve):
         pkgs = self.pkgSack.searchPkgTuple(pkgtup)
 
         if len(pkgs) == 0:
+            self._add_not_found_a(pkgs, pkgtup)
             if allow_missing: #  This can happen due to excludes after .up has
                 return None   # happened.
             raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
@@ -2994,6 +3018,7 @@ class YumBase(depsolve.Depsolve):
 
         pkgs = self.rpmdb.searchPkgTuple(pkgtup)
         if len(pkgs) == 0:
+            self._add_not_found_i(pkgs, pkgtup)
             raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
 
         # Dito. FIXME from getPackageObject() for len() > 1 ... :)
@@ -3419,6 +3444,7 @@ class YumBase(depsolve.Depsolve):
                 pkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                      epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
+                self._add_not_found_a(pkgs, nevra_dict)
                 
             if pkgs:
                 # if was_pattern or nevra-dict['arch'] is none, take the list
@@ -3759,6 +3785,7 @@ class YumBase(depsolve.Depsolve):
                 availpkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                             epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
+                self._add_not_found_a(availpkgs, nevra_dict)
                 if len(availpkgs) > 1:
                     availpkgs = self._compare_providers(availpkgs, requiringPo)
                     availpkgs = map(lambda x: x[0], availpkgs)
@@ -3949,7 +3976,7 @@ class YumBase(depsolve.Depsolve):
                 pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
                             epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
-
+                self._add_not_found_i(pkgs, nevra_dict)
                 if len(pkgs) == 0:
                     if not kwargs.get('silence_warnings', False):
                         self.logger.warning(_("No package matched to remove"))
@@ -4268,6 +4295,8 @@ class YumBase(depsolve.Depsolve):
                                              arch=nevra_dict['arch'], 
                                              ver=nevra_dict['version'],
                                              rel=nevra_dict['release'])
+            self._add_not_found_a(apkgs, nevra_dict)
+
         if not apkgs:
             # Do we still want to return errors here?
             # We don't in the cases below, so I didn't here...
