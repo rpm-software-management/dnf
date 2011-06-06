@@ -5363,6 +5363,11 @@ class YumBase(depsolve.Depsolve):
         found_leaves = set()
         checked = set()
         beingremoved = [ t.po for t in self.tsInfo.getMembersWithState(output_states=TS_REMOVE_STATES) ]
+        # cache previously examined packages
+        okay_to_remove = {}
+        for i in self.rpmdb.returnPackages():
+            okay_to_remove[i] = True
+
         for pkg in beingremoved: # for each package required by the pkg being removed
             #print 'removal: %s' % pkg.name
             for required in pkg.required_packages():
@@ -5370,23 +5375,26 @@ class YumBase(depsolve.Depsolve):
                 #    continue # if we've already checked it, skip it.
                 #checked.add(required)
                 if required.yumdb_info.get('reason', '') != 'dep': # if the required pkg is not a dep, then skip it
+                    okay_to_remove[required] = False
                     continue
                 if required in beingremoved:
+                    continue
+                if self._has_needed_revdeps(required, beingremoved, okay_to_remove):
                     continue
                 still_needed = False
                 for requiring in required.requiring_packages(): # so we have required deps - look at all the pkgs which require them
                     if requiring == required: # if they are self-requiring skip them
                         continue
-                    if requiring not in beingremoved: # if the requiring pkg is not in the list of pkgs being removed then it is still needed
-                        still_needed = True
-                        break
+                        
                 # go through the stuff in the ts to be installed - make sure none of that needs the required pkg, either.
                 for (provn,provf,provevr) in required.provides:
                     if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
                         still_needed = True
+                        okay_to_remove[required] = False
                         break
                 for fn in required.filelist + required.dirlist:
                     if self.tsInfo.getNewRequires(fn, None,(None,None,None)).keys():
+                        okay_to_remove[required] = False
                         still_needed = True
                         break
                             
@@ -5406,5 +5414,53 @@ class YumBase(depsolve.Depsolve):
                             beingremoved.append(txmbr.po)
                         found_leaves.add(txmbr)
         self.verbose_logger.log(logginglevels.INFO_2, "Found and removing %s unneeded dependencies" % len(found_leaves))
-        
-                    
+            
+    # Checks if pkg has any reverse deps which cannot be removed. 
+    # Currently this only checks the install reason for each revdep, 
+    # but we may want to check for other reasons that would  
+    # prevent the revdep from being removed (e.g. protected)
+    def _has_needed_revdeps(self, pkg, beingremoved, ok_to_remove):
+        # check if we've already found this package to have user-installed deps
+        if not ok_to_remove[pkg]:
+            # Debugging output
+            self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has been visited already and cannot be removed."), pkg)
+            return True
+        # Debugging output
+        self.verbose_logger.log(logginglevels.DEBUG_2, _("Examining revdeps of %s"), pkg)
+        # track which pkgs we have visited already
+        visited = {}
+        for po in self.rpmdb.returnPackages():
+            visited[po] = False
+        # no need to consider packages that are already being removed
+        for po in beingremoved:
+            visited[po] = True
+        stack = []
+        stack.append(pkg)
+        # depth-first search
+        while stack:
+            curpkg = stack[-1]
+            if not visited[curpkg]:
+                if not ok_to_remove[curpkg]:
+                    # Debugging output
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has been visited already and cannot be removed."), pkg)
+                    ok_to_remove[pkg] = False
+                    return True
+                if curpkg.yumdb_info.get('reason', '') != 'dep':
+                    # Debugging output
+                    self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has revdep %s which was user-installed."), pkg, curpkg)
+                    ok_to_remove[pkg] = False
+                    return True
+                visited[curpkg] = True
+            all_leaves_visited = True
+            leaves = curpkg.requiring_packages()
+            for leaf in leaves:
+                if not visited[leaf]:
+                    stack.append(leaf)
+                    all_leaves_visited = False
+                    break
+            if all_leaves_visited:
+                stack.pop()
+        # Debugging output
+        self.verbose_logger.log(logginglevels.DEBUG_2, _("%s has no user-installed revdeps."), pkg)
+        return False
+
