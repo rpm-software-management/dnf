@@ -23,9 +23,13 @@ gnome\-packagekit application\&.
 .br 
 .I \fR * update [package1] [package2] [\&.\&.\&.]
 .br 
+.I \fR * update-to [package1] [package2] [\&.\&.\&.]
+.br 
 .I \fR * check\-update
 .br 
 .I \fR * upgrade [package1] [package2] [\&.\&.\&.] 
+.br
+.I \fR * upgrade-to [package1] [package2] [\&.\&.\&.] 
 .br
 .I \fR * distribution-synchronization [package1] [package2] [\&.\&.\&.] 
 .br
@@ -73,7 +77,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
-.I \fR * history [info|list|packages-list|summary|redo|undo|new|addon-info] 
+.I \fR * history [info|list|packages-list|summary|addon-info|redo|undo|rollback|new] 
 .br
 .I \fR * check
 .br 
@@ -112,6 +116,16 @@ If the main obsoletes configure option is true (default) or the \-\-obsoletes
 flag is present \fByum\fP will include package 
 obsoletes in its calculations - this makes it better for distro\-version 
 changes, for example: upgrading from somelinux 8.0 to somelinux 9.
+
+Note that "\fBupdate\fP" works on installed packages first, and only if there
+are no matches does it look for available packages. The difference is most
+noticable when you do "\fBupdate\fP foo-1-2" which will act exactly as
+"\fBupdate\fP foo" if foo-1-2 is installed. You can use the "\fBupdate-to\fP"
+if you'd prefer that nothing happen in the above case.
+.IP 
+.IP "\fBupdate-to\fP"
+This command works like "\fBupdate\fP" but always specifies the version of the
+package we want to update to.
 .IP 
 .IP "\fBcheck\-update\fP"
 Implemented so you could know if your machine had any updates that needed to
@@ -125,12 +139,21 @@ Running in verbose mode also shows obsoletes.
 Is the same as the update command with the \-\-obsoletes flag set. See update 
 for more details.
 .IP 
+.IP "\fBupgrade-to\fP"
+This command works like "\fBupgrade\fP" but always specifies the version of the
+package we want to update to.
+.IP 
 .IP "\fBdistribution\-synchronization\fP or \fBdistro\-sync\fP"
 Synchronizes the installed package set with the latest packages available, this
 is done by either obsoleting, upgrading or downgrading as appropriate. This will
 "normally" do the same thing as the upgrade command however if you have the
 package FOO installed at version 4, and the latest available is only
 version 3, then this command will \fBdowngrade\fP FOO to version 3.
+
+If you give the optional argument "full", then the command will also reinstall
+packages where the install checksum and the available checksum do not match. And
+remove old packages (can be used to sync. rpmdb versions). The optional argument
+"different" can be used to specify the default operation.
 
 This command does not perform operations on groups, local packages or negative
 selections.
@@ -253,7 +276,10 @@ on groups, files, provides, filelists and rpm files just like the "install" comm
 .IP
 .IP "\fBdeplist\fP"
 Produces a list of all dependencies and what packages provide those
-dependencies for the given packages.
+dependencies for the given packages. As of 3.2.30 it now just shows the latest
+version of each package that matches (this can be changed by
+using --showduplicates) and it only shows the newest providers (which can be
+changed by using --verbose).
 .IP
 .IP "\fBrepolist\fP"
 Produces a list of configured repositories. The default is to list all
@@ -305,19 +331,36 @@ and so takes sub-commands:
 .IP "\fBhistory\fP"
 The history command allows the user to view what has happened in past
 transactions (assuming the history_record config. option is set). You can use
-info/list/summary to view what happened, undo/redo to act on that information
-and new to start a new history file.
+info/list/packages-list/summary to view what happened, undo/redo/rollback to act
+on that information and new to start a new history file.
 
 The info/list/summary commands take either a transaction id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
 
-The undo/redo commands take either a transaction id or the keyword last and
-an offset from the last transaction (Eg. if you've done 250 transactions,
-"last" refers to transaction 250, and "last-4" refers to transaction 246).
+The packages-list command takes a package  (with wildcards, as in
+\fBSpecifying package names\fP).
+
+The undo/redo/rollback commands take either a single transaction id or the
+keyword last and an offset from the last transaction (Eg. if you've done 250
+transactions, "last" refers to transaction 250, and "last-4" refers to
+transaction 246).
+
+The undo/redo commands act on the specified transaction, undo'ing or repeating
+the work of that transaction. While the rollback command will undo all
+transactions upto the point of the specified transaction. For example, if you
+have 3 transactions, where package A; B and C where installed respectively.
+Then "undo 1" will try to remove pacakge A, "redo 1" will try to install package
+A (if it is not still installed), and "rollback 1" will try to remove packages
+B and C. Note that after a "rollback 1" you will have a fourth transaction,
+although the ending rpmdb version (see: yum version) should be the same in
+transactions 1 and 4.
 
 The addon-info command takes a transaction ID, and the packages-list command
 takes a package (with wildcards).
+
+In "history list" you can change the behaviour of the 2nd column via. the
+configuration option history_list_view.
 
 In "history list" output the Altered column also gives some extra information
 if there was something not good with the transaction (this is also shown at the
@@ -406,7 +449,11 @@ Doesn't limit packages to their latest versions in the info, list and search
 commands (will also affect plugins which use the doPackageLists() API).
 .IP "\fB\-\-installroot=root\fP" 
 Specifies an alternative installroot, relative to which all packages will be
-installed.
+installed. Think of this like doing "chroot <root> yum" except using
+\-\-installroot allows yum to work before the chroot is created.
+Note: You may also want to use the option \-\-releasever=/ when creating the
+installroot as otherwise the $releasever value is taken from the rpmdb within
+the installroot (and thus. will be empty, before creation).
 .br
 Configuration Option: \fBinstallroot\fP
 .IP "\fB\-\-enablerepo=repoidglob\fP"
@@ -462,9 +509,11 @@ Configuration Option: \fBskip_broken\fP
 .br
 .IP "\fB\-\-releasever=version\fP"
 Pretend the current release version is the given string. This is very useful
-when combined with \-\-installroot. Note that with the default upstream cachedir,
-of /var/cache/yum, using this option will corrupt your cache (and you can use
-$releasever in your cachedir configuration to stop this).
+when combined with \-\-installroot. You can also use \-\-releasever=/ to take
+the releasever information from outside the installroot.
+Note that with the default upstream cachedir, of /var/cache/yum, using this
+option will corrupt your cache (and you can use $releasever in your cachedir
+configuration to stop this).
 .PP 
 .IP "\fB\-t, \-\-tolerant\fP"
 This option currently does nothing.

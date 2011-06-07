@@ -318,6 +318,13 @@ is not registered.
 Path to the SSL client certificate yum should use to connect to repos/remote sites
 Defaults to none.
 
+Note that if you are using curl compiled against NSS (default in Fedora/RHEL),
+curl treats sslclientcert values with the same basename as _identical_. This
+version of yum will check that this isn't true and output an error when the
+repositories "foo" and "bar" violate this, like so:
+
+sslclientcert basename shared between foo and bar
+
 .IP
 \fBsslclientkey \fR
 Path to the SSL client key yum should use to connect to repos/remote sites
@@ -348,6 +355,19 @@ This is a list of package names that should be recorded as having helped the
 transaction. yum plugins have an API to add themselves to this, so it should not
 normally be necessary to add packages here. Not that this is also used for the
 packages to look for in \-\-version. Defaults to rpm, yum, yum-metadata-parser.
+
+.IP
+\fBhistory_list_view \fR
+Which column of information to display in the "yum history list" command. There
+are currently three options: users, cmds (or commands), auto.
+
+Older versions of yum acted like "users", which always outputs the user who
+initiated the yum transaction. You can now specify "commands" which will instead
+always output the command line of the transaction. You can also specify
+"single-user-commands" which will display the users if there are more than one,
+otherwise it will display the command line.
+
+You can also specify "default" which currently selects "single-user-commands".
 
 .IP
 \fBcommands\fR
@@ -472,8 +492,8 @@ bugtrackers.
 
 .IP
 \fBcolor \fR
-Display colorized output automatically, depending on the output terminal,
-always (using ANSI codes) or never.
+Whether to display colorized output automatically, depending on the output
+terminal, can be changed to always (using ANSI codes) or never.
 Default is `auto'.
 Possible values are: auto, never, always.
 Command-line option: \fB\-\-color\fP

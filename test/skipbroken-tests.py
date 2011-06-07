@@ -1,7 +1,10 @@
 import unittest
 import logging
 import sys
+import re
 from testbase import *
+
+REGEX_PKG = re.compile(r"(\d*):?(.*)-(.*)-(.*)\.(.*)$")
 
 class SkipBrokenTests(DepsolveTests):
     ''' Test cases to test skip-broken'''
@@ -20,6 +23,36 @@ class SkipBrokenTests(DepsolveTests):
         po = FakePackage(name, version, release, epoch, arch, repo=self.repo)
         self.rpmdb.addPackage(po)
         return po
+
+    def _pkgstr_to_nevra(self, pkg_str):
+        '''
+        Get a nevra from from a epoch:name-version-release.arch string
+        @param pkg_str: package string
+        '''
+        res = REGEX_PKG.search(pkg_str)
+        if res:
+            (e,n,v,r,a) = res.groups()
+            if e == "": 
+                e = "0"
+            return (n,e,v,r,a)   
+        else: 
+            raise AttributeError("Illegal package string : %s" % pkg_str)
+
+    def repoString(self, pkg_str):
+        ''' 
+        Add an available package from a epoch:name-version-release.arch string
+        '''
+        (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
+        return self.repoPackage(n,v,r,e,a)   
+                
+            
+    def instString(self, pkg_str):
+        ''' 
+        Add an installed package from a epoch:name-version-release.arch string
+        '''
+        (n,e,v,r,a) = self._pkgstr_to_nevra(pkg_str)
+        return self.instPackage(n,v,r,e,a)   
+
            
     def testMissingReqNoSkip(self):
         ''' install fails,  because of missing req.
@@ -671,6 +704,111 @@ class SkipBrokenTests(DepsolveTests):
         # uncomment this line and the test will fail and you can see the output
         # self.assertResult([i1])
         
+    def test_conflict_looping(self):
+        ''' 
+        Skip-broken is looping
+        https://bugzilla.redhat.com/show_bug.cgi?id=681806
+        '''
+        members = [] # the result after the transaction
+        # Installed package conflicts with u1
+        i0 = self.instString('kde-l10n-4.6.0-3.fc15.1.noarch')
+        i0.addConflicts('kdepim', 'GT', ('6', '4.5.9', '0'))
+        members.append(i0)
+        i1 = self.instString('6:kdepim-4.5.94.1-1.fc14.x86_64')
+        u1 = self.repoString('7:kdepim-4.4.10-1.fc15.x86_64')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        # u1 should be removed, because of the conflict
+        members.append(i1)
+        i2 = self.instString('6:kdepim-libs-4.5.94.1-1.fc14.x86_64')
+        u2 = self.repoString('7:kdepim-libs-4.4.10-1.fc15.x86_64')
+        self.tsInfo.addUpdate(u2, oldpo=i2)
+        members.append(u2)
+        i3 = self.instString('kdepim-runtime-libs-4.5.94.1-2.fc14.x86_64')
+        u3 = self.repoString('1:kdepim-runtime-libs-4.4.10-2.fc15.x86_64')
+        self.tsInfo.addUpdate(u3, oldpo=i3)
+        members.append(u3)
+        i4 = self.instString('kdepim-runtime-4.5.94.1-2.fc14.x86_64')
+        u4 = self.repoString('1:kdepim-runtime-4.4.10-2.fc15.x86_64')
+        self.tsInfo.addUpdate(u4, oldpo=i4)
+        members.append(u4)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
+
+    def test_skipbroken_001(self):
+        ''' 
+        this will pass
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        self.assertEquals('empty', *self.resolveCode(skip=True))
+        self.assertResult(members)
+
+
+    def test_skipbroken_002(self):
+        ''' 
+        this will pass
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        # this is just junk to make the transaction big
+        i1 = self.instString('afoobar-0.4.12-2.fc12.noarch')
+        u1 = self.repoString('afoobar-0.4.14-1.fc14.noarch')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        members.append(u1)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
+
+    def test_skipbroken_003(self):
+        ''' 
+        this will fail, because of a bug in the skip-broken code.
+        it will remove the wrong package (zfoobar) instead of openssl.
+        the problem is that self._working_po is not set with the right value
+        when checking file requires for installed packages after the transaction
+        if resolved. (_resolveRequires)
+        if fails because self._working_po contains the last package processed in the transaction
+        zfoobar, so it will be removed.
+        https://bugzilla.redhat.com/show_bug.cgi?id=656057
+        
+        This should not fail anymore, after the the self._working_po is reset in depsolver
+        '''
+        members = []
+        # Installed package conflicts with ux1
+        ix0 = self.instString('1:libguestfs-1.6.0-1.fc14.1.i686')
+        ix0.addRequires('/usr/lib/.libssl.so.1.0.0a.hmac')
+        members.append(ix0)
+        ix1 = self.instString('openssl-1.0.0a-2.fc14.i686')
+        ix1.addFile("/usr/lib/.libssl.so.1.0.0a.hmac")
+        ux1 = self.repoString('openssl-1.0.0b-1.fc14.i686')
+        ux1.addFile("/usr/lib/.libssl.so.1.0.0b.hmac")
+        self.tsInfo.addUpdate(ux1, oldpo=ix1)
+        members.append(ix1)
+        # this is just junk to make the transaction big
+        i1 = self.instString('zfoobar-0.4.12-2.fc12.noarch')
+        u1 = self.repoString('zfoobar-0.4.14-1.fc14.noarch')
+        self.tsInfo.addUpdate(u1, oldpo=i1)
+        members.append(u1)
+        self.assertEquals('ok', *self.resolveCode(skip=True))
+        self.assertResult(members)
     
     
     def resolveCode(self,skip = False):

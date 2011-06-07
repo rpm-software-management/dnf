@@ -31,11 +31,12 @@ import warnings
 from subprocess import Popen, PIPE
 from rpmUtils import RpmUtilsError
 import rpmUtils.miscutils
-from rpmUtils.miscutils import flagToString, stringToVersion
+from rpmUtils.miscutils import flagToString, stringToVersion, compareVerOnly
 import Errors
 import errno
 import struct
 from constants import *
+from operator import itemgetter
 
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -273,6 +274,15 @@ class PackageObject(object):
     def __str__(self):
         return self.ui_envra
 
+    def printVer(self):
+        """returns a printable version string - including epoch, if it's set"""
+        if self.epoch != '0':
+            ver = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        else:
+            ver = '%s-%s' % (self.version, self.release)
+
+        return ver
+
     def verCMP(self, other):
         """ Compare package to another one, only rpm-version ordering. """
         if not other:
@@ -352,6 +362,36 @@ class PackageObject(object):
         for (csumtype, csum, csumid) in self.checksums:
             if csumid:
                 return (csumtype, csum)
+
+
+_not_found_repo = FakeRepository('-')
+_not_found_repo.cost = 0
+class YumNotFoundPackage(PackageObject):
+
+    def __init__(self, pkgtup):
+        self.name    = pkgtup[0]
+        self.arch    = pkgtup[1]
+        self.epoch   = pkgtup[2]
+        self.version = pkgtup[3]
+        self.release = pkgtup[4]
+        self.pkgtup  = pkgtup
+
+        self.size = 0
+        self._checksums = [] # (type, checksum, id(0,1)
+
+        self.repo = _not_found_repo
+        self.repoid = _not_found_repo.id
+
+    # Fakeout output.py that it's a real pkg. ...
+    def _ui_from_repo(self):
+        """ This just returns '-' """
+        return self.repoid
+    ui_from_repo = property(fget=lambda self: self._ui_from_repo())
+
+    def verifyLocalPkg(self):
+        """check the package checksum vs the localPkg
+           return True if pkg is good, False if not"""
+        return False
 
 #  This is the virtual base class of actual packages, it basically requires a
 # repo. even though it doesn't set one up in it's __init__. It also doesn't have
@@ -497,11 +537,9 @@ class RpmBase(object):
             else:
                 pri_only = False
 
-            files = self.returnFileEntries('file', pri_only) + \
-                    self.returnFileEntries('dir', pri_only) + \
-                    self.returnFileEntries('ghost', pri_only)
-            if reqtuple[0] in files:
-                return True
+            for ftype in ('file', 'dir', 'ghost'):
+                if reqtuple[0] in self.returnFileEntries(ftype, pri_only):
+                    return True
         
         return False
         
@@ -1069,6 +1107,9 @@ class YumAvailablePackage(PackageObject, RpmBase):
             
         if self.sourcerpm:
             msg += """    <rpm:sourcerpm>%s</rpm:sourcerpm>\n""" % misc.to_xml(self.sourcerpm)
+        else: # b/c yum 2.4.3 and OLD y-m-p willgfreak out if it is not there.
+            msg += """    <rpm:sourcerpm/>\n"""
+        
         msg +="""    <rpm:header-range start="%s" end="%s"/>""" % (self.hdrstart,
                                                                self.hdrend)
         msg += self._dump_pco('provides')
@@ -1129,7 +1170,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         raise NotImplementedError()
                     
     def _dump_requires(self):
-        """returns deps in format"""
+        """returns deps in XML format"""
         mylist = self._requires_with_pre()
 
         msg = ""
@@ -1138,7 +1179,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
         if hasattr(self, '_collapse_libc_requires') and self._collapse_libc_requires:
             libc_requires = filter(lambda x: x[0].startswith('libc.so.6'), mylist)
             if libc_requires:
-                best = sorted(libc_requires)[-1]
+                rest = sorted(libc_requires, cmp=compareVerOnly, key=itemgetter(0))
+                best = rest.pop()
+                if best[0].startswith('libc.so.6()'): # rpmvercmp will sort this one as 'highest' so we need to remove it from the list
+                    best = rest.pop()
                 newlist = []
                 for i in mylist:
                     if i[0].startswith('libc.so.6') and i != best:
@@ -1150,8 +1194,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if name.startswith('rpmlib('):
                 continue
             # this drops out requires that the pkg provides for itself.
-            if name in self.provides_names or name in self.filelist + \
-                                                self.dirlist + self.ghostlist:
+            if name in self.provides_names or \
+                    (name.startswith('/') and \
+                         (name in self.filelist or name in self.dirlist or
+                          name in self.ghostlist)):
                 if not flags:
                     continue
                 else:
@@ -1243,18 +1289,32 @@ class YumHeaderPackage(YumAvailablePackage):
         self.ver = self.version
         self.rel = self.release
         self.pkgtup = (self.name, self.arch, self.epoch, self.version, self.release)
-        # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
-        self.summary = self.hdr['summary'] or ''
-        self.summary = misc.share_data(self.summary.replace('\n', ''))
-        self.description = self.hdr['description'] or ''
-        self.description = misc.share_data(self.description)
+        self._loaded_summary = None
+        self._loaded_description = None
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
         self.packagesize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False
-        
+
+    def _loadSummary(self):
+        # Summaries "can be" empty, which rpm return [], see BZ 473239, *sigh*
+        if self._loaded_summary is None:
+            summary = self._get_hdr()['summary'] or ''
+            summary = misc.share_data(summary.replace('\n', ''))
+            self._loaded_summary = summary
+        return self._loaded_summary
+    summary = property(lambda x: x._loadSummary())
+
+    def _loadDescription(self):
+        if self._loaded_description is None:
+            description = self._get_hdr()['description'] or ''
+            description = misc.share_data(description)
+            self._loaded_description = description
+        return self._loaded_description
+    description = property(lambda x: x._loadDescription())
+
     def __str__(self):
         if self.epoch == '0':
             val = '%s-%s-%s.%s' % (self.name, self.version, self.release,
@@ -1828,7 +1888,6 @@ class YumInstalledPackage(YumHeaderPackage):
                 my_mode = my_st.st_mode
                 if 'ghost' in ftypes: #  This is what rpm does, although it
                     my_mode &= 0777   # doesn't usually get here.
-                    mode    &= 0777
                 if check_perms and pf.verify_mode and my_mode != pf.mode:
                     prob = _PkgVerifyProb('mode', 'mode does not match', ftypes)
                     prob.database_value = pf.mode

@@ -32,6 +32,15 @@ import Errors
 
 import rpmUtils.miscutils
 
+
+def safe_iterparse(filename):
+    """ Works like iterparse, but hides XML errors (prints a warning). """
+    try:
+        for event, elem in iterparse(filename):
+            yield event, elem
+    except SyntaxError: # Bad XML
+        print >> sys.stderr, "File is not valid XML:", filename
+
 class UpdateNoticeException(Exception):
     """ An exception thrown for bad UpdateNotice data. """
     pass
@@ -445,7 +454,7 @@ class UpdateMetadata(object):
         else:   # obj is a file object
             infile = obj
 
-        for event, elem in iterparse(infile):
+        for event, elem in safe_iterparse(infile):
             if elem.tag == 'update':
                 try:
                     un = UpdateNotice(elem)

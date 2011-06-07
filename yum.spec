@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.2.29
+Version: 3.4.1
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
@@ -212,6 +212,13 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Wed Apr 20 2011 James Antill <james at fedoraproject.org>
+- 3.4.1
+- umask bug fix.
+
+* Thu Apr 14 2011 James Antill <james at fedoraproject.org>
+- 3.4.0
+
 * Wed Jan 12 2011 Seth Vidal <skvidal at fedoraproject.org>
 - put yum-cron back into yum and make the subpkg. Thanks To Alec Habig for
   maintaining this so well for so long.

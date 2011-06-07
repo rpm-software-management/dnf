@@ -37,16 +37,31 @@ import constants
 
 import yum.depsolve
 
+def _open_no_umask(*args):
+    """ Annoying people like to set umask's for root, which screws everything
+        up for user readable stuff. """
+    oumask = os.umask(022)
+    try:
+        ret = open(*args)
+    finally:
+        os.umask(oumask)
+
+    return ret
+
+def _iopen(*args):
+    """ IOError wrapper BS for open, stupid exceptions. """
+    try:
+        ret = open(*args)
+    except IOError, e:
+        return None, e
+    return ret, None
+
+
 class RPMInstalledPackage(YumInstalledPackage):
 
     def __init__(self, rpmhdr, index, rpmdb):
         self._has_hdr = True
         YumInstalledPackage.__init__(self, rpmhdr, yumdb=rpmdb.yumdb)
-        # NOTE: We keep summary/description/url because it doesn't add much
-        # and "yum search" uses them all.
-        self.url       = rpmhdr['url']
-        # Also keep sourcerpm for pirut/etc.
-        self.sourcerpm = rpmhdr['sourcerpm']
 
         self.idx   = index
         self.rpmdb = rpmdb
@@ -67,13 +82,19 @@ class RPMInstalledPackage(YumInstalledPackage):
             raise Errors.PackageSackError, 'Rpmdb changed underneath us'
 
     def __getattr__(self, varname):
-        self.hdr = val = self._get_hdr()
-        self._has_hdr = True
-        # If these existed, then we wouldn't get here ... and nothing in the DB
-        # starts and ends with __'s. So these are missing.
-        if varname.startswith('__') and varname.endswith('__'):
+        # If these existed, then we wouldn't get here...
+        # Prevent access of __foo__, _cached_foo etc from loading the header 
+        if varname.startswith('_'):
             raise AttributeError, "%s has no attribute %s" % (self, varname)
-            
+
+        if varname != 'hdr': # Don't cache the hdr, unless explicitly requested
+            #  Note that we don't even cache the .blah value, but looking up the
+            # header is _really_ fast so it's not obvious any of it is worth it.
+            # This is different to prco etc. data, which is loaded separately.
+            val = self._get_hdr()
+        else:
+            self.hdr = val = self._get_hdr()
+            self._has_hdr = True
         if varname != 'hdr':   #  This is unusual, for anything that happens
             val = val[varname] # a lot we should preload at __init__.
                                # Also note that pkg.no_value raises KeyError.
@@ -234,7 +255,7 @@ class RPMDBPackageSack(PackageSackBase):
                 self._simple_pkgtup_list = csumpkgtups.keys()
 
         if not self._simple_pkgtup_list:
-            for (hdr, mi) in self._all_packages():
+            for (hdr, mi) in self._get_packages():
                 self._simple_pkgtup_list.append(self._hdr2pkgTuple(hdr))
             
         return self._simple_pkgtup_list
@@ -322,6 +343,18 @@ class RPMDBPackageSack(PackageSackBase):
             if txmbr.output_state in constants.TS_INSTALL_STATES:
                 self._pkgname_fails.discard(txmbr.name)
                 precache.append(txmbr)
+                if txmbr.reinstall:
+                    #  For reinstall packages we have:
+                    #
+                    # 1. one txmbr: the new install.
+                    # 2. two rpmdb entries: the new; the old;
+                    #
+                    # ...so we need to remove the old one, given only the new
+                    # one.
+                    ipo = self._tup2pkg[txmbr.pkgtup]
+                    _safe_del(self._idx2pkg, ipo.idx)
+                    _safe_del(self._tup2pkg, txmbr.pkgtup)
+
             if txmbr.output_state in constants.TS_REMOVE_STATES:
                 _safe_del(self._idx2pkg, txmbr.po.idx)
                 _safe_del(self._tup2pkg, txmbr.pkgtup)
@@ -378,54 +411,36 @@ class RPMDBPackageSack(PackageSackBase):
         pass
 
     def searchAll(self, name, query_type='like'):
-        ts = self.readOnlyTS()
         result = {}
 
         # check provides
         tag = self.DEP_TABLE['provides'][0]
-        mi = ts.dbMatch()
-        mi.pattern(tag, rpm.RPMMIRE_GLOB, name)
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            pkg = self._makePackageObject(hdr, mi.instance())
+        mi = self._get_packages(patterns=[(tag, rpm.RPMMIRE_GLOB, name)])
+        for hdr, idx in mi:
+            pkg = self._makePackageObject(hdr, idx)
             result.setdefault(pkg.pkgid, pkg)
-        del mi
 
         fileresults = self.searchFiles(name)
         for pkg in fileresults:
             result.setdefault(pkg.pkgid, pkg)
         
-        if self.auto_close:
-            self.ts.close()
-
         return result.values()
 
     def searchFiles(self, name):
         """search the filelists in the rpms for anything matching name"""
 
-        ts = self.readOnlyTS()
         result = {}
         
         name = os.path.normpath(name)
-        mi = ts.dbMatch('basenames', name)
         # Note that globs can't be done. As of 4.8.1:
         #   mi.pattern('basenames', rpm.RPMMIRE_GLOB, name)
         # ...produces no results.
 
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            pkg = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in self._get_packages('basenames', name):
+            pkg = self._makePackageObject(hdr, idx)
             result.setdefault(pkg.pkgid, pkg)
-        del mi
 
-        result = result.values()
-
-        if self.auto_close:
-            self.ts.close()
-
-        return result
+        return result.values()
         
     def searchPrco(self, name, prcotype):
 
@@ -438,21 +453,15 @@ class RPMDBPackageSack(PackageSackBase):
         if misc.re_glob(n):
             glob = True
             
-        ts = self.readOnlyTS()
         result = {}
         tag = self.DEP_TABLE[prcotype][0]
-        mi = ts.dbMatch(tag, misc.to_utf8(n))
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            po = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in self._get_packages(tag, misc.to_utf8(n)):
+            po = self._makePackageObject(hdr, idx)
             if not glob:
                 if po.checkPrco(prcotype, (n, f, (e,v,r))):
                     result[po.pkgid] = po
             else:
                 result[po.pkgid] = po
-        del mi
-
 
         # If it's not a provides or filename, we are done
         if prcotype == 'provides' and name[0] == '/':
@@ -462,9 +471,6 @@ class RPMDBPackageSack(PackageSackBase):
         
         result = result.values()
         self._cache[prcotype][name] = result
-
-        if self.auto_close:
-            self.ts.close()
 
         return result
 
@@ -607,7 +613,7 @@ class RPMDBPackageSack(PackageSackBase):
 
         if not self._completely_loaded:
             rpats = self._compile_patterns(patterns, ignore_case)
-            for hdr, idx in self._all_packages():
+            for hdr, idx in self._get_packages():
                 if self._match_repattern(rpats, hdr, ignore_case):
                     self._makePackageObject(hdr, idx)
             self._completely_loaded = patterns is None
@@ -636,18 +642,13 @@ class RPMDBPackageSack(PackageSackBase):
 
         if self._cached_conflicts_data is None:
             result = {}
-            ts = self.readOnlyTS()
-            mi = ts.dbMatch('conflictname')
 
-            for hdr in mi:
-                if hdr['name'] == 'gpg-pubkey': # Just in case...
-                    continue
-
+            for hdr, idx in self._get_packages('conflictname'):
                 if not hdr[rpm.RPMTAG_CONFLICTNAME]:
                     # Pre. rpm-4.9.x the above dbMatch() does nothing.
                     continue
 
-                po = self._makePackageObject(hdr, mi.instance())
+                po = self._makePackageObject(hdr, idx)
                 result[po.pkgid] = po
                 if po._has_hdr:
                     continue # Unlikely, but, meh...
@@ -659,9 +660,6 @@ class RPMDBPackageSack(PackageSackBase):
                 del po.hdr
             self._cached_conflicts_data = result.values()
 
-            if self.auto_close:
-                self.ts.close()
-
         return self._cached_conflicts_data
 
     def _write_conflicts_new(self, pkgs, rpmdbv):
@@ -669,7 +667,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         conflicts_fname = self._cachedir + '/conflicts'
-        fo = open(conflicts_fname + '.tmp', 'w')
+        fo = _open_no_umask(conflicts_fname + '.tmp', 'w')
         fo.write("%s\n" % rpmdbv)
         fo.write("%u\n" % len(pkgs))
         for pkg in sorted(pkgs):
@@ -711,10 +709,9 @@ class RPMDBPackageSack(PackageSackBase):
             return fo.readline()[:-1]
 
         conflict_fname = self._cachedir + '/conflicts'
-        if not os.path.exists(conflict_fname):
+        fo, e = _iopen(conflict_fname)
+        if fo is None:
             return None
-
-        fo = open(conflict_fname)
         frpmdbv = fo.readline()
         rpmdbv = self.simpleVersion(main_only=True)[0]
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
@@ -800,11 +797,12 @@ class RPMDBPackageSack(PackageSackBase):
             return fo.readline()[:-1]
 
         assert self.__cache_rpmdb__
-        if not os.path.exists(self._cachedir + '/file-requires'):
+
+        fo, e = _iopen(self._cachedir + '/file-requires')
+        if fo is None:
             return None, None
 
         rpmdbv = self.simpleVersion(main_only=True)[0]
-        fo = open(self._cachedir + '/file-requires')
         frpmdbv = fo.readline()
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
             return None, None
@@ -923,7 +921,7 @@ class RPMDBPackageSack(PackageSackBase):
         if installedUnresolvedFileRequires:
             return
 
-        fo = open(self._cachedir + '/file-requires.tmp', 'w')
+        fo = _open_no_umask(self._cachedir + '/file-requires.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
 
         fo.write("%u\n" % len(installedFileRequires))
@@ -957,14 +955,14 @@ class RPMDBPackageSack(PackageSackBase):
         if not self.__cache_rpmdb__:
             return
 
-        if not os.path.exists(self._cachedir + '/pkgtups-checksums'):
-            return
-
         def _read_str(fo):
             return fo.readline()[:-1]
 
+        fo, e = _iopen(self._cachedir + '/pkgtups-checksums')
+        if fo is None:
+            return
+
         rpmdbv = self.simpleVersion(main_only=True)[0]
-        fo = open(self._cachedir + '/pkgtups-checksums')
         frpmdbv = fo.readline()
         if not frpmdbv or rpmdbv != frpmdbv[:-1]:
             return
@@ -1025,7 +1023,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         pkg_checksum_tups = data
-        fo = open(self._cachedir + '/pkgtups-checksums.tmp', 'w')
+        fo = _open_no_umask(self._cachedir + '/pkgtups-checksums.tmp', 'w')
         fo.write("%s\n" % rpmdbversion)
         fo.write("%u\n" % len(pkg_checksum_tups))
         for pkgtup, TD in sorted(pkg_checksum_tups):
@@ -1058,7 +1056,10 @@ class RPMDBPackageSack(PackageSackBase):
             nmtime = os.path.getmtime(rpmdbvfname)
             omtime = os.path.getmtime(rpmdbfname)
             if omtime <= nmtime:
-                rpmdbv = open(rpmdbvfname).readline()[:-1]
+                fo, e = _iopen(rpmdbvfname)
+                if fo is None:
+                    return None
+                rpmdbv = fo.readline()[:-1]
                 self._have_cached_rpmdbv_data  = rpmdbv
         return self._have_cached_rpmdbv_data
 
@@ -1091,7 +1092,7 @@ class RPMDBPackageSack(PackageSackBase):
             except (IOError, OSError), e:
                 return
 
-        fo = open(rpmdbvfname + ".tmp", "w")
+        fo = _open_no_umask(rpmdbvfname + ".tmp", "w")
         fo.write(self._have_cached_rpmdbv_data)
         fo.write('\n')
         fo.close()
@@ -1168,7 +1169,7 @@ class RPMDBPackageSack(PackageSackBase):
         if not lowered:
             searchstrings = map(lambda x: x.lower(), searchstrings)
         ret = []
-        for hdr, idx in self._all_packages():
+        for hdr, idx in self._get_packages():
             n = self._find_search_fields(fields, searchstrings, hdr)
             if n > 0:
                 ret.append((self._makePackageObject(hdr, idx), n))
@@ -1190,40 +1191,19 @@ class RPMDBPackageSack(PackageSackBase):
         return [ self._makePackageObject(h, mi) for (h, mi) in ts.returnLeafNodes(headers=True) ]
         
     # Helper functions
-    def _all_packages(self):
-        '''Generator that yield (header, index) for all packages
+    def _get_packages(self, *args, **kwds):
+        '''dbMatch() wrapper generator that yields (header, index) for matches
         '''
         ts = self.readOnlyTS()
-        mi = ts.dbMatch()
 
-        for hdr in mi:
-            if hdr['name'] != 'gpg-pubkey':
-                yield (hdr, mi.instance())
+        mi = ts.dbMatch(*args, **kwds)
+        for h in mi:
+            if h['name'] != 'gpg-pubkey':
+                yield (h, mi.instance())
         del mi
+
         if self.auto_close:
             self.ts.close()
-
-    def _header_from_index(self, idx):
-        """returns a package header having been given an index"""
-        warnings.warn('_header_from_index() will go away in a future version of Yum.\n',
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        ts = self.readOnlyTS()
-        try:
-            mi = ts.dbMatch(0, idx)
-        except (TypeError, StopIteration), e:
-            #FIXME: raise some kind of error here
-            print 'No index matching %s found in rpmdb, this is bad' % idx
-            yield None # it should REALLY not be returning none - this needs to be right
-        else:
-            hdr = mi.next()
-            yield hdr
-            del hdr
-
-        del mi
-        if self.auto_close:
-            self.ts.close()
-
 
     def _search(self, name=None, epoch=None, ver=None, rel=None, arch=None):
         '''List of matching packages, to zero or more of NEVRA.'''
@@ -1254,18 +1234,16 @@ class RPMDBPackageSack(PackageSackBase):
 
         ts = self.readOnlyTS()
         if name is not None:
-            mi = ts.dbMatch('name', name)
+            mi = self._get_packages('name', name)
         elif arch is not None:
-            mi = ts.dbMatch('arch', arch)
+            mi = self._get_packages('arch', arch)
         else:
-            mi = ts.dbMatch()
+            mi = self._get_packages()
             self._completely_loaded = True
 
         done = False
-        for hdr in mi:
-            if hdr['name'] == 'gpg-pubkey':
-                continue
-            po = self._makePackageObject(hdr, mi.instance())
+        for hdr, idx in mi:
+            po = self._makePackageObject(hdr, idx)
             #  We create POs out of all matching names, even if we don't return
             # them.
             self._pkgnames_loaded.add(po.name)
@@ -1276,9 +1254,6 @@ class RPMDBPackageSack(PackageSackBase):
                     break
             else:
                 ret.append(po)
-
-        if self.auto_close:
-            self.ts.close()
 
         if not done and name is not None:
             self._pkgname_fails.add(name)
@@ -1323,7 +1298,7 @@ class RPMDBPackageSack(PackageSackBase):
     def getHdrList(self):
         warnings.warn('getHdrList() will go away in a future version of Yum.\n',
                 DeprecationWarning, stacklevel=2)
-        return [ hdr for hdr, idx in self._all_packages() ]
+        return [ hdr for hdr, idx in self._get_packages() ]
 
     def getNameArchPkgList(self):
         warnings.warn('getNameArchPkgList() will go away in a future version of Yum.\n',
@@ -1754,7 +1729,8 @@ class RPMDBAdditionalDataPackage(object):
 
         # Default write()+rename()... hardlink -c can still help.
         misc.unlink_f(fn + '.tmp')
-        fo = open(fn + '.tmp', 'w')
+
+        fo = _open_no_umask(fn + '.tmp', 'w')
         try:
             fo.write(value)
         except (OSError, IOError), e:
@@ -1787,7 +1763,9 @@ class RPMDBAdditionalDataPackage(object):
                 self._auto_cache(attr, self._yumdb_cache[key], fn, info)
                 return self._read_cached_data[attr]
 
-        fo = open(fn, 'r')
+        fo, e = _iopen(fn)
+        if fo is None: # This really sucks, don't do that.
+            return '<E:%d>' % e.errno
         value = fo.read()
         fo.close()
         del fo

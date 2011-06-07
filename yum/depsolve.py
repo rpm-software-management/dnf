@@ -69,6 +69,8 @@ class Depsolve(object):
         self._ts = None
         self._tsInfo = None
         self.dsCallback = None
+        # Callback-style switch, default to legacy (hdr, file) mode
+        self.use_txmbr_in_callback = False
         self.logger = logging.getLogger("yum.Depsolve")
         self.verbose_logger = logging.getLogger("yum.verbose.Depsolve")
 
@@ -220,8 +222,13 @@ class Depsolve(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
+                # New-style callback with just txmbr instead of full headers?
+                if self.use_txmbr_in_callback:
+                    cbkey = txmbr
+                else:
+                    cbkey = (hdr, rpmfile)
                 
-                self.ts.addInstall(hdr, (hdr, rpmfile), txmbr.ts_state)
+                self.ts.addInstall(hdr, cbkey, txmbr.ts_state)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
@@ -343,6 +350,7 @@ class Depsolve(object):
             providers = self.rpmdb.getProvides(needname, needflags, needversion)
 
         for inst_po in providers:
+            self._working_po = inst_po # store the last provider
             inst_str = '%s.%s %s:%s-%s' % inst_po.pkgtup
             (i_n, i_a, i_e, i_v, i_r) = inst_po.pkgtup
             self.verbose_logger.log(logginglevels.DEBUG_2,
@@ -673,11 +681,12 @@ class Depsolve(object):
         if len(self.tsInfo) != length and txmbrs:
             return CheckDeps, errormsgs
 
-        msg = '%s conflicts with %s' % (name, conflicting_po.name)
+        msg = '%s conflicts with %s' % (name, str(conflicting_po))
         errormsgs.append(msg)
         self.verbose_logger.log(logginglevels.DEBUG_1, msg)
         CheckDeps = False
-        self.po_with_problems.add((po,None,errormsgs[-1]))
+        # report the conflicting po, so skip-broken can remove it
+        self.po_with_problems.add((po,conflicting_po,errormsgs[-1]))
         return CheckDeps, errormsgs
 
     def _undoDepInstalls(self):
@@ -745,6 +754,7 @@ class Depsolve(object):
 
 
             # check global FileRequires
+            self._working_po = None # reset the working po
             if CheckRemoves:
                 CheckRemoves = False
                 for po, dep in self._checkFileRequires():
@@ -758,6 +768,7 @@ class Depsolve(object):
                     continue
 
             # check Conflicts
+            self._working_po = None # reset the working po
             if CheckInstalls:
                 CheckInstalls = False
                 for conflict in self._checkConflicts():

@@ -104,6 +104,7 @@ class TransactionData:
         self.depupdated = []
         self.reinstalled = []
         self.downgraded = []
+        self.failed = []
         
     def __len__(self):
         return len(self.pkgdict)

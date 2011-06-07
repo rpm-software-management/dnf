@@ -54,6 +54,10 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
     #print '%s, %s, %s vs %s, %s, %s = %s' % (e1, v1, r1, e2, v2, r2, rc)
     return rc
 
+def compareVerOnly(v1, v2):
+    """compare version strings only using rpm vercmp"""
+    return compareEVR(('', v1, ''), ('', v2, ''))
+    
 def checkSig(ts, package):
     """Takes a transaction set and a package, check it's sigs, 
     return 0 if they are all fine

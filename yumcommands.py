@@ -33,6 +33,15 @@ from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
 import yum.config
 
+def _err_mini_usage(base, basecmd):
+    if basecmd not in base.yum_cli_commands:
+        base.usage()
+        return
+    cmd = base.yum_cli_commands[basecmd]
+    txt = base.yum_cli_commands["help"]._makeOutput(cmd)
+    base.logger.critical(_(' Mini usage:\n'))
+    base.logger.critical(txt)
+
 def checkRootUID(base):
     """
     Verify that the program is being run by the root user.
@@ -46,7 +55,7 @@ def checkRootUID(base):
 def checkGPGKey(base):
     if not base.gpgKeyCheck():
         for repo in base.repos.listEnabled():
-            if (repo.gpgcheck or repo.repo_gpgcheck) and repo.gpgkey == '':
+            if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
                 msg = _("""
 You have enabled checking of packages via GPG keys. This is a good thing. 
 However, you do not have any GPG public keys installed. You need to download
@@ -62,25 +71,26 @@ will install it for you.
 For more information contact your distribution or package provider.
 """)
                 base.logger.critical(msg)
+                base.logger.critical(_("Problem repository: %s"), repo)
                 raise cli.CliError
 
 def checkPackageArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError
 
 def checkItemArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need an item to match'))
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError
 
 def checkGroupArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need a group or list of groups'))
-        base.usage()
+        _err_mini_usage(base, basecmd)
         raise cli.CliError    
 
 def checkCleanArg(base, basecmd, extcmds):
@@ -94,7 +104,7 @@ def checkCleanArg(base, basecmd, extcmds):
     for cmd in extcmds:
         if cmd not in VALID_ARGS:
             base.logger.critical(_('Error: invalid clean argument: %r') % cmd)
-            base.usage()
+            _err_mini_usage(base, basecmd)
             raise cli.CliError
 
 def checkShellArg(base, basecmd, extcmds):
@@ -149,7 +159,7 @@ class YumCommand:
 
     def doneCommand(self, base, msg, *args):
         if not self.done_command_once:
-            base.verbose_logger.log(logginglevels.INFO_2, msg, *args)
+            base.verbose_logger.info(msg, *args)
         self.done_command_once = True
 
     def getNames(self):
@@ -207,7 +217,7 @@ class InstallCommand(YumCommand):
 
 class UpdateCommand(YumCommand):
     def getNames(self):
-        return ['update']
+        return ['update', 'update-to']
 
     def getUsage(self):
         return _("[PACKAGE...]")
@@ -223,7 +233,7 @@ class UpdateCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         self.doneCommand(base, _("Setting up Update Process"))
         try:
-            return base.updatePkgs(extcmds)
+            return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -283,7 +293,7 @@ class InfoCommand(YumCommand):
         return ['info']
 
     def getUsage(self):
-        return "[PACKAGE|all|installed|updates|extras|obsoletes|recent]"
+        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
 
     def getSummary(self):
         return _("Display details about a package or group of packages")
@@ -626,13 +636,14 @@ class CheckUpdateCommand(YumCommand):
         checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
+        obscmds = ['obsoletes'] + extcmds
         base.extcmds.insert(0, 'updates')
         result = 0
         try:
             ypl = base.returnPkgLists(extcmds)
             if (base.conf.obsoletes or
                 base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
-                typl = base.returnPkgLists(['obsoletes'])
+                typl = base.returnPkgLists(obscmds)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
@@ -690,7 +701,7 @@ class SearchCommand(YumCommand):
 
 class UpgradeCommand(YumCommand):
     def getNames(self):
-        return ['upgrade']
+        return ['upgrade', 'upgrade-to']
 
     def getUsage(self):
         return 'PACKAGE...'
@@ -707,7 +718,7 @@ class UpgradeCommand(YumCommand):
         base.conf.obsoletes = 1
         self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
-            return base.updatePkgs(extcmds)
+            return base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
         except yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -972,7 +983,7 @@ class RepoListCommand(YumCommand):
                     elif repo.mirrorlist:
                         out += [base.fmtKeyValFill(_("Repo-mirrors : "),
                                                    repo.mirrorlist)]
-                    if enabled and repo.urls:
+                    if enabled and repo.urls and not baseurls:
                         url = repo.urls[0]
                         if len(repo.urls) > 1:
                             url += ' (%d more)' % (len(repo.urls) - 1)
@@ -1006,6 +1017,10 @@ class RepoListCommand(YumCommand):
                     if ui_excludes_num:
                         out += [base.fmtKeyValFill(_("Repo-excluded: "),
                                                    ui_excludes_num)]
+
+                    if repo.repofile:
+                        out += [base.fmtKeyValFill(_("Repo-filename: "),
+                                                   repo.repofile)]
 
                     base.verbose_logger.log(logginglevels.DEBUG_3,
                                             "%s\n",
@@ -1046,14 +1061,14 @@ class RepoListCommand(YumCommand):
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                base.verbose_logger.log(logginglevels.INFO_2,"%s %s",
+                base.verbose_logger.info("%s %s",
                                         txt_rid, txt_rnam)
             else:
-                base.verbose_logger.log(logginglevels.INFO_2,"%s %s %s",
+                base.verbose_logger.info("%s %s %s",
                                         txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    base.verbose_logger.log(logginglevels.INFO_2, "%s %s",
+                    base.verbose_logger.info("%s %s",
                                             utf8_width_fill(rid, id_len),
                                             utf8_width_fill(rname, nm_len,
                                                             nm_len))
@@ -1061,7 +1076,7 @@ class RepoListCommand(YumCommand):
 
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
-                base.verbose_logger.log(logginglevels.INFO_2, "%s %s %s%s",
+                base.verbose_logger.info("%s %s %s%s",
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
@@ -1130,8 +1145,7 @@ class HelpCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         if extcmds[0] in base.yum_cli_commands:
             command = base.yum_cli_commands[extcmds[0]]
-            base.verbose_logger.log(logginglevels.INFO_2,
-                    self._makeOutput(command))
+            base.verbose_logger.info(self._makeOutput(command))
         return 0, []
 
     def needTs(self, base, basecmd, extcmds):
@@ -1340,7 +1354,7 @@ class HistoryCommand(YumCommand):
         return ['history']
 
     def getUsage(self):
-        return "[info|list|summary|addon-info|package-list|redo|undo|new]"
+        return "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
 
     def getSummary(self):
         return _("Display, or use, the transaction history")
@@ -1365,11 +1379,52 @@ class HistoryCommand(YumCommand):
         if base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
+    def _hcmd_rollback(self, base, extcmds):
+        force = False
+        if len(extcmds) > 1 and extcmds[1] == 'force':
+            force = True
+            extcmds = extcmds[:]
+            extcmds.pop(0)
+
+        old = base._history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history rollback, no transaction']
+        last = base.history.last()
+        if last is None:
+            return 1, ['Failed history rollback, no last?']
+        if old.tid == last.tid:
+            return 0, ['Rollback to current, nothing to do']
+
+        mobj = None
+        for tid in base.history.old(range(old.tid + 1, last.tid + 1)):
+            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
+                if tid.altered_lt_rpmdb:
+                    msg = "Transaction history is incomplete, before %u."
+                else:
+                    msg = "Transaction history is incomplete, after %u."
+                print msg % tid.tid
+                print " You can use 'history rollback force', to try anyway."
+                return 1, ['Failed history rollback, incomplete']
+
+            if mobj is None:
+                mobj = yum.history.YumMergedHistoryTransaction(tid)
+            else:
+                mobj.merge(tid)
+
+        tm = time.ctime(old.beg_timestamp)
+        print "Rollback to transaction %u, from %s" % (old.tid, tm)
+        print base.fmtKeyValFill("  Undoing the following transactions: ",
+                                 ", ".join((str(x) for x in mobj.tid)))
+        base.historyInfoCmdPkgsAltered(mobj)
+        if base.history_undo(mobj):
+            return 2, ["Rollback to transaction %u" % (old.tid,)]
+
     def _hcmd_new(self, base, extcmds):
         base.history._create_db_file()
 
     def doCheck(self, base, basecmd, extcmds):
         cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new',
+                'rollback',
                 'addon', 'addon-info',
                 'pkg', 'pkgs', 'pkg-list', 'pkgs-list',
                 'package', 'package-list', 'packages', 'packages-list')
@@ -1377,7 +1432,7 @@ class HistoryCommand(YumCommand):
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'new'):
+        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
         elif not os.access(base.history._db_file, os.R_OK):
@@ -1405,6 +1460,8 @@ class HistoryCommand(YumCommand):
             ret = self._hcmd_undo(base, extcmds)
         elif vcmd in ('redo', 'repeat'):
             ret = self._hcmd_redo(base, extcmds)
+        elif vcmd == 'rollback':
+            ret = self._hcmd_rollback(base, extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(base, extcmds)
 
@@ -1416,7 +1473,7 @@ class HistoryCommand(YumCommand):
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
-        return vcmd in ('repeat', 'redo', 'undo')
+        return vcmd in ('repeat', 'redo', 'undo', 'rollback')
 
 
 class CheckRpmdbCommand(YumCommand):

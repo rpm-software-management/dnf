@@ -144,6 +144,11 @@ class ConfigPreProcessor:
                 # the current file returned EOF, pop it off the stack.
                 self._popfile()
         
+        # if the section is prefixed by a space then it is breaks iniparser/configparser
+        # so fix it
+        broken_sec_match = re.match(r'\s+\[(?P<section>.*)\]', line)
+        if broken_sec_match:
+            line = line.lstrip()
         # at this point we have a line from the topmost file on the stack
         # or EOF if the stack is empty
         if self._vars:

@@ -25,6 +25,7 @@ import types
 import sys
 from yum.constants import *
 from yum import _
+from yum.transactioninfo import TransactionMember
 import misc
 import tempfile
 
@@ -174,11 +175,11 @@ class RPMTransaction:
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         self.trans_running = False
-        self.filehandles = {}
+        self.fd = None
         self.total_actions = 0
         self.total_installed = 0
         self.complete_actions = 0
-        self.installed_pkg_names = []
+        self.installed_pkg_names = set()
         self.total_removed = 0
         self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
         self.filelog = False
@@ -209,8 +210,7 @@ class RPMTransaction:
         io_r = tempfile.NamedTemporaryFile()
         self._readpipe = io_r
         self._writepipe = open(io_r.name, 'w+b')
-        # This is dark magic, it really needs to be "base.ts.ts".
-        self.base.ts.ts.scriptFd = self._writepipe.fileno()
+        self.base.ts.setScriptFd(self._writepipe)
         rpmverbosity = {'critical' : 'crit',
                         'emergency' : 'emerg',
                         'error' : 'err',
@@ -255,27 +255,75 @@ class RPMTransaction:
 
         return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
 
-    def _makeHandle(self, hdr):
-        handle = '%s:%s.%s-%s-%s' % (hdr['epoch'], hdr['name'], hdr['version'],
-          hdr['release'], hdr['arch'])
+    # Find out txmbr based on the callback key. On erasures we dont know
+    # the exact txmbr but we always have a name, so return (name, txmbr)
+    # tuples so callers have less twists to deal with.
+    def _getTxmbr(self, cbkey):
+        if isinstance(cbkey, TransactionMember):
+            return (cbkey.name, cbkey)
+        elif isinstance(cbkey, tuple):
+            pkgtup = self._dopkgtup(cbkey[0])
+            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            # if this is not one, somebody screwed up
+            assert len(txmbrs) == 1
+            return (txmbrs[0].name, txmbrs[0])
+        elif isinstance(cbkey, basestring):
+            return (cbkey, None)
+        else:
+            return (None, None)
 
-        return handle
-    
+    def _fn_rm_installroot(self, filename):
+        """ Remove the installroot from the filename. """
+        # to handle us being inside a chroot at this point
+        # we hand back the right path to those 'outside' of the chroot() calls
+        # but we're using the right path inside.
+        if self.base.conf.installroot == '/':
+            return filename
+
+        return filename.replace(os.path.normpath(self.base.conf.installroot),'')
+
+    def ts_done_open(self):
+        """ Open the transaction done file, must be started outside the
+            chroot. """
+
+        if self.test: return False
+
+        if hasattr(self, '_ts_done'):
+            return True
+
+        self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir,
+                                                      self._ts_time)
+        ts_done_fn = self._fn_rm_installroot(self.ts_done_fn)
+
+        try:
+            self._ts_done = open(ts_done_fn, 'w')
+        except (IOError, OSError), e:
+            self.display.errorlog('could not open ts_done file: %s' % e)
+            self._ts_done = None
+            return False
+        self._fdSetCloseOnExec(self._ts_done.fileno())
+        return True
+
+    def ts_done_write(self, msg):
+        """ Write some data to the transaction done file. """
+        if self._ts_done is None:
+            return
+
+        try:
+            self._ts_done.write(msg)
+            self._ts_done.flush()
+        except (IOError, OSError), e:
+            #  Having incomplete transactions is probably worse than having
+            # nothing.
+            self.display.errorlog('could not write to ts_done file: %s' % e)
+            self._ts_done = None
+            misc.unlink_f(self.ts_done_fn)
+
     def ts_done(self, package, action):
         """writes out the portions of the transaction which have completed"""
         
-        if self.test: return
+        if not self.ts_done_open(): return
     
-        if not hasattr(self, '_ts_done'):
-            self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir, self._ts_time)
-            
-            try:
-                self._ts_done = open(self.ts_done_fn, 'w')
-            except (IOError, OSError), e:
-                self.display.errorlog('could not open ts_done file: %s' % e)
-                return
-            self._fdSetCloseOnExec(self._ts_done.fileno())
-        
         # walk back through self._te_tuples
         # make sure the package and the action make some kind of sense
         # write it out and pop(0) from the list
@@ -311,14 +359,7 @@ class RPMTransaction:
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
 
-        try:
-            self._ts_done.write(msg)
-            self._ts_done.flush()
-        except (IOError, OSError), e:
-            #  Having incomplete transactions is probably worse than having
-            # nothing.
-            del self._ts_done
-            misc.unlink_f(self.ts_done_fn)
+        self.ts_done_write(msg)
         self._te_tuples.pop(0)
     
     def ts_all(self):
@@ -350,17 +391,15 @@ class RPMTransaction:
         self._ts_time = time.strftime('%Y-%m-%d.%H:%M.%S')
         tsfn = '%s/transaction-all.%s' % (self.base.conf.persistdir, self._ts_time)
         self.ts_all_fn = tsfn
-        # to handle us being inside a chroot at this point
-        # we hand back the right path to those 'outside' of the chroot() calls
-        # but we're using the right path inside.
-        if self.base.conf.installroot != '/':
-            tsfn = tsfn.replace(os.path.normpath(self.base.conf.installroot),'')
+        tsfn = self._fn_rm_installroot(tsfn)
+
         try:
             if not os.path.exists(os.path.dirname(tsfn)):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
         except (IOError, OSError), e:
             self.display.errorlog('could not open ts_all file: %s' % e)
+            self._ts_done = None
             return
 
         try:
@@ -372,7 +411,9 @@ class RPMTransaction:
         except (IOError, OSError), e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
+            self.display.errorlog('could not write to ts_all file: %s' % e)
             misc.unlink_f(tsfn)
+            self._ts_done = None
 
     def callback( self, what, bytes, total, h, user ):
         if what == rpm.RPMCALLBACK_TRANS_START:
@@ -409,11 +450,11 @@ class RPMTransaction:
     
     
     def _transStart(self, bytes, total, h):
-        if bytes == 6:
-            self.total_actions = total
-            if self.test: return
-            self.trans_running = True
-            self.ts_all() # write out what transaction will do
+        self.total_actions = total
+        if self.test: return
+        self.trans_running = True
+        self.ts_all() # write out what transaction will do
+        self.ts_done_open()
 
     def _transProgress(self, bytes, total, h):
         pass
@@ -423,62 +464,52 @@ class RPMTransaction:
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
-        hdr = None
-        if h is not None:
-            hdr, rpmloc = h[0], h[1]
-            handle = self._makeHandle(hdr)
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
+            rpmloc = txmbr.po.localPkg()
             try:
-                fd = os.open(rpmloc, os.O_RDONLY)
-            except OSError, e:
+                self.fd = file(rpmloc)
+            except IOError, e:
                 self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
             else:
-                self.filehandles[handle]=fd
                 if self.trans_running:
                     self.total_installed += 1
                     self.complete_actions += 1
-                    self.installed_pkg_names.append(hdr['name'])
-                return fd
+                    self.installed_pkg_names.add(name)
+                return self.fd.fileno()
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
             
     def _instCloseFile(self, bytes, total, h):
-        hdr = None
-        if h is not None:
-            hdr, rpmloc = h[0], h[1]
-            handle = self._makeHandle(hdr)
-            os.close(self.filehandles[handle])
-            fd = 0
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
+            self.fd.close()
+            self.fd = None
             if self.test: return
             if self.trans_running:
-                pkgtup = self._dopkgtup(hdr)
-                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-                for txmbr in txmbrs:
-                    self.display.filelog(txmbr.po, txmbr.output_state)
-                    self._scriptout(txmbr.po)
-                    # NOTE: We only do this for install, not erase atm.
-                    #       because we don't get pkgtup data for erase (this 
-                    #       includes "Updated" pkgs).
-                    pid   = self.base.history.pkg2pid(txmbr.po)
-                    state = self.base.history.txmbr2state(txmbr)
-                    self.base.history.trans_data_pid_end(pid, state)
-                    self.ts_done(txmbr.po, txmbr.output_state)
+                self.display.filelog(txmbr.po, txmbr.output_state)
+                self._scriptout(txmbr.po)
+                # NOTE: We only do this for install, not erase atm.
+                #       because we don't get pkgtup data for erase (this 
+                #       includes "Updated" pkgs).
+                pid   = self.base.history.pkg2pid(txmbr.po)
+                state = self.base.history.txmbr2state(txmbr)
+                self.base.history.trans_data_pid_end(pid, state)
+                self.ts_done(txmbr.po, txmbr.output_state)
     
     def _instProgress(self, bytes, total, h):
-        if h is not None:
-            # If h is a string, we're repackaging.
+        name, txmbr = self._getTxmbr(h)
+        if name is not None:
+            # If we only have a name, we're repackaging.
             # Why the RPMCALLBACK_REPACKAGE_PROGRESS flag isn't set, I have no idea
-            if type(h) == type(""):
-                self.display.event(h, 'repackaging',  bytes, total,
+            if txmbr is None:
+                self.display.event(name, 'repackaging',  bytes, total,
                                 self.complete_actions, self.total_actions)
-
             else:
-                hdr, rpmloc = h[0], h[1]
-                pkgtup = self._dopkgtup(hdr)
-                txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-                for txmbr in txmbrs:
-                    action = txmbr.output_state
-                    self.display.event(txmbr.po, action, bytes, total,
-                                self.complete_actions, self.total_actions)
+                action = txmbr.output_state
+                self.display.event(txmbr.po, action, bytes, total,
+                            self.complete_actions, self.total_actions)
+
     def _unInstStart(self, bytes, total, h):
         pass
         
@@ -486,20 +517,21 @@ class RPMTransaction:
         pass
     
     def _unInstStop(self, bytes, total, h):
+        name, txmbr = self._getTxmbr(h)
         self.total_removed += 1
         self.complete_actions += 1
-        if h not in self.installed_pkg_names:
-            self.display.filelog(h, TS_ERASE)
+        if name not in self.installed_pkg_names:
+            self.display.filelog(name, TS_ERASE)
             action = TS_ERASE
         else:
             action = TS_UPDATED                    
         
-        self.display.event(h, action, 100, 100, self.complete_actions,
+        self.display.event(name, action, 100, 100, self.complete_actions,
                             self.total_actions)
-        self._scriptout(h)
+        self._scriptout(name)
         
         if self.test: return # and we're done
-        self.ts_done(h, action)
+        self.ts_done(name, action)
         
         
     def _rePackageStart(self, bytes, total, h):
@@ -512,20 +544,16 @@ class RPMTransaction:
         pass
         
     def _cpioError(self, bytes, total, h):
-        hdr, rpmloc = h[0], h[1]
-        pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-        for txmbr in txmbrs:
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
             txmbr.output_state = TS_FAILED
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
     
     def _unpackError(self, bytes, total, h):
-        hdr, rpmloc = h[0], h[1]
-        pkgtup = self._dopkgtup(hdr)
-        txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-        for txmbr in txmbrs:
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is not None:
             txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
             self.display.errorlog(msg)
@@ -533,35 +561,24 @@ class RPMTransaction:
             # right behavior should be
                 
     def _scriptError(self, bytes, total, h):
-        if not isinstance(h, types.TupleType):
-            # fun with install/erase transactions, see rhbz#484729
-            h = (h, None)
-        hdr, rpmloc = h[0], h[1]
-        remove_hdr = False # if we're in a clean up/remove then hdr will not be an rpm.hdr
-        if not isinstance(hdr, rpm.hdr):
-            txmbrs = [hdr]
-            remove_hdr = True
+        # "bytes" carries the failed scriptlet tag,
+        # "total" carries fatal/non-fatal status
+        scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
+
+        name, txmbr = self._getTxmbr(h)
+        if txmbr is None:
+            package_name = name
         else:
-            pkgtup = self._dopkgtup(hdr)
-            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
+            package_name = txmbr.po
             
-        for pkg in txmbrs:
-            # "bytes" carries the failed scriptlet tag,
-            # "total" carries fatal/non-fatal status
-            scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
-            if remove_hdr:
-                package_name = pkg
-            else:
-                package_name = pkg.po
-                
-            if total:
-                msg = ("Error in %s scriptlet in rpm package %s" % 
-                        (scriptlet_name, package_name))
-                if not remove_hdr:        
-                    pkg.output_state = TS_FAILED
-            else:
-                msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
-                       (scriptlet_name, package_name))
-            self.display.errorlog(msg)
-            # FIXME - what else should we do here? raise a failure and abort?
+        if total:
+            msg = ("Error in %s scriptlet in rpm package %s" % 
+                    (scriptlet_name, package_name))
+            if txmbr is not None:        
+                txmbr.output_state = TS_FAILED
+        else:
+            msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
+                   (scriptlet_name, package_name))
+        self.display.errorlog(msg)
+        # FIXME - what else should we do here? raise a failure and abort?
     

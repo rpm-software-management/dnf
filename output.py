@@ -809,20 +809,26 @@ class YumOutput:
     def depListOutput(self, results):
         """take a list of findDeps results and 'pretty print' the output"""
         
-        for pkg in results:
+        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        for pkg in sorted(results):
             print _("package: %s") % pkg.compactPrint()
             if len(results[pkg]) == 0:
                 print _("  No dependencies for this package")
                 continue
 
-            for req in results[pkg]:
+            for req in sorted(results[pkg]):
                 reqlist = results[pkg][req] 
                 print _("  dependency: %s") % prco_tuple_to_string(req)
                 if not reqlist:
                     print _("   Unsatisfied dependency")
                     continue
                 
-                for po in reqlist:
+                seen = {}
+                for po in reversed(sorted(reqlist)):
+                    key = (po.name, po.arch)
+                    if not verb and key in seen:
+                        continue
+                    seen[key] = po
                     print "   provider: %s" % po.compactPrint()
 
     def format_number(self, number, SI=0, space=' '):
@@ -1042,7 +1048,9 @@ class YumOutput:
             pkglist_lines.append((action, lines))
 
         for (action, pkglist) in [(_('Skipped (dependency problems)'),
-                                   self.skipped_packages),]:
+                                   self.skipped_packages),
+                                  (_('Not installed'), self._not_found_i.values()),
+                                  (_('Not available'), self._not_found_a.values())]:
             lines = []
             for po in pkglist:
                 a_wid = _add_line(lines, data, a_wid, po)
@@ -1361,6 +1369,14 @@ to exit.
         ''' Convert a user "TID" string of 2..4 into: (2, 4). '''
         def str2int(x):
             try:
+                if x == 'last' or x.startswith('last-'):
+                    tid = old.tid
+                    if x.startswith('last-'):
+                        off = int(x[len('last-'):])
+                        if off <= 0:
+                            int("z")
+                        tid -= off
+                    return tid
                 return int(x)
             except ValueError:
                 return None
@@ -1375,6 +1391,9 @@ to exit.
             return None
         etid = str2int(etid)
         if etid > old.tid:
+            return None
+
+        if btid is None or etid is None:
             return None
 
         # Have a range ... do a "merged" transaction.
@@ -1435,24 +1454,53 @@ to exit.
         if tids is None:
             return 1, ['Failed history list']
 
+        limit = 20
+        if printall:
+            limit = None
+
+        old_tids = self.history.old(tids, limit=limit)
+        done = 0
+        if self.conf.history_list_view == 'users':
+            uids = [1,2]
+        elif self.conf.history_list_view == 'commands':
+            uids = [1]
+        else:
+            assert self.conf.history_list_view == 'single-user-commands'
+            uids = set()
+            blanks = 0
+            for old in old_tids:
+                if not printall and done >= limit:
+                    break
+
+                done += 1
+                if old.cmdline is None:
+                    blanks += 1
+                uids.add(old.loginuid)
+            if len(uids) == 1 and blanks > (done / 2):
+                uids.add('blah')
+
         fmt = "%s | %s | %s | %s | %s"
+        if len(uids) == 1:
+            name = _("Command line")
+        else:
+            name = _("Login user")
         print fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(_("Login user"), 24, 24),
+                     utf8_width_fill(name, 24, 24),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
                      utf8_width_fill(_("Altered"), 7, 7))
         print "-" * 79
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
-        limit = 20
-        if printall:
-            limit = None
-        for old in self.history.old(tids, limit=limit):
+        for old in old_tids:
             if not printall and done >= limit:
                 break
 
             done += 1
-            name = self._pwd_ui_username(old.loginuid, 24)
+            if len(uids) == 1:
+                name = old.cmdline or ''
+            else:
+                name = self._pwd_ui_username(old.loginuid, 24)
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
@@ -1741,7 +1789,7 @@ to exit.
             addon_info = self.history.return_addon_data(old.tid)
 
             # for the ones we create by default - don't display them as there
-            default_addons = set(['config-main', 'config-repos'])
+            default_addons = set(['config-main', 'config-repos', 'saved_tx'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
                     print _("Additional non-default information stored: %d" 

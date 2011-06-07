@@ -77,8 +77,9 @@ pylint:
 pylint-short:
 	@pylint -r n --rcfile=test/yum-pylintrc --ignore=$(PYLINT_IGNORE) $(PYLINT_MODULES) 2>/dev/null
 
+ChangeLog: changelog
 changelog:
-	git log --since=2007-05-16 --pretty --numstat --summary | git2cl  > ChangeLog
+	git log --since=2007-05-16 --pretty --numstat --summary | git2cl | cat > ChangeLog
 
 testnewbehavior:
 	@NEW_BEHAVIOR=1 nosetests -i ".*test" test
@@ -92,7 +93,7 @@ daily: _archive
 _archive:
 	@rm -rf ${PKGNAME}-%{VERSION}.tar.gz
 	@rm -rf /tmp/${PKGNAME}-$(VERSION) /tmp/${PKGNAME}
-	@dir=$$PWD; cd /tmp; cp -a $$dir ${PKGNAME}
+	@dir=$$PWD; cd /tmp; git clone $$dir ${PKGNAME}
 	lynx -dump 'http://yum.baseurl.org/wiki/WritingYumPlugins?format=txt' > /tmp/${PKGNAME}/PLUGINS
 	lynx -dump 'http://yum.baseurl.org/wiki/Faq?format=txt' > /tmp/${PKGNAME}/FAQ
 	@rm -f /tmp/${PKGNAME}/$(remove_spec)

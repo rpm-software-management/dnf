@@ -252,6 +252,9 @@ class Checksums:
     def __len__(self):
         return self._len
 
+    # Note that len(x) is assert limited to INT_MAX, which is 2GB on i686.
+    length = property(fget=lambda self: self._len)
+
     def update(self, data):
         self._len += len(data)
         for sumalgo in self._sumalgos:
@@ -323,7 +326,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
 
         data = Checksums([sumtype])
         while data.read(fo, CHUNK):
-            if datasize is not None and len(data) > datasize:
+            if datasize is not None and data.length > datasize:
                 break
 
         if type(file) is types.StringType:
@@ -332,7 +335,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
             
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.
-        if datasize is not None and datasize != len(data):
+        if datasize is not None and datasize != data.length:
             return '!%u!%s' % (datasize, data.hexdigest(sumtype))
 
         return data.hexdigest(sumtype)
@@ -942,7 +945,7 @@ def stat_f(filename):
     try:
         return os.stat(filename)
     except OSError, e:
-        if e.errno != errno.ENOENT:
+        if e.errno not in (errno.ENOENT, errno.ENOTDIR):
             raise
         return None
 
@@ -995,7 +998,11 @@ def setup_locale(override_codecs=True, override_time=False):
 
 
 def get_my_lang_code():
-    mylang = locale.getlocale(locale.LC_MESSAGES)
+    try:
+        mylang = locale.getlocale(locale.LC_MESSAGES)
+    except ValueError, e:
+        # This is RHEL-5 python crack, Eg. en_IN can't be parsed properly
+        mylang = (None, None)
     if mylang == (None, None): # odd :)
         mylang = 'C'
     else:

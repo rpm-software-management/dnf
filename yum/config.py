@@ -691,6 +691,7 @@ class YumConf(StartupConf):
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
     # Time in seconds (1 day). NOTE: This isn't used when using metalinks
     mirrorlist_expire = SecondsOption(60 * 60 * 24)
+    # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()    
     skip_broken = BoolOption(False)
@@ -745,6 +746,13 @@ class YumConf(StartupConf):
     loadts_ignorerpm = BoolOption(False)
     
     clean_requirements_on_remove = BoolOption(False)
+
+
+    history_list_view = SelectionOption('single-user-commands',
+                                        ('single-user-commands', 'users',
+                                         'commands'),
+                                     mapper={'cmds'          : 'commands',
+                                             'default' :'single-user-commands'})
     _reposlist = []
 
     def dump(self):
@@ -1050,10 +1058,24 @@ def writeRawRepoFile(repo,only=None):
     # Updated the ConfigParser with the changed values    
     cfgOptions = repo.cfg.options(repo.id)
     for name,value in repo.iteritems():
+        if value is None: # Proxy
+            continue
+
+        if only is not None and name not in only:
+            continue
+
         option = repo.optionobj(name)
-        if option.default != value or name in cfgOptions :
-            if only == None or name in only:
-                ini[section_id][name] = option.tostring(value)
+        ovalue = option.tostring(value)
+        #  If the value is the same, but just interpreted ... when we don't want
+        # to keep the interpreted values.
+        if (name in ini[section_id] and
+            ovalue == varReplace(ini[section_id][name], yumvar)):
+            ovalue = ini[section_id][name]
+
+        if name not in cfgOptions and option.default == value:
+            continue
+
+        ini[section_id][name] = ovalue
     fp =file(repo.repofile,"w")               
     fp.write(str(ini))
     fp.close()
