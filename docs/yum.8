@@ -45,15 +45,7 @@ gnome\-packagekit application\&.
 .br
 .I \fR * makecache
 .br
-.I \fR * groupinstall group1 [group2] [\&.\&.\&.]
-.br
-.I \fR * groupupdate group1 [group2] [\&.\&.\&.]
-.br 
-.I \fR * grouplist [hidden] [groupwildcard] [\&.\&.\&.]
-.br
-.I \fR * groupremove group1 [group2] [\&.\&.\&.]
-.br
-.I \fR * groupinfo group1 [\&.\&.\&.]
+.I \fR * groups  [\&.\&.\&.]
 .br
 .I \fR * search string1 [string2] [\&.\&.\&.]
 .br
@@ -201,44 +193,42 @@ the \fIClean Options\fP section below\&.
 Is used to download and make usable all the metadata for the currently enabled
 \fByum\fP repos.
 .IP 
-.IP "\fBgroupinstall\fP"
-Is used to install all of the individual packages in a group, of the specified
+.IP "\fBgroups\fP"
+A command, new in 3.4.2, that collects all the subcommands that act on groups together.
+
+"\fBgroup install\fP" is used to install all of the individual packages in a group, of the specified
 types (this works as if you'd taken each of those package names and put them on
 the command line for a "yum install" command).
  The group_package_types configuration option specifies which types will
 be installed.
-.IP 
-.IP "\fBgroupupdate\fP"
-Is just an alias for groupinstall, which will do the right thing because
+
+"\fBgroup update\fP" is just an alias for groupinstall, which will do the right thing because
 "yum install X" and "yum update X" do the same thing, when X is already
 installed.
-.IP 
-.IP "\fBgrouplist\fP"
-Is used to list the available groups from all \fByum\fP repos. Groups are marked
+
+"\fBgroup list\fP" is used to list the available groups from all \fByum\fP repos. Groups are marked
 as "installed" if all mandatory packages are installed, or if a group doesn't
 have any mandatory packages then it is installed if any of the optional or
 default package are installed.
 The optional "hidden" argument will also list groups marked as not being
 "user visible". If you pass the \-v option, to enable verbose mode, then the
 groupids are displayed.
-.IP 
-.IP "\fBgroupremove\fP"
-Is used to remove all of the packages in a group, unlike "groupinstall" this
+
+"\fBgroup remove\fP" is used to remove all of the packages in a group, unlike "groupinstall" this
 will remove everything regardless of group_package_types. It is worth pointing
-out that packages can be in more than one group, so "groupinstall X Y" followed
-by "groupremove Y" does not do give you the same result as "groupinstall X".
+out that packages can be in more than one group, so "group install X Y" followed
+by "group remove Y" does not do give you the same result as "group install X".
 
 The groupremove_leaf_only configuration changes the behaviour of this command
 to only remove packages which aren't required by something else.
-.IP 
-.IP "\fBgroupinfo\fP"
-Is used to give the description and package list of a group (and which type
+
+"\fBgroup info\fP" is used to give the description and package list of a group (and which type
 those packages are marked as). Note that you can use the yum-filter-data and
 yum-list-data plugins to get/use the data the other way around (Ie. what
 groups own packages need updating). If you pass the \-v option, to enable verbose
 mode, then the package names are matched against installed/available packages
 similar to the list command.
-.IP 
+.IP
 .IP "\fBshell\fP"
 Is used to enter the 'yum shell', when a filename is specified the contents of
 that file is executed in yum shell mode. See \fIyum-shell(8)\fP for more info
