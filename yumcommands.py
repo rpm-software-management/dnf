@@ -430,17 +430,6 @@ class EraseCommand(YumCommand):
     def needTsRemove(self, base, basecmd, extcmds):
         return True
 
-class GroupCommand(YumCommand):
-    def doCommand(self, base, basecmd, extcmds):
-        self.doneCommand(base, _("Setting up Group Process"))
-
-        base.doRepoSetup(dosack=0)
-        try:
-            base.doGroupSetup()
-        except yum.Errors.GroupsError:
-            return 1, [_('No Groups on which to run command')]
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
  
 class GroupsCommand(YumCommand):
     """ Single sub-command interface for most groups interaction. """
@@ -551,101 +540,6 @@ class GroupsCommand(YumCommand):
 
         if cmd in ('remove',):
            return True
-        return False
-
-class GroupListCommand(GroupCommand):
-    def getNames(self):
-        return ['grouplist']
-
-    def getUsage(self):
-        return ""
-
-    def getSummary(self):
-        return _("List available package groups")
-    
-    def doCheck(self, base, basecmd, extcmds):
-        checkEnabledRepo(base)
-
-    def doCommand(self, base, basecmd, extcmds):
-        GroupCommand.doCommand(self, base, basecmd, extcmds)
-        return base.returnGroupLists(extcmds)
-
-    def needTs(self, base, basecmd, extcmds):
-        return False
-
-class GroupInstallCommand(GroupCommand):
-    def getNames(self):
-        return ['groupinstall', 'groupupdate']
-
-    def getUsage(self):
-        return "GROUP..."
-
-    def getSummary(self):
-        return _("Install the packages in a group on your system")
-    
-    def doCheck(self, base, basecmd, extcmds):
-        checkRootUID(base)
-        checkGPGKey(base)
-        checkGroupArg(base, basecmd, extcmds)
-        checkEnabledRepo(base)
-
-    def doCommand(self, base, basecmd, extcmds):
-        GroupCommand.doCommand(self, base, basecmd, extcmds)
-        try:
-            return base.installGroups(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
-
-class GroupRemoveCommand(GroupCommand):
-    def getNames(self):
-        return ['groupremove', 'grouperase']
-
-    def getUsage(self):
-        return "GROUP..."
-
-    def getSummary(self):
-        return _("Remove the packages in a group from your system")
-
-    def doCheck(self, base, basecmd, extcmds):
-        checkRootUID(base)
-        checkGroupArg(base, basecmd, extcmds)
-        checkEnabledRepo(base)
-
-    def doCommand(self, base, basecmd, extcmds):
-        GroupCommand.doCommand(self, base, basecmd, extcmds)
-        try:
-            return base.removeGroups(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
-
-    def needTs(self, base, basecmd, extcmds):
-        return False
-
-    def needTsRemove(self, base, basecmd, extcmds):
-        return True
-
-class GroupInfoCommand(GroupCommand):
-    def getNames(self):
-        return ['groupinfo']
-
-    def getUsage(self):
-        return "GROUP..."
-
-    def getSummary(self):
-        return _("Display details about a package group")
-
-    def doCheck(self, base, basecmd, extcmds):
-        checkGroupArg(base, basecmd, extcmds)
-        checkEnabledRepo(base)
-
-    def doCommand(self, base, basecmd, extcmds):
-        GroupCommand.doCommand(self, base, basecmd, extcmds)
-        try:
-            return base.returnGroupInfo(extcmds)
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
-
-    def needTs(self, base, basecmd, extcmds):
         return False
 
 class MakeCacheCommand(YumCommand):
