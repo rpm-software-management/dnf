@@ -2586,18 +2586,53 @@ class YumBase(depsolve.Depsolve):
                 sorted_lists[count] = []
             sorted_lists[count].append((pkg, totkeys, totvals))
 
+        #  To explain why the following code looks like someone took drugs
+        # before/during/after coding:
+        #
+        # We are sorting a list of: (po, tmpkeys, tmpvalues).
+        #                  Eg.      (po, ['foo', 'bar'], ['matches foo',
+        #                                                 'matches barx'])
+        #
+        # So we sort, and get a result like:
+        #        po    | repo | matching value
+        #     1. yum-1 |  fed | -2
+        #     2. yum-2 |  fed | -2 
+        #     3. yum-2 | @fed | -2
+        #     4. yum-3 |  ups | -1
+        # ...but without showdups we want to output _just_ #3, which requires
+        # we find the newest EVR po for the best "matching value". Without keys
+        # it's the same, except we just want the newest EVR.
+        #  If we screw it up it's probably not even noticable most of the time
+        # either, so it's pretty thankless. HTH. HAND.
         # By default just sort using package sorting
         sort_func = operator.itemgetter(0)
+        dup = lambda x: True
         if keys:
             # Take into account the keys found, their original order,
             # and number of fields hit as well
             sort_func = lambda x: (-sum((critweights[y] for y in x[1])),
-                                   "\0".join(sorted(x[1])), -len(x[2]), x[0])
+                                   -len(x[2]), "\0".join(sorted(x[1])), x[0])
+            dup = lambda x,y: sort_func(x)[:-1] == sort_func(y)[:-1]
         yielded = {}
         for val in reversed(sorted(sorted_lists)):
-            for (po, ks, vs) in sorted(sorted_lists[val], key=sort_func):
-                if not showdups and (po.name, po.arch) in yielded:
-                    continue
+            last = None
+            for sl_vals in sorted(sorted_lists[val], key=sort_func):
+                if showdups:
+                    (po, ks, vs) = sl_vals
+                else:
+                    if (sl_vals[0].name, sl_vals[0].arch) in yielded:
+                        continue
+
+                    na = (sl_vals[0].name, sl_vals[0].arch)
+                    if last is None or (last[0] == na and dup(last[1],sl_vals)):
+                        last = (na, sl_vals)
+                        continue
+
+                    (po, ks, vs) = last[1]
+                    if last[0] == na: # Dito. yielded test above.
+                        last = None
+                    else:
+                        last = (na, sl_vals)
 
                 if keys:
                     yield (po, ks, vs)
@@ -2606,6 +2641,12 @@ class YumBase(depsolve.Depsolve):
 
                 if not showdups:
                     yielded[(po.name, po.arch)] = 1
+            if last is not None:
+                (po, ks, vs) = last[1]
+                if keys:
+                    yield (po, ks, vs)
+                else:
+                    yield (po, vs)
 
     def searchPackageTags(self, criteria):
         results = {} # name = [(criteria, taglist)]
