@@ -299,6 +299,11 @@ class PackageObject(object):
             ret = cmp(self.arch, other.arch)
         if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
             ret = cmp(self.repoid, other.repoid)
+            # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
+            if ret and self.repoid == 'installed':
+                return 1
+            if ret and other.repoid == 'installed':
+                return -1
         return ret
     def __eq__(self, other):
         """ Compare packages for yes/no equality, includes everything in the
