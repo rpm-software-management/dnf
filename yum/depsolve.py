@@ -721,7 +721,7 @@ class Depsolve(object):
         p.print_stats(20)
         return rc
 
-    def resolveDeps(self, full_check=True):
+    def resolveDeps(self, full_check=True, skipping_broken=False):
 
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
@@ -795,7 +795,11 @@ class Depsolve(object):
                 txmbr.ts_state = 'i'
                 txmbr.output_state = TS_INSTALL
 
-        if self.dsCallback: self.dsCallback.end()
+        if self.dsCallback:
+            if not self.conf.skip_broken:
+                self.dsCallback.end()
+            elif not skipping_broken and not errors:
+                self.dsCallback.end()
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Dependency Process ending'))
 
         self.tsInfo.changed = False

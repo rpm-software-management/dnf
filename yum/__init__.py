@@ -1184,7 +1184,7 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (no packages to skip)' )
                     self.tsInfo.resetResolved(hard=True)
-            rescode, restring = self.resolveDeps(True)
+            rescode, restring = self.resolveDeps(True, skipping_broken=True)
             endTs = set(self.tsInfo)
              # Check if tsInfo has changes since we started to skip packages
              # if there is no changes then we got a loop.
