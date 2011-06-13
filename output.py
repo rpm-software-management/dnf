@@ -897,13 +897,16 @@ class YumOutput:
         if not verbose:
             return
 
-        print _("Repo        : %s") % po.repoid
-        print _('Matched from:')
+        print _("Repo        : %s") % po.ui_from_repo
+        done = False
         for item in yum.misc.unique(values):
             item = to_utf8(item)
             if to_utf8(po.name) == item or to_utf8(po.summary) == item:
                 continue # Skip double name/summary printing
 
+            if not done:
+                print _('Matched from:')
+                done = True
             can_overflow = True
             if False: pass
             elif to_utf8(po.description) == item:
