@@ -2715,7 +2715,7 @@ class YumBase(depsolve.Depsolve):
             self.verbose_logger.log(logginglevels.DEBUG_1,
                 _('Searching %d packages'), len(where))
             
-            for po in where:
+            for po in sorted(where):
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('searching package %s'), po)
                 tmpvalues = []
@@ -2781,7 +2781,7 @@ class YumBase(depsolve.Depsolve):
                     arg_taglist = taglist_provonly
 
                 arg_regex = re.compile(fnmatch.translate(arg))
-                for po in where:
+                for po in sorted(where):
                     searchlist = []
                     tmpvalues = []
                     for tag in arg_taglist:
