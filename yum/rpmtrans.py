@@ -545,6 +545,7 @@ class RPMTransaction:
         
     def _cpioError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
+        # In the case of a remove, we only have a name, not a txmbr
         if txmbr is not None:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
             txmbr.output_state = TS_FAILED
@@ -553,6 +554,7 @@ class RPMTransaction:
     
     def _unpackError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
+        # In the case of a remove, we only have a name, not a txmbr
         if txmbr is not None:
             txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
@@ -574,6 +576,7 @@ class RPMTransaction:
         if total:
             msg = ("Error in %s scriptlet in rpm package %s" % 
                     (scriptlet_name, package_name))
+            # In the case of a remove, we only have a name, not a txmbr
             if txmbr is not None:        
                 txmbr.output_state = TS_FAILED
         else:

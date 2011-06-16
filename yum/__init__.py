@@ -1589,6 +1589,7 @@ class YumBase(depsolve.Depsolve):
                     # but raising an exception is not going to do any good
                     self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % txmbr.po))
+                    txmbr.output_state = TS_FAILED
                     continue
                 po = self.getInstalledPackageObject(txmbr.pkgtup)
                 rpo = txmbr.po
@@ -1650,6 +1651,7 @@ class YumBase(depsolve.Depsolve):
                         # but raising an exception is not going to do any good
                         self.logger.critical(_('%s was supposed to be removed' \
                                                ' but is not!' % txmbr.po))
+                        txmbr.output_state = TS_FAILED
                         continue
                 yumdb_item = self.rpmdb.yumdb.get_package(po=txmbr.po)
                 yumdb_item.clean()
