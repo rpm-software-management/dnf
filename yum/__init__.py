@@ -1589,6 +1589,7 @@ class YumBase(depsolve.Depsolve):
                     # but raising an exception is not going to do any good
                     self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % txmbr.po))
+                    # Note: Get Panu to do te.Failed() so we don't have to
                     txmbr.output_state = TS_FAILED
                     continue
                 po = self.getInstalledPackageObject(txmbr.pkgtup)
@@ -1649,8 +1650,12 @@ class YumBase(depsolve.Depsolve):
                                 output_states=TS_INSTALL_STATES):
                         # maybe a file log here, too
                         # but raising an exception is not going to do any good
+                        # Note: This actually triggers atm. because we can't
+                        #       always find the erased txmbr to set it when
+                        #       we should.
                         self.logger.critical(_('%s was supposed to be removed' \
                                                ' but is not!' % txmbr.po))
+                        # Note: Get Panu to do te.Failed() so we don't have to
                         txmbr.output_state = TS_FAILED
                         continue
                 yumdb_item = self.rpmdb.yumdb.get_package(po=txmbr.po)
