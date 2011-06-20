@@ -38,7 +38,7 @@ import yum.logginglevels
 import yum.misc
 import yum.plugins
 from rpmUtils.arch import isMultiLibArch
-from yum import _
+from yum import _, P_
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
@@ -395,7 +395,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if disk:
             summary += _('Disk Requirements:\n')
             for k in disk:
-                summary += _('  At least %dMB more space needed on the %s filesystem.\n') % (disk[k], k)
+                summary += P_('  At least %dMB more space needed on the %s filesystem.\n', '  At least %dMB more space needed on the %s filesystem.\n', disk[k]) % (disk[k], k)
 
         # TODO: simplify the dependency errors?
 
@@ -722,7 +722,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             else:
                 done = True
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to install')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to install', '%d packages to install', change) % change]
 
         if not done:
             return 1, [_('Nothing to do')]
@@ -760,8 +761,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
-            msg = _('%d packages marked for Update') % change
-            return 2, [msg]
+            return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
         else:
             return 0, [_('No Packages marked for Update')]
 
@@ -859,8 +859,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 dupdates.extend(self.downgrade(name=n, epoch=e, ver=v, rel=r))
 
         if dupdates:
-            msg = _('%d packages marked for Distribution Synchronization') % len(dupdates)
-            return 2, [msg]
+            return 2, [P_('%d package marked for Distribution Synchronization', '%d packages marked for Distribution Synchronization', len(dupdates)) % len(dupdates)]
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
 
@@ -878,8 +877,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             all_rms.extend(rms)
         
         if all_rms:
-            msg = _('%d packages marked for removal') % len(all_rms)
-            return 2, [msg]
+            return 2, [P_('%d package marked for removal', '%d packages marked for removal', len(all_rms)) % len(all_rms)]
         else:
             return 0, [_('No Packages marked for removal')]
     
@@ -906,7 +904,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                         self.term.MODE['normal'])
                 self._maybeYouMeant(arg)
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to downgrade')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to downgrade', '%d packages to downgrade', change) % change]
         return 0, [_('Nothing to do')]
         
     def reinstallPkgs(self, userlist):
@@ -940,7 +939,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to reinstall')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
         return 0, [_('Nothing to do')]
 
     def localInstall(self, filelist, updateonly=0):
@@ -1363,7 +1363,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if not pkgs_used:
             return 0, [_('No packages in any requested group available to install or update')]
         else:
-            return 2, [_('%d Package(s) to Install') % len(pkgs_used)]
+            return 2, [P_('%d package to Install', '%d packages to Install', len(pkgs_used)) % len(pkgs_used)]
 
     def removeGroups(self, grouplist):
         """Remove only packages of the named group(s). Do not recurse."""
@@ -1381,7 +1381,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if not pkgs_used:
             return 0, [_('No packages to remove from groups')]
         else:
-            return 2, [_('%d Package(s) to remove') % len(pkgs_used)]
+            return 2, [P_('%d package to remove', '%d packages to remove', len(pkgs_used)) % len(pkgs_used)]
 
 
 
