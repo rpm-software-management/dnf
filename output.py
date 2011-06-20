@@ -38,7 +38,7 @@ import yum.misc
 from rpmUtils.miscutils import checkSignals, formatRequire
 from yum.constants import *
 
-from yum import logginglevels, _
+from yum import logginglevels, _, P_
 from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
 import yum.packages
@@ -1109,25 +1109,35 @@ Transaction Summary
         num_re = len(self.tsInfo.reinstalled)
         num_dg = len(self.tsInfo.downgraded)
         if num_in:
-            out.append(_("""\
-Install   %5.5s Package(s)
-""") % num_in)
+            out.append(P_("""\
+Install   %5.5s Package
+""", """\
+Install   %5.5s Packages
+""", num_in) % num_in)
         if num_up:
-            out.append(_("""\
-Upgrade   %5.5s Package(s)
-""") % num_up)
+            out.append(P_("""\
+Upgrade   %5.5s Package
+""", """\
+Upgrade   %5.5s Packages
+""", num_up) % num_up)
         if num_rm:
-            out.append(_("""\
-Remove    %5.5s Package(s)
-""") % num_rm)
+            out.append(P_("""\
+Remove    %5.5s Package
+""", """\
+Remove    %5.5s Packages
+""", num_rm) % num_rm)
         if num_re:
-            out.append(_("""\
-Reinstall %5.5s Package(s)
-""") % num_re)
+            out.append(P_("""\
+Reinstall %5.5s Package
+""", """\
+Reinstall %5.5s Packages
+""", num_re) % num_re)
         if num_dg:
-            out.append(_("""\
-Downgrade %5.5s Package(s)
-""") % num_dg)
+            out.append(P_("""\
+Downgrade %5.5s Package
+""", """\
+Downgrade %5.5s Packages
+""", num_dg) % num_dg)
         
         return ''.join(out)
         
