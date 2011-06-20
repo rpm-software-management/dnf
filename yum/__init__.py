@@ -3837,7 +3837,8 @@ class YumBase(depsolve.Depsolve):
                 if len(availpkgs) > 1:
                     availpkgs = self._compare_providers(availpkgs, requiringPo)
                     availpkgs = map(lambda x: x[0], availpkgs)
-
+                elif not availpkgs:
+                    self.logger.warning(_("No package matched to upgrade: %s"), self._ui_nevra_dict(nevra_dict))
        
         # for any thing specified
         # get the list of available pkgs matching it (or take the po)
@@ -4027,7 +4028,7 @@ class YumBase(depsolve.Depsolve):
                 self._add_not_found_i(pkgs, nevra_dict)
                 if len(pkgs) == 0:
                     if not kwargs.get('silence_warnings', False):
-                        self.logger.warning(_("No package matched to remove"))
+                        self.logger.warning(_("No package matched to remove: %s"), self._ui_nevra_dict(nevra_dict))
 
         ts = self.rpmdb.readOnlyTS()
         kern_pkgtup = misc.get_running_kernel_pkgtup(ts)
@@ -4439,6 +4440,32 @@ class YumBase(depsolve.Depsolve):
             tx_return.extend(txmbrs)
 
         return tx_return
+
+    @staticmethod
+    def _ui_nevra_dict(nevra_dict):
+        n = nevra_dict['name']
+        e = nevra_dict['epoch']
+        v = nevra_dict['version']
+        r = nevra_dict['release']
+        a = nevra_dict['arch']
+
+        if e and v and r:
+            evr = '%s:%s-%s' % (e, v, r)
+        elif v and r:
+            evr = '%s-%s' % (e, v, r)
+        elif e and v:
+            evr = '%s:%s' % (e, v)
+        elif v: # e and r etc. is just too weird to print
+            evr = v
+        else:
+            evr = ''
+        if n and evr:
+            return '%s-%s' % (n, evr)
+        if evr:
+            return '*-%s' % evr
+        if n:
+            return n
+        return '<unknown>'
         
     def _nevra_kwarg_parse(self, kwargs):
             
@@ -4492,6 +4519,8 @@ class YumBase(depsolve.Depsolve):
             if pkg.state == 'Update':
                 if self.update(pkgtup=pkg.pkgtup):
                     done = True
+                else:
+                    self.logger.critical(_('Failed to upgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if pkg.state in ('Install', 'True-Install', 'Obsoleting'):
                 if self.install(pkgtup=pkg.pkgtup):
@@ -4529,6 +4558,8 @@ class YumBase(depsolve.Depsolve):
             if pkg.state == 'Downgraded':
                 if self.update(pkgtup=pkg.pkgtup):
                     done = True
+                else:
+                    self.logger.critical(_('Failed to upgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if pkg.state == 'Obsoleting':
                 #  Note that obsoleting can mean anything, so if this is part of
