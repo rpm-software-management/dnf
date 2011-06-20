@@ -2262,7 +2262,7 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('%s file %s removed'), filetype, item)
                 removed+=1
-        msg = _('%d %s files removed') % (removed, filetype)
+        msg = P_('%d %s file removed', '%d %s files removed', removed) % (removed, filetype)
         return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
@@ -2720,7 +2720,7 @@ class YumBase(depsolve.Depsolve):
                 usedDepString = False
                 where = self.pkgSack.searchAll(arg, False)
             self.verbose_logger.log(logginglevels.DEBUG_1,
-                _('Searching %d packages'), len(where))
+               P_('Searching %d package', 'Searching %d packages', len(where)), len(where))
             
             for po in sorted(where):
                 self.verbose_logger.log(logginglevels.DEBUG_2,
