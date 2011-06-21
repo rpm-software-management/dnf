@@ -203,11 +203,14 @@ class YumBase(depsolve.Depsolve):
         self.prerepoconf = _YumPreRepoConf()
 
         self.run_with_package_names = set()
+        self._cleanup = []
 
     def __del__(self):
         self.close()
         self.closeRpmDB()
         self.doUnlock()
+        # call cleanup callbacks
+        for cb in self._cleanup: cb()
 
     def close(self):
         # We don't want to create the object, so we test if it's been created
@@ -375,7 +378,7 @@ class YumBase(depsolve.Depsolve):
                                      syslog_device)
 
     def doFileLogSetup(self, uid, logfile):
-        logginglevels.setFileLog(uid, logfile)
+        logginglevels.setFileLog(uid, logfile, self._cleanup)
 
     def getReposFromConfigFile(self, repofn, repo_age=None, validate=None):
         """read in repositories from a config .repo file"""
