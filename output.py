@@ -1098,47 +1098,20 @@ class YumOutput:
             if lines:
                 out.append(totalmsg)
 
-        summary = _("""
+        out.append(_("""
 Transaction Summary
 %s
-""") % ('=' * self.term.columns,)
-        out.append(summary)
-        num_in = len(self.tsInfo.installed + self.tsInfo.depinstalled)
-        num_up = len(self.tsInfo.updated + self.tsInfo.depupdated)
-        num_rm = len(self.tsInfo.removed + self.tsInfo.depremoved)
-        num_re = len(self.tsInfo.reinstalled)
-        num_dg = len(self.tsInfo.downgraded)
-        if num_in:
-            out.append(P_("""\
-Install   %5.5s Package
-""", """\
-Install   %5.5s Packages
-""", num_in) % num_in)
-        if num_up:
-            out.append(P_("""\
-Upgrade   %5.5s Package
-""", """\
-Upgrade   %5.5s Packages
-""", num_up) % num_up)
-        if num_rm:
-            out.append(P_("""\
-Remove    %5.5s Package
-""", """\
-Remove    %5.5s Packages
-""", num_rm) % num_rm)
-        if num_re:
-            out.append(P_("""\
-Reinstall %5.5s Package
-""", """\
-Reinstall %5.5s Packages
-""", num_re) % num_re)
-        if num_dg:
-            out.append(P_("""\
-Downgrade %5.5s Package
-""", """\
-Downgrade %5.5s Packages
-""", num_dg) % num_dg)
-        
+""") % ('=' * self.term.columns))
+        for action, count in (
+            ('Install', len(self.tsInfo.installed) + len(self.tsInfo.depinstalled)),
+            ('Upgrade', len(self.tsInfo.updated) + len(self.tsInfo.depupdated)),
+            ('Remove', len(self.tsInfo.removed) + len(self.tsInfo.depremoved)),
+            ('Reinstall', len(self.tsInfo.reinstalled)),
+            ('Downgrade', len(self.tsInfo.downgraded)),
+        ):
+            if count: out.append('%-9s %5d %s\n' % (
+                _(action), count, P_('Package', 'Packages', count),
+            ))
         return ''.join(out)
         
     def postTransactionOutput(self):
