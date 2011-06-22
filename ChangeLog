@@ -1,3 +1,346 @@
+2011-06-22  Zdeněk Pavlas <zpavlas@redhat.com>
+
+	* output.py: Clean up the 'Transaction summary' report.
+
+2011-06-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	Merge branch 'yum-3_2_X' of
+	ssh://yum.baseurl.org/srv/projects/yum/git/yum into yum-3_2_X  *
+	'yum-3_2_X' of ssh://yum.baseurl.org/srv/projects/yum/git/yum:   Fix
+	a leaked file descriptor
+
+2011-06-21  Zdeněk Pavlas <zpavlas@redhat.com>
+
+	* yum/__init__.py, yum/logginglevels.py: Fix a leaked file
+	descriptor  'yum.log' is now closed when YumBase instance is GC'd.
+	Resolves BZ 713924.
+
+2011-06-21  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: add check to make sure rest in the libc
+	collapsing is not a single item list.
+
+2011-06-20  Nick Jacek <njacek@redhat.com>
+
+	* yum/__init__.py: Uses ngettext to pluralise messages produced in
+	__init__.py. BZ 552317
+
+2011-06-20  Nick Jacek <njacek@redhat.com>
+
+	* cli.py: Uses ngettext to pluralise messages produced by several
+	functions in cli.py. BZ 552317
+
+2011-06-20  Nick Jacek <njacek@redhat.com>
+
+	* output.py: Changes the Transaction Summary so that the plurals are
+	printed using ngettext. BZ 552317
+
+2011-06-20  James Antill <james@and.org>
+
+	* yum/__init__.py: Add message to history redo/undo for when nothing
+	is done.
+
+2011-06-16  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Turn a name into a txmbr, if we can. Helps erase
+	filelog/scriptout and history.
+
+2011-06-16  James Antill <james@and.org>
+
+	* yum/__init__.py: Add comments on TS_FAILED setting.
+
+2011-06-16  Nick Jacek <njacek@redhat.com>
+
+	* yum/__init__.py, yum/rpmtrans.py: If verifyTransaction detects
+	that an install or removal was not successful, it will now set the
+	output_state of the pkg to TS_FAILED. BZ 661962  For the case of a
+	removal, since the output_state will be TS_FAILED rather than just
+	remaining TS_ERASE, yum will now correctly say that the removal
+	failed instead of saying that the package was removed.
+
+2011-06-16  James Antill <james@and.org>
+
+	* yum/update_md.py: Add a __unicode__ to the UpdateNotice object, so
+	the test code works.
+
+2011-06-14  James Antill <james@and.org>
+
+	* yum/__init__.py: Sort the packages, best we can easily, in
+	searchPackageProvides().
+
+2011-06-13  Nick Jacek <njacek@redhat.com>
+
+	* yum/__init__.py, yum/depsolve.py:  Stops "Finished dependency resolution" from being printed multiple
+	 times when --skip-broken is used. BZ 626569.
+
+2011-06-13  Marcelo Moreira de Mello <mmello@redhat.com>
+
+	* docs/yum.conf.5: - Fixed small typo at protected_multilib description on yum.conf man
+	page  Hello,    This patches fixes a small type at
+	protected_multilib description on yum.conf man page.   Cheers,
+	Marcelo -- Marcelo Moreira de Mello  From: Marcelo Moreira de Mello
+	<mmello@redhat.com> Date: Mon, 13 Jun 2011 16:10:07 -0300 Subject:
+	[PATCH]  Fixed small typo at protected_multilib description at
+	yum.conf man page
+
+2011-06-13  James Antill <james@and.org>
+
+	* yum/__init__.py: Show the correct "duplicate" package for search
+	without --showduplicates.
+
+2011-06-13  James Antill <james@and.org>
+
+	* yum/packages.py: Always sort installed repos. after available
+	repos.
+
+2011-06-13  James Antill <james@and.org>
+
+	* output.py: Show from_repo in matchcallback. Only print "Matched
+	from" is there is more.
+
+2011-06-08  Nick Jacek <njacek@redhat.com>
+
+	* docs/yum.8: Updated documentation for the new groups command.
+
+2011-06-08  Nick Jacek <njacek@redhat.com>
+
+	* yumcommands.py: Remove the unused group command classes.
+
+2011-06-08  Nick Jacek <njacek@redhat.com>
+
+	* cli.py, yumcommands.py: Adds the Groups command, and removes
+	individual command classes for grouplist etc. Adds the group summary
+	function.
+
+2011-06-06  Casey Jao <cjao@ugcs.caltech.edu>
+
+	* test/complexremovetests.py: Add complex remove tests for new
+	_remove_old_deps code.
+
+2011-06-06  Casey Jao <cjao@ugcs.caltech.edu>
+
+	* test/testbase.py: Make FakePackage use a simulated
+	RPMDBAdditionalDataPackage for yumdb_info.
+
+2011-06-06  Casey Jao <cjao@ugcs.caltech.edu>
+
+	* yum/__init__.py: Fix _remove_old_deps to deal with chains of
+	revdeps.
+
+2011-06-06  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/bn_IN.po, po/ca.po, po/cs.po, po/da.po, po/de.po, po/el.po,
+	po/en_GB.po, po/es.po, po/eu.po, po/fi.po, po/fr.po, po/gu.po,
+	po/hi.po, po/hu.po, po/id.po, po/id_ID.po, po/it.po, po/ja.po,
+	po/lt_LT.po, po/mr.po, po/ms.po, po/nb.po, po/pa.po, po/pl.po,
+	po/pt.po, po/pt_BR.po, po/ru.po, po/sr.po, po/sr@latin.po,
+	po/sv.po, po/uk.po, po/ur.po, po/yum.pot, po/zh_CN.po, po/zh_TW.po: 
+	yay transifex
+
+2011-06-02  James Antill <james@and.org>
+
+	* output.py, yum/__init__.py, yum/packages.py: Create list of
+	pkgtups we couldn't find, and output them in listTrans.
+
+2011-06-02  James Antill <james@and.org>
+
+	* cli.py, shell.py, yummain.py: Return -1 from doTransaction() if
+	user/GPG fails, diff. text. BZ 586690.
+
+2011-06-02  James Antill <james@and.org>
+
+	* yum/transactioninfo.py: Add failed to __init__ of TransData.
+
+2011-06-02  James Antill <james@and.org>
+
+	* yum/repos.py: Fix for pulp directly using RepoStorage() without a
+	YumBase().
+
+2011-06-01  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Make empty proxy/proxy_username mean the same as
+	unset/_none_. BZ 709188.
+
+2011-06-01  John Lau <jlau@redhat.com>
+
+	* yum/__init__.py: Fix _retrievePublicKey() when called with
+	repo=None. BZ 709311
+
+2011-05-31  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Do the timestamp check the correct way around.
+
+2011-05-31  James Antill <james@and.org>
+
+	* yum/yumRepo.py: Fail reverts of repomd.xml when we aren't doing
+	timestamp checks. BZ 665919.
+
+2011-05-27  James Antill <james@and.org>
+
+	* yum/misc.py: Work around RHEL-5 python broken getlocale() call. BZ
+	708292
+
+2011-05-26  Dennis Gilmore <dennis@ausil.us>
+
+	* rpmUtils/arch.py: we need to set the basearch on arm hardware to
+	arm.
+
+2011-05-26  James Antill <james@and.org>
+
+	* yum/rpmtrans.py: Do ts_done create at the same time as ts_all, so
+	it's consistent. BZ 707668.
+
+2011-05-26  Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>
+
+	* yum/__init__.py: Fix unicode problems with grpid  Running yum
+	groupremove with a group name which does not exist and includes
+	unicode characters raises a UnicodeDecodeError.  Pass grpid to
+	to_unicode before printing it to avoid errors like this.
+
+2011-05-25  James Antill <james@and.org>
+
+	* yum/misc.py: Also ignore ENOTDIR in stat_f. BZ 707422
+
+2011-05-25  James Antill <james@and.org>
+
+	* yumcommands.py: Show which repo. doesn't have a gpgkey.
+
+2011-05-24  James Antill <james@and.org>
+
+	* yum/__init__.py, yummain.py: Don't show depsolve failure messages
+	for non-depsolving problems. BZ 597336.
+
+2011-05-24  James Antill <james@and.org>
+
+	* yumcommands.py: Remove usage of INFO_* from yumcommands, as -q
+	supresses that. BZ 689241.
+
+2011-05-24  James Antill <james@and.org>
+
+	* docs/yum.conf.5: Tweak color docs. again. BZ 672706.
+
+2011-05-24  James Antill <james@and.org>
+
+	* yum/__init__.py: Sync. Installed provides return msg, with
+	available provides return msg.
+
+2011-05-23  James Antill <james@and.org>
+
+	* cli.py: Make yum provides nicer for things like "matplotlib" or
+	yum-config-manager.
+
+2011-05-20  James Antill <james@and.org>
+
+	* yum/__init__.py: Don't list the repos. in saved-tx, if we are
+	doing an rm transaction.
+
+2011-04-29  James Antill <james@and.org>
+
+	* yum/__init__.py:  Don't use .up object on package install, unless we have to.   Huge
+	 perf. gain, now takes ~60% of time to get to y/N choice. 45% when
+	 obsoletes are off.   Somewhat ugly workaround needed to get
+	 obsoletes data.   Also fixes bug when obsoletes are off and we
+	 install something which obsoletes things (they still need to be
+	 obsoleted, as rpm will do it).
+
+2011-04-27  James Antill <james@and.org>
+
+	* yumcommands.py: Add repofile to repolist -v output.
+
+2011-04-26  James Antill <james@and.org>
+
+	* docs/yum.8: Try to do a better explanation of how history
+	undo/redo/rollback work.
+
+2011-05-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/bn_IN.po, po/ca.po, po/cs.po, po/da.po, po/de.po, po/el.po,
+	po/en_GB.po, po/es.po, po/eu.po, po/fi.po, po/fr.po, po/gu.po,
+	po/hi.po, po/hu.po, po/id.po, po/id_ID.po, po/it.po, po/ja.po,
+	po/lt_LT.po, po/mr.po, po/ms.po, po/nb.po, po/pa.po, po/pl.po,
+	po/pt.po, po/pt_BR.po, po/ru.po, po/sr.po, po/sr@latin.po,
+	po/sv.po, po/uk.po, po/ur.po, po/yum.pot, po/zh_CN.po, po/zh_TW.po: 
+	newest .pot and translations, again
+
+2011-05-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* po/bn_IN.po, po/ca.po, po/cs.po, po/da.po, po/de.po, po/el.po,
+	po/en_GB.po, po/es.po, po/eu.po, po/fi.po, po/fr.po, po/gu.po,
+	po/hi.po, po/hu.po, po/id.po, po/id_ID.po, po/it.po, po/ja.po,
+	po/lt_LT.po, po/mr.po, po/ms.po, po/nb.po, po/pa.po, po/pl.po,
+	po/pt.po, po/pt_BR.po, po/ru.po, po/sr.po, po/sr@latin.po,
+	po/sv.po, po/uk.po, po/ur.po, po/zh_CN.po, po/zh_TW.po: merge all
+	the translations from transifex
+
+2011-05-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* yum/packages.py: remove a debug print add an explanation of why we
+	skip libc.so.6()
+
+2011-05-04  Seth Vidal <skvidal@fedoraproject.org>
+
+	* rpmUtils/miscutils.py, yum/packages.py: make sure we use rpm ver
+	cmp for the sort of the glibc requires  when we're doing
+	collapse_libc_requires. ultimately what's causing:
+	https://bugzilla.redhat.com/show_bug.cgi?id=701744
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Don't do long option splitting within base option
+	completion.  Functions should do the splitting themselves, giving
+	them better control over when to stop completing if a split
+	occurred.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Make long option splitting actually work with bash
+	4+.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add history info|list|summary completions.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Add history rollback completion.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Completion code cleanups.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Complete history packages-list on available instead
+	of installed packages.
+
+2011-04-24  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Use "declare -F" instead of "type" to check if a
+	bash function exists.  Avoids some stat() calls when it doesn't.
+
+2011-04-20  James Antill <james@and.org>
+
+	* docs/yum.8, yumcommands.py: Add history rollback command.
+
+2011-04-20  James Antill <james@and.org>
+
+	* output.py: Fail quickly for merged transactions of 123..xyz etc.,
+	which are invalid.
+
+2011-04-20  James Antill <james@and.org>
+
+	* output.py: Allow "last" usage in merged transactions.
+
+2011-04-23  Ville Skyttä <ville.skytta@iki.fi>
+
+	* etc/yum.bash: Ignore path like completions internally in
+	_yum_list, add .* to ignored globs.
+
+2011-04-20  James Antill <james@and.org>
+
+	* ChangeLog, yum.spec, yum/__init__.py: Update changelog and
+	version, for 3.4.1
+
 2011-04-19  James Antill <james@and.org>
 
 	* yum/rpmsack.py: Fix forced umask settings for yumdb/etc., 0 =>
