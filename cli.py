@@ -264,7 +264,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             opts.debuglevel = opts.errorlevel = 6
         if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
             self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
-        if opts.conffile != pc.fn:
+        #  getRoot() changes it, but then setupYumConfig() changes it back. So
+        # don't test for this, if we are using --installroot.
+        if root == '/' and opts.conffile != pc.fn:
             self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
 
         if opts.version:
