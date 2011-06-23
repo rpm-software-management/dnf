@@ -1103,14 +1103,14 @@ Transaction Summary
 %s
 """) % ('=' * self.term.columns))
         for action, count in (
-            ('Install', len(self.tsInfo.installed) + len(self.tsInfo.depinstalled)),
-            ('Upgrade', len(self.tsInfo.updated) + len(self.tsInfo.depupdated)),
-            ('Remove', len(self.tsInfo.removed) + len(self.tsInfo.depremoved)),
-            ('Reinstall', len(self.tsInfo.reinstalled)),
-            ('Downgrade', len(self.tsInfo.downgraded)),
+            (_('Install'), len(self.tsInfo.installed) + len(self.tsInfo.depinstalled)),
+            (_('Upgrade'), len(self.tsInfo.updated) + len(self.tsInfo.depupdated)),
+            (_('Remove'), len(self.tsInfo.removed) + len(self.tsInfo.depremoved)),
+            (_('Reinstall'), len(self.tsInfo.reinstalled)),
+            (_('Downgrade'), len(self.tsInfo.downgraded)),
         ):
             if count: out.append('%-9s %5d %s\n' % (
-                _(action), count, P_('Package', 'Packages', count),
+                action, count, P_('Package', 'Packages', count),
             ))
         return ''.join(out)
         
