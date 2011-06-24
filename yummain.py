@@ -101,6 +101,17 @@ def main(args):
     except Errors.YumBaseError, e:
         return exFatal(e)
 
+    # Try to open the current directory to see if we have 
+    # read and write access. If not, chdir to /
+    try:
+        f = open(".")
+    except IOError, e:
+        if e.errno == errno.EACCES:
+            verbose_logger.debug(_('No read/write access in current directory, moving to /'))
+            os.chdir("/")
+    else:
+        close(f)
+
     lockerr = ""
     while True:
         try:
