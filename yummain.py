@@ -107,7 +107,7 @@ def main(args):
         f = open(".")
     except IOError, e:
         if e.errno == errno.EACCES:
-            verbose_logger.debug(_('No read/write access in current directory, moving to /'))
+            logger.critical(_('No read/write access in current directory, moving to /'))
             os.chdir("/")
     else:
         close(f)
