@@ -91,7 +91,7 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
-__version__ = '3.4.2'
+__version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
