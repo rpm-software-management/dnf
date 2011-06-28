@@ -792,7 +792,9 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.log(logginglevels.DEBUG_4,
                                 _('Getting group metadata'))
         reposWithGroups = []
-        self.repos.doSetup()
+        #  Need to make sure the groups data is ready to read. Really we'd want
+        # to add groups to the mdpolicy list of the repo. but we don't atm.
+        self.pkgSack
         for repo in self.repos.listGroupsEnabled():
             if repo.groups_added: # already added the groups from this repo
                 reposWithGroups.append(repo)
