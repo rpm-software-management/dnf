@@ -3,6 +3,8 @@
 
 import os
 
+_ppc64_native_is_best = False
+
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
                    "sparc64v": ( "sparcv9v", "sparcv9v", "sparc64v" ),
@@ -10,6 +12,8 @@ multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
                    }
+if _ppc64_native_is_best:
+    multilibArches["ppc64"] = ( "ppc", "ppc64", "ppc64" )
 
 arches = {
     # ia32
@@ -339,7 +343,7 @@ def getBestArch(myarch=None):
     if arch.startswith("sparc64"):
         arch = multilibArches[arch][1]
 
-    if arch.startswith("ppc64"):
+    if arch.startswith("ppc64") and not _ppc64_native_is_best:
         arch = 'ppc'
 
     return arch
@@ -357,7 +361,7 @@ def getBaseArch(myarch=None):
 
     if myarch.startswith("sparc64"):
         return "sparc"
-    elif myarch.startswith("ppc64"):
+    elif myarch.startswith("ppc64") and not _ppc64_native_is_best:
         return "ppc"
     elif myarch.startswith("arm"):
         return "arm"
