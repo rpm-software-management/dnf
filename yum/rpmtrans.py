@@ -554,12 +554,13 @@ class RPMTransaction:
             #  Note that we are currently inside the chroot, which makes
             # sqlite panic when it tries to open it's journal file.
             # So let's have some "fun" and workaround that:
-            if self.base.conf.installroot != '/':
+            _do_chroot = False
+            if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(".")
             pid   = self.base.history.pkg2pid(txmbr.po)
             state = self.base.history.txmbr2state(txmbr)
             self.base.history.trans_data_pid_end(pid, state)
-            if self.base.conf.installroot != '/':
+            if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(self.base.conf.installroot)
 
             self.ts_done(txmbr.po, txmbr.output_state)

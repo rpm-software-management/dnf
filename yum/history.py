@@ -627,6 +627,14 @@ class YumHistory:
                 self.conf.readable = False
                 return None
 
+            #  Note that this is required due to changing the history DB in the
+            # callback for removed txmbrs ... which happens inside the chroot,
+            # as against all our other access which is outside the chroot. So
+            # we need sqlite to not open the journal.
+            #  In theory this sucks, as history could be shared. In reality
+            # it's deep yum stuff and there should only be one yum.
+            executeSQL(self._conn.cursor(), "PRAGMA locking_mode = EXCLUSIVE")
+
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()
@@ -747,7 +755,6 @@ class YumHistory:
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
                          """, ('TRUE', self._tid, pid, state))
         self._commit()
-        return cur.lastrowid
 
     def _trans_rpmdb_problem(self, problem):
         if not hasattr(self, '_tid'):
@@ -1310,6 +1317,9 @@ class YumHistory:
                                     'sqlite')
         if self._db_file == _db_file:
             os.rename(_db_file, _db_file + '.old')
+            # Just in case ... move the journal file too.
+            if os.path.exists(_db_file + '-journal'):
+                os.rename(_db_file  + '-journal', _db_file + '-journal.old')
         self._db_file = _db_file
         
         if self.conf.writable and not os.path.exists(self._db_file):
