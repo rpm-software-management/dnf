@@ -1,6 +1,6 @@
 Summary: RPM installer/updater
 Name: yum
-Version: 3.4.2
+Version: 3.4.3
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
