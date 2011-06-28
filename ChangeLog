@@ -1,3 +1,58 @@
+2011-06-28  James Antill <james@and.org>
+
+	* yum/__init__.py: Bump version to 3.4.3
+
+2011-06-28  James Antill <james@and.org>
+
+	* yum/__init__.py:  Don't call repo.doSetup() if we've already setup the repos. BZ
+	 717163.   Test: yum in @core == has    setup.        yum rm @core
+	 == hasn't setup.
+
+2011-06-28  James Antill <james@and.org>
+
+	* yum/history.py, yum/rpmtrans.py:  Disable the rpmtrans chroot workaround. Use exclusive locking in
+	 history.   The only downside here appears to be that we get
+	 .sqlite-journal files in /var/lib/yum/history ... which is probably
+	 fine.  Also tested fine as a normal user, with read-only access.
+
+2011-06-27  James Antill <james@and.org>
+
+	* yummain.py: Change the logging for NFS path problems from debug to
+	critical.
+
+2011-06-24  Nick Jacek <njacek@redhat.com>
+
+	* yummain.py: Checks if we have read and write access in the current
+	directory. If not, chdir to /. BZ 698795
+
+2011-06-23  Zdeněk Pavlas <zpavlas@redhat.com>
+
+	* output.py: Make the source xgettext-friendly.  xgettext ignores
+	_(var), so localize literals instead.
+
+2011-06-23  James Antill <james@and.org>
+
+	* cli.py: Don't show -c warning, when we've changed it due to
+	--installroot. BZ 707358.
+
+2011-06-22  James Antill <james@and.org>
+
+	* yum/rpmtrans.py:  Workaround rpm chroot insanity, so we can use sqlite from
+	 unInstStop() cb.   So the problem is that AGAIN, when we log stuff
+	 for installed rpms we do it in _instCloseFile, which is outside the
+	 chroot ... but when we log stuff for erase rpms we do it in
+	 _unInstStop, which is inside the chroot.  sqlite will open it's
+	 journal file, which is it has a working path for from outside the
+	 chroot ... being inside the chroot breaks this, which results in
+	 complete failure of everything.   Fix is to move out of the chroot,
+	 before we call the history/sqlite APIs, and then move back in again
+	 ... basically what rpm does.
+
+2011-06-22  James Antill <james@and.org>
+
+	* ChangeLog, yum.spec, yum/__init__.py: Update ChangeLog/version for
+	3.4.2 release.
+
 2011-06-22  Zdeněk Pavlas <zpavlas@redhat.com>
 
 	* output.py: Clean up the 'Transaction summary' report.
