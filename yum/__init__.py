@@ -1242,13 +1242,15 @@ class YumBase(depsolve.Depsolve):
         if None in pkgtup:
             return None
         return pkgtup
-    def _add_not_found_a(self, pkgs, nevra_dict):
-        pkgtup = self._add_not_found(pkgs, nevra_dict)
+    def _add_not_found_a(self, pkgs, nevra_dict={}, pkgtup=None):
+        if pkgtup is None and nevra_dict:
+            pkgtup = self._add_not_found(pkgs, nevra_dict)
         if pkgtup is None:
             return
         self._not_found_a[pkgtup] = YumNotFoundPackage(pkgtup)
-    def _add_not_found_i(self, pkgs, nevra_dict):
-        pkgtup = self._add_not_found(pkgs, nevra_dict)
+    def _add_not_found_i(self, pkgs, nevra_dict={}, pkgtup=None):
+        if pkgtup is None and nevra_dict:
+            pkgtup = self._add_not_found(pkgs, nevra_dict)
         if pkgtup is None:
             return
         self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
@@ -3049,7 +3051,7 @@ class YumBase(depsolve.Depsolve):
         pkgs = self.pkgSack.searchPkgTuple(pkgtup)
 
         if len(pkgs) == 0:
-            self._add_not_found_a(pkgs, pkgtup)
+            self._add_not_found_a(pkgs, pkgtup=pkgtup)
             if allow_missing: #  This can happen due to excludes after .up has
                 return None   # happened.
             raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
@@ -3071,7 +3073,7 @@ class YumBase(depsolve.Depsolve):
 
         pkgs = self.rpmdb.searchPkgTuple(pkgtup)
         if len(pkgs) == 0:
-            self._add_not_found_i(pkgs, pkgtup)
+            self._add_not_found_i(pkgs, pkgtup=pkgtup)
             raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
 
         # Dito. FIXME from getPackageObject() for len() > 1 ... :)
