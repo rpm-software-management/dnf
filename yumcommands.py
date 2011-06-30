@@ -43,16 +43,22 @@ def _err_mini_usage(base, basecmd):
     base.logger.critical(txt)
 
 def checkRootUID(base):
-    """
-    Verify that the program is being run by the root user.
+    """Verify that the program is being run by the root user.
 
-    @param base: a YumBase object.
+    :param base: a :class:`yum.Yumbase` object.
+    :raises: :class:`cli.CliError`
     """
     if base.conf.uid != 0:
         base.logger.critical(_('You need to be root to perform this command.'))
         raise cli.CliError
 
 def checkGPGKey(base):
+    """Verify that there are gpg keys for the enabled repositories in the
+    rpm database.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :raises: :class:`cli.CliError`
+    """
     if not base.gpgKeyCheck():
         for repo in base.repos.listEnabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
@@ -75,6 +81,14 @@ For more information contact your distribution or package provider.
                 raise cli.CliError
 
 def checkPackageArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains the name of at least one package for
+    *basecmd* to act on.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
     if len(extcmds) == 0:
         base.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
@@ -82,18 +96,44 @@ def checkPackageArg(base, basecmd, extcmds):
         raise cli.CliError
 
 def checkItemArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains the name of at least one item for
+    *basecmd* to act on.  Generally, the items are command-line
+    arguments that are not the name of a package, such as a file name
+    passed to provides.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need an item to match'))
         _err_mini_usage(base, basecmd)
         raise cli.CliError
 
 def checkGroupArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains the name of at least one group for
+    *basecmd* to act on.
+
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need a group or list of groups'))
         _err_mini_usage(base, basecmd)
         raise cli.CliError    
 
 def checkCleanArg(base, basecmd, extcmds):
+    """Verify that *extcmds* contains at least one argument, and that all
+    arguments in *extcmds* are valid options for clean.
+
+    :param base: a :class:`yum.Yumbase` object
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
+    """
     VALID_ARGS = ('headers', 'packages', 'metadata', 'dbcache', 'plugins',
                   'expire-cache', 'rpmdb', 'all')
 
@@ -108,12 +148,14 @@ def checkCleanArg(base, basecmd, extcmds):
             raise cli.CliError
 
 def checkShellArg(base, basecmd, extcmds):
-    """
-    Verify that the arguments given to 'yum shell' are valid.
+    """Verify that the arguments given to 'yum shell' are valid.  yum
+    shell can be given either no argument, or exactly one argument,
+    which is the name of a file.
 
-    yum shell can be given either no args, or exactly one argument,
-    which is the name of a file. If these are not met,
-    raise cli.CliError.
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
         base.verbose_logger.debug(_("No argument to shell"))
@@ -133,10 +175,12 @@ def checkShellArg(base, basecmd, extcmds):
         raise cli.CliError
 
 def checkEnabledRepo(base, possible_local_files=[]):
-    """
-    Verify that there is at least one enabled repo.
+    """Verify that there is at least one enabled repo.
 
-    @param base: a YumBase object.
+    :param base: a :class:`yum.Yumbase` object.
+    :param basecmd: the name of the command being checked for
+    :param extcmds: a list of arguments passed to *basecmd*
+    :raises: :class:`cli.CliError`:
     """
     if base.repos.listEnabled():
         return
@@ -152,63 +196,145 @@ def checkEnabledRepo(base, possible_local_files=[]):
     raise cli.CliError
 
 class YumCommand:
-        
+    """An abstract base class that defines the methods needed by the cli
+    to execute a specific command.  Subclasses must override at least
+    :func:`getUsage` and :func:`getSummary`.
+    """
+
     def __init__(self):
         self.done_command_once = False
         self.hidden = False
 
     def doneCommand(self, base, msg, *args):
+        """ Output *msg* the first time that this method is called, and do
+        nothing on subsequent calls.  This is to prevent duplicate
+        messages from being printed for the same command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param msg: the message to be output
+        :param *args: additional arguments associated with the message
+        """
         if not self.done_command_once:
             base.verbose_logger.info(msg, *args)
         self.done_command_once = True
 
     def getNames(self):
+        """Return a list of strings that are the names of the command.
+        The command can be called from the command line by using any
+        of these names.
+
+        :return: a list containing the names of the command
+        """
         return []
 
     def getUsage(self):
-        """
-        @return: A usage string for the command, including arguments.
+        """Return a usage string for the command, including arguments.
+
+        :return: a usage string for the command
         """
         raise NotImplementedError
 
     def getSummary(self):
-        """
-        @return: A one line summary of what the command does.
+        """Return a one line summary of what the command does.
+
+        :return: a one line summary of what the command does
         """
         raise NotImplementedError
     
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that various conditions are met so that the command
+        can run.
+
+        :param base: a :class:`yum.Yumbase` object.
+        :param basecmd: the name of the command being checked for
+        :param extcmds: a list of arguments passed to *basecmd*
+        """
         pass
 
     def doCommand(self, base, basecmd, extcmds):
-        """
-        @return: (exit_code, [ errors ]) where exit_code is:
-           0 = we're done, exit
-           1 = we've errored, exit with error string
-           2 = we've got work yet to do, onto the next stage
+        """Execute the command
+
+        :param base: a :class:`yum.Yumbase` object.
+        :param basecmd: the name of the command being executed
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
         """
         return 0, [_('Nothing to do')]
     
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before the
+        command can run
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return True
         
 class InstallCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    install command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of
+        these names.
+
+        :return: a list containing the names of this command
+        """
         return ['install']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return _("PACKAGE...")
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Install a package or packages on your system")
     
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        that there are enabled repositories with gpg keys, and that
+        this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Install Process"))
         try:
             return base.installPkgs(extcmds)
@@ -216,21 +342,60 @@ class InstallCommand(YumCommand):
             return 1, [str(e)]
 
 class UpdateCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    update command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can by called from the command line by using any of
+        these names.
+
+        :return: a list containing the names of this command
+        """
         return ['update', 'update-to']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return _("[PACKAGE...]")
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Update a package or packages on your system")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that there are enabled repositories with gpg
+        keys, and that this command is being run by the root user.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Update Process"))
         try:
             return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
@@ -238,21 +403,59 @@ class UpdateCommand(YumCommand):
             return 1, [str(e)]
 
 class DistroSyncCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    distro-synch command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['distribution-synchronization', 'distro-sync']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return _("[PACKAGE...]")
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Synchronize installed packages to the latest available versions")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that the program is being run by the root user,
+        and that there are enabled repositories with gpg keys.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
         try:
             base.conf.obsoletes = 1
@@ -289,16 +492,46 @@ def _list_cmd_calc_columns(base, ypl):
     return (-columns[0], -columns[1], -columns[2])
 
 class InfoCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    update command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['info']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Display details about a package or group of packages")
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         try:
             highlight = base.term.MODE['bold']
             ypl = base.returnPkgLists(extcmds, installed_available=highlight)
@@ -389,35 +622,95 @@ class InfoCommand(YumCommand):
             return 0, []
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         if len(extcmds) and extcmds[0] == 'installed':
             return False
         
         return True
 
 class ListCommand(InfoCommand):
+    """A class containing methods needed by the cli to execute the
+    list command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['list']
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("List a package or groups of packages")
 
 
 class EraseCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    erase command.
+    """
+
         
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['erase', 'remove']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "PACKAGE..."
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Remove a package or packages from your system")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run.  These include that the program is being run by the root
+        user, and that this command is called with appropriate
+        arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Remove Process"))
         try:
             return base.erasePkgs(extcmds)
@@ -425,9 +718,25 @@ class EraseCommand(YumCommand):
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
     def needTsRemove(self, base, basecmd, extcmds):
+        """Return whether a transaction set for removal only must be
+        set up before this command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a remove-only transaction set is needed, False otherwise
+        """
         return True
 
  
@@ -442,12 +751,25 @@ class GroupsCommand(YumCommand):
                        'groupinfo'    : 'info'}
 
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['groups', 'group'] + self.direct_commands.keys()
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[list|info|summary|install|upgrade|remove|mark] [GROUP]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Display, or use, the groups information")
     
     def _grp_setup_doCommand(self, base):
@@ -479,6 +801,14 @@ class GroupsCommand(YumCommand):
         return cmd, extcmds
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        The exact conditions checked will vary depending on the
+        subcommand that is being called.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         checkEnabledRepo(base)
@@ -505,6 +835,19 @@ class GroupsCommand(YumCommand):
             raise cli.CliError
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         self._grp_setup_doCommand(base)
@@ -529,6 +872,14 @@ class GroupsCommand(YumCommand):
 
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         if cmd in ('list', 'info', 'remove', 'summary'):
@@ -536,6 +887,14 @@ class GroupsCommand(YumCommand):
         return True
 
     def needTsRemove(self, base, basecmd, extcmds):
+        """Return whether a transaction set for removal only must be
+        set up before this command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a remove-only transaction set is needed, False otherwise
+        """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         if cmd in ('remove',):
@@ -543,20 +902,56 @@ class GroupsCommand(YumCommand):
         return False
 
 class MakeCacheCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    makecache command.
+    """
 
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['makecache']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return ""
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Generate the metadata cache")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that there is an enabled repository.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.logger.debug(_("Making cache files for all metadata files."))
         base.logger.debug(_("This may take a while depending on the speed of this computer"))
         try:
@@ -582,44 +977,134 @@ class MakeCacheCommand(YumCommand):
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class CleanCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    clean command.
+    """
     
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['clean']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[headers|packages|metadata|dbcache|plugins|expire-cache|all]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Remove cached data")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can run.
+        These include that there is at least one enabled repository,
+        and that this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkCleanArg(base, basecmd, extcmds)
         checkEnabledRepo(base)
         
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.conf.cache = 1
         return base.cleanCli(extcmds)
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class ProvidesCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    provides command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['provides', 'whatprovides']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "SOME_STRING"
     
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Find what package provides the given value")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkItemArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.logger.debug("Searching Packages: ")
         try:
             return base.provides(extcmds)
@@ -627,19 +1112,56 @@ class ProvidesCommand(YumCommand):
             return 1, [str(e)]
 
 class CheckUpdateCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    update command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['check-update']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[PACKAGE...]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Check for available package updates")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that there is at least one enabled repository.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         obscmds = ['obsoletes'] + extcmds
         base.extcmds.insert(0, 'updates')
         result = 0
@@ -681,19 +1203,56 @@ class CheckUpdateCommand(YumCommand):
             return result, []
 
 class SearchCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    search command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['search']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "SOME_STRING"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Search package details for the given string")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkItemArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.logger.debug(_("Searching Packages: "))
         try:
             return base.search(extcmds)
@@ -701,24 +1260,70 @@ class SearchCommand(YumCommand):
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class UpgradeCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    update command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['upgrade', 'upgrade-to']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return 'PACKAGE...'
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Update packages taking obsoletes into account")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+         run.  These include that the program is being run by the root
+         user, and that there are enabled repositories with gpg.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.conf.obsoletes = 1
         self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
@@ -727,25 +1332,64 @@ class UpgradeCommand(YumCommand):
             return 1, [str(e)]
 
 class LocalInstallCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    localinstall command.
+    """
+
     def __init__(self):
         YumCommand.__init__(self)
         self.hidden = True
 
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['localinstall', 'localupdate']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "FILE"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Install a local RPM")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run.  These include that there are enabled repositories with
+        gpg keys, and that this command is called with appropriate
+        arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
         
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is:
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Local Package Process"))
 
         updateonly = basecmd == 'localupdate'
@@ -755,19 +1399,57 @@ class LocalInstallCommand(YumCommand):
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class ResolveDepCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    resolvedep command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['resolvedep']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "DEPENDENCY"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Determine which package provides the given dependency")
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         base.logger.debug(_("Searching Packages for Dependency:"))
         try:
             return base.resolveDepCli(extcmds)
@@ -775,19 +1457,56 @@ class ResolveDepCommand(YumCommand):
             return 1, [str(e)]
 
 class ShellCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    shell command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['shell']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[FILENAME]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Run an interactive yum shell")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkShellArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _('Setting up Yum Shell'))
         try:
             return base.doShell()
@@ -795,23 +1514,69 @@ class ShellCommand(YumCommand):
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 
 class DepListCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    deplist command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['deplist']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return 'PACKAGE...'
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("List a package's dependencies")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate
+        arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkPackageArg(base, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Finding dependencies: "))
         try:
             return base.deplist(extcmds)
@@ -820,17 +1585,46 @@ class DepListCommand(YumCommand):
 
 
 class RepoListCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    repolist command.
+    """
     
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ('repolist',)
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return '[all|enabled|disabled]'
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _('Display the configured software repositories')
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         def _repo_size(repo):
             ret = 0
             for pkg in repo.sack.returnPackages():
@@ -1088,21 +1882,54 @@ class RepoListCommand(YumCommand):
         return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 
 class HelpCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    help command.
+    """
+
 
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['help']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "COMMAND"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Display a helpful usage message")
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate
+        arguments.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         if len(extcmds) == 0:
             base.usage()
             raise cli.CliError
@@ -1147,28 +1974,85 @@ class HelpCommand(YumCommand):
         return help_output
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         if extcmds[0] in base.yum_cli_commands:
             command = base.yum_cli_commands[extcmds[0]]
             base.verbose_logger.info(self._makeOutput(command))
         return 0, []
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class ReInstallCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    reinstall command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['reinstall']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "PACKAGE..."
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run.  These include that the program is being run by the root
+        user, that there are enabled repositories with gpg keys, and
+        that this command is called with appropriate arguments.
+
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Reinstall Process"))
         try:
             return base.reinstallPkgs(extcmds)
@@ -1177,25 +2061,73 @@ class ReInstallCommand(YumCommand):
             return 1, [to_unicode(e)]
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("reinstall a package")
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
         
 class DowngradeCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    downgrade command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['downgrade']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "PACKAGE..."
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run.  These include that the program is being run by the root
+        user, that there are enabled repositories with gpg keys, and
+        that this command is called with appropriate arguments.
+
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         self.doneCommand(base, _("Setting up Downgrade Process"))
         try:
             return base.downgradePkgs(extcmds)
@@ -1203,23 +2135,65 @@ class DowngradeCommand(YumCommand):
             return 1, [str(e)]
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("downgrade a package")
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 
 class VersionCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    version command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['version']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[all|installed|available]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Display a version for the machine and/or available repos.")
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
@@ -1344,6 +2318,14 @@ class VersionCommand(YumCommand):
         return 0, ['version']
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
@@ -1354,13 +2336,30 @@ class VersionCommand(YumCommand):
 
 
 class HistoryCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    history command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['history']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Display, or use, the transaction history")
 
     def _hcmd_redo(self, base, extcmds):
@@ -1427,6 +2426,14 @@ class HistoryCommand(YumCommand):
         base.history._create_db_file()
 
     def doCheck(self, base, basecmd, extcmds):
+        """Verify that conditions are met so that this command can
+        run.  The exact conditions checked will vary depending on the
+        subcommand that is being called.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        """
         cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new',
                 'rollback',
                 'addon', 'addon-info',
@@ -1444,6 +2451,19 @@ class HistoryCommand(YumCommand):
             raise cli.CliError
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
@@ -1474,6 +2494,14 @@ class HistoryCommand(YumCommand):
         return ret
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
@@ -1481,16 +2509,46 @@ class HistoryCommand(YumCommand):
 
 
 class CheckRpmdbCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    check-rpmdb command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['check', 'check-rpmdb']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "[dependencies|duplicates|all]"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("Check for problems in the rpmdb")
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         chkcmd = 'all'
         if extcmds:
             chkcmd = extcmds
@@ -1505,19 +2563,57 @@ class CheckRpmdbCommand(YumCommand):
         return rc, ['%s %s' % (basecmd, chkcmd)]
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return False
 
 class LoadTransactionCommand(YumCommand):
+    """A class containing methods needed by the cli to execute the
+    load-transaction command.
+    """
+
     def getNames(self):
+        """Return a list containing the names of this command.  This
+        command can be called from the command line by using any of these names.
+
+        :return: a list containing the names of this command
+        """
         return ['load-transaction', 'load-ts']
 
     def getUsage(self):
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
         return "filename"
 
     def getSummary(self):
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
         return _("load a saved transaction from filename")
 
     def doCommand(self, base, basecmd, extcmds):
+        """Execute this command.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: the command line arguments passed to *basecmd*
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         if not extcmds:
             base.logger.critical(_("No saved transaction file specified."))
             raise cli.CliError
@@ -1533,5 +2629,13 @@ class LoadTransactionCommand(YumCommand):
 
 
     def needTs(self, base, basecmd, extcmds):
+        """Return whether a transaction set must be set up before this
+        command can run.
+
+        :param base: a :class:`yum.Yumbase` object
+        :param basecmd: the name of the command
+        :param extcmds: a list of arguments passed to *basecmd*
+        :return: True if a transaction set is needed, False otherwise
+        """
         return True
 
