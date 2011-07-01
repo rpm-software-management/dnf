@@ -29,10 +29,7 @@ import yum.logginglevels as logginglevels
 
 
 class YumShell(cmd.Cmd):
-
-    """
-    Interactive yum shell.
-    """
+    """A class to implement an interactive yum shell."""
 
     def __init__(self, base):
         cmd.Cmd.__init__(self)
@@ -77,6 +74,11 @@ class YumShell(cmd.Cmd):
         return inputs
         
     def script(self):
+        """Execute a script file in the yum shell.  The location of
+        the script file is supplied by the :class:`cli.YumBaseCli`
+        object that is passed as a parameter to the :class:`YumShell`
+        object when it is created.
+        """
         try:
             fd = open(self.file, 'r')
         except IOError:
@@ -90,6 +92,13 @@ class YumShell(cmd.Cmd):
         return True
             
     def default(self, line):
+        """Handle the next line of input if there is not a dedicated
+        method of :class:`YumShell` to handle it.  This method will
+        handle yum commands that are not unique to the shell, such as
+        install, erase, etc.
+
+        :param line: the next line of input
+        """
         if len(line) > 0 and line.strip()[0] == '#':
             pass
         else:
@@ -117,9 +126,15 @@ class YumShell(cmd.Cmd):
                 self.base.doCommands()
     
     def emptyline(self):
+        """Do nothing on an empty line of input."""
         pass
 
     def completenames(self, text, line, begidx, endidx):
+        """Return a list of possible completions of a command.
+
+        :param text: the command to be completed
+        :return: a list of possible completions of the command
+        """
         ret = cmd.Cmd.completenames(self, text, line, begidx, endidx)
         for command in self.base.yum_cli_commands:
             if command.startswith(text) and command != "shell":
@@ -127,6 +142,11 @@ class YumShell(cmd.Cmd):
         return ret
 
     def do_help(self, arg):
+        """Output help information.
+
+        :param arg: the command to ouput help information about. If
+           *arg* is an empty string, general help will be output.
+        """
         msg = """
     Shell specific arguments:
       config - set config options
@@ -166,21 +186,47 @@ class YumShell(cmd.Cmd):
         self.verbose_logger.info(msg)
         
     def do_EOF(self, line):
+        """Exit the shell when EOF is reached.
+
+        :param line: unused
+        """
         self.resultmsgs = ['Leaving Shell']
         return True
     
     def do_quit(self, line):
+        """Exit the shell.
+
+        :param line: unused
+        """
         self.resultmsgs = ['Leaving Shell']
         return True
     
     def do_exit(self, line):
+        """Exit the shell.
+
+        :param line: unused
+        """
         self.resultmsgs = ['Leaving Shell']
         return True
     
     def do_ts(self, line):
+        """Handle the ts alias of the :func:`do_transaction` method.
+
+        :param line: the remainder of the line, containing the name of
+           a subcommand.  If no subcommand is given, run the list subcommand.
+        """
         self.do_transaction(line)
 
     def do_transaction(self, line):
+        """Execute the given transaction subcommand.  The list
+        subcommand outputs the contents of the transaction, the reset
+        subcommand clears the transaction, the solve subcommand solves
+        dependencies for the transaction, and the run subcommand
+        executes the transaction.
+
+        :param line: the remainder of the line, containing the name of
+           a subcommand.  If no subcommand is given, run the list subcommand.
+        """
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
             self.verbose_logger.log(logginglevels.INFO_2,
@@ -210,6 +256,15 @@ class YumShell(cmd.Cmd):
             self.do_help('transaction')
     
     def do_config(self, line):
+        """Configure yum shell options.
+        
+        :param line: the remainder of the line, containing an option,
+           and then optionally a value in the form [option] [value].
+           Valid options are one of the following: debuglevel,
+           errorlevel, obsoletes, gpgcheck, assumeyes, exclude.  If no
+           value is given, print the current value.  If a value is
+           supplied, set the option to the given value.
+        """
         (cmd, args, line) = self.parseline(line)
         # logs
         if cmd in ['debuglevel', 'errorlevel']:
@@ -264,9 +319,23 @@ class YumShell(cmd.Cmd):
             self.do_help('config')
 
     def do_repository(self, line):
+        """Handle the repository alias of the :func:`do_repo` method.
+
+        :param line: the remainder of the line, containing the name of
+           a subcommand.
+        """
         self.do_repo(line)
         
     def do_repo(self, line):
+        """Execute the given repo subcommand.  The list subcommand
+        lists repositories and their statuses, the enable subcommand
+        enables the given repository, and the disable subcommand
+        disables the given repository.
+
+        :param line: the remainder of the line, containing the name of
+           a subcommand and other parameters if required.  If no
+           subcommand is given, run the list subcommand.
+        """
         (cmd, args, line) = self.parseline(line)
         if cmd in ['list', None]:
             # Munge things to run the repolist command
@@ -338,6 +407,10 @@ class YumShell(cmd.Cmd):
         print line
         
     def do_run(self, line):
+        """Run the transaction.
+
+        :param line: unused
+        """
         if len(self.base.tsInfo) > 0:
             try:
                 (code, msgs) = self.base.buildTransaction()
