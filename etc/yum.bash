@@ -89,6 +89,16 @@ _yum_transactions()
         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" -- "$cur" ) )
 }
 
+_yum_atgroups()
+{
+    if [[ $1 == \@* ]]; then
+        _yum_grouplist "" "${1:1}"
+        COMPREPLY=( "${COMPREPLY[@]/#/@}" )
+        return 0
+    fi
+    return 1
+}
+
 # arguments:
 #   1 = current word to be completed
 #   2 = previous word
@@ -231,13 +241,15 @@ _yum()
             ;;
 
         downgrade|reinstall)
-            _yum_binrpmfiles "$cur"
-            _yum_list installed "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list installed "$cur"
+            fi
             return 0
             ;;
 
         erase|remove)
-            _yum_list installed "$cur"
+            _yum_atgroups "$cur" || _yum_list installed "$cur"
             return 0
             ;;
 
@@ -288,8 +300,10 @@ _yum()
             ;;
 
         install)
-            _yum_binrpmfiles "$cur"
-            _yum_list available "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list available "$cur"
+            fi
             return 0
             ;;
 
@@ -318,8 +332,10 @@ _yum()
             ;;
 
         update|upgrade)
-            _yum_binrpmfiles "$cur"
-            _yum_list updates "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list updates "$cur"
+            fi
             return 0
             ;;
         version)
