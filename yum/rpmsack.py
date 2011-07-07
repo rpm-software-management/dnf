@@ -1753,7 +1753,7 @@ class RPMDBAdditionalDataPackage(object):
         if attr.endswith('.tmp'):
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 
-        info = misc.stat_f(fn)
+        info = misc.stat_f(fn, ignore_EACCES=True)
         if info is None:
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 

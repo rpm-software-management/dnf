@@ -940,14 +940,16 @@ def unlink_f(filename):
         if e.errno != errno.ENOENT:
             raise
 
-def stat_f(filename):
+def stat_f(filename, ignore_EACCES=False):
     """ Call os.stat(), but don't die if the file isn't there. Returns None. """
     try:
         return os.stat(filename)
     except OSError, e:
-        if e.errno not in (errno.ENOENT, errno.ENOTDIR):
-            raise
-        return None
+        if e.errno in (errno.ENOENT, errno.ENOTDIR):
+            return None
+        if ignore_EACCES and e.errno == errno.EACCES:
+            return None
+        raise
 
 def _getloginuid():
     """ Get the audit-uid/login-uid, if available. None is returned if there
