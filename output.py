@@ -2366,6 +2366,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
+                                              progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
             msg = fmt % (utf8_width_fill(process, wid1, wid1),
                          utf8_width_fill(pkgname, wid2, wid2))
