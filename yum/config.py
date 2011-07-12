@@ -1069,7 +1069,7 @@ def writeRawRepoFile(repo,only=None):
         #  If the value is the same, but just interpreted ... when we don't want
         # to keep the interpreted values.
         if (name in ini[section_id] and
-            ovalue == varReplace(ini[section_id][name], yumvar)):
+            ovalue == varReplace(ini[section_id][name], repo.yumvar)):
             ovalue = ini[section_id][name]
 
         if name not in cfgOptions and option.default == value:
