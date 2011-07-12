@@ -13,6 +13,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+"""Various utility functions, and a utility class."""
+
 import sys
 import time
 import exceptions
@@ -29,6 +31,9 @@ import yum.plugins as plugins
 from urlgrabber.progress import format_number
 
 def suppress_keyboard_interrupt_message():
+    """Change settings so that nothing will be printed to the
+    terminal after an uncaught :class:`exceptions.KeyboardInterrupt`.
+    """
     old_excepthook = sys.excepthook
 
     def new_hook(type, value, traceback):
@@ -40,10 +45,23 @@ def suppress_keyboard_interrupt_message():
     sys.excepthook = new_hook
 
 def jiffies_to_seconds(jiffies):
+    """Convert a number of jiffies to seconds, using the convention
+    that 100 jiffies = 1 second.
+
+    :param jiffies: a number of jiffies
+    :return: the equivalent number of seconds
+    """
     Hertz = 100 # FIXME: Hack, need to get this, AT_CLKTCK elf note *sigh*
     return int(jiffies) / Hertz
 
 def seconds_to_ui_time(seconds):
+    """Return a human-readable string representation of the length of
+    a time interval given in seconds.
+
+    :param seconds: the length of the time interval in seconds
+    :return: a human-readable string representation of the length of
+    the time interval
+    """
     if seconds >= 60 * 60 * 24:
         return "%d day(s) %d:%02d:%02d" % (seconds / (60 * 60 * 24),
                                            (seconds / (60 * 60)) % 24,
@@ -55,6 +73,12 @@ def seconds_to_ui_time(seconds):
     return "%02d:%02d" % ((seconds / 60), seconds % 60)
 
 def get_process_info(pid):
+    """Return information about a process taken from
+    /proc/*pid*/status, /proc/stat/, and /proc/*pid*/stat.
+
+    :param pid: the process id number
+    :return: a dictionary containing information about the process
+    """
     if not pid:
         return
 
@@ -106,6 +130,16 @@ def get_process_info(pid):
     return ps
 
 def show_lock_owner(pid, logger):
+    """Output information about another process that is holding the
+    yum lock.
+
+    :param pid: the process id number of the process holding the yum
+       lock
+    :param logger: the logger to output the information to
+    :return: a dictionary containing information about the process.
+       This is the same as the dictionary returned by
+       :func:`get_process_info`.
+    """
     ps = get_process_info(pid)
     if not ps:
         return None
@@ -130,9 +164,16 @@ def show_lock_owner(pid, logger):
 
 
 def exception2msg(e):
-    """ DIE python DIE! Which one works:
-        to_unicode(e.value); unicode(e); str(e); 
-        Call this so you don't have to care. """
+    """Convert an exception to a message.  This function will convert
+    the exception using to_unicode, unicode, or str, whichever works correctly.
+
+    :param e: an exception
+    :return: a string representation of the exception
+    """
+
+    # DIE python DIE! Which one works:
+    # to_unicode(e.value); unicode(e); str(e); 
+    # Call this so you don't have to care.
     try:
         return to_unicode(e.value)
     except:
@@ -151,6 +192,8 @@ def exception2msg(e):
 
 
 class YumUtilBase(YumBaseCli):
+    """A class to extend the yum cli for utilities."""
+    
     def __init__(self,name,ver,usage):
         YumBaseCli.__init__(self)
         self._parser = YumOptionParser(base=self,utils=True,usage=usage)
@@ -167,11 +210,22 @@ class YumUtilBase(YumBaseCli):
             self.run_with_package_names.add("yum-utils")
 
     def exUserCancel(self):
+        """Output a message stating that the operation was cancelled
+        by the user.
+
+        :return: the exit code
+        """
         self.logger.critical(_('\n\nExiting on user cancel'))
         if self.unlock(): return 200
         return 1
 
     def exIOError(self, e):
+        """Output a message stating that the program is exiting due to
+        an IO exception.
+
+        :param e: the IO exception
+        :return: the exit code
+        """
         if e.errno == 32:
             self.logger.critical(_('\n\nExiting on Broken Pipe'))
         else:
@@ -180,10 +234,13 @@ class YumUtilBase(YumBaseCli):
         return 1
 
     def exPluginExit(self, e):
-        '''Called when a plugin raises PluginYumExit.
+        """Called when a plugin raises
+           :class:`yum.plugins.PluginYumExit`.  Log the plugin's exit
+           message if one was supplied.
 
-        Log the plugin's exit message if one was supplied.
-        ''' # ' xemacs hack
+        :param e: the exception
+        :return: the exit code
+        """ # ' xemacs hack
         exitmsg = exception2msg(e)
         if exitmsg:
             self.logger.warn('\n\n%s', exitmsg)
@@ -191,11 +248,20 @@ class YumUtilBase(YumBaseCli):
         return 1
 
     def exFatal(self, e):
+        """Output a message stating that a fatal error has occurred.
+
+        :param e: the exception
+        :return: the exit code
+        """
         self.logger.critical('\n\n%s', exception2msg(e))
         if self.unlock(): return 200
         return 1
         
     def unlock(self):
+        """Release the yum lock.
+
+        :return: the exit code
+        """
         try:
             self.closeRpmDB()
             self.doUnlock()
@@ -205,13 +271,27 @@ class YumUtilBase(YumBaseCli):
         
         
     def getOptionParser(self):
+        """Return the :class:`cli.YumOptionParser` for this object.
+
+        :return: the :class:`cli.YumOptionParser` for this object
+        """
         return self._parser        
 
     def getOptionGroup(self):
-        """ Get an option group to add non inherited options"""
+        """Return an option group to add non inherited options.
+
+        :return: a :class:`optparse.OptionGroup` for adding options
+           that are not inherited from :class:`YumBaseCli`.
+        """
         return self._option_group    
     
     def waitForLock(self):
+        """Establish the yum lock.  If another process is already
+        holding the yum lock, by default this method will keep trying
+        to establish the lock until it is successful.  However, if
+        :attr:`self.conf.exit_on_lock` is set to True, it will
+        raise a :class:`Errors.YumBaseError`.
+        """
         lockerr = ""
         while True:
             try:
@@ -233,6 +313,13 @@ class YumUtilBase(YumBaseCli):
         print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__)
         
     def doUtilConfigSetup(self,args = sys.argv[1:],pluginsTypes=(plugins.TYPE_CORE,)):
+        """Parse command line options, and perform configuration.
+
+        :param args: list of arguments to use for configuration
+        :param pluginsTypes: a sequence specifying the types of
+           plugins to load
+        :return: a dictionary containing the values of command line options
+        """
         # Parse only command line options that affect basic yum setup
         opts = self._parser.firstParse(args)
 
@@ -305,8 +392,9 @@ class YumUtilBase(YumBaseCli):
         return opts
 
     def doUtilYumSetup(self):
-        """do a default setup for all the normal/necessary yum components,
-           really just a shorthand for testing"""
+        """Do a default setup for all the normal or necessary yum components;
+           this method is mostly just a used for testing.
+        """
         # FIXME - we need another way to do this, I think.
         try:
             self.waitForLock()
@@ -319,6 +407,11 @@ class YumUtilBase(YumBaseCli):
             sys.exit(1)
 
     def doUtilBuildTransaction(self, unfinished_transactions_check=True):
+        """Build the transaction.
+
+        :param unfinished_transactions_check: whether to check if an
+           unfinished transaction has been saved
+        """
         try:
             (result, resultmsgs) = self.buildTransaction(unfinished_transactions_check = unfinished_transactions_check)
         except plugins.PluginYumExit, e:
@@ -361,6 +454,7 @@ class YumUtilBase(YumBaseCli):
         self.verbose_logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
         
     def doUtilTransaction(self):
+        """Perform the transaction."""
 
         try:
             return_code = self.doTransaction()
