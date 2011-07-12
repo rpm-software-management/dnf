@@ -35,7 +35,7 @@ import cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner, exception2msg
 
 def main(args):
-    """This does all the real work"""
+    """Run the yum program from a command line interface."""
 
     yum.misc.setup_locale(override_time=True)
 
@@ -248,6 +248,11 @@ def main(args):
     return return_code
 
 def hotshot(func, *args, **kwargs):
+    """Profile the given function using the hotshot profiler.
+
+    :param func: the function to profile
+    :return: the return code given by the hotshot profiler
+    """
     import hotshot.stats
     fn = os.path.expanduser("~/yum.prof")
     prof = hotshot.Profile(fn)
@@ -257,6 +262,11 @@ def hotshot(func, *args, **kwargs):
     return rc
 
 def cprof(func, *args, **kwargs):
+    """Profile the given function using the cprof profiler.
+
+    :param func: the function to profile
+    :return: the return code given by the cprof profiler
+    """
     import cProfile, pstats
     fn = os.path.expanduser("~/yum.prof")
     prof = cProfile.Profile()
@@ -266,6 +276,10 @@ def cprof(func, *args, **kwargs):
     return rc
 
 def print_stats(stats):
+    """Print out information from a :class:`Stats` object.
+
+    :param stats: the :class:`Stats` object to print information from
+    """
     stats.strip_dirs()
     stats.sort_stats('time', 'calls')
     stats.print_stats(20)
@@ -273,7 +287,14 @@ def print_stats(stats):
     stats.print_stats(40)
 
 def user_main(args, exit_code=False):
-    """ This calls one of the multiple main() functions based on env. vars """
+    """Call one of the multiple main() functions based on environment variables.
+
+    :param args: command line arguments passed into yum
+    :param exit_code: if *exit_code* is True, this function will exit
+       python with its exit code when it has finished executing.
+       Otherwise, it will return its exit code.
+    :return: the exit code from yum execution
+    """
     errcode = None
     if 'YUM_PROF' in os.environ:
         if os.environ['YUM_PROF'] == 'cprof':
