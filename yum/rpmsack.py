@@ -375,7 +375,8 @@ class RPMDBPackageSack(PackageSackBase):
             pkg = self.searchNevra(n, e, v, r, a)
             if not pkg:
                 # Wibble?
-                self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums)")
+                self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums): %s" %
+                                               txmbr)
                 continue
 
             pkg = pkg[0]
@@ -1013,7 +1014,8 @@ class RPMDBPackageSack(PackageSackBase):
             (n, a, e, v, r) = pkgtup
             pkg = self.searchNevra(n, e, v, r, a)
             if not pkg:
-                self._deal_with_bad_rpmdbcache("pkg checksums")
+                self._deal_with_bad_rpmdbcache("pkg checksums: %s-%s:%s-%s.%s" %
+                                               (n, e, v, r, a))
                 continue
             pkg = pkg[0]
             (T, D) = checksum_data[pkgtup]
