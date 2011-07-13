@@ -1028,7 +1028,10 @@ def _getsysver(installroot, distroverpkg):
     if idx.count() == 0:
         releasever = '$releasever'
     else:
-        hdr = idx.next()
+        try:
+            hdr = idx.next()
+        except StopIteration:
+            raise Errors.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
         del hdr
     del idx
