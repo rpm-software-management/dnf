@@ -117,6 +117,14 @@ critical actions. Default is `0' (do prompt).
 Command-line option: \fB\-y\fP
 
 .IP
+\fBassumeno\fR
+Either `1' or `0'. If yum would prompt for confirmation of critical actions, 
+assume the user chose no. This is basically the same as doing "echo | yum ..."
+but is a bit more usable. Default is `0' (do prompt).
+.br
+Command-line option: \fB\--assumeno\fP
+
+.IP
 \fBalwaysprompt\fR
 Either `1' or `0'. Without this option, yum will not prompt for confirmation
 when the list of packages to be installed exactly matches those given on the

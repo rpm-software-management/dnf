@@ -25,7 +25,7 @@ import sys
 import time
 import random
 import logging
-from optparse import OptionParser,OptionGroup
+from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 import rpm
 
 from weakref import proxy as weakref
@@ -491,7 +491,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # confirm with user
         if self._promptWanted():
-            if not self.userconfirm():
+            if self.conf.assumeno or not self.userconfirm():
                 self.verbose_logger.info(_('Exiting on user Command'))
                 return -1
 
@@ -1535,7 +1535,10 @@ class YumOptionParser(OptionParser):
                 
             # Handle remaining options
             if opts.assumeyes:
-                self.base.conf.assumeyes =1
+                self.base.conf.assumeyes = 1
+            if opts.assumeno:
+                self.base.conf.assumeno  = 1
+                self.base.conf.assumeyes = 0
 
             #  Instead of going cache-only for a non-root user, try to use a
             # user writable cachedir. If that fails fall back to cache-only.
@@ -1712,6 +1715,10 @@ class YumOptionParser(OptionParser):
                         help=_("verbose operation"))
         group.add_option("-y", "--assumeyes", dest="assumeyes",
                 action="store_true", help=_("answer yes for all questions"))
+        group.add_option("--assumeno", dest="assumeno",
+                action="store_true", help=_("answer no for all questions"))
+        group.add_option("--nodeps", dest="assumeno", # easter egg :)
+                action="store_true", help=SUPPRESS_HELP)
         group.add_option("--version", action="store_true", 
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"), 

@@ -4729,6 +4729,8 @@ class YumBase(depsolve.Depsolve):
                     rc = False
                     if self.conf.assumeyes:
                         rc = True
+                    elif self.conf.assumeno:
+                        rc = False
                         
                     # grab the .sig/.asc for the keyurl, if it exists
                     # if it does check the signature on the key
@@ -4823,6 +4825,9 @@ class YumBase(depsolve.Depsolve):
                     rc = False
                     if self.conf.assumeyes:
                         rc = True
+                    elif self.conf.assumeno:
+                        rc = False
+
                     elif callback:
                         rc = callback({"repo": repo, "userid": info['userid'],
                                         "hexkeyid": info['hexkeyid'], "keyurl": keyurl,
