@@ -1400,7 +1400,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         #  package wasn't explictly given on the command line
         for txmbr in self.tsInfo.getMembers():
             if txmbr.isDep or \
-                   txmbr.ts_state == 'e' or \
                    txmbr.name not in self.extcmds:
                 return True
         
