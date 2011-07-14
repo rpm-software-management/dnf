@@ -4727,10 +4727,10 @@ class YumBase(depsolve.Depsolve):
                     # Try installing/updating GPG key
                     self._getKeyImportMessage(info, keyurl)
                     rc = False
-                    if self.conf.assumeyes:
-                        rc = True
-                    elif self.conf.assumeno:
+                    if self.conf.assumeno:
                         rc = False
+                    elif self.conf.assumeyes:
+                        rc = True
                         
                     # grab the .sig/.asc for the keyurl, if it exists
                     # if it does check the signature on the key
@@ -4823,10 +4823,10 @@ class YumBase(depsolve.Depsolve):
                 if not key_installed:
                     self._getKeyImportMessage(info, keyurl, keytype)
                     rc = False
-                    if self.conf.assumeyes:
-                        rc = True
-                    elif self.conf.assumeno:
+                    if self.conf.assumeno:
                         rc = False
+                    elif self.conf.assumeyes:
+                        rc = True
 
                     elif callback:
                         rc = callback({"repo": repo, "userid": info['userid'],

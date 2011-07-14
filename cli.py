@@ -453,7 +453,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         lsts = self.listTransaction()
         if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
             self.verbose_logger.log(yum.logginglevels.INFO_1, lsts)
-        elif not self.conf.assumeyes:
+        elif self.conf.assumeno or not self.conf.assumeyes:
             #  If we are in quiet, and assumeyes isn't on we want to output
             # at least the transaction list anyway.
             self.logger.warn(lsts)
@@ -623,7 +623,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue            
 
             elif result == 1:
-                if not sys.stdin.isatty() and not self.conf.assumeyes:
+                ay = self.conf.assumeyes and not self.conf.assumeno
+                if not sys.stdin.isatty() and not ay:
                     raise yum.Errors.YumBaseError, \
                             _('Refusing to automatically import keys when running ' \
                             'unattended.\nUse "-y" to override.')
@@ -1389,7 +1390,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
-        if self.conf.assumeyes:
+        if self.conf.assumeyes and not self.conf.assumeno:
             return False
         if self.conf.alwaysprompt:
             return True
@@ -1538,7 +1539,6 @@ class YumOptionParser(OptionParser):
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
                 self.base.conf.assumeno  = 1
-                self.base.conf.assumeyes = 0
 
             #  Instead of going cache-only for a non-root user, try to use a
             # user writable cachedir. If that fails fall back to cache-only.

@@ -114,13 +114,15 @@ are causing problems from the transaction.
 Either `1' or `0'. Determines whether or not yum prompts for confirmation of
 critical actions. Default is `0' (do prompt).
 .br
-Command-line option: \fB\-y\fP
+Command-line option: \fB\-y\fP \fB\--assumeyes\fP
 
 .IP
 \fBassumeno\fR
 Either `1' or `0'. If yum would prompt for confirmation of critical actions, 
 assume the user chose no. This is basically the same as doing "echo | yum ..."
-but is a bit more usable. Default is `0' (do prompt).
+but is a bit more usable. This option overrides \fBassumeyes\fP, but is still
+subject to \fBalwaysprompt\fP.
+Default is `0' (do prompt).
 .br
 Command-line option: \fB\--assumeno\fP
 
@@ -141,6 +143,7 @@ Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
 command line with regard to packages. For example: if you request to install
 foo, bar and baz and baz is installed; yum won't error out complaining that baz
 is already installed. Default to `0' (not tolerant).
+Note: This option currently does nothing.
 .br
 Command-line option: \fB\-t\fP
 
