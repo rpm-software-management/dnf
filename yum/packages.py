@@ -1217,7 +1217,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
                     prcostring += ''' ver="%s"''' % misc.to_xml(v, attrib=True)
                 if r:
                     prcostring += ''' rel="%s"''' % misc.to_xml(r, attrib=True)
-            if pre:
+            if pre == "1":
                 prcostring += ''' pre="%s"''' % pre
                     
             prcostring += "/>\n"
