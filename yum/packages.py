@@ -1161,11 +1161,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             dirs = self.returnFileEntries('dir', primary_only=True)
             ghosts = self.returnFileEntries('ghost', primary_only=True)
                 
-        for fn in files:
+        for fn in sorted(files):
             msg += """    <file>%s</file>\n""" % misc.to_xml(fn)
-        for fn in dirs:
+        for fn in sorted(dirs):
             msg += """    <file type="dir">%s</file>\n""" % misc.to_xml(fn)
-        for fn in ghosts:
+        for fn in sorted(ghosts):
             msg += """    <file type="ghost">%s</file>\n""" % misc.to_xml(fn)
         
         return msg
