@@ -1083,7 +1083,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
          misc.to_unicode(misc.to_xml(self.summary)), 
          misc.to_unicode(misc.to_xml(self.description)), 
          packager, url, self.filetime, 
-         self.buildtime, self.packagesize, self.size, self.archivesize)
+         self.buildtime, self.packagesize, self.installedsize, self.archivesize)
         
         msg += self._return_remote_location()
         return msg
@@ -1133,7 +1133,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg = ""
         mylist = getattr(self, pcotype)
         if mylist: msg = "\n    <rpm:%s>\n" % pcotype
-        for (name, flags, (e,v,r)) in mylist:
+        for (name, flags, (e,v,r)) in sorted(mylist):
             pcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
                 pcostring += ''' flags="%s"''' % misc.to_xml(flags, attrib=True)
@@ -1194,8 +1194,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
                         continue
                     newlist.append(i)
                 mylist = newlist
-        
-        for (name, flags, (e,v,r),pre) in mylist:
+        used = 0
+        for (name, flags, (e,v,r),pre) in sorted(mylist):
             if name.startswith('rpmlib('):
                 continue
             # this drops out requires that the pkg provides for itself.
@@ -1217,13 +1217,16 @@ class YumAvailablePackage(PackageObject, RpmBase):
                     prcostring += ''' ver="%s"''' % misc.to_xml(v, attrib=True)
                 if r:
                     prcostring += ''' rel="%s"''' % misc.to_xml(r, attrib=True)
-            if pre != "0":
+            if pre not in ("0", 0):
                 prcostring += ''' pre="%s"''' % pre
-                    
+
             prcostring += "/>\n"
             msg += prcostring
+            used += 1
             
         if mylist: msg += "    </rpm:requires>"
+        if used == 0:
+            return ""
         return msg
 
     def _dump_changelog(self, clog_limit):
@@ -1299,7 +1302,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
-        self.packagesize = self.hdr['size']
+        self.packagesize = self.hdr['archivesize']
+        self.installedsize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False
 
