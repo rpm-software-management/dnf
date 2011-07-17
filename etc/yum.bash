@@ -75,7 +75,7 @@ _yum_baseopts()
 {
     local opts='--help --tolerant --cacheonly --config --randomwait
         --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
-        --verbose --assumeyes --version --installroot --enablerepo
+        --verbose --assumeyes --assumeno --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --skip-broken --color --releasever --setopt'
     [[ $COMP_LINE == *--noplugins* ]] || \
