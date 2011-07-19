@@ -238,9 +238,15 @@ def main(args):
         rpmdb_warn_checks()
         return_code = result
         if base._ts_save_file:
-            verbose_logger.info(_("Your transaction was saved, rerun it with: yum load-transaction %s") % base._ts_save_file)
+            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     elif return_code < 0:
         return_code = 1 # Means the pre-transaction checks failed...
+        #  This includes:
+        # . No packages.
+        # . Hitting N at the prompt.
+        # . GPG check failures.
+        if base._ts_save_file:
+            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
         verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
 
