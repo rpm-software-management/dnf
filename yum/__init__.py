@@ -5241,7 +5241,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError(_("Dependencies not solved. Will not save unresolved transaction."))
         
         if not filename:
-            prefix = 'yum_save_tx-%s' % time.strftime('%Y-%m-%d-%H-%M')
+            prefix = 'yum_save_tx.%s' % time.strftime('%Y-%m-%d.%H-%M.')
             fd,filename = tempfile.mkstemp(suffix='.yumtx', prefix=prefix)
             f = os.fdopen(fd, 'w')
         else:
