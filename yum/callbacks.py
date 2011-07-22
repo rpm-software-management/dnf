@@ -13,6 +13,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+"""Classes for handling various callbacks."""
+
 # imports
 
 import logging 
@@ -35,59 +37,79 @@ PT_MESSAGES = { PT_DOWNLOAD    : "Downloading Packages",
 
 
 class ProcessTransBaseCallback:
-    
+    """A class to handle callbacks from
+    :func:`YumBase.processTransaction`.
+    """
     def __init__(self):
         self.logger = logging.getLogger('yum.verbose.ProcessTrasactionBaseCallback')
         
     def event(self,state,data=None):
+        """Handle an event by logging it.
+
+        :param state: a number indicating the type of callback
+        :param data: data associated with the callback
+        """
         if state in PT_MESSAGES.keys():
             self.logger.info(PT_MESSAGES[state])
 
 class ProcessTransNoOutputCallback:
+    """A class to handle callbacks from
+    :func:`YumBase.processTransaction`, without logging them.
+    """
     def __init__(self):
         pass
          
     def event(self,state,data=None):
+        """Handle an event.
+
+        :param state: a number indicating the type of callback
+        :param data: data associated with the callback
+        """
         pass
     
 class DownloadBaseCallback( BaseMeter ):
-    """ 
-    This is class is a base class to use by implement a download progress
-    handler to be used with YumBase.repos.setProgressBar.
+    """This is a base class that can be extended to implement a custom
+    download progress handler to be used with
+    :func:`YumBase.repos.setProgressBar`.
     
-    Example:
+    Example::
     
-    from yum.callbacks import DownloadBaseCallback
-    
-    class MyDownloadCallback(  DownloadBaseCallback ):
-
-        def updateProgress(self,name,frac,fread,ftime):
-            '''
-            Update the progressbar
-            @param name: filename
-            @param frac: Progress fracment (0 -> 1)
-            @param fread: formated string containing BytesRead
-            @param ftime : formated string containing remaining or elapsed time
-            '''
-            pct = int( frac*100 )
-            print " %s : %s " % (name,pct)
-
-
-    if __name__ == '__main__':
-        my = YumBase()
-        my.doConfigSetup()
-        dnlcb = MyDownloadCallback()
-        my.repos.repos.setProgressBar( dnlcb )
-        for pkg in my.pkgSack:
-            print pkg.name
-
-    """
-    
+       from yum.callbacks import DownloadBaseCallback
+       
+       class MyDownloadCallback(  DownloadBaseCallback ):
+   
+           def updateProgress(self,name,frac,fread,ftime):
+               '''
+               Update the progressbar
+               @param name: filename
+               @param frac: Progress fracment (0 -> 1)
+               @param fread: formated string containing BytesRead
+               @param ftime : formated string containing remaining or elapsed time
+               '''
+               pct = int( frac*100 )
+               print " %s : %s " % (name,pct)
+   
+   
+       if __name__ == '__main__':
+           my = YumBase()
+           my.doConfigSetup()
+           dnlcb = MyDownloadCallback()
+           my.repos.setProgressBar( dnlcb )
+           for pkg in my.pkgSack:
+               print pkg.name
+       """
     def __init__(self):
         BaseMeter.__init__( self )
         self.totSize = ""   # Total size to download in a formatted string (Kb, MB etc)
         
     def update( self, amount_read, now=None ):
+        """Update the status bar.
+
+        :param amount_read: the amount of data, in bytes, that has been read
+        :param now: the current time in seconds since the epoch.  If
+           *now* is not given, the output of :func:`time.time()` will
+           be used.
+        """
         BaseMeter.update( self, amount_read, now )
 
     def _do_start( self, now=None ):
@@ -130,12 +152,15 @@ class DownloadBaseCallback( BaseMeter ):
         return name
 
     def updateProgress(self,name,frac,fread,ftime):
-        '''
-         Update the progressbar (Overload in child class)
-        @param name: filename
-        @param frac: Progress fracment (0 -> 1)
-        @param fread: formated string containing BytesRead
-        @param ftime : formated string containing remaining or elapsed time
-        '''
+        """Update the progressbar.  This method should be overridden
+        by subclasses to implement the handler.
+
+        :param name: the name of the filed being downloaded
+        :param frac: number between 0 and 1 representing the fraction
+            fraction of the file that has been downloaded
+        :param fread: formatted string containing the number of bytes read
+        :param ftime: formatted string containing remaining or elapsed time
+
+        """
         pass
         
