@@ -27,10 +27,7 @@ from yum.constants import *
 
 
 class RPMInstallCallback:
-
-    """
-    Yum command line callback class for callbacks from the RPM library.
-    """
+    """Yum command line callback class for callbacks from the RPM library."""
 
     def __init__(self, output=1):
         self.output = output
@@ -105,6 +102,21 @@ class RPMInstallCallback:
         return pkg
 
     def callback(self, what, bytes, total, h, user):
+        """Handle callbacks from the RPM library.
+
+        :param what: number identifying the type of callback
+        :param bytes: the number of bytes associated with the
+           callback; the exact meaning depends on the type of 
+           the callback.  For example, for a RPMCALLBACK_INST_PROGRESS
+           callback, bytes will represent the current amount of work done
+        :param total: the total amount of work associated with the
+           callback; the exact meaning depends on the type of the
+           callback. For example, *total* may represent the total
+           number of transactions in a transaction set
+        :param h: a package object or string identifying the package
+           involved in the callback
+        :param user: unused
+        """
         if what == rpm.RPMCALLBACK_TRANS_START:
             if bytes == 6:
                 self.total_actions = total
