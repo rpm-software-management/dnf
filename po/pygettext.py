@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding=utf-8
 # Originally written by Barry Warsaw <bwarsaw@python.org>
 #
 # minimally patched to make it even more xgettext compatible 
