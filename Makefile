@@ -38,6 +38,10 @@ install:
 
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
 
+apidocs:
+	make -C docs/sphinxdocs html
+	echo "Docs are in: docs/sphinxdocs/_build/*"
+
 .PHONY: docs test
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
