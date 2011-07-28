@@ -193,13 +193,14 @@ exit 0
 %files cron
 %defattr(-,root,root)
 %doc COPYING
-%{_sysconfdir}/cron.daily/0yum.cron
-%config(noreplace) %{_sysconfdir}/yum/yum-daily.yum
-%config(noreplace) %{_sysconfdir}/yum/yum-weekly.yum
+%config(noreplace) %{_sysconfdir}/cron.daily/yum-update.cron
+%config(noreplace) %{_sysconfdir}/cron.daily/yum-cleanup.cron
 %{_sysconfdir}/rc.d/init.d/yum-cron
+%{_sbindir}/yum-cron
 %config(noreplace) %{_sysconfdir}/sysconfig/yum-cron
-
-
+%dir %{_datadir}/yum-cron   
+%{_datadir}/yum-cron/update.yum
+%{_datadir}/yum-cron/cleanup.yum
 
 
 %files updatesd
@@ -212,6 +213,9 @@ exit 0
 %{_mandir}/man*/yum-updatesd*
 
 %changelog
+* Thu Jul 28 2011 Matthew Miller <mattdm at mattdm.org>
+- reorganize yum-cron to allow more flexible scheduling
+
 * Wed Apr 20 2011 James Antill <james at fedoraproject.org>
 - 3.4.1
 - umask bug fix.

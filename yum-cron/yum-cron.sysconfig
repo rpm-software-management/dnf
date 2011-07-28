@@ -25,9 +25,11 @@ DOWNLOAD_ONLY=no
 # Level 0 is the default
 # DEBUG_LEVEL=1
 
-# randomwait is used by yum to wait random time
-# default is 60 so yum waits random time from 1 to 60 minutes
-# the value must not be zero
+# Wait a random time before applying updates.
+# With a value of 60, yum-cron will waits random time from 1 to 60 minutes.
+# The value must not be zero
+# Note that this parameter affects the daily cron script; if you change that
+# file or run yum-cron in a different way it will have no effect.
 RANDOMWAIT="60"
 
 # if MAILTO is set and the mail command is available, the mail command 
@@ -44,10 +46,14 @@ MAILTO=
 
 # you may set DAYS_OF_WEEK to the days of the week you want to run 
 # default is every day 
+# Note that this parameter affects the daily cron script; if you change that
+# file or run yum-cron in a different way it will have no effect.
 #DAYS_OF_WEEK="0123456" 
 
 # which day should it do cleanup on?  defaults to 0 (Sunday).  If this day isn't in the 
 # DAYS_OF_WEEK above, it'll never happen
+# Note that this parameter affects the daily cron script; if you change that
+# file or run yum-cron in a different way it will have no effect.
 CLEANDAY="0"
 
 # set to yes to make the yum-cron service to wait for transactions to complete

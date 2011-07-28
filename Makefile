@@ -1,4 +1,4 @@
-SUBDIRS = rpmUtils yum etc docs po
+SUBDIRS = rpmUtils yum yum-cron etc docs po
 PYFILES = $(wildcard *.py)
 PYLINT_MODULES =  *.py yum rpmUtils
 PYLINT_IGNORE = oldUtils.py
