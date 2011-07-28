@@ -40,7 +40,7 @@ install:
 
 apidocs:
 	make -C docs/sphinxdocs html
-	echo "Docs are in: docs/sphinxdocs/_build/*"
+	echo "Docs are in: docs/sphinxdocs/_build/html/*"
 
 .PHONY: docs test
 
