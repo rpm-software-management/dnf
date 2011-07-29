@@ -1,12 +1,13 @@
 #!/bin/bash
 #
-# yum-cron           This shell script enables the automatic use of YUM
-#
-# Author:       Seth Vidal <skvidal@phy.duke.edu>
+# yum-cron      Enable or disable scheduled yum system updates.
 #
 # chkconfig:	- 50 01
 #
-# description:  Enable daily run of yum, a program updater.
+# description:  This controls whether yum-cron runs. If this service is \
+#               off, the yum-cron scripts in /etc/cron.daily exit \
+#               immediately; otherwise, they download and/or apply package \
+#               updates as configured in /etc/sysconfig/yum-cron.
 # processname:  yum-cron
 # config: /etc/yum/yum-daily.yum
 #
@@ -23,14 +24,14 @@ yumcronpid=/var/lock/yum-cron.lock/pidfile
 RETVAL=0
 
 start() {
-	echo -n $"Enabling nightly yum update: "
+	echo -n $"Enabling scheduled yum updates: "
 	touch "$lockfile" && success || failure
 	RETVAL=$?
 	echo
 }
 
 stop() {
-	echo -n $"Disabling nightly yum update: "
+	echo -n $"Disabling scheduled yum updates: "
 	if [ -f "$yumcronpid" -a "$SERVICE_WAITS" = "yes" ]; then
 	  yum_done=0
 	  if [ ! -f $tslock ]; then
@@ -39,7 +40,7 @@ stop() {
 	    yum_done=1
 	  fi
 	  if [ $yum_done -eq 0 ]; then
-	    echo -n $"Waiting for yum "
+	    echo -n $"Waiting for in-progress yum transaction "
 	    if [ -z "$SERVICE_WAIT_TIME" ]; then
 	      SERVICE_WAIT_TIME=300
 	    fi
@@ -87,10 +88,10 @@ case "$1" in
 	;;
   status)
 	if [ -f $lockfile ]; then
-		echo $"Nightly yum update is enabled."
+		echo $"Scheduled yum updates are enabled."
 		RETVAL=0
 	else
-		echo $"Nightly yum update is disabled."
+		echo $"Scheduled yum updates are disabled."
 		RETVAL=3
 	fi
 	;;
