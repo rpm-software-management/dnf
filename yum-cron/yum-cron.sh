@@ -80,31 +80,31 @@ else
   OTHERPID="$(cat "${LOCKFILE}")"
   # if cat wasn't able to read the file anymore, another instance probably is
   # about to remove the lock -- exit, we're *still* locked
-    if [ $? != 0 ]; then
+  if [ $? != 0 ]; then
+    echo "yum-cron: lock failed, PID ${OTHERPID} is active" >&2
+    exit 0
+  fi
+  if ! kill -0 $OTHERPID &>/dev/null; then
+    # Lock is stale. Remove it and restart.
+    echo "yum-cron: removing stale lock of nonexistant PID ${OTHERPID}" >&2
+    rm -rf "${LOCKDIR}"
+    echo "yum-cron: restarting myself" >&2
+    exec $0 "$@"
+  else
+    # Remove lockfiles more than a day old -- they must be stale.
+    find $LOCKDIR -type f -name 'pidfile' -amin +1440 -exec rm -rf $LOCKDIR \;
+    # If it's still there, it *wasn't* too old. Bail!
+    if [ -f $LOCKFILE ]; then
+      # Lock is valid and OTHERPID is active -- exit, we're locked!
       echo "yum-cron: lock failed, PID ${OTHERPID} is active" >&2
       exit 0
-    fi
-    if ! kill -0 $OTHERPID &>/dev/null; then
-      # Lock is stale. Remove it and restart.
-      echo "yum-cron: removing stale lock of nonexistant PID ${OTHERPID}" >&2
-      rm -rf "${LOCKDIR}"
+    else
+      # Lock was invalid. Restart.
+      echo "yum-cron: removing stale lock belonging to stale PID ${OTHERPID}" >&2
       echo "yum-cron: restarting myself" >&2
       exec $0 "$@"
-    else
-      # Remove lockfiles more than a day old -- they must be stale.
-      find $LOCKDIR -type f -name 'pidfile' -amin +1440 -exec rm -rf $LOCKDIR \;
-      # If it's still there, it *wasn't* too old. Bail!
-      if [ -f $LOCKFILE ]; then
-        # Lock is valid and OTHERPID is active -- exit, we're locked!
-        echo "yum-cron: lock failed, PID ${OTHERPID} is active" >&2
-        exit 0
-      else
-        # Lock was invalid. Restart.
-        echo "yum-cron: removing stale lock belonging to stale PID ${OTHERPID}" >&2
-        echo "yum-cron: restarting myself" >&2
-        exec $0 "$@"
-      fi
     fi
+  fi
 fi
 
 # Now, do the actual work.
