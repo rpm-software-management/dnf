@@ -10,7 +10,7 @@
 # abruptly shutting down mid-transaction. Therefore, you shouldn't change
 # them without changing that.
 LOCKDIR=/var/lock/yum-cron.lock
-LOCKFILE=$LOCKDIR/pidfile
+PIDFILE=$LOCKDIR/pidfile
 TSLOCK=$LOCKDIR/ts.lock
 
 
@@ -62,20 +62,20 @@ touch $YUMTMP
 if mkdir $LOCKDIR 2>/dev/null; then
   # Store the current process ID in the lock directory so we can check for
   # staleness later.
-  echo "$$" >"${LOCKFILE}"
+  echo "$$" >"${PIDFILE}"
   # And, clean up locks and tempfile when the script exits or is killed.
-  trap "{ rm -f $LOCKFILE $TSLOCK; rmdir $LOCKDIR 2>/dev/null; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
+  trap "{ rm -f $PIDFILE $TSLOCK; rmdir $LOCKDIR 2>/dev/null; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
 else
   # Lock failed -- check if a running process exists.  
   # First, if there's no PID file in the lock directory, something bad has
   # happened.  We can't know the process name, so, clean up the old lockdir
   # and restart.
-  if [[ ! -f $LOCKFILE ]]; then
+  if [[ ! -f $PIDFILE ]]; then
     rmdir $LOCKDIR 2>/dev/null
     echo "yum-cron: no lock PID, clearing and restarting myself" >&2
     exec $0 "$@"
   fi
-  OTHERPID="$(cat "${LOCKFILE}")"
+  OTHERPID="$(cat "${PIDFILE}")"
   # if cat wasn't able to read the file anymore, another instance probably is
   # about to remove the lock -- exit, we're *still* locked
   if [[ $? != 0 ]]; then
@@ -92,7 +92,7 @@ else
     # Remove lockfiles more than a day old -- they must be stale.
     find $LOCKDIR -type f -name 'pidfile' -amin +1440 -exec rm -rf $LOCKDIR \;
     # If it's still there, it *wasn't* too old. Bail!
-    if [[ -f $LOCKFILE ]]; then
+    if [[ -f $PIDFILE ]]; then
       # Lock is valid and OTHERPID is active -- exit, we're locked!
       echo "yum-cron: lock failed, PID ${OTHERPID} is active" >&2
       exit 0
