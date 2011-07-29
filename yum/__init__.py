@@ -3447,6 +3447,18 @@ class YumBase(depsolve.Depsolve):
            
            """
         
+
+        #  This is kind of hacky, we really need a better way to do errors than
+        # doing them directly from .install/etc. ... but this is easy. *sigh*.
+        pkg_warn = kwargs.get('pkg_warning_level', 'flibble')
+        def _dbg2(*args, **kwargs):
+            self.verbose_logger.log(logginglevels.DEBUG_2, *args, **kwargs)
+        level2func = {'debug2' : _dbg2,
+                      'warning' : self.verbose_logger.warning}
+        if pkg_warn not in level2func:
+            pkg_warn = 'warning'
+        pkg_warn = level2func[pkg_warn]
+
         pkgs = []
         was_pattern = False
         if po:
@@ -3602,23 +3614,23 @@ class YumBase(depsolve.Depsolve):
                     already_obs = pkgs[0]
 
                 if already_obs:
-                    self.verbose_logger.warning(_('Package %s is obsoleted by %s which is already installed'), 
-                                                po, already_obs)
+                    pkg_warn(_('Package %s is obsoleted by %s which is already installed'), 
+                             po, already_obs)
                 else:
                     if 'provides_for' in kwargs:
                         if not obsoleting_pkg.provides_for(kwargs['provides_for']):
-                            self.verbose_logger.warning(_('Package %s is obsoleted by %s, but obsoleting package does not provide for requirements'),
-                                                  po.name, obsoleting_pkg.name)
+                            pkg_warn(_('Package %s is obsoleted by %s, but obsoleting package does not provide for requirements'),
+                                     po.name, obsoleting_pkg.name)
                             continue
-                    self.verbose_logger.warning(_('Package %s is obsoleted by %s, trying to install %s instead'),
-                        po.name, obsoleting_pkg.name, obsoleting_pkg)
+                    pkg_warn(_('Package %s is obsoleted by %s, trying to install %s instead'),
+                             po.name, obsoleting_pkg.name, obsoleting_pkg)
                     tx_return.extend(self.install(po=obsoleting_pkg))
                 continue
             
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
-                    self.verbose_logger.warning(_('Package %s already installed and latest version'), po)
+                    pkg_warn(_('Package %s already installed and latest version'), po)
                     continue
 
             # make sure we don't have a name.arch of this already installed
@@ -3632,7 +3644,7 @@ class YumBase(depsolve.Depsolve):
                         found = True
                         break
                 if not found:
-                    self.verbose_logger.warning(_('Package matching %s already installed. Checking for update.'), po)            
+                    pkg_warn(_('Package matching %s already installed. Checking for update.'), po)            
                     txmbrs = self.update(po=po)
                     tx_return.extend(txmbrs)
                     continue
