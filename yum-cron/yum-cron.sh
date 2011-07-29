@@ -1,10 +1,24 @@
 #!/bin/bash
 
+# This script is designed to be run from cron to automatically keep your
+# system up to date with the latest security patches and bug fixes. It
+# can download and/or apply package updates as configured in
+# /etc/sysconfig/yum-cron.
+
+
+# These are used by /etc/init.d/yum-cron on shutdown to protect against
+# abruptly shutting down mid-transaction. Therefore, you shouldn't change
+# them without changing that.
 LOCKDIR=/var/lock/yum-cron.lock
 LOCKFILE=$LOCKDIR/pidfile
 TSLOCK=$LOCKDIR/ts.lock
+
+
+# This is the home of the yum scripts which power the various actions the
+# yum-cron system performs.
 SCRIPTDIR=/usr/share/yum-cron/
 
+# If no command line options were given, exit with a usage message.
 if [ -z "$1" ]; then
   echo "Usage: yum-cron {update|cleanup|...}"
   exit 1
@@ -12,41 +26,52 @@ else
   ACTION=$1
 fi
 
+# If a command line option was given, it must match a yum script.
 YUMSCRIPT=${SCRIPTDIR}/${ACTION}.yum
 if [ ! -r $YUMSCRIPT ]; then
   echo "Script for action \"$ACTION\" is not readable in $SCRIPTDIR."
   exit 1
 fi  
 
-# Grab config settings
+# Read the settings from our config file.
 if [ -f /etc/sysconfig/yum-cron ]; then
   source /etc/sysconfig/yum-cron
 fi
-# set default for SYSTEMNAME
+
+# If no system name is set, use the hostname.
 [ -z "$SYSTEMNAME" ]  && SYSTEMNAME=$( hostname ) 
 
-# if DOWNLOAD_ONLY is set then we force CHECK_ONLY too.
-# Gotta check before one can download!
+# If DOWNLOAD_ONLY is set, then we force CHECK_ONLY too.
+# Gotta check for updates before we can possibly download them.
 if [ "$DOWNLOAD_ONLY" == "yes" ]; then
   CHECK_ONLY=yes
 fi
 
+# This holds the output from the "meat" of this script, so that it can
+# be nicely mailed to the configured destination when we're done.
 YUMTMP=$(mktemp /var/run/yum-cron.XXXXXX)
 touch $YUMTMP 
 [ -x /sbin/restorecon ] && /sbin/restorecon $YUMTMP
 
-# Note - the lockfile code doesn't try and use YUMTMP to email messages nicely.
-# Too many ways to die, this gets handled by normal cron error mailing.
-# Try mkdir for the lockfile, will test for and make it in one atomic action
+# Here is the gigantic block of lockfile logic.
+#
+# Note: the lockfile code doesn't currently try and use YUMTMP to email
+# messages nicely, so this gets handled by normal cron error mailing.
+#
+
+# We use mkdir for the lockfile, as this will test for and if possible
+# create the lock in one atomic action. (So there's no race condition.)
 if mkdir $LOCKDIR 2>/dev/null; then
-  # store the current process ID in there so we can check for staleness later
+  # Store the current process ID in the lock directory so we can check for
+  # staleness later.
   echo "$$" >"${LOCKFILE}"
-  # and clean up locks and tempfile if the script exits or is killed  
+  # And, clean up locks and tempfile when the script exits or is killed.
   trap "{ rm -f $LOCKFILE $TSLOCK; rmdir $LOCKDIR 2>/dev/null; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
 else
-  # lock failed, check if process exists.  First, if there's no PID file
-  # in the lock directory, something bad has happened, we can't know the
-  # process name, so clean up the old lockdir and restart
+  # Lock failed -- check if a running process exists.  
+  # First, if there's no PID file in the lock directory, something bad has
+  # happened.  We can't know the process name, so, clean up the old lockdir
+  # and restart.
   if [ ! -f $LOCKFILE ]; then
     rmdir $LOCKDIR 2>/dev/null
     echo "yum-cron: no lock PID, clearing and restarting myself" >&2
@@ -60,21 +85,21 @@ else
       exit 0
     fi
     if ! kill -0 $OTHERPID &>/dev/null; then
-      # lock is stale, remove it and restart
+      # Lock is stale. Remove it and restart.
       echo "yum-cron: removing stale lock of nonexistant PID ${OTHERPID}" >&2
       rm -rf "${LOCKDIR}"
       echo "yum-cron: restarting myself" >&2
       exec $0 "$@"
     else
-      # Remove stale (more than a day old) lockfiles
+      # Remove lockfiles more than a day old -- they must be stale.
       find $LOCKDIR -type f -name 'pidfile' -amin +1440 -exec rm -rf $LOCKDIR \;
-      # if it's still there, it wasn't too old, bail
+      # If it's still there, it *wasn't* too old. Bail!
       if [ -f $LOCKFILE ]; then
-        # lock is valid and OTHERPID is active - exit, we're locked!
+        # Lock is valid and OTHERPID is active -- exit, we're locked!
         echo "yum-cron: lock failed, PID ${OTHERPID} is active" >&2
         exit 0
       else
-        # lock was invalid, restart
+        # Lock was invalid. Restart.
         echo "yum-cron: removing stale lock belonging to stale PID ${OTHERPID}" >&2
         echo "yum-cron: restarting myself" >&2
         exec $0 "$@"
@@ -82,15 +107,23 @@ else
     fi
 fi
 
-# Now, do the actual work; we special case "update" because it has
-# complicated conditionals; for everything else we just run yum with the
-# right parameters and corresponding script.  Right now, that's just
-# "cleanup" but theoretically there could be other actions.
+# Now, do the actual work.
 
+# We special case "update" because it has complicated conditionals; for
+# everything else we just run yum with the right parameters and
+# corresponding script.  Right now, that's just "cleanup" but theoretically
+# there could be other actions.
 {
   case "$ACTION" in
     update)
+        # There's three broad possibilties here:
+        #   CHECK_ONLY (possibly with DOWNLOAD_ONLY)
+        #   CHECK_FIRST (exits _silently_ if we can't access the repos)
+        #   nothing special -- just do it
+        # Note that in all cases, yum is updated first, and then 
+        # everything else.
         if [ "$CHECK_ONLY" == "yes" ]; then
+          # TSLOCK is used by the safe-shutdown code in the init script.
           touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e 0 -d 0 -y check-update 1> /dev/null 2>&1
           case $? in
@@ -104,7 +137,9 @@ fi
                  ;;
           esac
         elif [ "$CHECK_FIRST" == "yes" ]; then
-          # Don't run if we can't access the repos
+          # Don't run if we can't access the repos -- if this is set, 
+          # and there's a problem, we exit silently (but return an error
+          # code).
           touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e 0 -d 0 check-update 2>&-
           case $? in
@@ -114,6 +149,7 @@ fi
                  ;;
           esac
         else
+          # and here's the "just do it".
           touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e ${ERROR_LEVEL:-0} -d ${DEBUG_LEVEL:-0} -y update yum
           /usr/bin/yum $YUM_PARAMETER -e ${ERROR_LEVEL:-0} -d ${DEBUG_LEVEL:-0} -y shell $YUMSCRIPT
@@ -127,10 +163,10 @@ fi
 } >> $YUMTMP 2>&1
 
 if [ ! -z "$MAILTO" ] && [ -x /bin/mail ]; then 
-# if MAILTO is set, use mail command (ie better than standard mail with cron output) 
+# If MAILTO is set, use mail command for prettier output.
   [ -s "$YUMTMP" ] && mail -s "System update: $SYSTEMNAME" $MAILTO < $YUMTMP 
 else 
-# default behavior is to use cron's internal mailing of output from cron-script
+# The default behavior is to use cron's internal mailing of output.
   cat $YUMTMP
 fi 
 rm -f $YUMTMP 
