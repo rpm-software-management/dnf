@@ -2941,7 +2941,7 @@ class YumBase(depsolve.Depsolve):
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
-                    txmbrs = self.install(name = pkg)
+                    txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
                 except Errors.InstallError, e:
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
