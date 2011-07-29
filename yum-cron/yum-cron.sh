@@ -71,7 +71,7 @@ else
   # happened.  We can't know the process name, so, clean up the old lockdir
   # and restart.
   if [[ ! -f $PIDFILE ]]; then
-    rmdir $LOCKDIR 2>/dev/null
+    rm -rf "${LOCKDIR}"
     echo "yum-cron: no lock PID, clearing and restarting myself" >&2
     exec $0 "$@"
   fi
