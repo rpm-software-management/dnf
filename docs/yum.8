@@ -71,6 +71,8 @@ gnome\-packagekit application\&.
 .br
 .I \fR * history [info|list|packages-list|summary|addon-info|redo|undo|rollback|new] 
 .br
+.I \fR * load-transaction [txfile]
+.br
 .I \fR * check
 .br 
 .I \fR * help [command] 
@@ -370,6 +372,15 @@ end of the package column in the packages-list command).
 .br
 .I \fBs\fR - The transaction completed fine, but --skip-broken was enabled and had to skip some packages.
 .br
+
+
+.IP
+.IP "\fBload-transaction\fP"
+This command will re-load a saved yum transaction file, this allows you to
+run a transaction on one machine and then use it on another.
+The two common ways to get a saved yum transaction file are from
+"yum -q history addon-info last saved_tx" or via. the automatic saves in
+$TMPDIR/yum_save_tx.* when a transaction is solved but not run.
 
 .IP
 .IP "\fBcheck\fP"
