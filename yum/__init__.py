@@ -3450,6 +3450,9 @@ class YumBase(depsolve.Depsolve):
 
         #  This is kind of hacky, we really need a better way to do errors than
         # doing them directly from .install/etc. ... but this is easy. *sigh*.
+        #  We are only using this in "groupinstall" atm. ... so we don't have
+        # a long list of "blah already installed." messages when people run
+        # "groupinstall mygroup" in yum-cron etc.
         pkg_warn = kwargs.get('pkg_warning_level', 'flibble')
         def _dbg2(*args, **kwargs):
             self.verbose_logger.log(logginglevels.DEBUG_2, *args, **kwargs)
