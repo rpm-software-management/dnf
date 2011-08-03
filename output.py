@@ -47,6 +47,8 @@ import yum.history
 
 from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
+import locale
+
 def _term_width():
     """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
     if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
@@ -2433,6 +2435,92 @@ to exit.
 
                 num += 1
                 print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
+
+        # And, again, copy and paste...
+        lastdbv = self.history.last()
+        if lastdbv is None:
+            self._rpmdb_warn_checks(warn=False)
+        else:
+            #  If this is the last transaction, is good and it doesn't
+            # match the current rpmdb ... then mark it as bad.
+            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            if lastdbv.end_rpmdbversion != rpmdbv:
+                self._rpmdb_warn_checks()
+
+    def historyPackageInfoCmd(self, extcmds):
+        """Print information about packages in history transactions.
+
+        :param extcmds: list of extra command line arguments
+        """
+        tids = self.history.search(extcmds)
+        limit = None
+        if extcmds and not tids:
+            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            return 1, ['Failed history packages-info']
+        if not tids:
+            limit = 20
+
+        all_uistates = self._history_state2uistate
+
+        num = 0
+        for old in self.history.old(tids, limit=limit):
+            if limit is not None and num and (num +len(old.trans_data)) > limit:
+                break
+            last = None
+
+            for hpkg in old.trans_data: # Find a pkg to go with each cmd...
+                if limit is None:
+                    x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                    if not x and not m:
+                        continue
+
+                uistate = all_uistates.get(hpkg.state, hpkg.state)
+                if num:
+                    print ""
+                print _("Transaction ID :"), old.tid
+                tm = time.ctime(old.beg_timestamp)
+                print _("Begin time     :"), tm
+                print _("Package        :"), hpkg.ui_nevra
+                print _("State          :"), uistate
+                if hpkg.size is not None:
+                    num = int(hpkg.size)
+                    print _("Size           :"), locale.format("%d", num, True)
+                if hpkg.buildhost is not None:
+                    print _("Build host     :"), hpkg.buildhost
+                if hpkg.buildtime is not None:
+                    tm = time.ctime(int(hpkg.buildtime))
+                    print _("Build time     :"), tm
+                if hpkg.packager is not None:
+                    print _("Packager       :"), hpkg.packager
+                if hpkg.vendor is not None:
+                    print _("Vendor         :"), hpkg.vendor
+                if hpkg.license is not None:
+                    print _("License        :"), hpkg.license
+                if hpkg.url is not None:
+                    print _("URL            :"), hpkg.url
+                if hpkg.sourcerpm is not None:
+                    print _("Source RPM     :"), hpkg.sourcerpm
+                if hpkg.committime is not None:
+                    tm = time.ctime(int(hpkg.committime))
+                    print _("Commit Time    :"), tm
+                if hpkg.committer is not None:
+                    print _("Committer      :"), hpkg.committer
+                if hpkg.yumdb_info.reason is not None:
+                    print _("Reason         :"), hpkg.yumdb_info.reason
+                if hpkg.yumdb_info.command_line is not None:
+                    print _("Command Line   :"), hpkg.yumdb_info.command_line
+                if hpkg.yumdb_info.from_repo is not None:
+                    print _("From repo      :"), hpkg.yumdb_info.from_repo
+                if hpkg.yumdb_info.installed_by is not None:
+                    uid = int(hpkg.yumdb_info.installed_by)
+                    name = self._pwd_ui_username(uid)
+                    print _("Installed by   :"), name
+                if hpkg.yumdb_info.changed_by is not None:
+                    uid = int(hpkg.yumdb_info.changed_by)
+                    name = self._pwd_ui_username(uid)
+                    print _("Changed by     :"), name
+
+                num += 1
 
         # And, again, copy and paste...
         lastdbv = self.history.last()

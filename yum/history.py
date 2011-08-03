@@ -1350,6 +1350,35 @@ class YumHistory:
         self._commit()
         return True
 
+    def _pkg_stats(self):
+        """ Some stats about packages in the DB. """
+
+        ret = {'nevrac' : 0,
+               'nevra'  : 0,
+               'nevr'   : 0,
+               'na'     : 0,
+               'rpmdb'  : 0,
+               'yumdb'  : 0,
+               }
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_3():
+            return False
+
+        data = (('nevrac', "COUNT(*)",                      "pkgtups"),
+                ('na',     "COUNT(DISTINCT(name || arch))", "pkgtups"),
+                ('nevra',"COUNT(DISTINCT(name||version||epoch||release||arch))",
+                 "pkgtups"),
+                ('nevr',   "COUNT(DISTINCT(name||version||epoch||release))",
+                 "pkgtups"),
+                ('rpmdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_rpmdb"),
+                ('yumdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_yumdb"))
+
+        for key, bsql, esql in data:
+            executeSQL(cur, "SELECT %s FROM %s" % (bsql, esql))
+            for row in cur:
+                ret[key] = row[0]
+        return ret
+
     def _yieldSQLDataList(self, patterns, fields, ignore_case):
         """Yields all the package data for the given params. """
 

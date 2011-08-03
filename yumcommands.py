@@ -2425,6 +2425,36 @@ class HistoryCommand(YumCommand):
     def _hcmd_new(self, base, extcmds):
         base.history._create_db_file()
 
+    def _hcmd_stats(self, base, extcmds):
+        print "File        :", base.history._db_file
+        num = os.stat(base.history._db_file).st_size
+        print "Size        :", locale.format("%d", num, True)
+        counts = base.history._pkg_stats()
+        trans_1 = base.history.old("1")[0]
+        trans_N = base.history.last()
+        print _("Transactions:"), trans_N.tid
+        print _("Begin time  :"), time.ctime(trans_1.beg_timestamp)
+        print _("End time    :"), time.ctime(trans_N.end_timestamp)
+        print _("Counts      :")
+        print _("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True)
+        print _("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True)
+        print _("  NA     :"), locale.format("%6d", counts['na'],     True)
+        print _("  NEVR   :"), locale.format("%6d", counts['nevr'],   True)
+        print _("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True)
+        print _("  yum DB :"), locale.format("%6d", counts['yumdb'],  True)
+
+    def _hcmd_sync(self, base, extcmds):
+        extcmds = extcmds[1:]
+        if not extcmds:
+            extcmds = None
+        for ipkg in sorted(base.rpmdb.returnPackages(patterns=extcmds)):
+            if base.history.pkg2pid(ipkg, create=False) is None:
+                continue
+
+            print "Syncing rpm/yum DB data for:", ipkg, "...",
+            base.history.sync_alldb(ipkg)
+            print "Done."
+
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  The exact conditions checked will vary depending on the
@@ -2437,8 +2467,10 @@ class HistoryCommand(YumCommand):
         cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new',
                 'rollback',
                 'addon', 'addon-info',
+                'stats', 'statistics', 'sync', 'synchronize'
                 'pkg', 'pkgs', 'pkg-list', 'pkgs-list',
-                'package', 'package-list', 'packages', 'packages-list')
+                'package', 'package-list', 'packages', 'packages-list',
+                'pkg-info', 'pkgs-info', 'package-info', 'packages-info')
         if extcmds and extcmds[0] not in cmds:
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -2488,6 +2520,12 @@ class HistoryCommand(YumCommand):
             ret = self._hcmd_rollback(base, extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(base, extcmds)
+        elif vcmd in ('stats', 'statistics'):
+            ret = self._hcmd_stats(base, extcmds)
+        elif vcmd in ('sync', 'synchronize'):
+            ret = self._hcmd_sync(base, extcmds)
+        elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
+            ret = base.historyPackageInfoCmd(extcmds)
 
         if ret is None:
             return 0, ['history %s' % (vcmd,)]
