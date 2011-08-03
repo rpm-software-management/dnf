@@ -2002,6 +2002,9 @@ to exit.
     def _hpkg2from_repo(self, hpkg):
         """ Given a pkg, find the ipkg.ui_from_repo ... if none, then
             get an apkg. ... and put a ? in there. """
+        if 'from_repo' in hpkg.yumdb_info:
+            return hpkg.ui_from_repo
+
         ipkgs = self.rpmdb.searchPkgTuple(hpkg.pkgtup)
         if not ipkgs:
             apkgs = self.pkgSack.searchPkgTuple(hpkg.pkgtup)

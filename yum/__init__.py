@@ -881,7 +881,8 @@ class YumBase(depsolve.Depsolve):
         if self._history is None:
             pdb_path = self.conf.persistdir + "/history"
             self._history = yum.history.YumHistory(root=self.conf.installroot,
-                                                   db_path=pdb_path)
+                                                   db_path=pdb_path,
+                                                   releasever=self.conf.yumvar['releasever'])
         return self._history
     
     # properties so they auto-create themselves with defaults
@@ -1646,6 +1647,9 @@ class YumBase(depsolve.Depsolve):
                         po.yumdb_info.changed_by = str(loginuid)
                 elif loginuid is not None:
                     po.yumdb_info.installed_by = str(loginuid)
+
+                if self.conf.history_record:
+                    self.history.sync_alldb(po)
 
         # Remove old ones after installing new ones, so we can copy values.
         for txmbr in self.tsInfo:
