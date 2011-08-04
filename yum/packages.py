@@ -271,6 +271,14 @@ class PackageObject(object):
         return out
     ui_nevra = property(fget=lambda self: self._ui_nevra())
 
+    def _ui_evr(self):
+        if self.epoch == '0':
+            out = '%s-%s' % (self.version, self.release)
+        else:
+            out = '%s:%s-%s' % (self.epoch, self.version, self.release)
+        return out
+    ui_evr = property(fget=lambda self: self._ui_evr())
+
     def __str__(self):
         return self.ui_envra
 
