@@ -5318,6 +5318,16 @@ class YumBase(depsolve.Depsolve):
         # 3+numrepos = num pkgs
         # 3+numrepos+1 -> EOF= txmembers
         
+        if data[0] == 'saved_tx:\n':
+            #  Old versions of yum would put "saved_tx:" at the begining and
+            # two blank lines at the end when you used:
+            # "yum -q history addon-info saved_tx".
+            if data[-1] == 'history addon-info\n':
+                # Might as well also DTRT if they hand removed the plugins line
+                data = data[1:-3]
+            else:
+                data = data[1:-2]
+
         # rpm db ver
         rpmv = data[0].strip()
         if rpmv != str(self.rpmdb.simpleVersion(main_only=True)[0]):
