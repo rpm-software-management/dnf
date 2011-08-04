@@ -2349,12 +2349,12 @@ to exit.
         
         for item in extcmds[2:]:
             if item in addon_info:
-                print '%s:' % item
-                print self.history.return_addon_data(hist_data.tid, item)
+                self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
+                print self.history.return_addon_data(hist_data.tid, item),
+                self.verbose_logger.log(logginglevels.INFO_2, '')
             else:
                 print _('%s: No additional data found by this name') % item
-
-            print ''
+            self.verbose_logger.log(logginglevels.INFO_2, '')
 
     def historyPackageListCmd(self, extcmds):
         """Print a list of information about transactions from history
