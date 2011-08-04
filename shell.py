@@ -23,10 +23,11 @@ import cmd
 import shlex
 import logging
 
-from yum import Errors
+from yum import Errors, _
 from yum.constants import *
 import yum.logginglevels as logginglevels
-
+from yum.i18n import to_utf8
+import __builtin__
 
 class YumShell(cmd.Cmd):
     """A class to implement an interactive yum shell."""
@@ -72,7 +73,33 @@ class YumShell(cmd.Cmd):
                 raise Errors.YumBaseError, "Fatal error in script, exiting"
         
         return inputs
-        
+
+    def cmdloop(self, *args, **kwargs):
+        """ Sick hack for readline. """
+
+        oraw_input = raw_input
+        owriter    = sys.stdout
+        _ostdout   = owriter.stream
+
+        def _sick_hack_raw_input(prompt):
+            sys.stdout = _ostdout
+            rret = oraw_input(to_utf8(prompt))
+            sys.stdout = owriter
+
+            return rret
+
+        __builtin__.raw_input = _sick_hack_raw_input
+
+        try:
+            cret = cmd.Cmd.cmdloop(self, *args, **kwargs)
+        except:
+            __builtin__.raw_input  = oraw_input
+            raise
+
+        __builtin__.raw_input = oraw_input
+
+        return cret
+
     def script(self):
         """Execute a script file in the yum shell.  The location of
         the script file is supplied by the :class:`cli.YumBaseCli`
