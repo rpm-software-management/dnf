@@ -16,6 +16,8 @@ def trans(msg, default):
         msg = msg[:-2]
     return unicode(msg, encoding='utf-8')
 
+allow_plain_yn = True
+
 for fname in glob.glob("po/*.po"):
     next = None
     is_this_ok  = None
@@ -32,7 +34,8 @@ for fname in glob.glob("po/*.po"):
         if next is not None:
             if next == 'is_this_ok':
                 sis_this_ok = line
-                if line == 'msgstr ""\n' or line.find('[y/N]') != -1:
+                if line == 'msgstr ""\n' or (not allow_plain_yn and
+                                             line.find('[y/N]') != -1):
                     is_this_ok = False
                 else:
                     is_this_ok = True
@@ -62,9 +65,9 @@ for fname in glob.glob("po/*.po"):
             next = 'n'
     if (is_this_ok is None or
         yes is None or
-        y   is None or
+        (not allow_plain_yn and y   is None) or
         no  is None or
-        n   is None):
+        (not allow_plain_yn and n   is None)):
         print >>sys.stderr, """\
 ERROR: Can't find all the msg id's in %s
 is_this_ok %s
@@ -96,6 +99,10 @@ n          %5s: %s
        to_utf8(is_this_ok), to_utf8(sis_this_ok),
        to_utf8(yes), to_utf8(syes), to_utf8(y), to_utf8(sy),
        to_utf8(no), to_utf8(sno), to_utf8(n), to_utf8(sn))
+
+    if allow_plain_yn:
+        continue
+
     if syes[0] != sy:
         print >>sys.stderr, """\
 ERROR: yes/y translations don't match in: %s
