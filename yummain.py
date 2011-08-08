@@ -120,14 +120,14 @@ def main(args):
             if exception2msg(e) != lockerr:
                 lockerr = exception2msg(e)
                 logger.critical(lockerr)
-            if (e.errno not in (errno.EPERM, errno.EACCES) and
+            if (e.errno not in (errno.EPERM, errno.EACCES, errno.ENOSPC) and
                 not base.conf.exit_on_lock):
                 logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
                 tm = 0.1
                 if show_lock_owner(e.pid, logger):
                     tm = 2
                 time.sleep(tm)
-            elif e.errno in (errno.EPERM, errno.EACCES):
+            elif e.errno in (errno.EPERM, errno.EACCES, errno.ENOSPC):
                 logger.critical(_("Can't create lock file; exiting"))
                 return 1
             else:

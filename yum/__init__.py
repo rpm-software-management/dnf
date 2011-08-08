@@ -1842,16 +1842,15 @@ class YumBase(depsolve.Depsolve):
             if not os.path.exists(lockdir):
                 os.makedirs(lockdir, mode=0755)
             fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)    
+            os.write(fd, contents)
+            os.close(fd)
+            return 1
         except OSError, msg:
             if not msg.errno == errno.EEXIST: 
                 # Whoa. What the heck happened?
                 errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
                 raise Errors.LockError(msg.errno, errmsg, int(contents))
             return 0
-        else:
-            os.write(fd, contents)
-            os.close(fd)
-            return 1
     
     def _unlock(self, filename):
         misc.unlink_f(filename)
