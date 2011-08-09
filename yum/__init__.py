@@ -2003,16 +2003,6 @@ class YumBase(depsolve.Depsolve):
                     os.unlink(local)
 
             checkfunc = (self.verifyPkg, (po, 1), {})
-            dirstat = os.statvfs(po.repo.pkgdir)
-            if (dirstat.f_bavail * dirstat.f_bsize) <= long(po.size):
-                adderror(po, _('Insufficient space in download directory %s\n'
-                        "    * free   %s\n"
-                        "    * needed %s") %
-                         (po.repo.pkgdir,
-                          format_number(dirstat.f_bavail * dirstat.f_bsize),
-                          format_number(po.size)))
-                continue
-            
             try:
                 if i == 1 and not local_size and remote_size == po.size:
                     text = os.path.basename(po.relativepath)

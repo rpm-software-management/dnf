@@ -24,6 +24,7 @@ urlparse.uses_fragment.append("media")
 import Errors
 from urlgrabber.grabber import URLGrabber
 from urlgrabber.grabber import default_grabber
+from urlgrabber.progress import format_number
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
 import repoMDObject
@@ -35,6 +36,7 @@ import sqlitesack
 from yum import config
 from yum import misc
 from yum import comps
+from yum import _
 from constants import *
 import metalink
 
@@ -795,6 +797,16 @@ class YumRepository(Repository, config.RepoConf):
                 return result
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
+
+        if size:
+            dirstat = os.statvfs(os.path.dirname(local))
+            avail = dirstat.f_bavail * dirstat.f_bsize
+            if avail < long(size):
+                raise Errors.RepoError, _('''\
+Insufficient space in download directory %s
+    * free   %s
+    * needed %s'''
+                ) % (os.path.dirname(local), format_number(avail), format_number(long(size)))
 
         if url and scheme != "media":
             ugopts = self._default_grabopts(cache=cache)
