@@ -82,7 +82,7 @@ from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-from yum.i18n import to_unicode, to_str
+from yum.i18n import to_unicode, to_str, exception2msg
 
 import string
 import StringIO
@@ -2027,7 +2027,7 @@ class YumBase(depsolve.Depsolve):
                 done_repos.add(po.repoid)
 
             except Errors.RepoError, e:
-                adderror(po, str(e))
+                adderror(po, exception2msg(e))
             else:
                 po.localpath = mylocal
                 if po in errors:

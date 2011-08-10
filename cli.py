@@ -43,7 +43,7 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-from yum.i18n import to_unicode, to_utf8
+from yum.i18n import to_unicode, to_utf8, exception2msg
 
 #  This is for yum-utils/yumdownloader in RHEL-5, where it isn't importing this
 # directly but did do "from cli import *", and we did have this in 3.2.22. I
@@ -457,7 +457,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             try:
                 self._getTs(needTsRemove)
             except yum.Errors.YumBaseError, e:
-                return 1, [str(e)]
+                return 1, [exception2msg(e)]
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
