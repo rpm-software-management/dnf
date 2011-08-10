@@ -23,7 +23,7 @@ import yum
 from cli import *
 from yum import Errors
 from yum import _
-from yum.i18n import utf8_width
+from yum.i18n import utf8_width, exception2msg
 from yum import logginglevels
 from optparse import OptionGroup
 
@@ -161,34 +161,6 @@ def show_lock_owner(pid, logger):
     logger.critical(_("    State  : %s, pid: %d") % (ps['state'], pid))
 
     return ps
-
-
-def exception2msg(e):
-    """Convert an exception to a message.  This function will convert
-    the exception using to_unicode, unicode, or str, whichever works correctly.
-
-    :param e: an exception
-    :return: a string representation of the exception
-    """
-
-    # DIE python DIE! Which one works:
-    # to_unicode(e.value); unicode(e); str(e); 
-    # Call this so you don't have to care.
-    try:
-        return to_unicode(e.value)
-    except:
-        pass
-
-    try:
-        return unicode(e)
-    except:
-        pass
-
-    try:
-        return str(e)
-    except:
-        pass
-    return "<exception failed to convert to text>"
 
 
 class YumUtilBase(YumBaseCli):
