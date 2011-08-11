@@ -102,10 +102,12 @@ default_grabber.opts.user_agent += " yum/" + __version__
 
 
 class _YumPreBaseConf:
-    """This is the configuration interface for the YumBase configuration.
-       So if you want to change if plugins are on/off, or debuglevel/etc.
-       you tweak it here, and when yb.conf does it's thing ... it happens. """
-
+    """This is the configuration interface for the :class:`YumBase`
+    configuration.  To change configuration settings such as whether
+    plugins are on or off, or the value of debuglevel, change the
+    values here. Later, when :func:`YumBase.conf` is first called, all
+    of the options will be automatically configured.
+    """
     def __init__(self):
         self.fn = '/etc/yum/yum.conf'
         self.root = '/'
@@ -125,10 +127,12 @@ class _YumPreBaseConf:
 
 
 class _YumPreRepoConf:
-    """This is the configuration interface for the repos configuration.
-       So if you want to change callbacks etc. you tweak it here, and when
-       yb.repos does it's thing ... it happens. """
-
+    """This is the configuration interface for the repos configuration
+    configuration.  To change configuration settings such what
+    callbacks are used, change the values here. Later, when
+    :func:`YumBase.repos` is first called, all of the options will be
+    automatically configured.
+    """
     def __init__(self):
         self.progressbar = None
         self.callback = None
@@ -164,11 +168,11 @@ class _YumCostExclude:
         return False
 
 class YumBase(depsolve.Depsolve):
-    """This is a primary structure and base class. It houses the objects and
-       methods needed to perform most things in yum. It is almost an abstract
-       class in that you will need to add your own class above it for most
-       real use."""
-    
+    """This is a primary structure and base class. It houses the
+    objects and methods needed to perform most things in yum. It is
+    almost an abstract class in that you will need to add your own
+    class above it for most real use.
+    """
     def __init__(self):
         depsolve.Depsolve.__init__(self)
         self._conf = None
@@ -213,6 +217,8 @@ class YumBase(depsolve.Depsolve):
         for cb in self._cleanup: cb()
 
     def close(self):
+        """Close the history and repo objects."""
+
         # We don't want to create the object, so we test if it's been created
         if self._history is not None:
             self.history.close()
@@ -225,15 +231,33 @@ class YumBase(depsolve.Depsolve):
         return transactioninfo.TransactionData()
 
     def doGenericSetup(self, cache=0):
-        """do a default setup for all the normal/necessary yum components,
-           really just a shorthand for testing"""
+        """Do a default setup for all the normal or necessary yum
+        components.  This function is really just a shorthand for
+        testing purposes.
 
+        :param cache: whether to run in cache only mode, which will
+           run only from the system cache
+        """
         self.preconf.init_plugins = False
         self.conf.cache = cache
 
     def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
             plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
             errorlevel=None):
+        """Deprecated.  Perform configuration setup.
+
+        :param fn: the name of the configuration file to use
+        :param root: the root directory to use
+        :param init_plugins: whether to initialize plugins before
+           running yum
+        :param plugin_types: a tuple containing the types to plugins
+           to load
+        :param optparser: the option parser to use for configuration
+        :param debuglevel: the minimum debug logging level to output
+           messages from
+        :param errorlevel: the minimum error logging level to output
+           messages from
+        """
         warnings.warn(_('doConfigSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -367,22 +391,36 @@ class YumBase(depsolve.Depsolve):
     def doLoggingSetup(self, debuglevel, errorlevel,
                        syslog_ident=None, syslog_facility=None,
                        syslog_device='/dev/log'):
-        '''
-        Perform logging related setup.
+        """Perform logging related setup.
 
-        @param debuglevel: Debug logging level to use.
-        @param errorlevel: Error logging level to use.
-        '''
+        :param debuglevel: the minimum debug logging level to output
+           messages from
+        :param errorlevel: the minimum error logging level to output
+           messages from
+        :param syslog_ident: the ident of the syslog to use
+        :param syslog_facility: the name of the syslog facility to use
+        :param syslog_device: the syslog device to use
+        """
         logginglevels.doLoggingSetup(debuglevel, errorlevel,
                                      syslog_ident, syslog_facility,
                                      syslog_device)
 
     def doFileLogSetup(self, uid, logfile):
+        """Set up the logging file.
+
+        :param uid: the user id of the current user
+        :param logfile: the name of the file to use for logging
+        """
         logginglevels.setFileLog(uid, logfile, self._cleanup)
 
     def getReposFromConfigFile(self, repofn, repo_age=None, validate=None):
-        """read in repositories from a config .repo file"""
+        """Read in repositories from a config .repo file.
 
+        :param repofn: a string specifying the path of the .repo file
+           to read
+        :param repo_age: the last time that the .repo file was
+           modified, in seconds since the epoch
+        """
         if repo_age is None:
             repo_age = os.stat(repofn)[8]
         
@@ -448,8 +486,11 @@ class YumBase(depsolve.Depsolve):
                 self.logger.warning(e)
         
     def getReposFromConfig(self):
-        """read in repositories from config main and .repo files"""
-
+        """Read in repositories from the main yum conf file, and from
+        .repo files.  The location of the main yum conf file is given
+        by self.conf.config_file_path, and the location of the
+        directory of .repo files is given by self.conf.reposdir.
+        """
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
         repo_config_age = self.conf.config_file_age
@@ -472,12 +513,13 @@ class YumBase(depsolve.Depsolve):
                     self.getReposFromConfigFile(repofn, repo_age=thisrepo_age)
 
     def readRepoConfig(self, parser, section):
-        '''Parse an INI file section for a repository.
+        """Parse an INI file section for a repository.
 
-        @param parser: ConfParser or similar to read INI file values from.
-        @param section: INI file section to read.
-        @return: YumRepository instance.
-        '''
+        :param parser: :class:`ConfigParser` or similar object to read
+           INI file values from
+        :param section: INI file section to read
+        :return: :class:`yum.yumRepo.YumRepository` instance
+        """
         repo = yumRepo.YumRepository(section)
         try:
             repo.populate(parser, section, self.conf)
@@ -500,31 +542,31 @@ class YumBase(depsolve.Depsolve):
         return repo
 
     def disablePlugins(self):
-        '''Disable yum plugins
-        '''
+        """Disable yum plugins."""
+
         self.plugins = plugins.DummyYumPlugins()
     
     def doPluginSetup(self, optparser=None, plugin_types=None, searchpath=None,
             confpath=None,disabled_plugins=None,enabled_plugins=None):
-        '''Initialise and enable yum plugins. 
+        """Initialise and enable yum plugins.
+        Note: _getConfig() will also initialise plugins if instructed
+        to. Only call this method directly if not calling _getConfig()
+        or calling doConfigSetup(init_plugins=False).
 
-        Note: _getConfig() will initialise plugins if instructed to. Only
-        call this method directly if not calling _getConfig() or calling
-        doConfigSetup(init_plugins=False).
-
-        @param optparser: The OptionParser instance for this run (optional)
-        @param plugin_types: A sequence specifying the types of plugins to load.
-            This should be a sequence containing one or more of the
-            yum.plugins.TYPE_...  constants. If None (the default), all plugins
-            will be loaded.
-        @param searchpath: A list of directories to look in for plugins. A
-            default will be used if no value is specified.
-        @param confpath: A list of directories to look in for plugin
-            configuration files. A default will be used if no value is
-            specified.
-        @param disabled_plugins: Plugins to be disabled    
-        @param enabled_plugins: Plugins to be enabled
-        '''
+        :param optparser: the :class:`OptionParser` instance to use
+           for this run
+        :param plugin_types: a sequence specifying the types of plugins to load.
+           This should be a sequence containing one or more of the
+           yum.plugins.TYPE_...  constants. If None (the default), all plugins
+           will be loaded
+        :param searchpath: a list of directories to look in for plugins. A
+           default will be used if no value is specified
+        :param confpath: a list of directories to look in for plugin
+           configuration files. A default will be used if no value is
+           specified
+        :param disabled_plugins: a list of plugins to be disabled    
+        :param enabled_plugins: a list plugins to be enabled
+        """
         if isinstance(self.plugins, plugins.YumPlugins):
             raise RuntimeError(_("plugins already initialised"))
 
@@ -533,6 +575,8 @@ class YumBase(depsolve.Depsolve):
 
     
     def doRpmDBSetup(self):
+        """Deprecated.  Set up the rpm database."""
+
         warnings.warn(_('doRpmDBSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -552,7 +596,8 @@ class YumBase(depsolve.Depsolve):
         return self._rpmdb
 
     def closeRpmDB(self):
-        """closes down the instances of the rpmdb we have wangling around"""
+        """Closes down the instances of rpmdb that could be open."""
+
         if self._rpmdb is not None:
             self._rpmdb.ts = None
             self._rpmdb.dropCachedData()
@@ -567,6 +612,12 @@ class YumBase(depsolve.Depsolve):
         self._ts = None
 
     def doRepoSetup(self, thisrepo=None):
+        """Deprecated. Set up the yum repositories.
+
+        :param thisrepo: the repository to set up.  If None, all
+           repositories will be set up
+        :return: the set up repos
+        """
         warnings.warn(_('doRepoSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -630,6 +681,14 @@ class YumBase(depsolve.Depsolve):
         self._repos = RepoStorage(self)
     
     def doSackSetup(self, archlist=None, thisrepo=None):
+        """Deprecated. Populate the package sacks with information
+        from our repositories.
+
+        :param archlist: a list of the names of archs to include.  If
+           None, all arches are set up
+        :param thisrepo: the repository to use.  If None, all enabled
+           repositories are used
+        """
         warnings.warn(_('doSackSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -711,6 +770,9 @@ class YumBase(depsolve.Depsolve):
             
            
     def doUpdateSetup(self):
+        """Deprecated. Set up the update object in the base class and populate the
+        updates, obsoletes, and other lists.
+        """
         warnings.warn(_('doUpdateSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -765,6 +827,8 @@ class YumBase(depsolve.Depsolve):
         return self._up
     
     def doGroupSetup(self):
+        """Deprecated. Create and populate the groups object."""
+
         warnings.warn(_('doGroupSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
@@ -929,9 +993,10 @@ class YumBase(depsolve.Depsolve):
     
     
     def doSackFilelistPopulate(self):
-        """convenience function to populate the repos with the filelist metadata
-           it also is simply to only emit a log if anything actually gets populated"""
-        
+        """Convenience function to populate the repositories with the
+        filelist metadata, and emit a log message only if new
+        information is actually populated.
+        """
         necessary = False
         
         # I can't think of a nice way of doing this, we have to have the sack here
@@ -952,8 +1017,12 @@ class YumBase(depsolve.Depsolve):
             self.repos.populateSack(mdtype='filelists')
            
     def yumUtilsMsg(self, func, prog):
-        """ Output a message that the tool requires the yum-utils package,
-            if not installed. """
+        """Output a message that the given tool requires the yum-utils
+        package, if it not installed.
+
+        :param func: the function to output the message
+        :param prog: the name of the tool that requires yum-utils
+        """
         if self.rpmdb.contains(name="yum-utils"):
             return
 
@@ -965,8 +1034,13 @@ class YumBase(depsolve.Depsolve):
              (hibeg, prog, hiend))
 
     def buildTransaction(self, unfinished_transactions_check=True):
-        """go through the packages in the transaction set, find them in the
-           packageSack or rpmdb, and pack up the ts accordingly"""
+        """Go through the packages in the transaction set, find them
+        in the packageSack or rpmdb, and pack up the transaction set
+        accordingly.
+
+        :param unfinished_transactions_check: whether to check for
+           unfinished transactions before building the new transaction
+        """
         if (unfinished_transactions_check and
             misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
@@ -1457,8 +1531,14 @@ class YumBase(depsolve.Depsolve):
         return probs
 
     def runTransaction(self, cb):
-        """takes an rpm callback object, performs the transaction"""
+        """Perform the transaction.
 
+        :param cb: an rpm callback object to use in the transaction
+        :return: a :class:`yum.misc.GenericHolder` containing
+           information about the results of the transaction
+        :raises: :class:`yum.Errors.YumRPMTransError` if there is a
+           transaction cannot be completed
+        """
         self.plugins.run('pretrans')
 
         #  We may want to put this other places, eventually, but for now it's
@@ -1574,9 +1654,14 @@ class YumBase(depsolve.Depsolve):
         return resultobject
 
     def verifyTransaction(self, resultobject=None):
-        """checks that the transaction did what we expected it to do. Also 
-           propagates our external yumdb info"""
-        
+        """Check that the transaction did what was expected, and 
+        propagate external yumdb information.  Output error messages
+        if the transaction did not do what was expected.
+
+        :param resultobject: the :class:`yum.misc.GenericHolder`
+           object returned from the :func:`runTransaction` call that
+           ran the transaction
+        """
         # check to see that the rpmdb and the tsInfo roughly matches
         # push package object metadata outside of rpmdb into yumdb
         # delete old yumdb metadata entries
@@ -1686,10 +1771,11 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def costExcludePackages(self):
-        """ Create an excluder for repos. with higher cost. Eg.
-            repo-A:cost=1 repo-B:cost=2 ... here we setup an excluder on repo-B
-            that looks for pkgs in repo-B."""
-        
+        """Create an excluder for repositories with higher costs. For
+        example, if repo-A:cost=1 and repo-B:cost=2, this function
+        will set up an excluder on repo-B that looks for packages in
+        repo-B.
+        """
         # if all the repo.costs are equal then don't bother running things
         costs = {}
         for r in self.repos.listEnabled():
@@ -1711,10 +1797,12 @@ class YumBase(depsolve.Depsolve):
             done = True
 
     def excludePackages(self, repo=None):
-        """removes packages from packageSacks based on global exclude lists,
-           command line excludes and per-repository excludes, takes optional 
-           repo object to use."""
+        """Remove packages from packageSacks based on global exclude
+        lists, command line excludes and per-repository excludes.
 
+        :param repo: a repo object to use.  If not given, all
+           repositories are used
+        """
         if "all" in self.conf.disable_excludes:
             return
         
@@ -1741,9 +1829,11 @@ class YumBase(depsolve.Depsolve):
             self.pkgSack.addPackageExcluder(repoid, exid,'exclude.match', match)
 
     def includePackages(self, repo):
-        """removes packages from packageSacks based on list of packages, to include.
-           takes repoid as a mandatory argument."""
-        
+        """Remove packages from packageSacks based on list of
+        packages to include.  
+
+        :param repo: the repository to use
+        """
         includelist = repo.getIncludePkgList()
         
         if len(includelist) == 0:
@@ -1763,8 +1853,11 @@ class YumBase(depsolve.Depsolve):
         self.pkgSack.addPackageExcluder(repo.id, exid, 'exclude.marked')
         
     def doLock(self, lockfile = YUM_PID_FILE):
-        """perform the yum locking, raise yum-based exceptions, not OSErrors"""
-        
+        """Acquire the yum lock.
+
+        :param lockfile: the file to use for the lock
+        :raises: :class:`yum.Errors.LockError`
+        """
         if self.conf.uid != 0:
             #  If we are a user, assume we are using the root cache ... so don't
             # bother locking.
@@ -1810,8 +1903,12 @@ class YumBase(depsolve.Depsolve):
         self._lockfile = lockfile
     
     def doUnlock(self, lockfile=None):
-        """do the unlock for yum"""
-        
+        """Release the yum lock.
+
+        :param lockfile: the lock file to use.  If not given, the file
+           that was given as a parameter to the :func:`doLock` call
+           that closed the lock is used
+        """
         # if we're not root then we don't lock - just return nicely
         #  Note that we can get here from __del__, so if we haven't created
         # YumBase.conf we don't want to do so here as creating stuff inside
@@ -1856,10 +1953,22 @@ class YumBase(depsolve.Depsolve):
         misc.unlink_f(filename)
 
     def verifyPkg(self, fo, po, raiseError):
-        """verifies the package is what we expect it to be
-           raiseError  = defaults to 0 - if 1 then will raise
-           a URLGrabError if the file does not check out.
-           otherwise it returns false for a failure, true for success"""
+        """Check that the checksum of a remote package matches what we
+        expect it to be.  If the checksum of the package file is
+        wrong, and the file is also larger than expected, it cannot be
+        redeemed, so delete it.
+
+        :param fo: the file object of the package
+        :param po: the package object to verify
+        :param raiseError: if *raiseError* is 1, and the package
+           does not check out, a :class:`URLGrabError will be raised.
+           Defaults to 0
+        :return: True if the package is verified successfully.
+           Otherwise, False will be returned, unless *raiseError* is
+           1, in which case a :class:`URLGrabError` will be raised
+        :raises: :class:`URLGrabError` if verification fails, and
+           *raiseError* is 1
+        """
         failed = False
 
         if type(fo) is types.InstanceType:
@@ -1899,9 +2008,16 @@ class YumBase(depsolve.Depsolve):
         
         
     def verifyChecksum(self, fo, checksumType, csum):
-        """Verify the checksum of the file versus the 
-           provided checksum"""
+        """Verify that the checksum of the given file matches the
+        given checksum.
 
+        :param fo: the file object to verify the checksum of
+        :param checksumType: the type of checksum to use
+        :parm csum: the checksum to check against
+        :return: 0 if the checksums match
+        :raises: :class:`URLGrabError` if there is an error performing
+           the checksums, or the checksums do not match
+        """
         try:
             filesum = misc.checksum(checksumType, fo)
         except Errors.MiscError, e:
@@ -1913,6 +2029,17 @@ class YumBase(depsolve.Depsolve):
         return 0
 
     def downloadPkgs(self, pkglist, callback=None, callback_total=None):
+        """Download the packages specified by the given list of
+        package objects.
+
+        :param pkglist: a list of package objects specifying the
+           packages to download
+        :param callback: unused
+        :param callback_total: a callback to output messages about the
+           download operation
+        :return: a dictionary containing errors from the downloading process
+        :raises: :class:`URLGrabError`
+        """
         def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
             # could conceivably ping-pong between different disc1's
@@ -2047,7 +2174,22 @@ class YumBase(depsolve.Depsolve):
         return errors
 
     def verifyHeader(self, fo, po, raiseError):
-        """check the header out via it's naevr, internally"""
+        """Check that the header of the given file object and matches
+        the given package.
+
+        :param fo: the file object to check
+        :param po: the package object to check
+        :param raiseError: if *raiseError* is True, a
+           :class:`URLGrabError` will be raised if the header matches
+           the package object, or cannot be read from the file.  If
+           *raiseError* is False, 0 will be returned in the above
+           cases
+        :return: 1 if the header matches the package object, and 0 if
+           they do not match, and *raiseError* is False
+        :raises: :class:`URLGrabError` if *raiseError* is True, and
+           the header does not match the package object or cannot be
+           read from the file
+        """
         if type(fo) is types.InstanceType:
             fo = fo.filename
             
@@ -2071,9 +2213,12 @@ class YumBase(depsolve.Depsolve):
         return 1
         
     def downloadHeader(self, po):
-        """download a header from a package object.
-           output based on callback, raise yum.Errors.YumBaseError on problems"""
+        """Download a header from a package object.
 
+        :param po: the package object to download the header from
+        :raises: :class:`yum.Errors.RepoError` if there are errors
+           obtaining the header
+        """
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             return
                 
@@ -2117,15 +2262,17 @@ class YumBase(depsolve.Depsolve):
             return
 
     def sigCheckPkg(self, po):
-        '''
-        Take a package object and attempt to verify GPG signature if required
+        """Verify the GPG signature of the given package object.
 
-        Returns (result, error_string) where result is:
-            - 0 - GPG signature verifies ok or verification is not required.
-            - 1 - GPG verification failed but installation of the right GPG key
-                  might help.
-            - 2 - Fatal GPG verification error, give up.
-        '''
+        :param po: the package object to verify the signature of
+        :return: (result, error_string) 
+           where result is::
+
+              0 = GPG signature verifies ok or verification is not required.
+              1 = GPG verification failed but installation of the right GPG key
+                    might help.
+              2 = Fatal GPG verification error, give up.
+        """
         if self._override_sigchecks:
             check = False
             hasgpgkey = 0
@@ -2176,6 +2323,9 @@ class YumBase(depsolve.Depsolve):
         return result, msg
 
     def cleanUsedHeadersPackages(self):
+        """Delete the header and package files used in the
+        transaction from the yum cache.
+        """
         filelist = []
         for txmbr in self.tsInfo:
             if txmbr.po.state not in TS_INSTALL_STATES:
@@ -2213,27 +2363,40 @@ class YumBase(depsolve.Depsolve):
                     _('%s removed'), fn)
         
     def cleanHeaders(self):
+        """Delete the header files from the yum cache."""
+
         exts = ['hdr']
         return self._cleanFiles(exts, 'hdrdir', 'header')
 
     def cleanPackages(self):
+        """Delete the package files from the yum cache."""
+
         exts = ['rpm']
         return self._cleanFiles(exts, 'pkgdir', 'package')
 
     def cleanSqlite(self):
+        """Delete the sqlite files from the yum cache."""
+
         exts = ['sqlite', 'sqlite.bz2', 'sqlite-journal']
         return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
+        """Delete the metadata files from the yum cache."""
+
         exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc']
         # Metalink is also here, but is a *.xml file
         return self._cleanFiles(exts, 'cachedir', 'metadata') 
 
     def cleanExpireCache(self):
+        """Delete the local data saying when the metadata and mirror
+           lists were downloaded for each repository."""
+
         exts = ['cachecookie', 'mirrorlist.txt']
         return self._cleanFiles(exts, 'cachedir', 'metadata')
 
     def cleanRpmDB(self):
+        """Delete any cached data from the local rpmdb."""
+
         cachedir = self.conf.persistdir + "/rpmdb-indexes/"
         if not os.path.exists(cachedir):
             filelist = []
@@ -2267,8 +2430,29 @@ class YumBase(depsolve.Depsolve):
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False):
-        """generates lists of packages, un-reduced, based on pkgnarrow option"""
+        """Return a :class:`yum.misc.GenericHolder` containing
+        lists of package objects.  The contents of the lists are
+        specified in various ways by the arguments.
 
+        :param pkgnarrow: a string specifying which types of packages
+           lists to produces, such as updates, installed, available,
+           etc.
+        :param patterns: a list of names or wildcards specifying
+           packages to list
+        :param showdups: whether to include duplicate packages in the
+           lists
+        :param ignore_case: whether to ignore case when searching by
+           package names
+        :return: a :class:`yum.misc.GenericHolder` instance with the
+           following lists defined::
+
+             available = list of packageObjects
+             installed = list of packageObjects
+             updates = tuples of packageObjects (updating, installed)
+             extras = list of packageObjects
+             obsoletes = tuples of packageObjects (obsoleting, installed)
+             recent = list of packageObjects
+        """
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
         ygh = misc.GenericHolder(iter=pkgnarrow)
@@ -2456,14 +2640,13 @@ class YumBase(depsolve.Depsolve):
 
         
     def findDeps(self, pkgs):
-        """
-        Return the dependencies for a given package object list, as well
-        possible solutions for those dependencies.
+        """Return the dependencies for a given package object list, as well
+        as possible solutions for those dependencies.
            
-        Returns the deps as a dict of dicts::
-            packageobject = [reqs] = [list of satisfying pkgs]
+        :param pkgs: a list of package objects
+        :return: the dependencies as a dictionary of dictionaries:
+           packageobject = [reqs] = [list of satisfying pkgs]
         """
-        
         results = {}
 
         for pkg in pkgs:
@@ -2490,10 +2673,22 @@ class YumBase(depsolve.Depsolve):
     # pre 3.2.10 API used to always showdups, so that's the default atm.
     def searchGenerator(self, fields, criteria, showdups=True, keys=False, 
                                              searchtags=True, searchrpmdb=True):
-        """Generator method to lighten memory load for some searches.
-           This is the preferred search function to use. Setting keys to True
-           will use the search keys that matched in the sorting, and return
-           the search keys in the results. """
+        """Yield the packages that match the given search criteria.
+        This generator method will lighten memory load for some
+        searches, and is the preferred search function to use.
+
+        :param fields: the fields to search
+        :param criteria: a list of strings specifying the criteria to
+           search for
+        :param showdups: whether to yield duplicate packages from
+           different repositories
+        :param keys: setting *keys* to True will use the search keys
+           that matched in the sorting, and return the search keys in
+           the results
+        :param searchtags: whether to search the package tags
+        :param searchrpmdb: whether to search the rmpdb
+           
+        """
         sql_fields = []
         for f in fields:
             sql_fields.append(RPM_TO_SQLITE.get(f, f))
@@ -2656,6 +2851,14 @@ class YumBase(depsolve.Depsolve):
                     yield (po, vs)
 
     def searchPackageTags(self, criteria):
+        """Search for and return a list packages that have tags
+        matching the given criteria.
+
+        :param criteria: a list of strings specifying the criteria to
+           search for
+        :return: a list of package objects that have tags matching the
+           given criteria
+        """
         results = {} # name = [(criteria, taglist)]
         for c in criteria:
             c = c.lower()
@@ -2672,11 +2875,16 @@ class YumBase(depsolve.Depsolve):
         return results
         
     def searchPackages(self, fields, criteria, callback=None):
-        """Search specified fields for matches to criteria
-           optional callback specified to print out results
-           as you go. Callback is a simple function of:
-           callback(po, matched values list). It will 
-           just return a dict of dict[po]=matched values list"""
+        """Deprecated.  Search the specified fields for packages that
+        match the given criteria, and return a list of the results.
+
+        :param fields: the fields to seach
+        :param criteria: a list of strings specifying the criteria to
+           search for
+        :param callback: a function to print out the results as they
+           are found.  *callback* should have the form callback(po,
+           matched values list)
+        """
         warnings.warn(_('searchPackages() will go away in a future version of Yum.\
                       Use searchGenerator() instead. \n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)           
@@ -2695,6 +2903,19 @@ class YumBase(depsolve.Depsolve):
     
     def searchPackageProvides(self, args, callback=None,
                               callback_has_matchfor=False):
+        """Search for and return a list package objects that provide
+        the given files or features.
+
+        :param args: a list of strings specifying the files and
+           features to search for the packages that provide
+        :param callback: a callback function to print out the results
+           as they are found
+        :param callback_has_matchfor: whether the callback function
+           will accept a list of strings to highlight in its output.
+           If this is true, *args* will be passed to *callback* so
+           that the files or features that were searched for can be
+           highlighted
+        """
         def _arg_data(arg):
             if not misc.re_glob(arg):
                 isglob = False
@@ -2813,11 +3034,17 @@ class YumBase(depsolve.Depsolve):
         return matches
 
     def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
-        """returns two lists of groups, installed groups and available groups
-           optional 'uservisible' bool to tell it whether or not to return
-           only groups marked as uservisible"""
-        
-        
+        """Return two lists of groups: installed groups and available
+        groups.
+
+        :param uservisible: If True, only groups marked as uservisible
+           will be returned. Otherwise, all groups will be returned
+        :param patterns: a list of stings.  If given, only groups
+           with names that match the patterns will be included in the
+           lists.  If not given, all groups will be included
+        :param ignore_case: whether to ignore case when determining
+           whether group names match the strings in *patterns*
+        """
         installed = []
         available = []
 
@@ -2847,8 +3074,13 @@ class YumBase(depsolve.Depsolve):
     
     
     def groupRemove(self, grpid):
-        """mark all the packages in this group to be removed"""
-        
+        """Mark all the packages in the given group to be removed.
+
+        :param grpid: the name of the group containing the packages to
+           mark for removal
+        :return: a list of transaction members added to the
+           transaction set by this function
+        """
         txmbrs_used = []
         
         thesegroups = self.comps.return_groups(grpid)
@@ -2867,9 +3099,10 @@ class YumBase(depsolve.Depsolve):
         return txmbrs_used
 
     def groupUnremove(self, grpid):
-        """unmark any packages in the group from being removed"""
-        
+        """Unmark any packages in the given group from being removed.
 
+        :param grpid: the name of the group to unmark the packages of
+        """
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
@@ -2894,12 +3127,16 @@ class YumBase(depsolve.Depsolve):
         
         
     def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
-        """mark all the packages in the group to be installed
-           returns a list of transaction members it added to the transaction 
-           set
-           Optionally take:
-           group_package_types=List - overrides self.conf.group_package_types
-           enable_group_conditionals=Bool - overrides self.conf.enable_group_conditionals
+        """Mark all the packages in the given group to be installed.
+
+        :param grpid: the name of the group containing the packages to
+           mark for installation
+        :param group_package_types: a list of the types of groups to
+           work with.  This overrides self.conf.group_package_types
+        :param enable_group_conditionals: overrides
+           self.conf.enable_group_conditionals
+        :return: a list of transaction members added to the
+           transaction set by this function
         """
 
         if not self.comps.has_group(grpid):
@@ -2992,10 +3229,14 @@ class YumBase(depsolve.Depsolve):
         return txmbrs_used
 
     def deselectGroup(self, grpid, force=False):
-        """ Without the force option set, this removes packages from being
-            installed that were added as part of installing one of the
-            group(s). If the force option is set, then all installing packages
-            in the group(s) are force removed from the transaction. """
+        """Unmark the packages in the given group from being
+        installed.
+
+        :param grpid: the name of the group containing the packages to
+           unmark from installation
+        :param force: if True, force remove all the packages in the
+           given group from the transaction
+        """
         
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
@@ -3030,12 +3271,21 @@ class YumBase(depsolve.Depsolve):
                             self.tsInfo.remove(pkg.pkgtup)
         
     def getPackageObject(self, pkgtup, allow_missing=False):
-        """retrieves a packageObject from a pkgtuple - if we need
-           to pick and choose which one is best we better call out
-           to some method from here to pick the best pkgobj if there are
-           more than one response - right now it's more rudimentary."""
-           
-        
+        """Return a package object that corresponds to the given
+        package tuple.
+
+        :param pkgtup: the package tuple specifying the package object
+           to return
+
+        :param allow_missing: If no package corresponding to the given
+           package tuple can be found, None is returned if
+           *allow_missing* is True, and a :class:`yum.Errors.DepError` is
+           raised if *allow_missing* is False.
+        :return: a package object corresponding to the given package tuple
+        :raises: a :class:`yum.Errors.DepError` if no package
+           corresponding to the given package tuple can be found, and
+           *allow_missing* is False
+        """
         # look it up in the self.localPackages first:
         for po in self.localPackages:
             if po.pkgtup == pkgtup:
@@ -3060,10 +3310,18 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def getInstalledPackageObject(self, pkgtup):
-        """ Returns a YumInstalledPackage object for the pkgtup specified, or
-            raises an exception. You should use this instead of
-            searchPkgTuple() if you are assuming there is a value. """
+        """Return a :class:`yum.packages.YumInstalledPackage` object that
+        corresponds to the given package tuple.  This function should
+        be used instead of :func:`searchPkgTuple` if you are assuming
+        that the package object exists.
 
+        :param pkgtup: the package tuple specifying the package object
+           to return
+        :return: a :class:`yum.packages.YumInstalledPackage` object corresponding
+           to the given package tuple
+        :raises: a :class:`yum.Errors.RpmDBError` if the specified package
+           object cannot be found
+        """
         pkgs = self.rpmdb.searchPkgTuple(pkgtup)
         if len(pkgs) == 0:
             self._add_not_found_i(pkgs, pkgtup=pkgtup)
@@ -3074,9 +3332,11 @@ class YumBase(depsolve.Depsolve):
         return po
         
     def gpgKeyCheck(self):
-        """checks for the presence of gpg keys in the rpmdb
-           returns 0 if no keys returns 1 if keys"""
+        """Checks for the presence of GPG keys in the rpmdb.
 
+        :return: 0 if there are no GPG keys in the rpmdb, and 1 if
+           there are keys
+        """
         gpgkeyschecked = self.conf.cachedir + '/.gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1
@@ -3101,9 +3361,13 @@ class YumBase(depsolve.Depsolve):
             return 1
 
     def returnPackagesByDep(self, depstring):
-        """Pass in a generic [build]require string and this function will 
-           pass back the packages it finds providing that dep."""
+        """Return a list of package objects that provide the given
+        dependencies. 
 
+        :param depstring: a string specifying the dependency to return
+           the packages that fulfil
+        :return: a list of packages that fulfil the given dependency
+        """
         if not depstring:
             return []
 
@@ -3130,9 +3394,16 @@ class YumBase(depsolve.Depsolve):
         return self.pkgSack.getProvides(depname, depflags, depver).keys()
 
     def returnPackageByDep(self, depstring):
-        """Pass in a generic [build]require string and this function will 
-           pass back the best(or first) package it finds providing that dep."""
-        
+        """Return the best, or first, package object that provides the
+        given dependencies.
+
+        :param depstring: a string specifying the dependency to return
+           the package that fulfils
+        :return: the best, or first, package that fulfils the given
+           dependency
+        :raises: a :class:`yum.Errors.YumBaseError` if no packages that
+           fulfil the given dependency can be found
+        """
         # we get all sorts of randomness here
         errstring = depstring
         if type(depstring) not in types.StringTypes:
@@ -3151,9 +3422,14 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def returnInstalledPackagesByDep(self, depstring):
-        """Pass in a generic [build]require string and this function will 
-           pass back the installed packages it finds providing that dep."""
-        
+        """Return a list of installed package objects that provide the
+        given dependencies.
+
+        :param depstring: a string specifying the dependency to return
+           the packages that fulfil
+        :return: a list of installed packages that fulfil the given
+           dependency
+        """
         if not depstring:
             return []
 
@@ -3197,10 +3473,17 @@ class YumBase(depsolve.Depsolve):
         return bestlist[0][0]
 
     def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
-        """Takes a list of packages, returns the best packages.
-           This function is multilib aware so that it will not compare
-           multilib to singlelib packages""" 
-    
+        """Return the best packages from a list of packages.  This
+        function is multilib aware, so that it will not compare
+        multilib to singlelib packages.
+
+        :param pkglist: the list of packages to return the best
+           packages from
+        :param arch: packages will be selected that are compatible
+           with the architecture specified by *arch*
+        :param single_name: whether to return a single package name
+        :return: a list of the best packages from *pkglist*
+        """
         returnlist = []
         compatArchList = self.arch.get_arch_list(arch)
         multiLib = []
@@ -3433,12 +3716,19 @@ class YumBase(depsolve.Depsolve):
                 self.tsInfo.probFilterFlags.append(flag)
 
     def install(self, po=None, **kwargs):
-        """try to mark for install the item specified. Uses provided package 
-           object, if available. If not it uses the kwargs and gets the best
-           packages from the keyword options provided 
-           returns the list of txmbr of the items it installs
-           
-           """
+        """Mark the specified item for installation.  If a package
+        object is given, mark it for installation.  Otherwise, mark
+        the best package specified by the key word arguments for
+        installation.
+
+        :param po: a package object to install
+        :param kwargs: if *po* is not specified, these keyword
+           arguments will be used to find the best package to install
+        :return: a list of the transaction members added to the
+           transaction set by this function
+        :raises: :class:`yum.Errors.InstallError` if there is a problem
+           installing the package
+        """
         
 
         #  This is kind of hacky, we really need a better way to do errors than
@@ -3729,14 +4019,33 @@ class YumBase(depsolve.Depsolve):
         return txmbr
 
     def update(self, po=None, requiringPo=None, update_to=False, **kwargs):
-        """try to mark for update the item(s) specified. 
-            po is a package object - if that is there, mark it for update,
-            if possible
-            else use **kwargs to match the package needing update
-            if nothing is specified at all then attempt to update everything
+        """Mark the specified items to be updated.  If a package
+        object is given, mark it.  Else, if a package is specified by
+        the keyword arguments, mark it.  Finally, if nothing is given,
+        mark all installed packages to be updated.
+
+
+        :param po: the package object to be marked for updating
+        :param requiringPo: the package object that requires the
+           upgrade
+        :param update_to: if *update_to* is True, the update will only
+           be run if it will update the given package to the given
+           version.  For example, if the package foo-1-2 is installed,::
+
+             updatePkgs(["foo-1-2], update_to=False)
+           will work identically to::
             
-            returns the list of txmbr of the items it marked for update"""
-        
+             updatePkgs(["foo"])
+           but::
+
+             updatePkgs(["foo-1-2"], update_to=True)
+           
+           will do nothing
+        :param kwargs: if *po* is not given, the names or wildcards in
+           *kwargs* will be used to find the packages to update
+        :return: a list of transaction members added to the
+           transaction set by this function
+        """
         # check for args - if no po nor kwargs, do them all
         # if po, do it, ignore all else
         # if no po do kwargs
@@ -3995,11 +4304,18 @@ class YumBase(depsolve.Depsolve):
         return tx_return
         
     def remove(self, po=None, **kwargs):
-        """try to find and mark for remove the specified package(s) -
-            if po is specified then that package object (if it is installed) 
-            will be marked for removal.
-            if no po then look at kwargs, if neither then raise an exception"""
+        """Mark the specified packages for removal. If a package
+        object is given, mark it for removal.  Otherwise, mark the
+        package specified by the keyword arguments.
 
+        :param po: the package object to mark for installation
+        :param kwargs: If *po* is not given, the keyword arguments
+           will be used to specify a package to mark for installation
+        :return: a list of the transaction members that were added to
+           the transaction set by this method
+        :raises: :class:`yum.Errors.RemoveError` if nothing is specified
+           to mark for removal
+        """
         if not po and not kwargs:
             raise Errors.RemoveError, 'Nothing specified to remove'
         
@@ -4065,17 +4381,19 @@ class YumBase(depsolve.Depsolve):
         return tx_return
 
     def installLocal(self, pkg, po=None, updateonly=False):
+        """Mark a package on the local filesystem (i.e. not from a
+        repository) for installation. 
+        
+        :param pkg: a string specifying the path to an rpm file in the
+           local filesystem to be marked for installation
+        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :param updateonly: if True, the given package will only be
+           marked for installation if it is an upgrade for a package
+           that is already installed.  If False, this restriction is
+           not enforced
+        :return: a list of the transaction members added to the
+           transaction set by this method
         """
-        handles installs/updates of rpms provided on the filesystem in a
-        local dir (ie: not from a repo)
-
-        Return the added transaction members.
-
-        @param pkg: a path to an rpm file on disk.
-        @param po: A YumLocalPackage
-        @param updateonly: Whether or not true installs are valid.
-        """
-
         # read in the package into a YumLocalPackage Object
         # append it to self.localPackages
         # check if it can be installed or updated based on nevra versus rpmdb
@@ -4193,16 +4511,15 @@ class YumBase(depsolve.Depsolve):
         return tx_return
 
     def reinstallLocal(self, pkg, po=None):
+        """Mark a package on the local filesystem (i.e. not from a
+        repository) for reinstallation. 
+        
+        :param pkg: a string specifying the path to an rpm file in the
+           local filesystem to be marked for reinstallation
+        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :return: a list of the transaction members added to the
+           transaction set by this method
         """
-        handles reinstall of rpms provided on the filesystem in a
-        local dir (ie: not from a repo)
-
-        Return the added transaction members.
-
-        @param pkg: a path to an rpm file on disk.
-        @param po: A YumLocalPackage
-        """
-
         if not po:
             try:
                 po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
@@ -4225,9 +4542,19 @@ class YumBase(depsolve.Depsolve):
         return self.reinstall(po=po)
 
     def reinstall(self, po=None, **kwargs):
-        """Setup the problem filters to allow a reinstall to work, then
-           pass everything off to install"""
-           
+        """Mark the given package for reinstallation.  This is
+        accomplished by setting problem filters to allow a reinstall
+        take place, then calling :func:`install`.
+
+        :param po: the package object to mark for reinstallation
+        :param kwargs: if po is not given, the keyword will be used to
+           specify a package for reinstallation
+        :return: a list of the transaction members added to the
+           transaction set by this method
+        :raises: :class:`yum.Errors.ReinstallRemoveError` or
+           :class:`yum.Errors.ReinstallInstallError` depending the nature
+           of the error that is encountered
+        """
         self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
                              rpm.RPMPROB_FILTER_REPLACENEWFILES,
                              rpm.RPMPROB_FILTER_REPLACEOLDFILES)
@@ -4269,16 +4596,15 @@ class YumBase(depsolve.Depsolve):
         return tx_mbrs
         
     def downgradeLocal(self, pkg, po=None):
+        """Mark a package on the local filesystem (i.e. not from a
+        repository) to be downgraded.
+        
+        :param pkg: a string specifying the path to an rpm file in the
+           local filesystem to be marked to be downgraded
+        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :return: a list of the transaction members added to the
+           transaction set by this method
         """
-        handles downgrades of rpms provided on the filesystem in a
-        local dir (ie: not from a repo)
-
-        Return the added transaction members.
-
-        @param pkg: a path to an rpm file on disk.
-        @param po: A YumLocalPackage
-        """
-
         if not po:
             try:
                 po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
@@ -4319,13 +4645,19 @@ class YumBase(depsolve.Depsolve):
         return False
         
     def downgrade(self, po=None, **kwargs):
-        """ Try to downgrade a package. Works like:
-            % yum shell <<EOL
-            remove  abcd
-            install abcd-<old-version>
-            run
-            EOL """
+        """Mark a package to be downgraded.  This is equivalent to
+        first removing the currently installed package, and then
+        installing the older version.
 
+        :param po: the package object to be marked to be downgraded
+        :param kwargs: if a package object is not given, the keyword
+           arguments will be used to specify a package to be marked to
+           be downgraded
+        :return: a list of the transaction members added to the
+           transaction set by this method
+        :raises: :class:`yum.Errors.DowngradeError` if no packages are
+           specified or available for downgrade
+        """
         if not po and not kwargs:
             raise Errors.DowngradeError, 'Nothing specified to downgrade'
 
@@ -4511,8 +4843,14 @@ class YumBase(depsolve.Depsolve):
         return returndict
 
     def history_redo(self, transaction):
-        """ Given a valid historical transaction object, try and repeat
-            that transaction. """
+        """Repeat the transaction represented by the given
+        :class:`yum.history.YumHistoryTransaction` object.
+
+        :param transaction: a
+           :class:`yum.history.YumHistoryTransaction` object
+           representing the transaction to be repeated
+        :return: whether the transaction was repeated successfully
+        """
         # NOTE: This is somewhat basic atm. ... see comment in undo.
         #  Also note that redo doesn't force install Dep-Install packages,
         # which is probably what is wanted the majority of the time.
@@ -4548,8 +4886,14 @@ class YumBase(depsolve.Depsolve):
         return done
 
     def history_undo(self, transaction):
-        """ Given a valid historical transaction object, try and undo
-            that transaction. """
+        """Undo the transaction represented by the given
+        :class:`yum.history.YumHistoryTransaction` object.
+
+        :param transaction: a
+           :class:`yum.history.YumHistoryTransaction` object
+           representing the transaction to be undone
+        :return: whether the transaction was undone successfully
+        """
         # NOTE: This is somewhat basic atm. ... for instance we don't check
         #       that we are going from the old new version. However it's still
         #       better than the RHN rollback code, and people pay for that :).
@@ -4699,19 +5043,18 @@ class YumBase(depsolve.Depsolve):
         self.logger.critical("%s", msg)
 
     def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
-        """
-        Retrieve a key for a package. If needed, prompt for if the key should
-        be imported using askcb.
-        
-        @param po: Package object to retrieve the key of.
-        @param askcb: Callback function to use for asking for permission to
-                      import a key. This is verification, but also "choice".
-                      Takes arguments of the po, the userid for the key, and
-                      the keyid.
-        @param fullaskcb: Callback function to use for asking for permission to
-                          import a key. This is verification, but also "choice".
-                          Differs from askcb in that it gets passed a
-                          dictionary so that we can expand the values passed.
+        """Retrieve a key for a package. If needed, use the given
+        callback to prompt whether the key should be imported.
+
+        :param po: the package object to retrieve the key of
+        :param askcb: Callback function to use to ask permission to
+           import a key.  The arguments *askck* should take are the
+           package object, the userid of the key, and the keyid
+        :param fullaskcb: Callback function to use to ask permission to
+           import a key.  This differs from *askcb* in that it gets
+           passed a dictionary so that we can expand the values passed.
+        :raises: :class:`yum.Errors.YumBaseError` if there are errors
+           retrieving the keys
         """
         repo = self.repos.getRepo(po.repoid)
         keyurls = repo.gpgkey
@@ -4876,26 +5219,23 @@ class YumBase(depsolve.Depsolve):
                   'this repository.') % (repo.name)
 
     def getKeyForRepo(self, repo, callback=None):
-        """
-        Retrieve a key for a repository If needed, prompt for if the key should
-        be imported using callback
-        
-        @param repo: Repository object to retrieve the key of.
-        @param callback: Callback function to use for asking for verification
-                          of a key. Takes a dictionary of key info.
+        """Retrieve a key for a repository.  If needed, use the given
+        callback to prompt whether the key should be imported.
+
+        :param repo: repository object to retrieve the key of
+        :param callback: callback function to use for asking for
+           verification of key information
         """
         self._getAnyKeyForRepo(repo, repo.gpgdir, repo.gpgkey, is_cakey=False, callback=callback)
 
     def getCAKeyForRepo(self, repo, callback=None):
-        """
-        Retrieve a key for a repository If needed, prompt for if the key should
-        be imported using callback
-        
-        @param repo: Repository object to retrieve the key of.
-        @param callback: Callback function to use for asking for verification
-                          of a key. Takes a dictionary of key info.
-        """
+        """Retrieve a key for a repository.  If needed, use the given
+        callback to prompt whether the key should be imported.
 
+        :param repo: repository object to retrieve the key of
+        :param callback: callback function to use for asking for
+           verification of key information
+        """
         self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True, callback=callback)
 
     def _limit_installonly_pkgs(self):
@@ -4974,19 +5314,22 @@ class YumBase(depsolve.Depsolve):
             txmbr.depends_on.append(rel)
 
     def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
-        '''
-        Process the current Transaction
-        - Download Packages
-        - Check GPG Signatures.
-        - Run Test RPM Transaction
-        - Run RPM Transaction
-        
-        callback.event method is called at start/end of each process.
-        
-        @param callback: callback object (must have an event method)
-        @param rpmTestDisplay: Name of display class to use in RPM Test Transaction 
-        @param rpmDisplay: Name of display class to use in RPM Transaction 
-        '''
+        """Process the current transaction.  This involves the
+        following steps:
+          - Download the packages
+          - Check the GPG signatures of the packages
+          - Run the test RPM transaction
+          - Run the RPM Transaction
+        The *callback*.event method is called at the start, and
+        between each step.
+
+        :param callback: a callback object, which must have an event
+           method
+        :param rpmTestDisplay: name of the display class to use in the
+           RPM test transaction
+        :param rpmDisplay: name of the display class to use in the rpm
+           transaction
+        """
         
         if not callback:
             callback = callbacks.ProcessTransNoOutputCallback()
@@ -5129,13 +5472,19 @@ class YumBase(depsolve.Depsolve):
         return results
 
     def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
-        """add and enable a repo with just a baseurl/mirrorlist and repoid
-           requires repoid and at least one of baseurl and mirrorlist
-           additional optional kwargs are:
-           variable_convert=bool (defaults to true)
-           and any other attribute settable to the normal repo setup
-           ex: metadata_expire, enable_groups, gpgcheck, cachedir, etc
-           returns the repo object it added"""
+        """Add and enable a repository.
+
+        :param repoid: a string specifying the name of the repository
+        :param baseurls: a list of strings specifying the urls for
+           the repository.  At least one base url, or one mirror, must
+           be given
+        :param mirrorlist: a list of strings specifying a list of
+           mirrors for the repository.  At least one base url, or one
+           mirror must be given
+        :param kwargs: key word arguments to set any normal repository
+           attribute
+        :return: the new repository that has been added and enabled
+        """
         # out of place fixme - maybe we should make this the default repo addition
         # routine and use it from getReposFromConfigFile(), etc.
         newrepo = yumRepo.YumRepository(repoid)
@@ -5182,9 +5531,15 @@ class YumBase(depsolve.Depsolve):
 
     def setCacheDir(self, force=False, tmpdir=None, reuse=True,
                     suffix='/$basearch/$releasever'):
-        ''' Set a new cache dir, using misc.getCacheDir() and var. replace
-            on suffix. '''
+        """Set a new cache directory.
 
+        :param force: whether to force the cache directory to be
+           changed
+        :param tmpdir: a temporary directory
+        :param reuse: whether the temporary directory can be reused
+        :param suffix: suffix to attach to the directory name
+        :return: whether the new cache directory is successfully set
+        """
         if not force and os.geteuid() == 0:
             return True # We are root, not forced, so happy with the global dir.
         if tmpdir is None:
@@ -5235,13 +5590,24 @@ class YumBase(depsolve.Depsolve):
         self.history.write_addon_data('config-repos', myrepos)
         
     def verify_plugins_cb(self, verify_package):
-        """ Callback to call a plugin hook for pkg.verify(). """
+        """Callback to call a plugin hook for pkg.verify().
+
+        :param verify_package: a conduit for the callback
+        :return: *verify_package*
+        """
         self.plugins.run('verify_package', verify_package=verify_package)
         return verify_package
 
     def save_ts(self, filename=None, auto=False):
-        """saves out a transaction to .yumtx file to be loaded later"""
-        
+        """Save out a transaction to a .yumtx file to be loaded later.
+
+        :param filename: the name of the file to save the transaction
+           in.  If *filename* is not given, a name will be generated
+        :param auto: whether to output errors to the logger, rather
+           than raising exceptions
+        :raises: :class:`yum.Errors.YumBaseError` if there are errors
+           saving the transaction
+        """
         if self.tsInfo._unresolvedMembers:
             if auto:
                 self.logger.critical(_("Dependencies not solved. Will not save unresolved transaction."))
@@ -5281,7 +5647,17 @@ class YumBase(depsolve.Depsolve):
 
         
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None):
-        """loads a transaction from a .yumtx file"""
+        """Load a transaction from a .yumtx file.
+
+        :param filename: the name of the file to load the transaction
+           from
+        :param ignorerpm: whether to ignore messages from rpm
+        :param ignoremissing: whether to ignore that there may be
+           transaction members missing
+        :return: the members of the loaded transaction
+        :raises: :class:`yum.Errors.YumBaseError` if there are problems
+           loading the transaction
+        """
         # check rpmversion - if not match throw a fit
         # check repoversions  (and repos)- if not match throw a fit
         # load each txmbr - if pkgs being updated don't exist, bail w/error
