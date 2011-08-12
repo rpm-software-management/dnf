@@ -66,9 +66,9 @@ from yum.i18n import utf8_width
 API_VERSION = '2.6'
 
 class DeprecatedInt(int):
-    '''
-    A simple int subclass that used to check when a deprecated constant is used.
-    '''
+    """A simple int subclass that is used to check when a deprecated
+    constant is used.
+    """
 
 # Plugin types
 TYPE_CORE = 0
@@ -105,8 +105,8 @@ SLOT_TO_CONDUIT = {
 SLOTS = sorted(SLOT_TO_CONDUIT.keys())
 
 class PluginYumExit(Exception):
-    '''Used by plugins to signal that yum should stop
-    '''
+    """Exception that can be raised by plugins to signal that yum should stop."""
+
     def __init__(self, value="", translation_domain=""):
         self.value = value
         self.translation_domain = translation_domain
@@ -117,9 +117,7 @@ class PluginYumExit(Exception):
             return self.value
     
 class YumPlugins:
-    '''
-    Manager class for Yum plugins.
-    '''
+    """Manager class for Yum plugins."""
 
     def __init__(self, base, searchpath, optparser=None, types=None, 
             pluginconfpath=None,disabled=None,enabled=None):
@@ -167,8 +165,13 @@ class YumPlugins:
         self.run('config')
 
     def run(self, slotname, **kwargs):
-        '''Run all plugin functions for the given slot.
-        '''
+        """Run all plugin functions for the given slot.
+
+        :param slotname: a string representing the name of the slot to
+           run the plugins for
+        :param kwargs: keyword arguments that will be simply passed on
+           to the plugins
+        """
         # Determine handler class to use
         conduitcls = SLOT_TO_CONDUIT.get(slotname, None)
         if conduitcls is None:
@@ -356,23 +359,35 @@ class YumPlugins:
         return parser
 
     def setCmdLine(self, opts, commands):
-        '''Set the parsed command line options so that plugins can access them
-        '''
+        """Set the parsed command line options so that plugins can
+        access them.
+
+        :param opts: a dictionary containing the values of the command
+           line options
+        :param commands: a list of command line arguments passed to yum
+        """
         self.cmdline = (opts, commands)
 
 
 class DummyYumPlugins:
-    '''
-    This class provides basic emulation of the YumPlugins class. It exists so
-    that calls to plugins.run() don't fail if plugins aren't in use.
-    '''
+    """This class provides basic emulation of the :class:`YumPlugins`
+    class. It exists so that calls to plugins.run() don't fail if
+    plugins aren't in use.
+    """
     def run(self, *args, **kwargs):
+        """Do nothing.  All arguments are unused."""
+
         pass
 
     def setCmdLine(self, *args, **kwargs):
+        """Do nothing.  All arguments are unused."""
+
         pass
 
 class PluginConduit:
+    """A conduit class to transfer information between yum and the
+    plugin.
+    """
     def __init__(self, parent, base, conf):
         self._parent = parent
         self._base = base
@@ -382,14 +397,30 @@ class PluginConduit:
         self.verbose_logger = logging.getLogger("yum.verbose.plugin")
 
     def info(self, level, msg):
+        """Send an info message to the logger.
+
+        :param level: the level of the message to send
+        :param msg: the message to send
+        """
         converted_level = logginglevels.logLevelFromDebugLevel(level)
         self.verbose_logger.log(converted_level, msg)
 
     def error(self, level, msg):
+        """Send an error message to the logger.
+
+        :param level: the level of the message to send
+        :param msg: the message to send
+        """
         converted_level = logginglevels.logLevelFromErrorLevel(level)
         self.logger.log(converted_level, msg)
 
     def promptYN(self, msg):
+        """Return a yes or no response, either from assumeyes already
+        being set, or from prompting the user.
+
+        :param msg: the message to prompt the user with
+        :return: 1 if the response is yes, and 0 if the response is no
+        """
         self.info(2, msg)
         if self._base.conf.assumeyes:
             return 1
@@ -397,88 +428,96 @@ class PluginConduit:
             return self._base.userconfirm()
 
     def getYumVersion(self):
+        """Return a string representing the current version of yum."""
+
         import yum
         return yum.__version__
 
     def getOptParser(self):
-        '''Return the optparse.OptionParser instance for this execution of Yum
+        """Return the :class:`optparse.OptionParser` instance for this
+        execution of Yum.  In the "config" and "init" slots a plugin
+        may add extra options to this instance to extend the command
+        line options that Yum exposes.  In all other slots a plugin
+        may only read the :class:`OptionParser` instance.  Any
+        modification of the instance at this point will have no
+        effect.  See the
+        :func:`PreRepoSetupPluginConduit.getCmdLine` method for
+        details on how to retrieve the parsed values of command line
+        options.
 
-        In the "config" and "init" slots a plugin may add extra options to this
-        instance to extend the command line options that Yum exposes.
-
-        In all other slots a plugin may only read the OptionParser instance.
-        Any modification of the instance at this point will have no effect. 
-        
-        See the getCmdLine() method for details on how to retrieve the parsed
-        values of command line options.
-
-        @return: the global optparse.OptionParser instance used by Yum. May be
-            None if an OptionParser isn't in use.
-        '''
+        :return: the global :class:`optparse.OptionParser` instance used by
+           Yum. May be None if an OptionParser isn't in use
+        """
         # ' xemacs highlighting hack
         # This isn't API compatible :(
         # return self._parent.optparser.plugin_option_group
         return self._parent.optparser
 
     def confString(self, section, opt, default=None):
-        '''Read a string value from the plugin's own configuration file
+        """Read a string value from the plugin's own configuration file.
 
-        @param section: Configuration file section to read.
-        @param opt: Option name to read.
-        @param default: Value to read if option is missing.
-        @return: String option value read, or default if option was missing.
-        '''
+        :param section: configuration file section to read
+        :param opt: option name to read
+        :param default: value to read if the option is missing
+        :return: string option value read, or default if option was missing
+        """
         # ' xemacs highlighting hack
         return config.getOption(self._conf, section, opt, config.Option(default))
 
     def confInt(self, section, opt, default=None):
-        '''Read an integer value from the plugin's own configuration file
+        """Read an integer value from the plugin's own configuration file.
 
-        @param section: Configuration file section to read.
-        @param opt: Option name to read.
-        @param default: Value to read if option is missing.
-        @return: Integer option value read, or default if option was missing or
-            could not be parsed.
-        '''
+        :param section: configuration file section to read
+        :param opt: option name to read
+        :param default: value to read if the option is missing
+
+        :return: the integer option value read, or *default* if the
+            option was missing or could not be parsed
+        """
         return config.getOption(self._conf, section, opt, config.IntOption(default))
 
     def confFloat(self, section, opt, default=None):
-        '''Read a float value from the plugin's own configuration file
+        """Read a float value from the plugin's own configuration file.
 
-        @param section: Configuration file section to read.
-        @param opt: Option name to read.
-        @param default: Value to read if option is missing.
-        @return: Float option value read, or default if option was missing or
-            could not be parsed.
-        '''
+        :param section: configuration file section to read
+        :param opt: option name to read
+        :param default: value to read if the option is missing
+        :return: float option value read, or *default* if the option was
+            missing or could not be parsed
+        """
         return config.getOption(self._conf, section, opt, config.FloatOption(default))
 
     def confBool(self, section, opt, default=None):
-        '''Read a boolean value from the plugin's own configuration file
+        """Read a boolean value from the plugin's own configuration file
 
-        @param section: Configuration file section to read.
-        @param opt: Option name to read.
-        @param default: Value to read if option is missing.
-        @return: Boolean option value read, or default if option was missing or
-            could not be parsed.
-        '''
+        :param section: configuration file section to read
+        :param opt: option name to read
+        :param default: value to read if the option is missing
+        :return: boolean option value read, or *default* if the option
+            was missing or could not be parsed
+        """
         return config.getOption(self._conf, section, opt, config.BoolOption(default))
 
     def registerPackageName(self, name):
+        """Register the name of a package to use.
+
+        :param name: the name of the package to register
+        """
         self._base.run_with_package_names.add(name)
 
 
 class ConfigPluginConduit(PluginConduit):
+    """A conduit for use in the config slot."""
 
     def registerOpt(self, name, valuetype, where, default):
-        '''Register a yum configuration file option.
+        """Deprecated.  Register a yum configuration file option.
 
-        @param name: Name of the new option.
-        @param valuetype: Option type (PLUG_OPT_BOOL, PLUG_OPT_STRING ...)
-        @param where: Where the option should be available in the config file.
-            (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, ...)
-        @param default: Default value for the option if not set by the user.
-        '''
+        :param name: name of the new option
+        :param valuetype: option type (PLUG_OPT_BOOL, PLUG_OPT_STRING, etc.)
+        :param where: where the option should be available in the config file
+            (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, etc)
+        :param default: default value for the option if it is not set by the user
+        """
         warnings.warn('registerOpt() will go away in a future version of Yum.\n'
                 'Please manipulate config.YumConf and config.RepoConf directly.',
                 DeprecationWarning)
@@ -502,64 +541,93 @@ class ConfigPluginConduit(PluginConduit):
             setattr(config.RepoConf, name, config.Inherit(option))
 
     def registerCommand(self, command):
+        """Register a new command.
+
+        :param command: the command to register
+        :raises: :class:`yum.Errors.ConfigError` if the registration
+           of commands is not supported
+        """
         if hasattr(self._base, 'registerCommand'):
             self._base.registerCommand(command)
         else:
             raise Errors.ConfigError(_('registration of commands not supported'))
 
 class PostConfigPluginConduit(ConfigPluginConduit):
+    """Conduit for use in the postconfig slot."""
 
     def getConf(self):
+        """Return a dictionary containing the values of the
+        configuration options.
+
+        :return: a dictionary containing the values of the
+           configuration options
+        """
         return self._base.conf
 
 class InitPluginConduit(PluginConduit):
+    """Conduit for use in the init slot."""
 
     def getConf(self):
+        """Return a dictionary containing the values of the
+        configuration options.
+
+        :return: a dictionary containing the values of the
+           configuration options
+        """
         return self._base.conf
 
     def getRepos(self):
-        '''Return Yum's container object for all configured repositories.
+        """Return Yum's container object for all configured repositories.
 
-        @return: Yum's RepoStorage instance
-        '''
+        :return: Yum's :class:`yum.repos.RepoStorage` instance
+        """
         return self._base.repos
 
 class ArgsPluginConduit(InitPluginConduit):
+    """Conduit for dealing with command line arguments."""
 
     def __init__(self, parent, base, conf, args):
         InitPluginConduit.__init__(self, parent, base, conf)
         self._args = args
 
     def getArgs(self):
+        """Return a list of the command line arguments passed to yum.
+
+        :return: a list of the command line arguments passed to yum
+        """
         return self._args
 
 class PreRepoSetupPluginConduit(InitPluginConduit):
+    """Conduit for use in the prererosetup slot."""
+
 
     def getCmdLine(self):
-        '''Return parsed command line options.
+        """Return parsed command line options.
 
-        @return: (options, commands) as returned by OptionParser.parse_args()
-        '''
+        :return: (options, commands) as returned by :class:`OptionParser.parse_args()`
+        """
         return self._parent.cmdline
 
     def getRpmDB(self):
-        '''Return a representation of local RPM database. This allows querying
-        of installed packages.
+        """Return a representation of the local RPM database. This
+        allows querying of installed packages.
 
-        @return: rpmUtils.RpmDBHolder instance
-        '''
+        :return: a :class:`yum.rpmUtils.RpmDBHolder` instance
+        """
         return self._base.rpmdb
 
 class PostRepoSetupPluginConduit(PreRepoSetupPluginConduit):
+    """Conduit for use in the postreposetup slot."""
 
     def getGroups(self):
-        '''Return group information.
+        """Return group information.
 
-        @return: yum.comps.Comps instance
-        '''
+        :return: :class:`yum.comps.Comps` instance
+        """
         return self._base.comps
 
 class DownloadPluginConduit(PostRepoSetupPluginConduit):
+    """Conduit for use in the download slots."""
 
     def __init__(self, parent, base, conf, pkglist, errors=None):
         PostRepoSetupPluginConduit.__init__(self, parent, base, conf)
@@ -567,24 +635,35 @@ class DownloadPluginConduit(PostRepoSetupPluginConduit):
         self._errors = errors
 
     def getDownloadPackages(self):
-        '''Return a list of package objects representing packages to be
+        """Return a list of package objects representing packages to be
         downloaded.
-        '''
+
+        :return: a list of package object representing packages to be
+           downloaded
+        """
         return self._pkglist
 
     def getErrors(self):
-        '''Return a dictionary of download errors. 
+        """Return a dictionary of download errors. 
         
-        The returned dictionary is indexed by package object. Each element is a
-        list of strings describing the error.
-        '''
+        :return: a dictionary of download errors. This dictionary is
+           indexed by package object. Each element is a list of
+           strings describing the error
+        """
         if not self._errors:
             return {}
         return self._errors
 
 class MainPluginConduit(PostRepoSetupPluginConduit):
-
+    """Main conduit class for plugins.  Many other conduit classes
+    will inherit from this class.
+    """
     def getPackages(self, repo=None):
+        """Return a list of packages.
+
+        :param repo: the repo to return a packages from
+        :return: a list of package objects
+        """
         if repo:
             arg = repo.id
         else:
@@ -592,50 +671,76 @@ class MainPluginConduit(PostRepoSetupPluginConduit):
         return self._base.pkgSack.returnPackages(arg)
 
     def getPackageByNevra(self, nevra):
-        '''Retrieve a package object from the packages loaded by Yum using
-        nevra information 
+        """Retrieve a package object from the packages loaded by Yum using
+        nevra information.
         
-        @param nevra: A tuple holding (name, epoch, version, release, arch)
+        :param nevra: a tuple holding (name, epoch, version, release, arch)
             for a package
-        @return: A PackageObject instance (or subclass)
-        '''
+        :return: a :class:`yum.packages.PackageObject` instance (or subclass)
+        """
         return self._base.getPackageObject(nevra)
 
     def delPackage(self, po):
+        """Delete the given package from the package sack.
+
+        :param po: the package object to delete
+        """
         po.repo.sack.delPackage(po)
 
     def getTsInfo(self):
+        """Return transaction set.
+
+        :return: the transaction set
+        """
         return self._base.tsInfo
 
 class DepsolvePluginConduit(MainPluginConduit):
+    """Conduit for use in solving dependencies."""
+
     def __init__(self, parent, base, conf, rescode=None, restring=[]):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.resultcode = rescode
         self.resultstring = restring
 
 class CompareProvidersPluginConduit(MainPluginConduit):
+    """Conduit to compare different providers of packages."""
+
     def __init__(self, parent, base, conf, providers_dict={}, reqpo=None):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.packages = providers_dict
         self.reqpo = reqpo
 
 class HistoryPluginConduit(MainPluginConduit):
+    """Conduit to access information about the yum history."""
+
     def __init__(self, parent, base, conf, rescode=None, restring=[]):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.history = self._base.history
 
 class VerifyPluginConduit(MainPluginConduit):
+    """Conduit to verify packages."""
+
     def __init__(self, parent, base, conf, verify_package):
         MainPluginConduit.__init__(self, parent, base, conf)
         self.verify_package = verify_package
 
 def parsever(apiver):
+    """Parse a string representing an api version.
+
+    :param apiver: a string representing an api version
+    :return: a tuple containing the major and minor version numbers
+    """
     maj, min = apiver.split('.')
     return int(maj), int(min)
 
 def apiverok(a, b):
-    '''Return true if API version "a" supports API version "b"
-    '''
+    """Return true if API version "a" supports API version "b"
+
+    :param a: a string representing an api version
+    :param b: a string representing an api version
+
+    :return: whether version *a* supports version *b*
+    """
     a = parsever(a)
     b = parsever(b)
 
