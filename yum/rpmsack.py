@@ -1576,10 +1576,10 @@ class RPMDBAdditionalData(object):
         if not os.path.exists(self.conf.db_path):
             try:
                 _makedirs_no_umask(self.conf.db_path)
+                self.conf.writable = True
             except (IOError, OSError), e:
                 # some sort of useful thing here? A warning?
-                return
-            self.conf.writable = True
+                pass
         else:
             if os.access(self.conf.db_path, os.W_OK):
                 self.conf.writable = True
