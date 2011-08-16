@@ -775,6 +775,9 @@ class YumConf(StartupConf):
 
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
+    ip_resolve = CaselessSelectionOption(
+            allowed = ('ipv4', 'ipv6', 'whatever'),
+            mapper  = {'4': 'ipv4', '6': 'ipv6'})
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
@@ -916,6 +919,8 @@ class RepoConf(BaseConfig):
     bandwidth = Inherit(YumConf.bandwidth)
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
+    ip_resolve = Inherit(YumConf.ip_resolve)
+
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
     mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)

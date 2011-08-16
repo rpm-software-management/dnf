@@ -313,6 +313,14 @@ with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and
 ignored. Default is `0' (no bandwidth throttling). 
 
 .IP
+\fBip_resolve \fR
+Determines how yum resolves host names.
+
+`4' or `IPv4': resolve to IPv4 addresses only.
+
+`6' or `IPv6': resolve to IPv6 addresses only.
+
+.IP
 \fBsslcacert \fR
 Path to the directory containing the databases of the certificate authorities
 yum should use to verify SSL certificates. Defaults to none - uses system
@@ -766,6 +774,11 @@ repository.
 .IP
 \fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
+repository.
+
+.IP
+\fBip_resolve \fR
+Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
 
 
