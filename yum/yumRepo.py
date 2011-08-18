@@ -1033,7 +1033,7 @@ Insufficient space in download directory %s
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
-        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+        except Errors.RepoError:
             misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
@@ -1627,7 +1627,7 @@ Insufficient space in download directory %s
                                   text=text,
                                   cache=self.http_caching == 'all',
                                   size=thisdata.size)
-        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+        except Errors.RepoError:
             if retrieve_can_fail:
                 return None
             raise
