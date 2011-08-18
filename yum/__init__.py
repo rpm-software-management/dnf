@@ -1041,6 +1041,10 @@ class YumBase(depsolve.Depsolve):
         :param unfinished_transactions_check: whether to check for
            unfinished transactions before building the new transaction
         """
+        # FIXME: This is horrible, see below and yummain. Maybe create a real
+        #        rescode object? :(
+        self._depsolving_failed = False
+
         if (unfinished_transactions_check and
             misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
             msg = _('There are unfinished transactions remaining. You might ' \
