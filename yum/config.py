@@ -943,7 +943,7 @@ class VersionGroupConf(BaseConfig):
     run_with_packages = BoolOption(False)
 
 
-def readStartupConfig(configfile, root):
+def readStartupConfig(configfile, root, releasever=None):
     """Parse Yum's main configuration file and return a
     :class:`StartupConf` instance.  This is required in order to
     access configuration settings required as Yum starts up.
@@ -974,8 +974,13 @@ def readStartupConfig(configfile, root):
             raise Errors.ConfigError("All plugin search paths must be absolute")
     # Stuff this here to avoid later re-parsing
     startupconf._parser = parser
+
     # setup the release ver here
-    startupconf.releasever = _getsysver(startupconf.installroot, startupconf.distroverpkg)
+    if releasever is None:
+        releasever = _getsysver(startupconf.installroot,
+                                startupconf.distroverpkg)
+    startupconf.releasever = releasever
+
     uuidfile = '%s/%s/uuid' % (startupconf.installroot, startupconf.persistdir)
     startupconf.uuid = get_uuid(uuidfile)
 

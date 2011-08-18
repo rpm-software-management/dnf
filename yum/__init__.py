@@ -321,7 +321,7 @@ class YumBase(depsolve.Depsolve):
             # Try the old default
             fn = '/etc/yum.conf'
 
-        startupconf = config.readStartupConfig(fn, root)
+        startupconf = config.readStartupConfig(fn, root, releasever)
         startupconf.arch = arch
         startupconf.basearch = self.arch.basearch
         if uuid:
