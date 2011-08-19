@@ -173,8 +173,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         mainopts = yum.misc.GenericHolder()
         mainopts.items = []
 
+        bad_setopt_tm = []
+        bad_setopt_ne = []
+
         for item in setopts:
-            k,v = item.split('=')
+            vals = item.split('=')
+            if len(vals) > 2:
+                bad_setopt_tm.append(item)
+                continue
+            if len(vals) < 2:
+                bad_setopt_ne.append(item)
+                continue
+            k,v = vals
             period = k.find('.') 
             if period != -1:
                 repo = k[:period]
@@ -190,7 +200,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         self.main_setopts = mainopts
         self.repo_setopts = repoopts
-        
+
+        return bad_setopt_tm, bad_setopt_ne
         
     def getOptionsConfig(self, args):
         """Parse command line arguments, and set up :attr:`self.conf` and
@@ -210,7 +221,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             opts.verbose = False
 
         # go through all the setopts and set the global ones
-        self._parseSetOpts(opts.setopts)
+        bad_setopt_tm, bad_setopt_ne = self._parseSetOpts(opts.setopts)
         
         if self.main_setopts:
             for opt in self.main_setopts.items:
@@ -240,6 +251,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             pc.releasever = opts.releasever
             self.conf
             
+            for item in  bad_setopt_tm:
+                msg = "Setopt argument has multiple values: %s"
+                self.logger.warning(msg % item)
+            for item in  bad_setopt_ne:
+                msg = "Setopt argument has no value: %s"
+                self.logger.warning(msg % item)
             # now set  all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:
