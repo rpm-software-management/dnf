@@ -616,6 +616,12 @@ package's dependencies. If any of them are no longer required by any other
 package then also mark them to be removed.
 Boolean (1, 0, True, False, yes,no) Defaults to False
 
+.IP
+\fBupgrade_requirements_on_install \fR
+When installing/reinstalling/upgrading packages go through each package's
+installed dependencies and check for an update.
+Boolean (1, 0, True, False, yes,no) Defaults to False
+
 
 
 .SH "[repository] OPTIONS"

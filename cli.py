@@ -737,6 +737,42 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                      ", ".join(matches))
             self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
 
+    def _install_upgraded_requires(self, txmbrs):
+        """Go through the given txmbrs, and for any to be installed packages
+        look for their installed deps. and try to upgrade them, if the
+        configuration is set. Returning any new transaction members to be
+        isntalled.
+
+        :param txmbrs: a list of :class:`yum.transactioninfo.TransactionMember` objects
+        :return: a list of :class:`yum.transactioninfo.TransactionMember` objects
+        """
+
+        if not self.conf.upgrade_requirements_on_install:
+            return []
+
+        ret = []
+        done = set()
+        def _pkg2ups(pkg, reqpo=None):
+            if pkg.name in done:
+                return []
+            if reqpo is None:
+                reqpo = pkg
+
+            done.add(pkg.name)
+
+            uret = []
+            for req in pkg.requires:
+                for npkg in self.returnInstalledPackagesByDep(req):
+                    uret += self.update(pattern=npkg.name, requiringPo=reqpo)
+                    uret += _pkg2ups(npkg, reqpo=reqpo)
+            return uret
+
+        for txmbr in txmbrs:
+            print "JDBG:", txmbr
+            ret += _pkg2ups(txmbr.po)
+
+        return ret
+
     def installPkgs(self, userlist):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
@@ -767,11 +803,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                self.localInstall(filelist=[arg])
+                txmbrs = self.installLocal(arg)
+                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
             try:
-                self.install(pattern=arg)
+                txmbrs = self.install(pattern=arg)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -780,6 +817,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self._maybeYouMeant(arg)
             else:
                 done = True
+                self._install_upgraded_requires(txmbrs)
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to install', '%d packages to install', change) % change]
@@ -820,21 +858,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
-            # pass them off to localInstall() and then move on
+            # pass them off to installLocal() and then move on
             localupdates = []
             for item in userlist:
                 if (item.endswith('.rpm') and (yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
-                    localupdates.append(item)
-            
-            if len(localupdates) > 0:
-                self.localInstall(filelist=localupdates, updateonly=1)
-                for item in localupdates:
-                    userlist.remove(item)
-                
-            for arg in userlist:
-                if not self.update(pattern=arg, update_to=update_to):
-                    self._checkMaybeYouMeant(arg)
+                    txmbrs = self.installLocal(item, updateonly=1)
+                    self._install_upgraded_requires(txmbrs)
+                    continue
+
+                txmbrs = self.update(pattern=item, update_to=update_to)
+                self._install_upgraded_requires(txmbrs)
+                if not txmbrs:
+                    self._checkMaybeYouMeant(item)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
@@ -1041,12 +1077,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                self.reinstallLocal(arg)
+                txmbrs = self.reinstallLocal(arg)
+                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 
             try:
-                self.reinstall(pattern=arg)
+                txmbrs = self.reinstall(pattern=arg)
             except yum.Errors.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
             except yum.Errors.ReinstallInstallError, e:
@@ -1062,6 +1099,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.ReinstallError, e:
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
+            else:
+                self._install_upgraded_requires(txmbrs)
+
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
