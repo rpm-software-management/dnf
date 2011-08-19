@@ -1295,7 +1295,7 @@ class YumHistory:
 
         sql = """INSERT INTO pkg_%(db)sdb (pkgtupid, %(db)sdb_key, %(db)sdb_val)
                         VALUES (?, ?, ?)""" % {'db' : db}
-        executeSQL(cur, sql, (pid, attr, val))
+        executeSQL(cur, sql, (pid, attr, to_unicode(val)))
         for row in cur:
             return row[0]
 
