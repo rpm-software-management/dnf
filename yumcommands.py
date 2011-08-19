@@ -2452,8 +2452,10 @@ class HistoryCommand(YumCommand):
                 continue
 
             print "Syncing rpm/yum DB data for:", ipkg, "...",
-            base.history.sync_alldb(ipkg)
-            print "Done."
+            if base.history.sync_alldb(ipkg):
+                print "Done."
+            else:
+                print "FAILED."
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can

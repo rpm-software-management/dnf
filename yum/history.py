@@ -1313,7 +1313,9 @@ class YumHistory:
             val = getattr(ipkg, attr, None)
             if val is None:
                 continue
-            self._save_anydb_key(ipkg, "rpm", attr, val)
+            if not self._save_anydb_key(ipkg, "rpm", attr, val):
+                return False
+        return True
 
     def _save_yumdb(self, ipkg):
         """ Save all the data for yumdb for this installed pkg, assumes
@@ -1322,7 +1324,9 @@ class YumHistory:
             val = ipkg.yumdb_info.get(attr)
             if val is None:
                 continue
-            self._save_anydb_key(ipkg, "yum", attr, val)
+            if not self._save_anydb_key(ipkg, "yum", attr, val):
+                return False
+        return True
 
     def _wipe_anydb(self, pkg, db):
         """ Delete all the data for rpmdb/yumdb for this installed pkg. """
