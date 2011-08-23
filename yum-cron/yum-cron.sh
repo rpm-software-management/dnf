@@ -11,7 +11,6 @@
 # it without changing that.
 PIDFILE=/var/lock/yum-cron.pid
 
-
 # This is the home of the yum scripts which power the various actions the
 # yum-cron system performs.
 SCRIPTDIR=/usr/share/yum-cron/
@@ -30,6 +29,13 @@ if [[ ! -r $YUMSCRIPT ]]; then
   echo "Script for action \"$ACTION\" is not readable in $SCRIPTDIR."
   exit 1
 fi  
+
+# This must be set above. But there a couple of places where horrible
+# things might happen if it's unset, so, let's check.
+if [[ -z "$PIDFILE" ]]; then
+  echo "Error! \$PIDFILE variable must be set in yum-cron."
+  exit 1
+fi
 
 # Read the settings from our config file.
 if [[ -f /etc/sysconfig/yum-cron ]]; then
@@ -86,7 +92,7 @@ else
     exec $0 "$@"
   else
     # Remove lockfiles more than a day old -- they must be stale.
-    find $PIDFILE -type f -name 'yum-cron.pid' -amin +1440 -exec rm -f $PIDFILE \;
+    find $PIDFILE -type f -amin +1440 -exec rm -f $PIDFILE \;
     # If it's still there, it *wasn't* too old. Bail!
     if [[ -f $PIDFILE ]]; then
       # Lock is valid and OTHERPID is active -- exit, we're locked!
@@ -94,9 +100,7 @@ else
       exit 0
     else
       # Lock was invalid. Restart.
-      echo "yum-cron: removing stale lock belonging to stale PID ${OTHERPID}" >&2
-      rm -f $PIDFILE
-      echo "yum-cron: restarting myself" >&2
+      echo "yum-cron: removed stale lock belonging to PID ${OTHERPID}; restarting." >&2
       exec $0 "$@"
     fi
   fi
