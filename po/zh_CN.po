@@ -2,15 +2,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# Mike Ma <zhtx10@gmail.com>, 2011
-# lovenemesis <lovenemesis@gmail.com>, 2011
+# Mike Ma <zhtx10@gmail.com>, 2011.
+# lovenemesis <lovenemesis@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-07-17 05:22+0000\n"
+"Last-Translator: ekd123 <zhtx10@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.net/projects/p/yum/team/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -159,7 +159,7 @@ msgstr "下载软件包出错：\n"
 
 #: ../cli.py:525 ../yum/__init__.py:4967
 msgid "Running Transaction Check"
-msgstr ""
+msgstr "运行事务检查"
 
 #: ../cli.py:534 ../yum/__init__.py:4976
 msgid "ERROR You need to update rpm to handle:"
@@ -167,7 +167,7 @@ msgstr "错误：您需要更新 rpm 以处理："
 
 #: ../cli.py:536 ../yum/__init__.py:4979
 msgid "ERROR with transaction check vs depsolve:"
-msgstr ""
+msgstr "事务检查与依赖解决错误："
 
 #: ../cli.py:542
 msgid "RPM needs to be updated"
@@ -277,18 +277,18 @@ msgstr "未指定软件包"
 #: ../cli.py:1058
 #, python-format
 msgid "N/S Matched: %s"
-msgstr ""
+msgstr "N/S 匹配：%s"
 
 #: ../cli.py:1075
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
-msgstr ""
+msgstr "  名称和简介匹配 %sonly%s，使用“search all”试试。"
 
 #: ../cli.py:1077
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
-msgstr ""
+msgstr "  全名和简介匹配 %sonly%s，使用“search all”试试。"
 
 #: ../cli.py:1095
 #, python-format
@@ -298,7 +298,7 @@ msgstr "匹配：%s"
 #: ../cli.py:1102
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
-msgstr ""
+msgstr "  名称和简介匹配 %smonstly%s，使用“search all”试试。"
 
 #: ../cli.py:1106
 #, python-format
@@ -353,7 +353,7 @@ msgstr "清理插件"
 #: ../cli.py:1247
 #, python-format
 msgid "Warning: No groups match: %s"
-msgstr ""
+msgstr "警告：无组匹配：%s"
 
 #: ../cli.py:1264
 msgid "Installed Groups:"
@@ -361,7 +361,7 @@ msgstr "已安装的组："
 
 #: ../cli.py:1270
 msgid "Installed Language Groups:"
-msgstr ""
+msgstr "安装了的语言组："
 
 #: ../cli.py:1276
 msgid "Available Groups:"
@@ -369,7 +369,7 @@ msgstr "有效的组:"
 
 #: ../cli.py:1282
 msgid "Available Language Groups:"
-msgstr ""
+msgstr "可用语言组："
 
 #: ../cli.py:1285
 msgid "Done"
@@ -447,7 +447,7 @@ msgstr "--color 需要参数：auto, always, never"
 #: ../cli.py:1596
 #, python-format
 msgid "--installroot must be an absolute path: %s"
-msgstr ""
+msgstr "-- 安装根必须是绝对路径：%s"
 
 #: ../cli.py:1642
 msgid "show this help message and exit"
@@ -738,7 +738,7 @@ msgstr " 描述：%s"
 #: ../output.py:788
 #, python-format
 msgid " Language: %s"
-msgstr ""
+msgstr " 语言：%s"
 
 #: ../output.py:790
 msgid " Mandatory Packages:"
@@ -845,7 +845,7 @@ msgstr "未安装"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "不可用"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -995,11 +995,11 @@ msgstr "系统"
 #: ../output.py:1411
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr ""
+msgstr "跳过合并事务 %d 到 %d，因为它俩重叠"
 
 #: ../output.py:1421 ../output.py:1592
 msgid "No transactions"
-msgstr ""
+msgstr "没有事务"
 
 #: ../output.py:1446 ../output.py:2013
 msgid "Bad transaction IDs, or package(s), given"
@@ -1007,7 +1007,7 @@ msgstr "错误的事务 ID 或软件包"
 
 #: ../output.py:1484
 msgid "Command line"
-msgstr ""
+msgstr "命令行"
 
 #: ../output.py:1486 ../output.py:1908
 msgid "Login user"
@@ -1077,22 +1077,22 @@ msgstr "启动 rpmdb     ："
 #: ../output.py:1749
 #, python-format
 msgid "(%u seconds)"
-msgstr ""
+msgstr "（%u 秒）"
 
 #: ../output.py:1751
 #, python-format
 msgid "(%u minutes)"
-msgstr ""
+msgstr "（%u 分钟）"
 
 #: ../output.py:1753
 #, python-format
 msgid "(%u hours)"
-msgstr ""
+msgstr "（%u 小时）"
 
 #: ../output.py:1755
 #, python-format
 msgid "(%u days)"
-msgstr ""
+msgstr "（%u 天）"
 
 #: ../output.py:1756
 msgid "End time       :"
@@ -1117,7 +1117,7 @@ msgstr "已终止"
 
 #: ../output.py:1773
 msgid "Failures:"
-msgstr ""
+msgstr "失败："
 
 #: ../output.py:1777
 msgid "Failure:"
@@ -1246,7 +1246,7 @@ msgstr "安装"
 
 #: ../output.py:2107
 msgid "an update"
-msgstr ""
+msgstr "一个更新"
 
 #: ../output.py:2108
 msgid "erased"
@@ -1258,11 +1258,11 @@ msgstr "已重新安装"
 
 #: ../output.py:2110
 msgid "a downgrade"
-msgstr ""
+msgstr "一个降级"
 
 #: ../output.py:2111
 msgid "obsoleting"
-msgstr ""
+msgstr "舍弃"
 
 #: ../output.py:2112
 msgid "updated"
@@ -1275,7 +1275,7 @@ msgstr "取代"
 #: ../output.py:2117
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
-msgstr ""
+msgstr "---> 软件包 %s.%s.%s.%s-%s 将被 %s"
 
 #: ../output.py:2124
 msgid "--> Running transaction check"
@@ -1502,7 +1502,7 @@ msgstr "完毕！"
 
 #: ../yumcommands.py:42
 msgid " Mini usage:\n"
-msgstr ""
+msgstr " 迷你用法：\n"
 
 #: ../yumcommands.py:52
 msgid "You need to be root to perform this command."
@@ -1536,7 +1536,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "问题仓库：%s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1863,7 +1863,7 @@ msgstr "仓库除外："
 
 #: ../yumcommands.py:1022
 msgid "Repo-filename: "
-msgstr ""
+msgstr "仓库文件名："
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1975,27 +1975,27 @@ msgstr "检查rpmdb里的问题"
 
 #: ../yumcommands.py:1514
 msgid "load a saved transaction from filename"
-msgstr ""
+msgstr "从文件名中加载一个已存事务"
 
 #: ../yumcommands.py:1518
 msgid "No saved transaction file specified."
-msgstr ""
+msgstr "指定文件中没有已存事务。"
 
 #: ../yumcommands.py:1522
 #, python-format
 msgid "loading transaction from %s"
-msgstr ""
+msgstr "正在从 %s 中加载事务"
 
 #: ../yumcommands.py:1528
 #, python-format
 msgid "Transaction loaded from %s with %s members"
-msgstr ""
+msgstr "事务从 %s 载入，还有 %s 成员。"
 
 #. This is mainly for PackageSackError from rpmdb.
 #: ../yummain.py:84
 #, python-format
 msgid " Yum checks failed: %s"
-msgstr ""
+msgstr " Yum 检查失败：%s"
 
 #: ../yummain.py:114
 msgid ""
@@ -2004,7 +2004,7 @@ msgstr "另外一个程序锁定了 yum；等待它退出……"
 
 #: ../yummain.py:120
 msgid "Can't create lock file; exiting"
-msgstr ""
+msgstr "不能创建锁文件，退出"
 
 #. Depsolve stage
 #: ../yummain.py:167
@@ -2014,7 +2014,7 @@ msgstr "解决依赖关系"
 #: ../yummain.py:230
 #, python-format
 msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
-msgstr ""
+msgstr "您的事务已保存，用 yum load-transaction %s  打开。"
 
 #: ../yummain.py:288
 msgid ""
@@ -2104,12 +2104,12 @@ msgstr "提供 %s 的软件包使用的模式：%s"
 #: ../yum/depsolve.py:389 ../yum/depsolve.py:406
 #, python-format
 msgid "Trying to update %s to resolve dep"
-msgstr ""
+msgstr "尝试升级 %s 来解决依赖"
 
 #: ../yum/depsolve.py:400 ../yum/depsolve.py:410
 #, python-format
 msgid "No update paths found for %s. Failure!"
-msgstr ""
+msgstr "未为 %s 找到更新路径。失败！"
 
 #: ../yum/depsolve.py:416
 #, python-format
@@ -2360,12 +2360,12 @@ msgstr "存在未完成的操作。您或许需要先运行 yum-complete-transac
 
 #: ../yum/__init__.py:983
 msgid "--> Finding unneeded leftover dependencies"
-msgstr ""
+msgstr "--> 找到剩下的不需要的依赖"
 
 #: ../yum/__init__.py:1041
 #, python-format
 msgid "Protected multilib versions: %s != %s"
-msgstr ""
+msgstr "保护多库版本：%s != %s"
 
 #: ../yum/__init__.py:1096
 #, python-format
@@ -2613,12 +2613,12 @@ msgstr "找不到名为 %s 的软件包来安装"
 #: ../yum/__init__.py:2941
 #, python-format
 msgid "Warning: Group %s does not have any packages."
-msgstr ""
+msgstr "警告：%s 组不包含任何包。"
 
 #: ../yum/__init__.py:2943
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
-msgstr ""
+msgstr "组 %s 拥有 %u 有条件的包可能安装。"
 
 #. This can happen due to excludes after .up has
 #. happened.
@@ -2635,7 +2635,7 @@ msgstr "rpmdb 中找不到软件包元组 %s"
 #: ../yum/__init__.py:3079 ../yum/__init__.py:3129
 #, python-format
 msgid "Invalid version flag from: %s"
-msgstr ""
+msgstr "来自 %s 的无效版本标志"
 
 #: ../yum/__init__.py:3096 ../yum/__init__.py:3101
 #, python-format
@@ -2785,7 +2785,7 @@ msgstr "软件包 %s 没有安装，不能更新。运行 yum install 安装它�
 msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
-msgstr ""
+msgstr "软件包 %s.%s 未安装，不能更新它。替代方案是运行 yum install 安装。"
 
 #: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
 #, python-format
@@ -2848,7 +2848,7 @@ msgstr "降级失败：%s"
 #: ../yum/__init__.py:4516
 #, python-format
 msgid "Retrieving key from %s"
-msgstr ""
+msgstr "从 %s 检索密钥"
 
 #: ../yum/__init__.py:4534
 msgid "GPG key retrieval failed: "
@@ -2859,11 +2859,11 @@ msgstr "获取 GPG 密钥失败："
 #: ../yum/__init__.py:4557
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
-msgstr ""
+msgstr "密钥 %s 上的 GPG 密钥签名与 %s 仓库的 CA 密钥不匹配"
 
 #: ../yum/__init__.py:4559
 msgid "GPG key signature verified against CA Key(s)"
-msgstr ""
+msgstr "GPG 密钥签名验证与 CA 密钥冲突"
 
 #: ../yum/__init__.py:4567
 #, python-format
@@ -2883,6 +2883,10 @@ msgid ""
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
+"导入 %s 键 0x%s：\n"
+"  用户ID：%s\n"
+"  软件包：%s（%s）\n"
+"  来自  ：%s"
 
 #: ../yum/__init__.py:4600
 #, python-format
@@ -2891,6 +2895,9 @@ msgid ""
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
+"导入 %s 键 0x%s：\n"
+"  用户ID：“%s”\n"
+"  来自  ：%s"
 
 #: ../yum/__init__.py:4634
 #, python-format
@@ -2908,7 +2915,7 @@ msgstr "导入密钥成功"
 
 #: ../yum/__init__.py:4676
 msgid "Didn't install any keys"
-msgstr ""
+msgstr "没有安装任何键"
 
 #: ../yum/__init__.py:4680
 #, python-format
@@ -2933,7 +2940,7 @@ msgstr "导入密钥失败"
 #: ../yum/__init__.py:4770
 #, python-format
 msgid "Didn't install any keys for repo %s"
-msgstr ""
+msgstr "没有对 %s 仓库安装任何键"
 
 #: ../yum/__init__.py:4774
 #, python-format
@@ -2968,56 +2975,56 @@ msgstr "不能置缓存目录：%s"
 
 #: ../yum/__init__.py:5148 ../yum/__init__.py:5150
 msgid "Dependencies not solved. Will not save unresolved transaction."
-msgstr ""
+msgstr "依赖没有解决。将不会保存未解决事务。"
 
 #: ../yum/__init__.py:5179 ../yum/__init__.py:5181
 #, python-format
 msgid "Could not save transaction file %s: %s"
-msgstr ""
+msgstr "不能保存事务文件 %s：%s"
 
 #: ../yum/__init__.py:5195
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
-msgstr ""
+msgstr "不能访问或都去已存事务 %s：%s"
 
 #: ../yum/__init__.py:5214
 msgid "rpmdb ver mismatched saved transaction version, "
-msgstr ""
+msgstr "RPM数据库版本与已存事务版本不匹配， "
 
 #: ../yum/__init__.py:5216
 msgid " ignoring, as requested."
-msgstr ""
+msgstr " 忽略，作为请求。"
 
 #: ../yum/__init__.py:5219 ../yum/__init__.py:5354
 msgid " aborting."
-msgstr ""
+msgstr " 终止。"
 
 #: ../yum/__init__.py:5228
 msgid "cannot find tsflags or tsflags not integer."
-msgstr ""
+msgstr "不能找到 tsflags 或 tsflags 非整数。"
 
 #: ../yum/__init__.py:5267
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
-msgstr ""
+msgstr "在未知当前状态找到 txmbr：%s"
 
 #: ../yum/__init__.py:5271
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
-msgstr ""
+msgstr "不能找到 txmbr：在 %s 状态中 %s"
 
 #: ../yum/__init__.py:5307 ../yum/__init__.py:5324
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
-msgstr ""
+msgstr "不能找到 txmbr：来自原地 %s 的 %s"
 
 #: ../yum/__init__.py:5349
 msgid "Transaction members, relations are missing or ts has been modified,"
-msgstr ""
+msgstr "事务成员、关系缺失或 ts 已被修改，"
 
 #: ../yum/__init__.py:5351
 msgid " ignoring, as requested. You must redepsolve!"
-msgstr ""
+msgstr " 忽略，作为请求。您必须解决依赖！"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:209

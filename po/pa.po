@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# A S Alam <apreet.alam@gmail.com>, 2011
+# A S Alam <apreet.alam@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-08-18 01:40+0000\n"
+"Last-Translator: aalam <apreet.alam@gmail.com>\n"
 "Language-Team: Panjabi (Punjabi) <punjabi-users@lists.sf.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -160,7 +160,7 @@ msgstr "ਪੈਕੇਜ ਡਾਊਨਲੋਡ ਕਰਨ ਦੌਰਾਨ ਗਲ�
 
 #: ../cli.py:525 ../yum/__init__.py:4967
 msgid "Running Transaction Check"
-msgstr ""
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਚੈੱਕ ਚੱਲ ਰਿਹਾ ਹੈ"
 
 #: ../cli.py:534 ../yum/__init__.py:4976
 msgid "ERROR You need to update rpm to handle:"
@@ -352,7 +352,7 @@ msgstr "ਪਲੱਗਇਨ ਸਾਫ਼ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆ�
 #: ../cli.py:1247
 #, python-format
 msgid "Warning: No groups match: %s"
-msgstr ""
+msgstr "ਸਾਵਧਾਨ: ਕੋਈ ਮਿਲਦਾ ਗਰੁੱਪ ਨਹੀਂ: %s"
 
 #: ../cli.py:1264
 msgid "Installed Groups:"
@@ -360,7 +360,7 @@ msgstr "ਇੰਸਟਾਲ ਹੋਏ ਗਰੁੱਪ:"
 
 #: ../cli.py:1270
 msgid "Installed Language Groups:"
-msgstr ""
+msgstr "ਇੰਸਟਾਲ ਹੋਏ ਭਾਸ਼ਾ ਗਰੁੱਪ:"
 
 #: ../cli.py:1276
 msgid "Available Groups:"
@@ -368,7 +368,7 @@ msgstr "ਉਪਲੱਬਧ ਗਰੁੱਪ:"
 
 #: ../cli.py:1282
 msgid "Available Language Groups:"
-msgstr ""
+msgstr "ਉਪਲੱਬਧ ਭਾਸ਼ਾ ਗਰੁੱਪ:"
 
 #: ../cli.py:1285
 msgid "Done"
@@ -737,7 +737,7 @@ msgstr " ਵੇਰਵਾ: %s"
 #: ../output.py:788
 #, python-format
 msgid " Language: %s"
-msgstr ""
+msgstr " ਭਾਸ਼ਾ: %s"
 
 #: ../output.py:790
 msgid " Mandatory Packages:"
@@ -844,7 +844,7 @@ msgstr "ਇੰਸਟਾਲ ਨਹੀਂ"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "ਉਪਲੱਬਧ ਨਹੀਂ"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -998,7 +998,7 @@ msgstr ""
 
 #: ../output.py:1421 ../output.py:1592
 msgid "No transactions"
-msgstr ""
+msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ ਨਹੀਂ"
 
 #: ../output.py:1446 ../output.py:2013
 msgid "Bad transaction IDs, or package(s), given"
@@ -1006,7 +1006,7 @@ msgstr "ਖ਼ਰਾਬ ਟਰਾਂਸੈਕਸ਼ਨ ID, ਜਾਂ ਪੈਕ�
 
 #: ../output.py:1484
 msgid "Command line"
-msgstr ""
+msgstr "ਕਮਾਂਡ ਲਾਈਨ"
 
 #: ../output.py:1486 ../output.py:1908
 msgid "Login user"
@@ -1076,22 +1076,22 @@ msgstr "rpmdb ਸ਼ੁਰੂ    :"
 #: ../output.py:1749
 #, python-format
 msgid "(%u seconds)"
-msgstr ""
+msgstr "(%u ਸਕਿੰਟ)"
 
 #: ../output.py:1751
 #, python-format
 msgid "(%u minutes)"
-msgstr ""
+msgstr "(%u ਮਿੰਟ)"
 
 #: ../output.py:1753
 #, python-format
 msgid "(%u hours)"
-msgstr ""
+msgstr "(%u ਘੰਟੇ)"
 
 #: ../output.py:1755
 #, python-format
 msgid "(%u days)"
-msgstr ""
+msgstr "(%u ਦਿਨ)"
 
 #: ../output.py:1756
 msgid "End time       :"
@@ -1116,7 +1116,7 @@ msgstr "ਅਧੂਰਾ ਛੱਡਿਆ"
 
 #: ../output.py:1773
 msgid "Failures:"
-msgstr ""
+msgstr "ਫੇਲ੍ਹ:"
 
 #: ../output.py:1777
 msgid "Failure:"
@@ -1245,7 +1245,7 @@ msgstr "ਇੰਸਟਾਲ ਕੀਤੇ"
 
 #: ../output.py:2107
 msgid "an update"
-msgstr ""
+msgstr "ਇੱਕ ਅੱਪਡੇਟ"
 
 #: ../output.py:2108
 msgid "erased"
@@ -1257,11 +1257,11 @@ msgstr "ਮੁੜ-ਇੰਸਟਾਲ ਕੀਤੇ"
 
 #: ../output.py:2110
 msgid "a downgrade"
-msgstr ""
+msgstr "ਡਾਊਨਗਰੇਡ"
 
 #: ../output.py:2111
 msgid "obsoleting"
-msgstr ""
+msgstr "ਬਰਤਰਫ਼ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../output.py:2112
 msgid "updated"
@@ -1274,7 +1274,7 @@ msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ"
 #: ../output.py:2117
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
-msgstr ""
+msgstr "---> ਪੈਕੇਜ %s.%s %s:%s-%s ਹੋਵੇਗਾ %s"
 
 #: ../output.py:2124
 msgid "--> Running transaction check"
@@ -1505,7 +1505,7 @@ msgstr "ਮੁਕੰਮਲ!"
 
 #: ../yumcommands.py:42
 msgid " Mini usage:\n"
-msgstr ""
+msgstr " ਮਿੰਨੀ ਵਰਤੋਂ:\n"
 
 #: ../yumcommands.py:52
 msgid "You need to be root to perform this command."
@@ -1531,7 +1531,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "ਰਿਪੋਜ਼ਟਰੀ ਸਮੱਸਿਆ: %s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1831,7 +1831,7 @@ msgstr "ਕਦੇ ਨਹੀਂ (ਆਖਰੀ: %s)"
 #: ../yumcommands.py:1002
 #, python-format
 msgid "Instant (last: %s)"
-msgstr ""
+msgstr "ਮੌਕਾ (ਪਿਛਲਾ: %s)"
 
 #: ../yumcommands.py:1005
 #, python-format
@@ -1977,7 +1977,7 @@ msgstr ""
 #: ../yumcommands.py:1522
 #, python-format
 msgid "loading transaction from %s"
-msgstr ""
+msgstr "%s ਤੋਂ ਟਰਾਂਸੈਕਸ਼ਨ ਲੋਡ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yumcommands.py:1528
 #, python-format
@@ -2009,6 +2009,8 @@ msgstr "ਨਿਰਭਰਤਾ ਹੱਲ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 #, python-format
 msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
 msgstr ""
+"ਤੁਹਾਡੀ ਟਰਾਂਸੈਕਸ਼ਨ ਸੰਭਾਲੀ ਗਈ ਹੈ, ਇਸ ਨੂੰ ਬਾਅਦ ਵਿੱਚ ਚਲਾਉ: yum load-transaction "
+"%s"
 
 #: ../yummain.py:288
 msgid ""
@@ -2098,12 +2100,12 @@ msgstr ""
 #: ../yum/depsolve.py:389 ../yum/depsolve.py:406
 #, python-format
 msgid "Trying to update %s to resolve dep"
-msgstr ""
+msgstr "ਨਿਰਭਰਤਾ ਹੱਲ਼ ਕਰਨ ਲਈ %s ਅੱਪਡੇਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/depsolve.py:400 ../yum/depsolve.py:410
 #, python-format
 msgid "No update paths found for %s. Failure!"
-msgstr ""
+msgstr "%s ਲਈ ਕੋਈ ਅੱਪਡੇਟ ਮਾਰਗ ਨਹੀਂ ਲੱਭਿਆ। ਫੇਲ੍ਹ!"
 
 #: ../yum/depsolve.py:416
 #, python-format
@@ -2123,7 +2125,7 @@ msgstr ""
 #: ../yum/depsolve.py:440
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
-msgstr ""
+msgstr "%s: ਲਈ ਨਿਰਭਰਤਾ ਵਾਸਤੇ ਅੱਪਡੇਟ ਮਾਰਗ ਨਹੀਂ ਲੱਭਿਆ ਜਾ ਸਕਦਾ"
 
 #: ../yum/depsolve.py:471
 #, python-format
@@ -2135,6 +2137,8 @@ msgstr ""
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr ""
+"%s ਉਪਲੱਬਧ ਕਰਵਾਉਣ ਵਾਲਿਆ ਪੈਕੇਜਾਂ ਵਿੱਚ ਹੈ, ਪਰ ਇਹ ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ, ਹਟਾਇਆ ਜਾ "
+"ਰਿਹਾ ਹੈ।"
 
 #: ../yum/depsolve.py:529
 #, python-format
@@ -2256,7 +2260,7 @@ msgstr ""
 #: ../yum/__init__.py:488
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
-msgstr ""
+msgstr "ਰਿਪੋਜ਼ਟਰੀ %r ਦਾ ਸੰਰਚਨਾ ਵਿੱਚ ਨਾਂ ਮੌਜੂਦ ਨਹੀਂ ਹੈ, id ਵਰਤੋਂ ਨਾਲ"
 
 #: ../yum/__init__.py:526
 msgid "plugins already initialised"
@@ -2333,7 +2337,7 @@ msgstr "ਰਿਪੋਜ਼ਟਰੀ ਤੋਂ ਟੈਗ ਸ਼ਾਮਲ ਕੀ�
 #: ../yum/__init__.py:866
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
-msgstr ""
+msgstr "ਰਿਪੋਜ਼ਟਰੀ ਲਈ Pkg ਟੈਗ ਜੋੜਨ ਲਈ ਫੇਲ੍ਹ: %s - %s"
 
 #: ../yum/__init__.py:944
 msgid "Importing additional filelist information"
@@ -2441,7 +2445,7 @@ msgstr "%s ਲਾਕ ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ: %s 
 #: ../yum/__init__.py:1785
 #, python-format
 msgid "Unable to check if PID %s is active"
-msgstr ""
+msgstr "ਚੈੱਕ ਕਰਨ ਲਈ ਅਸਮਰੱਥ ਕਿਕੀ PID %s ਐਕਟਿਵ ਹੈ"
 
 #. Another copy seems to be running.
 #: ../yum/__init__.py:1789
@@ -2609,12 +2613,12 @@ msgstr "ਇੰਸਟਾਲ ਕਰਨ ਲਈ %s ਨਾਂ ਦਾ ਕੋਈ ਪੈ
 #: ../yum/__init__.py:2941
 #, python-format
 msgid "Warning: Group %s does not have any packages."
-msgstr ""
+msgstr "ਸਾਵਧਾਨ: %s ਗਰੁੱਪ ਵਿੱਚ ਕੋਈ ਵੀ ਪੈਕੇਜ ਨਹੀਂ ਹੈ।"
 
 #: ../yum/__init__.py:2943
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
-msgstr ""
+msgstr "ਗਰੁੱਪ %s ਵਿੱਚ %u ਲਾਜ਼ਮੀ ਪੈਕੇਜ ਹਨ, ਜੋ ਕਿ ਇੰਸਟਾਲ ਕੀਤੇ ਜਾ ਸਕਦੇ ਹਨ।"
 
 #. This can happen due to excludes after .up has
 #. happened.
@@ -2787,6 +2791,8 @@ msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
 msgstr ""
+"ਪੈਕੇਜ %s.%s ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ, ਅੱਪਡੇਟ ਨਹੀਂ ਹੋ ਸਕਦਾ। ਇਸ ਦੀ ਬਜਾਏ ਪਹਿਲਾਂ yum "
+"install ਚਲਾਉ।"
 
 #: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
 #, python-format
@@ -2849,7 +2855,7 @@ msgstr "ਡਾਊਨਗਰੇਡ ਕਰਨ ਲਈ ਫੇਲ੍ਹ: %s"
 #: ../yum/__init__.py:4516
 #, python-format
 msgid "Retrieving key from %s"
-msgstr ""
+msgstr "%s ਤੋਂ ਕੁੰਜੀ ਲਈ ਜਾ ਰਹੀ ਹੈ"
 
 #: ../yum/__init__.py:4534
 msgid "GPG key retrieval failed: "
@@ -2884,6 +2890,10 @@ msgid ""
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
+"%s ਕੁੰਜੀ 0x%s ਇੰਪੋਰਟ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ:\n"
+" Userid : %s\n"
+" ਪੈਕੇਜ: %s (%s)\n"
+" ਤੋਂ   : %s"
 
 #: ../yum/__init__.py:4600
 #, python-format
@@ -2892,11 +2902,14 @@ msgid ""
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
+"%s ਕੁੰਜੀ 0x%s ਇੰਪੋਰਟ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ:\n"
+" Userid: \"%s\"\n"
+" ਤੋਂ  : %s"
 
 #: ../yum/__init__.py:4634
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
-msgstr ""
+msgstr "GPG ਕੁੰਜੀ %s (0x%s) ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ"
 
 #: ../yum/__init__.py:4671
 #, python-format
@@ -2909,7 +2922,7 @@ msgstr "ਕੁੰਜੀ ਠੀਕ ਤਰ੍ਹਾਂ ਇੰਪੋਰਟ ਕੀ�
 
 #: ../yum/__init__.py:4676
 msgid "Didn't install any keys"
-msgstr ""
+msgstr "ਕੋਈ ਵੀ ਕੁੰਜੀ ਇੰਸਟਾਲ ਨਹੀਂ ਕੀਤੀ"
 
 #: ../yum/__init__.py:4680
 #, python-format
@@ -2925,7 +2938,7 @@ msgstr ""
 #: ../yum/__init__.py:4713
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
-msgstr ""
+msgstr "GPG ਕੁੰਜੀ %s (0x%s) ਨੂੰ ਪਹਿਲਾਂ ਹੀ ਇੰਪੋਰਟ ਕੀਤਾ ਗਿਆ ਹੈ"
 
 #: ../yum/__init__.py:4754
 msgid "Key import failed"
@@ -2934,7 +2947,7 @@ msgstr "ਕੁੰਜੀ ਇੰਪੋਰਟ ਫੇਲ੍ਹ"
 #: ../yum/__init__.py:4770
 #, python-format
 msgid "Didn't install any keys for repo %s"
-msgstr ""
+msgstr "%s ਰੈਪੋ ਲਈ ਕੋਈ ਵੀ ਕੁੰਜੀਆਂ ਇੰਸਟਾਲ ਨਹੀਂ ਹਨ"
 
 #: ../yum/__init__.py:4774
 #, python-format
@@ -2972,7 +2985,7 @@ msgstr ""
 #: ../yum/__init__.py:5179 ../yum/__init__.py:5181
 #, python-format
 msgid "Could not save transaction file %s: %s"
-msgstr ""
+msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਫਾਇਲ %s ਸੰਭਾਲੀ ਨਹੀਂ ਜਾ ਸਕੀ: %s"
 
 #: ../yum/__init__.py:5195
 #, python-format
@@ -2985,11 +2998,11 @@ msgstr ""
 
 #: ../yum/__init__.py:5216
 msgid " ignoring, as requested."
-msgstr ""
+msgstr " ਕੀਤੀ ਮੰਗ ਮੁਤਾਬਕ ਅਣਡਿੱਠਾ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../yum/__init__.py:5219 ../yum/__init__.py:5354
 msgid " aborting."
-msgstr ""
+msgstr "ਅਣਡਿੱਠਾ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
 
 #: ../yum/__init__.py:5228
 msgid "cannot find tsflags or tsflags not integer."
@@ -3096,7 +3109,7 @@ msgstr "%s ਨੂੰ %s ਨਾਲ ਬਦਲਿਆ ਜਾਂਦਾ ਹੈ"
 #: ../yum/rpmsack.py:176
 #, python-format
 msgid "%s provides %s but it cannot be found"
-msgstr ""
+msgstr "%s %s ਦਿੰਦਾ ਹੈ, ਪਰ ਇਹ ਲੱਭਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ"
 
 #: ../yum/rpmtrans.py:80
 msgid "Repackaging"

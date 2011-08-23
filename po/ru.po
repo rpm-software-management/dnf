@@ -2,15 +2,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# Misha Shnurapet <shnurapet AT fedoraproject.org>, 2011
-# Misha Shnurapet <shnurapet@fedoraproject.org>, 2011
+# Misha Shnurapet <shnurapet AT fedoraproject.org>, 2011.
+# Misha Shnurapet <shnurapet@fedoraproject.org>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-06-07 09:13+0000\n"
+"Last-Translator: shnurapet <shnurapet@fedoraproject.org>\n"
 "Language-Team: Russian (http://www.transifex.net/projects/p/yum/team/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -283,16 +283,16 @@ msgstr "Совпадений: %s"
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
-"  Название и описание совпадают только с %sonly%s, используйте «search all»,"
-" чтобы искать везде."
+"  Показаны %sтолько%s совпадения по названиям и описаниям, для большего "
+"используйте «search all»."
 
 #: ../cli.py:1077
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
-"  Полное название и описание совпадают только с %sonly%s, используйте "
-"«search all», чтобы искать везде."
+"  Показаны %sтолько%s полные совпадения по названиям и описаниям, для "
+"большего используйте «search all»."
 
 #: ../cli.py:1095
 #, python-format
@@ -303,8 +303,8 @@ msgstr "Совпадений: %s"
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr ""
-"  Название и описание совпадают с %smostly%s, используйте «search all», "
-"чтобы искать везде."
+"  Показаны %sв основном%s совпадения по названияю и описанию, для большего "
+"используйте «search all»."
 
 #: ../cli.py:1106
 #, python-format
@@ -857,7 +857,7 @@ msgstr "Не установлено"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "Недоступно"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -1554,7 +1554,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "Проблема с репозиторием: %s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1885,7 +1885,7 @@ msgstr "Исключено из репозитория   : "
 
 #: ../yumcommands.py:1022
 msgid "Repo-filename: "
-msgstr ""
+msgstr "Файл репозитория:"
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...

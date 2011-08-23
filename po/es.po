@@ -2,15 +2,16 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# beckerde <domingobecker@gmail.com>, 2011
-# Claudio Rodrigo Pereyra Diaz <elsupergomez@gmail.com>, 2011
+# Dennis Tobar <dennis.tobar@gmail.com>, 2011.
+# beckerde <domingobecker@gmail.com>, 2011.
+# Claudio Rodrigo Pereyra Diaz <elsupergomez@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-06-07 21:22+0000\n"
+"Last-Translator: dennistobar <dennis.tobar@gmail.com>\n"
 "Language-Team: Spanish (Castilian) <trans-es@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -326,7 +327,7 @@ msgstr "No se ha encontrado ningún paquete para %s"
 
 #: ../cli.py:1184
 msgid "Cleaning repos: "
-msgstr "Limpiando repositorios:"
+msgstr "Limpiando repositorios: "
 
 #: ../cli.py:1189
 msgid "Cleaning up Everything"
@@ -510,7 +511,7 @@ msgstr "operación detallada"
 
 #: ../cli.py:1673
 msgid "answer yes for all questions"
-msgstr "responde \"si\" a todas las preguntas"
+msgstr "responde \"sí\" a todas las preguntas"
 
 #: ../cli.py:1675
 msgid "show Yum version and exit"
@@ -721,7 +722,7 @@ msgstr "s"
 
 #: ../output.py:684
 msgid "yes"
-msgstr "si"
+msgstr "sí"
 
 #: ../output.py:685
 msgid "n"
@@ -864,7 +865,7 @@ msgstr "No instalado"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "No disponible"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -968,7 +969,7 @@ msgid ""
 "to exit.\n"
 msgstr ""
 "\n"
-" Se ha cancelado la descarga actual, %sinterrumpa con (ctrl-c) nuevamente%s dentro de %s%s%s segundos\n"
+"Se ha cancelado la descarga actual, %sinterrumpa con (ctrl-c) nuevamente%s dentro de %s%s%s segundos\n"
 "para finalizar.\n"
 
 #: ../output.py:1282
@@ -1569,7 +1570,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "Problema del repositorio: %s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1898,7 +1899,7 @@ msgstr "Repositorio excluído:"
 
 #: ../yumcommands.py:1022
 msgid "Repo-filename: "
-msgstr ""
+msgstr "Nombre de archivo del repositorio: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...

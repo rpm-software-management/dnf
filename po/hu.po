@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# András Bögöly <ebogoly@gmail.com>, 2011
+# András Bögöly <ebogoly@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-07-20 20:41+0000\n"
+"Last-Translator: bogolyandras <ebogoly@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.net/projects/p/yum/team/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -284,12 +284,16 @@ msgstr "N/S Megegyezett: %s"
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  A névből és a leírásból csak %s egyezik ezzel: %s, használja a \"search "
+"all\" parancsot bárki kereséséhez."
 
 #: ../cli.py:1077
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  A teljes névből és leírásból csak %s egyezik ezzel: %s, használja a "
+"\"search all\" parancsot bárki kereséséhez."
 
 #: ../cli.py:1095
 #, python-format
@@ -300,6 +304,8 @@ msgstr "Találat: %s"
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr ""
+"  A névből és a leírásból többnyire %s egyezik meg ezzel: %s, használja a "
+"\"search all\" parancsot bárki kereséséhez."
 
 #: ../cli.py:1106
 #, python-format
@@ -448,7 +454,7 @@ msgstr "--Szín egyikét veszi fel: auto, mindig, soha"
 #: ../cli.py:1596
 #, python-format
 msgid "--installroot must be an absolute path: %s"
-msgstr ""
+msgstr "A(z) --instalroot -nak abszolút elérési útnak kell lennie: %s"
 
 #: ../cli.py:1642
 msgid "show this help message and exit"
@@ -851,7 +857,7 @@ msgstr "Nem telepítve"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "Nem elérhető"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -1001,7 +1007,7 @@ msgstr "Rendszer"
 #: ../output.py:1411
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr ""
+msgstr "Egyesített tranzakció kihagyása: %d, mivel fedi a %d tranzakciót."
 
 #: ../output.py:1421 ../output.py:1592
 msgid "No transactions"
@@ -1549,7 +1555,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "Hibás tároló: %s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1877,7 +1883,7 @@ msgstr "Tároló-kizárt: "
 
 #: ../yumcommands.py:1022
 msgid "Repo-filename: "
-msgstr ""
+msgstr "Tároló-fájlnév: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1993,23 +1999,23 @@ msgstr "egy elmentett tranzakció betöltése fájlnév alapján"
 
 #: ../yumcommands.py:1518
 msgid "No saved transaction file specified."
-msgstr ""
+msgstr "Nincs meghatározva az elmentett tranzakció fájlja."
 
 #: ../yumcommands.py:1522
 #, python-format
 msgid "loading transaction from %s"
-msgstr ""
+msgstr "tranzakciók betöltések a következőből: %s"
 
 #: ../yumcommands.py:1528
 #, python-format
 msgid "Transaction loaded from %s with %s members"
-msgstr ""
+msgstr "Tranzakció betöltve innen: %s, %s taggal"
 
 #. This is mainly for PackageSackError from rpmdb.
 #: ../yummain.py:84
 #, python-format
 msgid " Yum checks failed: %s"
-msgstr ""
+msgstr " Yum ellenőrzés meghiúsult: %s"
 
 #: ../yummain.py:114
 msgid ""
@@ -2020,7 +2026,7 @@ msgstr ""
 
 #: ../yummain.py:120
 msgid "Can't create lock file; exiting"
-msgstr ""
+msgstr "Nem sikerült lezárni; kilépés..."
 
 #. Depsolve stage
 #: ../yummain.py:167
@@ -2031,6 +2037,8 @@ msgstr "Függőségek megállapítása"
 #, python-format
 msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
 msgstr ""
+"A tranzakció sikeresen mentve, újra futtatáshoz a következő parancsot "
+"használjuk: yum load-transaction %s"
 
 #: ../yummain.py:288
 msgid ""
@@ -2120,12 +2128,12 @@ msgstr "A(z) %s nevű csomag szolgáltatásának módja: %s"
 #: ../yum/depsolve.py:389 ../yum/depsolve.py:406
 #, python-format
 msgid "Trying to update %s to resolve dep"
-msgstr ""
+msgstr "Kisérlet a(z) %s frissítésére a függőségek feloldásához"
 
 #: ../yum/depsolve.py:400 ../yum/depsolve.py:410
 #, python-format
 msgid "No update paths found for %s. Failure!"
-msgstr ""
+msgstr "Nem található frissítési útvonal a következőhöz: %s."
 
 #: ../yum/depsolve.py:416
 #, python-format
@@ -2383,12 +2391,12 @@ msgstr ""
 
 #: ../yum/__init__.py:983
 msgid "--> Finding unneeded leftover dependencies"
-msgstr ""
+msgstr "--> Szükségtelen függőségek keresése"
 
 #: ../yum/__init__.py:1041
 #, python-format
 msgid "Protected multilib versions: %s != %s"
-msgstr ""
+msgstr "Védett multilib verzió: %s != %s"
 
 #: ../yum/__init__.py:1096
 #, python-format
@@ -2650,12 +2658,14 @@ msgstr "Nincs telepíthető csomag %s néven."
 #: ../yum/__init__.py:2941
 #, python-format
 msgid "Warning: Group %s does not have any packages."
-msgstr ""
+msgstr "Figyelem: A(z) %s csoport nem tartalmaz egyetlen csomagot sem."
 
 #: ../yum/__init__.py:2943
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr ""
+"A(z) %s csoportnak %u feltételes csomagja van, amelyek lehet, hogy "
+"telepítésre kerülnek."
 
 #. This can happen due to excludes after .up has
 #. happened.
@@ -2672,7 +2682,7 @@ msgstr "Az rpmdb nem tartalmaz csomagleírót a következőre: %s"
 #: ../yum/__init__.py:3079 ../yum/__init__.py:3129
 #, python-format
 msgid "Invalid version flag from: %s"
-msgstr ""
+msgstr "Érvénytelen verzió: %s"
 
 #: ../yum/__init__.py:3096 ../yum/__init__.py:3101
 #, python-format
@@ -2840,6 +2850,8 @@ msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
 msgstr ""
+"A következő csomag nincs telepítve: %s.%s, ezért nem lehet frissíteni. "
+"Futtassa a \"yum install\" parancsot a telepítéshez."
 
 #: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
 #, python-format
@@ -2903,7 +2915,7 @@ msgstr "Visszaállítás meghiúsult: %s"
 #: ../yum/__init__.py:4516
 #, python-format
 msgid "Retrieving key from %s"
-msgstr ""
+msgstr "GPG kulcs beszerzése a következőből: %s"
 
 #: ../yum/__init__.py:4534
 msgid "GPG key retrieval failed: "
@@ -2914,11 +2926,11 @@ msgstr "GPG kulcs beszerzés meghiúsult: "
 #: ../yum/__init__.py:4557
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
-msgstr ""
+msgstr "A(z) %s GPG kulcs aláírása nem egyezik a tároló CA kulcsával: %s"
 
 #: ../yum/__init__.py:4559
 msgid "GPG key signature verified against CA Key(s)"
-msgstr ""
+msgstr "A GPG kulcs sikeresen ellenőrizve lett a CA kulcsokkal"
 
 #: ../yum/__init__.py:4567
 #, python-format
@@ -2938,6 +2950,10 @@ msgid ""
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
+"%s GPG kulcs 0x%s importálása:\n"
+"Felhasználó: %s\n"
+"Csomag   : %s (%s)\n"
+"Származás: %s"
 
 #: ../yum/__init__.py:4600
 #, python-format
@@ -2946,6 +2962,9 @@ msgid ""
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
+"%s GPG kulcs 0x%s importálása:\n"
+"Felhasználó: %s\n"
+"Származás: %s"
 
 #: ../yum/__init__.py:4634
 #, python-format
@@ -2963,7 +2982,7 @@ msgstr "A kulcs importálása sikeres"
 
 #: ../yum/__init__.py:4676
 msgid "Didn't install any keys"
-msgstr ""
+msgstr "Nem lett telepítve egyetlen kulcs sem"
 
 #: ../yum/__init__.py:4680
 #, python-format
@@ -2990,7 +3009,7 @@ msgstr "A kulcs importálása meghiúsult"
 #: ../yum/__init__.py:4770
 #, python-format
 msgid "Didn't install any keys for repo %s"
-msgstr ""
+msgstr "Nem lett telepítve egyetlen kulcs sem a következő tárolóhoz: %s"
 
 #: ../yum/__init__.py:4774
 #, python-format
@@ -3026,55 +3045,59 @@ msgstr "Gyorsítótár-mappa beállítása meghiúsult: %s"
 #: ../yum/__init__.py:5148 ../yum/__init__.py:5150
 msgid "Dependencies not solved. Will not save unresolved transaction."
 msgstr ""
+"A függőségek feloldása még nincs kész. Nem lehet a függőben lévő tranzakciót"
+" menteni."
 
 #: ../yum/__init__.py:5179 ../yum/__init__.py:5181
 #, python-format
 msgid "Could not save transaction file %s: %s"
-msgstr ""
+msgstr "A következő tranzakciófájl mentése meghiúsult: %s: %s"
 
 #: ../yum/__init__.py:5195
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
-msgstr ""
+msgstr "Az elmentett tranzakció beolvasása meghiúsult: %s: %s"
 
 #: ../yum/__init__.py:5214
 msgid "rpmdb ver mismatched saved transaction version, "
-msgstr ""
+msgstr "Az rpmdb verziója nem egyezik a mentett tranzakció verziójával, "
 
 #: ../yum/__init__.py:5216
 msgid " ignoring, as requested."
-msgstr ""
+msgstr " kihagyva, ahogy kértük."
 
 #: ../yum/__init__.py:5219 ../yum/__init__.py:5354
 msgid " aborting."
-msgstr ""
+msgstr "megszakítás."
 
 #: ../yum/__init__.py:5228
 msgid "cannot find tsflags or tsflags not integer."
-msgstr ""
+msgstr "Nem található a tsflags, vagy a tsflags nem egész szám."
 
 #: ../yum/__init__.py:5267
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
-msgstr ""
+msgstr "txmbr található a jelenleg ismeretlen állapotban: %s"
 
 #: ../yum/__init__.py:5271
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
-msgstr ""
+msgstr "Nem található txmbr: %s állapotban %s"
 
 #: ../yum/__init__.py:5307 ../yum/__init__.py:5324
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
-msgstr ""
+msgstr "Nem található txmbr: %s, innen: %s"
 
 #: ../yum/__init__.py:5349
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr ""
+"A tranzakció elemek, tranzakció-viszonyok hiányoznak, vagy a ts feltehetően "
+"megváltozott,"
 
 #: ../yum/__init__.py:5351
 msgid " ignoring, as requested. You must redepsolve!"
-msgstr ""
+msgstr " átugorva, ahogy kérte. Szükséges a redepsolve!"
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:209
