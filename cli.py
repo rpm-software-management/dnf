@@ -768,7 +768,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return uret
 
         for txmbr in txmbrs:
-            print "JDBG:", txmbr
             ret += _pkg2ups(txmbr.po)
 
         return ret
