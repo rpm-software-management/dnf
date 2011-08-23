@@ -1417,19 +1417,37 @@ class YumOutput:
 Transaction Summary
 %s
 """) % ('=' * self.term.columns))
-        for action, count in (
-            (_('Install'), len(self.tsInfo.installed) + len(self.tsInfo.depinstalled)),
-            (_('Upgrade'), len(self.tsInfo.updated) + len(self.tsInfo.depupdated)),
-            (_('Remove'), len(self.tsInfo.removed) + len(self.tsInfo.depremoved)),
-            (_('Reinstall'), len(self.tsInfo.reinstalled)),
-            (_('Downgrade'), len(self.tsInfo.downgraded)),
-            (_('Skipped (dependency problems)'), len(self.skipped_packages)),
-            (_('Not installed'), len(self._not_found_i.values())),
-            (_('Not available'), len(self._not_found_a.values())),
+        for action, count, depcount in (
+            (_('Install'), len(self.tsInfo.installed),
+             len(self.tsInfo.depinstalled)),
+            (_('Upgrade'), len(self.tsInfo.updated),
+             len(self.tsInfo.depupdated)),
+            (_('Remove'), len(self.tsInfo.removed),
+             len(self.tsInfo.depremoved)),
+            (_('Reinstall'), len(self.tsInfo.reinstalled), 0),
+            (_('Downgrade'), len(self.tsInfo.downgraded), 0),
+            (_('Skipped (dependency problems)'), len(self.skipped_packages), 0),
+            (_('Not installed'), len(self._not_found_i.values()), 0),
+            (_('Not available'), len(self._not_found_a.values()), 0),
         ):
-            if count: out.append('%-9s %5d %s\n' % (
-                action, count, P_('Package', 'Packages', count),
-            ))
+            msg_pkgs = P_('Package', 'Packages', count)
+            if depcount:
+                msg_deppkgs = P_('Dependent package', 'Dependent packages',
+                                 depcount)
+                max_msg_pkgs  = utf8_width(_('Package'))
+                max_msg_pkgs2 = utf8_width(_('Packages'))
+                if max_msg_pkgs2 > max_msg_pkgs:
+                    max_msg_pkgs = max_msg_pkgs2
+                if count:
+                    msg = '%-9s %5d %-*s (+%5d %s)\n'
+                    out.append(msg % (action, count, max_msg_pkgs, msg_pkgs,
+                                      depcount, msg_deppkgs))
+                else:
+                    msg = '%-9s %5s %-*s ( %5d %s)\n'
+                    out.append(msg % (action, '', max_msg_pkgs, '',
+                                      depcount, msg_deppkgs))
+            elif count:
+                out.append('%-9s %5d %s\n' % (action, count, msg_pkgs))
         return ''.join(out)
         
     def postTransactionOutput(self):
