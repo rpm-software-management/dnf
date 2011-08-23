@@ -62,7 +62,7 @@ touch $YUMTMP
 if (set -o noclobber; echo "$$" > $PIDFILE) 2>/dev/null; then
   # We got the lock. So now, set a trap to clean up locks and the output
   # tempfile when the script exits or is killed.
-  trap "{ rm -f $PIDFILE; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
+  trap "rm -f $PIDFILE" INT TERM EXIT
 else
   # Lock failed -- check if a running process exists.  
   # First, if there's no PID file in the lock directory, something bad has
@@ -155,11 +155,12 @@ fi
 
 if [[ ! -z "$MAILTO" && -x /bin/mail ]]; then 
 # If MAILTO is set, use mail command for prettier output.
-  [[ -s "$YUMTMP" ]] && mail -s "System update: $SYSTEMNAME" $MAILTO < $YUMTMP 
+  [[ -s "$YUMTMP" ]] && \
+    mail -s "System update: $SYSTEMNAME" $MAILTO < $YUMTMP && \
+    rm -f $YUMTMP
 else 
 # The default behavior is to use cron's internal mailing of output.
-  cat $YUMTMP
+  cat $YUMTMP && rm -f $YUMTMP
 fi 
-rm -f $YUMTMP 
 
 exit 0
