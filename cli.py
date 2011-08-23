@@ -768,6 +768,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             return uret
 
         for txmbr in txmbrs:
+            for rtxmbr, T in txmbr.relatedto:
+                ret += _pkg2ups(rtxmbr)
             ret += _pkg2ups(txmbr.po)
 
         return ret
