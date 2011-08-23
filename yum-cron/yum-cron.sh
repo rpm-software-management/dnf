@@ -6,12 +6,10 @@
 # /etc/sysconfig/yum-cron.
 
 
-# These are used by /etc/init.d/yum-cron on shutdown to protect against
+# This is used by /etc/init.d/yum-cron on shutdown to protect against
 # abruptly shutting down mid-transaction. Therefore, you shouldn't change
-# them without changing that.
-LOCKDIR=/var/lock/yum-cron.lock
-PIDFILE=$LOCKDIR/pidfile
-TSLOCK=$LOCKDIR/ts.lock
+# it without changing that.
+PIDFILE=/var/lock/yum-cron.pid
 
 
 # This is the home of the yum scripts which power the various actions the
@@ -56,26 +54,24 @@ touch $YUMTMP
 # Note: the lockfile code doesn't currently try and use YUMTMP to email
 # messages nicely, so this gets handled by normal cron error mailing.
 #
-
-# We use mkdir for the lockfile, as this will test for and if possible
-# create the lock in one atomic action. (So there's no race condition.)
-if mkdir $LOCKDIR 2>/dev/null; then
-  # Store the current process ID in the lock directory so we can check for
-  # staleness later.
-  echo "$$" >"${PIDFILE}"
-  # And, clean up locks and tempfile when the script exits or is killed.
-  trap "{ rm -f $PIDFILE $TSLOCK; rmdir $LOCKDIR 2>/dev/null; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
+	
+# We use noclobber for the pidfile, as this will test for and if possible 
+# create the file in one atomic action. (So there's no race condition.) The 
+# current process ID is stored in the file so we can check for staleness 
+# later.
+if (set -o noclobber; echo "$$" > $PIDFILE) 2>/dev/null; then
+  # We got the lock. So now, set a trap to clean up locks and the output
+  # tempfile when the script exits or is killed.
+  trap "{ rm -f $PIDFILE; rm -f $YUMTMP; exit 255; }" INT TERM EXIT
 else
   # Lock failed -- check if a running process exists.  
   # First, if there's no PID file in the lock directory, something bad has
-  # happened.  We can't know the process name, so, clean up the old lockdir
-  # and restart.
+  # happened.  We can't know the process name, so, restart.
   if [[ ! -f $PIDFILE ]]; then
-    rm -rf "${LOCKDIR}"
-    echo "yum-cron: no lock PID, clearing and restarting myself" >&2
+    echo "yum-cron: no lock PID, restarting myself" >&2
     exec $0 "$@"
   fi
-  OTHERPID="$(cat "${PIDFILE}")"
+  OTHERPID="$(< $PIDFILE)" 2>/dev/null
   # if cat wasn't able to read the file anymore, another instance probably is
   # about to remove the lock -- exit, we're *still* locked
   if [[ $? != 0 ]]; then
@@ -85,12 +81,12 @@ else
   if ! kill -0 $OTHERPID &>/dev/null; then
     # Lock is stale. Remove it and restart.
     echo "yum-cron: removing stale lock of nonexistant PID ${OTHERPID}" >&2
-    rm -rf "${LOCKDIR}"
+    rm -f $PIDFILE
     echo "yum-cron: restarting myself" >&2
     exec $0 "$@"
   else
     # Remove lockfiles more than a day old -- they must be stale.
-    find $LOCKDIR -type f -name 'pidfile' -amin +1440 -exec rm -rf $LOCKDIR \;
+    find $PIDFILE -type f -name 'yum-cron.pid' -amin +1440 -exec rm -f $PIDFILE \;
     # If it's still there, it *wasn't* too old. Bail!
     if [[ -f $PIDFILE ]]; then
       # Lock is valid and OTHERPID is active -- exit, we're locked!
@@ -99,6 +95,7 @@ else
     else
       # Lock was invalid. Restart.
       echo "yum-cron: removing stale lock belonging to stale PID ${OTHERPID}" >&2
+      rm -f $PIDFILE
       echo "yum-cron: restarting myself" >&2
       exec $0 "$@"
     fi
@@ -121,8 +118,6 @@ fi
         # Note that in all cases, yum is updated first, and then 
         # everything else.
         if [[ "$CHECK_ONLY" == "yes" ]]; then
-          # TSLOCK is used by the safe-shutdown code in the init script.
-          touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e 0 -d 0 -y check-update 1> /dev/null 2>&1
           case $? in
             1)   exit 1;;
@@ -138,7 +133,6 @@ fi
           # Don't run if we can't access the repos -- if this is set, 
           # and there's a problem, we exit silently (but return an error
           # code).
-          touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e 0 -d 0 check-update 2>&-
           case $? in
             1)   exit 1;;
@@ -148,7 +142,6 @@ fi
           esac
         else
           # and here's the "just do it".
-          touch $TSLOCK
           /usr/bin/yum $YUM_PARAMETER -e ${ERROR_LEVEL:-0} -d ${DEBUG_LEVEL:-0} -y update yum
           /usr/bin/yum $YUM_PARAMETER -e ${ERROR_LEVEL:-0} -d ${DEBUG_LEVEL:-0} -y shell $YUMSCRIPT
         fi

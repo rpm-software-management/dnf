@@ -24,5 +24,12 @@ fi
 # the setting in the sysconfig file.
 [[ $RANDOMWAIT -gt 0 ]] && sleep $(( $RANDOM % ($RANDOMWAIT * 60) + 1 ))
 
+# Double-check to make sure that we're still supposed to be 
+# active after the random wait.
+if [[ ! -f /var/lock/subsys/yum-cron ]]; then
+  exit 0
+fi
+
+
 # Action!
 exec /usr/sbin/yum-cron update
