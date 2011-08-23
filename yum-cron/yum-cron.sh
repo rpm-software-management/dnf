@@ -45,13 +45,13 @@ fi
 
 # This holds the output from the "meat" of this script, so that it can
 # be nicely mailed to the configured destination when we're done.
-YUMTMP=$(mktemp /var/run/yum-cron.XXXXXX)
-touch $YUMTMP 
-[[ -x /sbin/restorecon ]] && /sbin/restorecon $YUMTMP
+YUMOUTPUT=$(mktemp /var/run/yum-cron.XXXXXX)
+touch $YUMOUTPUT 
+[[ -x /sbin/restorecon ]] && /sbin/restorecon $YUMOUTPUT
 
 # Here is the gigantic block of lockfile logic.
 #
-# Note: the lockfile code doesn't currently try and use YUMTMP to email
+# Note: the lockfile code doesn't currently try and use YUMOUTPUT to email
 # messages nicely, so this gets handled by normal cron error mailing.
 #
 	
@@ -151,16 +151,16 @@ fi
         ;;
   esac       
 
-} >> $YUMTMP 2>&1
+} >> $YUMOUTPUT 2>&1
 
 if [[ ! -z "$MAILTO" && -x /bin/mail ]]; then 
 # If MAILTO is set, use mail command for prettier output.
-  [[ -s "$YUMTMP" ]] && \
-    mail -s "System update: $SYSTEMNAME" $MAILTO < $YUMTMP && \
-    rm -f $YUMTMP
+  [[ -s "$YUMOUTPUT" ]] && \
+    mail -s "System update: $SYSTEMNAME" $MAILTO < $YUMOUTPUT && \
+    rm -f $YUMOUTPUT
 else 
 # The default behavior is to use cron's internal mailing of output.
-  cat $YUMTMP && rm -f $YUMTMP
+  cat $YUMOUTPUT && rm -f $YUMOUTPUT
 fi 
 
 exit 0
