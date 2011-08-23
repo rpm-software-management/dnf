@@ -1423,6 +1423,9 @@ Transaction Summary
             (_('Remove'), len(self.tsInfo.removed) + len(self.tsInfo.depremoved)),
             (_('Reinstall'), len(self.tsInfo.reinstalled)),
             (_('Downgrade'), len(self.tsInfo.downgraded)),
+            (_('Skipped (dependency problems)'), len(self.skipped_packages)),
+            (_('Not installed'), len(self._not_found_i.values())),
+            (_('Not available'), len(self._not_found_a.values())),
         ):
             if count: out.append('%-9s %5d %s\n' % (
                 action, count, P_('Package', 'Packages', count),
