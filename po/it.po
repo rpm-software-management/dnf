@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
+# Guido Grazioli <guido.grazioli@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
 "POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
-"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
+"PO-Revision-Date: 2011-08-20 12:03+0000\n"
+"Last-Translator: guidograzioli <guido.grazioli@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.net/projects/p/yum/team/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -157,7 +158,7 @@ msgstr "Errore nel download dei pacchetti:\n"
 
 #: ../cli.py:525 ../yum/__init__.py:4967
 msgid "Running Transaction Check"
-msgstr ""
+msgstr "Esecuzione del controllo di transazione"
 
 #: ../cli.py:534 ../yum/__init__.py:4976
 msgid "ERROR You need to update rpm to handle:"
@@ -165,7 +166,7 @@ msgstr "ERRORE Occorre aggiornare rpm per gestire:"
 
 #: ../cli.py:536 ../yum/__init__.py:4979
 msgid "ERROR with transaction check vs depsolve:"
-msgstr ""
+msgstr "ERRORE del controllo di transazione nei confronti di depsolve:"
 
 #: ../cli.py:542
 msgid "RPM needs to be updated"
@@ -275,18 +276,22 @@ msgstr "Nessun pacchetto specificato"
 #: ../cli.py:1058
 #, python-format
 msgid "N/S Matched: %s"
-msgstr ""
+msgstr "N/D trovati: %s"
 
 #: ../cli.py:1075
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  Ricerca effettuata %ssolamente%s in nome e descrizione breve, usare "
+"\"search all\" per cercare in tutti i campi."
 
 #: ../cli.py:1077
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  Ricerca effettuata %ssolamente%s in nome completo e descrizione breve, "
+"usare \"search all\" per cercare in tutti i campi."
 
 #: ../cli.py:1095
 #, python-format
@@ -297,6 +302,8 @@ msgstr "Trovato: %s"
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr ""
+"  Ricerca effettuata %sper lo più%s in nome e descrizione breve, usare "
+"\"search all\" per cercare in tutti i campi."
 
 #: ../cli.py:1106
 #, python-format
@@ -351,7 +358,7 @@ msgstr "Pulizia plugin"
 #: ../cli.py:1247
 #, python-format
 msgid "Warning: No groups match: %s"
-msgstr ""
+msgstr "Attenzione: nessun gruppo trovato per: %s"
 
 #: ../cli.py:1264
 msgid "Installed Groups:"
@@ -359,7 +366,7 @@ msgstr "Gruppi installati:"
 
 #: ../cli.py:1270
 msgid "Installed Language Groups:"
-msgstr ""
+msgstr "Gruppi lingua installati:"
 
 #: ../cli.py:1276
 msgid "Available Groups:"
@@ -367,7 +374,7 @@ msgstr "Gruppi disponibili:"
 
 #: ../cli.py:1282
 msgid "Available Language Groups:"
-msgstr ""
+msgstr "Gruppi lingua disponibili:"
 
 #: ../cli.py:1285
 msgid "Done"
@@ -449,7 +456,7 @@ msgstr "--color deve specificare uno tra: auto, always, never"
 #: ../cli.py:1596
 #, python-format
 msgid "--installroot must be an absolute path: %s"
-msgstr ""
+msgstr "--installroot deve essere un percorso assoluto: %s"
 
 #: ../cli.py:1642
 msgid "show this help message and exit"
@@ -549,7 +556,7 @@ msgstr "ignora pacchetti con problemi di risoluzione dipendenze"
 
 #: ../cli.py:1706
 msgid "control whether color is used"
-msgstr "controlla se il colore è usato"
+msgstr "imposta l'uso del colore"
 
 #: ../cli.py:1708
 msgid "set value of $releasever in yum config and repo files"
@@ -740,7 +747,7 @@ msgstr " Descrizione: %s"
 #: ../output.py:788
 #, python-format
 msgid " Language: %s"
-msgstr ""
+msgstr " Lingua: %s"
 
 #: ../output.py:790
 msgid " Mandatory Packages:"
@@ -850,7 +857,7 @@ msgstr "Non installato"
 
 #: ../output.py:1053
 msgid "Not available"
-msgstr ""
+msgstr "Non disponibile"
 
 #: ../output.py:1075 ../output.py:2024
 msgid "Package"
@@ -1000,11 +1007,11 @@ msgstr "Sistema"
 #: ../output.py:1411
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr ""
+msgstr "Ignoro la transazione importata %d a %d, perchè genera conflitti"
 
 #: ../output.py:1421 ../output.py:1592
 msgid "No transactions"
-msgstr ""
+msgstr "Nessuna transazione"
 
 #: ../output.py:1446 ../output.py:2013
 msgid "Bad transaction IDs, or package(s), given"
@@ -1012,7 +1019,7 @@ msgstr "L'ID transazione, o il pacchetto specificato, non è corretto"
 
 #: ../output.py:1484
 msgid "Command line"
-msgstr ""
+msgstr "Linea di comando"
 
 #: ../output.py:1486 ../output.py:1908
 msgid "Login user"
@@ -1082,22 +1089,22 @@ msgstr "rpmdb iniziale :"
 #: ../output.py:1749
 #, python-format
 msgid "(%u seconds)"
-msgstr ""
+msgstr "(%u secondi)"
 
 #: ../output.py:1751
 #, python-format
 msgid "(%u minutes)"
-msgstr ""
+msgstr "(%u minuti)"
 
 #: ../output.py:1753
 #, python-format
 msgid "(%u hours)"
-msgstr ""
+msgstr "(%u ore)"
 
 #: ../output.py:1755
 #, python-format
 msgid "(%u days)"
-msgstr ""
+msgstr "(%u giorni)"
 
 #: ../output.py:1756
 msgid "End time       :"
@@ -1122,7 +1129,7 @@ msgstr "Interrotto"
 
 #: ../output.py:1773
 msgid "Failures:"
-msgstr ""
+msgstr "Operazioni fallite:"
 
 #: ../output.py:1777
 msgid "Failure:"
@@ -1251,7 +1258,7 @@ msgstr "installato"
 
 #: ../output.py:2107
 msgid "an update"
-msgstr ""
+msgstr "un aggiornamento"
 
 #: ../output.py:2108
 msgid "erased"
@@ -1263,11 +1270,11 @@ msgstr "reinstallato"
 
 #: ../output.py:2110
 msgid "a downgrade"
-msgstr ""
+msgstr "un downgrade"
 
 #: ../output.py:2111
 msgid "obsoleting"
-msgstr ""
+msgstr "reso obsoleto"
 
 #: ../output.py:2112
 msgid "updated"
@@ -1280,7 +1287,7 @@ msgstr "reso obsoleto"
 #: ../output.py:2117
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
-msgstr ""
+msgstr "---&gt; Pacchetto %s.%s %s:%s-%s settato per essere %s"
 
 #: ../output.py:2124
 msgid "--> Running transaction check"
@@ -1512,7 +1519,7 @@ msgstr "Completo!"
 
 #: ../yumcommands.py:42
 msgid " Mini usage:\n"
-msgstr ""
+msgstr " Uso comune:\n"
 
 #: ../yumcommands.py:52
 msgid "You need to be root to perform this command."
@@ -1551,7 +1558,7 @@ msgstr ""
 #: ../yumcommands.py:74
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "Repository del problema: %s"
 
 #: ../yumcommands.py:80
 #, python-format
@@ -1728,7 +1735,7 @@ msgstr "Elimina i dati nella cache"
 
 #: ../yumcommands.py:613
 msgid "Find what package provides the given value"
-msgstr "Determina il pacchetto che fornisce il valore dato"
+msgstr "Determina quale pacchetto fornisce un dato valore"
 
 #: ../yumcommands.py:633
 msgid "Check for available package updates"
@@ -1879,7 +1886,7 @@ msgstr "Repo-excluded: "
 
 #: ../yumcommands.py:1022
 msgid "Repo-filename: "
-msgstr ""
+msgstr "Repo-filename: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1991,27 +1998,27 @@ msgstr "Identifica gli errori nell'rpmdb"
 
 #: ../yumcommands.py:1514
 msgid "load a saved transaction from filename"
-msgstr ""
+msgstr "carica una transazione salvata da un file"
 
 #: ../yumcommands.py:1518
 msgid "No saved transaction file specified."
-msgstr ""
+msgstr "Nessun file specificato per la transazione salvata."
 
 #: ../yumcommands.py:1522
 #, python-format
 msgid "loading transaction from %s"
-msgstr ""
+msgstr "caricamento transazione da %s"
 
 #: ../yumcommands.py:1528
 #, python-format
 msgid "Transaction loaded from %s with %s members"
-msgstr ""
+msgstr "Transazione caricata da %s con %s membri"
 
 #. This is mainly for PackageSackError from rpmdb.
 #: ../yummain.py:84
 #, python-format
 msgid " Yum checks failed: %s"
-msgstr ""
+msgstr " Controlli Yum falliti: %s"
 
 #: ../yummain.py:114
 msgid ""
@@ -2022,7 +2029,7 @@ msgstr ""
 
 #: ../yummain.py:120
 msgid "Can't create lock file; exiting"
-msgstr ""
+msgstr "Impossibile creare il file di lock; uscita"
 
 #. Depsolve stage
 #: ../yummain.py:167
@@ -2033,6 +2040,8 @@ msgstr "Risoluzione dipendenze"
 #, python-format
 msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
 msgstr ""
+"La transazione è stata salvata; per eseguirla nuovamente: yum load-"
+"transaction %s"
 
 #: ../yummain.py:288
 msgid ""
@@ -2060,7 +2069,7 @@ msgstr "tsflag non valido nel file di configurazione: %s"
 #: ../yum/depsolve.py:164
 #, python-format
 msgid "Searching pkgSack for dep: %s"
-msgstr "Ricerca di pkgSack per dip: %s"
+msgstr "Ricerca nel pkgSack per dip: %s"
 
 #: ../yum/depsolve.py:207
 #, python-format
@@ -2122,12 +2131,13 @@ msgstr "Modalità per il pacchetto che fornisce %s: %s"
 #: ../yum/depsolve.py:389 ../yum/depsolve.py:406
 #, python-format
 msgid "Trying to update %s to resolve dep"
-msgstr ""
+msgstr "Tentativo di aggiornare %s per risolvere una dipendenza"
 
 #: ../yum/depsolve.py:400 ../yum/depsolve.py:410
 #, python-format
 msgid "No update paths found for %s. Failure!"
 msgstr ""
+"Nessun percorso di aggiornamento trovato per %s. Aggiornamento fallito!"
 
 #: ../yum/depsolve.py:416
 #, python-format
@@ -2387,12 +2397,12 @@ msgstr ""
 
 #: ../yum/__init__.py:983
 msgid "--> Finding unneeded leftover dependencies"
-msgstr ""
+msgstr "--&gt; Ricerca di dipendenze non necessarie"
 
 #: ../yum/__init__.py:1041
 #, python-format
 msgid "Protected multilib versions: %s != %s"
-msgstr ""
+msgstr "Versioni multilib protette: %s != %s"
 
 #: ../yum/__init__.py:1096
 #, python-format
@@ -2649,12 +2659,14 @@ msgstr "Nessun pacchetto con nome %s disponibile per l'installazione"
 #: ../yum/__init__.py:2941
 #, python-format
 msgid "Warning: Group %s does not have any packages."
-msgstr ""
+msgstr "Attenzione: il gruppo %s non contiene alcun pacchetto."
 
 #: ../yum/__init__.py:2943
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr ""
+"Il gruppo %s contiene %u pacchetti facoltativi, che potrebbero essere "
+"installati."
 
 #. This can happen due to excludes after .up has
 #. happened.
@@ -2671,7 +2683,7 @@ msgstr "Il pacchetto con tupla %s non è stato trovato nel rpmdb"
 #: ../yum/__init__.py:3079 ../yum/__init__.py:3129
 #, python-format
 msgid "Invalid version flag from: %s"
-msgstr ""
+msgstr "Flag di versione non valido da: %s"
 
 #: ../yum/__init__.py:3096 ../yum/__init__.py:3101
 #, python-format
@@ -2833,6 +2845,8 @@ msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
 msgstr ""
+"Il pacchetto %s.%s non è installato, non è quindi possibile aggiornarlo. "
+"Eseguire yum install se si desidera installarlo."
 
 #: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
 #, python-format
@@ -2899,7 +2913,7 @@ msgstr "Downgrade fallito: %s"
 #: ../yum/__init__.py:4516
 #, python-format
 msgid "Retrieving key from %s"
-msgstr ""
+msgstr "Recupero chiave da %s"
 
 #: ../yum/__init__.py:4534
 msgid "GPG key retrieval failed: "
@@ -2911,10 +2925,12 @@ msgstr "Recupero chiave GPG fallito: "
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr ""
+"La firma della chiave GPG %s non corrisponde alla chiave della CA per il "
+"repository: %s"
 
 #: ../yum/__init__.py:4559
 msgid "GPG key signature verified against CA Key(s)"
-msgstr ""
+msgstr "Verifica della firma della chiave GPG con la chiave della CA fallita "
 
 #: ../yum/__init__.py:4567
 #, python-format
@@ -2934,6 +2950,10 @@ msgid ""
 " Package: %s (%s)\n"
 " From   : %s"
 msgstr ""
+"Importazione chiave %s 0x%s:\n"
+" Userid  : %s\n"
+" Pacchetto: %s (%s)\n"
+" Da       : %s"
 
 #: ../yum/__init__.py:4600
 #, python-format
@@ -2942,6 +2962,9 @@ msgid ""
 " Userid: \"%s\"\n"
 " From  : %s"
 msgstr ""
+"Importazione chiave %s 0x%s:\n"
+" Userid: %s\n"
+" Da    : %s"
 
 #: ../yum/__init__.py:4634
 #, python-format
@@ -2959,7 +2982,7 @@ msgstr "Chiave importata correttamente"
 
 #: ../yum/__init__.py:4676
 msgid "Didn't install any keys"
-msgstr ""
+msgstr "Non è stata installata alcuna chiave"
 
 #: ../yum/__init__.py:4680
 #, python-format
@@ -2986,7 +3009,7 @@ msgstr "Importazione chiave fallita"
 #: ../yum/__init__.py:4770
 #, python-format
 msgid "Didn't install any keys for repo %s"
-msgstr ""
+msgstr "Non è stata installata alcuna chiave per il repository %s"
 
 #: ../yum/__init__.py:4774
 #, python-format
@@ -3022,55 +3045,62 @@ msgstr "Impossibile impostare la cachedir: %s"
 #: ../yum/__init__.py:5148 ../yum/__init__.py:5150
 msgid "Dependencies not solved. Will not save unresolved transaction."
 msgstr ""
+"Dipendenze non risolte. La transazione con dipendenze non risolte non verrà "
+"salvata."
 
 #: ../yum/__init__.py:5179 ../yum/__init__.py:5181
 #, python-format
 msgid "Could not save transaction file %s: %s"
-msgstr ""
+msgstr "Impossibile salvare il file di transazione %s: %s"
 
 #: ../yum/__init__.py:5195
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
-msgstr ""
+msgstr "Impossibile accedere/leggere la transazione salvata %s: %s"
 
 #: ../yum/__init__.py:5214
 msgid "rpmdb ver mismatched saved transaction version, "
 msgstr ""
+"la versione di rpmdb non corrisponde alla versione della transazione "
+"salvata, "
 
 #: ../yum/__init__.py:5216
 msgid " ignoring, as requested."
-msgstr ""
+msgstr " ignorato, come richiesto."
 
 #: ../yum/__init__.py:5219 ../yum/__init__.py:5354
 msgid " aborting."
-msgstr ""
+msgstr " esecuzione annullata."
 
 #: ../yum/__init__.py:5228
 msgid "cannot find tsflags or tsflags not integer."
-msgstr ""
+msgstr "impossibile trovare tsflags o tsflags non intero."
 
 #: ../yum/__init__.py:5267
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
-msgstr ""
+msgstr "Membro di transazione trovato in stato attuale sconosciuto: %s"
 
 #: ../yum/__init__.py:5271
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
-msgstr ""
+msgstr "Impossibile trovare il membro di transazione: %s in stato %s"
 
 #: ../yum/__init__.py:5307 ../yum/__init__.py:5324
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
-msgstr ""
+msgstr "Impossibile trovare il membro di transazione: %s dall'origine: %s"
 
 #: ../yum/__init__.py:5349
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr ""
+"Membri della transazione, ci sono relazioni mancanti oppure ts è stata "
+"modificata,"
 
 #: ../yum/__init__.py:5351
 msgid " ignoring, as requested. You must redepsolve!"
 msgstr ""
+" ignorati, come richiesto. E' necessario eseguire nuovamente depsolve."
 
 #. Mostly copied from YumOutput._outKeyValFill()
 #: ../yum/plugins.py:209
