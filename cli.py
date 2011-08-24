@@ -763,7 +763,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             uret = []
             for req in pkg.requires:
                 for npkg in self.returnInstalledPackagesByDep(req):
-                    uret += self.update(pattern=npkg.name, requiringPo=reqpo)
+                    if npkg.name in done:
+                        continue
+                    uret += self.update(name=npkg.name, requiringPo=reqpo)
                     uret += _pkg2ups(npkg, reqpo=reqpo)
             return uret
 
