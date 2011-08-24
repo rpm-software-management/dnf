@@ -1114,10 +1114,12 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
         if check_timestamps:
             fi = stat_f(filename)
             fo = stat_f(out)
-            if fi and fo and fo.st_mtime > fi.st_mtime:
+            if fi and fo and fo.st_mtime == fi.st_mtime:
                 return out
 
         _decompress_chunked(filename, out, ztype)
+        if check_timestamps and fi:
+            os.utime(out, (fi.st_mtime, fi.st_mtime))
         
     return out
     
