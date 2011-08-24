@@ -1417,7 +1417,7 @@ class YumOutput:
 Transaction Summary
 %s
 """) % ('=' * self.term.columns))
-        for action, count, depcount in (
+        summary_data =  (
             (_('Install'), len(self.tsInfo.installed),
              len(self.tsInfo.depinstalled)),
             (_('Upgrade'), len(self.tsInfo.updated),
@@ -1429,25 +1429,56 @@ Transaction Summary
             (_('Skipped (dependency problems)'), len(self.skipped_packages), 0),
             (_('Not installed'), len(self._not_found_i.values()), 0),
             (_('Not available'), len(self._not_found_a.values()), 0),
-        ):
+        )
+        max_msg_action   = 0
+        max_msg_count    = 0
+        max_msg_pkgs     = 0
+        max_msg_depcount = 0
+        for action, count, depcount in summary_data:
+            if not count and not depcount:
+                continue
+
+            msg_pkgs = P_('Package', 'Packages', count)
+            len_msg_action   = utf8_width(action)
+            len_msg_count    = utf8_width(str(count))
+            len_msg_pkgs     = utf8_width(msg_pkgs)
+
+            if depcount:
+                len_msg_depcount = utf8_width(str(depcount))
+            else:
+                len_msg_depcount = 0
+
+            # dito. max() by hand, due to RHEL-5
+            if len_msg_action > max_msg_action:
+                max_msg_action = len_msg_action
+            if len_msg_count > max_msg_count:
+                max_msg_count = len_msg_count
+            if len_msg_pkgs > max_msg_pkgs:
+                max_msg_pkgs = len_msg_pkgs
+            if len_msg_depcount > max_msg_depcount:
+                max_msg_depcount = len_msg_depcount
+
+        for action, count, depcount in summary_data:
             msg_pkgs = P_('Package', 'Packages', count)
             if depcount:
                 msg_deppkgs = P_('Dependent package', 'Dependent packages',
                                  depcount)
-                max_msg_pkgs  = utf8_width(_('Package'))
-                max_msg_pkgs2 = utf8_width(_('Packages'))
-                if max_msg_pkgs2 > max_msg_pkgs:
-                    max_msg_pkgs = max_msg_pkgs2
                 if count:
-                    msg = '%-9s %5d %-*s (+%5d %s)\n'
-                    out.append(msg % (action, count, max_msg_pkgs, msg_pkgs,
-                                      depcount, msg_deppkgs))
+                    msg = '%s  %*d %s (+%*d %s)\n'
+                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                      max_msg_count, count,
+                                      utf8_width_fill(msg_pkgs, max_msg_pkgs),
+                                      max_msg_depcount, depcount, msg_deppkgs))
                 else:
-                    msg = '%-9s %5s %-*s ( %5d %s)\n'
-                    out.append(msg % (action, '', max_msg_pkgs, '',
-                                      depcount, msg_deppkgs))
+                    msg = '%s  %*s %s ( %*d %s)\n'
+                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                      max_msg_count, '',
+                                      utf8_width_fill('', max_msg_pkgs),
+                                      max_msg_depcount, depcount, msg_deppkgs))
             elif count:
-                out.append('%-9s %5d %s\n' % (action, count, msg_pkgs))
+                msg = '%s  %*d %s\n'
+                out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                  max_msg_count, count, msg_pkgs))
         return ''.join(out)
         
     def postTransactionOutput(self):
