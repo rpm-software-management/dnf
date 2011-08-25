@@ -2081,7 +2081,7 @@ to exit.
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
-                        pkg_max_len=0):
+                        pkg_max_len=0, show_repo=True):
             prefix = " " * prefix_len
             if was_installed:
                 _pkg_states = _pkg_states_installed
@@ -2105,9 +2105,11 @@ to exit.
             else:
                 (hibeg, hiend) = self._highlight('normal')
             state = utf8_width_fill(state, _pkg_states['maxlen'])
+            ui_repo = ''
+            if show_repo:
+                ui_repo = self._hpkg2from_repo(hpkg)
             print "%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, hpkg,
-                                        self._hpkg2from_repo(hpkg))
+                                        pkg_max_len, hpkg, ui_repo)
 
         if type(old.tid) == type([]):
             print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
@@ -2197,7 +2199,9 @@ to exit.
             print _("Packages Skipped:")
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
         for hpkg in old.trans_skip:
-            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len)
+            #  Don't show the repo. here because we can't store it as they were,
+            # by definition, not installed.
+            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len, show_repo=False)
 
         if old.rpmdb_problems:
             print _("Rpmdb Problems:")
