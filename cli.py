@@ -268,6 +268,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         except yum.Errors.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
+        except IOError, e:
+            e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
+            self.logger.critical(_('Config Error: %s'), e)
+            sys.exit(1)
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
             sys.exit(1)
