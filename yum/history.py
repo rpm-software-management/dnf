@@ -1296,10 +1296,8 @@ class YumHistory:
         sql = """INSERT INTO pkg_%(db)sdb (pkgtupid, %(db)sdb_key, %(db)sdb_val)
                         VALUES (?, ?, ?)""" % {'db' : db}
         executeSQL(cur, sql, (pid, attr, to_unicode(val)))
-        for row in cur:
-            return row[0]
 
-        return None
+        return cur.lastrowid
 
     def _save_rpmdb_key(self, pkg, attr, val):
         return self._save_anydb_key(pkg, "rpm", attr, val)
