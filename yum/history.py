@@ -738,6 +738,8 @@ class YumHistory:
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()
+    def _rollback(self):
+        return self._conn.rollback()
 
     def close(self):
         if self._conn is not None:
@@ -1345,10 +1347,12 @@ class YumHistory:
         """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
         if not self._wipe_anydb(ipkg, "rpm"):
             return False
-        self._wipe_anydb(ipkg, "yum")
-        if not self._save_rpmdb(ipkg):
+        if not (self._wipe_anydb(ipkg, "yum") and
+                self._save_rpmdb(ipkg) and
+                self._save_yumdb(ipkg)):
+            self._rollback()
             return False
-        self._save_yumdb(ipkg)
+
         self._commit()
         return True
 
