@@ -55,6 +55,7 @@ class FakeConf(object):
         self.protected_packages = []
         self.protected_multilib = False
         self.clean_requirements_on_remove = True
+        self.upgrade_requirements_on_install = False
 
 class FakeSack:
     """ Fake PackageSack to use with FakeRepository"""
