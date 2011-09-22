@@ -243,41 +243,86 @@ class PackageObject(object):
         
     def _ui_envra(self):
         if self.epoch == '0':
-            out = '%s-%s-%s.%s' % (self.name, 
-                                   self.version,
-                                   self.release, 
-                                   self.arch)
+            return self.nvra
         else:
-            out = '%s:%s-%s-%s.%s' % (self.epoch,
-                                      self.name,  
-                                      self.version, 
-                                      self.release, 
-                                      self.arch)
-        return out
+            return self.envra
     ui_envra = property(fget=lambda self: self._ui_envra())
 
     def _ui_nevra(self):
         if self.epoch == '0':
-            out = '%s-%s-%s.%s' % (self.name,
-                                   self.version,
-                                   self.release,
-                                   self.arch)
+            return self.nvra
         else:
-            out = '%s-%s:%s-%s.%s' % (self.name,
-                                      self.epoch,
-                                      self.version,
-                                      self.release,
-                                      self.arch)
-        return out
+            return self.nevra
     ui_nevra = property(fget=lambda self: self._ui_nevra())
 
     def _ui_evr(self):
         if self.epoch == '0':
-            out = '%s-%s' % (self.version, self.release)
+            return self.vr
         else:
-            out = '%s:%s-%s' % (self.epoch, self.version, self.release)
-        return out
+            return self.evr
     ui_evr = property(fget=lambda self: self._ui_evr())
+
+    def _ui_evra(self):
+        if self.epoch == '0':
+            return self.vra
+        else:
+            return self.evra
+    ui_evra = property(fget=lambda self: self._ui_evra())
+
+    def _ui_nevr(self):
+        if self.epoch == '0':
+            return self.nvr
+        else:
+            return self.nevr
+    ui_nevr = property(fget=lambda self: self._ui_nevr())
+
+    def _na(self):
+        return '%s.%s' % (self.name, self.arch)
+    na = property(fget=lambda self: self._na())
+
+    def _vr(self):
+        return '%s-%s' % (self.version, self.release)
+    vr = property(fget=lambda self: self._vr())
+
+    def _vra(self):
+        return '%s-%s.%s' % (self.version, self.release, self.arch)
+    vra = property(fget=lambda self: self._vra())
+
+    def _evr(self):
+        return '%s:%s-%s' % (self.epoch, self.version, self.release)
+    evr = property(fget=lambda self: self._evr())
+
+    def _evra(self):
+        return '%s:%s-%s.%s' % (self.epoch,self.version,self.release, self.arch)
+    evra = property(fget=lambda self: self._evra())
+
+    def _nvr(self):
+        return '%s-%s-%s' % (self.name, self.version, self.release)
+    nvr = property(fget=lambda self: self._nvr())
+
+    def _nvra(self):
+        return '%s-%s-%s.%s' % (self.name, self.version,self.release, self.arch)
+    nvra = property(fget=lambda self: self._nvra())
+
+    def _nevr(self):
+        return '%s-%s:%s-%s' % (self.name, self.epoch,self.version,self.release)
+    nevr = property(fget=lambda self: self._nevr())
+
+    def _nevra(self):
+        return '%s-%s:%s-%s.%s' % (self.name,
+                                   self.epoch, self.version, self.release,
+                                   self.arch)
+    nevra = property(fget=lambda self: self._nevra())
+
+    def _envr(self):
+        return '%s:%s-%s-%s' % (self.epoch,self.name, self.version,self.release)
+    envr = property(fget=lambda self: self._envr())
+
+    def _envra(self):
+        return '%s:%s-%s-%s.%s' % (self.epoch, self.name,
+                                   self.version, self.release,
+                                   self.arch)
+    envra = property(fget=lambda self: self._envra())
 
     def __str__(self):
         return self.ui_envra
