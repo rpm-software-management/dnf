@@ -102,15 +102,15 @@ def main(args):
         return exFatal(e)
 
     # Try to open the current directory to see if we have 
-    # read and write access. If not, chdir to /
+    # read and execute access. If not, chdir to /
     try:
         f = open(".")
     except IOError, e:
         if e.errno == errno.EACCES:
-            logger.critical(_('No read/write access in current directory, moving to /'))
+            logger.critical(_('No read/execute access in current directory, moving to /'))
             os.chdir("/")
     else:
-        close(f)
+        f.close()
 
     lockerr = ""
     while True:
