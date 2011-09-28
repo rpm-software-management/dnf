@@ -15,6 +15,7 @@
 
 """Various utility functions, and a utility class."""
 
+import os
 import sys
 import time
 import exceptions
@@ -29,6 +30,12 @@ from optparse import OptionGroup
 
 import yum.plugins as plugins
 from urlgrabber.progress import format_number
+
+try:
+    _USER_HZ = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
+except (AttributeError, KeyError):
+    # Huh, non-Unix platform? Or just really old?
+    _USER_HZ = 100
 
 def suppress_keyboard_interrupt_message():
     """Change settings so that nothing will be printed to the
@@ -45,14 +52,13 @@ def suppress_keyboard_interrupt_message():
     sys.excepthook = new_hook
 
 def jiffies_to_seconds(jiffies):
-    """Convert a number of jiffies to seconds, using the convention
-    that 100 jiffies = 1 second.
+    """Convert a number of jiffies to seconds. How many jiffies are in a second
+    is system-dependent, e.g. 100 jiffies = 1 second is common.
 
     :param jiffies: a number of jiffies
     :return: the equivalent number of seconds
     """
-    Hertz = 100 # FIXME: Hack, need to get this, AT_CLKTCK elf note *sigh*
-    return int(jiffies) / Hertz
+    return int(jiffies) / _USER_HZ
 
 def seconds_to_ui_time(seconds):
     """Return a human-readable string representation of the length of
