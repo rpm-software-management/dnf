@@ -3459,6 +3459,34 @@ class YumBase(depsolve.Depsolve):
 
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
 
+    def returnInstalledPackageByDep(self, depstring):
+        """Return the best, or first, installed package object that provides the
+        given dependencies.
+
+        :param depstring: a string specifying the dependency to return
+           the package that fulfils
+        :return: the best, or first, installed package that fulfils the given
+           dependency
+        :raises: a :class:`yum.Errors.YumBaseError` if no packages that
+           fulfil the given dependency can be found
+        """
+        # we get all sorts of randomness here
+        errstring = depstring
+        if type(depstring) not in types.StringTypes:
+            errstring = str(depstring)
+        
+        try:
+            pkglist = self.returnInstalledPackagesByDep(depstring)
+        except Errors.YumBaseError:
+            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+        
+        ps = ListPackageSack(pkglist)
+        result = self._bestPackageFromList(ps.returnNewestByNameArch())
+        if result is None:
+            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+        
+        return result
+
     def _bestPackageFromList(self, pkglist):
         """take list of package objects and return the best package object.
            If the list is empty, return None. 
