@@ -1414,6 +1414,10 @@ class ResolveDepCommand(YumCommand):
     resolvedep command.
     """
 
+    def __init__(self):
+        YumCommand.__init__(self)
+        self.hidden = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1434,7 +1438,7 @@ class ResolveDepCommand(YumCommand):
 
         :return: a one line summary of this command
         """
-        return _("Determine which package provides the given dependency")
+        return "repoquery --pkgnarrow=all --whatprovides --qf '%{envra} %{ui_from_repo}'"
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.

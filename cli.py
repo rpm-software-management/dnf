@@ -1402,7 +1402,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.YumBaseError:
                 ipkg = None
             else:
-                self.verbose_logger.info(ipkg.envra)
+                self.verbose_logger.info("%s %s" % (ipkg.envra,
+                                                    ipkg.ui_from_repo))
             try:
                 pkg = self.returnPackageByDep(arg)
             except yum.Errors.YumBaseError:
@@ -1410,7 +1411,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     self.logger.critical(_('No Package Found for %s'), arg)
             else:
                 if not pkg.verEQ(ipkg):
-                    self.verbose_logger.info(pkg.envra)
+                    self.verbose_logger.info("%s %s" % (pkg.envra,
+                                                        pkg.ui_from_repo))
 
         return 0, []
     

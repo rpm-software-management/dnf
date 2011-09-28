@@ -52,6 +52,7 @@ gnome\-packagekit application\&.
 .I \fR * shell [filename]
 .br
 .I \fR * resolvedep dep1 [dep2] [\&.\&.\&.] 
+    (maintained for legacy reasons only - use repoquery or yum provides)
 .br
 .I \fR * localinstall rpmfile1 [rpmfile2] [\&.\&.\&.] 
     (maintained for legacy reasons only - use install)
@@ -237,12 +238,13 @@ that file is executed in yum shell mode. See \fIyum-shell(8)\fP for more info
 .IP
 .IP "\fBresolvedep\fP"
 Is used to list packages providing the specified dependencies, at most one
-package is listed per dependency. 
+package is listed per dependency. This command is maintained for legacy
+reasons only, use repoquery instead.
 .IP
 .IP "\fBlocalinstall\fP"
 Is used to install a set of local rpm files. If required the enabled 
 repositories will be used to resolve dependencies. Note that the install command
-will do a local install, if given a filename. This option is maintained for legacy
+will do a local install, if given a filename. This command is maintained for legacy
 reasons only.
 .IP
 .IP "\fBlocalupdate\fP"
@@ -250,7 +252,7 @@ Is used to update the system by specifying local rpm files. Only the specified
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
 If required the enabled repositories will be used to resolve dependencies. Note
-that the update command will do a local update, if given a filename. This option is maintained for
+that the update command will do a local update, if given a filename. This command is maintained for
 legacy reasons only.
 .IP
 .IP "\fBreinstall\fP"
