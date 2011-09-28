@@ -1398,12 +1398,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         """
         for arg in args:
             try:
+                ipkg = self.returnInstalledPackageByDep(arg)
+            except yum.Errors.YumBaseError:
+                ipkg = None
+            else:
+                self.verbose_logger.info(ipkg.envra)
+            try:
                 pkg = self.returnPackageByDep(arg)
             except yum.Errors.YumBaseError:
-                self.logger.critical(_('No Package Found for %s'), arg)
+                if not ipkg:
+                    self.logger.critical(_('No Package Found for %s'), arg)
             else:
-                msg = '%s:%s-%s-%s.%s' % (pkg.epoch, pkg.name, pkg.version, pkg.release, pkg.arch)
-                self.verbose_logger.info(msg)
+                if not pkg.verEQ(ipkg):
+                    self.verbose_logger.info(pkg.envra)
 
         return 0, []
     
