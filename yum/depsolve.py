@@ -816,6 +816,19 @@ class Depsolve(object):
                     if checkdep:
                         break # The next conflict might be the same pkg
 
+                # check Obsoletes
+                #  Atm. This is _just_ checking for transaction members which
+                # obsolete each other. Because rpm will now auto. obs. those
+                # anyway. We _don't_ check for installed pkgs. which might obs.
+                # something to be installed, even though rpm will also do that.
+                for txmbr in self.tsInfo.getMembersWithState(None, output_states=TS_INSTALL_STATES):
+                    for obs_n in txmbr.po.obsoletes_names:
+                        for otxmbr in self.tsInfo.matchNaevr(name=obs_n):
+                            if otxmbr.output_state not in TS_INSTALL_STATES:
+                                continue
+                            if otxmbr.po.obsoletedBy([txmbr.po]):
+                                self.tsInfo.remove(otxmbr.pkgtup)
+
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
                     self.verbose_logger.log(logginglevels.DEBUG_1, _('Restarting Loop'))
