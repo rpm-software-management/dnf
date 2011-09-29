@@ -194,8 +194,8 @@ _yum()
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
         groupinfo groupinstall grouplist groupremove help history info install
-        list makecache provides reinstall remove repolist resolvedep search
-        shell update upgrade version )
+        list makecache provides reinstall remove repolist search shell update
+        upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#words[@]}-1; i++ )) ; do
