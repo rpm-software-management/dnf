@@ -4874,18 +4874,24 @@ class YumBase(depsolve.Depsolve):
 
         return returndict
 
-    def history_redo(self, transaction):
+    def history_redo(self, transaction,
+                     force_reinstall=False, force_changed_removal=False):
         """Repeat the transaction represented by the given
         :class:`yum.history.YumHistoryTransaction` object.
 
         :param transaction: a
            :class:`yum.history.YumHistoryTransaction` object
            representing the transaction to be repeated
+        :param force_reinstall: bool - do we want to reinstall anything that was
+           installed/updated/downgraded/etc.
+        :param force_changed_removal: bool - do we want to force remove anything
+           that was downgraded or upgraded.
         :return: whether the transaction was repeated successfully
         """
         # NOTE: This is somewhat basic atm. ... see comment in undo.
         #  Also note that redo doesn't force install Dep-Install packages,
         # which is probably what is wanted the majority of the time.
+
         old_conf_obs = self.conf.obsoletes
         self.conf.obsoletes = False
         done = False
@@ -4895,19 +4901,46 @@ class YumBase(depsolve.Depsolve):
                     done = True
         for pkg in transaction.trans_data:
             if pkg.state == 'Downgrade':
+                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
+                    if self.reinstall(pkgtup=pkg.pkgtup):
+                        done = True
+                    continue
+
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
                 except yum.Errors.DowngradeError:
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
+            if force_changed_removal and pkg.state == 'Downgraded':
+                if self.tsInfo.getMembers(pkg.pkgtup):
+                    continue
+                if self.remove(pkgtup=pkg.pkgtup, silence_warnings=True):
+                    done = True
+        for pkg in transaction.trans_data:
             if pkg.state == 'Update':
+                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
+                    if self.reinstall(pkgtup=pkg.pkgtup):
+                        done = True
+                    continue
+
                 if self.update(pkgtup=pkg.pkgtup):
                     done = True
                 else:
                     self.logger.critical(_('Failed to upgrade: %s'), pkg)
         for pkg in transaction.trans_data:
+            if force_changed_removal and pkg.state == 'Updated':
+                if self.tsInfo.getMembers(pkg.pkgtup):
+                    continue
+                if self.remove(pkgtup=pkg.pkgtup, silence_warnings=True):
+                    done = True
+        for pkg in transaction.trans_data:
             if pkg.state in ('Install', 'True-Install', 'Obsoleting'):
+                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
+                    if self.reinstall(pkgtup=pkg.pkgtup):
+                        done = True
+                    continue
+
                 if self.install(pkgtup=pkg.pkgtup):
                     done = True
         for pkg in transaction.trans_data:

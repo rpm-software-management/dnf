@@ -341,6 +341,11 @@ The undo/redo/rollback commands take either a single transaction id or the
 keyword last and an offset from the last transaction (Eg. if you've done 250
 transactions, "last" refers to transaction 250, and "last-4" refers to
 transaction 246).
+The redo command can also take some optional arguments before you specify the
+transaction. "force-reinstall" tells it reinstall any packages that were
+installed in that transaction (via. install, upgrade or downgrade).
+"force-remove" tells it to forcibly remove any packages that were updated or
+downgraded.
 
 The undo/redo commands act on the specified transaction, undo'ing or repeating
 the work of that transaction. While the rollback command will undo all

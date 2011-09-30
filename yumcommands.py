@@ -2367,13 +2367,35 @@ class HistoryCommand(YumCommand):
         return _("Display, or use, the transaction history")
 
     def _hcmd_redo(self, base, extcmds):
+        kwargs = {'force_reinstall' : False,
+                  'force_changed_removal' : False,
+                  }
+        kwargs_map = {'reinstall' : 'force_reinstall',
+                      'force-reinstall' : 'force_reinstall',
+                      'remove' : 'force_changed_removal',
+                      'force-remove' : 'force_changed_removal',
+                      }
+        while len(extcmds) > 1:
+            done = False
+            for arg in extcmds[1].replace(' ', ',').split(','):
+                if arg not in kwargs_map:
+                    continue
+
+                done = True
+                key = kwargs_map[extcmds[1]]
+                kwargs[key] = not kwargs[key]
+
+            if not done:
+                break
+            extcmds = [extcmds[0]] + extcmds[2:]
+
         old = base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
         print "Repeating transaction %u, from %s" % (old.tid, tm)
         base.historyInfoCmdPkgsAltered(old)
-        if base.history_redo(old):
+        if base.history_redo(old, **kwargs):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, base, extcmds):
