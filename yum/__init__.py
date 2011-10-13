@@ -5093,17 +5093,21 @@ class YumBase(depsolve.Depsolve):
             if pkgs:
                 pkgs = sorted(pkgs)[-1]
                 msg = (_('Importing %s key 0x%s:\n'
-                         ' Userid : %s\n'
-                         ' Package: %s (%s)\n'
-                         ' From   : %s') %
+                         ' Userid     : "%s"\n'
+                         ' Fingerprint: %s\n'
+                         ' Package    : %s (%s)\n'
+                         ' From       : %s') %
                        (keytype, info['hexkeyid'], to_unicode(info['userid']),
+                        misc.gpgkey_fingerprint_ascii(info),
                         pkgs, pkgs.ui_from_repo,
                         keyurl.replace("file://","")))
         if msg is None:
             msg = (_('Importing %s key 0x%s:\n'
-                     ' Userid: "%s"\n'
-                     ' From  : %s') %
+                     ' Userid     : "%s"\n'
+                     ' Fingerprint: %s\n'
+                     ' From       : %s') %
                    (keytype, info['hexkeyid'], to_unicode(info['userid']),
+                    misc.gpgkey_fingerprint_ascii(info),
                     keyurl.replace("file://","")))
         self.logger.critical("%s", msg)
 
