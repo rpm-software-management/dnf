@@ -8,6 +8,7 @@ import os
 import os.path
 from cStringIO import StringIO
 import base64
+import binascii
 import struct
 import re
 import errno
@@ -409,6 +410,17 @@ def procgpgkey(rawkey):
   
     # Decode and return
     return base64.decodestring(block.getvalue())
+
+def gpgkey_fingerprint_ascii(info, chop=4):
+    ''' Given a key_info data from getgpgkeyinfo(), return an ascii
+    fingerprint. Chop every 4 ascii values, as that is what GPG does. '''
+    # First "duh" ... it's a method...
+    fp = info['fingerprint']()
+    fp = binascii.hexlify(fp)
+    if chop:
+        fp = [fp[i:i+chop] for i in range(0, len(fp), chop)]
+        fp = " ".join(fp)
+    return fp
 
 def getgpgkeyinfo(rawkey, multiple=False):
     '''Return a dict of info for the given ASCII armoured key text
