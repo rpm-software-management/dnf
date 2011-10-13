@@ -1204,7 +1204,11 @@ class YumHistory:
         if tids and len(tids) <= yum.constants.PATTERNS_INDEXED_MAX:
             params = tids = list(set(tids))
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
-        sql += " ORDER BY beg_ts DESC, tid ASC"
+        #  This relies on the fact that the PRIMARY KEY in sqlite will always
+        # increase with each transaction. In theory we can use:
+        # ORDER BY beg_ts DESC ... except sometimes people do installs with a
+        # system clock that is very broken, and using that screws them forever.
+        sql += " ORDER BY tid DESC"
         if limit is not None:
             sql += " LIMIT " + str(limit)
         executeSQL(cur, sql, params)
