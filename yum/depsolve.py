@@ -849,6 +849,12 @@ class Depsolve(object):
                                 continue
                             if otxmbr.po.obsoletedBy([txmbr.po]):
                                 self.tsInfo.remove(otxmbr.pkgtup)
+                                #  We need to remove an obsoleted entry that
+                                # was maybe used to resolve something ... ?
+                                CheckDeps = True
+                                self._last_req = None
+                                self.pkgSack.delPackage(otxmbr.po)
+                                self.up.delPackage(otxmbr.pkgtup)
 
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
