@@ -58,6 +58,9 @@ flags = {"GT": rpm.RPMSENSE_GREATER,
          "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
          "EQ": rpm.RPMSENSE_EQUAL,
          None: 0 }
+_rflags = {}
+for f in flags:
+    _rflags[flags[f]] = f
 
 class Depsolve(object):
     """A class for resolving dependencies."""
@@ -407,9 +410,27 @@ class Depsolve(object):
             self.conf.obsoletes = 0
             txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
             self.conf.obsoletes = origobs
-            if not txmbrs:
+
+            def _check_update_worked(txmbrs, obs=False):
+                #  Old code assumed that if there was an update, we were good:
+                #    if txmbrs: return True
+                # ..however we have a problem when foo-1 and foo-2 both require
+                # bar-1, and bar-2 is being installed. If the req. is identical
+                # then we'll skip checking it in _checkInstall(), so we need to
+                # check it here.
+                for txmbr in txmbrs:
+                    if obs or txmbr.name == requiringPo.name:
+                        n,f,v = requirement
+                        creq = (n, _rflags[f],
+                                rpmUtils.miscutils.stringToVersion(v))
+                        # If it's identical ... checkInstall will skip it.
+                        if creq not in txmbr.po.requires:
+                            return True
+                return False
+
+            if not _check_update_worked(txmbrs):
                 txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
-                if not txmbrs:
+                if not _check_update_worked(txmbrs, obs=True):
                     msg = self._err_missing_requires(requiringPo, requirement)
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
                     return self._requiringFromTransaction(requiringPo, requirement, errorlist)
