@@ -266,17 +266,33 @@ _yum()
 
         history)
             if [[ $prev == $cmd ]] ; then
-                COMPREPLY=( $( compgen -W 'info list summary undo redo new
-                    addon-info package-list rollback' -- "$cur" ) )
+                COMPREPLY=( $( compgen -W 'info list packages-list
+                    packages-info summary addon-info redo undo rollback new
+                    sync stats' -- "$cur" ) )
                 return 0
             fi
             case $subcmd in
-                undo|redo|repeat|addon|addon-info|rollback)
-                    COMPREPLY=( $( compgen -W "last" -- "$cur" ) )
-                    _yum_transactions
+                undo|repeat|addon|addon-info|rollback)
+                    if [[ $prev == $subcmd ]]; then
+                        COMPREPLY=( $( compgen -W "last" -- "$cur" ) )
+                        _yum_transactions
+                    fi
+                    ;;
+                redo)
+                    case $prev in
+                        redo)
+                            COMPREPLY=( $( compgen -W "force-reinstall
+                                force-remove last" -- "$cur" ) )
+                            _yum_transactions
+                            ;;
+                        reinstall|force-reinstall|remove|force-remove)
+                            COMPREPLY=( $( compgen -W "last" -- "$cur" ) )
+                            _yum_transactions
+                            ;;
+                    esac
                     ;;
                 package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
-                packages-list)
+                packages-list|pkg-info|pkgs-info|package-info|packages-info)
                     _yum_list available "$cur"
                     ;;
                 info|list|summary)
@@ -287,6 +303,9 @@ _yum()
                         _yum_list available "$cur"
                     fi
                     _yum_transactions
+                    ;;
+                sync|synchronize)
+                    _yum_list installed "$cur"
                     ;;
             esac
             return 0
