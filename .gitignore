@@ -4,6 +4,8 @@
 *.bak
 *.swp
 *.tar.*
+.tx
+docs/sphinxdocs/_build
 .project
 .pydevproject
 asthelper.completions
