@@ -42,6 +42,15 @@ apidocs:
 	make -C docs/sphinxdocs html
 	echo "Docs are in: docs/sphinxdocs/_build/html/*"
 
+transifex-pull:
+	tx pull -a -f
+	@echo "You can now git commit -a -m 'Transfix pull, *.po update'"
+
+transifex-push:
+	make -C po yum.pot
+	tx push -s -t
+	@echo "You can now git commit -a -m 'Transfix push, yum.pot update'"
+
 .PHONY: docs test
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
