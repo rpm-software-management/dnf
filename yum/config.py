@@ -720,6 +720,7 @@ class YumConf(StartupConf):
     """
     retries = PositiveIntOption(10, names_of_0=["<forever>"])
     recent = IntOption(7, range_min=0)
+    reset_nice = BoolOption(False)
 
     cachedir = Option('/var/cache/yum')
 

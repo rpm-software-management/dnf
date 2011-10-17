@@ -1603,10 +1603,23 @@ class YumBase(depsolve.Depsolve):
                 pass
         self._ts_save_file = None
         
+        if self.conf.reset_nice:
+            onice = os.nice(0)
+            if onice:
+                try:
+                    os.nice(-onice)
+                except:
+                    onice = 0
+
         errors = self.ts.run(cb.callback, '')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
         # list means some errors happened in the transaction and non-empty 
         # list that there were errors preventing the ts from starting...
+        if self.conf.reset_nice:
+            try:
+                os.nice(onice)
+            except:
+                pass
         
         # make resultobject - just a plain yumgenericholder object
         resultobject = misc.GenericHolder()
