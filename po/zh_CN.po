@@ -2,15 +2,16 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# Mike Ma <zhtx10@gmail.com>, 2011.
+# Translators:
 # lovenemesis <lovenemesis@gmail.com>, 2011.
+# Mike Ma <zhtx10@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
-"POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-07-17 05:22+0000\n"
-"Last-Translator: ekd123 <zhtx10@gmail.com>\n"
+"POT-Creation-Date: 2011-08-23 11:08-0400\n"
+"PO-Revision-Date: 2011-08-23 15:09+0000\n"
+"Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
 "Language-Team: Chinese (China) (http://www.transifex.net/projects/p/yum/team/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,122 +19,123 @@ msgstr ""
 "Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: ../callback.py:48 ../output.py:1037 ../yum/rpmtrans.py:73
+#: ../callback.py:45 ../output.py:1355 ../yum/rpmtrans.py:73
 msgid "Updating"
 msgstr "正在升级"
 
-#: ../callback.py:49 ../yum/rpmtrans.py:74
+#: ../callback.py:46 ../yum/rpmtrans.py:74
 msgid "Erasing"
 msgstr "正在删除"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1036
-#: ../output.py:2218 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1354
+#: ../output.py:2720 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
 #: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "正在安装"
 
-#: ../callback.py:52 ../callback.py:58 ../output.py:1840 ../yum/rpmtrans.py:77
+#: ../callback.py:49 ../callback.py:55 ../output.py:2177 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "被取代"
 
-#: ../callback.py:54 ../output.py:1169 ../output.py:1686 ../output.py:1847
+#: ../callback.py:51 ../output.py:1476 ../output.py:2023 ../output.py:2184
 msgid "Updated"
 msgstr "更新完毕"
 
-#: ../callback.py:55 ../output.py:1685
+#: ../callback.py:52 ../output.py:2022
 msgid "Erased"
 msgstr "已删除"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1167
-#: ../output.py:1685 ../output.py:1687 ../output.py:2190
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1474
+#: ../output.py:2022 ../output.py:2024 ../output.py:2692
 msgid "Installed"
 msgstr "已安装"
 
-#: ../callback.py:130
+#: ../callback.py:142
 msgid "No header - huh?"
 msgstr "没有文件头 - 怎么回事？"
 
-#: ../callback.py:168
+#: ../callback.py:180
 msgid "Repackage"
 msgstr "重新打包"
 
-#: ../callback.py:189
+#: ../callback.py:201
 #, python-format
 msgid "Error: invalid output state: %s for %s"
 msgstr "错误：%s 输出状态不对：%s"
 
-#: ../callback.py:212
+#: ../callback.py:224
 #, python-format
 msgid "Erased: %s"
 msgstr "已删除：%s"
 
-#: ../callback.py:217 ../output.py:1038 ../output.py:2193
+#: ../callback.py:229 ../output.py:1356 ../output.py:2695
 msgid "Removing"
 msgstr "正在删除"
 
-#: ../callback.py:219 ../yum/rpmtrans.py:79
+#: ../callback.py:231 ../yum/rpmtrans.py:79
 msgid "Cleanup"
 msgstr "清理"
 
-#: ../cli.py:115
+#: ../cli.py:118
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "命令 \"%s\" 已有定义"
 
-#: ../cli.py:127
+#: ../cli.py:133
 msgid "Setting up repositories"
 msgstr "设置仓库"
 
-#: ../cli.py:138
+#: ../cli.py:144
 msgid "Reading repository metadata in from local files"
 msgstr "从本地文件读入仓库元数据"
 
-#: ../cli.py:245 ../utils.py:281
+#: ../cli.py:252 ../utils.py:340
 #, python-format
 msgid "Config Error: %s"
 msgstr "配置错误：%s"
 
-#: ../cli.py:248 ../cli.py:1584 ../utils.py:284
+#: ../cli.py:255 ../cli.py:1897 ../utils.py:343
 #, python-format
 msgid "Options Error: %s"
 msgstr "属性错误：%s"
 
-#: ../cli.py:293
+#: ../cli.py:302
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  已安装： %s-%s 在 %s"
 
-#: ../cli.py:295
+#: ../cli.py:304
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  构建    ：%s 在 %s"
 
-#: ../cli.py:297
+#: ../cli.py:306
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  已经提交：%s ，共 %s "
 
-#: ../cli.py:336
+#: ../cli.py:347
 msgid "You need to give some command"
 msgstr "你需要给出命令"
 
-#: ../cli.py:350
+#: ../cli.py:361
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "没有命令: %s。请使用 %s --help"
 
-#: ../cli.py:400
+#: ../cli.py:419
 msgid "Disk Requirements:\n"
 msgstr "磁盘要求：\n"
 
-#: ../cli.py:402
+#: ../cli.py:421
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr "  至少需要 %d MB 以上的空间在文件系统 %s 上。\n"
+msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
+msgstr[0] "  至少需要 %d MB 以上的空间在文件系统 %s 上。\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:407
+#: ../cli.py:426
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -141,60 +143,60 @@ msgstr ""
 "出错情况\n"
 "-------------\n"
 
-#: ../cli.py:450
+#: ../cli.py:474
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "尝试执行事务但无须任何处理。现在退出。"
 
-#: ../cli.py:497
+#: ../cli.py:521
 msgid "Exiting on user Command"
 msgstr "在用户的命令下退出"
 
-#: ../cli.py:501
+#: ../cli.py:525
 msgid "Downloading Packages:"
 msgstr "下载软件包："
 
-#: ../cli.py:506
+#: ../cli.py:530
 msgid "Error Downloading Packages:\n"
 msgstr "下载软件包出错：\n"
 
-#: ../cli.py:525 ../yum/__init__.py:4967
+#: ../cli.py:549 ../yum/__init__.py:5413
 msgid "Running Transaction Check"
 msgstr "运行事务检查"
 
-#: ../cli.py:534 ../yum/__init__.py:4976
+#: ../cli.py:558 ../yum/__init__.py:5422
 msgid "ERROR You need to update rpm to handle:"
 msgstr "错误：您需要更新 rpm 以处理："
 
-#: ../cli.py:536 ../yum/__init__.py:4979
+#: ../cli.py:560 ../yum/__init__.py:5425
 msgid "ERROR with transaction check vs depsolve:"
 msgstr "事务检查与依赖解决错误："
 
-#: ../cli.py:542
+#: ../cli.py:566
 msgid "RPM needs to be updated"
 msgstr "RPM 需要更新"
 
-#: ../cli.py:543
+#: ../cli.py:567
 #, python-format
 msgid "Please report this error in %s"
 msgstr "请在%s报告此错误"
 
-#: ../cli.py:549
+#: ../cli.py:573
 msgid "Running Transaction Test"
 msgstr "执行事务测试"
 
-#: ../cli.py:561
+#: ../cli.py:585
 msgid "Transaction Check Error:\n"
 msgstr "事务检验出错：\n"
 
-#: ../cli.py:568
+#: ../cli.py:592
 msgid "Transaction Test Succeeded"
 msgstr "事务测试成功"
 
-#: ../cli.py:600
+#: ../cli.py:624
 msgid "Running Transaction"
 msgstr "执行事务"
 
-#: ../cli.py:630
+#: ../cli.py:657
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -202,233 +204,248 @@ msgstr ""
 "如果不加干预，拒绝自动导入密钥。\n"
 "指定 \"-y\" 改变这个行为。"
 
-#: ../cli.py:649 ../cli.py:692
+#: ../cli.py:676 ../cli.py:719
 msgid "  * Maybe you meant: "
 msgstr "  * 也许您希望："
 
-#: ../cli.py:675 ../cli.py:683
+#: ../cli.py:702 ../cli.py:710
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "包 %s%s%s 可用，但未安装。"
 
-#: ../cli.py:689 ../cli.py:722 ../cli.py:908
+#: ../cli.py:716 ../cli.py:760 ../cli.py:998
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "没有可用的包 %s%s%s。"
 
-#: ../cli.py:729 ../cli.py:973
-msgid "Package(s) to install"
-msgstr "将安装的软件包"
+#: ../cli.py:768
+#, python-format
+msgid "%d package to install"
+msgid_plural "%d packages to install"
+msgstr[0] ""
 
-#: ../cli.py:732 ../cli.py:733 ../cli.py:914 ../cli.py:948 ../cli.py:974
-#: ../yumcommands.py:190
+#: ../cli.py:771 ../cli.py:772 ../cli.py:1005 ../cli.py:1051 ../cli.py:1086
+#: ../yumcommands.py:268
 msgid "Nothing to do"
 msgstr "无须任何处理"
 
-#: ../cli.py:767
+#: ../cli.py:824
 #, python-format
-msgid "%d packages marked for Update"
-msgstr "升级 %d 个软件包"
+msgid "%d package marked for Update"
+msgid_plural "%d packages marked for Update"
+msgstr[0] ""
 
-#: ../cli.py:770
+#: ../cli.py:826
 msgid "No Packages marked for Update"
 msgstr "不升级任何软件包"
 
-#: ../cli.py:866
+#: ../cli.py:937
 #, python-format
-msgid "%d packages marked for Distribution Synchronization"
-msgstr "已标记的欲分布同步的%d个包"
+msgid "%d package marked for Distribution Synchronization"
+msgid_plural "%d packages marked for Distribution Synchronization"
+msgstr[0] ""
 
-#: ../cli.py:869
+#: ../cli.py:939
 msgid "No Packages marked for Distribution Synchronization"
 msgstr "没有已标记的欲分布同步的包"
 
-#: ../cli.py:885
+#: ../cli.py:965
 #, python-format
-msgid "%d packages marked for removal"
-msgstr "删除 %d 个软件包"
+msgid "%d package marked for removal"
+msgid_plural "%d packages marked for removal"
+msgstr[0] ""
 
-#: ../cli.py:888
+#: ../cli.py:967
 msgid "No Packages marked for removal"
 msgstr "不删除任何软件包"
 
-#: ../cli.py:913
-msgid "Package(s) to downgrade"
-msgstr "要降级的包"
+#: ../cli.py:1004
+#, python-format
+msgid "%d package to downgrade"
+msgid_plural "%d packages to downgrade"
+msgstr[0] ""
 
-#: ../cli.py:938
+#: ../cli.py:1040
 #, python-format
 msgid " (from %s)"
 msgstr "（来自 %s）"
 
-#: ../cli.py:939
+#: ../cli.py:1041
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "安装的包 %s%s%s%s 不可用。"
 
-#: ../cli.py:947
-msgid "Package(s) to reinstall"
-msgstr "重装的包"
+#: ../cli.py:1050
+#, python-format
+msgid "%d package to reinstall"
+msgid_plural "%d packages to reinstall"
+msgstr[0] ""
 
-#: ../cli.py:960
+#: ../cli.py:1072
 msgid "No Packages Provided"
 msgstr "未指定软件包"
 
-#: ../cli.py:1058
+#: ../cli.py:1085
+msgid "Package(s) to install"
+msgstr "将安装的软件包"
+
+#: ../cli.py:1192
 #, python-format
 msgid "N/S Matched: %s"
 msgstr "N/S 匹配：%s"
 
-#: ../cli.py:1075
+#: ../cli.py:1209
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  名称和简介匹配 %sonly%s，使用“search all”试试。"
 
-#: ../cli.py:1077
+#: ../cli.py:1211
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  全名和简介匹配 %sonly%s，使用“search all”试试。"
 
-#: ../cli.py:1095
+#: ../cli.py:1229
 #, python-format
 msgid "Matched: %s"
 msgstr "匹配：%s"
 
-#: ../cli.py:1102
+#: ../cli.py:1236
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr "  名称和简介匹配 %smonstly%s，使用“search all”试试。"
 
-#: ../cli.py:1106
+#: ../cli.py:1240
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "警告：没有匹配 %s 的软件包"
 
-#: ../cli.py:1109
+#: ../cli.py:1243
 msgid "No Matches found"
 msgstr "没有找到匹配的软件包"
 
-#: ../cli.py:1174
+#: ../cli.py:1339
 #, python-format
 msgid "No Package Found for %s"
 msgstr "没有找到 %s 软件包"
 
-#: ../cli.py:1184
+#: ../cli.py:1377
 msgid "Cleaning repos: "
 msgstr "正在清理仓库： "
 
-#: ../cli.py:1189
+#: ../cli.py:1382
 msgid "Cleaning up Everything"
 msgstr "清理一切"
 
-#: ../cli.py:1205
+#: ../cli.py:1398
 msgid "Cleaning up Headers"
 msgstr "清理文件头缓存"
 
-#: ../cli.py:1208
+#: ../cli.py:1401
 msgid "Cleaning up Packages"
 msgstr "清理软件包"
 
-#: ../cli.py:1211
+#: ../cli.py:1404
 msgid "Cleaning up xml metadata"
 msgstr "清理 XML 元数据"
 
-#: ../cli.py:1214
+#: ../cli.py:1407
 msgid "Cleaning up database cache"
 msgstr "清理数据库缓存"
 
-#: ../cli.py:1217
+#: ../cli.py:1410
 msgid "Cleaning up expire-cache metadata"
 msgstr "清理过期缓存元数据"
 
-#: ../cli.py:1220
+#: ../cli.py:1413
 msgid "Cleaning up cached rpmdb data"
 msgstr "正在清理缓存rpmdb数据"
 
-#: ../cli.py:1223
+#: ../cli.py:1416
 msgid "Cleaning up plugins"
 msgstr "清理插件"
 
-#: ../cli.py:1247
+#: ../cli.py:1452
 #, python-format
 msgid "Warning: No groups match: %s"
 msgstr "警告：无组匹配：%s"
 
-#: ../cli.py:1264
+#: ../cli.py:1469 ../cli.py:1527
 msgid "Installed Groups:"
 msgstr "已安装的组："
 
-#: ../cli.py:1270
+#: ../cli.py:1475 ../cli.py:1533
 msgid "Installed Language Groups:"
 msgstr "安装了的语言组："
 
-#: ../cli.py:1276
+#: ../cli.py:1481 ../cli.py:1539
 msgid "Available Groups:"
 msgstr "有效的组:"
 
-#: ../cli.py:1282
+#: ../cli.py:1487 ../cli.py:1545
 msgid "Available Language Groups:"
 msgstr "可用语言组："
 
-#: ../cli.py:1285
+#: ../cli.py:1490 ../cli.py:1547
 msgid "Done"
 msgstr "完成"
 
-#: ../cli.py:1296 ../cli.py:1314 ../cli.py:1320 ../yum/__init__.py:3313
+#: ../cli.py:1570 ../cli.py:1598 ../cli.py:1604 ../yum/__init__.py:3648
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "警告：组 %s 不存在。"
 
-#: ../cli.py:1324
+#: ../cli.py:1608
 msgid "No packages in any requested group available to install or update"
 msgstr "指定组中没有可安装或升级的软件包"
 
-#: ../cli.py:1326
+#: ../cli.py:1610
 #, python-format
-msgid "%d Package(s) to Install"
-msgstr "安装 %d 个软件包"
+msgid "%d package to Install"
+msgid_plural "%d packages to Install"
+msgstr[0] ""
 
-#: ../cli.py:1336 ../yum/__init__.py:3325
+#: ../cli.py:1630 ../yum/__init__.py:3660
 #, python-format
 msgid "No group named %s exists"
 msgstr "没有名为 %s 的组"
 
-#: ../cli.py:1342
+#: ../cli.py:1636
 msgid "No packages to remove from groups"
 msgstr "指定组中没有要删除的软件包"
 
-#: ../cli.py:1344
+#: ../cli.py:1638
 #, python-format
-msgid "%d Package(s) to remove"
-msgstr "删除 %d 个软件包"
+msgid "%d package to remove"
+msgid_plural "%d packages to remove"
+msgstr[0] ""
 
-#: ../cli.py:1386
+#: ../cli.py:1679
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "略过已安装的 %s 软件包"
 
-#: ../cli.py:1397
+#: ../cli.py:1690
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "丢弃不可比较的软件包 %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1423
+#: ../cli.py:1716
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr "%s 未安装，加入列表以备安装"
 
-#: ../cli.py:1443
+#: ../cli.py:1736
 msgid "Plugin Options"
 msgstr "插件选项"
 
-#: ../cli.py:1451
+#: ../cli.py:1748
 #, python-format
 msgid "Command line error: %s"
 msgstr "命令行错误：%s"
 
-#: ../cli.py:1467
+#: ../cli.py:1770
 #, python-format
 msgid ""
 "\n"
@@ -439,284 +456,288 @@ msgstr ""
 "\n"
 "%s: %s 选项需要参数"
 
-#: ../cli.py:1521
+#: ../cli.py:1834
 msgid "--color takes one of: auto, always, never"
 msgstr "--color 需要参数：auto, always, never"
 
 #. We have a relative installroot ... haha
-#: ../cli.py:1596
+#: ../cli.py:1909
 #, python-format
 msgid "--installroot must be an absolute path: %s"
 msgstr "-- 安装根必须是绝对路径：%s"
 
-#: ../cli.py:1642
+#: ../cli.py:1963
 msgid "show this help message and exit"
 msgstr "显示此帮助消息并退出"
 
-#: ../cli.py:1646
+#: ../cli.py:1967
 msgid "be tolerant of errors"
 msgstr "容忍错误"
 
-#: ../cli.py:1649
+#: ../cli.py:1970
 msgid "run entirely from system cache, don't update cache"
 msgstr "完全从系统缓存运行，不升级缓存"
 
-#: ../cli.py:1652
+#: ../cli.py:1973
 msgid "config file location"
 msgstr "配置文件路径"
 
-#: ../cli.py:1655
+#: ../cli.py:1976
 msgid "maximum command wait time"
 msgstr "命令最长等待时间"
 
-#: ../cli.py:1657
+#: ../cli.py:1978
 msgid "debugging output level"
 msgstr "调试输出级别"
 
-#: ../cli.py:1661
+#: ../cli.py:1982
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "在 list/search 命令下，显示仓库里重复的条目"
 
-#: ../cli.py:1663
+#: ../cli.py:1984
 msgid "error output level"
 msgstr "错误输出级别"
 
-#: ../cli.py:1666
+#: ../cli.py:1987
 msgid "debugging output level for rpm"
 msgstr "rpm调试输出等级"
 
-#: ../cli.py:1669
+#: ../cli.py:1990
 msgid "quiet operation"
 msgstr "安静的操作"
 
-#: ../cli.py:1671
+#: ../cli.py:1992
 msgid "verbose operation"
 msgstr "详尽的操作过程"
 
-#: ../cli.py:1673
+#: ../cli.py:1994
 msgid "answer yes for all questions"
 msgstr "回答所有的问题为是"
 
-#: ../cli.py:1675
+#: ../cli.py:1996
+msgid "answer no for all questions"
+msgstr ""
+
+#: ../cli.py:2000
 msgid "show Yum version and exit"
 msgstr "显示 Yum 版本信息并退出"
 
-#: ../cli.py:1676
+#: ../cli.py:2001
 msgid "set install root"
 msgstr "设置目标根目录"
 
-#: ../cli.py:1680
+#: ../cli.py:2005
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "启用一个或多个仓库(支持通配符)"
 
-#: ../cli.py:1684
+#: ../cli.py:2009
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "禁用一个或多个仓库(支持通配符)"
 
-#: ../cli.py:1687
+#: ../cli.py:2012
 msgid "exclude package(s) by name or glob"
 msgstr "用全名或通配符排除软件包"
 
-#: ../cli.py:1689
+#: ../cli.py:2014
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "禁止从主配置，从仓库或者从任何位置排除"
 
-#: ../cli.py:1692
+#: ../cli.py:2017
 msgid "enable obsoletes processing during updates"
 msgstr "升级时考虑软件包取代关系"
 
-#: ../cli.py:1694
+#: ../cli.py:2019
 msgid "disable Yum plugins"
 msgstr "禁用 Yum 插件"
 
-#: ../cli.py:1696
+#: ../cli.py:2021
 msgid "disable gpg signature checking"
 msgstr "禁用 gpg 签名检测"
 
-#: ../cli.py:1698
+#: ../cli.py:2023
 msgid "disable plugins by name"
 msgstr "禁用指定名称的插件"
 
-#: ../cli.py:1701
+#: ../cli.py:2026
 msgid "enable plugins by name"
 msgstr "由名称启用插件"
 
-#: ../cli.py:1704
+#: ../cli.py:2029
 msgid "skip packages with depsolving problems"
 msgstr "跳过有依赖问题的软件包"
 
-#: ../cli.py:1706
+#: ../cli.py:2031
 msgid "control whether color is used"
 msgstr "配置是否使用颜色"
 
-#: ../cli.py:1708
+#: ../cli.py:2033
 msgid "set value of $releasever in yum config and repo files"
 msgstr "在yum配置和repo文件里设置$releasever的值"
 
-#: ../cli.py:1710
+#: ../cli.py:2035
 msgid "set arbitrary config and repo options"
 msgstr "设置任意配置和仓库选项"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Jan"
 msgstr "一月"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Feb"
 msgstr "二月"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Mar"
 msgstr "三月"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Apr"
 msgstr "四月"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "May"
 msgstr "五月"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Jun"
 msgstr "六月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Jul"
 msgstr "七月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Aug"
 msgstr "八月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Sep"
 msgstr "九月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Oct"
 msgstr "十月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Nov"
 msgstr "十一月"
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Dec"
 msgstr "十二月"
 
-#: ../output.py:318
+#: ../output.py:455
 msgid "Trying other mirror."
 msgstr "尝试其他镜像。"
 
-#: ../output.py:581
+#: ../output.py:798
 #, python-format
 msgid "Name        : %s%s%s"
 msgstr "名称        ：%s%s%s"
 
-#: ../output.py:582
+#: ../output.py:799
 #, python-format
 msgid "Arch        : %s"
 msgstr "构架        :%s"
 
-#: ../output.py:584
+#: ../output.py:801
 #, python-format
 msgid "Epoch       : %s"
 msgstr "时期       : %s"
 
-#: ../output.py:585
+#: ../output.py:802
 #, python-format
 msgid "Version     : %s"
 msgstr "版本     ：%s"
 
-#: ../output.py:586
+#: ../output.py:803
 #, python-format
 msgid "Release     : %s"
 msgstr "发布     ：%s"
 
-#: ../output.py:587
+#: ../output.py:804
 #, python-format
 msgid "Size        : %s"
 msgstr "大小        ：%s"
 
-#: ../output.py:588 ../output.py:900
+#: ../output.py:805 ../output.py:1198
 #, python-format
 msgid "Repo        : %s"
 msgstr "仓库        ：%s"
 
-#: ../output.py:590
+#: ../output.py:807
 #, python-format
 msgid "From repo   : %s"
 msgstr "来自仓库   ：%s"
 
-#: ../output.py:592
+#: ../output.py:809
 #, python-format
 msgid "Committer   : %s"
 msgstr "提交者   ：%s"
 
-#: ../output.py:593
+#: ../output.py:810
 #, python-format
 msgid "Committime  : %s"
 msgstr "提交时间  ：%s"
 
-#: ../output.py:594
+#: ../output.py:811
 #, python-format
 msgid "Buildtime   : %s"
 msgstr "构建时间：%s"
 
-#: ../output.py:596
+#: ../output.py:813
 #, python-format
 msgid "Install time: %s"
 msgstr "安装时间：%s"
 
-#: ../output.py:604
+#: ../output.py:821
 #, python-format
 msgid "Installed by: %s"
 msgstr "由 %s 安装"
 
-#: ../output.py:611
+#: ../output.py:828
 #, python-format
 msgid "Changed by  : %s"
 msgstr "由 %s 修改"
 
-#: ../output.py:612
+#: ../output.py:829
 msgid "Summary     : "
 msgstr "简介     ： "
 
-#: ../output.py:614 ../output.py:913
+#: ../output.py:831 ../output.py:1214
 #, python-format
 msgid "URL         : %s"
 msgstr "网址         ：%s"
 
-#: ../output.py:615
+#: ../output.py:832
 msgid "License     : "
 msgstr "协议     ： "
 
-#: ../output.py:616 ../output.py:910
+#: ../output.py:833 ../output.py:1211
 msgid "Description : "
 msgstr "描述： "
 
-#: ../output.py:684
+#: ../output.py:949
 msgid "y"
 msgstr "y"
 
-#: ../output.py:684
+#: ../output.py:949
 msgid "yes"
 msgstr "是"
 
-#: ../output.py:685
+#: ../output.py:950
 msgid "n"
 msgstr "n"
 
-#: ../output.py:685
+#: ../output.py:950
 msgid "no"
 msgstr "否"
 
-#: ../output.py:689
+#: ../output.py:954
 msgid "Is this ok [y/N]: "
 msgstr "确定吗？[y/N]："
 
-#: ../output.py:777
+#: ../output.py:1046
 #, python-format
 msgid ""
 "\n"
@@ -725,154 +746,155 @@ msgstr ""
 "\n"
 "组：%s"
 
-#: ../output.py:781
+#: ../output.py:1050
 #, python-format
 msgid " Group-Id: %s"
 msgstr " 组编号：%s"
 
-#: ../output.py:786
+#: ../output.py:1055
 #, python-format
 msgid " Description: %s"
 msgstr " 描述：%s"
 
-#: ../output.py:788
+#: ../output.py:1057
 #, python-format
 msgid " Language: %s"
 msgstr " 语言：%s"
 
-#: ../output.py:790
+#: ../output.py:1059
 msgid " Mandatory Packages:"
 msgstr " 必要的软件包："
 
-#: ../output.py:791
+#: ../output.py:1060
 msgid " Default Packages:"
 msgstr " 默认的软件包："
 
-#: ../output.py:792
+#: ../output.py:1061
 msgid " Optional Packages:"
 msgstr " 可选的软件包："
 
-#: ../output.py:793
+#: ../output.py:1062
 msgid " Conditional Packages:"
 msgstr " 可能的软件包："
 
-#: ../output.py:814
+#: ../output.py:1086
 #, python-format
 msgid "package: %s"
 msgstr "软件包：%s"
 
-#: ../output.py:816
+#: ../output.py:1088
 msgid "  No dependencies for this package"
 msgstr " 此软件包无依赖关系"
 
-#: ../output.py:821
+#: ../output.py:1093
 #, python-format
 msgid "  dependency: %s"
 msgstr "   依赖: %s"
 
-#: ../output.py:823
+#: ../output.py:1095
 msgid "   Unsatisfied dependency"
 msgstr " 不满足的依赖关系"
 
-#: ../output.py:901
+#: ../output.py:1206
 msgid "Matched from:"
 msgstr "匹配来自于:"
 
-#: ../output.py:916
+#: ../output.py:1217
 #, python-format
 msgid "License     : %s"
 msgstr "协议     ：%s"
 
-#: ../output.py:919
+#: ../output.py:1220
 #, python-format
 msgid "Filename    : %s"
 msgstr "文件名    ：%s"
 
-#: ../output.py:923
+#: ../output.py:1224
 msgid "Other       : "
 msgstr "其他       ： "
 
-#: ../output.py:966
+#: ../output.py:1280
 msgid "There was an error calculating total download size"
 msgstr "计算总下载量时出错"
 
-#: ../output.py:971
+#: ../output.py:1285
 #, python-format
 msgid "Total size: %s"
 msgstr "总文件大小：%s"
 
-#: ../output.py:974
+#: ../output.py:1288
 #, python-format
 msgid "Total download size: %s"
 msgstr "总下载量：%s"
 
-#: ../output.py:978 ../output.py:998
+#: ../output.py:1292 ../output.py:1315
 #, python-format
 msgid "Installed size: %s"
 msgstr "安装大小：%s"
 
-#: ../output.py:994
+#: ../output.py:1311
 msgid "There was an error calculating installed size"
 msgstr "有一个错误计算安装大小"
 
-#: ../output.py:1039
+#: ../output.py:1357
 msgid "Reinstalling"
 msgstr "重新安装"
 
-#: ../output.py:1040
+#: ../output.py:1358
 msgid "Downgrading"
 msgstr "正在降级"
 
-#: ../output.py:1041
+#: ../output.py:1359
 msgid "Installing for dependencies"
 msgstr "为依赖而安装"
 
-#: ../output.py:1042
+#: ../output.py:1360
 msgid "Updating for dependencies"
 msgstr "为依赖而更新"
 
-#: ../output.py:1043
+#: ../output.py:1361
 msgid "Removing for dependencies"
 msgstr "为依赖而移除"
 
-#: ../output.py:1050 ../output.py:1171
+#: ../output.py:1368 ../output.py:1478
 msgid "Skipped (dependency problems)"
 msgstr "跳过（依赖问题）"
 
-#: ../output.py:1052 ../output.py:1687
+#: ../output.py:1370 ../output.py:2024
 msgid "Not installed"
 msgstr "未安装"
 
-#: ../output.py:1053
+#: ../output.py:1371
 msgid "Not available"
 msgstr "不可用"
 
-#: ../output.py:1075 ../output.py:2024
+#: ../output.py:1393 ../output.py:1428 ../output.py:2379
 msgid "Package"
-msgstr "软件包"
+msgid_plural "Packages"
+msgstr[0] "软件包"
 
-#: ../output.py:1075
+#: ../output.py:1393
 msgid "Arch"
 msgstr "架构"
 
-#: ../output.py:1076
+#: ../output.py:1394
 msgid "Version"
 msgstr "版本"
 
-#: ../output.py:1076
+#: ../output.py:1394
 msgid "Repository"
 msgstr "仓库"
 
-#: ../output.py:1077
+#: ../output.py:1395
 msgid "Size"
 msgstr "大小"
 
-#: ../output.py:1089
+#: ../output.py:1407
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "      替换  %s%s%s.%s %s\n"
 
-#: ../output.py:1098
+#: ../output.py:1416
 #, python-format
 msgid ""
 "\n"
@@ -883,57 +905,52 @@ msgstr ""
 "事务概要\n"
 "%s\n"
 
-#: ../output.py:1109
-#, python-format
-msgid "Install   %5.5s Package(s)\n"
-msgstr "安装   %5.5s 个包\n"
+#: ../output.py:1421 ../output.py:2174 ../output.py:2175
+msgid "Install"
+msgstr "安装"
 
-#: ../output.py:1113
-#, python-format
-msgid "Upgrade   %5.5s Package(s)\n"
-msgstr "升级   %5.5s 个包\n"
+#: ../output.py:1422
+msgid "Upgrade"
+msgstr ""
 
-#: ../output.py:1117
-#, python-format
-msgid "Remove    %5.5s Package(s)\n"
-msgstr "移除    %5.5s 个包\n"
+#: ../output.py:1423
+msgid "Remove"
+msgstr ""
 
-#: ../output.py:1121
-#, python-format
-msgid "Reinstall %5.5s Package(s)\n"
-msgstr "重新安装 %5.5s 个包\n"
+#: ../output.py:1424 ../output.py:2180
+msgid "Reinstall"
+msgstr "重新安装"
 
-#: ../output.py:1125
-#, python-format
-msgid "Downgrade %5.5s Package(s)\n"
-msgstr "降级 %5.5s 个包\n"
+#: ../output.py:1425 ../output.py:2181
+msgid "Downgrade"
+msgstr "降级"
 
-#: ../output.py:1165
+#: ../output.py:1472
 msgid "Removed"
 msgstr "删除"
 
-#: ../output.py:1166
+#: ../output.py:1473
 msgid "Dependency Removed"
 msgstr "作为依赖被删除"
 
-#: ../output.py:1168
+#: ../output.py:1475
 msgid "Dependency Installed"
 msgstr "作为依赖被安装"
 
-#: ../output.py:1170
+#: ../output.py:1477
 msgid "Dependency Updated"
 msgstr "作为依赖被升级"
 
-#: ../output.py:1172
+#: ../output.py:1479
 msgid "Replaced"
 msgstr "替代"
 
-#: ../output.py:1173
+#: ../output.py:1480
 msgid "Failed"
 msgstr "失败"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1260
+#: ../output.py:1567
 msgid "two"
 msgstr "二"
 
@@ -941,7 +958,7 @@ msgstr "二"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1271
+#: ../output.py:1578
 #, python-format
 msgid ""
 "\n"
@@ -952,364 +969,416 @@ msgstr ""
 " 当前下载已取消，再次输入%s个中断(ctrl-c)%s于 %s%s%s 秒内\n"
 "以退出。\n"
 
-#: ../output.py:1282
+#: ../output.py:1589
 msgid "user interrupt"
 msgstr "用户中断"
 
-#: ../output.py:1300
+#: ../output.py:1615
 msgid "Total"
 msgstr "总计"
 
-#: ../output.py:1322
+#: ../output.py:1637
 msgid "I"
 msgstr "I"
 
-#: ../output.py:1323
+#: ../output.py:1638
 msgid "O"
 msgstr "O"
 
-#: ../output.py:1324
+#: ../output.py:1639
 msgid "E"
 msgstr "E"
 
-#: ../output.py:1325
+#: ../output.py:1640
 msgid "R"
 msgstr "R"
 
-#: ../output.py:1326
+#: ../output.py:1641
 msgid "D"
 msgstr "D"
 
-#: ../output.py:1327
+#: ../output.py:1642
 msgid "U"
 msgstr "U"
 
-#: ../output.py:1341
+#: ../output.py:1656
 msgid "<unset>"
 msgstr "<空>"
 
-#: ../output.py:1342
+#: ../output.py:1657
 msgid "System"
 msgstr "系统"
 
-#: ../output.py:1411
+#: ../output.py:1726
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
 msgstr "跳过合并事务 %d 到 %d，因为它俩重叠"
 
-#: ../output.py:1421 ../output.py:1592
+#: ../output.py:1736 ../output.py:1926
 msgid "No transactions"
 msgstr "没有事务"
 
-#: ../output.py:1446 ../output.py:2013
+#: ../output.py:1761 ../output.py:2368 ../output.py:2458
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "错误的事务 ID 或软件包"
 
-#: ../output.py:1484
+#: ../output.py:1808
 msgid "Command line"
 msgstr "命令行"
 
-#: ../output.py:1486 ../output.py:1908
+#: ../output.py:1810 ../output.py:2256
 msgid "Login user"
 msgstr "登陆用户"
 
 #. REALLY Needs to use columns!
-#: ../output.py:1487 ../output.py:2022
+#: ../output.py:1811 ../output.py:2377
 msgid "ID"
 msgstr "ID"
 
-#: ../output.py:1489
+#: ../output.py:1813
 msgid "Date and time"
 msgstr "日期和时间"
 
-#: ../output.py:1490 ../output.py:1910 ../output.py:2023
+#: ../output.py:1814 ../output.py:2258 ../output.py:2378
 msgid "Action(s)"
 msgstr "操作"
 
-#: ../output.py:1491 ../output.py:1911
+#: ../output.py:1815 ../output.py:2259
 msgid "Altered"
 msgstr "更改"
 
-#: ../output.py:1538
+#: ../output.py:1862
 msgid "No transaction ID given"
 msgstr "没有事务 ID"
 
-#: ../output.py:1564 ../output.py:1972
+#: ../output.py:1888 ../output.py:2324
 msgid "Bad transaction ID given"
 msgstr "错误的事务 ID"
 
-#: ../output.py:1569
+#: ../output.py:1893
 msgid "Not found given transaction ID"
 msgstr "未能找到指定事务 ID"
 
-#: ../output.py:1577
+#: ../output.py:1901
 msgid "Found more than one transaction ID!"
 msgstr "找到多个事务 ID!"
 
-#: ../output.py:1618 ../output.py:1980
+#: ../output.py:1952 ../output.py:2332
 msgid "No transaction ID, or package, given"
 msgstr "未指定事务 ID、或者软件包"
 
-#: ../output.py:1686 ../output.py:1845
+#: ../output.py:2023 ../output.py:2182
 msgid "Downgraded"
 msgstr "降级"
 
-#: ../output.py:1688
+#: ../output.py:2025
 msgid "Older"
 msgstr "较老的"
 
-#: ../output.py:1688
+#: ../output.py:2025
 msgid "Newer"
 msgstr "较早的"
 
-#: ../output.py:1724 ../output.py:1726
+#: ../output.py:2061 ../output.py:2063 ../output.py:2480
 msgid "Transaction ID :"
 msgstr "事务 ID："
 
-#: ../output.py:1728
+#: ../output.py:2065 ../output.py:2482
 msgid "Begin time     :"
 msgstr "起始时间    ："
 
-#: ../output.py:1731 ../output.py:1733
+#: ../output.py:2068 ../output.py:2070
 msgid "Begin rpmdb    :"
 msgstr "启动 rpmdb     ："
 
-#: ../output.py:1749
+#: ../output.py:2086
 #, python-format
 msgid "(%u seconds)"
 msgstr "（%u 秒）"
 
-#: ../output.py:1751
+#: ../output.py:2088
 #, python-format
 msgid "(%u minutes)"
 msgstr "（%u 分钟）"
 
-#: ../output.py:1753
+#: ../output.py:2090
 #, python-format
 msgid "(%u hours)"
 msgstr "（%u 小时）"
 
-#: ../output.py:1755
+#: ../output.py:2092
 #, python-format
 msgid "(%u days)"
 msgstr "（%u 天）"
 
-#: ../output.py:1756
+#: ../output.py:2093
 msgid "End time       :"
 msgstr "结束时间       ："
 
-#: ../output.py:1759 ../output.py:1761
+#: ../output.py:2096 ../output.py:2098
 msgid "End rpmdb      :"
 msgstr "结束 rpmdb      :"
 
-#: ../output.py:1764 ../output.py:1766
+#: ../output.py:2101 ../output.py:2103
 msgid "User           :"
 msgstr "用户           ："
 
-#: ../output.py:1770 ../output.py:1773 ../output.py:1775 ../output.py:1777
-#: ../output.py:1779
+#: ../output.py:2107 ../output.py:2110 ../output.py:2112 ../output.py:2114
+#: ../output.py:2116
 msgid "Return-Code    :"
 msgstr "返回码    ："
 
-#: ../output.py:1770 ../output.py:1775
+#: ../output.py:2107 ../output.py:2112
 msgid "Aborted"
 msgstr "已终止"
 
-#: ../output.py:1773
+#: ../output.py:2110
 msgid "Failures:"
 msgstr "失败："
 
-#: ../output.py:1777
+#: ../output.py:2114
 msgid "Failure:"
 msgstr "失败："
 
-#: ../output.py:1779
+#: ../output.py:2116
 msgid "Success"
 msgstr "成功"
 
-#: ../output.py:1784 ../output.py:1786
+#: ../output.py:2121 ../output.py:2123 ../output.py:2511
 msgid "Command Line   :"
 msgstr "命令行   ："
 
-#: ../output.py:1795
+#: ../output.py:2132
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "其他非默认信息已保存：%d"
 
 #. This is _possible_, but not common
-#: ../output.py:1800
+#: ../output.py:2137
 msgid "Transaction performed with:"
 msgstr "事务完成由："
 
-#: ../output.py:1804
+#: ../output.py:2141
 msgid "Packages Altered:"
 msgstr "已改变的包："
 
-#: ../output.py:1808
+#: ../output.py:2145
 msgid "Packages Skipped:"
 msgstr "已跳过的包："
 
-#: ../output.py:1814
+#: ../output.py:2151
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb 问题："
 
-#: ../output.py:1825
+#: ../output.py:2162
 msgid "Scriptlet output:"
 msgstr "Scriptlet 输出："
 
-#: ../output.py:1831
+#: ../output.py:2168
 msgid "Errors:"
 msgstr "错误："
 
-#: ../output.py:1837 ../output.py:1838
-msgid "Install"
-msgstr "安装"
-
-#: ../output.py:1839
+#: ../output.py:2176
 msgid "Dep-Install"
 msgstr "依赖安装"
 
-#: ../output.py:1841
+#: ../output.py:2178
 msgid "Obsoleting"
 msgstr "取代中"
 
-#: ../output.py:1842
+#: ../output.py:2179
 msgid "Erase"
 msgstr "抹去"
 
-#: ../output.py:1843
-msgid "Reinstall"
-msgstr "重新安装"
-
-#: ../output.py:1844
-msgid "Downgrade"
-msgstr "降级"
-
-#: ../output.py:1846
+#: ../output.py:2183
 msgid "Update"
 msgstr "更新"
 
-#: ../output.py:1909
+#: ../output.py:2257
 msgid "Time"
 msgstr "时间"
 
-#: ../output.py:1935
+#: ../output.py:2283
 msgid "Last day"
 msgstr "最近一天"
 
-#: ../output.py:1936
+#: ../output.py:2284
 msgid "Last week"
 msgstr "最近一周"
 
-#: ../output.py:1937
+#: ../output.py:2285
 msgid "Last 2 weeks"
 msgstr "最近2周"
 
 #. US default :p
-#: ../output.py:1938
+#: ../output.py:2286
 msgid "Last 3 months"
 msgstr "最近3个月"
 
-#: ../output.py:1939
+#: ../output.py:2287
 msgid "Last 6 months"
 msgstr "最近6个月"
 
-#: ../output.py:1940
+#: ../output.py:2288
 msgid "Last year"
 msgstr "最近一年"
 
-#: ../output.py:1941
+#: ../output.py:2289
 msgid "Over a year ago"
 msgstr "一年以前"
 
-#: ../output.py:1984
+#: ../output.py:2336
 #, python-format
 msgid "No Transaction %s found"
 msgstr "未找到事务 %s"
 
-#: ../output.py:1990
+#: ../output.py:2342
 msgid "Transaction ID:"
 msgstr "事务 ID："
 
-#: ../output.py:1991
+#: ../output.py:2343
 msgid "Available additional history information:"
 msgstr "可用的额外历史信息："
 
-#: ../output.py:2003
+#: ../output.py:2356
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: 未找到符合该名称的额外数据"
 
-#: ../output.py:2106
+#: ../output.py:2483
+msgid "Package        :"
+msgstr ""
+
+#: ../output.py:2484
+msgid "State          :"
+msgstr ""
+
+#: ../output.py:2487
+msgid "Size           :"
+msgstr ""
+
+#: ../output.py:2489
+msgid "Build host     :"
+msgstr ""
+
+#: ../output.py:2492
+msgid "Build time     :"
+msgstr ""
+
+#: ../output.py:2494
+msgid "Packager       :"
+msgstr ""
+
+#: ../output.py:2496
+msgid "Vendor         :"
+msgstr ""
+
+#: ../output.py:2498
+msgid "License        :"
+msgstr ""
+
+#: ../output.py:2500
+msgid "URL            :"
+msgstr ""
+
+#: ../output.py:2502
+msgid "Source RPM     :"
+msgstr ""
+
+#: ../output.py:2505
+msgid "Commit Time    :"
+msgstr ""
+
+#: ../output.py:2507
+msgid "Committer      :"
+msgstr ""
+
+#: ../output.py:2509
+msgid "Reason         :"
+msgstr ""
+
+#: ../output.py:2513
+msgid "From repo      :"
+msgstr ""
+
+#: ../output.py:2517
+msgid "Installed by   :"
+msgstr ""
+
+#: ../output.py:2521
+msgid "Changed by     :"
+msgstr ""
+
+#: ../output.py:2566
 msgid "installed"
 msgstr "安装"
 
-#: ../output.py:2107
+#: ../output.py:2567
 msgid "an update"
 msgstr "一个更新"
 
-#: ../output.py:2108
+#: ../output.py:2568
 msgid "erased"
 msgstr "删除"
 
-#: ../output.py:2109
+#: ../output.py:2569
 msgid "reinstalled"
 msgstr "已重新安装"
 
-#: ../output.py:2110
+#: ../output.py:2570
 msgid "a downgrade"
 msgstr "一个降级"
 
-#: ../output.py:2111
+#: ../output.py:2571
 msgid "obsoleting"
 msgstr "舍弃"
 
-#: ../output.py:2112
+#: ../output.py:2572
 msgid "updated"
 msgstr "升级"
 
-#: ../output.py:2113
+#: ../output.py:2573
 msgid "obsoleted"
 msgstr "取代"
 
-#: ../output.py:2117
+#: ../output.py:2577
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
 msgstr "---> 软件包 %s.%s.%s.%s-%s 将被 %s"
 
-#: ../output.py:2124
+#: ../output.py:2588
 msgid "--> Running transaction check"
 msgstr "--> 执行事务检查"
 
-#: ../output.py:2129
+#: ../output.py:2594
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> 使用新的信息重新计算依赖关系。"
 
-#: ../output.py:2134
+#: ../output.py:2600
 msgid "--> Finished Dependency Resolution"
 msgstr "--> 完成依赖关系计算"
 
-#: ../output.py:2139 ../output.py:2144
+#: ../output.py:2613 ../output.py:2626
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> 处理依赖关系 %s，它被软件包 %s 需要"
 
-#: ../output.py:2149
+#: ../output.py:2639
 #, python-format
 msgid "---> Keeping package: %s"
 msgstr "---> 保留软件包： %s"
 
-#: ../output.py:2152
+#: ../output.py:2648
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> 无法解决的依赖：%s"
 
-#: ../output.py:2163
+#: ../output.py:2665
 #, python-format
 msgid "Package: %s"
 msgstr "软件包：%s"
 
-#: ../output.py:2165
+#: ../output.py:2667
 #, python-format
 msgid ""
 "\n"
@@ -1318,7 +1387,7 @@ msgstr ""
 "\n"
 "    需要：%s"
 
-#: ../output.py:2174
+#: ../output.py:2676
 #, python-format
 msgid ""
 "\n"
@@ -1327,7 +1396,7 @@ msgstr ""
 "\n"
 "    %s: %s (%s)"
 
-#: ../output.py:2179
+#: ../output.py:2681
 #, python-format
 msgid ""
 "\n"
@@ -1336,7 +1405,7 @@ msgstr ""
 "\n"
 "        %s"
 
-#: ../output.py:2181
+#: ../output.py:2683
 msgid ""
 "\n"
 "        Not found"
@@ -1345,85 +1414,85 @@ msgstr ""
 "        未找到"
 
 #. These should be the only three things we care about:
-#: ../output.py:2196
+#: ../output.py:2698
 msgid "Updated By"
 msgstr "更新，由"
 
-#: ../output.py:2197
+#: ../output.py:2699
 msgid "Downgraded By"
 msgstr "降级，由"
 
-#: ../output.py:2198
+#: ../output.py:2700
 msgid "Obsoleted By"
 msgstr "取代，由"
 
-#: ../output.py:2216
+#: ../output.py:2718
 msgid "Available"
 msgstr "可用"
 
-#: ../output.py:2243 ../output.py:2248
+#: ../output.py:2753 ../output.py:2766
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> 处理 %s 与 %s 的冲突"
 
-#: ../output.py:2252
+#: ../output.py:2772
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> 根据指定的软件包创建事务，请等待。"
 
-#: ../output.py:2256
+#: ../output.py:2781
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "---> 下载 %s 的文件头作为事务的一部分。"
 
-#: ../utils.py:99
+#: ../utils.py:123
 msgid "Running"
 msgstr "运行中"
 
-#: ../utils.py:100
+#: ../utils.py:124
 msgid "Sleeping"
 msgstr "睡眠中"
 
-#: ../utils.py:101
+#: ../utils.py:125
 msgid "Uninterruptible"
 msgstr "不可中断"
 
-#: ../utils.py:102
+#: ../utils.py:126
 msgid "Zombie"
 msgstr "僵死"
 
-#: ../utils.py:103
+#: ../utils.py:127
 msgid "Traced/Stopped"
 msgstr "跟踪/停止"
 
-#: ../utils.py:104 ../yumcommands.py:994
+#: ../utils.py:128 ../yumcommands.py:1792
 msgid "Unknown"
 msgstr "未知"
 
-#: ../utils.py:115
+#: ../utils.py:149
 msgid "  The other application is: PackageKit"
 msgstr "  另一个应用程序是：PackageKit"
 
-#: ../utils.py:117
+#: ../utils.py:151
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  另一个应用程序是：%s"
 
-#: ../utils.py:120
+#: ../utils.py:154
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    内存：%5s RSS （%5sB VSZ）"
 
-#: ../utils.py:125
+#: ../utils.py:159
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    已启动： %s - %s之前"
 
-#: ../utils.py:127
+#: ../utils.py:161
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    状态  ：%s，进程ID：%d"
 
-#: ../utils.py:170 ../yummain.py:43
+#: ../utils.py:190 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
@@ -1433,7 +1502,7 @@ msgstr ""
 "\n"
 "由于用户取消而退出"
 
-#: ../utils.py:176 ../yummain.py:49
+#: ../utils.py:202 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
@@ -1443,7 +1512,7 @@ msgstr ""
 "\n"
 "由于管道被破坏而退出"
 
-#: ../utils.py:178 ../yummain.py:51
+#: ../utils.py:204 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
@@ -1454,41 +1523,41 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../utils.py:228 ../yummain.py:123
+#: ../utils.py:280 ../yummain.py:134
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
 msgstr "另外一个程序锁定了 yum；遵循 exit_on_lock 设置退出"
 
-#: ../utils.py:287
+#: ../utils.py:346
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr "插件退出错误：%s"
 
-#: ../utils.py:290
+#: ../utils.py:349
 #, python-format
 msgid "Yum Error: %s"
 msgstr "Yum 错误：%s"
 
-#: ../utils.py:342 ../yummain.py:150 ../yummain.py:189
+#: ../utils.py:407 ../yummain.py:161 ../yummain.py:200
 #, python-format
 msgid "Error: %s"
 msgstr "错误：%s"
 
-#: ../utils.py:346 ../yummain.py:194
+#: ../utils.py:411 ../yummain.py:205
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " 您可以尝试用 --skip-broken 来解决该问题"
 
-#: ../utils.py:348 ../yummain.py:87
+#: ../utils.py:413 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " 您可以尝试运行： rpm -Va --nofiles --nodigest"
 
-#: ../utils.py:355 ../yummain.py:160 ../yummain.py:202
+#: ../utils.py:420 ../yummain.py:171 ../yummain.py:213
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "未知错误：退出码 %d："
 
-#: ../utils.py:361 ../yummain.py:208
+#: ../utils.py:426 ../yummain.py:219
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1496,7 +1565,7 @@ msgstr ""
 "\n"
 "依赖关系解决"
 
-#: ../utils.py:376 ../yummain.py:234
+#: ../utils.py:442 ../yummain.py:251
 msgid "Complete!"
 msgstr "完毕！"
 
@@ -1508,7 +1577,7 @@ msgstr " 迷你用法：\n"
 msgid "You need to be root to perform this command."
 msgstr "你需要以 root 身份执行此命令。"
 
-#: ../yumcommands.py:59
+#: ../yumcommands.py:65
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
@@ -1533,53 +1602,53 @@ msgstr ""
 "\n"
 "详情请联系您的发行版或软件包制作人。\n"
 
-#: ../yumcommands.py:74
+#: ../yumcommands.py:80
 #, python-format
 msgid "Problem repository: %s"
 msgstr "问题仓库：%s"
 
-#: ../yumcommands.py:80
+#: ../yumcommands.py:94
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "错误：需要为 %s 指定软件包列表"
 
-#: ../yumcommands.py:86
+#: ../yumcommands.py:110
 msgid "Error: Need an item to match"
 msgstr "错误：需要指定匹配模式"
 
-#: ../yumcommands.py:92
+#: ../yumcommands.py:124
 msgid "Error: Need a group or list of groups"
 msgstr "错误：需要组或组的列表"
 
-#: ../yumcommands.py:101
+#: ../yumcommands.py:141
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "错误：清理命令需要参数：%s"
 
-#: ../yumcommands.py:106
+#: ../yumcommands.py:146
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "错误：清理命令参数不正确：%r"
 
-#: ../yumcommands.py:119
+#: ../yumcommands.py:161
 msgid "No argument to shell"
 msgstr "没有给外壳指定参数"
 
-#: ../yumcommands.py:121
+#: ../yumcommands.py:163
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "传给外壳的文件名：%s"
 
-#: ../yumcommands.py:125
+#: ../yumcommands.py:167
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr "作为参数传给外壳的文件 %s 不存在。"
 
-#: ../yumcommands.py:131
+#: ../yumcommands.py:173
 msgid "Error: more than one file given as argument to shell."
 msgstr "错误：作为参数传给外壳超过一个文件。"
 
-#: ../yumcommands.py:148
+#: ../yumcommands.py:192
 msgid ""
 "There are no enabled repos.\n"
 " Run \"yum repolist all\" to see the repos you have.\n"
@@ -1589,306 +1658,299 @@ msgstr ""
 "执行 \"yum repolist all\" 查看您拥有的仓库。\n"
 "您可以用 yum-config-manager --enable &lt;仓库名&gt; 来启用仓库"
 
-#: ../yumcommands.py:200
+#: ../yumcommands.py:300
 msgid "PACKAGE..."
 msgstr "软件包……"
 
-#: ../yumcommands.py:203
+#: ../yumcommands.py:307
 msgid "Install a package or packages on your system"
 msgstr "向系统中安装一个或多个软件包"
 
-#: ../yumcommands.py:212
+#: ../yumcommands.py:338
 msgid "Setting up Install Process"
 msgstr "设置安装进程"
 
-#: ../yumcommands.py:223 ../yumcommands.py:245
+#: ../yumcommands.py:363 ../yumcommands.py:423
 msgid "[PACKAGE...]"
 msgstr "[软件包……]"
 
-#: ../yumcommands.py:226
+#: ../yumcommands.py:370
 msgid "Update a package or packages on your system"
 msgstr "更新系统中的一个或多个软件包"
 
-#: ../yumcommands.py:234
+#: ../yumcommands.py:399
 msgid "Setting up Update Process"
 msgstr "设置更新进程"
 
-#: ../yumcommands.py:248
+#: ../yumcommands.py:430
 msgid "Synchronize installed packages to the latest available versions"
 msgstr "已同步软件包到最新可用版本"
 
-#: ../yumcommands.py:256
+#: ../yumcommands.py:459
 msgid "Setting up Distribution Synchronization Process"
 msgstr "正在设置发行版同步进程"
 
-#: ../yumcommands.py:299
+#: ../yumcommands.py:519
 msgid "Display details about a package or group of packages"
 msgstr "显示关于软件包或组的详细信息"
 
-#: ../yumcommands.py:348
+#: ../yumcommands.py:581
 msgid "Installed Packages"
 msgstr "已安装的软件包"
 
-#: ../yumcommands.py:356
+#: ../yumcommands.py:589
 msgid "Available Packages"
 msgstr "可安装的软件包"
 
-#: ../yumcommands.py:360
+#: ../yumcommands.py:593
 msgid "Extra Packages"
 msgstr "更多软件包"
 
-#: ../yumcommands.py:364
+#: ../yumcommands.py:597
 msgid "Updated Packages"
 msgstr "更新的软件包"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:372 ../yumcommands.py:379 ../yumcommands.py:667
+#: ../yumcommands.py:605 ../yumcommands.py:612 ../yumcommands.py:1193
 msgid "Obsoleting Packages"
 msgstr "取代的软件包"
 
-#: ../yumcommands.py:381
+#: ../yumcommands.py:614
 msgid "Recently Added Packages"
 msgstr "最近添加的软件包"
 
-#: ../yumcommands.py:388
+#: ../yumcommands.py:621
 msgid "No matching Packages to list"
 msgstr "没有匹配的软件包可以列出"
 
-#: ../yumcommands.py:402
+#: ../yumcommands.py:656
 msgid "List a package or groups of packages"
 msgstr "列出一个或一组软件包"
 
-#: ../yumcommands.py:414
+#: ../yumcommands.py:685
 msgid "Remove a package or packages from your system"
 msgstr "从系统中移除一个或多个软件包"
 
-#: ../yumcommands.py:421
+#: ../yumcommands.py:714
 msgid "Setting up Remove Process"
 msgstr "设置移除进程"
 
-#: ../yumcommands.py:435
+#: ../yumcommands.py:773
+msgid "Display, or use, the groups information"
+msgstr ""
+
+#: ../yumcommands.py:776
 msgid "Setting up Group Process"
 msgstr "设置组进程"
 
-#: ../yumcommands.py:441
+#: ../yumcommands.py:782
 msgid "No Groups on which to run command"
 msgstr "没有指定要处理的组"
 
-#: ../yumcommands.py:454
-msgid "List available package groups"
-msgstr "列出可安装的组"
+#: ../yumcommands.py:833
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr ""
 
-#: ../yumcommands.py:474
-msgid "Install the packages in a group on your system"
-msgstr "向系统中安装一组软件包"
-
-#: ../yumcommands.py:497
-msgid "Remove the packages in a group from your system"
-msgstr "从系统中移除一组软件包"
-
-#: ../yumcommands.py:525
-msgid "Display details about a package group"
-msgstr "显示组的详细信息"
-
-#: ../yumcommands.py:550
+#: ../yumcommands.py:929
 msgid "Generate the metadata cache"
 msgstr "创建元数据缓存"
 
-#: ../yumcommands.py:556
+#: ../yumcommands.py:955
 msgid "Making cache files for all metadata files."
 msgstr "为元数据文件生成缓存文件。"
 
-#: ../yumcommands.py:557
+#: ../yumcommands.py:956
 msgid "This may take a while depending on the speed of this computer"
 msgstr "这需要一段时间，取决于这台计算机的速度"
 
-#: ../yumcommands.py:578
+#: ../yumcommands.py:977
 msgid "Metadata Cache Created"
 msgstr "元数据缓存已建立"
 
-#: ../yumcommands.py:592
+#: ../yumcommands.py:1015
 msgid "Remove cached data"
 msgstr "删除缓存的数据"
 
-#: ../yumcommands.py:613
+#: ../yumcommands.py:1082
 msgid "Find what package provides the given value"
 msgstr "查找提供指定内容的软件包"
 
-#: ../yumcommands.py:633
+#: ../yumcommands.py:1139
 msgid "Check for available package updates"
 msgstr "检查是否有软件包更新"
 
-#: ../yumcommands.py:687
+#: ../yumcommands.py:1230
 msgid "Search package details for the given string"
 msgstr "在软件包详细信息中搜索指定字符串"
 
-#: ../yumcommands.py:693
+#: ../yumcommands.py:1256
 msgid "Searching Packages: "
 msgstr "搜索软件包："
 
-#: ../yumcommands.py:710
+#: ../yumcommands.py:1298
 msgid "Update packages taking obsoletes into account"
 msgstr "更新软件包同时考虑软件包取代关系"
 
-#: ../yumcommands.py:719
+#: ../yumcommands.py:1328
 msgid "Setting up Upgrade Process"
 msgstr "设置升级进程"
 
-#: ../yumcommands.py:737
+#: ../yumcommands.py:1363
 msgid "Install a local RPM"
 msgstr "安装本地的 RPM"
 
-#: ../yumcommands.py:745
+#: ../yumcommands.py:1393
 msgid "Setting up Local Package Process"
 msgstr "设置本地安装进程"
 
-#: ../yumcommands.py:764
+#: ../yumcommands.py:1437
 msgid "Determine which package provides the given dependency"
 msgstr "判断哪个包提供了指定的依赖"
 
-#: ../yumcommands.py:767
+#: ../yumcommands.py:1453
 msgid "Searching Packages for Dependency:"
 msgstr "查找依赖的软件包："
 
-#: ../yumcommands.py:781
+#: ../yumcommands.py:1484
 msgid "Run an interactive yum shell"
 msgstr "运行交互式的 yum 外壳"
 
-#: ../yumcommands.py:787
+#: ../yumcommands.py:1510
 msgid "Setting up Yum Shell"
 msgstr "设置 Yum 外壳"
 
-#: ../yumcommands.py:805
+#: ../yumcommands.py:1553
 msgid "List a package's dependencies"
 msgstr "列出软件包的依赖关系"
 
-#: ../yumcommands.py:811
+#: ../yumcommands.py:1580
 msgid "Finding dependencies: "
 msgstr "查找依赖："
 
-#: ../yumcommands.py:827
+#: ../yumcommands.py:1612
 msgid "Display the configured software repositories"
 msgstr "显示已配置的仓库"
 
-#: ../yumcommands.py:893 ../yumcommands.py:894
+#: ../yumcommands.py:1691 ../yumcommands.py:1692
 msgid "enabled"
 msgstr "启用"
 
-#: ../yumcommands.py:920 ../yumcommands.py:921
+#: ../yumcommands.py:1718 ../yumcommands.py:1719
 msgid "disabled"
 msgstr "禁用"
 
-#: ../yumcommands.py:937
+#: ../yumcommands.py:1735
 msgid "Repo-id      : "
 msgstr "仓库ID     ： "
 
-#: ../yumcommands.py:938
+#: ../yumcommands.py:1736
 msgid "Repo-name    : "
 msgstr "仓库名    ： "
 
-#: ../yumcommands.py:941
+#: ../yumcommands.py:1739
 msgid "Repo-status  : "
 msgstr "仓库状态  ： "
 
-#: ../yumcommands.py:944
+#: ../yumcommands.py:1742
 msgid "Repo-revision: "
 msgstr "仓库版本： "
 
-#: ../yumcommands.py:948
+#: ../yumcommands.py:1746
 msgid "Repo-tags    : "
 msgstr "仓库标志    ： "
 
-#: ../yumcommands.py:954
+#: ../yumcommands.py:1752
 msgid "Repo-distro-tags: "
 msgstr "仓库发行版标签： "
 
-#: ../yumcommands.py:959
+#: ../yumcommands.py:1757
 msgid "Repo-updated : "
 msgstr "仓库更新： "
 
-#: ../yumcommands.py:961
+#: ../yumcommands.py:1759
 msgid "Repo-pkgs    : "
 msgstr "仓库包    ： "
 
-#: ../yumcommands.py:962
+#: ../yumcommands.py:1760
 msgid "Repo-size    : "
 msgstr "仓库大小    ： "
 
-#: ../yumcommands.py:969 ../yumcommands.py:990
+#: ../yumcommands.py:1767 ../yumcommands.py:1788
 msgid "Repo-baseurl : "
 msgstr "仓库基本地址： "
 
-#: ../yumcommands.py:977
+#: ../yumcommands.py:1775
 msgid "Repo-metalink: "
 msgstr "仓库元链接："
 
-#: ../yumcommands.py:981
+#: ../yumcommands.py:1779
 msgid "  Updated    : "
 msgstr "更新："
 
-#: ../yumcommands.py:984
+#: ../yumcommands.py:1782
 msgid "Repo-mirrors : "
 msgstr "仓库镜像："
 
-#: ../yumcommands.py:1000
+#: ../yumcommands.py:1798
 #, python-format
 msgid "Never (last: %s)"
 msgstr "从不 （最后 %s）"
 
-#: ../yumcommands.py:1002
+#: ../yumcommands.py:1800
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "瞬间（最后%s）"
 
-#: ../yumcommands.py:1005
+#: ../yumcommands.py:1803
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s 秒 （最后 %s）"
 
-#: ../yumcommands.py:1007
+#: ../yumcommands.py:1805
 msgid "Repo-expire  : "
 msgstr "仓库到期："
 
-#: ../yumcommands.py:1010
+#: ../yumcommands.py:1808
 msgid "Repo-exclude : "
 msgstr "仓库排除："
 
-#: ../yumcommands.py:1014
+#: ../yumcommands.py:1812
 msgid "Repo-include : "
 msgstr "仓库包括："
 
-#: ../yumcommands.py:1018
+#: ../yumcommands.py:1816
 msgid "Repo-excluded: "
 msgstr "仓库除外："
 
-#: ../yumcommands.py:1022
+#: ../yumcommands.py:1820
 msgid "Repo-filename: "
 msgstr "仓库文件名："
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1032 ../yumcommands.py:1061
+#: ../yumcommands.py:1830 ../yumcommands.py:1859
 msgid "repo id"
 msgstr "仓库标识"
 
-#: ../yumcommands.py:1049 ../yumcommands.py:1050 ../yumcommands.py:1068
+#: ../yumcommands.py:1847 ../yumcommands.py:1848 ../yumcommands.py:1866
 msgid "status"
 msgstr "状态"
 
-#: ../yumcommands.py:1062
+#: ../yumcommands.py:1860
 msgid "repo name"
 msgstr "仓库名称"
 
-#: ../yumcommands.py:1099
+#: ../yumcommands.py:1922
 msgid "Display a helpful usage message"
 msgstr "显示用法信息"
 
-#: ../yumcommands.py:1133
+#: ../yumcommands.py:1964
 #, python-format
 msgid "No help available for %s"
 msgstr "没有关于 %s 的帮助"
 
-#: ../yumcommands.py:1138
+#: ../yumcommands.py:1969
 msgid ""
 "\n"
 "\n"
@@ -1898,7 +1960,7 @@ msgstr ""
 "\n"
 "别名："
 
-#: ../yumcommands.py:1140
+#: ../yumcommands.py:1971
 msgid ""
 "\n"
 "\n"
@@ -1908,85 +1970,125 @@ msgstr ""
 "\n"
 "别名："
 
-#: ../yumcommands.py:1168
+#: ../yumcommands.py:2056
 msgid "Setting up Reinstall Process"
 msgstr "设置覆盖安装进程"
 
-#: ../yumcommands.py:1176
+#: ../yumcommands.py:2068
 msgid "reinstall a package"
 msgstr "覆盖安装一个包"
 
-#: ../yumcommands.py:1195
+#: ../yumcommands.py:2131
 msgid "Setting up Downgrade Process"
 msgstr "设置降级过程"
 
-#: ../yumcommands.py:1202
+#: ../yumcommands.py:2142
 msgid "downgrade a package"
 msgstr "降级包"
 
-#: ../yumcommands.py:1216
+#: ../yumcommands.py:2181
 msgid "Display a version for the machine and/or available repos."
 msgstr "显示机器和/或可用的仓库版本。"
 
-#: ../yumcommands.py:1255
+#: ../yumcommands.py:2233
 msgid " Yum version groups:"
 msgstr " Yum版本组："
 
-#: ../yumcommands.py:1265
+#: ../yumcommands.py:2243
 msgid " Group   :"
 msgstr " 组   ："
 
-#: ../yumcommands.py:1266
+#: ../yumcommands.py:2244
 msgid " Packages:"
 msgstr " 包："
 
-#: ../yumcommands.py:1295
+#: ../yumcommands.py:2273
 msgid "Installed:"
 msgstr "已安装："
 
-#: ../yumcommands.py:1303
+#: ../yumcommands.py:2281
 msgid "Group-Installed:"
 msgstr "组已安装："
 
-#: ../yumcommands.py:1312
+#: ../yumcommands.py:2290
 msgid "Available:"
 msgstr "可用："
 
-#: ../yumcommands.py:1321
+#: ../yumcommands.py:2299
 msgid "Group-Available:"
 msgstr "组内现有："
 
-#: ../yumcommands.py:1360
+#: ../yumcommands.py:2363
 msgid "Display, or use, the transaction history"
 msgstr "显示或使用事务历史"
 
-#: ../yumcommands.py:1432
+#: ../yumcommands.py:2435
+msgid "Transactions:"
+msgstr ""
+
+#: ../yumcommands.py:2436
+msgid "Begin time  :"
+msgstr ""
+
+#: ../yumcommands.py:2437
+msgid "End time    :"
+msgstr ""
+
+#: ../yumcommands.py:2438
+msgid "Counts      :"
+msgstr ""
+
+#: ../yumcommands.py:2439
+msgid "  NEVRAC :"
+msgstr ""
+
+#: ../yumcommands.py:2440
+msgid "  NEVRA  :"
+msgstr ""
+
+#: ../yumcommands.py:2441
+msgid "  NA     :"
+msgstr ""
+
+#: ../yumcommands.py:2442
+msgid "  NEVR   :"
+msgstr ""
+
+#: ../yumcommands.py:2443
+msgid "  rpm DB :"
+msgstr ""
+
+#: ../yumcommands.py:2444
+msgid "  yum DB :"
+msgstr ""
+
+#: ../yumcommands.py:2475
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "无效的历史子命令，使用：%s。"
 
-#: ../yumcommands.py:1439
+#: ../yumcommands.py:2482
 msgid "You don't have access to the history DB."
 msgstr "你没有权限到历史数据。"
 
-#: ../yumcommands.py:1487
+#: ../yumcommands.py:2574
 msgid "Check for problems in the rpmdb"
 msgstr "检查rpmdb里的问题"
 
-#: ../yumcommands.py:1514
+#: ../yumcommands.py:2639
 msgid "load a saved transaction from filename"
 msgstr "从文件名中加载一个已存事务"
 
-#: ../yumcommands.py:1518
+#: ../yumcommands.py:2656
 msgid "No saved transaction file specified."
 msgstr "指定文件中没有已存事务。"
 
-#: ../yumcommands.py:1522
+#: ../yumcommands.py:2660
 #, python-format
 msgid "loading transaction from %s"
 msgstr "正在从 %s 中加载事务"
 
-#: ../yumcommands.py:1528
+#: ../yumcommands.py:2666
 #, python-format
 msgid "Transaction loaded from %s with %s members"
 msgstr "事务从 %s 载入，还有 %s 成员。"
@@ -1997,26 +2099,32 @@ msgstr "事务从 %s 载入，还有 %s 成员。"
 msgid " Yum checks failed: %s"
 msgstr " Yum 检查失败：%s"
 
-#: ../yummain.py:114
+#: ../yummain.py:110
+msgid "No read/write access in current directory, moving to /"
+msgstr ""
+
+#: ../yummain.py:124
+msgid "Can't create lock file; exiting"
+msgstr "不能创建锁文件，退出"
+
+#: ../yummain.py:128
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
 msgstr "另外一个程序锁定了 yum；等待它退出……"
 
-#: ../yummain.py:120
-msgid "Can't create lock file; exiting"
-msgstr "不能创建锁文件，退出"
-
 #. Depsolve stage
-#: ../yummain.py:167
+#: ../yummain.py:178
 msgid "Resolving Dependencies"
 msgstr "解决依赖关系"
 
-#: ../yummain.py:230
+#: ../yummain.py:241 ../yummain.py:249
 #, python-format
-msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
-msgstr "您的事务已保存，用 yum load-transaction %s  打开。"
+msgid ""
+"Your transaction was saved, rerun it with:\n"
+" yum load-transaction %s"
+msgstr ""
 
-#: ../yummain.py:288
+#: ../yummain.py:326
 msgid ""
 "\n"
 "\n"
@@ -2026,74 +2134,74 @@ msgstr ""
 "\n"
 "由于用户取消而退出。"
 
-#: ../yum/depsolve.py:84
+#: ../yum/depsolve.py:83
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr "doTsSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/depsolve.py:99
+#: ../yum/depsolve.py:98
 msgid "Setting up TransactionSets before config class is up"
 msgstr "在配置可用前设置事务集"
 
-#: ../yum/depsolve.py:153
+#: ../yum/depsolve.py:152
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "配置文件 %s 中使用 tsflag 是错误的"
 
-#: ../yum/depsolve.py:164
+#: ../yum/depsolve.py:170
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "搜索群集中 %s 的依赖关系"
 
-#: ../yum/depsolve.py:207
+#: ../yum/depsolve.py:221
 #, python-format
 msgid "Member: %s"
 msgstr "成员：%s"
 
-#: ../yum/depsolve.py:221 ../yum/depsolve.py:793
+#: ../yum/depsolve.py:235 ../yum/depsolve.py:831
 #, python-format
 msgid "%s converted to install"
 msgstr "%s 转为安装"
 
-#: ../yum/depsolve.py:233
+#: ../yum/depsolve.py:247
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "添加软件包 %s 到 %s 模式"
 
-#: ../yum/depsolve.py:249
+#: ../yum/depsolve.py:263
 #, python-format
 msgid "Removing Package %s"
 msgstr "正在删除软件包 %s"
 
-#: ../yum/depsolve.py:271
+#: ../yum/depsolve.py:285
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s 需要：%s"
 
-#: ../yum/depsolve.py:312
+#: ../yum/depsolve.py:326
 #, python-format
 msgid "%s requires %s"
 msgstr "%s 需要 %s"
 
-#: ../yum/depsolve.py:339
+#: ../yum/depsolve.py:353
 msgid "Needed Require has already been looked up, cheating"
 msgstr "已查询过所需的依赖关系，跳过"
 
-#: ../yum/depsolve.py:349
+#: ../yum/depsolve.py:363
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "所需的依赖关系并非软件包名称。搜索：%s"
 
-#: ../yum/depsolve.py:357
+#: ../yum/depsolve.py:371
 #, python-format
 msgid "Potential Provider: %s"
 msgstr " 可能的提供者：%s"
 
-#: ../yum/depsolve.py:380
+#: ../yum/depsolve.py:394
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "模式 %s 被用于提供 %s 的软件包：%s"
 
-#: ../yum/depsolve.py:384
+#: ../yum/depsolve.py:398
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "提供 %s 的软件包使用的模式：%s"
@@ -2101,114 +2209,114 @@ msgstr "提供 %s 的软件包使用的模式：%s"
 #. the thing it needs is being updated or obsoleted away
 #. try to update the requiring package in hopes that all this problem goes
 #. away :(
-#: ../yum/depsolve.py:389 ../yum/depsolve.py:406
+#: ../yum/depsolve.py:403 ../yum/depsolve.py:420
 #, python-format
 msgid "Trying to update %s to resolve dep"
 msgstr "尝试升级 %s 来解决依赖"
 
-#: ../yum/depsolve.py:400 ../yum/depsolve.py:410
+#: ../yum/depsolve.py:414 ../yum/depsolve.py:424
 #, python-format
 msgid "No update paths found for %s. Failure!"
 msgstr "未为 %s 找到更新路径。失败！"
 
-#: ../yum/depsolve.py:416
+#: ../yum/depsolve.py:430
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "事务：%s 软件包要求删除 %s"
 
-#: ../yum/depsolve.py:429
+#: ../yum/depsolve.py:443
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "事务：令 %s 被 %s 取代以解决依赖关系。"
 
-#: ../yum/depsolve.py:432
+#: ../yum/depsolve.py:446
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "事务：更新 %s 以解决依赖。"
 
-#: ../yum/depsolve.py:440
+#: ../yum/depsolve.py:454
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "无法找到 %s 依赖的更新路径"
 
-#: ../yum/depsolve.py:471
+#: ../yum/depsolve.py:485
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "快速匹配 %s 到 %s 的需求"
 
 #. is it already installed?
-#: ../yum/depsolve.py:513
+#: ../yum/depsolve.py:527
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "提供 %s 的软件包存在而且已被安装，不再检测。"
 
-#: ../yum/depsolve.py:529
+#: ../yum/depsolve.py:543
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr "可能解决依赖的 %s 软件包已经有更新的版本存在于事务中了。"
 
-#: ../yum/depsolve.py:540
+#: ../yum/depsolve.py:554
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "可能解决依赖的 %s 软件包已经有更新的版本安装过了。"
 
-#: ../yum/depsolve.py:558
+#: ../yum/depsolve.py:572
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s 已包含在事务中，不再重复"
 
-#: ../yum/depsolve.py:607
+#: ../yum/depsolve.py:621
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "事务：将 %s 作为 %s 的更新"
 
-#: ../yum/depsolve.py:616
+#: ../yum/depsolve.py:630
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "事务：将 %s 作为 %s 安装"
 
-#: ../yum/depsolve.py:727 ../yum/depsolve.py:819
+#: ../yum/depsolve.py:765 ../yum/depsolve.py:861
 msgid "Success - empty transaction"
 msgstr "成功 - 空的事务"
 
-#: ../yum/depsolve.py:767 ../yum/depsolve.py:783
+#: ../yum/depsolve.py:805 ../yum/depsolve.py:821
 msgid "Restarting Loop"
 msgstr "重新开始循环"
 
-#: ../yum/depsolve.py:799
+#: ../yum/depsolve.py:841
 msgid "Dependency Process ending"
 msgstr "依赖进程即将完成"
 
-#: ../yum/depsolve.py:821
+#: ../yum/depsolve.py:863
 msgid "Success - deps resolved"
 msgstr "成功 - 依赖关系解决"
 
-#: ../yum/depsolve.py:845
+#: ../yum/depsolve.py:887
 #, python-format
 msgid "Checking deps for %s"
 msgstr "检查 %s 的依赖关系"
 
-#: ../yum/depsolve.py:931
+#: ../yum/depsolve.py:973
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "搜索 %s 作为 %s 的依赖关系"
 
-#: ../yum/depsolve.py:1169
+#: ../yum/depsolve.py:1216
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "为 %s 运行 compare_providers()"
 
-#: ../yum/depsolve.py:1196 ../yum/depsolve.py:1202
+#: ../yum/depsolve.py:1243 ../yum/depsolve.py:1249
 #, python-format
 msgid "better arch in po %s"
 msgstr "%s 提供了更好的架构选择"
 
-#: ../yum/depsolve.py:1298
+#: ../yum/depsolve.py:1345
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s 取代 %s"
 
-#: ../yum/depsolve.py:1310
+#: ../yum/depsolve.py:1357
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -2217,162 +2325,162 @@ msgstr ""
 "比较 %s 与 %s 架构差异，在 %s\n"
 "  胜者：%s"
 
-#: ../yum/depsolve.py:1318
+#: ../yum/depsolve.py:1365
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "%s 和 %s 具有共同的源代码 rpm"
 
-#: ../yum/depsolve.py:1322
+#: ../yum/depsolve.py:1369
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr "基础软件包 %s 由于 %s 已经安装"
 
-#: ../yum/depsolve.py:1328
+#: ../yum/depsolve.py:1375
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "共同的前缀 %s 存在于 %s 和 %s 之间"
 
-#: ../yum/depsolve.py:1359
+#: ../yum/depsolve.py:1406
 #, python-format
 msgid "requires minimal: %d"
 msgstr "最小需求： %d"
 
-#: ../yum/depsolve.py:1363
+#: ../yum/depsolve.py:1410
 #, python-format
 msgid " Winner: %s"
 msgstr " 胜者：%s"
 
-#: ../yum/depsolve.py:1368
+#: ../yum/depsolve.py:1415
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr " 负者( %d)：%s"
 
-#: ../yum/depsolve.py:1384
+#: ../yum/depsolve.py:1431
 #, python-format
 msgid "Best Order: %s"
 msgstr "最佳顺序：%s"
 
-#: ../yum/__init__.py:234
+#: ../yum/__init__.py:261
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "doConfigSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:482
+#: ../yum/__init__.py:527
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr "软件仓库 %r：传递配置出错： %s"
 
-#: ../yum/__init__.py:488
+#: ../yum/__init__.py:533
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "仓库 %r 在配置文件中未指定名字，使用标识代替"
 
-#: ../yum/__init__.py:526
+#: ../yum/__init__.py:571
 msgid "plugins already initialised"
 msgstr "插件已初始化"
 
-#: ../yum/__init__.py:533
+#: ../yum/__init__.py:580
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "doRpmDBSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:544
+#: ../yum/__init__.py:591
 msgid "Reading Local RPMDB"
 msgstr "读入本地 RPMDB"
 
-#: ../yum/__init__.py:567
+#: ../yum/__init__.py:621
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "doRepoSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:630
+#: ../yum/__init__.py:692
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "doSackSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:660
+#: ../yum/__init__.py:722
 msgid "Setting up Package Sacks"
 msgstr "设置软件包群集"
 
-#: ../yum/__init__.py:705
+#: ../yum/__init__.py:767
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "仓库 %s 的对象缺少 _resetSack 方法\n"
 
-#: ../yum/__init__.py:706
+#: ../yum/__init__.py:768
 msgid "therefore this repo cannot be reset.\n"
 msgstr "因此仓库无法复位。\n"
 
-#: ../yum/__init__.py:711
+#: ../yum/__init__.py:776
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "doUpdateSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:723
+#: ../yum/__init__.py:788
 msgid "Building updates object"
 msgstr "建立升级对象"
 
-#: ../yum/__init__.py:765
+#: ../yum/__init__.py:832
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "doGroupSetup() 将从未来版本的 Yum 中去掉。\n"
 
-#: ../yum/__init__.py:790
+#: ../yum/__init__.py:857
 msgid "Getting group metadata"
 msgstr "获取组的元数据"
 
-#: ../yum/__init__.py:816
+#: ../yum/__init__.py:885
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "从仓库 %s 中添加组文件"
 
-#: ../yum/__init__.py:827
+#: ../yum/__init__.py:896
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "为仓库 %s 添加组文件时失败：%s"
 
-#: ../yum/__init__.py:833
+#: ../yum/__init__.py:902
 msgid "No Groups Available in any repository"
 msgstr "在现有的仓库中没有提供组"
 
-#: ../yum/__init__.py:845
+#: ../yum/__init__.py:914
 msgid "Getting pkgtags metadata"
 msgstr "获取软件包标签元数据"
 
-#: ../yum/__init__.py:855
+#: ../yum/__init__.py:924
 #, python-format
 msgid "Adding tags from repository: %s"
 msgstr "从软件仓库添加标签：%s"
 
-#: ../yum/__init__.py:866
+#: ../yum/__init__.py:935
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
 msgstr "从软件仓库添加软件包标签失败：%s - %s"
 
-#: ../yum/__init__.py:944
+#: ../yum/__init__.py:1015
 msgid "Importing additional filelist information"
 msgstr "正在导入额外的文件列表信息"
 
-#: ../yum/__init__.py:958
+#: ../yum/__init__.py:1033
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "程序 %s%s%s 位于 yum-utils 软件包。"
 
-#: ../yum/__init__.py:966
+#: ../yum/__init__.py:1050
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
 msgstr "存在未完成的操作。您或许需要先运行 yum-complete-transaction 来完成。"
 
-#: ../yum/__init__.py:983
+#: ../yum/__init__.py:1067
 msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> 找到剩下的不需要的依赖"
 
-#: ../yum/__init__.py:1041
+#: ../yum/__init__.py:1125
 #, python-format
 msgid "Protected multilib versions: %s != %s"
 msgstr "保护多库版本：%s != %s"
 
-#: ../yum/__init__.py:1096
+#: ../yum/__init__.py:1180
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
 msgstr "尝试移除受保护的 \"%s\""
 
-#: ../yum/__init__.py:1217
+#: ../yum/__init__.py:1301
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -2380,502 +2488,507 @@ msgstr ""
 "\n"
 "因为依赖关系问题而跳过的软件包："
 
-#: ../yum/__init__.py:1221
+#: ../yum/__init__.py:1305
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s 来自 %s"
 
 #. FIXME: _N()
-#: ../yum/__init__.py:1391
+#: ../yum/__init__.py:1477
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr "** 发现 %d 个已存在的 rpmdb 问题， 'yum check' 输出如下："
 
-#: ../yum/__init__.py:1395
+#: ../yum/__init__.py:1481
 msgid "Warning: RPMDB altered outside of yum."
 msgstr "警告：RPMDB 在 yum 以外被修改。"
 
-#: ../yum/__init__.py:1407
+#: ../yum/__init__.py:1493
 msgid "missing requires"
 msgstr "缺失的需求"
 
-#: ../yum/__init__.py:1408
+#: ../yum/__init__.py:1494
 msgid "installed conflict"
 msgstr "安装冲突"
 
-#: ../yum/__init__.py:1525
+#: ../yum/__init__.py:1617
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr "警告：事务过程中出现 scriptlet 或其他非致命性错误。"
 
-#: ../yum/__init__.py:1535
+#: ../yum/__init__.py:1627
 msgid "Transaction couldn't start:"
 msgstr "事务无法启动："
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1538
+#: ../yum/__init__.py:1630
 msgid "Could not run transaction."
 msgstr "不能执行事务。"
 
-#: ../yum/__init__.py:1552
+#: ../yum/__init__.py:1644
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "移除事务文件 %s 失败"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1590
+#: ../yum/__init__.py:1687
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s 假定被安装但并非这样！"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1651
+#. Note: This actually triggers atm. because we can't
+#. always find the erased txmbr to set it when
+#. we should.
+#: ../yum/__init__.py:1756
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s 假定被移除但并非这样！"
 
-#: ../yum/__init__.py:1768
+#: ../yum/__init__.py:1883
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr "不能打开锁 %s ： %s"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1785
+#: ../yum/__init__.py:1900
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "无法检测 PID %s 是否激活"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1789
+#: ../yum/__init__.py:1904
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "%s 已被锁定，PID 为 %s 的另一个程序正在运行。"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1830
+#: ../yum/__init__.py:1952
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "无法在 %s 创建锁：%s"
 
-#: ../yum/__init__.py:1875
+#: ../yum/__init__.py:2005
 #, python-format
 msgid ""
 "Package does not match intended download. Suggestion: run yum "
 "--enablerepo=%s clean metadata"
 msgstr "软件包与预期下载的不符。建议：运行 yum --enablerepo=%s clean metadata"
 
-#: ../yum/__init__.py:1891
+#: ../yum/__init__.py:2028
 msgid "Could not perform checksum"
 msgstr "无法执行校验和"
 
-#: ../yum/__init__.py:1894
+#: ../yum/__init__.py:2031
 msgid "Package does not match checksum"
 msgstr "软件包校验和不匹配"
 
-#: ../yum/__init__.py:1946
+#: ../yum/__init__.py:2094
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr "软件包校验和失败但是 %s 已启用缓存"
 
-#: ../yum/__init__.py:1949 ../yum/__init__.py:1979
+#: ../yum/__init__.py:2097 ../yum/__init__.py:2127
 #, python-format
 msgid "using local copy of %s"
 msgstr "使用本地的 %s 副本"
 
-#: ../yum/__init__.py:1991
-#, python-format
-msgid ""
-"Insufficient space in download directory %s\n"
-"    * free   %s\n"
-"    * needed %s"
-msgstr ""
-"下载目录 %s 空间不足\n"
-"    * 空闲   %s\n"
-"    * 需要 %s"
-
-#: ../yum/__init__.py:2052
+#: ../yum/__init__.py:2205
 msgid "Header is not complete."
 msgstr "文件头不完整。"
 
-#: ../yum/__init__.py:2089
+#: ../yum/__init__.py:2245
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
 msgstr "文件头不在本地缓存中，但是因为处于只使用缓存的模式，无法下载 %s"
 
-#: ../yum/__init__.py:2147
+#: ../yum/__init__.py:2305
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s 的公钥没有安装"
 
-#: ../yum/__init__.py:2151
+#: ../yum/__init__.py:2309
 #, python-format
 msgid "Problem opening package %s"
 msgstr "打开软件包 %s 出现问题"
 
-#: ../yum/__init__.py:2159
+#: ../yum/__init__.py:2317
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s 的公钥不可信任"
 
-#: ../yum/__init__.py:2163
+#: ../yum/__init__.py:2321
 #, python-format
 msgid "Package %s is not signed"
 msgstr "软件包 %s 没有签名"
 
-#: ../yum/__init__.py:2202
+#: ../yum/__init__.py:2363
 #, python-format
 msgid "Cannot remove %s"
 msgstr "无法删除 %s"
 
-#: ../yum/__init__.py:2206
+#: ../yum/__init__.py:2367
 #, python-format
 msgid "%s removed"
 msgstr "%s 已删除"
 
-#: ../yum/__init__.py:2252
+#: ../yum/__init__.py:2426
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "无法删除 %s 文件 %s"
 
-#: ../yum/__init__.py:2256
+#: ../yum/__init__.py:2430
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s 文件 %s 已删除"
 
-#: ../yum/__init__.py:2258
+#: ../yum/__init__.py:2432
 #, python-format
-msgid "%d %s files removed"
-msgstr "%d %s 文件已删除"
+msgid "%d %s file removed"
+msgid_plural "%d %s files removed"
+msgstr[0] ""
 
-#: ../yum/__init__.py:2327
+#: ../yum/__init__.py:2522
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "群集中有超过一个相同的匹配 %s"
 
-#: ../yum/__init__.py:2333
+#: ../yum/__init__.py:2528
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "更新不包括匹配 %s.%s %s:%s-%s 的内容"
 
-#: ../yum/__init__.py:2632
+#: ../yum/__init__.py:2892
 msgid ""
 "searchPackages() will go away in a future version of Yum."
 "                      Use searchGenerator() instead. \n"
 msgstr "searchPackages() 将从未来版本的 Yum 中去掉，被searchGenerator() 替代。\n"
 
-#: ../yum/__init__.py:2675
+#: ../yum/__init__.py:2948
 #, python-format
-msgid "Searching %d packages"
-msgstr "搜索 %d 个软件包"
+msgid "Searching %d package"
+msgid_plural "Searching %d packages"
+msgstr[0] ""
 
-#: ../yum/__init__.py:2679
+#: ../yum/__init__.py:2952
 #, python-format
 msgid "searching package %s"
 msgstr "搜索 %s 软件包"
 
-#: ../yum/__init__.py:2691
+#: ../yum/__init__.py:2964
 msgid "searching in file entries"
 msgstr "在文件中搜索"
 
-#: ../yum/__init__.py:2698
+#: ../yum/__init__.py:2971
 msgid "searching in provides entries"
 msgstr "在可提供的依赖中搜索"
 
-#: ../yum/__init__.py:2777
+#: ../yum/__init__.py:3056
 msgid "No group data available for configured repositories"
 msgstr "配置的软件仓库不包含组数据"
 
-#: ../yum/__init__.py:2808 ../yum/__init__.py:2827 ../yum/__init__.py:2858
-#: ../yum/__init__.py:2864 ../yum/__init__.py:2953 ../yum/__init__.py:2957
-#: ../yum/__init__.py:3339
+#: ../yum/__init__.py:3092 ../yum/__init__.py:3112 ../yum/__init__.py:3147
+#: ../yum/__init__.py:3153 ../yum/__init__.py:3246 ../yum/__init__.py:3250
+#: ../yum/__init__.py:3674
 #, python-format
 msgid "No Group named %s exists"
 msgstr "不存在 %s 组"
 
-#: ../yum/__init__.py:2839 ../yum/__init__.py:2973
+#: ../yum/__init__.py:3124 ../yum/__init__.py:3266
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "软件包 %s 没有包含在 %s 组中"
 
-#: ../yum/__init__.py:2887
+#: ../yum/__init__.py:3176
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "添加包 %s 从组 %s 中"
 
-#: ../yum/__init__.py:2891
+#: ../yum/__init__.py:3180
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "找不到名为 %s 的软件包来安装"
 
-#: ../yum/__init__.py:2941
+#: ../yum/__init__.py:3230
 #, python-format
 msgid "Warning: Group %s does not have any packages."
 msgstr "警告：%s 组不包含任何包。"
 
-#: ../yum/__init__.py:2943
+#: ../yum/__init__.py:3232
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr "组 %s 拥有 %u 有条件的包可能安装。"
 
 #. This can happen due to excludes after .up has
 #. happened.
-#: ../yum/__init__.py:3002
+#: ../yum/__init__.py:3304
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "群集中找不到软件包 %s"
 
-#: ../yum/__init__.py:3022
+#: ../yum/__init__.py:3332
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "rpmdb 中找不到软件包元组 %s"
 
-#: ../yum/__init__.py:3079 ../yum/__init__.py:3129
+#: ../yum/__init__.py:3395 ../yum/__init__.py:3457
 #, python-format
 msgid "Invalid version flag from: %s"
 msgstr "来自 %s 的无效版本标志"
 
-#: ../yum/__init__.py:3096 ../yum/__init__.py:3101
+#: ../yum/__init__.py:3419 ../yum/__init__.py:3424
 #, python-format
 msgid "No Package found for %s"
 msgstr "找不到 %s 软件包"
 
-#: ../yum/__init__.py:3401
+#: ../yum/__init__.py:3758
 msgid "Package Object was not a package object instance"
 msgstr "不是一个软件包对象的实例"
 
-#: ../yum/__init__.py:3405
+#: ../yum/__init__.py:3762
 msgid "Nothing specified to install"
 msgstr "没有指定要安装的内容"
 
-#: ../yum/__init__.py:3424 ../yum/__init__.py:4283
+#: ../yum/__init__.py:3781 ../yum/__init__.py:4683
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "检测 %s 提供的依赖或文件"
 
-#: ../yum/__init__.py:3430 ../yum/__init__.py:3775 ../yum/__init__.py:3969
-#: ../yum/__init__.py:4289
+#: ../yum/__init__.py:3787 ../yum/__init__.py:4151 ../yum/__init__.py:4353
+#: ../yum/__init__.py:4689
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "参数 %s 没有匹配"
 
-#: ../yum/__init__.py:3507
+#: ../yum/__init__.py:3864
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "包 %s 已安装且不可用"
 
-#: ../yum/__init__.py:3510
+#: ../yum/__init__.py:3867
 msgid "No package(s) available to install"
 msgstr "没有包可供安装"
 
-#: ../yum/__init__.py:3522
+#: ../yum/__init__.py:3879
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "软件包 %s 已包含在事务中"
 
-#: ../yum/__init__.py:3550
+#: ../yum/__init__.py:3907
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "软件包 %s 被已安装的 %s 取代"
 
-#: ../yum/__init__.py:3555
+#: ../yum/__init__.py:3912
 #, python-format
 msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
 "requirements"
 msgstr "软件包 %s 已经被 %s 取代，但是取代的软件包并未满足需求"
 
-#: ../yum/__init__.py:3558
+#: ../yum/__init__.py:3915
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr "软件包 %s 已经被 %s 取代，改为尝试安装 %s"
 
-#: ../yum/__init__.py:3566
+#: ../yum/__init__.py:3923
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "包 %s 已安装并且是最新版本"
 
-#: ../yum/__init__.py:3580
+#: ../yum/__init__.py:3937
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr "匹配 %s 的软件包已经安装。检查更新。"
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:3684
+#: ../yum/__init__.py:4060
 msgid "Updating Everything"
 msgstr "全部升级"
 
-#: ../yum/__init__.py:3708 ../yum/__init__.py:3849 ../yum/__init__.py:3879
-#: ../yum/__init__.py:3915
+#: ../yum/__init__.py:4084 ../yum/__init__.py:4226 ../yum/__init__.py:4256
+#: ../yum/__init__.py:4292
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "不更新已被取代的软件包：%s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3753 ../yum/__init__.py:3965
+#: ../yum/__init__.py:4129 ../yum/__init__.py:4349
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:3838
+#: ../yum/__init__.py:4169
+#, python-format
+msgid "No package matched to upgrade: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4215
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "包已被取代：%s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3874
+#: ../yum/__init__.py:4251
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "未更新已被废除的软件包：%s"
 
-#: ../yum/__init__.py:3883 ../yum/__init__.py:3919
+#: ../yum/__init__.py:4260 ../yum/__init__.py:4296
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "未更新已被更新的软件包：%s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:3982
-msgid "No package matched to remove"
-msgstr "没有匹配的要删除的包"
+#: ../yum/__init__.py:4366
+#, python-format
+msgid "No package matched to remove: %s"
+msgstr ""
 
-#: ../yum/__init__.py:3988
+#: ../yum/__init__.py:4372
 #, python-format
 msgid "Skipping the running kernel: %s"
 msgstr "跳过正在运行的内核：%ss"
 
-#: ../yum/__init__.py:3994
+#: ../yum/__init__.py:4378
 #, python-format
 msgid "Removing %s from the transaction"
 msgstr "从操作中移除 %s"
 
-#: ../yum/__init__.py:4029
+#: ../yum/__init__.py:4415
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "无法打开 %s ，跳过。"
 
-#: ../yum/__init__.py:4032 ../yum/__init__.py:4150 ../yum/__init__.py:4226
+#: ../yum/__init__.py:4418 ../yum/__init__.py:4535 ../yum/__init__.py:4620
 #, python-format
 msgid "Examining %s: %s"
 msgstr "诊断 %s: %s"
 
-#: ../yum/__init__.py:4036
+#: ../yum/__init__.py:4422
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr "无法本地安装 deltarpm %s ，跳过。"
 
-#: ../yum/__init__.py:4045 ../yum/__init__.py:4153 ../yum/__init__.py:4229
+#: ../yum/__init__.py:4431 ../yum/__init__.py:4538 ../yum/__init__.py:4623
 #, python-format
 msgid ""
 "Cannot add package %s to transaction. Not a compatible architecture: %s"
 msgstr "无法添加软件包 %s 到操作中。不属于可兼容的架构：%s"
 
-#: ../yum/__init__.py:4051
+#: ../yum/__init__.py:4437
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr "无法安装软件包 %s 。被已安装软件包 %s 标识为废除"
 
-#: ../yum/__init__.py:4059
+#: ../yum/__init__.py:4445
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
 "instead."
 msgstr "软件包 %s 没有安装，不能更新。运行 yum install 安装它。"
 
-#: ../yum/__init__.py:4078 ../yum/__init__.py:4085
+#: ../yum/__init__.py:4464 ../yum/__init__.py:4471
 #, python-format
 msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
 " instead."
 msgstr "软件包 %s.%s 未安装，不能更新它。替代方案是运行 yum install 安装。"
 
-#: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
+#: ../yum/__init__.py:4480 ../yum/__init__.py:4543 ../yum/__init__.py:4628
 #, python-format
 msgid "Excluding %s"
 msgstr "排除 %s"
 
-#: ../yum/__init__.py:4099
+#: ../yum/__init__.py:4485
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "%s 将被安装"
 
-#: ../yum/__init__.py:4105
+#: ../yum/__init__.py:4491
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "%s 将作为 %s 的更新"
 
-#: ../yum/__init__.py:4112
+#: ../yum/__init__.py:4498
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s：不更新已安装的软件包。"
 
-#: ../yum/__init__.py:4147 ../yum/__init__.py:4223
+#: ../yum/__init__.py:4532 ../yum/__init__.py:4617
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "无法打开文件：%s。跳过。"
 
-#: ../yum/__init__.py:4177
+#: ../yum/__init__.py:4572
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "覆盖安装出错：没有匹配的要删除的软件包"
 
-#: ../yum/__init__.py:4203
+#: ../yum/__init__.py:4598
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr "重新安装出错：没有匹配的软件包 %s 来安装"
 
-#: ../yum/__init__.py:4311
+#: ../yum/__init__.py:4711
 msgid "No package(s) available to downgrade"
 msgstr "没有可供降级的软件包"
 
-#: ../yum/__init__.py:4319
+#: ../yum/__init__.py:4719
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "软件包 %s 允许同时安装多个版本，跳过"
 
-#: ../yum/__init__.py:4365
+#: ../yum/__init__.py:4765
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "未找到匹配的可用软件包：%s"
 
-#: ../yum/__init__.py:4372
+#: ../yum/__init__.py:4772
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "只更新可用软件包：%s"
 
-#: ../yum/__init__.py:4442 ../yum/__init__.py:4479
+#: ../yum/__init__.py:4874 ../yum/__init__.py:4919
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "降级失败：%s"
 
-#: ../yum/__init__.py:4516
+#: ../yum/__init__.py:4880 ../yum/__init__.py:4925
+#, python-format
+msgid "Failed to upgrade: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4958
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "从 %s 检索密钥"
 
-#: ../yum/__init__.py:4534
+#: ../yum/__init__.py:4976
 msgid "GPG key retrieval failed: "
 msgstr "获取 GPG 密钥失败："
 
 #. if we decide we want to check, even though the sig failed
 #. here is where we would do that
-#: ../yum/__init__.py:4557
+#: ../yum/__init__.py:4999
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr "密钥 %s 上的 GPG 密钥签名与 %s 仓库的 CA 密钥不匹配"
 
-#: ../yum/__init__.py:4559
+#: ../yum/__init__.py:5001
 msgid "GPG key signature verified against CA Key(s)"
 msgstr "GPG 密钥签名验证与 CA 密钥冲突"
 
-#: ../yum/__init__.py:4567
+#: ../yum/__init__.py:5009
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "来自 %s 的不可用 GPG 密钥：%s"
 
-#: ../yum/__init__.py:4576
+#: ../yum/__init__.py:5018
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "GPG 密钥传递失败：密钥未包含值 %s"
 
-#: ../yum/__init__.py:4592
+#: ../yum/__init__.py:5034
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -2888,7 +3001,7 @@ msgstr ""
 "  软件包：%s（%s）\n"
 "  来自  ：%s"
 
-#: ../yum/__init__.py:4600
+#: ../yum/__init__.py:5042
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -2899,50 +3012,50 @@ msgstr ""
 "  用户ID：“%s”\n"
 "  来自  ：%s"
 
-#: ../yum/__init__.py:4634
+#: ../yum/__init__.py:5075
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s 的 GPG 密钥(0x%s)已安装"
 
-#: ../yum/__init__.py:4671
+#: ../yum/__init__.py:5114
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "导入密钥失败(代码 %d)"
 
-#: ../yum/__init__.py:4672 ../yum/__init__.py:4755
+#: ../yum/__init__.py:5115 ../yum/__init__.py:5201
 msgid "Key imported successfully"
 msgstr "导入密钥成功"
 
-#: ../yum/__init__.py:4676
+#: ../yum/__init__.py:5119
 msgid "Didn't install any keys"
 msgstr "没有安装任何键"
 
-#: ../yum/__init__.py:4680
+#: ../yum/__init__.py:5123
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr "仓库 \"%s\" 的 GPG 密钥已安装，但是不适用于此软件包。请检查仓库的公钥 URL 是否配置正确。"
 
-#: ../yum/__init__.py:4689
+#: ../yum/__init__.py:5132
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "导入的密钥没有用处，错误的密钥?"
 
-#: ../yum/__init__.py:4713
+#: ../yum/__init__.py:5156
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "位于 %s 的 GPG 密钥 （0x%s） 已经导入"
 
-#: ../yum/__init__.py:4754
+#: ../yum/__init__.py:5200
 msgid "Key import failed"
 msgstr "导入密钥失败"
 
-#: ../yum/__init__.py:4770
+#: ../yum/__init__.py:5216
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "没有对 %s 仓库安装任何键"
 
-#: ../yum/__init__.py:4774
+#: ../yum/__init__.py:5220
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
@@ -2951,157 +3064,181 @@ msgstr ""
 "\"%s\" 仓库列出的 GPG 密钥已经安装但并不正确。\n"
 "请检查此仓库正确的密钥 URL 配置。"
 
-#: ../yum/__init__.py:4924
+#: ../yum/__init__.py:5370
 msgid "Unable to find a suitable mirror."
 msgstr "不能发现合适的镜像。"
 
-#: ../yum/__init__.py:4926
+#: ../yum/__init__.py:5372
 msgid "Errors were encountered while downloading packages."
 msgstr "下载软件包时出错。"
 
-#: ../yum/__init__.py:4981
+#: ../yum/__init__.py:5427
 #, python-format
 msgid "Please report this error at %s"
 msgstr "请在 %s 报告这个错误"
 
-#: ../yum/__init__.py:4998
+#: ../yum/__init__.py:5444
 msgid "Test Transaction Errors: "
 msgstr "事务测试出错："
 
-#: ../yum/__init__.py:5098
+#: ../yum/__init__.py:5556
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "不能置缓存目录：%s"
 
-#: ../yum/__init__.py:5148 ../yum/__init__.py:5150
+#: ../yum/__init__.py:5617 ../yum/__init__.py:5619
 msgid "Dependencies not solved. Will not save unresolved transaction."
 msgstr "依赖没有解决。将不会保存未解决事务。"
 
-#: ../yum/__init__.py:5179 ../yum/__init__.py:5181
+#: ../yum/__init__.py:5648 ../yum/__init__.py:5650
 #, python-format
 msgid "Could not save transaction file %s: %s"
 msgstr "不能保存事务文件 %s：%s"
 
-#: ../yum/__init__.py:5195
+#: ../yum/__init__.py:5674
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
 msgstr "不能访问或都去已存事务 %s：%s"
 
-#: ../yum/__init__.py:5214
+#: ../yum/__init__.py:5703
 msgid "rpmdb ver mismatched saved transaction version, "
 msgstr "RPM数据库版本与已存事务版本不匹配， "
 
-#: ../yum/__init__.py:5216
+#: ../yum/__init__.py:5705
 msgid " ignoring, as requested."
 msgstr " 忽略，作为请求。"
 
-#: ../yum/__init__.py:5219 ../yum/__init__.py:5354
+#: ../yum/__init__.py:5708 ../yum/__init__.py:5843
 msgid " aborting."
 msgstr " 终止。"
 
-#: ../yum/__init__.py:5228
+#: ../yum/__init__.py:5717
 msgid "cannot find tsflags or tsflags not integer."
 msgstr "不能找到 tsflags 或 tsflags 非整数。"
 
-#: ../yum/__init__.py:5267
+#: ../yum/__init__.py:5756
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
 msgstr "在未知当前状态找到 txmbr：%s"
 
-#: ../yum/__init__.py:5271
+#: ../yum/__init__.py:5760
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
 msgstr "不能找到 txmbr：在 %s 状态中 %s"
 
-#: ../yum/__init__.py:5307 ../yum/__init__.py:5324
+#: ../yum/__init__.py:5796 ../yum/__init__.py:5813
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
 msgstr "不能找到 txmbr：来自原地 %s 的 %s"
 
-#: ../yum/__init__.py:5349
+#: ../yum/__init__.py:5838
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr "事务成员、关系缺失或 ts 已被修改，"
 
-#: ../yum/__init__.py:5351
+#: ../yum/__init__.py:5840
 msgid " ignoring, as requested. You must redepsolve!"
 msgstr " 忽略，作为请求。您必须解决依赖！"
 
+#. Debugging output
+#: ../yum/__init__.py:5915 ../yum/__init__.py:5934
+#, python-format
+msgid "%s has been visited already and cannot be removed."
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5918
+#, python-format
+msgid "Examining revdeps of %s"
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5939
+#, python-format
+msgid "%s has revdep %s which was user-installed."
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5953
+#, python-format
+msgid "%s has no user-installed revdeps."
+msgstr ""
+
 #. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:209
+#: ../yum/plugins.py:212
 msgid "Loaded plugins: "
 msgstr "已加载插件："
 
-#: ../yum/plugins.py:223 ../yum/plugins.py:229
+#: ../yum/plugins.py:226 ../yum/plugins.py:232
 #, python-format
 msgid "No plugin match for: %s"
 msgstr "没有匹配 %s 的插件"
 
-#: ../yum/plugins.py:259
+#: ../yum/plugins.py:262
 #, python-format
 msgid "Not loading \"%s\" plugin, as it is disabled"
 msgstr "\"%s\" 插件被禁用，因此未加载它"
 
 #. Give full backtrace:
-#: ../yum/plugins.py:271
+#: ../yum/plugins.py:274
 #, python-format
 msgid "Plugin \"%s\" can't be imported"
 msgstr "插件 \"%s\" 不能被导入"
 
-#: ../yum/plugins.py:278
+#: ../yum/plugins.py:281
 #, python-format
 msgid "Plugin \"%s\" doesn't specify required API version"
 msgstr "插件 \"%s\" 没有指定必要的 API 版本"
 
-#: ../yum/plugins.py:283
+#: ../yum/plugins.py:286
 #, python-format
 msgid "Plugin \"%s\" requires API %s. Supported API is %s."
 msgstr "插件 \"%s\" 需要 API %s。支持的 API 为 %s。"
 
-#: ../yum/plugins.py:316
+#: ../yum/plugins.py:319
 #, python-format
 msgid "Loading \"%s\" plugin"
 msgstr "加载 \"%s\" 插件"
 
-#: ../yum/plugins.py:323
+#: ../yum/plugins.py:326
 #, python-format
 msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
 msgstr "搜索路径中存在两个或多个重名插件 \"%s\""
 
-#: ../yum/plugins.py:343
+#: ../yum/plugins.py:346
 #, python-format
 msgid "Configuration file %s not found"
 msgstr "找不到配置文件 %s"
 
 #. for
 #. Configuration files for the plugin not found
-#: ../yum/plugins.py:346
+#: ../yum/plugins.py:349
 #, python-format
 msgid "Unable to find configuration file for plugin %s"
 msgstr "找不到插件 %s 的配置文件 "
 
-#: ../yum/plugins.py:508
+#: ../yum/plugins.py:553
 msgid "registration of commands not supported"
 msgstr "不支持注册命令"
 
-#: ../yum/rpmsack.py:148
+#: ../yum/rpmsack.py:159
 msgid "has missing requires of"
 msgstr "有缺少的需求"
 
-#: ../yum/rpmsack.py:151
+#: ../yum/rpmsack.py:162
 msgid "has installed conflicts"
 msgstr "有已安装冲突"
 
-#: ../yum/rpmsack.py:160
+#: ../yum/rpmsack.py:171
 #, python-format
 msgid "%s is a duplicate with %s"
 msgstr "%s 是 %s 的副本"
 
-#: ../yum/rpmsack.py:168
+#: ../yum/rpmsack.py:179
 #, python-format
 msgid "%s is obsoleted by %s"
 msgstr "%s 被 %s 取代"
 
-#: ../yum/rpmsack.py:176
+#: ../yum/rpmsack.py:187
 #, python-format
 msgid "%s provides %s but it cannot be found"
 msgstr "%s 提供 %s 但不能被找到"
@@ -3109,6 +3246,17 @@ msgstr "%s 提供 %s 但不能被找到"
 #: ../yum/rpmtrans.py:80
 msgid "Repackaging"
 msgstr "正在重新包装"
+
+#: ../yum/yumRepo.py:806
+#, python-format
+msgid ""
+"Insufficient space in download directory %s\n"
+"    * free   %s\n"
+"    * needed %s"
+msgstr ""
+"下载目录 %s 空间不足\n"
+"    * 空闲   %s\n"
+"    * 需要 %s"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format
