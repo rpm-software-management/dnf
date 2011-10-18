@@ -1890,32 +1890,16 @@ class YumBase(depsolve.Depsolve):
         
         mypid=str(os.getpid())    
         while not self._lock(lockfile, mypid, 0644):
-            try:
-                fd = open(lockfile, 'r')
-            except (IOError, OSError), e:
-                msg = _("Could not open lock %s: %s") % (lockfile, e)
-                raise Errors.LockError(errno.EPERM, msg)
-                
-            try: oldpid = int(fd.readline())
-            except ValueError:
-                # bogus data in the pid file. Throw away.
+            oldpid = self._get_locker(lockfile)
+            if not oldpid:
+                # Invalid locker: unlink lockfile and retry
                 self._unlock(lockfile)
-            else:
-                if oldpid == os.getpid(): # if we own the lock, we're fine
-                    break
-                try: os.kill(oldpid, 0)
-                except OSError, e:
-                    if e[0] == errno.ESRCH:
-                        # The pid doesn't exist
-                        self._unlock(lockfile)
-                    else:
-                        # Whoa. What the heck happened?
-                        msg = _('Unable to check if PID %s is active') % oldpid
-                        raise Errors.LockError(errno.EPERM, msg, oldpid)
-                else:
-                    # Another copy seems to be running.
-                    msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
-                    raise Errors.LockError(0, msg, oldpid)
+                continue
+            if oldpid == os.getpid(): # if we own the lock, we're fine
+                break
+            # Another copy seems to be running.
+            msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
+            raise Errors.LockError(0, msg, oldpid)
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
     
@@ -1950,7 +1934,8 @@ class YumBase(depsolve.Depsolve):
         self._unlock(lockfile)
         self._lockfile = None
         
-    def _lock(self, filename, contents='', mode=0777):
+    @staticmethod
+    def _lock(filename, contents='', mode=0777):
         lockdir = os.path.dirname(filename)
         try:
             if not os.path.exists(lockdir):
@@ -1966,8 +1951,34 @@ class YumBase(depsolve.Depsolve):
                 raise Errors.LockError(msg.errno, errmsg, int(contents))
             return 0
     
-    def _unlock(self, filename):
+    @staticmethod
+    def _unlock(filename):
         misc.unlink_f(filename)
+
+    @staticmethod
+    def _get_locker(lockfile):
+        try: fd = open(lockfile, 'r')
+        except (IOError, OSError), e:
+            msg = _("Could not open lock %s: %s") % (lockfile, e)
+            raise Errors.LockError(errno.EPERM, msg)
+        try: oldpid = int(fd.readline())
+        except ValueError:
+            return None # Bogus pid
+
+        try:
+            stat = open("/proc/%d/stat" % oldpid).readline()
+            if stat.split()[2] == 'Z':
+                return None # The pid is a zombie
+        except IOError:
+            # process dead or /proc not mounted
+            try: os.kill(oldpid, 0)
+            except OSError, e:
+                if e[0] == errno.ESRCH:
+                    return None # The pid doesn't exist
+                # Whoa. What the heck happened?
+                msg = _('Unable to check if PID %s is active') % oldpid
+                raise Errors.LockError(errno.EPERM, msg, oldpid)
+        return oldpid
 
     def verifyPkg(self, fo, po, raiseError):
         """Check that the checksum of a remote package matches what we
