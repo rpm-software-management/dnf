@@ -51,6 +51,12 @@ transifex-push:
 	tx push -s -t
 	@echo "You can now git commit -a -m 'Transfix push, yum.pot update'"
 
+transifex:
+	make transifex-pull
+	git commit -a -m 'Transfix pull, *.po update'
+	make transifex-push
+	git commit -a -m 'Transfix push, yum.pot update'
+
 .PHONY: docs test
 
 DOCS = yum rpmUtils callback.py yumcommands.py shell.py output.py cli.py utils.py\
