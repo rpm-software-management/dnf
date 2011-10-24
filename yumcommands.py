@@ -1664,6 +1664,13 @@ class RepoListCommand(YumCommand):
             except yum.Errors.RepoError:
                 if verbose:
                     raise
+                #  populate them by hand, so one failure doesn't kill everything
+                # after it.
+                for repo in base.repos.listEnabled():
+                    try:
+                        base.repos.populateSack(repo.id)
+                    except yum.Errors.RepoError:
+                        pass
 
         repos = base.repos.repos.values()
         repos.sort()
