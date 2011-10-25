@@ -624,6 +624,8 @@ class MetaSack(PackageSackBase):
 class PackageSack(PackageSackBase):
     """represents sets (sacks) of Package Objects"""
     def __init__(self):
+        PackageSackBase.__init__(self)
+
         self.nevra = {} #nevra[(Name, Epoch, Version, Release, Arch)] = []
         self.obsoletes = {} #obs[obsoletename] = [pkg1, pkg2, pkg3] 
                  #the package lists are packages that obsolete the key name
