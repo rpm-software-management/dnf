@@ -484,7 +484,7 @@ def exception2msg(e):
         pass
 
     try:
-        return str(e)
+        return to_unicode(str(e))
     except:
         pass
     return "<exception failed to convert to text>"
