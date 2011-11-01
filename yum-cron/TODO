@@ -1,0 +1,19 @@
+Logging:
+- Add basic syslog support (success or failure; number of updates)
+
+Documentation:
+- Write a man page
+- Write a readme file
+
+Mail:
+- Use a different subject for success and failure mail
+- Make receiving mail when nothing happens optional
+
+General:
+- Break out check-updates and download-updates into their own actions;
+  move that logic to the cron scripts
+- Re-do the lockfile bit so failures can be reported without resorting to
+  relying on cron's output handler.
+- Figure out what to do with systemd
+- Update rpm, glibc, yum, python, specially?
+- Check if we're running as root; exit nicely.

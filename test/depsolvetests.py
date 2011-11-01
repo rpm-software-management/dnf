@@ -1130,9 +1130,10 @@ class DepsolveTests(DepsolveTests):
         # FIXME: Does it make sense to ignore the obsoletes here? esp. as we
         # don't ignore the conflicts above? ... I'm guessing ignoring it is
         # by accident too? bah.
-        # self.assertEquals('err', *self.resolveCode())
-        self.assertEquals('ok', *self.resolveCode())
-        self.assertResult((ipo1, po1))
+        self.assertEquals('err', *self.resolveCode())
+        # Old behaviour:
+        # self.assertEquals('ok', *self.resolveCode())
+        # self.assertResult((ipo1, po1))
 
     def testUpdate_so_req_diff_arch(self):
         rpo1 = FakePackage('foozoomer')

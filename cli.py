@@ -25,7 +25,7 @@ import sys
 import time
 import random
 import logging
-from optparse import OptionParser,OptionGroup
+from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 import rpm
 
 from weakref import proxy as weakref
@@ -38,12 +38,12 @@ import yum.logginglevels
 import yum.misc
 import yum.plugins
 from rpmUtils.arch import isMultiLibArch
-from yum import _
+from yum import _, P_
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 
-from yum.i18n import to_unicode, to_utf8
+from yum.i18n import to_unicode, to_utf8, exception2msg
 
 #  This is for yum-utils/yumdownloader in RHEL-5, where it isn't importing this
 # directly but did do "from cli import *", and we did have this in 3.2.22. I
@@ -51,23 +51,24 @@ from yum.i18n import to_unicode, to_utf8
 from yum.packages import parsePackages
 
 def sigquit(signum, frame):
-    """ SIGQUIT handler for the yum cli. """
+    """SIGQUIT handler for the yum cli.  This function will print an
+    error message and exit the program.
+    
+    :param signum: unused
+    :param frame: unused
+    """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
     sys.exit(1)
 
 class CliError(yum.Errors.YumBaseError):
-
-    """
-    Command line interface related Exception.
-    """
+    """Command line interface related Exception."""
 
     def __init__(self, args=''):
         yum.Errors.YumBaseError.__init__(self)
         self.args = args
 
 class YumBaseCli(yum.YumBase, output.YumOutput):
-    """This is the base class for yum cli.
-       Inherits from yum.YumBase and output.YumOutput """
+    """This is the base class for yum cli."""
        
     def __init__(self):
         # handle sigquit early on
@@ -84,11 +85,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.InfoCommand())
         self.registerCommand(yumcommands.ListCommand())
         self.registerCommand(yumcommands.EraseCommand())
-        self.registerCommand(yumcommands.GroupCommand())
-        self.registerCommand(yumcommands.GroupListCommand())
-        self.registerCommand(yumcommands.GroupInstallCommand())
-        self.registerCommand(yumcommands.GroupRemoveCommand())
-        self.registerCommand(yumcommands.GroupInfoCommand())
+        self.registerCommand(yumcommands.GroupsCommand())
         self.registerCommand(yumcommands.MakeCacheCommand())
         self.registerCommand(yumcommands.CleanCommand())
         self.registerCommand(yumcommands.ProvidesCommand())
@@ -110,15 +107,24 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.LoadTransactionCommand())
 
     def registerCommand(self, command):
+        """Register a :class:`yumcommands.YumCommand` so that it can be called by
+        any of the names returned by its
+        :func:`yumcommands.YumCommand.getNames` method.
+        
+        :param command: the :class:`yumcommands.YumCommand` to register
+        """
         for name in command.getNames():
             if name in self.yum_cli_commands:
                 raise yum.Errors.ConfigError(_('Command "%s" already defined') % name)
             self.yum_cli_commands[name] = command
             
     def doRepoSetup(self, thisrepo=None, dosack=1):
-        """grabs the repomd.xml for each enabled repository 
-           and sets up the basics of the repository"""
-        
+        """Grab the repomd.xml for each enabled and set up the basics
+        of the repository.
+
+        :param thisrepo: the repository to set up
+        :param dosack: whether to get the repo sack
+        """
         if self._repos and thisrepo is None:
             return self._repos
             
@@ -167,8 +173,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         mainopts = yum.misc.GenericHolder()
         mainopts.items = []
 
+        bad_setopt_tm = []
+        bad_setopt_ne = []
+
         for item in setopts:
-            k,v = item.split('=')
+            vals = item.split('=')
+            if len(vals) > 2:
+                bad_setopt_tm.append(item)
+                continue
+            if len(vals) < 2:
+                bad_setopt_ne.append(item)
+                continue
+            k,v = vals
             period = k.find('.') 
             if period != -1:
                 repo = k[:period]
@@ -184,13 +200,15 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         self.main_setopts = mainopts
         self.repo_setopts = repoopts
-        
+
+        return bad_setopt_tm, bad_setopt_ne
         
     def getOptionsConfig(self, args):
-        """parses command line arguments, takes cli args:
-        sets up self.conf and self.cmds as well as logger objects 
-        in base instance"""
-       
+        """Parse command line arguments, and set up :attr:`self.conf` and
+        :attr:`self.cmds`, as well as logger objects in base instance.
+
+        :param args: a list of command line arguments
+        """
         self.optparser = YumOptionParser(base=self, usage=self._makeUsage())
         
         # Parse only command line options that affect basic yum setup
@@ -203,7 +221,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             opts.verbose = False
 
         # go through all the setopts and set the global ones
-        self._parseSetOpts(opts.setopts)
+        bad_setopt_tm, bad_setopt_ne = self._parseSetOpts(opts.setopts)
         
         if self.main_setopts:
             for opt in self.main_setopts.items:
@@ -233,6 +251,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             pc.releasever = opts.releasever
             self.conf
             
+            for item in  bad_setopt_tm:
+                msg = "Setopt argument has multiple values: %s"
+                self.logger.warning(msg % item)
+            for item in  bad_setopt_ne:
+                msg = "Setopt argument has no value: %s"
+                self.logger.warning(msg % item)
             # now set  all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:
@@ -242,6 +266,10 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                     setattr(self.conf, opt, getattr(self.main_setopts, opt))
 
         except yum.Errors.ConfigError, e:
+            self.logger.critical(_('Config Error: %s'), e)
+            sys.exit(1)
+        except IOError, e:
+            e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
         except ValueError, e:
@@ -268,7 +296,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             opts.debuglevel = opts.errorlevel = 6
         if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
             self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
-        if opts.conffile != pc.fn:
+        #  getRoot() changes it, but then setupYumConfig() changes it back. So
+        # don't test for this, if we are using --installroot.
+        if root == '/' and opts.conffile != pc.fn:
             self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
 
         if opts.version:
@@ -320,9 +350,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         time.sleep(sleeptime)
         
     def parseCommands(self):
-        """reads self.cmds and parses them out to make sure that the requested 
-        base command + argument makes any sense at all""" 
-
+        """Read :attr:`self.cmds` and parse them out to make sure that
+        the requested base command and argument makes any sense at
+        all.  This function will also set :attr:`self.basecmd` and
+        :attr:`self.extcmds`.
+        """
         self.verbose_logger.debug('Yum Version: %s', yum.__version__)
         self.verbose_logger.log(yum.logginglevels.DEBUG_4,
                                 'COMMAND: %s', self.cmdstring)
@@ -367,7 +399,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.history.write_addon_data('shell-cmds', data)
 
     def doShell(self):
-        """do a shell-like interface for yum commands"""
+        """Run a shell-like interface for yum commands.
+
+        :return: a tuple containing the shell result number, and the
+           shell result messages
+        """
 
         yumshell = shell.YumShell(base=self)
 
@@ -384,8 +420,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return yumshell.result, yumshell.resultmsgs
 
     def errorSummary(self, errstring):
-        """ parse the error string for 'interesting' errors which can
-            be grouped, such as disk space issues """
+        """Parse the error string for 'interesting' errors which can
+        be grouped, such as disk space issues.
+
+        :param errstring: the error string
+        :return: a string containing a summary of the errors
+        """
         summary = ''
         # do disk space report first
         p = re.compile('needs (\d+)MB on the (\S+) filesystem')
@@ -399,7 +439,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if disk:
             summary += _('Disk Requirements:\n')
             for k in disk:
-                summary += _('  At least %dMB more space needed on the %s filesystem.\n') % (disk[k], k)
+                summary += P_('  At least %dMB more space needed on the %s filesystem.\n', '  At least %dMB more space needed on the %s filesystem.\n', disk[k]) % (disk[k], k)
 
         # TODO: simplify the dependency errors?
 
@@ -410,16 +450,17 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
 
     def doCommands(self):
-        """
-        Calls the base command passes the extended commands/args out to be
-        parsed (most notably package globs).
-        
-        Returns a numeric result code and an optional string
-           - 0 = we're done, exit
-           - 1 = we've errored, exit with error string
-           - 2 = we've got work yet to do, onto the next stage
-        """
-        
+        """Call the base command, and pass it the extended commands or
+           arguments.
+
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """       
         # at this point we know the args are valid - we don't know their meaning
         # but we know we're not being sent garbage
         
@@ -437,14 +478,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             try:
                 self._getTs(needTsRemove)
             except yum.Errors.YumBaseError, e:
-                return 1, [str(e)]
+                return 1, [exception2msg(e)]
 
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
     def doTransaction(self):
-        """takes care of package downloading, checking, user confirmation and actually
-           RUNNING the transaction"""
-    
+        """Take care of package downloading, checking, user
+        confirmation and actually running the transaction.
+
+        :return: a numeric return code, and optionally a list of
+           errors.  A negative return code indicates that errors
+           occurred in the pre-transaction checks
+        """
         # just make sure there's not, well, nothing to do
         if len(self.tsInfo) == 0:
             self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
@@ -455,7 +500,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         lsts = self.listTransaction()
         if self.verbose_logger.isEnabledFor(yum.logginglevels.INFO_1):
             self.verbose_logger.log(yum.logginglevels.INFO_1, lsts)
-        elif not self.conf.assumeyes:
+        elif self.conf.assumeno or not self.conf.assumeyes:
             #  If we are in quiet, and assumeyes isn't on we want to output
             # at least the transaction list anyway.
             self.logger.warn(lsts)
@@ -493,7 +538,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         
         # confirm with user
         if self._promptWanted():
-            if not self.userconfirm():
+            if self.conf.assumeno or not self.userconfirm():
                 self.verbose_logger.info(_('Exiting on user Command'))
                 return -1
 
@@ -611,12 +656,14 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return resultobject.return_code
         
     def gpgsigcheck(self, pkgs):
-        '''Perform GPG signature verification on the given packages, installing
-        keys if possible
+        """Perform GPG signature verification on the given packages,
+        installing keys if possible.
 
-        Returns non-zero if execution should stop (user abort).
-        Will raise YumBaseError if there's a problem
-        '''
+        :param pkgs: a list of package objects to verify the GPG
+           signatures of
+        :return: non-zero if execution should stop due to an error
+        :raises: Will raise :class:`YumBaseError` if there's a problem
+        """
         for po in pkgs:
             result, errmsg = self.sigCheckPkg(po)
 
@@ -625,7 +672,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue            
 
             elif result == 1:
-                if not sys.stdin.isatty() and not self.conf.assumeyes:
+                ay = self.conf.assumeyes and not self.conf.assumeno
+                if not sys.stdin.isatty() and not ay:
                     raise yum.Errors.YumBaseError, \
                             _('Refusing to automatically import keys when running ' \
                             'unattended.\nUse "-y" to override.')
@@ -693,12 +741,62 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                      ", ".join(matches))
             self.verbose_logger.log(yum.logginglevels.INFO_2, msg)
 
+    def _install_upgraded_requires(self, txmbrs):
+        """Go through the given txmbrs, and for any to be installed packages
+        look for their installed deps. and try to upgrade them, if the
+        configuration is set. Returning any new transaction members to be
+        isntalled.
+
+        :param txmbrs: a list of :class:`yum.transactioninfo.TransactionMember` objects
+        :return: a list of :class:`yum.transactioninfo.TransactionMember` objects
+        """
+
+        if not self.conf.upgrade_requirements_on_install:
+            return []
+
+        ret = []
+        done = set()
+        def _pkg2ups(pkg, reqpo=None):
+            if pkg.name in done:
+                return []
+            if reqpo is None:
+                reqpo = pkg
+
+            done.add(pkg.name)
+
+            uret = []
+            for req in pkg.requires:
+                for npkg in self.returnInstalledPackagesByDep(req):
+                    if npkg.name in done:
+                        continue
+                    uret += self.update(name=npkg.name, requiringPo=reqpo)
+                    uret += _pkg2ups(npkg, reqpo=reqpo)
+            return uret
+
+        for txmbr in txmbrs:
+            for rtxmbr, T in txmbr.relatedto:
+                ret += _pkg2ups(rtxmbr)
+            ret += _pkg2ups(txmbr.po)
+
+        return ret
+
     def installPkgs(self, userlist):
-        """Attempts to take the user specified list of packages/wildcards
-           and install them, or if they are installed, update them to a newer
-           version. If a complete version number if specified, attempt to 
-           upgrade (or downgrade if they have been removed) them to the
-           specified version"""
+        """Attempt to take the user specified list of packages or
+        wildcards and install them, or if they are installed, update
+        them to a newer version. If a complete version number is
+        specified, attempt to upgrade (or downgrade if they have been
+        removed) them to the specified version.
+
+        :param userlist: a list of names or wildcards specifying
+           packages to install
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         # get the list of available packages
         # iterate over the user's list
         # add packages to Transaction holding class if they match.
@@ -712,11 +810,12 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                self.localInstall(filelist=[arg])
+                txmbrs = self.installLocal(arg)
+                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
             try:
-                self.install(pattern=arg)
+                txmbrs = self.install(pattern=arg)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -725,17 +824,37 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self._maybeYouMeant(arg)
             else:
                 done = True
+                self._install_upgraded_requires(txmbrs)
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to install')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to install', '%d packages to install', change) % change]
 
         if not done:
             return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
         
     def updatePkgs(self, userlist, quiet=0, update_to=False):
-        """take user commands and populate transaction wrapper with 
-           packages to be updated"""
-        
+        """Take user commands and populate transaction wrapper with
+        packages to be updated.
+
+        :param userlist: a list of names or wildcards specifying
+           packages to update.  If *userlist* is an empty list, yum
+           will perform a global update
+        :param quiet: unused
+        :param update_to: if *update_to* is True, the update will only
+           be run if it will update the given package to the given
+           version.  For example, if the package foo-1-2 is installed,
+           updatePkgs(["foo-1-2], update_to=False) will work
+           identically to updatePkgs(["foo"]), but
+           updatePkgs(["foo-1-2"], update_to=True) will do nothing
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         # if there is no userlist, then do global update below
         # this is probably 90% of the calls
         # if there is a userlist then it's for updating pkgs, not obsoleting
@@ -746,35 +865,47 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
-            # pass them off to localInstall() and then move on
+            # pass them off to installLocal() and then move on
             localupdates = []
             for item in userlist:
                 if (item.endswith('.rpm') and (yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
-                    localupdates.append(item)
-            
-            if len(localupdates) > 0:
-                self.localInstall(filelist=localupdates, updateonly=1)
-                for item in localupdates:
-                    userlist.remove(item)
-                
-            for arg in userlist:
-                if not self.update(pattern=arg, update_to=update_to):
-                    self._checkMaybeYouMeant(arg)
+                    txmbrs = self.installLocal(item, updateonly=1)
+                    self._install_upgraded_requires(txmbrs)
+                    continue
+
+                txmbrs = self.update(pattern=item, update_to=update_to)
+                self._install_upgraded_requires(txmbrs)
+                if not txmbrs:
+                    self._checkMaybeYouMeant(item)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
-            msg = _('%d packages marked for Update') % change
-            return 2, [msg]
+            return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
         else:
             return 0, [_('No Packages marked for Update')]
 
     #  Note that we aren't in __init__ yet for a couple of reasons, but we 
     # probably will get there for 3.2.28.
     def distroSyncPkgs(self, userlist):
-        """ This does either upgrade/downgrade, depending on if the latest
-            installed version is older or newer. We allow "selection" but not
-            local packages (use tmprepo, or something). """
+        """Upgrade or downgrade packages to match the latest versions
+        available in the enabled repositories.
+
+        :param userlist: list of names or wildcards specifying
+           packages to synchronize with the repositories.  If the
+           first string in *userlist* is "full", packages will also be
+           reinstalled if their checksums do not match the checksums
+           in the repositories.  If *userlist* is an empty list or
+           only contains "full", every installed package will be
+           synchronized
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
 
         level = 'diff'
         if userlist and userlist[0] in ('full', 'diff', 'different'):
@@ -863,15 +994,24 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 dupdates.extend(self.downgrade(name=n, epoch=e, ver=v, rel=r))
 
         if dupdates:
-            msg = _('%d packages marked for Distribution Synchronization') % len(dupdates)
-            return 2, [msg]
+            return 2, [P_('%d package marked for Distribution Synchronization', '%d packages marked for Distribution Synchronization', len(dupdates)) % len(dupdates)]
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
 
     def erasePkgs(self, userlist):
-        """take user commands and populate a transaction wrapper with packages
-           to be erased/removed"""
-        
+        """Take user commands and populate a transaction wrapper with
+        packages to be erased.
+
+        :param userlist: a list of names or wildcards specifying
+           packages to erase
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         oldcount = len(self.tsInfo)
 
         all_rms = []
@@ -882,15 +1022,25 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             all_rms.extend(rms)
         
         if all_rms:
-            msg = _('%d packages marked for removal') % len(all_rms)
-            return 2, [msg]
+            return 2, [P_('%d package marked for removal', '%d packages marked for removal', len(all_rms)) % len(all_rms)]
         else:
             return 0, [_('No Packages marked for removal')]
     
     def downgradePkgs(self, userlist):
-        """Attempts to take the user specified list of packages/wildcards
-           and downgrade them. If a complete version number if specified,
-           attempt to downgrade them to the specified version"""
+        """Attempt to take the user specified list of packages or
+        wildcards and downgrade them. If a complete version number if
+        specified, attempt to downgrade them to the specified version
+
+        :param userlist: a list of names or wildcards specifying
+           packages to downgrade
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
 
         oldcount = len(self.tsInfo)
         
@@ -910,24 +1060,37 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                                         self.term.MODE['normal'])
                 self._maybeYouMeant(arg)
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to downgrade')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to downgrade', '%d packages to downgrade', change) % change]
         return 0, [_('Nothing to do')]
         
     def reinstallPkgs(self, userlist):
-        """Attempts to take the user specified list of packages/wildcards
-           and reinstall them. """
+        """Attempt to take the user specified list of packages or
+        wildcards and reinstall them.
+
+        :param userlist: a list of names or wildcards specifying
+           packages to reinstall
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
 
         oldcount = len(self.tsInfo)
 
         for arg in userlist:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                self.reinstallLocal(arg)
+                txmbrs = self.reinstallLocal(arg)
+                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 
             try:
-                self.reinstall(pattern=arg)
+                txmbrs = self.reinstall(pattern=arg)
             except yum.Errors.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
             except yum.Errors.ReinstallInstallError, e:
@@ -943,14 +1106,27 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             except yum.Errors.ReinstallError, e:
                 assert False, "Shouldn't happen, but just in case"
                 self.verbose_logger.log(yum.logginglevels.INFO_2, e)
+            else:
+                self._install_upgraded_requires(txmbrs)
+
         if len(self.tsInfo) > oldcount:
-            return 2, [_('Package(s) to reinstall')]
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
         return 0, [_('Nothing to do')]
 
     def localInstall(self, filelist, updateonly=0):
-        """handles installs/updates of rpms provided on the filesystem in a 
-           local dir (ie: not from a repo)"""
-           
+        """Install or update rpms provided on the file system in a
+        local directory (i.e. not from a repository).
+
+        :param filelist: a list of names specifying local rpms
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """           
         # read in each package into a YumLocalPackage Object
         # append it to self.localPackages
         # check if it can be installed or updated based on nevra versus rpmdb
@@ -974,20 +1150,25 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, [_('Nothing to do')]
 
     def returnPkgLists(self, extcmds, installed_available=False):
-        """Returns packages lists based on arguments on the cli.returns a 
-           GenericHolder instance with the following lists defined:
-           available = list of packageObjects
-           installed = list of packageObjects
-           updates = tuples of packageObjects (updating, installed)
-           extras = list of packageObjects
-           obsoletes = tuples of packageObjects (obsoleting, installed)
-           recent = list of packageObjects
+        """Return a :class:`yum.misc.GenericHolder` object containing
+        lists of package objects that match the given names or wildcards.
 
-           installed_available = that the available package list is present
-                                 as .hidden_available when doing any of:
-                                 all/available/installed
-           """
-        
+        :param extcmds: a list of names or wildcards specifying
+           packages to list
+        :param installed_available: whether the available package list
+           is present as .hidden_available when doing all, available,
+           or installed
+
+        :return: a :class:`yum.misc.GenericHolder` instance with the
+           following lists defined::
+
+             available = list of packageObjects
+             installed = list of packageObjects
+             updates = tuples of packageObjects (updating, installed)
+             extras = list of packageObjects
+             obsoletes = tuples of packageObjects (obsoleting, installed)
+             recent = list of packageObjects
+        """
         special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
                    'obsoletes']
         
@@ -1019,8 +1200,25 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return ypl
 
     def search(self, args):
-        """cli wrapper method for module search function, searches simple
-           text tags in a package object"""
+        """Search for simple text tags in a package object. This is a
+        cli wrapper method for the module search function.
+
+        :param args: list of names or wildcards to search for.
+           Normally this method will begin by searching the package
+           names and summaries, and will only search urls and
+           descriptions if that fails.  However, if the first string
+           in *args* is "all", this method will always search
+           everything
+        :return: a tuple where the first item is an exit code, and
+           the second item is a generator if the search is a
+           successful, and a list of error messages otherwise
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         
         # call the yum module search function with lists of tags to search
         # and what to search for
@@ -1110,9 +1308,20 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, matching
 
     def deplist(self, args):
-        """cli wrapper method for findDeps method takes a list of packages and 
-            returns a formatted deplist for that package"""
+        """Print out a formatted list of dependencies for a list of
+        packages.  This is a cli wrapper method for
+        :class:`yum.YumBase.findDeps`.
 
+        :param args: a list of names or wildcards specifying packages
+           that should have their dependenices printed
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         pkgs = []
         for arg in args:
             if (arg.endswith('.rpm') and (yum.misc.re_remote_url(arg) or
@@ -1133,10 +1342,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, []
 
     def provides(self, args):
-        """use the provides methods in the rpmdb and pkgsack to produce a list 
-           of items matching the provides strings. This is a cli wrapper to the 
-           module"""
-        
+        """Print out a list of packages that provide the given file or
+        feature.  This a cli wrapper to the provides methods in the
+        rpmdb and pkgsack.
+
+        :param args: the name of a file or feature to search for
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         old_sdup = self.conf.showdupesfromrepos
         # For output, as searchPackageProvides() is always in showdups mode
         self.conf.showdupesfromrepos = True
@@ -1165,20 +1383,68 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, []
     
     def resolveDepCli(self, args):
-        """returns a package (one per user arg) that provide the supplied arg"""
-        
+        """Print information about a package that provides the given
+        dependency.  Only one package will be printed per dependency.
+
+        :param args: a list of strings specifying dependencies to
+           search for
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         for arg in args:
+            try:
+                ipkg = self.returnInstalledPackageByDep(arg)
+            except yum.Errors.YumBaseError:
+                ipkg = None
+            else:
+                self.verbose_logger.info("%s %s" % (ipkg.envra,
+                                                    ipkg.ui_from_repo))
             try:
                 pkg = self.returnPackageByDep(arg)
             except yum.Errors.YumBaseError:
-                self.logger.critical(_('No Package Found for %s'), arg)
+                if not ipkg:
+                    self.logger.critical(_('No Package Found for %s'), arg)
             else:
-                msg = '%s:%s-%s-%s.%s' % (pkg.epoch, pkg.name, pkg.version, pkg.release, pkg.arch)
-                self.verbose_logger.info(msg)
+                if not pkg.verEQ(ipkg):
+                    self.verbose_logger.info("%s %s" % (pkg.envra,
+                                                        pkg.ui_from_repo))
 
         return 0, []
     
     def cleanCli(self, userlist):
+        """Remove data from the yum cache directory.  What data is
+        removed depends on the options supplied by the user.
+
+        :param userlist: a list of options.  The following are valid
+           options::
+
+             expire-cache = Eliminate the local data saying when the
+               metadata and mirror lists were downloaded for each
+               repository.
+             packages = Eliminate any cached packages
+             headers = Eliminate the header files, which old versions
+               of yum used for dependency resolution
+             metadata = Eliminate all of the files which yum uses to
+               determine the remote availability of packages
+             dbcache = Eliminate the sqlite cache used for faster
+               access to metadata
+             rpmdb = Eliminate any cached datat from the local rpmdb
+             plugins = Tell any enabled plugins to eliminate their
+               cached data
+             all = do all of the above
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         hdrcode = pkgcode = xmlcode = dbcode = expccode = 0
         pkgresults = hdrresults = xmlresults = dbresults = expcresults = []
         msg = self.fmtKeyValFill(_('Cleaning repos: '), 
@@ -1230,7 +1496,19 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return code, []
 
     def returnGroupLists(self, userlist):
+        """Print out a list of groups that match the given names or
+        wildcards.
 
+        :param extcmds: a list of names or wildcards specifying
+           groups to list
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage        
+        """
         uservisible=1
             
         if len(userlist) > 0:
@@ -1283,9 +1561,78 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             done = True
 
         return 0, [_('Done')]
+
+    def returnGroupSummary(self, userlist):
+        """Print a summary of the groups that match the given names or
+        wildcards.
+
+        :param userlist: a list of names or wildcards specifying the
+           groups to summarise. If *userlist* is an empty list, all
+           installed and available packages will be summarised
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+        uservisible=1
+            
+        if len(userlist) > 0:
+            if userlist[0] == 'hidden':
+                uservisible=0
+                userlist.pop(0)
+        if not userlist:
+            userlist = None # Match everything...
+
+        installed, available = self.doGroupLists(uservisible=uservisible,
+                                                 patterns=userlist)
+        
+        def _out_grp(sect, num):
+            if not num:
+                return
+            self.verbose_logger.log(yum.logginglevels.INFO_2, '%s %u', sect,num)
+        done = 0
+        for group in installed:
+            if group.langonly: continue
+            done += 1
+        _out_grp(_('Installed Groups:'), done)
+
+        done = 0
+        for group in installed:
+            if not group.langonly: continue
+            done += 1
+        _out_grp(_('Installed Language Groups:'), done)
+
+        done = False
+        for group in available:
+            if group.langonly: continue
+            done += 1
+        _out_grp(_('Available Groups:'), done)
+
+        done = False
+        for group in available:
+            if not group.langonly: continue
+            done += 1
+        _out_grp(_('Available Language Groups:'), done)
+
+        return 0, [_('Done')]
     
     def returnGroupInfo(self, userlist):
-        """returns complete information on a list of groups"""
+        """Print complete information about the groups that match the
+        given names or wildcards.
+
+        :param userlist: a list of names or wildcards specifying the
+           groups to print information about
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         for strng in userlist:
             group_matched = False
             for group in self.comps.return_groups(strng):
@@ -1298,8 +1645,18 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return 0, []
         
     def installGroups(self, grouplist):
-        """for each group requested do 'selectGroup' on them."""
-        
+        """Mark the packages in the given groups for installation.
+
+        :param grouplist: a list of names or wildcards specifying
+           groups to be installed
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         pkgs_used = []
         
         for group_string in grouplist:
@@ -1323,11 +1680,21 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if not pkgs_used:
             return 0, [_('No packages in any requested group available to install or update')]
         else:
-            return 2, [_('%d Package(s) to Install') % len(pkgs_used)]
+            return 2, [P_('%d package to Install', '%d packages to Install', len(pkgs_used)) % len(pkgs_used)]
 
     def removeGroups(self, grouplist):
-        """Remove only packages of the named group(s). Do not recurse."""
+        """Mark the packages in the given groups for removal.
 
+        :param grouplist: a list of names or wildcards specifying
+           groups to be removed
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
         pkgs_used = []
         for group_string in grouplist:
             try:
@@ -1341,13 +1708,13 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         if not pkgs_used:
             return 0, [_('No packages to remove from groups')]
         else:
-            return 2, [_('%d Package(s) to remove') % len(pkgs_used)]
+            return 2, [P_('%d package to remove', '%d packages to remove', len(pkgs_used)) % len(pkgs_used)]
 
 
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
-        if self.conf.assumeyes:
+        if self.conf.assumeyes and not self.conf.assumeno:
             return False
         if self.conf.alwaysprompt:
             return True
@@ -1358,7 +1725,6 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         #  package wasn't explictly given on the command line
         for txmbr in self.tsInfo.getMembers():
             if txmbr.isDep or \
-                   txmbr.ts_state == 'e' or \
                    txmbr.name not in self.extcmds:
                 return True
         
@@ -1366,11 +1732,11 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return False
 
     def usage(self):
-        ''' Print out command line usage '''
+        """Print out an explanation of command line usage."""
         sys.stdout.write(self.optparser.format_help())
 
     def shellUsage(self):
-        ''' Print out the shell usage '''
+        """Print out an explanation of the shell usage."""
         sys.stdout.write(self.optparser.get_usage())
     
     def _installable(self, pkg, ematch=False):
@@ -1426,9 +1792,9 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         return False
 
 class YumOptionParser(OptionParser):
-    '''Subclass that makes some minor tweaks to make OptionParser do things the
+    """Subclass that makes some minor tweaks to make OptionParser do things the
     "yum way".
-    '''
+    """
 
     def __init__(self,base, **kwargs):
         # check if this is called with a utils=True/False parameter
@@ -1446,13 +1812,23 @@ class YumOptionParser(OptionParser):
         self._addYumBasicOptions()
 
     def error(self, msg):
-        '''This method is overridden so that error output goes to logger. '''
+        """Output an error message, and exit the program.  This method
+        is overridden so that error output goes to the logger.
+
+        :param msg: the error message to output
+        """
         self.print_usage()
         self.logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
     def firstParse(self,args):
-        # Parse only command line options that affect basic yum setup
+        """Parse only command line options that affect basic yum
+        setup.
+
+        :param args: a list of command line options to parse
+        :return: a dictionary containing the values of command line
+           options
+        """
         try:
             args = _filtercmdline(
                         ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"), 
@@ -1479,7 +1855,15 @@ class YumOptionParser(OptionParser):
         return ret
         
     def setupYumConfig(self, args=None):
-        # Now parse the command line for real
+        """Parse command line options.
+
+        :param args: the command line arguments entered by the user
+        :return: (opts, cmds)  opts is a dictionary containing
+           the values of command line options.  cmds is a list of the
+           command line arguments that were not parsed as options.
+           For example, if args is ["install", "foo", "--verbose"],
+           cmds will be ["install", "foo"].
+        """
         if not args:
             (opts, cmds) = self.parse_args()
         else:
@@ -1494,7 +1878,9 @@ class YumOptionParser(OptionParser):
                 
             # Handle remaining options
             if opts.assumeyes:
-                self.base.conf.assumeyes =1
+                self.base.conf.assumeyes = 1
+            if opts.assumeno:
+                self.base.conf.assumeno  = 1
 
             #  Instead of going cache-only for a non-root user, try to use a
             # user writable cachedir. If that fails fall back to cache-only.
@@ -1598,6 +1984,14 @@ class YumOptionParser(OptionParser):
         sys.exit(1)
 
     def getRoot(self,opts):
+        """Return the root location to use for the yum operation.
+        This location can be changed by using the --installroot
+        option.
+
+        :param opts: a dictionary containing the values of the command
+           line options
+        :return: a string representing the root location
+        """
         self._checkAbsInstallRoot(opts)
         # If the conf file is inside the  installroot - use that.
         # otherwise look for it in the normal root
@@ -1671,6 +2065,10 @@ class YumOptionParser(OptionParser):
                         help=_("verbose operation"))
         group.add_option("-y", "--assumeyes", dest="assumeyes",
                 action="store_true", help=_("answer yes for all questions"))
+        group.add_option("--assumeno", dest="assumeno",
+                action="store_true", help=_("answer no for all questions"))
+        group.add_option("--nodeps", dest="assumeno", # easter egg :)
+                action="store_true", help=SUPPRESS_HELP)
         group.add_option("--version", action="store_true", 
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"), 

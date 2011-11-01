@@ -1,4 +1,4 @@
-SUBDIRS = rpmUtils yum etc docs po
+SUBDIRS = rpmUtils yum yum-cron etc docs po
 PYFILES = $(wildcard *.py)
 PYLINT_MODULES =  *.py yum rpmUtils
 PYLINT_IGNORE = oldUtils.py
@@ -37,6 +37,25 @@ install:
 	mkdir -p $(DESTDIR)/var/lib/yum
 
 	for d in $(SUBDIRS); do make PYTHON=$(PYTHON) DESTDIR=`cd $(DESTDIR); pwd` -C $$d install; [ $$? = 0 ] || exit 1; done
+
+apidocs:
+	make -C docs/sphinxdocs html
+	echo "Docs are in: docs/sphinxdocs/_build/html/*"
+
+transifex-pull:
+	tx pull -a -f
+	@echo "You can now git commit -a -m 'Transfix pull, *.po update'"
+
+transifex-push:
+	make -C po yum.pot
+	tx push -s -t
+	@echo "You can now git commit -a -m 'Transfix push, yum.pot update'"
+
+transifex:
+	make transifex-pull
+	git commit -a -m 'Transfix pull, *.po update'
+	make transifex-push
+	git commit -a -m 'Transfix push, yum.pot update'
 
 .PHONY: docs test
 

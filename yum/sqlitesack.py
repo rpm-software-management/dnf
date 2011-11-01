@@ -406,7 +406,7 @@ class YumAvailablePackageSqlite(YumAvailablePackage, PackageObject, RpmBase):
         requires = []
         for ob in cur:
             pre = "0"
-            if ob['pre'].lower() in ['TRUE', 1]:
+            if ob['pre'].lower() in ['true', 1]:
                 pre = "1"
             prco_set = (_share_data(ob['name']), _share_data(ob['flags']),
                         (_share_data(ob['epoch']),

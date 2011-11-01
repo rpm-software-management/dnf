@@ -23,7 +23,7 @@ Update metadata (updateinfo.xml) parsing.
 
 import sys
 
-from yum.i18n import utf8_text_wrap, to_utf8
+from yum.i18n import utf8_text_wrap, to_utf8, to_unicode
 from yum.yumRepo import YumRepository
 from yum.packages import FakeRepository
 from yum.misc import to_xml, decompress, repo_gen_decompress
@@ -161,6 +161,8 @@ class UpdateNotice(object):
 
     def __str__(self):
         return to_utf8(self.text())
+    def __unicode__(self):
+        return to_unicode(self.text())
 
     def get_metadata(self):
         """ Return the metadata dict. """

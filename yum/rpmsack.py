@@ -48,6 +48,17 @@ def _open_no_umask(*args):
 
     return ret
 
+def _makedirs_no_umask(*args):
+    """ Annoying people like to set umask's for root, which screws everything
+        up for user readable stuff. """
+    oumask = os.umask(022)
+    try:
+        ret = os.makedirs(*args)
+    finally:
+        os.umask(oumask)
+
+    return ret
+
 def _iopen(*args):
     """ IOError wrapper BS for open, stupid exceptions. """
     try:
@@ -364,7 +375,8 @@ class RPMDBPackageSack(PackageSackBase):
             pkg = self.searchNevra(n, e, v, r, a)
             if not pkg:
                 # Wibble?
-                self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums)")
+                self._deal_with_bad_rpmdbcache("dCDPT(pkg checksums): %s" %
+                                               txmbr)
                 continue
 
             pkg = pkg[0]
@@ -1002,7 +1014,8 @@ class RPMDBPackageSack(PackageSackBase):
             (n, a, e, v, r) = pkgtup
             pkg = self.searchNevra(n, e, v, r, a)
             if not pkg:
-                self._deal_with_bad_rpmdbcache("pkg checksums")
+                self._deal_with_bad_rpmdbcache("pkg checksums: %s-%s:%s-%s.%s" %
+                                               (n, e, v, r, a))
                 continue
             pkg = pkg[0]
             (T, D) = checksum_data[pkgtup]
@@ -1088,7 +1101,7 @@ class RPMDBPackageSack(PackageSackBase):
                 return
 
             try:
-                os.makedirs(self._cachedir)
+                _makedirs_no_umask(self._cachedir)
             except (IOError, OSError), e:
                 return
 
@@ -1562,11 +1575,11 @@ class RPMDBAdditionalData(object):
         self._packages = {} # pkgid = dir
         if not os.path.exists(self.conf.db_path):
             try:
-                os.makedirs(self.conf.db_path)
+                _makedirs_no_umask(self.conf.db_path)
+                self.conf.writable = True
             except (IOError, OSError), e:
                 # some sort of useful thing here? A warning?
-                return
-            self.conf.writable = True
+                pass
         else:
             if os.access(self.conf.db_path, os.W_OK):
                 self.conf.writable = True
@@ -1708,7 +1721,7 @@ class RPMDBAdditionalDataPackage(object):
     def _write(self, attr, value):
         # check for self._conf.writable before going on?
         if not os.path.exists(self._mydir):
-            os.makedirs(self._mydir)
+            _makedirs_no_umask(self._mydir)
 
         attr = _sanitize(attr)
         if attr in self._read_cached_data:
@@ -1753,7 +1766,7 @@ class RPMDBAdditionalDataPackage(object):
         if attr.endswith('.tmp'):
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 
-        info = misc.stat_f(fn)
+        info = misc.stat_f(fn, ignore_EACCES=True)
         if info is None:
             raise AttributeError, "%s has no attribute %s" % (self, attr)
 

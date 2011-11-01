@@ -24,6 +24,7 @@ urlparse.uses_fragment.append("media")
 import Errors
 from urlgrabber.grabber import URLGrabber
 from urlgrabber.grabber import default_grabber
+from urlgrabber.progress import format_number
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
 import repoMDObject
@@ -35,6 +36,7 @@ import sqlitesack
 from yum import config
 from yum import misc
 from yum import comps
+from yum import _
 from constants import *
 import metalink
 
@@ -499,6 +501,7 @@ class YumRepository(Repository, config.RepoConf):
                  'throttle': self.throttle,
                  'proxies': self.proxy_dict,
                  'timeout': self.timeout,
+                 'ip_resolve': self.ip_resolve,
                  'http_headers': tuple(self.__headersListFromDict(cache=cache)),
                  'ssl_verify_peer': self.sslverify,
                  'ssl_verify_host': self.sslverify,
@@ -796,6 +799,16 @@ class YumRepository(Repository, config.RepoConf):
             except Errors.MediaError, e:
                 verbose_logger.log(logginglevels.DEBUG_2, "Error getting package from media; falling back to url %s" %(e,))
 
+        if size:
+            dirstat = os.statvfs(os.path.dirname(local))
+            avail = dirstat.f_bavail * dirstat.f_bsize
+            if avail < long(size):
+                raise Errors.RepoError, _('''\
+Insufficient space in download directory %s
+    * free   %s
+    * needed %s'''
+                ) % (os.path.dirname(local), format_number(avail), format_number(long(size)))
+
         if url and scheme != "media":
             ugopts = self._default_grabopts(cache=cache)
             ug = URLGrabber(progress_obj = self.callback,
@@ -1020,7 +1033,7 @@ class YumRepository(Repository, config.RepoConf):
             if grab_can_fail:
                 return None
             raise Errors.RepoError, 'Error downloading file %s: %s' % (local, e)
-        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+        except Errors.RepoError:
             misc.unlink_f(tfname)
             if grab_can_fail:
                 return None
@@ -1614,7 +1627,7 @@ class YumRepository(Repository, config.RepoConf):
                                   text=text,
                                   cache=self.http_caching == 'all',
                                   size=thisdata.size)
-        except (Errors.NoMoreMirrorsRepoError, Errors.RepoError):
+        except Errors.RepoError:
             if retrieve_can_fail:
                 return None
             raise

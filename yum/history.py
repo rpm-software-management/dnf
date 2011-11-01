@@ -97,9 +97,58 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     return (need_full, patterns, fields, False)
 # ---- horrible Copy and paste from sqlitesack ----
 
+class _YumHistPackageYumDB:
+    """ Class to pretend to be yumdb_info for history packages. """
+
+    def __init__(self, pkg):
+        self._pkg = pkg
+
+    _valid_yumdb_keys = set(["command_line",
+                             "from_repo", "from_repo_revision",
+                             "from_repo_timestamp",
+                             "installed_by", "changed_by",
+                             "reason", "releasever"])
+    def __getattr__(self, attr):
+        """ Load yumdb attributes from the history sqlite. """
+        pkg = self._pkg
+        if attr.startswith('_'):
+            raise AttributeError, "%s has no yum attribute %s" % (pkg, attr)
+
+        if attr not in self._valid_yumdb_keys:
+            raise AttributeError, "%s has no yum attribute %s" % (pkg, attr)
+
+        val = pkg._history._load_yumdb_key(pkg, attr)
+        if False and val is None:
+            raise AttributeError, "%s has no yum attribute %s" % (pkg, attr)
+
+        if val is None:
+            return None
+
+        val = str(val) or ""
+        setattr(self, attr, val)
+
+        return val
+
+    def __contains__(self, attr):
+        #  This is faster than __iter__ and it makes things fail in a much more
+        # obvious way in weird FS corruption cases like: BZ 593436
+        x = self.get(attr)
+        return x is not None
+
+    def get(self, attr, default=None):
+        """retrieve an add'l data obj"""
+
+        try:
+            res = getattr(self, attr)
+        except AttributeError:
+            return default
+        return res
+
+
 class YumHistoryPackage(PackageObject):
 
-    def __init__(self, name, arch, epoch, version, release, checksum=None):
+    def __init__(self, name, arch, epoch, version, release, checksum=None,
+                 history=None):
         self.name    = name
         self.version = version
         self.release = release
@@ -111,21 +160,69 @@ class YumHistoryPackage(PackageObject):
             self._checksums = [] # (type, checksum, id(0,1)
         else:
             chk = checksum.split(':')
-            self._checksums = [(chk[0], chk[1], 0)] # (type, checksum, id(0,1))
+            self._checksums = [(chk[0], chk[1], 1)] # (type, checksum, id(0,1))
         # Needed for equality comparisons in PackageObject
         self.repoid = "<history>"
 
+        self._history = history
+        self.yumdb_info = _YumHistPackageYumDB(self)
+
+    _valid_rpmdb_keys = set(["buildtime", "buildhost",
+                             "license", "packager",
+                             "size", "sourcerpm", "url", "vendor",
+                             # ?
+                             "committer", "committime"])
+    def __getattr__(self, attr):
+        """ Load rpmdb attributes from the history sqlite. """
+        if attr.startswith('_'):
+            raise AttributeError, "%s has no attribute %s" % (self, attr)
+
+        if attr not in self._valid_rpmdb_keys:
+            raise AttributeError, "%s has no attribute %s" % (self, attr)
+
+        val = self._history._load_rpmdb_key(self, attr)
+        if False and val is None:
+            raise AttributeError, "%s has no attribute %s" % (self, attr)
+
+        if val is None:
+            return None
+
+        val = str(val) or ""
+        setattr(self, attr, val)
+
+        return val
+
+    def _ui_from_repo(self):
+        """ This reports the repo the package is from, we integrate YUMDB info.
+            for RPM packages so a package from "fedora" that is installed has a
+            ui_from_repo of "@fedora". Note that, esp. with the --releasever
+            option, "fedora" or "rawhide" isn't authoritive.
+            So we also check against the current releasever and if it is
+            different we also print the YUMDB releasever. This means that
+            installing from F12 fedora, while running F12, would report as
+            "@fedora/13". """
+        if 'from_repo' in self.yumdb_info:
+            self._history.releasever
+            end = ''
+            if (self._history.releasever is not None and
+                'releasever' in self.yumdb_info and
+                self.yumdb_info.releasever != self._history.releasever):
+                end = '/' + self.yumdb_info.releasever
+            return '@' + self.yumdb_info.from_repo + end
+        return self.repoid
+    ui_from_repo = property(fget=lambda self: self._ui_from_repo())
+
+
 class YumHistoryPackageState(YumHistoryPackage):
-    def __init__(self, name,arch, epoch,version,release, state, checksum=None):
+    def __init__(self, name,arch, epoch,version,release, state, checksum=None,
+                 history=None):
         YumHistoryPackage.__init__(self, name,arch, epoch,version,release,
-                                   checksum)
+                                   checksum, history)
         self.done  = None
         self.state = state
 
-        self.repoid = '<history>'
 
-
-class YumHistoryRpmdbProblem(PackageObject):
+class YumHistoryRpmdbProblem:
     """ Class representing an rpmdb problem that existed at the time of the
         transaction. """
 
@@ -328,7 +425,8 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
     @staticmethod
     def _conv_pkg_state(pkg, state):
         npkg = YumHistoryPackageState(pkg.name, pkg.arch,
-                                      pkg.epoch,pkg.version,pkg.release, state)
+                                      pkg.epoch,pkg.version,pkg.release, state,
+                                      pkg._history)
         npkg._checksums = pkg._checksums
         npkg.done = pkg.done
         if _sttxt2stcode[npkg.state] in TS_INSTALL_STATES:
@@ -557,7 +655,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 class YumHistory:
     """ API for accessing the history sqlite data. """
 
-    def __init__(self, root='/', db_path=_history_dir):
+    def __init__(self, root='/', db_path=_history_dir, releasever=None):
         self._conn = None
         
         self.conf = yum.misc.GenericHolder()
@@ -567,6 +665,8 @@ class YumHistory:
             self.conf.db_path = os.path.normpath('/' + db_path)
         self.conf.writable = False
         self.conf.readable = True
+
+        self.releasever = releasever
 
         if not os.path.exists(self.conf.db_path):
             try:
@@ -627,16 +727,26 @@ class YumHistory:
                 self.conf.readable = False
                 return None
 
+            #  Note that this is required due to changing the history DB in the
+            # callback for removed txmbrs ... which happens inside the chroot,
+            # as against all our other access which is outside the chroot. So
+            # we need sqlite to not open the journal.
+            #  In theory this sucks, as history could be shared. In reality
+            # it's deep yum stuff and there should only be one yum.
+            executeSQL(self._conn.cursor(), "PRAGMA locking_mode = EXCLUSIVE")
+
         return self._conn.cursor()
     def _commit(self):
         return self._conn.commit()
+    def _rollback(self):
+        return self._conn.rollback()
 
     def close(self):
         if self._conn is not None:
             self._conn.close()
             self._conn = None
 
-    def _pkgtup2pid(self, pkgtup, checksum=None):
+    def _pkgtup2pid(self, pkgtup, checksum=None, create=True):
         cur = self._get_cursor()
         executeSQL(cur, """SELECT pkgtupid, checksum FROM pkgtups
                            WHERE name=? AND arch=? AND
@@ -651,6 +761,9 @@ class YumHistory:
             if checksum == sql_checksum:
                 return sql_pkgtupid
         
+        if not create:
+            return None
+
         (n,a,e,v,r) = pkgtup
         (n,a,e,v,r) = (to_unicode(n),to_unicode(a),
                        to_unicode(e),to_unicode(v),to_unicode(r))
@@ -666,23 +779,28 @@ class YumHistory:
                                 (name, arch, epoch, version, release)
                                 VALUES (?, ?, ?, ?, ?)""", (n,a,e,v,r))
         return cur.lastrowid
-    def _apkg2pid(self, po):
+    def _apkg2pid(self, po, create=True):
         csum = po.returnIdSum()
         if csum is not None:
             csum = "%s:%s" % (str(csum[0]), str(csum[1]))
-        return self._pkgtup2pid(po.pkgtup, csum)
-    def _ipkg2pid(self, po):
+        return self._pkgtup2pid(po.pkgtup, csum, create)
+    def _ipkg2pid(self, po, create=True):
         csum = None
         yumdb = po.yumdb_info
         if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
             csum = "%s:%s" % (yumdb.checksum_type, yumdb.checksum_data)
-        return self._pkgtup2pid(po.pkgtup, csum)
-    def pkg2pid(self, po):
+        return self._pkgtup2pid(po.pkgtup, csum, create)
+    def _hpkg2pid(self, po, create=False):
+        return self._apkg2pid(po, create)
+
+    def pkg2pid(self, po, create=True):
         if isinstance(po, YumInstalledPackage):
-            return self._ipkg2pid(po)
+            return self._ipkg2pid(po, create)
         if isinstance(po, YumAvailablePackage):
-            return self._apkg2pid(po)
-        return self._pkgtup2pid(po.pkgtup, None)
+            return self._apkg2pid(po, create)
+        if isinstance(po, YumHistoryPackage):
+            return self._hpkg2pid(po, create)
+        return self._pkgtup2pid(po.pkgtup, None, create)
 
     @staticmethod
     def txmbr2state(txmbr):
@@ -747,7 +865,6 @@ class YumHistory:
                          WHERE tid = ? AND pkgtupid = ? AND state = ?
                          """, ('TRUE', self._tid, pid, state))
         self._commit()
-        return cur.lastrowid
 
     def _trans_rpmdb_problem(self, problem):
         if not hasattr(self, '_tid'):
@@ -977,7 +1094,8 @@ class YumHistory:
                       ORDER BY name ASC, epoch ASC""", (tid,))
         ret = []
         for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
+                                    history=self)
             ret.append(obj)
         return ret
     def _old_data_pkgs(self, tid):
@@ -991,7 +1109,7 @@ class YumHistory:
         ret = []
         for row in cur:
             obj = YumHistoryPackageState(row[0],row[1],row[2],row[3],row[4],
-                                         row[7], row[5])
+                                         row[7], row[5], history=self)
             obj.done     = row[6] == 'TRUE'
             obj.state_installed = None
             if _sttxt2stcode[obj.state] in TS_INSTALL_STATES:
@@ -1011,7 +1129,8 @@ class YumHistory:
                       ORDER BY name ASC, epoch ASC""", (tid,))
         ret = []
         for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
+                                    history=self)
             ret.append(obj)
         return ret
     def _old_prob_pkgs(self, rpid):
@@ -1025,7 +1144,8 @@ class YumHistory:
                       ORDER BY name ASC, epoch ASC""", (rpid,))
         ret = []
         for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5])
+            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
+                                    history=self)
             obj.main = row[6] == 'TRUE'
             ret.append(obj)
         return ret
@@ -1084,7 +1204,11 @@ class YumHistory:
         if tids and len(tids) <= yum.constants.PATTERNS_INDEXED_MAX:
             params = tids = list(set(tids))
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
-        sql += " ORDER BY beg_ts DESC, tid ASC"
+        #  This relies on the fact that the PRIMARY KEY in sqlite will always
+        # increase with each transaction. In theory we can use:
+        # ORDER BY beg_ts DESC ... except sometimes people do installs with a
+        # system clock that is very broken, and using that screws them forever.
+        sql += " ORDER BY tid DESC"
         if limit is not None:
             sql += " LIMIT " + str(limit)
         executeSQL(cur, sql, params)
@@ -1143,6 +1267,127 @@ class YumHistory:
             return None
         assert len(ret) == 1
         return ret[0]
+
+    def _load_anydb_key(self, pkg, db, attr):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_3():
+            return None
+
+        pid = self.pkg2pid(pkg, create=False)
+        if pid is None:
+            return None
+
+        sql = """SELECT %(db)sdb_val FROM pkg_%(db)sdb
+                  WHERE pkgtupid=? and %(db)sdb_key=? """ % {'db' : db}
+        executeSQL(cur, sql, (pid, attr))
+        for row in cur:
+            return row[0]
+
+        return None
+
+    def _load_rpmdb_key(self, pkg, attr):
+        return self._load_anydb_key(pkg, "rpm", attr)
+    def _load_yumdb_key(self, pkg, attr):
+        return self._load_anydb_key(pkg, "yum", attr)
+
+    def _save_anydb_key(self, pkg, db, attr, val):
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_3():
+            return None
+
+        pid = self.pkg2pid(pkg, create=False)
+        if pid is None:
+            return None
+
+        sql = """INSERT INTO pkg_%(db)sdb (pkgtupid, %(db)sdb_key, %(db)sdb_val)
+                        VALUES (?, ?, ?)""" % {'db' : db}
+        executeSQL(cur, sql, (pid, attr, to_unicode(val)))
+
+        return cur.lastrowid
+
+    def _save_rpmdb_key(self, pkg, attr, val):
+        return self._save_anydb_key(pkg, "rpm", attr, val)
+    def _save_yumdb_key(self, pkg, attr, val):
+        return self._save_anydb_key(pkg, "yum", attr, val)
+
+    def _save_rpmdb(self, ipkg):
+        """ Save all the data for rpmdb for this installed pkg, assumes
+            there is no data currently. """
+        for attr in YumHistoryPackage._valid_rpmdb_keys:
+            val = getattr(ipkg, attr, None)
+            if val is None:
+                continue
+            if not self._save_anydb_key(ipkg, "rpm", attr, val):
+                return False
+        return True
+
+    def _save_yumdb(self, ipkg):
+        """ Save all the data for yumdb for this installed pkg, assumes
+            there is no data currently. """
+        for attr in _YumHistPackageYumDB._valid_yumdb_keys:
+            val = ipkg.yumdb_info.get(attr)
+            if val is None:
+                continue
+            if not self._save_anydb_key(ipkg, "yum", attr, val):
+                return False
+        return True
+
+    def _wipe_anydb(self, pkg, db):
+        """ Delete all the data for rpmdb/yumdb for this installed pkg. """
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_3():
+            return False
+
+        pid = self.pkg2pid(pkg, create=False)
+        if pid is None:
+            return False
+
+        sql = """DELETE FROM pkg_%(db)sdb WHERE pkgtupid=?""" % {'db' : db}
+        executeSQL(cur, sql, (pid,))
+
+        return True
+
+    def sync_alldb(self, ipkg):
+        """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
+        if not self._wipe_anydb(ipkg, "rpm"):
+            return False
+        if not (self._wipe_anydb(ipkg, "yum") and
+                self._save_rpmdb(ipkg) and
+                self._save_yumdb(ipkg)):
+            self._rollback()
+            return False
+
+        self._commit()
+        return True
+
+    def _pkg_stats(self):
+        """ Some stats about packages in the DB. """
+
+        ret = {'nevrac' : 0,
+               'nevra'  : 0,
+               'nevr'   : 0,
+               'na'     : 0,
+               'rpmdb'  : 0,
+               'yumdb'  : 0,
+               }
+        cur = self._get_cursor()
+        if cur is None or not self._update_db_file_3():
+            return False
+
+        data = (('nevrac', "COUNT(*)",                      "pkgtups"),
+                ('na',     "COUNT(DISTINCT(name || arch))", "pkgtups"),
+                ('nevra',"COUNT(DISTINCT(name||version||epoch||release||arch))",
+                 "pkgtups"),
+                ('nevr',   "COUNT(DISTINCT(name||version||epoch||release))",
+                 "pkgtups"),
+                ('rpmdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_rpmdb"),
+                ('yumdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_yumdb"))
+
+        for key, bsql, esql in data:
+            executeSQL(cur, "SELECT %s FROM %s" % (bsql, esql))
+            for row in cur:
+                ret[key] = row[0]
+        return ret
 
     def _yieldSQLDataList(self, patterns, fields, ignore_case):
         """Yields all the package data for the given params. """
@@ -1212,6 +1457,47 @@ class YumHistory:
         for row in cur:
             tids.add(row[0])
         return tids
+
+    _update_ops_3 = ['''\
+\
+ CREATE TABLE pkg_rpmdb (
+     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
+     rpmdb_key TEXT NOT NULL,
+     rpmdb_val TEXT NOT NULL);
+''', '''\
+ CREATE INDEX i_pkgkey_rpmdb ON pkg_rpmdb (pkgtupid, rpmdb_key);
+''', '''\
+ CREATE TABLE pkg_yumdb (
+     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
+     yumdb_key TEXT NOT NULL,
+     yumdb_val TEXT NOT NULL);
+''', '''\
+ CREATE INDEX i_pkgkey_yumdb ON pkg_yumdb (pkgtupid, yumdb_key);
+''']
+
+    def _update_db_file_3(self):
+        """ Update to version 3 of history, rpmdb/yumdb data. """
+        if not self._update_db_file_2():
+            return False
+
+        if hasattr(self, '_cached_updated_3'):
+            return self._cached_updated_3
+
+        cur = self._get_cursor()
+        if cur is None:
+            return False
+
+        executeSQL(cur, "PRAGMA table_info(pkg_yumdb)")
+        #  If we get anything, we're fine. There might be a better way of
+        # saying "anything" but this works.
+        for ob in cur:
+            break
+        else:
+            for op in self._update_ops_3:
+                cur.execute(op)
+            self._commit()
+        self._cached_updated_3 = True
+        return True
 
     _update_ops_2 = ['''\
 \
@@ -1310,6 +1596,9 @@ class YumHistory:
                                     'sqlite')
         if self._db_file == _db_file:
             os.rename(_db_file, _db_file + '.old')
+            # Just in case ... move the journal file too.
+            if os.path.exists(_db_file + '-journal'):
+                os.rename(_db_file  + '-journal', _db_file + '-journal.old')
         self._db_file = _db_file
         
         if self.conf.writable and not os.path.exists(self._db_file):
@@ -1363,6 +1652,8 @@ class YumHistory:
         for op in ops:
             cur.execute(op)
         for op in self._update_ops_2:
+            cur.execute(op)
+        for op in self._update_ops_3:
             cur.execute(op)
         self._commit()
 

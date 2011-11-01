@@ -2,13 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # 
-# András Bögöly <ebogoly@gmail.com>, 2011
+# Translators:
+# András Bögöly <ebogoly@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
-"POT-Creation-Date: 2011-06-06 10:21-0400\n"
-"PO-Revision-Date: 2011-06-06 14:21+0000\n"
+"POT-Creation-Date: 2011-08-23 11:08-0400\n"
+"PO-Revision-Date: 2011-08-23 15:09+0000\n"
 "Last-Translator: skvidal <skvidal@fedoraproject.org>\n"
 "Language-Team: Hungarian (http://www.transifex.net/projects/p/yum/team/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -17,123 +18,125 @@ msgstr ""
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: ../callback.py:48 ../output.py:1037 ../yum/rpmtrans.py:73
+#: ../callback.py:45 ../output.py:1355 ../yum/rpmtrans.py:73
 msgid "Updating"
 msgstr "Frissítés"
 
-#: ../callback.py:49 ../yum/rpmtrans.py:74
+#: ../callback.py:46 ../yum/rpmtrans.py:74
 msgid "Erasing"
 msgstr "Törlés"
 
-#: ../callback.py:50 ../callback.py:51 ../callback.py:53 ../output.py:1036
-#: ../output.py:2218 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1354
+#: ../output.py:2720 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
 #: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "Telepítés"
 
-#: ../callback.py:52 ../callback.py:58 ../output.py:1840 ../yum/rpmtrans.py:77
+#: ../callback.py:49 ../callback.py:55 ../output.py:2177 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "Elévült"
 
-#: ../callback.py:54 ../output.py:1169 ../output.py:1686 ../output.py:1847
+#: ../callback.py:51 ../output.py:1476 ../output.py:2023 ../output.py:2184
 msgid "Updated"
 msgstr "Frissítve"
 
-#: ../callback.py:55 ../output.py:1685
+#: ../callback.py:52 ../output.py:2022
 msgid "Erased"
 msgstr "Törölve"
 
-#: ../callback.py:56 ../callback.py:57 ../callback.py:59 ../output.py:1167
-#: ../output.py:1685 ../output.py:1687 ../output.py:2190
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1474
+#: ../output.py:2022 ../output.py:2024 ../output.py:2692
 msgid "Installed"
 msgstr "Telepítve"
 
-#: ../callback.py:130
+#: ../callback.py:142
 msgid "No header - huh?"
 msgstr "Hiányzik a fejléc - hm?"
 
-#: ../callback.py:168
+#: ../callback.py:180
 msgid "Repackage"
 msgstr "Újracsomagolás"
 
-#: ../callback.py:189
+#: ../callback.py:201
 #, python-format
 msgid "Error: invalid output state: %s for %s"
 msgstr "Hiba: érvénytelen kimeneti állapot: %s %s"
 
-#: ../callback.py:212
+#: ../callback.py:224
 #, python-format
 msgid "Erased: %s"
 msgstr "Eltávolítva: %s"
 
-#: ../callback.py:217 ../output.py:1038 ../output.py:2193
+#: ../callback.py:229 ../output.py:1356 ../output.py:2695
 msgid "Removing"
 msgstr "Eltávolítás"
 
-#: ../callback.py:219 ../yum/rpmtrans.py:79
+#: ../callback.py:231 ../yum/rpmtrans.py:79
 msgid "Cleanup"
 msgstr "Tisztítás"
 
-#: ../cli.py:115
+#: ../cli.py:118
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "A(z) \"%s\" nevű parancs már létezik"
 
-#: ../cli.py:127
+#: ../cli.py:133
 msgid "Setting up repositories"
 msgstr "Tárolók beállítása"
 
-#: ../cli.py:138
+#: ../cli.py:144
 msgid "Reading repository metadata in from local files"
 msgstr "Tárolók metaadatainak beolvasása helyi fájlokból"
 
-#: ../cli.py:245 ../utils.py:281
+#: ../cli.py:252 ../utils.py:340
 #, python-format
 msgid "Config Error: %s"
 msgstr "Beállítási hiba: %s"
 
-#: ../cli.py:248 ../cli.py:1584 ../utils.py:284
+#: ../cli.py:255 ../cli.py:1897 ../utils.py:343
 #, python-format
 msgid "Options Error: %s"
 msgstr "Opció hiba: %s"
 
-#: ../cli.py:293
+#: ../cli.py:302
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Telepítve : %s-%s at %s"
 
-#: ../cli.py:295
+#: ../cli.py:304
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Létrehozva: %s at %s"
 
-#: ../cli.py:297
+#: ../cli.py:306
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Hozzáadva: %s at %s"
 
-#: ../cli.py:336
+#: ../cli.py:347
 msgid "You need to give some command"
 msgstr "Egy parancs megadása szükségeltetik"
 
-#: ../cli.py:350
+#: ../cli.py:361
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Nincs ilyen parancs: %s. Kérjük használja a következőt: %s --help"
 
-#: ../cli.py:400
+#: ../cli.py:419
 msgid "Disk Requirements:\n"
 msgstr "Szükséges hely:\n"
 
-#: ../cli.py:402
+#: ../cli.py:421
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgstr ""
+msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
+msgstr[0] ""
 "  Legalább %dMB-tal több helyre van szükség az alábbi fájlrendszeren: %s\n"
+msgstr[1] ""
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:407
+#: ../cli.py:426
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -141,61 +144,61 @@ msgstr ""
 "Hiba összegzés\n"
 "-------------\n"
 
-#: ../cli.py:450
+#: ../cli.py:474
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr ""
 "A tranzakciót megpróbáltuk végrehajtani, de nincs semmi tennivaló. Kilépünk."
 
-#: ../cli.py:497
+#: ../cli.py:521
 msgid "Exiting on user Command"
 msgstr "Felhasználói parancs miatt kilépés."
 
-#: ../cli.py:501
+#: ../cli.py:525
 msgid "Downloading Packages:"
 msgstr "Csomagok letöltése:"
 
-#: ../cli.py:506
+#: ../cli.py:530
 msgid "Error Downloading Packages:\n"
 msgstr "Hiba ezen csomagok letöltésekor:\n"
 
-#: ../cli.py:525 ../yum/__init__.py:4967
+#: ../cli.py:549 ../yum/__init__.py:5413
 msgid "Running Transaction Check"
 msgstr "Tranzakció-ellenőrzés futtatása"
 
-#: ../cli.py:534 ../yum/__init__.py:4976
+#: ../cli.py:558 ../yum/__init__.py:5422
 msgid "ERROR You need to update rpm to handle:"
 msgstr "HIBA frissíteni kell az rpmet, hogy kezeljük:"
 
-#: ../cli.py:536 ../yum/__init__.py:4979
+#: ../cli.py:560 ../yum/__init__.py:5425
 msgid "ERROR with transaction check vs depsolve:"
 msgstr "HIBA a tranzakció ellenőrzés- és függőségfeloldásnál:"
 
-#: ../cli.py:542
+#: ../cli.py:566
 msgid "RPM needs to be updated"
 msgstr "RPM frissítésére van szükség"
 
-#: ../cli.py:543
+#: ../cli.py:567
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Kérem jelentse ezt a hibát a következőben: %s"
 
-#: ../cli.py:549
+#: ../cli.py:573
 msgid "Running Transaction Test"
 msgstr "Tranzakció teszt futtatása"
 
-#: ../cli.py:561
+#: ../cli.py:585
 msgid "Transaction Check Error:\n"
 msgstr "Tranzakció hibaellenőrzése:\n"
 
-#: ../cli.py:568
+#: ../cli.py:592
 msgid "Transaction Test Succeeded"
 msgstr "A Tranzakció teszt sikeres"
 
-#: ../cli.py:600
+#: ../cli.py:624
 msgid "Running Transaction"
 msgstr "Tranzakció futtatása"
 
-#: ../cli.py:630
+#: ../cli.py:657
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -203,233 +206,262 @@ msgstr ""
 "Felügyelet nélküli futás közben kulcsok nem importálhatóak.\n"
 "Használjuk az \"-y\" kapcsolót a felülbíráláshoz."
 
-#: ../cli.py:649 ../cli.py:692
+#: ../cli.py:676 ../cli.py:719
 msgid "  * Maybe you meant: "
 msgstr "* Lehet, hogy erre gondolt:"
 
-#: ../cli.py:675 ../cli.py:683
+#: ../cli.py:702 ../cli.py:710
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "A(z) %s%s%s elérhető, de nincs telepítve."
 
-#: ../cli.py:689 ../cli.py:722 ../cli.py:908
+#: ../cli.py:716 ../cli.py:760 ../cli.py:998
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Nincs ilyen csomag: %s%s%s."
 
-#: ../cli.py:729 ../cli.py:973
-msgid "Package(s) to install"
-msgstr "Telepítendő csomagok"
+#: ../cli.py:768
+#, python-format
+msgid "%d package to install"
+msgid_plural "%d packages to install"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:732 ../cli.py:733 ../cli.py:914 ../cli.py:948 ../cli.py:974
-#: ../yumcommands.py:190
+#: ../cli.py:771 ../cli.py:772 ../cli.py:1005 ../cli.py:1051 ../cli.py:1086
+#: ../yumcommands.py:268
 msgid "Nothing to do"
 msgstr "Nincs tennivaló"
 
-#: ../cli.py:767
+#: ../cli.py:824
 #, python-format
-msgid "%d packages marked for Update"
-msgstr "%d csomag kijelölve frissítésre"
+msgid "%d package marked for Update"
+msgid_plural "%d packages marked for Update"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:770
+#: ../cli.py:826
 msgid "No Packages marked for Update"
 msgstr "Nincs csomag kijelölve frissítésre"
 
-#: ../cli.py:866
+#: ../cli.py:937
 #, python-format
-msgid "%d packages marked for Distribution Synchronization"
-msgstr "%d csomag van kijelölve Disztribúció Szinkronizáláshoz"
+msgid "%d package marked for Distribution Synchronization"
+msgid_plural "%d packages marked for Distribution Synchronization"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:869
+#: ../cli.py:939
 msgid "No Packages marked for Distribution Synchronization"
 msgstr "Nincs csomag kijelölve Disztribúció Szinkronizáláshoz"
 
-#: ../cli.py:885
+#: ../cli.py:965
 #, python-format
-msgid "%d packages marked for removal"
-msgstr "%d csomag van kijelölve eltávolításra"
+msgid "%d package marked for removal"
+msgid_plural "%d packages marked for removal"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:888
+#: ../cli.py:967
 msgid "No Packages marked for removal"
 msgstr "Nincs csomag kijelölve eltávolításra"
 
-#: ../cli.py:913
-msgid "Package(s) to downgrade"
-msgstr "Visszaállítandó csomagok"
+#: ../cli.py:1004
+#, python-format
+msgid "%d package to downgrade"
+msgid_plural "%d packages to downgrade"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:938
+#: ../cli.py:1040
 #, python-format
 msgid " (from %s)"
 msgstr "(ebből: %s)"
 
-#: ../cli.py:939
+#: ../cli.py:1041
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "A következő telepített csomag nem elérhető: %s%s%s%s"
 
-#: ../cli.py:947
-msgid "Package(s) to reinstall"
-msgstr "Újratelepítendő csomagok"
+#: ../cli.py:1050
+#, python-format
+msgid "%d package to reinstall"
+msgid_plural "%d packages to reinstall"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:960
+#: ../cli.py:1072
 msgid "No Packages Provided"
 msgstr "Nem találhatóak csomagok"
 
-#: ../cli.py:1058
+#: ../cli.py:1085
+msgid "Package(s) to install"
+msgstr "Telepítendő csomagok"
+
+#: ../cli.py:1192
 #, python-format
 msgid "N/S Matched: %s"
 msgstr "N/S Megegyezett: %s"
 
-#: ../cli.py:1075
+#: ../cli.py:1209
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  A névből és a leírásból csak %s egyezik ezzel: %s, használja a \"search "
+"all\" parancsot bárki kereséséhez."
 
-#: ../cli.py:1077
+#: ../cli.py:1211
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr ""
+"  A teljes névből és leírásból csak %s egyezik ezzel: %s, használja a "
+"\"search all\" parancsot bárki kereséséhez."
 
-#: ../cli.py:1095
+#: ../cli.py:1229
 #, python-format
 msgid "Matched: %s"
 msgstr "Találat: %s"
 
-#: ../cli.py:1102
+#: ../cli.py:1236
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr ""
+"  A névből és a leírásból többnyire %s egyezik meg ezzel: %s, használja a "
+"\"search all\" parancsot bárki kereséséhez."
 
-#: ../cli.py:1106
+#: ../cli.py:1240
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Figyelem: Nincs találat a következőnél: %s"
 
-#: ../cli.py:1109
+#: ../cli.py:1243
 msgid "No Matches found"
 msgstr "Nincsenek találatok"
 
-#: ../cli.py:1174
+#: ../cli.py:1339
 #, python-format
 msgid "No Package Found for %s"
 msgstr "Nem találhatóak csomagok a következőre: %s"
 
-#: ../cli.py:1184
+#: ../cli.py:1377
 msgid "Cleaning repos: "
 msgstr "Tárolók tisztítása"
 
-#: ../cli.py:1189
+#: ../cli.py:1382
 msgid "Cleaning up Everything"
 msgstr "Minden tisztítása"
 
-#: ../cli.py:1205
+#: ../cli.py:1398
 msgid "Cleaning up Headers"
 msgstr "Fejlécek tisztítása"
 
-#: ../cli.py:1208
+#: ../cli.py:1401
 msgid "Cleaning up Packages"
 msgstr "Csomagok tisztítása"
 
-#: ../cli.py:1211
+#: ../cli.py:1404
 msgid "Cleaning up xml metadata"
 msgstr "xml metaadat tisztítása"
 
-#: ../cli.py:1214
+#: ../cli.py:1407
 msgid "Cleaning up database cache"
 msgstr "Adatbázis-gyorsítótár tisztítása"
 
-#: ../cli.py:1217
+#: ../cli.py:1410
 msgid "Cleaning up expire-cache metadata"
 msgstr "Elévülési gyorsítótár tisztítása"
 
-#: ../cli.py:1220
+#: ../cli.py:1413
 msgid "Cleaning up cached rpmdb data"
 msgstr "Gyorsítótárazott rpmdb adatok tisztítása"
 
-#: ../cli.py:1223
+#: ../cli.py:1416
 msgid "Cleaning up plugins"
 msgstr "Bővítmények tisztítása"
 
-#: ../cli.py:1247
+#: ../cli.py:1452
 #, python-format
 msgid "Warning: No groups match: %s"
 msgstr "Figyelem: Egy csoport sem azonos a következővel: %s"
 
-#: ../cli.py:1264
+#: ../cli.py:1469 ../cli.py:1527
 msgid "Installed Groups:"
 msgstr "Telepített csoportok:"
 
-#: ../cli.py:1270
+#: ../cli.py:1475 ../cli.py:1533
 msgid "Installed Language Groups:"
 msgstr "Telepített nyelvi csoportok:"
 
-#: ../cli.py:1276
+#: ../cli.py:1481 ../cli.py:1539
 msgid "Available Groups:"
 msgstr "Elérhető csoportok:"
 
-#: ../cli.py:1282
+#: ../cli.py:1487 ../cli.py:1545
 msgid "Available Language Groups:"
 msgstr "Elérhető nyelvi csoportok:"
 
-#: ../cli.py:1285
+#: ../cli.py:1490 ../cli.py:1547
 msgid "Done"
 msgstr "Kész"
 
-#: ../cli.py:1296 ../cli.py:1314 ../cli.py:1320 ../yum/__init__.py:3313
+#: ../cli.py:1570 ../cli.py:1598 ../cli.py:1604 ../yum/__init__.py:3648
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Figyelem: Az alábbi csoport nem létezik: %s"
 
-#: ../cli.py:1324
+#: ../cli.py:1608
 msgid "No packages in any requested group available to install or update"
 msgstr "Nincs telepítendő vagy frissítendő csomag a kiválasztott csoportokból"
 
-#: ../cli.py:1326
+#: ../cli.py:1610
 #, python-format
-msgid "%d Package(s) to Install"
-msgstr "%d Telepítendő csomag"
+msgid "%d package to Install"
+msgid_plural "%d packages to Install"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1336 ../yum/__init__.py:3325
+#: ../cli.py:1630 ../yum/__init__.py:3660
 #, python-format
 msgid "No group named %s exists"
 msgstr "Nincs ilyen csoport: %s"
 
-#: ../cli.py:1342
+#: ../cli.py:1636
 msgid "No packages to remove from groups"
 msgstr "Nincs szükség csomag eltávolítására csoportokból"
 
-#: ../cli.py:1344
+#: ../cli.py:1638
 #, python-format
-msgid "%d Package(s) to remove"
-msgstr "%d Eltávolítandó csomag"
+msgid "%d package to remove"
+msgid_plural "%d packages to remove"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1386
+#: ../cli.py:1679
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "A(z) %s nevű csomag már telepítve van, ezért továbblépünk."
 
-#: ../cli.py:1397
+#: ../cli.py:1690
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Megválunk a következőtől: pkg %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1423
+#: ../cli.py:1716
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr "Nincs más %s telepítve, ezért hozzáadjuk a listához."
 
-#: ../cli.py:1443
+#: ../cli.py:1736
 msgid "Plugin Options"
 msgstr "Bővítmény beállítások"
 
-#: ../cli.py:1451
+#: ../cli.py:1748
 #, python-format
 msgid "Command line error: %s"
 msgstr "Parancssori hiba a következőben: %s"
 
-#: ../cli.py:1467
+#: ../cli.py:1770
 #, python-format
 msgid ""
 "\n"
@@ -440,289 +472,293 @@ msgstr ""
 "\n"
 "%s: %s opciónak szüksége van egy argumentumra"
 
-#: ../cli.py:1521
+#: ../cli.py:1834
 msgid "--color takes one of: auto, always, never"
 msgstr "--Szín egyikét veszi fel: auto, mindig, soha"
 
 #. We have a relative installroot ... haha
-#: ../cli.py:1596
+#: ../cli.py:1909
 #, python-format
 msgid "--installroot must be an absolute path: %s"
-msgstr ""
+msgstr "A(z) --instalroot -nak abszolút elérési útnak kell lennie: %s"
 
-#: ../cli.py:1642
+#: ../cli.py:1963
 msgid "show this help message and exit"
 msgstr "ezen segítség mutatása"
 
-#: ../cli.py:1646
+#: ../cli.py:1967
 msgid "be tolerant of errors"
 msgstr "a hibák figyelmen kívül hagyása"
 
-#: ../cli.py:1649
+#: ../cli.py:1970
 msgid "run entirely from system cache, don't update cache"
 msgstr ""
 "futtatás a rendszer gyorsítótárából anélkül, hogy a csomagok vagy "
 "tárolóinformációk frissítve lennének"
 
-#: ../cli.py:1652
+#: ../cli.py:1973
 msgid "config file location"
 msgstr "konfigurációs fájl elérésí útja"
 
-#: ../cli.py:1655
+#: ../cli.py:1976
 msgid "maximum command wait time"
 msgstr "leghosszabb várakozási idő meghatározása"
 
-#: ../cli.py:1657
+#: ../cli.py:1978
 msgid "debugging output level"
 msgstr "a hibakeresés szintje"
 
-#: ../cli.py:1661
+#: ../cli.py:1982
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "ismétlődések mutatása a tárolókban és a keresési parancsokban"
 
-#: ../cli.py:1663
+#: ../cli.py:1984
 msgid "error output level"
 msgstr "hiba kimeneti szintje"
 
-#: ../cli.py:1666
+#: ../cli.py:1987
 msgid "debugging output level for rpm"
 msgstr "rpm hibakereső szint"
 
-#: ../cli.py:1669
+#: ../cli.py:1990
 msgid "quiet operation"
 msgstr "csendes működés"
 
-#: ../cli.py:1671
+#: ../cli.py:1992
 msgid "verbose operation"
 msgstr "visszajelzés működés közben"
 
-#: ../cli.py:1673
+#: ../cli.py:1994
 msgid "answer yes for all questions"
 msgstr "igennel válaszol minden felmerülő kérdésre"
 
-#: ../cli.py:1675
+#: ../cli.py:1996
+msgid "answer no for all questions"
+msgstr ""
+
+#: ../cli.py:2000
 msgid "show Yum version and exit"
 msgstr "Yum verziójának mutatása és kilépés"
 
-#: ../cli.py:1676
+#: ../cli.py:2001
 msgid "set install root"
 msgstr "telepítési root beállítása"
 
-#: ../cli.py:1680
+#: ../cli.py:2005
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr ""
 "egy vagy több tároló engedélyezése (helyettesítő karakterek megengedettek)"
 
-#: ../cli.py:1684
+#: ../cli.py:2009
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "egy vagy több tároló tiltása (helyettesítő karakterek megengedettek)"
 
-#: ../cli.py:1687
+#: ../cli.py:2012
 msgid "exclude package(s) by name or glob"
 msgstr "csomagok kizárása név vagy glob szerint"
 
-#: ../cli.py:1689
+#: ../cli.py:2014
 msgid "disable exclude from main, for a repo or for everything"
 msgstr "kizárás letiltása alapkomponensre, tárolókra ill. bármire"
 
-#: ../cli.py:1692
+#: ../cli.py:2017
 msgid "enable obsoletes processing during updates"
 msgstr "elavult komponensek feldolgozásának engedélyezése"
 
-#: ../cli.py:1694
+#: ../cli.py:2019
 msgid "disable Yum plugins"
 msgstr "Yum bővítmények tiltása"
 
-#: ../cli.py:1696
+#: ../cli.py:2021
 msgid "disable gpg signature checking"
 msgstr "gpg-aláírás ellenőrzés kihagyása"
 
-#: ../cli.py:1698
+#: ../cli.py:2023
 msgid "disable plugins by name"
 msgstr "bővítmények tiltása név szerint"
 
-#: ../cli.py:1701
+#: ../cli.py:2026
 msgid "enable plugins by name"
 msgstr "bővítmények engedélyezése név szerint"
 
-#: ../cli.py:1704
+#: ../cli.py:2029
 msgid "skip packages with depsolving problems"
 msgstr "azon csomagok átugrása, melyeknek függőségi problémáik vannak"
 
-#: ../cli.py:1706
+#: ../cli.py:2031
 msgid "control whether color is used"
 msgstr "szín használatának befolyásolása"
 
-#: ../cli.py:1708
+#: ../cli.py:2033
 msgid "set value of $releasever in yum config and repo files"
 msgstr ""
 "az alábbi érték beállítása a yum tároló és konfigurációs fájljaiban: "
 "$releasever"
 
-#: ../cli.py:1710
+#: ../cli.py:2035
 msgid "set arbitrary config and repo options"
 msgstr "tetszőleges konfiguráció- és tárolóbeállítások"
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Jan"
 msgstr "jan."
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Feb"
 msgstr "feb."
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Mar"
 msgstr "márc."
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Apr"
 msgstr "ápr."
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "May"
 msgstr "máj."
 
-#: ../output.py:307
+#: ../output.py:440
 msgid "Jun"
 msgstr "jún."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Jul"
 msgstr "júl."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Aug"
 msgstr "aug."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Sep"
 msgstr "szept."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Oct"
 msgstr "okt."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Nov"
 msgstr "nov."
 
-#: ../output.py:308
+#: ../output.py:441
 msgid "Dec"
 msgstr "dec."
 
-#: ../output.py:318
+#: ../output.py:455
 msgid "Trying other mirror."
 msgstr "Próbálkozás másik tükörszerverről."
 
-#: ../output.py:581
+#: ../output.py:798
 #, python-format
 msgid "Name        : %s%s%s"
 msgstr "Név         : %s%s%s"
 
-#: ../output.py:582
+#: ../output.py:799
 #, python-format
 msgid "Arch        : %s"
 msgstr "Arch        : %s"
 
-#: ../output.py:584
+#: ../output.py:801
 #, python-format
 msgid "Epoch       : %s"
 msgstr "Epoch       : %s"
 
-#: ../output.py:585
+#: ../output.py:802
 #, python-format
 msgid "Version     : %s"
 msgstr "Verzió      : %s"
 
-#: ../output.py:586
+#: ../output.py:803
 #, python-format
 msgid "Release     : %s"
 msgstr "Kiadás      : %s"
 
-#: ../output.py:587
+#: ../output.py:804
 #, python-format
 msgid "Size        : %s"
 msgstr "Méret       : %s"
 
-#: ../output.py:588 ../output.py:900
+#: ../output.py:805 ../output.py:1198
 #, python-format
 msgid "Repo        : %s"
 msgstr "Tároló      : %s"
 
-#: ../output.py:590
+#: ../output.py:807
 #, python-format
 msgid "From repo   : %s"
 msgstr "Tárolóból   : %s"
 
-#: ../output.py:592
+#: ../output.py:809
 #, python-format
 msgid "Committer   : %s"
 msgstr "Beküldő     : %s"
 
-#: ../output.py:593
+#: ../output.py:810
 #, python-format
 msgid "Committime  : %s"
 msgstr "Beküldési idő: %s"
 
-#: ../output.py:594
+#: ../output.py:811
 #, python-format
 msgid "Buildtime   : %s"
 msgstr "Kiállítási idő : %s"
 
-#: ../output.py:596
+#: ../output.py:813
 #, python-format
 msgid "Install time: %s"
 msgstr "Telepítési idő: %s"
 
-#: ../output.py:604
+#: ../output.py:821
 #, python-format
 msgid "Installed by: %s"
 msgstr "Telepítette: %s"
 
-#: ../output.py:611
+#: ../output.py:828
 #, python-format
 msgid "Changed by  : %s"
 msgstr "Módosította  : %s"
 
-#: ../output.py:612
+#: ../output.py:829
 msgid "Summary     : "
 msgstr "Összegzés   : "
 
-#: ../output.py:614 ../output.py:913
+#: ../output.py:831 ../output.py:1214
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../output.py:615
+#: ../output.py:832
 msgid "License     : "
 msgstr "Licenc      : "
 
-#: ../output.py:616 ../output.py:910
+#: ../output.py:833 ../output.py:1211
 msgid "Description : "
 msgstr "Leírás      : "
 
-#: ../output.py:684
+#: ../output.py:949
 msgid "y"
 msgstr "y"
 
-#: ../output.py:684
+#: ../output.py:949
 msgid "yes"
 msgstr "igen"
 
-#: ../output.py:685
+#: ../output.py:950
 msgid "n"
 msgstr "n"
 
-#: ../output.py:685
+#: ../output.py:950
 msgid "no"
 msgstr "nem"
 
-#: ../output.py:689
+#: ../output.py:954
 msgid "Is this ok [y/N]: "
 msgstr "Ez így jó? [y/N]"
 
-#: ../output.py:777
+#: ../output.py:1046
 #, python-format
 msgid ""
 "\n"
@@ -731,154 +767,156 @@ msgstr ""
 "\n"
 "Csoport: %s"
 
-#: ../output.py:781
+#: ../output.py:1050
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Csoport azonosító: %s"
 
-#: ../output.py:786
+#: ../output.py:1055
 #, python-format
 msgid " Description: %s"
 msgstr " Leírás: %s"
 
-#: ../output.py:788
+#: ../output.py:1057
 #, python-format
 msgid " Language: %s"
 msgstr " Nyelv: %s"
 
-#: ../output.py:790
+#: ../output.py:1059
 msgid " Mandatory Packages:"
 msgstr " Szükséges csomagok:"
 
-#: ../output.py:791
+#: ../output.py:1060
 msgid " Default Packages:"
 msgstr " Alapértelmezett csomagok:"
 
-#: ../output.py:792
+#: ../output.py:1061
 msgid " Optional Packages:"
 msgstr " Opcionális csomagok:"
 
-#: ../output.py:793
+#: ../output.py:1062
 msgid " Conditional Packages:"
 msgstr " Feltételes csomagok:"
 
-#: ../output.py:814
+#: ../output.py:1086
 #, python-format
 msgid "package: %s"
 msgstr "csomag: %s"
 
-#: ../output.py:816
+#: ../output.py:1088
 msgid "  No dependencies for this package"
 msgstr "  Ezen csomaghoz nincs függőség"
 
-#: ../output.py:821
+#: ../output.py:1093
 #, python-format
 msgid "  dependency: %s"
 msgstr "  függőség: %s"
 
-#: ../output.py:823
+#: ../output.py:1095
 msgid "   Unsatisfied dependency"
 msgstr "   Teljesítetlen függőség"
 
-#: ../output.py:901
+#: ../output.py:1206
 msgid "Matched from:"
 msgstr "Találat a következőtől:"
 
-#: ../output.py:916
+#: ../output.py:1217
 #, python-format
 msgid "License     : %s"
 msgstr "Licenc      : %s"
 
-#: ../output.py:919
+#: ../output.py:1220
 #, python-format
 msgid "Filename    : %s"
 msgstr "Fájlnév     : %s"
 
-#: ../output.py:923
+#: ../output.py:1224
 msgid "Other       : "
 msgstr "Egyéb       : "
 
-#: ../output.py:966
+#: ../output.py:1280
 msgid "There was an error calculating total download size"
 msgstr "Hiba történt a teljes letöltési méret számítása során"
 
-#: ../output.py:971
+#: ../output.py:1285
 #, python-format
 msgid "Total size: %s"
 msgstr "Teljes méret: %s"
 
-#: ../output.py:974
+#: ../output.py:1288
 #, python-format
 msgid "Total download size: %s"
 msgstr "Teljes letöltési méret: %s"
 
-#: ../output.py:978 ../output.py:998
+#: ../output.py:1292 ../output.py:1315
 #, python-format
 msgid "Installed size: %s"
 msgstr "Telepített méret: %s"
 
-#: ../output.py:994
+#: ../output.py:1311
 msgid "There was an error calculating installed size"
 msgstr "Hiba történt a telepített méret számítása során"
 
-#: ../output.py:1039
+#: ../output.py:1357
 msgid "Reinstalling"
 msgstr "Újratelepítés"
 
-#: ../output.py:1040
+#: ../output.py:1358
 msgid "Downgrading"
 msgstr "Visszaállítás"
 
-#: ../output.py:1041
+#: ../output.py:1359
 msgid "Installing for dependencies"
 msgstr "Telepítés a függőségeknek"
 
-#: ../output.py:1042
+#: ../output.py:1360
 msgid "Updating for dependencies"
 msgstr "Frissítés a függőségeknek"
 
-#: ../output.py:1043
+#: ../output.py:1361
 msgid "Removing for dependencies"
 msgstr "Eltávolítás a függőségeknek"
 
-#: ../output.py:1050 ../output.py:1171
+#: ../output.py:1368 ../output.py:1478
 msgid "Skipped (dependency problems)"
 msgstr "Kihagyva (függőségi problémák)"
 
-#: ../output.py:1052 ../output.py:1687
+#: ../output.py:1370 ../output.py:2024
 msgid "Not installed"
 msgstr "Nem telepítve"
 
-#: ../output.py:1053
+#: ../output.py:1371
 msgid "Not available"
-msgstr ""
+msgstr "Nem elérhető"
 
-#: ../output.py:1075 ../output.py:2024
+#: ../output.py:1393 ../output.py:1428 ../output.py:2379
 msgid "Package"
-msgstr "Csomag"
+msgid_plural "Packages"
+msgstr[0] "Csomag"
+msgstr[1] ""
 
-#: ../output.py:1075
+#: ../output.py:1393
 msgid "Arch"
 msgstr "Arch"
 
-#: ../output.py:1076
+#: ../output.py:1394
 msgid "Version"
 msgstr "Verzió"
 
-#: ../output.py:1076
+#: ../output.py:1394
 msgid "Repository"
 msgstr "Tároló"
 
-#: ../output.py:1077
+#: ../output.py:1395
 msgid "Size"
 msgstr "Méret"
 
-#: ../output.py:1089
+#: ../output.py:1407
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     lecserélés  %s%s%s.%s %s\n"
 
-#: ../output.py:1098
+#: ../output.py:1416
 #, python-format
 msgid ""
 "\n"
@@ -889,57 +927,52 @@ msgstr ""
 "Tranzakció Összegzés\n"
 "%s\n"
 
-#: ../output.py:1109
-#, python-format
-msgid "Install   %5.5s Package(s)\n"
-msgstr "%5.5s csomag telepítése\n"
+#: ../output.py:1421 ../output.py:2174 ../output.py:2175
+msgid "Install"
+msgstr "Telepítés"
 
-#: ../output.py:1113
-#, python-format
-msgid "Upgrade   %5.5s Package(s)\n"
-msgstr "%5.5s csomag frissítése\n"
+#: ../output.py:1422
+msgid "Upgrade"
+msgstr ""
 
-#: ../output.py:1117
-#, python-format
-msgid "Remove    %5.5s Package(s)\n"
-msgstr "%5.5s csomag eltávolítása\n"
+#: ../output.py:1423
+msgid "Remove"
+msgstr ""
 
-#: ../output.py:1121
-#, python-format
-msgid "Reinstall %5.5s Package(s)\n"
-msgstr "%5.5s csomag újratelepítése\n"
+#: ../output.py:1424 ../output.py:2180
+msgid "Reinstall"
+msgstr "Újratelepítés"
 
-#: ../output.py:1125
-#, python-format
-msgid "Downgrade %5.5s Package(s)\n"
-msgstr "%5.5s csomag visszaállítva\n"
+#: ../output.py:1425 ../output.py:2181
+msgid "Downgrade"
+msgstr "Visszaállítás"
 
-#: ../output.py:1165
+#: ../output.py:1472
 msgid "Removed"
 msgstr "Eltávolítva"
 
-#: ../output.py:1166
+#: ../output.py:1473
 msgid "Dependency Removed"
 msgstr "Függőség Eltávolítva"
 
-#: ../output.py:1168
+#: ../output.py:1475
 msgid "Dependency Installed"
 msgstr "Függőség Telepítve"
 
-#: ../output.py:1170
+#: ../output.py:1477
 msgid "Dependency Updated"
 msgstr "Függőség Frissítve"
 
-#: ../output.py:1172
+#: ../output.py:1479
 msgid "Replaced"
 msgstr "Lecserélve"
 
-#: ../output.py:1173
+#: ../output.py:1480
 msgid "Failed"
 msgstr "Sikertelen"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1260
+#: ../output.py:1567
 msgid "two"
 msgstr "kettő"
 
@@ -947,7 +980,7 @@ msgstr "kettő"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1271
+#: ../output.py:1578
 #, python-format
 msgid ""
 "\n"
@@ -958,364 +991,416 @@ msgstr ""
 "A jelenlegi letöltés megszakítva, %s megszakítás (ctrl-c) mégegyszer %s, %s%s%s másodperc alatt\n"
 "a kilépéshez.\n"
 
-#: ../output.py:1282
+#: ../output.py:1589
 msgid "user interrupt"
 msgstr "Felhasználó által megszakítva"
 
-#: ../output.py:1300
+#: ../output.py:1615
 msgid "Total"
 msgstr "Összesen"
 
-#: ../output.py:1322
+#: ../output.py:1637
 msgid "I"
 msgstr "I"
 
-#: ../output.py:1323
+#: ../output.py:1638
 msgid "O"
 msgstr "O"
 
-#: ../output.py:1324
+#: ../output.py:1639
 msgid "E"
 msgstr "E"
 
-#: ../output.py:1325
+#: ../output.py:1640
 msgid "R"
 msgstr "R"
 
-#: ../output.py:1326
+#: ../output.py:1641
 msgid "D"
 msgstr "D"
 
-#: ../output.py:1327
+#: ../output.py:1642
 msgid "U"
 msgstr "U"
 
-#: ../output.py:1341
+#: ../output.py:1656
 msgid "<unset>"
 msgstr "<üres>"
 
-#: ../output.py:1342
+#: ../output.py:1657
 msgid "System"
 msgstr "Rendszer"
 
-#: ../output.py:1411
+#: ../output.py:1726
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr ""
+msgstr "Egyesített tranzakció kihagyása: %d, mivel fedi a %d tranzakciót."
 
-#: ../output.py:1421 ../output.py:1592
+#: ../output.py:1736 ../output.py:1926
 msgid "No transactions"
 msgstr "Nincsenek tranzakciók"
 
-#: ../output.py:1446 ../output.py:2013
+#: ../output.py:1761 ../output.py:2368 ../output.py:2458
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Rossz tranzakció azonosító vagy csomagnév lett megadva"
 
-#: ../output.py:1484
+#: ../output.py:1808
 msgid "Command line"
 msgstr "Parancssor"
 
-#: ../output.py:1486 ../output.py:1908
+#: ../output.py:1810 ../output.py:2256
 msgid "Login user"
 msgstr "Felhasználó"
 
 #. REALLY Needs to use columns!
-#: ../output.py:1487 ../output.py:2022
+#: ../output.py:1811 ../output.py:2377
 msgid "ID"
 msgstr "azonosító"
 
-#: ../output.py:1489
+#: ../output.py:1813
 msgid "Date and time"
 msgstr "Dátum és idő"
 
-#: ../output.py:1490 ../output.py:1910 ../output.py:2023
+#: ../output.py:1814 ../output.py:2258 ../output.py:2378
 msgid "Action(s)"
 msgstr "Művelet(ek)"
 
-#: ../output.py:1491 ../output.py:1911
+#: ../output.py:1815 ../output.py:2259
 msgid "Altered"
 msgstr "Változtatta"
 
-#: ../output.py:1538
+#: ../output.py:1862
 msgid "No transaction ID given"
 msgstr "Nem lett megadva tranzakció azonosító"
 
-#: ../output.py:1564 ../output.py:1972
+#: ../output.py:1888 ../output.py:2324
 msgid "Bad transaction ID given"
 msgstr "Rossz tranzakció azonosító lett megadva"
 
-#: ../output.py:1569
+#: ../output.py:1893
 msgid "Not found given transaction ID"
 msgstr "Nem található a megadott tranzakció azonosítója"
 
-#: ../output.py:1577
+#: ../output.py:1901
 msgid "Found more than one transaction ID!"
 msgstr "Több, mint egy tranzakció azonosító található!"
 
-#: ../output.py:1618 ../output.py:1980
+#: ../output.py:1952 ../output.py:2332
 msgid "No transaction ID, or package, given"
 msgstr "Nem lett megadva tranzakció azonosító vagy csomag"
 
-#: ../output.py:1686 ../output.py:1845
+#: ../output.py:2023 ../output.py:2182
 msgid "Downgraded"
 msgstr "Visszaállítva"
 
-#: ../output.py:1688
+#: ../output.py:2025
 msgid "Older"
 msgstr "Régebbi"
 
-#: ../output.py:1688
+#: ../output.py:2025
 msgid "Newer"
 msgstr "Újabb"
 
-#: ../output.py:1724 ../output.py:1726
+#: ../output.py:2061 ../output.py:2063 ../output.py:2480
 msgid "Transaction ID :"
 msgstr "Tranzakció azonosító:"
 
-#: ../output.py:1728
+#: ../output.py:2065 ../output.py:2482
 msgid "Begin time     :"
 msgstr "Kezdés ideje   :"
 
-#: ../output.py:1731 ../output.py:1733
+#: ../output.py:2068 ../output.py:2070
 msgid "Begin rpmdb    :"
 msgstr "rpmdb kezdete:"
 
-#: ../output.py:1749
+#: ../output.py:2086
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u másodperc)"
 
-#: ../output.py:1751
+#: ../output.py:2088
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u perc)"
 
-#: ../output.py:1753
+#: ../output.py:2090
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u óra)"
 
-#: ../output.py:1755
+#: ../output.py:2092
 #, python-format
 msgid "(%u days)"
 msgstr "(%u nap)"
 
-#: ../output.py:1756
+#: ../output.py:2093
 msgid "End time       :"
 msgstr "Befejezés ideje:"
 
-#: ../output.py:1759 ../output.py:1761
+#: ../output.py:2096 ../output.py:2098
 msgid "End rpmdb      :"
 msgstr "rpmdb befejezése:"
 
-#: ../output.py:1764 ../output.py:1766
+#: ../output.py:2101 ../output.py:2103
 msgid "User           :"
 msgstr "Felhasználó    :"
 
-#: ../output.py:1770 ../output.py:1773 ../output.py:1775 ../output.py:1777
-#: ../output.py:1779
+#: ../output.py:2107 ../output.py:2110 ../output.py:2112 ../output.py:2114
+#: ../output.py:2116
 msgid "Return-Code    :"
 msgstr "Visszatérési érték:"
 
-#: ../output.py:1770 ../output.py:1775
+#: ../output.py:2107 ../output.py:2112
 msgid "Aborted"
 msgstr "Megszakítva"
 
-#: ../output.py:1773
+#: ../output.py:2110
 msgid "Failures:"
 msgstr "Hibák:"
 
-#: ../output.py:1777
+#: ../output.py:2114
 msgid "Failure:"
 msgstr "Hiba:"
 
-#: ../output.py:1779
+#: ../output.py:2116
 msgid "Success"
 msgstr "Siker"
 
-#: ../output.py:1784 ../output.py:1786
+#: ../output.py:2121 ../output.py:2123 ../output.py:2511
 msgid "Command Line   :"
 msgstr "Parancssor     :"
 
-#: ../output.py:1795
+#: ../output.py:2132
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "További nem alapértelmezett információ lett eltárolva: %d"
 
 #. This is _possible_, but not common
-#: ../output.py:1800
+#: ../output.py:2137
 msgid "Transaction performed with:"
 msgstr "A tranzakció lezajlott a következővel:"
 
-#: ../output.py:1804
+#: ../output.py:2141
 msgid "Packages Altered:"
 msgstr "Módosított csomagok:"
 
-#: ../output.py:1808
+#: ../output.py:2145
 msgid "Packages Skipped:"
 msgstr "Kihagyott csomagok:"
 
-#: ../output.py:1814
+#: ../output.py:2151
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb hibák:"
 
-#: ../output.py:1825
+#: ../output.py:2162
 msgid "Scriptlet output:"
 msgstr "Scriptlet kimenet:"
 
-#: ../output.py:1831
+#: ../output.py:2168
 msgid "Errors:"
 msgstr "Hibák:"
 
-#: ../output.py:1837 ../output.py:1838
-msgid "Install"
-msgstr "Telepítés"
-
-#: ../output.py:1839
+#: ../output.py:2176
 msgid "Dep-Install"
 msgstr "Függőség-Telepítés"
 
-#: ../output.py:1841
+#: ../output.py:2178
 msgid "Obsoleting"
 msgstr "Elavulttá tevés"
 
-#: ../output.py:1842
+#: ../output.py:2179
 msgid "Erase"
 msgstr "Törlés"
 
-#: ../output.py:1843
-msgid "Reinstall"
-msgstr "Újratelepítés"
-
-#: ../output.py:1844
-msgid "Downgrade"
-msgstr "Visszaállítás"
-
-#: ../output.py:1846
+#: ../output.py:2183
 msgid "Update"
 msgstr "Frissítés"
 
-#: ../output.py:1909
+#: ../output.py:2257
 msgid "Time"
 msgstr "Időpont"
 
-#: ../output.py:1935
+#: ../output.py:2283
 msgid "Last day"
 msgstr "1 napja"
 
-#: ../output.py:1936
+#: ../output.py:2284
 msgid "Last week"
 msgstr "1 hete"
 
-#: ../output.py:1937
+#: ../output.py:2285
 msgid "Last 2 weeks"
 msgstr "2 hete"
 
 #. US default :p
-#: ../output.py:1938
+#: ../output.py:2286
 msgid "Last 3 months"
 msgstr "3 hónapja"
 
-#: ../output.py:1939
+#: ../output.py:2287
 msgid "Last 6 months"
 msgstr "6 hónapja"
 
-#: ../output.py:1940
+#: ../output.py:2288
 msgid "Last year"
 msgstr "1 éve"
 
-#: ../output.py:1941
+#: ../output.py:2289
 msgid "Over a year ago"
 msgstr "Több, mint egy éve"
 
-#: ../output.py:1984
+#: ../output.py:2336
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Nem található a következő tranzakció: %s"
 
-#: ../output.py:1990
+#: ../output.py:2342
 msgid "Transaction ID:"
 msgstr "Tranzakció azonosító:"
 
-#: ../output.py:1991
+#: ../output.py:2343
 msgid "Available additional history information:"
 msgstr "Rendelkezésre álló további információ az előzményekről:"
 
-#: ../output.py:2003
+#: ../output.py:2356
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Nem található további adat erre a névre"
 
-#: ../output.py:2106
+#: ../output.py:2483
+msgid "Package        :"
+msgstr ""
+
+#: ../output.py:2484
+msgid "State          :"
+msgstr ""
+
+#: ../output.py:2487
+msgid "Size           :"
+msgstr ""
+
+#: ../output.py:2489
+msgid "Build host     :"
+msgstr ""
+
+#: ../output.py:2492
+msgid "Build time     :"
+msgstr ""
+
+#: ../output.py:2494
+msgid "Packager       :"
+msgstr ""
+
+#: ../output.py:2496
+msgid "Vendor         :"
+msgstr ""
+
+#: ../output.py:2498
+msgid "License        :"
+msgstr ""
+
+#: ../output.py:2500
+msgid "URL            :"
+msgstr ""
+
+#: ../output.py:2502
+msgid "Source RPM     :"
+msgstr ""
+
+#: ../output.py:2505
+msgid "Commit Time    :"
+msgstr ""
+
+#: ../output.py:2507
+msgid "Committer      :"
+msgstr ""
+
+#: ../output.py:2509
+msgid "Reason         :"
+msgstr ""
+
+#: ../output.py:2513
+msgid "From repo      :"
+msgstr ""
+
+#: ../output.py:2517
+msgid "Installed by   :"
+msgstr ""
+
+#: ../output.py:2521
+msgid "Changed by     :"
+msgstr ""
+
+#: ../output.py:2566
 msgid "installed"
 msgstr "telepítve"
 
-#: ../output.py:2107
+#: ../output.py:2567
 msgid "an update"
 msgstr "egy frissítés"
 
-#: ../output.py:2108
+#: ../output.py:2568
 msgid "erased"
 msgstr "törölve"
 
-#: ../output.py:2109
+#: ../output.py:2569
 msgid "reinstalled"
 msgstr "újratelepítve"
 
-#: ../output.py:2110
+#: ../output.py:2570
 msgid "a downgrade"
 msgstr "egy visszaállítás"
 
-#: ../output.py:2111
+#: ../output.py:2571
 msgid "obsoleting"
 msgstr "visszaállítás"
 
-#: ../output.py:2112
+#: ../output.py:2572
 msgid "updated"
 msgstr "frissítve"
 
-#: ../output.py:2113
+#: ../output.py:2573
 msgid "obsoleted"
 msgstr "elavult"
 
-#: ../output.py:2117
+#: ../output.py:2577
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
 msgstr "---> A(z) %s.%s %s:%s-%s csomaggal a következő történik: %s"
 
-#: ../output.py:2124
+#: ../output.py:2588
 msgid "--> Running transaction check"
 msgstr "--> Tranzakció ellenőrzés futtatása"
 
-#: ../output.py:2129
+#: ../output.py:2594
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> Függőségvizsgálat újraindítása az új változásokkal."
 
-#: ../output.py:2134
+#: ../output.py:2600
 msgid "--> Finished Dependency Resolution"
 msgstr "--> A függőségvizsgálat véget ért"
 
-#: ../output.py:2139 ../output.py:2144
+#: ../output.py:2613 ../output.py:2626
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> A(z) %s függőség feldolgozása a következő csomaghoz: %s"
 
-#: ../output.py:2149
+#: ../output.py:2639
 #, python-format
 msgid "---> Keeping package: %s"
 msgstr "---> Csomag megtartása: %s"
 
-#: ../output.py:2152
+#: ../output.py:2648
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Nem talált függőség: %s"
 
-#: ../output.py:2163
+#: ../output.py:2665
 #, python-format
 msgid "Package: %s"
 msgstr "Csomag: %s"
 
-#: ../output.py:2165
+#: ../output.py:2667
 #, python-format
 msgid ""
 "\n"
@@ -1324,7 +1409,7 @@ msgstr ""
 "\n"
 "    Megkövetel: %s"
 
-#: ../output.py:2174
+#: ../output.py:2676
 #, python-format
 msgid ""
 "\n"
@@ -1333,7 +1418,7 @@ msgstr ""
 "\n"
 "    %s: %s (%s)"
 
-#: ../output.py:2179
+#: ../output.py:2681
 #, python-format
 msgid ""
 "\n"
@@ -1342,7 +1427,7 @@ msgstr ""
 "\n"
 "        %s"
 
-#: ../output.py:2181
+#: ../output.py:2683
 msgid ""
 "\n"
 "        Not found"
@@ -1351,86 +1436,86 @@ msgstr ""
 "        Nem található"
 
 #. These should be the only three things we care about:
-#: ../output.py:2196
+#: ../output.py:2698
 msgid "Updated By"
 msgstr "Frissítette"
 
-#: ../output.py:2197
+#: ../output.py:2699
 msgid "Downgraded By"
 msgstr "Visszaállította"
 
-#: ../output.py:2198
+#: ../output.py:2700
 msgid "Obsoleted By"
 msgstr "Elavulttá tette"
 
-#: ../output.py:2216
+#: ../output.py:2718
 msgid "Available"
 msgstr "Elérhető"
 
-#: ../output.py:2243 ../output.py:2248
+#: ../output.py:2753 ../output.py:2766
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Konfliktus feldolgozása: %s ellentétben áll: %s"
 
-#: ../output.py:2252
+#: ../output.py:2772
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr "--> A tranzakció feltöltése csomagokkal. Kis türelmet."
 
-#: ../output.py:2256
+#: ../output.py:2781
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr ""
 "---> A(z) %s fejlécének betöltése, hogy a tranzakcióhoz hozzáadhassuk."
 
-#: ../utils.py:99
+#: ../utils.py:123
 msgid "Running"
 msgstr "Fut"
 
-#: ../utils.py:100
+#: ../utils.py:124
 msgid "Sleeping"
 msgstr "Alszik"
 
-#: ../utils.py:101
+#: ../utils.py:125
 msgid "Uninterruptible"
 msgstr "Nem megszakítható"
 
-#: ../utils.py:102
+#: ../utils.py:126
 msgid "Zombie"
 msgstr "Zombi"
 
-#: ../utils.py:103
+#: ../utils.py:127
 msgid "Traced/Stopped"
 msgstr "Nyomozott/Megállított"
 
-#: ../utils.py:104 ../yumcommands.py:994
+#: ../utils.py:128 ../yumcommands.py:1792
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: ../utils.py:115
+#: ../utils.py:149
 msgid "  The other application is: PackageKit"
 msgstr "  A másik alkalmazás: PackageKit"
 
-#: ../utils.py:117
+#: ../utils.py:151
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  A másik alkalmazás: %s"
 
-#: ../utils.py:120
+#: ../utils.py:154
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Memória : %5s RSS (%5sB VSZ)"
 
-#: ../utils.py:125
+#: ../utils.py:159
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Elindítva: %s - %s"
 
-#: ../utils.py:127
+#: ../utils.py:161
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Állapot  : %s, pid: %d"
 
-#: ../utils.py:170 ../yummain.py:43
+#: ../utils.py:190 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
@@ -1440,7 +1525,7 @@ msgstr ""
 "\n"
 "Felhasználó által megszakítva"
 
-#: ../utils.py:176 ../yummain.py:49
+#: ../utils.py:202 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
@@ -1450,7 +1535,7 @@ msgstr ""
 "\n"
 "Kilépés megtört cső miatt (broken pipe)"
 
-#: ../utils.py:178 ../yummain.py:51
+#: ../utils.py:204 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
@@ -1461,7 +1546,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../utils.py:228 ../yummain.py:123
+#: ../utils.py:280 ../yummain.py:134
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
@@ -1469,35 +1554,35 @@ msgstr ""
 "Egy másik alkalmazás használja a yum zárat, ezért kilépünk, ahogy be van "
 "állítva az exit_on_lock szerint"
 
-#: ../utils.py:287
+#: ../utils.py:346
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr "Bővítmény-Összeomlási Hiba: %s"
 
-#: ../utils.py:290
+#: ../utils.py:349
 #, python-format
 msgid "Yum Error: %s"
 msgstr "Yum Hiba: %s"
 
-#: ../utils.py:342 ../yummain.py:150 ../yummain.py:189
+#: ../utils.py:407 ../yummain.py:161 ../yummain.py:200
 #, python-format
 msgid "Error: %s"
 msgstr "Hiba: %s"
 
-#: ../utils.py:346 ../yummain.py:194
+#: ../utils.py:411 ../yummain.py:205
 msgid " You could try using --skip-broken to work around the problem"
 msgstr " Próbálja meg használni --skip kapcsolót a probléma elkerüléséhez"
 
-#: ../utils.py:348 ../yummain.py:87
+#: ../utils.py:413 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " Próbálja meg futtatni: rpm -Va --nofiles --nodigest"
 
-#: ../utils.py:355 ../yummain.py:160 ../yummain.py:202
+#: ../utils.py:420 ../yummain.py:171 ../yummain.py:213
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Ismeretlen Hiba: Kilépési Kód: %d:"
 
-#: ../utils.py:361 ../yummain.py:208
+#: ../utils.py:426 ../yummain.py:219
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1505,7 +1590,7 @@ msgstr ""
 "\n"
 "Függőségek Megtalálva"
 
-#: ../utils.py:376 ../yummain.py:234
+#: ../utils.py:442 ../yummain.py:251
 msgid "Complete!"
 msgstr "Kész!"
 
@@ -1517,7 +1602,7 @@ msgstr " Használat:\n"
 msgid "You need to be root to perform this command."
 msgstr "Csak a root felhasználó futtathatja ezt a parancsot."
 
-#: ../yumcommands.py:59
+#: ../yumcommands.py:65
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing. \n"
@@ -1546,53 +1631,53 @@ msgstr ""
 "\n"
 "További információért lépjen kapcsolatba a disztribúciójával ill. a csomagszolgáltatójával.\n"
 
-#: ../yumcommands.py:74
+#: ../yumcommands.py:80
 #, python-format
 msgid "Problem repository: %s"
-msgstr ""
+msgstr "Hibás tároló: %s"
 
-#: ../yumcommands.py:80
+#: ../yumcommands.py:94
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Hiba: Meg kell adni a csomagok listáját a következőhöz: %s"
 
-#: ../yumcommands.py:86
+#: ../yumcommands.py:110
 msgid "Error: Need an item to match"
 msgstr "Hiba: egy elemnek legalább egyeznie kell"
 
-#: ../yumcommands.py:92
+#: ../yumcommands.py:124
 msgid "Error: Need a group or list of groups"
 msgstr "Hiba: Szükség van legalább egy csoportra"
 
-#: ../yumcommands.py:101
+#: ../yumcommands.py:141
 #, python-format
 msgid "Error: clean requires an option: %s"
 msgstr "Hiba: a clean parancsnak szüksége van egy opcióra: %s"
 
-#: ../yumcommands.py:106
+#: ../yumcommands.py:146
 #, python-format
 msgid "Error: invalid clean argument: %r"
 msgstr "Hiba: helytelen clean argumentum: %r"
 
-#: ../yumcommands.py:119
+#: ../yumcommands.py:161
 msgid "No argument to shell"
 msgstr "Nincs argumentum a héj felé"
 
-#: ../yumcommands.py:121
+#: ../yumcommands.py:163
 #, python-format
 msgid "Filename passed to shell: %s"
 msgstr "Fájlnév átadva a héjnak: %s"
 
-#: ../yumcommands.py:125
+#: ../yumcommands.py:167
 #, python-format
 msgid "File %s given as argument to shell does not exist."
 msgstr "A(z) %s nevű fájl nem létező argumentumot adott át a héjnak."
 
-#: ../yumcommands.py:131
+#: ../yumcommands.py:173
 msgid "Error: more than one file given as argument to shell."
 msgstr "Hiba: több, mint egy fájl lett átadva argumentumként a héjnak."
 
-#: ../yumcommands.py:148
+#: ../yumcommands.py:192
 msgid ""
 "There are no enabled repos.\n"
 " Run \"yum repolist all\" to see the repos you have.\n"
@@ -1603,306 +1688,299 @@ msgstr ""
 "A következő paranccsal engedélyezhet tárolót:\n"
 " yum-config-manager --enable <repo>"
 
-#: ../yumcommands.py:200
+#: ../yumcommands.py:300
 msgid "PACKAGE..."
 msgstr "CSOMAG..."
 
-#: ../yumcommands.py:203
+#: ../yumcommands.py:307
 msgid "Install a package or packages on your system"
 msgstr "Csomag(ok) telepítése a rendszerre"
 
-#: ../yumcommands.py:212
+#: ../yumcommands.py:338
 msgid "Setting up Install Process"
 msgstr "Telepítési folyamat megkezdése"
 
-#: ../yumcommands.py:223 ../yumcommands.py:245
+#: ../yumcommands.py:363 ../yumcommands.py:423
 msgid "[PACKAGE...]"
 msgstr "[CSOMAG...]"
 
-#: ../yumcommands.py:226
+#: ../yumcommands.py:370
 msgid "Update a package or packages on your system"
 msgstr "Csomag(ok) frissítése a rendszeren"
 
-#: ../yumcommands.py:234
+#: ../yumcommands.py:399
 msgid "Setting up Update Process"
 msgstr "Frissítési folyamat megkezdése"
 
-#: ../yumcommands.py:248
+#: ../yumcommands.py:430
 msgid "Synchronize installed packages to the latest available versions"
 msgstr "Telepített csomagok szinkronizálása a legfrissebb verzióhoz"
 
-#: ../yumcommands.py:256
+#: ../yumcommands.py:459
 msgid "Setting up Distribution Synchronization Process"
 msgstr "Disztribúció szinkronizálási folyamat megkezdése"
 
-#: ../yumcommands.py:299
+#: ../yumcommands.py:519
 msgid "Display details about a package or group of packages"
 msgstr "Részletek megjelenítése egy csomagról vagy egy csomagcsoportról"
 
-#: ../yumcommands.py:348
+#: ../yumcommands.py:581
 msgid "Installed Packages"
 msgstr "Telepített csomagok"
 
-#: ../yumcommands.py:356
+#: ../yumcommands.py:589
 msgid "Available Packages"
 msgstr "Elérhető csomagok"
 
-#: ../yumcommands.py:360
+#: ../yumcommands.py:593
 msgid "Extra Packages"
 msgstr "Extra csomagok"
 
-#: ../yumcommands.py:364
+#: ../yumcommands.py:597
 msgid "Updated Packages"
 msgstr "Frissített csomagok"
 
 #. This only happens in verbose mode
-#: ../yumcommands.py:372 ../yumcommands.py:379 ../yumcommands.py:667
+#: ../yumcommands.py:605 ../yumcommands.py:612 ../yumcommands.py:1193
 msgid "Obsoleting Packages"
 msgstr "Elavult csomagok"
 
-#: ../yumcommands.py:381
+#: ../yumcommands.py:614
 msgid "Recently Added Packages"
 msgstr "Nemrégiben hozzáadott csomagok"
 
-#: ../yumcommands.py:388
+#: ../yumcommands.py:621
 msgid "No matching Packages to list"
 msgstr "Nem található csomag"
 
-#: ../yumcommands.py:402
+#: ../yumcommands.py:656
 msgid "List a package or groups of packages"
 msgstr "Csomag vagy csomagcsoport listázása"
 
-#: ../yumcommands.py:414
+#: ../yumcommands.py:685
 msgid "Remove a package or packages from your system"
 msgstr "Csomag(ok) eltávolítása a rendszerből"
 
-#: ../yumcommands.py:421
+#: ../yumcommands.py:714
 msgid "Setting up Remove Process"
 msgstr "Eltávolítási folyamat megkezdése"
 
-#: ../yumcommands.py:435
+#: ../yumcommands.py:773
+msgid "Display, or use, the groups information"
+msgstr ""
+
+#: ../yumcommands.py:776
 msgid "Setting up Group Process"
 msgstr "Csoport folyamat megkezdése"
 
-#: ../yumcommands.py:441
+#: ../yumcommands.py:782
 msgid "No Groups on which to run command"
 msgstr "Nem található csoport, amin futtatható a parancs"
 
-#: ../yumcommands.py:454
-msgid "List available package groups"
-msgstr "Elérhető Csomagcsoportok listázása"
+#: ../yumcommands.py:833
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr ""
 
-#: ../yumcommands.py:474
-msgid "Install the packages in a group on your system"
-msgstr "Csoportban lévő csomagok telepítése"
-
-#: ../yumcommands.py:497
-msgid "Remove the packages in a group from your system"
-msgstr "Csoportban lévő csomagok eltávolítása"
-
-#: ../yumcommands.py:525
-msgid "Display details about a package group"
-msgstr "Részletek megjelenítése egy csoportról"
-
-#: ../yumcommands.py:550
+#: ../yumcommands.py:929
 msgid "Generate the metadata cache"
 msgstr "Metaadat-gyorsítótár generálása"
 
-#: ../yumcommands.py:556
+#: ../yumcommands.py:955
 msgid "Making cache files for all metadata files."
 msgstr "Gyorsítótár készítése az összes metaadat fájlhoz."
 
-#: ../yumcommands.py:557
+#: ../yumcommands.py:956
 msgid "This may take a while depending on the speed of this computer"
 msgstr "Ez eltarthat egy darabig a számítógép sebességétől függően"
 
-#: ../yumcommands.py:578
+#: ../yumcommands.py:977
 msgid "Metadata Cache Created"
 msgstr "Metaadat gyorsítótár létrehozva"
 
-#: ../yumcommands.py:592
+#: ../yumcommands.py:1015
 msgid "Remove cached data"
 msgstr "Gyorsítótárazott adat eltávolítása"
 
-#: ../yumcommands.py:613
+#: ../yumcommands.py:1082
 msgid "Find what package provides the given value"
 msgstr "Megtalálja, mely csomag tartalmazza a megadott értéket"
 
-#: ../yumcommands.py:633
+#: ../yumcommands.py:1139
 msgid "Check for available package updates"
 msgstr "Csomagfrissítések ellenőrzése"
 
-#: ../yumcommands.py:687
+#: ../yumcommands.py:1230
 msgid "Search package details for the given string"
 msgstr "Csomagrészletek keresése egy megadott szöveg alapján"
 
-#: ../yumcommands.py:693
+#: ../yumcommands.py:1256
 msgid "Searching Packages: "
 msgstr "Csomagok keresése: "
 
-#: ../yumcommands.py:710
+#: ../yumcommands.py:1298
 msgid "Update packages taking obsoletes into account"
 msgstr "Csomagok frissítése az elavultakat is számításba véve"
 
-#: ../yumcommands.py:719
+#: ../yumcommands.py:1328
 msgid "Setting up Upgrade Process"
 msgstr "Frissítési folyamat megkezdése"
 
-#: ../yumcommands.py:737
+#: ../yumcommands.py:1363
 msgid "Install a local RPM"
 msgstr "Helyi RPM telepítése"
 
-#: ../yumcommands.py:745
+#: ../yumcommands.py:1393
 msgid "Setting up Local Package Process"
 msgstr "Helyi csomagolási folyamat megkezdése"
 
-#: ../yumcommands.py:764
+#: ../yumcommands.py:1437
 msgid "Determine which package provides the given dependency"
 msgstr "Megállapítja, melyik csomag tartalmazza a megadott függőséget"
 
-#: ../yumcommands.py:767
+#: ../yumcommands.py:1453
 msgid "Searching Packages for Dependency:"
 msgstr "Csomagfüggőségek keresése:"
 
-#: ../yumcommands.py:781
+#: ../yumcommands.py:1484
 msgid "Run an interactive yum shell"
 msgstr "Interaktív yum shell futtatása"
 
-#: ../yumcommands.py:787
+#: ../yumcommands.py:1510
 msgid "Setting up Yum Shell"
 msgstr "Yum Shell indítása"
 
-#: ../yumcommands.py:805
+#: ../yumcommands.py:1553
 msgid "List a package's dependencies"
 msgstr "Egy csomag függőségeinek listázása"
 
-#: ../yumcommands.py:811
+#: ../yumcommands.py:1580
 msgid "Finding dependencies: "
 msgstr "Függőségek keresése: "
 
-#: ../yumcommands.py:827
+#: ../yumcommands.py:1612
 msgid "Display the configured software repositories"
 msgstr "Beállított szoftverforrások megjelenítése"
 
-#: ../yumcommands.py:893 ../yumcommands.py:894
+#: ../yumcommands.py:1691 ../yumcommands.py:1692
 msgid "enabled"
 msgstr "engedélyezett"
 
-#: ../yumcommands.py:920 ../yumcommands.py:921
+#: ../yumcommands.py:1718 ../yumcommands.py:1719
 msgid "disabled"
 msgstr "tiltott"
 
-#: ../yumcommands.py:937
+#: ../yumcommands.py:1735
 msgid "Repo-id      : "
 msgstr "Tároló-azonosító: "
 
-#: ../yumcommands.py:938
+#: ../yumcommands.py:1736
 msgid "Repo-name    : "
 msgstr "Tároló-név   : "
 
-#: ../yumcommands.py:941
+#: ../yumcommands.py:1739
 msgid "Repo-status  : "
 msgstr "Tároló-állapot: "
 
-#: ../yumcommands.py:944
+#: ../yumcommands.py:1742
 msgid "Repo-revision: "
 msgstr "Tároló-vizsgálat:"
 
-#: ../yumcommands.py:948
+#: ../yumcommands.py:1746
 msgid "Repo-tags    : "
 msgstr "Tároló-címkék : "
 
-#: ../yumcommands.py:954
+#: ../yumcommands.py:1752
 msgid "Repo-distro-tags: "
 msgstr "Tároló-diszt.-címkék: "
 
-#: ../yumcommands.py:959
+#: ../yumcommands.py:1757
 msgid "Repo-updated : "
 msgstr "Tároló-frissítve: "
 
-#: ../yumcommands.py:961
+#: ../yumcommands.py:1759
 msgid "Repo-pkgs    : "
 msgstr "Tároló-csomagok: "
 
-#: ../yumcommands.py:962
+#: ../yumcommands.py:1760
 msgid "Repo-size    : "
 msgstr "Tároló-méret  : "
 
-#: ../yumcommands.py:969 ../yumcommands.py:990
+#: ../yumcommands.py:1767 ../yumcommands.py:1788
 msgid "Repo-baseurl : "
 msgstr "Tároló-baseurl: "
 
-#: ../yumcommands.py:977
+#: ../yumcommands.py:1775
 msgid "Repo-metalink: "
 msgstr "Tároló-metalink: "
 
-#: ../yumcommands.py:981
+#: ../yumcommands.py:1779
 msgid "  Updated    : "
 msgstr "  Frissítve  : "
 
-#: ../yumcommands.py:984
+#: ../yumcommands.py:1782
 msgid "Repo-mirrors : "
 msgstr "Tároló-tükrök: "
 
-#: ../yumcommands.py:1000
+#: ../yumcommands.py:1798
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Soha (utoljára: %s)"
 
-#: ../yumcommands.py:1002
+#: ../yumcommands.py:1800
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "Most (utoljára: %s)"
 
-#: ../yumcommands.py:1005
+#: ../yumcommands.py:1803
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s másodperc (utoljára: %s)"
 
-#: ../yumcommands.py:1007
+#: ../yumcommands.py:1805
 msgid "Repo-expire  : "
 msgstr "Tároló-lejárat: "
 
-#: ../yumcommands.py:1010
+#: ../yumcommands.py:1808
 msgid "Repo-exclude : "
 msgstr "Tároló-kizárás:"
 
-#: ../yumcommands.py:1014
+#: ../yumcommands.py:1812
 msgid "Repo-include : "
 msgstr "Tároló-tartalmaz: "
 
-#: ../yumcommands.py:1018
+#: ../yumcommands.py:1816
 msgid "Repo-excluded: "
 msgstr "Tároló-kizárt: "
 
-#: ../yumcommands.py:1022
+#: ../yumcommands.py:1820
 msgid "Repo-filename: "
-msgstr ""
+msgstr "Tároló-fájlnév: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1032 ../yumcommands.py:1061
+#: ../yumcommands.py:1830 ../yumcommands.py:1859
 msgid "repo id"
 msgstr "tároló azon"
 
-#: ../yumcommands.py:1049 ../yumcommands.py:1050 ../yumcommands.py:1068
+#: ../yumcommands.py:1847 ../yumcommands.py:1848 ../yumcommands.py:1866
 msgid "status"
 msgstr "állapot"
 
-#: ../yumcommands.py:1062
+#: ../yumcommands.py:1860
 msgid "repo name"
 msgstr "tároló név"
 
-#: ../yumcommands.py:1099
+#: ../yumcommands.py:1922
 msgid "Display a helpful usage message"
 msgstr "Egy használati tipp mutatása"
 
-#: ../yumcommands.py:1133
+#: ../yumcommands.py:1964
 #, python-format
 msgid "No help available for %s"
 msgstr "Nincs súgó az alábbi témakörben: %s"
 
-#: ../yumcommands.py:1138
+#: ../yumcommands.py:1969
 msgid ""
 "\n"
 "\n"
@@ -1912,7 +1990,7 @@ msgstr ""
 "\n"
 "alias-ok: "
 
-#: ../yumcommands.py:1140
+#: ../yumcommands.py:1971
 msgid ""
 "\n"
 "\n"
@@ -1922,117 +2000,163 @@ msgstr ""
 "\n"
 "alias: "
 
-#: ../yumcommands.py:1168
+#: ../yumcommands.py:2056
 msgid "Setting up Reinstall Process"
 msgstr "Újratelepítő folyamat indítása"
 
-#: ../yumcommands.py:1176
+#: ../yumcommands.py:2068
 msgid "reinstall a package"
 msgstr "egy csomag újratelepítése"
 
-#: ../yumcommands.py:1195
+#: ../yumcommands.py:2131
 msgid "Setting up Downgrade Process"
 msgstr "Visszaállítási folyamat indítása"
 
-#: ../yumcommands.py:1202
+#: ../yumcommands.py:2142
 msgid "downgrade a package"
 msgstr "egy csomag visszaállítása"
 
-#: ../yumcommands.py:1216
+#: ../yumcommands.py:2181
 msgid "Display a version for the machine and/or available repos."
 msgstr "Verzió és/vagy elérhető tárolók megjelenítése"
 
-#: ../yumcommands.py:1255
+#: ../yumcommands.py:2233
 msgid " Yum version groups:"
 msgstr " Yum verzió csoportok:"
 
-#: ../yumcommands.py:1265
+#: ../yumcommands.py:2243
 msgid " Group   :"
 msgstr " Csoport   :"
 
-#: ../yumcommands.py:1266
+#: ../yumcommands.py:2244
 msgid " Packages:"
 msgstr "Csomagok:"
 
-#: ../yumcommands.py:1295
+#: ../yumcommands.py:2273
 msgid "Installed:"
 msgstr "Telepített:"
 
-#: ../yumcommands.py:1303
+#: ../yumcommands.py:2281
 msgid "Group-Installed:"
 msgstr "Telepített csoport:"
 
-#: ../yumcommands.py:1312
+#: ../yumcommands.py:2290
 msgid "Available:"
 msgstr "Elérhető:"
 
-#: ../yumcommands.py:1321
+#: ../yumcommands.py:2299
 msgid "Group-Available:"
 msgstr "Elérhető csoport:"
 
-#: ../yumcommands.py:1360
+#: ../yumcommands.py:2363
 msgid "Display, or use, the transaction history"
 msgstr "Korábbi tranzakciók használata vagy megjelenítése"
 
-#: ../yumcommands.py:1432
+#: ../yumcommands.py:2435
+msgid "Transactions:"
+msgstr ""
+
+#: ../yumcommands.py:2436
+msgid "Begin time  :"
+msgstr ""
+
+#: ../yumcommands.py:2437
+msgid "End time    :"
+msgstr ""
+
+#: ../yumcommands.py:2438
+msgid "Counts      :"
+msgstr ""
+
+#: ../yumcommands.py:2439
+msgid "  NEVRAC :"
+msgstr ""
+
+#: ../yumcommands.py:2440
+msgid "  NEVRA  :"
+msgstr ""
+
+#: ../yumcommands.py:2441
+msgid "  NA     :"
+msgstr ""
+
+#: ../yumcommands.py:2442
+msgid "  NEVR   :"
+msgstr ""
+
+#: ../yumcommands.py:2443
+msgid "  rpm DB :"
+msgstr ""
+
+#: ../yumcommands.py:2444
+msgid "  yum DB :"
+msgstr ""
+
+#: ../yumcommands.py:2475
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Helytelen alparancs az előzményekhez, használja a következőt: %s"
 
-#: ../yumcommands.py:1439
+#: ../yumcommands.py:2482
 msgid "You don't have access to the history DB."
 msgstr "Ön nem tudja elérni az előzmények adatbázisát."
 
-#: ../yumcommands.py:1487
+#: ../yumcommands.py:2574
 msgid "Check for problems in the rpmdb"
 msgstr "Hibák keresése az rpmdb-ben"
 
-#: ../yumcommands.py:1514
+#: ../yumcommands.py:2639
 msgid "load a saved transaction from filename"
 msgstr "egy elmentett tranzakció betöltése fájlnév alapján"
 
-#: ../yumcommands.py:1518
+#: ../yumcommands.py:2656
 msgid "No saved transaction file specified."
-msgstr ""
+msgstr "Nincs meghatározva az elmentett tranzakció fájlja."
 
-#: ../yumcommands.py:1522
+#: ../yumcommands.py:2660
 #, python-format
 msgid "loading transaction from %s"
-msgstr ""
+msgstr "tranzakciók betöltések a következőből: %s"
 
-#: ../yumcommands.py:1528
+#: ../yumcommands.py:2666
 #, python-format
 msgid "Transaction loaded from %s with %s members"
-msgstr ""
+msgstr "Tranzakció betöltve innen: %s, %s taggal"
 
 #. This is mainly for PackageSackError from rpmdb.
 #: ../yummain.py:84
 #, python-format
 msgid " Yum checks failed: %s"
+msgstr " Yum ellenőrzés meghiúsult: %s"
+
+#: ../yummain.py:110
+msgid "No read/write access in current directory, moving to /"
 msgstr ""
 
-#: ../yummain.py:114
+#: ../yummain.py:124
+msgid "Can't create lock file; exiting"
+msgstr "Nem sikerült lezárni; kilépés..."
+
+#: ../yummain.py:128
 msgid ""
 "Another app is currently holding the yum lock; waiting for it to exit..."
 msgstr ""
 "Egy másik alkalmazás jelenleg használja a yum zárolást; várakozás annak "
 "kilépésére..."
 
-#: ../yummain.py:120
-msgid "Can't create lock file; exiting"
-msgstr ""
-
 #. Depsolve stage
-#: ../yummain.py:167
+#: ../yummain.py:178
 msgid "Resolving Dependencies"
 msgstr "Függőségek megállapítása"
 
-#: ../yummain.py:230
+#: ../yummain.py:241 ../yummain.py:249
 #, python-format
-msgid "Your transaction was saved, rerun it with: yum load-transaction %s"
+msgid ""
+"Your transaction was saved, rerun it with:\n"
+" yum load-transaction %s"
 msgstr ""
 
-#: ../yummain.py:288
+#: ../yummain.py:326
 msgid ""
 "\n"
 "\n"
@@ -2042,74 +2166,74 @@ msgstr ""
 "\n"
 "Kilépés felhasználói megszakítás miatt."
 
-#: ../yum/depsolve.py:84
+#: ../yum/depsolve.py:83
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr "A doTsSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/depsolve.py:99
+#: ../yum/depsolve.py:98
 msgid "Setting up TransactionSets before config class is up"
 msgstr "Tranzakciók indítása a konfigurációs osztályok felállása előtt"
 
-#: ../yum/depsolve.py:153
+#: ../yum/depsolve.py:152
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Hibás tsflag a következő konfigurációs fájlban: %s"
 
-#: ../yum/depsolve.py:164
+#: ../yum/depsolve.py:170
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "Keresés a pkgSack-ben függőség után: %s"
 
-#: ../yum/depsolve.py:207
+#: ../yum/depsolve.py:221
 #, python-format
 msgid "Member: %s"
 msgstr "Tag: %s"
 
-#: ../yum/depsolve.py:221 ../yum/depsolve.py:793
+#: ../yum/depsolve.py:235 ../yum/depsolve.py:831
 #, python-format
 msgid "%s converted to install"
 msgstr "A(z) %s át lett konvertálva telepítéshez"
 
-#: ../yum/depsolve.py:233
+#: ../yum/depsolve.py:247
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "A(z) %s nevű csomag hozzáadása %s módban"
 
-#: ../yum/depsolve.py:249
+#: ../yum/depsolve.py:263
 #, python-format
 msgid "Removing Package %s"
 msgstr "A következő csomag eltávolítása: %s"
 
-#: ../yum/depsolve.py:271
+#: ../yum/depsolve.py:285
 #, python-format
 msgid "%s requires: %s"
 msgstr "A(z) %s megköveteli a következőket: %s"
 
-#: ../yum/depsolve.py:312
+#: ../yum/depsolve.py:326
 #, python-format
 msgid "%s requires %s"
 msgstr "A(z) %s megköveteli a következőt: %s"
 
-#: ../yum/depsolve.py:339
+#: ../yum/depsolve.py:353
 msgid "Needed Require has already been looked up, cheating"
 msgstr "A szükséges dolognak már utánanéztek, lecsaljuk"
 
-#: ../yum/depsolve.py:349
+#: ../yum/depsolve.py:363
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "A megkövetelt dolog nem csomag, ezért utánanézünk: %s"
 
-#: ../yum/depsolve.py:357
+#: ../yum/depsolve.py:371
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Lehetséges Szolgáltató: %s"
 
-#: ../yum/depsolve.py:380
+#: ../yum/depsolve.py:394
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "A mód %s a(z) %s kiszolgáló felé: %s"
 
-#: ../yum/depsolve.py:384
+#: ../yum/depsolve.py:398
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "A(z) %s nevű csomag szolgáltatásának módja: %s"
@@ -2117,117 +2241,117 @@ msgstr "A(z) %s nevű csomag szolgáltatásának módja: %s"
 #. the thing it needs is being updated or obsoleted away
 #. try to update the requiring package in hopes that all this problem goes
 #. away :(
-#: ../yum/depsolve.py:389 ../yum/depsolve.py:406
+#: ../yum/depsolve.py:403 ../yum/depsolve.py:420
 #, python-format
 msgid "Trying to update %s to resolve dep"
-msgstr ""
+msgstr "Kisérlet a(z) %s frissítésére a függőségek feloldásához"
 
-#: ../yum/depsolve.py:400 ../yum/depsolve.py:410
+#: ../yum/depsolve.py:414 ../yum/depsolve.py:424
 #, python-format
 msgid "No update paths found for %s. Failure!"
-msgstr ""
+msgstr "Nem található frissítési útvonal a következőhöz: %s."
 
-#: ../yum/depsolve.py:416
+#: ../yum/depsolve.py:430
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: A(z) %s nevű csomaghoz szükséges a(z) %s törlése"
 
-#: ../yum/depsolve.py:429
+#: ../yum/depsolve.py:443
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: %s lecserélése függőség miatt a következőre: %s."
 
-#: ../yum/depsolve.py:432
+#: ../yum/depsolve.py:446
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: %s frissítése függőség miatt."
 
-#: ../yum/depsolve.py:440
+#: ../yum/depsolve.py:454
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr "Nem található frissítési útvonal a következőhöz: %s"
 
-#: ../yum/depsolve.py:471
+#: ../yum/depsolve.py:485
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "A(z) %s követelménye %s (gyors találattal)"
 
 #. is it already installed?
-#: ../yum/depsolve.py:513
+#: ../yum/depsolve.py:527
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr ""
 "%s az ellátandó csomagoknál található, bár telepítve van, ezért "
 "eltávolítjuk."
 
-#: ../yum/depsolve.py:529
+#: ../yum/depsolve.py:543
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr ""
 "A lehetséges %s nevű csomag már újabb verzióval szerepel a tranzakcióban."
 
-#: ../yum/depsolve.py:540
+#: ../yum/depsolve.py:554
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr "A lehetséges %s nevű csomagból már újabb verzió van telepítve."
 
-#: ../yum/depsolve.py:558
+#: ../yum/depsolve.py:572
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "A(z) %s már szerepel a tranzakcióban, kihagyás"
 
-#: ../yum/depsolve.py:607
+#: ../yum/depsolve.py:621
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: %s bejelölése a(z) %s frissítéseként"
 
-#: ../yum/depsolve.py:616
+#: ../yum/depsolve.py:630
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: A(z) %s telepítésre való bejelölése a következőhöz: %s"
 
-#: ../yum/depsolve.py:727 ../yum/depsolve.py:819
+#: ../yum/depsolve.py:765 ../yum/depsolve.py:861
 msgid "Success - empty transaction"
 msgstr "Siker - üres tranzakció"
 
-#: ../yum/depsolve.py:767 ../yum/depsolve.py:783
+#: ../yum/depsolve.py:805 ../yum/depsolve.py:821
 msgid "Restarting Loop"
 msgstr "Folyamat újraindítása"
 
-#: ../yum/depsolve.py:799
+#: ../yum/depsolve.py:841
 msgid "Dependency Process ending"
 msgstr "Függőségkezelő folyamat végetért"
 
-#: ../yum/depsolve.py:821
+#: ../yum/depsolve.py:863
 msgid "Success - deps resolved"
 msgstr "Siker - függőségek megoldva"
 
-#: ../yum/depsolve.py:845
+#: ../yum/depsolve.py:887
 #, python-format
 msgid "Checking deps for %s"
 msgstr "Függőségek keresése a következőre: %s"
 
-#: ../yum/depsolve.py:931
+#: ../yum/depsolve.py:973
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "A(z) %s keresése, mint a(z) %s szükséglete."
 
-#: ../yum/depsolve.py:1169
+#: ../yum/depsolve.py:1216
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "A compare_providers() parancs futtatása a következőhöz: %s"
 
-#: ../yum/depsolve.py:1196 ../yum/depsolve.py:1202
+#: ../yum/depsolve.py:1243 ../yum/depsolve.py:1249
 #, python-format
 msgid "better arch in po %s"
 msgstr "Jobb architektúra a következőben: %s"
 
-#: ../yum/depsolve.py:1298
+#: ../yum/depsolve.py:1345
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "A(z) %s már újabb, mint a(z) %s"
 
-#: ../yum/depsolve.py:1310
+#: ../yum/depsolve.py:1357
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -2236,144 +2360,144 @@ msgstr ""
 "archdist osszehasonlítva %s a következőhöz: %s a következőn: %s\n"
 "  Nyertes: %s"
 
-#: ../yum/depsolve.py:1318
+#: ../yum/depsolve.py:1365
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "gyakori forrásrpm %s és %s"
 
-#: ../yum/depsolve.py:1322
+#: ../yum/depsolve.py:1369
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr "legjobb %s nevű csomag telepítve van a következőhöz: %s"
 
-#: ../yum/depsolve.py:1328
+#: ../yum/depsolve.py:1375
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "gyakori előtag a következőre: %s, %s és %s között"
 
-#: ../yum/depsolve.py:1359
+#: ../yum/depsolve.py:1406
 #, python-format
 msgid "requires minimal: %d"
 msgstr "minimum szükséges: %d"
 
-#: ../yum/depsolve.py:1363
+#: ../yum/depsolve.py:1410
 #, python-format
 msgid " Winner: %s"
 msgstr " Nyertes: %s"
 
-#: ../yum/depsolve.py:1368
+#: ../yum/depsolve.py:1415
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr " Vesztes(ezzel: %d): %s"
 
-#: ../yum/depsolve.py:1384
+#: ../yum/depsolve.py:1431
 #, python-format
 msgid "Best Order: %s"
 msgstr "Legjobb sorrend: %s"
 
-#: ../yum/__init__.py:234
+#: ../yum/__init__.py:261
 msgid "doConfigSetup() will go away in a future version of Yum.\n"
 msgstr "A doConfigSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:482
+#: ../yum/__init__.py:527
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr "%r tároló: Hiba a konfigurációs fájl elemzése során: %s"
 
-#: ../yum/__init__.py:488
+#: ../yum/__init__.py:533
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr ""
 "A %r tárolónak hiányzik a neve a konfigurációban, ezért azonosítót "
 "használunk."
 
-#: ../yum/__init__.py:526
+#: ../yum/__init__.py:571
 msgid "plugins already initialised"
 msgstr "a bővítmények már betöltődtek"
 
-#: ../yum/__init__.py:533
+#: ../yum/__init__.py:580
 msgid "doRpmDBSetup() will go away in a future version of Yum.\n"
 msgstr "A doRpmDBSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:544
+#: ../yum/__init__.py:591
 msgid "Reading Local RPMDB"
 msgstr "Helyi RPMDB beolvasása"
 
-#: ../yum/__init__.py:567
+#: ../yum/__init__.py:621
 msgid "doRepoSetup() will go away in a future version of Yum.\n"
 msgstr "A doRepoSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:630
+#: ../yum/__init__.py:692
 msgid "doSackSetup() will go away in a future version of Yum.\n"
 msgstr "A doSackSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:660
+#: ../yum/__init__.py:722
 msgid "Setting up Package Sacks"
 msgstr "Tárolók csomagjainak előkészítése"
 
-#: ../yum/__init__.py:705
+#: ../yum/__init__.py:767
 #, python-format
 msgid "repo object for repo %s lacks a _resetSack method\n"
 msgstr "A következő tárolóobjektumból hiányzik a _resetSack metódus: %s\n"
 
-#: ../yum/__init__.py:706
+#: ../yum/__init__.py:768
 msgid "therefore this repo cannot be reset.\n"
 msgstr "ezért ezt a tárolót nem lehet visszaállítani.\n"
 
-#: ../yum/__init__.py:711
+#: ../yum/__init__.py:776
 msgid "doUpdateSetup() will go away in a future version of Yum.\n"
 msgstr "A doUpdateSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:723
+#: ../yum/__init__.py:788
 msgid "Building updates object"
 msgstr "Frissítési objektum létrehozása"
 
-#: ../yum/__init__.py:765
+#: ../yum/__init__.py:832
 msgid "doGroupSetup() will go away in a future version of Yum.\n"
 msgstr "A doGroupSetup() már nem lesz elérhető a későbbi Yum verziókban.\n"
 
-#: ../yum/__init__.py:790
+#: ../yum/__init__.py:857
 msgid "Getting group metadata"
 msgstr "Csoport metaadatok beszerzése"
 
-#: ../yum/__init__.py:816
+#: ../yum/__init__.py:885
 #, python-format
 msgid "Adding group file from repository: %s"
 msgstr "Csoportfájl hozzáadása a következő tárolóból: %s"
 
-#: ../yum/__init__.py:827
+#: ../yum/__init__.py:896
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Sikertelen a csoportfájl hozzáadása a következő tárolónál: %s - %s"
 
-#: ../yum/__init__.py:833
+#: ../yum/__init__.py:902
 msgid "No Groups Available in any repository"
 msgstr "Nincsenek elérhető csoportok egy tárolóban sem"
 
-#: ../yum/__init__.py:845
+#: ../yum/__init__.py:914
 msgid "Getting pkgtags metadata"
 msgstr "pkgtags metaadatok beszerzése"
 
-#: ../yum/__init__.py:855
+#: ../yum/__init__.py:924
 #, python-format
 msgid "Adding tags from repository: %s"
 msgstr "Címkék hozzáadása a következő tárolóból: %s"
 
-#: ../yum/__init__.py:866
+#: ../yum/__init__.py:935
 #, python-format
 msgid "Failed to add Pkg Tags for repository: %s - %s"
 msgstr "Sikertelen a címkék hozzáadása a következő tárolóból:%s - %s"
 
-#: ../yum/__init__.py:944
+#: ../yum/__init__.py:1015
 msgid "Importing additional filelist information"
 msgstr "További fájllista információk importálása"
 
-#: ../yum/__init__.py:958
+#: ../yum/__init__.py:1033
 #, python-format
 msgid "The program %s%s%s is found in the yum-utils package."
 msgstr "A következő program megtalálható a yum-utils csomagban: %s%s%s"
 
-#: ../yum/__init__.py:966
+#: ../yum/__init__.py:1050
 msgid ""
 "There are unfinished transactions remaining. You might consider running yum-"
 "complete-transaction first to finish them."
@@ -2381,21 +2505,21 @@ msgstr ""
 "Félbehagyott tranzakciók találhatóak. Ha be kívánja azokat fejezni, "
 "használja a yum-complete-transaction parancsot."
 
-#: ../yum/__init__.py:983
+#: ../yum/__init__.py:1067
 msgid "--> Finding unneeded leftover dependencies"
-msgstr ""
+msgstr "--> Szükségtelen függőségek keresése"
 
-#: ../yum/__init__.py:1041
+#: ../yum/__init__.py:1125
 #, python-format
 msgid "Protected multilib versions: %s != %s"
-msgstr ""
+msgstr "Védett multilib verzió: %s != %s"
 
-#: ../yum/__init__.py:1096
+#: ../yum/__init__.py:1180
 #, python-format
 msgid "Trying to remove \"%s\", which is protected"
 msgstr "Próbálkozás a(z) \"%s\" eltávolításával, ami védett"
 
-#: ../yum/__init__.py:1217
+#: ../yum/__init__.py:1301
 msgid ""
 "\n"
 "Packages skipped because of dependency problems:"
@@ -2403,54 +2527,54 @@ msgstr ""
 "\n"
 "Az alábbi csomagok ki lettek hagyva függőségi problémák miatt:"
 
-#: ../yum/__init__.py:1221
+#: ../yum/__init__.py:1305
 #, python-format
 msgid "    %s from %s"
 msgstr "    %s a következőből: %s"
 
 #. FIXME: _N()
-#: ../yum/__init__.py:1391
+#: ../yum/__init__.py:1477
 #, python-format
 msgid "** Found %d pre-existing rpmdb problem(s), 'yum check' output follows:"
 msgstr ""
 "** %d már meglévő rpmdb probléma található, 'yum check' kimenet pedig a "
 "következő:"
 
-#: ../yum/__init__.py:1395
+#: ../yum/__init__.py:1481
 msgid "Warning: RPMDB altered outside of yum."
 msgstr "Figyelem: RPMDB a yumon kívülről lett megváltoztatva."
 
-#: ../yum/__init__.py:1407
+#: ../yum/__init__.py:1493
 msgid "missing requires"
 msgstr "követelmények hiányoznak"
 
-#: ../yum/__init__.py:1408
+#: ../yum/__init__.py:1494
 msgid "installed conflict"
 msgstr "konfliktusokat teremtett"
 
-#: ../yum/__init__.py:1525
+#: ../yum/__init__.py:1617
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Figyelem: scriptlet vagy egyéb nem végzetes hiba adódott a tranzakció során."
 
-#: ../yum/__init__.py:1535
+#: ../yum/__init__.py:1627
 msgid "Transaction couldn't start:"
 msgstr "A tranzakció nem indítható:"
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1538
+#: ../yum/__init__.py:1630
 msgid "Could not run transaction."
 msgstr "Tranzakció futtatása meghiúsult."
 
-#: ../yum/__init__.py:1552
+#: ../yum/__init__.py:1644
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "A következő tranzakció-fájl eltávolítása meghiúsult: %s"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1590
+#: ../yum/__init__.py:1687
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr ""
@@ -2458,37 +2582,40 @@ msgstr ""
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1651
+#. Note: This actually triggers atm. because we can't
+#. always find the erased txmbr to set it when
+#. we should.
+#: ../yum/__init__.py:1756
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr ""
 "A(z) %s nevű csomagok már el kellett volna távolítani, habár ez még nem "
 "történt meg."
 
-#: ../yum/__init__.py:1768
+#: ../yum/__init__.py:1883
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr "A zárolás feloldása nem lehetséges: %s: %s"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1785
+#: ../yum/__init__.py:1900
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Nem lehetséges az ellenőrzés, ha a %s PID aktív"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1789
+#: ../yum/__init__.py:1904
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Már le van zárva %s: egy másik példány fut a következő pid-vel: %s"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1830
+#: ../yum/__init__.py:1952
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "Nem zárható le a következő: %s: %s "
 
-#: ../yum/__init__.py:1875
+#: ../yum/__init__.py:2005
 #, python-format
 msgid ""
 "Package does not match intended download. Suggestion: run yum "
@@ -2497,27 +2624,714 @@ msgstr ""
 "A csomag nem egyezik a várt letöltéssel. Ajánlott futtatni az alábbi parancsot:\n"
 "yum --enablerepo=%s clean metadata"
 
-#: ../yum/__init__.py:1891
+#: ../yum/__init__.py:2028
 msgid "Could not perform checksum"
 msgstr "Ellenőrzőösszeg végrehajtása nem lehetséges"
 
-#: ../yum/__init__.py:1894
+#: ../yum/__init__.py:2031
 msgid "Package does not match checksum"
 msgstr "A csomag nem egyezik az ellenőrzőösszeggel"
 
-#: ../yum/__init__.py:1946
+#: ../yum/__init__.py:2094
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 "A csomag nem egyezik az ellenőrzőösszeggel, de a gyorsítótárazás "
 "engedélyezett a következőhöz: %s"
 
-#: ../yum/__init__.py:1949 ../yum/__init__.py:1979
+#: ../yum/__init__.py:2097 ../yum/__init__.py:2127
 #, python-format
 msgid "using local copy of %s"
 msgstr "helyi másolat használata a következőhöz: %s"
 
-#: ../yum/__init__.py:1991
+#: ../yum/__init__.py:2205
+msgid "Header is not complete."
+msgstr "A fejléc nem teljes."
+
+#: ../yum/__init__.py:2245
+#, python-format
+msgid ""
+"Header not in local cache and caching-only mode enabled. Cannot download %s"
+msgstr ""
+"A fejléc nem található meg a helyi gyorsítótárban és a \"csak "
+"gyorsítótárazás\" mód be van kapcsolva. Nem tölthető le a következő: %s"
+
+#: ../yum/__init__.py:2305
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "A publikus kulcs nincs telepítve a következőhöz: %s"
+
+#: ../yum/__init__.py:2309
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Hiba a következő csomag megnyitásánál: %s"
+
+#: ../yum/__init__.py:2317
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "A publikus kulcs nem megbízható a következőhöz: %s"
+
+#: ../yum/__init__.py:2321
+#, python-format
+msgid "Package %s is not signed"
+msgstr "A következő csomag nincs aláírva: %s"
+
+#: ../yum/__init__.py:2363
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Nem távolítható el: %s"
+
+#: ../yum/__init__.py:2367
+#, python-format
+msgid "%s removed"
+msgstr "%s eltávolítva"
+
+#: ../yum/__init__.py:2426
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "Nem távolítható el a %s nevű fájl: %s"
+
+#: ../yum/__init__.py:2430
+#, python-format
+msgid "%s file %s removed"
+msgstr "%s fájl %s eltávolította"
+
+#: ../yum/__init__.py:2432
+#, python-format
+msgid "%d %s file removed"
+msgid_plural "%d %s files removed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../yum/__init__.py:2522
+#, python-format
+msgid "More than one identical match in sack for %s"
+msgstr "Több, mint egy azonos találat a tömbben a következőre: %s"
+
+#: ../yum/__init__.py:2528
+#, python-format
+msgid "Nothing matches %s.%s %s:%s-%s from update"
+msgstr "Semmi sem egyezik a következővel: %s.%s %s:%s-%s a frissítésből"
+
+#: ../yum/__init__.py:2892
+msgid ""
+"searchPackages() will go away in a future version of Yum."
+"                      Use searchGenerator() instead. \n"
+msgstr ""
+"A searchPackages() parancs már nem lesz elérhető a későbbi Yum verziókban.\n"
+"Kérjük, inkább használja a searchGenerator() parancsot helyette.\n"
+
+#: ../yum/__init__.py:2948
+#, python-format
+msgid "Searching %d package"
+msgid_plural "Searching %d packages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../yum/__init__.py:2952
+#, python-format
+msgid "searching package %s"
+msgstr "A következő csomag keresése: %s"
+
+#: ../yum/__init__.py:2964
+msgid "searching in file entries"
+msgstr "Keresés fájlbejegyzésekben"
+
+#: ../yum/__init__.py:2971
+msgid "searching in provides entries"
+msgstr "Keresés ellátási bejegyzésekben"
+
+#: ../yum/__init__.py:3056
+msgid "No group data available for configured repositories"
+msgstr "Nincsenek elérhető csoportadatok a beállított tárolókban"
+
+#: ../yum/__init__.py:3092 ../yum/__init__.py:3112 ../yum/__init__.py:3147
+#: ../yum/__init__.py:3153 ../yum/__init__.py:3246 ../yum/__init__.py:3250
+#: ../yum/__init__.py:3674
+#, python-format
+msgid "No Group named %s exists"
+msgstr "Nincs %s nevű csoport"
+
+#: ../yum/__init__.py:3124 ../yum/__init__.py:3266
+#, python-format
+msgid "package %s was not marked in group %s"
+msgstr "A(z) %s nevű csomag nem lett bejelölve a következő csoportban: %s"
+
+#: ../yum/__init__.py:3176
+#, python-format
+msgid "Adding package %s from group %s"
+msgstr "A(z) %s nevű csomag hozzáadás a következő csoportból: %s"
+
+#: ../yum/__init__.py:3180
+#, python-format
+msgid "No package named %s available to be installed"
+msgstr "Nincs telepíthető csomag %s néven."
+
+#: ../yum/__init__.py:3230
+#, python-format
+msgid "Warning: Group %s does not have any packages."
+msgstr "Figyelem: A(z) %s csoport nem tartalmaz egyetlen csomagot sem."
+
+#: ../yum/__init__.py:3232
+#, python-format
+msgid "Group %s does have %u conditional packages, which may get installed."
+msgstr ""
+"A(z) %s csoportnak %u feltételes csomagja van, amelyek lehet, hogy "
+"telepítésre kerülnek."
+
+#. This can happen due to excludes after .up has
+#. happened.
+#: ../yum/__init__.py:3304
+#, python-format
+msgid "Package tuple %s could not be found in packagesack"
+msgstr "A csomagtömbben nem található leíró a következőre: %s"
+
+#: ../yum/__init__.py:3332
+#, python-format
+msgid "Package tuple %s could not be found in rpmdb"
+msgstr "Az rpmdb nem tartalmaz csomagleírót a következőre: %s"
+
+#: ../yum/__init__.py:3395 ../yum/__init__.py:3457
+#, python-format
+msgid "Invalid version flag from: %s"
+msgstr "Érvénytelen verzió: %s"
+
+#: ../yum/__init__.py:3419 ../yum/__init__.py:3424
+#, python-format
+msgid "No Package found for %s"
+msgstr "Nem található csomag a következőre: %s"
+
+#: ../yum/__init__.py:3758
+msgid "Package Object was not a package object instance"
+msgstr "A Csomag Objektum nem egy csomag-objektum példány"
+
+#: ../yum/__init__.py:3762
+msgid "Nothing specified to install"
+msgstr "Semmi sem lett megadva telepítésnek"
+
+#: ../yum/__init__.py:3781 ../yum/__init__.py:4683
+#, python-format
+msgid "Checking for virtual provide or file-provide for %s"
+msgstr ""
+"Virtuális szolgáltatása vagy fájlszolgáltatás ellenőrzése a következőre: %s"
+
+#: ../yum/__init__.py:3787 ../yum/__init__.py:4151 ../yum/__init__.py:4353
+#: ../yum/__init__.py:4689
+#, python-format
+msgid "No Match for argument: %s"
+msgstr "Nincs találat a következő argumentumra: %s"
+
+#: ../yum/__init__.py:3864
+#, python-format
+msgid "Package %s installed and not available"
+msgstr "A(z) %s nevű csomag telepítve, bár nem érhető el"
+
+#: ../yum/__init__.py:3867
+msgid "No package(s) available to install"
+msgstr "Nincsenek elérhető csomagok telepítésre"
+
+#: ../yum/__init__.py:3879
+#, python-format
+msgid "Package: %s  - already in transaction set"
+msgstr "Csomag: %s  - már szerepel a tranzakcióban"
+
+#: ../yum/__init__.py:3907
+#, python-format
+msgid "Package %s is obsoleted by %s which is already installed"
+msgstr "A csomag %s cserélve lett a következőre: %s, ami már telepítve van"
+
+#: ../yum/__init__.py:3912
+#, python-format
+msgid ""
+"Package %s is obsoleted by %s, but obsoleting package does not provide for "
+"requirements"
+msgstr ""
+"A(z) %s nevű csomag már elavult a következő miatt: %s, bár ez nem teljesíti "
+"a követelményeket"
+
+#: ../yum/__init__.py:3915
+#, python-format
+msgid "Package %s is obsoleted by %s, trying to install %s instead"
+msgstr ""
+"A(z) %s nevű csomag már elavult a következő miatt: %s, próbálkozás inkább "
+"a(z) %s telepítésével"
+
+#: ../yum/__init__.py:3923
+#, python-format
+msgid "Package %s already installed and latest version"
+msgstr "A(z) %s nevű csomag már a legfrissebb verzióval rendelkezik"
+
+#: ../yum/__init__.py:3937
+#, python-format
+msgid "Package matching %s already installed. Checking for update."
+msgstr ""
+"A csomag, mely megegyezik a következővel: %s, már telepítve van. Frissítések"
+" keresése."
+
+#. update everything (the easy case)
+#: ../yum/__init__.py:4060
+msgid "Updating Everything"
+msgstr "Minden frissítése"
+
+#: ../yum/__init__.py:4084 ../yum/__init__.py:4226 ../yum/__init__.py:4256
+#: ../yum/__init__.py:4292
+#, python-format
+msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
+msgstr ""
+"Azon csomagok nem lesznek frissítve, melyek már elavultak: %s.%s %s:%s-%s"
+
+#: ../yum/__init__.py:4129 ../yum/__init__.py:4349
+#, python-format
+msgid "%s"
+msgstr "%s"
+
+#: ../yum/__init__.py:4169
+#, python-format
+msgid "No package matched to upgrade: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4215
+#, python-format
+msgid "Package is already obsoleted: %s.%s %s:%s-%s"
+msgstr "A következő csomag már elavult: %s.%s %s:%s-%s"
+
+#: ../yum/__init__.py:4251
+#, python-format
+msgid "Not Updating Package that is obsoleted: %s"
+msgstr "A következő elavult csomag nem lesz frissítve: %s"
+
+#: ../yum/__init__.py:4260 ../yum/__init__.py:4296
+#, python-format
+msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
+msgstr ""
+"Azon csomagok nem lesznek frissítve, melyek már frissítve vannak: %s.%s "
+"%s:%s-%s"
+
+#: ../yum/__init__.py:4366
+#, python-format
+msgid "No package matched to remove: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4372
+#, python-format
+msgid "Skipping the running kernel: %s"
+msgstr "A futó kernel kihagyása: %s"
+
+#: ../yum/__init__.py:4378
+#, python-format
+msgid "Removing %s from the transaction"
+msgstr "%s eltávolítása a tranzakcióból"
+
+#: ../yum/__init__.py:4415
+#, python-format
+msgid "Cannot open: %s. Skipping."
+msgstr "Nem nyitható meg a következő: %s. Kihagyás."
+
+#: ../yum/__init__.py:4418 ../yum/__init__.py:4535 ../yum/__init__.py:4620
+#, python-format
+msgid "Examining %s: %s"
+msgstr "%s felülvizsgálata: %s"
+
+#: ../yum/__init__.py:4422
+#, python-format
+msgid "Cannot localinstall deltarpm: %s. Skipping."
+msgstr ""
+"Nem lehet helyileg telepíteni a következő deltarpm fájlt: %s. Kihagyás."
+
+#: ../yum/__init__.py:4431 ../yum/__init__.py:4538 ../yum/__init__.py:4623
+#, python-format
+msgid ""
+"Cannot add package %s to transaction. Not a compatible architecture: %s"
+msgstr ""
+"Nem lehet a(z) %s csomagot hozzáadni a tranzakcióhoz. Nincs kompatibilis "
+"architektúra: %s"
+
+#: ../yum/__init__.py:4437
+#, python-format
+msgid "Cannot install package %s. It is obsoleted by installed package %s"
+msgstr ""
+"Nem lehet telepíteni a következő csomagot: %s. Ez már elavultnak számít a "
+"ezen telepített csomag miatt: %s"
+
+#: ../yum/__init__.py:4445
+#, python-format
+msgid ""
+"Package %s not installed, cannot update it. Run yum install to install it "
+"instead."
+msgstr ""
+"A(z) %s nevű csomag már telepítve van, frissítése nem lehetséges. Kérjük, "
+"használja ehelyett a yum install parancsot a telepítéséhez."
+
+#: ../yum/__init__.py:4464 ../yum/__init__.py:4471
+#, python-format
+msgid ""
+"Package %s.%s not installed, cannot update it. Run yum install to install it"
+" instead."
+msgstr ""
+"A következő csomag nincs telepítve: %s.%s, ezért nem lehet frissíteni. "
+"Futtassa a \"yum install\" parancsot a telepítéshez."
+
+#: ../yum/__init__.py:4480 ../yum/__init__.py:4543 ../yum/__init__.py:4628
+#, python-format
+msgid "Excluding %s"
+msgstr "%s kizárása"
+
+#: ../yum/__init__.py:4485
+#, python-format
+msgid "Marking %s to be installed"
+msgstr "%s megjelölése telepítésre"
+
+#: ../yum/__init__.py:4491
+#, python-format
+msgid "Marking %s as an update to %s"
+msgstr "%s megjelölése, mint %s frissítése"
+
+#: ../yum/__init__.py:4498
+#, python-format
+msgid "%s: does not update installed package."
+msgstr "%s: nem frissíti a telepített csomagot."
+
+#: ../yum/__init__.py:4532 ../yum/__init__.py:4617
+#, python-format
+msgid "Cannot open file: %s. Skipping."
+msgstr "Nem nyitható meg a következő fájl: %s. Kihagyás."
+
+#: ../yum/__init__.py:4572
+msgid "Problem in reinstall: no package matched to remove"
+msgstr "Probléma az újratelepítésnél: egy csomag sem eltávolítandó"
+
+#: ../yum/__init__.py:4598
+#, python-format
+msgid "Problem in reinstall: no package %s matched to install"
+msgstr ""
+"Probléma az újratelepítésnél: nem található %s nevű csomag telepítéshez"
+
+#: ../yum/__init__.py:4711
+msgid "No package(s) available to downgrade"
+msgstr "Nincsenek elérhető csomagok visszaállításhoz"
+
+#: ../yum/__init__.py:4719
+#, python-format
+msgid "Package %s is allowed multiple installs, skipping"
+msgstr "A(z) %s csomag többször is telepíthető, kihagyás"
+
+#: ../yum/__init__.py:4765
+#, python-format
+msgid "No Match for available package: %s"
+msgstr "Nem található csomag a következőre: %s"
+
+#: ../yum/__init__.py:4772
+#, python-format
+msgid "Only Upgrade available on package: %s"
+msgstr "Csak frissítés érhető el a következő csomagnál: %s"
+
+#: ../yum/__init__.py:4874 ../yum/__init__.py:4919
+#, python-format
+msgid "Failed to downgrade: %s"
+msgstr "Visszaállítás meghiúsult: %s"
+
+#: ../yum/__init__.py:4880 ../yum/__init__.py:4925
+#, python-format
+msgid "Failed to upgrade: %s"
+msgstr ""
+
+#: ../yum/__init__.py:4958
+#, python-format
+msgid "Retrieving key from %s"
+msgstr "GPG kulcs beszerzése a következőből: %s"
+
+#: ../yum/__init__.py:4976
+msgid "GPG key retrieval failed: "
+msgstr "GPG kulcs beszerzés meghiúsult: "
+
+#. if we decide we want to check, even though the sig failed
+#. here is where we would do that
+#: ../yum/__init__.py:4999
+#, python-format
+msgid "GPG key signature on key %s does not match CA Key for repo: %s"
+msgstr "A(z) %s GPG kulcs aláírása nem egyezik a tároló CA kulcsával: %s"
+
+#: ../yum/__init__.py:5001
+msgid "GPG key signature verified against CA Key(s)"
+msgstr "A GPG kulcs sikeresen ellenőrizve lett a CA kulcsokkal"
+
+#: ../yum/__init__.py:5009
+#, python-format
+msgid "Invalid GPG Key from %s: %s"
+msgstr "Hibás GPG kulcs a következőből: %s: %s"
+
+#: ../yum/__init__.py:5018
+#, python-format
+msgid "GPG key parsing failed: key does not have value %s"
+msgstr "GPG kulcs elemzés meghiúsult: a kulcs nem tartalmaz értéket: %s"
+
+#: ../yum/__init__.py:5034
+#, python-format
+msgid ""
+"Importing %s key 0x%s:\n"
+" Userid : %s\n"
+" Package: %s (%s)\n"
+" From   : %s"
+msgstr ""
+"%s GPG kulcs 0x%s importálása:\n"
+"Felhasználó: %s\n"
+"Csomag   : %s (%s)\n"
+"Származás: %s"
+
+#: ../yum/__init__.py:5042
+#, python-format
+msgid ""
+"Importing %s key 0x%s:\n"
+" Userid: \"%s\"\n"
+" From  : %s"
+msgstr ""
+"%s GPG kulcs 0x%s importálása:\n"
+"Felhasználó: %s\n"
+"Származás: %s"
+
+#: ../yum/__init__.py:5075
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
+
+#: ../yum/__init__.py:5114
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "A kulcs importálása meghiúsult (hibakód %d)"
+
+#: ../yum/__init__.py:5115 ../yum/__init__.py:5201
+msgid "Key imported successfully"
+msgstr "A kulcs importálása sikeres"
+
+#: ../yum/__init__.py:5119
+msgid "Didn't install any keys"
+msgstr "Nem lett telepítve egyetlen kulcs sem"
+
+#: ../yum/__init__.py:5123
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók ehhez a csomaghoz.\n"
+"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ezen tárolóhoz."
+
+#: ../yum/__init__.py:5132
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "A kulcsok importálása nem segített, rossz kulcsok?"
+
+#: ../yum/__init__.py:5156
+#, python-format
+msgid "GPG key at %s (0x%s) is already imported"
+msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
+
+#: ../yum/__init__.py:5200
+msgid "Key import failed"
+msgstr "A kulcs importálása meghiúsult"
+
+#: ../yum/__init__.py:5216
+#, python-format
+msgid "Didn't install any keys for repo %s"
+msgstr "Nem lett telepítve egyetlen kulcs sem a következő tárolóhoz: %s"
+
+#: ../yum/__init__.py:5220
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók.\n"
+"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ezen tárolóhoz."
+
+#: ../yum/__init__.py:5370
+msgid "Unable to find a suitable mirror."
+msgstr "Nem található megfelelő tükörszerver."
+
+#: ../yum/__init__.py:5372
+msgid "Errors were encountered while downloading packages."
+msgstr "Hiba történt a csomagok letöltése közben."
+
+#: ../yum/__init__.py:5427
+#, python-format
+msgid "Please report this error at %s"
+msgstr "Kérjük, jelentse ezt a hibát a következő címen: %s"
+
+#: ../yum/__init__.py:5444
+msgid "Test Transaction Errors: "
+msgstr "Tranzakció teszt hibák: "
+
+#: ../yum/__init__.py:5556
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Gyorsítótár-mappa beállítása meghiúsult: %s"
+
+#: ../yum/__init__.py:5617 ../yum/__init__.py:5619
+msgid "Dependencies not solved. Will not save unresolved transaction."
+msgstr ""
+"A függőségek feloldása még nincs kész. Nem lehet a függőben lévő tranzakciót"
+" menteni."
+
+#: ../yum/__init__.py:5648 ../yum/__init__.py:5650
+#, python-format
+msgid "Could not save transaction file %s: %s"
+msgstr "A következő tranzakciófájl mentése meghiúsult: %s: %s"
+
+#: ../yum/__init__.py:5674
+#, python-format
+msgid "Could not access/read saved transaction %s : %s"
+msgstr "Az elmentett tranzakció beolvasása meghiúsult: %s: %s"
+
+#: ../yum/__init__.py:5703
+msgid "rpmdb ver mismatched saved transaction version, "
+msgstr "Az rpmdb verziója nem egyezik a mentett tranzakció verziójával, "
+
+#: ../yum/__init__.py:5705
+msgid " ignoring, as requested."
+msgstr " kihagyva, ahogy kértük."
+
+#: ../yum/__init__.py:5708 ../yum/__init__.py:5843
+msgid " aborting."
+msgstr "megszakítás."
+
+#: ../yum/__init__.py:5717
+msgid "cannot find tsflags or tsflags not integer."
+msgstr "Nem található a tsflags, vagy a tsflags nem egész szám."
+
+#: ../yum/__init__.py:5756
+#, python-format
+msgid "Found txmbr in unknown current state: %s"
+msgstr "txmbr található a jelenleg ismeretlen állapotban: %s"
+
+#: ../yum/__init__.py:5760
+#, python-format
+msgid "Could not find txmbr: %s in state %s"
+msgstr "Nem található txmbr: %s állapotban %s"
+
+#: ../yum/__init__.py:5796 ../yum/__init__.py:5813
+#, python-format
+msgid "Could not find txmbr: %s from origin: %s"
+msgstr "Nem található txmbr: %s, innen: %s"
+
+#: ../yum/__init__.py:5838
+msgid "Transaction members, relations are missing or ts has been modified,"
+msgstr ""
+"A tranzakció elemek, tranzakció-viszonyok hiányoznak, vagy a ts feltehetően "
+"megváltozott,"
+
+#: ../yum/__init__.py:5840
+msgid " ignoring, as requested. You must redepsolve!"
+msgstr " átugorva, ahogy kérte. Szükséges a redepsolve!"
+
+#. Debugging output
+#: ../yum/__init__.py:5915 ../yum/__init__.py:5934
+#, python-format
+msgid "%s has been visited already and cannot be removed."
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5918
+#, python-format
+msgid "Examining revdeps of %s"
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5939
+#, python-format
+msgid "%s has revdep %s which was user-installed."
+msgstr ""
+
+#. Debugging output
+#: ../yum/__init__.py:5953
+#, python-format
+msgid "%s has no user-installed revdeps."
+msgstr ""
+
+#. Mostly copied from YumOutput._outKeyValFill()
+#: ../yum/plugins.py:212
+msgid "Loaded plugins: "
+msgstr "Betöltött bővítmények: "
+
+#: ../yum/plugins.py:226 ../yum/plugins.py:232
+#, python-format
+msgid "No plugin match for: %s"
+msgstr "Nem találhatóak bővítmények a következőre: %s"
+
+#: ../yum/plugins.py:262
+#, python-format
+msgid "Not loading \"%s\" plugin, as it is disabled"
+msgstr "A(z) \"%s\" nevű bővítmény betöltésének kihagyása, mert le van tiltva"
+
+#. Give full backtrace:
+#: ../yum/plugins.py:274
+#, python-format
+msgid "Plugin \"%s\" can't be imported"
+msgstr "A(z) \"%s\" nevű bővítmény nem importálható"
+
+#: ../yum/plugins.py:281
+#, python-format
+msgid "Plugin \"%s\" doesn't specify required API version"
+msgstr "A(z) \"%s\" nevű bővítmény nem felel meg a megkövetelt API verziónak"
+
+#: ../yum/plugins.py:286
+#, python-format
+msgid "Plugin \"%s\" requires API %s. Supported API is %s."
+msgstr "A(z) \"%s\" nevű bővítmény megköveteli a %s APIt. Támogatott API: %s."
+
+#: ../yum/plugins.py:319
+#, python-format
+msgid "Loading \"%s\" plugin"
+msgstr "A következő bővítmény betöltése: %s"
+
+#: ../yum/plugins.py:326
+#, python-format
+msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
+msgstr ""
+"Kettő vagy több plugin már léteik a keresési útvonalon a következő néven: %s"
+
+#: ../yum/plugins.py:346
+#, python-format
+msgid "Configuration file %s not found"
+msgstr "A következő konfigurációs fájl nem található: %s"
+
+#. for
+#. Configuration files for the plugin not found
+#: ../yum/plugins.py:349
+#, python-format
+msgid "Unable to find configuration file for plugin %s"
+msgstr "Nem található konfigurációs fájl a következő bővítményhez: %s"
+
+#: ../yum/plugins.py:553
+msgid "registration of commands not supported"
+msgstr "parancsok regisztrációja nem támogatott"
+
+#: ../yum/rpmsack.py:159
+msgid "has missing requires of"
+msgstr "hiányoznak követelmények"
+
+#: ../yum/rpmsack.py:162
+msgid "has installed conflicts"
+msgstr "konfliktusokat teremtett"
+
+#: ../yum/rpmsack.py:171
+#, python-format
+msgid "%s is a duplicate with %s"
+msgstr "%s egy másolat a következőhöz: %s"
+
+#: ../yum/rpmsack.py:179
+#, python-format
+msgid "%s is obsoleted by %s"
+msgstr "%s már elavult a következő miatt: %s"
+
+#: ../yum/rpmsack.py:187
+#, python-format
+msgid "%s provides %s but it cannot be found"
+msgstr "%s ellátja a következőt: %s, de nem található"
+
+#: ../yum/rpmtrans.py:80
+msgid "Repackaging"
+msgstr "Újracsomagolás"
+
+#: ../yum/yumRepo.py:806
 #, python-format
 msgid ""
 "Insufficient space in download directory %s\n"
@@ -2527,639 +3341,6 @@ msgstr ""
 "Nincs elég hely a letöltési könyvtárban: %s\n"
 "    * szabad    %s\n"
 "    * szükséges %s"
-
-#: ../yum/__init__.py:2052
-msgid "Header is not complete."
-msgstr "A fejléc nem teljes."
-
-#: ../yum/__init__.py:2089
-#, python-format
-msgid ""
-"Header not in local cache and caching-only mode enabled. Cannot download %s"
-msgstr ""
-"A fejléc nem található meg a helyi gyorsítótárban és a \"csak "
-"gyorsítótárazás\" mód be van kapcsolva. Nem tölthető le a következő: %s"
-
-#: ../yum/__init__.py:2147
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "A publikus kulcs nincs telepítve a következőhöz: %s"
-
-#: ../yum/__init__.py:2151
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Hiba a következő csomag megnyitásánál: %s"
-
-#: ../yum/__init__.py:2159
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "A publikus kulcs nem megbízható a következőhöz: %s"
-
-#: ../yum/__init__.py:2163
-#, python-format
-msgid "Package %s is not signed"
-msgstr "A következő csomag nincs aláírva: %s"
-
-#: ../yum/__init__.py:2202
-#, python-format
-msgid "Cannot remove %s"
-msgstr "Nem távolítható el: %s"
-
-#: ../yum/__init__.py:2206
-#, python-format
-msgid "%s removed"
-msgstr "%s eltávolítva"
-
-#: ../yum/__init__.py:2252
-#, python-format
-msgid "Cannot remove %s file %s"
-msgstr "Nem távolítható el a %s nevű fájl: %s"
-
-#: ../yum/__init__.py:2256
-#, python-format
-msgid "%s file %s removed"
-msgstr "%s fájl %s eltávolította"
-
-#: ../yum/__init__.py:2258
-#, python-format
-msgid "%d %s files removed"
-msgstr "%d %s fájl eltávolítva"
-
-#: ../yum/__init__.py:2327
-#, python-format
-msgid "More than one identical match in sack for %s"
-msgstr "Több, mint egy azonos találat a tömbben a következőre: %s"
-
-#: ../yum/__init__.py:2333
-#, python-format
-msgid "Nothing matches %s.%s %s:%s-%s from update"
-msgstr "Semmi sem egyezik a következővel: %s.%s %s:%s-%s a frissítésből"
-
-#: ../yum/__init__.py:2632
-msgid ""
-"searchPackages() will go away in a future version of Yum."
-"                      Use searchGenerator() instead. \n"
-msgstr ""
-"A searchPackages() parancs már nem lesz elérhető a későbbi Yum verziókban.\n"
-"Kérjük, inkább használja a searchGenerator() parancsot helyette.\n"
-
-#: ../yum/__init__.py:2675
-#, python-format
-msgid "Searching %d packages"
-msgstr "%d csomag keresése"
-
-#: ../yum/__init__.py:2679
-#, python-format
-msgid "searching package %s"
-msgstr "A következő csomag keresése: %s"
-
-#: ../yum/__init__.py:2691
-msgid "searching in file entries"
-msgstr "Keresés fájlbejegyzésekben"
-
-#: ../yum/__init__.py:2698
-msgid "searching in provides entries"
-msgstr "Keresés ellátási bejegyzésekben"
-
-#: ../yum/__init__.py:2777
-msgid "No group data available for configured repositories"
-msgstr "Nincsenek elérhető csoportadatok a beállított tárolókban"
-
-#: ../yum/__init__.py:2808 ../yum/__init__.py:2827 ../yum/__init__.py:2858
-#: ../yum/__init__.py:2864 ../yum/__init__.py:2953 ../yum/__init__.py:2957
-#: ../yum/__init__.py:3339
-#, python-format
-msgid "No Group named %s exists"
-msgstr "Nincs %s nevű csoport"
-
-#: ../yum/__init__.py:2839 ../yum/__init__.py:2973
-#, python-format
-msgid "package %s was not marked in group %s"
-msgstr "A(z) %s nevű csomag nem lett bejelölve a következő csoportban: %s"
-
-#: ../yum/__init__.py:2887
-#, python-format
-msgid "Adding package %s from group %s"
-msgstr "A(z) %s nevű csomag hozzáadás a következő csoportból: %s"
-
-#: ../yum/__init__.py:2891
-#, python-format
-msgid "No package named %s available to be installed"
-msgstr "Nincs telepíthető csomag %s néven."
-
-#: ../yum/__init__.py:2941
-#, python-format
-msgid "Warning: Group %s does not have any packages."
-msgstr ""
-
-#: ../yum/__init__.py:2943
-#, python-format
-msgid "Group %s does have %u conditional packages, which may get installed."
-msgstr ""
-
-#. This can happen due to excludes after .up has
-#. happened.
-#: ../yum/__init__.py:3002
-#, python-format
-msgid "Package tuple %s could not be found in packagesack"
-msgstr "A csomagtömbben nem található leíró a következőre: %s"
-
-#: ../yum/__init__.py:3022
-#, python-format
-msgid "Package tuple %s could not be found in rpmdb"
-msgstr "Az rpmdb nem tartalmaz csomagleírót a következőre: %s"
-
-#: ../yum/__init__.py:3079 ../yum/__init__.py:3129
-#, python-format
-msgid "Invalid version flag from: %s"
-msgstr ""
-
-#: ../yum/__init__.py:3096 ../yum/__init__.py:3101
-#, python-format
-msgid "No Package found for %s"
-msgstr "Nem található csomag a következőre: %s"
-
-#: ../yum/__init__.py:3401
-msgid "Package Object was not a package object instance"
-msgstr "A Csomag Objektum nem egy csomag-objektum példány"
-
-#: ../yum/__init__.py:3405
-msgid "Nothing specified to install"
-msgstr "Semmi sem lett megadva telepítésnek"
-
-#: ../yum/__init__.py:3424 ../yum/__init__.py:4283
-#, python-format
-msgid "Checking for virtual provide or file-provide for %s"
-msgstr ""
-"Virtuális szolgáltatása vagy fájlszolgáltatás ellenőrzése a következőre: %s"
-
-#: ../yum/__init__.py:3430 ../yum/__init__.py:3775 ../yum/__init__.py:3969
-#: ../yum/__init__.py:4289
-#, python-format
-msgid "No Match for argument: %s"
-msgstr "Nincs találat a következő argumentumra: %s"
-
-#: ../yum/__init__.py:3507
-#, python-format
-msgid "Package %s installed and not available"
-msgstr "A(z) %s nevű csomag telepítve, bár nem érhető el"
-
-#: ../yum/__init__.py:3510
-msgid "No package(s) available to install"
-msgstr "Nincsenek elérhető csomagok telepítésre"
-
-#: ../yum/__init__.py:3522
-#, python-format
-msgid "Package: %s  - already in transaction set"
-msgstr "Csomag: %s  - már szerepel a tranzakcióban"
-
-#: ../yum/__init__.py:3550
-#, python-format
-msgid "Package %s is obsoleted by %s which is already installed"
-msgstr "A csomag %s cserélve lett a következőre: %s, ami már telepítve van"
-
-#: ../yum/__init__.py:3555
-#, python-format
-msgid ""
-"Package %s is obsoleted by %s, but obsoleting package does not provide for "
-"requirements"
-msgstr ""
-"A(z) %s nevű csomag már elavult a következő miatt: %s, bár ez nem teljesíti "
-"a követelményeket"
-
-#: ../yum/__init__.py:3558
-#, python-format
-msgid "Package %s is obsoleted by %s, trying to install %s instead"
-msgstr ""
-"A(z) %s nevű csomag már elavult a következő miatt: %s, próbálkozás inkább "
-"a(z) %s telepítésével"
-
-#: ../yum/__init__.py:3566
-#, python-format
-msgid "Package %s already installed and latest version"
-msgstr "A(z) %s nevű csomag már a legfrissebb verzióval rendelkezik"
-
-#: ../yum/__init__.py:3580
-#, python-format
-msgid "Package matching %s already installed. Checking for update."
-msgstr ""
-"A csomag, mely megegyezik a következővel: %s, már telepítve van. Frissítések"
-" keresése."
-
-#. update everything (the easy case)
-#: ../yum/__init__.py:3684
-msgid "Updating Everything"
-msgstr "Minden frissítése"
-
-#: ../yum/__init__.py:3708 ../yum/__init__.py:3849 ../yum/__init__.py:3879
-#: ../yum/__init__.py:3915
-#, python-format
-msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
-msgstr ""
-"Azon csomagok nem lesznek frissítve, melyek már elavultak: %s.%s %s:%s-%s"
-
-#: ../yum/__init__.py:3753 ../yum/__init__.py:3965
-#, python-format
-msgid "%s"
-msgstr "%s"
-
-#: ../yum/__init__.py:3838
-#, python-format
-msgid "Package is already obsoleted: %s.%s %s:%s-%s"
-msgstr "A következő csomag már elavult: %s.%s %s:%s-%s"
-
-#: ../yum/__init__.py:3874
-#, python-format
-msgid "Not Updating Package that is obsoleted: %s"
-msgstr "A következő elavult csomag nem lesz frissítve: %s"
-
-#: ../yum/__init__.py:3883 ../yum/__init__.py:3919
-#, python-format
-msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
-msgstr ""
-"Azon csomagok nem lesznek frissítve, melyek már frissítve vannak: %s.%s "
-"%s:%s-%s"
-
-#: ../yum/__init__.py:3982
-msgid "No package matched to remove"
-msgstr "Nem található csomag eltávolításra"
-
-#: ../yum/__init__.py:3988
-#, python-format
-msgid "Skipping the running kernel: %s"
-msgstr "A futó kernel kihagyása: %s"
-
-#: ../yum/__init__.py:3994
-#, python-format
-msgid "Removing %s from the transaction"
-msgstr "%s eltávolítása a tranzakcióból"
-
-#: ../yum/__init__.py:4029
-#, python-format
-msgid "Cannot open: %s. Skipping."
-msgstr "Nem nyitható meg a következő: %s. Kihagyás."
-
-#: ../yum/__init__.py:4032 ../yum/__init__.py:4150 ../yum/__init__.py:4226
-#, python-format
-msgid "Examining %s: %s"
-msgstr "%s felülvizsgálata: %s"
-
-#: ../yum/__init__.py:4036
-#, python-format
-msgid "Cannot localinstall deltarpm: %s. Skipping."
-msgstr ""
-"Nem lehet helyileg telepíteni a következő deltarpm fájlt: %s. Kihagyás."
-
-#: ../yum/__init__.py:4045 ../yum/__init__.py:4153 ../yum/__init__.py:4229
-#, python-format
-msgid ""
-"Cannot add package %s to transaction. Not a compatible architecture: %s"
-msgstr ""
-"Nem lehet a(z) %s csomagot hozzáadni a tranzakcióhoz. Nincs kompatibilis "
-"architektúra: %s"
-
-#: ../yum/__init__.py:4051
-#, python-format
-msgid "Cannot install package %s. It is obsoleted by installed package %s"
-msgstr ""
-"Nem lehet telepíteni a következő csomagot: %s. Ez már elavultnak számít a "
-"ezen telepített csomag miatt: %s"
-
-#: ../yum/__init__.py:4059
-#, python-format
-msgid ""
-"Package %s not installed, cannot update it. Run yum install to install it "
-"instead."
-msgstr ""
-"A(z) %s nevű csomag már telepítve van, frissítése nem lehetséges. Kérjük, "
-"használja ehelyett a yum install parancsot a telepítéséhez."
-
-#: ../yum/__init__.py:4078 ../yum/__init__.py:4085
-#, python-format
-msgid ""
-"Package %s.%s not installed, cannot update it. Run yum install to install it"
-" instead."
-msgstr ""
-
-#: ../yum/__init__.py:4094 ../yum/__init__.py:4158 ../yum/__init__.py:4234
-#, python-format
-msgid "Excluding %s"
-msgstr "%s kizárása"
-
-#: ../yum/__init__.py:4099
-#, python-format
-msgid "Marking %s to be installed"
-msgstr "%s megjelölése telepítésre"
-
-#: ../yum/__init__.py:4105
-#, python-format
-msgid "Marking %s as an update to %s"
-msgstr "%s megjelölése, mint %s frissítése"
-
-#: ../yum/__init__.py:4112
-#, python-format
-msgid "%s: does not update installed package."
-msgstr "%s: nem frissíti a telepített csomagot."
-
-#: ../yum/__init__.py:4147 ../yum/__init__.py:4223
-#, python-format
-msgid "Cannot open file: %s. Skipping."
-msgstr "Nem nyitható meg a következő fájl: %s. Kihagyás."
-
-#: ../yum/__init__.py:4177
-msgid "Problem in reinstall: no package matched to remove"
-msgstr "Probléma az újratelepítésnél: egy csomag sem eltávolítandó"
-
-#: ../yum/__init__.py:4203
-#, python-format
-msgid "Problem in reinstall: no package %s matched to install"
-msgstr ""
-"Probléma az újratelepítésnél: nem található %s nevű csomag telepítéshez"
-
-#: ../yum/__init__.py:4311
-msgid "No package(s) available to downgrade"
-msgstr "Nincsenek elérhető csomagok visszaállításhoz"
-
-#: ../yum/__init__.py:4319
-#, python-format
-msgid "Package %s is allowed multiple installs, skipping"
-msgstr "A(z) %s csomag többször is telepíthető, kihagyás"
-
-#: ../yum/__init__.py:4365
-#, python-format
-msgid "No Match for available package: %s"
-msgstr "Nem található csomag a következőre: %s"
-
-#: ../yum/__init__.py:4372
-#, python-format
-msgid "Only Upgrade available on package: %s"
-msgstr "Csak frissítés érhető el a következő csomagnál: %s"
-
-#: ../yum/__init__.py:4442 ../yum/__init__.py:4479
-#, python-format
-msgid "Failed to downgrade: %s"
-msgstr "Visszaállítás meghiúsult: %s"
-
-#: ../yum/__init__.py:4516
-#, python-format
-msgid "Retrieving key from %s"
-msgstr ""
-
-#: ../yum/__init__.py:4534
-msgid "GPG key retrieval failed: "
-msgstr "GPG kulcs beszerzés meghiúsult: "
-
-#. if we decide we want to check, even though the sig failed
-#. here is where we would do that
-#: ../yum/__init__.py:4557
-#, python-format
-msgid "GPG key signature on key %s does not match CA Key for repo: %s"
-msgstr ""
-
-#: ../yum/__init__.py:4559
-msgid "GPG key signature verified against CA Key(s)"
-msgstr ""
-
-#: ../yum/__init__.py:4567
-#, python-format
-msgid "Invalid GPG Key from %s: %s"
-msgstr "Hibás GPG kulcs a következőből: %s: %s"
-
-#: ../yum/__init__.py:4576
-#, python-format
-msgid "GPG key parsing failed: key does not have value %s"
-msgstr "GPG kulcs elemzés meghiúsult: a kulcs nem tartalmaz értéket: %s"
-
-#: ../yum/__init__.py:4592
-#, python-format
-msgid ""
-"Importing %s key 0x%s:\n"
-" Userid : %s\n"
-" Package: %s (%s)\n"
-" From   : %s"
-msgstr ""
-
-#: ../yum/__init__.py:4600
-#, python-format
-msgid ""
-"Importing %s key 0x%s:\n"
-" Userid: \"%s\"\n"
-" From  : %s"
-msgstr ""
-
-#: ../yum/__init__.py:4634
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
-
-#: ../yum/__init__.py:4671
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "A kulcs importálása meghiúsult (hibakód %d)"
-
-#: ../yum/__init__.py:4672 ../yum/__init__.py:4755
-msgid "Key imported successfully"
-msgstr "A kulcs importálása sikeres"
-
-#: ../yum/__init__.py:4676
-msgid "Didn't install any keys"
-msgstr ""
-
-#: ../yum/__init__.py:4680
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók ehhez a csomaghoz.\n"
-"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ezen tárolóhoz."
-
-#: ../yum/__init__.py:4689
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "A kulcsok importálása nem segített, rossz kulcsok?"
-
-#: ../yum/__init__.py:4713
-#, python-format
-msgid "GPG key at %s (0x%s) is already imported"
-msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
-
-#: ../yum/__init__.py:4754
-msgid "Key import failed"
-msgstr "A kulcs importálása meghiúsult"
-
-#: ../yum/__init__.py:4770
-#, python-format
-msgid "Didn't install any keys for repo %s"
-msgstr ""
-
-#: ../yum/__init__.py:4774
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók.\n"
-"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ezen tárolóhoz."
-
-#: ../yum/__init__.py:4924
-msgid "Unable to find a suitable mirror."
-msgstr "Nem található megfelelő tükörszerver."
-
-#: ../yum/__init__.py:4926
-msgid "Errors were encountered while downloading packages."
-msgstr "Hiba történt a csomagok letöltése közben."
-
-#: ../yum/__init__.py:4981
-#, python-format
-msgid "Please report this error at %s"
-msgstr "Kérjük, jelentse ezt a hibát a következő címen: %s"
-
-#: ../yum/__init__.py:4998
-msgid "Test Transaction Errors: "
-msgstr "Tranzakció teszt hibák: "
-
-#: ../yum/__init__.py:5098
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Gyorsítótár-mappa beállítása meghiúsult: %s"
-
-#: ../yum/__init__.py:5148 ../yum/__init__.py:5150
-msgid "Dependencies not solved. Will not save unresolved transaction."
-msgstr ""
-
-#: ../yum/__init__.py:5179 ../yum/__init__.py:5181
-#, python-format
-msgid "Could not save transaction file %s: %s"
-msgstr ""
-
-#: ../yum/__init__.py:5195
-#, python-format
-msgid "Could not access/read saved transaction %s : %s"
-msgstr ""
-
-#: ../yum/__init__.py:5214
-msgid "rpmdb ver mismatched saved transaction version, "
-msgstr ""
-
-#: ../yum/__init__.py:5216
-msgid " ignoring, as requested."
-msgstr ""
-
-#: ../yum/__init__.py:5219 ../yum/__init__.py:5354
-msgid " aborting."
-msgstr ""
-
-#: ../yum/__init__.py:5228
-msgid "cannot find tsflags or tsflags not integer."
-msgstr ""
-
-#: ../yum/__init__.py:5267
-#, python-format
-msgid "Found txmbr in unknown current state: %s"
-msgstr ""
-
-#: ../yum/__init__.py:5271
-#, python-format
-msgid "Could not find txmbr: %s in state %s"
-msgstr ""
-
-#: ../yum/__init__.py:5307 ../yum/__init__.py:5324
-#, python-format
-msgid "Could not find txmbr: %s from origin: %s"
-msgstr ""
-
-#: ../yum/__init__.py:5349
-msgid "Transaction members, relations are missing or ts has been modified,"
-msgstr ""
-
-#: ../yum/__init__.py:5351
-msgid " ignoring, as requested. You must redepsolve!"
-msgstr ""
-
-#. Mostly copied from YumOutput._outKeyValFill()
-#: ../yum/plugins.py:209
-msgid "Loaded plugins: "
-msgstr "Betöltött bővítmények: "
-
-#: ../yum/plugins.py:223 ../yum/plugins.py:229
-#, python-format
-msgid "No plugin match for: %s"
-msgstr "Nem találhatóak bővítmények a következőre: %s"
-
-#: ../yum/plugins.py:259
-#, python-format
-msgid "Not loading \"%s\" plugin, as it is disabled"
-msgstr "A(z) \"%s\" nevű bővítmény betöltésének kihagyása, mert le van tiltva"
-
-#. Give full backtrace:
-#: ../yum/plugins.py:271
-#, python-format
-msgid "Plugin \"%s\" can't be imported"
-msgstr "A(z) \"%s\" nevű bővítmény nem importálható"
-
-#: ../yum/plugins.py:278
-#, python-format
-msgid "Plugin \"%s\" doesn't specify required API version"
-msgstr "A(z) \"%s\" nevű bővítmény nem felel meg a megkövetelt API verziónak"
-
-#: ../yum/plugins.py:283
-#, python-format
-msgid "Plugin \"%s\" requires API %s. Supported API is %s."
-msgstr "A(z) \"%s\" nevű bővítmény megköveteli a %s APIt. Támogatott API: %s."
-
-#: ../yum/plugins.py:316
-#, python-format
-msgid "Loading \"%s\" plugin"
-msgstr "A következő bővítmény betöltése: %s"
-
-#: ../yum/plugins.py:323
-#, python-format
-msgid "Two or more plugins with the name \"%s\" exist in the plugin search path"
-msgstr ""
-"Kettő vagy több plugin már léteik a keresési útvonalon a következő néven: %s"
-
-#: ../yum/plugins.py:343
-#, python-format
-msgid "Configuration file %s not found"
-msgstr "A következő konfigurációs fájl nem található: %s"
-
-#. for
-#. Configuration files for the plugin not found
-#: ../yum/plugins.py:346
-#, python-format
-msgid "Unable to find configuration file for plugin %s"
-msgstr "Nem található konfigurációs fájl a következő bővítményhez: %s"
-
-#: ../yum/plugins.py:508
-msgid "registration of commands not supported"
-msgstr "parancsok regisztrációja nem támogatott"
-
-#: ../yum/rpmsack.py:148
-msgid "has missing requires of"
-msgstr "hiányoznak követelmények"
-
-#: ../yum/rpmsack.py:151
-msgid "has installed conflicts"
-msgstr "konfliktusokat teremtett"
-
-#: ../yum/rpmsack.py:160
-#, python-format
-msgid "%s is a duplicate with %s"
-msgstr "%s egy másolat a következőhöz: %s"
-
-#: ../yum/rpmsack.py:168
-#, python-format
-msgid "%s is obsoleted by %s"
-msgstr "%s már elavult a következő miatt: %s"
-
-#: ../yum/rpmsack.py:176
-#, python-format
-msgid "%s provides %s but it cannot be found"
-msgstr "%s ellátja a következőt: %s, de nem található"
-
-#: ../yum/rpmtrans.py:80
-msgid "Repackaging"
-msgstr "Újracsomagolás"
 
 #: ../rpmUtils/oldUtils.py:33
 #, python-format

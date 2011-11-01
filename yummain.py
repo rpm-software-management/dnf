@@ -29,13 +29,13 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
-from yum.i18n import to_unicode, utf8_width
+from yum.i18n import to_unicode, utf8_width, exception2msg
 import yum.misc
 import cli
-from utils import suppress_keyboard_interrupt_message, show_lock_owner, exception2msg
+from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
-    """This does all the real work"""
+    """Run the yum program from a command line interface."""
 
     yum.misc.setup_locale(override_time=True)
 
@@ -101,6 +101,17 @@ def main(args):
     except Errors.YumBaseError, e:
         return exFatal(e)
 
+    # Try to open the current directory to see if we have 
+    # read and execute access. If not, chdir to /
+    try:
+        f = open(".")
+    except IOError, e:
+        if e.errno == errno.EACCES:
+            logger.critical(_('No read/execute access in current directory, moving to /'))
+            os.chdir("/")
+    else:
+        f.close()
+
     lockerr = ""
     while True:
         try:
@@ -109,16 +120,16 @@ def main(args):
             if exception2msg(e) != lockerr:
                 lockerr = exception2msg(e)
                 logger.critical(lockerr)
-            if (e.errno not in (errno.EPERM, errno.EACCES) and
-                not base.conf.exit_on_lock):
+            if e.errno in (errno.EPERM, errno.EACCES, errno.ENOSPC):
+                logger.critical(_("Can't create lock file; exiting"))
+                return 1
+
+            if not base.conf.exit_on_lock:
                 logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
                 tm = 0.1
                 if show_lock_owner(e.pid, logger):
                     tm = 2
                 time.sleep(tm)
-            elif e.errno in (errno.EPERM, errno.EACCES):
-                logger.critical(_("Can't create lock file; exiting"))
-                return 1
             else:
                 logger.critical(_("Another app is currently holding the yum lock; exiting as configured by exit_on_lock"))
                 return 1
@@ -227,9 +238,15 @@ def main(args):
         rpmdb_warn_checks()
         return_code = result
         if base._ts_save_file:
-            verbose_logger.info(_("Your transaction was saved, rerun it with: yum load-transaction %s") % base._ts_save_file)
+            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     elif return_code < 0:
         return_code = 1 # Means the pre-transaction checks failed...
+        #  This includes:
+        # . No packages.
+        # . Hitting N at the prompt.
+        # . GPG check failures.
+        if base._ts_save_file:
+            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
         verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
 
@@ -237,6 +254,11 @@ def main(args):
     return return_code
 
 def hotshot(func, *args, **kwargs):
+    """Profile the given function using the hotshot profiler.
+
+    :param func: the function to profile
+    :return: the return code given by the hotshot profiler
+    """
     import hotshot.stats
     fn = os.path.expanduser("~/yum.prof")
     prof = hotshot.Profile(fn)
@@ -246,6 +268,11 @@ def hotshot(func, *args, **kwargs):
     return rc
 
 def cprof(func, *args, **kwargs):
+    """Profile the given function using the cprof profiler.
+
+    :param func: the function to profile
+    :return: the return code given by the cprof profiler
+    """
     import cProfile, pstats
     fn = os.path.expanduser("~/yum.prof")
     prof = cProfile.Profile()
@@ -255,6 +282,10 @@ def cprof(func, *args, **kwargs):
     return rc
 
 def print_stats(stats):
+    """Print out information from a :class:`Stats` object.
+
+    :param stats: the :class:`Stats` object to print information from
+    """
     stats.strip_dirs()
     stats.sort_stats('time', 'calls')
     stats.print_stats(20)
@@ -262,7 +293,14 @@ def print_stats(stats):
     stats.print_stats(40)
 
 def user_main(args, exit_code=False):
-    """ This calls one of the multiple main() functions based on env. vars """
+    """Call one of the multiple main() functions based on environment variables.
+
+    :param args: command line arguments passed into yum
+    :param exit_code: if *exit_code* is True, this function will exit
+       python with its exit code when it has finished executing.
+       Otherwise, it will return its exit code.
+    :return: the exit code from yum execution
+    """
     errcode = None
     if 'YUM_PROF' in os.environ:
         if os.environ['YUM_PROF'] == 'cprof':

@@ -1,24 +1,51 @@
-Summary: RPM installer/updater
+%define move_yum_conf_back 1
+%define auto_sitelib 1
+%define yum_updatesd 0
+%define disable_check 0
+
+%if %{auto_sitelib}
+
+%{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
+%else
+%define python_sitelib /usr/lib/python?.?/site-packages
+%endif
+
+# We always used /usr/lib here, even on 64bit ... so it's a bit meh.
+%define yum_pluginslib   /usr/lib/yum-plugins
+%define yum_pluginsshare /usr/share/yum-plugins
+
+Summary: RPM package installer/updater/manager
 Name: yum
-Version: 3.4.1
+Version: 3.4.3
 Release: 0
 License: GPLv2+
 Group: System Environment/Base
 Source: %{name}-%{version}.tar.gz
 URL: http://yum.baseurl.org/
-BuildRoot: %{_tmppath}/%{name}-%{version}root
 BuildArchitectures: noarch
 BuildRequires: python
 BuildRequires: gettext
 BuildRequires: intltool
-
+# This is really CheckRequires ...
+BuildRequires: python-nose
+BuildRequires: python >= 2.4
+BuildRequires: rpm-python, rpm >= 0:4.4.2
+BuildRequires: python-iniparse
+BuildRequires: python-sqlite
+BuildRequires: python-urlgrabber >= 3.9.0-8
+BuildRequires: yum-metadata-parser >= 1.1.0
+BuildRequires: pygpgme
+# End of CheckRequires
+Conflicts: pirut < 1.1.4
 Requires: python >= 2.4
 Requires: rpm-python, rpm >= 0:4.4.2
-Requires: python-sqlite
-Requires: urlgrabber >= 3.9.2
-Requires: yum-metadata-parser >= 1.1.0
 Requires: python-iniparse
+Requires: python-sqlite
+Requires: python-urlgrabber >= 3.9.0-8
+Requires: yum-metadata-parser >= 1.1.0
 Requires: pygpgme
+
 Conflicts: rpm >= 5-0
 # Zif is a re-implementation of yum in C, however:
 #
@@ -34,18 +61,26 @@ Conflicts: rpm >= 5-0
 # zif experts).
 #
 # ...so we have two sane choices: i) Conflict with it. 2) Stop developing yum.
-Conflicts: zif
+#
+#  Upstream says that #2 will no longer be true after this release.
+Conflicts: zif <= 0.1.3-3.fc15
+
 Obsoletes: yum-skip-broken <= 1.1.18
+Provides: yum-skip-broken = 1.1.18.yum
 Obsoletes: yum-basearchonly <= 1.1.9
+Obsoletes: yum-plugin-basearchonly <= 1.1.9
+Provides: yum-basearchonly = 1.1.9.yum
+Provides: yum-plugin-basearchonly = 1.1.9.yum
 Obsoletes: yum-allow-downgrade < 1.1.20-0
 Obsoletes: yum-plugin-allow-downgrade < 1.1.22-0
+Provides: yum-allow-downgrade = 1.1.20-0.yum
+Provides: yum-plugin-allow-downgrade = 1.1.22-0.yum
 Obsoletes: yum-plugin-protect-packages < 1.1.27-0
-Provides: yum-skip-broken
-Provides: yum-basearchonly
-Provides: yum-allow-downgrade
-Provides: yum-plugin-allow-downgrade
-Provides: yum-protect-packages
-Provides: yum-plugin-protect-packages
+Provides: yum-protect-packages = 1.1.27-0.yum
+Provides: yum-plugin-protect-packages = 1.1.27-0.yum
+Obsoletes: yum-plugin-download-order <= 0.2-2
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
 
 %description
 Yum is a utility that can check for and automatically download and
@@ -58,9 +93,11 @@ Group: Applications/System
 Requires: yum = %{version}-%{release}
 Requires: dbus-python
 Requires: pygobject2
-Requires(preun): /sbin/chkconfig 
+Requires(preun): /sbin/chkconfig
+Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/service
-Requires(postun): /sbin/chkconfig 
+Requires(post): /sbin/service
+Requires(postun): /sbin/chkconfig
 Requires(postun): /sbin/service
 
 
@@ -83,18 +120,46 @@ Requires(postun): /sbin/service
 These are the files needed to run yum updates as a cron job.
 Install this package if you want auto yum updates nightly via cron.
 
+
+
 %prep
 %setup -q
 
 %build
 make
 
+%if !%{disable_check}
+%check
+make check
+%endif
+
 
 %install
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
-# install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/etc/yum/yum.conf
-# install -m 755 %{SOURCE2} $RPM_BUILD_ROOT/etc/cron.daily/yum.cron
+install -m 644 %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/yum.conf
+mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/yum/pluginconf.d $RPM_BUILD_ROOT/%{yum_pluginslib}
+mkdir -p $RPM_BUILD_ROOT/%{yum_pluginsshare}
+
+%if %{move_yum_conf_back}
+# for now, move repodir/yum.conf back
+mv $RPM_BUILD_ROOT/%{_sysconfdir}/yum/repos.d $RPM_BUILD_ROOT/%{_sysconfdir}/yum.repos.d
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum.conf
+%endif
+
+%if %{yum_updatesd}
+echo Keeping local yum-updatesd
+%else
+
+# yum-updatesd has moved to the separate source version
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/yum/yum-updatesd.conf 
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/yum-updatesd
+rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/dbus-1/system.d/yum-updatesd.conf
+rm -f $RPM_BUILD_ROOT/%{_sbindir}/yum-updatesd
+rm -f $RPM_BUILD_ROOT/%{_mandir}/man*/yum-updatesd*
+rm -f $RPM_BUILD_ROOT/%{_datadir}/yum-cli/yumupd.py*
+
+%endif
 
 # Ghost files:
 mkdir -p $RPM_BUILD_ROOT/var/lib/yum/history
@@ -102,12 +167,18 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/yum/plugins
 mkdir -p $RPM_BUILD_ROOT/var/lib/yum/yumdb
 touch $RPM_BUILD_ROOT/var/lib/yum/uuid
 
+# rpmlint bogus stuff...
+chmod +x $RPM_BUILD_ROOT/%{_datadir}/yum-cli/*.py
+chmod +x $RPM_BUILD_ROOT/%{python_sitelib}/yum/*.py
+chmod +x $RPM_BUILD_ROOT/%{python_sitelib}/rpmUtils/*.py
+
 %find_lang %name
 
 %clean
 [ "$RPM_BUILD_ROOT" != "/" ] && rm -rf $RPM_BUILD_ROOT
 
 
+%if %{yum_updatesd}
 %post updatesd
 /sbin/chkconfig --add yum-updatesd
 /sbin/service yum-updatesd condrestart >/dev/null 2>&1
@@ -119,6 +190,7 @@ if [ $1 = 0 ]; then
  /sbin/service yum-updatesd stop >/dev/null 2>&1
 fi
 exit 0
+%endif
 
 
 %post cron
@@ -165,21 +237,29 @@ exit 0
 
 
 %files -f %{name}.lang
-%defattr(-, root, root)
+%defattr(-, root, root, -)
 %doc README AUTHORS COPYING TODO INSTALL ChangeLog PLUGINS
+%if %{move_yum_conf_back}
+%config(noreplace) %{_sysconfdir}/yum.conf
+%dir %{_sysconfdir}/yum.repos.d
+%else
 %config(noreplace) %{_sysconfdir}/yum/yum.conf
+%dir %{_sysconfdir}/yum/repos.d
+%endif
 %config(noreplace) %{_sysconfdir}/yum/version-groups.conf
 %dir %{_sysconfdir}/yum
 %dir %{_sysconfdir}/yum/protected.d
-%dir %{_sysconfdir}/yum/repos.d
 %dir %{_sysconfdir}/yum/vars
-%config %{_sysconfdir}/logrotate.d/%{name}
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %{_sysconfdir}/bash_completion.d
+%dir %{_datadir}/yum-cli
 %{_datadir}/yum-cli/*
+%if %{yum_updatesd}
 %exclude %{_datadir}/yum-cli/yumupd.py*
+%endif
 %{_bindir}/yum
-/usr/lib/python?.?/site-packages/yum
-/usr/lib/python?.?/site-packages/rpmUtils
+%{python_sitelib}/yum
+%{python_sitelib}/rpmUtils
 %dir /var/cache/yum
 %dir /var/lib/yum
 %ghost /var/lib/yum/uuid
@@ -188,20 +268,24 @@ exit 0
 %ghost /var/lib/yum/yumdb
 %{_mandir}/man*/yum.*
 %{_mandir}/man*/yum-shell*
-
+# plugin stuff
+%dir %{_sysconfdir}/yum/pluginconf.d 
+%dir %{yum_pluginslib}
+%dir %{yum_pluginsshare}
 
 %files cron
 %defattr(-,root,root)
 %doc COPYING
-%{_sysconfdir}/cron.daily/0yum.cron
-%config(noreplace) %{_sysconfdir}/yum/yum-daily.yum
-%config(noreplace) %{_sysconfdir}/yum/yum-weekly.yum
+%config(noreplace) %{_sysconfdir}/cron.daily/yum-update.cron
+%config(noreplace) %{_sysconfdir}/cron.daily/yum-cleanup.cron
 %{_sysconfdir}/rc.d/init.d/yum-cron
+%{_sbindir}/yum-cron
 %config(noreplace) %{_sysconfdir}/sysconfig/yum-cron
+%dir %{_datadir}/yum-cron   
+%{_datadir}/yum-cron/update.yum
+%{_datadir}/yum-cron/cleanup.yum
 
-
-
-
+%if %{yum_updatesd}
 %files updatesd
 %defattr(-, root, root)
 %config(noreplace) %{_sysconfdir}/yum/yum-updatesd.conf
@@ -210,8 +294,12 @@ exit 0
 %{_datadir}/yum-cli/yumupd.py*
 %{_sbindir}/yum-updatesd
 %{_mandir}/man*/yum-updatesd*
+%endif
 
 %changelog
+* Thu Jul 28 2011 Matthew Miller <mattdm at mattdm.org>
+- reorganize yum-cron to allow more flexible scheduling
+
 * Wed Apr 20 2011 James Antill <james at fedoraproject.org>
 - 3.4.1
 - umask bug fix.

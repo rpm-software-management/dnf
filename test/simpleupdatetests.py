@@ -990,3 +990,72 @@ class SimpleUpdateTests(OperationsTests):
         # Nothing to do...
         self.assert_(res==0, msg)
 
+    def testUpdateReqFail_1(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '1'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+
+        res, msg = self.runOperation(['update', 'bar'],
+                                     [foo11, bar11],
+                                     [foo11, foo12, bar11, bar12])
+        # Should fail...
+        self.assert_(res=='err', msg)
+
+    def testUpdateReqFail_2(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'LE', ('0', '1', '1'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+
+        res, msg = self.runOperation(['update', 'bar'],
+                                     [foo11, bar11],
+                                     [foo11, foo12, bar11, bar12])
+        # Should fail...
+        self.assert_(res=='err', msg)
+
+    def testUpdateReqFail_3(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'EQ', ('0', '1', '1'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+
+        cbar11 = FakePackage('compat-bar', '1', '1', '0', 'i386')
+        cbar11.addProvides('bar', 'EQ', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['update', 'bar'],
+                                     [foo11, bar11],
+                                     [foo11, foo12, bar11, bar12, cbar11])
+        self.assert_(res=='ok', msg)
+        # Ideal:
+        # self.assertResult((foo11, bar12, cbar11))
+        self.assertResult((foo12, bar12, cbar11))
+
+    def testUpdateReqFail_4(self):
+        foo11 = FakePackage('foo', '1', '1', '0', 'i386')
+        foo11.addRequires('bar', 'EQ', ('0', '1', '1'))
+        foo12 = FakePackage('foo', '1', '2', '0', 'i386')
+        foo12.addRequires('bar', 'LE', ('0', '1', '1'))
+
+        bar11 = FakePackage('bar', '1', '1', '0', 'i386')
+        bar12 = FakePackage('bar', '1', '2', '0', 'i386')
+
+        cbar11 = FakePackage('compat-bar', '1', '1', '0', 'i386')
+        cbar11.addProvides('bar', 'EQ', ('0', '1', '1'))
+
+        res, msg = self.runOperation(['update', 'bar'],
+                                     [foo11, bar11],
+                                     [foo11, foo12, bar11, bar12, cbar11])
+        self.assert_(res=='ok', msg)
+        # Ideal:
+        # self.assertResult((foo11, bar12, cbar11))
+        self.assertResult((foo12, bar12, cbar11))

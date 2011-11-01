@@ -8,7 +8,7 @@ _yum_list()
     # Fail fast for things that look like paths.
     [[ $2 == */* || $2 == [.~]* ]] && return
 
-    if [ "$1" = all ] ; then
+    if [[ $1 == all ]] ; then
         # Try to strip in between headings like "Available Packages" - would
         # be nice if e.g. -d 0 did that for us.  This will obviously only work
         # for English :P
@@ -45,7 +45,7 @@ _yum_grouplist()
 {
     local IFS=$'\n'
     # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
-    COMPREPLY=( $( compgen -W "$( ${yum:-yum} -C grouplist $1 "$2*" \
+    COMPREPLY=( $( compgen -W "$( ${yum:-yum} -C grouplist $1 \
         2>/dev/null | sed -ne 's/^[[:space:]]\{1,\}\(.\{1,\}\)/\1/p' )" \
         -- "$2" ) )
 }
@@ -56,7 +56,7 @@ _yum_grouplist()
 _yum_plugins()
 {
     local val
-    [ $1 = 1 ] && val='\(1\|yes\|true\|on\)' || val='\(0\|no\|false\|off\)'
+    [[ $1 -eq 1 ]] && val='\(1\|yes\|true\|on\)' || val='\(0\|no\|false\|off\)'
     COMPREPLY+=( $( compgen -W '$( command grep -il "^\s*enabled\s*=\s*$val" \
         /etc/yum/pluginconf.d/*.conf 2>/dev/null \
         | sed -ne "s|^.*/\([^/]\{1,\}\)\.conf$|\1|p" )' -- "$2" ) )
@@ -75,7 +75,7 @@ _yum_baseopts()
 {
     local opts='--help --tolerant --cacheonly --config --randomwait
         --debuglevel --showduplicates --errorlevel --rpmverbosity --quiet
-        --verbose --assumeyes --version --installroot --enablerepo
+        --verbose --assumeyes --assumeno --version --installroot --enablerepo
         --disablerepo --exclude --disableexcludes --obsoletes --noplugins
         --nogpgcheck --skip-broken --color --releasever --setopt'
     [[ $COMP_LINE == *--noplugins* ]] || \
@@ -87,6 +87,16 @@ _yum_transactions()
 {
     COMPREPLY+=( $( compgen -W "$( $yum -d 0 -C history 2>/dev/null | \
         sed -ne 's/^[[:space:]]*\([0-9]\{1,\}\).*/\1/p' )" -- "$cur" ) )
+}
+
+_yum_atgroups()
+{
+    if [[ $1 == \@* ]]; then
+        _yum_grouplist "" "${1:1}"
+        COMPREPLY=( "${COMPREPLY[@]/#/@}" )
+        return 0
+    fi
+    return 1
 }
 
 # arguments:
@@ -184,8 +194,8 @@ _yum()
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
         groupinfo groupinstall grouplist groupremove help history info install
-        list makecache provides reinstall remove repolist resolvedep search
-        shell update upgrade version )
+        list makecache provides reinstall remove repolist search shell update
+        upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#words[@]}-1; i++ )) ; do
@@ -211,7 +221,7 @@ _yum()
             ;;
 
         clean)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'expire-cache packages headers
                     metadata cache dbcache all' -- "$cur" ) )
             return 0
@@ -224,20 +234,22 @@ _yum()
             ;;
 
         distro-sync|distribution-synchronization)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'full different' -- "$cur" ) )
             _yum_list installed "$cur"
             return 0
             ;;
 
         downgrade|reinstall)
-            _yum_binrpmfiles "$cur"
-            _yum_list installed "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list installed "$cur"
+            fi
             return 0
             ;;
 
         erase|remove)
-            _yum_list installed "$cur"
+            _yum_atgroups "$cur" || _yum_list installed "$cur"
             return 0
             ;;
 
@@ -247,36 +259,53 @@ _yum()
             ;;
 
         help)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W '${cmds[@]}' -- "$cur" ) )
             return 0
             ;;
 
         history)
             if [[ $prev == $cmd ]] ; then
-                COMPREPLY=( $( compgen -W 'info list summary undo redo new
-                    addon-info package-list rollback' -- "$cur" ) )
+                COMPREPLY=( $( compgen -W 'info list packages-list
+                    packages-info summary addon-info redo undo rollback new
+                    sync stats' -- "$cur" ) )
                 return 0
             fi
             case $subcmd in
-                undo|redo|repeat|addon|addon-info|rollback)
-                    _yum_transactions
-                    COMPREPLY=( $( compgen -W "${COMPREPLY[@]} last" \
-                        -- "$cur" ) )
+                undo|repeat|addon|addon-info|rollback)
+                    if [[ $prev == $subcmd ]]; then
+                        COMPREPLY=( $( compgen -W "last" -- "$cur" ) )
+                        _yum_transactions
+                    fi
+                    ;;
+                redo)
+                    case $prev in
+                        redo)
+                            COMPREPLY=( $( compgen -W "force-reinstall
+                                force-remove last" -- "$cur" ) )
+                            _yum_transactions
+                            ;;
+                        reinstall|force-reinstall|remove|force-remove)
+                            COMPREPLY=( $( compgen -W "last" -- "$cur" ) )
+                            _yum_transactions
+                            ;;
+                    esac
                     ;;
                 package-list|pkg|pkgs|pkg-list|pkgs-list|package|packages|\
-                packages-list)
+                packages-list|pkg-info|pkgs-info|package-info|packages-info)
                     _yum_list available "$cur"
                     ;;
                 info|list|summary)
-                    _yum_transactions
                     if [[ $subcmd != info ]] ; then
-                        COMPREPLY=( $( compgen -W "${COMPREPLY[@]} all" \
-                            -- "$cur" ) )
+                        COMPREPLY=( $( compgen -W "all" -- "$cur" ) )
                         [[ $cur != all ]] && _yum_list available "$cur"
                     else
                         _yum_list available "$cur"
                     fi
+                    _yum_transactions
+                    ;;
+                sync|synchronize)
+                    _yum_list installed "$cur"
                     ;;
             esac
             return 0
@@ -288,13 +317,15 @@ _yum()
             ;;
 
         install)
-            _yum_binrpmfiles "$cur"
-            _yum_list available "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list available "$cur"
+            fi
             return 0
             ;;
 
         list)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'all available updates installed
                     extras obsoletes recent' -- "$cur" ) )
             return 0
@@ -306,24 +337,26 @@ _yum()
             ;;
 
         repolist)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'all enabled disabled' -- "$cur" ) )
             return 0
             ;;
 
         shell)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -f -o plusdirs -- "$cur" ) )
             return 0
             ;;
 
         update|upgrade)
-            _yum_binrpmfiles "$cur"
-            _yum_list updates "$cur"
+            if ! _yum_atgroups "$cur" ; then
+                _yum_binrpmfiles "$cur"
+                _yum_list updates "$cur"
+            fi
             return 0
             ;;
         version)
-            [ "$prev" = "$cmd" ] && \
+            [[ $prev == $cmd ]] && \
                 COMPREPLY=( $( compgen -W 'all installed available nogroups
                     grouplist groupinfo' -- "$cur" ) )
             return 0

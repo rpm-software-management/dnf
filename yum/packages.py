@@ -243,33 +243,86 @@ class PackageObject(object):
         
     def _ui_envra(self):
         if self.epoch == '0':
-            out = '%s-%s-%s.%s' % (self.name, 
-                                   self.version,
-                                   self.release, 
-                                   self.arch)
+            return self.nvra
         else:
-            out = '%s:%s-%s-%s.%s' % (self.epoch,
-                                      self.name,  
-                                      self.version, 
-                                      self.release, 
-                                      self.arch)
-        return out
+            return self.envra
     ui_envra = property(fget=lambda self: self._ui_envra())
 
     def _ui_nevra(self):
         if self.epoch == '0':
-            out = '%s-%s-%s.%s' % (self.name,
-                                   self.version,
-                                   self.release,
-                                   self.arch)
+            return self.nvra
         else:
-            out = '%s-%s:%s-%s.%s' % (self.name,
-                                      self.epoch,
-                                      self.version,
-                                      self.release,
-                                      self.arch)
-        return out
+            return self.nevra
     ui_nevra = property(fget=lambda self: self._ui_nevra())
+
+    def _ui_evr(self):
+        if self.epoch == '0':
+            return self.vr
+        else:
+            return self.evr
+    ui_evr = property(fget=lambda self: self._ui_evr())
+
+    def _ui_evra(self):
+        if self.epoch == '0':
+            return self.vra
+        else:
+            return self.evra
+    ui_evra = property(fget=lambda self: self._ui_evra())
+
+    def _ui_nevr(self):
+        if self.epoch == '0':
+            return self.nvr
+        else:
+            return self.nevr
+    ui_nevr = property(fget=lambda self: self._ui_nevr())
+
+    def _na(self):
+        return '%s.%s' % (self.name, self.arch)
+    na = property(fget=lambda self: self._na())
+
+    def _vr(self):
+        return '%s-%s' % (self.version, self.release)
+    vr = property(fget=lambda self: self._vr())
+
+    def _vra(self):
+        return '%s-%s.%s' % (self.version, self.release, self.arch)
+    vra = property(fget=lambda self: self._vra())
+
+    def _evr(self):
+        return '%s:%s-%s' % (self.epoch, self.version, self.release)
+    evr = property(fget=lambda self: self._evr())
+
+    def _evra(self):
+        return '%s:%s-%s.%s' % (self.epoch,self.version,self.release, self.arch)
+    evra = property(fget=lambda self: self._evra())
+
+    def _nvr(self):
+        return '%s-%s-%s' % (self.name, self.version, self.release)
+    nvr = property(fget=lambda self: self._nvr())
+
+    def _nvra(self):
+        return '%s-%s-%s.%s' % (self.name, self.version,self.release, self.arch)
+    nvra = property(fget=lambda self: self._nvra())
+
+    def _nevr(self):
+        return '%s-%s:%s-%s' % (self.name, self.epoch,self.version,self.release)
+    nevr = property(fget=lambda self: self._nevr())
+
+    def _nevra(self):
+        return '%s-%s:%s-%s.%s' % (self.name,
+                                   self.epoch, self.version, self.release,
+                                   self.arch)
+    nevra = property(fget=lambda self: self._nevra())
+
+    def _envr(self):
+        return '%s:%s-%s-%s' % (self.epoch,self.name, self.version,self.release)
+    envr = property(fget=lambda self: self._envr())
+
+    def _envra(self):
+        return '%s:%s-%s-%s.%s' % (self.epoch, self.name,
+                                   self.version, self.release,
+                                   self.arch)
+    envra = property(fget=lambda self: self._envra())
 
     def __str__(self):
         return self.ui_envra
@@ -299,6 +352,11 @@ class PackageObject(object):
             ret = cmp(self.arch, other.arch)
         if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
             ret = cmp(self.repoid, other.repoid)
+            # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
+            if ret and self.repoid == 'installed':
+                return 1
+            if ret and other.repoid == 'installed':
+                return -1
         return ret
     def __eq__(self, other):
         """ Compare packages for yes/no equality, includes everything in the
@@ -1078,7 +1136,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
          misc.to_unicode(misc.to_xml(self.summary)), 
          misc.to_unicode(misc.to_xml(self.description)), 
          packager, url, self.filetime, 
-         self.buildtime, self.packagesize, self.size, self.archivesize)
+         self.buildtime, self.packagesize, self.installedsize, self.archivesize)
         
         msg += self._return_remote_location()
         return msg
@@ -1128,7 +1186,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
         msg = ""
         mylist = getattr(self, pcotype)
         if mylist: msg = "\n    <rpm:%s>\n" % pcotype
-        for (name, flags, (e,v,r)) in mylist:
+        for (name, flags, (e,v,r)) in sorted(mylist):
             pcostring = '''      <rpm:entry name="%s"''' % misc.to_xml(name, attrib=True)
             if flags:
                 pcostring += ''' flags="%s"''' % misc.to_xml(flags, attrib=True)
@@ -1156,11 +1214,11 @@ class YumAvailablePackage(PackageObject, RpmBase):
             dirs = self.returnFileEntries('dir', primary_only=True)
             ghosts = self.returnFileEntries('ghost', primary_only=True)
                 
-        for fn in files:
+        for fn in sorted(files):
             msg += """    <file>%s</file>\n""" % misc.to_xml(fn)
-        for fn in dirs:
+        for fn in sorted(dirs):
             msg += """    <file type="dir">%s</file>\n""" % misc.to_xml(fn)
-        for fn in ghosts:
+        for fn in sorted(ghosts):
             msg += """    <file type="ghost">%s</file>\n""" % misc.to_xml(fn)
         
         return msg
@@ -1181,7 +1239,7 @@ class YumAvailablePackage(PackageObject, RpmBase):
             if libc_requires:
                 rest = sorted(libc_requires, cmp=compareVerOnly, key=itemgetter(0))
                 best = rest.pop()
-                if best[0].startswith('libc.so.6()'): # rpmvercmp will sort this one as 'highest' so we need to remove it from the list
+                if len(rest) > 0 and best[0].startswith('libc.so.6()'): # rpmvercmp will sort this one as 'highest' so we need to remove it from the list
                     best = rest.pop()
                 newlist = []
                 for i in mylist:
@@ -1189,8 +1247,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
                         continue
                     newlist.append(i)
                 mylist = newlist
-        
-        for (name, flags, (e,v,r),pre) in mylist:
+        used = 0
+        for (name, flags, (e,v,r),pre) in sorted(mylist):
             if name.startswith('rpmlib('):
                 continue
             # this drops out requires that the pkg provides for itself.
@@ -1212,13 +1270,16 @@ class YumAvailablePackage(PackageObject, RpmBase):
                     prcostring += ''' ver="%s"''' % misc.to_xml(v, attrib=True)
                 if r:
                     prcostring += ''' rel="%s"''' % misc.to_xml(r, attrib=True)
-            if pre:
+            if pre not in ("0", 0):
                 prcostring += ''' pre="%s"''' % pre
-                    
+
             prcostring += "/>\n"
             msg += prcostring
+            used += 1
             
         if mylist: msg += "    </rpm:requires>"
+        if used == 0:
+            return ""
         return msg
 
     def _dump_changelog(self, clog_limit):
@@ -1294,7 +1355,8 @@ class YumHeaderPackage(YumAvailablePackage):
         self.pkgid = self.hdr[rpm.RPMTAG_SHA1HEADER]
         if not self.pkgid:
             self.pkgid = "%s.%s" %(self.hdr['name'], self.hdr['buildtime'])
-        self.packagesize = self.hdr['size']
+        self.packagesize = self.hdr['archivesize']
+        self.installedsize = self.hdr['size']
         self.__mode_cache = {}
         self.__prcoPopulated = False
 

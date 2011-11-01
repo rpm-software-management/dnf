@@ -1,6 +1,6 @@
 #!/usr/bin/python -t
 
-"""This handles actual output from the cli"""
+"""Handle actual output from the cli."""
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ import yum.misc
 from rpmUtils.miscutils import checkSignals, formatRequire
 from yum.constants import *
 
-from yum import logginglevels, _
+from yum import logginglevels, _, P_
 from yum.rpmtrans import RPMBaseCallback
 from yum.packageSack import packagesNewestByNameArch
 import yum.packages
@@ -46,6 +46,8 @@ import yum.packages
 import yum.history
 
 from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+
+import locale
 
 def _term_width():
     """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
@@ -60,17 +62,21 @@ def _term_width():
 
 
 class YumTextMeter(TextMeter):
-
-    """
-    Text progress bar output.
-    """
+    """A class to display text progress bar output."""
 
     def update(self, amount_read, now=None):
+        """Update the status of the text progress bar
+
+        :param amount_read: the amount of data, in bytes, that has been read
+        :param now: the current time in seconds since the epoch.  If
+           *now* is not given, the output of :func:`time.time()` will
+           be used.
+        """
         checkSignals()
         TextMeter.update(self, amount_read, now)
 
 class YumTerm:
-    """some terminal "UI" helpers based on curses"""
+    """A class to provide some terminal "UI" helpers based on curses."""
 
     # From initial search for "terminfo and python" got:
     # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/475116
@@ -145,6 +151,17 @@ class YumTerm:
         self.BG_COLOR = self.__ansi_forced_BG_COLOR
 
     def reinit(self, term_stream=None, color='auto'):
+        """Reinitializes the :class:`YumTerm`.
+
+        :param term_stream:  the terminal stream that the
+           :class:`YumTerm` should be initialized to use.  If
+           *term_stream* is not given, :attr:`sys.stdout` is used.
+        :param color: when to colorize output.  Valid values are
+           'always', 'auto', and 'never'.  'always' will use ANSI codes
+           to always colorize output, 'auto' will decide whether do
+           colorize depending on the terminal, and 'never' will never
+           colorize.
+        """
         self.__enabled = True
         if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = 80
@@ -255,6 +272,37 @@ class YumTerm:
         return re.sub(r'\$<\d+>[/*]?', '', cap)
 
     def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        *beg*, and postfix each occurrence with *end*, then return the
+        modified string.  For example::
+           
+           >>> yt = YumTerm()
+           >>> yt.sub('spam and eggs', 'x', 'z', ['and'])
+           'spam xandz eggs'
+
+        This is particularly useful for emphasizing certain words
+        in output: for example, calling :func:`sub` with *beg* =
+        MODE['bold'] and *end* = MODE['normal'] will return a string
+        that when printed to the terminal will appear to be *haystack*
+        with each occurrence of the strings in *needles* in bold
+        face.  Note, however, that the :func:`sub_mode`,
+        :func:`sub_bold`, :func:`sub_fg`, and :func:`sub_bg` methods
+        provide convenient ways to access this same emphasizing functionality. 
+
+        :param haystack: the string to be modified
+        :param beg: the string to be prefixed onto matches
+        :param end: the string to be postfixed onto matches
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :param escape: a function that accepts a string and returns
+           the same string with problematic characters escaped.  By
+           default, :func:`re.escape` is used.
+        :param ignore_case: whether case should be ignored when
+           searching for matches
+        :return: *haystack* with *beg* prefixing, and *end*
+          postfixing, occurrences of the strings in *needles*
+        """
         if not self.__enabled:
             return haystack
 
@@ -269,27 +317,106 @@ class YumTerm:
             haystack = re.sub(pat, render, haystack)
         return haystack
     def sub_norm(self, haystack, beg, needles, **kwds):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        *beg*, and postfix each occurrence with self.MODE['normal'],
+        then return the modified string.  If *beg* is an ANSI escape
+        code, such as given by self.MODE['bold'], this method will
+        return *haystack* with the formatting given by the code only
+        applied to the strings in *needles*.
+
+        :param haystack: the string to be modified
+        :param beg: the string to be prefixed onto matches
+        :param end: the string to be postfixed onto matches
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :return: *haystack* with *beg* prefixing, and self.MODE['normal']
+          postfixing, occurrences of the strings in *needles*
+        """
         return self.sub(haystack, beg, self.MODE['normal'], needles, **kwds)
 
     def sub_mode(self, haystack, mode, needles, **kwds):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        self.MODE[*mode*], and postfix each occurrence with
+        self.MODE['normal'], then return the modified string.  This
+        will return a string that when printed to the terminal will
+        appear to be *haystack* with each occurrence of the strings in
+        *needles* in the given *mode*.
+
+        :param haystack: the string to be modified
+        :param mode: the mode to set the matches to be in.  Valid
+           values are given by self.MODE.keys().
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :return: *haystack* with self.MODE[*mode*] prefixing, and
+          self.MODE['normal'] postfixing, occurrences of the strings
+          in *needles*
+        """
         return self.sub_norm(haystack, self.MODE[mode], needles, **kwds)
 
     def sub_bold(self, haystack, needles, **kwds):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        self.MODE['bold'], and postfix each occurrence with
+        self.MODE['normal'], then return the modified string.  This
+        will return a string that when printed to the terminal will
+        appear to be *haystack* with each occurrence of the strings in
+        *needles* in bold face.
+
+        :param haystack: the string to be modified
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :return: *haystack* with self.MODE['bold'] prefixing, and
+          self.MODE['normal'] postfixing, occurrences of the strings
+          in *needles*
+        """
         return self.sub_mode(haystack, 'bold', needles, **kwds)
     
     def sub_fg(self, haystack, color, needles, **kwds):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        self.FG_COLOR[*color*], and postfix each occurrence with
+        self.MODE['normal'], then return the modified string.  This
+        will return a string that when printed to the terminal will
+        appear to be *haystack* with each occurrence of the strings in
+        *needles* in the given color.
+
+        :param haystack: the string to be modified
+        :param color: the color to set the matches to be in.  Valid
+           values are given by self.FG_COLOR.keys().
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :return: *haystack* with self.FG_COLOR[*color*] prefixing, and
+          self.MODE['normal'] postfixing, occurrences of the strings
+          in *needles*
+        """
         return self.sub_norm(haystack, self.FG_COLOR[color], needles, **kwds)
 
     def sub_bg(self, haystack, color, needles, **kwds):
+        """Search the string *haystack* for all occurrences of any
+        string in the list *needles*.  Prefix each occurrence with
+        self.BG_COLOR[*color*], and postfix each occurrence with
+        self.MODE['normal'], then return the modified string.  This
+        will return a string that when printed to the terminal will
+        appear to be *haystack* with each occurrence of the strings in
+        *needles* highlighted in the given background color.
+
+        :param haystack: the string to be modified
+        :param color: the background color to set the matches to be in.  Valid
+           values are given by self.BG_COLOR.keys().
+        :param needles: a list of strings to add the prefixes and
+           postfixes to
+        :return: *haystack* with self.BG_COLOR[*color*] prefixing, and
+          self.MODE['normal'] postfixing, occurrences of the strings
+          in *needles*
+        """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
 
 
 
 class YumOutput:
-
-    """
-    Main output class for the yum command line.
-    """
+    """Main output class for the yum command line."""
 
     def __init__(self):
         self.logger = logging.getLogger("yum.cli")
@@ -304,6 +431,12 @@ class YumOutput:
 
     
     def printtime(self):
+        """Return a string representing the current time in the form::
+
+           Mon dd hh:mm:ss
+
+        :return: a string representing the current time
+        """
         months = [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
                   _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')]
         now = time.localtime(time.time())
@@ -312,14 +445,27 @@ class YumOutput:
         return ret
          
     def failureReport(self, errobj):
-        """failure output for failovers from urlgrabber"""
-        
+        """Perform failure output for failovers from urlgrabber
+
+        :param errobj: :class:`urlgrabber.grabber.CallbackObject`
+           containing information about the error
+        :raises: *errobj*.exception
+        """
         self.logger.error('%s: %s', errobj.url, errobj.exception)
         self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
     
         
     def simpleProgressBar(self, current, total, name=None):
+        """Output the current status to the terminal using a simple
+        status bar.
+
+        :param current: a number representing the amount of work
+           already done
+        :param total: a number representing the total amount of work
+           to be done
+        :param name: a name to label the progress bar with
+        """
         progressbar(current, total, name)
 
     def _highlight(self, highlight):
@@ -368,9 +514,29 @@ class YumOutput:
 
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):
-        """ Dynamically calculate the width of the fields in the data, data is
-            of the format [column-number][field_length] = rows. """
-
+        """Dynamically calculate the widths of the columns that the
+        fields in data should be placed into for output.
+        
+        :param data: a list of dictionaries that represent the data to
+           be output.  Each dictionary in the list corresponds to a
+           column of output. The keys of the dictionary are the
+           lengths of the items to be output, and the value associated
+           with a key is the number of items of that length.
+        :param columns: a list containing the minimum amount of space
+           that must be allocated for each row. This can be used to
+           ensure that there is space available in a column if, for
+           example, the actual lengths of the items being output
+           cannot be given in *data*
+        :param remainder_column: number of the column to receive a few
+           extra spaces that may remain after other allocation has
+           taken place
+        :param total_width: the total width of the output.
+           self.term.columns is used by default
+        :param indent: string that will be prefixed to a line of
+           output to create e.g. an indent
+        :return: a list of the widths of the columns that the fields
+           in data should be placed into for output
+        """
         if total_width is None:
             total_width = self.term.columns
 
@@ -473,10 +639,20 @@ class YumOutput:
         return (val, width, hibeg, hiend)
 
     def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
-        """ Return a string for columns of data, which can overflow.
-            text_width parameter finds the width of columns, this defaults to
-            utf8 but can be changed to len() if you know it'll be fine. """
+        """Return a row of data formatted into a string for output.
+        Items can overflow their columns. 
 
+        :param columns: a list of tuples containing the data to
+           output.  Each tuple contains first the item to be output,
+           then the amount of space allocated for the column, and then
+           optionally a type of highlighting for the item
+        :param msg: a string to begin the line of output with
+        :param end: a string to end the line of output with
+        :param text_width: a function to find the width of the items
+           in the columns.  This defaults to utf8 but can be changed
+           to len() if you know it'll be fine
+        :return: a row of data formatted into a string for output
+        """
         total_width = len(msg)
         data = []
         for col_data in columns[:-1]:
@@ -513,8 +689,18 @@ class YumOutput:
 
     def simpleList(self, pkg, ui_overflow=False, indent='', highlight=False,
                    columns=None):
-        """ Simple to use function to print a pkg as a line. """
+        """Print a package as a line.
 
+        :param pkg: the package to be printed
+        :param ui_overflow: unused
+        :param indent: string to be prefixed onto the line to provide
+           e.g. an indent
+        :param highlight: highlighting options for the name of the
+           package
+        :param colums: tuple containing the space allocated for each
+           column of output.  The columns are the package name, version,
+           and repository
+        """
         if columns is None:
             columns = (-40, -22, -16) # Old default
         ver = pkg.printVer()
@@ -526,9 +712,19 @@ class YumOutput:
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
-        """ Simple to use function to print a pkg as a line, with the pkg
-            itself in envra format so it can be pased to list/install/etc. """
+        """Print a package as a line, with the package itself in envra
+        format so it can be passed to list/install/etc. 
 
+        :param pkg: the package to be printed
+        :param ui_overflow: unused
+        :param indent: string to be prefixed onto the line to provide
+           e.g. an indent
+        :param highlight: highlighting options for the name of the
+           package
+        :param colums: tuple containing the space allocated for each
+           column of output.  The columns the are the package envra and
+           repository
+        """
         if columns is None:
             columns = (-63, -16) # Old default
         envra = '%s%s' % (indent, str(pkg))
@@ -538,7 +734,13 @@ class YumOutput:
         print self.fmtColumns(columns, text_width=len)
 
     def fmtKeyValFill(self, key, val):
-        """ Return a key value pair in the common two column output format. """
+        """Return a key value pair in the common two column output
+        format.
+
+        :param key: the key to be formatted
+        :param val: the value associated with *key*
+        :return: the key value pair formatted in two columns for output
+        """
         val = to_str(val)
         keylen = utf8_width(key)
         cols = self.term.columns
@@ -553,6 +755,15 @@ class YumOutput:
         return ret
     
     def fmtSection(self, name, fill='='):
+        """Format and return a section header.  The format of the
+        header is a line with *name* centred, and *fill* repeated on
+        either side to fill an entire line on the terminal.
+
+        :param name: the name of the section
+        :param fill: the character to repeat on either side of *name*
+          to fill an entire line.  *fill* must be a single character.
+        :return: a string formatted to be a section header
+        """
         name = to_str(name)
         cols = self.term.columns - 2
         name_len = utf8_width(name)
@@ -577,6 +788,12 @@ class YumOutput:
         return to_unicode(s)
 
     def infoOutput(self, pkg, highlight=False):
+        """Print information about the given package.
+
+        :param pkg: the package to print information about 
+        :param hightlight: highlighting options for the name of the
+           package
+        """
         (hibeg, hiend) = self._highlight(highlight)
         print _("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
         print _("Arch        : %s") % to_unicode(pkg.arch)
@@ -617,9 +834,22 @@ class YumOutput:
         print ""
     
     def updatesObsoletesList(self, uotup, changetype, columns=None):
-        """takes an updates or obsoletes tuple of pkgobjects and
-           returns a simple printed string of the output and a string
-           explaining the relationship between the tuple members"""
+        """Print a simple string that explains the relationship
+        between the members of an update or obsoletes tuple.
+
+        :param uotup: an update or obsoletes tuple.  The first member
+           is the new package, and the second member is the old
+           package
+        :param changetype: a string indicating what the change between
+           the packages is, e.g. 'updates' or 'obsoletes'
+        :param columns: a tuple containing information about how to
+           format the columns of output.  The absolute value of each
+           number in the tuple indicates how much space has been
+           allocated for the corresponding column.  If the number is
+           negative, the text in the column will be left justified,
+           and if it is positive, the text will be right justified.
+           The columns of output are the package name, version, and repository
+        """
         (changePkg, instPkg) = uotup
 
         if columns is not None:
@@ -640,12 +870,44 @@ class YumOutput:
 
     def listPkgs(self, lst, description, outputType, highlight_na={},
                  columns=None, highlight_modes={}):
-        """outputs based on whatever outputType is. Current options:
-           'list' - simple pkg list
-           'info' - similar to rpm -qi output
-           ...also highlight_na can be passed, and we'll highlight
-           pkgs with (names, arch) in that set."""
+        """Prints information about the given list of packages.
 
+        :param lst: a list of packages to print information about
+        :param description: string describing what the list of
+           packages contains, e.g. 'Available Packages'
+        :param outputType: The type of information to be printed.
+           Current options::
+           
+              'list' - simple pkg list
+              'info' - similar to rpm -qi output
+        :param highlight_na: a dictionary containing information about
+              packages that should be highlighted in the output.  The
+              dictionary keys are (name, arch) tuples for the package,
+              and the associated values are the package objects
+              themselves.
+        :param columns: a tuple containing information about how to
+           format the columns of output.  The absolute value of each
+           number in the tuple indicates how much space has been
+           allocated for the corresponding column.  If the number is
+           negative, the text in the column will be left justified,
+           and if it is positive, the text will be right justified.
+           The columns of output are the package name, version, and
+           repository
+        :param highlight_modes: dictionary containing information
+              about to highlight the packages in *highlight_na*.
+              *highlight_modes* should contain the following keys::
+                 
+                 'not_in' - highlighting used for packages not in *highlight_na*
+                 '=' - highlighting used when the package versions are equal
+                 '<' - highlighting used when the package has a lower version number
+                 '>' - highlighting used when the package has a higher version number
+        :return: (exit_code, [errors])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+        """
         if outputType in ['list', 'info']:
             thingslisted = 0
             if len(lst) > 0:
@@ -679,8 +941,11 @@ class YumOutput:
     
         
     def userconfirm(self):
-        """gets a yes or no from the user, defaults to No"""
+        """Get a yes or no from the user, and default to No
 
+        :return: True if the user selects yes, and False if the user
+           selects no
+        """
         yui = (to_unicode(_('y')), to_unicode(_('yes')))
         nui = (to_unicode(_('n')), to_unicode(_('no')))
         aui = (yui[0], yui[1], nui[0], nui[1])
@@ -774,6 +1039,10 @@ class YumOutput:
                                          columns=columns)
     
     def displayPkgsInGroups(self, group):
+        """Output information about the packages in a given group
+        
+        :param group: a Group object to output information about
+        """
         print _('\nGroup: %s') % group.ui_name
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
@@ -807,8 +1076,11 @@ class YumOutput:
                                            columns=columns)
 
     def depListOutput(self, results):
-        """take a list of findDeps results and 'pretty print' the output"""
-        
+        """Format and output a list of findDeps results
+
+        :param results: a list of package dependency information as
+           returned by findDeps
+        """
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         for pkg in sorted(results):
             print _("package: %s") % pkg.compactPrint()
@@ -832,7 +1104,18 @@ class YumOutput:
                     print "   provider: %s" % po.compactPrint()
 
     def format_number(self, number, SI=0, space=' '):
-        """Turn numbers into human-readable metric-like numbers"""
+        """Return a human-readable metric-like string representation
+        of a number.
+
+        :param number: the number to be converted to a human-readable form
+        :param SI: If is 0, this function will use the convention
+           that 1 kilobyte = 1024 bytes, otherwise, the convention
+           that 1 kilobyte = 1000 bytes will be used
+        :param space: string that will be placed between the number
+           and the SI prefix
+        :return: a human-readable metric-like string representation of
+           *number*
+        """
         symbols = [ ' ', # (none)
                     'k', # kilo
                     'M', # mega
@@ -870,16 +1153,31 @@ class YumOutput:
 
     @staticmethod
     def format_time(seconds, use_hours=0):
+        """Return a human-readable string representation of a number
+        of seconds.  The string will show seconds, minutes, and
+        optionally hours.
+
+        :param seconds: the number of seconds to convert to a
+           human-readable form
+        :param use_hours: If use_hours is 0, the representation will
+           be in minutes and seconds. Otherwise, it will be in hours,
+           minutes, and seconds
+        :return: a human-readable string representation of *seconds*
+        """
         return urlgrabber.progress.format_time(seconds, use_hours)
 
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
-        """ Output search/provides type callback matches. po is the pkg object,
-            values are the things in the po that we've matched.
-            If matchfor is passed, all the strings in that list will be
-            highlighted within the output.
-            verbose overrides logginglevel, if passed. """
+        """Output search/provides type callback matches.
 
+        :param po: the package object that matched the search
+        :param values: the information associated with *po* that
+           matched the search
+        :param matchfor: a list of strings to be highlighted in the
+           output
+        :param verbose: whether to output extra verbose information
+        :param highlight: highlighting options for the highlighted matches
+        """
         if self.conf.showdupesfromrepos:
             msg = '%s : ' % po
         else:
@@ -897,13 +1195,16 @@ class YumOutput:
         if not verbose:
             return
 
-        print _("Repo        : %s") % po.repoid
-        print _('Matched from:')
+        print _("Repo        : %s") % po.ui_from_repo
+        done = False
         for item in yum.misc.unique(values):
             item = to_utf8(item)
             if to_utf8(po.name) == item or to_utf8(po.summary) == item:
                 continue # Skip double name/summary printing
 
+            if not done:
+                print _('Matched from:')
+                done = True
             can_overflow = True
             if False: pass
             elif to_utf8(po.description) == item:
@@ -932,10 +1233,23 @@ class YumOutput:
         print '\n\n'
 
     def matchcallback_verbose(self, po, values, matchfor=None):
+        """Output search/provides type callback matches.  This will
+        output more information than :func:`matchcallback`.
+
+        :param po: the package object that matched the search
+        :param values: the information associated with *po* that
+           matched the search
+        :param matchfor: a list of strings to be highlighted in the
+           output
+        """
         return self.matchcallback(po, values, matchfor, verbose=True)
         
     def reportDownloadSize(self, packages, installonly=False):
-        """Report the total download size for a set of packages"""
+        """Report the total download size for a set of packages
+        
+        :param packages: a list of package objects
+        :param installonly: whether the transaction consists only of installations
+        """
         totsize = 0
         locsize = 0
         insize  = 0
@@ -979,7 +1293,10 @@ class YumOutput:
                                         self.format_number(insize))
 
     def reportRemoveSize(self, packages):
-        """Report the total size of packages being removed. """
+        """Report the total size of packages being removed.
+
+        :param packages: a list of package objects
+        """
         totsize = 0
         error = False
         for pkg in packages:
@@ -999,8 +1316,9 @@ class YumOutput:
                                     self.format_number(totsize))
             
     def listTransaction(self):
-        """returns a string rep of the  transaction in an easy-to-read way."""
-        
+        """Return a string representation of the transaction in an
+        easy-to-read format.
+        """
         self.tsInfo.makelists(True, True)
         pkglist_lines = []
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
@@ -1095,40 +1413,81 @@ class YumOutput:
             if lines:
                 out.append(totalmsg)
 
-        summary = _("""
+        out.append(_("""
 Transaction Summary
 %s
-""") % ('=' * self.term.columns,)
-        out.append(summary)
-        num_in = len(self.tsInfo.installed + self.tsInfo.depinstalled)
-        num_up = len(self.tsInfo.updated + self.tsInfo.depupdated)
-        num_rm = len(self.tsInfo.removed + self.tsInfo.depremoved)
-        num_re = len(self.tsInfo.reinstalled)
-        num_dg = len(self.tsInfo.downgraded)
-        if num_in:
-            out.append(_("""\
-Install   %5.5s Package(s)
-""") % num_in)
-        if num_up:
-            out.append(_("""\
-Upgrade   %5.5s Package(s)
-""") % num_up)
-        if num_rm:
-            out.append(_("""\
-Remove    %5.5s Package(s)
-""") % num_rm)
-        if num_re:
-            out.append(_("""\
-Reinstall %5.5s Package(s)
-""") % num_re)
-        if num_dg:
-            out.append(_("""\
-Downgrade %5.5s Package(s)
-""") % num_dg)
-        
+""") % ('=' * self.term.columns))
+        summary_data =  (
+            (_('Install'), len(self.tsInfo.installed),
+             len(self.tsInfo.depinstalled)),
+            (_('Upgrade'), len(self.tsInfo.updated),
+             len(self.tsInfo.depupdated)),
+            (_('Remove'), len(self.tsInfo.removed),
+             len(self.tsInfo.depremoved)),
+            (_('Reinstall'), len(self.tsInfo.reinstalled), 0),
+            (_('Downgrade'), len(self.tsInfo.downgraded), 0),
+            (_('Skipped (dependency problems)'), len(self.skipped_packages), 0),
+            (_('Not installed'), len(self._not_found_i.values()), 0),
+            (_('Not available'), len(self._not_found_a.values()), 0),
+        )
+        max_msg_action   = 0
+        max_msg_count    = 0
+        max_msg_pkgs     = 0
+        max_msg_depcount = 0
+        for action, count, depcount in summary_data:
+            if not count and not depcount:
+                continue
+
+            msg_pkgs = P_('Package', 'Packages', count)
+            len_msg_action   = utf8_width(action)
+            len_msg_count    = utf8_width(str(count))
+            len_msg_pkgs     = utf8_width(msg_pkgs)
+
+            if depcount:
+                len_msg_depcount = utf8_width(str(depcount))
+            else:
+                len_msg_depcount = 0
+
+            # dito. max() by hand, due to RHEL-5
+            if len_msg_action > max_msg_action:
+                max_msg_action = len_msg_action
+            if len_msg_count > max_msg_count:
+                max_msg_count = len_msg_count
+            if len_msg_pkgs > max_msg_pkgs:
+                max_msg_pkgs = len_msg_pkgs
+            if len_msg_depcount > max_msg_depcount:
+                max_msg_depcount = len_msg_depcount
+
+        for action, count, depcount in summary_data:
+            msg_pkgs = P_('Package', 'Packages', count)
+            if depcount:
+                msg_deppkgs = P_('Dependent package', 'Dependent packages',
+                                 depcount)
+                if count:
+                    msg = '%s  %*d %s (+%*d %s)\n'
+                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                      max_msg_count, count,
+                                      utf8_width_fill(msg_pkgs, max_msg_pkgs),
+                                      max_msg_depcount, depcount, msg_deppkgs))
+                else:
+                    msg = '%s  %*s %s ( %*d %s)\n'
+                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                      max_msg_count, '',
+                                      utf8_width_fill('', max_msg_pkgs),
+                                      max_msg_depcount, depcount, msg_deppkgs))
+            elif count:
+                msg = '%s  %*d %s\n'
+                out.append(msg % (utf8_width_fill(action, max_msg_action),
+                                  max_msg_count, count, msg_pkgs))
         return ''.join(out)
         
     def postTransactionOutput(self):
+        """Returns a human-readable summary of the results of the
+        transaction.
+        
+        :return: a string containing a human-readable summary of the
+           results of the transaction
+        """
         out = ''
         
         self.tsInfo.makelists()
@@ -1193,9 +1552,9 @@ Downgrade %5.5s Package(s)
         return out
 
     def setupProgressCallbacks(self):
-        """sets up the progress callbacks and various 
-           output bars based on debug level"""
-
+        """Set up the progress callbacks and various 
+           output bars based on debug level.
+        """
         # if we're below 2 on the debug level we don't need to be outputting
         # progress bars - this is hacky - I'm open to other options
         # One of these is a download
@@ -1230,10 +1589,12 @@ Downgrade %5.5s Package(s)
         self.dsCallback = dscb
     
     def setupProgessCallbacks(self):
-        # api purposes only to protect the typo
+        """This function is for API purposes only to protect the typo."""
         self.setupProgressCallbacks()
     
     def setupKeyImportCallbacks(self):
+        """Set up callbacks to import and confirm gpg public keys."""
+
         confirm_func = self._cli_confirm_gpg_key_import
         gpg_import_func = self.getKeyForRepo
         gpgca_import_func = self.getCAKeyForRepo
@@ -1247,14 +1608,12 @@ Downgrade %5.5s Package(s)
             self.repos.gpgca_import_func = gpgca_import_func
 
     def interrupt_callback(self, cbobj):
-        '''Handle CTRL-C's during downloads
+        '''Handle CTRL-C's during downloads.  If a CTRL-C occurs a
+        URLGrabError will be raised to push the download onto the next
+        mirror.  If two CTRL-C's occur in quick succession then yum
+        will exit.
 
-        If a CTRL-C occurs a URLGrabError will be raised to push the download
-        onto the next mirror.  
-        
-        If two CTRL-C's occur in quick succession then yum will exit.
-
-        @param cbobj: urlgrabber callback obj
+        :param cbobj: :class:`urlgrabber.grabber.CallbackObject`
         '''
         delta_exit_chk = 2.0      # Delta between C-c's so we treat as exit
         delta_exit_str = _("two") # Human readable version of above
@@ -1283,6 +1642,14 @@ to exit.
 
     def download_callback_total_cb(self, remote_pkgs, remote_size,
                                    download_start_timestamp):
+        """Outputs summary information about the download process.
+
+        :param remote_pkgs: a list of package objects that were downloaded
+        :param remote_size: the total amount of information that was
+           downloaded, in bytes
+        :param download_start_timestamp: the time when the download
+           process started, in seconds since the epoch
+        """
         if len(remote_pkgs) <= 1:
             return
         if not hasattr(urlgrabber.progress, 'TerminalLine'):
@@ -1448,8 +1815,17 @@ to exit.
         return tids, printall
 
     def historyListCmd(self, extcmds):
-        """ Shows the user a list of data about the history. """
+        """Output a list of information about the history of yum
+        transactions.
 
+        :param extcmds: list of extra command line arguments
+        :return: (exit_code, [errors])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+        """
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
             return 1, ['Failed history list']
@@ -1578,6 +1954,16 @@ to exit.
         return old[0]
 
     def historyInfoCmd(self, extcmds):
+        """Output information about a transaction in history
+
+        :param extcmds: list of extra command line arguments
+        :return: (exit_code, [errors])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+        """
         def str2int(x):
             try:
                 return int(x)
@@ -1670,6 +2056,9 @@ to exit.
     def _hpkg2from_repo(self, hpkg):
         """ Given a pkg, find the ipkg.ui_from_repo ... if none, then
             get an apkg. ... and put a ? in there. """
+        if 'from_repo' in hpkg.yumdb_info:
+            return hpkg.ui_from_repo
+
         ipkgs = self.rpmdb.searchPkgTuple(hpkg.pkgtup)
         if not ipkgs:
             apkgs = self.pkgSack.searchPkgTuple(hpkg.pkgtup)
@@ -1692,7 +2081,7 @@ to exit.
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
-                        pkg_max_len=0):
+                        pkg_max_len=0, show_repo=True):
             prefix = " " * prefix_len
             if was_installed:
                 _pkg_states = _pkg_states_installed
@@ -1716,9 +2105,11 @@ to exit.
             else:
                 (hibeg, hiend) = self._highlight('normal')
             state = utf8_width_fill(state, _pkg_states['maxlen'])
+            ui_repo = ''
+            if show_repo:
+                ui_repo = self._hpkg2from_repo(hpkg)
             print "%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, hpkg,
-                                        self._hpkg2from_repo(hpkg))
+                                        pkg_max_len, hpkg, ui_repo)
 
         if type(old.tid) == type([]):
             print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
@@ -1808,7 +2199,9 @@ to exit.
             print _("Packages Skipped:")
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
         for hpkg in old.trans_skip:
-            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len)
+            #  Don't show the repo. here because we can't store it as they were,
+            # by definition, not installed.
+            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len, show_repo=False)
 
         if old.rpmdb_problems:
             print _("Rpmdb Problems:")
@@ -1847,6 +2240,13 @@ to exit.
                               'Updated'      : _('Updated'),
                               }
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
+        """Print information about how packages are altered in a transaction.
+
+        :param old: the :class:`history.YumHistoryTransaction` to
+           print information about
+        :param pats: a list of patterns.  Packages that match a patten
+           in *pats* will be highlighted in the output
+        """
         last = None
         #  Note that these don't use _simple_pkg() because we are showing what
         # happened to them in the transaction ... not the difference between the
@@ -1900,6 +2300,10 @@ to exit.
                                         self._hpkg2from_repo(hpkg))
 
     def historySummaryCmd(self, extcmds):
+        """Print a summary of transactions in history.
+
+        :param extcmds: list of extra command line arguments
+        """
         tids, printall = self._history_list_transactions(extcmds)
         if tids is None:
             return 1, ['Failed history info']
@@ -1960,6 +2364,10 @@ to exit.
                              utf8_width_fill(uiacts, 16, 16), count)
 
     def historyAddonInfoCmd(self, extcmds):
+        """Print addon information about transaction in history.
+
+        :param extcmds: list of extra command line arguments
+        """
         tid = None
         if len(extcmds) > 1:
             tid = extcmds[1]
@@ -1997,16 +2405,19 @@ to exit.
         
         for item in extcmds[2:]:
             if item in addon_info:
-                print '%s:' % item
-                print self.history.return_addon_data(hist_data.tid, item)
+                self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
+                print self.history.return_addon_data(hist_data.tid, item),
+                self.verbose_logger.log(logginglevels.INFO_2, '')
             else:
                 print _('%s: No additional data found by this name') % item
-
-            print ''
+            self.verbose_logger.log(logginglevels.INFO_2, '')
 
     def historyPackageListCmd(self, extcmds):
-        """ Shows the user a list of data about the history, from the point
-            of a package(s) instead of via. transactions. """
+        """Print a list of information about transactions from history
+        that involve the given package or packages.
+
+        :param extcmds: list of extra command line arguments
+        """
         tids = self.history.search(extcmds)
         limit = None
         if extcmds and not tids:
@@ -2092,9 +2503,95 @@ to exit.
             if lastdbv.end_rpmdbversion != rpmdbv:
                 self._rpmdb_warn_checks()
 
+    def historyPackageInfoCmd(self, extcmds):
+        """Print information about packages in history transactions.
+
+        :param extcmds: list of extra command line arguments
+        """
+        tids = self.history.search(extcmds)
+        limit = None
+        if extcmds and not tids:
+            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            return 1, ['Failed history packages-info']
+        if not tids:
+            limit = 20
+
+        all_uistates = self._history_state2uistate
+
+        num = 0
+        for old in self.history.old(tids, limit=limit):
+            if limit is not None and num and (num +len(old.trans_data)) > limit:
+                break
+            last = None
+
+            for hpkg in old.trans_data: # Find a pkg to go with each cmd...
+                if limit is None:
+                    x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                    if not x and not m:
+                        continue
+
+                uistate = all_uistates.get(hpkg.state, hpkg.state)
+                if num:
+                    print ""
+                print _("Transaction ID :"), old.tid
+                tm = time.ctime(old.beg_timestamp)
+                print _("Begin time     :"), tm
+                print _("Package        :"), hpkg.ui_nevra
+                print _("State          :"), uistate
+                if hpkg.size is not None:
+                    num = int(hpkg.size)
+                    print _("Size           :"), locale.format("%d", num, True)
+                if hpkg.buildhost is not None:
+                    print _("Build host     :"), hpkg.buildhost
+                if hpkg.buildtime is not None:
+                    tm = time.ctime(int(hpkg.buildtime))
+                    print _("Build time     :"), tm
+                if hpkg.packager is not None:
+                    print _("Packager       :"), hpkg.packager
+                if hpkg.vendor is not None:
+                    print _("Vendor         :"), hpkg.vendor
+                if hpkg.license is not None:
+                    print _("License        :"), hpkg.license
+                if hpkg.url is not None:
+                    print _("URL            :"), hpkg.url
+                if hpkg.sourcerpm is not None:
+                    print _("Source RPM     :"), hpkg.sourcerpm
+                if hpkg.committime is not None:
+                    tm = time.ctime(int(hpkg.committime))
+                    print _("Commit Time    :"), tm
+                if hpkg.committer is not None:
+                    print _("Committer      :"), hpkg.committer
+                if hpkg.yumdb_info.reason is not None:
+                    print _("Reason         :"), hpkg.yumdb_info.reason
+                if hpkg.yumdb_info.command_line is not None:
+                    print _("Command Line   :"), hpkg.yumdb_info.command_line
+                if hpkg.yumdb_info.from_repo is not None:
+                    print _("From repo      :"), hpkg.yumdb_info.from_repo
+                if hpkg.yumdb_info.installed_by is not None:
+                    uid = int(hpkg.yumdb_info.installed_by)
+                    name = self._pwd_ui_username(uid)
+                    print _("Installed by   :"), name
+                if hpkg.yumdb_info.changed_by is not None:
+                    uid = int(hpkg.yumdb_info.changed_by)
+                    name = self._pwd_ui_username(uid)
+                    print _("Changed by     :"), name
+
+                num += 1
+
+        # And, again, copy and paste...
+        lastdbv = self.history.last()
+        if lastdbv is None:
+            self._rpmdb_warn_checks(warn=False)
+        else:
+            #  If this is the last transaction, is good and it doesn't
+            # match the current rpmdb ... then mark it as bad.
+            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            if lastdbv.end_rpmdbversion != rpmdbv:
+                self._rpmdb_warn_checks()
+
 
 class DepSolveProgressCallBack:
-    """provides text output callback functions for Dependency Solver callback"""
+    """A class to provide text output callback functions for Dependency Solver callback."""
     
     def __init__(self, ayum=None):
         """requires yum-cli log and errorlog functions as arguments"""
@@ -2103,6 +2600,25 @@ class DepSolveProgressCallBack:
         self.ayum = ayum
 
     def pkgAdded(self, pkgtup, mode):
+        """Print information about a package being added to the
+        transaction set.
+
+        :param pkgtup: tuple containing the package name, arch,
+           version, and repository
+        :param mode: a short string indicating why the package is
+           being added to the transaction set.
+
+        Valid current values for *mode* are::
+        
+           i = the package will be installed
+           u = the package will be an update
+           e = the package will be erased
+           r = the package will be reinstalled
+           d = the package will be a downgrade
+           o = the package will be obsoleting another package
+           ud = the package will be updated
+           od = the package will be obsoleted
+        """
         modedict = { 'i': _('installed'),
                      'u': _('an update'),
                      'e': _('erased'),
@@ -2118,43 +2634,85 @@ class DepSolveProgressCallBack:
             modeterm)
         
     def start(self):
+        """Perform setup at the beginning of the dependency solving
+        process.
+        """
         self.loops += 1
         
     def tscheck(self):
+        """Output a message stating that a transaction check is beginning."""
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
         
     def restartLoop(self):
+        """Output a message stating that dependency resolution is restarting."""
         self.loops += 1
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Restarting Dependency Resolution with new changes.'))
         self.verbose_logger.debug('---> Loop Number: %d', self.loops)
     
     def end(self):
+        """Output a message stating that dependency resolution has finished."""
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Finished Dependency Resolution'))
 
     
     def procReq(self, name, formatted_req):
+        """Output a message stating that the package *formatted_req*
+        is being processed as a dependency for the package *name*.
+
+        :param name: the name of the package that *formatted_req* is a
+           dependency of
+        :param formatted_req: a string representing the package that
+           is being processed as a dependency of *name*
+        """
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
 
     def procReqPo(self, po, formatted_req):
+        """Output a message stating that the package *formatted_req*
+        is being processed as a dependency for the package *po*.
+
+        :param po: the package object that *formatted_req* is a
+           dependency of
+        :param formatted_req: a string representing the package that
+           is being processed as a dependency of *po*
+        """
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
     
     def groupRemoveReq(self, po, hits):
+        """Output a message stating that the given package will not be
+        removed. This method is used during leaf-only group remove
+        commands to indicate that the package will be kept.
+
+        :param po: the :class:`yum.packages.PackageObject` that will
+           not be removed
+        :param hits: unused
+        """
         self.verbose_logger.log(logginglevels.INFO_2,
             _('---> Keeping package: %s'), po)
 
     def unresolved(self, msg):
+        """Output a message stating that there is an unresolved
+        dependency.
+
+        :param msg: string giving information about the unresolved
+        dependency
+        """
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
 
     def format_missing_requires(self, reqPo, reqTup):
-        """ Create a message for errorlist, non-cli users could also store this
-            data somewhere and not print errorlist. """
+        """Return an error message stating that a package required to
+        fulfill a dependency is missing.
+
+        :param reqPo: the package object that has a dependency that
+           cannot be fulfilled
+        :param reqTup: the name, flags, and version of the package
+           needed to fulfil the dependency
+        """
         needname, needflags, needversion = reqTup
 
         yb = self.ayum
@@ -2239,45 +2797,89 @@ class DepSolveProgressCallBack:
         return msg
     
     def procConflict(self, name, confname):
+        """Print a message stating that two packages in the
+        transaction conflict.
+
+        :param name: the name of the first package involved in the
+           conflict 
+        :param confname: the name of the second package involved in
+           the conflict
+        """
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Conflict: %s conflicts %s'),
                                 name, confname)
 
     def procConflictPo(self, po, confname):
+        """Print a message stating that two packages in the
+        transaction conflict.
+
+        :param name: the first package object involved in the
+           conflict 
+        :param confname: the second package object involved in
+           the conflict
+        """
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Conflict: %s conflicts %s'),
                                 po, confname)
 
     def transactionPopulation(self):
+        """Output a message stating that the transaction set is being populated."""
+
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
             'with selected packages. Please wait.'))
     
     def downloadHeader(self, name):
+        """Output a message stating that the header for the given
+        package is being downloaded.
+
+        :param name: the name of the package
+        """
         self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
             'to pack into transaction set.'), name)
        
 
 class CacheProgressCallback:
+    """A class to handle text output callbacks during metadata cache updates."""
 
-    '''
-    The class handles text output callbacks during metadata cache updates.
-    '''
-    
     def __init__(self):
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
         self.file_logger = logging.getLogger("yum.filelogging.cli")
 
     def log(self, level, message):
+        """Output a log message.
+
+        :param level: the logging level for the message
+        :param message: the message
+        """
         self.verbose_logger.log(level, message)
 
     def errorlog(self, level, message):
+        """Output an errorlog message.
+
+        :param level: the logging level for the message
+        :param message: the message
+        """
         self.logger.log(level, message)
 
     def filelog(self, level, message):
+        """Output a file log message.
+
+        :param level: the logging level for the message
+        :param message: the message
+        """
         self.file_logger.log(level, message)
 
     def progressbar(self, current, total, name=None):
+        """Output the current status to the terminal using a progress
+        status bar.
+
+        :param current: a number representing the amount of work
+           already done
+        :param total: a number representing the total amount of work
+           to be done
+        :param name: a name to label the progress bar with
+        """
         progressbar(current, total, name)
 
 def _pkgname_ui(ayum, pkgname, ts_states=None):
@@ -2330,10 +2932,7 @@ def _pkgname_ui(ayum, pkgname, ts_states=None):
     return pkgname
 
 class YumCliRPMCallBack(RPMBaseCallback):
-
-    """
-    Yum specific callback class for RPM operations.
-    """
+    """A Yum specific callback class for RPM operations."""
 
     width = property(lambda x: _term_width())
 
@@ -2351,11 +2950,31 @@ class YumCliRPMCallBack(RPMBaseCallback):
     #  Installing things have pkg objects passed to the events, so only need to
     # lookup for erased/obsoleted.
     def pkgname_ui(self, pkgname, ts_states=('e', 'od', 'ud', None)):
-        """ Get more information on a simple pkgname, if we can. """
+        """Return more information on a simple pkgname, if possible.
+
+        :param pkgname: the name of the package to find information about
+        :param ts_states: a tuple containing the states where the
+           package might be found
+        """
         return _pkgname_ui(self.ayum, pkgname, ts_states)
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        # this is where a progress bar would be called
+        """Output information about an rpm operation.  This may
+        include a text progress bar.
+
+        :param package: the package involved in the event
+        :param action: the type of action that is taking place.  Valid
+           values are given by
+           :func:`rpmtrans.RPMBaseCallback.action.keys()`
+        :param te_current: a number representing the amount of work
+           already done in the current transaction
+        :param te_total: a number representing the total amount of work
+           to be done in the current transaction
+        :param ts_current: the number of the current transaction in
+           transaction set
+        :param ts_total: the total number of transactions in the
+           transaction set
+        """
         process = self.action[action]
 
         if not hasattr(self, '_max_action_wid'):
@@ -2380,6 +2999,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         
         if self.output and (sys.stdout.isatty() or te_current == te_total):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
+                                              progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
             msg = fmt % (utf8_width_fill(process, wid1, wid1),
                          utf8_width_fill(pkgname, wid2, wid2))
@@ -2391,6 +3011,11 @@ class YumCliRPMCallBack(RPMBaseCallback):
                 print " "
 
     def scriptout(self, package, msgs):
+        """Print messages originating from a package script.
+
+        :param package: unused
+        :param msgs: the messages coming from the script
+        """
         if msgs:
             sys.stdout.write(to_unicode(msgs))
             sys.stdout.flush()
@@ -2445,6 +3070,15 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
 
 def progressbar(current, total, name=None):
+    """Output the current status to the terminal using a simple
+    text progress bar consisting of 50 # marks.
+
+    :param current: a number representing the amount of work
+       already done
+    :param total: a number representing the total amount of work
+       to be done
+    :param name: a name to label the progress bar with
+    """
     """simple progress bar 50 # marks"""
     
     mark = '#'

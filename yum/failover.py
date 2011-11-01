@@ -19,51 +19,80 @@
 # worry about calling get_serverurl() and server_failed() and these classes will 
 # figure out which URL to cough up based on the failover method.
 
+"""Classes for handling failovers for server URLs."""
+
 import random
 
 class baseFailOverMethod:
-
+    """A base class to provide a failover to switch to a new server if
+    the current one fails.
+    """
     def __init__(self, repo):
         self.repo = repo
         self.failures = 0
     
     def get_serverurl(self, i=None):
-        """Returns a serverurl based on this failover method or None 
-           if complete failure.  If i is given it is a direct index
-           to pull a server URL from instead of using the failures 
-           counter."""
+        """Return a server URL based on this failover method, or None
+        if there is a complete failure.  This method should always be
+        used to translate an index into a URL, as this object may
+        change how indexes map.
+
+        :param i: if given, this is the index of the server URL to
+           return, instead of using the failures counter
+        :return: the next server URL
+        """
         return None
         
     def server_failed(self):
-        "Tells the failover method that the current server is failed."
+        """Notify the failover method that the current server has
+        failed.
+        """
         self.failures = self.failures + 1
         
     def reset(self, i=0):
-        "Reset the failures counter to a given index."
+        """Reset the failures counter to the given index.
+
+        :param i: the index to reset the failures counter to
+        """
         self.failures = i
 
     def get_index(self):
-        """Returns the current number of failures which is also the
-           index into the list this object represents.  ger_serverurl()
-           should always be used to translate an index into a URL
-           as this object may change how indexs map.  (See RoundRobin)"""
+        """Return the current number of failures, which is also the
+        current index into the list of URLs that this object
+        represents.  :fun:`get_serverurl` should always be used to
+        translate an index into a URL, as this object may change how
+        indexes map.
 
+        :return: the current number of failures, which is also the
+           current index   
+        """
         return self.failures
    
     def len(self):
-        """Returns the how many URLs we've got to cycle through."""
+        """Return the total number of URLs available to cycle through
+        in this object.
 
+        :return: the total number of URLs available
+        """
         return len(self.repo.urls)
         
             
 
 class priority(baseFailOverMethod):
-
-    """Chooses server based on the first success in the list."""
-    
+    """A class to provide a failover to switch to a new server
+    if the current one fails.  This classes chooses the next server
+    based on the first success in the list of servers.
+    """
     def get_serverurl(self, i=None):
-        "Returns a serverurl based on this failover method or None if complete failure."
-        
+        """Return the next successful server URL in the list, or None
+        if there is a complete failure.  This method should always be
+        used to translate an index into a URL, as this object may
+        change how indexes map.
+
+        :param i: if given, this is the index of the server URL to
+           return, instead of using the failures counter
+        :return: the next server URL
+        """
         if i == None:
             index = self.failures
         else:
@@ -77,17 +106,28 @@ class priority(baseFailOverMethod):
         
     
 class roundRobin(baseFailOverMethod):
-
-    """Chooses server based on a round robin."""
-    
+    """A class to provide a failover to switch to a new server
+    if the current one fails.  When an object of this class is
+    created, it selects a random place in the list of URLs to begin
+    with, then each time :func:`get_serveurl` is called, the next URL
+    in the list is returned, cycling back to the beginning of the list
+    after the end is reached.
+    """
     def __init__(self, repo):
         baseFailOverMethod.__init__(self, repo)
         random.seed()
         self.offset = random.randint(0, 37)
     
     def get_serverurl(self, i=None):
-        "Returns a serverurl based on this failover method or None if complete failure."
+        """Return the next successful server URL in the list, using
+        the round robin scheme, or None if there is a complete
+        failure.  This method should always be used to translate an
+        index into a URL, as this object may change how indexes map.
 
+        :param i: if given, this is the index of the server URL to
+           return, instead of using the failures counter
+        :return: the next server URL
+        """
         if i == None:
             index = self.failures
         else:

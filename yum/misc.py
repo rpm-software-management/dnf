@@ -8,6 +8,7 @@ import os
 import os.path
 from cStringIO import StringIO
 import base64
+import binascii
 import struct
 import re
 import errno
@@ -409,6 +410,17 @@ def procgpgkey(rawkey):
   
     # Decode and return
     return base64.decodestring(block.getvalue())
+
+def gpgkey_fingerprint_ascii(info, chop=4):
+    ''' Given a key_info data from getgpgkeyinfo(), return an ascii
+    fingerprint. Chop every 4 ascii values, as that is what GPG does. '''
+    # First "duh" ... it's a method...
+    fp = info['fingerprint']()
+    fp = binascii.hexlify(fp)
+    if chop:
+        fp = [fp[i:i+chop] for i in range(0, len(fp), chop)]
+        fp = " ".join(fp)
+    return fp
 
 def getgpgkeyinfo(rawkey, multiple=False):
     '''Return a dict of info for the given ASCII armoured key text
@@ -940,14 +952,16 @@ def unlink_f(filename):
         if e.errno != errno.ENOENT:
             raise
 
-def stat_f(filename):
+def stat_f(filename, ignore_EACCES=False):
     """ Call os.stat(), but don't die if the file isn't there. Returns None. """
     try:
         return os.stat(filename)
     except OSError, e:
-        if e.errno not in (errno.ENOENT, errno.ENOTDIR):
-            raise
-        return None
+        if e.errno in (errno.ENOENT, errno.ENOTDIR):
+            return None
+        if ignore_EACCES and e.errno == errno.EACCES:
+            return None
+        raise
 
 def _getloginuid():
     """ Get the audit-uid/login-uid, if available. None is returned if there
@@ -1112,10 +1126,12 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
         if check_timestamps:
             fi = stat_f(filename)
             fo = stat_f(out)
-            if fi and fo and fo.st_mtime > fi.st_mtime:
+            if fi and fo and fo.st_mtime == fi.st_mtime:
                 return out
 
         _decompress_chunked(filename, out, ztype)
+        if check_timestamps and fi:
+            os.utime(out, (fi.st_mtime, fi.st_mtime))
         
     return out
     

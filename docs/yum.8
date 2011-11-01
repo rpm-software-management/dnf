@@ -45,21 +45,14 @@ gnome\-packagekit application\&.
 .br
 .I \fR * makecache
 .br
-.I \fR * groupinstall group1 [group2] [\&.\&.\&.]
-.br
-.I \fR * groupupdate group1 [group2] [\&.\&.\&.]
-.br 
-.I \fR * grouplist [hidden] [groupwildcard] [\&.\&.\&.]
-.br
-.I \fR * groupremove group1 [group2] [\&.\&.\&.]
-.br
-.I \fR * groupinfo group1 [\&.\&.\&.]
+.I \fR * groups  [\&.\&.\&.]
 .br
 .I \fR * search string1 [string2] [\&.\&.\&.]
 .br
 .I \fR * shell [filename]
 .br
 .I \fR * resolvedep dep1 [dep2] [\&.\&.\&.] 
+    (maintained for legacy reasons only - use repoquery or yum provides)
 .br
 .I \fR * localinstall rpmfile1 [rpmfile2] [\&.\&.\&.] 
     (maintained for legacy reasons only - use install)
@@ -77,7 +70,9 @@ gnome\-packagekit application\&.
 .br
 .I \fR * version [ all | installed | available | group-* | nogroups* | grouplist | groupinfo ]
 .br
-.I \fR * history [info|list|packages-list|summary|addon-info|redo|undo|rollback|new] 
+.I \fR * history [info|list|packages-list|packages-info|summary|addon-info|redo|undo|rollback|new|sync|stats] 
+.br
+.I \fR * load-transaction [txfile]
 .br
 .I \fR * check
 .br 
@@ -201,56 +196,55 @@ the \fIClean Options\fP section below\&.
 Is used to download and make usable all the metadata for the currently enabled
 \fByum\fP repos.
 .IP 
-.IP "\fBgroupinstall\fP"
-Is used to install all of the individual packages in a group, of the specified
+.IP "\fBgroups\fP"
+A command, new in 3.4.2, that collects all the subcommands that act on groups together.
+
+"\fBgroup install\fP" is used to install all of the individual packages in a group, of the specified
 types (this works as if you'd taken each of those package names and put them on
 the command line for a "yum install" command).
  The group_package_types configuration option specifies which types will
 be installed.
-.IP 
-.IP "\fBgroupupdate\fP"
-Is just an alias for groupinstall, which will do the right thing because
+
+"\fBgroup update\fP" is just an alias for groupinstall, which will do the right thing because
 "yum install X" and "yum update X" do the same thing, when X is already
 installed.
-.IP 
-.IP "\fBgrouplist\fP"
-Is used to list the available groups from all \fByum\fP repos. Groups are marked
+
+"\fBgroup list\fP" is used to list the available groups from all \fByum\fP repos. Groups are marked
 as "installed" if all mandatory packages are installed, or if a group doesn't
 have any mandatory packages then it is installed if any of the optional or
 default package are installed.
 The optional "hidden" argument will also list groups marked as not being
 "user visible". If you pass the \-v option, to enable verbose mode, then the
 groupids are displayed.
-.IP 
-.IP "\fBgroupremove\fP"
-Is used to remove all of the packages in a group, unlike "groupinstall" this
+
+"\fBgroup remove\fP" is used to remove all of the packages in a group, unlike "groupinstall" this
 will remove everything regardless of group_package_types. It is worth pointing
-out that packages can be in more than one group, so "groupinstall X Y" followed
-by "groupremove Y" does not do give you the same result as "groupinstall X".
+out that packages can be in more than one group, so "group install X Y" followed
+by "group remove Y" does not do give you the same result as "group install X".
 
 The groupremove_leaf_only configuration changes the behaviour of this command
 to only remove packages which aren't required by something else.
-.IP 
-.IP "\fBgroupinfo\fP"
-Is used to give the description and package list of a group (and which type
+
+"\fBgroup info\fP" is used to give the description and package list of a group (and which type
 those packages are marked as). Note that you can use the yum-filter-data and
 yum-list-data plugins to get/use the data the other way around (Ie. what
 groups own packages need updating). If you pass the \-v option, to enable verbose
 mode, then the package names are matched against installed/available packages
 similar to the list command.
-.IP 
+.IP
 .IP "\fBshell\fP"
 Is used to enter the 'yum shell', when a filename is specified the contents of
 that file is executed in yum shell mode. See \fIyum-shell(8)\fP for more info
 .IP
 .IP "\fBresolvedep\fP"
 Is used to list packages providing the specified dependencies, at most one
-package is listed per dependency. 
+package is listed per dependency. This command is maintained for legacy
+reasons only, use repoquery instead.
 .IP
 .IP "\fBlocalinstall\fP"
 Is used to install a set of local rpm files. If required the enabled 
 repositories will be used to resolve dependencies. Note that the install command
-will do a local install, if given a filename. This option is maintained for legacy
+will do a local install, if given a filename. This command is maintained for legacy
 reasons only.
 .IP
 .IP "\fBlocalupdate\fP"
@@ -258,7 +252,7 @@ Is used to update the system by specifying local rpm files. Only the specified
 rpm files of which an older version is already installed will be installed,
 the remaining specified packages will be ignored.
 If required the enabled repositories will be used to resolve dependencies. Note
-that the update command will do a local update, if given a filename. This option is maintained for
+that the update command will do a local update, if given a filename. This command is maintained for
 legacy reasons only.
 .IP
 .IP "\fBreinstall\fP"
@@ -270,7 +264,7 @@ on groups, files, provides and filelists just like the "install" command\&.
 Will try and downgrade a package from the version currently installed to the
 previously highest version (or the specified version).
 The depsolver will not necessarily work, but if you specify all the packages it
-should work (and thus. all the simple cases will work). Also this does not
+should work (thus, all the simple cases will work). Also this does not
 work for "installonly" packages, like Kernels. downgrade operates
 on groups, files, provides, filelists and rpm files just like the "install" command\&.
 .IP
@@ -331,20 +325,27 @@ and so takes sub-commands:
 .IP "\fBhistory\fP"
 The history command allows the user to view what has happened in past
 transactions (assuming the history_record config. option is set). You can use
-info/list/packages-list/summary to view what happened, undo/redo/rollback to act
-on that information and new to start a new history file.
+info/list/packages-list/packages-info/summary to view what happened,
+undo/redo/rollback to act on that information and new to start a new history
+file.
 
 The info/list/summary commands take either a transaction id or a package (with
 wildcards, as in \fBSpecifying package names\fP), all three can also be passed
 no arguments. list can be passed the keyword "all" to list all the transactions.
 
-The packages-list command takes a package  (with wildcards, as in
-\fBSpecifying package names\fP).
+The packages-list/packages-info commands takes a package  (with wildcards, as in
+\fBSpecifying package names\fP). And show data from the point of view of that
+package.
 
 The undo/redo/rollback commands take either a single transaction id or the
 keyword last and an offset from the last transaction (Eg. if you've done 250
 transactions, "last" refers to transaction 250, and "last-4" refers to
 transaction 246).
+The redo command can also take some optional arguments before you specify the
+transaction. "force-reinstall" tells it reinstall any packages that were
+installed in that transaction (via. install, upgrade or downgrade).
+"force-remove" tells it to forcibly remove any packages that were updated or
+downgraded.
 
 The undo/redo commands act on the specified transaction, undo'ing or repeating
 the work of that transaction. While the rollback command will undo all
@@ -358,6 +359,12 @@ transactions 1 and 4.
 
 The addon-info command takes a transaction ID, and the packages-list command
 takes a package (with wildcards).
+
+The stats command shows some statistics about the current history DB.
+
+The sync commands allows you to change the rpmdb/yumdb data stored for any
+installed packages, to whaever is in the current rpmdb/yumdb (this is mostly
+useful when this data was not stored when the package went into the history DB).
 
 In "history list" you can change the behaviour of the 2nd column via. the
 configuration option history_list_view.
@@ -380,6 +387,15 @@ end of the package column in the packages-list command).
 .br
 .I \fBs\fR - The transaction completed fine, but --skip-broken was enabled and had to skip some packages.
 .br
+
+
+.IP
+.IP "\fBload-transaction\fP"
+This command will re-load a saved yum transaction file, this allows you to
+run a transaction on one machine and then use it on another.
+The two common ways to get a saved yum transaction file are from
+"yum -q history addon-info last saved_tx" or via. the automatic saves in
+$TMPDIR/yum_save_tx.* when a transaction is solved but not run.
 
 .IP
 .IP "\fBcheck\fP"
@@ -411,6 +427,11 @@ Assume yes; assume that the answer to any question which would be asked
 is yes\&.
 .br
 Configuration Option: \fBassumeyes\fP
+.IP "\fB\-\-assumeno\fP"
+Assume no; assume that the answer to any question which would be asked 
+is no\&. This option overrides assumeyes, but is still subject to alwaysprompt.
+.br
+Configuration Option: \fBassumeno\fP
 .IP "\fB\-c, \-\-config=[config file]\fP" 
 Specifies the config file location - can take HTTP and FTP URLs and local file
 paths\&.

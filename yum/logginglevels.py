@@ -186,7 +186,7 @@ def doLoggingSetup(debuglevel, errorlevel,
     if errorlevel is not None:  
         setErrorLevel(errorlevel)
 
-def setFileLog(uid, logfile):
+def setFileLog(uid, logfile, cleanup=None):
     # TODO: When python's logging config parser doesn't blow up
     # when the user is non-root, put this in the config file.
     # syslog-style log
@@ -208,6 +208,8 @@ def setFileLog(uid, logfile):
                 "%b %d %H:%M:%S")
             filehandler.setFormatter(formatter)
             filelogger.addHandler(filehandler)
+            if not cleanup is None:
+                cleanup.append(lambda: filelogger.removeHandler(filehandler))
         except IOError:
             logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
 

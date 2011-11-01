@@ -58,12 +58,12 @@ flags = {"GT": rpm.RPMSENSE_GREATER,
          "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
          "EQ": rpm.RPMSENSE_EQUAL,
          None: 0 }
+_rflags = {}
+for f in flags:
+    _rflags[flags[f]] = f
 
 class Depsolve(object):
-
-    """
-    Dependency resolving class.
-    """
+    """A class for resolving dependencies."""
 
     def __init__(self):
         self._ts = None
@@ -81,6 +81,8 @@ class Depsolve(object):
         self.installedUnresolvedFileRequires = None
 
     def doTsSetup(self):
+        """Sets up the transaction set before it is used."""
+
         warnings.warn(_('doTsSetup() will go away in a future version of Yum.\n'),
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
         return self._getTs()
@@ -131,7 +133,7 @@ class Depsolve(object):
         
 
     def initActionTs(self):
-        """sets up the ts we'll use for all the work"""
+        """Set up the transaction set that will be used for all the work."""
         
         self._ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
         ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
@@ -158,19 +160,31 @@ class Depsolve(object):
         self._ts.setProbFilter(probfilter)
 
     def whatProvides(self, name, flags, version):
-        """searches the packageSacks for what provides the arguments
-           returns a ListPackageSack of providing packages, possibly empty"""
-
+        """Search the packageSacks for what provides the specified
+        feature or file.
+      
+        :param name: a string specifying the file or feature to search
+           for
+        :param flags: flags related to the search
+        :param version: the version to search for
+        :return: a :class:`ListPackagaSack` containing the packages
+           that match the arguments, and may be empty
+        """
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Searching pkgSack for dep: %s'),
             name)
         defSack = ListPackageSack(self.pkgSack.searchProvides((name, flags, version)))
         return defSack
         
     def allowedMultipleInstalls(self, po):
-        """takes a packageObject, returns 1 or 0 depending on if the package 
-           should/can be installed multiple times with different vers
-           like kernels and kernel modules, for example"""
+        """Return whether the given package object can be installed
+        multiple times with different versions.  For example, this
+        would be true of kernels and kernel modules.
 
+        :param po: the package object that this function will
+           determine whether can be install multiple times
+        :return: a boolean specifying whether *po* can be installed
+           multiple times
+        """
         iopkgs = set(self.conf.installonlypkgs)
         if po.name in iopkgs:
             return True
@@ -182,8 +196,11 @@ class Depsolve(object):
         return False
 
     def populateTs(self, test=0, keepold=1):
-        """take transactionData class and populate transaction set"""
+        """Populate the transaction set.
 
+        :param test: unused
+        :param keepold: whether to keep old packages
+        """
         if self.dsCallback: self.dsCallback.transactionPopulation()
         ts_elem = {}
         
@@ -393,9 +410,27 @@ class Depsolve(object):
             self.conf.obsoletes = 0
             txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
             self.conf.obsoletes = origobs
-            if not txmbrs:
+
+            def _check_update_worked(txmbrs, obs=False):
+                #  Old code assumed that if there was an update, we were good:
+                #    if txmbrs: return True
+                # ..however we have a problem when foo-1 and foo-2 both require
+                # bar-1, and bar-2 is being installed. If the req. is identical
+                # then we'll skip checking it in _checkInstall(), so we need to
+                # check it here.
+                for txmbr in txmbrs:
+                    if obs or txmbr.name == requiringPo.name:
+                        n,f,v = requirement
+                        creq = (n, _rflags[f],
+                                rpmUtils.miscutils.stringToVersion(v))
+                        # If it's identical ... checkInstall will skip it.
+                        if creq not in txmbr.po.requires:
+                            return True
+                return False
+
+            if not _check_update_worked(txmbrs):
                 txmbrs = self.update(po=requiringPo, requiringPo=requiringPo)
-                if not txmbrs:
+                if not _check_update_worked(txmbrs, obs=True):
                     msg = self._err_missing_requires(requiringPo, requirement)
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('No update paths found for %s. Failure!'), requiringPo)
                     return self._requiringFromTransaction(requiringPo, requirement, errorlist)
@@ -696,6 +731,13 @@ class Depsolve(object):
                 self.tsInfo.remove(txmbr.pkgtup)
 
     def prof_resolveDeps(self):
+        """Call :func:`resolveDeps`, and profile the call using the
+        hotshot profiler.
+
+        :return: a tuple containing the result code and a list of
+           result strings.  This is simply the return value of
+           :func:`resolveDeps` being passed up.
+        """
         fn = "anaconda.prof.0"
         import hotshot, hotshot.stats
         prof = hotshot.Profile(fn)
@@ -709,6 +751,13 @@ class Depsolve(object):
         return rc
 
     def cprof_resolveDeps(self):
+        """Call :func:`resolveDeps`, and profile the call using the
+        cprof profiler.
+
+        :return: a tuple containing the result code and a list of
+           result strings.  This is simply the return value of
+           :func:`resolveDeps` being passed up.
+        """
         import cProfile, pstats
         prof = cProfile.Profile()
         rc = prof.runcall(self.resolveDeps)
@@ -721,8 +770,18 @@ class Depsolve(object):
         p.print_stats(20)
         return rc
 
-    def resolveDeps(self, full_check=True):
-
+    def resolveDeps(self, full_check=True, skipping_broken=False):
+        """Resolve dependencies for the packages in the current
+        trasaction set.
+        
+        :param full_check: whether to also check removes and installs,
+           as well as dependencies
+        :param skipping_broken: if this is true, a message saying that
+           dependency solving has finished successfully will not be output.
+           This is useful since if there are broken packages that are
+           being skipped, :func:`resolveDeps` will need to be called
+           multiple times before dependency solving is completely finished
+        """
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
 
@@ -778,6 +837,25 @@ class Depsolve(object):
                     if checkdep:
                         break # The next conflict might be the same pkg
 
+                # check Obsoletes
+                #  Atm. This is _just_ checking for transaction members which
+                # obsolete each other. Because rpm will now auto. obs. those
+                # anyway. We _don't_ check for installed pkgs. which might obs.
+                # something to be installed, even though rpm will also do that.
+                for txmbr in self.tsInfo.getMembersWithState(None, output_states=TS_INSTALL_STATES):
+                    for obs_n in txmbr.po.obsoletes_names:
+                        for otxmbr in self.tsInfo.matchNaevr(name=obs_n):
+                            if otxmbr.output_state not in TS_INSTALL_STATES:
+                                continue
+                            if otxmbr.po.obsoletedBy([txmbr.po]):
+                                self.tsInfo.remove(otxmbr.pkgtup)
+                                #  We need to remove an obsoleted entry that
+                                # was maybe used to resolve something ... ?
+                                CheckDeps = True
+                                self._last_req = None
+                                self.pkgSack.delPackage(otxmbr.po)
+                                self.up.delPackage(otxmbr.pkgtup)
+
                 if CheckDeps:
                     if self.dsCallback: self.dsCallback.restartLoop()
                     self.verbose_logger.log(logginglevels.DEBUG_1, _('Restarting Loop'))
@@ -795,7 +873,11 @@ class Depsolve(object):
                 txmbr.ts_state = 'i'
                 txmbr.output_state = TS_INSTALL
 
-        if self.dsCallback: self.dsCallback.end()
+        if self.dsCallback:
+            if not self.conf.skip_broken:
+                self.dsCallback.end()
+            elif not skipping_broken and not errors:
+                self.dsCallback.end()
         self.verbose_logger.log(logginglevels.DEBUG_1, _('Dependency Process ending'))
 
         self.tsInfo.changed = False
@@ -1146,6 +1228,11 @@ class Depsolve(object):
         return ret
 
     def isPackageInstalled(self, pkgname):
+        """Return whether the given package in installed.
+
+        :param pkgname: the name of the package
+        :return: whether the package in installed
+        """
         lst = self.tsInfo.matchNaevr(name = pkgname)
         for txmbr in lst:
             if txmbr.output_state in TS_INSTALL_STATES:
@@ -1389,42 +1476,52 @@ class Depsolve(object):
 
 
 class DepCheck(object):
-    """object that YumDepsolver uses to see what things are needed to close
-       the transaction set. attributes: requires, conflicts are a list of 
-       requires are conflicts in the current transaction set. Each item in the
-       lists are a requires or conflicts object"""
+    """Object that :class:`YumDepsolver` uses to see what things are
+    needed to close the transaction set. The attributes requires and
+    conflicts are lists of requires and conflicts in the current
+    transaction set. Each item in the lists is a :class:`Requires` or
+    :class:`Conflicts` object.
+    """
     def __init__(self):
         self.requires = []
         self.conflicts = []
 
     def addRequires(self, po, req_tuple_list):
+        """Create and add a :class:`Requires` object to the list of
+        requires.
+
+        :param po: the package object involved in the requires
+        :param req_tuple_list: a list of required by *po* that are
+           un-closed in the transaction set
+        """
         # fixme - do checking for duplicates or additions in here to zip things along
         reqobj = Requires(po, req_tuple_list)
         self.requires.append(reqobj)
     
     def addConflicts(self, conflict_po_list, conflict_item):
+        """Create and add a :class:`Conflicts` object to the list of
+        conflicts.
+
+        :param conflict_po_list: a list of conflicting package objects
+        :param conflict_item: what the conflict between the members of
+           *conflict_po_list is.
+        """
         confobj = Conflicts(conflict_po_list, conflict_item)
         self.conflicts.append(confobj)
 
 class Requires(object):
-
+    """A pure data class for holding a package and the list of things
+    it requires.
     """
-    A pure data class for holding a package and the list of things it
-    requires.
-    """
-
     def __init__(self, pkg,requires):
         self.pkg = pkg # po of requiring pkg
         self.requires = requires # list of things it requires that are un-closed in the ts
 
 
 class Conflicts(object):
-
+    """A pure data class for holding a list packages and what the
+    conflict between them is.
     """
-    A pure data class for holding a package and the list of things it
-    conflicts.
-    """
-
     def __init__(self, pkglist, conflict):
         self.pkglist = pkglist # list of conflicting package objects
         self.conflict = conflict # what the conflict was between them

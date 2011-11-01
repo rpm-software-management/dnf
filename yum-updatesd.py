@@ -28,6 +28,11 @@
 # $ dbus-send --system --print-reply --type=method_call \
 #   --dest=edu.duke.linux.yum /Updatesd edu.duke.linux.yum.CheckNow
 
+"""
+Daemon to periodically check for updates to installed packages, and
+associated classes and methods.
+"""
+
 import os
 import sys
 import time
@@ -60,34 +65,78 @@ config_file = '/etc/yum/yum-updatesd.conf'
 initial_directory = os.getcwd()
 
 class UpdateEmitter(object):
-    """Abstract object for implementing different types of emitters."""
+    """Abstract class for implementing different types of
+       emitters.
+    """
+
     def __init__(self):
         pass
     def updatesAvailable(self, updateInfo):
         """Emitted when there are updates available to be installed.
         If not doing the download here, then called immediately on finding
         new updates.  If we do the download here, then called after the
-        updates have been downloaded."""
+        updates have been downloaded.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         pass
+
     def updatesDownloading(self, updateInfo):
-        """Emitted to give feedback of update download starting."""
+        """Emitted to give feedback of update download starting.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         pass
+
     def updatesApplied(self, updateInfo):
-        """Emitted on successful installation of updates."""
+        """Emitted on successful installation of updates.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         pass
+
     def updatesFailed(self, errmsgs):
-        """Emitted when an update has failed to install."""
+        """Emitted when an update has failed to install.
+
+        :param errmsgs: a list of error messages
+        """
         pass
+
     def checkFailed(self, error):
-        """Emitted when checking for updates failed."""
+        """Emitted when checking for updates failed.
+
+        :param error: an error message
+        """
         pass
 
     def setupFailed(self, error, translation_domain):
-        """Emitted when plugin initialization failed."""
+        """Emitted when plugin initialization failed.
+
+        :param error: an error message
+        :param translation_domain: the translation domain supplied by
+           the plugin
+        """
         pass
  
 
 class SyslogUpdateEmitter(UpdateEmitter):
+    """Emitter class to send messages to syslog."""
+
     def __init__(self, syslog_facility, ident = "yum-updatesd",
                  level = "WARN"):
         UpdateEmitter.__init__(self)
@@ -95,6 +144,15 @@ class SyslogUpdateEmitter(UpdateEmitter):
         self.level = level
         
     def updatesAvailable(self, updateInfo):
+        """Emit a message stating that updates are available.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         num = len(updateInfo)
         level = self.level
         if num > 1:
@@ -144,12 +202,23 @@ class SyslogUpdateEmitter(UpdateEmitter):
 
 
 class EmailUpdateEmitter(UpdateEmitter):
+    """Emitter class to send messages via email."""
+
     def __init__(self, sender, rcpt):
         UpdateEmitter.__init__(self)        
         self.sender = sender
         self.rcpt = rcpt
 
     def updatesAvailable(self, updateInfo):
+        """Emit a message stating that updates are available.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         num = len(updateInfo)
         if num < 1:
             return
@@ -173,6 +242,8 @@ class EmailUpdateEmitter(UpdateEmitter):
         s.close()
 
 class DbusUpdateEmitter(UpdateEmitter):
+    """Emitter class to send messages to the dbus message system."""
+
     def __init__(self):
         UpdateEmitter.__init__(self)        
         bus = dbus.SystemBus()
@@ -181,6 +252,15 @@ class DbusUpdateEmitter(UpdateEmitter):
         self.dbusintf = yum_dbus
 
     def updatesAvailable(self, updateInfo):
+        """Emit a message stating that updates are available.
+
+        :param updateInfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         num = len(updateInfo)
         msg = "%d" %(num,)
         if num > 0:
@@ -189,44 +269,102 @@ class DbusUpdateEmitter(UpdateEmitter):
             self.dbusintf.NoUpdatesAvailableSignal(msg)
 
     def updatesFailed(self, errmsgs):
+        """Emit a message stating that an update has failed to install.
+
+        :param errmsgs: a list of error messages
+        """
         self.dbusintf.UpdatesFailedSignal(errmsgs)
 
     def updatesApplied(self, updinfo):
+        """Emit a message stating that updates were installed
+        successfully.
+
+        :param updinfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         self.dbusintf.UpdatesAppliedSignal(updinfo)
 
     def checkFailed(self, error):
+        """Emit a message stating that checking for updates failed.
+
+        :param error: an error message
+        """
         self.dbusintf.CheckFailedSignal(error)
 
     def setupFailed(self, error, translation_domain):
+        """Emit a message stating that plugin initialization failed.
+
+        :param error: an error message
+        :param translation_domain: the translation domain supplied by
+           the plugin
+        """
         self.dbusintf.SetupFailedSignal(error, translation_domain)
 
 
 class YumDbusInterface(dbus.service.Object):
+    """Interface class for sending signals to the dbus."""
+
     def __init__(self, bus_name, object_path='/UpdatesAvail'):
         dbus.service.Object.__init__(self, bus_name, object_path)
 
     @dbus.service.signal('edu.duke.linux.yum')
     def UpdatesAvailableSignal(self, message):
+        """Send a signal stating that updates are available.
+        
+        :param message: the message to send in the signal
+        """
         pass
 
     @dbus.service.signal('edu.duke.linux.yum')
     def NoUpdatesAvailableSignal(self, message):
+        """Send a signal stating that no updates are available.
+
+        :param message: the message to send in the signal
+        """
         pass
         
     @dbus.service.signal('edu.duke.linux.yum')
     def UpdatesFailedSignal(self, errmsgs):
+        """Send a signal stating that the update has failed.
+
+        :param errmsgs: a list of error messages
+        """
         pass
 
     @dbus.service.signal('edu.duke.linux.yum')
     def UpdatesAppliedSignal(self, updinfo):
+        """Send a signal stating that updates were applied
+        successfully.
+
+        :param updinfo: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to
+        """
         pass
 
     @dbus.service.signal('edu.duke.linux.yum')
     def CheckFailedSignal(self, message):
+        """Send a signal stating that checking for updates failed.
+
+        :param message: the message to send in the signal
+        """
         pass
 
     @dbus.service.signal('edu.duke.linux.yum')
     def SetupFailedSignal(self, message, translation_domain=""):
+        """Send a signal stating that plugin initialization failed.
+
+        :param message: the message to send in the signal
+        :param translation_domain: the translation domain supplied by
+           the plugin
+        """
         pass
 
 
@@ -249,11 +387,18 @@ class UDConfig(BaseConfig):
 
 
 class UpdateBuildTransactionThread(threading.Thread):
+    """Class to build the update transaction in a new thread."""
+
     def __init__(self, updd, name):
         self.updd = updd
         threading.Thread.__init__(self, name=name)
 
     def run(self):
+        """Build the transaction, and download the packages to be
+        updated.  Finally, call self.processPkgs. This method must be
+        provided by a subclass, and will determine what, if any,
+        action is taken with the packages after they are downloaded.
+        """
         self.updd.tsInfo.makelists()
         try:
             (result, msgs) = self.updd.buildTransaction()
@@ -270,25 +415,41 @@ class UpdateBuildTransactionThread(threading.Thread):
 
 
 class UpdateDownloadThread(UpdateBuildTransactionThread):
+    """Class to download the packages in the update in a new thread."""
+
     def __init__(self, updd):
         UpdateBuildTransactionThread.__init__(self, updd,
             name="UpdateDownloadThread")
 
     def processPkgs(self, dlpkgs):
+        """Output that there are updates available via the emitters,
+        and release the yum locks.
+
+        :param dlpkgs: unused
+        """
         self.updd.emitAvailable()
         self.updd.releaseLocks()
 
 
 class UpdateInstallThread(UpdateBuildTransactionThread):
+    """Class to install updates in a new thread."""
+
     def __init__(self, updd):
         UpdateBuildTransactionThread.__init__(self, updd,
             name="UpdateInstallThread")
 
     def failed(self, msgs):
+        """Output that the update failed via the emitters.
+
+        :param msgs: a list or error messages to emit
+        """
         self.updd.emitUpdateFailed(msgs)
         self.updd.releaseLocks()
 
     def success(self):
+        """Output that the update has completed successfully via the
+        emitters, and perform clean up.
+        """
         self.updd.emitUpdateApplied()
         self.updd.releaseLocks()
 
@@ -296,6 +457,10 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
         self.updd.updateInfoTime = None        
         
     def processPkgs(self, dlpkgs):
+        """Apply the available updates.
+
+        :param dlpkgs: a list of package objecs to update
+        """
         for po in dlpkgs:
             result, err = self.updd.sigCheckPkg(po)
             if result == 0:
@@ -323,6 +488,8 @@ class UpdateInstallThread(UpdateBuildTransactionThread):
         self.success()
 
 class UpdatesDaemon(yum.YumBase):
+    """Class to implement the update checking daemon."""
+
     def __init__(self, opts):
         yum.YumBase.__init__(self)
         self.opts = opts
@@ -343,6 +510,9 @@ class UpdatesDaemon(yum.YumBase):
         self.updateInfoTime = None
 
     def doSetup(self):
+        """Perform set up, including setting up directories and
+        parsing options.
+        """
         # if we are not root do the special subdir thing
         if os.geteuid() != 0:
             if not os.path.exists(self.opts.nonroot_workdir):
@@ -352,6 +522,8 @@ class UpdatesDaemon(yum.YumBase):
         self.doConfigSetup(fn=self.opts.yum_config)
 
     def refreshUpdates(self):
+        """Retrieve information about what updates are available."""
+
         self.doLock()
         try:
             self.doRepoSetup()
@@ -366,6 +538,8 @@ class UpdatesDaemon(yum.YumBase):
         return True
 
     def populateUpdateMetadata(self):
+        """Populate the metadata for the packages in the update."""
+
         self.updateMetadata = UpdateMetadata()
         repos = []
 
@@ -383,6 +557,9 @@ class UpdatesDaemon(yum.YumBase):
                 md.close()
 
     def populateUpdates(self):
+        """Retrieve and set up information about the updates available
+        for installed packages.
+        """
         def getDbusPackageDict(pkg):
             """Returns a dictionary corresponding to the package object
             in the form that we can send over the wire for dbus."""
@@ -425,6 +602,8 @@ class UpdatesDaemon(yum.YumBase):
         self.updateInfoTime = time.time()
 
     def populateTsInfo(self):
+        """Set up information about the update in the tsInfo object."""
+
         # figure out the updates
         for (new, old) in self.up.getUpdatesTuples():
             updating = self.getPackageObject(new)
@@ -442,6 +621,13 @@ class UpdatesDaemon(yum.YumBase):
                 self.tsInfo.addObsoleted(installed, obsoleting)
 
     def updatesCheck(self):
+        """Check to see whether updates are available for any
+        installed packages. If updates are available, install them,
+        download them, or just emit a message, depending on what
+        options are selected in the configuration file.
+ 
+        :return: whether the daemon should continue looping
+        """
         if not self.didSetup:
             try:
                 self.doSetup()
@@ -491,6 +677,18 @@ class UpdatesDaemon(yum.YumBase):
         return True
 
     def getUpdateInfo(self):
+        """Return information about the update.  This may be
+        previously cached information if the configured time interval
+        between update retrievals has not yet elapsed, or there is an
+        error in trying to retrieve the update information.
+
+        :return: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to        
+        """
         # if we have a cached copy, use it
         if self.updateInfoTime and (time.time() - self.updateInfoTime <
                                     self.opts.updaterefresh):
@@ -522,40 +720,47 @@ class UpdatesDaemon(yum.YumBase):
         return self.updateInfo
 
     def updateCheckSetup(self):
+        """Set up the transaction set, rpm database, and prepare to
+        get updates.
+        """
         self.doTsSetup()
         self.doRpmDBSetup()
         self.doUpdateSetup()
 
     def releaseLocks(self):
+        """Close the rpm database, and release the yum lock."""
         self.closeRpmDB()
         self.doUnlock()
 
     def emitAvailable(self):
-        """method to emit a notice about updates"""
+        """Emit a notice stating whether updates are available."""
         map(lambda x: x.updatesAvailable(self.updateInfo), self.emitters)
 
     def emitDownloading(self):
-        """method to emit a notice about updates downloading"""
+        """Emit a notice stating that updates are downloading."""
         map(lambda x: x.updatesDownloading(self.updateInfo), self.emitters)
 
     def emitUpdateApplied(self):
-        """method to emit a notice when automatic updates applied"""
+        """Emit a notice stating that automatic updates have been applied."""
         map(lambda x: x.updatesApplied(self.updateInfo), self.emitters)
 
     def emitUpdateFailed(self, errmsgs):
-        """method to emit a notice when automatic updates failed"""
+        """Emit a notice stating that automatic updates failed."""
         map(lambda x: x.updatesFailed(errmsgs), self.emitters)
 
     def emitCheckFailed(self, error):
-        """method to emit a notice when checking for updates failed"""
+        """Emit a notice stating that checking for updates failed."""
         map(lambda x: x.checkFailed(error), self.emitters)
 
     def emitSetupFailed(self, error, translation_domain=""):
-        """method to emit a notice when checking for updates failed"""
+        """Emit a notice stating that checking for updates failed."""
         map(lambda x: x.setupFailed(error, translation_domain), self.emitters)
 
 
 class YumDbusListener(dbus.service.Object):
+    """Class to export methods that control the daemon over the
+    dbus.
+    """
     def __init__(self, updd, bus_name, object_path='/Updatesd',
                  allowshutdown = False):
         dbus.service.Object.__init__(self, bus_name, object_path)
@@ -563,11 +768,19 @@ class YumDbusListener(dbus.service.Object):
         self.allowshutdown = allowshutdown
 
     def doCheck(self):
+        """Check whether updates are available.
+
+        :return: False
+        """
         self.updd.updatesCheck()
         return False
 
     @dbus.service.method("edu.duke.linux.yum", in_signature="")
     def CheckNow(self):
+        """Check whether updates are available.
+
+        :return: a message stating that a check has been queued
+        """
         # make updating checking asynchronous since we discover whether
         # or not there are updates via a callback signal anyway
         gobject.idle_add(self.doCheck)
@@ -575,6 +788,11 @@ class YumDbusListener(dbus.service.Object):
 
     @dbus.service.method("edu.duke.linux.yum", in_signature="")
     def ShutDown(self):
+        """Shut down the daemon.
+        
+        :return: whether remote callers have permission to shut down
+           the daemon
+        """
         if not self.allowshutdown:
             return False
         
@@ -585,19 +803,34 @@ class YumDbusListener(dbus.service.Object):
 
     @dbus.service.method("edu.duke.linux.yum", in_signature="", out_signature="a(a{ss}a{ss})")
     def GetUpdateInfo(self):
+        """Return information about the available updates
+
+        :return: a list of tuples of dictionaries.  Each
+           dictionary contains information about a package, and each
+           tuple specifies an available upgrade: the second dictionary
+           in the tuple has information about a package that is
+           currently installed, and the first dictionary has
+           information what the package can be upgraded to        
+        """
         # FIXME: should this be async?
         upds = self.updd.getUpdateInfo()
         return upds
         
 
 def shutDown():
+    """Shut down the daemon."""
+
     sys.exit(0)
 
 def restart():
+    """Restart the daemon, reloading configuration files."""
+
     os.chdir(initial_directory)
     os.execve(sys.argv[0], sys.argv, os.environ)  
 
 def main(options = None):
+    """Configure and start the daemon."""
+
     # we'll be threading for downloads/updates
     gobject.threads_init()
     dbus.glib.threads_init()

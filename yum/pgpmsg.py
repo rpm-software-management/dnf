@@ -934,7 +934,8 @@ class pgp_certificate(object):
         """load(pkts)
 Initialize the pgp_certificate with a list of OpenPGP packets. The list of packets will
 be scanned to make sure they are valid for a pgp certificate."""
-        
+
+
         # each certificate should begin with a public key packet
         if pkts[0].pkt_typ != CTB_PKT_PK_CERT :
             raise ValueError('first PGP packet should be a public-key packet, not %s' % map_to_str(ctb_pkt_to_str, pkts[0].pkt_typ))
@@ -1093,6 +1094,16 @@ be scanned to make sure they are valid for a pgp certificate."""
                         self.rvkd_subkeys.append(subkey)
                     else :
                         self.subkeys.append(subkey)
+                elif pkts[pkt_idx].pkt_typ == CTB_PKT_SIG :
+
+                    # ok, well at least the type is good, we'll assume the cert is
+                    # revoked
+                    self.revocations.append(pkts[pkt_idx])
+
+                    # increment the pkt_idx to go to the next one
+                    pkt_idx = pkt_idx + 1
+
+                
                 else :
                     break
 
@@ -1234,7 +1245,6 @@ a PGP "certificate" includes a public key, user id(s), and signature.
 
             # ok, the sum looks ok so we'll actually decode the thing
             pkt_list = decode(cert_msg)
-
             # turn it into a real cert
             cert_list = []
             while len(pkt_list) > 0 :
@@ -1283,5 +1293,5 @@ def decode_multiple_keys(msg):
 
 if __name__ == '__main__' :
     import sys
-    for pgp_cert in decode_msg(open(sys.argv[1]).read()) :
+    for pgp_cert in decode_multiple_keys(open(sys.argv[1]).read()) :
         print pgp_cert

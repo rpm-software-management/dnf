@@ -79,7 +79,7 @@ Either `1' or `0'. This tells yum whether or not it should perform a check to
 make sure that multilib packages are the same version. For example, if this
 option is off (rpm behaviour) pkgA-1.x86_64 and pkgA-2.i386 can be installed
 at the same time. However this is very rarely desired.
-install only packages, like the kernel, are excempt from this check.
+Install only packages, like the kernel, are exempt from this check.
 The default is `1'.
 
 .IP
@@ -114,15 +114,27 @@ are causing problems from the transaction.
 Either `1' or `0'. Determines whether or not yum prompts for confirmation of
 critical actions. Default is `0' (do prompt).
 .br
-Command-line option: \fB\-y\fP
+Command-line option: \fB\-y\fP \fB\--assumeyes\fP
+
+.IP
+\fBassumeno\fR
+Either `1' or `0'. If yum would prompt for confirmation of critical actions, 
+assume the user chose no. This is basically the same as doing "echo | yum ..."
+but is a bit more usable. This option overrides \fBassumeyes\fP, but is still
+subject to \fBalwaysprompt\fP.
+Default is `0' (do prompt).
+.br
+Command-line option: \fB\--assumeno\fP
 
 .IP
 \fBalwaysprompt\fR
 Either `1' or `0'. Without this option, yum will not prompt for confirmation
 when the list of packages to be installed exactly matches those given on the
-command line. Unless \fBassumeyes\fR is enabled, it will still prompt for
-package removal, or when additional packages need to be installed to fulfill
-dependencies. Default is `1'.
+command line. Unless \fBassumeyes\fR is enabled, it will still prompt when
+additional packages need to be installed to fulfill dependencies. Note that
+older versions of yum would also always prompt for package removal, and that is
+no longer true.
+Default is `1'.
 .br
 
 .IP
@@ -131,6 +143,7 @@ Either `1' or `0'. If enabled, then yum will be tolerant of errors on the
 command line with regard to packages. For example: if you request to install
 foo, bar and baz and baz is installed; yum won't error out complaining that baz
 is already installed. Default to `0' (not tolerant).
+Note: This option currently does nothing.
 .br
 Command-line option: \fB\-t\fP
 
@@ -298,6 +311,14 @@ with the \fBthrottle\fR option (above). If \fBthrottle\fR is a percentage and
 \fBbandwidth\fR is `0' then bandwidth throttling will be disabled. If
 \fBthrottle\fR is expressed as a data rate (bytes/sec) then this option is
 ignored. Default is `0' (no bandwidth throttling). 
+
+.IP
+\fBip_resolve \fR
+Determines how yum resolves host names.
+
+`4' or `IPv4': resolve to IPv4 addresses only.
+
+`6' or `IPv6': resolve to IPv6 addresses only.
 
 .IP
 \fBsslcacert \fR
@@ -595,6 +616,16 @@ package's dependencies. If any of them are no longer required by any other
 package then also mark them to be removed.
 Boolean (1, 0, True, False, yes,no) Defaults to False
 
+.IP
+\fBupgrade_requirements_on_install \fR
+When installing/reinstalling/upgrading packages go through each package's
+installed dependencies and check for an update.
+Boolean (1, 0, True, False, yes,no) Defaults to False
+
+.IP
+\fBreset_nice \fR
+If set to true then yum will try to reset the nice value to zero, before
+running an rpm transaction. Defaults to False.
 
 
 .SH "[repository] OPTIONS"
@@ -753,6 +784,11 @@ repository.
 .IP
 \fBbandwidth\fR
 Overrides the \fBbandwidth\fR option from the [main] section for this
+repository.
+
+.IP
+\fBip_resolve \fR
+Overrides the \fBip_resolve\fR option from the [main] section for this
 repository.
 
 

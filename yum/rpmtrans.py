@@ -258,7 +258,7 @@ class RPMTransaction:
     # Find out txmbr based on the callback key. On erasures we dont know
     # the exact txmbr but we always have a name, so return (name, txmbr)
     # tuples so callers have less twists to deal with.
-    def _getTxmbr(self, cbkey):
+    def _getTxmbr(self, cbkey, erase=False):
         if isinstance(cbkey, TransactionMember):
             return (cbkey.name, cbkey)
         elif isinstance(cbkey, tuple):
@@ -268,7 +268,23 @@ class RPMTransaction:
             assert len(txmbrs) == 1
             return (txmbrs[0].name, txmbrs[0])
         elif isinstance(cbkey, basestring):
-            return (cbkey, None)
+            ret = None
+            #  If we don't have a tuple, it's because this is an erase txmbr and
+            # rpm doesn't provide one in that case. So we can "cheat" and look
+            # through all our txmbrs for the name we have, and if we find a
+            # single match ... that must be it.
+            if not erase:
+                return (cbkey, None)
+            for txmbr in self.base.tsInfo.matchNaevr(name=cbkey):
+                if txmbr.output_state not in TS_REMOVE_STATES:
+                    continue
+                #  If we have more than one match, then we don't know which one
+                # it is ... so just give up.
+                if ret is not None:
+                    return (cbkey, None)
+                ret = txmbr
+
+            return (cbkey, ret)
         else:
             return (None, None)
 
@@ -489,9 +505,6 @@ class RPMTransaction:
             if self.trans_running:
                 self.display.filelog(txmbr.po, txmbr.output_state)
                 self._scriptout(txmbr.po)
-                # NOTE: We only do this for install, not erase atm.
-                #       because we don't get pkgtup data for erase (this 
-                #       includes "Updated" pkgs).
                 pid   = self.base.history.pkg2pid(txmbr.po)
                 state = self.base.history.txmbr2state(txmbr)
                 self.base.history.trans_data_pid_end(pid, state)
@@ -517,21 +530,44 @@ class RPMTransaction:
         pass
     
     def _unInstStop(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h)
+        name, txmbr = self._getTxmbr(h, erase=True)
         self.total_removed += 1
         self.complete_actions += 1
         if name not in self.installed_pkg_names:
-            self.display.filelog(name, TS_ERASE)
+            if txmbr is not None:
+                self.display.filelog(txmbr.po, TS_ERASE)
+            else:
+                self.display.filelog(name, TS_ERASE)
             action = TS_ERASE
         else:
             action = TS_UPDATED                    
-        
+
+        # FIXME: Do we want to pass txmbr.po here too?
         self.display.event(name, action, 100, 100, self.complete_actions,
                             self.total_actions)
-        self._scriptout(name)
         
         if self.test: return # and we're done
-        self.ts_done(name, action)
+
+        if txmbr is not None:
+            self._scriptout(txmbr.po)
+
+            #  Note that we are currently inside the chroot, which makes
+            # sqlite panic when it tries to open it's journal file.
+            # So let's have some "fun" and workaround that:
+            _do_chroot = False
+            if _do_chroot and self.base.conf.installroot != '/':
+                os.chroot(".")
+            pid   = self.base.history.pkg2pid(txmbr.po)
+            state = self.base.history.txmbr2state(txmbr)
+            self.base.history.trans_data_pid_end(pid, state)
+            if _do_chroot and self.base.conf.installroot != '/':
+                os.chroot(self.base.conf.installroot)
+
+            self.ts_done(txmbr.po, txmbr.output_state)
+        else:
+            self._scriptout(name)
+
+            self.ts_done(name, action)
         
         
     def _rePackageStart(self, bytes, total, h):
@@ -545,6 +581,7 @@ class RPMTransaction:
         
     def _cpioError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
+        # In the case of a remove, we only have a name, not a txmbr
         if txmbr is not None:
             msg = "Error in cpio payload of rpm package %s" % txmbr.po
             txmbr.output_state = TS_FAILED
@@ -553,6 +590,7 @@ class RPMTransaction:
     
     def _unpackError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
+        # In the case of a remove, we only have a name, not a txmbr
         if txmbr is not None:
             txmbr.output_state = TS_FAILED
             msg = "Error unpacking rpm package %s" % txmbr.po
@@ -565,7 +603,7 @@ class RPMTransaction:
         # "total" carries fatal/non-fatal status
         scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
 
-        name, txmbr = self._getTxmbr(h)
+        name, txmbr = self._getTxmbr(h, erase=True)
         if txmbr is None:
             package_name = name
         else:
@@ -574,6 +612,7 @@ class RPMTransaction:
         if total:
             msg = ("Error in %s scriptlet in rpm package %s" % 
                     (scriptlet_name, package_name))
+            # In the case of a remove, we only have a name, not a txmbr
             if txmbr is not None:        
                 txmbr.output_state = TS_FAILED
         else:
