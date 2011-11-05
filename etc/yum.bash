@@ -370,7 +370,11 @@ _yum()
 
     $split && return 0
 
-    COMPREPLY=( $( compgen -W '$( _yum_baseopts ) ${cmds[@]}' -- "$cur" ) )
+    if [[ $cur == -* ]] ; then
+        COMPREPLY=( $( compgen -W '$( _yum_baseopts )' -- "$cur" ) )
+        return 0
+    fi
+    COMPREPLY=( $( compgen -W '${cmds[@]}' -- "$cur" ) )
 } &&
 complete -F _yum -o filenames yum yummain.py
 
