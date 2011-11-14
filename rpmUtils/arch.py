@@ -2,6 +2,7 @@
 #
 
 import os
+import rpm
 
 _ppc64_native_is_best = False
 
@@ -64,6 +65,10 @@ arches = {
     "armv6l": "armv5tejl",
     "armv5tejl": "armv5tel",
     "armv5tel": "noarch",
+
+    #arm hardware floating point
+    "armv7hnl": "armv7hl",
+    "armv7hl": "noarch",
 
     # super-h 
     "sh4a": "sh4",
@@ -235,6 +240,13 @@ def getCanonX86Arch(arch):
 
     return arch
 
+def getCanonARMArch(arch):
+    # the %{_target_arch} macro in rpm will let us know the abi we are using 
+    target = rpm.expandMacro('%{_target_cpu}')
+    if target.startswith('armv7h'):
+        return target
+    return arch
+
 def getCanonPPCArch(arch):
     # FIXME: should I do better handling for mac, etc?
     if arch != "ppc64":
@@ -312,6 +324,8 @@ def getCanonArch(skipRpmPlatform = 0):
     if (len(arch) == 4 and arch[0] == "i" and arch[2:4] == "86"):
         return getCanonX86Arch(arch)
 
+    if arch.startswith("arm"):
+        return getCanonARMArch(arch)
     if arch.startswith("ppc"):
         return getCanonPPCArch(arch)
     if arch.startswith("sparc"):
@@ -363,6 +377,8 @@ def getBaseArch(myarch=None):
         return "sparc"
     elif myarch.startswith("ppc64") and not _ppc64_native_is_best:
         return "ppc"
+    elif myarch.startswith("armv7h"):
+        return "armhfp"
     elif myarch.startswith("arm"):
         return "arm"
         
