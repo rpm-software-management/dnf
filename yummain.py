@@ -29,7 +29,7 @@ from yum import Errors
 from yum import plugins
 from yum import logginglevels
 from yum import _
-from yum.i18n import to_unicode, utf8_width, exception2msg
+from yum.i18n import utf8_width, exception2msg
 import yum.misc
 import cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
