@@ -445,6 +445,7 @@ class MetaSack(PackageSackBase):
         nobsdict = {}
         last_name = ''
         last_pkg = None
+        last_pkgtup = None
         #  It takes about 0.2 of a second to convert these into packages, just
         # so we can sort them, which is ~40% of this functions time. So we sort
         # the pkgtups "by hand".
