@@ -5823,6 +5823,7 @@ class YumBase(depsolve.Depsolve):
         pkgcount = 0
         pkgprob = False
         curpkg = None
+        missingany = False
         for l in data[pkgstart:]:
             l = l.rstrip()
             # our main txmbrs
