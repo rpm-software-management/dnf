@@ -1475,6 +1475,7 @@ class YumHistory:
  CREATE INDEX i_pkgkey_yumdb ON pkg_yumdb (pkgtupid, yumdb_key);
 ''']
 
+# pylint: disable-msg=E0203
     def _update_db_file_3(self):
         """ Update to version 3 of history, rpmdb/yumdb data. """
         if not self._update_db_file_2():
@@ -1585,6 +1586,8 @@ class YumHistory:
             self._commit()
         self._cached_updated_2 = True
         return True
+
+# pylint: enable-msg=E0203
 
     def _create_db_file(self):
         """ Create a new history DB file, populating tables etc. """
