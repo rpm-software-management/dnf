@@ -1005,7 +1005,7 @@ class RPMDBPackageSack(PackageSackBase):
             return
 
         if not load_packages:
-             return checksum_data
+            return checksum_data
 
         for pkgtup in checksum_data:
             if checksum_data[pkgtup] is None:

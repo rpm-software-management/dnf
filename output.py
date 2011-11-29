@@ -2183,8 +2183,8 @@ to exit.
             default_addons = set(['config-main', 'config-repos', 'saved_tx'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
-                    print _("Additional non-default information stored: %d" 
-                                % len(non_default))
+                print _("Additional non-default information stored: %d" 
+                            % len(non_default))
 
         if old.trans_with:
             # This is _possible_, but not common

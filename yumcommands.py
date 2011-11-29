@@ -898,7 +898,7 @@ class GroupsCommand(YumCommand):
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         if cmd in ('remove',):
-           return True
+            return True
         return False
 
 class MakeCacheCommand(YumCommand):
