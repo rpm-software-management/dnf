@@ -4855,7 +4855,7 @@ class YumBase(depsolve.Depsolve):
         if e and v and r:
             evr = '%s:%s-%s' % (e, v, r)
         elif v and r:
-            evr = '%s-%s' % (e, v, r)
+            evr = '%s-%s' % (v, r)
         elif e and v:
             evr = '%s:%s' % (e, v)
         elif v: # e and r etc. is just too weird to print
