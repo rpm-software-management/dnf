@@ -46,7 +46,8 @@ _yum_grouplist()
     local IFS=$'\n'
     # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
     COMPREPLY=( $( compgen -W "$( ${yum:-yum} -C grouplist $1 \
-        2>/dev/null | sed -ne 's/^[[:space:]]\{1,\}\(.\{1,\}\)/\1/p' )" \
+        2>/dev/null | sed -e 's/[[:space:]]\{1,\}\[.*$//' \
+        -ne 's/^[[:space:]]\{1,\}\(.\{1,\}\)/\1/p' )" \
         -- "$2" ) )
 }
 
