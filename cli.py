@@ -966,6 +966,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                         continue
 
                     nayi = napkg.yumdb_info
+                    found = False
                     for apkg in self.pkgSack.searchPkgTuple(napkg.pkgtup):
                         if ('checksum_type' in nayi and
                             'checksum_data' in nayi and
