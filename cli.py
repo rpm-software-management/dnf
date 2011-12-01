@@ -1536,7 +1536,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 msg += ' (%s)' % group.groupid
             if group.langonly:
                 msg += ' [%s]' % group.langonly
-            self.verbose_logger.log(yum.logginglevels.INFO_2, '%s', msg)
+            self.verbose_logger.info('%s', msg)
 
         done = False
         for group in installed:
