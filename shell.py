@@ -23,7 +23,7 @@ import cmd
 import shlex
 import logging
 
-from yum import Errors, _
+from yum import Errors
 from yum.constants import *
 import yum.logginglevels as logginglevels
 from yum.i18n import to_utf8

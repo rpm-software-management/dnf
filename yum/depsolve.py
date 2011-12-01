@@ -32,7 +32,6 @@ import rpm
 
 from packageSack import ListPackageSack
 from constants import *
-import packages
 import logginglevels
 import Errors
 import warnings

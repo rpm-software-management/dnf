@@ -48,7 +48,9 @@ from yum.i18n import to_unicode, to_utf8, exception2msg
 #  This is for yum-utils/yumdownloader in RHEL-5, where it isn't importing this
 # directly but did do "from cli import *", and we did have this in 3.2.22. I
 # just _love_ how python re-exports these by default.
+# pylint: disable-msg=W0611
 from yum.packages import parsePackages
+# pylint: enable-msg=W0611
 
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
