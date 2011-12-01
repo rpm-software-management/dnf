@@ -426,7 +426,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
     def _conv_pkg_state(pkg, state):
         npkg = YumHistoryPackageState(pkg.name, pkg.arch,
                                       pkg.epoch,pkg.version,pkg.release, state,
-                                      pkg._history)
+                                      history=pkg._history)
         npkg._checksums = pkg._checksums
         npkg.done = pkg.done
         if _sttxt2stcode[npkg.state] in TS_INSTALL_STATES:
