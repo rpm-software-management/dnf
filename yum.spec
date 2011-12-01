@@ -254,6 +254,7 @@ exit 0
 %{_sysconfdir}/bash_completion.d
 %dir %{_datadir}/yum-cli
 %{_datadir}/yum-cli/*
+%exclude %{_datadir}/yum-cli/completion-helper.py?
 %if %{yum_updatesd}
 %exclude %{_datadir}/yum-cli/yumupd.py*
 %endif

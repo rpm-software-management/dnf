@@ -1,53 +1,18 @@
 # bash completion for yum
 
-# arguments:
-#   1 = argument to "yum list" (all, available, updates etc)
-#   2 = current word to be completed
+_yum_helper()
+{
+    local IFS=$'\n'
+    COMPREPLY+=( $( compgen -W "$(
+        /usr/share/yum-cli/completion-helper.py -d 0 -C $@ 2>/dev/null )" \
+            -- "$cur" ) )
+}
+
 _yum_list()
 {
     # Fail fast for things that look like paths.
     [[ $2 == */* || $2 == [.~]* ]] && return
-
-    if [[ $1 == all ]] ; then
-        # Try to strip in between headings like "Available Packages" - would
-        # be nice if e.g. -d 0 did that for us.  This will obviously only work
-        # for English :P
-        COMPREPLY+=( $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
-            sed -ne '/^Available /d' -e '/^Installed /d' -e '/^Updated /d' \
-            -e 's/[[:space:]].*//p' ) )
-    else
-        # Drop first line (e.g. "Updated Packages") - would be nice if e.g.
-        # -d 0 did that for us.
-        COMPREPLY+=( $( ${yum:-yum} -d 0 -C list $1 "$2*" 2>/dev/null | \
-            sed -ne 1d -e 's/[[:space:]].*//p' ) )
-    fi
-}
-
-# arguments:
-#   1 = argument to "yum repolist" (enabled, disabled etc)
-#   2 = current word to be completed
-_yum_repolist()
-{
-    # TODO: add -d 0 when http://yum.baseurl.org/ticket/29 is fixed
-    #       (for now --noplugins is used to get rid of "Loaded plugins: ...")
-    # Drop first ("repo id      repo name") and last ("repolist: ...") rows -
-    # would be nice if e.g. -d 0 did that for us.
-    COMPREPLY+=(
-        $( compgen -W "$( ${yum:-yum} --noplugins -C repolist $1 2>/dev/null | \
-            sed -ne '/^repo\s\{1,\}id/d' -e '/^repolist:/d' \
-            -e 's/[[:space:]].*//p' )" -- "$2" ) )
-}
-
-# arguments:
-#   1 = argument to "yum grouplist" (usually empty (""), or hidden)
-#   2 = current word to be completed
-_yum_grouplist()
-{
-    local IFS=$'\n'
-    COMPREPLY=( $( compgen -W "$( ${yum:-yum} -d 0 -C grouplist $1 \
-        2>/dev/null | sed -e 's/[[:space:]]\{1,\}\[.*$//' \
-        -ne 's/^[[:space:]]\{1,\}\(.\{1,\}\)/\1/p' )" \
-        -- "$2" ) )
+    _yum_helper list "$@"
 }
 
 # arguments:
@@ -92,7 +57,7 @@ _yum_transactions()
 _yum_atgroups()
 {
     if [[ $1 == \@* ]]; then
-        _yum_grouplist "" "${1:1}"
+        _yum_helper groups list all "${1:1}"
         COMPREPLY=( "${COMPREPLY[@]/#/@}" )
         return 0
     fi
@@ -129,17 +94,17 @@ _yum_complete_baseopts()
             ;;
 
         --enablerepo)
-            _yum_repolist disabled "$1"
+            _yum_helper repolist disabled "$1"
             return 0
             ;;
 
         --disablerepo)
-            _yum_repolist enabled "$1"
+            _yum_helper repolist enabled "$1"
             return 0
             ;;
 
         --disableexcludes)
-            _yum_repolist all "$1"
+            _yum_helper repolist all "$1"
             COMPREPLY=( $( compgen -W '${COMPREPLY[@]} all main' -- "$1" ) )
             return 0
             ;;
@@ -254,7 +219,7 @@ _yum()
             ;;
 
         group*)
-            _yum_grouplist "" "$cur"
+            _yum_helper groups list all "$cur"
             return 0
             ;;
 
