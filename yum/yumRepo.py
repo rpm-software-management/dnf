@@ -1273,6 +1273,9 @@ Insufficient space in download directory %s
         return True
 
     def _check_db_version(self, mdtype, repoXML=None):
+        if self.mddownloadpolicy == 'xml':
+            return False
+
         if repoXML is None:
             repoXML = self.repoXML
         if mdtype in repoXML.repoData:

@@ -791,6 +791,7 @@ class YumConf(StartupConf):
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
     mdpolicy = ListOption(['group:primary'])
+    mddownloadpolicy = SelectionOption('sqlite', ('sqlite', 'xml'))
     #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
     multilib_policy = SelectionOption('all',('best', 'all'))
                  # all == install any/all arches you can
@@ -929,6 +930,7 @@ class RepoConf(BaseConfig):
     # NOTE: metalink expire _must_ be the same as metadata_expire, due to the
     #       checksumming of the repomd.xml.
     mdpolicy = Inherit(YumConf.mdpolicy)
+    mddownloadpolicy = Inherit(YumConf.mddownloadpolicy)
     cost = IntOption(1000)
     
     sslcacert = Inherit(YumConf.sslcacert)
