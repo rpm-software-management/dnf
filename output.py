@@ -49,6 +49,19 @@ from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
 import locale
 
+try:
+    assert max(2, 4) == 4
+except:
+    # Python-2.4.x doesn't have min/max ... *sigh*
+    def min(x, *args):
+        for y in args:
+            if x > y: x = y
+        return x
+    def max(x, *args):
+        for y in args:
+            if x < y: x = y
+        return x
+
 def _term_width():
     """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
     if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
@@ -1347,8 +1360,7 @@ class YumOutput:
             for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
                 data[d].setdefault(v, 0)
                 data[d][v] += 1
-            if a_wid < len(a): # max() is only in 2.5.z
-                a_wid = len(a)
+            a_wid = max(a_wid, len(a))
             return a_wid
 
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
@@ -1448,15 +1460,10 @@ Transaction Summary
             else:
                 len_msg_depcount = 0
 
-            # dito. max() by hand, due to RHEL-5
-            if len_msg_action > max_msg_action:
-                max_msg_action = len_msg_action
-            if len_msg_count > max_msg_count:
-                max_msg_count = len_msg_count
-            if len_msg_pkgs > max_msg_pkgs:
-                max_msg_pkgs = len_msg_pkgs
-            if len_msg_depcount > max_msg_depcount:
-                max_msg_depcount = len_msg_depcount
+            max_msg_action   = max(len_msg_action,   max_msg_action)
+            max_msg_count    = max(len_msg_count,    max_msg_count)
+            max_msg_pkgs     = max(len_msg_pkgs,     max_msg_pkgs)
+            max_msg_depcount = max(len_msg_depcount, max_msg_depcount)
 
         for action, count, depcount in summary_data:
             msg_pkgs = P_('Package', 'Packages', count)
@@ -2075,9 +2082,8 @@ to exit.
                                  'o' : _('Updated'), 'n' : _('Downgraded')}
         _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
                                  'o' : _('Older'), 'n' : _('Newer')}
-        # max() only in 2.5.z
-        maxlen = sorted([len(x) for x in (_pkg_states_installed.values() +
-                                          _pkg_states_available.values())])[-1]
+        maxlen = max([len(x) for x in (_pkg_states_installed.values() +
+                                       _pkg_states_available.values())])
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
