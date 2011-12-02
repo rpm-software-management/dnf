@@ -2886,7 +2886,23 @@ class CacheProgressCallback:
            to be done
         :param name: a name to label the progress bar with
         """
-        progressbar(current, total, name)
+        #  We can easily have 10k+ packages in a repo. and we don't want to
+        # output 80 * 10k lines to the screen, esp. when the user probably
+        # doesn't care about 10k updates ... some serial consoles also get
+        # really unhappy, as they can't deal with the IO fast enough.
+        num_outputs = 200
+        output = False
+        opc = total / num_outputs
+        if opc <= 1:
+            output = True
+        elif current <= 1:
+            output = True # output the begining
+        elif current == total:
+            output = True # output the end
+        elif not (current % opc):
+            output = True
+        if output:
+            progressbar(current, total, name)
 
 def _pkgname_ui(ayum, pkgname, ts_states=None):
     """ Get more information on a simple pkgname, if we can. We need to search
