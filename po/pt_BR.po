@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yum\n"
 "Report-Msgid-Bugs-To: http://yum.baseurl.org/\n"
-"POT-Creation-Date: 2011-08-23 11:08-0400\n"
-"PO-Revision-Date: 2011-08-26 02:18+0000\n"
-"Last-Translator: cleitonlima <cleitonlima@lavabit.com>\n"
+"POT-Creation-Date: 2011-10-17 17:36-0400\n"
+"PO-Revision-Date: 2011-10-17 21:40+0000\n"
+"Last-Translator: james <james@fedoraproject.org>\n"
 "Language-Team: Portuguese (Brazilian) (http://www.transifex.net/projects/p/yum/team/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,25 +28,25 @@ msgid "Erasing"
 msgstr "Apagando"
 
 #: ../callback.py:47 ../callback.py:48 ../callback.py:50 ../output.py:1354
-#: ../output.py:2720 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
+#: ../output.py:2776 ../yum/rpmtrans.py:75 ../yum/rpmtrans.py:76
 #: ../yum/rpmtrans.py:78
 msgid "Installing"
 msgstr "Instalando"
 
-#: ../callback.py:49 ../callback.py:55 ../output.py:2177 ../yum/rpmtrans.py:77
+#: ../callback.py:49 ../callback.py:55 ../output.py:2233 ../yum/rpmtrans.py:77
 msgid "Obsoleted"
 msgstr "Obsoletos"
 
-#: ../callback.py:51 ../output.py:1476 ../output.py:2023 ../output.py:2184
+#: ../callback.py:51 ../output.py:1528 ../output.py:2075 ../output.py:2240
 msgid "Updated"
 msgstr "Atualizados"
 
-#: ../callback.py:52 ../output.py:2022
+#: ../callback.py:52 ../output.py:2074
 msgid "Erased"
 msgstr "Removidos"
 
-#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1474
-#: ../output.py:2022 ../output.py:2024 ../output.py:2692
+#: ../callback.py:53 ../callback.py:54 ../callback.py:56 ../output.py:1526
+#: ../output.py:2074 ../output.py:2076 ../output.py:2748
 msgid "Installed"
 msgstr "Instalados"
 
@@ -68,7 +68,7 @@ msgstr "Erro: estado de saída inválido: %s de %s"
 msgid "Erased: %s"
 msgstr "Removidos: %s"
 
-#: ../callback.py:229 ../output.py:1356 ../output.py:2695
+#: ../callback.py:229 ../output.py:1356 ../output.py:2751
 msgid "Removing"
 msgstr "Removendo"
 
@@ -89,45 +89,45 @@ msgstr "Configurando repositórios"
 msgid "Reading repository metadata in from local files"
 msgstr "Lendo metadados do repositório a partir dos arquivos locais"
 
-#: ../cli.py:252 ../utils.py:340
+#: ../cli.py:269 ../cli.py:273 ../utils.py:346
 #, python-format
 msgid "Config Error: %s"
 msgstr "Erro de configuração: %s"
 
-#: ../cli.py:255 ../cli.py:1897 ../utils.py:343
+#: ../cli.py:276 ../cli.py:1970 ../utils.py:349
 #, python-format
 msgid "Options Error: %s"
 msgstr "Erro nas opções: %s"
 
-#: ../cli.py:302
+#: ../cli.py:323
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Instalados: %s-%s em %s"
 
-#: ../cli.py:304
+#: ../cli.py:325
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Construídos    : %s em %s"
 
-#: ../cli.py:306
+#: ../cli.py:327
 #, python-format
 msgid "  Committed: %s at %s"
 msgstr "  Enviados: %s em %s"
 
-#: ../cli.py:347
+#: ../cli.py:368
 msgid "You need to give some command"
 msgstr "Você precisa dar algum comando"
 
-#: ../cli.py:361
+#: ../cli.py:382
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Comando não encontrado: %s. Por favor, utilize %s --help"
 
-#: ../cli.py:419
+#: ../cli.py:440
 msgid "Disk Requirements:\n"
 msgstr "Requisitos de disco:\n"
 
-#: ../cli.py:421
+#: ../cli.py:442
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
@@ -136,7 +136,7 @@ msgstr[1] ""
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
-#: ../cli.py:426
+#: ../cli.py:447
 msgid ""
 "Error Summary\n"
 "-------------\n"
@@ -144,60 +144,60 @@ msgstr ""
 "Sumário de erros\n"
 "-------------\n"
 
-#: ../cli.py:474
+#: ../cli.py:495
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "Tentando executar a transação, mas não há nada a ser feito. Saindo."
 
-#: ../cli.py:521
+#: ../cli.py:542
 msgid "Exiting on user Command"
 msgstr "Saindo pelo comando do usuário"
 
-#: ../cli.py:525
+#: ../cli.py:546
 msgid "Downloading Packages:"
 msgstr "Baixando pacotes:"
 
-#: ../cli.py:530
+#: ../cli.py:551
 msgid "Error Downloading Packages:\n"
 msgstr "Erro ao baixar pacotes:\n"
 
-#: ../cli.py:549 ../yum/__init__.py:5413
+#: ../cli.py:570 ../yum/__init__.py:5491
 msgid "Running Transaction Check"
 msgstr "Executando Verificação da Transação"
 
-#: ../cli.py:558 ../yum/__init__.py:5422
+#: ../cli.py:579 ../yum/__init__.py:5500
 msgid "ERROR You need to update rpm to handle:"
 msgstr "ERRO. Você precisa atualizar o rpm para manipular:"
 
-#: ../cli.py:560 ../yum/__init__.py:5425
+#: ../cli.py:581 ../yum/__init__.py:5503
 msgid "ERROR with transaction check vs depsolve:"
 msgstr ""
 
-#: ../cli.py:566
+#: ../cli.py:587
 msgid "RPM needs to be updated"
 msgstr "O RPM precisa ser atualizado"
 
-#: ../cli.py:567
+#: ../cli.py:588
 #, python-format
 msgid "Please report this error in %s"
 msgstr "Por favor, relate esse erro em %s"
 
-#: ../cli.py:573
+#: ../cli.py:594
 msgid "Running Transaction Test"
 msgstr "Executando teste de transação"
 
-#: ../cli.py:585
+#: ../cli.py:606
 msgid "Transaction Check Error:\n"
 msgstr "Erro na verificação da transação:\n"
 
-#: ../cli.py:592
+#: ../cli.py:613
 msgid "Transaction Test Succeeded"
 msgstr "Teste de transação completo"
 
-#: ../cli.py:624
+#: ../cli.py:645
 msgid "Running Transaction"
 msgstr "Executando a transação"
 
-#: ../cli.py:657
+#: ../cli.py:678
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -205,108 +205,108 @@ msgstr ""
 "Recusa de importação automática das chaves ao executar de forma não assistida.\n"
 "Use \"-y\" para sobrescrever."
 
-#: ../cli.py:676 ../cli.py:719
+#: ../cli.py:697 ../cli.py:740
 msgid "  * Maybe you meant: "
 msgstr "  * Talvez você queira dizer: "
 
-#: ../cli.py:702 ../cli.py:710
+#: ../cli.py:723 ../cli.py:731
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "Pacotes %s%s%s disponíveis, mas já instalados."
 
-#: ../cli.py:716 ../cli.py:760 ../cli.py:998
+#: ../cli.py:737 ../cli.py:821 ../cli.py:1058
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Nenhum pacote %s%s%s disponível."
 
-#: ../cli.py:768
+#: ../cli.py:830
 #, python-format
 msgid "%d package to install"
 msgid_plural "%d packages to install"
-msgstr[0] "%d pacote para instalar"
-msgstr[1] "%d pacotes para instalar"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:771 ../cli.py:772 ../cli.py:1005 ../cli.py:1051 ../cli.py:1086
+#: ../cli.py:833 ../cli.py:834 ../cli.py:1065 ../cli.py:1115 ../cli.py:1150
 #: ../yumcommands.py:268
 msgid "Nothing to do"
 msgstr "Nada a ser feito"
 
-#: ../cli.py:824
+#: ../cli.py:884
 #, python-format
 msgid "%d package marked for Update"
 msgid_plural "%d packages marked for Update"
-msgstr[0] "%d pacote marcado para atualização"
-msgstr[1] "%d pacotes marcados para atualização"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:826
+#: ../cli.py:886
 msgid "No Packages marked for Update"
 msgstr "Nenhum pacote marcado para atualização"
 
-#: ../cli.py:937
+#: ../cli.py:997
 #, python-format
 msgid "%d package marked for Distribution Synchronization"
 msgid_plural "%d packages marked for Distribution Synchronization"
-msgstr[0] "%d pacotes marcados para Sincronização de Distribuição"
-msgstr[1] "%d pacotes marcados para Sincronização de Distribuição"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:939
+#: ../cli.py:999
 msgid "No Packages marked for Distribution Synchronization"
 msgstr "Nenhum pacote marcado para a Sincronização da Distribuição"
 
-#: ../cli.py:965
+#: ../cli.py:1025
 #, python-format
 msgid "%d package marked for removal"
 msgid_plural "%d packages marked for removal"
-msgstr[0] "%d pacote marcado para ser eliminado"
-msgstr[1] "%d pacotes marcados para serem eliminados"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:967
+#: ../cli.py:1027
 msgid "No Packages marked for removal"
 msgstr "Nenhum pacote marcado para remoção"
 
-#: ../cli.py:1004
+#: ../cli.py:1064
 #, python-format
 msgid "%d package to downgrade"
 msgid_plural "%d packages to downgrade"
-msgstr[0] "%d pacote para downgrade"
-msgstr[1] "%d pacotes para downgrade"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1040
+#: ../cli.py:1101
 #, python-format
 msgid " (from %s)"
 msgstr " (a partir de %s)"
 
-#: ../cli.py:1041
+#: ../cli.py:1102
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "O pacote instalado %s%s%s%s não está disponível."
 
-#: ../cli.py:1050
+#: ../cli.py:1114
 #, python-format
 msgid "%d package to reinstall"
 msgid_plural "%d packages to reinstall"
-msgstr[0] "%d pacote para reinstalação"
-msgstr[1] "%d pacotes para reinstalação"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1072
+#: ../cli.py:1136
 msgid "No Packages Provided"
 msgstr "Nenhum pacote fornecido"
 
-#: ../cli.py:1085
+#: ../cli.py:1149
 msgid "Package(s) to install"
 msgstr "Pacotes a serem instalados"
 
-#: ../cli.py:1192
+#: ../cli.py:1256
 #, python-format
 msgid "N/S Matched: %s"
 msgstr ""
 
-#: ../cli.py:1209
+#: ../cli.py:1273
 #, python-format
 msgid "  Name and summary matches %sonly%s, use \"search all\" for everything."
 msgstr "  Nome e sumário correspondem %sonly%s, use \"search all\" para tudo."
 
-#: ../cli.py:1211
+#: ../cli.py:1275
 #, python-format
 msgid ""
 "  Full name and summary matches %sonly%s, use \"search all\" for everything."
@@ -314,152 +314,152 @@ msgstr ""
 "  Nome completo e sumário correspondem %sonly%s, use \"search all\" para "
 "tudo."
 
-#: ../cli.py:1229
+#: ../cli.py:1293
 #, python-format
 msgid "Matched: %s"
 msgstr "Encontrado: %s"
 
-#: ../cli.py:1236
+#: ../cli.py:1300
 #, python-format
 msgid "  Name and summary matches %smostly%s, use \"search all\" for everything."
 msgstr "  Nome e sumário correspondem %smostly%s, use \"search all\" para tudo."
 
-#: ../cli.py:1240
+#: ../cli.py:1304
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "Aviso: nenhum resultado para: %s"
 
-#: ../cli.py:1243
+#: ../cli.py:1307
 msgid "No Matches found"
 msgstr "Nenhum pacote localizado"
 
-#: ../cli.py:1339
+#: ../cli.py:1411
 #, python-format
 msgid "No Package Found for %s"
 msgstr "Nenhum pacote localizado para %s"
 
-#: ../cli.py:1377
+#: ../cli.py:1450
 msgid "Cleaning repos: "
 msgstr "Limpando repositórios:"
 
-#: ../cli.py:1382
+#: ../cli.py:1455
 msgid "Cleaning up Everything"
 msgstr "Limpando tudo"
 
-#: ../cli.py:1398
+#: ../cli.py:1471
 msgid "Cleaning up Headers"
 msgstr "Limpando cabeçalhos"
 
-#: ../cli.py:1401
+#: ../cli.py:1474
 msgid "Cleaning up Packages"
 msgstr "Limpando pacotes"
 
-#: ../cli.py:1404
+#: ../cli.py:1477
 msgid "Cleaning up xml metadata"
 msgstr "Limpando metadados em xml"
 
-#: ../cli.py:1407
+#: ../cli.py:1480
 msgid "Cleaning up database cache"
 msgstr "Limpando cache do banco de dados"
 
-#: ../cli.py:1410
+#: ../cli.py:1483
 msgid "Cleaning up expire-cache metadata"
 msgstr "Limpando metadados expirados do cache"
 
-#: ../cli.py:1413
+#: ../cli.py:1486
 msgid "Cleaning up cached rpmdb data"
 msgstr "Limpando dados rpmdb em cache"
 
-#: ../cli.py:1416
+#: ../cli.py:1489
 msgid "Cleaning up plugins"
 msgstr "Limpando plugins"
 
-#: ../cli.py:1452
+#: ../cli.py:1525
 #, python-format
 msgid "Warning: No groups match: %s"
 msgstr "Aviso: Nenhum grupo correspondente: %s"
 
-#: ../cli.py:1469 ../cli.py:1527
+#: ../cli.py:1542 ../cli.py:1600
 msgid "Installed Groups:"
 msgstr "Grupos instalados:"
 
-#: ../cli.py:1475 ../cli.py:1533
+#: ../cli.py:1548 ../cli.py:1606
 msgid "Installed Language Groups:"
 msgstr "Grupos de Idiomas Instalados:"
 
-#: ../cli.py:1481 ../cli.py:1539
+#: ../cli.py:1554 ../cli.py:1612
 msgid "Available Groups:"
 msgstr "Grupos disponíveis:"
 
-#: ../cli.py:1487 ../cli.py:1545
+#: ../cli.py:1560 ../cli.py:1618
 msgid "Available Language Groups:"
 msgstr "Grupos de Idiomas Disponíveis:"
 
-#: ../cli.py:1490 ../cli.py:1547
+#: ../cli.py:1563 ../cli.py:1620
 msgid "Done"
 msgstr "Concluído"
 
-#: ../cli.py:1570 ../cli.py:1598 ../cli.py:1604 ../yum/__init__.py:3648
+#: ../cli.py:1643 ../cli.py:1671 ../cli.py:1677 ../yum/__init__.py:3689
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Aviso: O grupo %s não existe."
 
-#: ../cli.py:1608
+#: ../cli.py:1681
 msgid "No packages in any requested group available to install or update"
 msgstr ""
 "Nenhum pacote disponível para instalação ou atualização nos grupos "
 "requisitados"
 
-#: ../cli.py:1610
+#: ../cli.py:1683
 #, python-format
 msgid "%d package to Install"
 msgid_plural "%d packages to Install"
-msgstr[0] "%d pacote para Instalação"
-msgstr[1] "%d pacotes para Instalação"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1630 ../yum/__init__.py:3660
+#: ../cli.py:1703 ../yum/__init__.py:3701
 #, python-format
 msgid "No group named %s exists"
 msgstr "Nenhum grupo de nome %s existe"
 
-#: ../cli.py:1636
+#: ../cli.py:1709
 msgid "No packages to remove from groups"
 msgstr "Nenhum pacote a ser removido a partir dos grupos"
 
-#: ../cli.py:1638
+#: ../cli.py:1711
 #, python-format
 msgid "%d package to remove"
 msgid_plural "%d packages to remove"
-msgstr[0] "%d pacote para remoção"
-msgstr[1] "%d pacotes para remoção"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../cli.py:1679
+#: ../cli.py:1752
 #, python-format
 msgid "Package %s is already installed, skipping"
 msgstr "O pacote %s já está instalado, ignorando"
 
-#: ../cli.py:1690
+#: ../cli.py:1763
 #, python-format
 msgid "Discarding non-comparable pkg %s.%s"
 msgstr "Descartando pacote não comparável %s.%s"
 
 #. we've not got any installed that match n or n+a
-#: ../cli.py:1716
+#: ../cli.py:1789
 #, python-format
 msgid "No other %s installed, adding to list for potential install"
 msgstr ""
 "Nenhum outro %s instalado, adicionado à lista para potencial instalação"
 
-#: ../cli.py:1736
+#: ../cli.py:1809
 msgid "Plugin Options"
 msgstr "Opções do plugin"
 
-#: ../cli.py:1748
+#: ../cli.py:1821
 #, python-format
 msgid "Command line error: %s"
 msgstr "Erro na linha de comando: %s"
 
-#: ../cli.py:1770
+#: ../cli.py:1843
 #, python-format
 msgid ""
 "\n"
@@ -470,128 +470,128 @@ msgstr ""
 "\n"
 "%s: a opção %s requer um argumento"
 
-#: ../cli.py:1834
+#: ../cli.py:1907
 msgid "--color takes one of: auto, always, never"
 msgstr "--color aceita uma destas opções: auto, always, never"
 
 #. We have a relative installroot ... haha
-#: ../cli.py:1909
+#: ../cli.py:1982
 #, python-format
 msgid "--installroot must be an absolute path: %s"
 msgstr "--installroot deve ser um caminho absoluto: %s"
 
-#: ../cli.py:1963
+#: ../cli.py:2036
 msgid "show this help message and exit"
 msgstr "mostrar essa mensagem ajuda e sai"
 
-#: ../cli.py:1967
+#: ../cli.py:2040
 msgid "be tolerant of errors"
 msgstr "ser tolerante com os erros"
 
-#: ../cli.py:1970
+#: ../cli.py:2043
 msgid "run entirely from system cache, don't update cache"
 msgstr ""
 "executar por completo a partir do cache do sistema, não atualiza o cache"
 
-#: ../cli.py:1973
+#: ../cli.py:2046
 msgid "config file location"
 msgstr "configurar localização do arquivo"
 
-#: ../cli.py:1976
+#: ../cli.py:2049
 msgid "maximum command wait time"
 msgstr "Tempo máximo de espera do comando"
 
-#: ../cli.py:1978
+#: ../cli.py:2051
 msgid "debugging output level"
 msgstr "nível de depuração na saída"
 
-#: ../cli.py:1982
+#: ../cli.py:2055
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "mostrar duplicados em repos e em comandos de pesquisa/listagem"
 
-#: ../cli.py:1984
+#: ../cli.py:2057
 msgid "error output level"
 msgstr "nível de erro na saída"
 
-#: ../cli.py:1987
+#: ../cli.py:2060
 msgid "debugging output level for rpm"
 msgstr "nível de depuração na saída para o rpm"
 
-#: ../cli.py:1990
+#: ../cli.py:2063
 msgid "quiet operation"
 msgstr "operação discreta"
 
-#: ../cli.py:1992
+#: ../cli.py:2065
 msgid "verbose operation"
 msgstr "operação detalhada"
 
-#: ../cli.py:1994
+#: ../cli.py:2067
 msgid "answer yes for all questions"
 msgstr "responder sim para todas as perguntas"
 
-#: ../cli.py:1996
+#: ../cli.py:2069
 msgid "answer no for all questions"
-msgstr "responder não para todas as perguntas"
+msgstr ""
 
-#: ../cli.py:2000
+#: ../cli.py:2073
 msgid "show Yum version and exit"
 msgstr "mostrar versão do Yum ao sair"
 
-#: ../cli.py:2001
+#: ../cli.py:2074
 msgid "set install root"
 msgstr "definir raiz de instalação"
 
-#: ../cli.py:2005
+#: ../cli.py:2078
 msgid "enable one or more repositories (wildcards allowed)"
 msgstr "habilitar um ou mais repositórios (curingas são permitidos)"
 
-#: ../cli.py:2009
+#: ../cli.py:2082
 msgid "disable one or more repositories (wildcards allowed)"
 msgstr "desabilitar um ou mais repositórios (curingas são permitidos)"
 
-#: ../cli.py:2012
+#: ../cli.py:2085
 msgid "exclude package(s) by name or glob"
 msgstr "excluir pacote(s) por nome ou glob"
 
-#: ../cli.py:2014
+#: ../cli.py:2087
 msgid "disable exclude from main, for a repo or for everything"
 msgstr ""
 "desabilitar a exclusão a partir do principal, para um repositório ou para "
 "tudo"
 
-#: ../cli.py:2017
+#: ../cli.py:2090
 msgid "enable obsoletes processing during updates"
 msgstr "Habilitar processo de obsolescência durante as atualizações"
 
-#: ../cli.py:2019
+#: ../cli.py:2092
 msgid "disable Yum plugins"
 msgstr "desabilitar plugins do Yum"
 
-#: ../cli.py:2021
+#: ../cli.py:2094
 msgid "disable gpg signature checking"
 msgstr "desabilitar verificação de assinaturas gpg"
 
-#: ../cli.py:2023
+#: ../cli.py:2096
 msgid "disable plugins by name"
 msgstr "desabilitar plugins pelo nome"
 
-#: ../cli.py:2026
+#: ../cli.py:2099
 msgid "enable plugins by name"
 msgstr "habilita plugins pelo nome"
 
-#: ../cli.py:2029
+#: ../cli.py:2102
 msgid "skip packages with depsolving problems"
 msgstr "ignorar pacotes com problemas de solução de dependências"
 
-#: ../cli.py:2031
+#: ../cli.py:2104
 msgid "control whether color is used"
 msgstr "controla o uso da cor"
 
-#: ../cli.py:2033
+#: ../cli.py:2106
 msgid "set value of $releasever in yum config and repo files"
 msgstr "defina o valor de $releasever nos arquivos repo e yum config"
 
-#: ../cli.py:2035
+#: ../cli.py:2108
 msgid "set arbitrary config and repo options"
 msgstr "Configurando opções arbitrárias de repositório e configurações. "
 
@@ -873,19 +873,19 @@ msgstr "Atualizando para as dependências"
 msgid "Removing for dependencies"
 msgstr "Removendo para as dependências"
 
-#: ../output.py:1368 ../output.py:1478
+#: ../output.py:1368 ../output.py:1429 ../output.py:1530
 msgid "Skipped (dependency problems)"
 msgstr "Ignorado (problemas de dependências)"
 
-#: ../output.py:1370 ../output.py:2024
+#: ../output.py:1370 ../output.py:1430 ../output.py:2076
 msgid "Not installed"
 msgstr "Não instalado"
 
-#: ../output.py:1371
+#: ../output.py:1371 ../output.py:1431
 msgid "Not available"
 msgstr "Não disponível"
 
-#: ../output.py:1393 ../output.py:1428 ../output.py:2379
+#: ../output.py:1393 ../output.py:1441 ../output.py:1462 ../output.py:2435
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Pacote"
@@ -923,52 +923,58 @@ msgstr ""
 "Resumo da transação\n"
 "%s\n"
 
-#: ../output.py:1421 ../output.py:2174 ../output.py:2175
+#: ../output.py:1421 ../output.py:2230 ../output.py:2231
 msgid "Install"
 msgstr "Instalar"
 
-#: ../output.py:1422
-msgid "Upgrade"
-msgstr "Atualizar"
-
 #: ../output.py:1423
-msgid "Remove"
-msgstr "Remover"
+msgid "Upgrade"
+msgstr ""
 
-#: ../output.py:1424 ../output.py:2180
+#: ../output.py:1425
+msgid "Remove"
+msgstr ""
+
+#: ../output.py:1427 ../output.py:2236
 msgid "Reinstall"
 msgstr "Reinstalar"
 
-#: ../output.py:1425 ../output.py:2181
+#: ../output.py:1428 ../output.py:2237
 msgid "Downgrade"
 msgstr "Desatualizar"
 
-#: ../output.py:1472
+#: ../output.py:1464
+msgid "Dependent package"
+msgid_plural "Dependent packages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../output.py:1524
 msgid "Removed"
 msgstr "Removido(s)"
 
-#: ../output.py:1473
+#: ../output.py:1525
 msgid "Dependency Removed"
 msgstr "Dependência(s) removida(s)"
 
-#: ../output.py:1475
+#: ../output.py:1527
 msgid "Dependency Installed"
 msgstr "Dependência(s) instalada(s)"
 
-#: ../output.py:1477
+#: ../output.py:1529
 msgid "Dependency Updated"
 msgstr "Dependência(s) atualizada(s)"
 
-#: ../output.py:1479
+#: ../output.py:1531
 msgid "Replaced"
 msgstr "Substituído(s)"
 
-#: ../output.py:1480
+#: ../output.py:1532
 msgid "Failed"
 msgstr "Falhou"
 
 #. Delta between C-c's so we treat as exit
-#: ../output.py:1567
+#: ../output.py:1619
 msgid "two"
 msgstr "dois"
 
@@ -976,7 +982,7 @@ msgstr "dois"
 #. Current download cancelled, interrupt (ctrl-c) again within two seconds
 #. to exit.
 #. Where "interupt (ctrl-c) again" and "two" are highlighted.
-#: ../output.py:1578
+#: ../output.py:1630
 #, python-format
 msgid ""
 "\n"
@@ -987,416 +993,416 @@ msgstr ""
 " Download atual cancelado, %sinterrompa com (ctrl-c) novamente%s dentro de %s%s%s segundos\n"
 "para sair.\n"
 
-#: ../output.py:1589
+#: ../output.py:1641
 msgid "user interrupt"
 msgstr "interrupção do usuário"
 
-#: ../output.py:1615
+#: ../output.py:1667
 msgid "Total"
 msgstr "Total"
 
-#: ../output.py:1637
+#: ../output.py:1689
 msgid "I"
 msgstr "I"
 
-#: ../output.py:1638
+#: ../output.py:1690
 msgid "O"
 msgstr "O"
 
-#: ../output.py:1639
+#: ../output.py:1691
 msgid "E"
 msgstr "E"
 
-#: ../output.py:1640
+#: ../output.py:1692
 msgid "R"
 msgstr "R"
 
-#: ../output.py:1641
+#: ../output.py:1693
 msgid "D"
 msgstr "D"
 
-#: ../output.py:1642
+#: ../output.py:1694
 msgid "U"
 msgstr "U"
 
-#: ../output.py:1656
+#: ../output.py:1708
 msgid "<unset>"
 msgstr "<indefinido>"
 
-#: ../output.py:1657
+#: ../output.py:1709
 msgid "System"
 msgstr "Sistema"
 
-#: ../output.py:1726
+#: ../output.py:1778
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
 msgstr ""
 
-#: ../output.py:1736 ../output.py:1926
+#: ../output.py:1788 ../output.py:1978
 msgid "No transactions"
 msgstr "Nenhuma transação"
 
-#: ../output.py:1761 ../output.py:2368 ../output.py:2458
+#: ../output.py:1813 ../output.py:2424 ../output.py:2514
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "IDs de transação ou pacote(s) fornecido(s) inválido(s)"
 
-#: ../output.py:1808
+#: ../output.py:1860
 msgid "Command line"
 msgstr "Linha de comando"
 
-#: ../output.py:1810 ../output.py:2256
+#: ../output.py:1862 ../output.py:2312
 msgid "Login user"
 msgstr "Usuário de login"
 
 #. REALLY Needs to use columns!
-#: ../output.py:1811 ../output.py:2377
+#: ../output.py:1863 ../output.py:2433
 msgid "ID"
 msgstr "ID"
 
-#: ../output.py:1813
+#: ../output.py:1865
 msgid "Date and time"
 msgstr "Data e hora"
 
-#: ../output.py:1814 ../output.py:2258 ../output.py:2378
+#: ../output.py:1866 ../output.py:2314 ../output.py:2434
 msgid "Action(s)"
 msgstr "Ação(ões)"
 
-#: ../output.py:1815 ../output.py:2259
+#: ../output.py:1867 ../output.py:2315
 msgid "Altered"
 msgstr "Alterado"
 
-#: ../output.py:1862
+#: ../output.py:1914
 msgid "No transaction ID given"
 msgstr "Nenhum ID de transação fornecido"
 
-#: ../output.py:1888 ../output.py:2324
+#: ../output.py:1940 ../output.py:2380
 msgid "Bad transaction ID given"
 msgstr "O ID de transação fornecido é inválido"
 
-#: ../output.py:1893
+#: ../output.py:1945
 msgid "Not found given transaction ID"
 msgstr "O ID de transação dado não foi localizado"
 
-#: ../output.py:1901
+#: ../output.py:1953
 msgid "Found more than one transaction ID!"
 msgstr "Foi localizado mais de um ID de transação!"
 
-#: ../output.py:1952 ../output.py:2332
+#: ../output.py:2004 ../output.py:2388
 msgid "No transaction ID, or package, given"
 msgstr "Nenhum ID de transação ou pacote fornecido"
 
-#: ../output.py:2023 ../output.py:2182
+#: ../output.py:2075 ../output.py:2238
 msgid "Downgraded"
 msgstr "Desatualizados"
 
-#: ../output.py:2025
+#: ../output.py:2077
 msgid "Older"
 msgstr "Antigo"
 
-#: ../output.py:2025
+#: ../output.py:2077
 msgid "Newer"
 msgstr "Recente"
 
-#: ../output.py:2061 ../output.py:2063 ../output.py:2480
+#: ../output.py:2115 ../output.py:2117 ../output.py:2536
 msgid "Transaction ID :"
 msgstr "ID de transação:"
 
-#: ../output.py:2065 ../output.py:2482
+#: ../output.py:2119 ../output.py:2538
 msgid "Begin time     :"
 msgstr "Horário de início:"
 
-#: ../output.py:2068 ../output.py:2070
+#: ../output.py:2122 ../output.py:2124
 msgid "Begin rpmdb    :"
 msgstr "Início do rpmdb:"
 
-#: ../output.py:2086
+#: ../output.py:2140
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u segundos)"
 
-#: ../output.py:2088
+#: ../output.py:2142
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minutos)"
 
-#: ../output.py:2090
+#: ../output.py:2144
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u horas)"
 
-#: ../output.py:2092
+#: ../output.py:2146
 #, python-format
 msgid "(%u days)"
 msgstr "(%u dias)"
 
-#: ../output.py:2093
+#: ../output.py:2147
 msgid "End time       :"
 msgstr "Horário do fim:"
 
-#: ../output.py:2096 ../output.py:2098
+#: ../output.py:2150 ../output.py:2152
 msgid "End rpmdb      :"
 msgstr "Fim do rpmdb:"
 
-#: ../output.py:2101 ../output.py:2103
+#: ../output.py:2155 ../output.py:2157
 msgid "User           :"
 msgstr "Usuário:"
 
-#: ../output.py:2107 ../output.py:2110 ../output.py:2112 ../output.py:2114
-#: ../output.py:2116
+#: ../output.py:2161 ../output.py:2164 ../output.py:2166 ../output.py:2168
+#: ../output.py:2170
 msgid "Return-Code    :"
 msgstr "Código de retorno:"
 
-#: ../output.py:2107 ../output.py:2112
+#: ../output.py:2161 ../output.py:2166
 msgid "Aborted"
 msgstr "Interrompido"
 
-#: ../output.py:2110
+#: ../output.py:2164
 msgid "Failures:"
 msgstr "Falhas:"
 
-#: ../output.py:2114
+#: ../output.py:2168
 msgid "Failure:"
 msgstr "Falha:"
 
-#: ../output.py:2116
+#: ../output.py:2170
 msgid "Success"
 msgstr "Sucesso"
 
-#: ../output.py:2121 ../output.py:2123 ../output.py:2511
+#: ../output.py:2175 ../output.py:2177 ../output.py:2567
 msgid "Command Line   :"
 msgstr "Linha de comando  :"
 
-#: ../output.py:2132
+#: ../output.py:2186
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "informações não-padrão adicionais armazenadas: %d"
 
 #. This is _possible_, but not common
-#: ../output.py:2137
+#: ../output.py:2191
 msgid "Transaction performed with:"
 msgstr "Transação realizada com:"
 
-#: ../output.py:2141
+#: ../output.py:2195
 msgid "Packages Altered:"
 msgstr "Pacotes alterados:"
 
-#: ../output.py:2145
+#: ../output.py:2199
 msgid "Packages Skipped:"
 msgstr "Pacotes ignorados: "
 
-#: ../output.py:2151
+#: ../output.py:2207
 msgid "Rpmdb Problems:"
 msgstr "Problemas com Rpmdb:"
 
-#: ../output.py:2162
+#: ../output.py:2218
 msgid "Scriptlet output:"
 msgstr "Saída do scriptlet:"
 
-#: ../output.py:2168
+#: ../output.py:2224
 msgid "Errors:"
 msgstr "Erros:"
 
-#: ../output.py:2176
+#: ../output.py:2232
 msgid "Dep-Install"
 msgstr "Dep-Install"
 
-#: ../output.py:2178
+#: ../output.py:2234
 msgid "Obsoleting"
 msgstr "Obsoletos"
 
-#: ../output.py:2179
+#: ../output.py:2235
 msgid "Erase"
 msgstr "Apagar"
 
-#: ../output.py:2183
+#: ../output.py:2239
 msgid "Update"
 msgstr "Atualizar"
 
-#: ../output.py:2257
+#: ../output.py:2313
 msgid "Time"
 msgstr "Hora"
 
-#: ../output.py:2283
+#: ../output.py:2339
 msgid "Last day"
 msgstr "Ontem"
 
-#: ../output.py:2284
+#: ../output.py:2340
 msgid "Last week"
 msgstr "Uma semana atrás"
 
-#: ../output.py:2285
+#: ../output.py:2341
 msgid "Last 2 weeks"
 msgstr "2 semanas atrás"
 
 #. US default :p
-#: ../output.py:2286
+#: ../output.py:2342
 msgid "Last 3 months"
 msgstr "3 meses atrás"
 
-#: ../output.py:2287
+#: ../output.py:2343
 msgid "Last 6 months"
 msgstr "6 meses atrás"
 
-#: ../output.py:2288
+#: ../output.py:2344
 msgid "Last year"
 msgstr "Ano passado"
 
-#: ../output.py:2289
+#: ../output.py:2345
 msgid "Over a year ago"
 msgstr "Há mais de um ano"
 
-#: ../output.py:2336
+#: ../output.py:2392
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Nenhuma transação %s achada"
 
-#: ../output.py:2342
+#: ../output.py:2398
 msgid "Transaction ID:"
 msgstr "ID da transação:"
 
-#: ../output.py:2343
+#: ../output.py:2399
 msgid "Available additional history information:"
 msgstr "Informação adicional do histórico disponível:"
 
-#: ../output.py:2356
+#: ../output.py:2412
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Não há dados adicionais encontrados por este nome"
 
-#: ../output.py:2483
+#: ../output.py:2539
 msgid "Package        :"
-msgstr "Pacote        :"
+msgstr ""
 
-#: ../output.py:2484
+#: ../output.py:2540
 msgid "State          :"
 msgstr ""
 
-#: ../output.py:2487
+#: ../output.py:2543
 msgid "Size           :"
-msgstr "Tamanho           :"
+msgstr ""
 
-#: ../output.py:2489
+#: ../output.py:2545
 msgid "Build host     :"
 msgstr ""
 
-#: ../output.py:2492
+#: ../output.py:2548
 msgid "Build time     :"
 msgstr ""
 
-#: ../output.py:2494
+#: ../output.py:2550
 msgid "Packager       :"
-msgstr "Empacotador       :"
+msgstr ""
 
-#: ../output.py:2496
+#: ../output.py:2552
 msgid "Vendor         :"
-msgstr "Fornecedor         :"
+msgstr ""
 
-#: ../output.py:2498
+#: ../output.py:2554
 msgid "License        :"
-msgstr "Licença        :"
+msgstr ""
 
-#: ../output.py:2500
+#: ../output.py:2556
 msgid "URL            :"
-msgstr "URL            :"
+msgstr ""
 
-#: ../output.py:2502
+#: ../output.py:2558
 msgid "Source RPM     :"
-msgstr "Source RPM     :"
+msgstr ""
 
-#: ../output.py:2505
+#: ../output.py:2561
 msgid "Commit Time    :"
 msgstr ""
 
-#: ../output.py:2507
+#: ../output.py:2563
 msgid "Committer      :"
 msgstr ""
 
-#: ../output.py:2509
+#: ../output.py:2565
 msgid "Reason         :"
 msgstr ""
 
-#: ../output.py:2513
+#: ../output.py:2569
 msgid "From repo      :"
 msgstr ""
 
-#: ../output.py:2517
+#: ../output.py:2573
 msgid "Installed by   :"
-msgstr "Instalado por   :"
+msgstr ""
 
-#: ../output.py:2521
+#: ../output.py:2577
 msgid "Changed by     :"
-msgstr "Modificado por     :"
+msgstr ""
 
-#: ../output.py:2566
+#: ../output.py:2622
 msgid "installed"
 msgstr "instalado"
 
-#: ../output.py:2567
+#: ../output.py:2623
 msgid "an update"
 msgstr "uma atualização"
 
-#: ../output.py:2568
+#: ../output.py:2624
 msgid "erased"
 msgstr "removido"
 
-#: ../output.py:2569
+#: ../output.py:2625
 msgid "reinstalled"
 msgstr "Reinstalado"
 
-#: ../output.py:2570
+#: ../output.py:2626
 msgid "a downgrade"
 msgstr "um downgrade"
 
-#: ../output.py:2571
+#: ../output.py:2627
 msgid "obsoleting"
 msgstr "obsoleto"
 
-#: ../output.py:2572
+#: ../output.py:2628
 msgid "updated"
 msgstr "atualizado"
 
-#: ../output.py:2573
+#: ../output.py:2629
 msgid "obsoleted"
 msgstr "obsoleto"
 
-#: ../output.py:2577
+#: ../output.py:2633
 #, python-format
 msgid "---> Package %s.%s %s:%s-%s will be %s"
 msgstr "---> O pacote %s.%s %s:%s-%s será %s"
 
-#: ../output.py:2588
+#: ../output.py:2644
 msgid "--> Running transaction check"
 msgstr "--> Executando verificação da transação"
 
-#: ../output.py:2594
+#: ../output.py:2650
 msgid "--> Restarting Dependency Resolution with new changes."
 msgstr "--> Reiniciando resolução de dependências com as novas alterações."
 
-#: ../output.py:2600
+#: ../output.py:2656
 msgid "--> Finished Dependency Resolution"
 msgstr "--> Resolução de dependências finalizada"
 
-#: ../output.py:2613 ../output.py:2626
+#: ../output.py:2669 ../output.py:2682
 #, python-format
 msgid "--> Processing Dependency: %s for package: %s"
 msgstr "--> Processando dependência: %s para o pacote: %s"
 
-#: ../output.py:2639
+#: ../output.py:2695
 #, python-format
 msgid "---> Keeping package: %s"
 msgstr "---> Manter os  pacotes: %s"
 
-#: ../output.py:2648
+#: ../output.py:2704
 #, python-format
 msgid "--> Unresolved Dependency: %s"
 msgstr "--> Dependência não resolvida: %s"
 
-#: ../output.py:2665
+#: ../output.py:2721
 #, python-format
 msgid "Package: %s"
 msgstr "Pacote: %s"
 
-#: ../output.py:2667
+#: ../output.py:2723
 #, python-format
 msgid ""
 "\n"
@@ -1405,7 +1411,7 @@ msgstr ""
 "\n"
 "    Requer: %s"
 
-#: ../output.py:2676
+#: ../output.py:2732
 #, python-format
 msgid ""
 "\n"
@@ -1414,7 +1420,7 @@ msgstr ""
 "\n"
 "    %s: %s (%s)"
 
-#: ../output.py:2681
+#: ../output.py:2737
 #, python-format
 msgid ""
 "\n"
@@ -1423,7 +1429,7 @@ msgstr ""
 "\n"
 "        %s"
 
-#: ../output.py:2683
+#: ../output.py:2739
 msgid ""
 "\n"
 "        Not found"
@@ -1432,87 +1438,87 @@ msgstr ""
 "       Não encontrado"
 
 #. These should be the only three things we care about:
-#: ../output.py:2698
+#: ../output.py:2754
 msgid "Updated By"
 msgstr "Atualizado por"
 
-#: ../output.py:2699
+#: ../output.py:2755
 msgid "Downgraded By"
 msgstr "Desatualizado por"
 
-#: ../output.py:2700
+#: ../output.py:2756
 msgid "Obsoleted By"
 msgstr "Obsoletado por"
 
-#: ../output.py:2718
+#: ../output.py:2774
 msgid "Available"
 msgstr "Disponível"
 
-#: ../output.py:2753 ../output.py:2766
+#: ../output.py:2809 ../output.py:2822
 #, python-format
 msgid "--> Processing Conflict: %s conflicts %s"
 msgstr "--> Processando conflito: %s conflita com %s"
 
-#: ../output.py:2772
+#: ../output.py:2828
 msgid "--> Populating transaction set with selected packages. Please wait."
 msgstr ""
 "--> Construindo conjunto de transações com os pacotes selecionados. Por "
 "favor aguarde."
 
-#: ../output.py:2781
+#: ../output.py:2837
 #, python-format
 msgid "---> Downloading header for %s to pack into transaction set."
 msgstr "--> Baixando cabeçalho do %s para inclusão no conjunto de transações."
 
-#: ../utils.py:123
+#: ../utils.py:129
 msgid "Running"
 msgstr "Executando"
 
-#: ../utils.py:124
+#: ../utils.py:130
 msgid "Sleeping"
 msgstr "Dormindo"
 
-#: ../utils.py:125
+#: ../utils.py:131
 msgid "Uninterruptible"
 msgstr "Ininterrompível"
 
-#: ../utils.py:126
+#: ../utils.py:132
 msgid "Zombie"
 msgstr "Zumbi"
 
-#: ../utils.py:127
+#: ../utils.py:133
 msgid "Traced/Stopped"
 msgstr "Rastreado/Parado"
 
-#: ../utils.py:128 ../yumcommands.py:1792
+#: ../utils.py:134 ../yumcommands.py:1796
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: ../utils.py:149
+#: ../utils.py:155
 msgid "  The other application is: PackageKit"
 msgstr "  O outro aplicativo é: PackageKit"
 
-#: ../utils.py:151
+#: ../utils.py:157
 #, python-format
 msgid "  The other application is: %s"
 msgstr "  O outro aplicativo é: %s"
 
-#: ../utils.py:154
+#: ../utils.py:160
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
 msgstr "    Memória: %5s RSS (%5sB VSZ)"
 
-#: ../utils.py:159
+#: ../utils.py:165
 #, python-format
 msgid "    Started: %s - %s ago"
 msgstr "    Iniciado: %s - %s atrás"
 
-#: ../utils.py:161
+#: ../utils.py:167
 #, python-format
 msgid "    State  : %s, pid: %d"
 msgstr "    Estado: %s, pid: %d"
 
-#: ../utils.py:190 ../yummain.py:43
+#: ../utils.py:196 ../yummain.py:43
 msgid ""
 "\n"
 "\n"
@@ -1522,7 +1528,7 @@ msgstr ""
 "\n"
 "Saindo pelo cancelamento do usuário"
 
-#: ../utils.py:202 ../yummain.py:49
+#: ../utils.py:208 ../yummain.py:49
 msgid ""
 "\n"
 "\n"
@@ -1532,7 +1538,7 @@ msgstr ""
 "\n"
 "Saindo por um pipe defeituoso"
 
-#: ../utils.py:204 ../yummain.py:51
+#: ../utils.py:210 ../yummain.py:51
 #, python-format
 msgid ""
 "\n"
@@ -1543,7 +1549,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: ../utils.py:280 ../yummain.py:134
+#: ../utils.py:286 ../yummain.py:134
 msgid ""
 "Another app is currently holding the yum lock; exiting as configured by "
 "exit_on_lock"
@@ -1551,36 +1557,36 @@ msgstr ""
 "No momento outro aplicativo está com a posse da trava do yum; saindo "
 "conforme configurado pelo exit_on_lock"
 
-#: ../utils.py:346
+#: ../utils.py:352
 #, python-format
 msgid "PluginExit Error: %s"
 msgstr "Erro PluginExit: %s"
 
-#: ../utils.py:349
+#: ../utils.py:355
 #, python-format
 msgid "Yum Error: %s"
 msgstr "Error do Yum: %s"
 
-#: ../utils.py:407 ../yummain.py:161 ../yummain.py:200
+#: ../utils.py:413 ../yummain.py:161 ../yummain.py:200
 #, python-format
 msgid "Error: %s"
 msgstr "Error: %s"
 
-#: ../utils.py:411 ../yummain.py:205
+#: ../utils.py:417 ../yummain.py:205
 msgid " You could try using --skip-broken to work around the problem"
 msgstr ""
 " Você pode tentar usar o parâmetro --skip-broken para contornar o problema"
 
-#: ../utils.py:413 ../yummain.py:87
+#: ../utils.py:419 ../yummain.py:87
 msgid " You could try running: rpm -Va --nofiles --nodigest"
 msgstr " Você pode tentar executar: rpm -Va --nofiles --nodigest"
 
-#: ../utils.py:420 ../yummain.py:171 ../yummain.py:213
+#: ../utils.py:426 ../yummain.py:171 ../yummain.py:213
 #, python-format
 msgid "Unknown Error(s): Exit Code: %d:"
 msgstr "Erro(s) desconhecido(s): código de saída: %d:"
 
-#: ../utils.py:426 ../yummain.py:219
+#: ../utils.py:432 ../yummain.py:219
 msgid ""
 "\n"
 "Dependencies Resolved"
@@ -1588,7 +1594,7 @@ msgstr ""
 "\n"
 "Dependências resolvidas"
 
-#: ../utils.py:442 ../yummain.py:251
+#: ../utils.py:448 ../yummain.py:251
 msgid "Complete!"
 msgstr "Concluído!"
 
@@ -1765,7 +1771,7 @@ msgstr "Configurando o processo de remoção"
 
 #: ../yumcommands.py:773
 msgid "Display, or use, the groups information"
-msgstr "Exibir, ou utilizar, as informações dos grupos"
+msgstr ""
 
 #: ../yumcommands.py:776
 msgid "Setting up Group Process"
@@ -1832,153 +1838,149 @@ msgstr "Instala um RPM local"
 msgid "Setting up Local Package Process"
 msgstr "Configurando o processo de pacote local"
 
-#: ../yumcommands.py:1437
-msgid "Determine which package provides the given dependency"
-msgstr "Determina qual pacote fornece a dependência dada"
-
-#: ../yumcommands.py:1453
+#: ../yumcommands.py:1457
 msgid "Searching Packages for Dependency:"
 msgstr "Pesquisando pacotes por dependência:"
 
-#: ../yumcommands.py:1484
+#: ../yumcommands.py:1488
 msgid "Run an interactive yum shell"
 msgstr "Executa um shell interativo do yum"
 
-#: ../yumcommands.py:1510
+#: ../yumcommands.py:1514
 msgid "Setting up Yum Shell"
 msgstr "Configurando o shell do Yum"
 
-#: ../yumcommands.py:1553
+#: ../yumcommands.py:1557
 msgid "List a package's dependencies"
 msgstr "Lista as dependências de um pacote"
 
-#: ../yumcommands.py:1580
+#: ../yumcommands.py:1584
 msgid "Finding dependencies: "
 msgstr "Localizando dependências:"
 
-#: ../yumcommands.py:1612
+#: ../yumcommands.py:1616
 msgid "Display the configured software repositories"
 msgstr "Exibe os repositórios de software configurados"
 
-#: ../yumcommands.py:1691 ../yumcommands.py:1692
+#: ../yumcommands.py:1695 ../yumcommands.py:1696
 msgid "enabled"
 msgstr "habilitado"
 
-#: ../yumcommands.py:1718 ../yumcommands.py:1719
+#: ../yumcommands.py:1722 ../yumcommands.py:1723
 msgid "disabled"
 msgstr "desabilitado"
 
-#: ../yumcommands.py:1735
+#: ../yumcommands.py:1739
 msgid "Repo-id      : "
 msgstr "Repo-id      : "
 
-#: ../yumcommands.py:1736
+#: ../yumcommands.py:1740
 msgid "Repo-name    : "
 msgstr "Repo-name    : "
 
-#: ../yumcommands.py:1739
+#: ../yumcommands.py:1743
 msgid "Repo-status  : "
 msgstr "Repo-status  : "
 
-#: ../yumcommands.py:1742
+#: ../yumcommands.py:1746
 msgid "Repo-revision: "
 msgstr "Repo-revision: "
 
-#: ../yumcommands.py:1746
+#: ../yumcommands.py:1750
 msgid "Repo-tags    : "
 msgstr "Repo-tags    : "
 
-#: ../yumcommands.py:1752
+#: ../yumcommands.py:1756
 msgid "Repo-distro-tags: "
 msgstr "Repo-distro-tags: "
 
-#: ../yumcommands.py:1757
+#: ../yumcommands.py:1761
 msgid "Repo-updated : "
 msgstr "Repo-updated : "
 
-#: ../yumcommands.py:1759
+#: ../yumcommands.py:1763
 msgid "Repo-pkgs    : "
 msgstr "Repo-pkgs    : "
 
-#: ../yumcommands.py:1760
+#: ../yumcommands.py:1764
 msgid "Repo-size    : "
 msgstr "Repo-size    : "
 
-#: ../yumcommands.py:1767 ../yumcommands.py:1788
+#: ../yumcommands.py:1771 ../yumcommands.py:1792
 msgid "Repo-baseurl : "
 msgstr "Repo-baseurl : "
 
-#: ../yumcommands.py:1775
+#: ../yumcommands.py:1779
 msgid "Repo-metalink: "
 msgstr "Repo-metalink: "
 
-#: ../yumcommands.py:1779
+#: ../yumcommands.py:1783
 msgid "  Updated    : "
 msgstr "  Atualizados :"
 
-#: ../yumcommands.py:1782
+#: ../yumcommands.py:1786
 msgid "Repo-mirrors : "
 msgstr "Repo-mirrors : "
 
-#: ../yumcommands.py:1798
+#: ../yumcommands.py:1802
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Nunca (último: %s)"
 
-#: ../yumcommands.py:1800
+#: ../yumcommands.py:1804
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "Instante (último: %s)"
 
-#: ../yumcommands.py:1803
+#: ../yumcommands.py:1807
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s segundo(s) (último: %s)"
 
-#: ../yumcommands.py:1805
+#: ../yumcommands.py:1809
 msgid "Repo-expire  : "
 msgstr "Repo-expire  : "
 
-#: ../yumcommands.py:1808
+#: ../yumcommands.py:1812
 msgid "Repo-exclude : "
 msgstr "Repo-exclude : "
 
-#: ../yumcommands.py:1812
+#: ../yumcommands.py:1816
 msgid "Repo-include : "
 msgstr "Repo-include : "
 
-#: ../yumcommands.py:1816
+#: ../yumcommands.py:1820
 msgid "Repo-excluded: "
 msgstr "Repo-excluded: "
 
-#: ../yumcommands.py:1820
+#: ../yumcommands.py:1824
 msgid "Repo-filename: "
 msgstr "Nome do Arquivo repo: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../yumcommands.py:1830 ../yumcommands.py:1859
+#: ../yumcommands.py:1834 ../yumcommands.py:1863
 msgid "repo id"
 msgstr "id do repo"
 
-#: ../yumcommands.py:1847 ../yumcommands.py:1848 ../yumcommands.py:1866
+#: ../yumcommands.py:1851 ../yumcommands.py:1852 ../yumcommands.py:1870
 msgid "status"
 msgstr "status"
 
-#: ../yumcommands.py:1860
+#: ../yumcommands.py:1864
 msgid "repo name"
 msgstr "nome do repo"
 
-#: ../yumcommands.py:1922
+#: ../yumcommands.py:1926
 msgid "Display a helpful usage message"
 msgstr "Exibe uma mensagem de uso para ajuda"
 
-#: ../yumcommands.py:1964
+#: ../yumcommands.py:1968
 #, python-format
 msgid "No help available for %s"
 msgstr "Nenhuma ajuda disponível para %s"
 
-#: ../yumcommands.py:1969
+#: ../yumcommands.py:1973
 msgid ""
 "\n"
 "\n"
@@ -1988,7 +1990,7 @@ msgstr ""
 "\n"
 "apelidos: "
 
-#: ../yumcommands.py:1971
+#: ../yumcommands.py:1975
 msgid ""
 "\n"
 "\n"
@@ -1998,125 +2000,125 @@ msgstr ""
 "\n"
 "apelido: "
 
-#: ../yumcommands.py:2056
+#: ../yumcommands.py:2060
 msgid "Setting up Reinstall Process"
 msgstr "Configurando o processo de reinstalação"
 
-#: ../yumcommands.py:2068
+#: ../yumcommands.py:2072
 msgid "reinstall a package"
 msgstr "reinstala um pacote"
 
-#: ../yumcommands.py:2131
+#: ../yumcommands.py:2135
 msgid "Setting up Downgrade Process"
 msgstr "Configurando o processo de desatualização"
 
-#: ../yumcommands.py:2142
+#: ../yumcommands.py:2146
 msgid "downgrade a package"
 msgstr "desatualizando um pacote"
 
-#: ../yumcommands.py:2181
+#: ../yumcommands.py:2185
 msgid "Display a version for the machine and/or available repos."
 msgstr "Exibe uma versão para a máquina e/ou os repositórios disponíveis."
 
-#: ../yumcommands.py:2233
+#: ../yumcommands.py:2237
 msgid " Yum version groups:"
 msgstr " Grupos da versão do Yum:"
 
-#: ../yumcommands.py:2243
+#: ../yumcommands.py:2247
 msgid " Group   :"
 msgstr " Grupo:"
 
-#: ../yumcommands.py:2244
+#: ../yumcommands.py:2248
 msgid " Packages:"
 msgstr " Pacotes:"
 
-#: ../yumcommands.py:2273
+#: ../yumcommands.py:2277
 msgid "Installed:"
 msgstr "Instalados:"
 
-#: ../yumcommands.py:2281
+#: ../yumcommands.py:2285
 msgid "Group-Installed:"
 msgstr "Grupos instalados:"
 
-#: ../yumcommands.py:2290
+#: ../yumcommands.py:2294
 msgid "Available:"
 msgstr "Disponíveis:"
 
-#: ../yumcommands.py:2299
+#: ../yumcommands.py:2303
 msgid "Group-Available:"
 msgstr "Grupos disponíveis:"
 
-#: ../yumcommands.py:2363
+#: ../yumcommands.py:2367
 msgid "Display, or use, the transaction history"
 msgstr "Exibir ou usar o histórico de transações"
 
-#: ../yumcommands.py:2435
+#: ../yumcommands.py:2461
 msgid "Transactions:"
-msgstr "Transações:"
+msgstr ""
 
-#: ../yumcommands.py:2436
+#: ../yumcommands.py:2462
 msgid "Begin time  :"
 msgstr ""
 
-#: ../yumcommands.py:2437
+#: ../yumcommands.py:2463
 msgid "End time    :"
 msgstr ""
 
-#: ../yumcommands.py:2438
+#: ../yumcommands.py:2464
 msgid "Counts      :"
 msgstr ""
 
-#: ../yumcommands.py:2439
+#: ../yumcommands.py:2465
 msgid "  NEVRAC :"
-msgstr "  NEVRAC :"
+msgstr ""
 
-#: ../yumcommands.py:2440
+#: ../yumcommands.py:2466
 msgid "  NEVRA  :"
-msgstr "  NEVRA  :"
+msgstr ""
 
-#: ../yumcommands.py:2441
+#: ../yumcommands.py:2467
 msgid "  NA     :"
-msgstr "  NA     :"
+msgstr ""
 
-#: ../yumcommands.py:2442
+#: ../yumcommands.py:2468
 msgid "  NEVR   :"
-msgstr "  NEVR   :"
+msgstr ""
 
-#: ../yumcommands.py:2443
+#: ../yumcommands.py:2469
 msgid "  rpm DB :"
-msgstr "  rpm DB :"
+msgstr ""
 
-#: ../yumcommands.py:2444
+#: ../yumcommands.py:2470
 msgid "  yum DB :"
-msgstr "  yum DB :"
+msgstr ""
 
-#: ../yumcommands.py:2475
+#: ../yumcommands.py:2503
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Subcomando de histórico inválido, use: %s."
 
-#: ../yumcommands.py:2482
+#: ../yumcommands.py:2510
 msgid "You don't have access to the history DB."
 msgstr "Você não tem acesso ao banco de dados do histórico."
 
-#: ../yumcommands.py:2574
+#: ../yumcommands.py:2602
 msgid "Check for problems in the rpmdb"
 msgstr "Procurar por problemas no rpmdb"
 
-#: ../yumcommands.py:2639
+#: ../yumcommands.py:2667
 msgid "load a saved transaction from filename"
 msgstr "Carregar uma transação salva de um nome de arquivo"
 
-#: ../yumcommands.py:2656
+#: ../yumcommands.py:2684
 msgid "No saved transaction file specified."
 msgstr "Nenhum arquivo de transação salvo especificado."
 
-#: ../yumcommands.py:2660
+#: ../yumcommands.py:2688
 #, python-format
 msgid "loading transaction from %s"
 msgstr "carregando transação de %s"
 
-#: ../yumcommands.py:2666
+#: ../yumcommands.py:2694
 #, python-format
 msgid "Transaction loaded from %s with %s members"
 msgstr "Transação carregada de %s com %s membros"
@@ -2128,8 +2130,8 @@ msgid " Yum checks failed: %s"
 msgstr "A verificação do yum falhou: %s"
 
 #: ../yummain.py:110
-msgid "No read/write access in current directory, moving to /"
-msgstr "Sem acesso de leitura/escrita no diretório atual, mudando para /"
+msgid "No read/execute access in current directory, moving to /"
+msgstr ""
 
 #: ../yummain.py:124
 msgid "Can't create lock file; exiting"
@@ -2153,8 +2155,6 @@ msgid ""
 "Your transaction was saved, rerun it with:\n"
 " yum load-transaction %s"
 msgstr ""
-"Sua transação foi salva, reexcute-a com:\n"
-"yum load-transaction %s"
 
 #: ../yummain.py:326
 msgid ""
@@ -2166,75 +2166,75 @@ msgstr ""
 "\n"
 "Saindo pelo cancelamento do usuário."
 
-#: ../yum/depsolve.py:83
+#: ../yum/depsolve.py:86
 msgid "doTsSetup() will go away in a future version of Yum.\n"
 msgstr "doTsSetup() será removida em uma futura versão do Yum.\n"
 
-#: ../yum/depsolve.py:98
+#: ../yum/depsolve.py:101
 msgid "Setting up TransactionSets before config class is up"
 msgstr ""
 "Configurando TransactionSets antes da ativação da classe de configuração"
 
-#: ../yum/depsolve.py:152
+#: ../yum/depsolve.py:155
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "tsflag inválido no arquivo de configuração: %s"
 
-#: ../yum/depsolve.py:170
+#: ../yum/depsolve.py:173
 #, python-format
 msgid "Searching pkgSack for dep: %s"
 msgstr "Pesquisando pkgSack para a dep.: %s"
 
-#: ../yum/depsolve.py:221
+#: ../yum/depsolve.py:224
 #, python-format
 msgid "Member: %s"
 msgstr "Membro: %s"
 
-#: ../yum/depsolve.py:235 ../yum/depsolve.py:831
+#: ../yum/depsolve.py:238 ../yum/depsolve.py:871
 #, python-format
 msgid "%s converted to install"
 msgstr "%s convertido para instalar"
 
-#: ../yum/depsolve.py:247
+#: ../yum/depsolve.py:250
 #, python-format
 msgid "Adding Package %s in mode %s"
 msgstr "Adicionando pacote %s no modo %s"
 
-#: ../yum/depsolve.py:263
+#: ../yum/depsolve.py:266
 #, python-format
 msgid "Removing Package %s"
 msgstr "Removendo pacote %s"
 
-#: ../yum/depsolve.py:285
+#: ../yum/depsolve.py:288
 #, python-format
 msgid "%s requires: %s"
 msgstr "%s requer: %s"
 
-#: ../yum/depsolve.py:326
+#: ../yum/depsolve.py:329
 #, python-format
 msgid "%s requires %s"
 msgstr "%s requer %s"
 
-#: ../yum/depsolve.py:353
+#: ../yum/depsolve.py:356
 msgid "Needed Require has already been looked up, cheating"
 msgstr "O requerimento necessário já foi localizado, enganando"
 
-#: ../yum/depsolve.py:363
+#: ../yum/depsolve.py:366
 #, python-format
 msgid "Needed Require is not a package name. Looking up: %s"
 msgstr "O requerimento necessário não é o nome de um pacote. Localizando: %s"
 
-#: ../yum/depsolve.py:371
+#: ../yum/depsolve.py:374
 #, python-format
 msgid "Potential Provider: %s"
 msgstr "Fornecedor em potencial: %s"
 
-#: ../yum/depsolve.py:394
+#: ../yum/depsolve.py:397
 #, python-format
 msgid "Mode is %s for provider of %s: %s"
 msgstr "O modo é %s para o fornecedor do %s: %s"
 
-#: ../yum/depsolve.py:398
+#: ../yum/depsolve.py:401
 #, python-format
 msgid "Mode for pkg providing %s: %s"
 msgstr "Modo para o pacote que fornece o %s: %s"
@@ -2242,117 +2242,117 @@ msgstr "Modo para o pacote que fornece o %s: %s"
 #. the thing it needs is being updated or obsoleted away
 #. try to update the requiring package in hopes that all this problem goes
 #. away :(
-#: ../yum/depsolve.py:403 ../yum/depsolve.py:420
+#: ../yum/depsolve.py:406 ../yum/depsolve.py:441
 #, python-format
 msgid "Trying to update %s to resolve dep"
 msgstr "Tentando atualizar %s para resolver a dependência"
 
-#: ../yum/depsolve.py:414 ../yum/depsolve.py:424
+#: ../yum/depsolve.py:435 ../yum/depsolve.py:445
 #, python-format
 msgid "No update paths found for %s. Failure!"
 msgstr "Sem caminhos de atualização encontrados para %s. Falha!"
 
-#: ../yum/depsolve.py:430
+#: ../yum/depsolve.py:451
 #, python-format
 msgid "TSINFO: %s package requiring %s marked as erase"
 msgstr "TSINFO: o pacote %s que requer o %s foi marcado para remoção"
 
-#: ../yum/depsolve.py:443
+#: ../yum/depsolve.py:464
 #, python-format
 msgid "TSINFO: Obsoleting %s with %s to resolve dep."
 msgstr "TSINFO: Tornando %s obsoleto com o %s para resolver a dependência."
 
-#: ../yum/depsolve.py:446
+#: ../yum/depsolve.py:467
 #, python-format
 msgid "TSINFO: Updating %s to resolve dep."
 msgstr "TSINFO: Atualizando %s para resolver a dependência."
 
-#: ../yum/depsolve.py:454
+#: ../yum/depsolve.py:475
 #, python-format
 msgid "Cannot find an update path for dep for: %s"
 msgstr ""
 "Não foi possível encontrar um caminho de atualização para a dep. para: %s"
 
-#: ../yum/depsolve.py:485
+#: ../yum/depsolve.py:506
 #, python-format
 msgid "Quick matched %s to require for %s"
 msgstr "%s localizado rapidamente a ser requerido por %s"
 
 #. is it already installed?
-#: ../yum/depsolve.py:527
+#: ../yum/depsolve.py:548
 #, python-format
 msgid "%s is in providing packages but it is already installed, removing."
 msgstr "%s está nos pacotes fornecedores mas já está instalado, removendo."
 
-#: ../yum/depsolve.py:543
+#: ../yum/depsolve.py:564
 #, python-format
 msgid "Potential resolving package %s has newer instance in ts."
 msgstr ""
 "O pacote de solução em potencial %s tem uma instância mais nova no ct."
 
-#: ../yum/depsolve.py:554
+#: ../yum/depsolve.py:575
 #, python-format
 msgid "Potential resolving package %s has newer instance installed."
 msgstr ""
 "O pacote de solução em potencial %s tem uma instância mais nova instalada."
 
-#: ../yum/depsolve.py:572
+#: ../yum/depsolve.py:593
 #, python-format
 msgid "%s already in ts, skipping this one"
 msgstr "%s já está no ct, pulando esse"
 
-#: ../yum/depsolve.py:621
+#: ../yum/depsolve.py:642
 #, python-format
 msgid "TSINFO: Marking %s as update for %s"
 msgstr "TSINFO: Marcando %s como uma atualização para o %s"
 
-#: ../yum/depsolve.py:630
+#: ../yum/depsolve.py:651
 #, python-format
 msgid "TSINFO: Marking %s as install for %s"
 msgstr "TSINFO: Marcando %s como uma instalação para o %s"
 
-#: ../yum/depsolve.py:765 ../yum/depsolve.py:861
+#: ../yum/depsolve.py:786 ../yum/depsolve.py:901
 msgid "Success - empty transaction"
 msgstr "Sucesso - transação vazia"
 
-#: ../yum/depsolve.py:805 ../yum/depsolve.py:821
+#: ../yum/depsolve.py:826 ../yum/depsolve.py:861
 msgid "Restarting Loop"
 msgstr "Reiniciando o loop"
 
-#: ../yum/depsolve.py:841
+#: ../yum/depsolve.py:881
 msgid "Dependency Process ending"
 msgstr "Término do processo de dependências"
 
-#: ../yum/depsolve.py:863
+#: ../yum/depsolve.py:903
 msgid "Success - deps resolved"
 msgstr "Sucesso - dependências resolvidas"
 
-#: ../yum/depsolve.py:887
+#: ../yum/depsolve.py:927
 #, python-format
 msgid "Checking deps for %s"
 msgstr "Verificando dependências para %s"
 
-#: ../yum/depsolve.py:973
+#: ../yum/depsolve.py:1013
 #, python-format
 msgid "looking for %s as a requirement of %s"
 msgstr "procurando por %s como um requerimento do %s"
 
-#: ../yum/depsolve.py:1216
+#: ../yum/depsolve.py:1256
 #, python-format
 msgid "Running compare_providers() for %s"
 msgstr "Executando compare_providers() para %s"
 
-#: ../yum/depsolve.py:1243 ../yum/depsolve.py:1249
+#: ../yum/depsolve.py:1283 ../yum/depsolve.py:1289
 #, python-format
 msgid "better arch in po %s"
 msgstr "melhor arquitetura no po %s"
 
-#: ../yum/depsolve.py:1345
+#: ../yum/depsolve.py:1385
 #, python-format
 msgid "%s obsoletes %s"
 msgstr "%s torna %s obsoleto"
 
-#: ../yum/depsolve.py:1357
+#: ../yum/depsolve.py:1397
 #, python-format
 msgid ""
 "archdist compared %s to %s on %s\n"
@@ -2361,37 +2361,37 @@ msgstr ""
 "archdist comparou %s com %s em %s\n"
 "  Vencedor: %s"
 
-#: ../yum/depsolve.py:1365
+#: ../yum/depsolve.py:1405
 #, python-format
 msgid "common sourcerpm %s and %s"
 msgstr "Sourcerpm comum %s e %s"
 
-#: ../yum/depsolve.py:1369
+#: ../yum/depsolve.py:1409
 #, python-format
 msgid "base package %s is installed for %s"
 msgstr "o pacote base %s está instalado para o %s"
 
-#: ../yum/depsolve.py:1375
+#: ../yum/depsolve.py:1415
 #, python-format
 msgid "common prefix of %s between %s and %s"
 msgstr "prefixo comum de %s entre %s e %s"
 
-#: ../yum/depsolve.py:1406
+#: ../yum/depsolve.py:1446
 #, python-format
 msgid "requires minimal: %d"
 msgstr "requer mínimo: %d"
 
-#: ../yum/depsolve.py:1410
+#: ../yum/depsolve.py:1450
 #, python-format
 msgid " Winner: %s"
 msgstr "Vencedor: %s"
 
-#: ../yum/depsolve.py:1415
+#: ../yum/depsolve.py:1455
 #, python-format
 msgid " Loser(with %d): %s"
 msgstr "Perdedor(com %d): %s"
 
-#: ../yum/depsolve.py:1431
+#: ../yum/depsolve.py:1471
 #, python-format
 msgid "Best Order: %s"
 msgstr "Melhor ordem: %s"
@@ -2551,29 +2551,29 @@ msgstr "faltando exigências"
 msgid "installed conflict"
 msgstr "conflito instalado"
 
-#: ../yum/__init__.py:1617
+#: ../yum/__init__.py:1630
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Aviso: scriptlet ou outros erros não fatais ocorreram durante a transação."
 
-#: ../yum/__init__.py:1627
+#: ../yum/__init__.py:1640
 msgid "Transaction couldn't start:"
 msgstr "A transação não pode ser iniciada."
 
 #. should this be 'to_unicoded'?
-#: ../yum/__init__.py:1630
+#: ../yum/__init__.py:1643
 msgid "Could not run transaction."
 msgstr "Não foi possível executar a transação."
 
-#: ../yum/__init__.py:1644
+#: ../yum/__init__.py:1657
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Falha ao remover o arquivo de transação %s"
 
 #. maybe a file log here, too
 #. but raising an exception is not going to do any good
-#: ../yum/__init__.py:1687
+#: ../yum/__init__.py:1700
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s deveria ter sido instalado mas não foi!"
@@ -2583,35 +2583,35 @@ msgstr "%s deveria ter sido instalado mas não foi!"
 #. Note: This actually triggers atm. because we can't
 #. always find the erased txmbr to set it when
 #. we should.
-#: ../yum/__init__.py:1756
+#: ../yum/__init__.py:1769
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s deveria ter sido removido mas não foi!"
 
-#: ../yum/__init__.py:1883
+#: ../yum/__init__.py:1896
 #, python-format
 msgid "Could not open lock %s: %s"
 msgstr "Não foi possível abrir a trava %s: %s"
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1900
+#: ../yum/__init__.py:1913
 #, python-format
 msgid "Unable to check if PID %s is active"
 msgstr "Não foi possível verificar se o PID %s está ativo"
 
 #. Another copy seems to be running.
-#: ../yum/__init__.py:1904
+#: ../yum/__init__.py:1917
 #, python-format
 msgid "Existing lock %s: another copy is running as pid %s."
 msgstr "Bloqueio existente em %s: outra cópia está em execução com o pid %s."
 
 #. Whoa. What the heck happened?
-#: ../yum/__init__.py:1952
+#: ../yum/__init__.py:1965
 #, python-format
 msgid "Could not create lock at %s: %s "
 msgstr "Não foi possível criar um bloqueio em %s: %s"
 
-#: ../yum/__init__.py:2005
+#: ../yum/__init__.py:2018
 #, python-format
 msgid ""
 "Package does not match intended download. Suggestion: run yum "
@@ -2620,30 +2620,30 @@ msgstr ""
 "O Pacote não coincide com o download pretendido. Sugestão: execute  yum "
 "--enablerepo=%s clean metadata"
 
-#: ../yum/__init__.py:2028
+#: ../yum/__init__.py:2041
 msgid "Could not perform checksum"
 msgstr "Não foi possível realizar a soma de verificação"
 
-#: ../yum/__init__.py:2031
+#: ../yum/__init__.py:2044
 msgid "Package does not match checksum"
 msgstr "O pacote não corresponde à soma de verificação"
 
-#: ../yum/__init__.py:2094
+#: ../yum/__init__.py:2107
 #, python-format
 msgid "package fails checksum but caching is enabled for %s"
 msgstr ""
 "o pacote falhou na soma de verificação mas o cache está habilitado para o %s"
 
-#: ../yum/__init__.py:2097 ../yum/__init__.py:2127
+#: ../yum/__init__.py:2110 ../yum/__init__.py:2140
 #, python-format
 msgid "using local copy of %s"
 msgstr "usando cópia local do %s"
 
-#: ../yum/__init__.py:2205
+#: ../yum/__init__.py:2218
 msgid "Header is not complete."
 msgstr "O cabeçalho não está completo."
 
-#: ../yum/__init__.py:2245
+#: ../yum/__init__.py:2258
 #, python-format
 msgid ""
 "Header not in local cache and caching-only mode enabled. Cannot download %s"
@@ -2651,64 +2651,64 @@ msgstr ""
 "O cabeçalho não está no cache local e o modo de somente cache está "
 "habilitado. Não foi possível baixar o %s."
 
-#: ../yum/__init__.py:2305
+#: ../yum/__init__.py:2318
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "A chave pública para o %s não está instalada"
 
-#: ../yum/__init__.py:2309
+#: ../yum/__init__.py:2322
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problema ao abrir o pacote %s"
 
-#: ../yum/__init__.py:2317
+#: ../yum/__init__.py:2330
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "A chave pública para o %s não é confiável"
 
-#: ../yum/__init__.py:2321
+#: ../yum/__init__.py:2334
 #, python-format
 msgid "Package %s is not signed"
 msgstr "O pacote %s não está assinado"
 
-#: ../yum/__init__.py:2363
+#: ../yum/__init__.py:2376
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Não foi possível remover %s"
 
-#: ../yum/__init__.py:2367
+#: ../yum/__init__.py:2380
 #, python-format
 msgid "%s removed"
 msgstr "%s removido"
 
-#: ../yum/__init__.py:2426
+#: ../yum/__init__.py:2439
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "Não foi possível remover %s arquivo %s"
 
-#: ../yum/__init__.py:2430
+#: ../yum/__init__.py:2443
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s arquivo %s removido"
 
-#: ../yum/__init__.py:2432
+#: ../yum/__init__.py:2445
 #, python-format
 msgid "%d %s file removed"
 msgid_plural "%d %s files removed"
-msgstr[0] "%d %s arquivo removido"
-msgstr[1] "%d %s arquivos removidos"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../yum/__init__.py:2522
+#: ../yum/__init__.py:2535
 #, python-format
 msgid "More than one identical match in sack for %s"
 msgstr "Mais de uma correspondência idêntica no saco para %s"
 
-#: ../yum/__init__.py:2528
+#: ../yum/__init__.py:2541
 #, python-format
 msgid "Nothing matches %s.%s %s:%s-%s from update"
 msgstr "Nada corresponde ao %s.%s %s:%s-%s a partir da atualização"
 
-#: ../yum/__init__.py:2892
+#: ../yum/__init__.py:2905
 msgid ""
 "searchPackages() will go away in a future version of Yum."
 "                      Use searchGenerator() instead. \n"
@@ -2716,123 +2716,124 @@ msgstr ""
 "searchPackages() será removida em uma futura versão do Yum. Ao invés disso, "
 "use a searchGenerator().\n"
 
-#: ../yum/__init__.py:2948
+#: ../yum/__init__.py:2961
 #, python-format
 msgid "Searching %d package"
 msgid_plural "Searching %d packages"
-msgstr[0] "Procurando %d pacote"
-msgstr[1] "Procurando %d pacotes"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../yum/__init__.py:2952
+#: ../yum/__init__.py:2965
 #, python-format
 msgid "searching package %s"
 msgstr "pesquisando pelo pacote %s"
 
-#: ../yum/__init__.py:2964
+#: ../yum/__init__.py:2977
 msgid "searching in file entries"
 msgstr "pesquisando nas entradas do arquivo"
 
-#: ../yum/__init__.py:2971
+#: ../yum/__init__.py:2984
 msgid "searching in provides entries"
 msgstr "pesquisando nas entradas dos fornecimentos"
 
-#: ../yum/__init__.py:3056
+#: ../yum/__init__.py:3069
 msgid "No group data available for configured repositories"
 msgstr "Nenhum dado de grupos disponível para os repositório configurados"
 
-#: ../yum/__init__.py:3092 ../yum/__init__.py:3112 ../yum/__init__.py:3147
-#: ../yum/__init__.py:3153 ../yum/__init__.py:3246 ../yum/__init__.py:3250
-#: ../yum/__init__.py:3674
+#: ../yum/__init__.py:3105 ../yum/__init__.py:3125 ../yum/__init__.py:3160
+#: ../yum/__init__.py:3166 ../yum/__init__.py:3259 ../yum/__init__.py:3263
+#: ../yum/__init__.py:3715
 #, python-format
 msgid "No Group named %s exists"
 msgstr "Não existe nenhum grupo de nome %s"
 
-#: ../yum/__init__.py:3124 ../yum/__init__.py:3266
+#: ../yum/__init__.py:3137 ../yum/__init__.py:3279
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "o pacote %s não foi marcado no grupo %s"
 
-#: ../yum/__init__.py:3176
+#: ../yum/__init__.py:3189
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "Adicionando o pacote %s do grupo %s"
 
-#: ../yum/__init__.py:3180
+#: ../yum/__init__.py:3193
 #, python-format
 msgid "No package named %s available to be installed"
 msgstr "Nenhum pacote de nome %s disponível para ser instalado"
 
-#: ../yum/__init__.py:3230
+#: ../yum/__init__.py:3243
 #, python-format
 msgid "Warning: Group %s does not have any packages."
 msgstr "Aviso: O Grupo %s não tem nenhum pacote."
 
-#: ../yum/__init__.py:3232
+#: ../yum/__init__.py:3245
 #, python-format
 msgid "Group %s does have %u conditional packages, which may get installed."
 msgstr "O grupo %s tem %u pacotes condicionais, que devem ser instalados"
 
 #. This can happen due to excludes after .up has
 #. happened.
-#: ../yum/__init__.py:3304
+#: ../yum/__init__.py:3317
 #, python-format
 msgid "Package tuple %s could not be found in packagesack"
 msgstr "A tupla %s do pacote não pôde ser encontrada no packagesack"
 
-#: ../yum/__init__.py:3332
+#: ../yum/__init__.py:3345
 #, python-format
 msgid "Package tuple %s could not be found in rpmdb"
 msgstr "A tupla %s do pacote não pôde ser localizada no rpmdb"
 
-#: ../yum/__init__.py:3395 ../yum/__init__.py:3457
+#: ../yum/__init__.py:3408 ../yum/__init__.py:3470
 #, python-format
 msgid "Invalid version flag from: %s"
 msgstr ""
 
-#: ../yum/__init__.py:3419 ../yum/__init__.py:3424
+#: ../yum/__init__.py:3432 ../yum/__init__.py:3437 ../yum/__init__.py:3494
+#: ../yum/__init__.py:3499
 #, python-format
 msgid "No Package found for %s"
 msgstr "Nenhum pacote encontrado para %s"
 
-#: ../yum/__init__.py:3758
+#: ../yum/__init__.py:3799
 msgid "Package Object was not a package object instance"
 msgstr "O pacote de objeto não era uma instância de pacote de objeto"
 
-#: ../yum/__init__.py:3762
+#: ../yum/__init__.py:3803
 msgid "Nothing specified to install"
 msgstr "Nada especificado para instalar"
 
-#: ../yum/__init__.py:3781 ../yum/__init__.py:4683
+#: ../yum/__init__.py:3822 ../yum/__init__.py:4724
 #, python-format
 msgid "Checking for virtual provide or file-provide for %s"
 msgstr "Verificando por fornecimento virtual ou de arquivo para %s"
 
-#: ../yum/__init__.py:3787 ../yum/__init__.py:4151 ../yum/__init__.py:4353
-#: ../yum/__init__.py:4689
+#: ../yum/__init__.py:3828 ../yum/__init__.py:4192 ../yum/__init__.py:4394
+#: ../yum/__init__.py:4730
 #, python-format
 msgid "No Match for argument: %s"
 msgstr "Nenhuma correspondência para o argumento: %s"
 
-#: ../yum/__init__.py:3864
+#: ../yum/__init__.py:3905
 #, python-format
 msgid "Package %s installed and not available"
 msgstr "Pacote %s instalado, mas não disponível"
 
-#: ../yum/__init__.py:3867
+#: ../yum/__init__.py:3908
 msgid "No package(s) available to install"
 msgstr "Nenhum pacote disponível para instalar"
 
-#: ../yum/__init__.py:3879
+#: ../yum/__init__.py:3920
 #, python-format
 msgid "Package: %s  - already in transaction set"
 msgstr "Pacote: %s - já está no conjunto de transações"
 
-#: ../yum/__init__.py:3907
+#: ../yum/__init__.py:3948
 #, python-format
 msgid "Package %s is obsoleted by %s which is already installed"
 msgstr "O pacote %s foi tornado obsoleto pelo %s, o qual já está instalado"
 
-#: ../yum/__init__.py:3912
+#: ../yum/__init__.py:3953
 #, python-format
 msgid ""
 "Package %s is obsoleted by %s, but obsoleting package does not provide for "
@@ -2840,89 +2841,89 @@ msgid ""
 msgstr ""
 "O pacote %s foi tornado obsoleto por %s, mas este não provê os requisitos."
 
-#: ../yum/__init__.py:3915
+#: ../yum/__init__.py:3956
 #, python-format
 msgid "Package %s is obsoleted by %s, trying to install %s instead"
 msgstr ""
 "O pacote %s foi tornado obsoleto por %s, tentando instalar %s ao invés disso"
 
-#: ../yum/__init__.py:3923
+#: ../yum/__init__.py:3964
 #, python-format
 msgid "Package %s already installed and latest version"
 msgstr "O pacote %s já está instalado em sua última versão"
 
-#: ../yum/__init__.py:3937
+#: ../yum/__init__.py:3978
 #, python-format
 msgid "Package matching %s already installed. Checking for update."
 msgstr "O pacote %s já está instalado. Verificando por uma atualização."
 
 #. update everything (the easy case)
-#: ../yum/__init__.py:4060
+#: ../yum/__init__.py:4101
 msgid "Updating Everything"
 msgstr "Atualizando tudo"
 
-#: ../yum/__init__.py:4084 ../yum/__init__.py:4226 ../yum/__init__.py:4256
-#: ../yum/__init__.py:4292
+#: ../yum/__init__.py:4125 ../yum/__init__.py:4267 ../yum/__init__.py:4297
+#: ../yum/__init__.py:4333
 #, python-format
 msgid "Not Updating Package that is already obsoleted: %s.%s %s:%s-%s"
 msgstr "Pacote já obsoleto não será atualizado: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4129 ../yum/__init__.py:4349
+#: ../yum/__init__.py:4170 ../yum/__init__.py:4390
 #, python-format
 msgid "%s"
 msgstr "%s"
 
-#: ../yum/__init__.py:4169
+#: ../yum/__init__.py:4210
 #, python-format
 msgid "No package matched to upgrade: %s"
-msgstr "Nenhum pacote correspondente para atualização: %s"
+msgstr ""
 
-#: ../yum/__init__.py:4215
+#: ../yum/__init__.py:4256
 #, python-format
 msgid "Package is already obsoleted: %s.%s %s:%s-%s"
 msgstr "O pacote já está obsoleto: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4251
+#: ../yum/__init__.py:4292
 #, python-format
 msgid "Not Updating Package that is obsoleted: %s"
 msgstr "Não atualizando o pacote que está obsoleto: %s"
 
-#: ../yum/__init__.py:4260 ../yum/__init__.py:4296
+#: ../yum/__init__.py:4301 ../yum/__init__.py:4337
 #, python-format
 msgid "Not Updating Package that is already updated: %s.%s %s:%s-%s"
 msgstr "Pacote já atualizado não será atualizado novamente: %s.%s %s:%s-%s"
 
-#: ../yum/__init__.py:4366
+#: ../yum/__init__.py:4407
 #, python-format
 msgid "No package matched to remove: %s"
-msgstr "Nenhum pacote correspondente para remoção: %s"
+msgstr ""
 
-#: ../yum/__init__.py:4372
+#: ../yum/__init__.py:4413
 #, python-format
 msgid "Skipping the running kernel: %s"
 msgstr "Ignorando o kernel em execução: %s"
 
-#: ../yum/__init__.py:4378
+#: ../yum/__init__.py:4419
 #, python-format
 msgid "Removing %s from the transaction"
 msgstr "Removendo %s da transação"
 
-#: ../yum/__init__.py:4415
+#: ../yum/__init__.py:4456
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "Não foi possível abrir: %s. Ignorando."
 
-#: ../yum/__init__.py:4418 ../yum/__init__.py:4535 ../yum/__init__.py:4620
+#: ../yum/__init__.py:4459 ../yum/__init__.py:4576 ../yum/__init__.py:4661
 #, python-format
 msgid "Examining %s: %s"
 msgstr "Examinando %s: %s"
 
-#: ../yum/__init__.py:4422
+#: ../yum/__init__.py:4463
 #, python-format
 msgid "Cannot localinstall deltarpm: %s. Skipping."
 msgstr "Não é possível instalar localmente o deltarpm: %s. Ignorando."
 
-#: ../yum/__init__.py:4431 ../yum/__init__.py:4538 ../yum/__init__.py:4623
+#: ../yum/__init__.py:4472 ../yum/__init__.py:4579 ../yum/__init__.py:4664
 #, python-format
 msgid ""
 "Cannot add package %s to transaction. Not a compatible architecture: %s"
@@ -2930,13 +2931,13 @@ msgstr ""
 "Não foi possível adicionar o pacote %s à transação. %s não é uma arquitetura"
 " compatível."
 
-#: ../yum/__init__.py:4437
+#: ../yum/__init__.py:4478
 #, python-format
 msgid "Cannot install package %s. It is obsoleted by installed package %s"
 msgstr ""
 "Não é possível instalar o pacote % s. É obsoleto pelo pacote instalado %s"
 
-#: ../yum/__init__.py:4445
+#: ../yum/__init__.py:4486
 #, python-format
 msgid ""
 "Package %s not installed, cannot update it. Run yum install to install it "
@@ -2945,7 +2946,7 @@ msgstr ""
 "O pacote %s não está instalado, não é possível atualizá-lo. Execute o yum "
 "install para instalá-lo."
 
-#: ../yum/__init__.py:4464 ../yum/__init__.py:4471
+#: ../yum/__init__.py:4505 ../yum/__init__.py:4512
 #, python-format
 msgid ""
 "Package %s.%s not installed, cannot update it. Run yum install to install it"
@@ -2954,144 +2955,139 @@ msgstr ""
 "Pacote %s.%s não instalado, não pode ser atualizado. Execute yum install "
 "para instalá-lo em vez disso."
 
-#: ../yum/__init__.py:4480 ../yum/__init__.py:4543 ../yum/__init__.py:4628
+#: ../yum/__init__.py:4521 ../yum/__init__.py:4584 ../yum/__init__.py:4669
 #, python-format
 msgid "Excluding %s"
 msgstr "Excluindo %s"
 
-#: ../yum/__init__.py:4485
+#: ../yum/__init__.py:4526
 #, python-format
 msgid "Marking %s to be installed"
 msgstr "Marcando %s para ser instalado"
 
-#: ../yum/__init__.py:4491
+#: ../yum/__init__.py:4532
 #, python-format
 msgid "Marking %s as an update to %s"
 msgstr "Marcando %s como uma atualização do %s"
 
-#: ../yum/__init__.py:4498
+#: ../yum/__init__.py:4539
 #, python-format
 msgid "%s: does not update installed package."
 msgstr "%s: não atualiza o pacote instalado."
 
-#: ../yum/__init__.py:4532 ../yum/__init__.py:4617
+#: ../yum/__init__.py:4573 ../yum/__init__.py:4658
 #, python-format
 msgid "Cannot open file: %s. Skipping."
 msgstr "Não foi possível abrir o arquivo: %s. Ignorando."
 
-#: ../yum/__init__.py:4572
+#: ../yum/__init__.py:4613
 msgid "Problem in reinstall: no package matched to remove"
 msgstr "Problema na reinstalação: nenhum pacote encontrado para remoção"
 
-#: ../yum/__init__.py:4598
+#: ../yum/__init__.py:4639
 #, python-format
 msgid "Problem in reinstall: no package %s matched to install"
 msgstr "Problema na reinstalação: nenhum pacote %s encontrado para instalação"
 
-#: ../yum/__init__.py:4711
+#: ../yum/__init__.py:4752
 msgid "No package(s) available to downgrade"
 msgstr "Nenhum pacote disponível para ser desatualizado"
 
-#: ../yum/__init__.py:4719
+#: ../yum/__init__.py:4760
 #, python-format
 msgid "Package %s is allowed multiple installs, skipping"
 msgstr "O pacote %s permite múltiplas instalações, ignorando"
 
-#: ../yum/__init__.py:4765
+#: ../yum/__init__.py:4806
 #, python-format
 msgid "No Match for available package: %s"
 msgstr "Nenhuma correspondência disponível para o pacote: %s"
 
-#: ../yum/__init__.py:4772
+#: ../yum/__init__.py:4813
 #, python-format
 msgid "Only Upgrade available on package: %s"
 msgstr "Somente a atualização está disponível para o pacote: %s"
 
-#: ../yum/__init__.py:4874 ../yum/__init__.py:4919
+#: ../yum/__init__.py:4926 ../yum/__init__.py:4993
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Falha ao desatualizar: %s"
 
-#: ../yum/__init__.py:4880 ../yum/__init__.py:4925
+#: ../yum/__init__.py:4943 ../yum/__init__.py:4999
 #, python-format
 msgid "Failed to upgrade: %s"
-msgstr "Falha ao atualizar: %s"
+msgstr ""
 
-#: ../yum/__init__.py:4958
+#: ../yum/__init__.py:5032
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "Recuperando chave de %s"
 
-#: ../yum/__init__.py:4976
+#: ../yum/__init__.py:5050
 msgid "GPG key retrieval failed: "
 msgstr "A obtenção da chave GPG falhou:"
 
 #. if we decide we want to check, even though the sig failed
 #. here is where we would do that
-#: ../yum/__init__.py:4999
+#: ../yum/__init__.py:5073
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr ""
 "Assinatura da chave GPG na chave %s não combina com a chave CA para o "
 "repositório: %s"
 
-#: ../yum/__init__.py:5001
+#: ../yum/__init__.py:5075
 msgid "GPG key signature verified against CA Key(s)"
 msgstr "Assinatura da chave GPG verificada em relação a chave(s) CA"
 
-#: ../yum/__init__.py:5009
+#: ../yum/__init__.py:5083
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "A chave GPG de %s é inválida: %s"
 
-#: ../yum/__init__.py:5018
+#: ../yum/__init__.py:5092
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Falha na análise da chave GPG: ela não tem o valor %s"
 
-#: ../yum/__init__.py:5034
+#: ../yum/__init__.py:5108
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
-" Userid : %s\n"
-" Package: %s (%s)\n"
-" From   : %s"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" Package    : %s (%s)\n"
+" From       : %s"
 msgstr ""
-"Importando %s chave 0x%s:\n"
-"Id do usuário: %s\n"
-"Pacote: %s (%s)\n"
-"De   : %s"
 
-#: ../yum/__init__.py:5042
+#: ../yum/__init__.py:5118
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
-" Userid: \"%s\"\n"
-" From  : %s"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
 msgstr ""
-"Importando %s chave 0x%s:\n"
-"Id do Usuário: \"%s\"\n"
-"De  : %s"
 
-#: ../yum/__init__.py:5075
+#: ../yum/__init__.py:5153
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "A chave GPG em %s (0x%s) já está instalada"
 
-#: ../yum/__init__.py:5114
+#: ../yum/__init__.py:5192
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Falha na importação da chave (código %d)"
 
-#: ../yum/__init__.py:5115 ../yum/__init__.py:5201
+#: ../yum/__init__.py:5193 ../yum/__init__.py:5279
 msgid "Key imported successfully"
 msgstr "Chave importada com sucesso"
 
-#: ../yum/__init__.py:5119
+#: ../yum/__init__.py:5197
 msgid "Didn't install any keys"
 msgstr "Não instalar nenhuma das chaves"
 
-#: ../yum/__init__.py:5123
+#: ../yum/__init__.py:5201
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -3100,25 +3096,25 @@ msgstr ""
 "As chaves GPG listadas para o repositório \"%s\" já estão instaladas, mas não estão corretas para este pacote.\n"
 "Verifique se as URLs corretas das chaves estão configuradas para esse repositório."
 
-#: ../yum/__init__.py:5132
+#: ../yum/__init__.py:5210
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "A importação da(s) chave(s) não ajudou, chave(s) errada(s)?"
 
-#: ../yum/__init__.py:5156
+#: ../yum/__init__.py:5234
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "A chave GPG em %s (0x%s) já foi importada"
 
-#: ../yum/__init__.py:5200
+#: ../yum/__init__.py:5278
 msgid "Key import failed"
 msgstr "Falha na importação da chave"
 
-#: ../yum/__init__.py:5216
+#: ../yum/__init__.py:5294
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "Não instalar nenhuma das chaves para o repositório %s"
 
-#: ../yum/__init__.py:5220
+#: ../yum/__init__.py:5298
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
@@ -3127,103 +3123,103 @@ msgstr ""
 "As chaves GPG listadas para o repositório \"%s\" já estão instaladas, mas não estão corretas.\n"
 "Verifique se as URLs das chaves estão configuradas corretamente para este repositório. "
 
-#: ../yum/__init__.py:5370
+#: ../yum/__init__.py:5448
 msgid "Unable to find a suitable mirror."
 msgstr "Não foi possível encontrar um espelho apropriado."
 
-#: ../yum/__init__.py:5372
+#: ../yum/__init__.py:5450
 msgid "Errors were encountered while downloading packages."
 msgstr "Foram encontrados erros ao baixar os pacotes."
 
-#: ../yum/__init__.py:5427
+#: ../yum/__init__.py:5505
 #, python-format
 msgid "Please report this error at %s"
 msgstr "Por favor, relate esse erro em %s"
 
-#: ../yum/__init__.py:5444
+#: ../yum/__init__.py:5522
 msgid "Test Transaction Errors: "
 msgstr "Erros do teste de transação:"
 
-#: ../yum/__init__.py:5556
+#: ../yum/__init__.py:5634
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "Não foi possível definir a cachedir: %s"
 
-#: ../yum/__init__.py:5617 ../yum/__init__.py:5619
+#: ../yum/__init__.py:5695 ../yum/__init__.py:5697
 msgid "Dependencies not solved. Will not save unresolved transaction."
 msgstr ""
 "Dependências não resolvidas. Transações não resolvidas não serão salvas."
 
-#: ../yum/__init__.py:5648 ../yum/__init__.py:5650
+#: ../yum/__init__.py:5726 ../yum/__init__.py:5728
 #, python-format
 msgid "Could not save transaction file %s: %s"
 msgstr "Não foi possível salvar o arquivo de transação %s: %s"
 
-#: ../yum/__init__.py:5674
+#: ../yum/__init__.py:5752
 #, python-format
 msgid "Could not access/read saved transaction %s : %s"
 msgstr "Não foi possível acessar/ler a transação salva %s : %s"
 
-#: ../yum/__init__.py:5703
+#: ../yum/__init__.py:5781
 msgid "rpmdb ver mismatched saved transaction version, "
 msgstr ""
 
-#: ../yum/__init__.py:5705
+#: ../yum/__init__.py:5783
 msgid " ignoring, as requested."
 msgstr "ignorando, conforme solicitado."
 
-#: ../yum/__init__.py:5708 ../yum/__init__.py:5843
+#: ../yum/__init__.py:5786 ../yum/__init__.py:5921
 msgid " aborting."
 msgstr "abortando."
 
-#: ../yum/__init__.py:5717
+#: ../yum/__init__.py:5795
 msgid "cannot find tsflags or tsflags not integer."
 msgstr ""
 
-#: ../yum/__init__.py:5756
+#: ../yum/__init__.py:5834
 #, python-format
 msgid "Found txmbr in unknown current state: %s"
 msgstr ""
 
-#: ../yum/__init__.py:5760
+#: ../yum/__init__.py:5838
 #, python-format
 msgid "Could not find txmbr: %s in state %s"
 msgstr ""
 
-#: ../yum/__init__.py:5796 ../yum/__init__.py:5813
+#: ../yum/__init__.py:5874 ../yum/__init__.py:5891
 #, python-format
 msgid "Could not find txmbr: %s from origin: %s"
 msgstr "Não foi possível encontrar txmbr: %s da origem: %s"
 
-#: ../yum/__init__.py:5838
+#: ../yum/__init__.py:5916
 msgid "Transaction members, relations are missing or ts has been modified,"
 msgstr ""
 
-#: ../yum/__init__.py:5840
+#: ../yum/__init__.py:5918
 msgid " ignoring, as requested. You must redepsolve!"
 msgstr ""
 "ignorando, conforme pedido. Você deve rodar executar novamente o depsolve!"
 
 #. Debugging output
-#: ../yum/__init__.py:5915 ../yum/__init__.py:5934
+#: ../yum/__init__.py:5993 ../yum/__init__.py:6012
 #, python-format
 msgid "%s has been visited already and cannot be removed."
 msgstr ""
 
 #. Debugging output
-#: ../yum/__init__.py:5918
+#: ../yum/__init__.py:5996
 #, python-format
 msgid "Examining revdeps of %s"
 msgstr ""
 
 #. Debugging output
-#: ../yum/__init__.py:5939
+#: ../yum/__init__.py:6017
 #, python-format
 msgid "%s has revdep %s which was user-installed."
 msgstr ""
 
 #. Debugging output
-#: ../yum/__init__.py:5953
+#: ../yum/__init__.py:6031
 #, python-format
 msgid "%s has no user-installed revdeps."
 msgstr ""
