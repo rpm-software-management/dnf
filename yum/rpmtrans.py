@@ -119,7 +119,11 @@ class RPMBaseCallback:
         else:
             msg = '%s: %s' % (package, action)
         self.logger.info(msg)
-            
+
+    def verify_txmbr(self, base, txmbr, count):
+        " Callback for post transaction when we are in verifyTransaction(). "
+        pass
+
 
 class SimpleCliCallBack(RPMBaseCallback):
     def __init__(self):
@@ -140,6 +144,10 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print msgs,
 
+    def verify_txmbr(self, base, txmbr, count):
+        " Callback for post transaction when we are in verifyTransaction(). "
+        print _("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr)
+
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The
 # following means that we don't really need to know/care about that in the
@@ -157,8 +165,12 @@ class _WrapNoExceptions:
         def newFunc(*args, **kwargs):
             try:
                 func(*args, **kwargs)
-            except:
-                pass
+            except Exception, e:
+                # It's impossible to debug stuff without this:
+                try:
+                    print "Error:", "display callback failed:", e
+                except:
+                    pass
 
         newFunc.__name__ = func.__name__
         newFunc.__doc__ = func.__doc__
@@ -621,3 +633,9 @@ class RPMTransaction:
         self.display.errorlog(msg)
         # FIXME - what else should we do here? raise a failure and abort?
     
+    def verify_txmbr(self, txmbr, count):
+        " Callback for post transaction when we are in verifyTransaction(). "
+        if not hasattr(self.display, 'verify_txmbr'):
+            return
+
+        self.display.verify_txmbr(self.base, txmbr, count)

@@ -1667,10 +1667,13 @@ class YumBase(depsolve.Depsolve):
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verifyTransaction(resultobject)
+            vTcb = None
+            if hasattr(cb, 'verify_txmbr'):
+                vTcb = cb.verify_txmbr
+            self.verifyTransaction(resultobject, vTcb)
         return resultobject
 
-    def verifyTransaction(self, resultobject=None):
+    def verifyTransaction(self, resultobject=None, txmbr_cb=None):
         """Check that the transaction did what was expected, and 
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
@@ -1678,6 +1681,7 @@ class YumBase(depsolve.Depsolve):
         :param resultobject: the :class:`yum.misc.GenericHolder`
            object returned from the :func:`runTransaction` call that
            ran the transaction
+        :param txmbr_cb: the callback for the rpm transaction members
         """
         # check to see that the rpmdb and the tsInfo roughly matches
         # push package object metadata outside of rpmdb into yumdb
@@ -1689,9 +1693,16 @@ class YumBase(depsolve.Depsolve):
         #    that there is not also an install of this pkg in the tsInfo (reinstall)
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
+
+        def _call_txmbr_cb(txmbr, count):
+            if txmbr_cb is not None:
+                count += 1
+                txmbr_cb(txmbr, count)
+            return count
         
         vt_st = time.time()
         self.plugins.run('preverifytrans')
+        count = 0
         for txmbr in self.tsInfo:
             if txmbr.output_state in TS_INSTALL_STATES:
                 if not self.rpmdb.contains(po=txmbr.po):
@@ -1701,7 +1712,9 @@ class YumBase(depsolve.Depsolve):
                                            ' but is not!' % txmbr.po))
                     # Note: Get Panu to do te.Failed() so we don't have to
                     txmbr.output_state = TS_FAILED
+                    count = _call_txmbr_cb(txmbr, count)
                     continue
+                count = _call_txmbr_cb(txmbr, count)
                 po = self.getInstalledPackageObject(txmbr.pkgtup)
                 rpo = txmbr.po
                 po.yumdb_info.from_repo = rpo.repoid
@@ -1770,10 +1783,13 @@ class YumBase(depsolve.Depsolve):
                                                ' but is not!' % txmbr.po))
                         # Note: Get Panu to do te.Failed() so we don't have to
                         txmbr.output_state = TS_FAILED
+                        count = _call_txmbr_cb(txmbr, count)
                         continue
+                count = _call_txmbr_cb(txmbr, count)
                 yumdb_item = self.rpmdb.yumdb.get_package(po=txmbr.po)
                 yumdb_item.clean()
             else:
+                count = _call_txmbr_cb(txmbr, count)
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')

@@ -2977,14 +2977,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         """
         process = self.action[action]
 
-        if not hasattr(self, '_max_action_wid'):
-            wid1 = 0
-            for val in self.action.values():
-                wid_val = utf8_width(val)
-                if wid1 < wid_val:
-                    wid1 = wid_val
-            self._max_action_wid = wid1
-        wid1 = self._max_action_wid
+        wid1 = self._max_action_width()
         
         if type(package) not in types.StringTypes:
             pkgname = str(package)
@@ -2996,7 +2989,22 @@ class YumCliRPMCallBack(RPMBaseCallback):
             percent = 0
         else:
             percent = (te_current*100L)/te_total
-        
+        self._out_event(te_current, te_total, ts_current, ts_total,
+                        percent, process, pkgname, wid1)
+
+    def _max_action_width(self):
+        if not hasattr(self, '_max_action_wid_cache'):
+            wid1 = 0
+            for val in self.action.values():
+                wid_val = utf8_width(val)
+                if wid1 < wid_val:
+                    wid1 = wid_val
+            self._max_action_wid_cache = wid1
+        wid1 = self._max_action_wid_cache
+        return wid1
+
+    def _out_event(self, te_current, te_total, ts_current, ts_total,
+                   percent, process, pkgname, wid1):
         if self.output and (sys.stdout.isatty() or te_current == te_total):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
                                               progress=sys.stdout.isatty(),
@@ -3067,6 +3075,19 @@ class YumCliRPMCallBack(RPMBaseCallback):
             fmt = "  %s: %s " + bar + " " + done
             wid2 = pnl
         return fmt, wid1, wid2
+
+    def verify_txmbr(self, base, txmbr, count):
+        " Callback for post transaction when we are in verifyTransaction(). "
+        te_current = count
+        te_total   = len(base.tsInfo)
+        # self.event(txmbr.name, count, len(base.tsInfo), count, )
+
+        percent = 100 # (te_current*100L)/te_total
+        process = _('Verifying')
+        pkgname = str(txmbr.po)
+        wid1    = max(utf8_width(process), self._max_action_width())
+        self._out_event(100, 100, te_current, te_total, 
+                        percent, process, pkgname, wid1)
 
 
 def progressbar(current, total, name=None):
