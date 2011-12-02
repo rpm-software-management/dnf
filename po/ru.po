@@ -132,8 +132,8 @@ msgstr "Требование к носителю:\n"
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] " Необходимо по меньшей мере %dМБ на разделе %s.\n"
-msgstr[1] ""
-msgstr[2] ""
+msgstr[1] " Необходимо по меньшей мере %dМБ на разделе %s.\n"
+msgstr[2] " Необходимо по меньшей мере %dМБ на разделе %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary

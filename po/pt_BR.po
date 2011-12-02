@@ -132,7 +132,7 @@ msgstr "Requisitos de disco:\n"
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] "  Pelo menos mais %dMB são necessários no sistema de arquivos %s.\n"
-msgstr[1] ""
+msgstr[1] "  Pelo menos mais %dMB são necessários no sistema de arquivos %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary

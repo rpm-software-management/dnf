@@ -137,6 +137,8 @@ msgstr[0] ""
 "  Mindestens %dMB zusätzlicher Speicherplatz wird auf dem Dateisystem %s "
 "benötigt.\n"
 msgstr[1] ""
+"  Mindestens %dMB zusätzlicher Speicherplatz wird auf dem Dateisystem %s "
+"benötigt.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary

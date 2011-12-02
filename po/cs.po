@@ -132,8 +132,8 @@ msgstr "Diskové požadavky:\n"
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] "  Je potřeba alespoň o %dMB více místa na souborovém systému %s.\n"
-msgstr[1] ""
-msgstr[2] ""
+msgstr[1] "  Je potřeba alespoň o %dMB více místa na souborovém systému %s.\n"
+msgstr[2] "  Je potřeba alespoň o %dMB více místa na souborovém systému %s.\n"
 
 #. TODO: simplify the dependency errors?
 #. Fixup the summary
