@@ -45,6 +45,9 @@ from misc import get_uuid, read_in_items_from_dot_dir
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
 __repo_gpgcheck_default__ = False
+__main_multilib_policy_default__ = 'all'
+__main_failovermethod_default__ = 'roundrobin'
+__main_installonly_limit_default__ = 0
 
 class Option(object):
     """
@@ -730,7 +733,7 @@ class YumConf(StartupConf):
 
     commands = ListOption()
     exclude = ListOption()
-    failovermethod = Option('roundrobin')
+    failovermethod = Option(__main_failovermethod_default__)
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
@@ -743,7 +746,8 @@ class YumConf(StartupConf):
     # NOTE: If you set this to 2, then because it keeps the current kernel it
     # means if you ever install an "old" kernel it'll get rid of the newest one
     # so you probably want to use 3 as a minimum ... if you turn it on.
-    installonly_limit = PositiveIntOption(0, range_min=2,
+    installonly_limit = PositiveIntOption(__main_installonly_limit_default__,
+                                          range_min=2,
                                           names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
@@ -793,7 +797,8 @@ class YumConf(StartupConf):
     mdpolicy = ListOption(['group:primary'])
     mddownloadpolicy = SelectionOption('sqlite', ('sqlite', 'xml'))
     #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
-    multilib_policy = SelectionOption('all',('best', 'all'))
+    multilib_policy = SelectionOption(__main_multilib_policy_default__,
+                                      ('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
                  
