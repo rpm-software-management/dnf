@@ -59,6 +59,8 @@ def checkGPGKey(base):
     :param base: a :class:`yum.Yumbase` object.
     :raises: :class:`cli.CliError`
     """
+    if base._override_sigchecks:
+        return
     if not base.gpgKeyCheck():
         for repo in base.repos.listEnabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
