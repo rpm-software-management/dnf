@@ -46,6 +46,7 @@ def catchSqliteException(func):
 
 
 class PackageTagDB(object):
+    @catchSqliteException
     def __init__(self, repoid, sqlite_file):
         self.sqlite_file = sqlite_file
         self.repoid = repoid
