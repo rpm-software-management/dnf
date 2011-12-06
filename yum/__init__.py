@@ -5169,6 +5169,13 @@ class YumBase(depsolve.Depsolve):
         keyurls = repo.gpgkey
         key_installed = False
 
+        def _prov_key_data(msg):
+            msg += _('\n\n\n'
+                     ' Failing package is: %s\n'
+                     ' GPG Keys are configured as: %s\n'
+                     ) % (po, ", ".join(repo.gpgkey))
+            return msg
+
         user_cb_fail = False
         for keyurl in keyurls:
             keys = self._retrievePublicKey(keyurl, repo)
@@ -5215,8 +5222,8 @@ class YumBase(depsolve.Depsolve):
                 ts = self.rpmdb.readOnlyTS()
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
-                    raise Errors.YumBaseError, \
-                          _('Key import failed (code %d)') % result
+                    msg = _('Key import failed (code %d)') % result
+                    raise Errors.YumBaseError, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
@@ -5224,18 +5231,20 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError, _("Didn't install any keys")
 
         if not key_installed:
-            raise Errors.YumBaseError, \
-                  _('The GPG keys listed for the "%s" repository are ' \
+            msg = _('The GPG keys listed for the "%s" repository are ' \
                   'already installed but they are not correct for this ' \
                   'package.\n' \
                   'Check that the correct key URLs are configured for ' \
-                  'this repository.') % (repo.name)
+                  'this repository.') % repo.name
+            raise Errors.YumBaseError, _prov_key_data(msg)
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
         if result != 0:
-            self.logger.info(_("Import of key(s) didn't help, wrong key(s)?"))
-            raise Errors.YumBaseError, errmsg
+            msg = _("Import of key(s) didn't help, wrong key(s)?")
+            self.logger.info(msg)
+            errmsg = to_unicode(errmsg)
+            raise Errors.YumBaseError, _prov_key_data(errmsg)
     
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
@@ -5252,6 +5261,18 @@ class YumBase(depsolve.Depsolve):
         """
 
         key_installed = False
+
+        def _prov_key_data(msg):
+            cakeytxt = _("No")
+            if is_cakey:
+                cakeytxt = _("Yes")
+            msg += _('\n\n\n'
+                     ' CA Key: %s\n'
+                     ' Failing repo is: %s\n'
+                     ' GPG Keys are configured as: %s\n'
+                     ) % (cakeytxt, repo, ", ".join(keyurl_list))
+            return msg
+
         user_cb_fail = False
         for keyurl in keyurl_list:
             keys = self._retrievePublicKey(keyurl, repo, getSig=not is_cakey)
@@ -5302,7 +5323,8 @@ class YumBase(depsolve.Depsolve):
                 # Import the key
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
-                    raise Errors.YumBaseError, _('Key import failed')
+                    msg = _('Key %s import failed') % info['hexkeyid']
+                    raise Errors.YumBaseError, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
@@ -5318,14 +5340,16 @@ class YumBase(depsolve.Depsolve):
                             pass
 
         if not key_installed and user_cb_fail:
-            raise Errors.YumBaseError, _("Didn't install any keys for repo %s") % repo
+            msg = _("Didn't install any keys for repo %s") % repo
+            raise Errors.YumBaseError, _prov_key_data(msg)
 
         if not key_installed:
-            raise Errors.YumBaseError, \
+            msg = \
                   _('The GPG keys listed for the "%s" repository are ' \
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
+            raise Errors.YumBaseError, _prov_key_data(msg)
 
     def getKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given
