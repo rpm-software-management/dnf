@@ -2421,13 +2421,15 @@ class YumBase(depsolve.Depsolve):
     def cleanSqlite(self):
         """Delete the sqlite files from the yum cache."""
 
-        exts = ['sqlite', 'sqlite.bz2', 'sqlite-journal']
+        exts = ['sqlite', 'sqlite.bz2', 'sqlite.gz', 'sqlite.xz',
+                'sqlite-journal']
         return self._cleanFiles(exts, 'cachedir', 'sqlite')
 
     def cleanMetadata(self):
         """Delete the metadata files from the yum cache."""
 
-        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc']
+        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc',
+                'xml.bz2', 'xml.xz']
         # Metalink is also here, but is a *.xml file
         return self._cleanFiles(exts, 'cachedir', 'metadata') 
 
