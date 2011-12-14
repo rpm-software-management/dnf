@@ -1467,12 +1467,7 @@ Insufficient space in download directory %s
     def _getRepoXML(self):
         if self._repoXML:
             return self._repoXML
-        try:
-            self._loadRepoXML(text=self)
-        except Errors.RepoError, e:
-            msg = ("Cannot retrieve repository metadata (repomd.xml) for repository: %s. "
-                  "Please verify its path and try again" % self )
-            raise Errors.RepoError, msg
+        self._loadRepoXML(text=self)
         return self._repoXML
 
 
