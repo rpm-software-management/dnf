@@ -18,6 +18,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+import shlex
 import sys
 
 import cli
@@ -28,7 +29,8 @@ class GroupsCompletionCommand(yumcommands.GroupsCommand):
     def doCommand(self, base, basecmd, extcmds):
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
         # case insensitivity is fine here because groupinstall etc are that too
-        installed, available = base.doGroupLists()
+        installed, available = base.doGroupLists(
+            patterns=[get_pattern(extcmds)])
         if extcmds[0] in ("installed", "all"):
             for group in installed:
                 print group.ui_name
@@ -38,7 +40,8 @@ class GroupsCompletionCommand(yumcommands.GroupsCommand):
 
 class ListCompletionCommand(yumcommands.ListCommand):
     def doCommand(self, base, basecmd, extcmds):
-        ypl = base.doPackageLists(pkgnarrow=extcmds[0])
+        ypl = base.doPackageLists(pkgnarrow=extcmds[0],
+                                  patterns=[get_pattern(extcmds)])
         if extcmds[0] in ("installed", "all"):
             for pkg in ypl.installed:
                 print pkg.na
@@ -48,12 +51,20 @@ class ListCompletionCommand(yumcommands.ListCommand):
 
 class RepoListCompletionCommand(yumcommands.RepoListCommand):
     def doCommand(self, base, basecmd, extcmds):
+        import fnmatch
+        pattern = get_pattern(extcmds)
         for repo in base.repos.repos.values():
-            if extcmds[0] == "all" \
-                    or (extcmds[0] == "enabled" and repo.isEnabled()) \
-                    or (extcmds[0] == "disabled" and not repo.isEnabled()):
+            if fnmatch.fnmatch(repo.id, pattern) \
+                    and (extcmds[0] == "all" or
+                         (extcmds[0] == "enabled" and repo.isEnabled()) or
+                         (extcmds[0] == "disabled" and not repo.isEnabled())):
                 print repo.id
 
+
+def get_pattern(extcmds):
+    if len(extcmds) > 1 and extcmds[-1]:
+        return shlex.split(extcmds[-1])[0] + "*"
+    return "*"
 
 def main(args):
     base = cli.YumBaseCli()

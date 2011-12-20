@@ -3,9 +3,8 @@
 _yum_helper()
 {
     local IFS=$'\n'
-    COMPREPLY+=( $( compgen -W "$(
-        /usr/share/yum-cli/completion-helper.py -d 0 -C $@ 2>/dev/null )" \
-            -- "$cur" ) )
+    COMPREPLY+=( $(
+        /usr/share/yum-cli/completion-helper.py -d 0 -C "$@" 2>/dev/null ) )
 }
 
 _yum_list()
