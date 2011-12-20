@@ -158,16 +158,16 @@ _yum()
 
     # Commands offered as completions
     local cmds=( check check-update clean deplist distro-sync downgrade
-        groupinfo groupinstall grouplist groupremove help history info install
-        list makecache provides reinstall remove repolist search shell update
-        upgrade version )
+        groups help history info install list makecache provides reinstall
+        remove repolist search shell update upgrade version )
 
     local i c cmd subcmd
     for (( i=1; i < ${#words[@]}-1; i++ )) ; do
         [[ -n $cmd ]] && subcmd=${words[i]} && break
         # Recognize additional commands and aliases
         for c in ${cmds[@]} check-rpmdb distribution-synchronization erase \
-            groupupdate grouperase localinstall localupdate whatprovides ; do
+            group groupinfo groupinstall grouplist groupremove groupupdate \
+            grouperase localinstall localupdate whatprovides ; do
             [[ ${words[i]} == $c ]] && cmd=$c && break
         done
     done
@@ -180,8 +180,7 @@ _yum()
             return 0
             ;;
 
-        check-update|grouplist|makecache|provides|whatprovides|resolvedep|\
-        search)
+        check-update|makecache|provides|whatprovides|resolvedep|search)
             return 0
             ;;
 
@@ -219,7 +218,12 @@ _yum()
             ;;
 
         group*)
-            _yum_helper groups list all "$cur"
+            if [[ $cmd == groups || $cmd == group && $prev == $cmd ]] ; then
+                COMPREPLY=( $( compgen -W 'info install list remove summary' \
+                    -- "$cur" ) )
+            else
+                _yum_helper groups list all "$cur"
+            fi
             return 0
             ;;
 
