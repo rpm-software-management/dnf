@@ -3750,7 +3750,7 @@ class YumBase(depsolve.Depsolve):
     def _minus_deselect(self, pattern):
         """ Remove things from the transaction, like kickstart. """
         assert pattern[0] == '-'
-        pat = pattern[1:]
+        pat = pattern[1:].strip()
 
         if pat and pat[0] == '@':
             pat = pat[1:]
