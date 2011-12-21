@@ -217,7 +217,7 @@ _yum()
             ;;
 
         group*)
-            if [[ $cmd == groups || $cmd == group && $prev == $cmd ]] ; then
+            if [[ ($cmd == groups || $cmd == group) && $prev == $cmd ]] ; then
                 COMPREPLY=( $( compgen -W 'info install list remove summary' \
                     -- "$cur" ) )
             else
