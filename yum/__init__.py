@@ -2985,7 +2985,7 @@ class YumBase(depsolve.Depsolve):
                 where = self.returnPackagesByDep(arg)
             else:
                 usedDepString = False
-                where = self.pkgSack.searchAll(arg, False)
+                where = self.pkgSack.searchProvides(arg)
             self.verbose_logger.log(logginglevels.DEBUG_1,
                P_('Searching %d package', 'Searching %d packages', len(where)), len(where))
             
@@ -3851,20 +3851,12 @@ class YumBase(depsolve.Depsolve):
                     self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
                         arg)
 
-                    try:
-                        mypkgs = self.returnPackagesByDep(arg)
-                    except yum.Errors.YumBaseError, e:
-                        self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
-                    else:
-                        # install MTA* == fail, because provides don't do globs
-                        # install /usr/kerberos/bin/* == success (and we want
-                        #                                all of the pkgs)
-                        if mypkgs and not misc.re_glob(arg):
-                            mypkgs = self.bestPackagesFromList(mypkgs,
-                                                               single_name=True)
-                        if mypkgs:
-                            pkgs.extend(mypkgs)
-                        
+                    mypkgs = self.pkgSack.searchProvides(arg)
+                    if not misc.re_glob(arg):
+                        # install /usr/kerberos/bin/* == want all pkgs
+                        mypkgs = self.bestPackagesFromList(mypkgs, single_name=True)
+                    pkgs.extend(mypkgs)
+
             else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 
