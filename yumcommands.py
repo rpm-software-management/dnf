@@ -1731,111 +1731,108 @@ class RepoListCommand(YumCommand):
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = utf8_width(_('disabled'))
 
-            if True: # Here to make patch smaller, TODO: rm
-                if not verbose:
-                    rid = str(repo)
-                    if enabled and repo.metalink:
-                        mdts = repo.metalink_data.repomd.timestamp
-                        if mdts > repo.repoXML.timestamp:
-                            rid = '*' + rid
-                    cols.append((rid, repo.name,
-                                 (ui_enabled, ui_endis_wid), ui_num))
+            if not verbose:
+                rid = str(repo)
+                if enabled and repo.metalink:
+                    mdts = repo.metalink_data.repomd.timestamp
+                    if mdts > repo.repoXML.timestamp:
+                        rid = '*' + rid
+                cols.append((rid, repo.name,
+                             (ui_enabled, ui_endis_wid), ui_num))
+            else:
+                if enabled:
+                    md = repo.repoXML
                 else:
+                    md = None
+                out = [base.fmtKeyValFill(_("Repo-id      : "), repo),
+                       base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+
+                if force_show or extcmds:
+                    out += [base.fmtKeyValFill(_("Repo-status  : "),
+                                               ui_enabled)]
+                if md and md.revision is not None:
+                    out += [base.fmtKeyValFill(_("Repo-revision: "),
+                                               md.revision)]
+                if md and md.tags['content']:
+                    tags = md.tags['content']
+                    out += [base.fmtKeyValFill(_("Repo-tags    : "),
+                                               ", ".join(sorted(tags)))]
+
+                if md and md.tags['distro']:
+                    for distro in sorted(md.tags['distro']):
+                        tags = md.tags['distro'][distro]
+                        out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
+                                                   "[%s]: %s" % (distro,
+                                                   ", ".join(sorted(tags))))]
+
+                if md:
+                    out += [base.fmtKeyValFill(_("Repo-updated : "),
+                                               time.ctime(md.timestamp)),
+                            base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
+                            base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
+
+                if hasattr(repo, '_orig_baseurl'):
+                    baseurls = repo._orig_baseurl
+                else:
+                    baseurls = repo.baseurl
+                if baseurls:
+                    out += [base.fmtKeyValFill(_("Repo-baseurl : "),
+                                               ", ".join(baseurls))]
+
+                if enabled:
+                    # This needs to be here due to the mirrorlists are
+                    # metalinks hack.
+                    repo.urls
+                if repo.metalink:
+                    out += [base.fmtKeyValFill(_("Repo-metalink: "),
+                                               repo.metalink)]
                     if enabled:
-                        md = repo.repoXML
-                    else:
-                        md = None
-                    out = [base.fmtKeyValFill(_("Repo-id      : "), repo),
-                           base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+                        ts = repo.metalink_data.repomd.timestamp
+                        out += [base.fmtKeyValFill(_("  Updated    : "),
+                                                   time.ctime(ts))]
+                elif repo.mirrorlist:
+                    out += [base.fmtKeyValFill(_("Repo-mirrors : "),
+                                               repo.mirrorlist)]
+                if enabled and repo.urls and not baseurls:
+                    url = repo.urls[0]
+                    if len(repo.urls) > 1:
+                        url += ' (%d more)' % (len(repo.urls) - 1)
+                    out += [base.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
-                    if force_show or extcmds:
-                        out += [base.fmtKeyValFill(_("Repo-status  : "),
-                                                   ui_enabled)]
-                    if md and md.revision is not None:
-                        out += [base.fmtKeyValFill(_("Repo-revision: "),
-                                                   md.revision)]
-                    if md and md.tags['content']:
-                        tags = md.tags['content']
-                        out += [base.fmtKeyValFill(_("Repo-tags    : "),
-                                                   ", ".join(sorted(tags)))]
+                if not os.path.exists(repo.metadata_cookie):
+                    last = _("Unknown")
+                else:
+                    last = os.stat(repo.metadata_cookie).st_mtime
+                    last = time.ctime(last)
 
-                    if md and md.tags['distro']:
-                        for distro in sorted(md.tags['distro']):
-                            tags = md.tags['distro'][distro]
-                            out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
-                                                       "[%s]: %s" % (distro,
-                                                       ", ".join(sorted(tags))))]
+                if repo.metadata_expire <= -1:
+                    num = _("Never (last: %s)") % last
+                elif not repo.metadata_expire:
+                    num = _("Instant (last: %s)") % last
+                else:
+                    num = _num2ui_num(repo.metadata_expire)
+                    num = _("%s second(s) (last: %s)") % (num, last)
 
-                    if md:
-                        out += [base.fmtKeyValFill(_("Repo-updated : "),
-                                                   time.ctime(md.timestamp)),
-                                base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
-                                base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
+                out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
 
-                    if hasattr(repo, '_orig_baseurl'):
-                        baseurls = repo._orig_baseurl
-                    else:
-                        baseurls = repo.baseurl
-                    if baseurls:
-                        out += [base.fmtKeyValFill(_("Repo-baseurl : "),
-                                                   ", ".join(baseurls))]
+                if repo.exclude:
+                    out += [base.fmtKeyValFill(_("Repo-exclude : "),
+                                               ", ".join(repo.exclude))]
 
-                    if enabled:
-                        #  This needs to be here due to the mirrorlists are
-                        # metalinks hack.
-                        repo.urls
-                    if repo.metalink:
-                        out += [base.fmtKeyValFill(_("Repo-metalink: "),
-                                                   repo.metalink)]
-                        if enabled:
-                            ts = repo.metalink_data.repomd.timestamp
-                            out += [base.fmtKeyValFill(_("  Updated    : "),
-                                                       time.ctime(ts))]
-                    elif repo.mirrorlist:
-                        out += [base.fmtKeyValFill(_("Repo-mirrors : "),
-                                                   repo.mirrorlist)]
-                    if enabled and repo.urls and not baseurls:
-                        url = repo.urls[0]
-                        if len(repo.urls) > 1:
-                            url += ' (%d more)' % (len(repo.urls) - 1)
-                        out += [base.fmtKeyValFill(_("Repo-baseurl : "),
-                                                   url)]
+                if repo.includepkgs:
+                    out += [base.fmtKeyValFill(_("Repo-include : "),
+                                               ", ".join(repo.includepkgs))]
 
-                    if not os.path.exists(repo.metadata_cookie):
-                        last = _("Unknown")
-                    else:
-                        last = os.stat(repo.metadata_cookie).st_mtime
-                        last = time.ctime(last)
+                if ui_excludes_num:
+                    out += [base.fmtKeyValFill(_("Repo-excluded: "),
+                                               ui_excludes_num)]
 
-                    if repo.metadata_expire <= -1:
-                        num = _("Never (last: %s)") % last
-                    elif not repo.metadata_expire:
-                        num = _("Instant (last: %s)") % last
-                    else:
-                        num = _num2ui_num(repo.metadata_expire)
-                        num = _("%s second(s) (last: %s)") % (num, last)
+                if repo.repofile:
+                    out += [base.fmtKeyValFill(_("Repo-filename: "),
+                                               repo.repofile)]
 
-                    out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
-
-                    if repo.exclude:
-                        out += [base.fmtKeyValFill(_("Repo-exclude : "),
-                                                   ", ".join(repo.exclude))]
-
-                    if repo.includepkgs:
-                        out += [base.fmtKeyValFill(_("Repo-include : "),
-                                                   ", ".join(repo.includepkgs))]
-
-                    if ui_excludes_num:
-                        out += [base.fmtKeyValFill(_("Repo-excluded: "),
-                                                   ui_excludes_num)]
-
-                    if repo.repofile:
-                        out += [base.fmtKeyValFill(_("Repo-filename: "),
-                                                   repo.repofile)]
-
-                    base.verbose_logger.log(logginglevels.DEBUG_3,
-                                            "%s\n",
-                                            "\n".join(map(misc.to_unicode, out)))
+                base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
+                                        "\n".join(map(misc.to_unicode, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),

@@ -534,15 +534,14 @@ class RpmBase(object):
             if prcotuple in self._prco_lookup[prcotype]:
                 return 1
 
-        if True: # Keep indentation for patch smallness...
-            # make us look it up and compare
-            (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
-            if reqf is not None:
-                return self.inPrcoRange(prcotype, prcotuple)
-            else:
-                for (n, f, (e, v, r)) in self.returnPrco(prcotype):
-                    if i18n.str_eq(reqn, n):
-                        return 1
+        # make us look it up and compare
+        (reqn, reqf, (reqe, reqv ,reqr)) = prcotuple
+        if reqf is not None:
+            return self.inPrcoRange(prcotype, prcotuple)
+        else:
+            for (n, f, (e, v, r)) in self.returnPrco(prcotype):
+                if i18n.str_eq(reqn, n):
+                    return 1
 
         return 0
 
