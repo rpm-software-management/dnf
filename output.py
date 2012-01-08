@@ -2528,7 +2528,6 @@ to exit.
         for old in self.history.old(tids, limit=limit):
             if limit is not None and num and (num +len(old.trans_data)) > limit:
                 break
-            last = None
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
                 if limit is None:
