@@ -20,6 +20,7 @@ import time
 import types
 import urlparse
 urlparse.uses_fragment.append("media")
+import urllib
 
 import Errors
 from urlgrabber.grabber import URLGrabber
@@ -436,22 +437,13 @@ class YumRepository(Repository, config.RepoConf):
         if self.proxy not in empty:
             proxy_string = '%s' % self.proxy
             if self.proxy_username not in empty:
-                proxy_parsed = urlparse.urlsplit(self.proxy, allow_fragments=0)
-                proxy_proto = proxy_parsed[0]
-                proxy_host = proxy_parsed[1]
-                # http://foo:123 == ('http', 'foo:123', '', '', '')
-                # don't turn that into: http://foo:123? - bug#328121
-                if proxy_parsed[2] == '':
-                    proxy_rest = ''
-                else:
-                    proxy_rest = proxy_parsed[2] + '?' + proxy_parsed[3]
-                proxy_string = '%s://%s@%s%s' % (proxy_proto,
-                        self.proxy_username, proxy_host, proxy_rest)
 
+                auth = urllib.quote(self.proxy_username)
                 if self.proxy_password not in empty:
-                    proxy_string = '%s://%s:%s@%s%s' % (proxy_proto,
-                              self.proxy_username, self.proxy_password,
-                              proxy_host, proxy_rest)
+                    auth += ':' + urllib.quote(self.proxy_password)
+
+                proto, rest = re.match('(\w+://)(.+)', proxy_string).groups()
+                proxy_string = '%s%s@%s' % (proto, auth, rest)
 
         if proxy_string is not None:
             self._proxy_dict['http'] = proxy_string
