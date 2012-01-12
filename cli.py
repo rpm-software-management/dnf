@@ -1953,10 +1953,6 @@ class YumOptionParser(OptionParser):
                     self.base.usage()
                     sys.exit(1)
 
-            # make sure the added repos are setup.        
-            if len(opts.repos) > 0:
-                self.base._getRepos(doSetup=True)
-
             # Disable all gpg key checking, if requested.
             if opts.nogpgcheck:
                 #  Altering the normal configs. doesn't work too well, esp. with
