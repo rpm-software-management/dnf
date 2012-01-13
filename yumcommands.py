@@ -969,9 +969,7 @@ class MakeCacheCommand(YumCommand):
             # we can't remove them until *LoadRepo() can do:
             # 1. Download a .sqlite.bz2 and convert to .sqlite
             # 2. Download a .xml.gz and convert to .xml.gz.sqlite
-            base.repos.populateSack(mdtype='metadata', cacheonly=1)
-            base.repos.populateSack(mdtype='filelists', cacheonly=1)
-            base.repos.populateSack(mdtype='otherdata', cacheonly=1)
+            base.repos.populateSack(mdtype='all', cacheonly=1)
 
 
         except yum.Errors.YumBaseError, e:
