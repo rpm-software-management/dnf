@@ -917,8 +917,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
 
         # ultra simple optimization 
         if misc.re_primary_filename(name):
-            if not misc.re_glob(dirname): # is the dirname a glob?
-                return self._search_primary_files(name)
+            return self._search_primary_files(name)
         
         if len(self.filelistsdb) == 0:
             # grab repo object from primarydb and force filelists population in this sack using repo
