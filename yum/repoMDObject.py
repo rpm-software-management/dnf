@@ -108,10 +108,10 @@ class RepoData:
         
 class RepoMD:
     """represents the repomd xml file"""
-    
+
     def __init__(self, repoid, srcfile=None):
         """takes a repoid and a filename for the repomd.xml"""
-        
+
         self.timestamp = 0
         self.repoid    = repoid
         self.repoData  = {}
@@ -119,11 +119,14 @@ class RepoMD:
         self.length    = 0
         self.revision  = None
         self.tags      = {'content' : set(), 'distro' : {}, 'repo': set()}
-    
+        self.srcfile = srcfile
+
         if srcfile:
             self.parse(srcfile)
-    
+
     def parse(self, srcfile):
+        self.srcfile = srcfile
+
         if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             try:
