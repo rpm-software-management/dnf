@@ -91,6 +91,9 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
+import hawkey
+import hawkey.queries
+
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
@@ -208,6 +211,7 @@ class YumBase(depsolve.Depsolve):
 
         self.run_with_package_names = set()
         self._cleanup = []
+        self._sack = None
 
     def __del__(self):
         self.close()
@@ -215,6 +219,31 @@ class YumBase(depsolve.Depsolve):
         self.doUnlock()
         # call cleanup callbacks
         for cb in self._cleanup: cb()
+
+    def _init_hawkey_sack(self):
+        self._sack = hawkey.Sack()
+        self._sack.load_rpm_repo()
+        repo = hawkey.Repo()
+        repo.name = "Fedora"
+        fedora_repo = self.repos.repos["fedora"]
+        repo.repomd_fn = fedora_repo.repoXML.srcfile
+        repo.primary_fn = fedora_repo.getPrimaryXML()
+        self._sack.load_yum_repo(repo)
+
+        repo = hawkey.Repo()
+        repo.name = "updates"
+        updates_repo = self.repos.repos["updates"]
+        repo.repomd_fn = updates_repo.repoXML.srcfile
+        repo.primary_fn = updates_repo.getPrimaryXML()
+        self._sack.load_yum_repo(repo)
+
+        return self._sack
+
+    @property
+    def sack(self):
+        if self._sack:
+            return self._sack
+        return self._init_hawkey_sack()
 
     def close(self):
         """Close the history and repo objects."""
@@ -2518,8 +2547,8 @@ class YumBase(depsolve.Depsolve):
         if pkgnarrow == 'all': 
             dinst = {}
             ndinst = {} # Newest versions by name.arch
-            for po in self.rpmdb.returnPackages(patterns=patterns,
-                                                ignore_case=ic):
+            for po in hawkey.queries.installed_by_name(self.sack, patterns=patterns,
+                                                       ignore_case=ic):
                 dinst[po.pkgtup] = po
                 if showdups:
                     continue
@@ -2527,17 +2556,15 @@ class YumBase(depsolve.Depsolve):
                 if key not in ndinst or po.verGT(ndinst[key]):
                     ndinst[key] = po
             installed = dinst.values()
-                        
+
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns,
-                                                    ignore_case=ic)
+                avail = hawkey.queries.by_name(self.sack, patterns=patterns,
+                                               ignore_case=ic)
             else:
-                try:
-                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
-                                                              ignore_case=ic)
-                except Errors.PackageSackError:
-                    avail = []
-            
+                avail = hawkey.queries.latest_per_arch(self.sack,
+                                                       patterns=patterns,
+                                                       ignore_case=ic)
+
             for pkg in avail:
                 if showdups:
                     if pkg.pkgtup in dinst:
@@ -2548,7 +2575,7 @@ class YumBase(depsolve.Depsolve):
                     key = (pkg.name, pkg.arch)
                     if pkg.pkgtup in dinst:
                         reinstall_available.append(pkg)
-                    elif key not in ndinst or pkg.verGT(ndinst[key]):
+                    elif key not in ndinst or pkg.evr_gt(ndinst[key]):
                         available.append(pkg)
                     else:
                         old_available.append(pkg)

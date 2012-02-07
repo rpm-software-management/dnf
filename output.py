@@ -716,11 +716,9 @@ class YumOutput:
         """
         if columns is None:
             columns = (-40, -22, -16) # Old default
-        ver = pkg.printVer()
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        rid = pkg.ui_from_repo
-        columns = zip((na, ver, rid), columns, hi_cols)
+        columns = zip((na, pkg.evr, pkg.reponame), columns, hi_cols)
         print self.fmtColumns(columns, text_width=len)
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -932,9 +930,9 @@ class YumOutput:
                     if False: pass
                     elif key not in highlight_na:
                         highlight = highlight_modes.get('not in', 'normal')
-                    elif pkg.verEQ(highlight_na[key]):
+                    elif pkg.evr_eq(highlight_na[key]):
                         highlight = highlight_modes.get('=', 'normal')
-                    elif pkg.verLT(highlight_na[key]):
+                    elif pkg.evr_lt(highlight_na[key]):
                         highlight = highlight_modes.get('>', 'bold')
                     else:
                         highlight = highlight_modes.get('<', 'normal')
@@ -946,7 +944,7 @@ class YumOutput:
                         self.infoOutput(pkg, highlight=highlight)
                     else:
                         pass
-    
+
             if thingslisted == 0:
                 return 1, ['No Packages to list']
             return 0, []

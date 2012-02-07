@@ -468,11 +468,9 @@ class DistroSyncCommand(YumCommand):
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
         This "knows" about simpleList and printVer. """
-    na  = len(pkg.name)    + 1 + len(pkg.arch)    + len(indent)
-    ver = len(pkg.version) + 1 + len(pkg.release)
-    rid = len(pkg.ui_from_repo)
-    if pkg.epoch != '0':
-        ver += len(pkg.epoch) + 1
+    na  = len(pkg.name) + 1 + len(pkg.arch) + len(indent)
+    ver = len(pkg.evr)
+    rid = len(pkg.reponame)
     for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
         data[d].setdefault(v, 0)
         data[d][v] += 1
