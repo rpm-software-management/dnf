@@ -237,6 +237,8 @@ class YumBase(depsolve.Depsolve):
         repo.primary_fn = updates_repo.getPrimaryXML()
         self._sack.load_yum_repo(repo)
 
+        # this is where the .solv files are produced
+        self._sack.write_all_repos()
         return self._sack
 
     @property
