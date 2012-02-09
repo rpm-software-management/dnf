@@ -2584,23 +2584,10 @@ class YumBase(depsolve.Depsolve):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
-            for (n,a,e,v,r) in self.up.getUpdatesList():
-                matches = self.pkgSack.searchNevra(name=n, arch=a, epoch=e, 
-                                                   ver=v, rel=r)
-                if len(matches) > 1:
-                    updates.append(matches[0])
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                        _('More than one identical match in sack for %s'), 
-                        matches[0])
-                elif len(matches) == 1:
-                    updates.append(matches[0])
-                else:
-                    self.verbose_logger.log(logginglevels.DEBUG_1,
-                        _('Nothing matches %s.%s %s:%s-%s from update'), n,a,e,v,r)
-            if patterns:
-                exactmatch, matched, unmatched = \
-                   parsePackages(updates, patterns, casematch=not ignore_case)
-                updates = exactmatch + matched
+            updates = hawkey.queries.updates_by_name(self.sack,
+                                                     patterns=patterns,
+                                                     ignore_case=ic)
+            updates=list(updates)
 
         # installed only
         elif pkgnarrow == 'installed':

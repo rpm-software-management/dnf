@@ -32,6 +32,7 @@ import time
 from yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
 import yum.config
+import hawkey
 
 def _err_mini_usage(base, basecmd):
     if basecmd not in base.yum_cli_commands:
@@ -570,7 +571,7 @@ class InfoCommand(YumCommand):
             if highlight and ypl.updates:
                 # Do the local/remote split we get in "yum updates"
                 for po in sorted(ypl.updates):
-                    if po.repo.id != 'installed' and po.verifyLocalPkg():
+                    if po.reponame != hawkey.SYSTEM_REPO_NAME:
                         local_pkgs[(po.name, po.arch)] = po
 
             # Output the packages:
