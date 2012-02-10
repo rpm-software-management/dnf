@@ -2565,7 +2565,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 avail = hawkey.queries.latest_per_arch(self.sack,
                                                        patterns=patterns,
-                                                       ignore_case=ic)
+                                                       ignore_case=ic).values()
 
             for pkg in avail:
                 if showdups:
@@ -2598,33 +2598,36 @@ class YumBase(depsolve.Depsolve):
 
         # available in a repository
         elif pkgnarrow == 'available':
-
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns,
-                                                    ignore_case=ic)
+                avail = hawkey.queries.available_by_name(
+                    self.sack, patterns=patterns, ignore_case=ic)
+                inst_pkgs = hawkey.queries.installed_by_name(
+                    self.sack, patterns=patterns, ignore_case=ic)
+                installed_dict = hawkey.queries.per_arch_dict(inst_pkgs)
+                for avail_pkg in avail:
+                    key = (avail_pkg.name, avail_pkg.arch)
+                    installed_pkgs = installed_dict.get(key, [])
+                    same_ver = filter(lambda pkg: pkg.evr == avail_pkg.evr,
+                                      installed_pkgs)
+                    if len(same_ver) > 0:
+                        reinstall_available.append(avail_pkg)
+                    else:
+                        available.append(avail_pkg)
             else:
-                try:
-                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
-                                                              ignore_case=ic)
-                except Errors.PackageSackError:
-                    avail = []
-            
-            for pkg in avail:
-                if showdups:
-                    if self.rpmdb.contains(po=pkg):
-                        reinstall_available.append(pkg)
+                # we will only look at the latest versions of packages:
+                available_dict = hawkey.queries.latest_available_per_arch(
+                    self.sack, patterns=patterns, ignore_case=ic)
+                installed_dict = hawkey.queries.latest_installed_per_arch(
+                    self.sack, patterns=patterns, ignore_case=ic)
+                for (name, arch) in available_dict:
+                    avail_pkg = available_dict[(name, arch)]
+                    inst_pkg = installed_dict.get((name, arch), None)
+                    if not inst_pkg or avail_pkg.evr_gt(inst_pkg):
+                        available.append(avail_pkg)
+                    elif avail_pkg.evr_eq(inst_pkg):
+                        reinstall_available.append(avail_pkg)
                     else:
-                        available.append(pkg)
-                else:
-                    ipkgs = self.rpmdb.searchNevra(pkg.name, arch=pkg.arch)
-                    if ipkgs:
-                        latest = sorted(ipkgs, reverse=True)[0]
-                    if not ipkgs or pkg.verGT(latest):
-                        available.append(pkg)
-                    elif pkg.verEQ(latest):
-                        reinstall_available.append(pkg)
-                    else:
-                        old_available.append(pkg)
+                        old_available.append(avail_pkg)
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
