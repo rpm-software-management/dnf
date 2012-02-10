@@ -2591,9 +2591,11 @@ class YumBase(depsolve.Depsolve):
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = self.rpmdb.returnPackages(patterns=patterns,
-                                                  ignore_case=ic)
-        
+            installed = hawkey.queries.installed_by_name(self.sack,
+                                                         patterns=patterns,
+                                                         ignore_case=ic)
+            installed = list(installed)
+
         # available in a repository
         elif pkgnarrow == 'available':
 
