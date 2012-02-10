@@ -2631,15 +2631,17 @@ class YumBase(depsolve.Depsolve):
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
-            # we must compare the installed set versus the repo set
             # anything installed but not in a repo is an extra
-            avail = self.pkgSack.simplePkgList(patterns=patterns,
-                                               ignore_case=ic)
-            avail = set(avail)
-            for po in self.rpmdb.returnPackages(patterns=patterns,
-                                                ignore_case=ic):
-                if po.pkgtup not in avail:
-                    extras.append(po)
+            avail = hawkey.queries.available_by_name(
+                self.sack, patterns=patterns, ignore_case=ic)
+            avail_dict = hawkey.queries.per_pkgtup_dict(avail)
+            inst = hawkey.queries.installed_by_name(
+                self.sack, patterns=patterns, ignore_case=ic)
+            inst_dict = hawkey.queries.per_pkgtup_dict(inst)
+
+            for pkgtup in inst_dict:
+                if pkgtup not in avail_dict:
+                    extras.extend(inst_dict[pkgtup])
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
