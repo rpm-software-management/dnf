@@ -2646,35 +2646,14 @@ class YumBase(depsolve.Depsolve):
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
-
-            for (pkgtup, instTup) in self.up.getObsoletesTuples():
-                (n,a,e,v,r) = pkgtup
-                pkgs = self.pkgSack.searchNevra(name=n, arch=a, ver=v, rel=r, epoch=e)
-                instpo = self.getInstalledPackageObject(instTup)
-                for po in pkgs:
-                    obsoletes.append(po)
-                    obsoletesTuples.append((po, instpo))
             if patterns:
-                exactmatch, matched, unmatched = \
-                   parsePackages(obsoletes, patterns, casematch=not ignore_case)
-                obsoletes = exactmatch + matched
-                matched_obsoletes = set(obsoletes)
-                nobsoletesTuples = []
-                for po, instpo in obsoletesTuples:
-                    if po not in matched_obsoletes:
-                        continue
-                    nobsoletesTuples.append((po, instpo))
-                obsoletesTuples = nobsoletesTuples
-            if not showdups:
-                obsoletes = packagesNewestByName(obsoletes)
-                filt = set(obsoletes)
-                nobsoletesTuples = []
-                for po, instpo in obsoletesTuples:
-                    if po not in filt:
-                        continue
-                    nobsoletesTuples.append((po, instpo))
-                obsoletesTuples = nobsoletesTuples
-        
+                print("warning: hawkey can not query pattern obsoletes yet.")
+            q = hawkey.Query(self.sack)
+            obsoletes = list(q.filter(obsoleting__eq=True,
+                                      latest__eq=not showdups))
+            obsoletesTuples = [(new, old) for new in obsoletes for
+                               old in new.obsoletes_list()]
+
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
             now = time.time()

@@ -49,6 +49,8 @@ from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
 import locale
 
+import hawkey
+
 try:
     assert max(2, 4) == 4
 except:
@@ -866,7 +868,7 @@ class YumOutput:
         if columns is not None:
             # New style, output all info. for both old/new with old indented
             chi = self.conf.color_update_remote
-            if changePkg.repo.id != 'installed' and changePkg.verifyLocalPkg():
+            if changePkg.reponame != hawkey.SYSTEM_REPO_NAME:
                 chi = self.conf.color_update_local
             self.simpleList(changePkg, columns=columns, highlight=chi)
             self.simpleList(instPkg,   columns=columns, indent=' ' * 4,

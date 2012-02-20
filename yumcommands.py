@@ -604,11 +604,9 @@ class InfoCommand(YumCommand):
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
                 print _('Obsoleting Packages')
-                # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    base.updatesObsoletesList(obtup, 'obsoletes',
-                                              columns=columns)
+                    base.updatesObsoletesList(obtup, 'obsoletes', columns=columns)
             else:
                 rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
                                     basecmd, columns=columns)
