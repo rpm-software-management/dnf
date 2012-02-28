@@ -1296,14 +1296,14 @@ class YumOutput:
         if (not error):
             if locsize:
                 self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"), 
-                                        self.format_number(totsize))
+                                        self.format_number(totsize * 1024))
             if locsize != totsize:
                 self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"), 
-                                        self.format_number(totsize - locsize))
+                                        self.format_number((totsize - locsize) * 1024))
             if installonly:
                 self.verbose_logger.log(logginglevels.INFO_1,
                                         _("Installed size: %s"),
-                                        self.format_number(insize))
+                                        self.format_number(insize * 1024))
 
     def reportRemoveSize(self, packages):
         """Report the total size of packages being removed.
@@ -1317,7 +1317,7 @@ class YumOutput:
             # the package size fails, log the error and don't report download
             # size
             try:
-                size = int(pkg.size)
+                size = pkg.size
                 totsize += size
             except:
                 error = True
@@ -1326,7 +1326,7 @@ class YumOutput:
         if (not error):
             self.verbose_logger.log(logginglevels.INFO_1,
                                     _("Installed size: %s"),
-                                    self.format_number(totsize))
+                                    self.format_number(totsize * 1024))
             
     def listTransaction(self):
         """Return a string representation of the transaction in an
@@ -1338,19 +1338,17 @@ class YumOutput:
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
 
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
-            (n,a,e,v,r) = po.pkgtup
-            evr = po.printVer()
-            repoid = po.ui_from_repo
-            pkgsize = float(po.size)
-            size = self.format_number(pkgsize)
+            (n, a,evr) = po.pkgtup
+            repoid = po.reponame
+            size = self.format_number(po.size * 1024)
 
             if a is None: # gpgkeys are weird
                 a = 'noarch'
 
             # none, partial, full?
-            if po.repo.id == 'installed':
+            if po.reponame == hawkey.SYSTEM_REPO_NAME:
                 hi = self.conf.color_update_installed
-            elif po.verifyLocalPkg():
+            elif po.reponame == hawkey.CMDLINE_REPO_NAME:
                 hi = self.conf.color_update_local
             else:
                 hi = self.conf.color_update_remote
