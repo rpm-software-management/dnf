@@ -2632,10 +2632,10 @@ class DepSolveProgressCallBack:
                      'o': _('obsoleting'),
                      'ud': _('updated'),
                      'od': _('obsoleted'),}
-        (n, a, e, v, r) = pkgtup
+        (n, a, evr) = pkgtup
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('---> Package %s.%s %s:%s-%s will be %s'), n, a, e, v, r,
+            _('---> Package %s.%s %s will be %s'), n, a, evr,
             modeterm)
         
     def start(self):

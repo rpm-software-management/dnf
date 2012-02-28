@@ -34,6 +34,8 @@ import Errors
 import warnings
 import misc
 
+import hawkey
+
 class GetProvReqOnlyPackageSack(PackageSack):
     def __init__(self, need_files=False):
         PackageSack.__init__(self)
@@ -90,7 +92,7 @@ class TransactionData:
         self.pkgSack = None
         self.pkgSackPackages = 0
         self.localSack = PackageSack()
-        self._inSack = GetProvReqOnlyPackageSack()
+        self._inSack = None
 
         # lists of txmbrs in their states - just placeholders
         self.instgroups = []
@@ -243,6 +245,7 @@ class TransactionData:
            
         if po.name in self.installonlypkgs:
             return True
+        return False # :hawkey
         
         provides = po.provides_names
         if filter (lambda prov: prov in self.installonlypkgs, provides):
@@ -268,10 +271,6 @@ class TransactionData:
         self._namedict.setdefault(txmember.name, []).append(txmember)
         self.changed = True
         self.state_counter += 1
-        if self._isLocalPackage(txmember):
-            self.localSack.addPackage(txmember.po)
-        elif isinstance(txmember.po, YumAvailablePackageSqlite):
-            self.pkgSackPackages += 1
         if self._inSack is not None and txmember.output_state in TS_INSTALL_STATES:
             if not txmember.po.have_fastReturnFileEntries():
                 # In theory we could keep this on if a "small" repo. fails
@@ -664,6 +663,7 @@ class TransactionData:
         """addObsoleted() pkgs for anything that this txmbr will obsolete"""
         # this is mostly to keep us in-line with what will ACTUALLY happen
         # when rpm hits the obsoletes, whether we added them or not
+        return None # :hawkey
         for obs_n in txmbr.po.obsoletes_names:
             for pkg in self.rpmdb.searchNevra(name=obs_n):
                 if pkg.obsoletedBy([txmbr.po]):
@@ -752,14 +752,13 @@ class TransactionMember:
         self.downgraded_by = []
         self.reinstall = False
         self.groups = [] # groups it's in
-        self._poattr = ['pkgtup', 'repoid', 'name', 'arch', 'epoch', 'version',
-                        'release']
+        self._poattr = ['pkgtup', 'reponame', 'name', 'arch', 'evr']
 
         for attr in self._poattr:
             val = getattr(self.po, attr)
             setattr(self, attr, val)
 
-        if po.repoid == 'installed':
+        if po.reponame == hawkey.SYSTEM_REPO_NAME:
             #  We want to load these so that we can auto hardlink in the same
             # new values. Because of the hardlinks it should be really cheap
             # to load them ... although it's still a minor hack.
@@ -783,8 +782,8 @@ class TransactionMember:
         return object.__hash__(self)
             
     def __str__(self):
-        return "%s.%s %s:%s-%s - %s" % (self.name, self.arch, self.epoch,
-                                        self.version, self.release, self.ts_state)
+        return "%s.%s %s - %s" % (self.name, self.arch, self.evr,
+                                  self.ts_state)
 
     def __repr__(self):
         return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 

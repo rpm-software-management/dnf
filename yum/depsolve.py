@@ -781,6 +781,8 @@ class Depsolve(object):
            being skipped, :func:`resolveDeps` will need to be called
            multiple times before dependency solving is completely finished
         """
+        raise RuntimeError, "resolveDeps() called, but deps should"\
+            "be handled elsewhere"
         if not len(self.tsInfo):
             return (0, [_('Success - empty transaction')])
 

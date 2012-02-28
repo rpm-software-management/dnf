@@ -1064,6 +1064,16 @@ class YumBase(depsolve.Depsolve):
         func(_("The program %s%s%s is found in the yum-utils package.") %
              (hibeg, prog, hiend))
 
+    def buildHawkeyGoal(self, tsInfo):
+        goal = hawkey.Goal(self.sack)
+        for txmbr in tsInfo:
+            if txmbr.ts_state == 'u':
+                goal.update(txmbr.po)
+            else:
+                # :hawkey
+                raise NotImplementedError("hawkey can't handle non-udpates ATM.")
+        return goal
+
     def buildTransaction(self, unfinished_transactions_check=True):
         """Go through the packages in the transaction set, find them
         in the packageSack or rpmdb, and pack up the transaction set
@@ -1083,13 +1093,19 @@ class YumBase(depsolve.Depsolve):
             self.logger.critical(msg)
             self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
-        
+
         # XXX - we could add a conditional here to avoid running the plugins and 
         # limit_installonly_pkgs, etc - if we're being run from yum-complete-transaction
         # and don't want it to happen. - skv
-        
+
         self.plugins.run('preresolve')
         ds_st = time.time()
+        goal = self.buildHawkeyGoal(self.tsInfo)
+        goal.go()
+        (rescode, restring) = (2, [_('Success - deps resolved')])
+        self.plugins.run('postresolve', rescode=rescode, restring=restring)
+        self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
+        return (rescode, restring) # :hawkey
 
         (rescode, restring) = self.resolveDeps()
         self._limit_installonly_pkgs()
@@ -2647,7 +2663,8 @@ class YumBase(depsolve.Depsolve):
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
             if patterns:
-                print("warning: hawkey can not query pattern obsoletes yet.")
+                # :hawkey
+                warnings.warn("hawkey can not query pattern obsoletes yet.")
             q = hawkey.Query(self.sack)
             obsoletes = list(q.filter(obsoleting__eq=True,
                                       latest__eq=not showdups))
@@ -3824,7 +3841,7 @@ class YumBase(depsolve.Depsolve):
         pkgs = []
         was_pattern = False
         if po:
-            if isinstance(po, YumAvailablePackage) or isinstance(po, YumLocalPackage):
+            if isinstance(po, hawkey.Package):
                 pkgs.append(po)
             else:
                 raise Errors.InstallError, _('Package Object was not a package object instance')
@@ -4163,12 +4180,13 @@ class YumBase(depsolve.Depsolve):
         instpkgs = []
         availpkgs = []
         if po: # just a po
-            if po.repoid == 'installed':
+            if po.reponame == hawkey.SYSTEM_REPO_NAME:
                 instpkgs.append(po)
             else:
-                availpkgs.append(po)
-                
-                
+                txmbr = self.tsInfo.addUpdate(po)
+                tx_return.append(txmbr)
+                return tx_return
+        
         elif 'pattern' in kwargs:
             if kwargs['pattern'] and kwargs['pattern'][0] == '-':
                 return self._minus_deselect(kwargs['pattern'])
@@ -4471,20 +4489,21 @@ class YumBase(depsolve.Depsolve):
         updatepkgs = []
         donothingpkgs = []
 
+        self.sack.create_cmdline_repo()
+
         if not po:
             try:
-                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
-                                   ua=default_grabber.opts.user_agent)
-            except Errors.MiscError:
+                po = self.sack.add_cmdline_rpm(pkg)
+            except IOError:
                 self.logger.critical(_('Cannot open: %s. Skipping.'), pkg)
                 return tx_return
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('Examining %s: %s'), po.localpath, po)
-
-        # apparently someone wanted to try to install a drpm as an rpm :(
-        if po.hdr['payloadformat'] == 'drpm':
-            self.logger.critical(_('Cannot localinstall deltarpm: %s. Skipping.'), pkg)
-            return tx_return
+            self.localPackages.append(po)
+            if updateonly:
+                txmbrs = self.update(po=po)
+            else:
+                txmbrs = self.install(po=po)
+            tx_return.extend(txmbrs)
+            return tx_return # hawkey: the checks below are done elsewehre
 
         # if by any chance we're a noncompat arch rpm - bail and throw out an error
         # FIXME -our archlist should be stored somewhere so we don't have to
