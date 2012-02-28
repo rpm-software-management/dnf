@@ -2170,7 +2170,7 @@ class YumBase(depsolve.Depsolve):
         remote_pkgs = []
         remote_size = 0
         for po in pkglist:
-            if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+            if po.reponame == hawkey.CMDLINE_REPO_NAME:
                 continue
                     
             local = po.localPkg()
@@ -2367,7 +2367,7 @@ class YumBase(depsolve.Depsolve):
         if self._override_sigchecks:
             check = False
             hasgpgkey = 0
-        elif hasattr(po, 'pkgtype') and po.pkgtype == 'local':
+        elif po.reponame == hawkey.CMDLINE_REPO_NAME:
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
@@ -2421,9 +2421,9 @@ class YumBase(depsolve.Depsolve):
         for txmbr in self.tsInfo:
             if txmbr.po.state not in TS_INSTALL_STATES:
                 continue
-            if txmbr.po.repoid == "installed":
+            if txmbr.po.reponame == hawkey.SYSTEM_REPO_NAME:
                 continue
-            if txmbr.po.repoid not in self.repos.repos:
+            if txmbr.po.reponame == hawkey.CMDLINE_REPO_NAME:
                 continue
             
             # make sure it's not a local file

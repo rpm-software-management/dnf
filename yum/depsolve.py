@@ -187,7 +187,8 @@ class Depsolve(object):
         iopkgs = set(self.conf.installonlypkgs)
         if po.name in iopkgs:
             return True
-        
+        return False # :hawkey
+
         for prov in po.provides_names:
             if prov in iopkgs:
                 return True
@@ -224,9 +225,9 @@ class Depsolve(object):
             if txmbr.ts_state in ['u', 'i']:
                 if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
-                rpmfile = txmbr.po.localPkg()
+                rpmfile = txmbr.po.location
                 if os.path.exists(rpmfile):
-                    hdr = txmbr.po.returnHeaderFromPackage()
+                    hdr = rpmUtils.miscutils.headerFromFilename(rpmfile)
                 else:
                     self.downloadHeader(txmbr.po)
                     hdr = txmbr.po.returnLocalHeader()

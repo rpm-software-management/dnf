@@ -618,6 +618,7 @@ class TransactionData:
         """ Return a simple version for the future rpmdb. Works like
             rpmdb.simpleVersion(main_only=True)[0], but for the state the rpmdb
             will be in after the transaction. """
+        return PackageSackVersion() # :hawkey
         pkgs = self.rpmdb.returnPackages()
         _reinstalled_pkgtups = {}
         for txmbr in self.getMembersWithState(None, TS_INSTALL_STATES):

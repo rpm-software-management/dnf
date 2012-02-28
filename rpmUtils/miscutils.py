@@ -436,6 +436,11 @@ def hdrFromPackage(ts, package):
     os.close(fdno)
     return hdr
 
+def headerFromFilename(filename):
+        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        hdr = hdrFromPackage(ts, filename)
+        return hdr
+
 def checkSignals():
     if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
         if rpm.signalsCaught([signal.SIGINT, 
