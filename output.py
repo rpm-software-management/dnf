@@ -1539,8 +1539,8 @@ Transaction Summary
             if len(pkglist) > 0:
                 out += '\n%s:\n' % action
                 for txmbr in pkglist:
-                    (n,a,e,v,r) = txmbr.pkgtup
-                    msg = "%s.%s %s:%s-%s" % (n,a,e,v,r)
+                    (n, a, evr) = txmbr.pkgtup
+                    msg = "%s.%s %s" % (n, a, evr)
                     msgs.append(msg)
                 for num in (8, 7, 6, 5, 4, 3, 2):
                     cols = _fits_in_cols(msgs, num)

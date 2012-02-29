@@ -1740,6 +1740,7 @@ class YumBase(depsolve.Depsolve):
         #    that there is not also an install of this pkg in the tsInfo (reinstall)
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
+        return None # :hawkey
 
         def _call_txmbr_cb(txmbr, count):
             if txmbr_cb is not None:

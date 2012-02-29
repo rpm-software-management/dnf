@@ -517,6 +517,7 @@ class RPMTransaction:
             if self.trans_running:
                 self.display.filelog(txmbr.po, txmbr.output_state)
                 self._scriptout(txmbr.po)
+                return None # :hawkey
                 pid   = self.base.history.pkg2pid(txmbr.po)
                 state = self.base.history.txmbr2state(txmbr)
                 self.base.history.trans_data_pid_end(pid, state)

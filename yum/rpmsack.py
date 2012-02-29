@@ -370,6 +370,7 @@ class RPMDBPackageSack(PackageSackBase):
                 _safe_del(self._idx2pkg, txmbr.po.idx)
                 _safe_del(self._tup2pkg, txmbr.pkgtup)
 
+        return None # :hawkey
         for txmbr in precache:
             (n, a, e, v, r) = txmbr.pkgtup
             pkg = self.searchNevra(n, e, v, r, a)
