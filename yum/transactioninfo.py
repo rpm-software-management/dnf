@@ -418,6 +418,8 @@ class TransactionData:
         txmbr.po.state = TS_INSTALL        
         txmbr.ts_state = 'u'
         txmbr.reason = 'user'
+        self.add(txmbr)
+        return txmbr # :hawkey
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True

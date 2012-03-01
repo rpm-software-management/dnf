@@ -2635,30 +2635,31 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2,
             _('---> Package %s.%s %s will be %s'), n, a, evr,
             modeterm)
-        
+
     def start(self):
         """Perform setup at the beginning of the dependency solving
         process.
         """
+        self.verbose_logger.log(logginglevels.INFO_2,
+                                _('--> Starting dependency resolution'))
         self.loops += 1
-        
+
     def tscheck(self):
         """Output a message stating that a transaction check is beginning."""
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
-        
+
     def restartLoop(self):
         """Output a message stating that dependency resolution is restarting."""
         self.loops += 1
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Restarting Dependency Resolution with new changes.'))
         self.verbose_logger.debug('---> Loop Number: %d', self.loops)
-    
+
     def end(self):
         """Output a message stating that dependency resolution has finished."""
         self.verbose_logger.log(logginglevels.INFO_2,
-            _('--> Finished Dependency Resolution'))
+            _('--> Finished dependency resolution'))
 
-    
     def procReq(self, name, formatted_req):
         """Output a message stating that the package *formatted_req*
         is being processed as a dependency for the package *name*.

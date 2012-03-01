@@ -1067,11 +1067,14 @@ class YumBase(depsolve.Depsolve):
     def buildHawkeyGoal(self, tsInfo):
         goal = hawkey.Goal(self.sack)
         for txmbr in tsInfo:
-            if txmbr.ts_state == 'u':
+            if txmbr.ts_state == 'i':
+                goal.install(txmbr.po)
+            elif txmbr.ts_state == 'u':
                 goal.update(txmbr.po)
             else:
                 # :hawkey
-                raise NotImplementedError("hawkey can't handle non-udpates ATM.")
+                raise NotImplementedError("hawkey can't handle ts_state '%s'."
+                                          % txmbr.ts_state)
         return goal
 
     def buildTransaction(self, unfinished_transactions_check=True):
@@ -1100,10 +1103,12 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('preresolve')
         ds_st = time.time()
-        self.dsCallback.tscheck()
+        self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
         goal.go()
         for pkg in goal.list_installs():
+            self.dsCallback.pkgAdded(pkg, 'i')
+        for pkg in goal.list_upgrades():
             updated = goal.package_upgrades(pkg)
             self.dsCallback.pkgAdded(updated, 'ud')
             self.dsCallback.pkgAdded(pkg, 'u')
@@ -3846,6 +3851,7 @@ class YumBase(depsolve.Depsolve):
             pkg_warn = 'warning'
         pkg_warn = level2func[pkg_warn]
 
+        tx_return = []
         pkgs = []
         was_pattern = False
         if po:
@@ -3961,7 +3967,6 @@ class YumBase(depsolve.Depsolve):
         #  - better error handling/reporting
 
 
-        tx_return = []
         for po in pkgs:
             if self.tsInfo.exists(pkgtup=po.pkgtup):
                 if self.tsInfo.getMembersWithState(po.pkgtup, TS_INSTALL_STATES):
