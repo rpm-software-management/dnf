@@ -416,7 +416,7 @@ class TransactionData:
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_INSTALL
         txmbr.po.state = TS_INSTALL        
-        txmbr.ts_state = 'u'
+        txmbr.ts_state = 'i'
         txmbr.reason = 'user'
         self.add(txmbr)
         return txmbr # :hawkey
