@@ -1100,8 +1100,15 @@ class YumBase(depsolve.Depsolve):
 
         self.plugins.run('preresolve')
         ds_st = time.time()
+        self.dsCallback.tscheck()
         goal = self.buildHawkeyGoal(self.tsInfo)
         goal.go()
+        for pkg in goal.list_installs():
+            updated = goal.package_upgrades(pkg)
+            self.dsCallback.pkgAdded(updated, 'ud')
+            self.dsCallback.pkgAdded(pkg, 'u')
+        self.dsCallback.end()
+
         (rescode, restring) = (2, [_('Success - deps resolved')])
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
@@ -3842,11 +3849,12 @@ class YumBase(depsolve.Depsolve):
         pkgs = []
         was_pattern = False
         if po:
-            if isinstance(po, hawkey.Package):
-                pkgs.append(po)
-            else:
+            if not isinstance(po, hawkey.Package):
                 raise Errors.InstallError, _('Package Object was not a package object instance')
-            
+            txmbr = self.tsInfo.addInstall(po)
+            tx_return.append(txmbr)
+            return tx_return # :hawkey
+
         else:
             if not kwargs:
                 raise Errors.InstallError, _('Nothing specified to install')

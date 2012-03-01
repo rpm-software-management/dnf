@@ -2602,7 +2602,7 @@ class DepSolveProgressCallBack:
         self.loops = 0
         self.ayum = ayum
 
-    def pkgAdded(self, pkgtup, mode):
+    def pkgAdded(self, pkg, mode):
         """Print information about a package being added to the
         transaction set.
 
@@ -2630,7 +2630,7 @@ class DepSolveProgressCallBack:
                      'o': _('obsoleting'),
                      'ud': _('updated'),
                      'od': _('obsoleted'),}
-        (n, a, evr) = pkgtup
+        (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,
             _('---> Package %s.%s %s will be %s'), n, a, evr,
