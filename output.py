@@ -1338,7 +1338,8 @@ class YumOutput:
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
 
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
-            (n, a,evr) = po.pkgtup
+            (n, a, e, v, r) = po.pkgtup
+            evr = po.evr
             repoid = po.reponame
             size = self.format_number(po.size)
 
@@ -1539,7 +1540,8 @@ Transaction Summary
             if len(pkglist) > 0:
                 out += '\n%s:\n' % action
                 for txmbr in pkglist:
-                    (n, a, evr) = txmbr.pkgtup
+                    (n, a, e, v, r) = txmbr.pkgtup
+                    evr = txmbr.evr
                     msg = "%s.%s %s" % (n, a, evr)
                     msgs.append(msg)
                 for num in (8, 7, 6, 5, 4, 3, 2):
