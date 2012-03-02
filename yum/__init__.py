@@ -1105,16 +1105,17 @@ class YumBase(depsolve.Depsolve):
         ds_st = time.time()
         self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
-        goal.go()
-        for pkg in goal.list_installs():
-            self.dsCallback.pkgAdded(pkg, 'i')
-        for pkg in goal.list_upgrades():
-            updated = goal.package_upgrades(pkg)
-            self.dsCallback.pkgAdded(updated, 'ud')
-            self.dsCallback.pkgAdded(pkg, 'u')
+        if not goal.go():
+            (rescode, restring) =  (1, goal.problems())
+        else:
+            for pkg in goal.list_installs():
+                self.dsCallback.pkgAdded(pkg, 'i')
+            for pkg in goal.list_upgrades():
+                updated = goal.package_upgrades(pkg)
+                self.dsCallback.pkgAdded(updated, 'ud')
+                self.dsCallback.pkgAdded(pkg, 'u')
+            (rescode, restring) = (2, [_('Success - deps resolved')])
         self.dsCallback.end()
-
-        (rescode, restring) = (2, [_('Success - deps resolved')])
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return (rescode, restring) # :hawkey
