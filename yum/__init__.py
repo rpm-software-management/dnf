@@ -212,6 +212,7 @@ class YumBase(depsolve.Depsolve):
         self.run_with_package_names = set()
         self._cleanup = []
         self._sack = None
+        self.pre_check_errors = []
 
     def __del__(self):
         self.close()
@@ -1067,10 +1068,14 @@ class YumBase(depsolve.Depsolve):
     def buildHawkeyGoal(self, tsInfo):
         goal = hawkey.Goal(self.sack)
         for txmbr in tsInfo:
+            pkg = txmbr.po
             if txmbr.ts_state == 'i':
-                goal.install(txmbr.po)
+                goal.install(pkg)
             elif txmbr.ts_state == 'u':
-                goal.update(txmbr.po)
+                if not goal.update(pkg):
+                    msg = _("Package %s not installed, cannot update it. " +
+                            "Run yum install to install it instead.") % pkg.name
+                    self.pre_check_errors.append(msg)
             else:
                 # :hawkey
                 raise NotImplementedError("hawkey can't handle ts_state '%s'."
@@ -1105,7 +1110,9 @@ class YumBase(depsolve.Depsolve):
         ds_st = time.time()
         self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
-        if not goal.go():
+        if self.pre_check_errors:
+            (rescode, restring) = (1, self.pre_check_errors)
+        elif not goal.go():
             (rescode, restring) =  (1, goal.problems())
         else:
             for pkg in goal.list_installs():
