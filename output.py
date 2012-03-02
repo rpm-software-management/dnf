@@ -1295,15 +1295,15 @@ class YumOutput:
 
         if (not error):
             if locsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"), 
-                                        self.format_number(totsize * 1024))
+                self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"),
+                                        self.format_number(totsize))
             if locsize != totsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"), 
-                                        self.format_number((totsize - locsize) * 1024))
+                self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"),
+                                        self.format_number(totsize - locsize))
             if installonly:
                 self.verbose_logger.log(logginglevels.INFO_1,
                                         _("Installed size: %s"),
-                                        self.format_number(insize * 1024))
+                                        self.format_number(insize))
 
     def reportRemoveSize(self, packages):
         """Report the total size of packages being removed.
@@ -1326,7 +1326,7 @@ class YumOutput:
         if (not error):
             self.verbose_logger.log(logginglevels.INFO_1,
                                     _("Installed size: %s"),
-                                    self.format_number(totsize * 1024))
+                                    self.format_number(totsize))
             
     def listTransaction(self):
         """Return a string representation of the transaction in an
@@ -1340,7 +1340,7 @@ class YumOutput:
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
             (n, a,evr) = po.pkgtup
             repoid = po.reponame
-            size = self.format_number(po.size * 1024)
+            size = self.format_number(po.size)
 
             if a is None: # gpgkeys are weird
                 a = 'noarch'
