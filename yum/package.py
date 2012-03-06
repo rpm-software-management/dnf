@@ -25,6 +25,7 @@ class Package(hawkey.Package):
     def __init__(self, initobject, yumbase):
         super(Package, self).__init__(initobject)
         self.yumbase = yumbase
+        self.localpath = None
 
     @property # yum compatibility attribute
     def repoid(self):
@@ -66,7 +67,15 @@ class Package(hawkey.Package):
 
     # yum compatibility method
     def localPkg(self):
-        return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
+        """ Package's location in the filesystem.
+
+            For packages in remote repo returns where the package will be/has
+            been downloaded.
+        """
+        if self.reponame == hawkey.CMDLINE_REPO_NAME:
+            return self.location
+        return self.localpath or \
+            os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
     # yum cmopatibility method
     def verifyLocalPkg(self):

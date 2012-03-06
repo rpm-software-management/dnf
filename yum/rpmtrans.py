@@ -494,7 +494,7 @@ class RPMTransaction:
         self.lastmsg = None
         name, txmbr = self._getTxmbr(h)
         if txmbr is not None:
-            rpmloc = txmbr.po.location
+            rpmloc = txmbr.po.localPkg()
             try:
                 self.fd = file(rpmloc)
             except IOError, e:

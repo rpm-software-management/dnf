@@ -225,7 +225,7 @@ class Depsolve(object):
             if txmbr.ts_state in ['u', 'i']:
                 if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
-                rpmfile = txmbr.po.location
+                rpmfile = txmbr.po.localPkg()
                 if os.path.exists(rpmfile):
                     hdr = rpmUtils.miscutils.headerFromFilename(rpmfile)
                 else:

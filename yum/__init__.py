@@ -2461,8 +2461,7 @@ class YumBase(depsolve.Depsolve):
             if local:
                 filelist.extend([txmbr.po.localHdr()])
             else:
-                txmbr.po.xattr_origin_url # Load this, before we rm the file.
-                filelist.extend([txmbr.po.localPkg(), txmbr.po.localHdr()])
+                filelist.append(txmbr.po.localPkg())
 
         # now remove them
         for fn in filelist:
