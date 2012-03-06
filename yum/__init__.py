@@ -2081,6 +2081,7 @@ class YumBase(depsolve.Depsolve):
         :raises: :class:`URLGrabError` if verification fails, and
            *raiseError* is 1
         """
+        return True # :hawkey
         failed = False
 
         if type(fo) is types.InstanceType:
@@ -2193,7 +2194,8 @@ class YumBase(depsolve.Depsolve):
         for po in pkglist:
             if po.reponame == hawkey.CMDLINE_REPO_NAME:
                 continue
-                    
+            repo = self.repos.repos[po.reponame]
+            po.set_yum_repo(repo)
             local = po.localPkg()
             if os.path.exists(local):
                 if not self.verifyPkg(local, po, False):

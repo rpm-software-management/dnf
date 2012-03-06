@@ -855,14 +855,13 @@ Insufficient space in download directory %s
     def getPackage(self, package, checkfunc=None, text=None, cache=True):
         remote = package.relativepath
         local = package.localPkg()
-        basepath = package.basepath
 
         if self._preload_pkg_from_system_cache(package):
             if package.verifyLocalPkg():
                 return local
             misc.unlink_f(local)
 
-        return self._getFile(url=basepath,
+        return self._getFile(url=None,
                         relative=remote,
                         local=local,
                         checkfunc=checkfunc,
