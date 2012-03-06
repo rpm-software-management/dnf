@@ -4207,9 +4207,17 @@ class YumBase(depsolve.Depsolve):
             else:
                 txmbr = self.tsInfo.addUpdate(po)
                 tx_return.append(txmbr)
-                return tx_return
+                return tx_return # :hawkey
         
         elif 'pattern' in kwargs:
+            pats = [kwargs['pattern']]
+            availpkgs = sorted(hawkey.queries.updates_by_name(self.sack, pats))
+            if len(availpkgs) > 0:
+                pkg = availpkgs[0]
+                txmbr = self.tsInfo.addUpdate(pkg)
+                tx_return.append(txmbr)
+            return tx_return # :hawkey
+
             if kwargs['pattern'] and kwargs['pattern'][0] == '-':
                 return self._minus_deselect(kwargs['pattern'])
 
@@ -4244,7 +4252,6 @@ class YumBase(depsolve.Depsolve):
                 if update_to:
                     m = []
                 else:
-                    pats = [kwargs['pattern']]
                     # pats += list(set([pkg.name for pkg in instpkgs]))
                     m = self.pkgSack.returnNewestByNameArch(patterns=pats)
             except Errors.PackageSackError:
