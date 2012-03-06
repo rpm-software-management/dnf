@@ -223,7 +223,9 @@ class YumBase(depsolve.Depsolve):
         for cb in self._cleanup: cb()
 
     def _init_hawkey_sack(self):
-        self._sack = hawkey.Sack(package.Package) # passing the package class
+        # Create the Sack, tell it how to build packages, passing in the Package
+        # class and a YumBase reference.
+        self._sack = hawkey.Sack(package.Package, self)
         self._sack.load_rpm_repo()
         repo = hawkey.Repo()
         repo.name = "Fedora"
@@ -2195,8 +2197,6 @@ class YumBase(depsolve.Depsolve):
         for po in pkglist:
             if po.reponame == hawkey.CMDLINE_REPO_NAME:
                 continue
-            repo = self.repos.repos[po.reponame]
-            po.set_yum_repo(repo)
             local = po.localPkg()
             if os.path.exists(local):
                 if not self.verifyPkg(local, po, False):

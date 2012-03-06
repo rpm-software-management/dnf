@@ -22,8 +22,9 @@ import hawkey
 import os.path
 
 class Package(hawkey.Package):
-    def __init__(self, initobject):
+    def __init__(self, initobject, yumbase):
         super(Package, self).__init__(initobject)
+        self.yumbase = yumbase
 
     @property # yum compatibility attribute
     def repoid(self):
@@ -35,7 +36,7 @@ class Package(hawkey.Package):
 
     @property # yum compatiblity attribute
     def repo(self):
-        return self.yum_repo
+        return self.yumbase.repos.repos[self.reponame]
 
     @property # yum compatiblity attribute
     def relativepath(self):
@@ -63,13 +64,9 @@ class Package(hawkey.Package):
         vr = self.evr.split(":", 1)[-1]
         return vr.split("-")[1]
 
-    # yum compatibility method/hack
-    def set_yum_repo(self, repo):
-        self.yum_repo = repo
-
     # yum compatibility method
     def localPkg(self):
-        return os.path.join(self.yum_repo.pkgdir, os.path.basename(self.location))
+        return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
     # yum cmopatibility method
     def verifyLocalPkg(self):
