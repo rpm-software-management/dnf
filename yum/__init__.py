@@ -91,6 +91,7 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
+import package
 import hawkey
 import hawkey.queries
 
@@ -222,7 +223,7 @@ class YumBase(depsolve.Depsolve):
         for cb in self._cleanup: cb()
 
     def _init_hawkey_sack(self):
-        self._sack = hawkey.Sack()
+        self._sack = hawkey.Sack(package.Package) # passing the package class
         self._sack.load_rpm_repo()
         repo = hawkey.Repo()
         repo.name = "Fedora"
@@ -2692,7 +2693,7 @@ class YumBase(depsolve.Depsolve):
             obsoletes = list(q.filter(obsoleting__eq=True,
                                       latest__eq=not showdups))
             obsoletesTuples = [(new, old) for new in obsoletes for
-                               old in new.obsoletes_list()]
+                               old in new.obsoletes_list(self.sack)]
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
