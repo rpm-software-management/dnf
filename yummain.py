@@ -193,6 +193,8 @@ def main(args):
     if result == 0:
         # Normal exit
         if unlock(): return 200
+        for msg in resultmsgs:
+            print msg
         return 0
     elif result == 1:
         # Fatal error

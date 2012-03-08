@@ -1118,19 +1118,25 @@ class YumBase(depsolve.Depsolve):
         elif not goal.go():
             (rescode, restring) =  (1, goal.problems())
         else:
+            cnt = 0
             for pkg in goal.list_installs():
+                cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
                 # TransactionData skips the package if it knows about it
                 # already, i.e. we added it through self.install()
                 self.tsInfo.addInstall(pkg)
             for pkg in goal.list_upgrades():
+                cnt += 1
                 updated = goal.package_upgrades(pkg)
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
                 # TransactionData skips the package if it knows about it
                 # already, i.e. we added it through self.update()
                 self.tsInfo.addUpdate(pkg)
-            (rescode, restring) = (2, [_('Success - deps resolved')])
+            if cnt > 0:
+                (rescode, restring) = (2, [_('Success - deps resolved')])
+            else:
+                (rescode, restring) = (0, [_('Nothing to do')])
         self.dsCallback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
