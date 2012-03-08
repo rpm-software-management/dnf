@@ -66,6 +66,10 @@ class Package(hawkey.Package):
         return vr.split("-")[1]
 
     # yum compatibility method
+    def getDiscNum(self):
+        return self.medianr
+
+    # yum compatibility method
     def localPkg(self):
         """ Package's location in the filesystem.
 

@@ -1120,10 +1120,16 @@ class YumBase(depsolve.Depsolve):
         else:
             for pkg in goal.list_installs():
                 self.dsCallback.pkgAdded(pkg, 'i')
+                # TransactionData skips the package if it knows about it
+                # already, i.e. we added it through self.install()
+                self.tsInfo.addInstall(pkg)
             for pkg in goal.list_upgrades():
                 updated = goal.package_upgrades(pkg)
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
+                # TransactionData skips the package if it knows about it
+                # already, i.e. we added it through self.update()
+                self.tsInfo.addUpdate(pkg)
             (rescode, restring) = (2, [_('Success - deps resolved')])
         self.dsCallback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
@@ -3874,6 +3880,14 @@ class YumBase(depsolve.Depsolve):
         else:
             if not kwargs:
                 raise Errors.InstallError, _('Nothing specified to install')
+            pats = [kwargs['pattern']]
+            availpkgs = list(hawkey.queries.available_by_name(self.sack, pats,
+                                                              latest_only=True))
+            if len(availpkgs) > 0:
+                pkg = availpkgs[0]
+                txmbr = self.tsInfo.addInstall(pkg)
+                tx_return.append(txmbr)
+            return tx_return # :hawkey
 
             if 'pattern' in kwargs:
                 if kwargs['pattern'] and kwargs['pattern'][0] == '-':
@@ -3883,7 +3897,6 @@ class YumBase(depsolve.Depsolve):
                     return self._at_groupinstall(kwargs['pattern'])
 
                 was_pattern = True
-                pats = [kwargs['pattern']]
                 mypkgs = self.pkgSack.returnPackages(patterns=pats,
                                                       ignore_case=False)
                 pkgs.extend(mypkgs)
