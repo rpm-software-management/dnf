@@ -761,6 +761,7 @@ class TransactionMember:
             val = getattr(self.po, attr)
             setattr(self, attr, val)
 
+        return # :hawkey
         if po.reponame == hawkey.SYSTEM_REPO_NAME:
             #  We want to load these so that we can auto hardlink in the same
             # new values. Because of the hardlinks it should be really cheap

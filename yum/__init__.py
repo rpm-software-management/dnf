@@ -1079,8 +1079,9 @@ class YumBase(depsolve.Depsolve):
                     msg = _("Package %s not installed, cannot update it. " +
                             "Run yum install to install it instead.") % pkg.name
                     self.pre_check_errors.append(msg)
+            elif txmbr.ts_state == 'e':
+                goal.erase(pkg)
             else:
-                # :hawkey
                 raise NotImplementedError("hawkey can't handle ts_state '%s'."
                                           % txmbr.ts_state)
         return goal
@@ -1119,20 +1120,26 @@ class YumBase(depsolve.Depsolve):
             (rescode, restring) =  (1, goal.problems())
         else:
             cnt = 0
+            # Below, we call self.tsInfo.add* for all packages that come out of
+            # transaction, to make sure we add the packages that depsolver
+            # seemed fit to throw in (e.g. new dependencies for a package we
+            # selected to install). We do this even for packages that might be
+            # in tsInfo already, tsInfo recognizes those and doesn't add them
+            # twice.
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
-                # TransactionData skips the package if it knows about it
-                # already, i.e. we added it through self.install()
                 self.tsInfo.addInstall(pkg)
             for pkg in goal.list_upgrades():
                 cnt += 1
                 updated = goal.package_upgrades(pkg)
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
-                # TransactionData skips the package if it knows about it
-                # already, i.e. we added it through self.update()
                 self.tsInfo.addUpdate(pkg)
+            for pkg in goal.list_erasures():
+                cnt += 1
+                self.dsCallback.pkgAdded(pkg, 'e')
+                self.tsInfo.addErase(pkg)
             if cnt > 0:
                 (rescode, restring) = (2, [_('Success - deps resolved')])
             else:
@@ -4460,8 +4467,14 @@ class YumBase(depsolve.Depsolve):
         
         
         if po:
-            pkgs = [po]  
+            pkgs = [po]
         else:
+            pats = [kwargs['pattern']]
+            for pkg in hawkey.queries.installed_by_name(self.sack, pats):
+                txmbr = self.tsInfo.addErase(pkg)
+                tx_return.append(txmbr)
+            return tx_return # :hawkey
+
             if 'pattern' in kwargs:
                 if kwargs['pattern'] and kwargs['pattern'][0] == '-':
                     return self._minus_deselect(kwargs['pattern'])

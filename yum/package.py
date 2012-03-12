@@ -28,6 +28,10 @@ class Package(hawkey.Package):
         self.localpath = None
 
     @property # yum compatibility attribute
+    def idx(self):
+        return self.rpmdbid
+
+    @property # yum compatibility attribute
     def repoid(self):
         return self.reponame
 
