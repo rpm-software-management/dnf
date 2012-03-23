@@ -2711,7 +2711,7 @@ class YumBase(depsolve.Depsolve):
             obsoletes = list(q.filter(obsoleting__eq=True,
                                       latest__eq=not showdups))
             obsoletesTuples = [(new, old) for new in obsoletes for
-                               old in new.obsoletes_list(self.sack)]
+                               old in new.obsoletes_list()]
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
