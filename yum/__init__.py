@@ -93,7 +93,7 @@ from urlgrabber.grabber import default_grabber
 
 import package
 import hawkey
-import hawkey.queries
+import queries
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
@@ -2607,7 +2607,7 @@ class YumBase(depsolve.Depsolve):
         if pkgnarrow == 'all': 
             dinst = {}
             ndinst = {} # Newest versions by name.arch
-            for po in hawkey.queries.installed_by_name(self.sack, patterns=patterns,
+            for po in queries.installed_by_name(self.sack, patterns=patterns,
                                                        ignore_case=ic):
                 dinst[po.pkgtup] = po
                 if showdups:
@@ -2618,10 +2618,10 @@ class YumBase(depsolve.Depsolve):
             installed = dinst.values()
 
             if showdups:
-                avail = hawkey.queries.by_name(self.sack, patterns=patterns,
+                avail = queries.by_name(self.sack, patterns=patterns,
                                                ignore_case=ic)
             else:
-                avail = hawkey.queries.latest_per_arch(self.sack,
+                avail = queries.latest_per_arch(self.sack,
                                                        patterns=patterns,
                                                        ignore_case=ic).values()
 
@@ -2642,14 +2642,14 @@ class YumBase(depsolve.Depsolve):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
-            updates = hawkey.queries.updates_by_name(self.sack,
+            updates = queries.updates_by_name(self.sack,
                                                      patterns=patterns,
                                                      ignore_case=ic)
             updates=list(updates)
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = hawkey.queries.installed_by_name(self.sack,
+            installed = queries.installed_by_name(self.sack,
                                                          patterns=patterns,
                                                          ignore_case=ic)
             installed = list(installed)
@@ -2657,11 +2657,11 @@ class YumBase(depsolve.Depsolve):
         # available in a repository
         elif pkgnarrow == 'available':
             if showdups:
-                avail = hawkey.queries.available_by_name(
+                avail = queries.available_by_name(
                     self.sack, patterns=patterns, ignore_case=ic)
-                inst_pkgs = hawkey.queries.installed_by_name(
+                inst_pkgs = queries.installed_by_name(
                     self.sack, patterns=patterns, ignore_case=ic)
-                installed_dict = hawkey.queries.per_arch_dict(inst_pkgs)
+                installed_dict = queries.per_arch_dict(inst_pkgs)
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
@@ -2673,9 +2673,9 @@ class YumBase(depsolve.Depsolve):
                         available.append(avail_pkg)
             else:
                 # we will only look at the latest versions of packages:
-                available_dict = hawkey.queries.latest_available_per_arch(
+                available_dict = queries.latest_available_per_arch(
                     self.sack, patterns=patterns, ignore_case=ic)
-                installed_dict = hawkey.queries.latest_installed_per_arch(
+                installed_dict = queries.latest_installed_per_arch(
                     self.sack, patterns=patterns, ignore_case=ic)
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)]
@@ -2690,12 +2690,12 @@ class YumBase(depsolve.Depsolve):
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
-            avail = hawkey.queries.available_by_name(
+            avail = queries.available_by_name(
                 self.sack, patterns=patterns, ignore_case=ic)
-            avail_dict = hawkey.queries.per_pkgtup_dict(avail)
-            inst = hawkey.queries.installed_by_name(
+            avail_dict = queries.per_pkgtup_dict(avail)
+            inst = queries.installed_by_name(
                 self.sack, patterns=patterns, ignore_case=ic)
-            inst_dict = hawkey.queries.per_pkgtup_dict(inst)
+            inst_dict = queries.per_pkgtup_dict(inst)
 
             for pkgtup in inst_dict:
                 if pkgtup not in avail_dict:
@@ -3894,7 +3894,7 @@ class YumBase(depsolve.Depsolve):
             if not kwargs:
                 raise Errors.InstallError, _('Nothing specified to install')
             pats = [kwargs['pattern']]
-            availpkgs = list(hawkey.queries.available_by_name(self.sack, pats,
+            availpkgs = list(queries.available_by_name(self.sack, pats,
                                                               latest_only=True))
             if len(availpkgs) > 0:
                 pkg = availpkgs[0]
@@ -4239,7 +4239,7 @@ class YumBase(depsolve.Depsolve):
         
         elif 'pattern' in kwargs:
             pats = [kwargs['pattern']]
-            availpkgs = sorted(hawkey.queries.updates_by_name(self.sack, pats))
+            availpkgs = sorted(queries.updates_by_name(self.sack, pats))
             if len(availpkgs) > 0:
                 pkg = availpkgs[0]
                 txmbr = self.tsInfo.addUpdate(pkg)
@@ -4470,7 +4470,7 @@ class YumBase(depsolve.Depsolve):
             pkgs = [po]
         else:
             pats = [kwargs['pattern']]
-            for pkg in hawkey.queries.installed_by_name(self.sack, pats):
+            for pkg in queries.installed_by_name(self.sack, pats):
                 txmbr = self.tsInfo.addErase(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey
