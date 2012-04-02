@@ -69,6 +69,10 @@ class Package(hawkey.Package):
         vr = self.evr.split(":", 1)[-1]
         return vr.split("-")[1]
 
+    @property # yum compatibility attribute
+    def ui_from_repo(self):
+        return self.reponame
+
     # yum compatibility method
     def getDiscNum(self):
         return self.medianr

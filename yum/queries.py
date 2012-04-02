@@ -21,6 +21,9 @@
 import hawkey
 import itertools
 
+def _is_glob_pattern(pattern):
+    return set(pattern) & set("*[?")
+
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
                       updates_only=False, latest_only=False):
@@ -31,7 +34,7 @@ def _construct_result(sack, patterns, ignore_case,
         if ignore_case:
             flags = [hawkey.ICASE]
         # autodetect glob patterns
-        if set(p) & set("*[?"):
+        if _is_glob_pattern(p):
             q.filter(*flags, name__glob=p)
         else:
             q.filter(*flags, name__eq=p)
@@ -55,6 +58,21 @@ def available_by_name(sack, patterns, ignore_case=False, latest_only=False):
 
 def by_name(sack, patterns, ignore_case=False):
     return _construct_result(sack, patterns, ignore_case)
+
+def by_file(sack, patterns, ignore_case=False):
+    queries = []
+    for p in patterns:
+        sack.load_filelists()
+        q = hawkey.Query(sack)
+        flags = []
+        if ignore_case:
+            flags = [hawkey.ICASE]
+        if _is_glob_pattern(p):
+            q.filter(*flags, file__glob=p)
+        else:
+            q.filter(*flags, file__eq=p)
+        queries.append(q)
+    return itertools.chain.from_iterable(queries)
 
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):

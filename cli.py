@@ -42,6 +42,7 @@ from yum import _, P_
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
+import yum.queries
 
 from yum.i18n import to_unicode, to_utf8, exception2msg
 
@@ -1358,6 +1359,16 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         # For output, as searchPackageProvides() is always in showdups mode
         self.conf.showdupesfromrepos = True
         cb = self.matchcallback_verbose
+        matches = 0
+        for pkg in yum.queries.by_file(self.sack, args):
+            self.matchcallback_verbose(pkg, [], args)
+            matches += 1
+        self.conf.showdupesfromrepos = old_sdup
+
+        if not matches:
+            return 0, ['No Matches found']
+        return 0, [] # :hawkey
+
         matching = self.searchPackageProvides(args, callback=cb,
                                               callback_has_matchfor=True)
         if len(matching) == 0:

@@ -227,23 +227,21 @@ class YumBase(depsolve.Depsolve):
         # class and a YumBase reference.
         self._sack = hawkey.Sack(package.Package, self)
         self._sack.load_rpm_repo()
-        repo = hawkey.Repo()
-        repo.name = "Fedora"
-        fedora_repo = self.repos.repos["fedora"]
-        repo.repomd_fn = fedora_repo.repoXML.srcfile
-        repo.primary_fn = fedora_repo.getPrimaryXML()
-        self._sack.load_yum_repo(repo)
-
-        repo = hawkey.Repo()
-        repo.name = "updates"
-        updates_repo = self.repos.repos["updates"]
-        repo.repomd_fn = updates_repo.repoXML.srcfile
-        repo.primary_fn = updates_repo.getPrimaryXML()
-        self._sack.load_yum_repo(repo)
+        self._add_repo_to_hawkey("fedora")
+        self._add_repo_to_hawkey("updates")
 
         # this is where the .solv files are produced
         self._sack.write_all_repos()
         return self._sack
+
+    def _add_repo_to_hawkey(self, name):
+        repo = hawkey.Repo()
+        repo.name = name
+        yum_repo = self.repos.repos[name]
+        repo.repomd_fn = yum_repo.repoXML.srcfile
+        repo.primary_fn = yum_repo.getPrimaryXML()
+        repo.filelists_fn = yum_repo.getFileListsXML()
+        self._sack.load_yum_repo(repo)
 
     @property
     def sack(self):
