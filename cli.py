@@ -1360,6 +1360,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.conf.showdupesfromrepos = True
         cb = self.matchcallback_verbose
         matches = 0
+        self.sack.load_filelists()
         for pkg in yum.queries.by_file(self.sack, args):
             self.matchcallback_verbose(pkg, [], args)
             matches += 1

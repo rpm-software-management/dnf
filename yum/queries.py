@@ -62,7 +62,6 @@ def by_name(sack, patterns, ignore_case=False):
 def by_file(sack, patterns, ignore_case=False):
     queries = []
     for p in patterns:
-        sack.load_filelists()
         q = hawkey.Query(sack)
         flags = []
         if ignore_case:
