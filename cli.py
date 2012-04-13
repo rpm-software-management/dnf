@@ -42,7 +42,7 @@ from yum import _, P_
 from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
-import yum.queries
+import dnf.queries
 
 from yum.i18n import to_unicode, to_utf8, exception2msg
 
@@ -1361,7 +1361,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         cb = self.matchcallback_verbose
         matches = 0
         self._sack_load_filelists()
-        for pkg in yum.queries.by_file(self.sack, args):
+        for pkg in dnf.queries.by_file(self.sack, args):
             self.matchcallback_verbose(pkg, [], args)
             matches += 1
         self.conf.showdupesfromrepos = old_sdup

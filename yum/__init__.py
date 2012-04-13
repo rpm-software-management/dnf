@@ -91,9 +91,8 @@ from weakref import proxy as weakref
 
 from urlgrabber.grabber import default_grabber
 
-import package
 import hawkey
-import queries
+from dnf import package, queries
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])

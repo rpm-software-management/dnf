@@ -1,4 +1,4 @@
-# package.py
+# queries.py
 # Often reused hawkey queries.
 #
 # Copyright (C) 2012  Red Hat, Inc.
