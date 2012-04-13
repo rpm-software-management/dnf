@@ -1,0 +1,4 @@
+SET(dnf_SRCS __init__.py package.py queries.py)
+INSTALL (FILES ${dnf_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf)
+ADD_SUBDIRECTORY (yum)
+ADD_SUBDIRECTORY (yum-cli)

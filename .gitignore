@@ -11,3 +11,4 @@ docs/sphinxdocs/_build
 asthelper.completions
 .emacs.desktop*
 TAGS
+build/
