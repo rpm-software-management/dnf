@@ -243,6 +243,10 @@ class YumBase(depsolve.Depsolve):
         repo.filelists_fn = yum_repo.getFileListsXML()
         self._sack.load_yum_repo(repo)
 
+    def _sack_load_filelists(self):
+        self.sack.load_filelists()
+        self.sack.write_filelists()
+
     @property
     def sack(self):
         if self._sack:
