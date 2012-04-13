@@ -1,0 +1,13 @@
+#! /bin/bash
+
+GITREV=`git log|head -1| sed 's/commit //'`
+[[ $# -gt 1 ]] && GITREV=$1
+
+# shorten to 7 characters
+GITREV=${GITREV:0:7}
+
+echo $GITREV
+
+TARGET_DIR=$HOME/rpmbuild/SOURCES
+mkdir -p $TARGET_DIR
+git archive ${GITREV} --prefix=dnf/ | xz > $TARGET_DIR/dnf-${GITREV}.tar.xz
