@@ -1,0 +1,14 @@
+#!/usr/bin/python
+import os
+import sys
+
+if __name__ != "__main__":
+    sys.stderr.write("the toplevel dnf module must not be imported")
+    sys.exit(1)
+
+here = sys.path[0]
+if here != '/usr/bin':
+    sys.path[0] = os.path.dirname(here)
+
+import yummain
+yummain.user_main(sys.argv[1:], exit_code=True)
