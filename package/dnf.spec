@@ -1,4 +1,4 @@
-%global gitrev 45d2b4a
+%global gitrev 833c054
 
 Name:		dnf
 Version:	0.1
@@ -31,5 +31,5 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{python_sitelib}/dnf/*
 
 %changelog
-* Thu Apr 12 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.1-0.git45d2b4a%{?dist}
+* Thu Apr 12 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.1-0.git833c054%{?dist}
 - Initial package.
