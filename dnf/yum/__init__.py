@@ -4481,8 +4481,7 @@ class YumBase(depsolve.Depsolve):
         if po:
             pkgs = [po]
         else:
-            pats = [kwargs['pattern']]
-            for pkg in queries.installed_by_name(self.sack, pats):
+            for pkg in queries.installed_by_name(self.sack, kwargs['pattern']):
                 txmbr = self.tsInfo.addErase(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey

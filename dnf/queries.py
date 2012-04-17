@@ -20,6 +20,7 @@
 
 import hawkey
 import itertools
+import types
 
 def _is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
@@ -27,14 +28,22 @@ def _is_glob_pattern(pattern):
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
                       updates_only=False, latest_only=False):
-    queries = []
-    for p in patterns:
+    """ Generic query builder.
+
+        patterns can be:
+        :: a string pattern we will use to match against package names
+        :: a list of strings representing patterns that are ORed together
+        :: None in which case we query over all names.
+    """
+
+    def build_query(p):
         q = hawkey.Query(sack)
         flags = []
         if ignore_case:
             flags = [hawkey.ICASE]
-        # autodetect glob patterns
-        if _is_glob_pattern(p):
+        if p is None:
+            pass
+        elif _is_glob_pattern(p): # autodetect glob patterns
             q.filter(*flags, name__glob=p)
         else:
             q.filter(*flags, name__eq=p)
@@ -44,7 +53,17 @@ def _construct_result(sack, patterns, ignore_case,
             q.filter(repo__neq=exclude_repo)
         q.filter(updates__eq=updates_only)
         q.filter(latest__eq=latest_only)
-        queries.append(q)
+        return q
+
+    queries = []
+    if type(patterns) in types.StringTypes:
+        queries.append(build_query(patterns))
+    elif patterns is None:
+        queries.append(build_query(None))
+    else:
+        for p in patterns:
+            queries.append(build_query(p))
+
     return itertools.chain.from_iterable(queries)
 
 def installed_by_name(sack, patterns, ignore_case=False):
