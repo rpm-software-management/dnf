@@ -231,6 +231,8 @@ class YumBase(depsolve.Depsolve):
 
         # this is where the .solv files are produced
         self._sack.write_all_repos()
+
+        self._sack.installonly = self.conf.installonlypkgs
         return self._sack
 
     def _add_repo_to_hawkey(self, name):
@@ -4242,7 +4244,7 @@ class YumBase(depsolve.Depsolve):
             pats = [kwargs['pattern']]
             availpkgs = sorted(queries.updates_by_name(self.sack, pats))
             if len(availpkgs) > 0:
-                pkg = availpkgs[0]
+                pkg = availpkgs[-1]
                 txmbr = self.tsInfo.addUpdate(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey

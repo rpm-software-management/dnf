@@ -409,9 +409,6 @@ class TransactionData:
         """adds a package as an install but in mode 'u' to the ts
            takes a packages object and returns a TransactionMember Object"""
 
-        if self._allowedMultipleInstalls(po):
-            return self.addTrueInstall(po)
-    
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_INSTALL
@@ -432,6 +429,7 @@ class TransactionData:
         """adds a package as an install
            takes a packages object and returns a TransactionMember Object"""
     
+        return self.addInstall(po) # :hawkey
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_TRUEINSTALL
