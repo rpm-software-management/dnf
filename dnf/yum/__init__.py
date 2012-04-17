@@ -1719,9 +1719,18 @@ class YumBase(depsolve.Depsolve):
         if errors is None:
             pass
         elif len(errors) == 0:
-            errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
-            self.verbose_logger.debug(errstring)
-            resultobject.return_code = 1
+            # this is a particularly tricky case happening also when rpm failed
+            # to obtain the transaction lock. We can only try to see if a
+            # particular element failed and if not, decide that is the
+            # case.
+            if len(filter(lambda el: el.Failed(), self.ts)) > 0:
+                errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
+                self.verbose_logger.debug(errstring)
+                resultobject.return_code = 1
+            else:
+                self.logger.critical(_("Transaction couldn't start (no root?)"))
+                raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
+                                              errors=[])
         else:
             if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
                 herrors = [to_unicode(to_str(x)) for x in errors]
