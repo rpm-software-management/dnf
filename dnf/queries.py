@@ -95,12 +95,11 @@ def by_file(sack, patterns, ignore_case=False):
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):
     matching = _construct_result(sack, patterns, ignore_case,
-                                 include_repo, exclude_repo)
+                                 include_repo, exclude_repo,
+                                 latest_only=True)
     latest = {} # (name, arch) -> pkg mapping
     for pkg in matching:
         key = (pkg.name, pkg.arch)
-        if key in latest and latest[key].evr_gt(pkg):
-            continue
         latest[key] = pkg
     return latest
 
