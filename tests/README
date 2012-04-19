@@ -1,0 +1,14 @@
+= DNF Testing Framework =
+
+What will not be tested:
+
+* all combinations of query parameters (tested in hawkey)
+* rpm transactions themselves (tested in RPM)
+* depsolving (the core depsolving algorithms are tested in libsolv, correctly
+  setting up libsolv is hawkey's job)
+
+== The repos/ directory ==
+
+This directory contains sample package data for testing. The goal is to have as
+few packages as possible, ideally one or two per a specific testing role they
+can play.
