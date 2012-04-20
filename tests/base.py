@@ -11,12 +11,30 @@ TOTAL_RPMDB_COUNT = 1
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT + 2
 TOTAL_NSOLVABLES = 6
 
+# testing infrastructure
+
 def repo(reponame):
     return os.path.join(repo_dir(), reponame)
 
 def repo_dir():
     this_dir=os.path.dirname(__file__)
     return os.path.join(this_dir, "repos")
+
+# mock objects
+
+def create_mock_package(name, major_version):
+    pkg = mock.Mock(spec_set=['pkgtup', 'name', 'reponame', 'repoid',
+                              'arch', 'evr', 'state'])
+    pkg.name = name
+    pkg.reponame = pkg.repoid = 'main'
+    pkg.arch = 'noarch'
+    pkg.evr = '%d-1' % major_version
+    pkg.pkgtup = (pkg.name, pkg.arch, 0, str(major_version) , '1')
+    return pkg
+
+def mock_packages():
+    return [create_mock_package("within%s" % chr(i), 2)
+            for i in range(ord('A'), ord('I'))]
 
 def mock_yum_base(*extra_repos):
     yumbase = MockYumBase()
@@ -38,26 +56,6 @@ class MockYumBase(dnf.yum.YumBase):
             self._sack.load_test_repo(repo, fn)
 
         return self._sack
-
-class ResultTestCase(unittest.TestCase):
-
-    # originally from testbase.py
-    def assertResult(self, yumbase, pkgs):
-        """ Check if "system" contains the given pkgs. pkgs must be present. Any
-            other pkgs result in an error. Pkgs are present if they are in the
-            rpmdb and are not REMOVEd or they are INSTALLed.
-        """
-        pkgs = set(pkgs)
-        installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
-
-        yumbase.buildTransaction()
-        for txmbr in yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_REMOVE_STATES):
-            installed.remove(txmbr.po)
-        for txmbr in yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_INSTALL_STATES):
-            installed.add(txmbr.po)
-        self.assertEqual(pkgs, installed)
 
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
@@ -82,3 +80,25 @@ class FakeConf(object):
         self.protected_multilib = False
         self.clean_requirements_on_remove = True
         self.upgrade_requirements_on_install = False
+
+# specialized test cases
+
+class ResultTestCase(unittest.TestCase):
+
+    # originally from testbase.py
+    def assertResult(self, yumbase, pkgs):
+        """ Check if "system" contains the given pkgs. pkgs must be present. Any
+            other pkgs result in an error. Pkgs are present if they are in the
+            rpmdb and are not REMOVEd or they are INSTALLed.
+        """
+        pkgs = set(pkgs)
+        installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
+
+        yumbase.buildTransaction()
+        for txmbr in yumbase.tsInfo.getMembersWithState(
+            output_states=dnf.yum.constants.TS_REMOVE_STATES):
+            installed.remove(txmbr.po)
+        for txmbr in yumbase.tsInfo.getMembersWithState(
+            output_states=dnf.yum.constants.TS_INSTALL_STATES):
+            installed.add(txmbr.po)
+        self.assertEqual(pkgs, installed)
