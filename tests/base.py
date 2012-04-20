@@ -3,6 +3,7 @@ import dnf.queries
 import dnf.yum
 import dnf.yum.constants
 import hawkey.test
+import mock
 import os
 import unittest
 
@@ -21,7 +22,7 @@ def mock_yum_base(*extra_repos):
     yumbase = MockYumBase()
     yumbase.conf = FakeConf()
     yumbase.tsInfo = dnf.yum.transactioninfo.TransactionData()
-
+    yumbase.dsCallback = mock.Mock()
     yumbase.mock_extra_repos = extra_repos
     return yumbase
 
@@ -49,6 +50,7 @@ class ResultTestCase(unittest.TestCase):
         pkgs = set(pkgs)
         installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
 
+        yumbase.buildTransaction()
         for txmbr in yumbase.tsInfo.getMembersWithState(
             output_states=dnf.yum.constants.TS_REMOVE_STATES):
             installed.remove(txmbr.po)

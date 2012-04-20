@@ -1139,6 +1139,7 @@ class YumBase(depsolve.Depsolve):
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
                 self.tsInfo.addUpdate(pkg)
+                self.tsInfo.addUpdated(updated, pkg)
             for pkg in goal.list_erasures():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'e')
