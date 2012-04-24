@@ -79,19 +79,24 @@ def available_by_name(sack, patterns, ignore_case=False, latest_only=False):
 def by_name(sack, patterns, ignore_case=False):
     return _construct_result(sack, patterns, ignore_case)
 
-def by_file(sack, patterns, ignore_case=False):
-    queries = []
-    for p in patterns:
-        q = hawkey.Query(sack)
-        flags = []
-        if ignore_case:
-            flags = [hawkey.ICASE]
-        if _is_glob_pattern(p):
-            q.filter(*flags, file__glob=p)
-        else:
-            q.filter(*flags, file__eq=p)
-        queries.append(q)
-    return itertools.chain.from_iterable(queries)
+def by_file(sack, patterns, ignore_case=False, run_query=True):
+    if type(patterns) in types.StringTypes:
+        patterns = [patterns]
+
+    glob = len(filter(_is_glob_pattern, patterns)) > 0
+    flags = []
+    q = hawkey.Query(sack)
+    if ignore_case:
+        flags = [hawkey.ICASE]
+    if glob:
+        q.filter(*flags, file__glob=patterns)
+    else:
+        q.filter(*flags, file=patterns)
+
+    if run_query:
+        return q.run()
+    else:
+        return q
 
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):

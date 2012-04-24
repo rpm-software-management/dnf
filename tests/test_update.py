@@ -1,6 +1,5 @@
 import base
 import dnf.queries
-import unittest
 
 class Update(base.ResultTestCase):
     def test_update(self):

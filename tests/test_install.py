@@ -1,6 +1,5 @@
 import base
 import dnf.queries
-import unittest
 
 class Install(base.ResultTestCase):
     def test_not_available(self):

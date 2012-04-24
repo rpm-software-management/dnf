@@ -1,6 +1,5 @@
 import base
 import dnf.queries
-import unittest
 
 class Remove(base.ResultTestCase):
     def test_not_installed(self):
