@@ -35,36 +35,29 @@ def _construct_result(sack, patterns, ignore_case,
         :: a list of strings representing patterns that are ORed together
         :: None in which case we query over all names.
     """
-
-    def build_query(p):
-        q = hawkey.Query(sack)
-        flags = []
-        if ignore_case:
-            flags = [hawkey.ICASE]
-        if p is None:
-            pass
-        elif _is_glob_pattern(p): # autodetect glob patterns
-            q.filter(*flags, name__glob=p)
-        else:
-            q.filter(*flags, name__eq=p)
-        if include_repo:
-            q.filter(repo__eq=include_repo)
-        if exclude_repo:
-            q.filter(repo__neq=exclude_repo)
-        q.filter(updates__eq=updates_only)
-        q.filter(latest__eq=latest_only)
-        return q
-
-    queries = []
     if type(patterns) in types.StringTypes:
-        queries.append(build_query(patterns))
+        patterns = [patterns]
     elif patterns is None:
-        queries.append(build_query(None))
-    else:
-        for p in patterns:
-            queries.append(build_query(p))
+        patterns = []
+    glob = len(filter(_is_glob_pattern, patterns)) > 0
 
-    return itertools.chain.from_iterable(queries)
+    flags = []
+    q = hawkey.Query(sack)
+    if ignore_case:
+        flags = [hawkey.ICASE]
+    if len(patterns) == 0:
+        pass
+    elif glob:
+        q.filter(*flags, name__glob=patterns)
+    else:
+        q.filter(*flags, name=patterns)
+    if include_repo:
+        q.filter(repo__eq=include_repo)
+    if exclude_repo:
+        q.filter(repo__neq=exclude_repo)
+    q.filter(updates__eq=updates_only)
+    q.filter(latest__eq=latest_only)
+    return q
 
 def installed_by_name(sack, patterns, ignore_case=False):
     return _construct_result(sack, patterns, ignore_case,
