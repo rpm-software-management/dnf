@@ -18,4 +18,4 @@ class Update(base.ResultTestCase):
         ret = yumbase.update(pattern="mrkite") # no "mrkite" installed
         self.assertEqual(ret, [])
         self.assertResult(yumbase,
-                          list(dnf.queries.installed_by_name(yumbase.sack, None)))
+                          dnf.queries.installed_by_name(yumbase.sack, None))

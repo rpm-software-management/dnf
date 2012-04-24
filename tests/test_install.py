@@ -15,6 +15,6 @@ class Install(base.ResultTestCase):
         """ Simple install. """
         yumbase = base.mock_yum_base("main")
         ret = yumbase.install(pattern="mrkite")
-        new_set = list(dnf.queries.installed_by_name(yumbase.sack, None)) + \
-            list(dnf.queries.available_by_name(yumbase.sack, "mrkite"))
+        new_set = dnf.queries.installed_by_name(yumbase.sack, None) + \
+            dnf.queries.available_by_name(yumbase.sack, "mrkite")
         self.assertResult(yumbase, new_set)

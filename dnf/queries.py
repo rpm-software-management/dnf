@@ -27,13 +27,18 @@ def _is_glob_pattern(pattern):
 
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
-                      updates_only=False, latest_only=False):
+                      updates_only=False, latest_only=False,
+                      run_query=True):
     """ Generic query builder.
 
         patterns can be:
         :: a string pattern we will use to match against package names
         :: a list of strings representing patterns that are ORed together
         :: None in which case we query over all names.
+
+        If 'run_query' is True the built query is evaluated and matching
+        packages returned. Otherwise the query itself is returned (for instance
+        to be further specified and then evaluated).
     """
     if type(patterns) in types.StringTypes:
         patterns = [patterns]
@@ -57,7 +62,10 @@ def _construct_result(sack, patterns, ignore_case,
         q.filter(repo__neq=exclude_repo)
     q.filter(updates__eq=updates_only)
     q.filter(latest__eq=latest_only)
-    return q
+    if run_query:
+        return q.run()
+    else:
+        return q
 
 def installed_by_name(sack, patterns, ignore_case=False):
     return _construct_result(sack, patterns, ignore_case,

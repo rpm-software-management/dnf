@@ -15,6 +15,6 @@ class Remove(base.ResultTestCase):
         """ Simple remove. """
         yumbase = base.mock_yum_base()
         ret = yumbase.remove(pattern="pepper")
-        pepper = list(dnf.queries.installed_by_name(yumbase.sack, "pepper"))
+        pepper = dnf.queries.installed_by_name(yumbase.sack, "pepper")
         self.assertEqual([txmbr.po for txmbr in ret], pepper)
         self.assertResult(yumbase, [])

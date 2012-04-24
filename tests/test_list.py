@@ -24,8 +24,8 @@ class Queries(unittest.TestCase):
         yumbase = base.mock_yum_base()
         pepper = dnf.queries.installed_by_name(yumbase.sack, "pepper")
         # make sure 'pepper' package exists:
-        self.assertEqual(len(list(pepper)), 1)
+        self.assertEqual(len(pepper), 1)
         # we shouldn't see it more than once with a tricky query below:
-        res = list(dnf.queries.installed_by_name(yumbase.sack, ["pep*", "*per"]))
+        res = dnf.queries.installed_by_name(yumbase.sack, ["pep*", "*per"])
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))

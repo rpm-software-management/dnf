@@ -2658,14 +2658,12 @@ class YumBase(depsolve.Depsolve):
             updates = queries.updates_by_name(self.sack,
                                                      patterns=patterns,
                                                      ignore_case=ic)
-            updates=list(updates)
 
         # installed only
         elif pkgnarrow == 'installed':
             installed = queries.installed_by_name(self.sack,
                                                          patterns=patterns,
                                                          ignore_case=ic)
-            installed = list(installed)
 
         # available in a repository
         elif pkgnarrow == 'available':
@@ -3907,8 +3905,8 @@ class YumBase(depsolve.Depsolve):
             if not kwargs:
                 raise Errors.InstallError, _('Nothing specified to install')
             pats = [kwargs['pattern']]
-            availpkgs = list(queries.available_by_name(self.sack, pats,
-                                                              latest_only=True))
+            availpkgs = queries.available_by_name(self.sack, pats,
+                                                  latest_only=True)
             if len(availpkgs) > 0:
                 pkg = availpkgs[0]
                 txmbr = self.tsInfo.addInstall(pkg)
