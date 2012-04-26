@@ -1,7 +1,8 @@
-%global gitrev 70753dd
+%global gitrev de732f5
+%define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.0
+Version:	0.2.1
 Release:	2.%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
@@ -29,9 +30,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %files
 %{_bindir}/*
 %{python_sitelib}/dnf/*
+%config(noreplace) %{confdir}/dnf.conf
 
 %changelog
-* Thu Apr 25 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.0-2.git70753dd%{?dist}
+* Thu Apr 26 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.1-2.gitde732f5%{?dist}
+- Create 'etc/dnf/dnf.conf'.
+
+* Wed Apr 25 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.0-2.git70753dd%{?dist}
 - New version.
 
 * Thu Apr 12 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.1-0.git833c054%{?dist}
