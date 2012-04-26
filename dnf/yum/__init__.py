@@ -226,8 +226,8 @@ class YumBase(depsolve.Depsolve):
         # class and a YumBase reference.
         self._sack = hawkey.Sack(package.Package, self)
         self._sack.load_rpm_repo()
-        self._add_repo_to_hawkey("fedora")
-        self._add_repo_to_hawkey("updates")
+        for r in self.repos.listEnabled():
+            self._add_repo_to_hawkey(r.id)
 
         # this is where the .solv files are produced
         self._sack.write_all_repos()
