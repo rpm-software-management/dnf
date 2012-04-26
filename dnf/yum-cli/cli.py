@@ -43,6 +43,7 @@ from yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
 import dnf.queries
+import dnf.const
 
 from yum.i18n import to_unicode, to_utf8, exception2msg
 
@@ -2050,7 +2051,7 @@ class YumOptionParser(OptionParser):
                 action="store_true",
                 help=_("run entirely from system cache, don't update cache"))
         group.add_option("-c", "--config", dest="conffile",
-                default='/etc/yum/yum.conf',
+                default=dnf.const.CONF_FILENAME,
                 help=_("config file location"), metavar='[config file]')
         group.add_option("-R", "--randomwait", dest="sleeptime", type='int',
                 default=None,

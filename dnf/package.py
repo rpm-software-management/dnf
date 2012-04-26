@@ -1,5 +1,5 @@
 # package.py
-# Module defining the yum.Package class.
+# Module defining the dnf.Package class.
 #
 # Copyright (C) 2012  Red Hat, Inc.
 #

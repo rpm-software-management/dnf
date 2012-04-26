@@ -92,7 +92,7 @@ from weakref import proxy as weakref
 from urlgrabber.grabber import default_grabber
 
 import hawkey
-from dnf import package, queries
+from dnf import package, queries, const
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
@@ -112,7 +112,7 @@ class _YumPreBaseConf:
     of the options will be automatically configured.
     """
     def __init__(self):
-        self.fn = '/etc/yum/yum.conf'
+        self.fn = const.CONF_FILENAME
         self.root = '/'
         self.init_plugins = True
         self.plugin_types = (plugins.TYPE_CORE,)
