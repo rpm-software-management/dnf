@@ -19,3 +19,5 @@
 #
 
 CONF_FILENAME='/etc/dnf/dnf.conf'
+PREFIX='dnf'
+TMPDIR='/var/tmp/'

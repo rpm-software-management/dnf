@@ -62,6 +62,8 @@ from Errors import MiscError
 from i18n import to_utf8, to_unicode
 # pylint: enable-msg=W0611
 
+import dnf.const
+
 _share_data_store   = {}
 _share_data_store_u = {}
 def share_data(value):
@@ -615,10 +617,10 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
 
     return False
 
-def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
+def getCacheDir():
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
-    
+
     uid = os.geteuid()
     try:
         usertup = pwd.getpwuid(uid)
@@ -626,20 +628,19 @@ def getCacheDir(tmpdir='/var/tmp', reuse=True, prefix='yum-'):
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
-    if reuse:
-        # check for /var/tmp/yum-username-* - 
-        prefix = '%s%s-' % (prefix, username)
-        dirpath = '%s/%s*' % (tmpdir, prefix)
-        cachedirs = sorted(glob.glob(dirpath))
-        for thisdir in cachedirs:
-            stats = os.lstat(thisdir)
-            if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
-                return thisdir
+    # check for /var/tmp/dnf-username-* -
+    prefix = '%s-%s-' % (dnf.const.PREFIX, username)
+    dirpath = '%s/%s*' % (dnf.const.TMPDIR, prefix)
+    cachedirs = sorted(glob.glob(dirpath))
+    for thisdir in cachedirs:
+        stats = os.lstat(thisdir)
+        if S_ISDIR(stats[0]) and S_IMODE(stats[0]) == 448 and stats[4] == uid:
+            return thisdir
 
     # make the dir (tempfile.mkdtemp())
-    cachedir = tempfile.mkdtemp(prefix=prefix, dir=tmpdir)
+    cachedir = tempfile.mkdtemp(prefix=prefix, dir=dnf.const.TMPDIR)
     return cachedir
-        
+
 def sortPkgObj(pkg1 ,pkg2):
     """sorts a list of yum package objects by name"""
     if pkg1.name > pkg2.name:
