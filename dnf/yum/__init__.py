@@ -224,7 +224,7 @@ class YumBase(depsolve.Depsolve):
     def _init_hawkey_sack(self):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
-        self._sack = hawkey.Sack(package.Package, self)
+        self._sack = hawkey.Sack(pkgcls=package.Package, pkginitval=self)
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
