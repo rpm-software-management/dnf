@@ -1343,7 +1343,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         self.conf.showdupesfromrepos = True
         cb = self.matchcallback_verbose
         matches = 0
-        self._sack_load_filelists()
+        self.sack.ensure_filelists(self.repos)
         for pkg in dnf.queries.by_file(self.sack, args):
             self.matchcallback_verbose(pkg, [], args)
             matches += 1

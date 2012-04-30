@@ -288,6 +288,7 @@ class YumRepository(Repository, config.RepoConf):
 
         self._grabfunc = None
         self._grab = None
+        self.hawkey_repo = None
 
     def __cmp__(self, other):
         """ Sort yum repos. by cost, and then by alphanumeric on their id. """

@@ -46,7 +46,10 @@ def mock_yum_base(*extra_repos):
 
 class MockYumBase(dnf.yum.YumBase):
     """ See also: hawkey/test/python/__init__.py """
-    def _init_hawkey_sack(self):
+    @property
+    def sack(self):
+        if self._sack:
+            return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
         self._sack = hawkey.test.TestSack(repo_dir(), dnf.package.Package, self)

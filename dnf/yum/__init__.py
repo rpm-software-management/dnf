@@ -92,7 +92,7 @@ from weakref import proxy as weakref
 from urlgrabber.grabber import default_grabber
 
 import hawkey
-from dnf import package, queries, const
+from dnf import package, queries, const, sack
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
@@ -221,10 +221,22 @@ class YumBase(depsolve.Depsolve):
         # call cleanup callbacks
         for cb in self._cleanup: cb()
 
-    def _init_hawkey_sack(self):
+    def _add_repo_to_hawkey(self, name):
+        repo = hawkey.Repo()
+        repo.name = name
+        yum_repo = self.repos.repos[name]
+        repo.repomd_fn = yum_repo.repoXML.srcfile
+        repo.primary_fn = yum_repo.getPrimaryXML()
+        yum_repo.hawkey_repo = repo
+        self._sack.load_yum_repo(repo)
+
+    @property
+    def sack(self):
+        if self._sack:
+            return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
-        self._sack = hawkey.Sack(pkgcls=package.Package, pkginitval=self)
+        self._sack = sack.Sack(pkgcls=package.Package, pkginitval=self)
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
@@ -234,25 +246,6 @@ class YumBase(depsolve.Depsolve):
 
         self._sack.installonly = self.conf.installonlypkgs
         return self._sack
-
-    def _add_repo_to_hawkey(self, name):
-        repo = hawkey.Repo()
-        repo.name = name
-        yum_repo = self.repos.repos[name]
-        repo.repomd_fn = yum_repo.repoXML.srcfile
-        repo.primary_fn = yum_repo.getPrimaryXML()
-        repo.filelists_fn = yum_repo.getFileListsXML()
-        self._sack.load_yum_repo(repo)
-
-    def _sack_load_filelists(self):
-        self.sack.load_filelists()
-        self.sack.write_filelists()
-
-    @property
-    def sack(self):
-        if self._sack:
-            return self._sack
-        return self._init_hawkey_sack()
 
     def close(self):
         """Close the history and repo objects."""
