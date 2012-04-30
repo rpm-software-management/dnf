@@ -465,26 +465,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
             0 = we're done, exit
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
-        """       
-        # at this point we know the args are valid - we don't know their meaning
-        # but we know we're not being sent garbage
-        
-        # setup our transaction set if the command we're using needs it
-        # compat with odd modules not subclassing YumCommand
-        needTs = True
-        needTsRemove = False
-        cmd = self.yum_cli_commands[self.basecmd]
-        if hasattr(cmd, 'needTs'):
-            needTs = cmd.needTs(self, self.basecmd, self.extcmds)
-        if not needTs and hasattr(cmd, 'needTsRemove'):
-            needTsRemove = cmd.needTsRemove(self, self.basecmd, self.extcmds)
-        
-        if needTs or needTsRemove:
-            try:
-                self._getTs(needTsRemove)
-            except yum.Errors.YumBaseError, e:
-                return 1, [exception2msg(e)]
-
+        """
         return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
     def doTransaction(self):

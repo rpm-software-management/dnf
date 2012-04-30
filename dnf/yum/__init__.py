@@ -749,6 +749,7 @@ class YumBase(depsolve.Depsolve):
         # and don't setup the pkgSack to not be None when it's empty. This means
         # we skip excludes/includes/etc. ... but there's no packages, so
         # hopefully that's ok.
+        raise RuntimeError, "sacks deprecated in dnf."
         if self._pkgSack is not None and thisrepo is None:
             return self._pkgSack
         
@@ -5762,8 +5763,6 @@ class YumBase(depsolve.Depsolve):
             cachedir = misc.getCacheDir()
         except (IOError, OSError), e:
             self.logger.critical(_('Could not set cachedir: %s') % str(e))
-            import traceback
-            traceback.print_exc()
             cachedir = None
 
         if cachedir is None:
