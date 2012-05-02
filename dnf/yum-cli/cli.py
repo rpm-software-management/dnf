@@ -221,7 +221,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
 
         # Just print out the version if that's what the user wanted
         if opts.version:
-            print yum.__version__
+            print dnf.const.VERSION
             opts.quiet = True
             opts.verbose = False
 
@@ -360,7 +360,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         all.  This function will also set :attr:`self.basecmd` and
         :attr:`self.extcmds`.
         """
-        self.verbose_logger.debug('Yum Version: %s', yum.__version__)
+        self.verbose_logger.debug('dnf version: %s', dnf.const.VERSION)
         self.verbose_logger.log(yum.logginglevels.DEBUG_4,
                                 'COMMAND: %s', self.cmdstring)
         self.verbose_logger.log(yum.logginglevels.DEBUG_4,
