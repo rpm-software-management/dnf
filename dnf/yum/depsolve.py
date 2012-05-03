@@ -107,11 +107,7 @@ class Depsolve(object):
             the transaction. If so we don't need to setup the remote repos. """
         if self._tsInfo is None:
             self._tsInfo = self._transactionDataFactory()
-            if remove_only:
-                pkgSack = None
-            else:
-                pkgSack = self.pkgSack
-            self._tsInfo.setDatabases(self.rpmdb, pkgSack)
+            self._tsInfo.setDatabases(self.rpmdb, None)
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
             # this REALLY sucks, sadly (needed for group conditionals)
             self._tsInfo.install_method = self.install
