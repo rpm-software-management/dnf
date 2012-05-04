@@ -2614,7 +2614,7 @@ class YumBase(depsolve.Depsolve):
                 if showdups:
                     continue
                 key = (po.name, po.arch)
-                if key not in ndinst or po.verGT(ndinst[key]):
+                if key not in ndinst or po > ndinst[key]:
                     ndinst[key] = po
             installed = dinst.values()
 
