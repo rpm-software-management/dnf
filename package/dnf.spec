@@ -1,9 +1,9 @@
-%global gitrev 35b76f8
+%global gitrev 6787583
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.2
-Release:	5.git%{gitrev}%{?dist}
+Release:	6.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -33,8 +33,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{confdir}/dnf.conf
 
 %changelog
-* Fri May 4 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.2-5.git35b76f8%{?dist}
+* Fri May 4 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.2-6.git6787583%{?dist}
 - support plain 'dnf update'.
+- disable plugins.
 
 * Thu Apr 26 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.1-2.gitde732f5%{?dist}
 - Create 'etc/dnf/dnf.conf'.
