@@ -1,9 +1,9 @@
-%global gitrev de732f5
+%global gitrev 35b76f8
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.2
-Release:	2.%{gitrev}%{?dist}
+Release:	5.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -11,7 +11,7 @@ URL:		https://github.com/akozumpl/dnf
 Source0:	dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake python2
-Requires:	python-hawkey >= 0.2.0-3
+Requires:	python-hawkey >= 0.2.1-1
 
 %description
 A highly experimental Yum replacement on top of libsolv.
@@ -33,6 +33,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{confdir}/dnf.conf
 
 %changelog
+* Fri May 4 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.2-5.git35b76f8%{?dist}
+- support plain 'dnf update'.
+
 * Thu Apr 26 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.1-2.gitde732f5%{?dist}
 - Create 'etc/dnf/dnf.conf'.
 
