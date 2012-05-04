@@ -1,4 +1,4 @@
-SET(dnf_SRCS __init__.py package.py queries.py)
+FILE(GLOB dnf_SRCS *.py)
 INSTALL (FILES ${dnf_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf)
 ADD_SUBDIRECTORY (rpmUtils)
 ADD_SUBDIRECTORY (yum)
