@@ -212,7 +212,6 @@ class YumBase(depsolve.Depsolve):
         self.run_with_package_names = set()
         self._cleanup = []
         self._sack = None
-        self.pre_check_errors = []
 
     def __del__(self):
         self.close()
@@ -1072,10 +1071,7 @@ class YumBase(depsolve.Depsolve):
             if txmbr.ts_state == 'i':
                 goal.install(pkg)
             elif txmbr.ts_state == 'u':
-                if not goal.update(pkg):
-                    msg = _("Package %s not installed, cannot update it. " +
-                            "Run yum install to install it instead.") % pkg.name
-                    self.pre_check_errors.append(msg)
+                goal.update(pkg, check_later_version=False)
             elif txmbr.ts_state == 'e':
                 goal.erase(pkg)
             else:
@@ -1111,10 +1107,8 @@ class YumBase(depsolve.Depsolve):
         ds_st = time.time()
         self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
-        if self.pre_check_errors:
-            (rescode, restring) = (1, self.pre_check_errors)
-        elif not goal.go():
-            (rescode, restring) =  (1, goal.problems())
+        if not goal.go():
+            (rescode, restring) =  (1, goal.problems)
         else:
             cnt = 0
             # Below, we call self.tsInfo.add* for all packages that come out of
@@ -4192,7 +4186,7 @@ class YumBase(depsolve.Depsolve):
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
         tx_return = []
-        if not po and not kwargs: # update everything (the easy case)
+        if False: # hawkey
             self.verbose_logger.log(logginglevels.DEBUG_2, _('Updating Everything'))
             updates = self.up.getUpdatesTuples()
             if self.conf.obsoletes:
@@ -4227,21 +4221,17 @@ class YumBase(depsolve.Depsolve):
             
             return tx_return
 
-        # complications
-        # the user has given us something - either a package object to be
-        # added to the transaction as an update or they've given us a pattern 
-        # of some kind
-        
         instpkgs = []
         availpkgs = []
         if po: # just a po
             if po.reponame == hawkey.SYSTEM_REPO_NAME:
                 instpkgs.append(po)
             else:
-                txmbr = self.tsInfo.addUpdate(po)
-                tx_return.append(txmbr)
+                installed = sorted(queries.installed_by_name(self.sack, po.name))
+                if len(installed) > 0 and installed[-1] < po:
+                    txmbr = self.tsInfo.addUpdate(po)
+                    tx_return.append(txmbr)
                 return tx_return # :hawkey
-        
         elif 'pattern' in kwargs:
             pats = [kwargs['pattern']]
             availpkgs = sorted(queries.updates_by_name(self.sack, pats))
@@ -4293,7 +4283,13 @@ class YumBase(depsolve.Depsolve):
 
             if not availpkgs and not instpkgs:
                 self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
-        
+        elif not kwargs: # update everything
+            availpkgs = queries.updates_by_name(self.sack, None,
+                                                latest_only=True)
+            txmbrs = map(self.tsInfo.addUpdate, availpkgs)
+            tx_return.extend(txmbrs)
+            return tx_return # :hawkey
+
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
 

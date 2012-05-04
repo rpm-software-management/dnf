@@ -117,8 +117,9 @@ def latest_available_per_arch(sack, patterns, ignore_case=False):
     return latest_per_arch(sack, patterns, ignore_case,
                            exclude_repo=hawkey.SYSTEM_REPO_NAME)
 
-def updates_by_name(sack, patterns, ignore_case=False):
+def updates_by_name(sack, patterns, ignore_case=False, latest_only=False):
     return _construct_result(sack, patterns, ignore_case,
+                             latest_only=latest_only,
                              updates_only=True)
 
 def per_arch_dict(pkg_list):
