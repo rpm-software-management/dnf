@@ -2,7 +2,7 @@
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
-Version:	0.2.1
+Version:	0.2.2
 Release:	2.%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
