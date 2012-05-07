@@ -18,3 +18,10 @@ class Update(base.ResultTestCase):
         self.assertEqual(ret, [])
         self.assertResult(yumbase,
                           dnf.queries.installed_by_name(yumbase.sack, None))
+
+    def test_update_all(self):
+        yumbase = base.mock_yum_base("main", "updates")
+        sack = yumbase.sack
+        ret = yumbase.update()
+        expected = dnf.queries.available_by_name(sack, "pepper", latest_only=True)
+        self.assertItemsEqual((txmem.po for txmem in ret), expected)
