@@ -1239,6 +1239,7 @@ Insufficient space in download directory %s
                 result = local
                 old_data = self._oldRepoMDData
                 self._repoXML = old_data['old_repo_XML']
+                self._repoXML.srcfile = result
             else:
                 result = self._getFileRepoXML(local, text)
                 if result is None:
