@@ -1,9 +1,9 @@
-%global gitrev 6787583
+%global gitrev bbc0801
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	6.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -33,6 +33,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{confdir}/dnf.conf
 
 %changelog
+* Mon May 7 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.3-1.gitbbc0801%{?dist}
+- Fix assert in hawkey's sack.c.
+
 * Fri May 4 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.2-6.git6787583%{?dist}
 - support plain 'dnf update'.
 - disable plugins.
