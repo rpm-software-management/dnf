@@ -60,7 +60,7 @@ def _construct_result(sack, patterns, ignore_case,
         q.filter(repo__eq=include_repo)
     if exclude_repo:
         q.filter(repo__neq=exclude_repo)
-    q.filter(updates__eq=updates_only)
+    q.filter(upgrades=updates_only)
     q.filter(latest__eq=latest_only)
     if run_query:
         return q.run()

@@ -1071,7 +1071,7 @@ class YumBase(depsolve.Depsolve):
             if txmbr.ts_state == 'i':
                 goal.install(pkg)
             elif txmbr.ts_state == 'u':
-                goal.update(pkg, check_later_version=False)
+                goal.upgrade_to(pkg, check_installed=False)
             elif txmbr.ts_state == 'e':
                 goal.erase(pkg)
             else:
