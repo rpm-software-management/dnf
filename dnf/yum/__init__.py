@@ -1975,13 +1975,15 @@ class YumBase(depsolve.Depsolve):
             self.pkgSack.addPackageExcluder(repo.id, exid, 'wash.match', match)
         exid = "yum.includepkgs.3"
         self.pkgSack.addPackageExcluder(repo.id, exid, 'exclude.marked')
-        
-    def doLock(self, lockfile = YUM_PID_FILE):
+
+    def doLock(self):
         """Acquire the yum lock.
 
         :param lockfile: the file to use for the lock
         :raises: :class:`yum.Errors.LockError`
         """
+        lockfile = const.PID_FILENAME
+
         if self.conf.uid != 0:
             #  If we are a user, assume we are using the root cache ... so don't
             # bother locking.
