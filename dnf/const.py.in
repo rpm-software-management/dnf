@@ -19,6 +19,7 @@
 #
 
 CONF_FILENAME='/etc/dnf/dnf.conf'
+PID_FILENAME = '/var/run/dnf.pid'
 PREFIX='dnf'
 TMPDIR='/var/tmp/'
 VERSION_MAJOR=@DNF_MAJOR@
