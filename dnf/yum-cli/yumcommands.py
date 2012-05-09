@@ -953,25 +953,8 @@ class MakeCacheCommand(YumCommand):
             2 = we've got work yet to do, onto the next stage
         """
         base.logger.debug(_("Making cache files for all metadata files."))
-        base.logger.debug(_("This may take a while depending on the speed of this computer"))
-        try:
-            for repo in base.repos.findRepos('*'):
-                repo.metadata_expire = 0
-                repo.mdpolicy = "group:all"
-            base.doRepoSetup(dosack=0)
-            base.repos.doSetup()
-            for repo in base.repos.listEnabled():
-                repo.repoXML
-            
-            # These convert the downloaded data into usable data,
-            # we can't remove them until *LoadRepo() can do:
-            # 1. Download a .sqlite.bz2 and convert to .sqlite
-            # 2. Download a .xml.gz and convert to .xml.gz.sqlite
-            base.repos.populateSack(mdtype='all', cacheonly=1)
-
-
-        except yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
+        sack = base.sack # triggers metadata sync
+        sack.ensure_filelists(base.repos) # does filelists sync
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, base, basecmd, extcmds):
