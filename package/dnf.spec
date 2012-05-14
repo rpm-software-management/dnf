@@ -12,6 +12,7 @@ Source0:	dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake python2
 Requires:	python-hawkey >= 0.2.1-1
+Requires:	crontabs
 
 %description
 A highly experimental Yum replacement on top of libsolv.
@@ -31,6 +32,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_bindir}/*
 %{python_sitelib}/dnf/*
 %config(noreplace) %{confdir}/dnf.conf
+%config(noreplace) %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
 * Mon May 7 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.3-1.gitbbc0801%{?dist}

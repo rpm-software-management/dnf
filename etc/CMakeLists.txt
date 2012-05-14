@@ -1,1 +1,2 @@
+INSTALL (PROGRAMS "dnf-makecache.cron" DESTINATION ${SYSCONFDIR}/cron.hourly)
 ADD_SUBDIRECTORY (dnf)
