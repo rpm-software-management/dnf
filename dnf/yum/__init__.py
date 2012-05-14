@@ -235,6 +235,7 @@ class YumBase(depsolve.Depsolve):
             return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
+        start = time.time()
         self._sack = sack.Sack(pkgcls=package.Package, pkginitval=self)
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
@@ -244,6 +245,9 @@ class YumBase(depsolve.Depsolve):
         self._sack.write_all_repos()
 
         self._sack.installonly = self.conf.installonlypkgs
+        self._sack.ensure_filelists(self.repos)
+        self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
+                                  (time.time() - start))
         return self._sack
 
     def close(self):
