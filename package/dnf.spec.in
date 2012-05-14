@@ -1,9 +1,9 @@
-%global gitrev bbc0801
+%global gitrev e3adb52
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -11,7 +11,7 @@ URL:		https://github.com/akozumpl/dnf
 Source0:	dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake python2
-Requires:	python-hawkey >= 0.2.1-1
+Requires:	python-hawkey >= 0.2.2-1
 Requires:	crontabs
 
 %description
@@ -35,6 +35,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Mon May 14 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.4-3.gite3adb52%{?dist}
+- Use cron to prefetch metadata.
+- Always loads filelists (attempts to fix some resolving problems).
+
 * Mon May 7 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.3-1.gitbbc0801%{?dist}
 - Fix assert in hawkey's sack.c.
 
