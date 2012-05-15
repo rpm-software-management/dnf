@@ -9,7 +9,7 @@ import unittest
 
 TOTAL_RPMDB_COUNT = 1
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT + 2
-TOTAL_NSOLVABLES = 6
+TOTAL_NSOLVABLES = 8
 
 # testing infrastructure
 

@@ -3901,8 +3901,7 @@ class YumBase(depsolve.Depsolve):
             pats = [kwargs['pattern']]
             availpkgs = queries.available_by_name(self.sack, pats,
                                                   latest_only=True)
-            if len(availpkgs) > 0:
-                pkg = availpkgs[0]
+            for pkg in availpkgs:
                 txmbr = self.tsInfo.addInstall(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey
@@ -4240,9 +4239,8 @@ class YumBase(depsolve.Depsolve):
                 return tx_return # :hawkey
         elif 'pattern' in kwargs:
             pats = [kwargs['pattern']]
-            availpkgs = sorted(queries.updates_by_name(self.sack, pats))
-            if len(availpkgs) > 0:
-                pkg = availpkgs[-1]
+            availpkgs = queries.updates_by_name(self.sack, pats, latest_only=True)
+            for pkg in availpkgs:
                 txmbr = self.tsInfo.addUpdate(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey
