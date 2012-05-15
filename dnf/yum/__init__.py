@@ -1115,12 +1115,8 @@ class YumBase(depsolve.Depsolve):
             (rescode, restring) =  (1, goal.problems)
         else:
             cnt = 0
-            # Below, we call self.tsInfo.add* for all packages that come out of
-            # transaction, to make sure we add the packages that depsolver
-            # seemed fit to throw in (e.g. new dependencies for a package we
-            # selected to install). We do this even for packages that might be
-            # in tsInfo already, tsInfo recognizes those and doesn't add them
-            # twice.
+            # reset tsInfo, some packages might have gone during resolving
+            self.tsInfo = transactioninfo.TransactionData()
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
