@@ -9,8 +9,13 @@ class YumBaseTest(unittest.TestCase):
 
     @mock.patch('dnf.const.PID_FILENAME', "/var/run/dnf.unittest.pid")
     def test_locking(self):
+        # tricky setup:
         yumbase = dnf.yum.YumBase()
+        yumbase.conf = mock.Mock()
+        yumbase.conf.cache = None
         yumbase.conf.cachedir = "/tmp"
+        del yumbase.preconf
+
         self.assertIsNone(yumbase._lockfile)
         yumbase.doLock()
         lockfile = yumbase._lockfile
