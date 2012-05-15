@@ -7,9 +7,9 @@ import mock
 import os
 import unittest
 
-TOTAL_RPMDB_COUNT = 1
+TOTAL_RPMDB_COUNT = 2
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT + 2
-TOTAL_NSOLVABLES = 8
+TOTAL_NSOLVABLES = 9
 
 # testing infrastructure
 
@@ -97,7 +97,9 @@ class ResultTestCase(unittest.TestCase):
         pkgs = set(pkgs)
         installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
 
-        yumbase.buildTransaction()
+        (rcode, rstring) = yumbase.buildTransaction()
+        self.assertNotEqual(rcode, 1)
+
         for txmbr in yumbase.tsInfo.getMembersWithState(
             output_states=dnf.yum.constants.TS_REMOVE_STATES):
             installed.remove(txmbr.po)

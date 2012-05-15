@@ -1,4 +1,6 @@
 =Ver: 2.0
 #
 =Pkg: pepper 20 0 x86_64
+=Req: librita >= 1-0
 =Prv: /raised/smile
+=Pkg: librita 1 1 x86_64

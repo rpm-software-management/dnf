@@ -1111,7 +1111,7 @@ class YumBase(depsolve.Depsolve):
         ds_st = time.time()
         self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
-        if not goal.go():
+        if not goal.go(allow_uninstall=True):
             (rescode, restring) =  (1, goal.problems)
         else:
             cnt = 0
