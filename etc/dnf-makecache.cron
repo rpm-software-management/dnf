@@ -1,3 +1,6 @@
 #! /bin/bash
 
-/usr/bin/dnf makecache >>/var/log/dnf-makecache.cron
+LOGFILE=/var/log/dnf-makecache.cron
+STAMP=`date +%c`:
+echo $STAMP >>$LOGFILE
+/usr/bin/dnf makecache >>$LOGFILE
