@@ -1081,6 +1081,8 @@ class YumBase(depsolve.Depsolve):
             else:
                 raise NotImplementedError("hawkey can't handle ts_state '%s'."
                                           % txmbr.ts_state)
+        for q in tsInfo.query_installs:
+            goal.install(query=q)
         return goal
 
     def buildTransaction(self, unfinished_transactions_check=True):
@@ -3891,17 +3893,22 @@ class YumBase(depsolve.Depsolve):
             tx_return.append(txmbr)
             return tx_return # :hawkey
 
+        if not kwargs:
+            raise Errors.InstallError, _('Nothing specified to install')
+        pats = [kwargs['pattern']]
+
+        if self.conf.multilib_policy == "best":
+            self.tsInfo.addQueryInstall(
+                queries.by_name(self.sack, pats, get_query=True))
         else:
-            if not kwargs:
-                raise Errors.InstallError, _('Nothing specified to install')
-            pats = [kwargs['pattern']]
             availpkgs = queries.available_by_name(self.sack, pats,
                                                   latest_only=True)
             for pkg in availpkgs:
-                txmbr = self.tsInfo.addInstall(pkg)
-                tx_return.append(txmbr)
-            return tx_return # :hawkey
+                self.tsInfo.addInstall(pkg)
 
+        return self.tsInfo # :hawkey
+
+        if False:
             if 'pattern' in kwargs:
                 if kwargs['pattern'] and kwargs['pattern'][0] == '-':
                     return self._minus_deselect(kwargs['pattern'])

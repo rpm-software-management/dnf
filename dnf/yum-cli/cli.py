@@ -735,6 +735,8 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
         :return: a list of :class:`yum.transactioninfo.TransactionMember` objects
         """
 
+        return [] # :hawkey
+
         if not self.conf.upgrade_requirements_on_install:
             return []
 
@@ -799,7 +801,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 continue # it was something on disk and it ended in rpm 
                          # no matter what we don't go looking at repos
             try:
-                txmbrs = self.install(pattern=arg)
+                self.install(pattern=arg)
             except yum.Errors.InstallError:
                 self.verbose_logger.log(yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -808,7 +810,7 @@ class YumBaseCli(yum.YumBase, output.YumOutput):
                 self._maybeYouMeant(arg)
             else:
                 done = True
-                self._install_upgraded_requires(txmbrs)
+                self._install_upgraded_requires([])
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to install', '%d packages to install', change) % change]

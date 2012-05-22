@@ -107,10 +107,11 @@ class TransactionData:
         self.reinstalled = []
         self.downgraded = []
         self.failed = []
-        
+        self.query_installs = []
+
     def __len__(self):
-        return len(self.pkgdict)
-        
+        return len(self.pkgdict) + len(self.query_installs)
+
     def __iter__(self):
         if hasattr(self.getMembers(), '__iter__'):
             return self.getMembers().__iter__()
@@ -424,6 +425,9 @@ class TransactionData:
         self.findObsoletedByThisMember(txmbr)
         self.add(txmbr)
         return txmbr
+
+    def addQueryInstall(self, query):
+        self.query_installs.append(query)
 
     def addTrueInstall(self, po):
         """adds a package as an install
