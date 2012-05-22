@@ -28,7 +28,7 @@ def _is_glob_pattern(pattern):
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
                       updates_only=False, latest_only=False,
-                      run_query=True):
+                      get_query=False):
     """ Generic query builder.
 
         patterns can be:
@@ -36,7 +36,7 @@ def _construct_result(sack, patterns, ignore_case,
         :: a list of strings representing patterns that are ORed together
         :: None in which case we query over all names.
 
-        If 'run_query' is True the built query is evaluated and matching
+        If 'get_query' is False the built query is evaluated and matching
         packages returned. Otherwise the query itself is returned (for instance
         to be further specified and then evaluated).
     """
@@ -62,10 +62,9 @@ def _construct_result(sack, patterns, ignore_case,
         q.filter(repo__neq=exclude_repo)
     q.filter(upgrades=updates_only)
     q.filter(latest__eq=latest_only)
-    if run_query:
-        return q.run()
-    else:
+    if get_query:
         return q
+    return q.run()
 
 def installed_by_name(sack, patterns, ignore_case=False):
     return _construct_result(sack, patterns, ignore_case,
@@ -76,10 +75,10 @@ def available_by_name(sack, patterns, ignore_case=False, latest_only=False):
                              exclude_repo=hawkey.SYSTEM_REPO_NAME,
                              latest_only=latest_only)
 
-def by_name(sack, patterns, ignore_case=False):
-    return _construct_result(sack, patterns, ignore_case)
+def by_name(sack, patterns, ignore_case=False, get_query=False):
+    return _construct_result(sack, patterns, ignore_case, get_query=get_query)
 
-def by_file(sack, patterns, ignore_case=False, run_query=True):
+def by_file(sack, patterns, ignore_case=False, get_query=False):
     if type(patterns) in types.StringTypes:
         patterns = [patterns]
 
@@ -93,10 +92,9 @@ def by_file(sack, patterns, ignore_case=False, run_query=True):
     else:
         q.filter(*flags, file=patterns)
 
-    if run_query:
-        return q.run()
-    else:
+    if get_query:
         return q
+    return q.run()
 
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):
