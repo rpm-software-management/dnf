@@ -45,7 +45,12 @@ def mock_yum_base(*extra_repos):
     return yumbase
 
 class MockYumBase(dnf.yum.YumBase):
-    """ See also: hawkey/test/python/__init__.py """
+    """ See also: hawkey/test/python/__init__.py.
+
+        Note that currently the used TestSack has always architecture set to
+        "x86_64". This is to get the same behavior when running unit tests on
+        different arches.
+    """
     @property
     def sack(self):
         if self._sack:
