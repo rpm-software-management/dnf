@@ -22,8 +22,8 @@ class PackageTest(unittest.TestCase):
 
     def test_verify(self):
         self.pkg.localpath = TOUR_PKG_PATH
-        self.pkg.chksum = (TOUR_MD5, hawkey.CHKSUM_MD5)
+        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
         self.pkg.size = TOUR_SIZE
         self.assertTrue(self.pkg.verifyLocalPkg())
-        self.pkg.chksum = (TOUR_WRONG_MD5, hawkey.CHKSUM_MD5)
+        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
         self.assertFalse(self.pkg.verifyLocalPkg())

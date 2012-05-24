@@ -115,8 +115,8 @@ class Package(hawkey.Package):
 
     # yum cmopatibility method
     def verifyLocalPkg(self):
-        (chksum, chksum_type) = self.chksum
-        chksum_type = hawkey.chksum2name(chksum_type)
+        (chksum_type, chksum) = self.chksum
+        chksum_type = hawkey.chksum_name(chksum_type)
         sum_in_md = binascii.hexlify(chksum)
         real_sum = yum.misc.checksum(chksum_type, self.localPkg(),
                                      datasize=self.size)
