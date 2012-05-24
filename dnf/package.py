@@ -37,7 +37,7 @@ class Package(hawkey.Package):
 
     @property # yum compatibility attribute
     def pkgtup(self):
-        return (self.name, self.arch, self.e, self.v, self.r)
+        return (self.name, self.arch, str(self.e), self.v, self.r)
 
     @property # yum compatiblity attribute
     def repo(self):
