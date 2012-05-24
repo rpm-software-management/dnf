@@ -18,14 +18,38 @@
 # Red Hat, Inc.
 #
 
+import binascii
 import hawkey
 import os.path
+import yum.misc
 
 class Package(hawkey.Package):
     def __init__(self, initobject, yumbase):
         super(Package, self).__init__(initobject)
         self.yumbase = yumbase
         self.localpath = None
+        self._size = None
+        self._chksum = None
+
+    @property
+    def chksum(self):
+        if self._chksum:
+            return self._chksum
+        return super(Package, self).chksum
+
+    @chksum.setter
+    def chksum(self, val):
+        self._chksum = val
+
+    @property
+    def size(self):
+        if self._size:
+            return self._size
+        return super(Package, self).size
+
+    @size.setter
+    def size(self, val):
+        self._size = val
 
     @property # yum compatibility attribute
     def idx(self):
@@ -91,4 +115,9 @@ class Package(hawkey.Package):
 
     # yum cmopatibility method
     def verifyLocalPkg(self):
-        return True
+        (chksum, chksum_type) = self.chksum
+        chksum_type = hawkey.chksum2name(chksum_type)
+        sum_in_md = binascii.hexlify(chksum)
+        real_sum = yum.misc.checksum(chksum_type, self.localPkg(),
+                                     datasize=self.size)
+        return real_sum == sum_in_md

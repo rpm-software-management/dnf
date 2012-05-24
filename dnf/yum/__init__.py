@@ -92,7 +92,8 @@ from weakref import proxy as weakref
 from urlgrabber.grabber import default_grabber
 
 import hawkey
-from dnf import package, queries, const, sack
+import dnf.package
+from dnf import queries, const, sack
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
@@ -236,7 +237,7 @@ class YumBase(depsolve.Depsolve):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
         start = time.time()
-        self._sack = sack.Sack(pkgcls=package.Package, pkginitval=self)
+        self._sack = sack.Sack(pkgcls=dnf.package.Package, pkginitval=self)
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
@@ -2108,9 +2109,6 @@ class YumBase(depsolve.Depsolve):
         :raises: :class:`URLGrabError` if verification fails, and
            *raiseError* is 1
         """
-        return True # :hawkey
-        failed = False
-
         if type(fo) is types.InstanceType:
             fo = fo.filename
         
@@ -2118,14 +2116,6 @@ class YumBase(depsolve.Depsolve):
             po.localpath = fo
 
         if not po.verifyLocalPkg():
-            failed = True
-        else:
-            ylp = YumLocalPackage(self.rpmdb.readOnlyTS(), fo)
-            if ylp.pkgtup != po.pkgtup:
-                failed = True
-
-
-        if failed:            
             # if the file is wrong AND it is >= what we expected then it
             # can't be redeemed. If we can, kill it and start over fresh
             cursize = os.stat(fo)[6]
