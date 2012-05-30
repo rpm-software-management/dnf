@@ -1,8 +1,8 @@
 import base
 import dnf.package
+import dnf.queries
 import hawkey
 import os.path
-import queries
 import unittest
 import binascii
 
@@ -15,7 +15,7 @@ class PackageTest(unittest.TestCase):
     def setUp(self):
         yumbase = base.mock_yum_base()
         self.sack = yumbase.sack
-        self.pkg = queries.by_name(yumbase.sack, "pepper")[0]
+        self.pkg = dnf.queries.by_name(yumbase.sack, "pepper")[0]
 
     def test_pkgtup(self):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))

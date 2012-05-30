@@ -6,5 +6,3 @@ def dnf_toplevel():
 
 toplevel = dnf_toplevel()
 assert(sys.path[0] == toplevel) # nosetests ensures this
-sys.path.insert(0, os.path.join(toplevel, "dnf/yum-cli"))
-sys.path.insert(0, os.path.join(toplevel, "dnf/"))
