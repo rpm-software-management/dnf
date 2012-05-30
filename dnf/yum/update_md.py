@@ -23,11 +23,11 @@ Update metadata (updateinfo.xml) parsing.
 
 import sys
 
-from yum.i18n import utf8_text_wrap, to_utf8, to_unicode
-from yum.yumRepo import YumRepository
-from yum.packages import FakeRepository
-from yum.misc import to_xml, decompress, repo_gen_decompress
-from yum.misc import cElementTree_iterparse as iterparse 
+from i18n import utf8_text_wrap, to_utf8, to_unicode
+from yumRepo import YumRepository
+from packages import FakeRepository
+from misc import to_xml, decompress, repo_gen_decompress
+from misc import cElementTree_iterparse as iterparse 
 import Errors
 
 import rpmUtils.miscutils
@@ -499,9 +499,9 @@ class UpdateMetadata(object):
 
 def main():
     """ update_md test function. """
-    import yum.misc
+    import misc
 
-    yum.misc.setup_locale()
+    misc.setup_locale()
     def usage():
         print >> sys.stderr, "Usage: %s <update metadata> ..." % sys.argv[0]
         sys.exit(1)

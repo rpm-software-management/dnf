@@ -37,7 +37,7 @@ import Errors
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from yum import _, _rpm_ver_atleast
+from . import _, _rpm_ver_atleast
 
 try:
     assert max(2, 4) == 4

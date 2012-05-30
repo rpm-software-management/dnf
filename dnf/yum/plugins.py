@@ -33,9 +33,9 @@ import fnmatch
 
 from weakref import proxy as weakref
 
-from yum import _
+from . import _
 
-from yum.i18n import utf8_width
+from i18n import utf8_width
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -430,8 +430,8 @@ class PluginConduit:
     def getYumVersion(self):
         """Return a string representing the current version of yum."""
 
-        import yum
-        return yum.__version__
+        from . import __version__
+        return __version__
 
     def getOptParser(self):
         """Return the :class:`optparse.OptionParser` instance for this
@@ -544,7 +544,7 @@ class ConfigPluginConduit(PluginConduit):
         """Register a new command.
 
         :param command: the command to register
-        :raises: :class:`yum.Errors.ConfigError` if the registration
+        :raises: :class:`Errors.ConfigError` if the registration
            of commands is not supported
         """
         if hasattr(self._base, 'registerCommand'):
@@ -579,7 +579,7 @@ class InitPluginConduit(PluginConduit):
     def getRepos(self):
         """Return Yum's container object for all configured repositories.
 
-        :return: Yum's :class:`yum.repos.RepoStorage` instance
+        :return: Yum's :class:`repos.RepoStorage` instance
         """
         return self._base.repos
 
@@ -612,7 +612,7 @@ class PreRepoSetupPluginConduit(InitPluginConduit):
         """Return a representation of the local RPM database. This
         allows querying of installed packages.
 
-        :return: a :class:`yum.rpmUtils.RpmDBHolder` instance
+        :return: a :class:`rpmUtils.RpmDBHolder` instance
         """
         return self._base.rpmdb
 
@@ -622,7 +622,7 @@ class PostRepoSetupPluginConduit(PreRepoSetupPluginConduit):
     def getGroups(self):
         """Return group information.
 
-        :return: :class:`yum.comps.Comps` instance
+        :return: :class:`comps.Comps` instance
         """
         return self._base.comps
 
@@ -676,7 +676,7 @@ class MainPluginConduit(PostRepoSetupPluginConduit):
         
         :param nevra: a tuple holding (name, epoch, version, release, arch)
             for a package
-        :return: a :class:`yum.packages.PackageObject` instance (or subclass)
+        :return: a :class:`packages.PackageObject` instance (or subclass)
         """
         return self._base.getPackageObject(nevra)
 

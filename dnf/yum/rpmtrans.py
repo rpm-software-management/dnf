@@ -23,9 +23,9 @@ import time
 import logging
 import types
 import sys
-from yum.constants import *
-from yum import _
-from yum.transactioninfo import TransactionMember
+from constants import *
+from . import _
+from transactioninfo import TransactionMember
 import misc
 import tempfile
 
@@ -36,7 +36,7 @@ class NoOutputCallBack:
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
         @param package: A yum package object or simple string of a package name
-        @param action: A yum.constant transaction set state or in the obscure 
+        @param action: A constant transaction set state or in the obscure 
                        rpm repackage case it could be the string 'repackaging'
         @param te_current: current number of bytes processed in the transaction
                            element being processed

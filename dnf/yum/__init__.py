@@ -45,9 +45,9 @@ import logging.config
 import operator
 import tempfile
 
-import yum.i18n
-_ = yum.i18n._
-P_ = yum.i18n.P_
+import i18n
+_ = i18n._
+P_ = i18n.P_
 
 import config
 from config import ParsingError, ConfigParser
@@ -72,7 +72,7 @@ import plugins
 import logginglevels
 import yumRepo
 import callbacks
-import yum.history
+import history
 
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
@@ -81,8 +81,8 @@ from packages import parsePackages, comparePoEVR
 from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
 from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
-from yum.rpmtrans import RPMTransaction,SimpleCliCallBack
-from yum.i18n import to_unicode, to_str, exception2msg
+from rpmtrans import RPMTransaction,SimpleCliCallBack
+from i18n import to_unicode, to_str, exception2msg
 
 import string
 import StringIO
@@ -364,7 +364,7 @@ class YumBase(depsolve.Depsolve):
         
         if startupconf.gaftonmode:
             global _
-            _ = yum.i18n.dummy_wrapper
+            _ = i18n.dummy_wrapper
 
         if debuglevel != None:
             startupconf.debuglevel = debuglevel
@@ -380,7 +380,7 @@ class YumBase(depsolve.Depsolve):
             if startupconf.installroot == '/':
                 releasever = None
             else:
-                releasever = yum.config._getsysver("/",startupconf.distroverpkg)
+                releasever = config._getsysver("/",startupconf.distroverpkg)
         if releasever != None:
             startupconf.releasever = releasever
 
@@ -553,7 +553,7 @@ class YumBase(depsolve.Depsolve):
         :param parser: :class:`ConfigParser` or similar object to read
            INI file values from
         :param section: INI file section to read
-        :return: :class:`yum.yumRepo.YumRepository` instance
+        :return: :class:`yumRepo.YumRepository` instance
         """
         repo = yumRepo.YumRepository(section)
         try:
@@ -592,7 +592,7 @@ class YumBase(depsolve.Depsolve):
            for this run
         :param plugin_types: a sequence specifying the types of plugins to load.
            This should be a sequence containing one or more of the
-           yum.plugins.TYPE_...  constants. If None (the default), all plugins
+           plugins.TYPE_...  constants. If None (the default), all plugins
            will be loaded
         :param searchpath: a list of directories to look in for plugins. A
            default will be used if no value is specified
@@ -950,7 +950,7 @@ class YumBase(depsolve.Depsolve):
                                 _('Getting pkgtags metadata'))
         
         if self._tags is None:
-            self._tags = yum.pkgtag_db.PackageTags()
+            self._tags = pkgtag_db.PackageTags()
            
             for repo in self.repos.listEnabled():
                 if 'pkgtags' not in repo.repoXML.fileTypes():
@@ -980,7 +980,7 @@ class YumBase(depsolve.Depsolve):
            history information. """
         if self._history is None:
             pdb_path = self.conf.persistdir + "/history"
-            self._history = yum.history.YumHistory(root=self.conf.installroot,
+            self._history = history.YumHistory(root=self.conf.installroot,
                                                    db_path=pdb_path,
                                                    releasever=self.conf.yumvar['releasever'])
         return self._history
@@ -1622,9 +1622,9 @@ class YumBase(depsolve.Depsolve):
         """Perform the transaction.
 
         :param cb: an rpm callback object to use in the transaction
-        :return: a :class:`yum.misc.GenericHolder` containing
+        :return: a :class:`misc.GenericHolder` containing
            information about the results of the transaction
-        :raises: :class:`yum.Errors.YumRPMTransError` if there is a
+        :raises: :class:`Errors.YumRPMTransError` if there is a
            transaction cannot be completed
         """
         self.plugins.run('pretrans')
@@ -1771,7 +1771,7 @@ class YumBase(depsolve.Depsolve):
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
 
-        :param resultobject: the :class:`yum.misc.GenericHolder`
+        :param resultobject: the :class:`misc.GenericHolder`
            object returned from the :func:`runTransaction` call that
            ran the transaction
         :param txmbr_cb: the callback for the rpm transaction members
@@ -1983,7 +1983,7 @@ class YumBase(depsolve.Depsolve):
         """Acquire the yum lock.
 
         :param lockfile: the file to use for the lock
-        :raises: :class:`yum.Errors.LockError`
+        :raises: :class:`Errors.LockError`
         """
         lockfile = const.PID_FILENAME
 
@@ -2188,7 +2188,7 @@ class YumBase(depsolve.Depsolve):
             return 0
         
         """download list of package objects handed to you, output based on
-           callback, raise yum.Errors.YumBaseError on problems"""
+           callback, raise Errors.YumBaseError on problems"""
 
         errors = {}
         def adderror(po, msg):
@@ -2345,7 +2345,7 @@ class YumBase(depsolve.Depsolve):
         """Download a header from a package object.
 
         :param po: the package object to download the header from
-        :raises: :class:`yum.Errors.RepoError` if there are errors
+        :raises: :class:`Errors.RepoError` if there are errors
            obtaining the header
         """
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
@@ -2560,7 +2560,7 @@ class YumBase(depsolve.Depsolve):
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False):
-        """Return a :class:`yum.misc.GenericHolder` containing
+        """Return a :class:`misc.GenericHolder` containing
         lists of package objects.  The contents of the lists are
         specified in various ways by the arguments.
 
@@ -2573,7 +2573,7 @@ class YumBase(depsolve.Depsolve):
            lists
         :param ignore_case: whether to ignore case when searching by
            package names
-        :return: a :class:`yum.misc.GenericHolder` instance with the
+        :return: a :class:`misc.GenericHolder` instance with the
            following lists defined::
 
              available = list of packageObjects
@@ -3379,10 +3379,10 @@ class YumBase(depsolve.Depsolve):
 
         :param allow_missing: If no package corresponding to the given
            package tuple can be found, None is returned if
-           *allow_missing* is True, and a :class:`yum.Errors.DepError` is
+           *allow_missing* is True, and a :class:`Errors.DepError` is
            raised if *allow_missing* is False.
         :return: a package object corresponding to the given package tuple
-        :raises: a :class:`yum.Errors.DepError` if no package
+        :raises: a :class:`Errors.DepError` if no package
            corresponding to the given package tuple can be found, and
            *allow_missing* is False
         """
@@ -3410,16 +3410,16 @@ class YumBase(depsolve.Depsolve):
         return result
 
     def getInstalledPackageObject(self, pkgtup):
-        """Return a :class:`yum.packages.YumInstalledPackage` object that
+        """Return a :class:`packages.YumInstalledPackage` object that
         corresponds to the given package tuple.  This function should
         be used instead of :func:`searchPkgTuple` if you are assuming
         that the package object exists.
 
         :param pkgtup: the package tuple specifying the package object
            to return
-        :return: a :class:`yum.packages.YumInstalledPackage` object corresponding
+        :return: a :class:`packages.YumInstalledPackage` object corresponding
            to the given package tuple
-        :raises: a :class:`yum.Errors.RpmDBError` if the specified package
+        :raises: a :class:`Errors.RpmDBError` if the specified package
            object cannot be found
         """
         pkgs = self.rpmdb.searchPkgTuple(pkgtup)
@@ -3501,7 +3501,7 @@ class YumBase(depsolve.Depsolve):
            the package that fulfils
         :return: the best, or first, package that fulfils the given
            dependency
-        :raises: a :class:`yum.Errors.YumBaseError` if no packages that
+        :raises: a :class:`Errors.YumBaseError` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -3563,7 +3563,7 @@ class YumBase(depsolve.Depsolve):
            the package that fulfils
         :return: the best, or first, installed package that fulfils the given
            dependency
-        :raises: a :class:`yum.Errors.YumBaseError` if no packages that
+        :raises: a :class:`Errors.YumBaseError` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -3768,7 +3768,7 @@ class YumBase(depsolve.Depsolve):
             try:
                 txmbrs = self.selectGroup(group.groupid)
                 tx_return.extend(txmbrs)
-            except yum.Errors.GroupsError:
+            except Errors.GroupsError:
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
         return tx_return
@@ -3780,7 +3780,7 @@ class YumBase(depsolve.Depsolve):
         tx_return = []
         try:
             txmbrs = self.groupRemove(group_string)
-        except yum.Errors.GroupsError:
+        except Errors.GroupsError:
             self.logger.critical(_('No group named %s exists'), group_string)
         else:
             tx_return.extend(txmbrs)
@@ -3854,7 +3854,7 @@ class YumBase(depsolve.Depsolve):
            arguments will be used to find the best package to install
         :return: a list of the transaction members added to the
            transaction set by this function
-        :raises: :class:`yum.Errors.InstallError` if there is a problem
+        :raises: :class:`Errors.InstallError` if there is a problem
            installing the package
         """
         
@@ -4257,7 +4257,7 @@ class YumBase(depsolve.Depsolve):
                         depmatches = self.returnPackagesByDep(arg)
                     else:
                         depmatches = self.returnInstalledPackagesByDep(arg)
-                except yum.Errors.YumBaseError, e:
+                except Errors.YumBaseError, e:
                     self.logger.critical(_('%s') % e)
 
                 if update_to:
@@ -4454,7 +4454,7 @@ class YumBase(depsolve.Depsolve):
            will be used to specify a package to mark for installation
         :return: a list of the transaction members that were added to
            the transaction set by this method
-        :raises: :class:`yum.Errors.RemoveError` if nothing is specified
+        :raises: :class:`Errors.RemoveError` if nothing is specified
            to mark for removal
         """
         if not po and not kwargs:
@@ -4487,7 +4487,7 @@ class YumBase(depsolve.Depsolve):
                     arg = u[0]
                     try:
                         depmatches = self.returnInstalledPackagesByDep(arg)
-                    except yum.Errors.YumBaseError, e:
+                    except Errors.YumBaseError, e:
                         self.logger.critical(_('%s') % e)
                     
                     if not depmatches:
@@ -4532,7 +4532,7 @@ class YumBase(depsolve.Depsolve):
         
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked for installation
-        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage` 
         :param updateonly: if True, the given package will only be
            marked for installation if it is an upgrade for a package
            that is already installed.  If False, this restriction is
@@ -4663,7 +4663,7 @@ class YumBase(depsolve.Depsolve):
         
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked for reinstallation
-        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage` 
         :return: a list of the transaction members added to the
            transaction set by this method
         """
@@ -4698,8 +4698,8 @@ class YumBase(depsolve.Depsolve):
            specify a package for reinstallation
         :return: a list of the transaction members added to the
            transaction set by this method
-        :raises: :class:`yum.Errors.ReinstallRemoveError` or
-           :class:`yum.Errors.ReinstallInstallError` depending the nature
+        :raises: :class:`Errors.ReinstallRemoveError` or
+           :class:`Errors.ReinstallInstallError` depending the nature
            of the error that is encountered
         """
         self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
@@ -4748,7 +4748,7 @@ class YumBase(depsolve.Depsolve):
         
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked to be downgraded
-        :param po: a :class:`yum.packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage` 
         :return: a list of the transaction members added to the
            transaction set by this method
         """
@@ -4802,7 +4802,7 @@ class YumBase(depsolve.Depsolve):
            be downgraded
         :return: a list of the transaction members added to the
            transaction set by this method
-        :raises: :class:`yum.Errors.DowngradeError` if no packages are
+        :raises: :class:`Errors.DowngradeError` if no packages are
            specified or available for downgrade
         """
         if not po and not kwargs:
@@ -4828,7 +4828,7 @@ class YumBase(depsolve.Depsolve):
 
                     try:
                         apkgs = self.returnPackagesByDep(arg)
-                    except yum.Errors.YumBaseError, e:
+                    except Errors.YumBaseError, e:
                         self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
 
         else:
@@ -4992,10 +4992,10 @@ class YumBase(depsolve.Depsolve):
     def history_redo(self, transaction,
                      force_reinstall=False, force_changed_removal=False):
         """Repeat the transaction represented by the given
-        :class:`yum.history.YumHistoryTransaction` object.
+        :class:`history.YumHistoryTransaction` object.
 
         :param transaction: a
-           :class:`yum.history.YumHistoryTransaction` object
+           :class:`history.YumHistoryTransaction` object
            representing the transaction to be repeated
         :param force_reinstall: bool - do we want to reinstall anything that was
            installed/updated/downgraded/etc.
@@ -5024,7 +5024,7 @@ class YumBase(depsolve.Depsolve):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except yum.Errors.DowngradeError:
+                except Errors.DowngradeError:
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if force_changed_removal and pkg.state == 'Downgraded':
@@ -5067,10 +5067,10 @@ class YumBase(depsolve.Depsolve):
 
     def history_undo(self, transaction):
         """Undo the transaction represented by the given
-        :class:`yum.history.YumHistoryTransaction` object.
+        :class:`history.YumHistoryTransaction` object.
 
         :param transaction: a
-           :class:`yum.history.YumHistoryTransaction` object
+           :class:`history.YumHistoryTransaction` object
            representing the transaction to be undone
         :return: whether the transaction was undone successfully
         """
@@ -5091,7 +5091,7 @@ class YumBase(depsolve.Depsolve):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except yum.Errors.DowngradeError:
+                except Errors.DowngradeError:
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if pkg.state == 'Downgraded':
@@ -5237,7 +5237,7 @@ class YumBase(depsolve.Depsolve):
         :param fullaskcb: Callback function to use to ask permission to
            import a key.  This differs from *askcb* in that it gets
            passed a dictionary so that we can expand the values passed.
-        :raises: :class:`yum.Errors.YumBaseError` if there are errors
+        :raises: :class:`Errors.YumBaseError` if there are errors
            retrieving the keys
         """
         repo = self.repos.getRepo(po.repoid)
@@ -5804,7 +5804,7 @@ class YumBase(depsolve.Depsolve):
            in.  If *filename* is not given, a name will be generated
         :param auto: whether to output errors to the logger, rather
            than raising exceptions
-        :raises: :class:`yum.Errors.YumBaseError` if there are errors
+        :raises: :class:`Errors.YumBaseError` if there are errors
            saving the transaction
         """
         if self.tsInfo._unresolvedMembers:
@@ -5854,7 +5854,7 @@ class YumBase(depsolve.Depsolve):
         :param ignoremissing: whether to ignore that there may be
            transaction members missing
         :return: the members of the loaded transaction
-        :raises: :class:`yum.Errors.YumBaseError` if there are problems
+        :raises: :class:`Errors.YumBaseError` if there are problems
            loading the transaction
         """
         # check rpmversion - if not match throw a fit

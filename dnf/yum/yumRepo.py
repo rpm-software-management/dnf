@@ -34,10 +34,10 @@ from repos import Repository
 import parser
 import sqlitecachec
 import sqlitesack
-from yum import config
-from yum import misc
-from yum import comps
-from yum import _
+import config
+import misc
+import comps
+from . import _
 from constants import *
 import metalink
 

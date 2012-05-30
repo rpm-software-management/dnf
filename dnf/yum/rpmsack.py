@@ -32,10 +32,10 @@ from packageSack import PackageSackBase, PackageSackVersion
 import fnmatch
 import re
 
-from yum.i18n import to_unicode, _
+from i18n import to_unicode, _
 import constants
 
-import yum.depsolve
+import depsolve
 
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
@@ -1478,7 +1478,7 @@ class RPMDBPackageSack(PackageSackBase):
                 if self.getProvides(req, flags, ver):
                     providers.add(rreq)
                     continue
-                flags = yum.depsolve.flags.get(flags, flags)
+                flags = depsolve.flags.get(flags, flags)
                 missing = miscutils.formatRequire(req, ver, flags)
                 prob = RPMDBProblemDependency(pkg, "requires", missing=missing)
                 problems.append(prob)
@@ -1490,7 +1490,7 @@ class RPMDBPackageSack(PackageSackBase):
                 res = self.getProvides(req, flags, ver)
                 if not res:
                     continue
-                flags = yum.depsolve.flags.get(flags, flags)
+                flags = depsolve.flags.get(flags, flags)
                 found = miscutils.formatRequire(req, ver, flags)
                 prob = RPMDBProblemDependency(pkg, "conflicts", found=found,
                                               conflicts=res)

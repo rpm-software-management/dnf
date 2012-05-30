@@ -14,7 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2006 Duke University
 
-from yum.misc import cElementTree_iterparse as iterparse 
+from misc import cElementTree_iterparse as iterparse 
 from Errors import RepoMDError
 
 import sys

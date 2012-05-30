@@ -23,11 +23,11 @@ import glob
 from weakref import proxy as weakref
 
 from sqlutils import sqlite, executeSQL, sql_esc_glob
-import yum.misc as misc
-import yum.constants
-from yum.constants import *
-from yum.packages import YumInstalledPackage, YumAvailablePackage, PackageObject
-from yum.i18n import to_unicode, to_utf8
+import misc as misc
+import constants
+from constants import *
+from packages import YumInstalledPackage, YumAvailablePackage, PackageObject
+from i18n import to_unicode, to_utf8
 
 from rpmUtils.arch import getBaseArch
 
@@ -70,7 +70,7 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
               'sql_envra', 'sql_nevra']
     need_full = False
     for pat in patterns:
-        if yum.misc.re_full_search_needed(pat):
+        if misc.re_full_search_needed(pat):
             need_full = True
             break
 
@@ -658,7 +658,7 @@ class YumHistory:
     def __init__(self, root='/', db_path=_history_dir, releasever=None):
         self._conn = None
         
-        self.conf = yum.misc.GenericHolder()
+        self.conf = misc.GenericHolder()
         if not os.path.normpath(db_path).startswith(root):
             self.conf.db_path  = os.path.normpath(root + '/' + db_path)
         else:
@@ -930,7 +930,7 @@ class YumHistory:
                             (timestamp, rpmdb_version, loginuid)
                             VALUES (?, ?, ?)""", (int(time.time()),
                                                     str(rpmdb_version),
-                                                    yum.misc.getloginuid()))
+                                                    misc.getloginuid()))
         self._tid = cur.lastrowid
 
         for pkg in using_pkgs:
@@ -1201,7 +1201,7 @@ class YumHistory:
                              loginuid, NULL
                       FROM trans_beg"""
         params = None
-        if tids and len(tids) <= yum.constants.PATTERNS_INDEXED_MAX:
+        if tids and len(tids) <= constants.PATTERNS_INDEXED_MAX:
             params = tids = list(set(tids))
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
         #  This relies on the fact that the PRIMARY KEY in sqlite will always
@@ -1215,7 +1215,7 @@ class YumHistory:
         ret = []
         tid2obj = {}
         for row in cur:
-            if tids and len(tids) > yum.constants.PATTERNS_INDEXED_MAX:
+            if tids and len(tids) > constants.PATTERNS_INDEXED_MAX:
                 if row[0] not in tids:
                     continue
             obj = YumHistoryTransaction(self, row)
@@ -1228,7 +1228,7 @@ class YumHistory:
                          return_code
                   FROM trans_end"""
         params = tid2obj.keys()
-        if len(params) > yum.constants.PATTERNS_INDEXED_MAX:
+        if len(params) > constants.PATTERNS_INDEXED_MAX:
             executeSQL(cur, sql)
         else:
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(params))
@@ -1434,7 +1434,7 @@ class YumHistory:
             pat_max = PATTERNS_MAX
             if not need_full:
                 pat_max = PATTERNS_INDEXED_MAX
-            for npatterns in yum.misc.seq_max_split(patterns, pat_max):
+            for npatterns in misc.seq_max_split(patterns, pat_max):
                 data = _setupHistorySearchSQL(npatterns, ignore_case)
                 (need_full, nps, fields, names) = data
                 assert nps
@@ -1445,7 +1445,7 @@ class YumHistory:
         sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
         params = list(pkgtupids)
         tids = set()
-        if len(params) > yum.constants.PATTERNS_INDEXED_MAX:
+        if len(params) > constants.PATTERNS_INDEXED_MAX:
             executeSQL(cur, """SELECT tid FROM trans_data_pkgs""")
             for row in cur:
                 if row[0] in params:

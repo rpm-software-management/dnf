@@ -74,7 +74,7 @@ class DownloadBaseCallback( BaseMeter ):
     
     Example::
     
-       from yum.callbacks import DownloadBaseCallback
+       from callbacks import DownloadBaseCallback
        
        class MyDownloadCallback(  DownloadBaseCallback ):
    

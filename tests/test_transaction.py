@@ -1,8 +1,8 @@
 import base
 import unittest
-from yum.constants import *
+from dnf.yum.constants import *
 
-from yum.transactioninfo import TransactionData
+from dnf.yum.transactioninfo import TransactionData
 
 class TransactionDataTests(unittest.TestCase):
     ''' Test cases for yum.transactioninfo.TransactionData'''
