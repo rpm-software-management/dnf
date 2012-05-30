@@ -1,4 +1,4 @@
-SET(yum-cli_SRCS
+SET(cli_SRCS
     callback.py
     cli.py
     output.py
@@ -6,4 +6,4 @@ SET(yum-cli_SRCS
     utils.py
     yumcommands.py
     yummain.py)
-INSTALL (FILES ${yum-cli_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/yum-cli)
+INSTALL (FILES ${cli_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/cli)

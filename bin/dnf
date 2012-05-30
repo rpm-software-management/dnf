@@ -14,6 +14,5 @@ else:
     # git checkout
     dnf_toplevel = os.path.dirname(here)
     sys.path[0] = dnf_toplevel
-
 from dnf.cli import yummain
 yummain.user_main(sys.argv[1:], exit_code=True)
