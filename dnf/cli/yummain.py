@@ -25,19 +25,19 @@ import logging
 import time
 import errno
 
-from yum import Errors
-from yum import plugins
-from yum import logginglevels
-from yum import _
-from yum.i18n import utf8_width, exception2msg
-import yum.misc
+from dnf.yum import Errors
+from dnf.yum import plugins
+from dnf.yum import logginglevels
+from dnf.yum import _
+from dnf.yum.i18n import utf8_width, exception2msg
+import dnf.yum.misc
 import cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
     """Run the yum program from a command line interface."""
 
-    yum.misc.setup_locale(override_time=True)
+    dnf.yum.misc.setup_locale(override_time=True)
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
@@ -301,7 +301,7 @@ def user_main(args, exit_code=False):
     :param exit_code: if *exit_code* is True, this function will exit
        python with its exit code when it has finished executing.
        Otherwise, it will return its exit code.
-    :return: the exit code from yum execution
+    :return: the exit code from dnf.yum execution
     """
     errcode = None
     if 'YUM_PROF' in os.environ:

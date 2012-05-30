@@ -22,8 +22,8 @@ import rpm
 import os
 import sys
 import logging
-from yum import _
-from yum.constants import *
+from dnf.yum import _
+from dnf.yum.constants import *
 
 
 class RPMInstallCallback:

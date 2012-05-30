@@ -23,10 +23,10 @@ import cmd
 import shlex
 import logging
 
-from yum import Errors
-from yum.constants import *
-import yum.logginglevels as logginglevels
-from yum.i18n import to_utf8
+from dnf.yum import Errors
+from dnf.yum.constants import *
+import dnf.yum.logginglevels as logginglevels
+from dnf.yum.i18n import to_utf8
 import __builtin__
 
 class YumShell(cmd.Cmd):

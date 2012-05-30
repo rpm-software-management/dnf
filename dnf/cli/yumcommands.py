@@ -21,17 +21,17 @@ Classes for subcommands of the yum command line interface.
 
 import os
 import cli
-from yum import logginglevels
-from yum import _
-from yum import misc
-import yum.Errors
+from dnf.yum import logginglevels
+from dnf.yum import _
+from dnf.yum import misc
+import dnf.yum.Errors
 import operator
 import locale
 import fnmatch
 import time
-from yum.i18n import utf8_width, utf8_width_fill, to_unicode
+from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
-import yum.config
+import dnf.yum.config
 import hawkey
 
 def _err_mini_usage(base, basecmd):
@@ -46,7 +46,7 @@ def _err_mini_usage(base, basecmd):
 def checkRootUID(base):
     """Verify that the program is being run by the root user.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :raises: :class:`cli.CliError`
     """
     return None
@@ -58,7 +58,7 @@ def checkGPGKey(base):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :raises: :class:`cli.CliError`
     """
     if base._override_sigchecks:
@@ -88,7 +88,7 @@ def checkPackageArg(base, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one package for
     *basecmd* to act on.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -105,7 +105,7 @@ def checkItemArg(base, basecmd, extcmds):
     arguments that are not the name of a package, such as a file name
     passed to provides.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -119,7 +119,7 @@ def checkGroupArg(base, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
     *basecmd* to act on.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -133,7 +133,7 @@ def checkCleanArg(base, basecmd, extcmds):
     """Verify that *extcmds* contains at least one argument, and that all
     arguments in *extcmds* are valid options for clean.
 
-    :param base: a :class:`yum.Yumbase` object
+    :param base: a :class:`dnf.yum.Yumbase` object
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -156,7 +156,7 @@ def checkShellArg(base, basecmd, extcmds):
     shell can be given either no argument, or exactly one argument,
     which is the name of a file.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -181,7 +181,7 @@ def checkShellArg(base, basecmd, extcmds):
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
-    :param base: a :class:`yum.Yumbase` object.
+    :param base: a :class:`dnf.yum.Yumbase` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`:
@@ -214,7 +214,7 @@ class YumCommand:
         nothing on subsequent calls.  This is to prevent duplicate
         messages from being printed for the same command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param msg: the message to be output
         :param *args: additional arguments associated with the message
         """
@@ -249,7 +249,7 @@ class YumCommand:
         """Verify that various conditions are met so that the command
         can run.
 
-        :param base: a :class:`yum.Yumbase` object.
+        :param base: a :class:`dnf.yum.Yumbase` object.
         :param basecmd: the name of the command being checked for
         :param extcmds: a list of arguments passed to *basecmd*
         """
@@ -258,7 +258,7 @@ class YumCommand:
     def doCommand(self, base, basecmd, extcmds):
         """Execute the command
 
-        :param base: a :class:`yum.Yumbase` object.
+        :param base: a :class:`dnf.yum.Yumbase` object.
         :param basecmd: the name of the command being executed
         :param extcmds: a list of arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -275,7 +275,7 @@ class YumCommand:
         """Return whether a transaction set must be set up before the
         command can run
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -316,7 +316,7 @@ class InstallCommand(YumCommand):
         that there are enabled repositories with gpg keys, and that
         this command is called with appropriate arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -328,7 +328,7 @@ class InstallCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -342,7 +342,7 @@ class InstallCommand(YumCommand):
         self.doneCommand(base, _("Setting up Install Process"))
         try:
             return base.installPkgs(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 class UpdateCommand(YumCommand):
@@ -378,7 +378,7 @@ class UpdateCommand(YumCommand):
         These include that there are enabled repositories with gpg
         keys, and that this command is being run by the root user.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -389,7 +389,7 @@ class UpdateCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -403,7 +403,7 @@ class UpdateCommand(YumCommand):
         self.doneCommand(base, _("Setting up Update Process"))
         try:
             return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 class DistroSyncCommand(YumCommand):
@@ -438,7 +438,7 @@ class DistroSyncCommand(YumCommand):
         These include that the program is being run by the root user,
         and that there are enabled repositories with gpg keys.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -449,7 +449,7 @@ class DistroSyncCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -464,7 +464,7 @@ class DistroSyncCommand(YumCommand):
         try:
             base.conf.obsoletes = 1
             return base.distroSyncPkgs(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
@@ -523,7 +523,7 @@ class InfoCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -537,7 +537,7 @@ class InfoCommand(YumCommand):
         try:
             highlight = base.term.MODE['bold']
             ypl = base.returnPkgLists(extcmds, installed_available=highlight)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
             update_pkgs = {}
@@ -625,7 +625,7 @@ class InfoCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -690,7 +690,7 @@ class EraseCommand(YumCommand):
         user, and that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -700,7 +700,7 @@ class EraseCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -714,14 +714,14 @@ class EraseCommand(YumCommand):
         self.doneCommand(base, _("Setting up Remove Process"))
         try:
             return base.erasePkgs(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -732,7 +732,7 @@ class EraseCommand(YumCommand):
         """Return whether a transaction set for removal only must be
         set up before this command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a remove-only transaction set is needed, False otherwise
@@ -778,9 +778,9 @@ class GroupsCommand(YumCommand):
         base.doRepoSetup(dosack=0)
         try:
             base.doGroupSetup()
-        except yum.Errors.GroupsError:
+        except dnf.yum.Errors.GroupsError:
             return 1, [_('No Groups on which to run command')]
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def _grp_cmd(self, basecmd, extcmds):
@@ -805,7 +805,7 @@ class GroupsCommand(YumCommand):
         The exact conditions checked will vary depending on the
         subcommand that is being called.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -837,7 +837,7 @@ class GroupsCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -867,7 +867,7 @@ class GroupsCommand(YumCommand):
             if cmd == 'remove':
                 return base.removeGroups(extcmds)
 
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 
@@ -875,7 +875,7 @@ class GroupsCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -890,7 +890,7 @@ class GroupsCommand(YumCommand):
         """Return whether a transaction set for removal only must be
         set up before this command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a remove-only transaction set is needed, False otherwise
@@ -932,7 +932,7 @@ class MakeCacheCommand(YumCommand):
         """Verify that conditions are met so that this command can
         run; namely that there is an enabled repository.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -941,7 +941,7 @@ class MakeCacheCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -961,7 +961,7 @@ class MakeCacheCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1000,7 +1000,7 @@ class CleanCommand(YumCommand):
         These include that there is at least one enabled repository,
         and that this command is called with appropriate arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1010,7 +1010,7 @@ class CleanCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1028,7 +1028,7 @@ class CleanCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1066,7 +1066,7 @@ class ProvidesCommand(YumCommand):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1075,7 +1075,7 @@ class ProvidesCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1089,7 +1089,7 @@ class ProvidesCommand(YumCommand):
         base.logger.debug("Searching Packages: ")
         try:
             return base.provides(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 class CheckUpdateCommand(YumCommand):
@@ -1123,7 +1123,7 @@ class CheckUpdateCommand(YumCommand):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1132,7 +1132,7 @@ class CheckUpdateCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1178,7 +1178,7 @@ class CheckUpdateCommand(YumCommand):
                     base.updatesObsoletesList(obtup, 'obsoletes',
                                               columns=columns)
                 result = 100
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
             return result, []
@@ -1214,7 +1214,7 @@ class SearchCommand(YumCommand):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1223,7 +1223,7 @@ class SearchCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1237,14 +1237,14 @@ class SearchCommand(YumCommand):
         base.logger.debug(_("Searching Packages: "))
         try:
             return base.search(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1283,7 +1283,7 @@ class UpgradeCommand(YumCommand):
          run.  These include that the program is being run by the root
          user, and that there are enabled repositories with gpg.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1294,7 +1294,7 @@ class UpgradeCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1309,7 +1309,7 @@ class UpgradeCommand(YumCommand):
         self.doneCommand(base, _("Setting up Upgrade Process"))
         try:
             return base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 class LocalInstallCommand(YumCommand):
@@ -1349,7 +1349,7 @@ class LocalInstallCommand(YumCommand):
         gpg keys, and that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1360,7 +1360,7 @@ class LocalInstallCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1376,14 +1376,14 @@ class LocalInstallCommand(YumCommand):
         updateonly = basecmd == 'localupdate'
         try:
             return base.localInstall(filelist=extcmds, updateonly=updateonly)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1424,7 +1424,7 @@ class ResolveDepCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1438,7 +1438,7 @@ class ResolveDepCommand(YumCommand):
         base.logger.debug(_("Searching Packages for Dependency:"))
         try:
             return base.resolveDepCli(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 class ShellCommand(YumCommand):
@@ -1472,7 +1472,7 @@ class ShellCommand(YumCommand):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1481,7 +1481,7 @@ class ShellCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1495,14 +1495,14 @@ class ShellCommand(YumCommand):
         self.doneCommand(base, _('Setting up Yum Shell'))
         try:
             return base.doShell()
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1542,7 +1542,7 @@ class DepListCommand(YumCommand):
         run; namely that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1551,7 +1551,7 @@ class DepListCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1565,7 +1565,7 @@ class DepListCommand(YumCommand):
         self.doneCommand(base, _("Finding dependencies: "))
         try:
             return base.deplist(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 
@@ -1599,7 +1599,7 @@ class RepoListCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1642,7 +1642,7 @@ class RepoListCommand(YumCommand):
                 # Setup so len(repo.sack) is correct
                 base.repos.populateSack()
                 base.pkgSack # Need to setup the pkgSack, so excludes work
-            except yum.Errors.RepoError:
+            except dnf.yum.Errors.RepoError:
                 if verbose:
                     raise
                 #  populate them by hand, so one failure doesn't kill everything
@@ -1650,7 +1650,7 @@ class RepoListCommand(YumCommand):
                 for repo in base.repos.listEnabled():
                     try:
                         base.repos.populateSack(repo.id)
-                    except yum.Errors.RepoError:
+                    except dnf.yum.Errors.RepoError:
                         pass
 
         repos = base.repos.repos.values()
@@ -1874,7 +1874,7 @@ class RepoListCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1915,7 +1915,7 @@ class HelpCommand(YumCommand):
         run; namely that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1965,7 +1965,7 @@ class HelpCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1985,7 +1985,7 @@ class HelpCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2019,7 +2019,7 @@ class ReInstallCommand(YumCommand):
         that this command is called with appropriate arguments.
 
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -2031,7 +2031,7 @@ class ReInstallCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2046,7 +2046,7 @@ class ReInstallCommand(YumCommand):
         try:
             return base.reinstallPkgs(extcmds)
             
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
 
     def getSummary(self):
@@ -2060,7 +2060,7 @@ class ReInstallCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2094,7 +2094,7 @@ class DowngradeCommand(YumCommand):
         that this command is called with appropriate arguments.
 
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -2106,7 +2106,7 @@ class DowngradeCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2120,7 +2120,7 @@ class DowngradeCommand(YumCommand):
         self.doneCommand(base, _("Setting up Downgrade Process"))
         try:
             return base.downgradePkgs(extcmds)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
     def getSummary(self):
@@ -2134,7 +2134,7 @@ class DowngradeCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2172,7 +2172,7 @@ class VersionCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2211,7 +2211,7 @@ class VersionCommand(YumCommand):
             else:
                 vcmd = vcmd[len('nogroups-'):]
         else:
-            gconf = yum.config.readVersionGroupsConfig()
+            gconf = dnf.yum.config.readVersionGroupsConfig()
 
         for group in gconf:
             groups[group] = set(gconf[group].pkglist)
@@ -2270,7 +2270,7 @@ class VersionCommand(YumCommand):
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
                         _append_repos(cols, data[3][grp])
-            except yum.Errors.YumBaseError, e:
+            except dnf.yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
         if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
@@ -2289,7 +2289,7 @@ class VersionCommand(YumCommand):
                                      str(data[2][grp])))
                         if verbose:
                             _append_repos(cols, data[3][grp])
-            except yum.Errors.YumBaseError, e:
+            except dnf.yum.Errors.YumBaseError, e:
                 return 1, [str(e)]
 
         data = {'rid' : {}, 'ver' : {}}
@@ -2310,7 +2310,7 @@ class VersionCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2421,7 +2421,7 @@ class HistoryCommand(YumCommand):
                 return 1, ['Failed history rollback, incomplete']
 
             if mobj is None:
-                mobj = yum.history.YumMergedHistoryTransaction(tid)
+                mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
             else:
                 mobj.merge(tid)
 
@@ -2473,7 +2473,7 @@ class HistoryCommand(YumCommand):
         run.  The exact conditions checked will vary depending on the
         subcommand that is being called.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -2498,7 +2498,7 @@ class HistoryCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2548,7 +2548,7 @@ class HistoryCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2589,7 +2589,7 @@ class CheckRpmdbCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2617,7 +2617,7 @@ class CheckRpmdbCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2654,7 +2654,7 @@ class LoadTransactionCommand(YumCommand):
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2674,7 +2674,7 @@ class LoadTransactionCommand(YumCommand):
         
         try:
             base.load_ts(load_file)
-        except yum.Errors.YumBaseError, e:
+        except dnf.yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
         return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo.getMembers()))]
 
@@ -2683,7 +2683,7 @@ class LoadTransactionCommand(YumCommand):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`yum.Yumbase` object
+        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise

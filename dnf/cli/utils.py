@@ -20,15 +20,15 @@ import sys
 import time
 import exceptions
 
-import yum
+import dnf.yum
 from cli import *
-from yum import Errors
-from yum import _
-from yum.i18n import utf8_width, exception2msg
-from yum import logginglevels
+from dnf.yum import Errors
+from dnf.yum import _
+from dnf.yum.i18n import utf8_width, exception2msg
+from dnf.yum import logginglevels
 from optparse import OptionGroup
 
-import yum.plugins as plugins
+import dnf.yum.plugins as plugins
 from urlgrabber.progress import format_number
 
 try:
@@ -213,7 +213,7 @@ class YumUtilBase(YumBaseCli):
 
     def exPluginExit(self, e):
         """Called when a plugin raises
-           :class:`yum.plugins.PluginYumExit`.  Log the plugin's exit
+           :class:`dnf.yum.plugins.PluginYumExit`.  Log the plugin's exit
            message if one was supplied.
 
         :param e: the exception
@@ -288,7 +288,7 @@ class YumUtilBase(YumBaseCli):
                 break
         
     def _printUtilVersion(self):
-        print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,yum.__version__)
+        print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,dnf.yum.__version__)
         
     def doUtilConfigSetup(self,args = sys.argv[1:],pluginsTypes=(plugins.TYPE_CORE,)):
         """Parse command line options, and perform configuration.

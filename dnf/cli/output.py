@@ -32,20 +32,20 @@ from weakref import proxy as weakref
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
-from yum.misc import prco_tuple_to_string
-from yum.i18n import to_str, to_utf8, to_unicode
-import yum.misc
+from dnf.yum.misc import prco_tuple_to_string
+from dnf.yum.i18n import to_str, to_utf8, to_unicode
+import dnf.yum.misc
 from rpmUtils.miscutils import checkSignals, formatRequire
-from yum.constants import *
+from dnf.yum.constants import *
 
-from yum import logginglevels, _, P_
-from yum.rpmtrans import RPMBaseCallback
-from yum.packageSack import packagesNewestByNameArch
-import yum.packages
+from dnf.yum import logginglevels, _, P_
+from dnf.yum.rpmtrans import RPMBaseCallback
+from dnf.yum.packageSack import packagesNewestByNameArch
+import dnf.yum.packages
 
-import yum.history
+import dnf.yum.history
 
-from yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
 import locale
 
@@ -1210,7 +1210,7 @@ class YumOutput:
 
         print _("Repo        : %s") % po.ui_from_repo
         done = False
-        for item in yum.misc.unique(values):
+        for item in dnf.yum.misc.unique(values):
             item = to_utf8(item)
             if to_utf8(po.name) == item or to_utf8(po.summary) == item:
                 continue # Skip double name/summary printing
@@ -2032,7 +2032,7 @@ to exit.
 
             if tid.tid >= bmtid and tid.tid <= emtid:
                 if mobj is None:
-                    mobj = yum.history.YumMergedHistoryTransaction(tid)
+                    mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
                 else:
                     mobj.merge(tid)
             elif mobj is not None:
@@ -2045,7 +2045,7 @@ to exit.
                 if mtids:
                     bmtid, emtid = mtids.pop(0)
                     if tid.tid >= bmtid and tid.tid <= emtid:
-                        mobj = yum.history.YumMergedHistoryTransaction(tid)
+                        mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
 
             if tid.tid in utids:
                 if done:
@@ -2274,7 +2274,7 @@ to exit.
 
             highlight = 'normal'
             if pats:
-                x,m,u = yum.packages.parsePackages([hpkg], pats)
+                x,m,u = dnf.yum.packages.parsePackages([hpkg], pats)
                 if x or m:
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
@@ -2467,7 +2467,7 @@ to exit.
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
                 if limit is None:
-                    x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                    x,m,u = dnf.yum.packages.parsePackages([hpkg], extcmds)
                     if not x and not m:
                         continue
 
@@ -2531,7 +2531,7 @@ to exit.
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
                 if limit is None:
-                    x,m,u = yum.packages.parsePackages([hpkg], extcmds)
+                    x,m,u = dnf.yum.packages.parsePackages([hpkg], extcmds)
                     if not x and not m:
                         continue
 
@@ -2693,7 +2693,7 @@ class DepSolveProgressCallBack:
         removed. This method is used during leaf-only group remove
         commands to indicate that the package will be kept.
 
-        :param po: the :class:`yum.packages.PackageObject` that will
+        :param po: the :class:`dnf.yum.packages.PackageObject` that will
            not be removed
         :param hits: unused
         """
@@ -2740,7 +2740,7 @@ class DepSolveProgressCallBack:
             done = False
             for pkgtup in pkg.matchingPrcos('provides', needtup):
                 done = True
-                msg += _('\n        %s') % yum.misc.prco_tuple_to_string(pkgtup)
+                msg += _('\n        %s') % dnf.yum.misc.prco_tuple_to_string(pkgtup)
             if not done:
                 msg += _('\n        Not found')
             return msg
@@ -3228,7 +3228,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress",
                                              "rpm-progress",
                                              'i18n-rpm-progress'):
-        yum.misc.setup_locale()
+        dnf.yum.misc.setup_locale()
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress"):
         print ""
         print " Doing progress, i18n: small name"
