@@ -19,11 +19,15 @@
 #
 
 import hawkey
+import logging
+import sys
+import yum.Errors
 
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
         self._filelists = False
+        self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
 
     def ensure_filelists(self, repos):
         if self._filelists:
@@ -37,3 +41,14 @@ class Sack(hawkey.Sack):
         self.load_filelists()
         self.write_filelists()
         return True
+
+    def ensure_presto(self, repos):
+        for yum_repo in repos.listEnabled():
+            repo = yum_repo.hawkey_repo
+            try:
+                repo.presto_fn = yum_repo.getPrestoXML()
+            except yum.Errors.RepoMDError, e:
+                self.verbose_logger.info("not found deltainfo for: %s" %
+                                         yum_repo.name)
+        self.load_presto()
+        self.write_presto()

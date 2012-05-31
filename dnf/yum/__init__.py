@@ -247,6 +247,7 @@ class YumBase(depsolve.Depsolve):
 
         self._sack.installonly = self.conf.installonlypkgs
         self._sack.ensure_filelists(self.repos)
+        self._sack.ensure_presto(self.repos)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         return self._sack

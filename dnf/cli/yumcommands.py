@@ -954,7 +954,6 @@ class MakeCacheCommand(YumCommand):
         """
         base.logger.debug(_("Making cache files for all metadata files."))
         sack = base.sack # triggers metadata sync
-        sack.ensure_filelists(base.repos) # does filelists sync
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, base, basecmd, extcmds):

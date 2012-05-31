@@ -1645,6 +1645,9 @@ Insufficient space in download directory %s
 
         return self.retrieveMD('filelists')
 
+    def getPrestoXML(self):
+        return self.retrieveMD('prestodelta')
+
     def getOtherXML(self):
         return self.retrieveMD('other')
 
