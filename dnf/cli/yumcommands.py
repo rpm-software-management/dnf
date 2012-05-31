@@ -566,7 +566,7 @@ class InfoCommand(YumCommand):
                 # available to install vs. update vs. old.
                 for pkg in ypl.hidden_installed:
                     key = (pkg.name, pkg.arch)
-                    if key not in inst_pkgs or pkg.verGT(inst_pkgs[key]):
+                    if key not in inst_pkgs or pkg > inst_pkgs[key]:
                         inst_pkgs[key] = pkg
 
             if highlight and ypl.updates:
