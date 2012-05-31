@@ -14,12 +14,12 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2004 Duke University
 
-import rpmUtils
-import rpmUtils.miscutils
-import rpmUtils.arch
+from . import RpmUtilsError
+import miscutils
+import arch
 
 def _vertup_cmp(tup1, tup2):
-    return rpmUtils.miscutils.compareEVR(tup1, tup2)
+    return miscutils.compareEVR(tup1, tup2)
 class Updates:
     """
     This class computes and keeps track of updates and obsoletes.
@@ -45,14 +45,14 @@ class Updates:
                                   'kernel-enterprise', 'kernel-bigmem',
                                   'kernel-BOOT'])
                               
-        self.myarch = rpmUtils.arch.canonArch # set this if you want to
+        self.myarch = arch.canonArch # set this if you want to
                                               # test on some other arch
                                               # otherwise leave it alone
-        self._is_multilib = rpmUtils.arch.isMultiLibArch(self.myarch)
+        self._is_multilib = arch.isMultiLibArch(self.myarch)
         
-        self._archlist = rpmUtils.arch.getArchList(self.myarch)
+        self._archlist = arch.getArchList(self.myarch)
 
-        self._multilib_compat_arches = rpmUtils.arch.getMultiArchInfo(self.myarch)
+        self._multilib_compat_arches = arch.getMultiArchInfo(self.myarch)
 
         # make some dicts from installed and available
         self.installdict = self.makeNADict(self.installed, 1)
@@ -133,7 +133,7 @@ class Updates:
     def returnNewest(self, evrlist):
         """takes a list of (e, v, r) tuples and returns the newest one"""
         if len(evrlist)==0:
-            raise rpmUtils.RpmUtilsError, "Zero Length List in returnNewest call"
+            raise RpmUtilsError, "Zero Length List in returnNewest call"
             
         if len(evrlist)==1:
             return evrlist[0]
@@ -141,7 +141,7 @@ class Updates:
         (new_e, new_v, new_r) = evrlist[0] # we'll call the first ones 'newest'
         
         for (e, v, r) in evrlist[1:]:
-            rc = rpmUtils.miscutils.compareEVR((e, v, r), (new_e, new_v, new_r))
+            rc = miscutils.compareEVR((e, v, r), (new_e, new_v, new_r))
             if rc > 0:
                 new_e = e
                 new_v = v
@@ -176,7 +176,7 @@ class Updates:
         for tup in self.updatesdict:
             if len(self.updatesdict[tup]) > 1:
                 mylist = self.updatesdict[tup]
-                self.updatesdict[tup] = rpmUtils.miscutils.unique(mylist)
+                self.updatesdict[tup] = miscutils.unique(mylist)
     
     
     def checkForObsolete(self, pkglist, newest=1):
@@ -195,7 +195,7 @@ class Updates:
             name = pkgtup[0]
             for obs_flag, obs_version, obsoleting in self._obsoletes_by_name.get(name, []):
                 if obs_flag in [None, 0] and name == obsoleting[0]: continue
-                if rpmUtils.miscutils.rangeCheck( (name, obs_flag, obs_version), pkgtup):
+                if miscutils.rangeCheck( (name, obs_flag, obs_version), pkgtup):
                     obsdict.setdefault(obsoleting, []).append(pkgtup)
 
         if not obsdict:
@@ -240,7 +240,7 @@ class Updates:
                 if (obs_n, None) in self.installdict:
                     for (rpm_a, rpm_e, rpm_v, rpm_r) in self.installdict[(obs_n, None)]:
                         if flag in [None, 0] or \
-                                rpmUtils.miscutils.rangeCheck((obs_n, flag, (obs_e, obs_v, obs_r)),
+                                miscutils.rangeCheck((obs_n, flag, (obs_e, obs_v, obs_r)),
                                                               (obs_n, rpm_a, rpm_e, rpm_v, rpm_r)):
                             # make sure the obsoleting pkg is not already installed
                             willInstall = 1
@@ -322,10 +322,10 @@ class Updates:
                 for (rpm_e, rpm_v, rpm_r) in self.installdict[(n, a)]:
                     try:
                         (e, v, r) = self.returnNewest(newpkgs[(n,a)])
-                    except rpmUtils.RpmUtilsError:
+                    except RpmUtilsError:
                         continue
                     else:
-                        rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                        rc = miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                         if rc <= 0:
                             try:
                                 newpkgs[(n, a)].remove((e, v, r))
@@ -375,7 +375,7 @@ class Updates:
                     (rpm_e, rpm_v, rpm_r) = self.returnNewest(self.installdict[(n, a)])
                     if (n, a) in newpkgs:
                         (e, v, r) = self.returnNewest(newpkgs[(n, a)])
-                        rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                        rc = miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                         if rc > 0:
                             # this is definitely an update - put it in the dict
                             if (n, a, rpm_e, rpm_v, rpm_r) not in updatedict:
@@ -390,7 +390,7 @@ class Updates:
                 (rpm_a, rpm_e, rpm_v, rpm_r) = self.installdict[(n, None)][0]
                 if (n, None) in newpkgs:
                     for (a, e, v, r) in newpkgs[(n, None)]:
-                        rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                        rc = miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                         if rc > 0:
                             # this is definitely an update - put it in the dict
                             if (n, rpm_a, rpm_e, rpm_v, rpm_r) not in updatedict:
@@ -409,14 +409,14 @@ class Updates:
         
         archlists = []
         if self._is_multilib:
-            if self.myarch in rpmUtils.arch.multilibArches:
+            if self.myarch in arch.multilibArches:
                 biarches = [self.myarch]
             else:
-                biarches = [self.myarch, rpmUtils.arch.arches[self.myarch]]
+                biarches = [self.myarch, arch.arches[self.myarch]]
             biarches.append('noarch')
             
             multicompat = self._multilib_compat_arches[0]
-            multiarchlist = rpmUtils.arch.getArchList(multicompat)
+            multiarchlist = arch.getArchList(multicompat)
             archlists = [ set(biarches), set(multiarchlist) ]
             # archlists = [ biarches, multiarchlist ]
         else:
@@ -451,7 +451,7 @@ class Updates:
                             # we've got a match - get our versions and compare
                             (rpm_e, rpm_v, rpm_r) = hipdict[(n, a)][0] # only ever going to be first one
                             (e, v, r) = hapdict[(n, a)][0] # there can be only one
-                            rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                            rc = miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                             if rc > 0:
                                 # this is definitely an update - put it in the dict
                                 if (n, a, rpm_e, rpm_v, rpm_r) not in updatedict:
@@ -465,7 +465,7 @@ class Updates:
                     for (n,a) in hipdict:
                         instarchs.append(a)
                     
-                    rpm_a = rpmUtils.arch.getBestArchFromList(instarchs, myarch=self.myarch)
+                    rpm_a = arch.getBestArchFromList(instarchs, myarch=self.myarch)
                     if rpm_a is None:
                         continue
 
@@ -479,13 +479,13 @@ class Updates:
                     availarchs = []
                     for (n,a) in hapdict:
                         availarchs.append(a)
-                    a = rpmUtils.arch.getBestArchFromList(availarchs, myarch=self.myarch)
+                    a = arch.getBestArchFromList(availarchs, myarch=self.myarch)
                     if a is None:
                         continue
                         
                     (rpm_e, rpm_v, rpm_r) = hipdict[(n, rpm_a)][0] # there can be just one
                     (e, v, r) = hapdict[(n, a)][0] # just one, I'm sure, I swear!
-                    rc = rpmUtils.miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
+                    rc = miscutils.compareEVR((e, v, r), (rpm_e, rpm_v, rpm_r))
                     if rc > 0:
                         # this is definitely an update - put it in the dict
                         if (n, rpm_a, rpm_e, rpm_v, rpm_r) not in updatedict:
@@ -704,7 +704,7 @@ class Updates:
                 pkgtup2 = highdict[(n, a)]
                 done = True
                 (n2, a2, e2, v2, r2) = pkgtup2
-                rc = rpmUtils.miscutils.compareEVR((e,v,r), (e2, v2, r2))
+                rc = miscutils.compareEVR((e,v,r), (e2, v2, r2))
                 if rc > 0:
                     highdict[(n, a)] = pkgtup
         

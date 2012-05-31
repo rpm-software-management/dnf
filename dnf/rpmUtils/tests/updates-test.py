@@ -1,6 +1,6 @@
 
-import rpmUtils.updates
-import rpmUtils.arch
+import dnf.rpmUtils.updates
+import dnf.rpmUtils.arch
 
 instlist = [('foo', 'i386', '0', '1', '1'),
             ('do', 'i386', '0', '2', '3'),
@@ -32,14 +32,14 @@ obslist = {('quux', 'noarch', '0', '1', '3'): [('bar', None, (None, None, None))
            }
            
 
-up = rpmUtils.updates.Updates(instlist, availlist)
+up = dnf.rpmUtils.updates.Updates(instlist, availlist)
 up.debug=1
 up.exactarch=1
 #up.myarch = 'sparc64'
-up._is_multilib = rpmUtils.arch.isMultiLibArch(up.myarch)
-up._archlist = rpmUtils.arch.getArchList(up.myarch)
+up._is_multilib = dnf.rpmUtils.arch.isMultiLibArch(up.myarch)
+up._archlist = dnf.rpmUtils.arch.getArchList(up.myarch)
 print up._archlist
-up._multilib_compat_arches = rpmUtils.arch.getMultiArchInfo(up.myarch)
+up._multilib_compat_arches = dnf.rpmUtils.arch.getMultiArchInfo(up.myarch)
 up.doUpdates()
 up.condenseUpdates()
 

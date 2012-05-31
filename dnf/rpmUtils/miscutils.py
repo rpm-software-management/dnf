@@ -23,7 +23,8 @@ import sys
 import locale
 import signal
 
-import rpmUtils.transaction
+from . import RpmUtilsError
+import transaction
 
 def rpmOutToStr(arg):
     if type(arg) != types.StringType:
@@ -333,7 +334,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
     """Performs roughly the equivalent of rpm2cpio(8).
        Reads the package from fdno, and dumps the cpio payload to out,
        using bufsize as the buffer size."""
-    ts = rpmUtils.transaction.initReadOnlyTransaction()
+    ts = transaction.initReadOnlyTransaction()
     hdr = ts.hdrFromFdno(fdno)
     del ts
     
@@ -343,7 +344,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         # TODO: someone implement me!
     #el
     if compr != 'gzip':
-        raise rpmUtils.RpmUtilsError, \
+        raise RpmUtilsError, \
               'Unsupported payload compressor: "%s"' % compr
     f = gzip.GzipFile(None, 'rb', None, os.fdopen(fdno, 'rb', bufsize))
     while 1:
@@ -420,7 +421,7 @@ def hdrFromPackage(ts, package):
     try:
         fdno = os.open(package, os.O_RDONLY)
     except OSError, e:
-        raise rpmUtils.RpmUtilsError, 'Unable to open file'
+        raise RpmUtilsError, 'Unable to open file'
     
     # XXX: We should start a readonly ts here, so we don't get the options
     # from the other one (sig checking, etc)
@@ -428,16 +429,16 @@ def hdrFromPackage(ts, package):
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error, e:
         os.close(fdno)
-        raise rpmUtils.RpmUtilsError, "RPM Error opening Package"
+        raise RpmUtilsError, "RPM Error opening Package"
     if type(hdr) != rpm.hdr:
         os.close(fdno)
-        raise rpmUtils.RpmUtilsError, "RPM Error opening Package (type)"
+        raise RpmUtilsError, "RPM Error opening Package (type)"
     
     os.close(fdno)
     return hdr
 
 def headerFromFilename(filename):
-        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        ts = transaction.initReadOnlyTransaction()
         hdr = hdrFromPackage(ts, filename)
         return hdr
 
