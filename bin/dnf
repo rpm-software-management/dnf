@@ -7,12 +7,10 @@ if __name__ != "__main__":
     sys.exit(1)
 
 here = sys.path[0]
-if here == '/usr/bin':
-    # installed dnf package
-    dnf_toplevel = '/usr/lib/python2.7/site-packages/'
-else:
+if here != '/usr/bin':
     # git checkout
     dnf_toplevel = os.path.dirname(here)
     sys.path[0] = dnf_toplevel
+
 from dnf.cli import yummain
 yummain.user_main(sys.argv[1:], exit_code=True)
