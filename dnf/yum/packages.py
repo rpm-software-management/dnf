@@ -29,9 +29,9 @@ import fnmatch
 import stat
 import warnings
 from subprocess import Popen, PIPE
-from rpmUtils import RpmUtilsError
-import rpmUtils.miscutils
-from rpmUtils.miscutils import flagToString, stringToVersion, compareVerOnly
+from dnf.rpmUtils import RpmUtilsError
+import dnf.rpmUtils.miscutils
+from dnf.rpmUtils.miscutils import flagToString, stringToVersion, compareVerOnly
 import Errors
 import errno
 import struct
@@ -59,7 +59,7 @@ def comparePoEVR(po1, po2):
     """
     (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
     (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
-    return rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+    return dnf.rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
 def comparePoEVREQ(po1, po2):
     """
     Compare two Package or PackageEVR objects for equality.
@@ -573,7 +573,7 @@ class RpmBase(object):
                     r = self.rel
                 #(e, v, r) = (self.epoch, self.ver, self.rel)
 
-            matched = rpmUtils.miscutils.rangeCompare(
+            matched = dnf.rpmUtils.miscutils.rangeCompare(
                 reqtuple, (n, f, (e, v, r)))
             if matched:
                 result.append((n, f, (e, v, r)))
@@ -684,7 +684,7 @@ class RpmBase(object):
             return self._base_package_name_ret
 
         if hasattr(self, 'sourcerpm') and self.sourcerpm:
-            (n, v, r, e, a) = rpmUtils.miscutils.splitFilename(self.sourcerpm)
+            (n, v, r, e, a) = dnf.rpmUtils.miscutils.splitFilename(self.sourcerpm)
             if n != self.name:
                 self._base_package_name_ret = n
                 return n
@@ -731,7 +731,7 @@ class PackageEVR:
         self.release = r
         
     def compare(self,other):
-        return rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
+        return dnf.rpmUtils.miscutils.compareEVR((self.epoch, self.ver, self.rel), (other.epoch, other.ver, other.rel))
     
     def __lt__(self, other):
         if self.compare(other) < 0:
@@ -907,10 +907,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
     
     def returnHeaderFromPackage(self):
         rpmfile = self.localPkg()
-        ts = rpmUtils.transaction.initReadOnlyTransaction()
+        ts = dnf.rpmUtils.transaction.initReadOnlyTransaction()
         try:
-            hdr = rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
-        except rpmUtils.RpmUtilsError:
+            hdr = dnf.rpmUtils.miscutils.hdrFromPackage(ts, rpmfile)
+        except dnf.rpmUtils.RpmUtilsError:
             raise Errors.RepoError, 'Package Header %s: RPM Cannot open' % self
         return hdr
         
@@ -1409,11 +1409,11 @@ class YumHeaderPackage(YumAvailablePackage):
                 continue
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sFLAGS' % tag)]
-            flag = map(rpmUtils.miscutils.flagToString, lst)
+            flag = map(dnf.rpmUtils.miscutils.flagToString, lst)
             flag = map(misc.share_data, flag)
 
             lst = hdr[getattr(rpm, 'RPMTAG_%sVERSION' % tag)]
-            vers = map(rpmUtils.miscutils.stringToVersion, lst)
+            vers = map(dnf.rpmUtils.miscutils.stringToVersion, lst)
             vers = map(lambda x: (misc.share_data(x[0]), misc.share_data(x[1]),
                                   misc.share_data(x[2])), vers)
 
@@ -1508,7 +1508,7 @@ class YumHeaderPackage(YumAvailablePackage):
     def _is_pre_req(self, flag):
         """check the flags for a requirement, return 1 or 0 whether or not requires
            is a pre-requires or a not"""
-        # FIXME this should probably be put in rpmUtils.miscutils since 
+        # FIXME this should probably be put in dnf.rpmUtils.miscutils since 
         # - that's what it is
         if flag is not None:
             # Note: RPMSENSE_PREREQ == 0 since rpm-4.4'ish
@@ -2051,7 +2051,7 @@ class YumLocalPackage(YumHeaderPackage):
         if ts is None:
             #  This shouldn't be used "normally" within yum, but is very useful
             # for small scripts and debugging/etc.
-            ts = rpmUtils.transaction.initReadOnlyTransaction()
+            ts = dnf.rpmUtils.transaction.initReadOnlyTransaction()
 
         if filename is None:
             raise Errors.MiscError, \
@@ -2063,7 +2063,7 @@ class YumLocalPackage(YumHeaderPackage):
 
         
         try:
-            hdr = rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
+            hdr = dnf.rpmUtils.miscutils.hdrFromPackage(ts, self.localpath)
         except RpmUtilsError, e:
             raise Errors.MiscError, \
                 'Could not open local rpm file: %s: %s' % (self.localpath, e)

@@ -53,10 +53,10 @@ import config
 from config import ParsingError, ConfigParser
 import Errors
 import rpmsack
-import rpmUtils.updates
-from rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
-from rpmUtils.miscutils import compareEVR
-import rpmUtils.transaction
+import dnf.rpmUtils.updates
+from dnf.rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
+from dnf.rpmUtils.miscutils import compareEVR
+import dnf.rpmUtils.transaction
 import comps
 import pkgtag_db
 from repos import RepoStorage
@@ -825,7 +825,7 @@ class YumBase(depsolve.Depsolve):
 
         up_st = time.time()
 
-        self._up = rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
+        self._up = dnf.rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 7:
             self._up.debug = 1
         
@@ -2415,7 +2415,7 @@ class YumBase(depsolve.Depsolve):
         
         if check:
             ts = self.rpmdb.readOnlyTS()
-            sigresult = rpmUtils.miscutils.checkSig(ts, po.localPkg())
+            sigresult = dnf.rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
             
             if sigresult == 0:
@@ -3441,7 +3441,7 @@ class YumBase(depsolve.Depsolve):
         if os.path.exists(gpgkeyschecked):
             return 1
             
-        myts = rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
+        myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
         myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
         keys = idx.count()
@@ -3684,7 +3684,7 @@ class YumBase(depsolve.Depsolve):
 
             if not hasattr(self, '_up_obs_hack'):
                 obs_init = time.time()
-                up = rpmUtils.updates.Updates([], [])
+                up = dnf.rpmUtils.updates.Updates([], [])
                 up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
                 self.verbose_logger.debug('Obs Init time: %0.3f' % (time.time()
                                                                     - obs_init))
@@ -5773,7 +5773,7 @@ class YumBase(depsolve.Depsolve):
             return False
         if pkg1.arch not in self.arch.archlist:
             return False
-        if rpmUtils.arch.canCoinstall(pkg1.arch, pkg2.arch):
+        if dnf.rpmUtils.arch.canCoinstall(pkg1.arch, pkg2.arch):
             return False
         if self.allowedMultipleInstalls(pkg1):
             return False

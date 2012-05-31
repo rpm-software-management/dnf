@@ -29,7 +29,7 @@ try:
 except ImportError:
     lzma = None
 
-from rpmUtils.miscutils import stringToVersion, flagToString
+from dnf.rpmUtils.miscutils import stringToVersion, flagToString
 from stat import *
 try:
     import gpgme

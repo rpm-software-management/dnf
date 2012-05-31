@@ -22,9 +22,9 @@ import os.path
 import types
 import logging
 
-import rpmUtils.transaction
-import rpmUtils.miscutils
-from rpmUtils.arch import archDifference, canCoinstall
+import dnf.rpmUtils.transaction
+import dnf.rpmUtils.miscutils
+from dnf.rpmUtils.arch import archDifference, canCoinstall
 import misc
 from misc import unique, version_tuple_to_string
 from transactioninfo import TransactionMember
@@ -129,7 +129,7 @@ class Depsolve(object):
     def initActionTs(self):
         """Set up the transaction set that will be used for all the work."""
         
-        self._ts = rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+        self._ts = dnf.rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
         ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                             'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
                             'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
@@ -222,7 +222,7 @@ class Depsolve(object):
                     continue
                 rpmfile = txmbr.po.localPkg()
                 if os.path.exists(rpmfile):
-                    hdr = rpmUtils.miscutils.headerFromFilename(rpmfile)
+                    hdr = dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
                 else:
                     self.downloadHeader(txmbr.po)
                     hdr = txmbr.po.returnLocalHeader()
@@ -279,7 +279,7 @@ class Depsolve(object):
         errormsgs = []
 
         needname, flags, needversion = requirement
-        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+        niceformatneed = dnf.rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         self.verbose_logger.log(logginglevels.DEBUG_1, _('%s requires: %s'), po, niceformatneed)
         self._dscb_procReq(po, niceformatneed)
 
@@ -319,7 +319,7 @@ class Depsolve(object):
             if msg is not None: # PK
                 return self.dsCallback.format_missing_requires(reqPo, reqTup)
         (needname, needflags, needversion) = reqTup
-        ui_req = rpmUtils.miscutils.formatRequire(needname, needversion,
+        ui_req = dnf.rpmUtils.miscutils.formatRequire(needname, needversion,
                                                   needflags)
         return _('%s requires %s') % (reqPo, ui_req)
 
@@ -336,7 +336,7 @@ class Depsolve(object):
         name, arch, epoch, ver, rel = requiringPo.pkgtup
 
         needname, needflags, needversion = requirement
-        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
+        niceformatneed = dnf.rpmUtils.miscutils.formatRequire(needname, needversion, needflags)
 
 
         # we must first find out why the requirement is no longer there
@@ -417,7 +417,7 @@ class Depsolve(object):
                     if obs or txmbr.name == requiringPo.name:
                         n,f,v = requirement
                         creq = (n, _rflags[f],
-                                rpmUtils.miscutils.stringToVersion(v))
+                                dnf.rpmUtils.miscutils.stringToVersion(v))
                         # If it's identical ... checkInstall will skip it.
                         if creq not in txmbr.po.requires:
                             return True
@@ -491,7 +491,7 @@ class Depsolve(object):
         if flags == 0:
             flags = None
         if type(version) in (types.StringType, types.NoneType, types.UnicodeType):
-            (r_e, r_v, r_r) = rpmUtils.miscutils.stringToVersion(version)
+            (r_e, r_v, r_r) = dnf.rpmUtils.miscutils.stringToVersion(version)
         elif type(version) in (types.TupleType, types.ListType): # would this ever be a ListType?
             (r_e, r_v, r_r) = version
         
@@ -687,7 +687,7 @@ class Depsolve(object):
         needname, flags, needversion = conflict
         (name, arch, epoch, ver, rel) = po.pkgtup
 
-        niceformatneed = rpmUtils.miscutils.formatRequire(needname, needversion, flags)
+        niceformatneed = dnf.rpmUtils.miscutils.formatRequire(needname, needversion, flags)
         self._dscb_procConflict(po, niceformatneed)
 
         length = len(self.tsInfo)

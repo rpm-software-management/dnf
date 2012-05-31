@@ -24,8 +24,8 @@ import re
 import fnmatch
 import misc
 from packages import parsePackages
-import rpmUtils.miscutils
-from rpmUtils.miscutils import compareEVR
+import dnf.rpmUtils.miscutils
+from dnf.rpmUtils.miscutils import compareEVR
 
 class PackageSackVersion:
     def __init__(self):
@@ -709,7 +709,7 @@ class PackageSack(PackageSackBase):
         if version is None:
             version = (None, None, None)
         elif type(version) in (str, type(None), unicode):
-            version = rpmUtils.miscutils.stringToVersion(version)
+            version = dnf.rpmUtils.miscutils.stringToVersion(version)
         result = { }
         for po in self.provides.get(name, []):
             hits = po.matchingPrcos('provides', (name, flags, version))
@@ -727,7 +727,7 @@ class PackageSack(PackageSackBase):
         if version is None:
             version = (None, None, None)
         elif type(version) in (str, type(None), unicode):
-            version = rpmUtils.miscutils.stringToVersion(version)
+            version = dnf.rpmUtils.miscutils.stringToVersion(version)
         result = { }
         for po in self.requires.get(name, []):
             hits = po.matchingPrcos('requires', (name, flags, version))

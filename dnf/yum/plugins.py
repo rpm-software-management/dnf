@@ -612,7 +612,7 @@ class PreRepoSetupPluginConduit(InitPluginConduit):
         """Return a representation of the local RPM database. This
         allows querying of installed packages.
 
-        :return: a :class:`rpmUtils.RpmDBHolder` instance
+        :return: a :class:`dnf.rpmUtils.RpmDBHolder` instance
         """
         return self._base.rpmdb
 

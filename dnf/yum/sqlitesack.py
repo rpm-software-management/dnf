@@ -29,7 +29,7 @@ import Errors
 import misc
 
 from sqlutils import executeSQL, sql_esc, sql_esc_glob
-import rpmUtils.miscutils
+import dnf.rpmUtils.miscutils
 import sqlutils
 import constants
 import operator
@@ -1180,7 +1180,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
         if flags == 0:
             flags = None
         if type(version) in (str, type(None), unicode):
-            req = (name, flags, rpmUtils.miscutils.stringToVersion(
+            req = (name, flags, dnf.rpmUtils.miscutils.stringToVersion(
                 version))
         elif type(version) in (tuple, list): # would this ever be a list?
             req = (name, flags, version)
@@ -1211,7 +1211,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                 tmp = {}
                 for x in memoize.get((rep, name), []):
                     pkgkey, val = x
-                    if rpmUtils.miscutils.rangeCompare(req, val):
+                    if dnf.rpmUtils.miscutils.rangeCompare(req, val):
                         tmp.setdefault(pkgkey, []).append(val)
                 for pkgKey, hits in tmp.iteritems():
                     pkg = self._packageByKey(rep, pkgKey)
@@ -1232,7 +1232,7 @@ class YumSqlitePackageSack(yumRepo.YumPackageSack):
                        (_share_data(x['epoch']), _share_data(x['version']),
                         _share_data(x['release'])))
                 val = _share_data(val)
-                if rpmUtils.miscutils.rangeCompare(req, val):
+                if dnf.rpmUtils.miscutils.rangeCompare(req, val):
                     tmp.setdefault(x['pkgKey'], []).append(val)
             for pkgKey, hits in tmp.iteritems():
                 pkg = self._packageByKey(rep, pkgKey)

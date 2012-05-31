@@ -30,7 +30,7 @@ from misc import to_xml, decompress, repo_gen_decompress
 from misc import cElementTree_iterparse as iterparse 
 import Errors
 
-import rpmUtils.miscutils
+import dnf.rpmUtils.miscutils
 
 
 def safe_iterparse(filename):
@@ -147,7 +147,7 @@ class UpdateNotice(object):
         #  Get a list of arches we care about:
         #XXX ARCH CHANGE - what happens here if we set the arch - we need to
         # pass this in, perhaps
-        arches = set(rpmUtils.arch.getArchList())
+        arches = set(dnf.rpmUtils.arch.getArchList())
 
         filelist = "      Files :"
         for pkg in self._md['pkglist']:
@@ -351,7 +351,7 @@ class UpdateNotice(object):
 
 def _rpm_tup_vercmp(tup1, tup2):
     """ Compare two "std." tuples, (n, a, e, v, r). """
-    return rpmUtils.miscutils.compareEVR((tup1[2], tup1[3], tup1[4]),
+    return dnf.rpmUtils.miscutils.compareEVR((tup1[2], tup1[3], tup1[4]),
                                          (tup2[2], tup2[3], tup2[4]))
 
 class UpdateMetadata(object):

@@ -29,7 +29,7 @@ from constants import *
 from packages import YumInstalledPackage, YumAvailablePackage, PackageObject
 from i18n import to_unicode, to_utf8
 
-from rpmUtils.arch import getBaseArch
+from dnf.rpmUtils.arch import getBaseArch
 
 _history_dir = '/var/lib/yum/history'
 

@@ -20,9 +20,9 @@ import glob
 import os
 import os.path
 
-from rpmUtils import miscutils
-from rpmUtils import arch
-from rpmUtils.transaction import initReadOnlyTransaction
+from dnf.rpmUtils import miscutils
+from dnf.rpmUtils import arch
+from dnf.rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
 from packages import YumInstalledPackage, parsePackages

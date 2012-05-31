@@ -37,7 +37,7 @@ except ImportError:
 if not _use_iniparse:
     from ConfigParser import NoSectionError, NoOptionError, ParsingError
     from ConfigParser import ConfigParser
-import rpmUtils.transaction
+import dnf.rpmUtils.transaction
 import Errors
 import types
 from misc import get_uuid, read_in_items_from_dot_dir
@@ -1123,7 +1123,7 @@ def _getsysver(installroot, distroverpkg):
     @param distroverpkg: The value of the distroverpkg option.
     @return: The release version as a string (eg. '4' for FC4)
     '''
-    ts = rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
+    ts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     try:
         idx = ts.dbMatch('provides', distroverpkg)

@@ -37,7 +37,7 @@ import dnf.yum.Errors
 import dnf.yum.logginglevels
 import dnf.yum.misc
 import dnf.yum.plugins
-from rpmUtils.arch import isMultiLibArch
+from dnf.rpmUtils.arch import isMultiLibArch
 from dnf.yum import _, P_
 from dnf.yum.rpmtrans import RPMTransaction
 import signal
