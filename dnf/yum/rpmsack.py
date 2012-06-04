@@ -35,7 +35,12 @@ import re
 from i18n import to_unicode, _
 import constants
 
-import depsolve
+flags = {"GT": rpm.RPMSENSE_GREATER,
+         "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
+         "LT": rpm.RPMSENSE_LESS,
+         "LE": rpm.RPMSENSE_LESS | rpm.RPMSENSE_EQUAL,
+         "EQ": rpm.RPMSENSE_EQUAL,
+         None: 0 }
 
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
@@ -1478,7 +1483,7 @@ class RPMDBPackageSack(PackageSackBase):
                 if self.getProvides(req, flags, ver):
                     providers.add(rreq)
                     continue
-                flags = depsolve.flags.get(flags, flags)
+                flags = flags.get(flags, flags)
                 missing = miscutils.formatRequire(req, ver, flags)
                 prob = RPMDBProblemDependency(pkg, "requires", missing=missing)
                 problems.append(prob)
@@ -1490,7 +1495,7 @@ class RPMDBPackageSack(PackageSackBase):
                 res = self.getProvides(req, flags, ver)
                 if not res:
                     continue
-                flags = depsolve.flags.get(flags, flags)
+                flags = flags.get(flags, flags)
                 found = miscutils.formatRequire(req, ver, flags)
                 prob = RPMDBProblemDependency(pkg, "conflicts", found=found,
                                               conflicts=res)

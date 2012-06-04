@@ -67,7 +67,6 @@ import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
 from packageSack import packagesNewestByName, packagesNewestByNameArch, ListPackageSack
-import depsolve
 import plugins
 import logginglevels
 import yumRepo
@@ -171,15 +170,15 @@ class _YumCostExclude:
                 return True
         return False
 
-class YumBase(depsolve.Depsolve):
+class YumBase(object):
     """This is a primary structure and base class. It houses the
     objects and methods needed to perform most things in yum. It is
     almost an abstract class in that you will need to add your own
     class above it for most real use.
     """
     def __init__(self):
-        depsolve.Depsolve.__init__(self)
         self._conf = None
+        self._ts = None
         self._tsInfo = None
         self._rpmdb = None
         self._up = None
@@ -611,6 +610,55 @@ class YumBase(depsolve.Depsolve):
         self._tsInfo = None
         self._up = None
         self.comps = None
+
+    def _getTsInfo(self, remove_only=False):
+        """ remove_only param. says if we are going to do _only_ remove(s) in
+            the transaction. If so we don't need to setup the remote repos. """
+        if self._tsInfo is None:
+            self._tsInfo = self._transactionDataFactory()
+            self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
+            # this REALLY sucks, sadly (needed for group conditionals)
+            self._tsInfo.install_method = self.install
+            self._tsInfo.update_method = self.update
+            self._tsInfo.remove_method = self.remove
+        return self._tsInfo
+
+    def _setTsInfo(self, value):
+        self._tsInfo = value
+
+    def _delTsInfo(self):
+        self._tsInfo = None
+
+    def _getActionTs(self):
+        if not self._ts:
+            self.initActionTs()
+        return self._ts
+
+    def initActionTs(self):
+        """Set up the transaction set that will be used for all the work."""
+        self._ts = dnf.rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
+        ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
+                            'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
+                            'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
+                            'test': rpm.RPMTRANS_FLAG_TEST,
+                            'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
+                            'repackage': rpm.RPMTRANS_FLAG_REPACKAGE}
+        # This is only in newer rpm.org releases
+        if hasattr(rpm, 'RPMTRANS_FLAG_NOCONTEXTS'):
+            ts_flags_to_rpm['nocontexts'] = rpm.RPMTRANS_FLAG_NOCONTEXTS
+
+        self._ts.setFlags(0) # reset everything.
+
+        for flag in self.conf.tsflags:
+            if flag in ts_flags_to_rpm:
+                self._ts.addTsFlag(ts_flags_to_rpm[flag])
+            else:
+                self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
+
+        probfilter = 0
+        for flag in self.tsInfo.probFilterFlags:
+            probfilter |= flag
+        self._ts.setProbFilter(probfilter)
 
     def _deleteTs(self):
         del self._ts
@@ -5649,6 +5697,21 @@ class YumBase(depsolve.Depsolve):
 
         return results
 
+    def allowedMultipleInstalls(self, po):
+        """Return whether the given package object can be installed
+        multiple times with different versions.  For example, this
+        would be true of kernels and kernel modules.
+
+        :param po: the package object that this function will
+           determine whether can be install multiple times
+        :return: a boolean specifying whether *po* can be installed
+           multiple times
+        """
+        iopkgs = set(self.conf.installonlypkgs)
+        if po.name in iopkgs:
+            return True
+        return False # :hawkey
+
     def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
         """Add and enable a repository.
 
@@ -5706,6 +5769,76 @@ class YumBase(depsolve.Depsolve):
         # enable the main repo
         self.repos.enableRepo(newrepo.id)
         return newrepo
+
+    def populateTs(self, test=0, keepold=1):
+        """Populate the transaction set.
+
+        :param test: unused
+        :param keepold: whether to keep old packages
+        """
+        if self.dsCallback: self.dsCallback.transactionPopulation()
+        ts_elem = {}
+
+        if self.ts.ts is None:
+            self.initActionTs()
+
+        if keepold:
+            for te in self.ts:
+                epoch = te.E()
+                if epoch is None:
+                    epoch = '0'
+                pkginfo = (te.N(), te.A(), epoch, te.V(), te.R())
+                if te.Type() == 1:
+                    mode = 'i'
+                elif te.Type() == 2:
+                    mode = 'e'
+
+                ts_elem[(pkginfo, mode)] = 1
+
+        for txmbr in self.tsInfo.getMembers():
+            self.verbose_logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
+            if txmbr.ts_state in ['u', 'i']:
+                if (txmbr.pkgtup, 'i') in ts_elem:
+                    continue
+                rpmfile = txmbr.po.localPkg()
+                if os.path.exists(rpmfile):
+                    hdr = dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
+                else:
+                    self.downloadHeader(txmbr.po)
+                    hdr = txmbr.po.returnLocalHeader()
+
+                if txmbr.ts_state == 'u':
+                    if self.allowedMultipleInstalls(txmbr.po):
+                        self.verbose_logger.log(logginglevels.DEBUG_2,
+                            _('%s converted to install'), txmbr.po)
+                        txmbr.ts_state = 'i'
+                        txmbr.output_state = TS_INSTALL
+
+                # New-style callback with just txmbr instead of full headers?
+                if self.use_txmbr_in_callback:
+                    cbkey = txmbr
+                else:
+                    cbkey = (hdr, rpmfile)
+
+                self.ts.addInstall(hdr, cbkey, txmbr.ts_state)
+                self.verbose_logger.log(logginglevels.DEBUG_1,
+                    _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
+                if self.dsCallback:
+                    dscb_ts_state = txmbr.ts_state
+                    if dscb_ts_state == 'u' and txmbr.downgrades:
+                        dscb_ts_state = 'd'
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
+
+            elif txmbr.ts_state in ['e']:
+                if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
+                    continue
+                self.ts.addErase(txmbr.po.idx)
+                if self.dsCallback:
+                    if txmbr.downgraded_by:
+                        continue
+                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
+                self.verbose_logger.log(logginglevels.DEBUG_1,
+                    _('Removing Package %s'), txmbr.po)
 
     def setCacheDir(self):
         """Set a new cache directory.
