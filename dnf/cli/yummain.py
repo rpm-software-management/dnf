@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2005 Duke University 
+# Copyright 2005 Duke University
 
 """
 Entrance point for the yum command line interface.
@@ -101,7 +101,7 @@ def main(args):
     except Errors.YumBaseError, e:
         return exFatal(e)
 
-    # Try to open the current directory to see if we have 
+    # Try to open the current directory to see if we have
     # read and execute access. If not, chdir to /
     try:
         f = open(".")
@@ -150,7 +150,7 @@ def main(args):
 
     # Act on the command/shell result
     if result == 0:
-        # Normal exit 
+        # Normal exit
         for msg in resultmsgs:
             verbose_logger.log(logginglevels.INFO_2, '%s', msg)
         if unlock(): return 200
@@ -173,12 +173,12 @@ def main(args):
             logger.critical(msg)
         if unlock(): return 200
         return 3
-            
+
     # Depsolve stage
     verbose_logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
 
     try:
-        (result, resultmsgs) = base.buildTransaction() 
+        (result, resultmsgs) = base.buildTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
@@ -188,7 +188,7 @@ def main(args):
         return exUserCancel()
     except IOError, e:
         return exIOError(e)
-   
+
     # Act on the depsolve result
     if result == 0:
         # Normal exit

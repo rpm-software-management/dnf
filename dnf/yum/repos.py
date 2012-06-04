@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2004 Duke University 
+# Copyright 2004 Duke University
 
 import re
 import fnmatch
@@ -43,9 +43,9 @@ class _wrap_ayum_getKeyForRepo:
 class RepoStorage:
     """This class contains multiple repositories and core configuration data
        about them."""
-       
+
     def __init__(self, ayum):
-        self.repos = {} # list of repos by repoid pointing a repo object 
+        self.repos = {} # list of repos by repoid pointing a repo object
                         # of repo options/misc data
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
@@ -68,9 +68,9 @@ class RepoStorage:
         self.quick_enable_disable = {}
 
     def doSetup(self, thisrepo = None):
-        
+
         self.ayum.plugins.run('prereposetup')
-        
+
         if thisrepo is None:
             repos = self.listEnabled()
         else:
@@ -87,10 +87,10 @@ class RepoStorage:
             # so nothing else touches us
             if not repo.enabled:
                 self.disableRepo(repo.id)
-                
+
         self._setup = True
         self.ayum.plugins.run('postreposetup')
-        
+
     def __str__(self):
         return str(self.repos.keys())
 
@@ -122,12 +122,12 @@ class RepoStorage:
             thisrepo = self.repos[repoid]
             thisrepo.close()
             del self.repos[repoid]
-            
+
     def sort(self):
         repolist = self.repos.values()
         repolist.sort()
         return repolist
-        
+
     def getRepo(self, repoid):
         try:
             return self.repos[repoid]
@@ -139,7 +139,7 @@ class RepoStorage:
         """find all repositories matching fnmatch `pattern`"""
 
         result = []
-        
+
         for item in pattern.split(','):
             item = item.strip()
             match = re.compile(fnmatch.translate(item)).match
@@ -147,10 +147,10 @@ class RepoStorage:
                 if match(name):
                     result.append(repo)
         return result
-        
+
     def disableRepo(self, repoid):
         """disable a repository from use
-        
+
         fnmatch wildcards may be used to disable a group of repositories.
         returns repoid of disabled repos as list
         """
@@ -163,12 +163,12 @@ class RepoStorage:
             thisrepo = self.getRepo(repoid)
             repos.append(thisrepo.id)
             thisrepo.disable()
-        
+
         return repos
-        
+
     def enableRepo(self, repoid):
         """enable a repository for use
-        
+
         fnmatch wildcards may be used to enable a group of repositories.
         returns repoid of enables repos as list
         """
@@ -181,9 +181,9 @@ class RepoStorage:
             thisrepo = self.getRepo(repoid)
             repos.append(thisrepo.id)
             thisrepo.enable()
-        
+
         return repos
-        
+
     def listEnabled(self):
         """return list of enabled repo objects"""
 
@@ -220,7 +220,7 @@ class RepoStorage:
 
     def setCacheDir(self, cachedir):
         """sets the cachedir value in all repos"""
-        
+
         self._cachedir = cachedir
         for repo in self.repos.values():
             repo.old_base_cache_dir = repo.basecachedir
@@ -229,19 +229,19 @@ class RepoStorage:
 
     def setProgressBar(self, obj):
         """sets the progress bar for downloading files from repos"""
-        
+
         for repo in self.repos.values():
             repo.setCallback(obj)
 
     def setFailureCallback(self, obj):
         """sets the failure callback for all repos"""
-        
+
         for repo in self.repos.values():
             repo.setFailureObj(obj)
 
     def setMirrorFailureCallback(self, obj):
         """sets the failure callback for all mirrors"""
-        
+
         for repo in self.repos.values():
             repo.setMirrorFailureObj(obj)
 
@@ -255,7 +255,7 @@ class RepoStorage:
 
     def populateSack(self, which='enabled', mdtype='metadata', callback=None, cacheonly=0):
         """
-        This populates the package sack from the repositories, two optional 
+        This populates the package sack from the repositories, two optional
         arguments:
             - which='repoid, enabled, all'
             - mdtype='metadata, filelists, otherdata, all'
@@ -287,7 +287,7 @@ class RepoStorage:
             data = ['metadata', 'filelists', 'otherdata']
         else:
             data = [ mdtype ]
-         
+
         for repo in myrepos:
             sack = repo.getPackageSack()
             try:
@@ -302,7 +302,7 @@ class RepoStorage:
 
 
 class Repository:
-    """this is an actual repository object"""       
+    """this is an actual repository object"""
 
     def __init__(self, repoid):
         self.id = repoid
@@ -325,7 +325,7 @@ class Repository:
 
     def __hash__(self):
         return hash(self.id)
-        
+
     def __del__(self):
         self.close()
 
@@ -346,7 +346,7 @@ class Repository:
     def enable(self):
         self.setAttribute('enabled', 1)
         self.quick_enable_disable[self.id] = True
-                    
+
     def disable(self):
         self.setAttribute('enabled', 0)
         self.quick_enable_disable[self.id] = False
@@ -365,13 +365,13 @@ class Repository:
 
     def getGroupLocation(self):
         raise NotImplementedError()
- 
+
     def getPackageSack(self):
         raise NotImplementedError()
 
     def setup(self, cache):
         raise NotImplementedError()
-                    
+
     def setCallback(self, callback):
         raise NotImplementedError()
 

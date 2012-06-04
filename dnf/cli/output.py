@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2005 Duke University 
+# Copyright 2005 Duke University
 
 import sys
 import time
@@ -110,7 +110,7 @@ class YumTerm:
         'reverse' : 'rev',
         'normal' : 'sgr0',
         }
-    
+
     __colors = {
         'black' : 0,
         'blue' : 1,
@@ -237,7 +237,7 @@ class YumTerm:
         if not term_stream.isatty():
             self.__enabled = False
             return
-        
+
         # Check the terminal type.  If we fail, then assume that the
         # terminal has no capabilities.
         try:
@@ -250,7 +250,7 @@ class YumTerm:
         if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
             self.columns = curses.tigetnum('cols')
         self.lines = curses.tigetnum('lines')
-        
+
         # Look up string capabilities.
         for cap_name in self.MODE:
             mode = cap_name
@@ -291,7 +291,7 @@ class YumTerm:
         string in the list *needles*.  Prefix each occurrence with
         *beg*, and postfix each occurrence with *end*, then return the
         modified string.  For example::
-           
+
            >>> yt = YumTerm()
            >>> yt.sub('spam and eggs', 'x', 'z', ['and'])
            'spam xandz eggs'
@@ -303,7 +303,7 @@ class YumTerm:
         with each occurrence of the strings in *needles* in bold
         face.  Note, however, that the :func:`sub_mode`,
         :func:`sub_bold`, :func:`sub_fg`, and :func:`sub_bg` methods
-        provide convenient ways to access this same emphasizing functionality. 
+        provide convenient ways to access this same emphasizing functionality.
 
         :param haystack: the string to be modified
         :param beg: the string to be prefixed onto matches
@@ -387,7 +387,7 @@ class YumTerm:
           in *needles*
         """
         return self.sub_mode(haystack, 'bold', needles, **kwds)
-    
+
     def sub_fg(self, haystack, color, needles, **kwds):
         """Search the string *haystack* for all occurrences of any
         string in the list *needles*.  Prefix each occurrence with
@@ -444,7 +444,7 @@ class YumOutput:
         self.term = YumTerm()
         self._last_interrupt = None
 
-    
+
     def printtime(self):
         """Return a string representing the current time in the form::
 
@@ -458,7 +458,7 @@ class YumOutput:
         ret = months[int(time.strftime('%m', now)) - 1] + \
               time.strftime(' %d %T ', now)
         return ret
-         
+
     def failureReport(self, errobj):
         """Perform failure output for failovers from urlgrabber
 
@@ -469,8 +469,8 @@ class YumOutput:
         self.logger.error('%s: %s', errobj.url, errobj.exception)
         self.logger.error(_('Trying other mirror.'))
         raise errobj.exception
-    
-        
+
+
     def simpleProgressBar(self, current, total, name=None):
         """Output the current status to the terminal using a simple
         status bar.
@@ -531,7 +531,7 @@ class YumOutput:
                     total_width=None, indent=''):
         """Dynamically calculate the widths of the columns that the
         fields in data should be placed into for output.
-        
+
         :param data: a list of dictionaries that represent the data to
            be output.  Each dictionary in the list corresponds to a
            column of output. The keys of the dictionary are the
@@ -655,7 +655,7 @@ class YumOutput:
 
     def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
         """Return a row of data formatted into a string for output.
-        Items can overflow their columns. 
+        Items can overflow their columns.
 
         :param columns: a list of tuples containing the data to
            output.  Each tuple contains first the item to be output,
@@ -726,7 +726,7 @@ class YumOutput:
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
         """Print a package as a line, with the package itself in envra
-        format so it can be passed to list/install/etc. 
+        format so it can be passed to list/install/etc.
 
         :param pkg: the package to be printed
         :param ui_overflow: unused
@@ -766,7 +766,7 @@ class YumOutput:
                                  initial_indent=key,
                                  subsequent_indent='     ...: ')
         return ret
-    
+
     def fmtSection(self, name, fill='='):
         """Format and return a section header.  The format of the
         header is a line with *name* centred, and *fill* repeated on
@@ -803,7 +803,7 @@ class YumOutput:
     def infoOutput(self, pkg, highlight=False):
         """Print information about the given package.
 
-        :param pkg: the package to print information about 
+        :param pkg: the package to print information about
         :param hightlight: highlighting options for the name of the
            package
         """
@@ -845,7 +845,7 @@ class YumOutput:
         print self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license))
         print self.fmtKeyValFill(_("Description : "),self._enc(pkg.description))
         print ""
-    
+
     def updatesObsoletesList(self, uotup, changetype, columns=None):
         """Print a simple string that explains the relationship
         between the members of an update or obsoletes tuple.
@@ -890,7 +890,7 @@ class YumOutput:
            packages contains, e.g. 'Available Packages'
         :param outputType: The type of information to be printed.
            Current options::
-           
+
               'list' - simple pkg list
               'info' - similar to rpm -qi output
         :param highlight_na: a dictionary containing information about
@@ -909,7 +909,7 @@ class YumOutput:
         :param highlight_modes: dictionary containing information
               about to highlight the packages in *highlight_na*.
               *highlight_modes* should contain the following keys::
-                 
+
                  'not_in' - highlighting used for packages not in *highlight_na*
                  '=' - highlighting used when the package versions are equal
                  '<' - highlighting used when the package has a lower version number
@@ -950,9 +950,9 @@ class YumOutput:
             if thingslisted == 0:
                 return 1, ['No Packages to list']
             return 0, []
-        
-    
-        
+
+
+
     def userconfirm(self):
         """Get a yes or no from the user, and default to No
 
@@ -984,9 +984,9 @@ class YumOutput:
 
         if len(choice) == 0 or choice not in yui:
             return False
-        else:            
+        else:
             return True
-    
+
     def _cli_confirm_gpg_key_import(self, keydict):
         # FIXME what should we be printing here?
         return self.userconfirm()
@@ -1050,10 +1050,10 @@ class YumOutput:
                     self.simpleEnvraList(ipkg or apkg, ui_overflow=True,
                                          indent=indent, highlight=highlight,
                                          columns=columns)
-    
+
     def displayPkgsInGroups(self, group):
         """Output information about the packages in a given group
-        
+
         :param group: a Group object to output information about
         """
         print _('\nGroup: %s') % group.ui_name
@@ -1102,12 +1102,12 @@ class YumOutput:
                 continue
 
             for req in sorted(results[pkg]):
-                reqlist = results[pkg][req] 
+                reqlist = results[pkg][req]
                 print _("  dependency: %s") % prco_tuple_to_string(req)
                 if not reqlist:
                     print _("   Unsatisfied dependency")
                     continue
-                
+
                 seen = {}
                 for po in reversed(sorted(reqlist)):
                     key = (po.name, po.arch)
@@ -1138,21 +1138,21 @@ class YumOutput:
                     'E', # exa
                     'Z', # zetta
                     'Y'] # yotta
-    
+
         if SI: step = 1000.0
         else: step = 1024.0
-    
+
         thresh = 999
         depth = 0
         max_depth = len(symbols) - 1
-    
+
         # we want numbers between 0 and thresh, but don't exceed the length
         # of our list.  In that event, the formatting will be screwed up,
         # but it'll still show the right number.
         while number > thresh and depth < max_depth:
             depth  = depth + 1
             number = number / step
-    
+
         if type(number) == type(1) or type(number) == type(1L):
             format = '%i%s%s'
         elif number < 9.95:
@@ -1161,7 +1161,7 @@ class YumOutput:
             format = '%.1f%s%s'
         else:
             format = '%.0f%s%s'
-    
+
         return(format % (float(number or 0), space, symbols[depth]))
 
     @staticmethod
@@ -1200,7 +1200,7 @@ class YumOutput:
             if highlight is None:
                 highlight = self.conf.color_search_match
             msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
-        
+
         print msg
 
         if verbose is None:
@@ -1256,10 +1256,10 @@ class YumOutput:
            output
         """
         return self.matchcallback(po, values, matchfor, verbose=True)
-        
+
     def reportDownloadSize(self, packages, installonly=False):
         """Report the total download size for a set of packages
-        
+
         :param packages: a list of package objects
         :param installonly: whether the transaction consists only of installations
         """
@@ -1327,7 +1327,7 @@ class YumOutput:
             self.verbose_logger.log(logginglevels.INFO_1,
                                     _("Installed size: %s"),
                                     self.format_number(totsize))
-            
+
     def listTransaction(self):
         """Return a string representation of the transaction in an
         easy-to-read format.
@@ -1420,7 +1420,7 @@ class YumOutput:
                                  obspo.arch, obspo.printVer())
                     msg = msg+appended
                 totalmsg = totalmsg + msg
-        
+
             if lines:
                 out.append(totalmsg)
 
@@ -1486,16 +1486,16 @@ Transaction Summary
                 out.append(msg % (utf8_width_fill(action, max_msg_action),
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
-        
+
     def postTransactionOutput(self):
         """Returns a human-readable summary of the results of the
         transaction.
-        
+
         :return: a string containing a human-readable summary of the
            results of the transaction
         """
         out = ''
-        
+
         self.tsInfo.makelists()
 
         #  Works a bit like calcColumns, but we never overflow a column we just
@@ -1527,9 +1527,9 @@ Transaction Summary
                 col_lens[col] *= -1
             return col_lens
 
-        for (action, pkglist) in [(_('Removed'), self.tsInfo.removed), 
+        for (action, pkglist) in [(_('Removed'), self.tsInfo.removed),
                                   (_('Dependency Removed'), self.tsInfo.depremoved),
-                                  (_('Installed'), self.tsInfo.installed), 
+                                  (_('Installed'), self.tsInfo.installed),
                                   (_('Dependency Installed'), self.tsInfo.depinstalled),
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
@@ -1559,7 +1559,7 @@ Transaction Summary
         return out
 
     def setupProgressCallbacks(self):
-        """Set up the progress callbacks and various 
+        """Set up the progress callbacks and various
            output bars based on debug level.
         """
         # if we're below 2 on the debug level we don't need to be outputting
@@ -1594,11 +1594,11 @@ Transaction Summary
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
         self.dsCallback = dscb
-    
+
     def setupProgessCallbacks(self):
         """This function is for API purposes only to protect the typo."""
         self.setupProgressCallbacks()
-    
+
     def setupKeyImportCallbacks(self):
         """Set up callbacks to import and confirm gpg public keys."""
 
@@ -2174,7 +2174,7 @@ to exit.
             print _("Return-Code    :"), _("Failure:"), old.return_code
         else:
             print _("Return-Code    :"), _("Success")
-            
+
         if old.cmdline is not None:
             if type(old.cmdline) == type([]):
                 for cmdline in old.cmdline:
@@ -2189,7 +2189,7 @@ to exit.
             default_addons = set(['config-main', 'config-repos', 'saved_tx'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
-                print _("Additional non-default information stored: %d" 
+                print _("Additional non-default information stored: %d"
                             % len(non_default))
 
         if old.trans_with:
@@ -2322,7 +2322,7 @@ to exit.
         print "-" * 79
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
-                'fortnight' : {}, 'quarter' : {}, 'half' : {}, 
+                'fortnight' : {}, 'quarter' : {}, 'half' : {},
                 'year' : {}, 'all' : {}}
         for old in self.history.old(tids):
             name = self._pwd_ui_username(old.loginuid, 26)
@@ -2397,7 +2397,7 @@ to exit.
         if not old:
             self.logger.critical(_('No Transaction %s found') % tid)
             return 1, ['Failed history addon-info']
-            
+
         hist_data = old[0]
         addon_info = self.history.return_addon_data(hist_data.tid)
         if len(extcmds) <= 2:
@@ -2406,9 +2406,9 @@ to exit.
             for itemname in self.history.return_addon_data(hist_data.tid):
                 print '  %s' % itemname
             print ''
-            
+
             return 0, ['history addon-info']
-        
+
         for item in extcmds[2:]:
             if item in addon_info:
                 self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
@@ -2597,7 +2597,7 @@ to exit.
 
 class DepSolveProgressCallBack:
     """A class to provide text output callback functions for Dependency Solver callback."""
-    
+
     def __init__(self, ayum=None):
         """requires yum-cli log and errorlog functions as arguments"""
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
@@ -2614,7 +2614,7 @@ class DepSolveProgressCallBack:
            being added to the transaction set.
 
         Valid current values for *mode* are::
-        
+
            i = the package will be installed
            u = the package will be an update
            e = the package will be erased
@@ -2687,7 +2687,7 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
-    
+
     def groupRemoveReq(self, po, hits):
         """Output a message stating that the given package will not be
         removed. This method is used during leaf-only group remove
@@ -2727,12 +2727,12 @@ class DepSolveProgressCallBack:
         msg = _('Package: %s') % (prob_pkg,)
         ui_req = formatRequire(needname, needversion, needflags)
         msg += _('\n    Requires: %s') % (ui_req,)
-        
+
         # if DepSolveProgressCallback() is used instead of DepSolveProgressCallback(ayum=<YumBase Object>)
         # then ayum has no value and we can't continue to find details about the missing requirements
         if not yb:
             return msg
-        
+
         def _msg_pkg(action, pkg, needname):
             " Add a package to the message, including any provides matches. "
             msg = _('\n    %s: %s (%s)') % (action, pkg, pkg.ui_from_repo)
@@ -2801,13 +2801,13 @@ class DepSolveProgressCallBack:
         for pkg in sorted(yb.pkgSack.searchNames(available_names)):
             tst, last, msg = _run_avail_pkg(pkg, msg)
         return msg
-    
+
     def procConflict(self, name, confname):
         """Print a message stating that two packages in the
         transaction conflict.
 
         :param name: the name of the first package involved in the
-           conflict 
+           conflict
         :param confname: the name of the second package involved in
            the conflict
         """
@@ -2820,7 +2820,7 @@ class DepSolveProgressCallBack:
         transaction conflict.
 
         :param name: the first package object involved in the
-           conflict 
+           conflict
         :param confname: the second package object involved in
            the conflict
         """
@@ -2833,7 +2833,7 @@ class DepSolveProgressCallBack:
 
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
             'with selected packages. Please wait.'))
-    
+
     def downloadHeader(self, name):
         """Output a message stating that the header for the given
         package is being downloaded.
@@ -2842,7 +2842,7 @@ class DepSolveProgressCallBack:
         """
         self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
             'to pack into transaction set.'), name)
-       
+
 
 class CacheProgressCallback:
     """A class to handle text output callbacks during metadata cache updates."""
@@ -2963,7 +2963,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
         self.output = logging.getLogger("yum.verbose.cli").isEnabledFor(logginglevels.INFO_2)
-        
+
         # for a progress bar
         self.mark = "#"
         self.marks = 22
@@ -3000,12 +3000,12 @@ class YumCliRPMCallBack(RPMBaseCallback):
         process = self.action[action]
 
         wid1 = self._max_action_width()
-        
+
         if type(package) not in types.StringTypes:
             pkgname = str(package)
         else:
             pkgname = self.pkgname_ui(package)
-            
+
         self.lastpackage = package
         if te_total == 0:
             percent = 0
@@ -3108,7 +3108,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         process = _('Verifying')
         pkgname = str(txmbr.po)
         wid1    = max(utf8_width(process), self._max_action_width())
-        self._out_event(100, 100, te_current, te_total, 
+        self._out_event(100, 100, te_current, te_total,
                         percent, process, pkgname, wid1)
 
 
@@ -3123,13 +3123,13 @@ def progressbar(current, total, name=None):
     :param name: a name to label the progress bar with
     """
     """simple progress bar 50 # marks"""
-    
+
     mark = '#'
     if not sys.stdout.isatty():
         return
-        
+
     if current == 0:
-        percent = 0 
+        percent = 0
     else:
         if total != 0:
             percent = float(current) / total
@@ -3164,7 +3164,7 @@ def progressbar(current, total, name=None):
         hashbar = mark * int(width * percent)
         output = '\r%s: [%-*s]%s' % (utf8_width_fill(name, nwid, nwid), width,
                                      hashbar, end)
-     
+
     if current <= total:
         sys.stdout.write(output)
 
@@ -3172,7 +3172,7 @@ def progressbar(current, total, name=None):
         sys.stdout.write('\n')
 
     sys.stdout.flush()
-        
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "format_number":
@@ -3217,7 +3217,7 @@ if __name__ == "__main__":
         print ""
         for i in xrange(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
-            time.sleep(0.1)        
+            time.sleep(0.1)
         print ""
         print " Doing CB, big proc / big pkg"
         print ""
@@ -3259,7 +3259,7 @@ if __name__ == "__main__":
         print ""
         for i in xrange(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
-            time.sleep(0.1)        
+            time.sleep(0.1)
         print ""
         print " Doing CB, i18n: big proc / big pkg"
         print ""
@@ -3267,4 +3267,4 @@ if __name__ == "__main__":
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
         print ""
-        
+

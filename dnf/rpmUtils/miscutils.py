@@ -30,9 +30,9 @@ def rpmOutToStr(arg):
     if type(arg) != types.StringType:
     # and arg is not None:
         arg = str(arg)
-        
+
     return arg
-    
+
 
 def compareEVR((e1, v1, r1), (e2, v2, r2)):
     # return 1: a is newer than b
@@ -58,15 +58,15 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
 def compareVerOnly(v1, v2):
     """compare version strings only using rpm vercmp"""
     return compareEVR(('', v1, ''), ('', v2, ''))
-    
+
 def checkSig(ts, package):
-    """Takes a transaction set and a package, check it's sigs, 
+    """Takes a transaction set and a package, check it's sigs,
     return 0 if they are all fine
     return 1 if the gpg key can't be found
     return 2 if the header is in someway damaged
-    return 3 if the key is not trusted 
+    return 3 if the key is not trusted
     return 4 if the pkg is not gpg or pgp signed"""
-    
+
     value = 0
     currentflags = ts.setVSFlags(0)
     fdno = os.open(package, os.O_RDONLY)
@@ -101,26 +101,26 @@ def checkSig(ts, package):
 def getSigInfo(hdr):
     """checks signature from an hdr hand back signature information and/or
        an error code"""
-       
+
     locale.setlocale(locale.LC_ALL, 'C')
     string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
     siginfo = hdr.sprintf(string)
     if siginfo != '(none)':
-        error = 0 
+        error = 0
         sigtype, sigdate, sigid = siginfo.split(',')
     else:
         error = 101
         sigtype = 'MD5'
         sigdate = 'None'
         sigid = 'None'
-        
+
     infotuple = (sigtype, sigdate, sigid)
     return error, infotuple
 
 def pkgTupleFromHeader(hdr):
     """return a pkgtuple (n, a, e, v, r) from a hdr object, converts
        None epoch to 0, as well."""
-   
+
     name = hdr['name']
 
     # RPMTAG_SOURCEPACKAGE: RPMTAG_SOURCERPM is not necessarily there for
@@ -130,7 +130,7 @@ def pkgTupleFromHeader(hdr):
         arch = hdr['arch']
     else:
         arch = 'src'
-        
+
     ver = hdr['version']
     rel = hdr['release']
     epoch = hdr['epoch']
@@ -138,8 +138,8 @@ def pkgTupleFromHeader(hdr):
         epoch = '0'
     pkgtuple = (name, arch, epoch, ver, rel)
     return pkgtuple
-    
-    
+
+
 def rangeCheck(reqtuple, pkgtuple):
     """returns true if the package epoch-ver-rel satisfy the range
        requested in the reqtuple:
@@ -164,7 +164,7 @@ def rangeCompare(reqtuple, provtuple):
     # and you thought we were done having fun
     # if the requested release is left out then we have
     # to remove release from the package prco to make sure the match
-    # is a success - ie: if the request is EQ foo 1:3.0.0 and we have 
+    # is a success - ie: if the request is EQ foo 1:3.0.0 and we have
     # foo 1:3.0.0-15 then we have to drop the 15 so we can match
     if reqr is None:
         r = None
@@ -227,9 +227,9 @@ def rangeCompare(reqtuple, provtuple):
 
 ###########
 # Title: Remove duplicates from a sequence
-# Submitter: Tim Peters 
-# From: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52560                      
-    
+# Submitter: Tim Peters
+# From: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52560
+
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
 
@@ -301,8 +301,8 @@ def unique(s):
 
 def splitFilename(filename):
     """
-    Pass in a standard style rpm fullname 
-    
+    Pass in a standard style rpm fullname
+
     Return a name, version, release, epoch, arch, e.g.::
         foo-1.0-1.i386.rpm returns foo, 1.0, 1, i386
         1:bar-9-123a.ia64.rpm returns bar, 9, 123a, 1, ia64
@@ -310,7 +310,7 @@ def splitFilename(filename):
 
     if filename[-4:] == '.rpm':
         filename = filename[:-4]
-       
+
     archIndex = filename.rfind('.')
     arch = filename[archIndex+1:]
 
@@ -325,7 +325,7 @@ def splitFilename(filename):
         epoch = ''
     else:
         epoch = filename[:epochIndex]
-        
+
     name = filename[epochIndex + 1:verIndex]
     return name, ver, rel, epoch, arch
 
@@ -337,7 +337,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
     ts = transaction.initReadOnlyTransaction()
     hdr = ts.hdrFromFdno(fdno)
     del ts
-    
+
     compr = hdr[rpm.RPMTAG_PAYLOADCOMPRESSOR] or 'gzip'
     #XXX FIXME
     #if compr == 'bzip2':
@@ -352,7 +352,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         if tmp == "": break
         out.write(tmp)
     f.close()
-                 
+
 def formatRequire (name, version, flags):
     '''
     Return a human readable requirement string (ex.  foobar >= 2.0)
@@ -361,7 +361,7 @@ def formatRequire (name, version, flags):
     @param flags: binary flags ( 0010 = equal, 0100 = greater than, 1000 = less than )
     '''
     s = name
-    
+
     if flags and (type(flags) == type(0) or type(flags) == type(0L)): # Flag must be set and a int (or a long, now)
         if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER |
                     rpm.RPMSENSE_EQUAL):
@@ -376,7 +376,7 @@ def formatRequire (name, version, flags):
                 s = "%s %s" %(s, version)
     return s
 
-    
+
 def flagToString(flags):
     flags = flags & 0xf
 
@@ -422,7 +422,7 @@ def hdrFromPackage(ts, package):
         fdno = os.open(package, os.O_RDONLY)
     except OSError, e:
         raise RpmUtilsError, 'Unable to open file'
-    
+
     # XXX: We should start a readonly ts here, so we don't get the options
     # from the other one (sig checking, etc)
     try:
@@ -433,7 +433,7 @@ def hdrFromPackage(ts, package):
     if type(hdr) != rpm.hdr:
         os.close(fdno)
         raise RpmUtilsError, "RPM Error opening Package (type)"
-    
+
     os.close(fdno)
     return hdr
 
@@ -444,10 +444,10 @@ def headerFromFilename(filename):
 
 def checkSignals():
     if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
-        if rpm.signalsCaught([signal.SIGINT, 
+        if rpm.signalsCaught([signal.SIGINT,
                               signal.SIGTERM,
                               signal.SIGPIPE,
                               signal.SIGQUIT,
                               signal.SIGHUP]):
             sys.exit(1)
-    
+

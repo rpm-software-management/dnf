@@ -82,7 +82,7 @@ def logLevelFromErrorLevel(error_level):
     """ Convert an old-style error logging level to the new style. """
     error_table = { -1 : __NO_LOGGING, 0 : logging.CRITICAL, 1 : logging.ERROR,
         2 : logging.WARNING}
-    
+
     return __convertLevel(error_level, error_table)
 
 def logLevelFromDebugLevel(debug_level):
@@ -112,7 +112,7 @@ def __convertLevel(level, table):
 def setDebugLevel(level):
     converted_level = logLevelFromDebugLevel(level)
     logging.getLogger("yum.verbose").setLevel(converted_level)
-    
+
 def setErrorLevel(level):
     converted_level = logLevelFromErrorLevel(level)
     logging.getLogger("yum").setLevel(converted_level)
@@ -123,7 +123,7 @@ def doLoggingSetup(debuglevel, errorlevel,
                    syslog_device='/dev/log'):
     """
     Configure the python logger.
-    
+
     errorlevel is optional. If provided, it will override the logging level
     provided in the logging config file for error messages.
     debuglevel is optional. If provided, it will override the logging level
@@ -131,32 +131,32 @@ def doLoggingSetup(debuglevel, errorlevel,
     """
     global _added_handlers
 
-    #logging.basicConfig() # this appears to not change anything in our 
+    #logging.basicConfig() # this appears to not change anything in our
     # logging setup - disabling this b/c of the behaviors in yum ticket 525
     # -skvidal
-    
+
 
     if _added_handlers:
         if debuglevel is not None:
             setDebugLevel(debuglevel)
-        if errorlevel is not None:  
+        if errorlevel is not None:
             setErrorLevel(errorlevel)
         return
 
     plainformatter = logging.Formatter("%(message)s")
-    
+
     console_stdout = logging.StreamHandler(sys.stdout)
     console_stdout.setFormatter(plainformatter)
     verbose = logging.getLogger("yum.verbose")
     verbose.propagate = False
     verbose.addHandler(console_stdout)
-        
+
     console_stderr = logging.StreamHandler(sys.stderr)
     console_stderr.setFormatter(plainformatter)
     logger = logging.getLogger("yum")
     logger.propagate = False
     logger.addHandler(console_stderr)
-   
+
     filelogger = logging.getLogger("yum.filelogging")
     filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
@@ -183,7 +183,7 @@ def doLoggingSetup(debuglevel, errorlevel,
 
     if debuglevel is not None:
         setDebugLevel(debuglevel)
-    if errorlevel is not None:  
+    if errorlevel is not None:
         setErrorLevel(errorlevel)
 
 def setFileLog(uid, logfile, cleanup=None):
@@ -196,12 +196,12 @@ def setFileLog(uid, logfile, cleanup=None):
             logdir = os.path.dirname(logfile)
             if not os.path.exists(logdir):
                 os.makedirs(logdir, mode=0755)
-            
+
             if not os.path.exists(logfile):
                 f = open(logfile, 'w')
                 os.chmod(logfile, 0600) # making sure umask doesn't catch us up
                 f.close()
-                
+
             filelogger = logging.getLogger("yum.filelogging")
             filehandler = logging.FileHandler(logfile)
             formatter = logging.Formatter("%(asctime)s %(message)s",

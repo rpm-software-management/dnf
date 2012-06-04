@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2002 Duke University 
+# Copyright 2002 Duke University
 
 """
 Configuration parser and default values for yum.
@@ -71,7 +71,7 @@ class Option(object):
         self._attrname = '__opt%d' % id(self)
 
     def __get__(self, obj, objtype):
-        """Called when the option is read (via the descriptor protocol). 
+        """Called when the option is read (via the descriptor protocol).
 
         :param obj: The configuration instance to modify.
         :param objtype: The type of the config instance (not used).
@@ -85,7 +85,7 @@ class Option(object):
         return getattr(obj, self._attrname, None)
 
     def __set__(self, obj, value):
-        """Called when the option is set (via the descriptor protocol). 
+        """Called when the option is set (via the descriptor protocol).
 
         :param obj: The configuration instance to modify.
         :param value: The value to set the option to.
@@ -101,8 +101,8 @@ class Option(object):
         setattr(obj, self._attrname, value)
 
     def setup(self, obj, name):
-        """Initialise the option for a config instance. 
-        This must be called before the option can be set or retrieved. 
+        """Initialise the option for a config instance.
+        This must be called before the option can be set or retrieved.
 
         :param obj: :class:`BaseConfig` (or subclass) instance.
         :param name: Name of the option.
@@ -196,7 +196,7 @@ class UrlOption(Option):
     scheme.
     """
 
-    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'), 
+    def __init__(self, default=None, schemes=('http', 'ftp', 'file', 'https'),
             allow_none=False):
         super(UrlOption, self).__init__(default)
         self.schemes = schemes
@@ -246,7 +246,7 @@ class UrlListOption(ListOption):
 
         # Hold a UrlOption instance to assist with parsing
         self._urloption = UrlOption(schemes=schemes)
-        
+
     def parse(self, s):
         """Parse a string containing multiple urls into a list, and
         ensure that they are in a scheme that can be used.
@@ -279,7 +279,7 @@ class IntOption(Option):
         super(IntOption, self).__init__(default)
         self._range_min = range_min
         self._range_max = range_max
-        
+
     def parse(self, s):
         """Parse a string containing an integer.
 
@@ -340,10 +340,10 @@ class SecondsOption(Option):
         until something happens. Works like :class:`BytesOption`.  Note
         that due to historical president -1 means "never", so this accepts
         that and allows the word never, too.
-    
+
         Valid inputs: 100, 1.5m, 90s, 1.2d, 1d, 0xF, 0.1, -1, never.
         Invalid inputs: -10, -0.1, 45.6Z, 1d6h, 1day, 1y.
-    
+
         :param s: the string to parse
         :return: an integer representing the number of seconds
            specified by *s*
@@ -383,7 +383,7 @@ class BoolOption(Option):
         """Parse a string containing a boolean value.  1, yes, and
         true will evaluate to True; and 0, no, and false will evaluate
         to False.  Case is ignored.
-        
+
         :param s: the string containing the boolean value
         :return: the boolean value contained in *s*
         :raises: :class:`ValueError` if there is an error in parsing
@@ -400,7 +400,7 @@ class BoolOption(Option):
     def tostring(self, value):
         """Convert a boolean value to a string value.  This does the
         opposite of the :func:`parse` method above.
-        
+
         :param value: the boolean value to convert
         :return: a string representation of *value*
         """
@@ -433,7 +433,7 @@ class SelectionOption(Option):
         super(SelectionOption, self).__init__(default)
         self._allowed = allowed
         self._mapper  = mapper
-        
+
     def parse(self, s):
         """Parse a string for specific values.
 
@@ -477,7 +477,7 @@ class BytesOption(Option):
         number followed by an optional single character unit. Valid
         units are 'k', 'M', 'G'. Case is ignored. The convention that
         1k = 1024 bytes is used.
-       
+
         Valid inputs: 100, 123M, 45.6k, 12.4G, 100K, 786.3, 0.
         Invalid inputs: -10, -0.1, 45.6L, 123Mb.
 
@@ -497,7 +497,7 @@ class BytesOption(Option):
         else:
             n = s
             mult = 1
-             
+
         try:
             n = float(n)
         except ValueError:
@@ -586,7 +586,7 @@ class BaseConfig(object):
                 # No matching option in this section, try inheriting
                 if parent and option.inherit:
                     value = getattr(parent, name)
-               
+
             if value is not None:
                 setattr(self, name, value)
 
@@ -655,7 +655,7 @@ class BaseConfig(object):
                 raise ValueError("not populated, don't know section")
             section = self._section
 
-        # Updated the ConfigParser with the changed values    
+        # Updated the ConfigParser with the changed values
         cfgOptions = self.cfg.options(section)
         for name,value in self.iteritems():
             option = self.optionobj(name)
@@ -686,7 +686,7 @@ class BaseConfig(object):
         :param option: string specifying the option to set the value
            of
         :param value: the value to set the option to
-        """        
+        """
         warnings.warn('setConfigOption() will go away in a future version of Yum.\n'
                 'Please set option values as attributes or using setattr().',
                 DeprecationWarning)
@@ -715,7 +715,7 @@ class StartupConf(BaseConfig):
     syslog_facility = Option('LOG_USER')
     syslog_device = Option('/dev/log')
     persistdir = Option('/var/lib/yum')
-    
+
 class YumConf(StartupConf):
     """Configuration option definitions for yum.conf's [main] section.
 
@@ -775,7 +775,7 @@ class YumConf(StartupConf):
     enable_group_conditionals = BoolOption(True)
     groupremove_leaf_only = BoolOption(False)
     group_package_types = ListOption(['mandatory', 'default'])
-    
+
     timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 
     bandwidth = BytesOption(0)
@@ -790,7 +790,7 @@ class YumConf(StartupConf):
     mirrorlist_expire = SecondsOption(60 * 60 * 24)
     # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
-    disable_excludes = ListOption()    
+    disable_excludes = ListOption()
     skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
@@ -801,7 +801,7 @@ class YumConf(StartupConf):
                                       ('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
-                 
+
     bugtracker_url = Option('https://bugzilla.redhat.com/enter_bug.cgi?product=Fedora&version=rawhide&component=yum')
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),
@@ -825,7 +825,7 @@ class YumConf(StartupConf):
     color_update_remote    = Option('normal')
 
     color_search_match = Option('bold')
-    
+
     sslcacert = Option()
     sslverify = BoolOption(True)
     sslclientcert = Option()
@@ -840,10 +840,10 @@ class YumConf(StartupConf):
                                     parse_default=True)
     protected_multilib = BoolOption(True)
     exit_on_lock = BoolOption(False)
-    
+
     loadts_ignoremissing = BoolOption(False)
     loadts_ignorerpm = BoolOption(False)
-    
+
     clean_requirements_on_remove = BoolOption(False)
 
     upgrade_requirements_on_install = BoolOption(False)
@@ -907,8 +907,8 @@ class RepoConf(BaseConfig):
     mediaid = Option()
     gpgkey = UrlListOption()
     gpgcakey = UrlListOption()
-    exclude = ListOption() 
-    includepkgs = ListOption() 
+    exclude = ListOption()
+    includepkgs = ListOption()
 
     proxy = Inherit(YumConf.proxy)
     proxy_username = Inherit(YumConf.proxy_username)
@@ -937,14 +937,14 @@ class RepoConf(BaseConfig):
     mdpolicy = Inherit(YumConf.mdpolicy)
     mddownloadpolicy = Inherit(YumConf.mddownloadpolicy)
     cost = IntOption(1000)
-    
+
     sslcacert = Inherit(YumConf.sslcacert)
     sslverify = Inherit(YumConf.sslverify)
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
 
     skip_if_unavailable = BoolOption(False)
-    
+
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""
 
@@ -1001,7 +1001,7 @@ def readMainConfig(startupconf):
     :param startupconf: :class:`StartupConf` instance as returned by readStartupConfig()
     :return: Populated :class:`YumConf` instance
     """
-    
+
     # ' xemacs syntax hack
 
     # Set up substitution vars
@@ -1012,7 +1012,7 @@ def readMainConfig(startupconf):
     yumvars['uuid'] = startupconf.uuid
     # Note: We don't setup the FS yumvars here, because we want to be able to
     #       use the core yumvars in persistdir. Which is the base of FS yumvars.
-    
+
     # Read [main] section
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')
@@ -1025,7 +1025,7 @@ def readMainConfig(startupconf):
                                              # it annoys me
         ir_path = varReplace(ir_path, yumvars)
         setattr(yumconf, option, ir_path)
-    
+
     # Read the FS yumvars
     try:
         dir_fsvars = yumconf.installroot + "/etc/yum/vars/"
@@ -1047,28 +1047,28 @@ def readMainConfig(startupconf):
     for option in ('cachedir', 'logfile', 'persistdir'):
         _apply_installroot(yumconf, option)
 
-    # Add in some extra attributes which aren't actually configuration values 
+    # Add in some extra attributes which aren't actually configuration values
     yumconf.yumvar = yumvars
     yumconf.uid = 0
     yumconf.cache = 0
     yumconf.progess_obj = None
-    
+
     # items related to the originating config file
     yumconf.config_file_path = startupconf.config_file_path
     if os.path.exists(startupconf.config_file_path):
         yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
     else:
         yumconf.config_file_age = 0
-    
+
     # propagate the debuglevel and errorlevel values:
     yumconf.debuglevel = startupconf.debuglevel
     yumconf.errorlevel = startupconf.errorlevel
-    
+
     return yumconf
 
 def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
     """Parse the configuration file for version groups.
-    
+
     :param configfile: the configuration file to read
     :return: a dictionary containing the parsed options
     """
@@ -1097,7 +1097,7 @@ def getOption(conf, section, name, option):
     :return: The parsed value or default if value was not present
     :raises: :class:`ValueError` if the option could not be parsed
     """
-    try: 
+    try:
         val = conf.get(section, name)
     except (NoSectionError, NoOptionError):
         return option.default
@@ -1159,7 +1159,7 @@ def writeRawRepoFile(repo,only=None):
 
     :param repo: the Repo Object to write back out
     :param only: list of attributes to work on. If *only* is None, all
-       options will be written out   
+       options will be written out
     """
     if not _use_iniparse:
         return
@@ -1172,8 +1172,8 @@ def writeRawRepoFile(repo,only=None):
         for sect in ini._sections.keys():
             if varReplace(sect, repo.yumvar) == repo.id:
                 section_id = sect
-    
-    # Updated the ConfigParser with the changed values    
+
+    # Updated the ConfigParser with the changed values
     cfgOptions = repo.cfg.options(repo.id)
     for name,value in repo.iteritems():
         if value is None: # Proxy
@@ -1194,7 +1194,7 @@ def writeRawRepoFile(repo,only=None):
             continue
 
         ini[section_id][name] = ovalue
-    fp =file(repo.repofile,"w")               
+    fp =file(repo.repofile,"w")
     fp.write(str(ini))
     fp.close()
 

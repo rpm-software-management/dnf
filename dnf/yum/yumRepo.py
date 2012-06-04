@@ -372,13 +372,13 @@ class YumRepository(Repository, config.RepoConf):
     def dump(self):
         output = '[%s]\n' % self.id
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ('mediafunc', 'sack', 'metalink_data', 'grab', 
+        excluded_vars = ('mediafunc', 'sack', 'metalink_data', 'grab',
                          'grabfunc', 'repoXML', 'cfg', 'retrieved',
-                        'mirrorlistparsed', 'gpg_import_func', 
+                        'mirrorlistparsed', 'gpg_import_func',
                         'gpgca_import_func', 'failure_obj',
-                        'callback', 'confirm_func', 'groups_added', 
+                        'callback', 'confirm_func', 'groups_added',
                         'interrupt_callback', 'id', 'mirror_failure_obj',
-                        'repo_config_age', 'groupsfilename', 'copy_local', 
+                        'repo_config_age', 'groupsfilename', 'copy_local',
                         'basecachedir', 'http_headers', 'metadata_cookie',
                         'metadata_cookie_fn', 'quick_enable_disable',
                         'repoMDFile', 'timestamp_check', 'urls', 'mirrorurls',
@@ -567,7 +567,7 @@ class YumRepository(Repository, config.RepoConf):
                 self._dirSetupMkdir_p(dir)
             except Errors.RepoError, e:
                 pass
-                
+
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
         self._preload_md_from_system_cache('repomd.xml')
@@ -605,7 +605,7 @@ class YumRepository(Repository, config.RepoConf):
                         lambda self, x: self._dirSetAttr('hdrdir', x))
     gpgdir   = property(lambda self: self._dirGetAttr('gpgdir'),
                         lambda self, x: self._dirSetAttr('gpgdir', x))
-    gpgcadir   = property(lambda self: self._dirGetAttr('gpgcadir'),  
+    gpgcadir   = property(lambda self: self._dirGetAttr('gpgcadir'),
                         lambda self, x: self._dirSetAttr('gpgcadir', x))
     metadata_cookie = property(lambda self: self._dirGetAttr('metadata_cookie'))
 
@@ -722,7 +722,7 @@ class YumRepository(Repository, config.RepoConf):
                         raise Errors.RepoError, msg
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))                    
+                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
@@ -746,7 +746,7 @@ class YumRepository(Repository, config.RepoConf):
                              fdel=lambda self: setattr(self, "_metalink", None))
 
     def _getFile(self, url=None, relative=None, local=None, start=None, end=None,
-            copy_local=None, checkfunc=None, text=None, reget='simple', 
+            copy_local=None, checkfunc=None, text=None, reget='simple',
             cache=True, size=None):
         """retrieve file from the mirrorgroup for the repo
            relative to local, optionally get range from
@@ -1611,10 +1611,10 @@ Insufficient space in download directory %s
                     if os.stat(local).st_size >= int(thisdata.size):
                         misc.unlink_f(local)
             local = self._getFile(relative=remote,
-                                  local=local, 
+                                  local=local,
                                   copy_local=1,
                                   reget=reget,
-                                  checkfunc=checkfunc, 
+                                  checkfunc=checkfunc,
                                   text=text,
                                   cache=self.http_caching == 'all',
                                   size=thisdata.size)
@@ -1775,7 +1775,7 @@ Insufficient space in download directory %s
         """attempts to copy the metadata file from the system-wide cache,
            if possible"""
         return self._preload_file_from_system_cache(filename)
-    
+
     def _preload_pkg_from_system_cache(self, pkg):
         """attempts to copy the package from the system-wide cache,
            if possible"""
@@ -1852,7 +1852,7 @@ Insufficient space in download directory %s
         problems = []
         if 'repodata' in items:
             problems.extend(self._verify_md())
-        if 'comps' in items:        
+        if 'comps' in items:
             if self.enablegroups:
                 problems.extend(self._verify_comps())
         if 'packages' in items:
@@ -1901,7 +1901,7 @@ def getMirrorList(mirrorlist, pdict = None):
 
 class RepoVerifyProblem:
     """ Holder for each "problem" we find with a repo.verify(). """
-    
+
     def __init__(self, type, msg, details, fake=False):
         self.type           = type
         self.message        = msg

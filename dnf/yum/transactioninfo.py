@@ -17,9 +17,9 @@
 
 # TODOS: make all the package relationships deal with package objects
 # search by package object for TransactionData, etc.
-# provide a real TransactionData.remove(txmbr) method, It should 
+# provide a real TransactionData.remove(txmbr) method, It should
 # remove the given txmbr and iterate to remove all those in depedent relationships
-# with the given txmbr. 
+# with the given txmbr.
 
 """
 Classes and functions for manipulating a transaction to be passed
@@ -127,18 +127,18 @@ class TransactionData:
                       self.getMembers(pkgtup))
 
     def getMembers(self, pkgtup=None):
-        """takes an optional package tuple and returns all transaction members 
+        """takes an optional package tuple and returns all transaction members
            matching, no pkgtup means it returns all transaction members"""
-        
+
         returnlist = []
 
         if pkgtup is None:
             for members in self.pkgdict.itervalues():
-                returnlist.extend(members)            
+                returnlist.extend(members)
         elif pkgtup in self.pkgdict:
             returnlist.extend(self.pkgdict[pkgtup])
         return returnlist
-            
+
     # The order we resolve things in _matters_, so for sanity sort the list
     # otherwise .i386 can be different to .x86_64 etc.
     def getUnresolvedMembers(self):
@@ -155,7 +155,7 @@ class TransactionData:
         return False
 
     def getMode(self, name=None, arch=None, epoch=None, ver=None, rel=None):
-        """returns the mode of the first match from the transaction set, 
+        """returns the mode of the first match from the transaction set,
            otherwise, returns None"""
 
         txmbrs = self.matchNaevr(name=name, arch=arch, epoch=epoch, ver=ver, rel=rel)
@@ -164,14 +164,14 @@ class TransactionData:
         states = []
         for txmbr in txmbrs:
             states.append(txmbr.ts_state)
-        
+
         if 'u' in states:
             return 'u'
         elif 'i' in states:
             return 'i'
         else:
             return states[0]
-            
+
     def matchNaevr(self, name=None, arch=None, epoch=None, ver=None, rel=None):
         """returns the list of packages matching the args above"""
         if name is None:
@@ -202,7 +202,7 @@ class TransactionData:
         """ Remove these packages from the transaction. This is more user
             orientated than .remove(). Used from kickstart/install -blah. """
 
-        #  We don't have a returnPackages() here, so just try the "simple" 
+        #  We don't have a returnPackages() here, so just try the "simple"
         # specifications. Pretty much 100% hit rate on kickstart.
         txmbrs = self.matchNaevr(pattern)
         if not txmbrs:
@@ -240,23 +240,23 @@ class TransactionData:
         return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
 
     def _allowedMultipleInstalls(self, po):
-        """takes a packageObject, returns 1 or 0 depending on if the package 
+        """takes a packageObject, returns 1 or 0 depending on if the package
            should/can be installed multiple times with different vers
            like kernels and kernel modules, for example"""
-           
+
         if po.name in self.installonlypkgs:
             return True
         return False # :hawkey
-        
+
         provides = po.provides_names
         if filter (lambda prov: prov in self.installonlypkgs, provides):
             return True
-        
+
         return False
-        
+
     def add(self, txmember):
         """add a package to the transaction"""
-        
+
         for oldpo in txmember.updates:
             self.addUpdated(oldpo, txmember.po)
 
@@ -303,19 +303,19 @@ class TransactionData:
                 self._inSack.delPackage(txmbr.po)
             self._namedict[txmbr.name].remove(txmbr)
             self._unresolvedMembers.add(txmbr)
-        
+
         del self.pkgdict[pkgtup]
         if not self._namedict[pkgtup[0]]:
             del self._namedict[pkgtup[0]]
-        self.changed = True        
+        self.changed = True
         self.state_counter += 1
-    
+
     def exists(self, pkgtup):
         """tells if the pkg is in the class"""
         if pkgtup in self.pkgdict:
             if len(self.pkgdict[pkgtup]) != 0:
                 return 1
-        
+
         return 0
 
     def isObsoleted(self, pkgtup):
@@ -324,14 +324,14 @@ class TransactionData:
             for txmbr in self.getMembers(pkgtup=pkgtup):
                 if txmbr.output_state == TS_OBSOLETED:
                     return True
-        
+
         return False
-                
+
     def makelists(self, include_reinstall=False, include_downgrade=False):
         """returns lists of transaction Member objects based on mode:
            updated, installed, erased, obsoleted, depupdated, depinstalled
            deperased"""
-           
+
         self.instgroups = []
         self.removedgroups = []
         self.removed = []
@@ -351,7 +351,7 @@ class TransactionData:
                     self.depupdated.append(txmbr)
                 else:
                     self.updated.append(txmbr)
-                    
+
             elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
                 if include_reinstall and txmbr.reinstall:
                     self.reinstalled.append(txmbr)
@@ -369,7 +369,7 @@ class TransactionData:
                     self.depinstalled.append(txmbr)
                 else:
                     self.installed.append(txmbr)
-            
+
             elif txmbr.output_state == TS_ERASE:
                 if include_downgrade and txmbr.downgraded_by:
                     continue
@@ -381,18 +381,18 @@ class TransactionData:
                     self.depremoved.append(txmbr)
                 else:
                     self.removed.append(txmbr)
-                    
+
             elif txmbr.output_state == TS_OBSOLETED:
                 self.obsoleted.append(txmbr)
-                
+
             elif txmbr.output_state == TS_OBSOLETING:
                 self.installed.append(txmbr)
             elif txmbr.output_state == TS_FAILED:
                 self.failed.append(txmbr)
-                
+
             else:
                 pass
-    
+
         self.updated.sort()
         self.installed.sort()
         self.removed.sort()
@@ -413,7 +413,7 @@ class TransactionData:
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_INSTALL
-        txmbr.po.state = TS_INSTALL        
+        txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
         self.add(txmbr)
@@ -421,7 +421,7 @@ class TransactionData:
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
-        
+
         self.findObsoletedByThisMember(txmbr)
         self.add(txmbr)
         return txmbr
@@ -432,12 +432,12 @@ class TransactionData:
     def addTrueInstall(self, po):
         """adds a package as an install
            takes a packages object and returns a TransactionMember Object"""
-    
+
         return self.addInstall(po) # :hawkey
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_TRUEINSTALL
-        txmbr.po.state = TS_INSTALL        
+        txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'i'
         txmbr.reason = 'user'
 
@@ -446,12 +446,12 @@ class TransactionData:
 
         self.add(txmbr)
         return txmbr
-    
+
 
     def addErase(self, po):
         """adds a package as an erasure
            takes a packages object and returns a TransactionMember Object"""
-    
+
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL
         txmbr.output_state = TS_ERASE
@@ -463,19 +463,19 @@ class TransactionData:
     def addUpdate(self, po, oldpo=None):
         """adds a package as an update
            takes a packages object and returns a TransactionMember Object"""
-        
+
         if self._allowedMultipleInstalls(po):
             return self.addTrueInstall(po)
-            
+
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_UPDATE
-        txmbr.po.state = TS_UPDATE        
+        txmbr.po.state = TS_UPDATE
         txmbr.ts_state = 'u'
         if oldpo:
             txmbr.relatedto.append((oldpo, 'updates'))
             txmbr.updates.append(oldpo)
-            
+
         self.add(txmbr)
         self.findObsoletedByThisMember(txmbr)
         return txmbr
@@ -500,7 +500,7 @@ class TransactionData:
     def addUpdated(self, po, updating_po):
         """adds a package as being updated by another pkg
            takes a packages object and returns a TransactionMember Object"""
-    
+
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL
         txmbr.output_state =  TS_UPDATED
@@ -514,7 +514,7 @@ class TransactionData:
     def addObsoleting(self, po, oldpo):
         """adds a package as an obsolete over another pkg
            takes a packages object and returns a TransactionMember Object"""
-    
+
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_AVAILABLE
         txmbr.output_state = TS_OBSOLETING
@@ -532,7 +532,7 @@ class TransactionData:
     def addObsoleted(self, po, obsoleting_po):
         """adds a package as being obsoleted by another pkg
            takes a packages object and returns a TransactionMember Object"""
-    
+
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL
         txmbr.output_state =  TS_OBSOLETED
@@ -663,7 +663,7 @@ class TransactionData:
         self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
 
         return main
-    
+
     def findObsoletedByThisMember(self, txmbr):
         """addObsoleted() pkgs for anything that this txmbr will obsolete"""
         # this is mostly to keep us in-line with what will ACTUALLY happen
@@ -737,7 +737,7 @@ class SortableTransactionData(TransactionData):
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/
        updated/erased)."""
-    
+
     def __init__(self, po):
         # holders for data
         self.po = po # package object
@@ -775,7 +775,7 @@ class TransactionMember:
     def setAsDep(self, po=None):
         """sets the transaction member as a dependency and maps the dep into the
            relationship list attribute"""
-        
+
         self.isDep = 1
         if po:
             self.relatedto.append((po, 'dependson'))
@@ -786,16 +786,16 @@ class TransactionMember:
 
     def __hash__(self):
         return object.__hash__(self)
-            
+
     def __str__(self):
         return "%s.%s %s - %s" % (self.name, self.arch, self.evr,
                                   self.ts_state)
 
     def __repr__(self):
-        return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self))) 
-    
+        return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self)))
+
     def _dump(self):
-        msg = "mbr: %s,%s,%s,%s,%s %s\n" % (self.name, self.arch, self.epoch, 
+        msg = "mbr: %s,%s,%s,%s,%s %s\n" % (self.name, self.arch, self.epoch,
                      self.version, self.release, self.current_state)
         msg += "  repo: %s\n" % self.po.repo.id
         msg += "  ts_state: %s\n" % self.ts_state
@@ -804,17 +804,17 @@ class TransactionMember:
         msg += "  reason: %s\n" % self.reason
         #msg += "  process: %s\n" % self.process
         msg += "  reinstall: %s\n" % bool(self.reinstall)
-        
+
         if self.relatedto:
             msg += "  relatedto:"
             for (po, rel) in self.relatedto:
                 pkgorigin = 'a'
                 if isinstance(po, YumInstalledPackage):
                     pkgorigin = 'i'
-                msg += " %s,%s,%s,%s,%s@%s:%s" % (po.name, po.arch, po.epoch, 
+                msg += " %s,%s,%s,%s,%s@%s:%s" % (po.name, po.arch, po.epoch,
                       po.version, po.release, pkgorigin, rel)
             msg += "\n"
-            
+
         for lst in ['depends_on', 'obsoletes', 'obsoleted_by', 'downgrades',
                     'downgraded_by', 'updates', 'updated_by']:
             thislist = getattr(self, lst)
@@ -824,10 +824,10 @@ class TransactionMember:
                     pkgorigin = 'a'
                     if isinstance(po, YumInstalledPackage):
                         pkgorigin = 'i'
-                    msg += " %s,%s,%s,%s,%s@%s" % (po.name, po.arch, po.epoch, 
+                    msg += " %s,%s,%s,%s,%s@%s" % (po.name, po.arch, po.epoch,
                         po.version, po.release, pkgorigin)
                 msg += "\n"
-                
+
         if self.groups:
             msg += "  groups: %s\n" % ' '.join(self.groups)
 

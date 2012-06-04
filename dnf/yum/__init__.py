@@ -162,7 +162,7 @@ class _YumCostExclude:
         for repo in self._repos.listEnabled():
             if repo.cost >= self.repo.cost:
                 break
-            #  searchNevra is a bit slower, although more generic for repos. 
+            #  searchNevra is a bit slower, although more generic for repos.
             # that don't use sqlitesack as the backend ... although they are
             # probably screwed anyway.
             #
@@ -196,7 +196,7 @@ class YumBase(depsolve.Depsolve):
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
         self._override_sigchecks = False
         self._repos = RepoStorage(self)
-        self.repo_setopts = {} # since we have to use repo_setopts in base and 
+        self.repo_setopts = {} # since we have to use repo_setopts in base and
                                # not in cli - set it up as empty so no one
                                # trips over it later
 
@@ -290,7 +290,7 @@ class YumBase(depsolve.Depsolve):
 
         if self._conf:
             return self._conf
-        conf_st = time.time()            
+        conf_st = time.time()
 
         if kwargs:
             for arg in ('fn', 'root', 'init_plugins', 'plugin_types',
@@ -314,7 +314,7 @@ class YumBase(depsolve.Depsolve):
         releasever = self.preconf.releasever
         arch = self.preconf.arch
         uuid = self.preconf.uuid
-        
+
         if arch: # if preconf is setting an arch we need to pass that up
             self.arch.setup_arch(arch)
         else:
@@ -331,7 +331,7 @@ class YumBase(depsolve.Depsolve):
         startupconf.basearch = self.arch.basearch
         if uuid:
             startupconf.uuid = uuid
-        
+
         if startupconf.gaftonmode:
             global _
             _ = i18n.dummy_wrapper
@@ -386,12 +386,12 @@ class YumBase(depsolve.Depsolve):
         # repos are ver/arch specific so add $basearch/$releasever
         self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
                % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
-                  self.yumvar.get('releasever', '$releasever')))        
+                  self.yumvar.get('releasever', '$releasever')))
         self.doFileLogSetup(self.conf.uid, self.conf.logfile)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         self.plugins.run('init')
         return self._conf
-        
+
 
     def doLoggingSetup(self, debuglevel, errorlevel,
                        syslog_ident=None, syslog_facility=None,
@@ -428,7 +428,7 @@ class YumBase(depsolve.Depsolve):
         """
         if repo_age is None:
             repo_age = os.stat(repofn)[8]
-        
+
         confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.yumvar)
         parser = ConfigParser()
         try:
@@ -452,7 +452,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                 if byte in "-_.:":
                     continue
-                
+
                 bad = byte
                 break
 
@@ -479,17 +479,17 @@ class YumBase(depsolve.Depsolve):
                         msg = "Repo %s did not have a %s attr. before setopt"
                         self.logger.warning(msg % (thisrepo.id, opt))
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
-                    
+
             if validate and not validate(thisrepo):
                 continue
-                    
+
             # Got our list of repo objects, add them to the repos
             # collection
             try:
                 self._repos.add(thisrepo)
             except Errors.RepoError, e:
                 self.logger.warning(e)
-        
+
     def getReposFromConfig(self):
         """Read in repositories from the main yum conf file, and from
         .repo files.  The location of the main yum conf file is given
@@ -499,7 +499,7 @@ class YumBase(depsolve.Depsolve):
         # Read .repo files from directories specified by the reposdir option
         # (typically /etc/yum/repos.d)
         repo_config_age = self.conf.config_file_age
-        
+
         # Get the repos from the main yum.conf file
         self.getReposFromConfigFile(self.conf.config_file_path, repo_config_age)
 
@@ -550,7 +550,7 @@ class YumBase(depsolve.Depsolve):
         """Disable yum plugins."""
 
         self.plugins = plugins.DummyYumPlugins()
-    
+
     def doPluginSetup(self, optparser=None, plugin_types=None, searchpath=None,
             confpath=None,disabled_plugins=None,enabled_plugins=None):
         """Initialise and enable yum plugins.
@@ -569,7 +569,7 @@ class YumBase(depsolve.Depsolve):
         :param confpath: a list of directories to look in for plugin
            configuration files. A default will be used if no value is
            specified
-        :param disabled_plugins: a list of plugins to be disabled    
+        :param disabled_plugins: a list of plugins to be disabled
         :param enabled_plugins: a list plugins to be enabled
         """
         if isinstance(self.plugins, plugins.YumPlugins):
@@ -578,7 +578,7 @@ class YumBase(depsolve.Depsolve):
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
                 plugin_types, confpath, disabled_plugins, enabled_plugins)
 
-    
+
     def doRpmDBSetup(self):
         """Deprecated.  Set up the rpm database."""
 
@@ -586,7 +586,7 @@ class YumBase(depsolve.Depsolve):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getRpmDB()
-    
+
     def _getRpmDB(self):
         """sets up a holder object for important information from the rpmdb"""
 
@@ -611,7 +611,7 @@ class YumBase(depsolve.Depsolve):
         self._tsInfo = None
         self._up = None
         self.comps = None
-    
+
     def _deleteTs(self):
         del self._ts
         self._ts = None
@@ -676,15 +676,15 @@ class YumBase(depsolve.Depsolve):
                     msg = 'sslclientcert basename shared between %s and %s'
                     raise Errors.ConfigError, msg % (repo, cert_basenames[bn])
 
-            repo_st = time.time()        
+            repo_st = time.time()
             self._repos.doSetup(thisrepo)
-            self.verbose_logger.debug('repo time: %0.3f' % (time.time() - repo_st))        
+            self.verbose_logger.debug('repo time: %0.3f' % (time.time() - repo_st))
         return self._repos
 
     def _delRepos(self):
         del self._repos
         self._repos = RepoStorage(self)
-    
+
     def doSackSetup(self, archlist=None, thisrepo=None):
         """Deprecated. Populate the package sacks with information
         from our repositories.
@@ -698,7 +698,7 @@ class YumBase(depsolve.Depsolve):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getSacks(archlist=archlist, thisrepo=thisrepo)
-        
+
     def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
            takes optional archlist for archs to include"""
@@ -719,30 +719,30 @@ class YumBase(depsolve.Depsolve):
         raise RuntimeError, "sacks deprecated in dnf."
         if self._pkgSack is not None and thisrepo is None:
             return self._pkgSack
-        
+
         if thisrepo is None:
             repos = 'enabled'
         else:
             repos = self.repos.findRepos(thisrepo)
-        
+
         self.verbose_logger.debug(_('Setting up Package Sacks'))
         sack_st = time.time()
         if not archlist:
             archlist = self.arch.archlist
-        
+
         archdict = {}
         for arch in archlist:
             archdict[arch] = 1
-        
+
         self.repos.getPackageSack().setCompatArchs(archdict)
         self.repos.populateSack(which=repos)
         if not self.repos.getPackageSack():
             return self.repos.getPackageSack() # ha ha, see above
         self._pkgSack = self.repos.getPackageSack()
-        
+
         self.excludePackages()
         self._pkgSack.excludeArchs(archlist)
-        
+
         #FIXME - this could be faster, too.
         if repos == 'enabled':
             repos = self.repos.listEnabled()
@@ -756,16 +756,16 @@ class YumBase(depsolve.Depsolve):
         self.costExcludePackages()
         self.verbose_logger.debug('pkgsack time: %0.3f' % (time.time() - sack_st))
         return self._pkgSack
-    
-    
+
+
     def _delSacks(self):
         """reset the package sacks back to zero - making sure to nuke the ones
            in the repo objects, too - where it matters"""
-           
+
         # nuke the top layer
-        
+
         self._pkgSack = None
-           
+
         for repo in self.repos.repos.values():
             if hasattr(repo, '_resetSack'):
                 repo._resetSack()
@@ -773,8 +773,8 @@ class YumBase(depsolve.Depsolve):
                 warnings.warn(_('repo object for repo %s lacks a _resetSack method\n') +
                         _('therefore this repo cannot be reset.\n'),
                         Errors.YumFutureDeprecationWarning, stacklevel=2)
-            
-           
+
+
     def doUpdateSetup(self):
         """Deprecated. Set up the update object in the base class and populate the
         updates, obsoletes, and other lists.
@@ -783,14 +783,14 @@ class YumBase(depsolve.Depsolve):
                 Errors.YumFutureDeprecationWarning, stacklevel=2)
 
         return self._getUpdates()
-        
+
     def _getUpdates(self):
         """setups up the update object in the base class and fills out the
            updates, obsoletes and others lists"""
-        
+
         if self._up:
             return self._up
-        
+
         self.verbose_logger.debug(_('Building updates object'))
 
         up_st = time.time()
@@ -798,12 +798,12 @@ class YumBase(depsolve.Depsolve):
         self._up = dnf.rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
         if self.conf.debuglevel >= 7:
             self._up.debug = 1
-        
+
         if hasattr(self, '_up_obs_hack'):
             self._up.rawobsoletes = self._up_obs_hack.rawobsoletes
             del self._up_obs_hack
         elif self.conf.obsoletes:
-            obs_init = time.time()    
+            obs_init = time.time()
             #  Note: newest=True here is semi-required for repos. with multiple
             # versions. The problem is that if pkgA-2 _accidentally_ obsoletes
             # pkgB-1, and we keep all versions, we want to release a pkgA-3
@@ -826,12 +826,12 @@ class YumBase(depsolve.Depsolve):
             self._up.doObsoletes()
             self.verbose_logger.debug('up:obs time: %0.3f' % (time.time() - obs_st))
 
-        cond_up_st = time.time()                    
+        cond_up_st = time.time()
         self._up.condenseUpdates()
         self.verbose_logger.debug('up:condense time: %0.3f' % (time.time() - cond_up_st))
-        self.verbose_logger.debug('updates time: %0.3f' % (time.time() - up_st))        
+        self.verbose_logger.debug('updates time: %0.3f' % (time.time() - up_st))
         return self._up
-    
+
     def doGroupSetup(self):
         """Deprecated. Create and populate the groups object."""
 
@@ -849,16 +849,16 @@ class YumBase(depsolve.Depsolve):
                 for repo in self._repos.listGroupsEnabled():
                     repo.groups_added = False
         self._comps = val
-    
+
     def _getGroups(self):
         """create the groups object that will store the comps metadata
            finds the repos with groups, gets their comps data and merge it
            into the group object"""
-        
+
         if self._comps:
             return self._comps
 
-        group_st = time.time()            
+        group_st = time.time()
         self.verbose_logger.log(logginglevels.DEBUG_4,
                                 _('Getting group metadata'))
         reposWithGroups = []
@@ -869,7 +869,7 @@ class YumBase(depsolve.Depsolve):
             if repo.groups_added: # already added the groups from this repo
                 reposWithGroups.append(repo)
                 continue
-                
+
             if not repo.ready():
                 raise Errors.RepoError, "Repository '%s' not yet setup" % repo
             try:
@@ -878,7 +878,7 @@ class YumBase(depsolve.Depsolve):
                 pass
             else:
                 reposWithGroups.append(repo)
-        
+
         # now we know which repos actually have groups files.
         overwrite = self.conf.overwrite_groups
         self._comps = comps.Comps(overwrite_groups = overwrite)
@@ -886,7 +886,7 @@ class YumBase(depsolve.Depsolve):
         for repo in reposWithGroups:
             if repo.groups_added: # already added the groups from this repo
                 continue
-                
+
             self.verbose_logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
@@ -895,7 +895,7 @@ class YumBase(depsolve.Depsolve):
                 groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
                                                      cached=repo.cache)
                 # Do we want a RepoError here?
-                
+
             try:
                 self._comps.add(groupfile)
             except (Errors.GroupsError,Errors.CompsException), e:
@@ -908,27 +908,27 @@ class YumBase(depsolve.Depsolve):
             raise Errors.GroupsError, _('No Groups Available in any repository')
 
         self._comps.compile(self.rpmdb.simplePkgList())
-        self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))                
+        self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))
         return self._comps
 
     def _getTags(self):
-        """ create the tags object used to search/report from the pkgtags 
+        """ create the tags object used to search/report from the pkgtags
             metadata"""
-        
+
         tag_st = time.time()
         self.verbose_logger.log(logginglevels.DEBUG_4,
                                 _('Getting pkgtags metadata'))
-        
+
         if self._tags is None:
             self._tags = pkgtag_db.PackageTags()
-           
+
             for repo in self.repos.listEnabled():
                 if 'pkgtags' not in repo.repoXML.fileTypes():
                     continue
 
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('Adding tags from repository: %s'), repo)
-                
+
                 # fetch the sqlite tagdb
                 try:
                     tag_md = repo.retrieveMD('pkgtags')
@@ -940,11 +940,11 @@ class YumBase(depsolve.Depsolve):
                 except (Errors.RepoError, Errors.PkgTagsError), e:
                     msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, str(e))
                     self.logger.critical(msg)
-                    
-                
+
+
         self.verbose_logger.debug('tags time: %0.3f' % (time.time() - tag_st))
         return self._tags
-        
+
     def _getHistory(self):
         """auto create the history object that to access/append the transaction
            history information. """
@@ -954,7 +954,7 @@ class YumBase(depsolve.Depsolve):
                                                    db_path=pdb_path,
                                                    releasever=self.conf.yumvar['releasever'])
         return self._history
-    
+
     # properties so they auto-create themselves with defaults
     repos = property(fget=lambda self: self._getRepos(),
                      fset=lambda self, value: setattr(self, "_repos", value),
@@ -972,11 +972,11 @@ class YumBase(depsolve.Depsolve):
                      fset=lambda self, value: setattr(self, "_rpmdb", value),
                      fdel=lambda self: setattr(self, "_rpmdb", None),
                      doc="RpmSack object")
-    tsInfo = property(fget=lambda self: self._getTsInfo(), 
-                      fset=lambda self,value: self._setTsInfo(value), 
+    tsInfo = property(fget=lambda self: self._getTsInfo(),
+                      fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),
                       doc="Transaction Set information object")
-    ts = property(fget=lambda self: self._getActionTs(), 
+    ts = property(fget=lambda self: self._getActionTs(),
                   fdel=lambda self: self._deleteTs(),
                   doc="TransactionSet object")
     up = property(fget=lambda self: self._getUpdates(),
@@ -996,15 +996,15 @@ class YumBase(depsolve.Depsolve):
                        fset=lambda self, value: setattr(self, "_tags",value),
                        fdel=lambda self: setattr(self, "_tags", None),
                        doc="Yum Package Tags Object")
-    
-    
+
+
     def doSackFilelistPopulate(self):
         """Convenience function to populate the repositories with the
         filelist metadata, and emit a log message only if new
         information is actually populated.
         """
         necessary = False
-        
+
         # I can't think of a nice way of doing this, we have to have the sack here
         # first or the below does nothing so...
         if self.pkgSack:
@@ -1021,7 +1021,7 @@ class YumBase(depsolve.Depsolve):
             msg = _('Importing additional filelist information')
             self.verbose_logger.log(logginglevels.INFO_2, msg)
             self.repos.populateSack(mdtype='filelists')
-           
+
     def yumUtilsMsg(self, func, prog):
         """Output a message that the given tool requires the yum-utils
         package, if it not installed.
@@ -1076,7 +1076,7 @@ class YumBase(depsolve.Depsolve):
             self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
 
-        # XXX - we could add a conditional here to avoid running the plugins and 
+        # XXX - we could add a conditional here to avoid running the plugins and
         # limit_installonly_pkgs, etc - if we're being run from yum-complete-transaction
         # and don't want it to happen. - skv
 
@@ -1250,10 +1250,10 @@ class YumBase(depsolve.Depsolve):
                 self.skipped_packages = []    # reset the public list of skipped packages.
             sb_st = time.time()
             rescode, restring = self._skipPackagesWithProblems(rescode, restring)
-            self._printTransaction()        
+            self._printTransaction()
             self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
         return (rescode, restring)
-            
+
 
     def _skipPackagesWithProblems(self, rescode, restring):
         ''' Remove the packages with depsolve errors and depsolve again '''
@@ -1267,11 +1267,11 @@ class YumBase(depsolve.Depsolve):
 
         def _remove_from_sack(po):
             # get all compatible arch packages from pkgSack
-            # we need to remove them too so i386 packages are not 
+            # we need to remove them too so i386 packages are not
             # dragged in when a x86_64 is skipped.
             pkgs = self._getPackagesToRemoveAllArch(po)
             for pkg in pkgs:
-                if not po.repoid == 'installed' and pkg not in removed_from_sack:             
+                if not po.repoid == 'installed' and pkg not in removed_from_sack:
                     self.verbose_logger.debug('SKIPBROKEN: removing %s from pkgSack & updates' % str(po))
                     self.pkgSack.delPackage(pkg)
                     self.up.delPackage(pkg.pkgtup)
@@ -1282,8 +1282,8 @@ class YumBase(depsolve.Depsolve):
         count = 0
         skipped_po = set()
         removed_from_sack = set()
-        orig_restring = restring    # Keep the old error messages 
-        looping = 0 
+        orig_restring = restring    # Keep the old error messages
+        looping = 0
         while (len(self.po_with_problems) > 0 and rescode == 1):
             count += 1
             #  Remove all the rpmdb cache data, this is somewhat heavy handed
@@ -1295,7 +1295,7 @@ class YumBase(depsolve.Depsolve):
             if count == 30: # Failsafe, to avoid endless looping
                 self.verbose_logger.debug('SKIPBROKEN: Too many loops ')
                 break
-            self._printTransaction()        
+            self._printTransaction()
             depTree = self._buildDepTree()
             startTs = set(self.tsInfo)
             toRemove = set()
@@ -1315,7 +1315,7 @@ class YumBase(depsolve.Depsolve):
             # Nothing was removed, so we still got a problem
              # the first time we get here we reset the resolved members of
              # tsInfo and takes a new run all members in the current transaction
-            if not toRemove: 
+            if not toRemove:
                 looping += 1
                 if looping > 2:
                     break # Bail out
@@ -1335,12 +1335,12 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (transaction not changed)' )
                     self.tsInfo.resetResolved(hard=True)
-            else: 
+            else:
                 # Reset the looping counter, because it is only a loop if the same transaction is
                 # unchanged two times in row, not if it has been unchanged in a early stage.
-                looping = 0 
-                    
-            # if we are all clear, then we have to check that the whole current transaction 
+                looping = 0
+
+            # if we are all clear, then we have to check that the whole current transaction
             # can complete the depsolve without error, because the packages skipped
             # can have broken something that passed the tests earlier.
             # FIXME: We need do this in a better way.
@@ -1389,7 +1389,7 @@ class YumBase(depsolve.Depsolve):
         self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
 
     def _checkMissingObsoleted(self):
-        """ 
+        """
         If multiple packages is obsoleting the same package
         then the TS_OBSOLETED can get removed from the transaction
         so we must make sure that they, exist and else create them
@@ -1408,7 +1408,7 @@ class YumBase(depsolve.Depsolve):
                     self.tsInfo.remove(txmbr.po.pkgtup)
 
     def _checkUpdatedLeftovers(self):
-        """ 
+        """
         If multiple packages is updated the same package
         and this package get removed because of an dep issue
         then make sure that all the TS_UPDATED get removed.
@@ -1430,15 +1430,15 @@ class YumBase(depsolve.Depsolve):
             # skip for all compat archs
             for a in self.arch.archlist:
                 pkgtup = (n,a,e,v,r)
-                matched = self.pkgSack.searchNevra(n,e,v,r,a) 
+                matched = self.pkgSack.searchNevra(n,e,v,r,a)
                 pkgs.extend(matched)
         else:
             pkgs.append(po)
-        return pkgs   
-        
-                
-                
-        
+        return pkgs
+
+
+
+
 
     def _skipFromTransaction(self,po):
         skipped =  []
@@ -1460,8 +1460,8 @@ class YumBase(depsolve.Depsolve):
             self.tsInfo.remove(po.pkgtup)
             if not po.repoid == 'installed':
                 skip.append(po)
-        return skip 
-              
+        return skip
+
     def _buildDepTree(self):
         ''' create a dictionary with po and deps '''
         depTree = { }
@@ -1496,7 +1496,7 @@ class YumBase(depsolve.Depsolve):
                 msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
         self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))
-                                    
+
     def _getPackagesToRemove(self,po,deptree,toRemove):
         '''
         get the (related) pos to remove.
@@ -1506,10 +1506,10 @@ class YumBase(depsolve.Depsolve):
             for pkg in (txmbr.updates + txmbr.obsoletes):
                 toRemove.add(pkg)
                 self._getDepsToRemove(pkg, deptree, toRemove)
-            # Remove related packages    
+            # Remove related packages
             for (relative, relation) in txmbr.relatedto:
                 toRemove.add(relative)
-                self._getDepsToRemove(relative, deptree, toRemove)                
+                self._getDepsToRemove(relative, deptree, toRemove)
         self._getDepsToRemove(po, deptree, toRemove)
 
     def _getDepsToRemove(self,po, deptree, toRemove):
@@ -1636,7 +1636,7 @@ class YumBase(depsolve.Depsolve):
             self._store_config_in_history()
             if hasattr(self, '_shell_history_write'): # Only in cli...
                 self._shell_history_write()
-            
+
             self.plugins.run('historybegin')
         #  Just before we update the transaction, update what we think the
         # rpmdb will look like. This needs to be done before the run, so that if
@@ -1656,7 +1656,7 @@ class YumBase(depsolve.Depsolve):
             except (IOError, OSError), e:
                 pass
         self._ts_save_file = None
-        
+
         if self.conf.reset_nice:
             onice = os.nice(0)
             if onice:
@@ -1666,15 +1666,15 @@ class YumBase(depsolve.Depsolve):
                     onice = 0
 
         errors = self.ts.run(cb.callback, '')
-        # ts.run() exit codes are, hmm, "creative": None means all ok, empty 
-        # list means some errors happened in the transaction and non-empty 
+        # ts.run() exit codes are, hmm, "creative": None means all ok, empty
+        # list means some errors happened in the transaction and non-empty
         # list that there were errors preventing the ts from starting...
         if self.conf.reset_nice:
             try:
                 os.nice(onice)
             except:
                 pass
-        
+
         # make resultobject - just a plain yumgenericholder object
         resultobject = misc.GenericHolder()
         resultobject.return_code = 0
@@ -1696,21 +1696,21 @@ class YumBase(depsolve.Depsolve):
         else:
             if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
                 herrors = [to_unicode(to_str(x)) for x in errors]
-                self.plugins.run('historyend')                
+                self.plugins.run('historyend')
                 self.history.end(rpmdbv, 2, errors=herrors)
 
-                
+
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
                 self.logger.critical(e[0]) # should this be 'to_unicoded'?
             raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
                                           errors=errors)
 
-                          
+
         if (not self.conf.keepcache and
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.cleanUsedHeadersPackages()
-        
+
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
                 fn = getattr(cb, i)
@@ -1719,7 +1719,7 @@ class YumBase(depsolve.Depsolve):
                 except (IOError, OSError), e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
-        
+
         # drop out the rpm cache so we don't step on bad hdr indexes
         if (self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) or
             resultobject.return_code):
@@ -1737,7 +1737,7 @@ class YumBase(depsolve.Depsolve):
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):
-        """Check that the transaction did what was expected, and 
+        """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
 
@@ -1749,7 +1749,7 @@ class YumBase(depsolve.Depsolve):
         # check to see that the rpmdb and the tsInfo roughly matches
         # push package object metadata outside of rpmdb into yumdb
         # delete old yumdb metadata entries
-        
+
         # for each pkg in the tsInfo
         # if it is an install - see that the pkg is installed
         # if it is a remove - see that the pkg is no longer installed, provided
@@ -1763,7 +1763,7 @@ class YumBase(depsolve.Depsolve):
                 count += 1
                 txmbr_cb(txmbr, count)
             return count
-        
+
         vt_st = time.time()
         self.plugins.run('preverifytrans')
         count = 0
@@ -1902,10 +1902,10 @@ class YumBase(depsolve.Depsolve):
         """
         if "all" in self.conf.disable_excludes:
             return
-        
+
         # if not repo: then assume global excludes, only
         # if repo: then do only that repos' packages and excludes
-        
+
         if not repo: # global only
             if "main" in self.conf.disable_excludes:
                 return
@@ -1927,15 +1927,15 @@ class YumBase(depsolve.Depsolve):
 
     def includePackages(self, repo):
         """Remove packages from packageSacks based on list of
-        packages to include.  
+        packages to include.
 
         :param repo: the repository to use
         """
         includelist = repo.getIncludePkgList()
-        
+
         if len(includelist) == 0:
             return
-        
+
         # includepkgs actually means "exclude everything that doesn't match".
         #  So we mark everything, then wash those we want to keep and then
         # exclude everything that is marked.
@@ -1969,8 +1969,8 @@ class YumBase(depsolve.Depsolve):
             root = self.conf.installroot
         lockfile = root + '/' + lockfile # lock in the chroot
         lockfile = os.path.normpath(lockfile) # get rid of silly preceding extra /
-        
-        mypid=str(os.getpid())    
+
+        mypid=str(os.getpid())
         while not self._lock(lockfile, mypid, 0644):
             oldpid = self._get_locker(lockfile)
             if not oldpid:
@@ -1984,7 +1984,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.LockError(0, msg, oldpid)
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
-    
+
     def doUnlock(self, lockfile=None):
         """Release the yum lock.
 
@@ -2004,7 +2004,7 @@ class YumBase(depsolve.Depsolve):
         # sure nothing should ever pass lockfile in here anyway.
         if self.conf.uid != 0:
             lockfile = None
-        
+
         if lockfile is not None:
             root = self.conf.installroot
             lockfile = root + '/' + lockfile # lock in the chroot
@@ -2012,27 +2012,27 @@ class YumBase(depsolve.Depsolve):
             return # Don't delete other people's lock files on __del__
         else:
             lockfile = self._lockfile # Get the value we locked with
-        
+
         self._unlock(lockfile)
         self._lockfile = None
-        
+
     @staticmethod
     def _lock(filename, contents='', mode=0777):
         lockdir = os.path.dirname(filename)
         try:
             if not os.path.exists(lockdir):
                 os.makedirs(lockdir, mode=0755)
-            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)    
+            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
             os.write(fd, contents)
             os.close(fd)
             return 1
         except OSError, msg:
-            if not msg.errno == errno.EEXIST: 
+            if not msg.errno == errno.EEXIST:
                 # Whoa. What the heck happened?
                 errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
                 raise Errors.LockError(msg.errno, errmsg, int(contents))
             return 0
-    
+
     @staticmethod
     def _unlock(filename):
         misc.unlink_f(filename)
@@ -2081,7 +2081,7 @@ class YumBase(depsolve.Depsolve):
         """
         if type(fo) is types.InstanceType:
             fo = fo.filename
-        
+
         if fo != po.localPkg():
             po.localpath = fo
 
@@ -2098,15 +2098,15 @@ class YumBase(depsolve.Depsolve):
                     os.unlink(fo)
 
             if raiseError:
-                msg = _('Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata') %  po.repo.id 
+                msg = _('Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata') %  po.repo.id
                 raise URLGrabError(-1, msg)
             else:
                 return False
 
-        
+
         return True
-        
-        
+
+
     def verifyChecksum(self, fo, checksumType, csum):
         """Verify that the checksum of the given file matches the
         given checksum.
@@ -2122,10 +2122,10 @@ class YumBase(depsolve.Depsolve):
             filesum = misc.checksum(checksumType, fo)
         except Errors.MiscError, e:
             raise URLGrabError(-3, _('Could not perform checksum'))
-            
+
         if filesum != csum:
             raise URLGrabError(-1, _('Package does not match checksum'))
-        
+
         return 0
 
     def downloadPkgs(self, pkglist, callback=None, callback_total=None):
@@ -2156,7 +2156,7 @@ class YumBase(depsolve.Depsolve):
             elif a > b:
                 return 1
             return 0
-        
+
         """download list of package objects handed to you, output based on
            callback, raise Errors.YumBaseError on problems"""
 
@@ -2191,16 +2191,16 @@ class YumBase(depsolve.Depsolve):
                 else:
                     self.verbose_logger.debug(_("using local copy of %s") %(po,))
                     continue
-                        
+
             remote_pkgs.append(po)
             remote_size += po.size
-            
-            # caching is enabled and the package 
-            # just failed to check out there's no 
+
+            # caching is enabled and the package
+            # just failed to check out there's no
             # way to save this, report the error and return
             if (self.conf.cache or repo_cached) and errors:
                 return errors
-                
+
 
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -2291,7 +2291,7 @@ class YumBase(depsolve.Depsolve):
         """
         if type(fo) is types.InstanceType:
             fo = fo.filename
-            
+
         try:
             hlist = rpm.readHeaderListFromFile(fo)
             hdr = hlist[0]
@@ -2300,7 +2300,7 @@ class YumBase(depsolve.Depsolve):
                 raise URLGrabError(-1, _('Header is not complete.'))
             else:
                 return 0
-                
+
         yip = YumInstalledPackage(hdr) # we're using YumInstalledPackage b/c
                                        # it takes headers <shrug>
         if yip.pkgtup != po.pkgtup:
@@ -2308,9 +2308,9 @@ class YumBase(depsolve.Depsolve):
                 raise URLGrabError(-1, 'Header does not match intended download')
             else:
                 return 0
-        
+
         return 1
-        
+
     def downloadHeader(self, po):
         """Download a header from a package object.
 
@@ -2320,7 +2320,7 @@ class YumBase(depsolve.Depsolve):
         """
         if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
             return
-                
+
         errors = {}
         local =  po.localHdr()
         repo = self.repos.getRepo(po.repoid)
@@ -2328,7 +2328,7 @@ class YumBase(depsolve.Depsolve):
             try:
                 result = self.verifyHeader(local, po, raiseError=1)
             except URLGrabError, e:
-                # might add a check for length of file - if it is < 
+                # might add a check for length of file - if it is <
                 # required doing a reget
                 misc.unlink_f(local)
             else:
@@ -2338,9 +2338,9 @@ class YumBase(depsolve.Depsolve):
             if self.conf.cache:
                 raise Errors.RepoError, \
                 _('Header not in local cache and caching-only mode enabled. Cannot download %s') % po.hdrpath
-        
+
         if self.dsCallback: self.dsCallback.downloadHeader(po.name)
-        
+
         try:
             if not os.path.exists(repo.hdrdir):
                 os.makedirs(repo.hdrdir)
@@ -2364,7 +2364,7 @@ class YumBase(depsolve.Depsolve):
         """Verify the GPG signature of the given package object.
 
         :param po: the package object to verify the signature of
-        :return: (result, error_string) 
+        :return: (result, error_string)
            where result is::
 
               0 = GPG signature verifies ok or verification is not required.
@@ -2381,13 +2381,13 @@ class YumBase(depsolve.Depsolve):
         else:
             repo = self.repos.getRepo(po.repoid)
             check = repo.gpgcheck
-            hasgpgkey = not not repo.gpgkey 
-        
+            hasgpgkey = not not repo.gpgkey
+
         if check:
             ts = self.rpmdb.readOnlyTS()
             sigresult = dnf.rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
-            
+
             if sigresult == 0:
                 result = 0
                 msg = ''
@@ -2412,9 +2412,9 @@ class YumBase(depsolve.Depsolve):
                 msg = _('Public key for %s is not trusted') % localfn
 
             elif sigresult == 4:
-                result = 2 
+                result = 2
                 msg = _('Package %s is not signed') % localfn
-            
+
         else:
             result =0
             msg = ''
@@ -2433,7 +2433,7 @@ class YumBase(depsolve.Depsolve):
                 continue
             if txmbr.po.reponame == hawkey.CMDLINE_REPO_NAME:
                 continue
-            
+
             # make sure it's not a local file
             repo = self.repos.repos[txmbr.po.repoid]
             local = False
@@ -2441,7 +2441,7 @@ class YumBase(depsolve.Depsolve):
                 if u.startswith("file:"):
                     local = True
                     break
-                
+
             if local:
                 filelist.extend([txmbr.po.localHdr()])
             else:
@@ -2459,7 +2459,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('%s removed'), fn)
-        
+
     def cleanHeaders(self):
         """Delete the header files from the yum cache."""
 
@@ -2485,7 +2485,7 @@ class YumBase(depsolve.Depsolve):
         exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc',
                 'xml.bz2', 'xml.xz']
         # Metalink is also here, but is a *.xml file
-        return self._cleanFiles(exts, 'cachedir', 'metadata') 
+        return self._cleanFiles(exts, 'cachedir', 'metadata')
 
     def cleanExpireCache(self):
         """Delete the local data saying when the metadata and mirror
@@ -2556,7 +2556,7 @@ class YumBase(depsolve.Depsolve):
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
         ygh = misc.GenericHolder(iter=pkgnarrow)
-        
+
         installed = []
         available = []
         reinstall_available = []
@@ -2569,7 +2569,7 @@ class YumBase(depsolve.Depsolve):
 
         ic = ignore_case
         # list all packages - those installed and available, don't 'think about it'
-        if pkgnarrow == 'all': 
+        if pkgnarrow == 'all':
             dinst = {}
             ndinst = {} # Newest versions by name.arch
             for po in queries.installed_by_name(self.sack, patterns=patterns,
@@ -2689,12 +2689,12 @@ class YumBase(depsolve.Depsolve):
                                                               ignore_case=ic)
                 except Errors.PackageSackError:
                     avail = []
-            
+
             for po in avail:
                 if int(po.filetime) > recentlimit:
                     recent.append(po)
-        
-        
+
+
         ygh.installed = installed
         ygh.available = available
         ygh.reinstall_available = reinstall_available
@@ -2708,11 +2708,11 @@ class YumBase(depsolve.Depsolve):
         return ygh
 
 
-        
+
     def findDeps(self, pkgs):
         """Return the dependencies for a given package object list, as well
         as possible solutions for those dependencies.
-           
+
         :param pkgs: a list of package objects
         :return: the dependencies as a dictionary of dictionaries:
            packageobject = [reqs] = [list of satisfying pkgs]
@@ -2720,28 +2720,28 @@ class YumBase(depsolve.Depsolve):
         results = {}
 
         for pkg in pkgs:
-            results[pkg] = {} 
+            results[pkg] = {}
             reqs = pkg.requires
             reqs.sort()
             pkgresults = results[pkg] # shorthand so we don't have to do the
                                       # double bracket thing
-            
+
             for req in reqs:
                 (r,f,v) = req
                 if r.startswith('rpmlib('):
                     continue
-                
+
                 satisfiers = []
 
                 for po in self.whatProvides(r, f, v):
                     satisfiers.append(po)
 
                 pkgresults[req] = satisfiers
-        
+
         return results
-    
+
     # pre 3.2.10 API used to always showdups, so that's the default atm.
-    def searchGenerator(self, fields, criteria, showdups=True, keys=False, 
+    def searchGenerator(self, fields, criteria, showdups=True, keys=False,
                                              searchtags=True, searchrpmdb=True):
         """Yield the packages that match the given search criteria.
         This generator method will lighten memory load for some
@@ -2757,15 +2757,15 @@ class YumBase(depsolve.Depsolve):
            the results
         :param searchtags: whether to search the package tags
         :param searchrpmdb: whether to search the rmpdb
-           
+
         """
         sql_fields = []
         for f in fields:
             sql_fields.append(RPM_TO_SQLITE.get(f, f))
 
         # yield the results in order of most terms matched first
-        sorted_lists = {} # count_of_matches = [(pkgobj, 
-                          #                     [search strings which matched], 
+        sorted_lists = {} # count_of_matches = [(pkgobj,
+                          #                     [search strings which matched],
                           #                     [results that matched])]
         tmpres = []
         real_crit = []
@@ -2816,8 +2816,8 @@ class YumBase(depsolve.Depsolve):
         results_by_pkg = {} # pkg=[list_of_tuples_of_values]
         if searchtags:
             tmpres = self.searchPackageTags(real_crit_lower)
-            
-            
+
+
             for pkg in tmpres:
                 count = 0
                 matchkeys = []
@@ -2840,7 +2840,7 @@ class YumBase(depsolve.Depsolve):
                         results_by_pkg[pkg] = []
                     results_by_pkg[pkg].append((k,v))
 
-        # take our existing dict-by-pkg and make the dict-by-count for 
+        # take our existing dict-by-pkg and make the dict-by-count for
         # this bizarro sorted_lists format
         # FIXME - stab sorted_lists in the chest at some later date
         sorted_lists = {}
@@ -2850,7 +2850,7 @@ class YumBase(depsolve.Depsolve):
             for (k, v) in results_by_pkg[pkg]:
                 totkeys.extend(k)
                 totvals.extend(v)
-            
+
             totkeys = misc.unique(totkeys)
             totvals = misc.unique(totvals)
             count = len(totkeys)
@@ -2868,7 +2868,7 @@ class YumBase(depsolve.Depsolve):
         # So we sort, and get a result like:
         #        po    | repo | matching value
         #     1. yum-1 |  fed | -2
-        #     2. yum-2 |  fed | -2 
+        #     2. yum-2 |  fed | -2
         #     3. yum-2 | @fed | -2
         #     4. yum-3 |  ups | -1
         # ...but without showdups we want to output _just_ #3, which requires
@@ -2941,9 +2941,9 @@ class YumBase(depsolve.Depsolve):
                 if pkg not in results:
                     results[pkg] = []
                 results[pkg].append((c, taglist))
-        
+
         return results
-        
+
     def searchPackages(self, fields, criteria, callback=None):
         """Deprecated.  Search the specified fields for packages that
         match the given criteria, and return a list of the results.
@@ -2957,20 +2957,20 @@ class YumBase(depsolve.Depsolve):
         """
         warnings.warn(_('searchPackages() will go away in a future version of Yum.\
                       Use searchGenerator() instead. \n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)           
+                Errors.YumFutureDeprecationWarning, stacklevel=2)
         matches = {}
         match_gen = self.searchGenerator(fields, criteria)
-        
+
         for (po, matched_strings) in match_gen:
             if callback:
                 callback(po, matched_strings)
             if po not in matches:
                 matches[po] = []
-            
+
             matches[po].extend(matched_strings)
-        
+
         return matches
-    
+
     def searchPackageProvides(self, args, callback=None,
                               callback_has_matchfor=False):
         """Search for and return a list package objects that provide
@@ -3012,26 +3012,26 @@ class YumBase(depsolve.Depsolve):
                 where = self.pkgSack.searchProvides(arg)
             self.verbose_logger.log(logginglevels.DEBUG_1,
                P_('Searching %d package', 'Searching %d packages', len(where)), len(where))
-            
+
             for po in sorted(where):
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('searching package %s'), po)
                 tmpvalues = []
-                
+
                 if usedDepString:
                     tmpvalues.append(arg)
 
                 if not isglob and canBeFile:
                     # then it is not a globbed file we have matched it precisely
                     tmpvalues.append(arg)
-                    
+
                 if isglob and canBeFile:
                     self.verbose_logger.log(logginglevels.DEBUG_2,
                         _('searching in file entries'))
                     for thisfile in po.dirlist + po.filelist + po.ghostlist:
                         if fnmatch.fnmatch(thisfile, arg):
                             tmpvalues.append(thisfile)
-                
+
 
                 self.verbose_logger.log(logginglevels.DEBUG_2,
                     _('searching in provides entries'))
@@ -3048,13 +3048,13 @@ class YumBase(depsolve.Depsolve):
                         else:
                             callback(po, tmpvalues)
                     matches[po] = tmpvalues
-        
+
         # installed rpms, too
         taglist = ['filelist', 'dirnames', 'provides_names']
         taglist_provonly = ['provides_names']
         for arg in args:
             isglob, canBeFile = _arg_data(arg)
-            
+
             if not isglob:
                 where = self.returnInstalledPackagesByDep(arg)
                 usedDepString = True
@@ -3090,17 +3090,17 @@ class YumBase(depsolve.Depsolve):
                             searchlist.extend(tagdata)
                         else:
                             searchlist.append(tagdata)
-                    
+
                     for item in searchlist:
                         if arg_regex.match(item):
                             tmpvalues.append(item)
-                
+
                     if len(tmpvalues) > 0:
                         if callback: # No matchfor, on globs
                             callback(po, tmpvalues)
                         matches[po] = tmpvalues
-            
-            
+
+
         return matches
 
     def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
@@ -3120,7 +3120,7 @@ class YumBase(depsolve.Depsolve):
 
         if self.comps.compscount == 0:
             raise Errors.GroupsError, _('No group data available for configured repositories')
-        
+
         if patterns is None:
             grps = self.comps.groups
         else:
@@ -3139,10 +3139,10 @@ class YumBase(depsolve.Depsolve):
                         available.append(grp)
                 else:
                     available.append(grp)
-            
+
         return sorted(installed), sorted(available)
-    
-    
+
+
     def groupRemove(self, grpid):
         """Mark all the packages in the given group to be removed.
 
@@ -3152,7 +3152,7 @@ class YumBase(depsolve.Depsolve):
            transaction set by this function
         """
         txmbrs_used = []
-        
+
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
@@ -3165,7 +3165,7 @@ class YumBase(depsolve.Depsolve):
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
                     txmbr.groups.append(thisgroup.groupid)
-            
+
         return txmbrs_used
 
     def groupUnremove(self, grpid):
@@ -3190,12 +3190,12 @@ class YumBase(depsolve.Depsolve):
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
-                        
+
                         # if there aren't any other groups mentioned then remove the pkg
                         if len(txmbr.groups) == 0:
                             self.tsInfo.remove(txmbr.po.pkgtup)
-        
-        
+
+
     def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
         """Mark all the packages in the given group to be installed.
 
@@ -3211,10 +3211,10 @@ class YumBase(depsolve.Depsolve):
 
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-        
+
         txmbrs_used = []
         thesegroups = self.comps.return_groups(grpid)
-     
+
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -3225,9 +3225,9 @@ class YumBase(depsolve.Depsolve):
         for thisgroup in thesegroups:
             if thisgroup.selected:
                 continue
-            
+
             thisgroup.selected = True
-            
+
             pkgs = []
             if 'mandatory' in package_types:
                 pkgs.extend(thisgroup.mandatory_packages)
@@ -3249,7 +3249,7 @@ class YumBase(depsolve.Depsolve):
                     txmbrs_used.extend(txmbrs)
                     for txmbr in txmbrs:
                         txmbr.groups.append(thisgroup.groupid)
-            
+
             group_conditionals = self.conf.enable_group_conditionals
             if enable_group_conditionals is not None: # has to be this way so we can set it to False
                 group_conditionals = enable_group_conditionals
@@ -3285,7 +3285,7 @@ class YumBase(depsolve.Depsolve):
                                     if pkg.arch in best:
                                         use.append(pkg)
                                 pkgs = use
-                               
+
                         pkgs = packagesNewestByName(pkgs)
                         count_cond_test += len(pkgs)
 
@@ -3307,17 +3307,17 @@ class YumBase(depsolve.Depsolve):
         :param force: if True, force remove all the packages in the
            given group from the transaction
         """
-        
+
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-            
+
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-        
+
         for thisgroup in thesegroups:
             thisgroup.selected = False
-            
+
             for pkgname in thisgroup.packages:
                 txmbrs = self.tsInfo.getMembersWithState(None,TS_INSTALL_STATES)
                 for txmbr in txmbrs:
@@ -3325,21 +3325,21 @@ class YumBase(depsolve.Depsolve):
                         continue
 
                     if not force:
-                        try: 
+                        try:
                             txmbr.groups.remove(grpid)
                         except ValueError:
                             self.verbose_logger.log(logginglevels.DEBUG_1,
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
-                        
+
                     # If the pkg isn't part of any group, or the group is
                     # being forced out ... then remove the pkg
                     if force or len(txmbr.groups) == 0:
                         self.tsInfo.remove(txmbr.po.pkgtup)
                         for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
                             self.tsInfo.remove(pkg.pkgtup)
-        
+
     def getPackageObject(self, pkgtup, allow_missing=False):
         """Return a package object that corresponds to the given
         package tuple.
@@ -3360,7 +3360,7 @@ class YumBase(depsolve.Depsolve):
         for po in self.localPackages:
             if po.pkgtup == pkgtup:
                 return po
-                
+
         pkgs = self.pkgSack.searchPkgTuple(pkgtup)
 
         if len(pkgs) == 0:
@@ -3368,15 +3368,15 @@ class YumBase(depsolve.Depsolve):
             if allow_missing: #  This can happen due to excludes after .up has
                 return None   # happened.
             raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
-            
+
         if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
             result = pkgs[0]
         else:
             result = pkgs[0] # which should be the only
-        
+
             # this is where we could do something to figure out which repository
             # is the best one to pull from
-        
+
         return result
 
     def getInstalledPackageObject(self, pkgtup):
@@ -3400,7 +3400,7 @@ class YumBase(depsolve.Depsolve):
         # Dito. FIXME from getPackageObject() for len() > 1 ... :)
         po = pkgs[0] # take the first one
         return po
-        
+
     def gpgKeyCheck(self):
         """Checks for the presence of GPG keys in the rpmdb.
 
@@ -3410,21 +3410,21 @@ class YumBase(depsolve.Depsolve):
         gpgkeyschecked = self.conf.cachedir + '/.gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1
-            
+
         myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
         myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
         keys = idx.count()
         del idx
         del myts
-        
+
         if keys == 0:
             return 0
         else:
             mydir = os.path.dirname(gpgkeyschecked)
             if not os.path.exists(mydir):
                 os.makedirs(mydir)
-                
+
             fo = open(gpgkeyschecked, 'w')
             fo.close()
             del fo
@@ -3432,7 +3432,7 @@ class YumBase(depsolve.Depsolve):
 
     def returnPackagesByDep(self, depstring):
         """Return a list of package objects that provide the given
-        dependencies. 
+        dependencies.
 
         :param depstring: a string specifying the dependency to return
            the packages that fulfil
@@ -3478,17 +3478,17 @@ class YumBase(depsolve.Depsolve):
         errstring = depstring
         if type(depstring) not in types.StringTypes:
             errstring = str(depstring)
-        
+
         try:
             pkglist = self.returnPackagesByDep(depstring)
         except Errors.YumBaseError:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
-        
+
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
-        
+
         return result
 
     def returnInstalledPackagesByDep(self, depstring):
@@ -3513,7 +3513,7 @@ class YumBase(depsolve.Depsolve):
             depname = depstring
             depflags = None
             depver = None
-            
+
             if depstring[0] != '/':
                 # not a file dep - look at it for being versioned
                 dep_split = depstring.split()
@@ -3540,30 +3540,30 @@ class YumBase(depsolve.Depsolve):
         errstring = depstring
         if type(depstring) not in types.StringTypes:
             errstring = str(depstring)
-        
+
         try:
             pkglist = self.returnInstalledPackagesByDep(depstring)
         except Errors.YumBaseError:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
-        
+
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
             raise Errors.YumBaseError, _('No Package found for %s') % errstring
-        
+
         return result
 
     def _bestPackageFromList(self, pkglist):
         """take list of package objects and return the best package object.
-           If the list is empty, return None. 
-           
+           If the list is empty, return None.
+
            Note: this is not aware of multilib so make sure you're only
            passing it packages of a single arch group."""
-        
-        
+
+
         if len(pkglist) == 0:
             return None
-            
+
         if len(pkglist) == 1:
             return pkglist[0]
 
@@ -3596,7 +3596,7 @@ class YumBase(depsolve.Depsolve):
                 multiLib.append(po)
             else:
                 singleLib.append(po)
-                
+
         # we now have three lists.  find the best package(s) of each
         multi = self._bestPackageFromList(multiLib)
         single = self._bestPackageFromList(singleLib)
@@ -3742,7 +3742,7 @@ class YumBase(depsolve.Depsolve):
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
         return tx_return
-        
+
     def _at_groupremove(self, pattern):
         " Do groupremove via. leading @ on the cmd line, for remove."
         assert pattern[0] == '@'
@@ -3827,7 +3827,7 @@ class YumBase(depsolve.Depsolve):
         :raises: :class:`Errors.InstallError` if there is a problem
            installing the package
         """
-        
+
 
         #  This is kind of hacky, we really need a better way to do errors than
         # doing them directly from .install/etc. ... but this is easy. *sigh*.
@@ -3882,10 +3882,10 @@ class YumBase(depsolve.Depsolve):
                 pkgs.extend(mypkgs)
                 # if we have anything left unmatched, let's take a look for it
                 # being a dep like glibc.so.2 or /foo/bar/baz
-                
+
                 if not mypkgs:
                     arg = kwargs['pattern']
-                    self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
+                    self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'),
                         arg)
 
                     mypkgs = self.pkgSack.searchProvides(arg)
@@ -3901,13 +3901,13 @@ class YumBase(depsolve.Depsolve):
                      epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                      ver=nevra_dict['version'], rel=nevra_dict['release'])
                 self._add_not_found_a(pkgs, nevra_dict)
-                
+
             if pkgs:
                 # if was_pattern or nevra-dict['arch'] is none, take the list
-                # of arches based on our multilib_compat config and 
+                # of arches based on our multilib_compat config and
                 # toss out any pkgs of any arch NOT in that arch list
 
-                
+
                 # only do these things if we're multilib
                 if self.arch.multilib:
                     if was_pattern or not nevra_dict['arch']: # and only if they
@@ -3920,16 +3920,16 @@ class YumBase(depsolve.Depsolve):
                             best.append('noarch')
                             for pkg in pkgs:
                                 if pkg.arch in best:
-                                    pkgs_by_name[pkg.name] = 1    
-                                    use.append(pkg)  
+                                    pkgs_by_name[pkg.name] = 1
+                                    use.append(pkg)
                                 else:
                                     not_added.append(pkg)
                             for pkg in not_added:
                                 if not pkg.name in pkgs_by_name:
                                     use.append(pkg)
-                           
+
                             pkgs = use
-                           
+
                 pkgs = packagesNewestByName(pkgs)
 
                 pkgbyname = {}
@@ -3964,7 +3964,7 @@ class YumBase(depsolve.Depsolve):
             if pkgs:
                 return []
             raise Errors.InstallError, _('No package(s) available to install')
-        
+
         # FIXME - lots more checking here
         #  - install instead of erase
         #  - better error handling/reporting
@@ -3977,14 +3977,14 @@ class YumBase(depsolve.Depsolve):
                         _('Package: %s  - already in transaction set'), po)
                     tx_return.extend(self.tsInfo.getMembers(pkgtup=po.pkgtup))
                     continue
-            
+
             # make sure this shouldn't be passed to update:
             if (self.rpmdb.searchNames([po.name]) and
                 po.pkgtup in self.up.updating_dict):
                 txmbrs = self.update(po=po)
                 tx_return.extend(txmbrs)
                 continue
-            
+
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.
@@ -4002,7 +4002,7 @@ class YumBase(depsolve.Depsolve):
                     already_obs = pkgs[0]
 
                 if already_obs:
-                    pkg_warn(_('Package %s is obsoleted by %s which is already installed'), 
+                    pkg_warn(_('Package %s is obsoleted by %s which is already installed'),
                              po, already_obs)
                 else:
                     if 'provides_for' in kwargs:
@@ -4014,7 +4014,7 @@ class YumBase(depsolve.Depsolve):
                              po.name, obsoleting_pkg.name, obsoleting_pkg)
                     tx_return.extend(self.install(po=obsoleting_pkg))
                 continue
-            
+
             # make sure it's not already installed
             if self.rpmdb.contains(po=po):
                 if not self.tsInfo.getMembersWithState(po.pkgtup, TS_REMOVE_STATES):
@@ -4032,16 +4032,16 @@ class YumBase(depsolve.Depsolve):
                         found = True
                         break
                 if not found:
-                    pkg_warn(_('Package matching %s already installed. Checking for update.'), po)            
+                    pkg_warn(_('Package matching %s already installed. Checking for update.'), po)
                     txmbrs = self.update(po=po)
                     tx_return.extend(txmbrs)
                     continue
 
-                
+
             # at this point we are going to mark the pkg to be installed, make sure
             # it's not an older package that is allowed in due to multiple installs
             # or some other oddity. If it is - then modify the problem filter to cope
-            
+
             for ipkg in self.rpmdb.searchNevra(name=po.name, arch=po.arch):
                 if ipkg.verEQ(po):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
@@ -4057,7 +4057,7 @@ class YumBase(depsolve.Depsolve):
                 if ipkg.verGT(po) and not canCoinstall(ipkg.arch, po.arch):
                     self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
                     break
-            
+
             # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
             obs_pkgs = list(self._find_obsoletees_direct(po))
             if obs_pkgs:
@@ -4136,12 +4136,12 @@ class YumBase(depsolve.Depsolve):
 
              updatePkgs(["foo-1-2], update_to=False)
            will work identically to::
-            
+
              updatePkgs(["foo"])
            but::
 
              updatePkgs(["foo-1-2"], update_to=True)
-           
+
            will do nothing
         :param kwargs: if *po* is not given, the names or wildcards in
            *kwargs* will be used to find the packages to update
@@ -4176,7 +4176,7 @@ class YumBase(depsolve.Depsolve):
                 if requiringPo:
                     txmbr.setAsDep(requiringPo)
                 tx_return.append(txmbr)
-                
+
             for (new, old) in updates:
                 if self.tsInfo.isObsoleted(pkgtup=old):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
@@ -4186,7 +4186,7 @@ class YumBase(depsolve.Depsolve):
                     if new is None:
                         continue
                     tx_return.extend(self.update(po=new))
-            
+
             return tx_return
 
         instpkgs = []
@@ -4260,8 +4260,8 @@ class YumBase(depsolve.Depsolve):
         else: # we have kwargs, sort them out.
             nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-            instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
-                        epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+            instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'],
+                        epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                         ver=nevra_dict['version'], rel=nevra_dict['release'])
 
             if not instpkgs:
@@ -4274,7 +4274,7 @@ class YumBase(depsolve.Depsolve):
                     availpkgs = map(lambda x: x[0], availpkgs)
                 elif not availpkgs:
                     self.logger.warning(_("No package matched to upgrade: %s"), self._ui_nevra_dict(nevra_dict))
-       
+
         # for any thing specified
         # get the list of available pkgs matching it (or take the po)
         # get the list of installed pkgs matching it (or take the po)
@@ -4286,15 +4286,15 @@ class YumBase(depsolve.Depsolve):
            # all along checking to make sure we:
             # don't update something that's already been obsoleted
             # don't update something that's already been updated
-            
+
         # if there are more than one package that matches an update from
         # a pattern/kwarg then:
             # if it is a valid update and we'
-        
+
         # TODO: we should search the updates and obsoletes list and
         # mark the package being updated or obsoleted away appropriately
         # and the package relationship in the tsInfo
-        
+
 
         # check for obsoletes first
         if self.conf.obsoletes:
@@ -4331,7 +4331,7 @@ class YumBase(depsolve.Depsolve):
                     continue
                 if self.tsInfo.isObsoleted(installed_pkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
-                                            installed_pkg.pkgtup)                                               
+                                            installed_pkg.pkgtup)
                 # at this point we are going to mark the pkg to be installed, make sure
                 # it doesn't obsolete anything. If it does, mark that in the tsInfo, too
                 elif po.pkgtup in self.up.getObsoletesList(name=po.name):
@@ -4348,7 +4348,7 @@ class YumBase(depsolve.Depsolve):
                         self.tsInfo.remove(installed_pkg.pkgtup)
                     txmbr = self._add_up_txmbr(requiringPo, po, installed_pkg)
                     tx_return.append(txmbr)
-                        
+
         for available_pkg in availpkgs:
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
@@ -4366,7 +4366,7 @@ class YumBase(depsolve.Depsolve):
                                                  tx_return):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already updated: %s.%s %s:%s-%s') %
                                             updated)
-                
+
                 else:
                     updated_pkg =  self.getInstalledPackageObject(updated)
                     if self.tsInfo.getMembersWithState(updated,
@@ -4375,7 +4375,7 @@ class YumBase(depsolve.Depsolve):
                     txmbr = self._add_up_txmbr(requiringPo,
                                                available_pkg, updated_pkg)
                     tx_return.append(txmbr)
-                    
+
             # check to see if the pkg we want to install is not _quite_ the newest
             # one but still technically an update over what is installed.
             pot_updated = self.rpmdb.searchNevra(name=available_pkg.name, arch=available_pkg.arch)
@@ -4393,7 +4393,7 @@ class YumBase(depsolve.Depsolve):
 #                    # and we're goofed up in a localPackage that someone wants to apply for some odd reason
 #                    # so we go for name-only update match and check
 #                    pot_updated = self.rpmdb.searchNevra(name=available_pkg.name)
-            
+
             for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
                     self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is already obsoleted: %s.%s %s:%s-%s') %
@@ -4405,15 +4405,15 @@ class YumBase(depsolve.Depsolve):
                 elif ipkg.verLT(available_pkg):
                     txmbr = self._add_up_txmbr(requiringPo, available_pkg, ipkg)
                     tx_return.append(txmbr)
-        
+
         for txmbr in tx_return:
             for i_pkg in self.rpmdb.searchNevra(name=txmbr.name):
                 if i_pkg not in txmbr.updates:
                     if self._does_this_update(txmbr.po, i_pkg):
                         self.tsInfo.addUpdated(i_pkg, txmbr.po)
-                        
+
         return tx_return
-        
+
     def remove(self, po=None, **kwargs):
         """Mark the specified packages for removal. If a package
         object is given, mark it for removal.  Otherwise, mark the
@@ -4429,11 +4429,11 @@ class YumBase(depsolve.Depsolve):
         """
         if not po and not kwargs:
             raise Errors.RemoveError, 'Nothing specified to remove'
-        
+
         tx_return = []
         pkgs = []
-        
-        
+
+
         if po:
             pkgs = [po]
         else:
@@ -4459,18 +4459,18 @@ class YumBase(depsolve.Depsolve):
                         depmatches = self.returnInstalledPackagesByDep(arg)
                     except Errors.YumBaseError, e:
                         self.logger.critical(_('%s') % e)
-                    
+
                     if not depmatches:
                         arg = to_unicode(arg)
                         self.logger.critical(_('No Match for argument: %s') % to_unicode(arg))
                     else:
                         pkgs.extend(depmatches)
-                
-            else:    
+
+            else:
                 nevra_dict = self._nevra_kwarg_parse(kwargs)
 
-                pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'], 
-                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'], 
+                pkgs = self.rpmdb.searchNevra(name=nevra_dict['name'],
+                            epoch=nevra_dict['epoch'], arch=nevra_dict['arch'],
                             ver=nevra_dict['version'], rel=nevra_dict['release'])
                 self._add_not_found_i(pkgs, nevra_dict)
                 if len(pkgs) == 0:
@@ -4493,16 +4493,16 @@ class YumBase(depsolve.Depsolve):
                 # Now start the remove/reinstall
             txmbr = self.tsInfo.addErase(po)
             tx_return.append(txmbr)
-        
+
         return tx_return
 
     def installLocal(self, pkg, po=None, updateonly=False):
         """Mark a package on the local filesystem (i.e. not from a
-        repository) for installation. 
-        
+        repository) for installation.
+
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked for installation
-        :param po: a :class:`packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage`
         :param updateonly: if True, the given package will only be
            marked for installation if it is an upgrade for a package
            that is already installed.  If False, this restriction is
@@ -4543,13 +4543,13 @@ class YumBase(depsolve.Depsolve):
         if po.arch not in self.arch.archlist:
             self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return tx_return
-        
+
         if self.conf.obsoletes:
             obsoleters = po.obsoletedBy(self.rpmdb.searchObsoletes(po.name))
             if obsoleters:
                 self.logger.critical(_('Cannot install package %s. It is obsoleted by installed package %s'), po, obsoleters[0])
                 return tx_return
-            
+
         # everything installed that matches the name
         installedByKey = self.rpmdb.searchNevra(name=po.name)
         # go through each package
@@ -4609,7 +4609,7 @@ class YumBase(depsolve.Depsolve):
         for po in donothingpkgs:
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('%s: does not update installed package.'), po.localpath)
-        
+
         # this checks to make sure that any of the to-be-installed pkgs
         # does not obsolete something else that's installed
         # this doesn't handle the localpkgs obsoleting EACH OTHER or
@@ -4624,16 +4624,16 @@ class YumBase(depsolve.Depsolve):
                     self.tsInfo.addObsoleted(obs_pkg, txmbr.po)
                     txmbr.obsoletes.append(obs_pkg)
                     self.tsInfo.addObsoleting(txmbr.po,obs_pkg)
-                
+
         return tx_return
 
     def reinstallLocal(self, pkg, po=None):
         """Mark a package on the local filesystem (i.e. not from a
-        repository) for reinstallation. 
-        
+        repository) for reinstallation.
+
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked for reinstallation
-        :param po: a :class:`packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage`
         :return: a list of the transaction members added to the
            transaction set by this method
         """
@@ -4711,14 +4711,14 @@ class YumBase(depsolve.Depsolve):
             raise Errors.ReinstallInstallError(_("Problem in reinstall: no package %s matched to install") % ", ".join(failed), failed_pkgs=failed_pkgs)
         tx_mbrs.extend(new_members)
         return tx_mbrs
-        
+
     def downgradeLocal(self, pkg, po=None):
         """Mark a package on the local filesystem (i.e. not from a
         repository) to be downgraded.
-        
+
         :param pkg: a string specifying the path to an rpm file in the
            local filesystem to be marked to be downgraded
-        :param po: a :class:`packages.YumLocalPackage` 
+        :param po: a :class:`packages.YumLocalPackage`
         :return: a list of the transaction members added to the
            transaction set by this method
         """
@@ -4745,11 +4745,11 @@ class YumBase(depsolve.Depsolve):
 
     def _is_local_exclude(self, po, pkglist):
         """returns True if the local pkg should be excluded"""
-        
+
         if "all" in self.conf.disable_excludes or \
            "main" in self.conf.disable_excludes:
             return False
-        
+
         toexc = []
         if len(self.conf.exclude) > 0:
             exactmatch, matched, unmatched = \
@@ -4760,7 +4760,7 @@ class YumBase(depsolve.Depsolve):
             return True
 
         return False
-        
+
     def downgrade(self, po=None, **kwargs):
         """Mark a package to be downgraded.  This is equivalent to
         first removing the currently installed package, and then
@@ -4793,7 +4793,7 @@ class YumBase(depsolve.Depsolve):
                                                    ignore_case=False)
                 if not apkgs:
                     arg = kwargs['pattern']
-                    self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'), 
+                    self.verbose_logger.debug(_('Checking for virtual provide or file-provide for %s'),
                         arg)
 
                     try:
@@ -4803,9 +4803,9 @@ class YumBase(depsolve.Depsolve):
 
         else:
             nevra_dict = self._nevra_kwarg_parse(kwargs)
-            apkgs = self.pkgSack.searchNevra(name=nevra_dict['name'], 
+            apkgs = self.pkgSack.searchNevra(name=nevra_dict['name'],
                                              epoch=nevra_dict['epoch'],
-                                             arch=nevra_dict['arch'], 
+                                             arch=nevra_dict['arch'],
                                              ver=nevra_dict['version'],
                                              rel=nevra_dict['release'])
             self._add_not_found_a(apkgs, nevra_dict)
@@ -4930,11 +4930,11 @@ class YumBase(depsolve.Depsolve):
         if n:
             return n
         return '<unknown>'
-        
+
     def _nevra_kwarg_parse(self, kwargs):
-            
+
         returndict = {}
-        
+
         if 'pkgtup' in kwargs:
             (n, a, e, v, r) = kwargs['pkgtup']
             returndict['name'] = n
@@ -5100,10 +5100,10 @@ class YumBase(depsolve.Depsolve):
         Returns a list of dicts with all the keyinfo
         """
         key_installed = False
-        
+
         msg = _('Retrieving key from %s') % keyurl
         self.verbose_logger.log(logginglevels.INFO_2, msg)
-       
+
         # Go get the GPG key from the given URL
         try:
             url = misc.to_utf8(keyurl)
@@ -5121,7 +5121,7 @@ class YumBase(depsolve.Depsolve):
         except urlgrabber.grabber.URLGrabError, e:
             raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
-                                      
+
         # check for a .asc file accompanying it - that's our gpg sig on the key
         # suck it down and do the check
         sigfile = None
@@ -5138,7 +5138,7 @@ class YumBase(depsolve.Depsolve):
                 sigfile = None
 
             if sigfile:
-                if not misc.valid_detached_sig(sigfile, 
+                if not misc.valid_detached_sig(sigfile,
                                     StringIO.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
@@ -5147,17 +5147,17 @@ class YumBase(depsolve.Depsolve):
                     msg = _('GPG key signature verified against CA Key(s)')
                     self.verbose_logger.log(logginglevels.INFO_2, msg)
                     valid_sig = True
-            
+
         # Parse the key
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
-            raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') % 
+            raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') %
                                       (url, to_unicode(str(e))))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
-            for info in ('keyid', 'timestamp', 'userid', 
+            for info in ('keyid', 'timestamp', 'userid',
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
                     raise Errors.YumBaseError, \
@@ -5167,7 +5167,7 @@ class YumBase(depsolve.Depsolve):
             thiskey['valid_sig'] = valid_sig
             thiskey['has_sig'] = bool(sigfile)
             keys.append(thiskey)
-        
+
         return keys
 
     def _getKeyImportMessage(self, info, keyurl, keytype='GPG'):
@@ -5232,7 +5232,7 @@ class YumBase(depsolve.Depsolve):
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
                         keyurl, info['hexkeyid']))
                     continue
-                
+
                 if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
                     key_installed = True
                 else:
@@ -5243,7 +5243,7 @@ class YumBase(depsolve.Depsolve):
                         rc = False
                     elif self.conf.assumeyes:
                         rc = True
-                        
+
                     # grab the .sig/.asc for the keyurl, if it exists
                     # if it does check the signature on the key
                     # if it is signed by one of our ca-keys for this repo or the global one
@@ -5252,7 +5252,7 @@ class YumBase(depsolve.Depsolve):
 
                     elif fullaskcb:
                         rc = fullaskcb({"po": po, "userid": info['userid'],
-                                        "hexkeyid": info['hexkeyid'], 
+                                        "hexkeyid": info['hexkeyid'],
                                         "keyurl": keyurl,
                                         "fingerprint": info['fingerprint'],
                                         "timestamp": info['timestamp']})
@@ -5262,7 +5262,7 @@ class YumBase(depsolve.Depsolve):
                     if not rc:
                         user_cb_fail = True
                         continue
-                    
+
                 # Import the key
                 ts = self.rpmdb.readOnlyTS()
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
@@ -5290,12 +5290,12 @@ class YumBase(depsolve.Depsolve):
             self.logger.info(msg)
             errmsg = to_unicode(errmsg)
             raise Errors.YumBaseError, _prov_key_data(errmsg)
-    
+
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
         Retrieve a key for a repository If needed, prompt for if the key should
         be imported using callback
-        
+
         @param repo: Repository object to retrieve the key of.
         @param destdir: destination of the gpg pub ring
         @param keyurl_list: list of urls for gpg keys
@@ -5345,7 +5345,7 @@ class YumBase(depsolve.Depsolve):
                     keytype = 'GPG'
                     if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
                         key_installed = True
-                        
+
                 if not key_installed:
                     self._getKeyImportMessage(info, keyurl, keytype)
                     rc = False
@@ -5364,7 +5364,7 @@ class YumBase(depsolve.Depsolve):
                     if not rc:
                         user_cb_fail = True
                         continue
-                
+
                 # Import the key
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
@@ -5449,8 +5449,8 @@ class YumBase(depsolve.Depsolve):
             return ret_beg + ret_mid + ret_end
 
         if self.conf.installonly_limit < 1 :
-            return 
-            
+            return
+
         toremove = []
         #  We "probably" want to use either self.ts or self.rpmdb.ts if either
         # is available. However each ts takes a ref. on signals generally, and
@@ -5477,14 +5477,14 @@ class YumBase(depsolve.Depsolve):
 
             numleft = len(installed) - self.conf.installonly_limit + 1
             for po in installed:
-                if (po.version, po.release) == (cur_kernel_v, cur_kernel_r): 
+                if (po.version, po.release) == (cur_kernel_v, cur_kernel_r):
                     # don't remove running
                     continue
                 if numleft == 0:
                     break
                 toremove.append((po,m))
                 numleft -= 1
-                        
+
         for po,rel in toremove:
             txmbr = self.tsInfo.addErase(po)
             # Add a dep relation to the new version of the package, causing this one to be erased
@@ -5508,10 +5508,10 @@ class YumBase(depsolve.Depsolve):
         :param rpmDisplay: name of the display class to use in the rpm
            transaction
         """
-        
+
         if not callback:
             callback = callbacks.ProcessTransNoOutputCallback()
-        
+
         # Download Packages
         callback.event(callbacks.PT_DOWNLOAD)
         pkgs = self._downloadPackages(callback)
@@ -5525,17 +5525,17 @@ class YumBase(depsolve.Depsolve):
         # Run Transaction
         callback.event(callbacks.PT_TRANSACTION)
         self._doTransaction(callback,display=rpmDisplay)
-    
+
     def _downloadPackages(self,callback):
         ''' Download the need packages in the Transaction '''
-        # This can be overloaded by a subclass.    
+        # This can be overloaded by a subclass.
         dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
                                             txmbr.ts_state in ("i", "u"),
                                             self.tsInfo.getMembers()))
         # Check if there is something to do
         if len(dlpkgs) == 0:
             return None
-        # make callback with packages to download                                    
+        # make callback with packages to download
         callback.event(callbacks.PT_DOWNLOAD_PKGS,dlpkgs)
         try:
             probs = self.downloadPkgs(dlpkgs)
@@ -5554,26 +5554,26 @@ class YumBase(depsolve.Depsolve):
 
     def _checkSignatures(self,pkgs,callback):
         ''' The the signatures of the downloaded packages '''
-        # This can be overloaded by a subclass.    
+        # This can be overloaded by a subclass.
         for po in pkgs:
             result, errmsg = self.sigCheckPkg(po)
             if result == 0:
                 # Verified ok, or verify not req'd
-                continue            
+                continue
             elif result == 1:
                 self.getKeyForPackage(po, self._askForGPGKeyImport)
             else:
                 raise Errors.YumGPGCheckError, errmsg
 
         return 0
-        
+
     def _askForGPGKeyImport(self, po, userid, hexkeyid):
-        ''' 
-        Ask for GPGKeyImport 
+        '''
+        Ask for GPGKeyImport
         This need to be overloaded in a subclass to make GPG Key import work
         '''
         return False
-    
+
     def _doTestTransaction(self,callback,display=None):
         ''' Do the RPM test transaction '''
         self.initActionTs()
@@ -5582,8 +5582,8 @@ class YumBase(depsolve.Depsolve):
         self.dsCallback = None # dumb, dumb dumb dumb!
         self.populateTs( keepold=0 ) # sigh
 
-        # This can be overloaded by a subclass.    
-        self.verbose_logger.log(logginglevels.INFO_2, 
+        # This can be overloaded by a subclass.
+        self.verbose_logger.log(logginglevels.INFO_2,
                  _('Running Transaction Check'))
         msgs = self._run_rpm_check()
         if msgs:
@@ -5597,11 +5597,11 @@ class YumBase(depsolve.Depsolve):
                 retmsgs.extend(msgs)
                 raise Errors.YumRPMCheckError, retmsgs
             retmsgs = [_('ERROR with transaction check vs depsolve:')]
-            retmsgs.extend(msgs) 
-            retmsgs.append(_('Please report this error at %s') 
+            retmsgs.extend(msgs)
+            retmsgs.append(_('Please report this error at %s')
                                          % self.conf.bugtracker_url)
             raise Errors.YumRPMCheckError,retmsgs
-        
+
         tsConf = {}
         for feature in ['diskspacecheck']: # more to come, I'm sure
             tsConf[feature] = getattr( self.conf, feature )
@@ -5610,14 +5610,14 @@ class YumBase(depsolve.Depsolve):
         # overwrite the default display class
         if display:
             testcb.display = display
-  
+
         tserrors = self.ts.test( testcb, conf=tsConf )
         del testcb
-  
+
         if len( tserrors ) > 0:
             errstring =  _('Test Transaction Errors: ')
             for descr in tserrors:
-                errstring += '  %s\n' % descr 
+                errstring += '  %s\n' % descr
             raise Errors.YumTestTransactionError, errstring
 
         del self.ts
@@ -5627,7 +5627,7 @@ class YumBase(depsolve.Depsolve):
 
     def _doTransaction(self,callback,display=None):
         ''' do the RPM Transaction '''
-        # This can be overloaded by a subclass.    
+        # This can be overloaded by a subclass.
         self.initActionTs() # make a new, blank ts to populate
         self.populateTs( keepold=0 ) # populate the ts
         self.ts.check() # required for ordering
@@ -5670,7 +5670,7 @@ class YumBase(depsolve.Depsolve):
         newrepo.basecachedir = self.conf.cachedir
 
         var_convert = kwargs.get('variable_convert', True)
-        
+
         if baseurls:
             replaced = []
             if var_convert:
@@ -5700,10 +5700,10 @@ class YumBase(depsolve.Depsolve):
         for key in kwargs.keys():
             if not hasattr(newrepo, key): continue # skip the ones which aren't vars
             setattr(newrepo, key, kwargs[key])
-        
+
         # add the new repo
         self.repos.add(newrepo)
-        # enable the main repo  
+        # enable the main repo
         self.repos.enableRepo(newrepo.id)
         return newrepo
 
@@ -5733,10 +5733,10 @@ class YumBase(depsolve.Depsolve):
         return True # We got a new cache dir
 
     def _does_this_update(self, pkg1, pkg2):
-        """returns True if pkg1 can update pkg2, False if not. 
+        """returns True if pkg1 can update pkg2, False if not.
            This only checks if it can be an update it does not check if
            it is obsoleting or anything else."""
-        
+
         if pkg1.name != pkg2.name:
             return False
         if pkg1.verLE(pkg2):
@@ -5747,8 +5747,8 @@ class YumBase(depsolve.Depsolve):
             return False
         if self.allowedMultipleInstalls(pkg1):
             return False
-            
-        return True    
+
+        return True
 
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
@@ -5757,7 +5757,7 @@ class YumBase(depsolve.Depsolve):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
-        
+
     def verify_plugins_cb(self, verify_package):
         """Callback to call a plugin hook for pkg.verify().
 
@@ -5782,16 +5782,16 @@ class YumBase(depsolve.Depsolve):
                 self.logger.critical(_("Dependencies not solved. Will not save unresolved transaction."))
                 return
             raise Errors.YumBaseError(_("Dependencies not solved. Will not save unresolved transaction."))
-        
+
         if not filename:
             prefix = 'yum_save_tx.%s' % time.strftime('%Y-%m-%d.%H-%M.')
             fd,filename = tempfile.mkstemp(suffix='.yumtx', prefix=prefix)
             f = os.fdopen(fd, 'w')
         else:
             f = open(filename, 'w')
-        
+
         self._ts_save_file = filename
-        
+
         msg = "%s\n" % self.rpmdb.simpleVersion(main_only=True)[0]
         msg += "%s\n" % self.ts.getTsFlags()
         if self.tsInfo.pkgSack is None: # rm Transactions don't have pkgSack
@@ -5814,7 +5814,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 raise Errors.YumBaseError(_("Could not save transaction file %s: %s") % (filename, str(e)))
 
-        
+
     def load_ts(self, filename, ignorerpm=None, ignoremissing=None):
         """Load a transaction from a .yumtx file.
 
@@ -5837,13 +5837,13 @@ class YumBase(depsolve.Depsolve):
             data = open(filename, 'r').readlines()
         except (IOError, OSError), e:
             raise Errors.YumBaseError(_("Could not access/read saved transaction %s : %s") % (filename, str(e)))
-            
+
 
         if ignorerpm is None:
             ignorerpm = self.conf.loadts_ignorerpm
         if ignoremissing is None:
             ignoremissing = self.conf.loadts_ignoremissing
-            
+
         # data format
         # 0 == rpmdb version
         # 1 == tsflags
@@ -5851,7 +5851,7 @@ class YumBase(depsolve.Depsolve):
         # 3:numrepos = repos
         # 3+numrepos = num pkgs
         # 3+numrepos+1 -> EOF= txmembers
-        
+
         if data[0] == 'saved_tx:\n':
             #  Old versions of yum would put "saved_tx:" at the begining and
             # two blank lines at the end when you used:
@@ -5872,7 +5872,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 msg += _(" aborting.")
                 raise Errors.YumBaseError(msg)
-        
+
         # tsflags
         # FIXME - probably should let other tsflags play nicely together
         #         so someone can add --nogpgcheck or --nodocs or --nodiskspace or some nonsense and have it work
@@ -5883,7 +5883,7 @@ class YumBase(depsolve.Depsolve):
             raise Errors.YumBaseError(msg)
 
         self.ts.setFlags(tsflags)
-        
+
         # repos
         numrepos = int(data[2].strip())
         repos = []
@@ -5895,7 +5895,7 @@ class YumBase(depsolve.Depsolve):
         numpkgs = int(data[rindex].strip())
 
         pkgstart = rindex + 1
-        
+
         pkgcount = 0
         pkgprob = False
         curpkg = None
@@ -5949,7 +5949,7 @@ class YumBase(depsolve.Depsolve):
             elif k in ('groups'):
                 curpkg.groups.extend(v.split(' '))
             # the relationships to our main txmbrs
-            elif k in ('updated_by', 'obsoleted_by', 'downgraded_by', 
+            elif k in ('updated_by', 'obsoleted_by', 'downgraded_by',
                        'downgrades', 'updates', 'obsoletes', 'depends_on'):
                 for pkgspec in v.strip().split(' '):
                     pkgtup, origin  = pkgspec.split('@')
@@ -5983,23 +5983,23 @@ class YumBase(depsolve.Depsolve):
                         curlist = getattr(curpkg, k)
                         curlist.append((po,rel))
                         setattr(curpkg, k, curlist)
-                        
+
             # the plain strings
             else: #ts_state, reason
                 setattr(curpkg, k, v.strip())
-            
+
             if missingany:
                 pkgprob = True
-                
+
         # make sure we get the last one in!
         self.tsInfo.add(curpkg)
         if curpkg in self.tsInfo._unresolvedMembers:
             self.tsInfo._unresolvedMembers.remove(curpkg)
 
-            
+
         if numpkgs != pkgcount:
             pkgprob = True
-            
+
         if pkgprob:
             msg = _("Transaction members, relations are missing or ts has been modified,")
             if ignoremissing:
@@ -6008,7 +6008,7 @@ class YumBase(depsolve.Depsolve):
             else:
                 msg += _(" aborting.")
                 raise Errors.YumBaseError(msg)
-            
+
         return self.tsInfo.getMembers()
 
     def _remove_old_deps(self):
@@ -6040,7 +6040,7 @@ class YumBase(depsolve.Depsolve):
                 for requiring in required.requiring_packages(): # so we have required deps - look at all the pkgs which require them
                     if requiring == required: # if they are self-requiring skip them
                         continue
-                        
+
                 # go through the stuff in the ts to be installed - make sure none of that needs the required pkg, either.
                 for (provn,provf,provevr) in required.provides:
                     if self.tsInfo.getNewRequires(provn, provf, provevr).keys():
@@ -6052,13 +6052,13 @@ class YumBase(depsolve.Depsolve):
                         okay_to_remove[required] = False
                         still_needed = True
                         break
-                            
+
                     #for tbi_pkg in self.tsInfo.getMembersWithState(output_states=TS_INSTALL_STATES):
                     #   for reqtuple in tbi_pkg.po.requires:
                     #        if required.provides_for(reqtuple):
                     #            still_needed = True
                     #            break
-                
+
                 if not still_needed:
                     print '---> Marking %s to be removed - no longer needed by %s' % (required.name, pkg.name)
                     txmbrs = self.remove(po=required)
@@ -6069,10 +6069,10 @@ class YumBase(depsolve.Depsolve):
                             beingremoved.append(txmbr.po)
                         found_leaves.add(txmbr)
         self.verbose_logger.log(logginglevels.INFO_2, "Found and removing %s unneeded dependencies" % len(found_leaves))
-            
-    # Checks if pkg has any reverse deps which cannot be removed. 
-    # Currently this only checks the install reason for each revdep, 
-    # but we may want to check for other reasons that would  
+
+    # Checks if pkg has any reverse deps which cannot be removed.
+    # Currently this only checks the install reason for each revdep,
+    # but we may want to check for other reasons that would
     # prevent the revdep from being removed (e.g. protected)
     def _has_needed_revdeps(self, pkg, beingremoved, ok_to_remove):
         # check if we've already found this package to have user-installed deps

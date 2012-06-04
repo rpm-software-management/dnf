@@ -14,7 +14,7 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 # Copyright 2006 Duke University
 
-from misc import cElementTree_iterparse as iterparse 
+from misc import cElementTree_iterparse as iterparse
 from Errors import RepoMDError
 
 import sys
@@ -22,7 +22,7 @@ import types
 from misc import AutoFileChecksums, to_xml
 
 def ns_cleanup(qn):
-    if qn.find('}') == -1: return qn 
+    if qn.find('}') == -1: return qn
     return qn.split('}')[1]
 
 class RepoData:
@@ -43,14 +43,14 @@ class RepoData:
             self.parse(elem)
 
     def parse(self, elem):
-        
+
         for child in elem:
             child_name = ns_cleanup(child.tag)
             if child_name == 'location':
                 relative = child.attrib.get('href')
                 base = child.attrib.get('base')
                 self.location = (base, relative)
-            
+
             elif child_name == 'checksum':
                 csum_value = child.text
                 csum_type = child.attrib.get('type')
@@ -60,7 +60,7 @@ class RepoData:
                 csum_value = child.text
                 csum_type = child.attrib.get('type')
                 self.openchecksum = (csum_type, csum_value)
-            
+
             elif child_name == 'timestamp':
                 self.timestamp = child.text
             elif child_name == 'database_version':
@@ -74,13 +74,13 @@ class RepoData:
         msg = ""
         top = """<data type="%s">\n""" % to_xml(self.type, attrib=True)
         msg += top
-        
+
         for (data, xmlname) in [('checksum', 'checksum'),('openchecksum', 'open-checksum')]:
             if hasattr(self, data):
                 val = getattr(self, data)
                 if val[0]:
                     d_xml = """  <%s type="%s">%s</%s>\n""" % (xmlname,
-                                       to_xml(val[0], attrib=True), 
+                                       to_xml(val[0], attrib=True),
                                        to_xml(val[1]), xmlname)
                     msg += d_xml
 
@@ -92,20 +92,20 @@ class RepoData:
                     loc = """  <location xml:base="%s" href="%s"/>\n""" % (
                        to_xml(val[0], attrib=True), to_xml(val[1], attrib=True))
                 msg += loc
-            
+
         for (data,xmlname) in [('timestamp', 'timestamp'),
                                ('dbversion', 'database_version'),
                                ('size','size'), ('opensize', 'open-size')]:
             val = getattr(self, data)
             if val:
-                d_xml = """  <%s>%s</%s>\n""" % (xmlname, to_xml(val), 
+                d_xml = """  <%s>%s</%s>\n""" % (xmlname, to_xml(val),
                                                  xmlname)
                 msg += d_xml
 
         bottom = """</data>\n"""
         msg += bottom
         return msg
-        
+
 class RepoMD:
     """represents the repomd xml file"""
 
@@ -141,11 +141,11 @@ class RepoMD:
         infile = AutoFileChecksums(infile, ['sha256', 'sha512'],
                                    ignore_missing=True, ignore_none=True)
         parser = iterparse(infile)
-        
+
         try:
             for event, elem in parser:
                 elem_name = ns_cleanup(elem.tag)
-                
+
                 if elem_name == "data":
                     thisdata = RepoData(elem=elem)
                     self.repoData[thisdata.type] = thisdata
@@ -171,17 +171,17 @@ class RepoMD:
             self.length    = len(infile.checksums)
         except SyntaxError, e:
             raise RepoMDError, "Damaged repomd.xml file"
-            
+
     def fileTypes(self):
         """return list of metadata file types available"""
         return self.repoData.keys()
-    
+
     def getData(self, type):
         if type in self.repoData:
             return self.repoData[type]
         else:
             raise RepoMDError, "requested datatype %s not available" % type
-            
+
     def dump(self):
         """dump fun output"""
 
@@ -212,14 +212,14 @@ class RepoMD:
             print ''
     def dump_xml(self):
         msg = ""
-        
+
         top = """<?xml version="1.0" encoding="UTF-8"?>
 <repomd xmlns="http://linux.duke.edu/metadata/repo" xmlns:rpm="http://linux.duke.edu/metadata/rpm">\n"""
         msg += top
         if self.revision:
             rev = """ <revision>%s</revision>\n""" % to_xml(self.revision)
             msg += rev
-        
+
         if self.tags['content'] or self.tags['distro'] or self.tags['repo']:
             tags = """ <tags>\n"""
             for item in self.tags['content']:
@@ -238,10 +238,10 @@ class RepoMD:
                 tags += tag
             tags += """ </tags>\n"""
             msg += tags
-        
+
         for md in self.repoData.values():
             msg += md.dump_xml()
-        
+
         msg += """</repomd>\n"""
 
         return msg
@@ -252,11 +252,11 @@ def main():
         print "file          : %s" % sys.argv[1]
         p = RepoMD('repoid', sys.argv[1])
         p.dump()
-        
+
     except IOError:
         print >> sys.stderr, "newcomps.py: No such file:\'%s\'" % sys.argv[1]
         sys.exit(1)
-        
+
 if __name__ == '__main__':
     main()
 

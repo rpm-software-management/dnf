@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-# Copyright 2006 Duke University 
+# Copyright 2006 Duke University
 # Written by Seth Vidal
 
 """
@@ -67,7 +67,7 @@ def checkGPGKey(base):
         for repo in base.repos.listEnabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
                 msg = _("""
-You have enabled checking of packages via GPG keys. This is a good thing. 
+You have enabled checking of packages via GPG keys. This is a good thing.
 However, you do not have any GPG public keys installed. You need to download
 the keys for packages you wish to install and install them.
 You can do that by running the command:
@@ -75,7 +75,7 @@ You can do that by running the command:
 
 
 Alternatively you can specify the url to the key you would like to use
-for a repository in the 'gpgkey' option in a repository section and yum 
+for a repository in the 'gpgkey' option in a repository section and yum
 will install it for you.
 
 For more information contact your distribution or package provider.
@@ -127,7 +127,7 @@ def checkGroupArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.logger.critical(_('Error: Need a group or list of groups'))
         _err_mini_usage(base, basecmd)
-        raise cli.CliError    
+        raise cli.CliError
 
 def checkCleanArg(base, basecmd, extcmds):
     """Verify that *extcmds* contains at least one argument, and that all
@@ -164,11 +164,11 @@ def checkShellArg(base, basecmd, extcmds):
     if len(extcmds) == 0:
         base.verbose_logger.debug(_("No argument to shell"))
     elif len(extcmds) == 1:
-        base.verbose_logger.debug(_("Filename passed to shell: %s"), 
-            extcmds[0])              
+        base.verbose_logger.debug(_("Filename passed to shell: %s"),
+            extcmds[0])
         if not os.path.isfile(extcmds[0]):
             base.logger.critical(
-                _("File %s given as argument to shell does not exist."), 
+                _("File %s given as argument to shell does not exist."),
                 extcmds[0])
             base.usage()
             raise cli.CliError
@@ -244,7 +244,7 @@ class YumCommand:
         :return: a one line summary of what the command does
         """
         raise NotImplementedError
-    
+
     def doCheck(self, base, basecmd, extcmds):
         """Verify that various conditions are met so that the command
         can run.
@@ -270,7 +270,7 @@ class YumCommand:
             2 = we've got work yet to do, onto the next stage
         """
         return 0, [_('Nothing to do')]
-    
+
     def needTs(self, base, basecmd, extcmds):
         """Return whether a transaction set must be set up before the
         command can run
@@ -281,7 +281,7 @@ class YumCommand:
         :return: True if a transaction set is needed, False otherwise
         """
         return True
-        
+
 class InstallCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     install command.
@@ -309,7 +309,7 @@ class InstallCommand(YumCommand):
         :return: a one line summary of this command
         """
         return _("Install a package or packages on your system")
-    
+
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
         These include that the program is being run by the root user,
@@ -601,7 +601,7 @@ class InfoCommand(YumCommand):
                                 highlight_modes={'=' : cul, 'not in' : cur})
 
             # XXX put this into the ListCommand at some point
-            if len(ypl.obsoletes) > 0 and basecmd == 'list': 
+            if len(ypl.obsoletes) > 0 and basecmd == 'list':
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
                 print _('Obsoleting Packages')
@@ -632,7 +632,7 @@ class InfoCommand(YumCommand):
         """
         if len(extcmds) and extcmds[0] == 'installed':
             return False
-        
+
         return True
 
 class ListCommand(InfoCommand):
@@ -661,7 +661,7 @@ class EraseCommand(YumCommand):
     erase command.
     """
 
-        
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -739,7 +739,7 @@ class EraseCommand(YumCommand):
         """
         return True
 
- 
+
 class GroupsCommand(YumCommand):
     """ Single sub-command interface for most groups interaction. """
 
@@ -771,7 +771,7 @@ class GroupsCommand(YumCommand):
         :return: a one line summary of this command
         """
         return _("Display, or use, the groups information")
-    
+
     def _grp_setup_doCommand(self, base):
         self.doneCommand(base, _("Setting up Group Process"))
 
@@ -971,7 +971,7 @@ class CleanCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     clean command.
     """
-    
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1005,7 +1005,7 @@ class CleanCommand(YumCommand):
         """
         checkCleanArg(base, basecmd, extcmds)
         checkEnabledRepo(base)
-        
+
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
@@ -1053,7 +1053,7 @@ class ProvidesCommand(YumCommand):
         :return: a usage string for this command
         """
         return "SOME_STRING"
-    
+
     def getSummary(self):
         """Return a one line summary of this command.
 
@@ -1355,7 +1355,7 @@ class LocalInstallCommand(YumCommand):
         checkRootUID(base)
         checkGPGKey(base)
         checkPackageArg(base, basecmd, extcmds)
-        
+
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
 
@@ -1572,7 +1572,7 @@ class RepoListCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     repolist command.
     """
-    
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -2044,7 +2044,7 @@ class ReInstallCommand(YumCommand):
         self.doneCommand(base, _("Setting up Reinstall Process"))
         try:
             return base.reinstallPkgs(extcmds)
-            
+
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
 
@@ -2065,7 +2065,7 @@ class ReInstallCommand(YumCommand):
         :return: True if a transaction set is needed, False otherwise
         """
         return False
-        
+
 class DowngradeCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
     downgrade command.
@@ -2667,10 +2667,10 @@ class LoadTransactionCommand(YumCommand):
         if not extcmds:
             base.logger.critical(_("No saved transaction file specified."))
             raise cli.CliError
-        
+
         load_file = extcmds[0]
         self.doneCommand(base, _("loading transaction from %s") % load_file)
-        
+
         try:
             base.load_ts(load_file)
         except dnf.yum.Errors.YumBaseError, e:
