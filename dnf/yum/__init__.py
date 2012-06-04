@@ -53,7 +53,6 @@ import config
 from config import ParsingError, ConfigParser
 import Errors
 import rpmsack
-import dnf.rpmUtils.updates
 from dnf.rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
 from dnf.rpmUtils.miscutils import compareEVR
 import dnf.rpmUtils.transaction
@@ -181,7 +180,6 @@ class YumBase(object):
         self._ts = None
         self._tsInfo = None
         self._rpmdb = None
-        self._up = None
         self._comps = None
         self._history = None
         self._pkgSack = None
@@ -608,7 +606,6 @@ class YumBase(object):
         self._rpmdb = None
         self._ts = None
         self._tsInfo = None
-        self._up = None
         self.comps = None
 
     def _getTsInfo(self, remove_only=False):
@@ -832,54 +829,6 @@ class YumBase(object):
 
         return self._getUpdates()
 
-    def _getUpdates(self):
-        """setups up the update object in the base class and fills out the
-           updates, obsoletes and others lists"""
-
-        if self._up:
-            return self._up
-
-        self.verbose_logger.debug(_('Building updates object'))
-
-        up_st = time.time()
-
-        self._up = dnf.rpmUtils.updates.Updates(self.rpmdb.simplePkgList(), self.pkgSack.simplePkgList())
-        if self.conf.debuglevel >= 7:
-            self._up.debug = 1
-
-        if hasattr(self, '_up_obs_hack'):
-            self._up.rawobsoletes = self._up_obs_hack.rawobsoletes
-            del self._up_obs_hack
-        elif self.conf.obsoletes:
-            obs_init = time.time()
-            #  Note: newest=True here is semi-required for repos. with multiple
-            # versions. The problem is that if pkgA-2 _accidentally_ obsoletes
-            # pkgB-1, and we keep all versions, we want to release a pkgA-3
-            # that doesn't do the obsoletes ... and thus. not obsolete pkgB-1.
-            self._up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
-            self.verbose_logger.debug('up:Obs Init time: %0.3f' % (time.time() - obs_init))
-
-        self._up.myarch = self.arch.canonarch
-        self._up._is_multilib = self.arch.multilib
-        self._up._archlist = self.arch.archlist
-        self._up._multilib_compat_arches = self.arch.compatarches
-        self._up.exactarch = self.conf.exactarch
-        self._up.exactarchlist = self.conf.exactarchlist
-        up_pr_st = time.time()
-        self._up.doUpdates()
-        self.verbose_logger.debug('up:simple updates time: %0.3f' % (time.time() - up_pr_st))
-
-        if self.conf.obsoletes:
-            obs_st = time.time()
-            self._up.doObsoletes()
-            self.verbose_logger.debug('up:obs time: %0.3f' % (time.time() - obs_st))
-
-        cond_up_st = time.time()
-        self._up.condenseUpdates()
-        self.verbose_logger.debug('up:condense time: %0.3f' % (time.time() - cond_up_st))
-        self.verbose_logger.debug('updates time: %0.3f' % (time.time() - up_st))
-        return self._up
-
     def doGroupSetup(self):
         """Deprecated. Create and populate the groups object."""
 
@@ -1027,10 +976,6 @@ class YumBase(object):
     ts = property(fget=lambda self: self._getActionTs(),
                   fdel=lambda self: self._deleteTs(),
                   doc="TransactionSet object")
-    up = property(fget=lambda self: self._getUpdates(),
-                  fset=lambda self, value: setattr(self, "_up", value),
-                  fdel=lambda self: setattr(self, "_up", None),
-                  doc="Updates Object")
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: self._setGroups(value),
                      fdel=lambda self: setattr(self, "_comps", None),
@@ -3681,102 +3626,6 @@ class YumBase(object):
 
         return returnlist
 
-    # FIXME: This doesn't really work, as it assumes one obsoleter for each pkg
-    # when we can have:
-    # 1 pkg obsoleted by multiple pkgs _and_
-    # 1 pkg obsoleting multiple pkgs
-    # ...and we need to detect loops, and get the arches "right" and do this
-    # for chains. Atm. I hate obsoletes, and I can't get it to work better,
-    # easily ... so screw it, don't create huge chains of obsoletes with some
-    # loops in there too ... or I'll have to hurt you.
-    def _pkg2obspkg(self, po):
-        """ Given a package return the package it's obsoleted by and so
-            we should install instead. Or None if there isn't one. """
-        if self._up is not None:
-            thispkgobsdict = self.up.checkForObsolete([po.pkgtup])
-        else:
-            #  This is pretty hacky, but saves a huge amount of time for small
-            # ops.
-            if not self.conf.obsoletes:
-                return None
-
-            if not hasattr(self, '_up_obs_hack'):
-                obs_init = time.time()
-                up = dnf.rpmUtils.updates.Updates([], [])
-                up.rawobsoletes = self.pkgSack.returnObsoletes(newest=True)
-                self.verbose_logger.debug('Obs Init time: %0.3f' % (time.time()
-                                                                    - obs_init))
-                self._up_obs_hack = up
-            thispkgobsdict = self._up_obs_hack.checkForObsolete([po.pkgtup])
-
-        if po.pkgtup in thispkgobsdict:
-            obsoleting  = thispkgobsdict[po.pkgtup]
-            oobsoleting = []
-            # We want to keep the arch. of the obsoleted pkg. if possible.
-            for opkgtup in obsoleting:
-                if not canCoinstall(po.arch, opkgtup[1]):
-                    oobsoleting.append(opkgtup)
-            if oobsoleting:
-                obsoleting = oobsoleting
-            if len(obsoleting) > 1:
-                # Pick the first name, and run with it...
-                first = obsoleting[0]
-                obsoleting = [pkgtup for pkgtup in obsoleting
-                              if first[0] == pkgtup[0]]
-            if len(obsoleting) > 1:
-                # Lock to the latest version...
-                def _sort_ver(x, y):
-                    n1,a1,e1,v1,r1 = x
-                    n2,a2,e2,v2,r2 = y
-                    return compareEVR((e1,v1,r1), (e2,v2,r2))
-                obsoleting.sort(_sort_ver)
-                first = obsoleting[0]
-                obsoleting = [pkgtup for pkgtup in obsoleting
-                              if not _sort_ver(first, pkgtup)]
-            if len(obsoleting) > 1:
-                # Now do arch distance (see depsolve:compare_providers)...
-                def _sort_arch_i(carch, a1, a2):
-                    res1 = archDifference(carch, a1)
-                    if not res1:
-                        return 0
-                    res2 = archDifference(carch, a2)
-                    if not res2:
-                        return 0
-                    return res1 - res2
-                def _sort_arch(x, y):
-                    n1,a1,e1,v1,r1 = x
-                    n2,a2,e2,v2,r2 = y
-                    ret = _sort_arch_i(po.arch,            a1, a2)
-                    if ret:
-                        return ret
-                    ret = _sort_arch_i(self.arch.bestarch, a1, a2)
-                    return ret
-                obsoleting.sort(_sort_arch)
-            for pkgtup in obsoleting:
-                pkg = self.getPackageObject(pkgtup, allow_missing=True)
-                if pkg is not None:
-                    return pkg
-            return None
-        return None
-
-    def _test_loop(self, node, next_func):
-        """ Generic comp. sci. test for looping, walk the list with two pointers
-            moving one twice as fast as the other. If they are ever == you have
-            a loop. If loop we return None, if no loop the last element. """
-        slow = node
-        done = False
-        while True:
-            next = next_func(node)
-            if next is None and not done: return None
-            if next is None: return node
-            node = next_func(next)
-            if node is None: return next
-            done = True
-
-            slow = next_func(slow)
-            if next == slow:
-                return None
-
     def _at_groupinstall(self, pattern):
         " Do groupinstall via. leading @ on the cmd line, for install/update."
         assert pattern[0] == '@'
@@ -4038,7 +3887,7 @@ class YumBase(object):
             # at which point ignore everything.
             obsoleting_pkg = None
             if self.conf.obsoletes:
-                obsoleting_pkg = self._test_loop(po, self._pkg2obspkg)
+                obsoleting_pkg = None
             if obsoleting_pkg is not None:
                 # this is not a definitive check but it'll make sure we don't
                 # pull in foo.i586 when foo.x86_64 already obsoletes the pkg and
@@ -4215,7 +4064,7 @@ class YumBase(object):
                                                        allow_missing=True)
                 if obsoleting_pkg is None:
                     continue
-                topkg = self._test_loop(obsoleting_pkg, self._pkg2obspkg)
+                topkg = None
                 if topkg is not None:
                     obsoleting_pkg = topkg
                 installed_pkg =  self.getInstalledPackageObject(installed)
@@ -4401,7 +4250,7 @@ class YumBase(object):
             #  Make sure we're not installing a package which is obsoleted by
             # something else in the repo. Unless there is a obsoletion loop,
             # at which point ignore everything.
-            obsoleting_pkg = self._test_loop(available_pkg, self._pkg2obspkg)
+            obsoleting_pkg = None
             if obsoleting_pkg is not None:
                 self.verbose_logger.log(logginglevels.DEBUG_2, _('Not Updating Package that is obsoleted: %s'), available_pkg)
                 tx_return.extend(self.update(po=obsoleting_pkg))
