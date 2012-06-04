@@ -277,37 +277,6 @@ class YumBase(depsolve.Depsolve):
         self.preconf.init_plugins = False
         self.conf.cache = cache
 
-    def doConfigSetup(self, fn='/etc/yum/yum.conf', root='/', init_plugins=True,
-            plugin_types=(plugins.TYPE_CORE,), optparser=None, debuglevel=None,
-            errorlevel=None):
-        """Deprecated.  Perform configuration setup.
-
-        :param fn: the name of the configuration file to use
-        :param root: the root directory to use
-        :param init_plugins: whether to initialize plugins before
-           running yum
-        :param plugin_types: a tuple containing the types to plugins
-           to load
-        :param optparser: the option parser to use for configuration
-        :param debuglevel: the minimum debug logging level to output
-           messages from
-        :param errorlevel: the minimum error logging level to output
-           messages from
-        """
-        warnings.warn(_('doConfigSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        if hasattr(self, 'preconf'):
-            self.preconf.fn = fn
-            self.preconf.root = root
-            self.preconf.init_plugins = init_plugins
-            self.preconf.plugin_types = plugin_types
-            self.preconf.optparser = optparser
-            self.preconf.debuglevel = debuglevel
-            self.preconf.errorlevel = errorlevel
-
-        return self.conf
-        
     def _getConfig(self, **kwargs):
         '''
         Parse and load Yum's configuration files and call hooks initialise
