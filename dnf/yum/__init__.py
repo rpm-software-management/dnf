@@ -274,27 +274,15 @@ class YumBase(object):
         self.preconf.init_plugins = False
         self.conf.cache = cache
 
-    def _getConfig(self, **kwargs):
+    def _getConfig(self):
         '''
         Parse and load Yum's configuration files and call hooks initialise
         plugins and logging. Uses self.preconf for pre-configuration,
         configuration. '''
 
-        # ' xemacs syntax hack
-
-        if kwargs:
-            warnings.warn('Use .preconf instead of passing args to _getConfig')
-
         if self._conf:
             return self._conf
         conf_st = time.time()
-
-        if kwargs:
-            for arg in ('fn', 'root', 'init_plugins', 'plugin_types',
-                        'optparser', 'debuglevel', 'errorlevel',
-                        'disabled_plugins', 'enabled_plugins'):
-                if arg in kwargs:
-                    setattr(self.preconf, arg, kwargs[arg])
 
         fn = self.preconf.fn
         root = self.preconf.root
@@ -316,12 +304,6 @@ class YumBase(object):
             self.arch.setup_arch(arch)
         else:
             arch = self.arch.canonarch
-
-        # TODO: Remove this block when we no longer support configs outside
-        # of /etc/yum/
-        if fn == '/etc/yum/yum.conf' and not os.path.exists(fn):
-            # Try the old default
-            fn = '/etc/yum.conf'
 
         startupconf = config.readStartupConfig(fn, root, releasever)
         startupconf.arch = arch
