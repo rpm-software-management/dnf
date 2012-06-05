@@ -191,10 +191,13 @@ def setFileLogs(logdir, cleanup):
     try:
         if not os.path.exists(logdir):
             os.makedirs(logdir, mode=0755)
-        _setFileLog(logging.getLogger("yum"),
-                    os.path.join(logdir, dnf.const.LOG), cleanup)
+        mainhandler = _setFileLog(logging.getLogger("yum"),
+                                  os.path.join(logdir, dnf.const.LOG), cleanup)
         _setFileLog(logging.getLogger("yum.filelogging"),
                     os.path.join(logdir, dnf.const.LOG_TRANSACTION), cleanup)
+        # the main log file should end up knowing everything:
+        logging.getLogger("yum.verbose").addHandler(mainhandler)
+        logging.getLogger("yum.filelogging").addHandler(mainhandler)
     except IOError:
         logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
 
@@ -212,6 +215,7 @@ def _setFileLog(logger, logfile, cleanup=None):
     logger.addHandler(filehandler)
     if cleanup is not None:
         cleanup.append(lambda: logger.removeHandler(filehandler))
+    return filehandler
 
 def setLoggingApp(app):
     if syslog:
