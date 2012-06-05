@@ -32,11 +32,11 @@ import tempfile
 class NoOutputCallBack:
     def __init__(self):
         pass
-        
+
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
         @param package: A yum package object or simple string of a package name
-        @param action: A constant transaction set state or in the obscure 
+        @param action: A constant transaction set state or in the obscure
                        rpm repackage case it could be the string 'repackaging'
         @param te_current: current number of bytes processed in the transaction
                            element being processed
@@ -46,7 +46,7 @@ class NoOutputCallBack:
         @param ts_total: total number of processes in the transaction.
         """
         # this is where a progress bar would be called
-        
+
         pass
 
     def scriptout(self, package, msgs):
@@ -56,7 +56,7 @@ class NoOutputCallBack:
 
     def errorlog(self, msg):
         """takes a simple error msg string"""
-        
+
         pass
 
     def filelog(self, package, action):
@@ -64,34 +64,34 @@ class NoOutputCallBack:
         """package is the same as in event() - a package object or simple string
            action is also the same as in event()"""
         pass
-        
+
 class RPMBaseCallback:
     '''
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
-        self.action = { TS_UPDATE : _('Updating'), 
+        self.action = { TS_UPDATE : _('Updating'),
                         TS_ERASE: _('Erasing'),
-                        TS_INSTALL: _('Installing'), 
+                        TS_INSTALL: _('Installing'),
                         TS_TRUEINSTALL : _('Installing'),
                         TS_OBSOLETED: _('Obsoleted'),
                         TS_OBSOLETING: _('Installing'),
                         TS_UPDATED: _('Cleanup'),
                         'repackaging': _('Repackaging')}
         # The fileaction are not translated, most sane IMHO / Tim
-        self.fileaction = { TS_UPDATE: 'Updated', 
+        self.fileaction = { TS_UPDATE: 'Updated',
                             TS_ERASE: 'Erased',
-                            TS_INSTALL: 'Installed', 
-                            TS_TRUEINSTALL: 'Installed', 
+                            TS_INSTALL: 'Installed',
+                            TS_TRUEINSTALL: 'Installed',
                             TS_OBSOLETED: 'Obsoleted',
                             TS_OBSOLETING: 'Installed',
-                            TS_UPDATED: 'Cleanup'}   
-        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')        
-        
+                            TS_UPDATED: 'Cleanup'}
+        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
+
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
         @param package: A yum package object or simple string of a package name
-        @param action: A yum.constant transaction set state or in the obscure 
+        @param action: A yum.constant transaction set state or in the obscure
                        rpm repackage case it could be the string 'repackaging'
         @param te_current: Current number of bytes processed in the transaction
                            element being processed
@@ -113,7 +113,7 @@ class RPMBaseCallback:
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
-        # hurky but, sadly, not much else 
+        # hurky but, sadly, not much else
         if action in self.fileaction:
             msg = '%s: %s' % (self.fileaction[action], package)
         else:
@@ -130,10 +130,10 @@ class SimpleCliCallBack(RPMBaseCallback):
         RPMBaseCallback.__init__(self)
         self.lastmsg = None
         self.lastpackage = None # name of last package we looked at
-        
+
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # this is where a progress bar would be called
-        msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package, 
+        msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package,
                                    te_current, te_total, ts_current, ts_total)
         if msg != self.lastmsg:
             print msg
@@ -259,7 +259,7 @@ class RPMTransaction:
 
     def __del__(self):
         self._shutdownOutputLogging()
-        
+
     def _dopkgtup(self, hdr):
         tmpepoch = hdr['epoch']
         if tmpepoch is None: epoch = '0'
@@ -349,13 +349,13 @@ class RPMTransaction:
 
     def ts_done(self, package, action):
         """writes out the portions of the transaction which have completed"""
-        
+
         if not self.ts_done_open(): return
-    
+
         # walk back through self._te_tuples
         # make sure the package and the action make some kind of sense
         # write it out and pop(0) from the list
-        
+
         # make sure we have a list to work from
         if len(self._te_tuples) == 0:
             # if we don't then this is pretrans or postrans or a trigger
@@ -373,13 +373,13 @@ class RPMTransaction:
         if action in TS_INSTALL_STATES:
             if t != 'install':
                 self.display.filelog(package, msg)
-                
+
         # check the pkg name out to make sure it matches
         if type(package) in types.StringTypes:
             name = package
         else:
             name = package.name
-        
+
         if n != name:
             msg = 'ts_done name in te is %s should be %s' % (n, package)
             self.display.filelog(package, msg)
@@ -389,10 +389,10 @@ class RPMTransaction:
 
         self.ts_done_write(msg)
         self._te_tuples.pop(0)
-    
+
     def ts_all(self):
         """write out what our transaction will do"""
-        
+
         # save the transaction elements into a list so we can run across them
         if not hasattr(self, '_te_tuples'):
             self._te_tuples = []
@@ -411,8 +411,8 @@ class RPMTransaction:
                 t = 'erase'
             else:
                 t = te.Type()
-            
-            # save this in a list            
+
+            # save this in a list
             self._te_tuples.append((t,e,n,v,r,a))
 
         # write to a file
@@ -475,8 +475,8 @@ class RPMTransaction:
         # SCRIPT_ERROR is only in rpm >= 4.6.0
         elif hasattr(rpm, "RPMCALLBACK_SCRIPT_ERROR") and what == rpm.RPMCALLBACK_SCRIPT_ERROR:
             self._scriptError(bytes, total, h)
-    
-    
+
+
     def _transStart(self, bytes, total, h):
         self.total_actions = total
         if self.test: return
@@ -486,7 +486,7 @@ class RPMTransaction:
 
     def _transProgress(self, bytes, total, h):
         pass
-        
+
     def _transStop(self, bytes, total, h):
         pass
 
@@ -507,7 +507,7 @@ class RPMTransaction:
                 return self.fd.fileno()
         else:
             self.display.errorlog("Error: No Header to INST_OPEN_FILE")
-            
+
     def _instCloseFile(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
         if txmbr is not None:
@@ -522,7 +522,7 @@ class RPMTransaction:
                 state = self.base.history.txmbr2state(txmbr)
                 self.base.history.trans_data_pid_end(pid, state)
                 self.ts_done(txmbr.po, txmbr.output_state)
-    
+
     def _instProgress(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
         if name is not None:
@@ -538,10 +538,10 @@ class RPMTransaction:
 
     def _unInstStart(self, bytes, total, h):
         pass
-        
+
     def _unInstProgress(self, bytes, total, h):
         pass
-    
+
     def _unInstStop(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h, erase=True)
         self.total_removed += 1
@@ -553,12 +553,12 @@ class RPMTransaction:
                 self.display.filelog(name, TS_ERASE)
             action = TS_ERASE
         else:
-            action = TS_UPDATED                    
+            action = TS_UPDATED
 
         # FIXME: Do we want to pass txmbr.po here too?
         self.display.event(name, action, 100, 100, self.complete_actions,
                             self.total_actions)
-        
+
         if self.test: return # and we're done
 
         if txmbr is not None:
@@ -581,17 +581,17 @@ class RPMTransaction:
             self._scriptout(name)
 
             self.ts_done(name, action)
-        
-        
+
+
     def _rePackageStart(self, bytes, total, h):
         pass
-        
+
     def _rePackageStop(self, bytes, total, h):
         pass
-        
+
     def _rePackageProgress(self, bytes, total, h):
         pass
-        
+
     def _cpioError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
         # In the case of a remove, we only have a name, not a txmbr
@@ -600,7 +600,7 @@ class RPMTransaction:
             txmbr.output_state = TS_FAILED
             self.display.errorlog(msg)
             # FIXME - what else should we do here? raise a failure and abort?
-    
+
     def _unpackError(self, bytes, total, h):
         name, txmbr = self._getTxmbr(h)
         # In the case of a remove, we only have a name, not a txmbr
@@ -610,7 +610,7 @@ class RPMTransaction:
             self.display.errorlog(msg)
             # FIXME - should we raise? I need a test case pkg to see what the
             # right behavior should be
-                
+
     def _scriptError(self, bytes, total, h):
         # "bytes" carries the failed scriptlet tag,
         # "total" carries fatal/non-fatal status
@@ -621,19 +621,19 @@ class RPMTransaction:
             package_name = name
         else:
             package_name = txmbr.po
-            
+
         if total:
-            msg = ("Error in %s scriptlet in rpm package %s" % 
+            msg = ("Error in %s scriptlet in rpm package %s" %
                     (scriptlet_name, package_name))
             # In the case of a remove, we only have a name, not a txmbr
-            if txmbr is not None:        
+            if txmbr is not None:
                 txmbr.output_state = TS_FAILED
         else:
-            msg = ("Non-fatal %s scriptlet failure in rpm package %s" % 
+            msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
                    (scriptlet_name, package_name))
         self.display.errorlog(msg)
         # FIXME - what else should we do here? raise a failure and abort?
-    
+
     def verify_txmbr(self, txmbr, count):
         " Callback for post transaction when we are in verifyTransaction(). "
         if not hasattr(self.display, 'verify_txmbr'):
