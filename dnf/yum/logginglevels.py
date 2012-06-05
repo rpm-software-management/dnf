@@ -24,6 +24,7 @@ import socket
 import sys
 import logging
 import logging.handlers
+import dnf.const
 
 INFO_1 = 19
 INFO_2 = 18
@@ -186,32 +187,31 @@ def doLoggingSetup(debuglevel, errorlevel,
     if errorlevel is not None:
         setErrorLevel(errorlevel)
 
-def setFileLog(uid, logfile, cleanup=None):
-    # TODO: When python's logging config parser doesn't blow up
-    # when the user is non-root, put this in the config file.
-    # syslog-style log
-    if uid == 0:
-        try:
-            # For installroot etc.
-            logdir = os.path.dirname(logfile)
-            if not os.path.exists(logdir):
-                os.makedirs(logdir, mode=0755)
+def setFileLogs(logdir, cleanup):
+    try:
+        if not os.path.exists(logdir):
+            os.makedirs(logdir, mode=0755)
+        _setFileLog(logging.getLogger("yum"),
+                    os.path.join(logdir, dnf.const.LOG), cleanup)
+        _setFileLog(logging.getLogger("yum.filelogging"),
+                    os.path.join(logdir, dnf.const.LOG_TRANSACTION), cleanup)
+    except IOError:
+        logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
 
-            if not os.path.exists(logfile):
-                f = open(logfile, 'w')
-                os.chmod(logfile, 0600) # making sure umask doesn't catch us up
-                f.close()
+def _setFileLog(logger, logfile, cleanup=None):
+    # For installroot etc.
+    if not os.path.exists(logfile):
+        f = open(logfile, 'w')
+        os.chmod(logfile, 0600) # making sure umask doesn't catch us up
+        f.close()
 
-            filelogger = logging.getLogger("yum.filelogging")
-            filehandler = logging.FileHandler(logfile)
-            formatter = logging.Formatter("%(asctime)s %(message)s",
-                "%b %d %H:%M:%S")
-            filehandler.setFormatter(formatter)
-            filelogger.addHandler(filehandler)
-            if not cleanup is None:
-                cleanup.append(lambda: filelogger.removeHandler(filehandler))
-        except IOError:
-            logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
+    filehandler = logging.FileHandler(logfile)
+    formatter = logging.Formatter("%(asctime)s %(message)s",
+        "%b %d %H:%M:%S")
+    filehandler.setFormatter(formatter)
+    logger.addHandler(filehandler)
+    if cleanup is not None:
+        cleanup.append(lambda: logger.removeHandler(filehandler))
 
 def setLoggingApp(app):
     if syslog:

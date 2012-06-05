@@ -1,5 +1,5 @@
-# const.py
-# dnf constants.
+# package.py
+# Module defining the dnf.Package class.
 #
 # Copyright (C) 2012  Red Hat, Inc.
 #
@@ -18,13 +18,7 @@
 # Red Hat, Inc.
 #
 
-CONF_FILENAME='/etc/dnf/dnf.conf'
-PID_FILENAME = '/var/run/dnf.pid'
-PREFIX='dnf'
-LOG='dnf.log'
-LOG_TRANSACTION='dnf.transaction.log'
-TMPDIR='/var/tmp/'
-VERSION_MAJOR=0
-VERSION_MINOR=2
-VERSION_PATCH=5
-VERSION="%d.%d.%d" % (VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
+import os
+
+def am_i_root():
+    return os.geteuid() == 0

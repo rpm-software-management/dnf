@@ -366,11 +366,10 @@ class YumBase(object):
         self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
                % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
                   self.yumvar.get('releasever', '$releasever')))
-        self.doFileLogSetup(self.conf.uid, self.conf.logfile)
+        logginglevels.setFileLogs(self.conf.logdir, self._cleanup)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         self.plugins.run('init')
         return self._conf
-
 
     def doLoggingSetup(self, debuglevel, errorlevel,
                        syslog_ident=None, syslog_facility=None,
@@ -388,14 +387,6 @@ class YumBase(object):
         logginglevels.doLoggingSetup(debuglevel, errorlevel,
                                      syslog_ident, syslog_facility,
                                      syslog_device)
-
-    def doFileLogSetup(self, uid, logfile):
-        """Set up the logging file.
-
-        :param uid: the user id of the current user
-        :param logfile: the name of the file to use for logging
-        """
-        logginglevels.setFileLog(uid, logfile, self._cleanup)
 
     def getReposFromConfigFile(self, repofn, repo_age=None, validate=None):
         """Read in repositories from a config .repo file.

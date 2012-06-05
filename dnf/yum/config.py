@@ -40,7 +40,10 @@ if not _use_iniparse:
 import dnf.rpmUtils.transaction
 import Errors
 import types
+import misc
 from misc import get_uuid, read_in_items_from_dot_dir
+import dnf.util
+import dnf.const
 
 # Alter/patch these to change the default checking...
 __pkgs_gpgcheck_default__ = False
@@ -728,7 +731,7 @@ class YumConf(StartupConf):
     cachedir = Option('/var/cache/yum')
 
     keepcache = BoolOption(True)
-    logfile = Option('/var/log/yum.log')
+    logdir = Option('/var/log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
 
     commands = ListOption()
@@ -1043,8 +1046,9 @@ def readMainConfig(startupconf):
             continue
         yumvars[fsvar] = val
 
+    yumconf.logdir = logdir_fit(yumconf.logdir)
     # These can use the above FS yumvars
-    for option in ('cachedir', 'logfile', 'persistdir'):
+    for option in ('cachedir', 'logdir', 'persistdir'):
         _apply_installroot(yumconf, option)
 
     # Add in some extra attributes which aren't actually configuration values
@@ -1198,9 +1202,5 @@ def writeRawRepoFile(repo,only=None):
     fp.write(str(ini))
     fp.close()
 
-#def main():
-#    mainconf = readMainConfig(readStartupConfig('/etc/yum/yum.conf', '/'))
-#    print mainconf.cachedir
-#
-#if __name__ == '__main__':
-#    main()
+def logdir_fit(current_logdir):
+    return current_logdir if dnf.util.am_i_root() else misc.getCacheDir()

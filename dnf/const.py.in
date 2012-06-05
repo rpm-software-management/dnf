@@ -21,6 +21,8 @@
 CONF_FILENAME='/etc/dnf/dnf.conf'
 PID_FILENAME = '/var/run/dnf.pid'
 PREFIX='dnf'
+LOG='dnf.log'
+LOG_TRANSACTION='dnf.transaction.log'
 TMPDIR='/var/tmp/'
 VERSION_MAJOR=@DNF_MAJOR@
 VERSION_MINOR=@DNF_MINOR@
