@@ -48,7 +48,7 @@ class Sack(hawkey.Sack):
             try:
                 repo.presto_fn = yum_repo.getPrestoXML()
             except yum.Errors.RepoMDError, e:
-                self.verbose_logger.info("not found deltainfo for: %s" %
-                                         yum_repo.name)
+                self.verbose_logger.debug("not found deltainfo for: %s" %
+                                          yum_repo.name)
         self.load_presto()
         self.write_presto()

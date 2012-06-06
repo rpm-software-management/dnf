@@ -110,15 +110,6 @@ def __convertLevel(level, table):
 
     return new_level
 
-def setDebugLevel(level):
-    converted_level = logLevelFromDebugLevel(level)
-    logging.getLogger("yum.verbose").setLevel(converted_level)
-
-def setErrorLevel(level):
-    converted_level = logLevelFromErrorLevel(level)
-    logging.getLogger("yum").setLevel(converted_level)
-
-_added_handlers = False
 def doLoggingSetup(debuglevel, errorlevel,
                    syslog_ident=None, syslog_facility=None,
                    syslog_device='/dev/log'):
@@ -130,37 +121,30 @@ def doLoggingSetup(debuglevel, errorlevel,
     debuglevel is optional. If provided, it will override the logging level
     provided in the logging config file for debug messages.
     """
-    global _added_handlers
-
-    #logging.basicConfig() # this appears to not change anything in our
-    # logging setup - disabling this b/c of the behaviors in yum ticket 525
-    # -skvidal
-
-
-    if _added_handlers:
-        if debuglevel is not None:
-            setDebugLevel(debuglevel)
-        if errorlevel is not None:
-            setErrorLevel(errorlevel)
-        return
-
+    # set up the basic loggers, max them out for general (file) output
     plainformatter = logging.Formatter("%(message)s")
 
     console_stdout = logging.StreamHandler(sys.stdout)
     console_stdout.setFormatter(plainformatter)
     verbose = logging.getLogger("yum.verbose")
+    verbose.setLevel(DEBUG_4)
     verbose.propagate = False
     verbose.addHandler(console_stdout)
 
     console_stderr = logging.StreamHandler(sys.stderr)
     console_stderr.setFormatter(plainformatter)
     logger = logging.getLogger("yum")
+    logger.setLevel(DEBUG_4)
     logger.propagate = False
     logger.addHandler(console_stderr)
 
     filelogger = logging.getLogger("yum.filelogging")
     filelogger.setLevel(logging.INFO)
     filelogger.propagate = False
+
+    # limit what goes into console according to user settings:
+    console_stdout.setLevel(logLevelFromDebugLevel(debuglevel))
+    console_stderr.setLevel(logLevelFromErrorLevel(errorlevel))
 
     global syslog
     if syslog_device:
@@ -180,12 +164,6 @@ def doLoggingSetup(debuglevel, errorlevel,
             else:
                 setLoggingApp(syslog_ident or "yum")
                 filelogger.addHandler(syslog)
-    _added_handlers = True
-
-    if debuglevel is not None:
-        setDebugLevel(debuglevel)
-    if errorlevel is not None:
-        setErrorLevel(errorlevel)
 
 def setFileLogs(logdir, cleanup):
     try:
