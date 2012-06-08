@@ -3,7 +3,6 @@ SET (rpmUtils_SRCS
     __init__.py
     miscutils.py
     oldUtils.py
-    transaction.py
-    updates.py)
+    transaction.py)
 
 INSTALL (FILES ${rpmUtils_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/rpmUtils)

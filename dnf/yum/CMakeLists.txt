@@ -3,7 +3,6 @@ SET(yum_SRCS __init__.py
 	     comps.py
 	     config.py
 	     constants.py
-	     depsolve.py
 	     Errors.py
 	     failover.py
 	     history.py

@@ -1,4 +1,5 @@
 SET(cli_SRCS
+    __init__.py
     callback.py
     cli.py
     output.py
