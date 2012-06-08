@@ -1,9 +1,9 @@
-%global gitrev f594065
+%global gitrev 365322d
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -11,7 +11,7 @@ URL:		https://github.com/akozumpl/dnf
 Source0:	dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake python2
-Requires:	python-hawkey >= 0.2.3-1
+Requires:	python-hawkey >= 0.2.4-2
 Requires:	crontabs
 
 %description
@@ -35,6 +35,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Fri Jun 8 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-3	.git365322d%{?dist}
+- Logging improvements.
+
 * Wed May 16 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.5-2.gitf594065%{?dist}
 - erase: remove dependants along with their dependency.
 
