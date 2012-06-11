@@ -115,6 +115,10 @@ class Package(hawkey.Package):
 
     # yum cmopatibility method
     def verifyLocalPkg(self):
+        if self.reponame == hawkey.SYSTEM_REPO_NAME:
+            raise ValueError, "Can not verify an installed package."
+        if self.reponame == hawkey.CMDLINE_REPO_NAME:
+            return True # local package always verifies against itself
         (chksum_type, chksum) = self.chksum
         chksum_type = hawkey.chksum_name(chksum_type)
         sum_in_md = binascii.hexlify(chksum)

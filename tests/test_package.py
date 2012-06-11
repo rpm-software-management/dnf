@@ -13,9 +13,9 @@ TOUR_SIZE = 2317
 
 class PackageTest(unittest.TestCase):
     def setUp(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.mock_yum_base("main")
         self.sack = yumbase.sack
-        self.pkg = dnf.queries.by_name(yumbase.sack, "pepper")[0]
+        self.pkg = dnf.queries.available_by_name(self.sack, "pepper")[0]
 
     def test_pkgtup(self):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
@@ -27,3 +27,13 @@ class PackageTest(unittest.TestCase):
         self.assertTrue(self.pkg.verifyLocalPkg())
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
         self.assertFalse(self.pkg.verifyLocalPkg())
+
+    def test_verify_local(self):
+        self.sack.create_cmdline_repo()
+        local_pkg = self.sack.add_cmdline_rpm(TOUR_PKG_PATH)
+        self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
+        self.assertTrue(local_pkg.verifyLocalPkg())
+
+    def test_verify_installed(self):
+        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        self.assertRaises(ValueError, pkg.verifyLocalPkg)
