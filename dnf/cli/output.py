@@ -2631,7 +2631,8 @@ class DepSolveProgressCallBack:
                      'd': _('a downgrade'),
                      'o': _('obsoleting'),
                      'ud': _('updated'),
-                     'od': _('obsoleted'),}
+                     'od': _('obsoleted'),
+                     'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
         self.verbose_logger.log(logginglevels.INFO_2,

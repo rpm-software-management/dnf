@@ -1055,7 +1055,14 @@ class YumBase(object):
         else:
             cnt = 0
             # reset tsInfo, some packages might have gone during resolving
-            self.tsInfo = transactioninfo.TransactionData()
+            self.tsInfo = transactioninfo.TransactionData(
+                prob_filter_flags=self.tsInfo.probFilterFlags)
+            for pkg in goal.list_downgrades():
+                cnt += 1
+                downgraded = goal.package_obsoletes(pkg)
+                self.dsCallback.pkgAdded(downgraded, 'dd')
+                self.dsCallback.pkgAdded(pkg, 'd')
+                self.tsInfo.addDowngrade(pkg, downgraded)
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
@@ -4366,6 +4373,16 @@ class YumBase(object):
 
         return tx_return
 
+    def _installLocalCommon(self, path):
+        self.sack.create_cmdline_repo()
+        try:
+            po = self.sack.add_cmdline_rpm(path)
+        except IOError:
+            self.logger.critical(_('Cannot open: %s. Skipping.'), path)
+            return None
+        self.localPackages.append(po)
+        return po
+
     def installLocal(self, pkg, po=None, updateonly=False):
         """Mark a package on the local filesystem (i.e. not from a
         repository) for installation.
@@ -4582,7 +4599,7 @@ class YumBase(object):
         tx_mbrs.extend(new_members)
         return tx_mbrs
 
-    def downgradeLocal(self, pkg, po=None):
+    def downgradeLocal(self, path):
         """Mark a package on the local filesystem (i.e. not from a
         repository) to be downgraded.
 
@@ -4592,26 +4609,10 @@ class YumBase(object):
         :return: a list of the transaction members added to the
            transaction set by this method
         """
+        po = self._installLocalCommon(path)
         if not po:
-            try:
-                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
-                                   ua=default_grabber.opts.user_agent)
-            except Errors.MiscError:
-                self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
-                return []
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('Examining %s: %s'), po.localpath, po)
-
-        if po.arch not in self.arch.archlist:
-            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return []
-
-        # handle excludes for a local downgrade
-        if self._is_local_exclude(po, [po]):
-            self.verbose_logger.debug(_('Excluding %s'), po)
-            return []
-
-        return self.downgrade(po=po)
+        return self.downgrade(po)
 
     def _is_local_exclude(self, po, pkglist):
         """returns True if the local pkg should be excluded"""
@@ -4645,8 +4646,20 @@ class YumBase(object):
         :raises: :class:`Errors.DowngradeError` if no packages are
            specified or available for downgrade
         """
-        if not po and not kwargs:
+        tx_return = []
+        if po:
+            installed = sorted(queries.installed_by_name(self.sack, po.name))
+            if len(installed) > 0 and installed[0] > po:
+                txmbrs = self.tsInfo.addDowngrade(po, installed[0])
+                tx_return.extend(txmbrs)
+        elif kwargs:
+            raise NotImplementedError, "yumbase.downgrade() kwargs not implemented"
+        else:
             raise Errors.DowngradeError, 'Nothing specified to downgrade'
+
+        if len(tx_return) > 0:
+            self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
+        return tx_return # :hawkey
 
         doing_group_pkgs = False
         if po:

@@ -104,7 +104,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # self.registerCommand(yumcommands.RepoListCommand())
         # self.registerCommand(yumcommands.HelpCommand())
         # self.registerCommand(yumcommands.ReInstallCommand())
-        # self.registerCommand(yumcommands.DowngradeCommand())
+        self.registerCommand(yumcommands.DowngradeCommand())
         # self.registerCommand(yumcommands.VersionCommand())
         # self.registerCommand(yumcommands.HistoryCommand())
         # self.registerCommand(yumcommands.CheckRpmdbCommand())
