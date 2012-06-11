@@ -4,3 +4,4 @@
 =Req: librita >= 1-0
 =Prv: /raised/smile
 =Pkg: librita 1 1 x86_64
+=Pkg: tour 5 0 noarch

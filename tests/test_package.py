@@ -6,7 +6,6 @@ import os.path
 import unittest
 import binascii
 
-TOUR_PKG_PATH = os.path.join(base.repo_dir(), "tour-4-4.noarch.rpm")
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
@@ -21,7 +20,7 @@ class PackageTest(unittest.TestCase):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
 
     def test_verify(self):
-        self.pkg.localpath = TOUR_PKG_PATH
+        self.pkg.localpath = base.TOUR_PKG_PATH
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
         self.pkg.size = TOUR_SIZE
         self.assertTrue(self.pkg.verifyLocalPkg())
@@ -30,7 +29,7 @@ class PackageTest(unittest.TestCase):
 
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_rpm(TOUR_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
 

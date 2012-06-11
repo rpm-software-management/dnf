@@ -7,9 +7,10 @@ import mock
 import os
 import unittest
 
-TOTAL_RPMDB_COUNT = 2
+TOTAL_RPMDB_COUNT = 3
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT + 2
-TOTAL_NSOLVABLES = 9
+AVAILABLE_NSOLVABLES = 5
+TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
 # testing infrastructure
 
@@ -19,6 +20,15 @@ def repo(reponame):
 def repo_dir():
     this_dir=os.path.dirname(__file__)
     return os.path.join(this_dir, "repos")
+
+TOUR_PKG_PATH = os.path.join(repo_dir(), "tour-4-4.noarch.rpm")
+
+# oten used query
+
+def installed_but(sack, *args):
+    q = hawkey.Query(sack).filter(repo__eq=hawkey.SYSTEM_REPO_NAME)
+    map(lambda name: q.filter(name__neq=name), args)
+    return q
 
 # mock objects
 

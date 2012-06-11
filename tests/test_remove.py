@@ -1,5 +1,6 @@
 import base
 import dnf.queries
+import hawkey
 
 class Remove(base.ResultTestCase):
     def setUp(self):
@@ -18,11 +19,11 @@ class Remove(base.ResultTestCase):
         pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
         self.assertEqual([txmbr.po for txmbr in ret], pepper)
         self.assertResult(self.yumbase,
-                          dnf.queries.installed_by_name(self.yumbase.sack,
-                                                        "librita"))
+                          base.installed_but(self.yumbase.sack, "pepper"))
 
     def test_remove_depended(self):
         """ Remove a lib that some other package depends on. """
         ret = self.yumbase.remove(pattern="librita")
         # we should end up with nothing in this case:
-        self.assertResult(self.yumbase, [])
+        new_set = base.installed_but(self.yumbase.sack, "librita", "pepper")
+        self.assertResult(self.yumbase, new_set)
