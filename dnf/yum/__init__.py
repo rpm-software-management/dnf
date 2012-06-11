@@ -1062,7 +1062,7 @@ class YumBase(object):
                 self.tsInfo.addInstall(pkg)
             for pkg in goal.list_upgrades():
                 cnt += 1
-                updated = goal.package_upgrades(pkg)
+                updated = goal.package_obsoletes(pkg)
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
                 self.tsInfo.addUpdate(pkg)
