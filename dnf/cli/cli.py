@@ -796,7 +796,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                txmbrs = self.installLocal(arg)
+                txmbrs = self.install_local(arg)
                 self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
@@ -855,7 +855,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             for item in userlist:
                 if (item.endswith('.rpm') and (dnf.yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
-                    txmbrs = self.installLocal(item, updateonly=1)
+                    txmbrs = self.update_local(item)
                     self._install_upgraded_requires(txmbrs)
                     continue
 
@@ -1032,7 +1032,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                self.downgradeLocal(arg)
+                self.downgrade_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 

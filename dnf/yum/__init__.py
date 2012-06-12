@@ -4363,7 +4363,7 @@ class YumBase(object):
 
         return tx_return
 
-    def _installLocalCommon(self, path):
+    def _local_common(self, path):
         self.sack.create_cmdline_repo()
         try:
             po = self.sack.add_cmdline_rpm(path)
@@ -4372,7 +4372,22 @@ class YumBase(object):
             return None
         return po
 
-    def installLocal(self, pkg, po=None, updateonly=False):
+    def downgrade_local(self, path):
+        """Mark a package on the local filesystem (i.e. not from a
+        repository) to be downgraded.
+
+        :param pkg: a string specifying the path to an rpm file in the
+           local filesystem to be marked to be downgraded
+        :param po: a :class:`packages.YumLocalPackage`
+        :return: a list of the transaction members added to the
+           transaction set by this method
+        """
+        po = self._local_common(path)
+        if not po:
+            return []
+        return self.downgrade(po)
+
+    def install_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
         repository) for installation.
 
@@ -4386,115 +4401,16 @@ class YumBase(object):
         :return: a list of the transaction members added to the
            transaction set by this method
         """
-        tx_return = []
-        installpkgs = []
-        updatepkgs = []
-        donothingpkgs = []
-
-        self.sack.create_cmdline_repo()
-
+        po = self._local_common(path)
         if not po:
-            try:
-                po = self.sack.add_cmdline_rpm(pkg)
-            except IOError:
-                self.logger.critical(_('Cannot open: %s. Skipping.'), pkg)
-                return tx_return
-            if updateonly:
-                txmbrs = self.update(po=po)
-            else:
-                txmbrs = self.install(po=po)
-            tx_return.extend(txmbrs)
-            return tx_return # hawkey: the checks below are done elsewehre
+            return []
+        return self.install(po)
 
-        # if by any chance we're a noncompat arch rpm - bail and throw out an error
-        # FIXME -our archlist should be stored somewhere so we don't have to
-        # do this: but it's not a config file sort of thing
-        # FIXME: Should add noarch, yum localinstall works ...
-        # just rm this method?
-        if po.arch not in self.arch.archlist:
-            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
-            return tx_return
-
-        if self.conf.obsoletes:
-            obsoleters = po.obsoletedBy(self.rpmdb.searchObsoletes(po.name))
-            if obsoleters:
-                self.logger.critical(_('Cannot install package %s. It is obsoleted by installed package %s'), po, obsoleters[0])
-                return tx_return
-
-        # everything installed that matches the name
-        installedByKey = self.rpmdb.searchNevra(name=po.name)
-        # go through each package
-        if len(installedByKey) == 0: # nothing installed by that name
-            if updateonly:
-                self.logger.warning(_('Package %s not installed, cannot update it. Run yum install to install it instead.'), po.name)
-                return tx_return
-            else:
-                installpkgs.append(po)
-
-        for installed_pkg in installedByKey:
-            if po.verGT(installed_pkg): # we're newer - this is an update, pass to them
-                if installed_pkg.name in self.conf.exactarchlist:
-                    if po.arch == installed_pkg.arch:
-                        updatepkgs.append((po, installed_pkg))
-                    else:
-                        donothingpkgs.append(po)
-                else:
-                    updatepkgs.append((po, installed_pkg))
-            elif po.verEQ(installed_pkg):
-                if (po.arch != installed_pkg.arch and
-                    (isMultiLibArch(po.arch) or
-                     isMultiLibArch(installed_pkg.arch))):
-                    if updateonly:
-                        self.logger.warning(_('Package %s.%s not installed, cannot update it. Run yum install to install it instead.'), po.name, po.arch)
-                    else:
-                        installpkgs.append(po)
-                else:
-                    donothingpkgs.append(po)
-            elif self.allowedMultipleInstalls(po):
-                if updateonly:
-                    self.logger.warning(_('Package %s.%s not installed, cannot update it. Run yum install to install it instead.'), po.name, po.arch)
-                else:
-                    installpkgs.append(po)
-            else:
-                donothingpkgs.append(po)
-
-        # handle excludes for a localinstall
-        check_pkgs = installpkgs + [x[0] for x in updatepkgs]
-        if self._is_local_exclude(po, check_pkgs):
-            self.verbose_logger.debug(_('Excluding %s'), po)
-            return tx_return
-
-        for po in installpkgs:
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('Marking %s to be installed'), po.localpath)
-            tx_return.extend(self.install(po=po))
-
-        for (po, oldpo) in updatepkgs:
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('Marking %s as an update to %s'), po.localpath, oldpo)
-            txmbrs = self.update(po=po)
-            tx_return.extend(txmbrs)
-
-        for po in donothingpkgs:
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('%s: does not update installed package.'), po.localpath)
-
-        # this checks to make sure that any of the to-be-installed pkgs
-        # does not obsolete something else that's installed
-        # this doesn't handle the localpkgs obsoleting EACH OTHER or
-        # anything else in the transaction set, though. That could/should
-        # be fixed later but a fair bit of that is a pebkac and should be
-        # said as "don't do that". potential 'fixme'
-        for txmbr in tx_return:
-            #  We don't want to do this twice, so only bother if the txmbr
-            # doesn't already obsolete anything.
-            if txmbr.po.obsoletes and not txmbr.obsoletes:
-                for obs_pkg in self._find_obsoletees(txmbr.po):
-                    self.tsInfo.addObsoleted(obs_pkg, txmbr.po)
-                    txmbr.obsoletes.append(obs_pkg)
-                    self.tsInfo.addObsoleting(txmbr.po,obs_pkg)
-
-        return tx_return
+    def update_local(self, path):
+        po = self._local_common(path)
+        if not po:
+            return []
+        return self.update(po)
 
     def reinstallLocal(self, pkg, po=None):
         """Mark a package on the local filesystem (i.e. not from a
@@ -4580,21 +4496,6 @@ class YumBase(object):
             raise Errors.ReinstallInstallError(_("Problem in reinstall: no package %s matched to install") % ", ".join(failed), failed_pkgs=failed_pkgs)
         tx_mbrs.extend(new_members)
         return tx_mbrs
-
-    def downgradeLocal(self, path):
-        """Mark a package on the local filesystem (i.e. not from a
-        repository) to be downgraded.
-
-        :param pkg: a string specifying the path to an rpm file in the
-           local filesystem to be marked to be downgraded
-        :param po: a :class:`packages.YumLocalPackage`
-        :return: a list of the transaction members added to the
-           transaction set by this method
-        """
-        po = self._installLocalCommon(path)
-        if not po:
-            return []
-        return self.downgrade(po)
 
     def _is_local_exclude(self, po, pkglist):
         """returns True if the local pkg should be excluded"""

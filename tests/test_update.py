@@ -29,3 +29,13 @@ class Update(base.ResultTestCase):
         ret = yumbase.update()
         expected = available_by_name(sack, "pepper", latest_only=True)
         self.assertItemsEqual((txmem.po for txmem in ret), expected)
+
+    def test_update_local(self):
+        yumbase = base.mock_yum_base()
+        sack = yumbase.sack
+        ret = yumbase.update_local(base.TOUR_51_PKG_PATH)
+        self.assertEqual(len(ret), 1)
+        new_pkg = ret[0].po
+        self.assertEqual(new_pkg.evr, "5-1")
+        new_set = base.installed_but(yumbase.sack, "tour") + [new_pkg]
+        self.assertResult(yumbase, new_set)

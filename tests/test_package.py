@@ -20,7 +20,7 @@ class PackageTest(unittest.TestCase):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
 
     def test_verify(self):
-        self.pkg.localpath = base.TOUR_PKG_PATH
+        self.pkg.localpath = base.TOUR_44_PKG_PATH
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
         self.pkg.size = TOUR_SIZE
         self.assertTrue(self.pkg.verifyLocalPkg())
@@ -29,7 +29,7 @@ class PackageTest(unittest.TestCase):
 
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_44_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
 

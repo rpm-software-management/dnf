@@ -21,7 +21,8 @@ def repo_dir():
     this_dir=os.path.dirname(__file__)
     return os.path.join(this_dir, "repos")
 
-TOUR_PKG_PATH = os.path.join(repo_dir(), "tour-4-4.noarch.rpm")
+TOUR_44_PKG_PATH = os.path.join(repo_dir(), "tour-4-4.noarch.rpm")
+TOUR_51_PKG_PATH = os.path.join(repo_dir(), "tour-5-1.noarch.rpm")
 
 # oten used query
 
