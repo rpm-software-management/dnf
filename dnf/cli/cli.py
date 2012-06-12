@@ -97,7 +97,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # self.registerCommand(yumcommands.CheckUpdateCommand())
         # self.registerCommand(yumcommands.SearchCommand())
         # self.registerCommand(yumcommands.UpgradeCommand())
-        # self.registerCommand(yumcommands.LocalInstallCommand())
         # self.registerCommand(yumcommands.ResolveDepCommand())
         # self.registerCommand(yumcommands.ShellCommand())
         # self.registerCommand(yumcommands.DepListCommand())
@@ -1097,41 +1096,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
-        return 0, [_('Nothing to do')]
-
-    def localInstall(self, filelist, updateonly=0):
-        """Install or update rpms provided on the file system in a
-        local directory (i.e. not from a repository).
-
-        :param filelist: a list of names specifying local rpms
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # read in each package into a YumLocalPackage Object
-        # append it to self.localPackages
-        # check if it can be installed or updated based on nevra versus rpmdb
-        # don't import the repos until we absolutely need them for depsolving
-
-        if len(filelist) == 0:
-            return 0, [_('No Packages Provided')]
-
-        installing = False
-        for pkg in filelist:
-            if not pkg.endswith('.rpm'):
-                self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
-                   "Skipping: %s, filename does not end in .rpm.", pkg)
-                continue
-            txmbrs = self.installLocal(pkg, updateonly=updateonly)
-            if txmbrs:
-                installing = True
-
-        if installing:
-            return 2, [_('Package(s) to install')]
         return 0, [_('Nothing to do')]
 
     def returnPkgLists(self, extcmds, installed_available=False):
