@@ -4632,7 +4632,7 @@ class YumBase(object):
 
         return False
 
-    def downgrade(self, po=None, **kwargs):
+    def downgrade(self, po=None, pattern=None, **kwargs):
         """Mark a package to be downgraded.  This is equivalent to
         first removing the currently installed package, and then
         installing the older version.
@@ -4652,6 +4652,10 @@ class YumBase(object):
             if len(installed) > 0 and installed[0] > po:
                 txmbrs = self.tsInfo.addDowngrade(po, installed[0])
                 tx_return.extend(txmbrs)
+        elif pattern:
+            for pkg in queries.downgrades_by_name(self.sack, pattern):
+                txmbr = self.tsInfo.addDowngrade(pkg)
+                tx_return.append(txmbr)
         elif kwargs:
             raise NotImplementedError, "yumbase.downgrade() kwargs not implemented"
         else:

@@ -482,22 +482,20 @@ class TransactionData:
         self.findObsoletedByThisMember(txmbr)
         return txmbr
 
-    def addDowngrade(self, po, oldpo):
+    def addDowngrade(self, po, oldpo=None):
         """adds a package as an downgrade takes a packages object and returns
            a pair of TransactionMember Objects"""
 
-        itxmbr = self.addErase(oldpo)
-        itxmbr.relatedto.append((po, 'downgradedby'))
-        itxmbr.downgraded_by.append(po)
-
         atxmbr = self.addInstall(po)
-        if not atxmbr: # Fail?
-            self.remove(itxmbr.pkgtup)
-            return None
-        atxmbr.relatedto.append((oldpo, 'downgrades'))
-        atxmbr.downgrades.append(oldpo)
 
-        return (itxmbr, atxmbr)
+        if oldpo:
+            itxmbr = self.addErase(oldpo)
+            itxmbr.relatedto.append((po, 'downgradedby'))
+            itxmbr.downgraded_by.append(po)
+            atxmbr.relatedto.append((oldpo, 'downgrades'))
+            atxmbr.downgrades.append(oldpo)
+            return (itxmbr, atxmbr)
+        return atxmbr
 
     def addUpdated(self, po, updating_po):
         """adds a package as being updated by another pkg

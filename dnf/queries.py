@@ -27,7 +27,9 @@ def _is_glob_pattern(pattern):
 
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
-                      updates_only=False, latest_only=False,
+                      downgrades_only=False,
+                      updates_only=False,
+                      latest_only=False,
                       get_query=False):
     """ Generic query builder.
 
@@ -60,6 +62,7 @@ def _construct_result(sack, patterns, ignore_case,
         q.filter(repo__eq=include_repo)
     if exclude_repo:
         q.filter(repo__neq=exclude_repo)
+    q.filter(downgrades=downgrades_only)
     q.filter(upgrades=updates_only)
     q.filter(latest__eq=latest_only)
     if get_query:
@@ -118,6 +121,11 @@ def latest_installed_per_arch(sack, patterns, ignore_case=False):
 def latest_available_per_arch(sack, patterns, ignore_case=False):
     return latest_per_arch(sack, patterns, ignore_case,
                            exclude_repo=hawkey.SYSTEM_REPO_NAME)
+
+def downgrades_by_name(sack, patterns, ignore_case=False, latest_only=False):
+    return _construct_result(sack, patterns, ignore_case,
+                             latest_only=latest_only,
+                             downgrades_only=True)
 
 def updates_by_name(sack, patterns, ignore_case=False, latest_only=False):
     return _construct_result(sack, patterns, ignore_case,

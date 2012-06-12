@@ -5,3 +5,4 @@
 =Pkg: mrkite 2 0 x86_64
 =Pkg: lotus 3 16 i686
 =Pkg: lotus 3 16 x86_64
+=Pkg: tour 4.6 1 noarch
