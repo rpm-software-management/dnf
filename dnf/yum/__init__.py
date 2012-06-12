@@ -3329,6 +3329,7 @@ class YumBase(object):
            corresponding to the given package tuple can be found, and
            *allow_missing* is False
         """
+        raise NotImplementedError, "not implemented in hawkey" # :hawkey
         # look it up in the self.localPackages first:
         for po in self.localPackages:
             if po.pkgtup == pkgtup:
@@ -4259,17 +4260,6 @@ class YumBase(object):
             if pot_updated and self.allowedMultipleInstalls(available_pkg):
                 # only compare against the newest of what's installed for kernel
                 pot_updated = sorted(pot_updated)[-1:]
-#FIXME - potentially do the comparables thing from what used to
-#        be in cli.installPkgs() to see what we should be comparing
-#        it to of what is installed. in the meantime name.arch is
-#        most likely correct
-# this is sorta a fix - but it shouldn't be only for localPackages
-#            else:
-#                if available_pkg in self.localPackages:
-#                    # if we got here the potentially updated is not a matching arch
-#                    # and we're goofed up in a localPackage that someone wants to apply for some odd reason
-#                    # so we go for name-only update match and check
-#                    pot_updated = self.rpmdb.searchNevra(name=available_pkg.name)
 
             for ipkg in pot_updated:
                 if self.tsInfo.isObsoleted(ipkg.pkgtup):
@@ -4380,7 +4370,6 @@ class YumBase(object):
         except IOError:
             self.logger.critical(_('Cannot open: %s. Skipping.'), path)
             return None
-        self.localPackages.append(po)
         return po
 
     def installLocal(self, pkg, po=None, updateonly=False):
@@ -4397,10 +4386,6 @@ class YumBase(object):
         :return: a list of the transaction members added to the
            transaction set by this method
         """
-        # read in the package into a YumLocalPackage Object
-        # append it to self.localPackages
-        # check if it can be installed or updated based on nevra versus rpmdb
-        # don't import the repos until we absolutely need them for depsolving
         tx_return = []
         installpkgs = []
         updatepkgs = []
@@ -4414,7 +4399,6 @@ class YumBase(object):
             except IOError:
                 self.logger.critical(_('Cannot open: %s. Skipping.'), pkg)
                 return tx_return
-            self.localPackages.append(po)
             if updateonly:
                 txmbrs = self.update(po=po)
             else:
@@ -4483,13 +4467,11 @@ class YumBase(object):
         for po in installpkgs:
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Marking %s to be installed'), po.localpath)
-            self.localPackages.append(po)
             tx_return.extend(self.install(po=po))
 
         for (po, oldpo) in updatepkgs:
             self.verbose_logger.log(logginglevels.INFO_2,
                 _('Marking %s as an update to %s'), po.localpath, oldpo)
-            self.localPackages.append(po)
             txmbrs = self.update(po=po)
             tx_return.extend(txmbrs)
 
