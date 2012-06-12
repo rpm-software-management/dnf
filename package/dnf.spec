@@ -1,9 +1,9 @@
-%global gitrev 365322d
+%global gitrev 2791093
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.6
-Release:	3.git%{gitrev}%{?dist}
+Release:	4.git%{gitrev}%{?dist}
 Summary:	A highly experimental Yum replacement on top of libsolv.
 Group:		System Environment/Base
 License:	GPLv2+
@@ -35,6 +35,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Tue Jun 12 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-4.git2791093%{?dist}
+- Fix missing cli/__init__.py
+
 * Fri Jun 8 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-3	.git365322d%{?dist}
 - Logging improvements.
 
