@@ -952,7 +952,22 @@ class MakeCacheCommand(YumCommand):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.logger.debug(_("Making cache files for all metadata files."))
+        base.verbose_logger.debug(_("Making cache files for all metadata files."))
+        for r in base.repos.listEnabled():
+            (cookie, expires_in) = r.metadata_expire_in()
+            if not cookie or not r.metadataCurrent():
+                base.verbose_logger.debug("%s: has expired and will be "
+                                          "refreshed." % r.id)
+                r.metadata_force_expire()
+            elif expires_in < 60 * 60: # expires within an hour
+                base.verbose_logger.debug("%s: metadata will expire after %d "
+                                          "seconds and will be refreshed now" %
+                                          (r.id, expires_in))
+                r.metadata_force_expire()
+            else:
+                base.verbose_logger.debug("%s: will expire after %d "
+                                          "seconds." % (r.id, expires_in))
+
         sack = base.sack # triggers metadata sync
         return 0, [_('Metadata Cache Created')]
 

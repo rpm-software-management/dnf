@@ -52,6 +52,8 @@ import stat
 import errno
 import tempfile
 
+import dnf.util
+
 #  If you want yum to _always_ check the MD .sqlite files then set this to
 # False (this doesn't affect .xml files or .sqilte files derived from them).
 # With this as True yum will only check when a new repomd.xml or
@@ -897,10 +899,9 @@ Insufficient space in download directory %s
         if self._metadataCurrent is not None:
             return self._metadataCurrent
 
-        mC_def = self.withinCacheAge(self.metadata_cookie, self.metadata_expire)
-        if not mC_def: # Normal path...
-            self._metadataCurrent = mC_def
-            return mC_def
+        if not self.withinCacheAge(self.metadata_cookie, self.metadata_expire):
+            self._metadtaCurrent = False
+            return False
 
         # Edge cases, both repomd.xml and metalink (if used). Must exist.
         repomdfn = self.cachedir + '/' + 'repomd.xml'
@@ -916,6 +917,22 @@ Insufficient space in download directory %s
 
         self._metadataCurrent = True
         return True
+
+    def metadata_expire_in(self):
+        """ Get the number of seconds after which the metadata will expire.
+
+            Returns a tuple, boolean whether the information can be obtained and
+            the number of seconds. Negative number means the metadata has
+            expired already.
+        """
+        try:
+            age = time.time() - dnf.util.file_timestamp(self.metadata_cookie)
+            return (True, self.metadata_expire - age)
+        except OSError:
+            return (False, 0)
+
+    def metadata_force_expire(self):
+        self._metadataCurrent = False
 
     #  The metalink _shouldn't_ be newer than the repomd.xml or the checksums
     # will be off, but we only really care when we are downloading the

@@ -22,3 +22,6 @@ import os
 
 def am_i_root():
     return os.geteuid() == 0
+
+def file_timestamp(fn):
+    return os.stat(fn).st_mtime
