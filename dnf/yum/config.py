@@ -82,7 +82,6 @@ class Option(object):
         :return: The parsed option value or the default value if the value
            wasn't set in the configuration file.
         """
-        # xemacs highlighting hack: '
         if self.deleted:
             raise RuntimeError("Option is no longer a part of the conf.")
         if obj is None:
@@ -709,7 +708,6 @@ class StartupConf(BaseConfig):
     that are required early in the initialisation process or before
     the other [main] options can be parsed.
     """
-    # xemacs highlighting hack: '
     debuglevel = IntOption(2, 0, 10)
     errorlevel = IntOption(2, 0, 10)
 
@@ -973,8 +971,6 @@ def readStartupConfig(configfile, root, releasever=None):
     :raises: :class:`Errors.ConfigError` if a problem is detected with while parsing.
     """
 
-    # ' xemacs syntax hack
-
     StartupConf.installroot.default = root
     startupconf = StartupConf()
     startupconf.config_file_path = configfile
@@ -1010,9 +1006,6 @@ def readMainConfig(startupconf):
     :param startupconf: :class:`StartupConf` instance as returned by readStartupConfig()
     :return: Populated :class:`YumConf` instance
     """
-
-    # ' xemacs syntax hack
-
     # Set up substitution vars
     yumvars = _getEnvVar()
     yumvars['basearch'] = startupconf.basearch

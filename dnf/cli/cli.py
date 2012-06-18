@@ -2083,7 +2083,6 @@ def _filtercmdline(novalopts, valopts, args):
 
     Will raise ValueError if there was a problem parsing the command line.
     '''
-    # ' xemacs syntax hack
     out = []
     args = list(args)       # Make a copy because this func is destructive
 

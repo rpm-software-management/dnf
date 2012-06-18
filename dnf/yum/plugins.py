@@ -448,9 +448,6 @@ class PluginConduit:
         :return: the global :class:`optparse.OptionParser` instance used by
            Yum. May be None if an OptionParser isn't in use
         """
-        # ' xemacs highlighting hack
-        # This isn't API compatible :(
-        # return self._parent.optparser.plugin_option_group
         return self._parent.optparser
 
     def confString(self, section, opt, default=None):
@@ -461,7 +458,6 @@ class PluginConduit:
         :param default: value to read if the option is missing
         :return: string option value read, or default if option was missing
         """
-        # ' xemacs highlighting hack
         return config.getOption(self._conf, section, opt, config.Option(default))
 
     def confInt(self, section, opt, default=None):

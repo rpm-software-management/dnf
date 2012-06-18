@@ -56,7 +56,7 @@ def main(args):
         '''Called when a plugin raises PluginYumExit.
 
         Log the plugin's exit message if one was supplied.
-        ''' # ' xemacs hack
+        '''
         exitmsg = exception2msg(e)
         if exitmsg:
             logger.warn('\n\n%s', exitmsg)

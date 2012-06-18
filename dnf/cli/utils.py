@@ -218,7 +218,7 @@ class YumUtilBase(YumBaseCli):
 
         :param e: the exception
         :return: the exit code
-        """ # ' xemacs hack
+        """
         exitmsg = exception2msg(e)
         if exitmsg:
             self.logger.warn('\n\n%s', exitmsg)
