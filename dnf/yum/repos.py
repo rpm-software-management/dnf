@@ -218,15 +218,6 @@ class RepoStorage:
         for repo in self.repos.values():
             repo.cache = cacheval
 
-    def setCacheDir(self, cachedir):
-        """sets the cachedir value in all repos"""
-
-        self._cachedir = cachedir
-        for repo in self.repos.values():
-            repo.old_base_cache_dir = repo.basecachedir
-            repo.basecachedir = cachedir
-
-
     def setProgressBar(self, obj):
         """sets the progress bar for downloading files from repos"""
 

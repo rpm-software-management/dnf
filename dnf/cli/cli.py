@@ -36,6 +36,7 @@ import dnf.yum
 import dnf.yum.Errors
 import dnf.yum.logginglevels
 import dnf.yum.misc
+from dnf.yum.parser import varReplace
 import dnf.yum.plugins
 from dnf.rpmUtils.arch import isMultiLibArch
 from dnf.yum import _, P_
@@ -343,6 +344,12 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.cmdstring = 'yum '
         for arg in self.args:
             self.cmdstring += '%s ' % arg
+
+        # configuration has been collected, accumulate it into sensible form
+        self.cache_c.prefix = self.conf.cachedir
+        self.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
+                                         self.conf.yumvar)
+        del self.conf.cachedir # ensure access to the value is done via cache_c
 
         try:
             self.parseCommands() # before we return check over the base command + args
@@ -1845,8 +1852,6 @@ class YumOptionParser(OptionParser):
             #  Instead of going cache-only for a non-root user, try to use a
             # user writable cachedir. If that fails fall back to cache-only.
             if opts.cacheonly:
-                self.base.conf.cache = 1
-            elif not self.base.setCacheDir():
                 self.base.conf.cache = 1
 
             if opts.obsoletes:

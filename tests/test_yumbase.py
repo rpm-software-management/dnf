@@ -13,7 +13,8 @@ class YumBaseTest(unittest.TestCase):
         yumbase = dnf.yum.YumBase()
         yumbase.conf = mock.Mock()
         yumbase.conf.cache = None
-        yumbase.conf.cachedir = "/tmp"
+        yumbase.cache_c.prefix = "/tmp"
+        yumbase.cache_c.suffix = ""
         del yumbase.preconf
 
         self.assertIsNone(yumbase._lockfile)

@@ -259,7 +259,8 @@ class YumRepository(Repository, config.RepoConf):
         self.repo_config_age = 0 # if we're a repo not from a file then the
                                  # config is very, very old
         # throw in some stubs for things that will be set by the config class
-        self.basecachedir = ""
+        self.basecachedir = None
+        self.fallback_basecachedir = None
         self.base_persistdir = ""
         self.cost = 1000
         self.copy_local = 0
@@ -384,7 +385,7 @@ class YumRepository(Repository, config.RepoConf):
                         'basecachedir', 'http_headers', 'metadata_cookie',
                         'metadata_cookie_fn', 'quick_enable_disable',
                         'repoMDFile', 'timestamp_check', 'urls', 'mirrorurls',
-                        'yumvar', 'repofile')
+                        'yumvar', 'repofile', 'fallback_basecachedir')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue

@@ -90,6 +90,7 @@ from weakref import proxy as weakref
 from urlgrabber.grabber import default_grabber
 
 import hawkey
+import dnf.conf
 import dnf.package
 from dnf import queries, const, sack
 
@@ -210,6 +211,7 @@ class YumBase(object):
         self.run_with_package_names = set()
         self._cleanup = []
         self._sack = None
+        self.cache_c = dnf.conf.Cache()
 
     def __del__(self):
         self.close()
@@ -509,8 +511,9 @@ class YumBase(object):
                     'using id') % section)
         repo.name = to_unicode(repo.name)
 
-        # Set attributes not from the config file
-        repo.basecachedir = self.conf.cachedir
+        repo.basecachedir = self.cache_c.cachedir
+        repo.fallback_basecachedir = self.cache_c.fallback_cachedir
+
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
 
@@ -669,8 +672,6 @@ class YumBase(object):
             self.repos.confirm_func = prerepoconf.confirm_func
             self.repos.gpg_import_func = prerepoconf.gpg_import_func
             self.repos.gpgca_import_func = prerepoconf.gpgca_import_func
-            if prerepoconf.cachedir is not None:
-                self.repos.setCacheDir(prerepoconf.cachedir)
             if prerepoconf.cache is not None:
                 self.repos.setCache(prerepoconf.cache)
 
@@ -1935,7 +1936,7 @@ class YumBase(object):
             # bother locking.
             if self.conf.cache:
                 return
-            root = self.conf.cachedir
+            root = self.cache_c.cachedir
             # Don't want <cachedir>/var/run/yum.pid ... just: <cachedir>/yum.pid
             lockfile = os.path.basename(lockfile)
         else:
@@ -3381,7 +3382,7 @@ class YumBase(object):
         :return: 0 if there are no GPG keys in the rpmdb, and 1 if
            there are keys
         """
-        gpgkeyschecked = self.conf.cachedir + '/.gpgkeyschecked.yum'
+        gpgkeyschecked = self.cache_c.cachedir + '/.gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1
 
@@ -5437,6 +5438,8 @@ class YumBase(object):
     def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
         """Add and enable a repository.
 
+        Never used in yum/:hawkey (only plugins).
+
         :param repoid: a string specifying the name of the repository
         :param baseurls: a list of strings specifying the urls for
            the repository.  At least one base url, or one mirror, must
@@ -5452,7 +5455,6 @@ class YumBase(object):
         # routine and use it from getReposFromConfigFile(), etc.
         newrepo = yumRepo.YumRepository(repoid)
         newrepo.name = repoid
-        newrepo.basecachedir = self.conf.cachedir
 
         var_convert = kwargs.get('variable_convert', True)
 
@@ -5479,7 +5481,8 @@ class YumBase(object):
         newrepo.metadata_expire = 0
         newrepo.gpgcheck = self.conf.gpgcheck
         newrepo.repo_gpgcheck = self.conf.repo_gpgcheck
-        newrepo.basecachedir = self.conf.cachedir
+        newrepo.basecachedir = self.cache_c.cachedir
+        newrepo.fallback_basecachedir = self.cache_c.fallback_cachedir
         newrepo.base_persistdir = self.conf._repos_persistdir
 
         for key in kwargs.keys():
@@ -5561,31 +5564,6 @@ class YumBase(object):
                     self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Removing Package %s'), txmbr.po)
-
-    def setCacheDir(self):
-        """Set a new cache directory.
-
-        :return: whether the new cache directory is successfully set
-        """
-        suffix='/$basearch/$releasever'
-        if os.geteuid() == 0:
-            return True # We are root.
-        try:
-            cachedir = misc.getCacheDir()
-        except (IOError, OSError), e:
-            self.logger.critical(_('Could not set cachedir: %s') % str(e))
-            cachedir = None
-
-        if cachedir is None:
-            return False # Tried, but failed, to get a "user" cachedir
-
-        cachedir += varReplace(suffix, self.conf.yumvar)
-        if hasattr(self, 'prerepoconf'):
-            self.prerepoconf.cachedir = cachedir
-        else:
-            self.repos.setCacheDir(cachedir)
-        self.conf.cachedir = cachedir
-        return True # We got a new cache dir
 
     def _does_this_update(self, pkg1, pkg2):
         """returns True if pkg1 can update pkg2, False if not.

@@ -734,7 +734,7 @@ class YumConf(StartupConf):
     recent = IntOption(7, range_min=0)
     reset_nice = BoolOption(True)
 
-    cachedir = Option('/var/cache/yum')
+    cachedir = Option(dnf.const.SYSTEM_CACHEDIR)
 
     keepcache = BoolOption(True)
     logdir = Option('/var/log')
@@ -1026,7 +1026,7 @@ def readMainConfig(startupconf):
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')
 
-    # Apply the installroot to directory options
+    # Apply the installroot to directory options, substitutes variables.
     def _apply_installroot(yumconf, option):
         path = getattr(yumconf, option)
         ir_path = yumconf.installroot + path
