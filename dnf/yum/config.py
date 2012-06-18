@@ -66,6 +66,7 @@ class Option(object):
         if parse_default:
             default = self.parse(default)
         self.default = default
+        self.deleted = False
 
     def _setattrname(self):
         """Calculate the internal attribute name used to store option state in
@@ -82,6 +83,8 @@ class Option(object):
            wasn't set in the configuration file.
         """
         # xemacs highlighting hack: '
+        if self.deleted:
+            raise RuntimeError("Option is no longer a part of the conf.")
         if obj is None:
             return self
 
@@ -102,6 +105,9 @@ class Option(object):
                 raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
                                                                  value, str(e)))
         setattr(obj, self._attrname, value)
+
+    def __delete__(self, obj):
+        self.deleted = True
 
     def setup(self, obj, name):
         """Initialise the option for a config instance.
