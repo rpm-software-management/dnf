@@ -672,37 +672,6 @@ class BaseConfig(object):
         # write the updated ConfigParser to the fileobj.
         self.cfg.write(fileobj)
 
-    def getConfigOption(self, option, default=None):
-        """Return the current value of the given option.
-
-        :param option: string specifying the option to return the
-           value of
-        :param default: the value to return if the option does not exist
-        :return: the value of the option specified by *option*, or
-           *default* if it does not exist
-        """
-        warnings.warn('getConfigOption() will go away in a future version of Yum.\n'
-                'Please access option values as attributes or using getattr().',
-                DeprecationWarning)
-        if hasattr(self, option):
-            return getattr(self, option)
-        return default
-
-    def setConfigOption(self, option, value):
-        """Set the value of the given option to the given value.
-
-        :param option: string specifying the option to set the value
-           of
-        :param value: the value to set the option to
-        """
-        warnings.warn('setConfigOption() will go away in a future version of Yum.\n'
-                'Please set option values as attributes or using setattr().',
-                DeprecationWarning)
-        if hasattr(self, option):
-            setattr(self, option, value)
-        else:
-            raise Errors.ConfigError, 'No such option %s' % option
-
 class StartupConf(BaseConfig):
     """Configuration option definitions for yum.conf's [main] section
     that are required early in the initialisation process or before
