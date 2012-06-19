@@ -1,4 +1,3 @@
-#! /usr/bin/python -tt
 import re
 import urlparse
 import urlgrabber
