@@ -1,10 +1,10 @@
-%global gitrev 9d95cc5
+%global gitrev b4aa5c1
 %define confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.6
-Release:	6.git%{gitrev}%{?dist}
-Summary:	A highly experimental Yum replacement on top of libsolv.
+Release:	7.git%{gitrev}%{?dist}
+Summary:	A Yum fork on top of libsolv
 Group:		System Environment/Base
 License:	GPLv2+
 URL:		https://github.com/akozumpl/dnf
@@ -15,7 +15,7 @@ Requires:	python-hawkey >= 0.2.4-4
 Requires:	crontabs
 
 %description
-A highly experimental Yum replacement on top of libsolv.
+A Yum fork on top of libsolv
 
 %prep
 %setup -q -n dnf
@@ -29,12 +29,16 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %files
+%doc README.md COPYING
 %{_bindir}/*
 %{python_sitelib}/dnf/*
 %config(noreplace) %{confdir}/dnf.conf
-%config(noreplace) %{_sysconfdir}/cron.hourly/dnf-makecache.cron
+%{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Tue Jun 19 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-7.gitb4aa5c1
+- Fix rpmlint issues.
+
 * Wed Jun 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-6.git9d95cc5%{?dist}
 - Depend on the latest python-hawkey.
 
