@@ -1,5 +1,3 @@
-#!/usr/bin/python -t
-
 """Handle actual output from the cli."""
 
 # This program is free software; you can redistribute it and/or modify

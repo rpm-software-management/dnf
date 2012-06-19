@@ -1,6 +1,3 @@
-#!/usr/bin/python -tt
-
-
 class RpmUtilsError(Exception):
 
     """ Exception thrown for anything rpmUtils related. """

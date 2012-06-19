@@ -1,6 +1,3 @@
-#!/usr/bin/python
-#
-
 import os
 import rpm
 

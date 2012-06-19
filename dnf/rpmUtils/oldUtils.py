@@ -1,5 +1,3 @@
-#!/usr/bin/python -tt
-
 import rpm
 import types
 import os
