@@ -557,10 +557,10 @@ class YumRepository(Repository, config.RepoConf):
         self.setAttribute('_dir_setup_gpgdir', persistdir + '/gpgdir' + ext)
         self.setAttribute('_dir_setup_gpgcadir', persistdir + '/gpgcadir' + ext)
 
-        cookie = self.cachedir + '/' + self.metadata_cookie_fn
+        cookie = cachedir + '/' + self.metadata_cookie_fn
         self.setAttribute('_dir_setup_metadata_cookie', cookie)
 
-        for dir in [self.cachedir, self.pkgdir]:
+        for dir in [cachedir, self.pkgdir]:
             self._dirSetupMkdir_p(dir)
 
         # persistdir is really root-only but try the make anyway and just
@@ -1770,21 +1770,18 @@ Insufficient space in download directory %s
 
     def _preload_file_from_system_cache(self, filename, subdir='',
                                         destfn=None):
-        """attempts to copy the file from the system-wide cache,
-           if possible"""
-        if not hasattr(self, 'old_base_cache_dir'):
-            return False
-        if self.old_base_cache_dir == "":
+        """ Copy the file from the fallback cache, if possible."""
+        if not self.fallback_basecachedir:
             return False
 
-        glob_repo_cache_dir=os.path.join(self.old_base_cache_dir, self.id)
+        glob_repo_cache_dir = os.path.join(self.fallback_basecachedir, self.id)
         if not os.path.exists(glob_repo_cache_dir):
             return False
         if os.path.normpath(glob_repo_cache_dir) == os.path.normpath(self.cachedir):
             return False
 
         # Try to copy whatever file it is
-        fn = glob_repo_cache_dir   + '/' + subdir + os.path.basename(filename)
+        fn = glob_repo_cache_dir + '/' + subdir + os.path.basename(filename)
         if destfn is None:
             destfn = self.cachedir + '/' + subdir + os.path.basename(filename)
         return self._preload_file(fn, destfn)
