@@ -68,163 +68,6 @@ warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 logger = logging.getLogger("yum.Repos")
 verbose_logger = logging.getLogger("yum.verbose.Repos")
 
-class YumPackageSack(packageSack.PackageSack):
-    """imports/handles package objects from an mdcache dict object"""
-    def __init__(self, packageClass):
-        packageSack.PackageSack.__init__(self)
-        self.pc = packageClass
-        self.added = {}
-
-    def __del__(self):
-        self.close()
-
-    def close(self):
-        self.added = {}
-
-    def addDict(self, repo, datatype, dataobj, callback=None):
-        if repo in self.added:
-            if datatype in self.added[repo]:
-                return
-
-        total = len(dataobj)
-        if datatype == 'metadata':
-            current = 0
-            for pkgid in dataobj:
-                current += 1
-                if callback: callback.progressbar(current, total, repo)
-                pkgdict = dataobj[pkgid]
-                po = self.pc(repo, pkgdict)
-                po.id = pkgid
-                self._addToDictAsList(self.pkgsByID, pkgid, po)
-                self.addPackage(po)
-
-            if repo not in self.added:
-                self.added[repo] = []
-            self.added[repo].append('metadata')
-            # indexes will need to be rebuilt
-            self.indexesBuilt = 0
-
-        elif datatype in ['filelists', 'otherdata']:
-            if repo in self.added:
-                if 'metadata' not in self.added[repo]:
-                    raise Errors.RepoError, '%s md for %s imported before primary' \
-                           % (datatype, repo.id)
-            current = 0
-            for pkgid in dataobj:
-                current += 1
-                if callback: callback.progressbar(current, total, repo)
-                pkgdict = dataobj[pkgid]
-                if pkgid in self.pkgsByID:
-                    for po in self.pkgsByID[pkgid]:
-                        po.importFromDict(pkgdict)
-
-            self.added[repo].append(datatype)
-            # indexes will need to be rebuilt
-            self.indexesBuilt = 0
-        else:
-            # umm, wtf?
-            pass
-
-    def populate(self, repo, mdtype='metadata', callback=None, cacheonly=0):
-        if mdtype == 'all':
-            data = ['metadata', 'filelists', 'otherdata']
-        else:
-            data = [ mdtype ]
-
-        if not hasattr(repo, 'cacheHandler'):
-            repo.cacheHandler = sqlitecachec.RepodataParserSqlite(
-                storedir=repo.cachedir,
-                repoid=repo.id,
-                callback=callback,
-                )
-        for item in data:
-            if repo in self.added:
-                if item in self.added[repo]:
-                    continue
-
-            db_fn = None
-
-            if item == 'metadata':
-                mydbtype = 'primary_db'
-                mymdtype = 'primary'
-                repo_get_function = repo.getPrimaryXML
-                repo_cache_function = repo.cacheHandler.getPrimary
-
-            elif item == 'filelists':
-                mydbtype = 'filelists_db'
-                mymdtype = 'filelists'
-                repo_get_function = repo.getFileListsXML
-                repo_cache_function = repo.cacheHandler.getFilelists
-
-            elif item == 'otherdata':
-                mydbtype = 'other_db'
-                mymdtype = 'other'
-                repo_get_function = repo.getOtherXML
-                repo_cache_function = repo.cacheHandler.getOtherdata
-
-            else:
-                continue
-
-            if self._check_db_version(repo, mydbtype):
-                # see if we have the uncompressed db and check it's checksum vs the openchecksum
-                # if not download the compressed file
-                # decompress it
-                # unlink it
-
-                db_un_fn = self._check_uncompressed_db(repo, mydbtype)
-                if not db_un_fn:
-                    db_fn = repo._retrieveMD(mydbtype)
-                    if db_fn:
-                        if not repo.cache:
-                            db_un_fn = misc.decompress(db_fn)
-                            misc.unlink_f(db_fn)
-                            db_un_fn = self._check_uncompressed_db(repo, mydbtype)
-
-                dobj = repo.cacheHandler.open_database(db_un_fn)
-
-            else:
-                repo._xml2sqlite_local = True
-                xml = repo_get_function()
-                xmldata = repo.repoXML.getData(mymdtype)
-                (ctype, csum) = xmldata.checksum
-                dobj = repo_cache_function(xml, csum)
-
-            if not cacheonly:
-                self.addDict(repo, item, dobj, callback)
-            del dobj
-
-
-        # get rid of all this stuff we don't need now
-        del repo.cacheHandler
-
-    def _check_uncompressed_db(self, repo, mdtype):
-        """return file name of uncompressed db is good, None if not"""
-        mydbdata = repo.repoXML.getData(mdtype)
-        (r_base, remote) = mydbdata.location
-        fname = os.path.basename(remote)
-        compressed_fn = repo.cachedir + '/' + fname
-        db_un_fn = misc.decompress(compressed_fn, fn_only=True)
-
-        result = None
-
-        repo._preload_md_from_system_cache(os.path.basename(db_un_fn))
-        if os.path.exists(db_un_fn):
-            if skip_old_DBMD_check and repo._using_old_MD:
-                return db_un_fn
-
-            try:
-                repo.checkMD(db_un_fn, mdtype, openchecksum=True)
-            except URLGrabError:
-                if not repo.cache:
-                    misc.unlink_f(db_un_fn)
-            else:
-                result = db_un_fn
-
-        return result
-
-    def _check_db_version(self, repo, mdtype):
-        return repo._check_db_version(mdtype)
-
 class YumRepository(Repository, config.RepoConf):
     """
     This is an actual repository object
@@ -286,8 +129,6 @@ class YumRepository(Repository, config.RepoConf):
         # called "tmp" in repoquery --repofrompath and/or new1/old1 in repodiff.
         self.timestamp_check = True
 
-        self._sack = None
-
         self._grabfunc = None
         self._grab = None
         self.hawkey_repo = None
@@ -305,25 +146,8 @@ class YumRepository(Repository, config.RepoConf):
             return ret
         return cmp(self.id, other.id)
 
-    def _getSack(self):
-        # FIXME: Note that having the repo hold the sack, which holds "repos"
-        # is not only confusing but creates a circular dep.
-        #  Atm. we don't leak memory because RepoStorage.close() is called,
-        # which calls repo.close() which calls sack.close() which removes the
-        # repos from the sack ... thus. breaking the cycle.
-        if self._sack is None:
-            self._sack = sqlitesack.YumSqlitePackageSack(
-                sqlitesack.YumAvailablePackageSqlite)
-        return self._sack
-    sack = property(_getSack)
-
     def close(self):
-        if self._sack is not None:
-            self.sack.close()
         Repository.close(self)
-
-    def _resetSack(self):
-        self._sack = None
 
     def __getProxyDict(self):
         self.doProxyDict()
@@ -334,11 +158,6 @@ class YumRepository(Repository, config.RepoConf):
     # consistent access to how proxy information should look (and ensuring
     # that it's actually determined for the repo)
     proxy_dict = property(__getProxyDict)
-
-    def getPackageSack(self):
-        """Returns the instance of this repository's package sack."""
-        return self.sack
-
 
     def ready(self):
         """Returns true if this repository is setup and ready for use."""
@@ -374,7 +193,7 @@ class YumRepository(Repository, config.RepoConf):
     def dump(self):
         output = '[%s]\n' % self.id
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ('mediafunc', 'sack', 'metalink_data', 'grab',
+        excluded_vars = ('mediafunc', 'metalink_data', 'grab',
                          'grabfunc', 'repoXML', 'cfg', 'retrieved',
                         'mirrorlistparsed', 'gpg_import_func',
                         'gpgca_import_func', 'failure_obj',
@@ -1311,10 +1130,7 @@ Insufficient space in download directory %s
             if not os.path.exists(local):
                 local = misc.decompress(local, fn_only=True)
                 compressed = True
-        #  If we can, make a copy of the system-wide-cache version of this file,
-        # note that we often don't get here. So we also do this in
-        # YumPackageSack.populate ... and we look for the uncompressed versions
-        # in retrieveMD.
+        #  If we can, make a copy of the system-wide-cache version of this file.
         self._preload_md_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
