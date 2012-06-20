@@ -3,19 +3,19 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	7.git%{gitrev}%{?dist}
-Summary:	A Yum fork on top of libsolv
+Release:	8.git%{gitrev}%{?dist}
+Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 License:	GPLv2+
 URL:		https://github.com/akozumpl/dnf
-Source0:	dnf-%{gitrev}.tar.xz
+Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake python2
 Requires:	python-hawkey >= 0.2.4-4
 Requires:	crontabs
 
 %description
-A Yum fork on top of libsolv
+Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %prep
 %setup -q -n dnf
@@ -30,13 +30,13 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %files
 %doc README.md COPYING
-%{_bindir}/*
+%{_bindir}/dnf
 %{python_sitelib}/dnf/*
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
-* Tue Jun 19 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-7.gitb4aa5c1
+* Tue Jun 19 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-8.gitb4aa5c1
 - Fix rpmlint issues.
 
 * Wed Jun 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-6.git9d95cc5%{?dist}
