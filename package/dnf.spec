@@ -30,7 +30,7 @@ rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 %files
-%doc README.md COPYING
+%doc AUTHORS README.md COPYING
 %{_bindir}/dnf
 %{python_sitelib}/dnf/
 %dir %{confdir}
