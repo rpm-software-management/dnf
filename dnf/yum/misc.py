@@ -800,7 +800,7 @@ def get_running_kernel_version_release(ts):
         return (pkgtup[3], pkgtup[4])
     return (None, None)
 
-def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
+def find_unfinished_transactions(yumlibpath):
     """returns a list of the timestamps from the filenames of the unfinished
        transactions remaining in the yumlibpath specified.
     """
@@ -820,9 +820,9 @@ def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
     timestamps.sort()
     return timestamps
 
-def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
+def find_ts_remaining(timestamp, yumlibpath):
     """this function takes the timestamp of the transaction to look at and
-       the path to the yum lib dir (defaults to /var/lib/yum)
+       the path to the yum lib dir.
        returns a list of tuples(action, pkgspec) for the unfinished transaction
        elements. Returns an empty list if none.
 

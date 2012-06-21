@@ -919,10 +919,10 @@ class YumBase(object):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
-            pdb_path = self.conf.persistdir + "/history"
-            self._history = history.YumHistory(root=self.conf.installroot,
-                                                   db_path=pdb_path,
-                                                   releasever=self.conf.yumvar['releasever'])
+            db_path = self.conf.persistdir + "/history"
+            self._history = history.YumHistory(db_path,
+                                               root=self.conf.installroot,
+                                               releasever=self.conf.yumvar['releasever'])
         return self._history
 
     # properties so they auto-create themselves with defaults

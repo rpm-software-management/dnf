@@ -680,7 +680,7 @@ class StartupConf(BaseConfig):
 
     distroverpkg = Option('redhat-release')
     installroot = Option('/')
-    config_file_path = Option('/etc/yum/yum.conf')
+    config_file_path = Option(dnf.const.CONF_FILENAME)
     plugins = BoolOption(False)
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
@@ -688,7 +688,7 @@ class StartupConf(BaseConfig):
     syslog_ident = Option()
     syslog_facility = Option('LOG_USER')
     syslog_device = Option('/dev/log')
-    persistdir = Option('/var/lib/yum')
+    persistdir = Option(dnf.const.PERSISTDIR)
 
 class YumConf(StartupConf):
     """Configuration option definitions for yum.conf's [main] section.

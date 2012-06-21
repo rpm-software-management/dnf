@@ -30,8 +30,6 @@ from i18n import to_unicode, to_utf8
 
 from dnf.rpmUtils.arch import getBaseArch
 
-_history_dir = '/var/lib/yum/history'
-
 # NOTE: That we don't list TS_FAILED, because pkgs shouldn't go into the
 #       transaction with that. And if they come out with that we don't want to
 #       match them to anything anyway.
@@ -654,7 +652,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 class YumHistory:
     """ API for accessing the history sqlite data. """
 
-    def __init__(self, root='/', db_path=_history_dir, releasever=None):
+    def __init__(self, db_path, root='/', releasever=None):
         self._conn = None
 
         self.conf = misc.GenericHolder()
