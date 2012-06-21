@@ -103,6 +103,9 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
+def by_repo(sack, reponame):
+    return _construct_result(sack, None, ignore_case=False, include_repo=reponame)
+
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):
     matching = _construct_result(sack, patterns, ignore_case,

@@ -31,6 +31,7 @@ import time
 from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode
 
 import dnf.yum.config
+import dnf.queries
 import hawkey
 
 def _err_mini_usage(base, basecmd):
@@ -1547,8 +1548,8 @@ class RepoListCommand(YumCommand):
         """
         def _repo_size(repo):
             ret = 0
-            for pkg in repo.sack.returnPackages():
-                ret += pkg.packagesize
+            for pkg in dnf.queries.by_repo(base.sack, repo.id):
+                ret += pkg.size
             return base.format_number(ret)
 
         def _repo_match(repo, patterns):
@@ -1572,21 +1573,6 @@ class RepoListCommand(YumCommand):
         extcmds = map(lambda x: x.lower(), extcmds)
 
         verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
-        if arg != 'disabled' or extcmds:
-            try:
-                # Setup so len(repo.sack) is correct
-                base.repos.populateSack()
-                base.pkgSack # Need to setup the pkgSack, so excludes work
-            except dnf.yum.Errors.RepoError:
-                if verbose:
-                    raise
-                #  populate them by hand, so one failure doesn't kill everything
-                # after it.
-                for repo in base.repos.listEnabled():
-                    try:
-                        base.repos.populateSack(repo.id)
-                    except dnf.yum.Errors.RepoError:
-                        pass
 
         repos = base.repos.repos.values()
         repos.sort()
@@ -1624,17 +1610,8 @@ class RepoListCommand(YumCommand):
                     ui_size = _repo_size(repo)
                 # We don't show status for list disabled
                 if arg != 'disabled' or verbose:
-                    if verbose or base.conf.exclude or repo.exclude:
-                        num        = len(repo.sack.simplePkgList())
-                    else:
-                        num        = len(repo.sack)
+                    num = len(dnf.queries.by_repo(base.sack, repo.id))
                     ui_num     = _num2ui_num(num)
-                    excludes   = repo.sack._excludes
-                    excludes   = len([pid for r,pid in excludes if r == repo])
-                    if excludes:
-                        ui_excludes_num = _num2ui_num(excludes)
-                        if not verbose:
-                            ui_num += "+%s" % ui_excludes_num
                     tot_num   += num
             else:
                 enabled = False

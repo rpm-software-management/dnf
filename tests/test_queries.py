@@ -27,3 +27,10 @@ class Queries(unittest.TestCase):
         res = dnf.queries.by_file(yumbase.sack, "/raised/smile")
         self.assertEqual(len(res), 1)
         self.assertEqual(pkg, res[0])
+
+    def test_by_repo(self):
+        yumbase = base.mock_yum_base("updates", "main")
+        pkgs = dnf.queries.by_repo(yumbase.sack, "updates")
+        self.assertEqual(len(pkgs), 1)
+        pkgs = dnf.queries.by_repo(yumbase.sack, "main")
+        self.assertEqual(len(pkgs), 5)
