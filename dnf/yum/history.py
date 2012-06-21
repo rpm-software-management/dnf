@@ -36,17 +36,17 @@ _history_dir = '/var/lib/yum/history'
 #       transaction with that. And if they come out with that we don't want to
 #       match them to anything anyway.
 _stcode2sttxt = {TS_UPDATE : 'Update',
-                 TS_UPDATED : 'Updated', 
+                 TS_UPDATED : 'Updated',
                  TS_ERASE: 'Erase',
-                 TS_INSTALL: 'Install', 
+                 TS_INSTALL: 'Install',
                  TS_TRUEINSTALL : 'True-Install',
                  TS_OBSOLETED: 'Obsoleted',
                  TS_OBSOLETING: 'Obsoleting'}
 
 _sttxt2stcode = {'Update' : TS_UPDATE,
-                 'Updated' : TS_UPDATED, 
+                 'Updated' : TS_UPDATED,
                  'Erase' : TS_ERASE,
-                 'Install' : TS_INSTALL, 
+                 'Install' : TS_INSTALL,
                  'True-Install' : TS_TRUEINSTALL,
                  'Dep-Install' : TS_INSTALL,
                  'Reinstall' : TS_INSTALL, # Broken
@@ -656,7 +656,7 @@ class YumHistory:
 
     def __init__(self, root='/', db_path=_history_dir, releasever=None):
         self._conn = None
-        
+
         self.conf = misc.GenericHolder()
         if not os.path.normpath(db_path).startswith(root):
             self.conf.db_path  = os.path.normpath(root + '/' + db_path)
@@ -697,8 +697,8 @@ class YumHistory:
 
         if self._db_file is None:
             self._create_db_file()
-        
-        # make an addon path for where we're going to stick 
+
+        # make an addon path for where we're going to stick
         # random additional history info - probably from plugins and what-not
         self.conf.addon_path = self.conf.db_path + '/' + self._db_date
         if not os.path.exists(self.conf.addon_path):
@@ -759,7 +759,7 @@ class YumHistory:
                 continue
             if checksum == sql_checksum:
                 return sql_pkgtupid
-        
+
         if not create:
             return None
 
@@ -832,7 +832,7 @@ class YumHistory:
         cur = self._get_cursor()
         if cur is None or not self._update_db_file_2():
             return None
-        
+
         res = executeSQL(cur,
                          """INSERT INTO trans_skip_pkgs
                          (tid, pkgtupid)
@@ -935,12 +935,12 @@ class YumHistory:
         for pkg in using_pkgs:
             pid = self._ipkg2pid(pkg)
             self.trans_with_pid(pid)
-        
+
         for txmbr in txmbrs:
             pid   = self.pkg2pid(txmbr.po)
             state = self.txmbr2state(txmbr)
             self.trans_data_pid_beg(pid, state)
-        
+
         for pkg in skip_packages:
             pid   = self.pkg2pid(pkg)
             self.trans_skip_pid(pid)
@@ -1028,20 +1028,20 @@ class YumHistory:
         del self._tid
 
     def write_addon_data(self, dataname, data):
-        """append data to an arbitrary-named file in the history 
+        """append data to an arbitrary-named file in the history
            addon_path/transaction id location,
            returns True if write succeeded, False if not"""
-        
+
         if not hasattr(self, '_tid'):
             # maybe we should raise an exception or a warning here?
             return False
-        
+
         if not dataname:
             return False
-        
+
         if not data:
             return False
-            
+
         # make sure the tid dir exists
         tid_dir = self.conf.addon_path + '/' + str(self._tid)
 
@@ -1051,7 +1051,7 @@ class YumHistory:
             except (IOError, OSError), e:
                 # emit a warning/raise an exception?
                 return False
-        
+
         # cleanup dataname
         safename = dataname.replace('/', '_')
         data_fn = tid_dir + '/' + safename
@@ -1067,23 +1067,23 @@ class YumHistory:
             return False
         # return
         return True
-        
+
     def return_addon_data(self, tid, item=None):
         hist_and_tid = self.conf.addon_path + '/' + str(tid) + '/'
         addon_info = glob.glob(hist_and_tid + '*')
         addon_names = [ i.replace(hist_and_tid, '') for i in addon_info ]
         if not item:
             return addon_names
-        
+
         if item not in addon_names:
             # XXX history needs SOME kind of exception, or warning, I think?
             return None
-        
+
         fo = open(hist_and_tid + item, 'r')
         data = fo.read()
         fo.close()
         return data
-        
+
     def _old_with_pkgs(self, tid):
         cur = self._get_cursor()
         executeSQL(cur,
@@ -1602,13 +1602,13 @@ class YumHistory:
             if os.path.exists(_db_file + '-journal'):
                 os.rename(_db_file  + '-journal', _db_file + '-journal.old')
         self._db_file = _db_file
-        
+
         if self.conf.writable and not os.path.exists(self._db_file):
             # make them default to 0600 - sysadmin can change it later
             # if they want
             fo = os.open(self._db_file, os.O_CREAT, 0600)
             os.close(fo)
-                
+
         cur = self._get_cursor()
         ops = ['''\
  CREATE TABLE trans_beg (
@@ -1669,5 +1669,5 @@ SELECT pkgtupid,name,epoch,version,release,arch,
   epoch || ":" || name || "-" || version || "-" || release || "." || arch AS sql_envra,
   name || "-" || epoch || ":" || version || "-" || release || "." || arch AS sql_nevra
   FROM pkgtups
-  WHERE 
+  WHERE
 """

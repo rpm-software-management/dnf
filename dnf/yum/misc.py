@@ -153,7 +153,7 @@ def re_remote_url(s):
 
 ###########
 # Title: Remove duplicates from a sequence
-# Submitter: Tim Peters 
+# Submitter: Tim Peters
 # From: http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/52560
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
@@ -318,12 +318,12 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
        sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
        filename = /path/to/file
        CHUNK=65536 by default"""
-     
+
     # chunking brazenly lifted from Ryan Tomayko
     try:
         if type(file) not in types.StringTypes:
             fo = file # assume it's a file-like-object
-        else:           
+        else:
             fo = open(file, 'r', CHUNK)
 
         data = Checksums([sumtype])
@@ -334,7 +334,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
         if type(file) is types.StringType:
             fo.close()
             del fo
-            
+
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.
         if datasize is not None and datasize != data.length:
@@ -345,15 +345,15 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
         raise MiscError, 'Error opening file for checksum: %s' % file
 
 def getFileList(path, ext, filelist):
-    """Return all files in path matching ext, store them in filelist, 
+    """Return all files in path matching ext, store them in filelist,
        recurse dirs return list object"""
-    
+
     extlen = len(ext)
     try:
         dir_list = os.listdir(path)
     except OSError, e:
         raise MiscError, ('Error accessing directory %s, %s') % (path, e)
-        
+
     for d in dir_list:
         if os.path.isdir(path + '/' + d):
             filelist = getFileList(path + '/' + d, ext, filelist)
@@ -361,18 +361,18 @@ def getFileList(path, ext, filelist):
             if not ext or d[-extlen:].lower() == '%s' % (ext):
                 newpath = os.path.normpath(path + '/' + d)
                 filelist.append(newpath)
-                    
+
     return filelist
 
 class GenericHolder:
     """Generic Holder class used to hold other objects of known types
        It exists purely to be able to do object.somestuff, object.someotherstuff
-       or object[key] and pass object to another function that will 
+       or object[key] and pass object to another function that will
        understand it"""
 
     def __init__(self, iter=None):
         self.__iter = iter
-       
+
     def __iter__(self):
         if self.__iter is not None:
             return iter(self[self.__iter])
@@ -387,7 +387,7 @@ def procgpgkey(rawkey):
     '''Convert ASCII armoured GPG key to binary
     '''
     # TODO: CRC checking? (will RPM do this anyway?)
-    
+
     # Normalise newlines
     rawkey = re.sub('\r\n?', '\n', rawkey)
 
@@ -408,7 +408,7 @@ def procgpgkey(rawkey):
             break
         elif pastheaders:
             block.write(line+'\n')
-  
+
     # Decode and return
     return base64.decodestring(block.getvalue())
 
@@ -438,8 +438,8 @@ def getgpgkeyinfo(rawkey, multiple=False):
         raise ValueError(str(e))
     if len(keys) == 0:
         raise ValueError('No key found in given key data')
-    
-    for key in keys:    
+
+    for key in keys:
         keyid_blob = key.public_key.key_id()
 
         info = {
@@ -452,8 +452,8 @@ def getgpgkeyinfo(rawkey, multiple=False):
             'valid_sig': False,
         }
 
-        # Retrieve the timestamp from the matching signature packet 
-        # (this is what RPM appears to do) 
+        # Retrieve the timestamp from the matching signature packet
+        # (this is what RPM appears to do)
         for userid in key.user_ids[0]:
             if not isinstance(userid, pgpmsg.signature):
                 continue
@@ -467,11 +467,11 @@ def getgpgkeyinfo(rawkey, multiple=False):
                         info['timestamp'] = int(tspkt[1])
                         break
         key_info_objs.append(info)
-    if multiple:      
+    if multiple:
         return key_info_objs
     else:
         return key_info_objs[0]
-        
+
 
 def keyIdToRPMVer(keyid):
     '''Convert an integer representing a GPG key ID to the hex version string
@@ -483,7 +483,7 @@ def keyIdToRPMVer(keyid):
 def keyInstalled(ts, keyid, timestamp):
     '''
     Return if the GPG key described by the given keyid and timestamp are
-    installed in the rpmdb.  
+    installed in the rpmdb.
 
     The keyid and timestamp should both be passed as integers.
     The ts is an rpm transaction set object
@@ -494,7 +494,7 @@ def keyInstalled(ts, keyid, timestamp):
         - 1       key with matching ID is installed but has a older timestamp
         - 2       key with matching ID is installed but has a newer timestamp
 
-    No effort is made to handle duplicates. The first matching keyid is used to 
+    No effort is made to handle duplicates. The first matching keyid is used to
     calculate the return result.
     '''
     # Convert key id to 'RPM' form
@@ -507,7 +507,7 @@ def keyInstalled(ts, keyid, timestamp):
             if installedts == timestamp:
                 return 0
             elif installedts < timestamp:
-                return 1    
+                return 1
             else:
                 return 2
 
@@ -517,14 +517,14 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
     # FIXME - cachedir can be removed from this method when we break api
     if gpgme is None:
         return False
-    
+
     if not gpgdir:
         gpgdir = '%s/gpgdir' % cachedir
-    
+
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
-    
-    key_fo = StringIO(rawkey) 
+
+    key_fo = StringIO(rawkey)
     os.environ['GNUPGHOME'] = gpgdir
     # import the key
     ctx = gpgme.Context()
@@ -536,7 +536,7 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
     # ultimately trust the key or pygpgme is definitionally stupid
     k = ctx.get_key(keyid)
     gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
-    
+
     if make_ro_copy:
 
         rodir = gpgdir + '-ro'
@@ -549,19 +549,19 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
                 os.chmod(ro_f, 0755)
             fp = open(rodir + '/gpg.conf', 'w', 0755)
             # yes it is this stupid, why do you ask?
-            opts="""lock-never    
-no-auto-check-trustdb    
+            opts="""lock-never
+no-auto-check-trustdb
 trust-model direct
 no-expensive-trust-checks
-no-permission-warning         
+no-permission-warning
 preserve-permissions
 """
             fp.write(opts)
             fp.close()
 
-        
+
     return True
-    
+
 def return_keyids_from_pubring(gpgdir):
     if gpgme is None or not os.path.exists(gpgdir):
         return []
@@ -648,7 +648,7 @@ def sortPkgObj(pkg1 ,pkg2):
         return 0
     else:
         return -1
-        
+
 def newestInList(pkgs):
     """ Return the newest in the list of packages. """
     ret = [ pkgs.pop() ]
@@ -671,7 +671,7 @@ def version_tuple_to_string(evrTuple):
     """
     (e, v, r) = evrTuple
     s = ""
-    
+
     if e not in [0, '0', None]:
         s += '%s:' % e
     if v is not None:
@@ -682,12 +682,12 @@ def version_tuple_to_string(evrTuple):
 
 def prco_tuple_to_string(prcoTuple):
     """returns a text string of the prco from the tuple format"""
-    
+
     (name, flag, evr) = prcoTuple
     flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
     if flag is None:
         return name
-    
+
     return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
 
 def string_to_prco_tuple(prcoString):
@@ -698,7 +698,7 @@ def string_to_prco_tuple(prcoString):
     else:
         n = prcoString
         f = v = None
-        
+
         # We love GPG keys as packages, esp. awesome provides like:
         #  gpg(Fedora (13) <fedora@fedoraproject.org>)
         if n[0] != '/' and not n.startswith("gpg("):
@@ -706,7 +706,7 @@ def string_to_prco_tuple(prcoString):
             prco_split = n.split()
             if len(prco_split) == 3:
                 n, f, v = prco_split
-    
+
     # now we have 'n, f, v' where f and v could be None and None
     if f is not None and f not in constants.LETTERFLAGS:
         if f not in constants.SYMBOLFLAGS:
@@ -721,19 +721,19 @@ def string_to_prco_tuple(prcoString):
         (prco_e, prco_v, prco_r) = stringToVersion(v)
     elif type(v) in (types.TupleType, types.ListType):
         (prco_e, prco_v, prco_r) = v
-    
+
     #now we have (n, f, (e, v, r)) for the thing specified
     return (n, f, (prco_e, prco_v, prco_r))
 
 def refineSearchPattern(arg):
     """Takes a search string from the cli for Search or Provides
        and cleans it up so it doesn't make us vomit"""
-    
+
     if re.search('[*{}?+]|\[.+\]', arg):
         restring = fnmatch.translate(arg)
     else:
         restring = re.escape(arg)
-        
+
     return restring
 
 
@@ -742,15 +742,15 @@ def _decompress_chunked(source, dest, ztype):
     if ztype not in _available_compression:
         msg = "%s compression not available" % ztype
         raise Errors.MiscError, msg
-    
+
     if ztype == 'bz2':
         s_fn = bz2.BZ2File(source, 'r')
     elif ztype == 'xz':
         s_fn = lzma.LZMAFile(source, 'r')
     elif ztype == 'gz':
         s_fn = gzip.GzipFile(source, 'r')
-    
-    
+
+
     destination = open(dest, 'w')
 
     while True:
@@ -758,7 +758,7 @@ def _decompress_chunked(source, dest, ztype):
             data = s_fn.read(1024000)
         except IOError:
             break
-        
+
         if not data: break
 
         try:
@@ -766,14 +766,14 @@ def _decompress_chunked(source, dest, ztype):
         except (OSError, IOError), e:
             msg = "Error writing to file %s: %s" % (dest, str(e))
             raise Errors.MiscError, msg
-    
+
     destination.close()
     s_fn.close()
-    
+
 def bunzipFile(source,dest):
     """ Extract the bzipped contents of source to dest. """
     _decompress_chunked(source, dest, ztype='bz2')
-    
+
 def get_running_kernel_pkgtup(ts):
     """This takes the output of uname and figures out the pkgtup of the running
        kernel (name, arch, epoch, version, release)."""
@@ -789,9 +789,9 @@ def get_running_kernel_pkgtup(ts):
             if h['epoch'] is None:
                 e = '0'
             return (h['name'], h['arch'], e, h['version'], h['release'])
-    
+
     return (None, None, None, None, None)
- 
+
 def get_running_kernel_version_release(ts):
     """This takes the output of uname and figures out the (version, release)
     tuple for the running kernel."""
@@ -801,10 +801,10 @@ def get_running_kernel_version_release(ts):
     return (None, None)
 
 def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
-    """returns a list of the timestamps from the filenames of the unfinished 
+    """returns a list of the timestamps from the filenames of the unfinished
        transactions remaining in the yumlibpath specified.
     """
-    timestamps = []    
+    timestamps = []
     tsallg = '%s/%s' % (yumlibpath, 'transaction-all*')
     tsdoneg = '%s/%s' % (yumlibpath, 'transaction-done*')
     tsalls = glob.glob(tsallg)
@@ -819,40 +819,40 @@ def find_unfinished_transactions(yumlibpath='/var/lib/yum'):
 
     timestamps.sort()
     return timestamps
-    
+
 def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
-    """this function takes the timestamp of the transaction to look at and 
+    """this function takes the timestamp of the transaction to look at and
        the path to the yum lib dir (defaults to /var/lib/yum)
        returns a list of tuples(action, pkgspec) for the unfinished transaction
        elements. Returns an empty list if none.
 
     """
-    
+
     to_complete_items = []
-    tsallpath = '%s/%s.%s' % (yumlibpath, 'transaction-all', timestamp)    
+    tsallpath = '%s/%s.%s' % (yumlibpath, 'transaction-all', timestamp)
     tsdonepath = '%s/%s.%s' % (yumlibpath,'transaction-done', timestamp)
     tsdone_items = []
 
     if not os.path.exists(tsallpath):
         # something is wrong, here, probably need to raise _something_
-        return to_complete_items    
+        return to_complete_items
 
-            
+
     if os.path.exists(tsdonepath):
         tsdone_fo = open(tsdonepath, 'r')
         tsdone_items = tsdone_fo.readlines()
-        tsdone_fo.close()     
-    
+        tsdone_fo.close()
+
     tsall_fo = open(tsallpath, 'r')
     tsall_items = tsall_fo.readlines()
     tsall_fo.close()
-    
+
     for item in tsdone_items:
         # this probably shouldn't happen but it's worth catching anyway
         if item not in tsall_items:
-            continue        
+            continue
         tsall_items.remove(item)
-        
+
     for item in tsall_items:
         item = item.replace('\n', '')
         if item == '':
@@ -863,7 +863,7 @@ def find_ts_remaining(timestamp, yumlibpath='/var/lib/yum'):
             msg = "Transaction journal  file %s is corrupt." % (tsallpath)
             raise Errors.MiscError, msg
         to_complete_items.append((action, pkgspec))
-    
+
     return to_complete_items
 
 def seq_max_split(seq, max_entries):
@@ -882,16 +882,16 @@ def seq_max_split(seq, max_entries):
 
 def _ugly_utf8_string_hack(item):
     """hands back a unicoded string"""
-    # this is backward compat for handling non-utf8 filenames 
+    # this is backward compat for handling non-utf8 filenames
     # and content inside packages. :(
     # content that xml can cope with but isn't really kosher
 
     # if we're anything obvious - do them first
     if item is None:
         return ''
-    elif isinstance(item, unicode):    
+    elif isinstance(item, unicode):
         return item
-    
+
     # this handles any bogon formats we see
     du = False
     try:
@@ -904,14 +904,14 @@ def _ugly_utf8_string_hack(item):
                 x = unicode(item, enc)
             except UnicodeError:
                 pass
-                
+
             else:
                 if x.encode(enc) == item:
                     if enc != 'utf-8':
                         print '\n%s encoding on %s\n' % (enc, item)
                     return x.encode('utf-8')
-    
-    
+
+
     # Kill bytes (or libxml will die) not in the small byte portion of:
     #  http://www.w3.org/TR/REC-xml/#NT-Char
     # we allow high bytes, if it passed the utf8 check above. Eg.
@@ -1004,7 +1004,7 @@ def setup_locale(override_codecs=True, override_time=False):
         print >> sys.stderr, 'Failed to set locale, defaulting to C'
         os.environ['LC_ALL'] = 'C'
         locale.setlocale(locale.LC_ALL, 'C')
-        
+
     if override_codecs:
         import codecs
         sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
@@ -1021,9 +1021,9 @@ def get_my_lang_code():
         mylang = 'C'
     else:
         mylang = '.'.join(mylang)
-    
+
     return mylang
-    
+
 def return_running_pids():
     """return list of running processids, excluding this one"""
     mypid = os.getpid()
@@ -1053,13 +1053,13 @@ def get_open_files(pid):
         filename = filename.strip()
         if filename not in files:
             files.append(filename)
-    
+
     cli_f = '/proc/%s/cmdline' % pid
     try:
         cli = open(cli_f, 'r')
     except (IOError, OSError), e:
         return files
-    
+
     cmdline = cli.read()
     if cmdline.find('\00') != -1:
         cmds = cmdline.split('\00')
@@ -1081,7 +1081,7 @@ def get_uuid(savepath):
             myid = open('/proc/sys/kernel/random/uuid', 'r').read()
         else:
             myid = str(uuid4())
-        
+
         try:
             sf = open(savepath, 'w')
             sf.write(myid)
@@ -1089,20 +1089,20 @@ def get_uuid(savepath):
             sf.close()
         except (IOError, OSError), e:
             pass
-        
+
         return myid
-        
+
 def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
-    
+
     out = dest
     if not dest:
         out = filename
-        
+
     if filename.endswith('.gz'):
         ztype='gz'
-        if not dest: 
+        if not dest:
             out = filename.replace('.gz', '')
 
     elif filename.endswith('.bz') or filename.endswith('.bz2'):
@@ -1112,16 +1112,16 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
                 out = filename.replace('.bz','')
             else:
                 out = filename.replace('.bz2', '')
-    
+
     elif filename.endswith('.xz'):
         ztype='xz'
         if not dest:
             out = filename.replace('.xz', '')
-        
+
     else:
         out = filename # returning the same file since it is not compressed
         ztype = None
-    
+
     if ztype and not fn_only:
         if check_timestamps:
             fi = stat_f(filename)
@@ -1132,9 +1132,9 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
         _decompress_chunked(filename, out, ztype)
         if check_timestamps and fi:
             os.utime(out, (fi.st_mtime, fi.st_mtime))
-        
+
     return out
-    
+
 def repo_gen_decompress(filename, generated_name, cached=False):
     """ This is a wrapper around decompress, where we work out a cached
         generated name, and use check_timestamps. filename _must_ be from
@@ -1145,7 +1145,7 @@ def repo_gen_decompress(filename, generated_name, cached=False):
         os.makedirs(dest, mode=0755)
     dest += '/' + generated_name
     return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
-    
+
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """takes a glob of a dir (like /etc/foo.d/*.foo)
        returns a list of all the lines in all the files matching
