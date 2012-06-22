@@ -1561,6 +1561,10 @@ class YumBase(object):
 
         return probs
 
+    def _record_history(self):
+        return self.conf.history_record and \
+            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
+
     def runTransaction(self, cb):
         """Perform the transaction.
 
@@ -1579,10 +1583,7 @@ class YumBase(object):
                 self.run_with_package_names.add('yum-metadata-parser')
                 break
 
-        if (not self.conf.history_record or
-            self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
-            frpmdbv = self.tsInfo.futureRpmDBVersion()
-        else:
+        if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
             rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
@@ -1602,7 +1603,6 @@ class YumBase(object):
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
 
-            frpmdbv = self.tsInfo.futureRpmDBVersion()
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
                              self.skipped_packages, rpmdb_problems, cmdline)
             # write out our config and repo data to additional history info
@@ -1616,6 +1616,7 @@ class YumBase(object):
         # "something" happens and the rpmdb is different from what we think it
         # will be we store what we thought, not what happened (so it'll be an
         # invalid cache).
+        frpmdbv = self.tsInfo.futureRpmDBVersion()
         self.rpmdb.transactionResultVersion(frpmdbv)
         # transaction has started - all bets are off on our saved ts file
         if self._ts_save_file is not None:
@@ -1667,7 +1668,7 @@ class YumBase(object):
                 raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
                                               errors=[])
         else:
-            if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+            if self._record_history():
                 herrors = [to_unicode(to_str(x)) for x in errors]
                 self.plugins.run('historyend')
                 self.history.end(rpmdbv, 2, errors=herrors)
@@ -1831,7 +1832,7 @@ class YumBase(object):
 
         self.plugins.run('postverifytrans')
         rpmdbv = self.rpmdb.simpleVersion(main_only=True)[0]
-        if self.conf.history_record and not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+        if self._record_history():
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
