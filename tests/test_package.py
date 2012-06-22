@@ -27,6 +27,11 @@ class PackageTest(unittest.TestCase):
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
         self.assertFalse(self.pkg.verifyLocalPkg())
 
+    def test_return_id_sum(self):
+        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
+        self.assertEqual(self.pkg.returnIdSum(),
+                         ('md5', '68e9ded8ea25137c964a638f12e9987c'))
+
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
         local_pkg = self.sack.add_cmdline_rpm(base.TOUR_44_PKG_PATH)

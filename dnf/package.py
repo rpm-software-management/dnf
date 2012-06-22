@@ -113,15 +113,21 @@ class Package(hawkey.Package):
         return self.localpath or \
             os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
-    # yum cmopatibility method
+    # yum compatibility method
+    def returnIdSum(self):
+        """ Return the chksum type and chksum string how the legacy yum expects
+            it.
+        """
+        (chksum_type, chksum) = self.chksum
+        return (hawkey.chksum_name(chksum_type), binascii.hexlify(chksum))
+
+    # yum compatibility method
     def verifyLocalPkg(self):
         if self.reponame == hawkey.SYSTEM_REPO_NAME:
             raise ValueError, "Can not verify an installed package."
         if self.reponame == hawkey.CMDLINE_REPO_NAME:
             return True # local package always verifies against itself
-        (chksum_type, chksum) = self.chksum
-        chksum_type = hawkey.chksum_name(chksum_type)
-        sum_in_md = binascii.hexlify(chksum)
+        (chksum_type, chksum) = self.returnIdSum()
         real_sum = yum.misc.checksum(chksum_type, self.localPkg(),
                                      datasize=self.size)
-        return real_sum == sum_in_md
+        return real_sum == chksum
