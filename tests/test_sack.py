@@ -1,5 +1,6 @@
 import dnf.sack
 import hawkey.test
+import base
 import mock
 import unittest
 
@@ -14,3 +15,11 @@ class Sack(unittest.TestCase):
         sack.ensure_filelists(repos)
         self.assertEqual(sack.load_filelists.call_count, 1)
         self.assertEqual(sack.write_filelists.call_count, 1)
+
+    def test_rpmdb_version(self):
+        yumbase = base.mock_yum_base()
+        sack = yumbase.sack
+        version = yumbase.sack.rpmdb_version()
+        self.assertEqual(version._num, 3)
+        self.assertEqual(version._chksum.hexdigest(),
+                         "6034f87b90f13af4fdf2e8bded72d37e5d00f0ca")

@@ -1,5 +1,6 @@
 import dnf.package
 import dnf.queries
+import dnf.sack
 import dnf.yum
 import dnf.yum.constants
 import hawkey.test
@@ -55,6 +56,13 @@ def mock_yum_base(*extra_repos):
     yumbase.mock_extra_repos = extra_repos
     return yumbase
 
+class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
+    def __init__(self, repo_dir, yumbase):
+        hawkey.test.TestSackMixin.__init__(self, repo_dir)
+        dnf.sack.Sack.__init__(self,
+                               pkgcls=dnf.package.Package,
+                               pkginitval=yumbase)
+
 class MockYumBase(dnf.yum.YumBase):
     """ See also: hawkey/test/python/__init__.py.
 
@@ -68,7 +76,7 @@ class MockYumBase(dnf.yum.YumBase):
             return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
-        self._sack = hawkey.test.TestSack(repo_dir(), dnf.package.Package, self)
+        self._sack = TestSack(repo_dir(), self)
         self._sack.load_rpm_repo()
         for repo in self.mock_extra_repos:
             fn = "%s.repo" % repo

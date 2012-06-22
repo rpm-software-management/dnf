@@ -22,6 +22,8 @@ import hawkey
 import logging
 import sys
 import yum.Errors
+import queries
+from yum.packageSack import PackageSackVersion
 
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
@@ -52,3 +54,14 @@ class Sack(hawkey.Sack):
                                           yum_repo.name)
         self.load_presto()
         self.write_presto()
+
+    def rpmdb_version(self):
+        pkgs = queries.installed(self)
+        main = PackageSackVersion()
+        for pkg in pkgs:
+            ydbi = {} # :hawkey, was: pkg.yumdb_info
+            csum = None
+            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
+                csum = (ydbi.checksum_type, ydbi.checksum_data)
+            main.update(pkg, csum)
+        return main
