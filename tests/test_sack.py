@@ -20,6 +20,6 @@ class Sack(unittest.TestCase):
         yumbase = base.mock_yum_base()
         sack = yumbase.sack
         version = yumbase.sack.rpmdb_version()
-        self.assertEqual(version._num, 3)
+        self.assertEqual(version._num, base.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(),
                          "6034f87b90f13af4fdf2e8bded72d37e5d00f0ca")

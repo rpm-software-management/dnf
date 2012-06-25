@@ -260,10 +260,6 @@ class YumBase(object):
         if self._repos:
             self._repos.close()
 
-    def _transactionDataFactory(self):
-        """Factory method returning TransactionData object"""
-        return transactioninfo.TransactionData()
-
     def doGenericSetup(self, cache=0):
         """Do a default setup for all the normal or necessary yum
         components.  This function is really just a shorthand for
@@ -587,7 +583,7 @@ class YumBase(object):
         """ remove_only param. says if we are going to do _only_ remove(s) in
             the transaction. If so we don't need to setup the remote repos. """
         if self._tsInfo is None:
-            self._tsInfo = self._transactionDataFactory()
+            self._tsInfo = transactioninfo.TransactionData()
             self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
             # this REALLY sucks, sadly (needed for group conditionals)
             self._tsInfo.install_method = self.install
@@ -1585,8 +1581,8 @@ class YumBase(object):
 
         if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
-            using_pkgs = self.rpmdb.returnPackages(patterns=using_pkgs_pats)
-            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+            using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
+            rpmdbv  = self.sack.rpmdb_version()
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -1611,13 +1607,7 @@ class YumBase(object):
                 self._shell_history_write()
 
             self.plugins.run('historybegin')
-        #  Just before we update the transaction, update what we think the
-        # rpmdb will look like. This needs to be done before the run, so that if
-        # "something" happens and the rpmdb is different from what we think it
-        # will be we store what we thought, not what happened (so it'll be an
-        # invalid cache).
-        frpmdbv = self.tsInfo.futureRpmDBVersion()
-        self.rpmdb.transactionResultVersion(frpmdbv)
+
         # transaction has started - all bets are off on our saved ts file
         if self._ts_save_file is not None:
             # write the saved transaction data to the addon location in history

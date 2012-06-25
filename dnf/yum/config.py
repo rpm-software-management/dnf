@@ -846,9 +846,13 @@ class YumConf(StartupConf):
                 continue
             if attr in excluded_vars:
                 continue
-            if isinstance(getattr(self, attr), types.MethodType):
+            try:
+                res = getattr(self, attr)
+            except RuntimeError:
+                output += "(%s deleted)\n" % attr
                 continue
-            res = getattr(self, attr)
+            if isinstance(res, types.MethodType):
+                continue
             if not res and type(res) not in (type(False), type(0)):
                 res = ''
             if type(res) == types.ListType:
