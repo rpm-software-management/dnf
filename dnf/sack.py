@@ -22,8 +22,12 @@ import hawkey
 import logging
 import sys
 import yum.Errors
+import package
 import queries
 from yum.packageSack import PackageSackVersion
+
+def build_sack(yumbase):
+    return Sack(pkgcls=package.Package, pkginitval=yumbase)
 
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):

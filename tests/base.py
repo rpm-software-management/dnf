@@ -25,7 +25,7 @@ def repo_dir():
 TOUR_44_PKG_PATH = os.path.join(repo_dir(), "tour-4-4.noarch.rpm")
 TOUR_51_PKG_PATH = os.path.join(repo_dir(), "tour-5-1.noarch.rpm")
 
-# oten used query
+# often used query
 
 def installed_but(sack, *args):
     q = hawkey.Query(sack).filter(repo__eq=hawkey.SYSTEM_REPO_NAME)
@@ -107,6 +107,8 @@ class FakeConf(object):
         self.protected_multilib = False
         self.clean_requirements_on_remove = True
         self.upgrade_requirements_on_install = False
+        self.yumvar = {'releasever' : 'Fedora69'}
+        self.history_record = False
 
 # specialized test cases
 

@@ -211,6 +211,7 @@ class YumBase(object):
         self._cleanup = []
         self._sack = None
         self.cache_c = dnf.conf.Cache()
+        self._yumdb = None
 
     def __del__(self):
         self.close()
@@ -235,7 +236,7 @@ class YumBase(object):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
         start = time.time()
-        self._sack = sack.Sack(pkgcls=dnf.package.Package, pkginitval=self)
+        self._sack = sack.build_sack(self)
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
@@ -249,6 +250,14 @@ class YumBase(object):
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         return self._sack
+
+    @property
+    def yumdb(self):
+        if self._yumdb:
+            return self._yumdb
+        db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
+        self._yumdb = rpmsack.RPMDBAdditionalData(db_path)
+        return self._yumdb
 
     def close(self):
         """Close the history and repo objects."""
@@ -1720,7 +1729,6 @@ class YumBase(object):
         #    that there is not also an install of this pkg in the tsInfo (reinstall)
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
-        return None # :hawkey
 
         def _call_txmbr_cb(txmbr, count):
             if txmbr_cb is not None:
@@ -1731,50 +1739,56 @@ class YumBase(object):
         vt_st = time.time()
         self.plugins.run('preverifytrans')
         count = 0
+        # the rpmdb has changed by now. hawkey doesn't support dropping a repo
+        # yet we have to check what packages are in now: build a transient sack
+        # with only rpmdb in it. In the future when RPM Python bindings can tell
+        # us if a particular transaction element failed or not we can skip this
+        # completely.
+        rpmdb_sack = sack.build_sack(self)
+        rpmdb_sack.load_rpm_repo()
+
         for txmbr in self.tsInfo:
+            rpo = txmbr.po
+            installed = queries.installed_exact(rpmdb_sack, rpo.name,
+                                                rpo.evr, rpo.arch)
             if txmbr.output_state in TS_INSTALL_STATES:
-                if not self.rpmdb.contains(po=txmbr.po):
-                    # maybe a file log here, too
-                    # but raising an exception is not going to do any good
+                if len(installed) < 1:
                     self.logger.critical(_('%s was supposed to be installed' \
-                                           ' but is not!' % txmbr.po))
-                    # Note: Get Panu to do te.Failed() so we don't have to
+                                               ' but is not!' % txmbr.po))
                     txmbr.output_state = TS_FAILED
                     count = _call_txmbr_cb(txmbr, count)
                     continue
+                po = installed[0]
                 count = _call_txmbr_cb(txmbr, count)
-                po = self.getInstalledPackageObject(txmbr.pkgtup)
-                rpo = txmbr.po
-                po.yumdb_info.from_repo = rpo.repoid
-                po.yumdb_info.reason = txmbr.reason
-                po.yumdb_info.releasever = self.conf.yumvar['releasever']
+                yumdb_info = self.yumdb.get_package(po)
+                yumdb_info.from_repo = rpo.repoid
+                yumdb_info.reason = txmbr.reason
+                yumdb_info.releasever = self.conf.yumvar['releasever']
                 if hasattr(self, 'args') and self.args:
-                    po.yumdb_info.command_line = ' '.join(self.args)
+                    yumdb_info.command_line = ' '.join(self.args)
                 elif hasattr(self, 'cmds') and self.cmds:
-                    po.yumdb_info.command_line = ' '.join(self.cmds)
+                    yumdb_info.command_line = ' '.join(self.cmds)
                 csum = rpo.returnIdSum()
                 if csum is not None:
-                    po.yumdb_info.checksum_type = str(csum[0])
-                    po.yumdb_info.checksum_data = str(csum[1])
+                    yumdb_info.checksum_type = str(csum[0])
+                    yumdb_info.checksum_data = str(csum[1])
 
-                if isinstance(rpo, YumLocalPackage):
+                if rpo.reponame == hawkey.CMDLINE_REPO_NAME:
                     try:
                         st = os.stat(rpo.localPkg())
                         lp_ctime = str(int(st.st_ctime))
                         lp_mtime = str(int(st.st_mtime))
-                        po.yumdb_info.from_repo_revision  = lp_ctime
-                        po.yumdb_info.from_repo_timestamp = lp_mtime
-                    except: pass
-
-                if rpo.xattr_origin_url is not None:
-                    po.yumdb_info.origin_url = rpo.xattr_origin_url
+                        yumdb_info.from_repo_revision  = lp_ctime
+                        yumdb_info.from_repo_timestamp = lp_mtime
+                    except Exception:
+                        pass
 
                 if hasattr(rpo.repo, 'repoXML'):
                     md = rpo.repo.repoXML
                     if md and md.revision is not None:
-                        po.yumdb_info.from_repo_revision  = str(md.revision)
+                        yumdb_info.from_repo_revision  = str(md.revision)
                     if md:
-                        po.yumdb_info.from_repo_timestamp = str(md.timestamp)
+                        yumdb_info.from_repo_timestamp = str(md.timestamp)
 
                 loginuid = misc.getloginuid()
                 if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
@@ -1784,22 +1798,20 @@ class YumBase(object):
                         opo = txmbr.downgrades[0]
                     else:
                         opo = po
-                    if 'installed_by' in opo.yumdb_info:
-                        po.yumdb_info.installed_by = opo.yumdb_info.installed_by
+                    opo_yumdb_info = self.yumdb.get_package(opo)
+                    if 'installed_by' in opo_yumdb_info:
+                        yumdb_info.installed_by = opo_yumdb_info.installed_by
                     if loginuid is not None:
-                        po.yumdb_info.changed_by = str(loginuid)
+                        yumdb_info.changed_by = str(loginuid)
                 elif loginuid is not None:
-                    po.yumdb_info.installed_by = str(loginuid)
+                    yumdb_info.installed_by = str(loginuid)
 
                 if self.conf.history_record:
                     self.history.sync_alldb(po)
 
-        # Remove old ones after installing new ones, so we can copy values.
-        for txmbr in self.tsInfo:
-            if txmbr.output_state in TS_INSTALL_STATES:
-                pass
+            # Remove old ones after installing new ones, so we can copy values.
             elif txmbr.output_state in TS_REMOVE_STATES:
-                if self.rpmdb.contains(po=txmbr.po):
+                if len(installed) > 0:
                     if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
                                 output_states=TS_INSTALL_STATES):
                         # maybe a file log here, too
@@ -1814,21 +1826,20 @@ class YumBase(object):
                         count = _call_txmbr_cb(txmbr, count)
                         continue
                 count = _call_txmbr_cb(txmbr, count)
-                yumdb_item = self.rpmdb.yumdb.get_package(po=txmbr.po)
+                yumdb_item = self.yumdb.get_package(po=txmbr.po)
                 yumdb_item.clean()
             else:
                 count = _call_txmbr_cb(txmbr, count)
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
-        rpmdbv = self.rpmdb.simpleVersion(main_only=True)[0]
         if self._record_history():
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
+            rpmdbv = rpmdb_sack.rpmdb_version()
             self.plugins.run('historyend')
             self.history.end(rpmdbv, ret)
-        self.rpmdb.dropCachedData()
         self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def costExcludePackages(self):

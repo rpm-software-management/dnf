@@ -28,8 +28,9 @@ class Package(hawkey.Package):
         super(Package, self).__init__(initobject)
         self.yumbase = yumbase
         self.localpath = None
-        self._size = None
         self._chksum = None
+        self._repo = None
+        self._size = None
 
     @property
     def chksum(self):
@@ -55,6 +56,11 @@ class Package(hawkey.Package):
     def idx(self):
         return self.rpmdbid
 
+    @property #yum compatibility attribute
+    def pkgid(self):
+        (_, chksum) = self.hdr_chksum
+        return binascii.hexlify(chksum)
+
     @property # yum compatibility attribute
     def repoid(self):
         return self.reponame
@@ -65,7 +71,13 @@ class Package(hawkey.Package):
 
     @property # yum compatiblity attribute
     def repo(self):
+        if self._repo:
+            return self._repo
         return self.yumbase.repos.repos[self.reponame]
+
+    @repo.setter
+    def repo(self, val):
+        self._repo = val
 
     @property # yum compatiblity attribute
     def relativepath(self):
