@@ -652,7 +652,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 class YumHistory:
     """ API for accessing the history sqlite data. """
 
-    def __init__(self, db_path, root='/', releasever=None):
+    def __init__(self, db_path, yumdb, root='/', releasever=None):
         self._conn = None
 
         self.conf = misc.GenericHolder()
@@ -662,6 +662,7 @@ class YumHistory:
             self.conf.db_path = os.path.normpath('/' + db_path)
         self.conf.writable = False
         self.conf.readable = True
+        self.yumdb = yumdb
 
         self.releasever = releasever
 
@@ -1321,8 +1322,9 @@ class YumHistory:
     def _save_yumdb(self, ipkg):
         """ Save all the data for yumdb for this installed pkg, assumes
             there is no data currently. """
+        yumdb_info = self.yumdb.get_package(ipkg)
         for attr in _YumHistPackageYumDB._valid_yumdb_keys:
-            val = ipkg.yumdb_info.get(attr)
+            val = yumdb_info.get(attr)
             if val is None:
                 continue
             if not self._save_anydb_key(ipkg, "yum", attr, val):

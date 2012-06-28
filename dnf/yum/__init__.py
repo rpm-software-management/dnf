@@ -925,9 +925,10 @@ class YumBase(object):
            history information. """
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
-            self._history = history.YumHistory(db_path,
+            releasever = self.conf.yumvar['releasever']
+            self._history = history.YumHistory(db_path, self.yumdb,
                                                root=self.conf.installroot,
-                                               releasever=self.conf.yumvar['releasever'])
+                                               releasever=releasever)
         return self._history
 
     # properties so they auto-create themselves with defaults

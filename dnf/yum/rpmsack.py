@@ -1736,11 +1736,6 @@ class RPMDBAdditionalDataPackage(object):
         if attr.endswith('.tmp'):
             raise AttributeError, "Cannot set attribute %s on %s" % (attr, self)
 
-        #  These two are special, as they have an index and are used as our
-        # cache-breaker.
-        if attr in ('checksum_type', 'checksum_data'):
-            misc.unlink_f(self._conf.version_path)
-
         # Auto hardlink some of the attrs...
         if self._link_yumdb_cache(fn, value):
             return
