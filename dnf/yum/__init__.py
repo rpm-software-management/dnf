@@ -1746,88 +1746,97 @@ class YumBase(object):
         rpmdb_sack = sack.build_sack(self)
         rpmdb_sack.load_rpm_repo()
 
+        # Process new packages before the old ones so we can copy values.
         for txmbr in self.tsInfo:
+            if txmbr.output_state not in TS_INSTALL_STATES:
+                continue
+
             rpo = txmbr.po
             installed = queries.installed_exact(rpmdb_sack, rpo.name,
                                                 rpo.evr, rpo.arch)
-            if txmbr.output_state in TS_INSTALL_STATES:
-                if len(installed) < 1:
-                    self.logger.critical(_('%s was supposed to be installed' \
-                                               ' but is not!' % txmbr.po))
+            if len(installed) < 1:
+                self.logger.critical(_('%s was supposed to be installed' \
+                                           ' but is not!' % txmbr.po))
+                txmbr.output_state = TS_FAILED
+                count = _call_txmbr_cb(txmbr, count)
+                continue
+            po = installed[0]
+            count = _call_txmbr_cb(txmbr, count)
+            yumdb_info = self.yumdb.get_package(po)
+            yumdb_info.from_repo = rpo.repoid
+            yumdb_info.reason = txmbr.reason
+            yumdb_info.releasever = self.conf.yumvar['releasever']
+            if hasattr(self, 'args') and self.args:
+                yumdb_info.command_line = ' '.join(self.args)
+            elif hasattr(self, 'cmds') and self.cmds:
+                yumdb_info.command_line = ' '.join(self.cmds)
+            csum = rpo.returnIdSum()
+            if csum is not None:
+                yumdb_info.checksum_type = str(csum[0])
+                yumdb_info.checksum_data = str(csum[1])
+
+            if rpo.reponame == hawkey.CMDLINE_REPO_NAME:
+                try:
+                    st = os.stat(rpo.localPkg())
+                    lp_ctime = str(int(st.st_ctime))
+                    lp_mtime = str(int(st.st_mtime))
+                    yumdb_info.from_repo_revision  = lp_ctime
+                    yumdb_info.from_repo_timestamp = lp_mtime
+                except Exception:
+                    pass
+
+            if hasattr(rpo.repo, 'repoXML'):
+                md = rpo.repo.repoXML
+                if md and md.revision is not None:
+                    yumdb_info.from_repo_revision  = str(md.revision)
+                if md:
+                    yumdb_info.from_repo_timestamp = str(md.timestamp)
+
+            loginuid = misc.getloginuid()
+            if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
+                if txmbr.updates:
+                    opo = txmbr.updates[0]
+                elif txmbr.downgrades:
+                    opo = txmbr.downgrades[0]
+                else:
+                    opo = po
+                opo_yumdb_info = self.yumdb.get_package(opo)
+                if 'installed_by' in opo_yumdb_info:
+                    yumdb_info.installed_by = opo_yumdb_info.installed_by
+                if loginuid is not None:
+                    yumdb_info.changed_by = str(loginuid)
+            elif loginuid is not None:
+                yumdb_info.installed_by = str(loginuid)
+
+            if self.conf.history_record:
+                self.history.sync_alldb(po)
+
+        for txmbr in self.tsInfo:
+            if txmbr.output_state not in TS_REMOVE_STATES:
+                continue
+            rpo = txmbr.po
+            installed = queries.installed_exact(rpmdb_sack, rpo.name,
+                                                rpo.evr, rpo.arch)
+            if len(installed) > 0:
+                if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
+                            output_states=TS_INSTALL_STATES):
+                    # maybe a file log here, too
+                    # but raising an exception is not going to do any good
+                    # Note: This actually triggers atm. because we can't
+                    #       always find the erased txmbr to set it when
+                    #       we should.
+                    self.logger.critical(_('%s was supposed to be removed' \
+                                           ' but is not!' % txmbr.po))
+                    # Note: Get Panu to do te.Failed() so we don't have to
                     txmbr.output_state = TS_FAILED
                     count = _call_txmbr_cb(txmbr, count)
                     continue
-                po = installed[0]
-                count = _call_txmbr_cb(txmbr, count)
-                yumdb_info = self.yumdb.get_package(po)
-                yumdb_info.from_repo = rpo.repoid
-                yumdb_info.reason = txmbr.reason
-                yumdb_info.releasever = self.conf.yumvar['releasever']
-                if hasattr(self, 'args') and self.args:
-                    yumdb_info.command_line = ' '.join(self.args)
-                elif hasattr(self, 'cmds') and self.cmds:
-                    yumdb_info.command_line = ' '.join(self.cmds)
-                csum = rpo.returnIdSum()
-                if csum is not None:
-                    yumdb_info.checksum_type = str(csum[0])
-                    yumdb_info.checksum_data = str(csum[1])
+            count = _call_txmbr_cb(txmbr, count)
+            yumdb_item = self.yumdb.get_package(po=txmbr.po)
+            yumdb_item.clean()
 
-                if rpo.reponame == hawkey.CMDLINE_REPO_NAME:
-                    try:
-                        st = os.stat(rpo.localPkg())
-                        lp_ctime = str(int(st.st_ctime))
-                        lp_mtime = str(int(st.st_mtime))
-                        yumdb_info.from_repo_revision  = lp_ctime
-                        yumdb_info.from_repo_timestamp = lp_mtime
-                    except Exception:
-                        pass
-
-                if hasattr(rpo.repo, 'repoXML'):
-                    md = rpo.repo.repoXML
-                    if md and md.revision is not None:
-                        yumdb_info.from_repo_revision  = str(md.revision)
-                    if md:
-                        yumdb_info.from_repo_timestamp = str(md.timestamp)
-
-                loginuid = misc.getloginuid()
-                if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
-                    if txmbr.updates:
-                        opo = txmbr.updates[0]
-                    elif txmbr.downgrades:
-                        opo = txmbr.downgrades[0]
-                    else:
-                        opo = po
-                    opo_yumdb_info = self.yumdb.get_package(opo)
-                    if 'installed_by' in opo_yumdb_info:
-                        yumdb_info.installed_by = opo_yumdb_info.installed_by
-                    if loginuid is not None:
-                        yumdb_info.changed_by = str(loginuid)
-                elif loginuid is not None:
-                    yumdb_info.installed_by = str(loginuid)
-
-                if self.conf.history_record:
-                    self.history.sync_alldb(po)
-
-            # Remove old ones after installing new ones, so we can copy values.
-            elif txmbr.output_state in TS_REMOVE_STATES:
-                if len(installed) > 0:
-                    if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
-                                output_states=TS_INSTALL_STATES):
-                        # maybe a file log here, too
-                        # but raising an exception is not going to do any good
-                        # Note: This actually triggers atm. because we can't
-                        #       always find the erased txmbr to set it when
-                        #       we should.
-                        self.logger.critical(_('%s was supposed to be removed' \
-                                               ' but is not!' % txmbr.po))
-                        # Note: Get Panu to do te.Failed() so we don't have to
-                        txmbr.output_state = TS_FAILED
-                        count = _call_txmbr_cb(txmbr, count)
-                        continue
-                count = _call_txmbr_cb(txmbr, count)
-                yumdb_item = self.yumdb.get_package(po=txmbr.po)
-                yumdb_item.clean()
-            else:
+        for txmbr in self.tsInfo:
+            if txmbr.output_state not in TS_INSTALL_STATES + TS_REMOVE_STATES:
                 count = _call_txmbr_cb(txmbr, count)
                 self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
