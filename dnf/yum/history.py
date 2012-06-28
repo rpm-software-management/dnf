@@ -792,7 +792,7 @@ class YumHistory:
         return self._apkg2pid(po, create)
 
     def pkg2pid(self, po, create=True):
-        if isinstance(po, YumInstalledPackage):
+        if po.from_system:
             return self._ipkg2pid(po, create)
         if isinstance(po, YumAvailablePackage):
             return self._apkg2pid(po, create)
