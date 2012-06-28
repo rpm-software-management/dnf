@@ -16,6 +16,17 @@ class PackageTest(unittest.TestCase):
         self.sack = yumbase.sack
         self.pkg = dnf.queries.available_by_name(self.sack, "pepper")[0]
 
+    def test_from_cmdline(self):
+        self.sack.create_cmdline_repo()
+        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_44_PKG_PATH)
+        self.assertTrue(local_pkg.from_cmdline)
+        self.assertFalse(self.pkg.from_cmdline)
+
+    def test_from_system(self):
+        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        self.assertTrue(pkg.from_system)
+        self.assertFalse(self.pkg.from_system)
+
     def test_pkgtup(self):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
 

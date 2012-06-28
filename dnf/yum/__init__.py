@@ -1775,7 +1775,7 @@ class YumBase(object):
                 yumdb_info.checksum_type = str(csum[0])
                 yumdb_info.checksum_data = str(csum[1])
 
-            if rpo.reponame == hawkey.CMDLINE_REPO_NAME:
+            if rpo.from_cmdline:
                 try:
                     st = os.stat(rpo.localPkg())
                     lp_ctime = str(int(st.st_ctime))
@@ -2162,7 +2162,7 @@ class YumBase(object):
         remote_pkgs = []
         remote_size = 0
         for po in pkglist:
-            if po.reponame == hawkey.CMDLINE_REPO_NAME:
+            if po.from_cmdline:
                 continue
             local = po.localPkg()
             if os.path.exists(local):
@@ -2358,7 +2358,7 @@ class YumBase(object):
         if self._override_sigchecks:
             check = False
             hasgpgkey = 0
-        elif po.reponame == hawkey.CMDLINE_REPO_NAME:
+        elif po.from_cmdline:
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
@@ -2412,9 +2412,9 @@ class YumBase(object):
         for txmbr in self.tsInfo:
             if txmbr.po.state not in TS_INSTALL_STATES:
                 continue
-            if txmbr.po.reponame == hawkey.SYSTEM_REPO_NAME:
+            if txmbr.po.from_system:
                 continue
-            if txmbr.po.reponame == hawkey.CMDLINE_REPO_NAME:
+            if txmbr.po.from_cmdline:
                 continue
 
             # make sure it's not a local file
@@ -4080,7 +4080,7 @@ class YumBase(object):
         instpkgs = []
         availpkgs = []
         if po: # just a po
-            if po.reponame == hawkey.SYSTEM_REPO_NAME:
+            if po.from_system:
                 instpkgs.append(po)
             else:
                 installed = sorted(queries.installed_by_name(self.sack, po.name))

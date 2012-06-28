@@ -1345,9 +1345,9 @@ class YumOutput:
                 a = 'noarch'
 
             # none, partial, full?
-            if po.reponame == hawkey.SYSTEM_REPO_NAME:
+            if po.from_system:
                 hi = self.conf.color_update_installed
-            elif po.reponame == hawkey.CMDLINE_REPO_NAME:
+            elif po.from_cmdline:
                 hi = self.conf.color_update_local
             else:
                 hi = self.conf.color_update_remote

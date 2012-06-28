@@ -43,6 +43,14 @@ class Package(hawkey.Package):
         self._chksum = val
 
     @property
+    def from_cmdline(self):
+        return self.reponame == hawkey.CMDLINE_REPO_NAME
+
+    @property
+    def from_system(self):
+        return self.reponame == hawkey.SYSTEM_REPO_NAME
+
+    @property
     def size(self):
         if self._size:
             return self._size
@@ -120,7 +128,7 @@ class Package(hawkey.Package):
             For packages in remote repo returns where the package will be/has
             been downloaded.
         """
-        if self.reponame == hawkey.CMDLINE_REPO_NAME:
+        if self.from_cmdline:
             return self.location
         return self.localpath or \
             os.path.join(self.repo.pkgdir, os.path.basename(self.location))
@@ -135,9 +143,9 @@ class Package(hawkey.Package):
 
     # yum compatibility method
     def verifyLocalPkg(self):
-        if self.reponame == hawkey.SYSTEM_REPO_NAME:
+        if self.from_system:
             raise ValueError, "Can not verify an installed package."
-        if self.reponame == hawkey.CMDLINE_REPO_NAME:
+        if self.from_cmdline:
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()
         real_sum = yum.misc.checksum(chksum_type, self.localPkg(),
