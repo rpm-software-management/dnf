@@ -1,5 +1,5 @@
-# package.py
-# Module defining the dnf.Package class.
+# util.py
+# Basic dnf utils.
 #
 # Copyright (C) 2012  Red Hat, Inc.
 #
@@ -25,3 +25,20 @@ def am_i_root():
 
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
+
+def lazyattr(attrname):
+    """ Decorator to get lazy attribute initialization.
+
+        Composes with @property. Force reinitialization by deleting the
+        <attrname>.
+     """
+    def get_decorated(fn):
+        def cached_getter(obj):
+            try:
+                return getattr(obj, attrname)
+            except AttributeError:
+                val = fn(obj)
+                setattr(obj, attrname, val)
+                return val
+        return cached_getter
+    return get_decorated

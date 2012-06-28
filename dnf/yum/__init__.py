@@ -91,6 +91,7 @@ from urlgrabber.grabber import default_grabber
 import hawkey
 import dnf.conf
 import dnf.package
+import dnf.util
 from dnf import queries, const, sack
 
 __version__ = '3.4.3'
@@ -211,7 +212,6 @@ class YumBase(object):
         self._cleanup = []
         self._sack = None
         self.cache_c = dnf.conf.Cache()
-        self._yumdb = None
 
     def __del__(self):
         self.close()
@@ -252,12 +252,10 @@ class YumBase(object):
         return self._sack
 
     @property
+    @dnf.util.lazyattr("_yumdb")
     def yumdb(self):
-        if self._yumdb:
-            return self._yumdb
         db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
-        self._yumdb = rpmsack.RPMDBAdditionalData(db_path)
-        return self._yumdb
+        return rpmsack.RPMDBAdditionalData(db_path)
 
     def close(self):
         """Close the history and repo objects."""
