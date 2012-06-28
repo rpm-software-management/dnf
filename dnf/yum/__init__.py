@@ -1590,7 +1590,7 @@ class YumBase(object):
         if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
-            rpmdbv  = self.sack.rpmdb_version()
+            rpmdbv  = self.sack.rpmdb_version(self.yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -1845,7 +1845,7 @@ class YumBase(object):
             ret = -1
             if resultobject is not None:
                 ret = resultobject.return_code
-            rpmdbv = rpmdb_sack.rpmdb_version()
+            rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.plugins.run('historyend')
             self.history.end(rpmdbv, ret)
         self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))

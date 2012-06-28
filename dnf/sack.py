@@ -59,11 +59,11 @@ class Sack(hawkey.Sack):
         self.load_presto()
         self.write_presto()
 
-    def rpmdb_version(self):
+    def rpmdb_version(self, yumdb):
         pkgs = queries.installed(self)
         main = PackageSackVersion()
         for pkg in pkgs:
-            ydbi = {} # :hawkey, was: pkg.yumdb_info
+            ydbi = yumdb.get_package(pkg)
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)

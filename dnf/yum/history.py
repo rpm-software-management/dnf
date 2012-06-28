@@ -784,7 +784,7 @@ class YumHistory:
         return self._pkgtup2pid(po.pkgtup, csum, create)
     def _ipkg2pid(self, po, create=True):
         csum = None
-        yumdb = {} # :hawkey, was po.yumdb_info
+        yumdb = self.yumdb.get_package(po)
         if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
             csum = "%s:%s" % (yumdb.checksum_type, yumdb.checksum_data)
         return self._pkgtup2pid(po.pkgtup, csum, create)
