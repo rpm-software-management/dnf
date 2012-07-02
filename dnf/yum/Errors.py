@@ -71,10 +71,10 @@ class LockError(YumBaseError):
         self.errno = errno
         self.msg = msg
         self.pid = pid
-        
+
 class DepError(YumBaseError):
     pass
-    
+
 class RepoError(YumBaseError):
     pass
 
@@ -83,10 +83,10 @@ class DuplicateRepoError(RepoError):
 
 class NoMoreMirrorsRepoError(RepoError):
     pass
-    
+
 class ConfigError(YumBaseError):
     pass
-    
+
 class MiscError(YumBaseError):
     pass
 
@@ -98,7 +98,7 @@ class InstallError(YumBaseError):
 
 class UpdateError(YumBaseError):
     pass
-    
+
 class RemoveError(YumBaseError):
     pass
 
@@ -130,10 +130,10 @@ class CompsException(YumBaseError):
 
 class MediaError(YumBaseError):
     pass
-    
+
 class PkgTagsError(YumBaseError):
     pass
-    
+
 class YumDeprecationWarning(DeprecationWarning):
     """
     Used to mark a method as deprecated.
