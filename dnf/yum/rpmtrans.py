@@ -196,8 +196,6 @@ class RPMTransaction:
         self.filelog = False
 
         self._setupOutputLogging(base.conf.rpmverbosity)
-        if not os.path.exists(self.base.conf.persistdir):
-            os.makedirs(self.base.conf.persistdir) # make the dir, just in case
 
     # Error checking? -- these should probably be where else
     def _fdSetNonblock(self, fd):

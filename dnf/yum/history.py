@@ -24,9 +24,11 @@ from weakref import proxy as weakref
 from sqlutils import sqlite, executeSQL, sql_esc_glob
 import misc as misc
 import constants
+import Errors
 from constants import *
 from packages import YumInstalledPackage, YumAvailablePackage, PackageObject
 from i18n import to_unicode, to_utf8
+from . import _
 
 from dnf.rpmUtils.arch import getBaseArch
 
@@ -670,9 +672,10 @@ class YumHistory:
             try:
                 os.makedirs(self.conf.db_path)
             except (IOError, OSError), e:
-                # some sort of useful thing here? A warning?
-                return
-            self.conf.writable = True
+                msg = _("Unable to initialize yumdb history: %s") % str(e)
+                raise Errors.YumDBError(msg)
+            else:
+                self.conf.writable = True
         else:
             if os.access(self.conf.db_path, os.W_OK):
                 self.conf.writable = True

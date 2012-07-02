@@ -44,7 +44,10 @@ class YumTestTransactionError(YumBaseError):
 
 class YumRPMCheckError(YumBaseError):
     pass
-        
+
+class YumDBError(YumBaseError):
+    pass
+
 class YumRPMTransError(YumBaseError):
     """ This class means rpm's .ts.run() returned known errors. We are compat.
         with YumBaseError in that we print nicely, and compat. with traditional
