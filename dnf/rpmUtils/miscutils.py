@@ -21,7 +21,7 @@ import sys
 import locale
 import signal
 
-from . import RpmUtilsError
+from error import RpmUtilsError
 import transaction
 
 def rpmOutToStr(arg):

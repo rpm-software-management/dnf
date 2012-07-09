@@ -28,7 +28,7 @@ import fnmatch
 import stat
 import warnings
 from subprocess import Popen, PIPE
-from dnf.rpmUtils import RpmUtilsError
+from dnf.rpmUtils.error import RpmUtilsError
 import dnf.rpmUtils.miscutils
 from dnf.rpmUtils.miscutils import flagToString, stringToVersion, compareVerOnly
 import Errors
