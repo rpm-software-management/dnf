@@ -1055,6 +1055,8 @@ class YumBase(object):
         self.dsCallback.start()
         goal = self.buildHawkeyGoal(self.tsInfo)
         if not goal.go(allow_uninstall=True):
+            if self.conf.debuglevel >= 6:
+                goal.log_decisions()
             (rescode, restring) =  (1, goal.problems)
         else:
             cnt = 0
