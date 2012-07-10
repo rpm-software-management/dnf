@@ -416,7 +416,6 @@ class TransactionData:
         txmbr.output_state = TS_INSTALL
         txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'i'
-        txmbr.reason = 'user'
         self.add(txmbr)
         return txmbr # :hawkey
 
@@ -440,7 +439,6 @@ class TransactionData:
         txmbr.output_state = TS_TRUEINSTALL
         txmbr.po.state = TS_INSTALL
         txmbr.ts_state = 'i'
-        txmbr.reason = 'user'
 
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
@@ -744,7 +742,7 @@ class TransactionMember:
         self.ts_state = None # what state to put it into in the transaction set
         self.output_state = None # what state to list if printing it
         self.isDep = 0
-        self.reason = 'user' # reason for it to be in the transaction set
+        self.reason = 'unknown' # reason for it to be in the transaction set
         self.process = None #  I think this is used nowhere by nothing - skv 2010/11/03
         self.relatedto = [] # ([relatedpkg, relationship)]
         self.depends_on = []

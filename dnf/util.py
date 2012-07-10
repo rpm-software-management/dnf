@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+import hawkey
 import os
 
 def am_i_root():
@@ -42,3 +43,10 @@ def lazyattr(attrname):
                 return val
         return cached_getter
     return get_decorated
+
+def reason_name(reason):
+    if reason == hawkey.REASON_DEP:
+        return "dep"
+    if reason == hawkey.REASON_USER:
+        return "user"
+    raise ValueError, "Unknown reason %d" % reason

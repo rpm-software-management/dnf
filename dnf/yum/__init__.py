@@ -1072,7 +1072,8 @@ class YumBase(object):
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
-                self.tsInfo.addInstall(pkg)
+                txmbr = self.tsInfo.addInstall(pkg)
+                txmbr.reason = dnf.util.reason_name(goal.get_reason(pkg))
             for pkg in goal.list_upgrades():
                 cnt += 1
                 updated = goal.package_obsoletes(pkg)
