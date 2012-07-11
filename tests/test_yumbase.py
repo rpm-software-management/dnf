@@ -2,6 +2,7 @@ import base
 import binascii
 import dnf.queries
 import dnf.yum
+import dnf.yum.constants
 import hawkey
 import mock
 import os
@@ -70,3 +71,16 @@ class VerifyTransactionTest(unittest.TestCase):
         datapackageclass.assert_any_call(mock.ANY,
                                          '/should-not-exist-bad-test!/yumdb/p/pepper-pepper-20-0-x86_64',
                                          yumdb_cache=mock.ANY)
+
+class InstallReason(base.ResultTestCase):
+    def setUp(self):
+        self.yumbase = base.mock_yum_base("main")
+
+    def test_reason(self):
+        self.yumbase.install(pattern="mrkite")
+        self.yumbase.buildTransaction()
+        new_pkgs = self.yumbase.tsInfo.getMembersWithState(
+            output_states=dnf.yum.constants.TS_INSTALL_STATES)
+        pkg_reasons = [(txmbr.po.name, txmbr.reason) for txmbr in new_pkgs]
+        self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
+                              pkg_reasons)

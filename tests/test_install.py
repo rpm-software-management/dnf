@@ -1,7 +1,6 @@
 import base
 import dnf.queries
 from dnf.queries import available_by_name
-import dnf.yum.constants
 import hawkey
 
 class InstallMultilibAll(base.ResultTestCase):
@@ -71,16 +70,3 @@ class MultilibBestMainRepo(base.ResultTestCase):
             filter(name="lotus", arch="x86_64", repo="main")[0]
         new_set = self.installed + [new_package]
         self.assertResult(self.yumbase, new_set)
-
-class InstallReason(base.ResultTestCase):
-    def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
-
-    def test_reason(self):
-        self.yumbase.install(pattern="mrkite")
-        self.yumbase.buildTransaction()
-        new_pkgs = self.yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_INSTALL_STATES)
-        pkg_reasons = [(txmbr.po.name, txmbr.reason) for txmbr in new_pkgs]
-        self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
-                              pkg_reasons)
