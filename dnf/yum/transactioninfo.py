@@ -258,9 +258,6 @@ class TransactionData:
     def add(self, txmember):
         """add a package to the transaction"""
 
-        for oldpo in txmember.updates:
-            self.addUpdated(oldpo, txmember.po)
-
         if txmember.pkgtup not in self.pkgdict:
             self.pkgdict[txmember.pkgtup] = []
         else:
@@ -474,6 +471,7 @@ class TransactionData:
         if oldpo:
             txmbr.relatedto.append((oldpo, 'updates'))
             txmbr.updates.append(oldpo)
+            self._addUpdated(oldpo, po)
 
         self.add(txmbr)
         self.findObsoletedByThisMember(txmbr)
@@ -494,9 +492,13 @@ class TransactionData:
             return (itxmbr, atxmbr)
         return atxmbr
 
-    def addUpdated(self, po, updating_po):
+    # deprecated
+    def _addUpdated(self, po, updating_po):
         """adds a package as being updated by another pkg
-           takes a packages object and returns a TransactionMember Object"""
+           takes a packages object and returns a TransactionMember Object
+
+           :hawkey: no point exposing this function on the interface.
+        """
 
         txmbr = TransactionMember(po)
         txmbr.current_state = TS_INSTALL

@@ -46,24 +46,23 @@ class TransactionDataTests(unittest.TestCase):
         txmbr = self.tsInfo.getMembers(self.pkgs[0].pkgtup)[0]
         self.assertEqual(txmbr.output_state, TS_INSTALL)
 
-    def testAddUpdatesAndObsoletes(self):
+    def testObsoletes(self):
         ''' test addUpdated,addObsoleted'''
-        txmbr1 = self.tsInfo.addUpdated(self.pkgs[1], self.pkgs[2])
         txmbr2 = self.tsInfo.addObsoleted(self.pkgs[3], self.pkgs[4])
-        self.assertEqual(len(self.tsInfo), 2)
-        txmbr = self.tsInfo.getMembersWithState(output_states=[TS_UPDATED])[0]
-        self.assertEqual(txmbr.po, self.pkgs[1])
+        self.assertEqual(len(self.tsInfo), 1)
+        txmbrs = self.tsInfo.getMembersWithState(output_states=[TS_UPDATED])
+        self.assertEqual(len(txmbrs), 0)
         txmbr = self.tsInfo.getMembersWithState(output_states=[TS_OBSOLETED])[0]
         self.assertEqual(txmbr.po, self.pkgs[3])
 
     def testMatchNaevr(self):
         ''' test MatchNaevr '''
         self.tsInfo.addInstall(self.pkgs[0])
-        self.tsInfo.addUpdated(self.pkgs[2],self.pkgs[1])
+        self.tsInfo.addUpdate(self.pkgs[2],self.pkgs[1])
         res = self.tsInfo.matchNaevr(name='withinC')
         self.assertEqual(len(res),1)
         res = self.tsInfo.matchNaevr(arch='noarch')
-        self.assertEqual(len(res),2)
+        self.assertEqual(len(res),3)
 
     def testgetMembersWithState(self):
         ''' test getMembersWithState'''

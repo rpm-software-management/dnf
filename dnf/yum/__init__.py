@@ -1079,8 +1079,7 @@ class YumBase(object):
                 updated = goal.package_obsoletes(pkg)
                 self.dsCallback.pkgAdded(updated, 'ud')
                 self.dsCallback.pkgAdded(pkg, 'u')
-                self.tsInfo.addUpdate(pkg)
-                self.tsInfo.addUpdated(updated, pkg)
+                self.tsInfo.addUpdate(pkg, updated)
             for pkg in goal.list_erasures():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'e')
@@ -4149,6 +4148,7 @@ class YumBase(object):
             return tx_return # :hawkey
 
         else: # we have kwargs, sort them out.
+            raise NotImplementedError("not in DNF yet") # :hawkey
             nevra_dict = self._nevra_kwarg_parse(kwargs)
 
             instpkgs = self.rpmdb.searchNevra(name=nevra_dict['name'],
@@ -4290,7 +4290,7 @@ class YumBase(object):
             for i_pkg in self.rpmdb.searchNevra(name=txmbr.name):
                 if i_pkg not in txmbr.updates:
                     if self._does_this_update(txmbr.po, i_pkg):
-                        self.tsInfo.addUpdated(i_pkg, txmbr.po)
+                        self.tsInfo._addUpdated(i_pkg, txmbr.po)
 
         return tx_return
 
