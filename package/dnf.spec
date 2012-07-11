@@ -1,13 +1,13 @@
-%global gitrev 964faae
+%global gitrev b1f1c08
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	0.2.6
-Release:	10.git%{gitrev}%{?dist}
+Release:	11.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
-License:	GPLv2+ and GPLv2 and GPL and Public Domain
+License:	GPLv2+ and GPLv2 and GPL
 URL:		https://github.com/akozumpl/dnf
 Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
@@ -39,6 +39,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Wed Jul 11 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-11.gitb1f1c08
+- More licensing changes.
+
 * Mon Jul 9 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-10.git964faae
 - Licensing changes.
 
