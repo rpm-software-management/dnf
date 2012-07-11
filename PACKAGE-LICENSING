@@ -10,7 +10,7 @@ yum/misc.py
 yum/parser.py
 rpmUtils/arch.py
 
-In the yum-devel-list-thread below those concernes were resolved Yum maintainers
-who confirmed these files are covered by GPLv2+:
+In the yum-devel-list-thread below those concernes were resolved by Yum
+maintainers who confirmed these files were covered by GPLv2+:
 
 http://lists.baseurl.org/pipermail/yum-devel/2012-July/009376.html
