@@ -1,7 +1,16 @@
 All files in DNF are distributed as GPLv2+ with the exceptions below:
 
 yum/sqlutils.py : GPLv2
-yum/misc.py : Public Domain
-yum/parser.py : Public Domain
 rpmUtils/transaction.py : GPL
-rpmUtils/arch.py : Public Domain
+
+Licensing conditions of the following files were disputed when DNF was forked
+from Yum:
+
+yum/misc.py
+yum/parser.py
+rpmUtils/arch.py
+
+In the yum-devel-list-thread below those concernes were resolved Yum maintainers
+who confirmed these files are covered by GPLv2+:
+
+http://lists.baseurl.org/pipermail/yum-devel/2012-July/009376.html
