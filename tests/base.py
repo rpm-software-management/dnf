@@ -122,7 +122,6 @@ class ResultTestCase(unittest.TestCase):
             other pkgs result in an error. Pkgs are present if they are in the
             rpmdb and are not REMOVEd or they are INSTALLed.
         """
-        pkgs = set(pkgs)
         installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
 
         (rcode, rstring) = yumbase.buildTransaction()
@@ -134,4 +133,4 @@ class ResultTestCase(unittest.TestCase):
         for txmbr in yumbase.tsInfo.getMembersWithState(
             output_states=dnf.yum.constants.TS_INSTALL_STATES):
             installed.add(txmbr.po)
-        self.assertEqual(pkgs, installed)
+        self.assertItemsEqual(installed, pkgs)
