@@ -31,9 +31,9 @@ class Queries(unittest.TestCase):
     def test_by_repo(self):
         yumbase = base.mock_yum_base("updates", "main")
         pkgs = dnf.queries.by_repo(yumbase.sack, "updates")
-        self.assertEqual(len(pkgs), 1)
+        self.assertEqual(len(pkgs), base.UPDATES_NSOLVABLES)
         pkgs = dnf.queries.by_repo(yumbase.sack, "main")
-        self.assertEqual(len(pkgs), 5)
+        self.assertEqual(len(pkgs), base.MAIN_NSOLVABLES)
 
     def test_installed_exact(self):
         sack = base.mock_yum_base().sack

@@ -60,7 +60,7 @@ class VerifyTransactionTest(unittest.TestCase):
         # during the method call:
         yumdb_info = datapackageclass()
         self.assertEqual(yumdb_info.from_repo, 'main')
-        self.assertEqual(yumdb_info.reason, 'user')
+        self.assertEqual(yumdb_info.reason, 'unknown')
         self.assertEqual(yumdb_info.releasever, 'Fedora69')
         self.assertEqual(yumdb_info.checksum_type, 'md5')
         self.assertEqual(yumdb_info.checksum_data, HASH)

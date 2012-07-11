@@ -1,10 +1,12 @@
 import base
 import dnf.queries
+from dnf.queries import available_by_name
+import dnf.yum.constants
 import hawkey
 
 class InstallMultilibAll(base.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base()
+        self.yumbase = base.mock_yum_base("main")
         self.yumbase.conf.multilib_policy = "all"
 
     def test_not_available(self):
@@ -17,8 +19,10 @@ class InstallMultilibAll(base.ResultTestCase):
     def test_install(self):
         """ Simple install. """
         self.yumbase.install(pattern="mrkite")
-        new_set = dnf.queries.installed(self.yumbase.sack) + \
-            dnf.queries.available_by_name(self.yumbase.sack, "mrkite")
+        expected = available_by_name(self.yumbase.sack, ["mrkite", "trampoline"])
+        # ensure sanity of the test (otherwise it would pass no matter what):
+        self.assertEqual(len(expected), 2)
+        new_set = dnf.queries.installed(self.yumbase.sack) + expected
         self.assertResult(self.yumbase, new_set)
 
 class MultilibAllMainRepo(base.ResultTestCase):
@@ -39,8 +43,7 @@ class MultilibAllMainRepo(base.ResultTestCase):
         tsinfo = self.yumbase.install(pattern="lotus")
         arches = [txmbr.po.arch for txmbr in tsinfo]
         self.assertItemsEqual(arches, ['x86_64', 'i686'])
-        new_set = self.installed + \
-            dnf.queries.available_by_name(self.yumbase.sack, "lotus")
+        new_set = self.installed + available_by_name(self.yumbase.sack, "lotus")
         self.assertResult(self.yumbase, new_set)
 
 class MultilibBestMainRepo(base.ResultTestCase):
@@ -68,3 +71,16 @@ class MultilibBestMainRepo(base.ResultTestCase):
             filter(name="lotus", arch="x86_64", repo="main")[0]
         new_set = self.installed + [new_package]
         self.assertResult(self.yumbase, new_set)
+
+class InstallReason(base.ResultTestCase):
+    def setUp(self):
+        self.yumbase = base.mock_yum_base("main")
+
+    def test_reason(self):
+        self.yumbase.install(pattern="mrkite")
+        self.yumbase.buildTransaction()
+        new_pkgs = self.yumbase.tsInfo.getMembersWithState(
+            output_states=dnf.yum.constants.TS_INSTALL_STATES)
+        pkg_reasons = [(txmbr.po.name, txmbr.reason) for txmbr in new_pkgs]
+        self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
+                              pkg_reasons)
