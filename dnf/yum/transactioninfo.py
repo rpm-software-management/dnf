@@ -489,7 +489,6 @@ class TransactionData:
             itxmbr.downgraded_by.append(po)
             atxmbr.relatedto.append((oldpo, 'downgrades'))
             atxmbr.downgrades.append(oldpo)
-            return (itxmbr, atxmbr)
         return atxmbr
 
     # deprecated
@@ -831,3 +830,14 @@ class TransactionMember:
             msg += "  groups: %s\n" % ' '.join(self.groups)
 
         return msg
+
+    def propagated_reason(self, yumdb):
+        if self.reason == "user":
+            return self.reason
+        if self.updates:
+            updated = self.updates[0]
+            return yumdb.get_package(updated).reason
+        if self.downgrades:
+            downgraded = self.downgrades[0]
+            return yumdb.get_package(downgraded).reason
+        return self.reason

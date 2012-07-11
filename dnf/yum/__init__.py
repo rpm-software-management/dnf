@@ -1766,7 +1766,7 @@ class YumBase(object):
             count = _call_txmbr_cb(txmbr, count)
             yumdb_info = self.yumdb.get_package(po)
             yumdb_info.from_repo = rpo.repoid
-            yumdb_info.reason = txmbr.reason
+            yumdb_info.reason = txmbr.propagated_reason(self.yumdb)
             yumdb_info.releasever = self.conf.yumvar['releasever']
             if hasattr(self, 'args') and self.args:
                 yumdb_info.command_line = ' '.join(self.args)
@@ -4547,7 +4547,7 @@ class YumBase(object):
             installed = sorted(queries.installed_by_name(self.sack, po.name))
             if len(installed) > 0 and installed[0] > po:
                 txmbrs = self.tsInfo.addDowngrade(po, installed[0])
-                tx_return.extend(txmbrs)
+                tx_return.append(txmbrs)
         elif pattern:
             for pkg in queries.downgrades_by_name(self.sack, pattern):
                 txmbr = self.tsInfo.addDowngrade(pkg)

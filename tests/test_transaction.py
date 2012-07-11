@@ -1,4 +1,5 @@
 import base
+import mock
 import unittest
 from dnf.yum.constants import *
 
@@ -10,6 +11,23 @@ class TransactionDataTests(unittest.TestCase):
     def setUp(self):
         self.tsInfo = TransactionData()
         self.pkgs = base.mock_packages()
+
+    def test_propagated_reason(self):
+        class FakeYumdbInfo(object):
+            def __init__(self, pkg):
+                self.reason = str(id(pkg))
+
+        txmbr = self.tsInfo.addInstall(self.pkgs[0])
+        txmbr.reason = "user"
+        self.assertEqual(txmbr.propagated_reason(None), "user")
+
+        txmbr = self.tsInfo.addUpdate(self.pkgs[1], self.pkgs[2])
+        yumdb = mock.Mock(get_package=FakeYumdbInfo)
+        self.assertEqual(txmbr.propagated_reason(yumdb), str(id(self.pkgs[2])))
+
+        txmbr = self.tsInfo.addDowngrade(self.pkgs[3], self.pkgs[4])
+        yumdb = mock.Mock(get_package=FakeYumdbInfo)
+        self.assertEqual(txmbr.propagated_reason(yumdb), str(id(self.pkgs[4])))
 
     def testLenght(self):
         ''' test __len__ method '''

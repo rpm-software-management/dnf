@@ -7,10 +7,8 @@ class Downgrade(base.ResultTestCase):
         sack = yumbase.sack
 
         ret = yumbase.downgrade_local(base.TOUR_44_PKG_PATH)
-        self.assertEqual(len(ret), 2) # quirk of TransactionData.addDowngrade()
-        new_pkg = [txmbr.po for txmbr in ret if \
-                       txmbr.po.location == base.TOUR_44_PKG_PATH][0]
-        new_set = base.installed_but(sack, "tour") + [new_pkg]
+        self.assertEqual(len(ret), 1)
+        new_set = base.installed_but(sack, "tour") + [ret[0].po]
         self.assertResult(yumbase, new_set)
 
     def test_downgrade(self):
