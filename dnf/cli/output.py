@@ -2059,19 +2059,10 @@ to exit.
             self._historyInfoCmd(mobj)
 
     def _hpkg2from_repo(self, hpkg):
-        """ Given a pkg, find the ipkg.ui_from_repo ... if none, then
-            get an apkg. ... and put a ? in there. """
+        """ Given a pkg, find the ipkg.ui_from_repo."""
         if 'from_repo' in hpkg.yumdb_info:
             return hpkg.ui_from_repo
-
-        ipkgs = self.rpmdb.searchPkgTuple(hpkg.pkgtup)
-        if not ipkgs:
-            apkgs = self.pkgSack.searchPkgTuple(hpkg.pkgtup)
-            if not apkgs:
-                return '?'
-            return '@?' + str(apkgs[0].repoid)
-
-        return ipkgs[0].ui_from_repo
+        return "(unknown)"
 
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)

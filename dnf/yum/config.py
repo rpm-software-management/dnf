@@ -806,7 +806,7 @@ class YumConf(StartupConf):
     sslclientkey = Option()
 
     history_record = BoolOption(True)
-    history_record_packages = ListOption(['yum', 'rpm'])
+    history_record_packages = ListOption(['dnf', 'rpm'])
 
     rpmverbosity = Option('info')
 

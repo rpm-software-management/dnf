@@ -651,7 +651,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             self.end_rpmdbversion = obj.end_rpmdbversion
 
 
-class YumHistory:
+class YumHistory(object):
     """ API for accessing the history sqlite data. """
 
     def __init__(self, db_path, yumdb, root='/', releasever=None):
@@ -795,13 +795,11 @@ class YumHistory:
         return self._apkg2pid(po, create)
 
     def pkg2pid(self, po, create=True):
-        if po.from_system:
-            return self._ipkg2pid(po, create)
-        if isinstance(po, YumAvailablePackage):
-            return self._apkg2pid(po, create)
         if isinstance(po, YumHistoryPackage):
             return self._hpkg2pid(po, create)
-        return self._pkgtup2pid(po.pkgtup, None, create)
+        if po.from_system:
+            return self._ipkg2pid(po, create)
+        return self._apkg2pid(po, create)
 
     @staticmethod
     def txmbr2state(txmbr):
@@ -947,7 +945,7 @@ class YumHistory:
             pid   = self.pkg2pid(pkg)
             self.trans_skip_pid(pid)
 
-        for problem in rpmdb_problems:
+        for problem in []: #:hawkey, was 'in rpmdb_problems:'
             self._trans_rpmdb_problem(problem)
 
         if cmdline:
