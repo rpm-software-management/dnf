@@ -1904,15 +1904,6 @@ to exit.
             if old.altered_gt_rpmdb:
                 lmark = '>'
             print fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark)
-        lastdbv = self.history.last()
-        if lastdbv is None:
-            self._rpmdb_warn_checks(warn=False)
-        else:
-            #  If this is the last transaction, is good and it doesn't
-            # match the current rpmdb ... then mark it as bad.
-            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-            if lastdbv.end_rpmdbversion != rpmdbv:
-                self._rpmdb_warn_checks()
 
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
@@ -2487,17 +2478,6 @@ to exit.
                 num += 1
                 print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
 
-        # And, again, copy and paste...
-        lastdbv = self.history.last()
-        if lastdbv is None:
-            self._rpmdb_warn_checks(warn=False)
-        else:
-            #  If this is the last transaction, is good and it doesn't
-            # match the current rpmdb ... then mark it as bad.
-            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-            if lastdbv.end_rpmdbversion != rpmdbv:
-                self._rpmdb_warn_checks()
-
     def historyPackageInfoCmd(self, extcmds):
         """Print information about packages in history transactions.
 
@@ -2571,18 +2551,6 @@ to exit.
                     print _("Changed by     :"), name
 
                 num += 1
-
-        # And, again, copy and paste...
-        lastdbv = self.history.last()
-        if lastdbv is None:
-            self._rpmdb_warn_checks(warn=False)
-        else:
-            #  If this is the last transaction, is good and it doesn't
-            # match the current rpmdb ... then mark it as bad.
-            rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
-            if lastdbv.end_rpmdbversion != rpmdbv:
-                self._rpmdb_warn_checks()
-
 
 class DepSolveProgressCallBack:
     """A class to provide text output callback functions for Dependency Solver callback."""

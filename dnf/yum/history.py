@@ -945,7 +945,7 @@ class YumHistory(object):
             pid   = self.pkg2pid(pkg)
             self.trans_skip_pid(pid)
 
-        for problem in []: #:hawkey, was 'in rpmdb_problems:'
+        for problem in rpmdb_problems:
             self._trans_rpmdb_problem(problem)
 
         if cmdline:

@@ -1596,13 +1596,10 @@ class YumBase(object):
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
-            rpmdb_problems = []
+
             if lastdbv is None or rpmdbv != lastdbv:
-                txmbrs = self.tsInfo.getMembersWithState(None, TS_REMOVE_STATES)
-                ignore_pkgs = [txmbr.po for txmbr in txmbrs]
-                output_warn = lastdbv is not None
-                rpmdb_problems = self._rpmdb_warn_checks(warn=output_warn,
-                                                        ignore_pkgs=ignore_pkgs)
+                self.verbose_logger.info("RPMDB altered outside of DNF.")
+
             cmdline = None
             if hasattr(self, 'args') and self.args:
                 cmdline = ' '.join(self.args)
@@ -1610,7 +1607,7 @@ class YumBase(object):
                 cmdline = ' '.join(self.cmds)
 
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
-                             self.skipped_packages, rpmdb_problems, cmdline)
+                             self.skipped_packages, [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
             if hasattr(self, '_shell_history_write'): # Only in cli...

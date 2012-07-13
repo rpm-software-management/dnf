@@ -204,7 +204,6 @@ def main(args):
         if base._depsolving_failed:
             if not base.conf.skip_broken:
                 verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
-            rpmdb_warn_checks()
         if unlock(): return 200
         return 1
     elif result == 2:
