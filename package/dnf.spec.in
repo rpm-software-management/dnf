@@ -1,9 +1,9 @@
-%global gitrev b1f1c08
+%global gitrev 3f2389e
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	11.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -13,7 +13,7 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
-Requires:	python-hawkey >= 0.2.4-4
+Requires:	python-hawkey >= 0.2.6-1
 Requires:	crontabs
 
 %description
@@ -39,6 +39,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Mon Jul 16 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-1.git3f2389e
+- First Fedora rawhide build.
+
 * Wed Jul 11 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.6-11.gitb1f1c08
 - More licensing changes.
 
