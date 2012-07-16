@@ -1,9 +1,9 @@
-%global gitrev 3f2389e
+%global gitrev b74addd
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -39,6 +39,9 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Mon Jul 16 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-2.gitb74addd
+- Add missing rpmUtils.error.
+
 * Mon Jul 16 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-1.git3f2389e
 - First Fedora rawhide build.
 
