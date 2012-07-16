@@ -10,8 +10,8 @@ As of July 2012, DNF and all its dependencies are available in rawhide Fedora
 earlier, unless you update rpm and libdb to the Fedora 18 versions first. Might
 warrant rebuilding rpm database so know what you are doing and do backup.
 
-[1] http://yum.baseurl.org/
-[2] http://rpm.org/
-[3] https://github.com/openSUSE/libsolv
-[4] https://github.com/akozumpl/hawkey
-[5] http://koji.fedoraproject.org/koji/packageinfo?packageID=14310
+[1] http://yum.baseurl.org/  
+[2] http://rpm.org/  
+[3] https://github.com/openSUSE/libsolv  
+[4] https://github.com/akozumpl/hawkey  
+[5] http://koji.fedoraproject.org/koji/packageinfo?packageID=14310  
