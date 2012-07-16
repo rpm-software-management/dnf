@@ -1,6 +1,7 @@
 SET (rpmUtils_SRCS
-    arch.py
     __init__.py
+    arch.py
+    error.py
     miscutils.py
     transaction.py)
 
