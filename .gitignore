@@ -12,3 +12,4 @@ asthelper.completions
 .emacs.desktop*
 TAGS
 build/
+package/dnf.spec
