@@ -29,14 +29,14 @@ from dnf.yum import plugins
 from dnf.yum import logginglevels
 from dnf.yum import _
 from dnf.yum.i18n import utf8_width, exception2msg
-import dnf.yum.misc
+import dnf.i18n
 import cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
     """Run the yum program from a command line interface."""
 
-    dnf.yum.misc.setup_locale(override_time=True)
+    dnf.i18n.setup_locale()
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
