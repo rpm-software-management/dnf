@@ -1009,8 +1009,20 @@ class YumBase(object):
         func(_("The program %s%s%s is found in the yum-utils package.") %
              (hibeg, prog, hiend))
 
+    def _push_userinstalled(self, goal):
+        for pkg in queries.installed(self.sack):
+            yumdb_info = self.yumdb.get_package(pkg)
+            reason = 'user'
+            try:
+                reason = yumdb_info.reason
+            except AttributeError:
+                pass
+            if reason == 'user':
+                goal.userinstalled(pkg)
+
     def buildHawkeyGoal(self, tsInfo):
         goal = hawkey.Goal(self.sack)
+        push_userinstalled = False
         for txmbr in tsInfo:
             pkg = txmbr.po
             if txmbr.ts_state == 'i':
@@ -1018,12 +1030,15 @@ class YumBase(object):
             elif txmbr.ts_state == 'u':
                 goal.upgrade_to(pkg, check_installed=False)
             elif txmbr.ts_state == 'e':
-                goal.erase(pkg)
+                push_userinstalled = self.conf.clean_requirements_on_remove
+                goal.erase(pkg, clean_deps=self.conf.clean_requirements_on_remove)
             else:
                 raise NotImplementedError("hawkey can't handle ts_state '%s'."
                                           % txmbr.ts_state)
         for q in tsInfo.query_installs:
             goal.install(query=q)
+        if push_userinstalled:
+            self._push_userinstalled(goal)
         return goal
 
     def buildTransaction(self, unfinished_transactions_check=True):

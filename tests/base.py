@@ -56,6 +56,7 @@ def mock_yum_base(*extra_repos):
     yumbase.tsInfo = dnf.yum.transactioninfo.TransactionData()
     yumbase.dsCallback = mock.Mock()
     yumbase.mock_extra_repos = extra_repos
+    yumbase._yumdb = MockYumDB()
     return yumbase
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
@@ -86,6 +87,17 @@ class MockYumBase(dnf.yum.YumBase):
 
         return self._sack
 
+class MockYumDB(mock.Mock):
+    def __init__(self):
+        super(mock.Mock, self).__init__()
+        self.db = {}
+
+    def get_package(self, po):
+        return self.db.setdefault(str(po), mock.Mock())
+
+    def assertLength(self, length):
+        assert(len(self.db) == length)
+
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
@@ -107,7 +119,7 @@ class FakeConf(object):
         self.groupremove_leaf_only = False
         self.protected_packages = []
         self.protected_multilib = False
-        self.clean_requirements_on_remove = True
+        self.clean_requirements_on_remove = False
         self.upgrade_requirements_on_install = False
         self.yumvar = {'releasever' : 'Fedora69'}
         self.history_record = False

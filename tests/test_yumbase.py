@@ -29,6 +29,17 @@ class YumBaseTest(unittest.TestCase):
         yumbase.doUnlock()
         self.assertFalse(os.access(lockfile, os.F_OK))
 
+    def test_push_userinstalled(self):
+        yumbase = base.mock_yum_base()
+        # setup:
+        yumbase.conf.clean_requirements_on_remove = True
+        pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
+        goal = mock.Mock(spec=["userinstalled"])
+        yumbase.yumdb.get_package(pkg).reason = "user"
+        # test:
+        yumbase._push_userinstalled(goal)
+        goal.userinstalled.assert_called_with(pkg)
+
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():
@@ -43,9 +54,8 @@ class VerifyTransactionTest(unittest.TestCase):
         self.yumbase = base.mock_yum_base("main")
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
-    @mock.patch('dnf.yum.rpmsack.RPMDBAdditionalDataPackage')
     @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
-    def test_verify_transaction(self, datapackageclass, unused_build_sack):
+    def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
         new_pkg = dnf.queries.available_by_name(self.yumbase.sack, "pepper")[0]
@@ -59,18 +69,13 @@ class VerifyTransactionTest(unittest.TestCase):
         self.yumbase.verifyTransaction()
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
-        yumdb_info = datapackageclass()
+        yumdb_info = self.yumbase.yumdb.get_package(new_pkg)
         self.assertEqual(yumdb_info.from_repo, 'main')
         self.assertEqual(yumdb_info.reason, 'unknown')
         self.assertEqual(yumdb_info.releasever, 'Fedora69')
         self.assertEqual(yumdb_info.checksum_type, 'md5')
         self.assertEqual(yumdb_info.checksum_data, HASH)
-        datapackageclass.assert_any_call(mock.ANY,
-                                         '/should-not-exist-bad-test!/yumdb/m/mrkite-mrkite-2-0-x86_64',
-                                         yumdb_cache=mock.ANY)
-        datapackageclass.assert_any_call(mock.ANY,
-                                         '/should-not-exist-bad-test!/yumdb/p/pepper-pepper-20-0-x86_64',
-                                         yumdb_cache=mock.ANY)
+        self.yumbase.yumdb.assertLength(2)
 
 class InstallReason(base.ResultTestCase):
     def setUp(self):
