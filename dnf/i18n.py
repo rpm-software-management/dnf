@@ -24,6 +24,19 @@ import sys
 Centralize i18n stuff here. Must be unittested.
 """
 
+class UnicodeStream(object):
+    def __init__(self, stream, encoding):
+        self.stream = stream
+        self.encoding = encoding
+
+    def write(self, s):
+        if isinstance(s, unicode):
+            s = s.encode(self.encoding, 'replace')
+        self.stream.write(s)
+
+    def __getattr__(self, name):
+        return getattr(self.stream, name)
+
 def setup_locale():
     try:
         locale.setlocale(locale.LC_ALL, '')
@@ -34,3 +47,15 @@ def setup_locale():
         print >> sys.stderr, 'Failed to set locale, defaulting to C'
         os.environ['LC_ALL'] = 'C'
         locale.setlocale(locale.LC_ALL, 'C')
+
+def setup_stdout():
+    """ Check that stdout is of suitable encoding and handle the situation if
+        not.
+
+        Returns True if stdout was of suitable encoding already and no chagnes
+        were needed.
+    """
+    if sys.stdout.encoding is None:
+        sys.stdout = UnicodeStream(sys.stdout, locale.getpreferredencoding())
+        return False
+    return True

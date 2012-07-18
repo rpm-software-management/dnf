@@ -37,6 +37,7 @@ def main(args):
     """Run the yum program from a command line interface."""
 
     dnf.i18n.setup_locale()
+    dnf.i18n.setup_stdout()
 
     def exUserCancel():
         logger.critical(_('\n\nExiting on user cancel'))
