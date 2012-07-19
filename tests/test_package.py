@@ -2,6 +2,7 @@ import base
 import dnf.package
 import dnf.queries
 import hawkey
+import mock
 import os.path
 import unittest
 import binascii
@@ -26,6 +27,12 @@ class PackageTest(unittest.TestCase):
         pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
         self.assertTrue(pkg.from_system)
         self.assertFalse(self.pkg.from_system)
+
+    @mock.patch("dnf.package.Package.rpmdbid", 3l)
+    def test_idx(self):
+        """ pkg.idx is an int. """
+        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        self.assertEqual(type(pkg.idx), int)
 
     def test_pkgtup(self):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))

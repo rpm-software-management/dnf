@@ -62,7 +62,8 @@ class Package(hawkey.Package):
 
     @property # yum compatibility attribute
     def idx(self):
-        return self.rpmdbid
+        """ Always type it to int, rpm bindings expect it like that. """
+        return int(self.rpmdbid)
 
     @property #yum compatibility attribute
     def pkgid(self):
