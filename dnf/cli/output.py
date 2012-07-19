@@ -806,21 +806,23 @@ class YumOutput:
            package
         """
         (hibeg, hiend) = self._highlight(highlight)
+        yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
         print _("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
         print _("Arch        : %s") % to_unicode(pkg.arch)
-        if pkg.epoch != "0":
-            print _("Epoch       : %s") % to_unicode(pkg.epoch)
-        print _("Version     : %s") % to_unicode(pkg.version)
-        print _("Release     : %s") % to_unicode(pkg.release)
+        if pkg.e != "0":
+            print _("Epoch       : %s") % to_unicode(pkg.e)
+        print _("Version     : %s") % to_unicode(pkg.v)
+        print _("Release     : %s") % to_unicode(pkg.r)
         print _("Size        : %s") % self.format_number(float(pkg.size))
         print _("Repo        : %s") % to_unicode(pkg.repoid)
-        if pkg.repoid == 'installed' and 'from_repo' in pkg.yumdb_info:
-            print _("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo)
+        if 'from_repo' in yumdb_info:
+            print _("From repo   : %s") % to_unicode(yumdb_info.from_repo)
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
-            print _("Committer   : %s") % to_unicode(pkg.committer)
-            print _("Committime  : %s") % time.ctime(pkg.committime)
+            # :hawkey does not support changelog information
+            # print _("Committer   : %s") % to_unicode(pkg.committer)
+            # print _("Committime  : %s") % time.ctime(pkg.committime)
             print _("Buildtime   : %s") % time.ctime(pkg.buildtime)
-            if hasattr(pkg, 'installtime'):
+            if pkg.installtime > 0:
                 print _("Install time: %s") % time.ctime(pkg.installtime)
             if pkg.repoid == 'installed':
                 uid = None

@@ -87,7 +87,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # :hawkey -- commented out are not yet supported in dnf
         self.registerCommand(yumcommands.InstallCommand())
         self.registerCommand(yumcommands.UpdateCommand())
-        # self.registerCommand(yumcommands.InfoCommand())
+        self.registerCommand(yumcommands.InfoCommand())
         self.registerCommand(yumcommands.ListCommand())
         self.registerCommand(yumcommands.EraseCommand())
         # self.registerCommand(yumcommands.GroupsCommand())
