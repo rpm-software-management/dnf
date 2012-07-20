@@ -42,6 +42,7 @@ from dnf.yum.packageSack import packagesNewestByNameArch
 import dnf.yum.packages
 
 import dnf.yum.history
+import dnf.queries
 
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
@@ -2016,7 +2017,7 @@ to exit.
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv  = self.rpmdb.simpleVersion(main_only=True)[0]
+                rpmdbv  = self.sack.rpmdb_version(self.yumdb)
                 if lastdbv != rpmdbv:
                     tid.altered_gt_rpmdb = True
             lastdbv = None
@@ -2076,7 +2077,7 @@ to exit.
             else:
                 _pkg_states = _pkg_states_available
             state  = _pkg_states['i']
-            ipkgs = self.rpmdb.searchNames([hpkg.name])
+            ipkgs = dnf.queries.installed_by_name(self.sack, hpkg.name)
             ipkgs.sort()
             if not ipkgs:
                 state  = _pkg_states['e']

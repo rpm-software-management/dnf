@@ -92,6 +92,7 @@ import hawkey
 import dnf.conf
 import dnf.package
 import dnf.util
+import dnf.rpmUtils.connection
 from dnf import queries, const, sack
 
 __version__ = '3.4.3'
@@ -228,6 +229,11 @@ class YumBase(object):
         repo.primary_fn = yum_repo.getPrimaryXML()
         yum_repo.hawkey_repo = repo
         self._sack.load_yum_repo(repo)
+
+    @property
+    @dnf.util.lazyattr("_rpm")
+    def rpm(self):
+        return dnf.rpmUtils.connection.RpmConnection(self.conf.installroot)
 
     @property
     def sack(self):
@@ -564,7 +570,7 @@ class YumBase(object):
 
     def _getRpmDB(self):
         """sets up a holder object for important information from the rpmdb"""
-
+        raise RuntimeError, "sacks deprecated in dnf." #:hawkey
         if self._rpmdb is None:
             rpmdb_st = time.time()
             self.verbose_logger.log(logginglevels.DEBUG_4,
@@ -737,7 +743,7 @@ class YumBase(object):
         # and don't setup the pkgSack to not be None when it's empty. This means
         # we skip excludes/includes/etc. ... but there's no packages, so
         # hopefully that's ok.
-        raise RuntimeError, "sacks deprecated in dnf."
+        raise RuntimeError, "sacks deprecated in dnf." #:hawkey
         if self._pkgSack is not None and thisrepo is None:
             return self._pkgSack
 
@@ -1704,13 +1710,6 @@ class YumBase(object):
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
 
-        # drop out the rpm cache so we don't step on bad hdr indexes
-        if (self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST) or
-            resultobject.return_code):
-            self.rpmdb.dropCachedData()
-        else:
-            self.rpmdb.dropCachedDataPostTransaction(list(self.tsInfo))
-
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
@@ -2379,7 +2378,7 @@ class YumBase(object):
             hasgpgkey = not not repo.gpgkey
 
         if check:
-            ts = self.rpmdb.readOnlyTS()
+            ts = self.rpm.readonly_ts
             sigresult = dnf.rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
 
