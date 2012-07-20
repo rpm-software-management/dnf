@@ -559,15 +559,6 @@ class YumBase(object):
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
                 plugin_types, confpath, disabled_plugins, enabled_plugins)
 
-
-    def doRpmDBSetup(self):
-        """Deprecated.  Set up the rpm database."""
-
-        warnings.warn(_('doRpmDBSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        return self._getRpmDB()
-
     def _getRpmDB(self):
         """sets up a holder object for important information from the rpmdb"""
         raise RuntimeError, "sacks deprecated in dnf." #:hawkey
@@ -645,18 +636,6 @@ class YumBase(object):
         del self._ts
         self._ts = None
 
-    def doRepoSetup(self, thisrepo=None):
-        """Deprecated. Set up the yum repositories.
-
-        :param thisrepo: the repository to set up.  If None, all
-           repositories will be set up
-        :return: the set up repos
-        """
-        warnings.warn(_('doRepoSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        return self._getRepos(thisrepo, True)
-
     def _getRepos(self, thisrepo=None, doSetup = False):
         """ For each enabled repository set up the basics of the repository. """
         if hasattr(self, 'prerepoconf'):
@@ -711,20 +690,6 @@ class YumBase(object):
     def _delRepos(self):
         del self._repos
         self._repos = RepoStorage(self)
-
-    def doSackSetup(self, archlist=None, thisrepo=None):
-        """Deprecated. Populate the package sacks with information
-        from our repositories.
-
-        :param archlist: a list of the names of archs to include.  If
-           None, all arches are set up
-        :param thisrepo: the repository to use.  If None, all enabled
-           repositories are used
-        """
-        warnings.warn(_('doSackSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        return self._getSacks(archlist=archlist, thisrepo=thisrepo)
 
     def _getSacks(self, archlist=None, thisrepo=None):
         """populates the package sacks for information from our repositories,
@@ -800,25 +765,6 @@ class YumBase(object):
                 warnings.warn(_('repo object for repo %s lacks a _resetSack method\n') +
                         _('therefore this repo cannot be reset.\n'),
                         Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-
-    def doUpdateSetup(self):
-        """Deprecated. Set up the update object in the base class and populate the
-        updates, obsoletes, and other lists.
-        """
-        warnings.warn(_('doUpdateSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        return self._getUpdates()
-
-    def doGroupSetup(self):
-        """Deprecated. Create and populate the groups object."""
-
-        warnings.warn(_('doGroupSetup() will go away in a future version of Yum.\n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-
-        self.comps = None
-        return self._getGroups()
 
     def _setGroups(self, val):
         if val is None:
@@ -2937,33 +2883,6 @@ class YumBase(object):
                 results[pkg].append((c, taglist))
 
         return results
-
-    def searchPackages(self, fields, criteria, callback=None):
-        """Deprecated.  Search the specified fields for packages that
-        match the given criteria, and return a list of the results.
-
-        :param fields: the fields to seach
-        :param criteria: a list of strings specifying the criteria to
-           search for
-        :param callback: a function to print out the results as they
-           are found.  *callback* should have the form callback(po,
-           matched values list)
-        """
-        warnings.warn(_('searchPackages() will go away in a future version of Yum.\
-                      Use searchGenerator() instead. \n'),
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-        matches = {}
-        match_gen = self.searchGenerator(fields, criteria)
-
-        for (po, matched_strings) in match_gen:
-            if callback:
-                callback(po, matched_strings)
-            if po not in matches:
-                matches[po] = []
-
-            matches[po].extend(matched_strings)
-
-        return matches
 
     def searchPackageProvides(self, args, callback=None,
                               callback_has_matchfor=False):

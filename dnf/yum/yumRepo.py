@@ -283,11 +283,6 @@ class YumRepository(Repository, config.RepoConf):
 
         return headers
 
-    def setupGrab(self):
-        warnings.warn('setupGrab() will go away in a future version of Yum.\n',
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-        self._setupGrab()
-
     def _setupGrab(self):
         """sets up the grabber functions with the already stocked in urls for
            the mirror groups"""
@@ -429,11 +424,6 @@ class YumRepository(Repository, config.RepoConf):
     gpgcadir   = property(lambda self: self._dirGetAttr('gpgcadir'),
                         lambda self, x: self._dirSetAttr('gpgcadir', x))
     metadata_cookie = property(lambda self: self._dirGetAttr('metadata_cookie'))
-
-    def baseurlSetup(self):
-        warnings.warn('baseurlSetup() will go away in a future version of Yum.\n',
-                Errors.YumFutureDeprecationWarning, stacklevel=2)
-        self._baseurlSetup()
 
     def _hack_mirrorlist_for_anaconda(self):
         #  Anaconda doesn't like having mirrorlist and metalink, so we allow

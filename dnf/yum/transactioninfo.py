@@ -674,13 +674,6 @@ class TransactionData:
                     txmbr.output_state = TS_OBSOLETING
                     txmbr.po.state = TS_OBSOLETING
 
-class ConditionalTransactionData(TransactionData):
-    """A transaction data implementing conditional package addition"""
-    def __init__(self):
-        warnings.warn("ConditionalTransactionData will go away in a future "
-                      "version of Yum.", Errors.YumFutureDeprecationWarning)
-        TransactionData.__init__(self)
-
 class SortableTransactionData(TransactionData):
     """A transaction data implementing topological sort on it's members"""
     def __init__(self):
