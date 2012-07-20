@@ -5,7 +5,7 @@
 #         Adrian Likins <alikins@redhat.com>
 # Some Edits by Seth Vidal <skvidal@phy.duke.edu>
 #
-# a couple of classes wrapping up transactions so that we  
+# a couple of classes wrapping up transactions so that we
 #    can share transactions instead of creating new ones all over
 #
 
@@ -66,7 +66,7 @@ class TransactionWrapper:
 
     def __iter__(self):
         return self.ts
-        
+
     def getMethod(self, method):
         # in theory, we can override this with
         # profile/etc info
@@ -91,22 +91,22 @@ class TransactionWrapper:
         curflags = self.ts.setFlags(0)
         self.ts.setFlags(curflags)
         return curflags
-    
+
     def isTsFlagSet(self, flag):
         val = self.getTsFlags()
         return bool(flag & val)
 
     def setScriptFd(self, fd):
         self.ts.scriptFd = fd.fileno()
-        
+
 #    def addProblemFilter(self, filt):
 #        curfilter = self.ts.setProbFilter(0)
-#        self.ts.setProbFilter(cutfilter | filt)    
-        
+#        self.ts.setProbFilter(cutfilter | filt)
+
     def test(self, cb, conf={}):
-        """tests the ts we've setup, takes a callback function and a conf dict 
+        """tests the ts we've setup, takes a callback function and a conf dict
            for flags and what not"""
-    
+
         origflags = self.getTsFlags()
         self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
         # FIXME GARBAGE - remove once this is reimplemented elsehwere
@@ -115,41 +115,41 @@ class TransactionWrapper:
             self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
         tserrors = self.ts.run(cb.callback, '')
         self.ts.setFlags(origflags)
-    
+
         reserrors = []
         if tserrors:
             for (descr, (etype, mount, need)) in tserrors:
                 reserrors.append(descr)
-        
+
         return reserrors
-            
-        
+
+
     def returnLeafNodes(self, headers=False):
         """returns a list of package tuples (n,a,e,v,r) that are not required by
            any other package on the system
            If headers is True then it will return a list of (header, index) tuples
            """
-        
+
         req = {}
         orphan = []
-    
+
         mi = self.dbMatch()
         if mi is None: # this is REALLY unlikely but let's just say it for the moment
-            return orphan    
-            
+            return orphan
+
         # prebuild the req dict
         for h in mi:
             if h['name'] == 'gpg-pubkey':
                 continue
             if not h[rpm.RPMTAG_REQUIRENAME]:
                 continue
-            tup = miscutils.pkgTupleFromHeader(h)    
+            tup = miscutils.pkgTupleFromHeader(h)
             for r in h[rpm.RPMTAG_REQUIRENAME]:
                 if r not in req:
                     req[r] = set()
                 req[r].add(tup)
-     
-     
+
+
         mi = self.dbMatch()
         if mi is None:
             return orphan
@@ -180,12 +180,11 @@ class TransactionWrapper:
                     orphan.append((h, mi.instance()))
                 else:
                     orphan.append(tup)
-        
+
         return orphan
 
-        
+
 def initReadOnlyTransaction(root='/'):
     read_ts =  TransactionWrapper(root=root)
     read_ts.pushVSFlags((rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     return read_ts
-
