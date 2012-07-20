@@ -98,7 +98,7 @@ class RPMInstalledPackage(YumInstalledPackage):
 
     def __getattr__(self, varname):
         # If these existed, then we wouldn't get here...
-        # Prevent access of __foo__, _cached_foo etc from loading the header 
+        # Prevent access of __foo__, _cached_foo etc from loading the header
         if varname.startswith('_'):
             raise AttributeError, "%s has no attribute %s" % (self, varname)
 
@@ -115,7 +115,7 @@ class RPMInstalledPackage(YumInstalledPackage):
                                # Also note that pkg.no_value raises KeyError.
 
         return val
-    
+
     def requiring_packages(self):
         """return list of installed pkgs requiring this package"""
         pkgset = set()
@@ -123,14 +123,14 @@ class RPMInstalledPackage(YumInstalledPackage):
             for pkg in self.rpmdb.getRequires(reqn,reqf,reqevr):
                 if pkg != self:
                     pkgset.add(pkg)
-                
+
         for fn in self.filelist + self.dirlist:
             for pkg in self.rpmdb.getRequires(fn, None, (None, None, None)):
                 if pkg != self:
                     pkgset.add(pkg)
-                
+
         return list(pkgset)
-        
+
 
     def required_packages(self):
         pkgset = set()
@@ -138,9 +138,9 @@ class RPMInstalledPackage(YumInstalledPackage):
             for pkg in self.rpmdb.getProvides(reqn, reqf, reqevr):
                 if pkg != self:
                     pkgset.add(pkg)
-        
+
         return list(pkgset)
-        
+
 class RPMDBProblem:
     '''
     Represents a problem in the rpmdb, from the check_*() functions.
@@ -201,13 +201,13 @@ class RPMDBAdditionalData(object):
     # pkgs stored in name[0]/name[1]/pkgid-name-ver-rel-arch dirs
     # dirs have files per piece of info we're keeping
     #    repoid, install reason, status, blah, (group installed for?), notes?
-    
+
     def __init__(self, db_path='/var/lib/yum/yumdb', version_path=None):
         self.conf = misc.GenericHolder()
         self.conf.db_path = db_path
         self.conf.version_path = version_path
         self.conf.writable = False
-        
+
         self._packages = {} # pkgid = dir
         if not os.path.exists(self.conf.db_path):
             try:
@@ -249,7 +249,7 @@ class RPMDBAdditionalData(object):
             thisdir = self._get_dir_name(pkgtup, pkgid)
         else:
             raise ValueError,"Pass something to RPMDBAdditionalData.get_package"
-        
+
         return RPMDBAdditionalDataPackage(self.conf, thisdir,
                                           yumdb_cache=self.yumdb_cache)
 
@@ -386,7 +386,7 @@ class RPMDBAdditionalDataPackage(object):
         os.rename(fn +  '.tmp', fn) # even works on ext4 now!:o
 
         self._auto_cache(attr, value, fn)
-    
+
     def _read(self, attr):
         attr = _sanitize(attr)
 
@@ -419,7 +419,7 @@ class RPMDBAdditionalDataPackage(object):
         self._auto_cache(attr, value, fn, info)
 
         return value
-    
+
     def _delete(self, attr):
         """remove the attribute file"""
 
@@ -433,7 +433,7 @@ class RPMDBAdditionalDataPackage(object):
                 os.unlink(fn)
             except (IOError, OSError):
                 raise AttributeError, "Cannot delete attribute %s on %s " % (attr, self)
-    
+
     def __getattr__(self, attr):
         return self._read(attr)
 
