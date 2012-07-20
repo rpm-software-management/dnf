@@ -181,7 +181,6 @@ class YumBase(object):
         self._conf = None
         self._ts = None
         self._tsInfo = None
-        self._rpmdb = None
         self._comps = None
         self._history = None
         self._pkgSack = None
@@ -559,26 +558,8 @@ class YumBase(object):
         self.plugins = plugins.YumPlugins(self, searchpath, optparser,
                 plugin_types, confpath, disabled_plugins, enabled_plugins)
 
-    def _getRpmDB(self):
-        """sets up a holder object for important information from the rpmdb"""
-        raise RuntimeError, "sacks deprecated in dnf." #:hawkey
-        if self._rpmdb is None:
-            rpmdb_st = time.time()
-            self.verbose_logger.log(logginglevels.DEBUG_4,
-                                    _('Reading Local RPMDB'))
-            self._rpmdb = rpmsack.RPMDBPackageSack(root=self.conf.installroot,
-                                                   releasever=self.conf.yumvar['releasever'],
-                                                   persistdir=self.conf.persistdir)
-            self.verbose_logger.debug('rpmdb time: %0.3f' % (time.time() - rpmdb_st))
-        return self._rpmdb
-
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
-
-        if self._rpmdb is not None:
-            self._rpmdb.ts = None
-            self._rpmdb.dropCachedData()
-        self._rpmdb = None
         self._ts = None
         self._tsInfo = None
         self.comps = None
@@ -894,10 +875,6 @@ class YumBase(object):
                     fset=lambda self, value: setattr(self, "_conf", value),
                     fdel=lambda self: setattr(self, "_conf", None),
                     doc="Yum Config Object")
-    rpmdb = property(fget=lambda self: self._getRpmDB(),
-                     fset=lambda self, value: setattr(self, "_rpmdb", value),
-                     fdel=lambda self: setattr(self, "_rpmdb", None),
-                     doc="RpmSack object")
     tsInfo = property(fget=lambda self: self._getTsInfo(),
                       fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),
