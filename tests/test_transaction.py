@@ -33,6 +33,8 @@ class TransactionDataTests(unittest.TestCase):
         class FakeYumdbInfo(object):
             def __init__(self, pkg):
                 self.reason = str(id(pkg))
+            def get(self, attr):
+                return getattr(self, attr)
 
         txmbr = self.tsInfo.addInstall(self.pkgs[0])
         txmbr.reason = "user"
@@ -45,6 +47,10 @@ class TransactionDataTests(unittest.TestCase):
         txmbr = self.tsInfo.addDowngrade(self.pkgs[3], self.pkgs[4])
         yumdb = mock.Mock(get_package=FakeYumdbInfo)
         self.assertEqual(txmbr.propagated_reason(yumdb), str(id(self.pkgs[4])))
+        # test the call can survive if no reason is known:
+        yumdb = mock.Mock(get_package=lambda pkg:
+                              mock.Mock(spec=[], get=lambda attr: None))
+        self.assertEqual(txmbr.propagated_reason(yumdb), "unknown")
 
     def testLenght(self):
         ''' test __len__ method '''

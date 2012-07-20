@@ -834,10 +834,13 @@ class TransactionMember:
     def propagated_reason(self, yumdb):
         if self.reason == "user":
             return self.reason
+        previously = None
         if self.updates:
             updated = self.updates[0]
-            return yumdb.get_package(updated).reason
-        if self.downgrades:
+            previously =  yumdb.get_package(updated).get('reason')
+        elif self.downgrades:
             downgraded = self.downgrades[0]
-            return yumdb.get_package(downgraded).reason
+            previously = yumdb.get_package(downgraded).get('reason')
+        if previously:
+            return previously
         return self.reason
