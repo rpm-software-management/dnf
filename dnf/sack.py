@@ -18,16 +18,39 @@
 # Red Hat, Inc.
 #
 
+from .yum import misc
 import hawkey
 import logging
 import sys
 import yum.Errors
 import package
 import queries
-from yum.packageSack import PackageSackVersion
 
-def build_sack(yumbase):
-    return Sack(pkgcls=package.Package, pkginitval=yumbase)
+class SackVersion:
+    def __init__(self):
+        self._num = 0
+        self._chksum = misc.Checksums(['sha1'])
+
+    def __str__(self):
+        return "%u:%s" % (self._num, self._chksum.hexdigest())
+
+    def __eq__(self, other):
+        if other is None: return False
+        if type(other) in (type(''), type(u'')):
+            return str(self) == other
+        if self._num != other._num: return False
+        if self._chksum.digest() != other._chksum.digest(): return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def update(self, pkg, csum):
+        self._num += 1
+        self._chksum.update(str(pkg))
+        if csum is not None:
+            self._chksum.update(csum[0])
+            self._chksum.update(csum[1])
 
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
@@ -61,7 +84,7 @@ class Sack(hawkey.Sack):
 
     def rpmdb_version(self, yumdb):
         pkgs = queries.installed(self)
-        main = PackageSackVersion()
+        main = SackVersion()
         for pkg in pkgs:
             ydbi = yumdb.get_package(pkg)
             csum = None
@@ -69,3 +92,7 @@ class Sack(hawkey.Sack):
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
             main.update(pkg, csum)
         return main
+
+def build_sack(yumbase):
+    return Sack(pkgcls=package.Package, pkginitval=yumbase)
+

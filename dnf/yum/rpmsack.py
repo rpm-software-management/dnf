@@ -25,7 +25,7 @@ from dnf.rpmUtils.transaction import initReadOnlyTransaction
 import misc
 import Errors
 from packages import YumInstalledPackage, parsePackages
-from packageSack import PackageSackBase, PackageSackVersion
+from packageSack import PackageSackBase
 
 # For returnPackages(patterns=)
 import fnmatch

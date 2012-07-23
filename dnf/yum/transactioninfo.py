@@ -26,7 +26,7 @@ to rpm.
 """
 
 from constants import *
-from packageSack import PackageSack, PackageSackVersion
+from packageSack import PackageSack
 from packages import YumInstalledPackage
 from sqlitesack import YumAvailablePackageSqlite
 import Errors
@@ -615,52 +615,6 @@ class TransactionData:
         result = self.getOldRequires(name, flag, version)
         result.update(self.getNewRequires(name, flag, version))
         return result
-
-    def futureRpmDBVersion(self):
-        """ Return a simple version for the future rpmdb. Works like
-            rpmdb.simpleVersion(main_only=True)[0], but for the state the rpmdb
-            will be in after the transaction. """
-        return PackageSackVersion() # :hawkey
-        pkgs = self.rpmdb.returnPackages()
-        _reinstalled_pkgtups = {}
-        for txmbr in self.getMembersWithState(None, TS_INSTALL_STATES):
-            # reinstalls have to use their "new" checksum data, in case it's
-            # different.
-            if txmbr.reinstall:
-                _reinstalled_pkgtups[txmbr.po.pkgtup] = txmbr.po
-            pkgs.append(txmbr.po)
-
-        self.rpmdb.preloadPackageChecksums()
-        main = PackageSackVersion()
-        pkg_checksum_tups = []
-        for pkg in sorted(pkgs):
-            if pkg.repoid != 'installed':
-                # Paste from PackageSackBase.simpleVersion()
-                csum = pkg.returnIdSum()
-                main.update(pkg, csum)
-                pkg_checksum_tups.append((pkg.pkgtup, csum))
-                continue
-
-            # Installed pkg, see if it's about to die
-            if self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
-                continue
-            # ...or die and be risen again (Zombie!)
-            if pkg.pkgtup in _reinstalled_pkgtups:
-                continue
-
-            # Paste from rpmdb.simpleVersion()
-            ydbi = pkg.yumdb_info
-            csum = None
-            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
-                csum = (ydbi.checksum_type, ydbi.checksum_data)
-            #  We need all the pkgtups, so we even save the ones without a
-            # checksum.
-            pkg_checksum_tups.append((pkg.pkgtup, csum))
-            main.update(pkg, csum)
-
-        self.rpmdb.transactionCachePackageChecksums(pkg_checksum_tups)
-
-        return main
 
     def findObsoletedByThisMember(self, txmbr):
         """addObsoleted() pkgs for anything that this txmbr will obsolete"""
