@@ -27,7 +27,6 @@ to rpm.
 
 from constants import *
 from packages import YumInstalledPackage
-from sqlitesack import YumAvailablePackageSqlite
 import Errors
 import warnings
 import misc
@@ -194,14 +193,6 @@ class TransactionData:
             self.remove(txmbr.pkgtup)
         return txmbrs
 
-    def _isLocalPackage(self, txmember):
-        # Is this the right criteria?
-        # FIXME: This is kinda weird, we really want all local pkgs to be in a
-        # special pkgsack before this point ... so that "yum up ./*.rpm" works.
-        #  Also FakePackage() sets it off ... which is confusing and not what
-        # happens IRL.
-        return txmember.ts_state in ('u', 'i') and not isinstance(txmember.po, (YumInstalledPackage, YumAvailablePackageSqlite))
-
     def _allowedMultipleInstalls(self, po):
         """takes a packageObject, returns 1 or 0 depending on if the package
            should/can be installed multiple times with different vers
@@ -255,8 +246,6 @@ class TransactionData:
             return
         for txmbr in self.pkgdict[pkgtup]:
             txmbr.po.state = None
-            if isinstance(txmbr.po, YumAvailablePackageSqlite):
-                self.pkgSackPackages -= 1
             if self._inSack is not None and txmbr.output_state in TS_INSTALL_STATES:
                 self._inSack.delPackage(txmbr.po)
             self._namedict[txmbr.name].remove(txmbr)

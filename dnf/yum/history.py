@@ -55,8 +55,6 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Obsoleted' : TS_OBSOLETED,
                  'Obsoleting' : TS_OBSOLETING}
 
-# ---- horrible Copy and paste from sqlitesack ----
-
 def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     """Setup need_full and patterns for _yieldSQLDataList, also see if
        we can get away with just using searchNames(). """
@@ -94,7 +92,6 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
             return (need_full, patterns, fields, True)
         patterns = tmp
     return (need_full, patterns, fields, False)
-# ---- horrible Copy and paste from sqlitesack ----
 
 class _YumHistPackageYumDB:
     """ Class to pretend to be yumdb_info for history packages. """
@@ -1660,7 +1657,6 @@ class YumHistory(object):
             cur.execute(op)
         self._commit()
 
-# Pasted from sqlitesack
 _FULL_PARSE_QUERY_BEG = """
 SELECT pkgtupid,name,epoch,version,release,arch,
   name || "." || arch AS sql_nameArch,

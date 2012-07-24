@@ -30,8 +30,6 @@ from urlgrabber.grabber import URLGrabError
 import repoMDObject
 from repos import Repository
 import parser
-import sqlitecachec
-import sqlitesack
 import config
 import misc
 import comps
