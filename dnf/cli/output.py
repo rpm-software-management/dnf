@@ -38,7 +38,6 @@ from dnf.yum.constants import *
 
 from dnf.yum import logginglevels, _, P_
 from dnf.yum.rpmtrans import RPMBaseCallback
-from dnf.yum.packageSack import packagesNewestByNameArch
 import dnf.yum.packages
 
 import dnf.yum.history
@@ -995,6 +994,7 @@ class YumOutput:
     def _group_names2aipkgs(self, pkg_names):
         """ Convert pkg_names to installed pkgs or available pkgs, return
             value is a dict on pkg.name returning (apkg, ipkg). """
+        raise NotImplementedError, "not implemented in hawkey" # :hawkey
         ipkgs = self.rpmdb.searchNames(pkg_names)
         apkgs = self.pkgSack.searchNames(pkg_names)
         apkgs = packagesNewestByNameArch(apkgs)

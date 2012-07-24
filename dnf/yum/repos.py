@@ -20,7 +20,6 @@ import logging
 import misc
 
 import Errors
-from packageSack import MetaSack
 
 from weakref import proxy as weakref
 
@@ -48,7 +47,6 @@ class RepoStorage:
                         # of repo options/misc data
         self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
-        self.pkgSack = MetaSack()
         self.logger = logging.getLogger("yum.RepoStorage")
 
         self._setup = False
@@ -241,55 +239,6 @@ class RepoStorage:
 
     def getPackageSack(self):
         return self.pkgSack
-
-
-    def populateSack(self, which='enabled', mdtype='metadata', callback=None, cacheonly=0):
-        """
-        This populates the package sack from the repositories, two optional
-        arguments:
-            - which='repoid, enabled, all'
-            - mdtype='metadata, filelists, otherdata, all'
-        """
-
-        if not self._setup:
-            self.doSetup()
-
-        if not callback:
-            callback = self.callback
-        myrepos = []
-        if which == 'enabled':
-            myrepos = self.listEnabled()
-        elif which == 'all':
-            myrepos = self.repos.values()
-        else:
-            if type(which) == types.ListType:
-                for repo in which:
-                    if isinstance(repo, Repository):
-                        myrepos.append(repo)
-                    else:
-                        repobj = self.getRepo(repo)
-                        myrepos.append(repobj)
-            elif type(which) == types.StringType:
-                repobj = self.getRepo(which)
-                myrepos.append(repobj)
-
-        if mdtype == 'all':
-            data = ['metadata', 'filelists', 'otherdata']
-        else:
-            data = [ mdtype ]
-
-        for repo in myrepos:
-            sack = repo.getPackageSack()
-            try:
-                sack.populate(repo, mdtype, callback, cacheonly)
-            except Errors.RepoError, e:
-                if mdtype in ['all', 'metadata'] and repo.skip_if_unavailable:
-                    self.disableRepo(repo.id)
-                else:
-                    raise
-            else:
-                self.pkgSack.addSack(repo.id, sack)
-
 
 class Repository:
     """this is an actual repository object"""

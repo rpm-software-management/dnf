@@ -28,7 +28,6 @@ from urlgrabber.progress import format_number
 import urlgrabber.mirror
 from urlgrabber.grabber import URLGrabError
 import repoMDObject
-import packageSack
 from repos import Repository
 import parser
 import sqlitecachec

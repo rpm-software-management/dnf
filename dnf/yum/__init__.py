@@ -64,7 +64,6 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabber, URLGrabError
 from urlgrabber.progress import format_number
-from packageSack import packagesNewestByName, packagesNewestByNameArch, ListPackageSack
 import plugins
 import logginglevels
 import yumRepo
@@ -672,81 +671,6 @@ class YumBase(object):
         del self._repos
         self._repos = RepoStorage(self)
 
-    def _getSacks(self, archlist=None, thisrepo=None):
-        """populates the package sacks for information from our repositories,
-           takes optional archlist for archs to include"""
-
-        # FIXME: Fist of death ... normally we'd do either:
-        #
-        # 1. use self._pkgSack is not None, and only init. once.
-        # 2. auto. correctly re-init each time a repo is added/removed
-        #
-        # ...we should probably just smeg it and do #2, but it's hard and will
-        # probably break something (but it'll "fix" excludes).
-        #  #1 can't be done atm. because we did self._pkgSack and external
-        # tools now rely on being able to create an empty sack and then have it
-        # auto. re-init when they add some stuff. So we add a bit more "clever"
-        # and don't setup the pkgSack to not be None when it's empty. This means
-        # we skip excludes/includes/etc. ... but there's no packages, so
-        # hopefully that's ok.
-        raise RuntimeError, "sacks deprecated in dnf." #:hawkey
-        if self._pkgSack is not None and thisrepo is None:
-            return self._pkgSack
-
-        if thisrepo is None:
-            repos = 'enabled'
-        else:
-            repos = self.repos.findRepos(thisrepo)
-
-        self.verbose_logger.debug(_('Setting up Package Sacks'))
-        sack_st = time.time()
-        if not archlist:
-            archlist = self.arch.archlist
-
-        archdict = {}
-        for arch in archlist:
-            archdict[arch] = 1
-
-        self.repos.getPackageSack().setCompatArchs(archdict)
-        self.repos.populateSack(which=repos)
-        if not self.repos.getPackageSack():
-            return self.repos.getPackageSack() # ha ha, see above
-        self._pkgSack = self.repos.getPackageSack()
-
-        self.excludePackages()
-        self._pkgSack.excludeArchs(archlist)
-
-        #FIXME - this could be faster, too.
-        if repos == 'enabled':
-            repos = self.repos.listEnabled()
-        for repo in repos:
-            self.includePackages(repo)
-            self.excludePackages(repo)
-        self.plugins.run('exclude')
-        self._pkgSack.buildIndexes()
-
-        # now go through and kill pkgs based on pkg.repo.cost()
-        self.costExcludePackages()
-        self.verbose_logger.debug('pkgsack time: %0.3f' % (time.time() - sack_st))
-        return self._pkgSack
-
-
-    def _delSacks(self):
-        """reset the package sacks back to zero - making sure to nuke the ones
-           in the repo objects, too - where it matters"""
-
-        # nuke the top layer
-
-        self._pkgSack = None
-
-        for repo in self.repos.repos.values():
-            if hasattr(repo, '_resetSack'):
-                repo._resetSack()
-            else:
-                warnings.warn(_('repo object for repo %s lacks a _resetSack method\n') +
-                        _('therefore this repo cannot be reset.\n'),
-                        Errors.YumFutureDeprecationWarning, stacklevel=2)
-
     def _setGroups(self, val):
         if val is None:
             # if we unset the comps object, we need to undo which repos have
@@ -867,10 +791,6 @@ class YumBase(object):
                      fset=lambda self, value: setattr(self, "_repos", value),
                      fdel=lambda self: self._delRepos(),
                      doc="Repo Storage object - object of yum repositories")
-    pkgSack = property(fget=lambda self: self._getSacks(),
-                       fset=lambda self, value: setattr(self, "_pkgSack", value),
-                       fdel=lambda self: self._delSacks(),
-                       doc="Package sack object - object of yum package objects")
     conf = property(fget=lambda self: self._getConfig(),
                     fset=lambda self, value: setattr(self, "_conf", value),
                     fdel=lambda self: setattr(self, "_conf", None),
@@ -895,31 +815,6 @@ class YumBase(object):
                        fset=lambda self, value: setattr(self, "_tags",value),
                        fdel=lambda self: setattr(self, "_tags", None),
                        doc="Yum Package Tags Object")
-
-
-    def doSackFilelistPopulate(self):
-        """Convenience function to populate the repositories with the
-        filelist metadata, and emit a log message only if new
-        information is actually populated.
-        """
-        necessary = False
-
-        # I can't think of a nice way of doing this, we have to have the sack here
-        # first or the below does nothing so...
-        if self.pkgSack:
-            for repo in self.repos.listEnabled():
-                if repo in repo.sack.added:
-                    if 'filelists' in repo.sack.added[repo]:
-                        continue
-                    else:
-                        necessary = True
-                else:
-                    necessary = True
-
-        if necessary:
-            msg = _('Importing additional filelist information')
-            self.verbose_logger.log(logginglevels.INFO_2, msg)
-            self.repos.populateSack(mdtype='filelists')
 
     def yumUtilsMsg(self, func, prog):
         """Output a message that the given tool requires the yum-utils
@@ -3098,7 +2993,7 @@ class YumBase(object):
         :return: a list of transaction members added to the
            transaction set by this function
         """
-
+        raise NotImplementedError, "not implemented in hawkey" # :hawkey
         if not self.comps.has_group(grpid):
             raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -3366,6 +3261,7 @@ class YumBase(object):
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
+        raise NotImplementedError, "not implemented in hawkey" # :hawkey
         errstring = depstring
         if type(depstring) not in types.StringTypes:
             errstring = str(depstring)
@@ -3428,6 +3324,7 @@ class YumBase(object):
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
+        raise NotImplementedError, "not implemented in hawkey" # :hawkey
         errstring = depstring
         if type(depstring) not in types.StringTypes:
             errstring = str(depstring)

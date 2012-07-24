@@ -26,7 +26,6 @@ to rpm.
 """
 
 from constants import *
-from packageSack import PackageSack
 from packages import YumInstalledPackage
 from sqlitesack import YumAvailablePackageSqlite
 import Errors
@@ -34,42 +33,6 @@ import warnings
 import misc
 
 import hawkey
-
-class GetProvReqOnlyPackageSack(PackageSack):
-    def __init__(self, need_files=False):
-        PackageSack.__init__(self)
-        self._need_index_files = need_files
-
-    def __addPackageToIndex_primary_files(self, obj):
-        for ftype in obj.returnFileTypes(primary_only=True):
-            for file in obj.returnFileEntries(ftype, primary_only=True):
-                self._addToDictAsList(self.filenames, file, obj)
-    def __addPackageToIndex_files(self, obj):
-        for ftype in obj.returnFileTypes():
-            for file in obj.returnFileEntries(ftype):
-                self._addToDictAsList(self.filenames, file, obj)
-    def _addPackageToIndex(self, obj):
-        for (n, fl, (e,v,r)) in obj.returnPrco('provides'):
-            self._addToDictAsList(self.provides, n, obj)
-        for (n, fl, (e,v,r)) in obj.returnPrco('requires'):
-            self._addToDictAsList(self.requires, n, obj)
-        if self._need_index_files:
-            self.__addPackageToIndex_files(obj)
-        else:
-            self.__addPackageToIndex_primary_files(obj)
-
-    def __buildFileIndexes(self):
-        for repoid in self.pkgsByRepo:
-            for obj in self.pkgsByRepo[repoid]:
-                self.__addPackageToIndex_files(obj)
-    def searchFiles(self, name):
-        if not self._need_index_files and not misc.re_primary_filename(name):
-            self._need_index_files = True
-            if self.indexesBuilt:
-                self.filenames = {}
-                self.__buildFileIndexes()
-
-        return PackageSack.searchFiles(self, name)
 
 class TransactionData:
     """Data Structure designed to hold information on a yum Transaction Set"""
@@ -92,7 +55,6 @@ class TransactionData:
         self.rpmdb = None
         self.pkgSack = None
         self.pkgSackPackages = 0
-        self.localSack = PackageSack()
         self._inSack = None
 
         # lists of txmbrs in their states - just placeholders
@@ -293,9 +255,7 @@ class TransactionData:
             return
         for txmbr in self.pkgdict[pkgtup]:
             txmbr.po.state = None
-            if self._isLocalPackage(txmbr):
-                self.localSack.delPackage(txmbr.po)
-            elif isinstance(txmbr.po, YumAvailablePackageSqlite):
+            if isinstance(txmbr.po, YumAvailablePackageSqlite):
                 self.pkgSackPackages -= 1
             if self._inSack is not None and txmbr.output_state in TS_INSTALL_STATES:
                 self._inSack.delPackage(txmbr.po)
