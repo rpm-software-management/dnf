@@ -225,8 +225,14 @@ class YumBase(object):
         yum_repo = self.repos.repos[name]
         repo.repomd_fn = yum_repo.repoXML.srcfile
         repo.primary_fn = yum_repo.getPrimaryXML()
+        repo.filelists_fn = yum_repo.getFileListsXML()
+        try:
+            repo.presto_fn = yum_repo.getPrestoXML()
+        except Errors.RepoMDError, e:
+            self.verbose_logger.debug("not found deltainfo for: %s" %
+                                      yum_repo.name)
         yum_repo.hawkey_repo = repo
-        self._sack.load_yum_repo(repo)
+        self._sack.load_yum_repo(repo, build_cache=True, load_filelists=True)
 
     @property
     @dnf.util.lazyattr("_rpm")
@@ -244,13 +250,6 @@ class YumBase(object):
         self._sack.load_rpm_repo()
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
-
-        # this is where the .solv files are produced
-        self._sack.write_all_repos()
-
-        self._sack.installonly = self.conf.installonlypkgs
-        self._sack.ensure_filelists(self.repos)
-        self._sack.ensure_presto(self.repos)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         return self._sack

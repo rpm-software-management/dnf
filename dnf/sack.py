@@ -58,30 +58,6 @@ class Sack(hawkey.Sack):
         self._filelists = False
         self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
 
-    def ensure_filelists(self, repos):
-        if self._filelists:
-            return False
-
-        self._filelists = True
-        for yum_repo in repos.listEnabled():
-            repo = yum_repo.hawkey_repo
-            repo.filelists_fn = yum_repo.getFileListsXML()
-
-        self.load_filelists()
-        self.write_filelists()
-        return True
-
-    def ensure_presto(self, repos):
-        for yum_repo in repos.listEnabled():
-            repo = yum_repo.hawkey_repo
-            try:
-                repo.presto_fn = yum_repo.getPrestoXML()
-            except yum.Errors.RepoMDError, e:
-                self.verbose_logger.debug("not found deltainfo for: %s" %
-                                          yum_repo.name)
-        self.load_presto()
-        self.write_presto()
-
     def rpmdb_version(self, yumdb):
         pkgs = queries.installed(self)
         main = SackVersion()
