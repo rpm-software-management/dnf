@@ -36,7 +36,7 @@ class PackageTest(unittest.TestCase):
 
     def test_from_cmdline(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
         self.assertTrue(local_pkg.from_cmdline)
         self.assertFalse(self.pkg.from_cmdline)
 
@@ -69,7 +69,7 @@ class PackageTest(unittest.TestCase):
 
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_rpm(base.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
 

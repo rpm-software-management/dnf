@@ -97,7 +97,7 @@ class MockYumBase(dnf.yum.YumBase):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a YumBase reference.
         self._sack = TestSack(repo_dir(), self)
-        self._sack.load_rpm_repo()
+        self._sack.load_system_repo()
         for repo in self.mock_extra_repos:
             fn = "%s.repo" % repo
             self._sack.load_test_repo(repo, fn)

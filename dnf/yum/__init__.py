@@ -247,7 +247,7 @@ class YumBase(object):
         # class and a YumBase reference.
         start = time.time()
         self._sack = sack.build_sack(self)
-        self._sack.load_rpm_repo()
+        self._sack.load_system_repo(hawkey.Repo(), build_cache=True)
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
@@ -1572,7 +1572,7 @@ class YumBase(object):
         # us if a particular transaction element failed or not we can skip this
         # completely.
         rpmdb_sack = sack.build_sack(self)
-        rpmdb_sack.load_rpm_repo()
+        rpmdb_sack.load_system_repo(hawkey.Repo())
 
         # Process new packages before the old ones so we can copy values.
         for txmbr in self.tsInfo:
@@ -4180,7 +4180,7 @@ class YumBase(object):
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
         try:
-            po = self.sack.add_cmdline_rpm(path)
+            po = self.sack.add_cmdline_package(path)
         except IOError:
             self.logger.critical(_('Cannot open: %s. Skipping.'), path)
             return None
