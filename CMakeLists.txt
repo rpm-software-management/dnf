@@ -1,6 +1,8 @@
 PROJECT (dnf)
 CMAKE_MINIMUM_REQUIRED (VERSION 2.4)
 
+INCLUDE (${CMAKE_SOURCE_DIR}/VERSION.cmake)
+
 SET( SYSCONFDIR /etc)
 FIND_PACKAGE (PythonInterp REQUIRED)
 EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from distutils import sysconfig; stdout.write(sysconfig.get_python_lib())" OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
@@ -11,10 +13,6 @@ ADD_SUBDIRECTORY (bin)
 ADD_SUBDIRECTORY (etc)
 ENABLE_TESTING()
 ADD_SUBDIRECTORY (tests)
-
-SET(DNF_MAJOR "0")
-SET(DNF_MINOR "2")
-SET(DNF_PATCH "7")
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/package/dnf.spec.in ${CMAKE_SOURCE_DIR}/package/dnf.spec @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/const.py.in ${CMAKE_SOURCE_DIR}/dnf/const.py @ONLY)
