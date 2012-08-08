@@ -24,7 +24,7 @@ class Sanity(unittest.TestCase):
         assert(os.access(base.repo("@System.repo"), os.R_OK))
         sack = base.mock_yum_base().sack
         assert(sack)
-        self.assertEqual(sack.nsolvables, base.SYSTEM_NSOLVABLES)
+        self.assertEqual(len(sack), base.SYSTEM_NSOLVABLES)
 
         sack2 = base.mock_yum_base("main", "updates").sack
-        self.assertEqual(sack2.nsolvables, base.TOTAL_NSOLVABLES)
+        self.assertEqual(len(sack2), base.TOTAL_NSOLVABLES)
