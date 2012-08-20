@@ -59,3 +59,16 @@ def setup_stdout():
         sys.stdout = UnicodeStream(sys.stdout, locale.getpreferredencoding())
         return False
     return True
+
+def input(ucstring):
+    """ Take input from user.
+
+        What the raw_input() builitn does, but encode the prompt first
+        (raw_input() won't check sys.stdout.encoding as e.g. print does, see
+        test_i18n.TestInput.test_assumption()).
+    """
+    if not isinstance(ucstring, unicode):
+        raise TypeError("input() accepts Unicode strings")
+    enc = sys.stdout.encoding if sys.stdout.encoding else 'utf8'
+    s = ucstring.encode(enc, 'strict')
+    return raw_input(s)

@@ -51,3 +51,24 @@ class TestStdout(unittest.TestCase):
         output = fileobj.write.call_args[0][0]
         self.assertEqual(output, '\xa9\xed\xf8ka')
         self.assertEqual(len(output), len(UC_TEXT))
+
+class TestInput(unittest.TestCase):
+    def test_assumption(self):
+        """ Test that raw_input() always fails on a unicode string with accented
+            characters. If this is not the case we might not need i18n.input()
+            as a raw_input() wrapper.
+         """
+        self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
+
+    @mock.patch('sys.stdout')
+    @mock.patch('__builtin__.raw_input', lambda x: x)
+    def test_input(self, stdout):
+        stdout.encoding = None
+        s = dnf.i18n.input(UC_TEXT)
+        self.assertEqual(s, UC_TEXT.encode('utf8'))
+
+        stdout.encoding = 'iso-8859-2'
+        s = dnf.i18n.input(UC_TEXT)
+        self.assertEqual(s, UC_TEXT.encode('iso-8859-2'))
+
+        self.assertRaises(TypeError, dnf.i18n.input, "string")

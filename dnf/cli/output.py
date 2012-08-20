@@ -40,6 +40,7 @@ from dnf.yum import logginglevels, _, P_
 from dnf.yum.rpmtrans import RPMBaseCallback
 import dnf.yum.packages
 
+import dnf.i18n
 import dnf.yum.history
 import dnf.queries
 
@@ -964,7 +965,7 @@ class YumOutput:
         aui = (yui[0], yui[1], nui[0], nui[1])
         while True:
             try:
-                choice = raw_input(_('Is this ok [y/N]: '))
+                choice = dnf.i18n.input(_('Is this ok [y/N]: '))
             except UnicodeEncodeError:
                 raise
             except UnicodeDecodeError:
