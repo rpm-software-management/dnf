@@ -1,4 +1,4 @@
-%global gitrev 8ac0959
+%global gitrev 5dea6e7
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -13,7 +13,7 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
-Requires:	python-hawkey >= 0.2.8-1
+Requires:	python-hawkey >= 0.2.9-1
 Requires:	crontabs
 
 %description
@@ -39,6 +39,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
 
 %changelog
+* Thu Aug 23 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.9-1.git5dea6e7
+- Latest hawkey compatibilities.
+- RhBug: 847098
+
 * Mon Aug 6 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.7-6.git8ac0959
 - Maintenance build to conform the new hawkey repo loading APIs.
 
