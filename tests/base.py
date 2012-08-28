@@ -48,8 +48,7 @@ TOUR_51_PKG_PATH = os.path.join(repo_dir(), "tour-5-1.noarch.rpm")
 
 def installed_but(sack, *args):
     q = hawkey.Query(sack).filter(repo__eq=hawkey.SYSTEM_REPO_NAME)
-    map(lambda name: q.filter(name__neq=name), args)
-    return q
+    return reduce(lambda query, name: query.filter(name__neq=name), args, q)
 
 # mock objects
 

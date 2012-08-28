@@ -55,16 +55,16 @@ def _construct_result(sack, patterns, ignore_case,
     if len(patterns) == 0:
         pass
     elif glob:
-        q.filter(*flags, name__glob=patterns)
+        q.filterm(*flags, name__glob=patterns)
     else:
-        q.filter(*flags, name=patterns)
+        q.filterm(*flags, name=patterns)
     if include_repo:
-        q.filter(repo__eq=include_repo)
+        q.filterm(repo__eq=include_repo)
     if exclude_repo:
-        q.filter(repo__neq=exclude_repo)
-    q.filter(downgrades=downgrades_only)
-    q.filter(upgrades=updates_only)
-    q.filter(latest__eq=latest_only)
+        q.filterm(repo__neq=exclude_repo)
+    q.filterm(downgrades=downgrades_only)
+    q.filterm(upgrades=updates_only)
+    q.filterm(latest__eq=latest_only)
     if get_query:
         return q
     return q.run()
@@ -85,7 +85,7 @@ def available_by_name(sack, patterns, ignore_case=False, latest_only=False):
 def installed_exact(sack, name, evr, arch, get_query=False):
     q = _construct_result(sack, name, False, get_query=True,
                           include_repo=hawkey.SYSTEM_REPO_NAME)
-    q.filter(arch__eq=arch, evr__eq=evr);
+    q.filterm(arch__eq=arch, evr__eq=evr);
     return q if get_query else q.run()
 
 def by_name(sack, patterns, ignore_case=False, get_query=False):
@@ -101,9 +101,9 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
     if ignore_case:
         flags = [hawkey.ICASE]
     if glob:
-        q.filter(*flags, file__glob=patterns)
+        q.filterm(*flags, file__glob=patterns)
     else:
-        q.filter(*flags, file=patterns)
+        q.filterm(*flags, file=patterns)
 
     if get_query:
         return q

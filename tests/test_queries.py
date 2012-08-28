@@ -34,8 +34,7 @@ class Queries(unittest.TestCase):
     def test_by_file(self):
         # check sanity first:
         yumbase = base.mock_yum_base()
-        q = hawkey.Query(yumbase.sack)
-        q.filter(file__eq="/raised/smile")
+        q = hawkey.Query(yumbase.sack).filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
 
