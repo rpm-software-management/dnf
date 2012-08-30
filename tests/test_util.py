@@ -73,3 +73,7 @@ class Util(unittest.TestCase):
         self.assertEqual(slow.square1(), 169)
         self.assertEqual(slow.square2, 169)
         self.assertEqual(slow.computed, 4)
+
+    def test_strip_prefix(self):
+        self.assertIsNone(dnf.util.strip_prefix("razorblade", "blade"))
+        self.assertEqual(dnf.util.strip_prefix("razorblade", "razor"), "blade")

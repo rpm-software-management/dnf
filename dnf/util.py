@@ -50,3 +50,8 @@ def reason_name(reason):
     if reason == hawkey.REASON_USER:
         return "user"
     raise ValueError, "Unknown reason %d" % reason
+
+def strip_prefix(s, prefix):
+    if s.startswith(prefix):
+        return s[len(prefix):]
+    return None
