@@ -13,3 +13,4 @@ asthelper.completions
 TAGS
 build/
 package/dnf.spec
+dnf/const.py
