@@ -940,7 +940,7 @@ class YumBase(object):
         # works for downloads / mirror failover etc.
         kern_pkgtup = None
         if rescode == 2 and self.conf.protected_packages:
-            kern_pkgtup =misc.get_running_kernel_pkgtup(self.rpmdb.readOnlyTS())
+            kern_pkgtup =misc.get_running_kernel_pkgtup(self.rpm.readonly_ts)
         self.rpmdb.ts = None
 
         # do the skip broken magic, if enabled and problems exist
@@ -4159,7 +4159,7 @@ class YumBase(object):
                     if not kwargs.get('silence_warnings', False):
                         self.logger.warning(_("No package matched to remove: %s"), self._ui_nevra_dict(nevra_dict))
 
-        ts = self.rpmdb.readOnlyTS()
+        ts = self.rpm.readonly_ts
         kern_pkgtup = misc.get_running_kernel_pkgtup(ts)
         for po in pkgs:
             if self.conf.protected_packages and po.pkgtup == kern_pkgtup:
@@ -4239,7 +4239,7 @@ class YumBase(object):
         """
         if not po:
             try:
-                po = YumUrlPackage(self, ts=self.rpmdb.readOnlyTS(), url=pkg,
+                po = YumUrlPackage(self, ts=self.rpm.readonly_ts, url=pkg,
                                    ua=default_grabber.opts.user_agent)
             except Errors.MiscError:
                 self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
@@ -4755,13 +4755,13 @@ class YumBase(object):
 
         return keys
 
-    def _getKeyImportMessage(self, info, keyurl, keytype='GPG'):
+    def _log_key_import(self, info, keyurl, keytype='GPG'):
         msg = None
-        if keyurl.startswith("file:"):
-            fname = keyurl[len("file:"):]
-            pkgs = self.rpmdb.searchFiles(fname)
+        fname = dnf.util.strip_prefix(keyurl, "file://")
+        if fname:
+            pkgs = queries.by_file(self.sack, fname)
             if pkgs:
-                pkgs = sorted(pkgs)[-1]
+                pkg = pkgs[0]
                 msg = (_('Importing %s key 0x%s:\n'
                          ' Userid     : "%s"\n'
                          ' Fingerprint: %s\n'
@@ -4769,8 +4769,7 @@ class YumBase(object):
                          ' From       : %s') %
                        (keytype, info['hexkeyid'], to_unicode(info['userid']),
                         misc.gpgkey_fingerprint_ascii(info),
-                        pkgs, pkgs.ui_from_repo,
-                        keyurl.replace("file://","")))
+                        pkg, pkg.reponame, fname))
         if msg is None:
             msg = (_('Importing %s key 0x%s:\n'
                      ' Userid     : "%s"\n'
@@ -4811,7 +4810,7 @@ class YumBase(object):
             keys = self._retrievePublicKey(keyurl, repo)
 
             for info in keys:
-                ts = self.rpmdb.readOnlyTS()
+                ts = self.rpm.readonly_ts
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
@@ -4822,7 +4821,7 @@ class YumBase(object):
                     key_installed = True
                 else:
                     # Try installing/updating GPG key
-                    self._getKeyImportMessage(info, keyurl)
+                    self._log_key_import(info, keyurl)
                     rc = False
                     if self.conf.assumeno:
                         rc = False
@@ -4849,7 +4848,6 @@ class YumBase(object):
                         continue
 
                 # Import the key
-                ts = self.rpmdb.readOnlyTS()
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
@@ -4932,7 +4930,7 @@ class YumBase(object):
                         key_installed = True
 
                 if not key_installed:
-                    self._getKeyImportMessage(info, keyurl, keytype)
+                    self._log_key_import(info, keyurl, keytype)
                     rc = False
                     if self.conf.assumeno:
                         rc = False
@@ -5042,7 +5040,7 @@ class YumBase(object):
         # SIGINT specifically, so we _must_ have got rid of all of the used tses
         # before we try downloading. This is called from buildTransaction()
         # so self.rpmdb.ts should be valid.
-        ts = self.rpmdb.readOnlyTS()
+        ts = self.rpm.readonly_ts
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
         install_only_names = set(self.conf.installonlypkgs)
         for m in self.tsInfo.getMembers():
