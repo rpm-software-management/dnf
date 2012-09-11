@@ -49,17 +49,69 @@
             
   <div class="section" id="dnf-command-reference">
 <h1>DNF Command Reference<a class="headerlink" href="#dnf-command-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">&lt;command&gt;</span> <span class="pre">&lt;[args]&gt;</span></tt></p>
+</div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is an experimental replacent for <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM Linux
 distributions. It aims to maintain CLI compatibility with Yum while improving on
 speed and defining strict API and plugin interface.</p>
+<p>Available commands are:</p>
+<ul class="simple">
+<li>downgrade</li>
+<li>erase</li>
+<li>help</li>
+<li>history</li>
+<li>info</li>
+<li>install</li>
+<li>list</li>
+<li>makecache</li>
+<li>provides</li>
+<li>repolist</li>
+<li>update</li>
+</ul>
+<p>See the reference for each command below.</p>
+</div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
+<dd>Shows the help.</dd>
+<dt><tt class="docutils literal"><span class="pre">-C,</span> <span class="pre">--cacheonly</span></tt></dt>
+<dd>Run entirely from system cache, don&#8217;t update cache</dd>
+<dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">[config</span> <span class="pre">file],</span> <span class="pre">--config=[config</span> <span class="pre">file]</span></tt></dt>
+<dd>config file location</dd>
+<dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">[minutes],</span> <span class="pre">--randomwait=[minutes]</span></tt></dt>
+<dd>maximum command wait time</dd>
+<dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">[debug</span> <span class="pre">level],</span> <span class="pre">--debuglevel=[debug</span> <span class="pre">level]</span></tt></dt>
+<dd>debugging output level</dd>
+<dt><tt class="docutils literal"><span class="pre">--showduplicates</span></tt></dt>
+<dd>show duplicates, in repos, in list/search commands</dd>
+<dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">[error</span> <span class="pre">level],</span> <span class="pre">--errorlevel=[error</span> <span class="pre">level]</span></tt></dt>
+<dd>error output level</dd>
+<dt><tt class="docutils literal"><span class="pre">--rpmverbosity=[debug</span> <span class="pre">level</span> <span class="pre">name]</span></tt></dt>
+<dd>debugging output level for rpm</dd>
+<dt><tt class="docutils literal"><span class="pre">-q,</span> <span class="pre">--quiet</span></tt></dt>
+<dd>quiet operation</dd>
+<dt><tt class="docutils literal"><span class="pre">-v,</span> <span class="pre">--verbose</span></tt></dt>
+<dd>verbose operation</dd>
+<dt><tt class="docutils literal"><span class="pre">-y,</span> <span class="pre">--assumeyes</span></tt></dt>
+<dd>answer yes for all questions</dd>
+<dt><tt class="docutils literal"><span class="pre">--assumeno</span></tt></dt>
+<dd>answer no for all questions</dd>
+<dt><tt class="docutils literal"><span class="pre">--version</span></tt></dt>
+<dd>show Yum version and exit</dd>
+<dt><tt class="docutils literal"><span class="pre">--installroot=[path]</span></tt></dt>
+<dd>set install root</dd>
+</dl>
 </div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> (<a class="reference external" href="https://github.com/akozumpl/dnf/">https://github.com/akozumpl/dnf/</a>)</li>
-<li><a class="reference external" href="http://yum.baseurl.org/">Yum</a> (<a class="reference external" href="http://yum.baseurl.org/">http://yum.baseurl.org/</a>)</li>
+<li><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> project homepage (<a class="reference external" href="https://github.com/akozumpl/dnf/">https://github.com/akozumpl/dnf/</a>)</li>
+<li><a class="reference external" href="http://yum.baseurl.org/">Yum</a> project homepage (<a class="reference external" href="http://yum.baseurl.org/">http://yum.baseurl.org/</a>)</li>
 </ul>
 </div>
 </div>
@@ -73,7 +125,9 @@ speed and defining strict API and plugin interface.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">DNF Command Reference</a><ul>
+<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
