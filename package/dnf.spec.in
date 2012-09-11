@@ -13,6 +13,7 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
+BuildRequires:  python-sphinx
 Requires:	python-hawkey >= 0.2.10-1
 Requires:	crontabs
 
@@ -25,6 +26,7 @@ Package manager forked from Yum, using libsolv as a dependency resolver.
 %build
 %cmake .
 make %{?_smp_mflags}
+make doc-man
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -37,6 +39,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
+%{_mandir}/man1/dnf.1.gz
 
 %changelog
 * Thu Aug 30 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.10-1.gitb06d183

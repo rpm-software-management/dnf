@@ -18,6 +18,9 @@
 # Red Hat, Inc.
 #
 
+# Careful what is imported here: the module should be able to be imported
+# without having dependencies installed (useful for 'make doc').
+
 CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
 LOG='dnf.log'

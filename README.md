@@ -1,7 +1,7 @@
 # DNF
 
-It is a highly experimental replacement for yum [1], evolving from yum's
-code. It handles packages using rpm [2] libsolv [3] and hawkey [4] libraries.
+It is an experimental replacement for yum [1], evolving from yum's code. It
+handles packages using rpm [2] libsolv [3] and hawkey [4] libraries.
 
 ## Fedora Users
 

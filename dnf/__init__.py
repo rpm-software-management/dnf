@@ -17,3 +17,6 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
+
+# Careful what is imported here so the package toplevel can be imported without
+# having dependencies installed (useful for 'make doc').
