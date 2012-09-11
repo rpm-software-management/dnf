@@ -18,16 +18,19 @@
 # Red Hat, Inc.
 #
 
+CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
-PID_FILENAME = '/var/run/dnf.pid'
-PREFIX='dnf'
 LOG='dnf.log'
 LOG_TRANSACTION='dnf.transaction.log'
+NAME='DNF'
 PERSISTDIR='/var/lib/dnf'
-TMPDIR='/var/tmp/'
+PID_FILENAME = '/var/run/dnf.pid'
 SYSTEM_CACHEDIR='/var/cache/dnf'
-CACHEDIR_SUFFIX='$basearch/$releasever'
+TMPDIR='/var/tmp/'
 VERSION_MAJOR=@DNF_MAJOR@
 VERSION_MINOR=@DNF_MINOR@
 VERSION_PATCH=@DNF_PATCH@
+
+PREFIX=NAME.lower()
+PROGRAM_NAME=NAME.lower()
 VERSION="%d.%d.%d" % (VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)

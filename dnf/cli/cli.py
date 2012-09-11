@@ -101,7 +101,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # self.registerCommand(yumcommands.ShellCommand())
         # self.registerCommand(yumcommands.DepListCommand())
         self.registerCommand(yumcommands.RepoListCommand())
-        # self.registerCommand(yumcommands.HelpCommand())
+        self.registerCommand(yumcommands.HelpCommand())
         # self.registerCommand(yumcommands.ReInstallCommand())
         self.registerCommand(yumcommands.DowngradeCommand())
         # self.registerCommand(yumcommands.VersionCommand())
@@ -155,7 +155,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         Format an attractive usage string for yum, listing subcommand
         names and summary usages.
         """
-        usage = 'yum [options] COMMAND\n\nList of Commands:\n\n'
+        name = dnf.const.PROGRAM_NAME
+        usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
         commands = dnf.yum.misc.unique([x for x in self.yum_cli_commands.values()
                                     if not (hasattr(x, 'hidden') and x.hidden)])
         commands.sort(key=lambda x: x.getNames()[0])
@@ -340,7 +341,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # save our original args out
         self.args = args
         # save out as a nice command string
-        self.cmdstring = 'yum '
+        self.cmdstring = dnf.const.PROGRAM_NAME + ' '
         for arg in self.args:
             self.cmdstring += '%s ' % arg
 
@@ -1771,8 +1772,8 @@ class YumOptionParser(OptionParser):
         OptionParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("yum.cli")
         self.base = base
-        self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
-        self.add_option_group(self.plugin_option_group)
+        # self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
+        # self.add_option_group(self.plugin_option_group)
 
         self._addYumBasicOptions()
 
@@ -2026,46 +2027,60 @@ class YumOptionParser(OptionParser):
                 action="store_true", help=_("answer yes for all questions"))
         group.add_option("--assumeno", dest="assumeno",
                 action="store_true", help=_("answer no for all questions"))
-        group.add_option("--nodeps", dest="assumeno", # easter egg :)
-                action="store_true", help=SUPPRESS_HELP)
         group.add_option("--version", action="store_true",
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"),
                 metavar='[path]')
         group.add_option("--enablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
-                help=_("enable one or more repositories (wildcards allowed)"),
+                # help=_("enable one or more repositories (wildcards allowed)"),
+                help=SUPPRESS_HELP,
                 metavar='[repo]')
         group.add_option("--disablerepo", action='callback',
                 type='string', callback=repo_optcb, dest='repos', default=[],
-                help=_("disable one or more repositories (wildcards allowed)"),
+                # help=_("disable one or more repositories (wildcards allowed)"),
+                help=SUPPRESS_HELP,
                 metavar='[repo]')
         group.add_option("-x", "--exclude", default=[], action="append",
-                help=_("exclude package(s) by name or glob"), metavar='[package]')
+                # help=_("exclude package(s) by name or glob"),
+                help=SUPPRESS_HELP,
+                metavar='[package]')
         group.add_option("", "--disableexcludes", default=[], action="append",
-                help=_("disable exclude from main, for a repo or for everything"),
+                # help=_("disable exclude from main, for a repo or for everything"),
+                help=SUPPRESS_HELP,
                         metavar='[repo]')
         group.add_option("--obsoletes", action="store_true",
-                help=_("enable obsoletes processing during updates"))
+                # help=_("enable obsoletes processing during updates")
+                help=SUPPRESS_HELP)
         group.add_option("--noplugins", action="store_true",
-                help=_("disable Yum plugins"))
+                # help=_("disable Yum plugins")
+                help=SUPPRESS_HELP)
         group.add_option("--nogpgcheck", action="store_true",
-                help=_("disable gpg signature checking"))
+                # help=_("disable gpg signature checking")
+                help=SUPPRESS_HELP)
         group.add_option("", "--disableplugin", dest="disableplugins", default=[],
-                action="append", help=_("disable plugins by name"),
+                action="append",
+                # help=_("disable plugins by name"),
+                help=SUPPRESS_HELP,
                 metavar='[plugin]')
         group.add_option("", "--enableplugin", dest="enableplugins", default=[],
-                action="append", help=_("enable plugins by name"),
+                action="append",
+                # help=_("enable plugins by name"),
+                help=SUPPRESS_HELP,
                 metavar='[plugin]')
         group.add_option("--skip-broken", action="store_true", dest="skipbroken",
-                help=_("skip packages with depsolving problems"))
+                # help=_("skip packages with depsolving problems")
+                help=SUPPRESS_HELP)
         group.add_option("", "--color", dest="color", default=None,
-                help=_("control whether color is used"))
+                # help=_("control whether color is used")
+                help=SUPPRESS_HELP)
         group.add_option("", "--releasever", dest="releasever", default=None,
-                help=_("set value of $releasever in yum config and repo files"))
+                # help=_("set value of $releasever in yum config and repo files")
+                help=SUPPRESS_HELP)
         group.add_option("", "--setopt", dest="setopts", default=[],
-                action="append", help=_("set arbitrary config and repo options"))
-
+                action="append",
+                # help=_("set arbitrary config and repo options")
+                help=SUPPRESS_HELP)
 
 def _filtercmdline(novalopts, valopts, args):
     '''Keep only specific options from the command line argument list
