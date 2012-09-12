@@ -1996,8 +1996,6 @@ class YumOptionParser(OptionParser):
                 help=_("show this help message and exit"))
         group.conflict_handler = "error"
 
-        group.add_option("-t", "--tolerant", action="store_true",
-                help=_("be tolerant of errors"))
         group.add_option("-C", "--cacheonly", dest="cacheonly",
                 action="store_true",
                 help=_("run entirely from system cache, don't update cache"))

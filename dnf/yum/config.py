@@ -734,7 +734,6 @@ class YumConf(StartupConf):
     assumeno  = BoolOption(False)
     alwaysprompt = BoolOption(True)
     exactarch = BoolOption(True)
-    tolerant = BoolOption(True)
     diskspacecheck = BoolOption(True)
     overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
