@@ -1,9 +1,9 @@
-%global gitrev b06d183
+%global gitrev 9da1268
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -42,6 +42,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %{_mandir}/man1/dnf.1.gz
 
 %changelog
+* Thu Sep 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.11-1.git9da1268
+- Make 'dnf help' work. (RhBug: 853923)
+- Add the man page. (RhBug: 853923)
+
 * Thu Aug 30 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.10-1.gitb06d183
 - Latest hawkey compatibilities.
 - RhBug: 852803
