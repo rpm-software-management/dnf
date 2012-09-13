@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.10-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.2.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.10-1',
+        VERSION:     '0.2.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.10-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.11-1 documentation" href="index.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -107,6 +107,139 @@ speed and defining strict API and plugin interface.</p>
 <dd>set install root</dd>
 </dl>
 </div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-label"><em>Specifying Packages</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
+<div class="section" id="downgrade-command">
+<h3>Downgrade Command<a class="headerlink" href="#downgrade-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">downgrade</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Downgrades the specified packages to the highest of all known lower versions.</dd>
+</dl>
+</div>
+<div class="section" id="erase-command">
+<h3>Erase Command<a class="headerlink" href="#erase-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">erase</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Removes the specified packages from the system along with any packages
+depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt>
+is enabled also removes any dependencies that are no longer needed.</dd>
+</dl>
+</div>
+<div class="section" id="help-command">
+<h3>Help Command<a class="headerlink" href="#help-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">help</span> <span class="pre">[&lt;command&gt;]</span></tt></dt>
+<dd>Displays the help text for all commands. If given a command name then only
+displays the help for that particular command.</dd>
+</dl>
+</div>
+<div class="section" id="history-command">
+<h3>History Command<a class="headerlink" href="#history-command" title="Permalink to this headline">¶</a></h3>
+<p>The history command allows the user to view what has happened in past
+transactions (assuming the <tt class="docutils literal"><span class="pre">history_record</span></tt> configuration option is set).</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">[list]</span></tt></dt>
+<dd>The default history action is listing all known transaction information in a
+table.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;transaction_id&gt;]</span></tt></dt>
+<dd>Describe the given transaction. When no ID is given describes what happened
+during the latest transacton.</dd>
+</dl>
+</div>
+<div class="section" id="info-command">
+<h3>Info Command<a class="headerlink" href="#info-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">info</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Is used to list a description and summary information about available packages.</dd>
+</dl>
+</div>
+<div class="section" id="install-command">
+<h3>Install Command<a class="headerlink" href="#install-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">install</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Installs the specified packages and their dependencies. After the
+transaction is finished all the specified packages are installed on the
+system.</dd>
+</dl>
+</div>
+<div class="section" id="list-command">
+<h3>List Command<a class="headerlink" href="#list-command" title="Permalink to this headline">¶</a></h3>
+<p>Dumps lists of packages depending on the packages&#8217; relation to the
+system. Generally packages are available (it is present in a repository we know
+about) or installed (present in the RPMDB). The list command can also limit the
+displayed packages according to other criteria, e.g. to only those that update
+an installed package.</p>
+<p>All the forms take a <tt class="docutils literal"><span class="pre">[&lt;package-specs&gt;...]</span></tt> parameter to further limit the
+result to only those packages matching it.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">[all]</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>Lists all packages known to us, present in the RPMDB, in a repo or in both.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">installed</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>Lists installed packages.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">available</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>Lists available packages.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">extras</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>Lists extras, that is packages installed on the system that are not
+available in any known repository.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">obsoletes</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>List the packages installed on the system that are obsoleted by packages in
+any known repository.</dd>
+</dl>
+</div>
+<div class="section" id="makecache-command">
+<h3>Makecache Command<a class="headerlink" href="#makecache-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">makecache</span></tt></dt>
+<dd>Downloads and caches in binary format metadata for all known repos. Tries to
+avoid downloading whenever possible (typically when the metadata timestamp
+hasn&#8217;t changed).</dd>
+</dl>
+</div>
+<div class="section" id="provides-command">
+<h3>Provides Command<a class="headerlink" href="#provides-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">provides</span> <span class="pre">&lt;provide-spec&gt;</span></tt></dt>
+<dd>Finds the packages providing the given <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt>. This is useful
+when one knows a filename and wants to find what package (installed or not)
+provides this file.</dd>
+</dl>
+</div>
+<div class="section" id="repolist-command">
+<h3>Repolist Command<a class="headerlink" href="#repolist-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repolist</span> <span class="pre">[enabled|disabled|all]</span></tt></dt>
+<dd>Depending on the exact command, lists enabled, disabled or all known
+repositories. Lists all enabled repositories by default. Provides more
+detailed information when <tt class="docutils literal"><span class="pre">-v</span></tt> option is used.</dd>
+</dl>
+</div>
+<div class="section" id="update-command">
+<h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dd>Updates the specified packages and their dependencies as necessary. If no
+<tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given, updates all packages a newer version and
+relevant dependencies available.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="specifying-packages">
+<span id="specifying-packages-label"></span><h2>Specifying Packages<a class="headerlink" href="#specifying-packages" title="Permalink to this headline">¶</a></h2>
+<p>Many commands take a <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> parameter that selects a package for the
+operation. The specification is always done by the name of the package. If
+multiple versions of the selected package exist in the repo, the most recent
+version suitable for the given operation is used.</p>
+<p>The specification is case-sensitive,globbing characters &#8220;<tt class="docutils literal"><span class="pre">?</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[</span></tt>
+are allowed and trigger shell-like glob matching.</p>
+</div>
+<div class="section" id="specifying-provides">
+<span id="specifying-provides-label"></span><h2>Specifying Provides<a class="headerlink" href="#specifying-provides" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> in command descriptions means the command operates on
+packages providing the given spec. This can currently only be a file
+provide. The selection is case-sensitive and globbing is supported.</p>
+</div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -128,6 +261,22 @@ speed and defining strict API and plugin interface.</p>
 <li><a class="reference internal" href="#synopsis">Synopsis</a></li>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#options">Options</a></li>
+<li><a class="reference internal" href="#commands">Commands</a><ul>
+<li><a class="reference internal" href="#downgrade-command">Downgrade Command</a></li>
+<li><a class="reference internal" href="#erase-command">Erase Command</a></li>
+<li><a class="reference internal" href="#help-command">Help Command</a></li>
+<li><a class="reference internal" href="#history-command">History Command</a></li>
+<li><a class="reference internal" href="#info-command">Info Command</a></li>
+<li><a class="reference internal" href="#install-command">Install Command</a></li>
+<li><a class="reference internal" href="#list-command">List Command</a></li>
+<li><a class="reference internal" href="#makecache-command">Makecache Command</a></li>
+<li><a class="reference internal" href="#provides-command">Provides Command</a></li>
+<li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
+<li><a class="reference internal" href="#update-command">Update Command</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#specifying-packages">Specifying Packages</a></li>
+<li><a class="reference internal" href="#specifying-provides">Specifying Provides</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
@@ -167,7 +316,7 @@ speed and defining strict API and plugin interface.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
