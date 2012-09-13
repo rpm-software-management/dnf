@@ -180,7 +180,9 @@ Makecache Command
 Provides Command
 ----------------
 ``dnf [options] provides <provide-spec>``
-    Finds the packages providing the given ``<provide-spec>``.
+    Finds the packages providing the given ``<provide-spec>``. This is useful
+    when one knows a filename and wants to find what package (installed or not)
+    provides this file.
 
 ----------------
 Repolist Command
@@ -205,7 +207,13 @@ Update Command
 Specifying Packages
 ===================
 
-(how to spec a package)
+Many commands take a ``<package-spec>`` parameter that selects a package for the
+operation. The specification is always done by the name of the package. If
+multiple versions of the selected package exist in the repo, the most recent
+version suitable for the given operation is used.
+
+The specification is case-sensitive,globbing characters "``?``, ``*`` and ``[``
+are allowed and trigger shell-like glob matching.
 
 .. _specifying_provides-label:
 
@@ -213,8 +221,9 @@ Specifying Packages
 Specifying Provides
 ===================
 
-(how to spec a provide)
-
+``<provide-spec>`` in command descriptions means the command operates on
+packages providing the given spec. This can currently only be a file
+provide. The selection is case-sensitive and globbing is supported.
 
 ========
 See Also
