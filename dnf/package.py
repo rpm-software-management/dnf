@@ -98,21 +98,15 @@ class Package(hawkey.Package):
 
     @property # yum compatibility attribute
     def e(self):
-        split = self.evr.split(":", 1)
-        if len(split) > 1:
-            return int(split[0])
-        else:
-            return 0
+        return self.epoch
 
     @property # yum compatibility attribute
     def v(self):
-        vr = self.evr.split(":", 1)[-1]
-        return vr.split("-")[0]
+        return self.version
 
     @property # yum compatibility attribute
     def r(self):
-        vr = self.evr.split(":", 1)[-1]
-        return vr.split("-")[1]
+        return self.release
 
     @property # yum compatibility attribute
     def ui_from_repo(self):
