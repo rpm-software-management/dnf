@@ -10,4 +10,4 @@ ADD_CUSTOM_TARGET (doc-man
 		  COMMENT "Building manpage documentation")
 ADD_CUSTOM_TARGET (doc)
 ADD_DEPENDENCIES (doc doc-html doc-man)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.1 DESTINATION share/man/man1)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.8 DESTINATION share/man/man8)

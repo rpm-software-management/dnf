@@ -41,7 +41,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
-%{_mandir}/man1/dnf.1.gz
+%{_mandir}/man8/dnf.8.gz
 
 %changelog
 * Thu Sep 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.11-1.git9da1268

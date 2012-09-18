@@ -215,7 +215,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('command_ref', 'dnf', u'DNF Command Reference',
-     [u'Aleš Kozumplík'], 1)
+     [u'Aleš Kozumplík'], 8)
 ]
 
 # If true, show URL addresses after external links.
