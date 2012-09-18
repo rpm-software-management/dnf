@@ -1,0 +1,242 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dnf Reference &mdash; DNF 0.2.11-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.11-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.2.11-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="dnf.yum Reference" href="api_dnf.yum.html" />
+    <link rel="prev" title="DNF API Reference" href="api.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.yum.html" title="dnf.yum Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dnf-reference">
+<h1><a class="toc-backref" href="#id2">dnf Reference</a><a class="headerlink" href="#dnf-reference" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#dnf-reference" id="id2">dnf Reference</a><ul>
+<li><a class="reference internal" href="#id1" id="id3">dnf</a></li>
+<li><a class="reference internal" href="#module-dnf.conf" id="id4">dnf.conf</a></li>
+<li><a class="reference internal" href="#module-dnf.const" id="id5">dnf.const</a></li>
+<li><a class="reference internal" href="#module-dnf.i18n" id="id6">dnf.i18n</a></li>
+<li><a class="reference internal" href="#module-dnf.package" id="id7">dnf.package</a></li>
+<li><a class="reference internal" href="#module-dnf.queries" id="id8">dnf.queries</a></li>
+<li><a class="reference internal" href="#module-dnf.sack" id="id9">dnf.sack</a></li>
+<li><a class="reference internal" href="#module-dnf.util" id="id10">dnf.util</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id3">dnf</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-dnf"></span></div>
+<div class="section" id="module-dnf.conf">
+<span id="dnf-conf"></span><h2><a class="toc-backref" href="#id4">dnf.conf</a><a class="headerlink" href="#module-dnf.conf" title="Permalink to this headline">¶</a></h2>
+<p>The configuration classes and routines in yum are splattered over too many
+places, hard to change and debug. The new structure here will replace that. Its
+goal is to:</p>
+<ul class="simple">
+<li>accept configuration options from all three sources (the main config file,
+repo config files, command line switches)</li>
+<li>handle all the logic of storing those and producing related values.</li>
+<li>returning configuration values.</li>
+<li>optionally: asserting no value is overridden once it has been applied
+somewhere (e.g. do not let a new repo be initialized with different global
+cache path than an already existing one).</li>
+</ul>
+</div>
+<div class="section" id="module-dnf.const">
+<span id="dnf-const"></span><h2><a class="toc-backref" href="#id5">dnf.const</a><a class="headerlink" href="#module-dnf.const" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.i18n">
+<span id="dnf-i18n"></span><h2><a class="toc-backref" href="#id6">dnf.i18n</a><a class="headerlink" href="#module-dnf.i18n" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dnf.i18n.input">
+<tt class="descclassname">dnf.i18n.</tt><tt class="descname">input</tt><big>(</big><em>ucstring</em><big>)</big><a class="headerlink" href="#dnf.i18n.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take input from user.</p>
+<p>What the raw_input() builitn does, but encode the prompt first
+(raw_input() won&#8217;t check sys.stdout.encoding as e.g. print does, see
+test_i18n.TestInput.test_assumption()).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.i18n.setup_stdout">
+<tt class="descclassname">dnf.i18n.</tt><tt class="descname">setup_stdout</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.i18n.setup_stdout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that stdout is of suitable encoding and handle the situation if
+not.</p>
+<p>Returns True if stdout was of suitable encoding already and no chagnes
+were needed.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dnf.package">
+<span id="dnf-package"></span><h2><a class="toc-backref" href="#id7">dnf.package</a><a class="headerlink" href="#module-dnf.package" title="Permalink to this headline">¶</a></h2>
+<p>Contains the dnf.Package class.</p>
+<dl class="class">
+<dt id="dnf.package.Package">
+<em class="property">class </em><tt class="descclassname">dnf.package.</tt><tt class="descname">Package</tt><big>(</big><em>initobject</em>, <em>yumbase</em><big>)</big><a class="headerlink" href="#dnf.package.Package" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a package.</p>
+<dl class="attribute">
+<dt id="dnf.package.Package.idx">
+<tt class="descname">idx</tt><a class="headerlink" href="#dnf.package.Package.idx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Always type it to int, rpm bindings expect it like that.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.package.Package.localPkg">
+<tt class="descname">localPkg</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.package.Package.localPkg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Package&#8217;s location in the filesystem.</p>
+<p>For packages in remote repo returns where the package will be/has
+been downloaded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.package.Package.returnIdSum">
+<tt class="descname">returnIdSum</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.package.Package.returnIdSum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the chksum type and chksum string how the legacy yum expects
+it.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-dnf.queries">
+<span id="dnf-queries"></span><h2><a class="toc-backref" href="#id8">dnf.queries</a><a class="headerlink" href="#module-dnf.queries" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.sack">
+<span id="dnf-sack"></span><h2><a class="toc-backref" href="#id9">dnf.sack</a><a class="headerlink" href="#module-dnf.sack" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.util">
+<span id="dnf-util"></span><h2><a class="toc-backref" href="#id10">dnf.util</a><a class="headerlink" href="#module-dnf.util" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dnf.util.lazyattr">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">lazyattr</tt><big>(</big><em>attrname</em><big>)</big><a class="headerlink" href="#dnf.util.lazyattr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to get lazy attribute initialization.</p>
+<p>Composes with &#64;property. Force reinitialization by deleting the
+&lt;attrname&gt;.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">dnf Reference</a><ul>
+<li><a class="reference internal" href="#id1">dnf</a></li>
+<li><a class="reference internal" href="#module-dnf.conf">dnf.conf</a></li>
+<li><a class="reference internal" href="#module-dnf.const">dnf.const</a></li>
+<li><a class="reference internal" href="#module-dnf.i18n">dnf.i18n</a></li>
+<li><a class="reference internal" href="#module-dnf.package">dnf.package</a></li>
+<li><a class="reference internal" href="#module-dnf.queries">dnf.queries</a></li>
+<li><a class="reference internal" href="#module-dnf.sack">dnf.sack</a></li>
+<li><a class="reference internal" href="#module-dnf.util">dnf.util</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">DNF API Reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_dnf.yum.html"
+                        title="next chapter">dnf.yum Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_dnf.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.yum.html" title="dnf.yum Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Red Hat.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>dnf.rpmUtils Reference &mdash; DNF 0.2.11-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.11-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.2.11-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="dnf.cli Reference" href="api_dnf.cli.html" />
+    <link rel="prev" title="dnf.yum Reference" href="api_dnf.yum.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.cli.html" title="dnf.cli Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.yum.html" title="dnf.yum Reference"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dnf-rpmutils-reference">
+<h1><a class="toc-backref" href="#id1">dnf.rpmUtils Reference</a><a class="headerlink" href="#dnf-rpmutils-reference" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#dnf-rpmutils-reference" id="id1">dnf.rpmUtils Reference</a><ul>
+<li><a class="reference internal" href="#module-dnf.rpmUtils" id="id2">dnf.rpmUtils</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.arch" id="id3">dnf.rpmUtils.arch</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.connection" id="id4">dnf.rpmUtils.connection</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.error" id="id5">dnf.rpmUtils.error</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.miscutils" id="id6">dnf.rpmUtils.miscutils</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.transaction" id="id7">dnf.rpmUtils.transaction</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-dnf.rpmUtils">
+<span id="dnf-rpmutils"></span><h2><a class="toc-backref" href="#id2">dnf.rpmUtils</a><a class="headerlink" href="#module-dnf.rpmUtils" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.rpmUtils.arch">
+<span id="dnf-rpmutils-arch"></span><h2><a class="toc-backref" href="#id3">dnf.rpmUtils.arch</a><a class="headerlink" href="#module-dnf.rpmUtils.arch" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="dnf.rpmUtils.arch.ArchStorage">
+<em class="property">class </em><tt class="descclassname">dnf.rpmUtils.arch.</tt><tt class="descname">ArchStorage</tt><a class="headerlink" href="#dnf.rpmUtils.arch.ArchStorage" title="Permalink to this definition">¶</a></dt>
+<dd><p>class for keeping track of what arch we have set and doing various
+permutations based on it</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.arch.canCoinstall">
+<tt class="descclassname">dnf.rpmUtils.arch.</tt><tt class="descname">canCoinstall</tt><big>(</big><em>arch1</em>, <em>arch2</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.arch.canCoinstall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take two arches and return True if it is possible that they can be
+installed together with the same nevr. Ex: arch1=i386 and arch2=i686 then
+it will return False. arch1=i386 and arch2=x86_64 will return True.
+It does not determine whether or not the arches make any sense. Just whether
+they could possibly install w/o conflict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.arch.getBaseArch">
+<tt class="descclassname">dnf.rpmUtils.arch.</tt><tt class="descname">getBaseArch</tt><big>(</big><em>myarch=None</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.arch.getBaseArch" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns &#8216;base&#8217; arch for myarch, if specified, or canonArch if not.
+base arch is the arch before noarch in the arches dict if myarch is not
+a key in the multilibArches.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.arch.getBestArchFromList">
+<tt class="descclassname">dnf.rpmUtils.arch.</tt><tt class="descname">getBestArchFromList</tt><big>(</big><em>archlist</em>, <em>myarch=None</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.arch.getBestArchFromList" title="Permalink to this definition">¶</a></dt>
+<dd><p>return the best arch from the list for myarch if - myarch is not given,
+then return the best arch from the list for the canonArch.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.arch.isMultiLibArch">
+<tt class="descclassname">dnf.rpmUtils.arch.</tt><tt class="descname">isMultiLibArch</tt><big>(</big><em>arch=None</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.arch.isMultiLibArch" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true if arch is a multilib arch, false if not</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dnf.rpmUtils.connection">
+<span id="dnf-rpmutils-connection"></span><h2><a class="toc-backref" href="#id4">dnf.rpmUtils.connection</a><a class="headerlink" href="#module-dnf.rpmUtils.connection" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.rpmUtils.error">
+<span id="dnf-rpmutils-error"></span><h2><a class="toc-backref" href="#id5">dnf.rpmUtils.error</a><a class="headerlink" href="#module-dnf.rpmUtils.error" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-dnf.rpmUtils.miscutils">
+<span id="dnf-rpmutils-miscutils"></span><h2><a class="toc-backref" href="#id6">dnf.rpmUtils.miscutils</a><a class="headerlink" href="#module-dnf.rpmUtils.miscutils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.checkSig">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">checkSig</tt><big>(</big><em>ts</em>, <em>package</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.checkSig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a transaction set and a package, check it&#8217;s sigs,
+return 0 if they are all fine
+return 1 if the gpg key can&#8217;t be found
+return 2 if the header is in someway damaged
+return 3 if the key is not trusted
+return 4 if the pkg is not gpg or pgp signed</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.compareVerOnly">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">compareVerOnly</tt><big>(</big><em>v1</em>, <em>v2</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.compareVerOnly" title="Permalink to this definition">¶</a></dt>
+<dd><p>compare version strings only using rpm vercmp</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.formatRequire">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">formatRequire</tt><big>(</big><em>name</em>, <em>version</em>, <em>flags</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.formatRequire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a human readable requirement string (ex.  foobar &gt;= 2.0)
+&#64;param name: requirement name (ex. foobar)
+&#64;param version: requirent version (ex. 2.0)
+&#64;param flags: binary flags ( 0010 = equal, 0100 = greater than, 1000 = less than )</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.getSigInfo">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">getSigInfo</tt><big>(</big><em>hdr</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.getSigInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>checks signature from an hdr hand back signature information and/or
+an error code</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.hdrFromPackage">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">hdrFromPackage</tt><big>(</big><em>ts</em>, <em>package</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.hdrFromPackage" title="Permalink to this definition">¶</a></dt>
+<dd><p>hand back the rpm header or raise an Error if the pkg is fubar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.pkgTupleFromHeader">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">pkgTupleFromHeader</tt><big>(</big><em>hdr</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.pkgTupleFromHeader" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a pkgtuple (n, a, e, v, r) from a hdr object, converts
+None epoch to 0, as well.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.rangeCheck">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">rangeCheck</tt><big>(</big><em>reqtuple</em>, <em>pkgtuple</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.rangeCheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true if the package epoch-ver-rel satisfy the range
+requested in the reqtuple:
+ex: foo &gt;= 2.1-1</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.rangeCompare">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">rangeCompare</tt><big>(</big><em>reqtuple</em>, <em>provtuple</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.rangeCompare" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns true if provtuple satisfies reqtuple</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.rpm2cpio">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">rpm2cpio</tt><big>(</big><em>fdno</em>, <em>out=&lt;open file '&lt;stdout&gt;'</em>, <em>mode 'w' at 0x7f1c6cddf1e0&gt;</em>, <em>bufsize=2048</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.rpm2cpio" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs roughly the equivalent of rpm2cpio(8).
+Reads the package from fdno, and dumps the cpio payload to out,
+using bufsize as the buffer size.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.splitFilename">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">splitFilename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.splitFilename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass in a standard style rpm fullname</p>
+<dl class="docutils">
+<dt>Return a name, version, release, epoch, arch, e.g.::</dt>
+<dd>foo-1.0-1.i386.rpm returns foo, 1.0, 1, i386
+1:bar-9-123a.ia64.rpm returns bar, 9, 123a, 1, ia64</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.rpmUtils.miscutils.unique">
+<tt class="descclassname">dnf.rpmUtils.miscutils.</tt><tt class="descname">unique</tt><big>(</big><em>s</em><big>)</big><a class="headerlink" href="#dnf.rpmUtils.miscutils.unique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of the elements in s, but without duplicates.</p>
+<p>For example, unique([1,2,3,1,2,3]) is some permutation of [1,2,3],
+unique(&#8220;abcabc&#8221;) some permutation of [&#8220;a&#8221;, &#8220;b&#8221;, &#8220;c&#8221;], and
+unique(([1, 2], [2, 3], [1, 2])) some permutation of
+[[2, 3], [1, 2]].</p>
+<p>For best speed, all sequence elements should be hashable.  Then
+unique() will usually work in linear time.</p>
+<p>If not possible, the sequence elements should enjoy a total
+ordering, and if list(s).sort() doesn&#8217;t raise TypeError it&#8217;s
+assumed that they do enjoy a total ordering.  Then unique() will
+usually work in O(N*log2(N)) time.</p>
+<p>If that&#8217;s not possible either, the sequence elements must support
+equality-testing.  Then unique() will usually work in quadratic
+time.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-dnf.rpmUtils.transaction">
+<span id="dnf-rpmutils-transaction"></span><h2><a class="toc-backref" href="#id7">dnf.rpmUtils.transaction</a><a class="headerlink" href="#module-dnf.rpmUtils.transaction" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">dnf.rpmUtils Reference</a><ul>
+<li><a class="reference internal" href="#module-dnf.rpmUtils">dnf.rpmUtils</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.arch">dnf.rpmUtils.arch</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.connection">dnf.rpmUtils.connection</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.error">dnf.rpmUtils.error</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.miscutils">dnf.rpmUtils.miscutils</a></li>
+<li><a class="reference internal" href="#module-dnf.rpmUtils.transaction">dnf.rpmUtils.transaction</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_dnf.yum.html"
+                        title="previous chapter">dnf.yum Reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_dnf.cli.html"
+                        title="next chapter">dnf.cli Reference</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_dnf.rpmUtils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.cli.html" title="dnf.cli Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_dnf.yum.html" title="dnf.yum Reference"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Red Hat.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

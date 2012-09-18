@@ -1,0 +1,256 @@
+.TH "DNF" "1" "September 18, 2012" "0.2.11" "DNF"
+.SH NAME
+dnf \- DNF Command Reference
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.\" Man page generated from reStructeredText.
+.
+.SH SYNOPSIS
+.sp
+\fBdnf [options] <command> <[args]>\fP
+.SH DESCRIPTION
+.sp
+\fI\%DNF\fP is an experimental replacent for \fI\%Yum\fP, a package manager for RPM Linux
+distributions. It aims to maintain CLI compatibility with Yum while improving on
+speed and defining strict API and plugin interface.
+.sp
+Available commands are:
+.INDENT 0.0
+.IP \(bu 2
+downgrade
+.IP \(bu 2
+erase
+.IP \(bu 2
+help
+.IP \(bu 2
+history
+.IP \(bu 2
+info
+.IP \(bu 2
+install
+.IP \(bu 2
+list
+.IP \(bu 2
+makecache
+.IP \(bu 2
+provides
+.IP \(bu 2
+repolist
+.IP \(bu 2
+update
+.UNINDENT
+.sp
+See the reference for each command below.
+.SH OPTIONS
+.INDENT 0.0
+.TP
+.B \fB\-h, \-\-help\fP
+Shows the help.
+.TP
+.B \fB\-C, \-\-cacheonly\fP
+Run entirely from system cache, don\(aqt update cache
+.TP
+.B \fB\-c [config file], \-\-config=[config file]\fP
+config file location
+.TP
+.B \fB\-R [minutes], \-\-randomwait=[minutes]\fP
+maximum command wait time
+.TP
+.B \fB\-d [debug level], \-\-debuglevel=[debug level]\fP
+debugging output level
+.TP
+.B \fB\-\-showduplicates\fP
+show duplicates, in repos, in list/search commands
+.TP
+.B \fB\-e [error level], \-\-errorlevel=[error level]\fP
+error output level
+.TP
+.B \fB\-\-rpmverbosity=[debug level name]\fP
+debugging output level for rpm
+.TP
+.B \fB\-q, \-\-quiet\fP
+quiet operation
+.TP
+.B \fB\-v, \-\-verbose\fP
+verbose operation
+.TP
+.B \fB\-y, \-\-assumeyes\fP
+answer yes for all questions
+.TP
+.B \fB\-\-assumeno\fP
+answer no for all questions
+.TP
+.B \fB\-\-version\fP
+show Yum version and exit
+.TP
+.B \fB\-\-installroot=[path]\fP
+set install root
+.UNINDENT
+.SH COMMANDS
+.sp
+For an explanation of \fB<package\-spec>\fP see \fI\%Specifying Packages\fP.
+.sp
+For an explanation of \fB<provide\-spec>\fP see \fI\%Specifying Provides\fP.
+.SS Downgrade Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] downgrade <package\-specs>...\fP
+Downgrades the specified packages to the highest of all known lower versions.
+.UNINDENT
+.SS Erase Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] erase <package\-specs>...\fP
+Removes the specified packages from the system along with any packages
+depending on the packages being removed. If \fBclean_requirements_on_remove\fP
+is enabled also removes any dependencies that are no longer needed.
+.UNINDENT
+.SS Help Command
+.INDENT 0.0
+.TP
+.B \fBdnf help [<command>]\fP
+Displays the help text for all commands. If given a command name then only
+displays the help for that particular command.
+.UNINDENT
+.SS History Command
+.sp
+The history command allows the user to view what has happened in past
+transactions (assuming the \fBhistory_record\fP configuration option is set).
+.INDENT 0.0
+.TP
+.B \fBdnf history [list]\fP
+The default history action is listing all known transaction information in a
+table.
+.TP
+.B \fBdnf history info [<transaction_id>]\fP
+Describe the given transaction. When no ID is given describes what happened
+during the latest transacton.
+.UNINDENT
+.SS Info Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] info <package\-specs>...\fP
+Is used to list a description and summary information about available packages.
+.UNINDENT
+.SS Install Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] install <package\-specs>...\fP
+Installs the specified packages and their dependencies. After the
+transaction is finished all the specified packages are installed on the
+system.
+.UNINDENT
+.SS List Command
+.sp
+Dumps lists of packages depending on the packages\(aq relation to the
+system. Generally packages are available (it is present in a repository we know
+about) or installed (present in the RPMDB). The list command can also limit the
+displayed packages according to other criteria, e.g. to only those that update
+an installed package.
+.sp
+All the forms take a \fB[<package\-specs>...]\fP parameter to further limit the
+result to only those packages matching it.
+.INDENT 0.0
+.TP
+.B \fBdnf [options] list [all] [<package\-specs>...]\fP
+Lists all packages known to us, present in the RPMDB, in a repo or in both.
+.TP
+.B \fBdnf [options] list installed [<package\-specs>...]\fP
+Lists installed packages.
+.TP
+.B \fBdnf [options] list available [<package\-specs>...]\fP
+Lists available packages.
+.TP
+.B \fBdnf [options] list extras [<package\-specs>...]\fP
+Lists extras, that is packages installed on the system that are not
+available in any known repository.
+.TP
+.B \fBdnf [options] list obsoletes [<package\-specs>...]\fP
+List the packages installed on the system that are obsoleted by packages in
+any known repository.
+.UNINDENT
+.SS Makecache Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] makecache\fP
+Downloads and caches in binary format metadata for all known repos. Tries to
+avoid downloading whenever possible (typically when the metadata timestamp
+hasn\(aqt changed).
+.UNINDENT
+.SS Provides Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] provides <provide\-spec>\fP
+Finds the packages providing the given \fB<provide\-spec>\fP. This is useful
+when one knows a filename and wants to find what package (installed or not)
+provides this file.
+.UNINDENT
+.SS Repolist Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] repolist [enabled|disabled|all]\fP
+Depending on the exact command, lists enabled, disabled or all known
+repositories. Lists all enabled repositories by default. Provides more
+detailed information when \fB\-v\fP option is used.
+.UNINDENT
+.SS Update Command
+.INDENT 0.0
+.TP
+.B \fBdnf [options] update [<package\-specs>...]\fP
+Updates the specified packages and their dependencies as necessary. If no
+\fB<package\-specs>\fP are given, updates all packages a newer version and
+relevant dependencies available.
+.UNINDENT
+.SH SPECIFYING PACKAGES
+.sp
+Many commands take a \fB<package\-spec>\fP parameter that selects a package for the
+operation. The specification is always done by the name of the package. If
+multiple versions of the selected package exist in the repo, the most recent
+version suitable for the given operation is used.
+.sp
+The specification is case\-sensitive,globbing characters "\fB?\fP, \fB*\fP and \fB[\fP
+are allowed and trigger shell\-like glob matching.
+.SH SPECIFYING PROVIDES
+.sp
+\fB<provide\-spec>\fP in command descriptions means the command operates on
+packages providing the given spec. This can currently only be a file
+provide. The selection is case\-sensitive and globbing is supported.
+.SH SEE ALSO
+.INDENT 0.0
+.IP \(bu 2
+\fI\%DNF\fP project homepage (\fI\%https://github.com/akozumpl/dnf/\fP)
+.IP \(bu 2
+\fI\%Yum\fP project homepage (\fI\%http://yum.baseurl.org/\fP)
+.UNINDENT
+.SH AUTHOR
+Aleš Kozumplík
+.SH COPYRIGHT
+2012, Red Hat
+.\" Generated by docutils manpage writer.
+.\" 
+.
