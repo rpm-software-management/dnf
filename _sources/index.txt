@@ -8,6 +8,7 @@ Contents:
    :maxdepth: 1
 
    command_ref
+   api
 
 Indices and tables
 
