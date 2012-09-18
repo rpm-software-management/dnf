@@ -58,7 +58,7 @@ class baseFailOverMethod:
     def get_index(self):
         """Return the current number of failures, which is also the
         current index into the list of URLs that this object
-        represents.  :fun:`get_serverurl` should always be used to
+        represents.  :func:`get_serverurl` should always be used to
         translate an index into a URL, as this object may change how
         indexes map.
 

@@ -216,7 +216,7 @@ class YumCommand:
 
         :param base: a :class:`dnf.yum.Yumbase` object
         :param msg: the message to be output
-        :param *args: additional arguments associated with the message
+        :param \*args: additional arguments associated with the message
         """
         if not self.done_command_once:
             base.verbose_logger.info(msg, *args)
@@ -375,6 +375,7 @@ class UpdateCommand(YumCommand):
 
     def doCheck(self, base, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
+
         These include that there are enabled repositories with gpg
         keys, and that this command is being run by the root user.
 
@@ -1293,9 +1294,10 @@ class UpgradeCommand(YumCommand):
         return _("Update packages taking obsoletes into account")
 
     def doCheck(self, base, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-         run.  These include that the program is being run by the root
-         user, and that there are enabled repositories with gpg.
+        """Verify that conditions are met so that this command can run.
+
+        These include that the program is being run by the root user, and that
+        there are enabled repositories with gpg.
 
         :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command

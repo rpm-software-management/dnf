@@ -257,18 +257,16 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
         %*.*s, as it does the "right" thing with regard to utf-8 sequences.
         prefix and suffix should be used for "invisible" bytes, like
         highlighting.
-        Eg.
-        "%-*.*s" % (10, 20, msg)
-           <= becomes =>
-        "%s" % (utf8_width_fill(msg, 10, 20)).
 
-        "%20.10s" % (msg)
-           <= becomes =>
-        "%s" % (utf8_width_fill(msg, 20, 10, left=False)).
+        Examples:
 
-        "%s%.10s%s" % (prefix, msg, suffix)
-           <= becomes =>
-        "%s" % (utf8_width_fill(msg, 0, 10, prefix=prefix, suffix=suffix)).
+        ``"%-*.*s" % (10, 20, msg)`` becomes ``"%s" % (utf8_width_fill(msg, 10, 20))``.
+
+        ``"%20.10s" % (msg)`` becomes ``"%s" % (utf8_width_fill(msg, 20, 10,
+        left=False))``.
+
+        ``"%s%.10s%s" % (prefix, msg, suffix)`` becomes ``"%s" %
+        (utf8_width_fill(msg, 0, 10, prefix=prefix, suffix=suffix))``.
         """
     passed_msg = msg
     width, msg = utf8_width_chop(msg, chop)

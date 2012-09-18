@@ -399,8 +399,9 @@ class UpdateMetadata(object):
         """
         Retrieve any update notices which are newer than a
         given std. pkgtup (name, arch, epoch, version, release) tuple.
-        Returns: list of (pkgtup, notice) that are newer than the given pkgtup,
-                 in the order of newest pkgtups first.
+
+        :return: list of (pkgtup, notice) that are newer than the given pkgtup,
+          in the order of newest pkgtups first.
         """
         oldpkgtup = pkgtup
         name = oldpkgtup[0]

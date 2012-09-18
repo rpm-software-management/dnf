@@ -65,7 +65,7 @@ def seconds_to_ui_time(seconds):
 
     :param seconds: the length of the time interval in seconds
     :return: a human-readable string representation of the length of
-    the time interval
+      the time interval
     """
     if seconds >= 60 * 60 * 24:
         return "%d day(s) %d:%02d:%02d" % (seconds / (60 * 60 * 24),
@@ -211,12 +211,12 @@ class YumUtilBase(YumBaseCli):
         return 1
 
     def exPluginExit(self, e):
-        """Called when a plugin raises
-           :class:`dnf.yum.plugins.PluginYumExit`.  Log the plugin's exit
-           message if one was supplied.
+        """Called when a plugin raises :class:`dnf.yum.plugins.PluginYumExit`.
 
-        :param e: the exception
-        :return: the exit code
+           Log the plugin's exit message if one was supplied.
+
+           :param e: the exception
+           :return: the exit code
         """
         exitmsg = exception2msg(e)
         if exitmsg:

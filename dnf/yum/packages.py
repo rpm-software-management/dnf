@@ -390,16 +390,16 @@ class PackageObject(object):
             return None
         return not self.verEQ(other)
     def verLT(self, other):
-        """ Uses verCMP, tests if the other _rpm-version_ is <  ours. """
+        """ Uses verCMP, tests if the other rpm-version is <  ours. """
         return self.verCMP(other) <  0
     def verLE(self, other):
-        """ Uses verCMP, tests if the other _rpm-version_ is <= ours. """
+        """ Uses verCMP, tests if the other rpm-version is <= ours. """
         return self.verCMP(other) <= 0
     def verGT(self, other):
-        """ Uses verCMP, tests if the other _rpm-version_ is >  ours. """
+        """ Uses verCMP, tests if the other rpm-version is >  ours. """
         return self.verCMP(other) >  0
     def verGE(self, other):
-        """ Uses verCMP, tests if the other _rpm-version_ is >= ours. """
+        """ Uses verCMP, tests if the other rpm-version is >= ours. """
         return self.verCMP(other) >= 0
 
     def __repr__(self):

@@ -1144,11 +1144,11 @@ def repo_gen_decompress(filename, generated_name, cached=False):
     return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
 
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
-    """takes a glob of a dir (like /etc/foo.d/*.foo)
-       returns a list of all the lines in all the files matching
-       that glob, ignores comments and blank lines,
-       optional paramater 'line_as_list tells whether to
-       treat each line as a space or comma-separated list, defaults to True"""
+    """ Takes a glob of a dir (like /etc/foo.d/\*.foo) returns a list of all the
+       lines in all the files matching that glob, ignores comments and blank
+       lines, optional paramater 'line_as_list tells whether to treat each line
+       as a space or comma-separated list, defaults to True.
+    """
     results = []
     for fname in glob.glob(thisglob):
         for line in open(fname):

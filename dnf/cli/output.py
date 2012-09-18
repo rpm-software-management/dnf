@@ -2663,11 +2663,9 @@ class DepSolveProgressCallBack:
             _('---> Keeping package: %s'), po)
 
     def unresolved(self, msg):
-        """Output a message stating that there is an unresolved
-        dependency.
+        """Output a message stating that there is an unresolved dependency.
 
-        :param msg: string giving information about the unresolved
-        dependency
+        :param msg: string giving information about the unresolved dependency.
         """
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)

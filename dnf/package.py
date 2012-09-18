@@ -18,12 +18,15 @@
 # Red Hat, Inc.
 #
 
+""" Contains the dnf.Package class. """
+
 import binascii
 import hawkey
 import os.path
 import yum.misc
 
 class Package(hawkey.Package):
+    """ Represents a package. """
     def __init__(self, initobject, yumbase):
         super(Package, self).__init__(initobject)
         self.yumbase = yumbase

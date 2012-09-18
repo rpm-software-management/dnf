@@ -541,7 +541,7 @@ class YumBase(object):
            for this run
         :param plugin_types: a sequence specifying the types of plugins to load.
            This should be a sequence containing one or more of the
-           plugins.TYPE_...  constants. If None (the default), all plugins
+           plugins.TYPE_*  constants. If None (the default), all plugins
            will be loaded
         :param searchpath: a list of directories to look in for plugins. A
            default will be used if no value is specified
@@ -1883,7 +1883,7 @@ class YumBase(object):
         :param fo: the file object of the package
         :param po: the package object to verify
         :param raiseError: if *raiseError* is 1, and the package
-           does not check out, a :class:`URLGrabError will be raised.
+           does not check out, a :class:`URLGrabError` will be raised.
            Defaults to 0
         :return: True if the package is verified successfully.
            Otherwise, False will be returned, unless *raiseError* is
@@ -3827,9 +3827,11 @@ class YumBase(object):
            version.  For example, if the package foo-1-2 is installed,::
 
              updatePkgs(["foo-1-2], update_to=False)
+
            will work identically to::
 
              updatePkgs(["foo"])
+
            but::
 
              updatePkgs(["foo-1-2"], update_to=True)
@@ -5075,21 +5077,20 @@ class YumBase(object):
             txmbr.depends_on.append(rel)
 
     def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
-        """Process the current transaction.  This involves the
-        following steps:
-          - Download the packages
-          - Check the GPG signatures of the packages
-          - Run the test RPM transaction
-          - Run the RPM Transaction
-        The *callback*.event method is called at the start, and
-        between each step.
+        """Process the current transaction.  This involves the following steps:
+           - Download the packages
+           - Check the GPG signatures of the packages
+           - Run the test RPM transaction
+           - Run the RPM Transaction
+           The *callback*.event method is called at the start, and
+           between each step.
 
-        :param callback: a callback object, which must have an event
-           method
-        :param rpmTestDisplay: name of the display class to use in the
-           RPM test transaction
-        :param rpmDisplay: name of the display class to use in the rpm
-           transaction
+           :param callback: a callback object, which must have an event
+              method
+           :param rpmTestDisplay: name of the display class to use in the
+              RPM test transaction
+           :param rpmDisplay: name of the display class to use in the rpm
+              transaction
         """
 
         if not callback:

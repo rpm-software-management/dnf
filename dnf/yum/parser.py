@@ -28,10 +28,10 @@ _KEYCRE = re.compile(r"\$(\w+)")
 def varReplace(raw, vars):
     '''Perform variable replacement
 
-    @param raw: String to perform substitution on.  
-    @param vars: Dictionary of variables to replace. Key is variable name
-        (without $ prefix). Value is replacement string.
-    @return: Input raw string with substituted values.
+    :param raw: String to perform substitution on.
+    :param vars: Dictionary of variables to replace. Key is variable name
+      (without $ prefix). Value is replacement string.
+    :return: Input raw string with substituted values.
     '''
 
     done = []                      # Completed chunks to return

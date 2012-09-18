@@ -24,13 +24,14 @@ The configuration classes and routines in yum are splattered over too many
 places, hard to change and debug. The new structure here will replace that. Its
 goal is to:
 
-* accept configuration options from all three sources (the main
-config file, repo config files, command line switches)
+* accept configuration options from all three sources (the main config file,
+  repo config files, command line switches)
 * handle all the logic of storing those and producing related values.
 * returning configuration values.
 * optionally: asserting no value is overridden once it has been applied
   somewhere (e.g. do not let a new repo be initialized with different global
   cache path than an already existing one).
+
 """
 
 import dnf.const
