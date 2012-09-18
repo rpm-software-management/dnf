@@ -73,6 +73,7 @@ def mock_yum_base(*extra_repos):
     yumbase.dsCallback = mock.Mock()
     yumbase.mock_extra_repos = extra_repos
     yumbase._yumdb = MockYumDB()
+    yumbase.term = FakeTerm()
     return yumbase
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
@@ -113,6 +114,10 @@ class MockYumDB(mock.Mock):
 
     def assertLength(self, length):
         assert(len(self.db) == length)
+
+class FakeTerm(object):
+    def __init__(self):
+        self.MODE = {'bold'   : '', 'normal' : ''}
 
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):

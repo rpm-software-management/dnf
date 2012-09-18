@@ -42,8 +42,9 @@ from dnf.yum import _, P_
 from dnf.yum.rpmtrans import RPMTransaction
 import signal
 import yumcommands
-import dnf.queries
 import dnf.const
+import dnf.queries
+import dnf.sack
 
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg
 
@@ -70,6 +71,33 @@ class CliError(dnf.yum.Errors.YumBaseError):
     def __init__(self, args=''):
         dnf.yum.Errors.YumBaseError.__init__(self)
         self.args = args
+
+def print_versions(pkgs, yumbase):
+    def sm_ui_time(x):
+        return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
+    def sm_ui_date(x): # For changelogs, there is no time
+        return time.strftime("%Y-%m-%d", time.gmtime(x))
+
+    rpmdb_sack = dnf.sack.rpmdb_sack(yumbase)
+    done = False
+    for pkg in dnf.queries.installed_by_name(rpmdb_sack, pkgs):
+        if done: print ""
+        done = True
+        if pkg.epoch == '0':
+            ver = '%s-%s.%s' % (pkg.version, pkg.release, pkg.arch)
+        else:
+            ver = '%s:%s-%s.%s' % (pkg.epoch,
+                                   pkg.version, pkg.release, pkg.arch)
+        name = "%s%s%s" % (yumbase.term.MODE['bold'], pkg.name,
+                           yumbase.term.MODE['normal'])
+        print _("  Installed: %s-%s at %s") %(name, ver,
+                                           sm_ui_time(pkg.installtime))
+        print _("  Built    : %s at %s") % (pkg.packager,
+                                            sm_ui_time(pkg.buildtime))
+        # :hawkey, no changelist information yet
+        # print _("  Committed: %s at %s") % (pkg.committer,
+        #                                    sm_ui_date(pkg.committime))
+
 
 class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
     """This is the base class for yum cli."""
@@ -306,31 +334,15 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         if root == '/' and opts.conffile != pc.fn:
             self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
 
+        # configuration has been collected, accumulate it into sensible form
+        self.cache_c.prefix = self.conf.cachedir
+        self.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
+                                         self.conf.yumvar)
+        del self.conf.cachedir # ensure access to the value is done via cache_c
+
         if opts.version:
             self.conf.cache = 1
-            yum_progs = self.run_with_package_names
-            done = False
-            def sm_ui_time(x):
-                return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
-            def sm_ui_date(x): # For changelogs, there is no time
-                return time.strftime("%Y-%m-%d", time.gmtime(x))
-            for pkg in sorted(self.rpmdb.returnPackages(patterns=yum_progs)):
-                # We should only have 1 version of each...
-                if done: print ""
-                done = True
-                if pkg.epoch == '0':
-                    ver = '%s-%s.%s' % (pkg.version, pkg.release, pkg.arch)
-                else:
-                    ver = '%s:%s-%s.%s' % (pkg.epoch,
-                                           pkg.version, pkg.release, pkg.arch)
-                name = "%s%s%s" % (self.term.MODE['bold'], pkg.name,
-                                   self.term.MODE['normal'])
-                print _("  Installed: %s-%s at %s") %(name, ver,
-                                                   sm_ui_time(pkg.installtime))
-                print _("  Built    : %s at %s") % (pkg.packager,
-                                                    sm_ui_time(pkg.buildtime))
-                print _("  Committed: %s at %s") % (pkg.committer,
-                                                    sm_ui_date(pkg.committime))
+            print_versions(self.run_with_package_names, self)
             sys.exit(0)
 
         if opts.sleeptime is not None:
@@ -344,12 +356,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.cmdstring = dnf.const.PROGRAM_NAME + ' '
         for arg in self.args:
             self.cmdstring += '%s ' % arg
-
-        # configuration has been collected, accumulate it into sensible form
-        self.cache_c.prefix = self.conf.cachedir
-        self.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
-                                         self.conf.yumvar)
-        del self.conf.cachedir # ensure access to the value is done via cache_c
 
         try:
             self.parseCommands() # before we return check over the base command + args
