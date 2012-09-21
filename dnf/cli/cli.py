@@ -92,7 +92,7 @@ def print_versions(pkgs, yumbase):
                            yumbase.term.MODE['normal'])
         print _("  Installed: %s-%s at %s") %(name, ver,
                                            sm_ui_time(pkg.installtime))
-        print _("  Built    : %s at %s") % (pkg.packager,
+        print _("  Built    : %s at %s") % (pkg.packager if pkg.packager else "",
                                             sm_ui_time(pkg.buildtime))
         # :hawkey, no changelist information yet
         # print _("  Committed: %s at %s") % (pkg.committer,
