@@ -1,5 +1,5 @@
-%global gitrev 9da1268
-%global hawkey_version 0.2.10-1
+%global gitrev 832ecd1
+%global hawkey_version 0.2.11-3
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -47,6 +47,11 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Fri Sep 21 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.12-1.git832ecd1
+- fix 'dnf --version'. (RhBug: 857710)
+- Latest hawkey compatibilities.
+- Run 'make check' when building the RPM.
+
 * Thu Sep 13 2012 Aleš Kozumplík <akozumpl@redhat.com> - 0.2.11-1.git9da1268
 - Make 'dnf help' work. (RhBug: 853923)
 - Add the man page. (RhBug: 853923)
