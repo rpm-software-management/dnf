@@ -2271,12 +2271,6 @@ class YumBase(object):
                 self.verbose_logger.log(logginglevels.DEBUG_4,
                     _('%s removed'), fn)
 
-    def cleanHeaders(self):
-        """Delete the header files from the yum cache."""
-
-        exts = ['hdr']
-        return self._cleanFiles(exts, 'hdrdir', 'header')
-
     def cleanPackages(self):
         """Delete the package files from the yum cache."""
 

@@ -120,7 +120,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.EraseCommand())
         # self.registerCommand(yumcommands.GroupsCommand())
         self.registerCommand(yumcommands.MakeCacheCommand())
-        # self.registerCommand(yumcommands.CleanCommand())
+        self.registerCommand(yumcommands.CleanCommand())
         self.registerCommand(yumcommands.ProvidesCommand())
         # self.registerCommand(yumcommands.CheckUpdateCommand())
         # self.registerCommand(yumcommands.SearchCommand())
@@ -1399,8 +1399,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                metadata and mirror lists were downloaded for each
                repository.
              packages = Eliminate any cached packages
-             headers = Eliminate the header files, which old versions
-               of yum used for dependency resolution
              metadata = Eliminate all of the files which yum uses to
                determine the remote availability of packages
              dbcache = Eliminate the sqlite cache used for faster
@@ -1417,8 +1415,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        hdrcode = pkgcode = xmlcode = dbcode = expccode = 0
-        pkgresults = hdrresults = xmlresults = dbresults = expcresults = []
+        pkgcode = xmlcode = dbcode = expccode = 0
+        pkgresults = xmlresults = dbresults = expcresults = []
         msg = self.fmtKeyValFill(_('Cleaning repos: '),
                         ' '.join([ x.id for x in self.repos.listEnabled()]))
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
@@ -1426,22 +1424,18 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                 _('Cleaning up Everything'))
             pkgcode, pkgresults = self.cleanPackages()
-            hdrcode, hdrresults = self.cleanHeaders()
             xmlcode, xmlresults = self.cleanMetadata()
             dbcode, dbresults = self.cleanSqlite()
             rpmcode, rpmresults = self.cleanRpmDB()
             self.plugins.run('clean')
 
-            code = hdrcode + pkgcode + xmlcode + dbcode + rpmcode
-            results = (hdrresults + pkgresults + xmlresults + dbresults +
+            code = pkgcode + xmlcode + dbcode + rpmcode
+            results = (pkgresults + xmlresults + dbresults +
                        rpmresults)
             for msg in results:
                 self.logger.debug(msg)
             return code, []
 
-        if 'headers' in userlist:
-            self.logger.debug(_('Cleaning up Headers'))
-            hdrcode, hdrresults = self.cleanHeaders()
         if 'packages' in userlist:
             self.logger.debug(_('Cleaning up Packages'))
             pkgcode, pkgresults = self.cleanPackages()
@@ -1461,8 +1455,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             self.logger.debug(_('Cleaning up plugins'))
             self.plugins.run('clean')
 
-        code = hdrcode + pkgcode + xmlcode + dbcode + expccode
-        results = hdrresults + pkgresults + xmlresults + dbresults + expcresults
+        code = pkgcode + xmlcode + dbcode + expccode
+        results = pkgresults + xmlresults + dbresults + expcresults
         for msg in results:
             self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
         return code, []

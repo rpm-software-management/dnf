@@ -138,7 +138,7 @@ def checkCleanArg(base, basecmd, extcmds):
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
     """
-    VALID_ARGS = ('headers', 'packages', 'metadata', 'dbcache', 'plugins',
+    VALID_ARGS = ('packages', 'metadata', 'dbcache', 'plugins',
                   'expire-cache', 'rpmdb', 'all')
 
     if len(extcmds) == 0:
@@ -1001,7 +1001,7 @@ class CleanCommand(YumCommand):
 
         :return: a usage string for this command
         """
-        return "[headers|packages|metadata|dbcache|plugins|expire-cache|all]"
+        return "[packages|metadata|dbcache|plugins|expire-cache|all]"
 
     def getSummary(self):
         """Return a one line summary of this command.
