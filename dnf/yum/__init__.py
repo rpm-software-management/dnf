@@ -1613,8 +1613,7 @@ class YumBase(object):
                     yumdb_info.from_repo_timestamp = lp_mtime
                 except Exception:
                     pass
-
-            if hasattr(rpo.repo, 'repoXML'):
+            elif hasattr(rpo.repo, 'repoXML'):
                 md = rpo.repo.repoXML
                 if md and md.revision is not None:
                     yumdb_info.from_repo_revision  = str(md.revision)
