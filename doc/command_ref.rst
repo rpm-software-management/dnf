@@ -6,7 +6,7 @@
 Synopsis
 ========
 
-``dnf [options] <command> <[args]>``
+``dnf [options] <command> [<args>...]``
 
 ===========
 Description
@@ -18,6 +18,7 @@ speed and defining strict API and plugin interface.
 
 Available commands are:
 
+* clean
 * downgrade
 * erase
 * help
@@ -85,6 +86,35 @@ Commands
 For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
+
+-------------
+Clean Command
+-------------
+Performs cleanup of temporary files for the currently enabled repositories.
+
+``dnf clean dbcache``
+    Removes cache files generated from the repository metadata. This forces DNF
+    to regenerate the cache files the next time it is run.
+
+``dnf clean expire-cache``
+    Removes local cookie files saying when the metadata and mirrorlists were
+    downloaded for each repo. DNF will revalidate the cache for each repo the
+    next time it is used.
+
+``dnf clean metadata``
+    Removes repository metadata. Those are the files which DNF uses to determine
+    the remote availability of packages. Using this option will make DNF
+    download all the metadata the next time it is run.
+
+``dnf clean packages``
+    Removes any cached packages from the system.  Note that packages are not
+    automatically deleted after they are downloaded.
+
+``dnf clean plugins``
+    Tells all enabled plugins to eliminate their cached data.
+
+``dnf clean all``
+    Does all of the above.
 
 -----------------
 Downgrade Command
