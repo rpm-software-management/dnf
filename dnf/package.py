@@ -39,6 +39,11 @@ class Package(hawkey.Package):
     def chksum(self):
         if self._chksum:
             return self._chksum
+        if self.from_cmdline:
+            chksum_type = yum.misc.get_default_chksum_type()
+            chksum_val = yum.misc.checksum(chksum_type, self.location)
+            return (hawkey.chksum_type(chksum_type),
+                    binascii.unhexlify(chksum_val))
         return super(Package, self).chksum
 
     @chksum.setter

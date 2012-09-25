@@ -52,25 +52,10 @@ try:
     import gpgme.editutil
 except ImportError:
     gpgme = None
-try:
-    import hashlib
-    _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
-    _default_checksums = ['sha256']
-except ImportError:
-    # Python-2.4.z ... gah!
-    import sha
-    import md5
-    _available_checksums = set(['md5', 'sha1'])
-    _default_checksums = ['sha1']
-    class hashlib:
 
-        @staticmethod
-        def new(algo):
-            if algo == 'md5':
-                return md5.new()
-            if algo == 'sha1':
-                return sha.new()
-            raise ValueError, "Bad checksum type"
+import hashlib
+_available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
+_default_checksums = ['sha256']
 
 from Errors import MiscError
 # These are API things, so we can't remove them even if they aren't used here.
@@ -329,6 +314,8 @@ class AutoFileChecksums:
     def read(self, size=-1):
         return self.checksums.read(self._fo, size)
 
+def get_default_chksum_type():
+    return _default_checksums[0]
 
 def checksum(sumtype, file, CHUNK=2**16, datasize=None):
     """takes filename, hand back Checksum of it

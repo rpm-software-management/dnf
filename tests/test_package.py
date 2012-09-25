@@ -25,6 +25,7 @@ import unittest
 import binascii
 
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
+TOUR_SHA256 = binascii.unhexlify("ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62")
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
@@ -72,6 +73,13 @@ class PackageTest(unittest.TestCase):
         local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
+
+    def test_chksum_local(self):
+        self.sack.create_cmdline_repo()
+        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
+        chksum = local_pkg.chksum
+        self.assertEqual(chksum[0], hawkey.CHKSUM_SHA256)
+        self.assertEqual(chksum[1], TOUR_SHA256)
 
     def test_verify_installed(self):
         pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
