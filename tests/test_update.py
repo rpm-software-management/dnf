@@ -24,7 +24,7 @@ from dnf.queries import \
 class Update(base.ResultTestCase):
     def test_update(self):
         """ Simple update. """
-        yumbase = base.mock_yum_base("updates")
+        yumbase = base.MockYumBase("updates")
         ret = yumbase.update(pattern="pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
         self.assertEqual(len(new_versions), 1)
@@ -34,21 +34,21 @@ class Update(base.ResultTestCase):
 
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """
-        yumbase = base.mock_yum_base("main")
+        yumbase = base.MockYumBase("main")
         ret = yumbase.update(pattern="mrkite") # no "mrkite" installed
         self.assertEqual(ret, [])
         self.assertResult(yumbase, installed(yumbase.sack))
 
     def test_update_all(self):
         """ Update all you can. """
-        yumbase = base.mock_yum_base("main", "updates")
+        yumbase = base.MockYumBase("main", "updates")
         sack = yumbase.sack
         ret = yumbase.update()
         expected = available_by_name(sack, "pepper", latest_only=True)
         self.assertItemsEqual((txmem.po for txmem in ret), expected)
 
     def test_update_local(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.MockYumBase()
         sack = yumbase.sack
         ret = yumbase.update_local(base.TOUR_51_PKG_PATH)
         self.assertEqual(len(ret), 1)

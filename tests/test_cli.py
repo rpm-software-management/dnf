@@ -13,7 +13,7 @@ OUTPUT="""\
 
 class VersionString(unittest.TestCase):
     def test_print_versions(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.MockYumBase()
         with mock.patch('sys.stdout') as stdout,\
                 mock.patch('dnf.sack.rpmdb_sack', return_value=yumbase.sack):
             dnf.cli.cli.print_versions(['pepper', 'tour'], yumbase)

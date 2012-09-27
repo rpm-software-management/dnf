@@ -22,9 +22,9 @@ import unittest
 class Sanity(unittest.TestCase):
     def test_sanity(self):
         assert(os.access(base.repo("@System.repo"), os.R_OK))
-        sack = base.mock_yum_base().sack
+        sack = base.MockYumBase().sack
         assert(sack)
         self.assertEqual(len(sack), base.SYSTEM_NSOLVABLES)
 
-        sack2 = base.mock_yum_base("main", "updates").sack
+        sack2 = base.MockYumBase("main", "updates").sack
         self.assertEqual(len(sack2), base.TOTAL_NSOLVABLES)

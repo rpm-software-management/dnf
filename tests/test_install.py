@@ -22,7 +22,7 @@ import hawkey
 
 class InstallMultilibAll(base.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
         self.yumbase.conf.multilib_policy = "all"
 
     def test_not_available(self):
@@ -43,7 +43,7 @@ class InstallMultilibAll(base.ResultTestCase):
 
 class MultilibAllMainRepo(base.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.yumbase.conf.multilib_policy = "all"
 
@@ -64,7 +64,7 @@ class MultilibAllMainRepo(base.ResultTestCase):
 
 class MultilibBestMainRepo(base.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.assertEqual(self.yumbase.conf.multilib_policy, "best")
 

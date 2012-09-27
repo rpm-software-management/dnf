@@ -48,7 +48,7 @@ class YumBaseTest(unittest.TestCase):
         self.assertFalse(os.access(lockfile, os.F_OK))
 
     def test_push_userinstalled(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.MockYumBase()
         # setup:
         yumbase.conf.clean_requirements_on_remove = True
         pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
@@ -69,7 +69,7 @@ def ret_pkgid(self):
 
 class VerifyTransactionTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
     @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
@@ -97,7 +97,7 @@ class VerifyTransactionTest(unittest.TestCase):
 
 class InstallReason(base.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
 
     def test_reason(self):
         self.yumbase.install(pattern="mrkite")
@@ -110,7 +110,7 @@ class InstallReason(base.ResultTestCase):
 
 class CleanTest(unittest.TestCase):
     def test_clean_binary_cache(self):
-        yumbase = base.mock_yum_base("main")
+        yumbase = base.MockYumBase("main")
         with mock.patch('os.access', return_value=True) as access,\
                 mock.patch.object(yumbase, "_cleanFilelist") as _:
             yumbase.clean_binary_cache()

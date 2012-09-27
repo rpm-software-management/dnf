@@ -20,7 +20,7 @@ import dnf.queries
 
 class Downgrade(base.ResultTestCase):
     def test_downgrade_local(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.MockYumBase()
         sack = yumbase.sack
 
         ret = yumbase.downgrade_local(base.TOUR_44_PKG_PATH)
@@ -29,7 +29,7 @@ class Downgrade(base.ResultTestCase):
         self.assertResult(yumbase, new_set)
 
     def test_downgrade(self):
-        yumbase = base.mock_yum_base("main")
+        yumbase = base.MockYumBase("main")
         sack = yumbase.sack
         ret = yumbase.downgrade(pattern="tour")
         self.assertEqual(len(ret), 1)

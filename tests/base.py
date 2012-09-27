@@ -67,9 +67,6 @@ def mock_packages():
     return [create_mock_package("within%s" % chr(i), 2)
             for i in range(ord('A'), ord('I'))]
 
-def mock_yum_base(*extra_repos):
-    return MockYumBase(extra_repos)
-
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
         hawkey.test.TestSackMixin.__init__(self, repo_dir)
@@ -84,7 +81,7 @@ class MockYumBase(dnf.yum.YumBase):
         "x86_64". This is to get the same behavior when running unit tests on
         different arches.
     """
-    def __init__(self, extra_repos):
+    def __init__(self, *extra_repos):
         super(MockYumBase, self).__init__()
         self._repos =dnf.yum.RepoStorage(self)
         for r in extra_repos:

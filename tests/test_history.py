@@ -34,7 +34,7 @@ class TestedHistory(dnf.yum.history.YumHistory):
 
 class History(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.mock_yum_base("main")
+        self.yumbase = base.MockYumBase("main")
         self.sack = self.yumbase.sack
         self.history = TestedHistory()
 

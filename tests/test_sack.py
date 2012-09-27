@@ -23,7 +23,7 @@ import unittest
 
 class Sack(unittest.TestCase):
     def test_rpmdb_version(self):
-        yumbase = base.mock_yum_base()
+        yumbase = base.MockYumBase()
         sack = yumbase.sack
         yumdb = mock.MagicMock()
         version = yumbase.sack.rpmdb_version(yumdb)

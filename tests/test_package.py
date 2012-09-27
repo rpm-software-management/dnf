@@ -31,7 +31,7 @@ TOUR_SIZE = 2317
 
 class PackageTest(unittest.TestCase):
     def setUp(self):
-        yumbase = base.mock_yum_base("main")
+        yumbase = base.MockYumBase("main")
         self.sack = yumbase.sack
         self.pkg = dnf.queries.available_by_name(self.sack, "pepper")[0]
 
