@@ -17,6 +17,7 @@
 
 import base
 import binascii
+import dnf.const
 import dnf.queries
 import dnf.yum
 import dnf.yum.constants
@@ -106,3 +107,18 @@ class InstallReason(base.ResultTestCase):
         pkg_reasons = [(txmbr.po.name, txmbr.reason) for txmbr in new_pkgs]
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
+
+class CleanTest(unittest.TestCase):
+    def test_clean_binary_cache(self):
+        yumbase = base.mock_yum_base("main")
+        with mock.patch('os.access', return_value=True) as access,\
+                mock.patch.object(yumbase, "_cleanFilelist") as _:
+            yumbase.clean_binary_cache()
+        self.assertEqual(len(access.call_args_list), 3)
+        fname = access.call_args_list[0][0][0]
+        assert(fname.startswith(dnf.const.TMPDIR))
+        assert(fname.endswith(hawkey.SYSTEM_REPO_NAME + '.solv'))
+        fname = access.call_args_list[1][0][0]
+        assert(fname.endswith('main.solv'))
+        fname = access.call_args_list[2][0][0]
+        assert(fname.endswith('main-filenames.solvx'))

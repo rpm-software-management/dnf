@@ -2277,12 +2277,20 @@ class YumBase(object):
         exts = ['rpm']
         return self._cleanFiles(exts, 'pkgdir', 'package')
 
-    def cleanSqlite(self):
-        """Delete the sqlite files from the yum cache."""
+    def clean_binary_cache(self):
+        """ Delete the binary cache files from the DNF cache.
 
-        exts = ['sqlite', 'sqlite.bz2', 'sqlite.gz', 'sqlite.xz',
-                'sqlite-journal']
-        return self._cleanFiles(exts, 'cachedir', 'sqlite')
+            IOW, clean up the .solv and .solvx hawkey cache files.
+        """
+        files = [os.path.join(self.cache_c.cachedir,
+                              hawkey.SYSTEM_REPO_NAME + ".solv")]
+        for repo in self.repos.listEnabled():
+            basename = os.path.join(self.cache_c.cachedir, repo.id)
+            files.append(basename + ".solv")
+            files.append(basename + "-filenames.solvx")
+        files = filter(lambda f: os.access(f, os.F_OK), files)
+
+        return self._cleanFilelist('dbcache', files)
 
     def cleanMetadata(self):
         """Delete the metadata files from the yum cache."""

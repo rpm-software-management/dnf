@@ -1425,7 +1425,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 _('Cleaning up Everything'))
             pkgcode, pkgresults = self.cleanPackages()
             xmlcode, xmlresults = self.cleanMetadata()
-            dbcode, dbresults = self.cleanSqlite()
+            dbcode, dbresults = self.clean_binary_cache()
             rpmcode, rpmresults = self.cleanRpmDB()
             self.plugins.run('clean')
 
@@ -1444,7 +1444,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             xmlcode, xmlresults = self.cleanMetadata()
         if 'dbcache' in userlist or 'metadata' in userlist:
             self.logger.debug(_('Cleaning up database cache'))
-            dbcode, dbresults =  self.cleanSqlite()
+            dbcode, dbresults =  self.clean_binary_cache()
         if 'expire-cache' in userlist or 'metadata' in userlist:
             self.logger.debug(_('Cleaning up expire-cache metadata'))
             expccode, expcresults = self.cleanExpireCache()
