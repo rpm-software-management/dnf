@@ -20,6 +20,7 @@ import dnf.queries
 import dnf.sack
 import dnf.yum
 import dnf.yum.constants
+import dnf.yum.yumRepo
 import hawkey.test
 import mock
 import os
@@ -67,14 +68,7 @@ def mock_packages():
             for i in range(ord('A'), ord('I'))]
 
 def mock_yum_base(*extra_repos):
-    yumbase = MockYumBase()
-    yumbase.conf = FakeConf()
-    yumbase.tsInfo = dnf.yum.transactioninfo.TransactionData()
-    yumbase.dsCallback = mock.Mock()
-    yumbase.mock_extra_repos = extra_repos
-    yumbase._yumdb = MockYumDB()
-    yumbase.term = FakeTerm()
-    return yumbase
+    return MockYumBase(extra_repos)
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
@@ -90,6 +84,23 @@ class MockYumBase(dnf.yum.YumBase):
         "x86_64". This is to get the same behavior when running unit tests on
         different arches.
     """
+    def __init__(self, extra_repos):
+        super(MockYumBase, self).__init__()
+        self._repos =dnf.yum.RepoStorage(self)
+        for r in extra_repos:
+            repo = dnf.yum.yumRepo.YumRepository(r)
+            repo.enable()
+            self._repos.add(repo)
+
+        self._yumdb = MockYumDB()
+        self.conf = FakeConf()
+        self.dsCallback = mock.Mock()
+        self.extra_repos = extra_repos
+        self.tsInfo = dnf.yum.transactioninfo.TransactionData()
+        self.term = FakeTerm()
+        self.cache_c.prefix = "/tmp"
+        self.cache_c.suffix = ""
+
     @property
     def sack(self):
         if self._sack:
@@ -98,11 +109,15 @@ class MockYumBase(dnf.yum.YumBase):
         # class and a YumBase reference.
         self._sack = TestSack(repo_dir(), self)
         self._sack.load_system_repo()
-        for repo in self.mock_extra_repos:
+        for repo in self.extra_repos:
             fn = "%s.repo" % repo
             self._sack.load_test_repo(repo, fn)
 
         return self._sack
+
+    @property
+    def repos(self):
+        return self._repos
 
 class MockYumDB(mock.Mock):
     def __init__(self):
