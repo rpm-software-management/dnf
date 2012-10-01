@@ -58,7 +58,10 @@ class TestInput(unittest.TestCase):
             characters. If this is not the case we might not need i18n.input()
             as a raw_input() wrapper.
          """
-        self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
+        if sys.stdout.isatty():
+            # Only works when stdout is a terminal (and not captured in some
+            # way, for instance when nosetests is run without the -s switch).
+            self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
 
     @mock.patch('sys.stdout')
     @mock.patch('__builtin__.raw_input', lambda x: x)
