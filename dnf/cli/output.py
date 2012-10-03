@@ -21,15 +21,15 @@ import logging
 import types
 import gettext
 import pwd
+import re
 import rpm
-
-import re # For YumTerm
-
 from weakref import proxy as weakref
 
 from urlgrabber.progress import TextMeter
 import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
+
+import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8, to_unicode
 import dnf.yum.misc
@@ -1202,13 +1202,10 @@ class YumOutput:
             if highlight is None:
                 highlight = self.conf.color_search_match
             msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
-
         print msg
 
-        return # :hawkey
-
         if verbose is None:
-            verbose = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+            verbose = logginglevels.is_stdout_verbose(self.conf.debuglevel)
         if not verbose:
             return
 

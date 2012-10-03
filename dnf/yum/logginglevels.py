@@ -198,3 +198,7 @@ def setLoggingApp(app):
     if syslog:
         syslogformatter = logging.Formatter(app + "[%(process)d]: %(message)s")
         syslog.setFormatter(syslogformatter)
+
+def is_stdout_verbose(debuglevel):
+    loglevel = logLevelFromDebugLevel(debuglevel)
+    return loglevel <= logging.DEBUG
