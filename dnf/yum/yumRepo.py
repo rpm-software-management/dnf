@@ -1562,13 +1562,14 @@ Insufficient space in download directory %s
     def _preload_file(self, fn, destfn):
         """attempts to copy the file, if possible"""
         # don't copy it if the copy in our users dir is newer or equal
-        if not os.path.exists(fn):
-            return False
-        if os.path.exists(destfn):
+        try:
             if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
                 return False
-        shutil.copy2(fn, destfn)
-        return True
+            shutil.copy2(fn, destfn)
+        except EnvironmentError:
+            return False
+        else:
+            return True
 
     def _preload_file_from_system_cache(self, filename, subdir='',
                                         destfn=None):
