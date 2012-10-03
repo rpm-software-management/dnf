@@ -54,7 +54,8 @@ def installed_but(sack, *args):
 # mock objects
 
 def create_mock_package(name, major_version):
-    pkg = mock.Mock(spec_set=['pkgtup', 'name', 'reponame', 'repoid',
+    pkg = mock.Mock(spec_set=['pkgtup', 'summary', 'url', 'name',
+                              'reponame', 'repoid',
                               'arch', 'evr', 'state', 'reason'])
     pkg.name = name
     pkg.reponame = pkg.repoid = 'main'

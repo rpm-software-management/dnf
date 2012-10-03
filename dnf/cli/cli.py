@@ -31,6 +31,7 @@ from weakref import proxy as weakref
 
 import output
 import shell
+import dnf.match_counter
 import dnf.yum
 import dnf.yum.Errors
 import dnf.yum.logginglevels
@@ -45,6 +46,7 @@ import yumcommands
 import dnf.const
 import dnf.queries
 import dnf.sack
+import hawkey
 
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg
 
@@ -123,7 +125,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.CleanCommand())
         self.registerCommand(yumcommands.ProvidesCommand())
         # self.registerCommand(yumcommands.CheckUpdateCommand())
-        # self.registerCommand(yumcommands.SearchCommand())
+        self.registerCommand(yumcommands.SearchCommand())
         # self.registerCommand(yumcommands.UpgradeCommand())
         # self.registerCommand(yumcommands.ResolveDepCommand())
         # self.registerCommand(yumcommands.ShellCommand())
@@ -1162,8 +1164,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         return ypl
 
     def search(self, args):
-        """Search for simple text tags in a package object. This is a
-        cli wrapper method for the module search function.
+        """Search for simple text tags in a package object.
 
         :param args: list of names or wildcards to search for.
            Normally this method will begin by searching the package
@@ -1182,92 +1183,43 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
 
-        # call the yum module search function with lists of tags to search
-        # and what to search for
-        # display the list of matches
-
-        searchlist = ['name', 'summary', 'description', 'url']
-        dups = self.conf.showdupesfromrepos
-        args = map(to_unicode, args)
-
-        okeys = set()
-        akeys = set() # All keys, used to see if nothing matched
-        mkeys = set() # "Main" set of keys for N/S search (biggest term. hit).
-        pos   = set()
-
-        def _print_match_section(text):
+        def _print_match_section(text, keys):
             # Print them in the order they were passed
             used_keys = [arg for arg in args if arg in keys]
             print self.fmtSection(text % ", ".join(used_keys))
 
-        #  First try just the name/summary fields, and if we get any hits
-        # don't do the other stuff. Unless the user overrides via. "all".
+        # prepare the input
+        dups = self.conf.showdupesfromrepos
+        search_all = False
         if len(args) > 1 and args[0] == 'all':
             args.pop(0)
-        else:
-            matching = self.searchGenerator(['name', 'summary'], args,
-                                            showdups=dups, keys=True)
-            for (po, keys, matched_value) in matching:
-                if keys != okeys:
-                    if akeys:
-                        if len(mkeys) == len(args):
-                            break
-                        print ""
-                    else:
-                        mkeys = set(keys)
-                    _print_match_section(_('N/S Matched: %s'))
-                    okeys = keys
-                pos.add(po)
-                akeys.update(keys)
-                self.matchcallback(po, matched_value, args)
+            search_all = True
 
-        matching = self.searchGenerator(searchlist, args,
-                                        showdups=dups, keys=True)
-
-        okeys = set()
-
-        #  If we got a hit with just name/summary then we only care about hits
-        # with _more_ search terms. Thus. if we hit all our search terms. do
-        # nothing.
-        if len(mkeys) == len(args):
-            print ""
-            if len(args) == 1:
-                msg = _('  Name and summary matches %sonly%s, use "search all" for everything.')
-            else:
-                msg = _('  Full name and summary matches %sonly%s, use "search all" for everything.')
-            print msg % (self.term.MODE['bold'], self.term.MODE['normal'])
-            matching = []
-
-        for (po, keys, matched_value) in matching:
-            #  Don't print matches for "a", "b", "c" on N+S+D when we already
-            # matched that on just N+S.
-            if len(keys) <= len(mkeys):
-                continue
-             #  Just print the highest level of full matches, when we did
-             # minimal matches. Ie. "A", "B" match N+S, just print the
-             # "A", "B", "C", "D" full match, and not the "B", "C", "D" matches.
-            if mkeys and len(keys) < len(okeys):
-                continue
-
-            if keys != okeys:
-                if akeys:
-                    print ""
-                _print_match_section(_('Matched: %s'))
-                okeys = keys
-                akeys.update(keys)
-            self.matchcallback(po, matched_value, args)
-
-        if mkeys and len(mkeys) != len(args):
-            print ""
-            print _('  Name and summary matches %smostly%s, use "search all" for everything.') % (self.term.MODE['bold'], self.term.MODE['normal'])
-
+        counter = dnf.match_counter.MatchCounter()
         for arg in args:
-            if arg not in akeys:
-                self.logger.warning(_('Warning: No matches found for: %s'), arg)
+            self.search_counted(counter, 'name', arg)
+            self.search_counted(counter, 'summary', arg)
 
-        if not akeys:
+        section_text = _('N/S Matched: %s')
+        ns_only = True
+        if search_all or counter.total() == 0:
+            section_text = _('Matched: %s')
+            ns_only = False
+            for arg in args:
+                self.search_counted(counter, 'description', arg)
+                self.search_counted(counter, 'url', arg)
+
+        matched_needles = None
+        for pkg in counter.sorted(reverse=True):
+            if matched_needles != counter.matched_needles(pkg):
+                matched_needles = counter.matched_needles(pkg)
+                _print_match_section(section_text, matched_needles)
+            self.matchcallback(pkg, counter.matched_haystacks(pkg), args)
+
+        if len(counter) == 0:
+            self.logger.warning(_('Warning: No matches found for: %s'), arg)
             return 0, [_('No Matches found')]
-        return 0, matching
+        return 0, []
 
     def deplist(self, args):
         """Print out a formatted list of dependencies for a list of

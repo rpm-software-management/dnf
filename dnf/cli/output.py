@@ -1205,6 +1205,8 @@ class YumOutput:
 
         print msg
 
+        return # :hawkey
+
         if verbose is None:
             verbose = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if not verbose:

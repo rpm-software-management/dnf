@@ -18,6 +18,7 @@
 import base
 import binascii
 import dnf.const
+import dnf.match_counter
 import dnf.queries
 import dnf.yum
 import dnf.yum.constants
@@ -57,6 +58,21 @@ class YumBaseTest(unittest.TestCase):
         # test:
         yumbase._push_userinstalled(goal)
         goal.userinstalled.assert_called_with(pkg)
+
+# test YumBase methods that need the sack
+class MockYumBaseTest(unittest.TestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("main")
+
+    def test_search_counted(self):
+        counter = dnf.match_counter.MatchCounter()
+        self.yumbase.search_counted(counter, 'summary', 'ation')
+        self.assertEqual(len(counter), 2)
+        haystacks = set()
+        for pkg in counter:
+            haystacks.update(counter.matched_haystacks(pkg))
+        self.assertItemsEqual(haystacks, ["It's an invitation.",
+                                          "Make a reservation."])
 
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
