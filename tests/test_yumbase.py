@@ -74,6 +74,11 @@ class MockYumBaseTest(unittest.TestCase):
         self.assertItemsEqual(haystacks, ["It's an invitation.",
                                           "Make a reservation."])
 
+    def test_search_counted_glob(self):
+        counter = dnf.match_counter.MatchCounter()
+        self.yumbase.search_counted(counter, 'summary', '*invit*')
+        self.assertEqual(len(counter), 1)
+
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():

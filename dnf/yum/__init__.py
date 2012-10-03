@@ -2553,6 +2553,8 @@ class YumBase(object):
 
     def search_counted(self, counter, attr, needle):
         fdict = {'%s__substr' % attr : needle}
+        if queries.is_glob_pattern(needle):
+            fdict = {'%s__glob' % attr : needle}
         q = hawkey.Query(self.sack).filter(**fdict)
         map(lambda pkg: counter.add(pkg, attr, needle), q.run())
         return counter

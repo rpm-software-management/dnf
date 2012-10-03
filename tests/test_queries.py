@@ -21,6 +21,11 @@ import hawkey
 import unittest
 
 class Queries(unittest.TestCase):
+    def test_is_glob_pattern(self):
+        assert(dnf.queries.is_glob_pattern("all*.ext"))
+        assert(dnf.queries.is_glob_pattern("all?.ext"))
+        assert(not dnf.queries.is_glob_pattern("not.ext"))
+
     def test_duplicities(self):
         yumbase = base.MockYumBase()
         pepper = dnf.queries.installed_by_name(yumbase.sack, "pepper")

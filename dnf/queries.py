@@ -22,7 +22,7 @@ import hawkey
 import itertools
 import types
 
-def _is_glob_pattern(pattern):
+def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
 def _construct_result(sack, patterns, ignore_case,
@@ -46,7 +46,7 @@ def _construct_result(sack, patterns, ignore_case,
         patterns = [patterns]
     elif patterns is None:
         patterns = []
-    glob = len(filter(_is_glob_pattern, patterns)) > 0
+    glob = len(filter(is_glob_pattern, patterns)) > 0
 
     flags = []
     q = hawkey.Query(sack)
@@ -95,7 +95,7 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
     if type(patterns) in types.StringTypes:
         patterns = [patterns]
 
-    glob = len(filter(_is_glob_pattern, patterns)) > 0
+    glob = len(filter(is_glob_pattern, patterns)) > 0
     flags = []
     q = hawkey.Query(sack)
     if ignore_case:
