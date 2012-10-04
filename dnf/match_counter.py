@@ -58,8 +58,9 @@ class MatchCounter(dict):
     def matched_needles(self, pkg):
         return set(map(lambda m: m[1], self[pkg]))
 
-    def sorted(self, reverse=False):
-        return sorted(self, key=self._key_func(), reverse=reverse)
+    def sorted(self, reverse=False, limit_to=None):
+        keys = limit_to if limit_to else self.iterkeys()
+        return sorted(keys, key=self._key_func(), reverse=reverse)
 
     def total(self):
         return reduce(lambda total, pkg: total + len(self[pkg]) ,self, 0)

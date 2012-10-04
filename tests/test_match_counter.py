@@ -46,6 +46,13 @@ class TestCounter(unittest.TestCase):
         self.assertEqual(counter.sorted(), [2, 3, 1])
         self.assertEqual(counter.sorted(reverse=True), [1, 3,2])
 
+    def test_sorted_limit(self):
+        counter = dnf.match_counter.MatchCounter()
+        counter.add(1, 'name', '')
+        counter.add(2, 'url', '')
+        counter.add(3, 'description', '')
+        self.assertSequenceEqual(counter.sorted(limit_to=[1,2]), [2,1])
+
     def test_total(self):
         counter = dnf.match_counter.MatchCounter()
         counter.add(3, 'summary', 'humbert')

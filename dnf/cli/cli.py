@@ -1210,7 +1210,11 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 self.search_counted(counter, 'url', arg)
 
         matched_needles = None
-        for pkg in counter.sorted(reverse=True):
+        limit = None
+        if not self.conf.showdupesfromrepos:
+            limit = hawkey.Query(self.sack).filter(pkg=counter.iterkeys())
+            limit = limit.filter(latest=True)
+        for pkg in counter.sorted(reverse=True, limit_to=limit):
             if matched_needles != counter.matched_needles(pkg):
                 matched_needles = counter.matched_needles(pkg)
                 _print_match_section(section_text, matched_needles)
