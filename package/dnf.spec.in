@@ -1,10 +1,10 @@
-%global gitrev 832ecd1
-%global hawkey_version 0.2.11-3
+%global gitrev da60a96
+%global hawkey_version 0.2.12-2
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -50,6 +50,12 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Fri Oct 5 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.13-1.gitda60a96
+- fix: traceback in YumBase.verifyTransaction() for local .rpms.
+- Enable the 'clean' command. (RhBug: 853940)
+- download no sqlite metadata.
+- Reenable the search command. (RhBug: 853940)
+
 * Fri Sep 21 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.12-1.git832ecd1
 - fix 'dnf --version'. (RhBug: 857710)
 - Latest hawkey compatibilities.
