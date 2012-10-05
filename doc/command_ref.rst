@@ -29,6 +29,7 @@ Available commands are:
 * makecache
 * provides
 * repolist
+* search
 * update
 
 See the reference for each command below.
@@ -221,6 +222,16 @@ Repolist Command
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
     detailed information when ``-v`` option is used.
+
+--------------
+Search Command
+--------------
+``dnf [options] search [all] <keywords>...``
+    Search package metadata for the keywords. Keywords are matched as
+    case-sensitive substrings, globbing is supported. By default the command
+    will only look at package names and summaries, failing that (or whenever
+    ``all`` was givin as an argument) it will match against package descriptions
+    and URLs. The result is sorted from the most relevant results to the least.
 
 --------------
 Update Command
