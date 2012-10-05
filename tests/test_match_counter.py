@@ -20,6 +20,12 @@ import dnf.match_counter
 import unittest
 
 class TestCounter(unittest.TestCase):
+    def test_canonize_string_set(self):
+        a = ['f', 'p']
+        b = ['p']
+        self.assertLess(dnf.match_counter._canonize_string_set(b, 2),
+                        dnf.match_counter._canonize_string_set(a, 2))
+
     def test_matched(self):
         pkg = base.create_mock_package("humbert", 1)
         pkg.url = url = "http://humbert.com"
@@ -46,6 +52,26 @@ class TestCounter(unittest.TestCase):
         self.assertEqual(counter.sorted(), [2, 3, 1])
         self.assertEqual(counter.sorted(reverse=True), [1, 3,2])
 
+    def test_sorted_with_needles(self):
+        # the same needles should be listed together:
+        counter = dnf.match_counter.MatchCounter()
+        counter.add(1, 'summary', 'grin')
+        counter.add(2, 'summary', 'foolish')
+        counter.add(3, 'summary', 'grin')
+        counter.add(4, 'summary', 'grin')
+
+        srt = counter.sorted()
+        self.assertIn(srt.index(2), [0, 3])
+
+        # more unique needles is more than less unique needles:
+        counter = dnf.match_counter.MatchCounter()
+        counter.add(1, 'summary', 'a')
+        counter.add(1, 'summary', 'b')
+        counter.add(2, 'summary', 'b')
+        counter.add(2, 'summary', 'b')
+
+        self.assertEqual(counter.sorted(), [2, 1])
+
     def test_sorted_limit(self):
         counter = dnf.match_counter.MatchCounter()
         counter.add(1, 'name', '')
@@ -60,4 +86,3 @@ class TestCounter(unittest.TestCase):
         counter.add(20, 'summary', 'humbert')
         self.assertEqual(len(counter), 2)
         self.assertEqual(counter.total(), 3)
-

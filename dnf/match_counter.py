@@ -25,6 +25,12 @@ WEIGHTS = {
     'url'		: 1,
     }
 
+def _canonize_string_set(sset, length):
+    """ Ordered sset with empty strings prepended. """
+    current = len(sset)
+    l = [''] * (length - current) + sorted(sset)
+    return l
+
 class MatchCounter(dict):
     """ Map packages to which which of their attributes matched in a search
         against what values.
@@ -38,9 +44,21 @@ class MatchCounter(dict):
         return sum(weights)
 
     def _key_func(self):
-        def get_key(name):
-            return self._eval_matches(self[name])
+        """ Get the key function used for sorting matches.
+
+            It is not enough to only look at the matches and order them by the
+            sum of their weighted hits. In case this number is the same we have
+            to ensure that the same matched needles are next to each other in
+            the result.
+        """
+        max_length = self._max_needles()
+        def get_key(pkg):
+            return (self._eval_matches(self[pkg]),
+                    _canonize_string_set(self.matched_needles(pkg), max_length))
         return get_key
+
+    def _max_needles(self):
+        return max(map(lambda pkg: len(self.matched_needles(pkg)), self))
 
     def add(self, pkg, key, needle):
         self.setdefault(pkg, []).append((key, needle))
@@ -64,4 +82,3 @@ class MatchCounter(dict):
 
     def total(self):
         return reduce(lambda total, pkg: total + len(self[pkg]) ,self, 0)
-
