@@ -84,6 +84,6 @@ class MultilibBestMainRepo(base.ResultTestCase):
         self.assertEqual(len(tsinfo), 1)
 
         new_package = hawkey.Query(self.yumbase.sack).\
-            filter(name="lotus", arch="x86_64", repo="main")[0]
+            filter(name="lotus", arch="x86_64", reponame="main")[0]
         new_set = self.installed + [new_package]
         self.assertResult(self.yumbase, new_set)

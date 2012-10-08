@@ -59,9 +59,9 @@ def _construct_result(sack, patterns, ignore_case,
     else:
         q.filterm(*flags, name=patterns)
     if include_repo:
-        q.filterm(repo__eq=include_repo)
+        q.filterm(reponame__eq=include_repo)
     if exclude_repo:
-        q.filterm(repo__neq=exclude_repo)
+        q.filterm(reponame__neq=exclude_repo)
     q.filterm(downgrades=downgrades_only)
     q.filterm(upgrades=updates_only)
     q.filterm(latest__eq=latest_only)
