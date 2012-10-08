@@ -21,6 +21,7 @@ BuildRequires:  urlgrabber
 BuildRequires:	python-hawkey >= %{hawkey_version}
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	crontabs
+Requires:	libreport-filesystem
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
@@ -47,6 +48,7 @@ make ARGS="-V" test
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/cron.hourly/dnf-makecache.cron
+%{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
