@@ -121,6 +121,18 @@ class Package(hawkey.Package):
         return self.reponame
 
     # yum compatibility method
+    def evr_eq(self, pkg):
+        return self.evr_cmp(pkg) == 0
+
+    # yum compatibility method
+    def evr_gt(self, pkg):
+        return self.evr_cmp(pkg) > 0
+
+    # yum compatibility method
+    def evr_lt(self, pkg):
+        return self.evr_cmp(pkg) < 0
+
+    # yum compatibility method
     def getDiscNum(self):
         return self.medianr
 
