@@ -1563,7 +1563,8 @@ Insufficient space in download directory %s
         """attempts to copy the file, if possible"""
         # don't copy it if the copy in our users dir is newer or equal
         try:
-            if os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
+            if os.path.exists(destfn) and \
+                    os.stat(fn)[stat.ST_CTIME] <= os.stat(destfn)[stat.ST_CTIME]:
                 return False
             shutil.copy2(fn, destfn)
         except EnvironmentError:
