@@ -182,7 +182,9 @@ def _setFileLog(logger, logfile, cleanup=None):
     # For installroot etc.
     if not os.path.exists(logfile):
         f = open(logfile, 'w')
-        os.chmod(logfile, 0600) # making sure umask doesn't catch us up
+        # by default make logfiles readable by the user (so the reporting ABRT
+        # user can attach root logfiles).
+        os.chmod(logfile, 0644)
         f.close()
 
     filehandler = logging.FileHandler(logfile)
