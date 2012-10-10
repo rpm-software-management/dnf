@@ -383,10 +383,10 @@ class YumRepository(Repository, config.RepoConf):
 
         # if we're using a cachedir that's not the system one, copy over these
         # basic items from the system one
-        self._preload_md_from_system_cache('repomd.xml')
-        self._preload_md_from_system_cache('cachecookie')
-        self._preload_md_from_system_cache('mirrorlist.txt')
-        self._preload_md_from_system_cache('metalink.xml')
+        self._preload_file_from_system_cache('repomd.xml')
+        self._preload_file_from_system_cache('cachecookie')
+        self._preload_file_from_system_cache('mirrorlist.txt')
+        self._preload_file_from_system_cache('metalink.xml')
 
     def _dirGetAttr(self, attr):
         """ Make the directory attributes call .dirSetup() if needed. """
@@ -1118,7 +1118,7 @@ Insufficient space in download directory %s
                 local = misc.decompress(local, fn_only=True)
                 compressed = True
         #  If we can, make a copy of the system-wide-cache version of this file.
-        self._preload_md_from_system_cache(os.path.basename(local))
+        self._preload_file_from_system_cache(os.path.basename(local))
         if not self._checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
@@ -1415,7 +1415,7 @@ Insufficient space in download directory %s
                            self)
 
         if (os.path.exists(local) or
-            self._preload_md_from_system_cache(os.path.basename(local))):
+            self._preload_file_from_system_cache(os.path.basename(local))):
             if self._checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
@@ -1588,11 +1588,6 @@ Insufficient space in download directory %s
         if destfn is None:
             destfn = self.cachedir + '/' + subdir + os.path.basename(filename)
         return self._preload_file(fn, destfn)
-
-    def _preload_md_from_system_cache(self, filename):
-        """attempts to copy the metadata file from the system-wide cache,
-           if possible"""
-        return self._preload_file_from_system_cache(filename)
 
     def _preload_pkg_from_system_cache(self, pkg):
         """attempts to copy the package from the system-wide cache,
