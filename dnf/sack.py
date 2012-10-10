@@ -75,5 +75,5 @@ def build_sack(yumbase):
 
 def rpmdb_sack(yumbase):
     sack = build_sack(yumbase)
-    sack.load_system_repo(hawkey.Repo())
+    sack.load_system_repo()
     return sack

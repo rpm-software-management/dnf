@@ -220,8 +220,7 @@ class YumBase(object):
         for cb in self._cleanup: cb()
 
     def _add_repo_to_hawkey(self, name):
-        repo = hawkey.Repo()
-        repo.name = name
+        repo = hawkey.Repo(name)
         yum_repo = self.repos.repos[name]
         repo.repomd_fn = yum_repo.repoXML.srcfile
         repo.primary_fn = yum_repo.getPrimaryXML()
@@ -247,7 +246,7 @@ class YumBase(object):
         # class and a YumBase reference.
         start = time.time()
         self._sack = sack.build_sack(self)
-        self._sack.load_system_repo(hawkey.Repo(), build_cache=True)
+        self._sack.load_system_repo(build_cache=True)
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
         self._sack.installonly = self.conf.installonlypkgs
@@ -1573,7 +1572,7 @@ class YumBase(object):
         # us if a particular transaction element failed or not we can skip this
         # completely.
         rpmdb_sack = sack.build_sack(self)
-        rpmdb_sack.load_system_repo(hawkey.Repo())
+        rpmdb_sack.load_system_repo()
 
         # Process new packages before the old ones so we can copy values.
         for txmbr in self.tsInfo:
