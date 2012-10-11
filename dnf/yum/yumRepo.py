@@ -16,6 +16,7 @@
 import os
 import re
 import time
+import traceback
 import types
 import urlparse
 urlparse.uses_fragment.append("media")
@@ -1049,11 +1050,10 @@ Insufficient space in download directory %s
         if self._repoXML is not None:
             return False
 
-        if self._cachingRepoXML(local):
-            caching = True
+        caching = self._cachingRepoXML(local)
+        if caching:
             result = local
         else:
-            caching = False
             if self._latestRepoXML(local):
                 result = local
                 old_data = self._oldRepoMDData
@@ -1134,14 +1134,24 @@ Insufficient space in download directory %s
                 return False
             return True
 
+        def log_extra_files(mdtype, msg):
+            present = glob.glob(self.cachedir + "/*%s*.xml.gz" % mdtype)
+            if present:
+                msg = "_commonRetrieveDataMD: %s, yet files present: " % \
+                    msg
+                verbose_logger.log(logginglevels.DEBUG_4, msg)
+                for fname in present:
+                    verbose_logger.log(logginglevels.DEBUG_4, fname)
+                verbose_logger.log(logginglevels.DEBUG_4,
+                                   "\n".join(traceback.format_stack()))
+
         all_mdtypes = self.retrieved.keys()
         if mdtypes is None:
             mdtypes = all_mdtypes
 
         reverts = []
-        if 'old_repo_XML' not in self._oldRepoMDData:
-            old_repo_XML = None
-        else:
+        old_repo_XML = None
+        if 'old_repo_XML' in self._oldRepoMDData:
             old_repo_XML = self._oldRepoMDData['old_repo_XML']
             self._oldRepoMDData['old_MD_files'] = reverts
 
@@ -1171,6 +1181,10 @@ Insufficient space in download directory %s
                     if os.path.exists(gen_local):
                         os.rename(gen_local, gen_local + '.old.tmp')
                         reverts.append(gen_local)
+                else:
+                    log_extra_files(mdtype, "_groupCheckData..() has failed")
+            else:
+                log_extra_files(mdtype, "old_repo_XML is False")
 
             if ndata is None: # Doesn't exist in this repo
                 continue
