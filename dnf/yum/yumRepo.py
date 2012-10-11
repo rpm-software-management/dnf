@@ -659,7 +659,6 @@ Insufficient space in download directory %s
                     raise Errors.RepoError, errstr
 
         return result
-    __get = _getFile
 
     def getPackage(self, package, checkfunc=None, text=None, cache=True):
         remote = package.relativepath
@@ -944,9 +943,6 @@ Insufficient space in download directory %s
 
         if mdtype == 'group' and 'group_gz' in repoXML.fileTypes():
             mdtype = 'group_gz'
-        if (mdtype in ['other', 'filelists', 'primary'] and
-            self._check_db_version(mdtype + '_db', repoXML=repoXML)):
-            mdtype += '_db'
 
         return (mdtype, repoXML.repoData.get(mdtype))
 
@@ -1088,17 +1084,6 @@ Insufficient space in download directory %s
             return False
         return True
 
-    def _check_db_version(self, mdtype, repoXML=None):
-        if self.mddownloadpolicy == 'xml':
-            return False
-
-        if repoXML is None:
-            repoXML = self.repoXML
-        if mdtype in repoXML.repoData:
-            if DBVERSION == repoXML.repoData[mdtype].dbversion:
-                return True
-        return False
-
     # mmdtype is unused, but in theory was == primary
     # dbmtype == primary_db etc.
     def _groupCheckDataMDValid(self, data, dbmdtype, mmdtype, file_check=False):
@@ -1119,7 +1104,7 @@ Insufficient space in download directory %s
                 compressed = True
         #  If we can, make a copy of the system-wide-cache version of this file.
         self._preload_file_from_system_cache(os.path.basename(local))
-        if not self._checkMD(local, dbmdtype, openchecksum=compressed,
+        if not self.checkMD(local, dbmdtype, openchecksum=compressed,
                              data=data, check_can_fail=True):
             return None
 
@@ -1160,7 +1145,6 @@ Insufficient space in download directory %s
             old_repo_XML = self._oldRepoMDData['old_repo_XML']
             self._oldRepoMDData['old_MD_files'] = reverts
 
-        # Inited twice atm. ... sue me
         self._oldRepoMDData['new_MD_files'] = []
         downloading_with_size = []
         downloading_no_size   = []
@@ -1183,9 +1167,6 @@ Insufficient space in download directory %s
 
                     #  This is the super easy way. We just to see if a generated
                     # file is there for all files, but it should always work.
-                    #  And anyone who is giving us MD with blah and blah.sqlite
-                    # which are different types, can play a game I like to call
-                    # "come here, ouch".
                     gen_local = local + '.sqlite'
                     if os.path.exists(gen_local):
                         os.rename(gen_local, gen_local + '.old.tmp')
@@ -1238,17 +1219,6 @@ Insufficient space in download directory %s
         self._doneOldRepoXML()
         return True
 
-    def _groupLoadRepoXML(self, text=None, mdtypes=None):
-        """ Retrieve the new repomd.xml from the repository, then check it
-            and parse it. If it fails we revert to the old version and pretend
-            that is fine. If the new repomd.xml requires new version of files
-            that we have, like updateinfo.xml, we download those too and if any
-            of those fail, we again revert everything and pretend old data is
-            good. """
-
-        if self._commonLoadRepoXML(text):
-            self._commonRetrieveDataMD(mdtypes)
-
     def _mdpolicy2mdtypes(self):
         md_groups = {'instant'       : [],
                      'group:primary' : ['primary'],
@@ -1271,7 +1241,16 @@ Insufficient space in download directory %s
     def _loadRepoXML(self, text=None):
         """retrieve/check/read in repomd.xml from the repository"""
         try:
-            return self._groupLoadRepoXML(text, self._mdpolicy2mdtypes())
+            # Retrieve the new repomd.xml from the repository, then check it and
+            # parse it. If it fails we revert to the old version and pretend
+            # that is fine. If the new repomd.xml requires new version of files
+            # that we have, like updateinfo.xml, we download those too and if
+            # any of those fail, we again revert everything and pretend old data
+            # is good.
+            mdtypes = self._mdpolicy2mdtypes()
+            if self._commonLoadRepoXML(text):
+                self._commonRetrieveDataMD(mdtypes)
+            return
         except KeyboardInterrupt:
             self._revertOldRepoXML() # Undo metadata cookie?
             raise
@@ -1332,16 +1311,11 @@ Insufficient space in download directory %s
             raise URLGrabError(-1, 'repomd.xml does not match metalink for %s' %
                                self)
 
-
-    def checkMD(self, fn, mdtype, openchecksum=False):
-        """check the metadata type against its checksum"""
-        return self._checkMD(fn, mdtype, openchecksum)
-
-    def _checkMD(self, fn, mdtype, openchecksum=False,
+    def checkMD(self, fn, mdtype, openchecksum=False,
                  data=None, check_can_fail=False):
-        """ Internal function, use .checkMD() from outside yum. """
+        """check the metadata type against its checksum"""
 
-        thisdata = data # So the argument name is nicer
+        thisdata = data
         if thisdata is None:
             thisdata = self.repoXML.getData(mdtype)
 
@@ -1416,7 +1390,7 @@ Insufficient space in download directory %s
 
         if (os.path.exists(local) or
             self._preload_file_from_system_cache(os.path.basename(local))):
-            if self._checkMD(local, mdtype, check_can_fail=True):
+            if self.checkMD(local, mdtype, check_can_fail=True):
                 self.retrieved[mdtype] = 1
                 return local # it's the same return the local one
 
