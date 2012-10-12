@@ -56,7 +56,6 @@ from dnf.rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMulti
 from dnf.rpmUtils.miscutils import compareEVR
 import dnf.rpmUtils.transaction
 import comps
-import pkgtag_db
 from repos import RepoStorage
 import misc
 from parser import ConfigPreProcessor, varReplace
@@ -740,40 +739,6 @@ class YumBase(object):
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))
         return self._comps
 
-    def _getTags(self):
-        """ create the tags object used to search/report from the pkgtags
-            metadata"""
-
-        tag_st = time.time()
-        self.verbose_logger.log(logginglevels.DEBUG_4,
-                                _('Getting pkgtags metadata'))
-
-        if self._tags is None:
-            self._tags = pkgtag_db.PackageTags()
-
-            for repo in self.repos.listEnabled():
-                if 'pkgtags' not in repo.repoXML.fileTypes():
-                    continue
-
-                self.verbose_logger.log(logginglevels.DEBUG_4,
-                    _('Adding tags from repository: %s'), repo)
-
-                # fetch the sqlite tagdb
-                try:
-                    tag_md = repo.retrieveMD('pkgtags')
-                    tag_sqlite  = misc.repo_gen_decompress(tag_md,
-                                                           'pkgtags.sqlite',
-                                                           cached=repo.cache)
-                    # feed it into _tags.add()
-                    self._tags.add(repo.id, tag_sqlite)
-                except (Errors.RepoError, Errors.PkgTagsError), e:
-                    msg = _('Failed to add Pkg Tags for repository: %s - %s') % (repo, str(e))
-                    self.logger.critical(msg)
-
-
-        self.verbose_logger.debug('tags time: %0.3f' % (time.time() - tag_st))
-        return self._tags
-
     def _getHistory(self):
         """auto create the history object that to access/append the transaction
            history information. """
@@ -809,11 +774,6 @@ class YumBase(object):
                        fset=lambda self, value: setattr(self, "_history",value),
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
-
-    pkgtags = property(fget=lambda self: self._getTags(),
-                       fset=lambda self, value: setattr(self, "_tags",value),
-                       fdel=lambda self: setattr(self, "_tags", None),
-                       doc="Yum Package Tags Object")
 
     def yumUtilsMsg(self, func, prog):
         """Output a message that the given tool requires the yum-utils
@@ -2557,30 +2517,6 @@ class YumBase(object):
         q = hawkey.Query(self.sack).filter(**fdict)
         map(lambda pkg: counter.add(pkg, attr, needle), q.run())
         return counter
-
-    def searchPackageTags(self, criteria):
-        """Search for and return a list packages that have tags
-        matching the given criteria.
-
-        :param criteria: a list of strings specifying the criteria to
-           search for
-        :return: a list of package objects that have tags matching the
-           given criteria
-        """
-        results = {} # name = [(criteria, taglist)]
-        for c in criteria:
-            c = c.lower()
-            res = self.pkgtags.search_tags(c)
-            for (name, taglist) in res.items():
-                pkgs = self.pkgSack.searchNevra(name=name)
-                if not pkgs:
-                    continue
-                pkg = pkgs[0]
-                if pkg not in results:
-                    results[pkg] = []
-                results[pkg].append((c, taglist))
-
-        return results
 
     def searchPackageProvides(self, args, callback=None,
                               callback_has_matchfor=False):
