@@ -1638,58 +1638,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         """Print out an explanation of the shell usage."""
         sys.stdout.write(self.optparser.get_usage())
 
-    def _installable(self, pkg, ematch=False):
-
-        """check if the package is reasonably installable, true/false"""
-
-        exactarchlist = self.conf.exactarchlist
-        # we look through each returned possibility and rule out the
-        # ones that we obviously can't use
-
-        if self.rpmdb.contains(po=pkg):
-            self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_3,
-                _('Package %s is already installed, skipping'), pkg)
-            return False
-
-        # everything installed that matches the name
-        installedByKey = self.rpmdb.searchNevra(name=pkg.name)
-        comparable = []
-        for instpo in installedByKey:
-            if isMultiLibArch(instpo.arch) == isMultiLibArch(pkg.arch):
-                comparable.append(instpo)
-            else:
-                self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_3,
-                    _('Discarding non-comparable pkg %s.%s'), instpo.name, instpo.arch)
-                continue
-
-        # go through each package
-        if len(comparable) > 0:
-            for instpo in comparable:
-                if pkg.verGT(instpo): # we're newer - this is an update, pass to them
-                    if instpo.name in exactarchlist:
-                        if pkg.arch == instpo.arch:
-                            return True
-                    else:
-                        return True
-
-                elif pkg.verEQ(instpo): # same, ignore
-                    return False
-
-                elif pkg.verLT(instpo): # lesser, check if the pkgtup is an exactmatch
-                                   # if so then add it to be installed
-                                   # if it can be multiply installed
-                                   # this is where we could handle setting
-                                   # it to be an 'oldpackage' revert.
-
-                    if ematch and self.allowedMultipleInstalls(pkg):
-                        return True
-
-        else: # we've not got any installed that match n or n+a
-            self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_1, _('No other %s installed, adding to list for potential install'), pkg.name)
-            return True
-
-        return False
-
 class YumOptionParser(OptionParser):
     """Subclass that makes some minor tweaks to make OptionParser do things the
     "yum way".
