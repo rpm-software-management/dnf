@@ -1274,7 +1274,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
         old_sdup = self.conf.showdupesfromrepos
-        # For output, as searchPackageProvides() is always in showdups mode
+        # always in showdups mode
         self.conf.showdupesfromrepos = True
         cb = self.matchcallback_verbose
         matches = 0
@@ -1285,29 +1285,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
 
         if not matches:
             return 0, ['No Matches found']
-        return 0, [] # :hawkey
-
-        matching = self.searchPackageProvides(args, callback=cb,
-                                              callback_has_matchfor=True)
-        if len(matching) == 0:
-            #  Try to be a bit clever, for commands, and python modules.
-            # Maybe want something so we can do perl/etc. too?
-            paths = set(sys.path + os.environ['PATH'].split(':'))
-            nargs = []
-            for arg in args:
-                if dnf.yum.misc.re_filename(arg) or dnf.yum.misc.re_glob(arg):
-                    continue
-                for path in paths:
-                    if not path:
-                        continue
-                    nargs.append("%s/%s" % (path, arg))
-            matching = self.searchPackageProvides(nargs, callback=cb,
-                                                  callback_has_matchfor=True)
-        self.conf.showdupesfromrepos = old_sdup
-
-        if len(matching) == 0:
-            return 0, ['No Matches found']
-
         return 0, []
 
     def resolveDepCli(self, args):
