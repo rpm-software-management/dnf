@@ -820,8 +820,8 @@ class YumBase(object):
             else:
                 raise NotImplementedError("hawkey can't handle ts_state '%s'."
                                           % txmbr.ts_state)
-        for q in tsInfo.query_installs:
-            goal.install(query=q)
+        for sltr in tsInfo.selector_installs:
+            goal.install(select=sltr)
         if push_userinstalled:
             self._push_userinstalled(goal)
         return goal
@@ -3176,8 +3176,9 @@ class YumBase(object):
         pats = [kwargs['pattern']]
 
         if self.conf.multilib_policy == "best":
-            self.tsInfo.addQueryInstall(
-                queries.by_name(self.sack, pats, get_query=True))
+            assert(len(pats) == 1)
+            sltr = hawkey.Selector(self.sack).set(name=pats[0])
+            self.tsInfo.add_selector_install(sltr)
         else:
             availpkgs = queries.available_by_name(self.sack, pats,
                                                   latest_only=True)

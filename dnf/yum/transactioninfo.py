@@ -69,10 +69,10 @@ class TransactionData:
         self.reinstalled = []
         self.downgraded = []
         self.failed = []
-        self.query_installs = []
+        self.selector_installs = []
 
     def __len__(self):
-        return len(self.pkgdict) + len(self.query_installs)
+        return len(self.pkgdict) + len(self.selector_installs)
 
     def __iter__(self):
         if hasattr(self.getMembers(), '__iter__'):
@@ -372,8 +372,8 @@ class TransactionData:
         self.add(txmbr)
         return txmbr
 
-    def addQueryInstall(self, query):
-        self.query_installs.append(query)
+    def add_selector_install(self, sltr):
+        self.selector_installs.append(sltr)
 
     def addTrueInstall(self, po):
         """adds a package as an install
