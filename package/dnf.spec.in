@@ -1,10 +1,10 @@
-%global gitrev ea72d9a
+%global gitrev 4831982
 %global hawkey_version 0.3.0
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -52,7 +52,7 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
-* Wed Oct 17 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.13-1.gitea72d9a
+* Wed Oct 17 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.14-2.git4831982
 - works against hawkey-0.3.0
 - search: sort so same matched keywords stay next to each other.
 - Add custom ABRT collector.
@@ -60,6 +60,7 @@ make ARGS="-V" test
 - Make the logfiles readable by everyone.
 - yumRepo: log when we are leaving MD files behind and don't know why.
 - Support globs in the install command when multilib_policy is 'best'. (RhBug: 864710)
+- Fix failing unit tests on i686.
 
 * Fri Oct 5 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.13-1.gitda60a96
 - fix: traceback in YumBase.verifyTransaction() for local .rpms.
