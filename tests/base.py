@@ -72,6 +72,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
         hawkey.test.TestSackMixin.__init__(self, repo_dir)
         dnf.sack.Sack.__init__(self,
+                               arch=hawkey.test.FIXED_ARCH,
                                pkgcls=dnf.package.Package,
                                pkginitval=yumbase)
 
