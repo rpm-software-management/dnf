@@ -91,7 +91,7 @@ import dnf.conf
 import dnf.package
 import dnf.util
 import dnf.rpmUtils.connection
-from dnf import queries, const, sack
+from dnf import const, queries, sack, selector
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
@@ -3177,7 +3177,7 @@ class YumBase(object):
 
         if self.conf.multilib_policy == "best":
             assert(len(pats) == 1)
-            sltr = hawkey.Selector(self.sack).set(name=pats[0])
+            sltr = selector.Selector(self.sack).set_autoglob(name=pats[0])
             self.tsInfo.add_selector_install(sltr)
         else:
             availpkgs = queries.available_by_name(self.sack, pats,
