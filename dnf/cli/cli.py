@@ -124,7 +124,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.MakeCacheCommand())
         self.registerCommand(yumcommands.CleanCommand())
         self.registerCommand(yumcommands.ProvidesCommand())
-        # self.registerCommand(yumcommands.CheckUpdateCommand())
+        self.registerCommand(yumcommands.CheckUpdateCommand())
         self.registerCommand(yumcommands.SearchCommand())
         # self.registerCommand(yumcommands.UpgradeCommand())
         # self.registerCommand(yumcommands.ResolveDepCommand())

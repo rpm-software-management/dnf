@@ -18,6 +18,7 @@ speed and defining strict API and plugin interface.
 
 Available commands are:
 
+* check-update
 * clean
 * downgrade
 * erase
@@ -87,6 +88,18 @@ Commands
 For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
+
+--------------------
+Check Update Command
+--------------------
+
+``dnf [options] check-update [<package-specs>...]``
+
+    Non-interactively checks if updates of the specified packages are
+    available. If no ``<package-specs>`` are given checks whether any updates at
+    all are available for your system. DNF exit code will be 100 when there are
+    updates available and a list of the updates will be printed, 0 if not and 1
+    if an error occurs.
 
 -------------
 Clean Command

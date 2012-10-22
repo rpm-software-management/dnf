@@ -1176,7 +1176,8 @@ class CheckUpdateCommand(YumCommand):
                 if highlight:
                     # Do the local/remote split we get in "yum updates"
                     for po in sorted(ypl.updates):
-                        if po.repo.id != 'installed' and po.verifyLocalPkg():
+                        local = po.localPkg()
+                        if os.path.exists(local) and po.verifyLocalPkg():
                             local_pkgs[(po.name, po.arch)] = po
 
                 cul = base.conf.color_update_local
@@ -1185,7 +1186,7 @@ class CheckUpdateCommand(YumCommand):
                               highlight_na=local_pkgs, columns=columns,
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
-            if len(ypl.obsoletes) > 0: # This only happens in verbose mode
+            if len(ypl.obsoletes) > 0:
                 print _('Obsoleting Packages')
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
