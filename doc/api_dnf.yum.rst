@@ -99,12 +99,6 @@ dnf.yum.pgpmsg
 .. automodule:: dnf.yum.pgpmsg
     :members:
 
-dnf.yum.pkgtag_db
------------------
-
-.. automodule:: dnf.yum.pkgtag_db
-    :members:
-
 dnf.yum.plugins
 ---------------
 

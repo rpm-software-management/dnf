@@ -249,12 +249,16 @@ Specifying Packages
 ===================
 
 Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. The specification is always done by the name of the package. If
+operation. The specification is first taken as the name of a package. If
 multiple versions of the selected package exist in the repo, the most recent
-version suitable for the given operation is used.
+version suitable for the given operation is used.  The name specification is
+case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
+trigger shell-like glob matching.
 
-The specification is case-sensitive,globbing characters "``?``, ``*`` and ``[``
-are allowed and trigger shell-like glob matching.
+If no package matches the name pattern, DNF tries to see if the pattern
+corresponds to the ``name-[epoch:]version-release.arch`` format (also called
+*NEVRA*), and applies the operation accordingly.
+
 
 .. _specifying_provides-label:
 
