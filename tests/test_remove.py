@@ -44,3 +44,8 @@ class Remove(base.ResultTestCase):
         # we should end up with nothing in this case:
         new_set = base.installed_but(self.yumbase.sack, "librita", "pepper")
         self.assertResult(self.yumbase, new_set)
+
+    def test_remove_nevra(self):
+        ret = self.yumbase.remove(pattern="pepper-20-0.x86_64")
+        pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
+        self.assertEqual([txmbr.po for txmbr in ret], pepper)

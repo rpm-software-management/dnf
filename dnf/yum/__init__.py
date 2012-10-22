@@ -3748,7 +3748,14 @@ class YumBase(object):
         if po:
             pkgs = [po]
         else:
-            for pkg in queries.installed_by_name(self.sack, kwargs['pattern']):
+            pattern = kwargs['pattern']
+            installed = queries.installed_by_name(self.sack, pattern)
+            if len(installed) == 0:
+                try:
+                    installed = hawkey.split_nevra(pattern).to_query(self.sack)
+                except hawkey.ValueException:
+                    installed = []
+            for pkg in installed:
                 txmbr = self.tsInfo.addErase(pkg)
                 tx_return.append(txmbr)
             return tx_return # :hawkey

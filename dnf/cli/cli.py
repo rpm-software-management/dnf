@@ -703,6 +703,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # same output.
         # if it is a grouppattern then none of this is going to make any sense
         # skip it.
+        return False # :hawkey
         if not arg or arg[0] == '@':
             return
 
