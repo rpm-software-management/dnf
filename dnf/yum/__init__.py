@@ -2435,12 +2435,11 @@ class YumBase(object):
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
+            inst = queries.installed(self.sack, get_query=True)
             if patterns:
-                # :hawkey
-                warnings.warn("hawkey can not query pattern obsoletes yet.")
-            q = hawkey.Query(self.sack)
-            obsoletes = list(q.filter(obsoleting__eq=True,
-                                      latest__eq=not showdups))
+                inst = queries.installed_by_name(self.sack, patterns=patterns,
+                                                 ignore_case=ic, get_query=True)
+            obsoletes = hawkey.Query(self.sack).filter(obsoletes=inst)
             obsoletesTuples = [(new, old) for new in obsoletes for
                                old in new.obsoletes_list()]
 
