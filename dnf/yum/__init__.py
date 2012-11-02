@@ -3172,17 +3172,19 @@ class YumBase(object):
 
         if not kwargs:
             raise Errors.InstallError, _('Nothing specified to install')
-        pats = [kwargs['pattern']]
 
-        if self.conf.multilib_policy == "best":
-            assert(len(pats) == 1)
-            sltr = selector.Selector(self.sack).set_autoglob(name=pats[0])
+        pat = kwargs['pattern']
+        if queries.is_nevra(pat):
+            availpkgs = queries.available_by_nevra(self.sack, pat)
+        elif self.conf.multilib_policy == "best":
+            sltr = selector.Selector(self.sack).set_autoglob(name=pat)
             self.tsInfo.add_selector_install(sltr)
+            return self.tsInfo
         else:
-            availpkgs = queries.available_by_name(self.sack, pats,
+            availpkgs = queries.available_by_name(self.sack, pat,
                                                   latest_only=True)
-            for pkg in availpkgs:
-                self.tsInfo.addInstall(pkg)
+        for pkg in availpkgs:
+            self.tsInfo.addInstall(pkg)
 
         return self.tsInfo # :hawkey
 
@@ -3521,7 +3523,7 @@ class YumBase(object):
                     tx_return.append(txmbr)
                 return tx_return # :hawkey
         elif 'pattern' in kwargs:
-            pats = [kwargs['pattern']]
+            pats = kwargs['pattern']
             availpkgs = queries.updates_by_name(self.sack, pats, latest_only=True)
             for pkg in availpkgs:
                 txmbr = self.tsInfo.addUpdate(pkg)
@@ -3749,11 +3751,8 @@ class YumBase(object):
         else:
             pattern = kwargs['pattern']
             installed = queries.installed_by_name(self.sack, pattern)
-            if len(installed) == 0:
-                try:
-                    installed = hawkey.split_nevra(pattern).to_query(self.sack)
-                except hawkey.ValueException:
-                    installed = []
+            if not installed:
+                installed = queries.installed_by_nevra(self.sack, pattern)
             for pkg in installed:
                 txmbr = self.tsInfo.addErase(pkg)
                 tx_return.append(txmbr)

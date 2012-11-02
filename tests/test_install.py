@@ -41,6 +41,13 @@ class InstallMultilibAll(base.ResultTestCase):
         new_set = dnf.queries.installed(self.yumbase.sack) + expected
         self.assertResult(self.yumbase, new_set)
 
+    def test_install_nevra(self):
+        self.yumbase.install(pattern="lotus-3-16.i686")
+        available = available_by_name(self.yumbase.sack, "lotus", get_query=True)
+        lotus = available.filter(arch="i686")[0]
+        new_set = dnf.queries.installed(self.yumbase.sack) + [lotus]
+        self.assertResult(self.yumbase, new_set)
+
 class MultilibAllMainRepo(base.ResultTestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")

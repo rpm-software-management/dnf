@@ -25,6 +25,13 @@ import types
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
+def is_nevra(pattern):
+    try:
+        hawkey.split_nevra(pattern)
+    except hawkey.ValueException:
+        return False
+    return True
+
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
                       downgrades_only=False,
@@ -77,10 +84,26 @@ def installed_by_name(sack, patterns, ignore_case=False, get_query=False):
                              include_repo=hawkey.SYSTEM_REPO_NAME,
                              get_query=get_query)
 
-def available_by_name(sack, patterns, ignore_case=False, latest_only=False):
+def installed_by_nevra(sack, pattern):
+    try:
+        installed = hawkey.split_nevra(pattern).to_query(sack)
+    except hawkey.ValueException:
+        return hawkey.Query(sack).filter(empty=True)
+    return installed.filter(reponame=hawkey.SYSTEM_REPO_NAME)
+
+def available_by_name(sack, patterns, ignore_case=False, latest_only=False,
+                      get_query=False):
     return _construct_result(sack, patterns, ignore_case,
                              exclude_repo=hawkey.SYSTEM_REPO_NAME,
-                             latest_only=latest_only)
+                             latest_only=latest_only,
+                             get_query=get_query)
+
+def available_by_nevra(sack, pattern):
+    try:
+        installed = hawkey.split_nevra(pattern).to_query(sack)
+    except hawkey.ValueException:
+        return hawkey.Query(sack).filter(empty=True)
+    return installed.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
 def installed_exact(sack, name, evr, arch, get_query=False):
     q = _construct_result(sack, name, False, get_query=True,
