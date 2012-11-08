@@ -41,6 +41,9 @@ class TestCounter(unittest.TestCase):
 
     def test_sorted(self):
         counter = dnf.match_counter.MatchCounter()
+        self.assertEqual(counter.sorted(), [])
+
+        counter = dnf.match_counter.MatchCounter()
         counter.add(1, 'name', '')
         counter.add(2, 'description', '')
         self.assertEqual(counter.sorted(), [2, 1])

@@ -32,8 +32,8 @@ def _canonize_string_set(sset, length):
     return l
 
 class MatchCounter(dict):
-    """ Map packages to which which of their attributes matched in a search
-        against what values.
+    """ Map packages to which of their attributes matched in a search against
+        what values.
 
         The mapping is: ``package -> [(key, needle), ... ]``.
     """
@@ -58,7 +58,9 @@ class MatchCounter(dict):
         return get_key
 
     def _max_needles(self):
-        return max(map(lambda pkg: len(self.matched_needles(pkg)), self))
+        if self:
+            return max(map(lambda pkg: len(self.matched_needles(pkg)), self))
+        return 0
 
     def add(self, pkg, key, needle):
         self.setdefault(pkg, []).append((key, needle))
