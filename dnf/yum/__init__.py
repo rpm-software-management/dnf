@@ -2440,8 +2440,11 @@ class YumBase(object):
                 inst = queries.installed_by_name(self.sack, patterns=patterns,
                                                  ignore_case=ic, get_query=True)
             obsoletes = hawkey.Query(self.sack).filter(obsoletes=inst)
-            obsoletesTuples = [(new, old) for new in obsoletes for
-                               old in new.obsoletes_list()]
+            obsoletesTuples = []
+            for new in obsoletes:
+                obsoleted_reldeps = new.obsoletes
+                obsoletesTuples.extend([(new, old) for old in
+                                        inst.filter(provides=obsoleted_reldeps)])
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
