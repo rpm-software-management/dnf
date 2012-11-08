@@ -558,7 +558,7 @@ class InfoCommand(YumCommand):
                             ypl.reinstall_available +
                             ypl.old_available):
                     key = (pkg.name, pkg.arch)
-                    if key not in update_pkgs or pkg.verGT(update_pkgs[key]):
+                    if key not in update_pkgs or pkg > update_pkgs[key]:
                         update_pkgs[key] = pkg
 
             if highlight and ypl.available:
