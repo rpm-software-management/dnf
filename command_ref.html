@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.11-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.2.15-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.11-1',
+        VERSION:     '0.2.15-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.11-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.15-1 documentation" href="index.html" />
+    <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
   <body>
@@ -36,9 +37,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -51,7 +58,7 @@
 <h1>DNF Command Reference<a class="headerlink" href="#dnf-command-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">&lt;command&gt;</span> <span class="pre">&lt;[args]&gt;</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">&lt;command&gt;</span> <span class="pre">[&lt;args&gt;...]</span></tt></p>
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
@@ -60,6 +67,8 @@ distributions. It aims to maintain CLI compatibility with Yum while improving on
 speed and defining strict API and plugin interface.</p>
 <p>Available commands are:</p>
 <ul class="simple">
+<li>check-update</li>
+<li>clean</li>
 <li>downgrade</li>
 <li>erase</li>
 <li>help</li>
@@ -70,6 +79,7 @@ speed and defining strict API and plugin interface.</p>
 <li>makecache</li>
 <li>provides</li>
 <li>repolist</li>
+<li>search</li>
 <li>update</li>
 </ul>
 <p>See the reference for each command below.</p>
@@ -111,6 +121,40 @@ speed and defining strict API and plugin interface.</p>
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-label"><em>Specifying Packages</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
+<div class="section" id="check-update-command">
+<h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
+<blockquote>
+<div>Non-interactively checks if updates of the specified packages are
+available. If no <tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given checks whether any updates at
+all are available for your system. DNF exit code will be 100 when there are
+updates available and a list of the updates will be printed, 0 if not and 1
+if an error occurs.</div></blockquote>
+</div>
+<div class="section" id="clean-command">
+<h3>Clean Command<a class="headerlink" href="#clean-command" title="Permalink to this headline">¶</a></h3>
+<p>Performs cleanup of temporary files for the currently enabled repositories.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">dbcache</span></tt></dt>
+<dd>Removes cache files generated from the repository metadata. This forces DNF
+to regenerate the cache files the next time it is run.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">expire-cache</span></tt></dt>
+<dd>Removes local cookie files saying when the metadata and mirrorlists were
+downloaded for each repo. DNF will revalidate the cache for each repo the
+next time it is used.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">metadata</span></tt></dt>
+<dd>Removes repository metadata. Those are the files which DNF uses to determine
+the remote availability of packages. Using this option will make DNF
+download all the metadata the next time it is run.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">packages</span></tt></dt>
+<dd>Removes any cached packages from the system.  Note that packages are not
+automatically deleted after they are downloaded.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">plugins</span></tt></dt>
+<dd>Tells all enabled plugins to eliminate their cached data.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">all</span></tt></dt>
+<dd>Does all of the above.</dd>
+</dl>
+</div>
 <div class="section" id="downgrade-command">
 <h3>Downgrade Command<a class="headerlink" href="#downgrade-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
@@ -215,6 +259,17 @@ repositories. Lists all enabled repositories by default. Provides more
 detailed information when <tt class="docutils literal"><span class="pre">-v</span></tt> option is used.</dd>
 </dl>
 </div>
+<div class="section" id="search-command">
+<h3>Search Command<a class="headerlink" href="#search-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">search</span> <span class="pre">[all]</span> <span class="pre">&lt;keywords&gt;...</span></tt></dt>
+<dd>Search package metadata for the keywords. Keywords are matched as
+case-sensitive substrings, globbing is supported. By default the command
+will only look at package names and summaries, failing that (or whenever
+<tt class="docutils literal"><span class="pre">all</span></tt> was givin as an argument) it will match against package descriptions
+and URLs. The result is sorted from the most relevant results to the least.</dd>
+</dl>
+</div>
 <div class="section" id="update-command">
 <h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
@@ -228,11 +283,14 @@ relevant dependencies available.</dd>
 <div class="section" id="specifying-packages">
 <span id="specifying-packages-label"></span><h2>Specifying Packages<a class="headerlink" href="#specifying-packages" title="Permalink to this headline">¶</a></h2>
 <p>Many commands take a <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> parameter that selects a package for the
-operation. The specification is always done by the name of the package. If
+operation. The specification is first taken as the name of a package. If
 multiple versions of the selected package exist in the repo, the most recent
-version suitable for the given operation is used.</p>
-<p>The specification is case-sensitive,globbing characters &#8220;<tt class="docutils literal"><span class="pre">?</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[</span></tt>
-are allowed and trigger shell-like glob matching.</p>
+version suitable for the given operation is used.  The name specification is
+case-sensitive, globbing characters &#8220;<tt class="docutils literal"><span class="pre">?</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[</span></tt> are allowed and
+trigger shell-like glob matching.</p>
+<p>If no package matches the name pattern, DNF tries to see if the pattern
+corresponds to the <tt class="docutils literal"><span class="pre">name-[epoch:]version-release.arch</span></tt> format (also called
+<em>NEVRA</em>), and applies the operation accordingly.</p>
 </div>
 <div class="section" id="specifying-provides">
 <span id="specifying-provides-label"></span><h2>Specifying Provides<a class="headerlink" href="#specifying-provides" title="Permalink to this headline">¶</a></h2>
@@ -262,6 +320,8 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#options">Options</a></li>
 <li><a class="reference internal" href="#commands">Commands</a><ul>
+<li><a class="reference internal" href="#check-update-command">Check Update Command</a></li>
+<li><a class="reference internal" href="#clean-command">Clean Command</a></li>
 <li><a class="reference internal" href="#downgrade-command">Downgrade Command</a></li>
 <li><a class="reference internal" href="#erase-command">Erase Command</a></li>
 <li><a class="reference internal" href="#help-command">Help Command</a></li>
@@ -272,6 +332,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#makecache-command">Makecache Command</a></li>
 <li><a class="reference internal" href="#provides-command">Provides Command</a></li>
 <li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
+<li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
 </ul>
 </li>
@@ -285,6 +346,9 @@ provide. The selection is case-sensitive and globbing is supported.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
                         title="previous chapter">DNF, Experimental Yum Replacement</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">DNF API Reference</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/command_ref.txt"
@@ -314,9 +378,15 @@ provide. The selection is case-sensitive and globbing is supported.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             >next</a> |</li>
+        <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
