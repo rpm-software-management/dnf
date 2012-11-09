@@ -1741,9 +1741,6 @@ class YumOptionParser(OptionParser):
                 self._checkAbsInstallRoot(opts)
                 self.base.conf.installroot = opts.installroot
 
-            if opts.skipbroken:
-                self.base.conf.skip_broken = True
-
             if opts.showdupesfromrepos:
                 self.base.conf.showdupesfromrepos = True
 

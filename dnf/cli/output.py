@@ -1377,9 +1377,7 @@ class YumOutput:
 
             pkglist_lines.append((action, lines))
 
-        for (action, pkglist) in [(_('Skipped (dependency problems)'),
-                                   self.skipped_packages),
-                                  (_('Not installed'), self._not_found_i.values()),
+        for (action, pkglist) in [(_('Not installed'), self._not_found_i.values()),
                                   (_('Not available'), self._not_found_a.values())]:
             lines = []
             for po in pkglist:
@@ -1438,7 +1436,6 @@ Transaction Summary
              len(self.tsInfo.depremoved)),
             (_('Reinstall'), len(self.tsInfo.reinstalled), 0),
             (_('Downgrade'), len(self.tsInfo.downgraded), 0),
-            (_('Skipped (dependency problems)'), len(self.skipped_packages), 0),
             (_('Not installed'), len(self._not_found_i.values()), 0),
             (_('Not available'), len(self._not_found_a.values()), 0),
         )
@@ -1534,7 +1531,6 @@ Transaction Summary
                                   (_('Dependency Installed'), self.tsInfo.depinstalled),
                                   (_('Updated'), self.tsInfo.updated),
                                   (_('Dependency Updated'), self.tsInfo.depupdated),
-                                  (_('Skipped (dependency problems)'), self.skipped_packages),
                                   (_('Replaced'), self.tsInfo.obsoleted),
                                   (_('Failed'), self.tsInfo.failed)]:
             msgs = []

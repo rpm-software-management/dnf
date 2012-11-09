@@ -185,7 +185,6 @@ class YumBase(object):
         self._lockfile = None
         self._tags = None
         self._ts_save_file = None
-        self.skipped_packages = []   # packages skip by the skip-broken code
         self._not_found_a = {}
         self._not_found_i = {}
         self.logger = logging.getLogger("yum.YumBase")
@@ -893,131 +892,6 @@ class YumBase(object):
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         return (rescode, restring)
 
-    def _doSkipBroken(self,rescode, restring, clear_skipped=True):
-        ''' do skip broken if it is enabled '''
-        # if depsolve failed and skipbroken is enabled
-        # The remove the broken packages from the transactions and
-        # Try another depsolve
-        if self.conf.skip_broken and rescode==1:
-            if clear_skipped:
-                self.skipped_packages = []    # reset the public list of skipped packages.
-            sb_st = time.time()
-            rescode, restring = self._skipPackagesWithProblems(rescode, restring)
-            self._printTransaction()
-            self.verbose_logger.debug('Skip-Broken time: %0.3f' % (time.time() - sb_st))
-        return (rescode, restring)
-
-
-    def _skipPackagesWithProblems(self, rescode, restring):
-        ''' Remove the packages with depsolve errors and depsolve again '''
-
-        def _remove(po, depTree, toRemove):
-            if not po:
-                return
-            self._getPackagesToRemove(po, depTree, toRemove)
-            # Only remove non installed packages from pkgSack
-            _remove_from_sack(po)
-
-        def _remove_from_sack(po):
-            # get all compatible arch packages from pkgSack
-            # we need to remove them too so i386 packages are not
-            # dragged in when a x86_64 is skipped.
-            pkgs = self._getPackagesToRemoveAllArch(po)
-            for pkg in pkgs:
-                if not po.repoid == 'installed' and pkg not in removed_from_sack:
-                    self.verbose_logger.debug('SKIPBROKEN: removing %s from pkgSack & updates' % str(po))
-                    self.pkgSack.delPackage(pkg)
-                    self.up.delPackage(pkg.pkgtup)
-                    removed_from_sack.add(pkg)
-
-        # Keep removing packages & Depsolve until all errors is gone
-        # or the transaction is empty
-        count = 0
-        skipped_po = set()
-        removed_from_sack = set()
-        orig_restring = restring    # Keep the old error messages
-        looping = 0
-        while (len(self.po_with_problems) > 0 and rescode == 1):
-            count += 1
-            #  Remove all the rpmdb cache data, this is somewhat heavy handed
-            # but easier than removing/altering specific bits of the cache ...
-            # and skip-broken shouldn't care too much about speed.
-            self.rpmdb.transactionReset()
-            self.installedFileRequires = None # Kind of hacky
-            self.verbose_logger.debug("SKIPBROKEN: ########### Round %i ################" , count)
-            if count == 30: # Failsafe, to avoid endless looping
-                self.verbose_logger.debug('SKIPBROKEN: Too many loops ')
-                break
-            self._printTransaction()
-            depTree = self._buildDepTree()
-            startTs = set(self.tsInfo)
-            toRemove = set()
-            for po,wpo,err in self.po_with_problems:
-                # check if the problem is caused by a package in the transaction
-                if not self.tsInfo.exists(po.pkgtup):
-                    _remove(wpo, depTree, toRemove)
-                else:
-                    _remove(po,  depTree, toRemove)
-            for po in toRemove:
-                skipped = self._skipFromTransaction(po)
-                for skip in skipped:
-                    skipped_po.add(skip)
-                    # make sure we get the compat arch packages skip from pkgSack and up too.
-                    if skip not in removed_from_sack and skip.repoid != 'installed':
-                        _remove_from_sack(skip)
-            # Nothing was removed, so we still got a problem
-             # the first time we get here we reset the resolved members of
-             # tsInfo and takes a new run all members in the current transaction
-            if not toRemove:
-                looping += 1
-                if looping > 2:
-                    break # Bail out
-                else:
-                    self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (no packages to skip)' )
-                    self.tsInfo.resetResolved(hard=True)
-            rescode, restring = self.resolveDeps(True, skipping_broken=True)
-            endTs = set(self.tsInfo)
-             # Check if tsInfo has changes since we started to skip packages
-             # if there is no changes then we got a loop.
-             # the first time we get here we reset the resolved members of
-             # tsInfo and takes a new run all members in the current transaction
-            if startTs-endTs == set():
-                looping += 1
-                if looping > 2:
-                    break # Bail out
-                else:
-                    self.verbose_logger.debug('SKIPBROKEN: resetting already resolved packages (transaction not changed)' )
-                    self.tsInfo.resetResolved(hard=True)
-            else:
-                # Reset the looping counter, because it is only a loop if the same transaction is
-                # unchanged two times in row, not if it has been unchanged in a early stage.
-                looping = 0
-
-            # if we are all clear, then we have to check that the whole current transaction
-            # can complete the depsolve without error, because the packages skipped
-            # can have broken something that passed the tests earlier.
-            # FIXME: We need do this in a better way.
-            if rescode != 1:
-                self.verbose_logger.debug('SKIPBROKEN: sanity check the current transaction' )
-                self.tsInfo.resetResolved(hard=True)
-                self._checkMissingObsoleted() # This is totally insane, but needed :(
-                self._checkUpdatedLeftovers() # Cleanup updated leftovers
-                rescode, restring = self.resolveDeps()
-        if rescode != 1:
-            self.verbose_logger.debug("SKIPBROKEN: took %i rounds ", count)
-            self.verbose_logger.info(_('\nPackages skipped because of dependency problems:'))
-            skipped_list = [p for p in skipped_po]
-            skipped_list.sort()
-            for po in skipped_list:
-                msg = _("    %s from %s") % (str(po),po.repo.id)
-                self.verbose_logger.info(msg)
-            self.skipped_packages.extend(skipped_list)   # make the skipped packages public
-        else:
-            # If we cant solve the problems the show the original error messages.
-            self.verbose_logger.info("Skip-broken could not solve problems")
-            return 1, orig_restring
-        return rescode, restring
-
     def _add_not_found(self, pkgs, nevra_dict):
         if pkgs:
             return None
@@ -1277,7 +1151,7 @@ class YumBase(object):
                 cmdline = ' '.join(self.cmds)
 
             self.history.beg(rpmdbv, using_pkgs, list(self.tsInfo),
-                             self.skipped_packages, [], cmdline)
+                             [], [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
             if hasattr(self, '_shell_history_write'): # Only in cli...

@@ -412,8 +412,6 @@ class YumUtilBase(YumBaseCli):
                 prefix = _('Error: %s')
                 prefix2nd = (' ' * (utf8_width(prefix) - 2))
                 self.logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
-            if not self.conf.skip_broken:
-                self.verbose_logger.info(_(" You could try using --skip-broken to work around the problem"))
             if not self._rpmdb_warn_checks(out=self.verbose_logger.info, warn=False):
                 self.verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
             if self.unlock(): return 200

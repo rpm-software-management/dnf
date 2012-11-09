@@ -145,7 +145,6 @@ class FakeConf(object):
         self.installroot = '/'
         self.tsflags = []
         self.installonly_limit = 0
-        self.skip_broken = False
         self.disable_excludes = []
         self.multilib_policy = 'best'
         self.persistdir = '/should-not-exist-bad-test!'

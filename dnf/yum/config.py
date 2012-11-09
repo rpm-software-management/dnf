@@ -764,7 +764,6 @@ class YumConf(StartupConf):
     # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()
-    skip_broken = BoolOption(False)
     #  Note that "instant" is the old behaviour, but group:primary is very
     # similar but better :).
     mdpolicy = ListOption(['group:primary'])
