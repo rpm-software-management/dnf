@@ -881,6 +881,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
+        elif self.tsInfo.upgrade_all:
+            return 2, [_('Any healthy packages marked for Update')]
         else:
             return 0, [_('No Packages marked for Update')]
 

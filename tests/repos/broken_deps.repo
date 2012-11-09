@@ -1,0 +1,6 @@
+=Ver: 2.0
+#
+=Pkg: pepper 20 2 x86_64
+=Req: librita >= 1.2-0
+=Pkg: pepper 20 1 x86_64
+=Req: librita >= 1-0

@@ -18,6 +18,7 @@
 import base
 from dnf.queries import \
     available_by_name, \
+    available_by_nevra, \
     installed, \
     updates_by_name
 
@@ -44,8 +45,10 @@ class Update(base.ResultTestCase):
         yumbase = base.MockYumBase("main", "updates")
         sack = yumbase.sack
         ret = yumbase.update()
-        expected = available_by_name(sack, "pepper", latest_only=True)
-        self.assertItemsEqual((txmem.po for txmem in ret), expected)
+        self.assertTrue(yumbase.tsInfo.upgrade_all)
+        expected = base.installed_but(sack, "pepper") + \
+            list(available_by_nevra(sack, "pepper-20-1.x86_64"))
+        self.assertResult(yumbase, expected)
 
     def test_update_local(self):
         yumbase = base.MockYumBase()
@@ -56,3 +59,17 @@ class Update(base.ResultTestCase):
         self.assertEqual(new_pkg.evr, "5-1")
         new_set = base.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
+
+class SkipBroken(base.ResultTestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("broken_deps")
+        self.sack = self.yumbase.sack
+
+    def test_update_all(self):
+        """ update() without parameters update everything it can that has its
+            deps in trim. Broken packages are silently skipped.
+        """
+        txmbrs = self.yumbase.update()
+        new_set = base.installed_but(self.sack, "pepper").run()
+        new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
+        self.assertResult(self.yumbase, new_set)

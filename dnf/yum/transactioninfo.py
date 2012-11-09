@@ -70,6 +70,7 @@ class TransactionData:
         self.downgraded = []
         self.failed = []
         self.selector_installs = []
+        self.upgrade_all = False
 
     def __len__(self):
         return len(self.pkgdict) + len(self.selector_installs)

@@ -821,6 +821,8 @@ class YumBase(object):
                                           % txmbr.ts_state)
         for sltr in tsInfo.selector_installs:
             goal.install(select=sltr)
+        if tsInfo.upgrade_all:
+            goal.upgrade_all()
         if push_userinstalled:
             self._push_userinstalled(goal)
         return goal
@@ -3044,11 +3046,8 @@ class YumBase(object):
             for pkg in availpkgs:
                 txmbr = self.tsInfo.addUpdate(pkg)
                 tx_return.append(txmbr)
-        elif not kwargs: # update everything
-            availpkgs = queries.updates_by_name(self.sack, None,
-                                                latest_only=True)
-            txmbrs = map(self.tsInfo.addUpdate, availpkgs)
-            tx_return.extend(txmbrs)
+        elif not kwargs: # update everything updatable
+            self.tsInfo.upgrade_all = True
         else: # we have kwargs, sort them out.
             raise NotImplementedError("not in DNF yet")
         return tx_return
