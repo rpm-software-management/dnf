@@ -917,25 +917,6 @@ class YumBase(object):
             return
         self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
 
-    def _checkMissingObsoleted(self):
-        """
-        If multiple packages is obsoleting the same package
-        then the TS_OBSOLETED can get removed from the transaction
-        so we must make sure that they, exist and else create them
-        """
-        for txmbr in self.tsInfo.getMembersWithState(None, [TS_OBSOLETING,TS_OBSOLETED]):
-            for pkg in txmbr.obsoletes:
-                if not self.tsInfo.exists(pkg.pkgtup):
-                    obs = self.tsInfo.addObsoleted(pkg,txmbr.po)
-                    self.verbose_logger.debug('SKIPBROKEN: Added missing obsoleted %s (%s)' % (pkg,txmbr.po) )
-            for pkg in txmbr.obsoleted_by:
-                # check if the obsoleting txmbr is in the transaction
-                # else remove the obsoleted txmbr
-                # it clean out some really wierd cases
-                if not self.tsInfo.exists(pkg.pkgtup):
-                    self.verbose_logger.debug('SKIPBROKEN: Remove extra obsoleted %s (%s)' % (txmbr.po,pkg) )
-                    self.tsInfo.remove(txmbr.po.pkgtup)
-
     def _checkUpdatedLeftovers(self):
         """
         If multiple packages is updated the same package
@@ -2944,47 +2925,6 @@ class YumBase(object):
             self.tsInfo.addInstall(pkg)
 
         return self.tsInfo
-
-    def _check_new_update_provides(self, opkg, npkg):
-        """ Check for any difference in the provides of the old and new update
-            that is needed by the transaction. If so we "update" those pkgs
-            too, to the latest version. """
-        oprovs = set(opkg.returnPrco('provides'))
-        nprovs = set(npkg.returnPrco('provides'))
-        tx_return = []
-        for prov in oprovs.difference(nprovs):
-            reqs = self.tsInfo.getRequires(*prov)
-            for pkg in reqs:
-                for req in reqs[pkg]:
-                    if not npkg.inPrcoRange('provides', req):
-                        naTup = (pkg.name, pkg.arch)
-                        for pkg in self.pkgSack.returnNewestByNameArch(naTup):
-                            tx_return.extend(self.update(po=pkg))
-                        break
-        return tx_return
-
-    def _newer_update_in_trans(self, pkgtup, available_pkg, tx_return):
-        """ We return True if there is a newer package already in the
-            transaction. If there is an older one, we remove it (and update any
-            deps. that aren't satisfied by the newer pkg) and return False so
-            we'll update to this newer pkg. """
-        found = False
-        for txmbr in self.tsInfo.getMembersWithState(pkgtup, [TS_UPDATED]):
-            count = 0
-            for po in txmbr.updated_by:
-                if available_pkg.verLE(po):
-                    count += 1
-                else:
-                    for ntxmbr in self.tsInfo.getMembers(po.pkgtup):
-                        self.tsInfo.remove(ntxmbr.po.pkgtup)
-                        txs = self._check_new_update_provides(ntxmbr.po,
-                                                              available_pkg)
-                        tx_return.extend(txs)
-            if count:
-                found = True
-            else:
-                self.tsInfo.remove(txmbr.po.pkgtup)
-        return found
 
     def _add_up_txmbr(self, requiringPo, upkg, ipkg):
         txmbr = self.tsInfo.addUpdate(upkg, ipkg)

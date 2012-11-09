@@ -266,15 +266,6 @@ class TransactionData:
 
         return 0
 
-    def isObsoleted(self, pkgtup):
-        """true if the pkgtup is marked to be obsoleted"""
-        if self.exists(pkgtup):
-            for txmbr in self.getMembers(pkgtup=pkgtup):
-                if txmbr.output_state == TS_OBSOLETED:
-                    return True
-
-        return False
-
     def makelists(self, include_reinstall=False, include_downgrade=False):
         """returns lists of transaction Member objects based on mode:
            updated, installed, erased, obsoleted, depupdated, depinstalled
@@ -369,7 +360,6 @@ class TransactionData:
         if self.rpmdb.contains(po=txmbr.po):
             txmbr.reinstall = True
 
-        self.findObsoletedByThisMember(txmbr)
         self.add(txmbr)
         return txmbr
 
@@ -424,7 +414,6 @@ class TransactionData:
             self._addUpdated(oldpo, po)
 
         self.add(txmbr)
-        self.findObsoletedByThisMember(txmbr)
         return txmbr
 
     def addDowngrade(self, po, oldpo=None):
@@ -458,125 +447,6 @@ class TransactionData:
         txmbr.updated_by.append(updating_po)
         self.add(txmbr)
         return txmbr
-
-    def addObsoleting(self, po, oldpo):
-        """adds a package as an obsolete over another pkg
-           takes a packages object and returns a TransactionMember Object"""
-
-        txmbr = TransactionMember(po)
-        txmbr.current_state = TS_AVAILABLE
-        txmbr.output_state = TS_OBSOLETING
-        txmbr.po.state = TS_OBSOLETING
-        txmbr.ts_state = 'u'
-        txmbr.relatedto.append((oldpo, 'obsoletes'))
-        txmbr.obsoletes.append(oldpo)
-
-        if self.rpmdb.contains(po=txmbr.po):
-            txmbr.reinstall = True
-
-        self.add(txmbr)
-        return txmbr
-
-    def addObsoleted(self, po, obsoleting_po):
-        """adds a package as being obsoleted by another pkg
-           takes a packages object and returns a TransactionMember Object"""
-
-        txmbr = TransactionMember(po)
-        txmbr.current_state = TS_INSTALL
-        txmbr.output_state =  TS_OBSOLETED
-        txmbr.po.state = TS_OBSOLETED
-        txmbr.ts_state = 'od'
-        txmbr.relatedto.append((obsoleting_po, 'obsoletedby'))
-        txmbr.obsoleted_by.append(obsoleting_po)
-        self.add(txmbr)
-        for otxmbr in self.getMembersWithState(obsoleting_po.pkgtup,
-                                               [TS_OBSOLETING]):
-            if po in otxmbr.obsoletes:
-                continue
-            otxmbr.relatedto.append((po, 'obsoletes'))
-            otxmbr.obsoletes.append(po)
-        return txmbr
-
-
-    def setDatabases(self, rpmdb, pkgSack):
-        self.rpmdb = rpmdb
-        self.pkgSack = pkgSack
-
-    def getNewProvides(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }
-        searches in packages to be installed"""
-        result = { }
-        if not self.pkgSackPackages:
-            pass
-        elif self._inSack is None:
-            for pkg, hits in self.pkgSack.getProvides(name, flag, version).iteritems():
-                if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
-                    result[pkg] = hits
-        else:
-            for pkg, hits in self._inSack.getProvides(name, flag, version).iteritems():
-                result[pkg] = hits
-        result.update(self.localSack.getProvides(name, flag, version))
-        return result
-
-    def getOldProvides(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }
-        searches in packages already installed and not going to be removed"""
-        result = { }
-        for pkg, hits in self.rpmdb.getProvides(name, flag, version).iteritems():
-            if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
-                result[pkg] = hits
-        return result
-
-    def getProvides(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }"""
-        result = self.getOldProvides(name, flag, version)
-        result.update(self.getNewProvides(name, flag, version))
-        return result
-
-    def getNewRequires(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }
-        searches in packages to be installed"""
-        result = { }
-        if not self.pkgSackPackages:
-            pass
-        elif self._inSack is None:
-            for pkg, hits in self.pkgSack.getRequires(name, flag, version).iteritems():
-                if self.getMembersWithState(pkg.pkgtup, TS_INSTALL_STATES):
-                    result[pkg] = hits
-        else:
-            for pkg, hits in self._inSack.getRequires(name, flag, version).iteritems():
-                result[pkg] = hits
-
-        result.update(self.localSack.getRequires(name, flag, version))
-        return result
-
-
-    def getOldRequires(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }
-        searches in packages already installed and not going to be removed"""
-        result = { }
-        for pkg, hits in self.rpmdb.getRequires(name, flag, version).iteritems():
-            if not self.getMembersWithState(pkg.pkgtup, TS_REMOVE_STATES):
-                result[pkg] = hits
-        return result
-
-    def getRequires(self, name, flag=None, version=(None, None, None)):
-        """return dict { packages -> list of matching provides }"""
-        result = self.getOldRequires(name, flag, version)
-        result.update(self.getNewRequires(name, flag, version))
-        return result
-
-    def findObsoletedByThisMember(self, txmbr):
-        """addObsoleted() pkgs for anything that this txmbr will obsolete"""
-        # this is mostly to keep us in-line with what will ACTUALLY happen
-        # when rpm hits the obsoletes, whether we added them or not
-        return None # :hawkey
-        for obs_n in txmbr.po.obsoletes_names:
-            for pkg in self.rpmdb.searchNevra(name=obs_n):
-                if pkg.obsoletedBy([txmbr.po]):
-                    self.addObsoleted(pkg, txmbr.po)
-                    txmbr.output_state = TS_OBSOLETING
-                    txmbr.po.state = TS_OBSOLETING
 
 class SortableTransactionData(TransactionData):
     """A transaction data implementing topological sort on it's members"""

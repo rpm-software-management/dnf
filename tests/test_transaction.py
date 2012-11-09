@@ -87,15 +87,6 @@ class TransactionDataTests(unittest.TestCase):
         txmbr = self.tsInfo.getMembers(self.pkgs[0].pkgtup)[0]
         self.assertEqual(txmbr.output_state, TS_INSTALL)
 
-    def testObsoletes(self):
-        ''' test addUpdated,addObsoleted'''
-        txmbr2 = self.tsInfo.addObsoleted(self.pkgs[3], self.pkgs[4])
-        self.assertEqual(len(self.tsInfo), 1)
-        txmbrs = self.tsInfo.getMembersWithState(output_states=[TS_UPDATED])
-        self.assertEqual(len(txmbrs), 0)
-        txmbr = self.tsInfo.getMembersWithState(output_states=[TS_OBSOLETED])[0]
-        self.assertEqual(txmbr.po, self.pkgs[3])
-
     def testMatchNaevr(self):
         ''' test MatchNaevr '''
         self.tsInfo.addInstall(self.pkgs[0])
