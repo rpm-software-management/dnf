@@ -2785,7 +2785,7 @@ def _pkgname_ui(ayum, pkgname, ts_states=None):
 
     matches = []
     def _cond_add(po):
-        if matches and matches[0].arch == po.arch and matches[0].verEQ(po):
+        if matches and matches[0].arch == po.arch and matches[0].evr_cmp(po) == 0:
             return
         matches.append(po)
 
@@ -2803,7 +2803,7 @@ def _pkgname_ui(ayum, pkgname, ts_states=None):
     show_ver  = True
     show_arch = True
     for match in matches:
-        if not fmatch.verEQ(match):
+        if fmatch.evr_cmp(match):
             show_ver  = False
         if fmatch.arch != match.arch:
             show_arch = False

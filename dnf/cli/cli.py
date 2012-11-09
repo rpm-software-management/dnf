@@ -635,8 +635,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # put back our depcheck callback
         self.dsCallback = dscb
         # setup our rpm ts callback
-        cb = RPMTransaction(self,
-                            display=output.YumCliRPMCallBack(weakref(self)))
+        cb = RPMTransaction(self, display=output.YumCliRPMCallBack(weakref(self)))
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
