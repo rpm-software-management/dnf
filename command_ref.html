@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="DNF 0.2.15-1 documentation" href="index.html" />
-    <link rel="next" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api.html" title="DNF API Reference"
+          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
@@ -273,10 +273,12 @@ and URLs. The result is sorted from the most relevant results to the least.</dd>
 <div class="section" id="update-command">
 <h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
-<dd>Updates the specified packages and their dependencies as necessary. If no
-<tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given, updates all packages a newer version and
-relevant dependencies available.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span></tt></dt>
+<dd>Updates each package to a highest version that is both available and
+resolvable.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Updates each specified package to the latest available version. Updates
+depdendencies as necessary.</dd>
 </dl>
 </div>
 </div>
@@ -347,8 +349,8 @@ provide. The selection is case-sensitive and globbing is supported.</p>
   <p class="topless"><a href="index.html"
                         title="previous chapter">DNF, Experimental Yum Replacement</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api.html"
-                        title="next chapter">DNF API Reference</a></p>
+  <p class="topless"><a href="cli_vs_yum.html"
+                        title="next chapter">Changes in DNF CLI compared to Yum</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/command_ref.txt"
@@ -381,7 +383,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api.html" title="DNF API Reference"
+          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"

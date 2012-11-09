@@ -249,11 +249,13 @@ Search Command
 --------------
 Update Command
 --------------
-``dnf [options] update [<package-specs>...]``
-    Updates the specified packages and their dependencies as necessary. If no
-    ``<package-specs>`` are given, updates all packages a newer version and
-    relevant dependencies available.
+``dnf [options] update``
+    Updates each package to a highest version that is both available and
+    resolvable.
 
+``dnf [options] update <package-specs>...``
+    Updates each specified package to the latest available version. Updates
+    depdendencies as necessary.
 
 .. _specifying_packages-label:
 
