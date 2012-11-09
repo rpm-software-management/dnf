@@ -8,6 +8,7 @@ Contents:
    :maxdepth: 1
 
    command_ref
+   cli_vs_yum
    api
 
 Indices and tables
