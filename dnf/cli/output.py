@@ -2697,16 +2697,6 @@ class DepSolveProgressCallBack:
         self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
             'with selected packages. Please wait.'))
 
-    def downloadHeader(self, name):
-        """Output a message stating that the header for the given
-        package is being downloaded.
-
-        :param name: the name of the package
-        """
-        self.verbose_logger.log(logginglevels.INFO_2, _('---> Downloading header for %s '
-            'to pack into transaction set.'), name)
-
-
 class CacheProgressCallback:
     """A class to handle text output callbacks during metadata cache updates."""
 

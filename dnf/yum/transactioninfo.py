@@ -26,7 +26,6 @@ to rpm.
 """
 
 from constants import *
-from packages import YumInstalledPackage
 import Errors
 import warnings
 import misc
@@ -574,7 +573,7 @@ class TransactionMember:
             msg += "  relatedto:"
             for (po, rel) in self.relatedto:
                 pkgorigin = 'a'
-                if isinstance(po, YumInstalledPackage):
+                if po.from_system:
                     pkgorigin = 'i'
                 msg += " %s,%s,%s,%s,%s@%s:%s" % (po.name, po.arch, po.epoch,
                       po.version, po.release, pkgorigin, rel)
@@ -587,7 +586,7 @@ class TransactionMember:
                 msg += "  %s:" % lst
                 for po in thislist:
                     pkgorigin = 'a'
-                    if isinstance(po, YumInstalledPackage):
+                    if po.from_system:
                         pkgorigin = 'i'
                     msg += " %s,%s,%s,%s,%s@%s" % (po.name, po.arch, po.epoch,
                         po.version, po.release, pkgorigin)

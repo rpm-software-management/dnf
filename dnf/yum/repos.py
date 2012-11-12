@@ -322,7 +322,3 @@ class Repository:
 
     def getPackage(self, package, checkfunc = None, text = None, cache = True):
         raise NotImplementedError()
-
-    def getHeader(self, package, checkfunc = None, reget = 'simple', cache = True):
-        raise NotImplementedError()
-

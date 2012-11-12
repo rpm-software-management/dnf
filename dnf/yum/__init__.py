@@ -73,7 +73,7 @@ import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
 from packages import parsePackages, comparePoEVR
-from packages import YumAvailablePackage, YumLocalPackage, YumInstalledPackage
+from packages import YumAvailablePackage, YumLocalPackage
 from packages import YumUrlPackage, YumNotFoundPackage
 from constants import *
 from rpmtrans import RPMTransaction,SimpleCliCallBack
@@ -1683,94 +1683,6 @@ class YumBase(object):
             urlgrabber.grabber.reset_curl_obj()
 
         return errors
-
-    def verifyHeader(self, fo, po, raiseError):
-        """Check that the header of the given file object and matches
-        the given package.
-
-        :param fo: the file object to check
-        :param po: the package object to check
-        :param raiseError: if *raiseError* is True, a
-           :class:`URLGrabError` will be raised if the header matches
-           the package object, or cannot be read from the file.  If
-           *raiseError* is False, 0 will be returned in the above
-           cases
-        :return: 1 if the header matches the package object, and 0 if
-           they do not match, and *raiseError* is False
-        :raises: :class:`URLGrabError` if *raiseError* is True, and
-           the header does not match the package object or cannot be
-           read from the file
-        """
-        if type(fo) is types.InstanceType:
-            fo = fo.filename
-
-        try:
-            hlist = rpm.readHeaderListFromFile(fo)
-            hdr = hlist[0]
-        except (rpm.error, IndexError):
-            if raiseError:
-                raise URLGrabError(-1, _('Header is not complete.'))
-            else:
-                return 0
-
-        yip = YumInstalledPackage(hdr) # we're using YumInstalledPackage b/c
-                                       # it takes headers <shrug>
-        if yip.pkgtup != po.pkgtup:
-            if raiseError:
-                raise URLGrabError(-1, 'Header does not match intended download')
-            else:
-                return 0
-
-        return 1
-
-    def downloadHeader(self, po):
-        """Download a header from a package object.
-
-        :param po: the package object to download the header from
-        :raises: :class:`Errors.RepoError` if there are errors
-           obtaining the header
-        """
-        if hasattr(po, 'pkgtype') and po.pkgtype == 'local':
-            return
-
-        errors = {}
-        local =  po.localHdr()
-        repo = self.repos.getRepo(po.repoid)
-        if os.path.exists(local):
-            try:
-                result = self.verifyHeader(local, po, raiseError=1)
-            except URLGrabError, e:
-                # might add a check for length of file - if it is <
-                # required doing a reget
-                misc.unlink_f(local)
-            else:
-                po.hdrpath = local
-                return
-        else:
-            if self.conf.cache:
-                raise Errors.RepoError, \
-                _('Header not in local cache and caching-only mode enabled. Cannot download %s') % po.hdrpath
-
-        if self.dsCallback: self.dsCallback.downloadHeader(po.name)
-
-        try:
-            if not os.path.exists(repo.hdrdir):
-                os.makedirs(repo.hdrdir)
-            checkfunc = (self.verifyHeader, (po, 1), {})
-            hdrpath = repo.getHeader(po, checkfunc=checkfunc,
-                    cache=repo.http_caching != 'none',
-                    )
-        except Errors.RepoError, e:
-            saved_repo_error = e
-            try:
-                misc.unlink_f(local)
-            except OSError, e:
-                raise Errors.RepoError, saved_repo_error
-            else:
-                raise Errors.RepoError, saved_repo_error
-        else:
-            po.hdrpath = hdrpath
-            return
 
     def sigCheckPkg(self, po):
         """Verify the GPG signature of the given package object.
@@ -3887,11 +3799,9 @@ class YumBase(object):
                 if (txmbr.pkgtup, 'i') in ts_elem:
                     continue
                 rpmfile = txmbr.po.localPkg()
-                if os.path.exists(rpmfile):
-                    hdr = dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
-                else:
-                    self.downloadHeader(txmbr.po)
-                    hdr = txmbr.po.returnLocalHeader()
+                if not os.path.exists(rpmfile):
+                    raise RuntimeError("rpm file does not exist %s", rpmfile)
+                hdr = dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
 
                 if txmbr.ts_state == 'u':
                     if self.allowedMultipleInstalls(txmbr.po):

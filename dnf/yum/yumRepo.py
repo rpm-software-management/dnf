@@ -679,24 +679,6 @@ Insufficient space in download directory %s
                         size=package.size,
                         )
 
-    def getHeader(self, package, checkfunc = None, reget = 'simple',
-            cache = True):
-
-        remote = package.relativepath
-        local =  package.localHdr()
-        start = package.hdrstart
-        end = package.hdrend
-        size = end-start
-        basepath = package.basepath
-        # yes, I know, don't ask
-        if not os.path.exists(self.hdrdir):
-            os.makedirs(self.hdrdir)
-
-        return self._getFile(url=basepath, relative=remote, local=local, start=start,
-                        reget=None, end=end, checkfunc=checkfunc, copy_local=1,
-                        cache=cache, size=size,
-                        )
-
     def metadataCurrent(self):
         """Check if there is a metadata_cookie and check its age. If the
         age of the cookie is less than metadata_expire time then return true
