@@ -30,7 +30,6 @@ import rpm
 from weakref import proxy as weakref
 
 import output
-import shell
 import dnf.match_counter
 import dnf.yum
 import dnf.yum.Errors
@@ -127,7 +126,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.registerCommand(dnf.cli.commands.CheckUpdateCommand())
         self.registerCommand(dnf.cli.commands.SearchCommand())
         # self.registerCommand(dnf.cli.commands.ResolveDepCommand())
-        # self.registerCommand(dnf.cli.commands.ShellCommand())
         # self.registerCommand(dnf.cli.commands.DepListCommand())
         self.registerCommand(dnf.cli.commands.RepoListCommand())
         self.registerCommand(dnf.cli.commands.HelpCommand())
@@ -402,40 +400,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             raise CliError
 
         self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
-
-    def _shell_history_write(self):
-        if not hasattr(self, '_shell_history_cmds'):
-            return
-        if not self._shell_history_cmds:
-            return
-
-        data = self._shell_history_cmds
-        # Turn: [["a", "b"], ["c", "d"]] => "a b\nc d\n"
-        data = [" ".join(cmds) for cmds in data]
-        data.append('')
-        data = "\n".join(data)
-        self.history.write_addon_data('shell-cmds', data)
-
-    def doShell(self):
-        """Run a shell-like interface for yum commands.
-
-        :return: a tuple containing the shell result number, and the
-           shell result messages
-        """
-
-        yumshell = shell.YumShell(base=self)
-
-        # We share this array...
-        self._shell_history_cmds = yumshell._shell_history_cmds
-
-        if len(self.extcmds) == 0:
-            yumshell.cmdloop()
-        else:
-            yumshell.script()
-
-        del self._shell_history_cmds
-
-        return yumshell.result, yumshell.resultmsgs
 
     def errorSummary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -1608,8 +1572,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         else:
             return 2, [P_('%d package to remove', '%d packages to remove', len(pkgs_used)) % len(pkgs_used)]
 
-
-
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
         if self.conf.assumeyes and not self.conf.assumeno:
@@ -1632,10 +1594,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
     def usage(self):
         """Print out an explanation of command line usage."""
         sys.stdout.write(self.optparser.format_help())
-
-    def shellUsage(self):
-        """Print out an explanation of the shell usage."""
-        sys.stdout.write(self.optparser.get_usage())
 
 class YumOptionParser(OptionParser):
     """Subclass that makes some minor tweaks to make OptionParser do things the

@@ -151,33 +151,6 @@ def checkCleanArg(base, basecmd, extcmds):
             _err_mini_usage(base, basecmd)
             raise cli.CliError
 
-def checkShellArg(base, basecmd, extcmds):
-    """Verify that the arguments given to 'yum shell' are valid.  yum
-    shell can be given either no argument, or exactly one argument,
-    which is the name of a file.
-
-    :param base: a :class:`dnf.yum.Yumbase` object.
-    :param basecmd: the name of the command being checked for
-    :param extcmds: a list of arguments passed to *basecmd*
-    :raises: :class:`cli.CliError`
-    """
-    if len(extcmds) == 0:
-        base.verbose_logger.debug(_("No argument to shell"))
-    elif len(extcmds) == 1:
-        base.verbose_logger.debug(_("Filename passed to shell: %s"),
-            extcmds[0])
-        if not os.path.isfile(extcmds[0]):
-            base.logger.critical(
-                _("File %s given as argument to shell does not exist."),
-                extcmds[0])
-            base.usage()
-            raise cli.CliError
-    else:
-        base.logger.critical(
-                _("Error: more than one file given as argument to shell."))
-        base.usage()
-        raise cli.CliError
-
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
@@ -1317,75 +1290,6 @@ class ResolveDepCommand(Command):
             return base.resolveDepCli(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
-
-class ShellCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    shell command.
-    """
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['shell']
-
-    def getUsage(self):
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[FILENAME]"
-
-    def getSummary(self):
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Run an interactive yum shell")
-
-    def doCheck(self, base, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that this command is called with appropriate arguments.
-
-        :param base: a :class:`dnf.yum.Yumbase` object
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkShellArg(base, basecmd, extcmds)
-
-    def doCommand(self, base, basecmd, extcmds):
-        """Execute this command.
-
-        :param base: a :class:`dnf.yum.Yumbase` object
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        self.doneCommand(base, _('Setting up Yum Shell'))
-        try:
-            return base.doShell()
-        except dnf.yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
-
-    def needTs(self, base, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param base: a :class:`dnf.yum.Yumbase` object
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
 
 class DepListCommand(Command):
     """A class containing methods needed by the cli to execute the
