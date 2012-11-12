@@ -81,6 +81,7 @@ speed and defining strict API and plugin interface.</p>
 <li>repolist</li>
 <li>search</li>
 <li>update</li>
+<li>upgrade</li>
 </ul>
 <p>See the reference for each command below.</p>
 </div>
@@ -272,11 +273,16 @@ and URLs. The result is sorted from the most relevant results to the least.</dd>
 </div>
 <div class="section" id="update-command">
 <h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Deprecated alias for the <a class="reference internal" href="#upgrade-command-label"><em>Upgrade Command</em></a>.</div></blockquote>
+</div>
+<div class="section" id="upgrade-command">
+<span id="upgrade-command-label"></span><h3>Upgrade Command<a class="headerlink" href="#upgrade-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">upgrade</span></tt></dt>
 <dd>Updates each package to a highest version that is both available and
 resolvable.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">upgrade</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
 <dd>Updates each specified package to the latest available version. Updates
 depdendencies as necessary.</dd>
 </dl>
@@ -336,6 +342,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
+<li><a class="reference internal" href="#upgrade-command">Upgrade Command</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#specifying-packages">Specifying Packages</a></li>

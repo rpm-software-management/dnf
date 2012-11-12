@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="DNF 0.2.15-1 documentation" href="index.html" />
     <link rel="next" title="dnf Reference" href="api_dnf.html" />
-    <link rel="prev" title="DNF Command Reference" href="command_ref.html" /> 
+    <link rel="prev" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="api_dnf.html" title="dnf Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="command_ref.html" title="DNF Command Reference"
+          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
       </ul>
@@ -71,47 +71,47 @@ have ideas or suggestions about the form of the future API.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api_dnf.html">dnf Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.html#id1">dnf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#dnf-conf">dnf.conf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.conf">dnf.conf</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.const">dnf.const</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.i18n">dnf.i18n</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#dnf-package">dnf.package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#dnf-queries">dnf.queries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#dnf-sack">dnf.sack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#dnf-util">dnf.util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.package">dnf.package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.queries">dnf.queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.sack">dnf.sack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.html#module-dnf.util">dnf.util</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_dnf.yum.html">dnf.yum Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum">dnf.yum</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-callbacks">dnf.yum.callbacks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-comps">dnf.yum.comps</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-config">dnf.yum.config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-constants">dnf.constants</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-errors">dnf.yum.Errors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-failover">dnf.yum.failover</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-history">dnf.yum.history</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-i18n">dnf.yum.i18n</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-logginglevels">dnf.yum.logginglevels</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-mdparser">dnf.yum.mdparser</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-metalink">dnf.yum.metalink</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-misc">dnf.yum.misc</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-packages">dnf.yum.packages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-parser">dnf.yum.parser</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-pgpmsg">dnf.yum.pgpmsg</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-plugins">dnf.yum.plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-repomdobject">dnf.yum.repoMDObject</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-repos">dnf.yum.repos</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-rpmsack">dnf.yum.rpmsack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-rpmtrans">dnf.yum.rpmtrans</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-sqlutils">dnf.yum.sqlutils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-transactioninfo">dnf.yum.transactioninfo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-update-md">dnf.yum.update_md</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#dnf-yum-yumrepo">dnf.yum.yumRepo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum">dnf.yum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.callbacks">dnf.yum.callbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.comps">dnf.yum.comps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.config">dnf.yum.config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.constants">dnf.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.Errors">dnf.yum.Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.failover">dnf.yum.failover</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.history">dnf.yum.history</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.i18n">dnf.yum.i18n</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.logginglevels">dnf.yum.logginglevels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.mdparser">dnf.yum.mdparser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.metalink">dnf.yum.metalink</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.misc">dnf.yum.misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.packages">dnf.yum.packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.parser">dnf.yum.parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.pgpmsg">dnf.yum.pgpmsg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.plugins">dnf.yum.plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.repoMDObject">dnf.yum.repoMDObject</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.repos">dnf.yum.repos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.rpmsack">dnf.yum.rpmsack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.rpmtrans">dnf.yum.rpmtrans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.sqlutils">dnf.yum.sqlutils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.transactioninfo">dnf.yum.transactioninfo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.update_md">dnf.yum.update_md</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.yum.html#module-dnf.yum.yumRepo">dnf.yum.yumRepo</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_dnf.rpmUtils.html">dnf.rpmUtils Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils">dnf.rpmUtils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.arch">dnf.rpmUtils.arch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#dnf-rpmutils-connection">dnf.rpmUtils.connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.connection">dnf.rpmUtils.connection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.error">dnf.rpmUtils.error</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.miscutils">dnf.rpmUtils.miscutils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.transaction">dnf.rpmUtils.transaction</a></li>
@@ -119,13 +119,13 @@ have ideas or suggestions about the form of the future API.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api_dnf.cli.html">dnf.cli Reference</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli">dnf.cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-callback">dnf.cli.callback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-cli">dnf.cli.cli</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-output">dnf.cli.output</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-shell">dnf.cli.shell</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-utils">dnf.cli.utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-yumcommands">dnf.cli.yumcommands</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#dnf-cli-yummain">dnf.cli.yummain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.callback">dnf.cli.callback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.cli">dnf.cli.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.output">dnf.cli.output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.shell">dnf.cli.shell</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.utils">dnf.cli.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.yumcommands">dnf.cli.yumcommands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_dnf.cli.html#module-dnf.cli.yummain">dnf.cli.yummain</a></li>
 </ul>
 </li>
 </ul>
@@ -139,8 +139,8 @@ have ideas or suggestions about the form of the future API.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="command_ref.html"
-                        title="previous chapter">DNF Command Reference</a></p>
+  <p class="topless"><a href="cli_vs_yum.html"
+                        title="previous chapter">Changes in DNF CLI compared to Yum</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="api_dnf.html"
                         title="next chapter">dnf Reference</a></p>
@@ -179,7 +179,7 @@ have ideas or suggestions about the form of the future API.</p>
           <a href="api_dnf.html" title="dnf Reference"
              >next</a> |</li>
         <li class="right" >
-          <a href="command_ref.html" title="DNF Command Reference"
+          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              >previous</a> |</li>
         <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
       </ul>
