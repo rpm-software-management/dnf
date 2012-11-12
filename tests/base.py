@@ -85,7 +85,7 @@ class MockYumBase(dnf.yum.YumBase):
     """
     def __init__(self, *extra_repos):
         super(MockYumBase, self).__init__()
-        self._repos =dnf.yum.RepoStorage(self)
+        self._repos = dnf.yum.RepoStorage(self)
         for r in extra_repos:
             repo = dnf.yum.yumRepo.YumRepository(r)
             repo.enable()

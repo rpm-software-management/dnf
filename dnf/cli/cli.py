@@ -42,7 +42,7 @@ from dnf.rpmUtils.arch import isMultiLibArch
 from dnf.yum import _, P_
 from dnf.yum.rpmtrans import RPMTransaction
 import signal
-import yumcommands
+import dnf.cli.commands
 import dnf.const
 import dnf.queries
 import dnf.sack
@@ -115,36 +115,36 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.yum_cli_commands = {}
         self.use_txmbr_in_callback = True
         # :hawkey -- commented out are not yet supported in dnf
-        self.registerCommand(yumcommands.InstallCommand())
-        self.registerCommand(yumcommands.UpdateCommand())
-        self.registerCommand(yumcommands.InfoCommand())
-        self.registerCommand(yumcommands.ListCommand())
-        self.registerCommand(yumcommands.EraseCommand())
-        # self.registerCommand(yumcommands.GroupsCommand())
-        self.registerCommand(yumcommands.MakeCacheCommand())
-        self.registerCommand(yumcommands.CleanCommand())
-        self.registerCommand(yumcommands.ProvidesCommand())
-        self.registerCommand(yumcommands.CheckUpdateCommand())
-        self.registerCommand(yumcommands.SearchCommand())
-        # self.registerCommand(yumcommands.ResolveDepCommand())
-        # self.registerCommand(yumcommands.ShellCommand())
-        # self.registerCommand(yumcommands.DepListCommand())
-        self.registerCommand(yumcommands.RepoListCommand())
-        self.registerCommand(yumcommands.HelpCommand())
-        # self.registerCommand(yumcommands.ReInstallCommand())
-        self.registerCommand(yumcommands.DowngradeCommand())
-        # self.registerCommand(yumcommands.VersionCommand())
-        self.registerCommand(yumcommands.HistoryCommand())
-        # self.registerCommand(yumcommands.CheckRpmdbCommand())
-        # self.registerCommand(yumcommands.DistroSyncCommand())
-        # self.registerCommand(yumcommands.LoadTransactionCommand())
+        self.registerCommand(dnf.cli.commands.InstallCommand())
+        self.registerCommand(dnf.cli.commands.UpdateCommand())
+        self.registerCommand(dnf.cli.commands.InfoCommand())
+        self.registerCommand(dnf.cli.commands.ListCommand())
+        self.registerCommand(dnf.cli.commands.EraseCommand())
+        # self.registerCommand(dnf.cli.commands.GroupsCommand())
+        self.registerCommand(dnf.cli.commands.MakeCacheCommand())
+        self.registerCommand(dnf.cli.commands.CleanCommand())
+        self.registerCommand(dnf.cli.commands.ProvidesCommand())
+        self.registerCommand(dnf.cli.commands.CheckUpdateCommand())
+        self.registerCommand(dnf.cli.commands.SearchCommand())
+        # self.registerCommand(dnf.cli.commands.ResolveDepCommand())
+        # self.registerCommand(dnf.cli.commands.ShellCommand())
+        # self.registerCommand(dnf.cli.commands.DepListCommand())
+        self.registerCommand(dnf.cli.commands.RepoListCommand())
+        self.registerCommand(dnf.cli.commands.HelpCommand())
+        # self.registerCommand(dnf.cli.commands.ReInstallCommand())
+        self.registerCommand(dnf.cli.commands.DowngradeCommand())
+        # self.registerCommand(dnf.cli.commands.VersionCommand())
+        self.registerCommand(dnf.cli.commands.HistoryCommand())
+        # self.registerCommand(dnf.cli.commands.CheckRpmdbCommand())
+        # self.registerCommand(dnf.cli.commands.DistroSyncCommand())
+        # self.registerCommand(dnf.cli.commands.LoadTransactionCommand())
 
     def registerCommand(self, command):
-        """Register a :class:`yumcommands.YumCommand` so that it can be called by
-        any of the names returned by its
-        :func:`yumcommands.YumCommand.getNames` method.
+        """ Register a :class:`dnf.cli.commands.Command` so that it can be
+            called by any of the names returned by its
+            :func:`dnf.cli.commands.Command.getNames` method.
 
-        :param command: the :class:`yumcommands.YumCommand` to register
+            :param command: the :class:`dnf.cli.commands.Command` to register
         """
         for name in command.getNames():
             if name in self.yum_cli_commands:

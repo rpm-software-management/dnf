@@ -199,7 +199,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
     base.logger.critical(msg)
     raise cli.CliError
 
-class YumCommand:
+class Command:
     """An abstract base class that defines the methods needed by the cli
     to execute a specific command.  Subclasses must override at least
     :func:`getUsage` and :func:`getSummary`.
@@ -282,7 +282,7 @@ class YumCommand:
         """
         return True
 
-class InstallCommand(YumCommand):
+class InstallCommand(Command):
     """A class containing methods needed by the cli to execute the
     install command.
     """
@@ -345,7 +345,7 @@ class InstallCommand(YumCommand):
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-class UpdateCommand(YumCommand):
+class UpdateCommand(Command):
     """A class containing methods needed by the cli to execute the
     update command.
     """
@@ -407,7 +407,7 @@ class UpdateCommand(YumCommand):
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-class DistroSyncCommand(YumCommand):
+class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
     distro-synch command.
     """
@@ -494,7 +494,7 @@ def _list_cmd_calc_columns(base, ypl):
     columns = base.calcColumns(data, remainder_column=1)
     return (-columns[0], -columns[1], -columns[2])
 
-class InfoCommand(YumCommand):
+class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.
     """
@@ -657,7 +657,7 @@ class ListCommand(InfoCommand):
         return _("List a package or groups of packages")
 
 
-class EraseCommand(YumCommand):
+class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
     erase command.
     """
@@ -741,7 +741,7 @@ class EraseCommand(YumCommand):
         return True
 
 
-class GroupsCommand(YumCommand):
+class GroupsCommand(Command):
     """ Single sub-command interface for most groups interaction. """
 
     direct_commands = {'grouplist'    : 'list',
@@ -902,7 +902,7 @@ class GroupsCommand(YumCommand):
             return True
         return False
 
-class MakeCacheCommand(YumCommand):
+class MakeCacheCommand(Command):
     """A class containing methods needed by the cli to execute the
     makecache command.
     """
@@ -983,7 +983,7 @@ class MakeCacheCommand(YumCommand):
         """
         return False
 
-class CleanCommand(YumCommand):
+class CleanCommand(Command):
     """A class containing methods needed by the cli to execute the
     clean command.
     """
@@ -1050,7 +1050,7 @@ class CleanCommand(YumCommand):
         """
         return False
 
-class ProvidesCommand(YumCommand):
+class ProvidesCommand(Command):
     """A class containing methods needed by the cli to execute the
     provides command.
     """
@@ -1107,7 +1107,7 @@ class ProvidesCommand(YumCommand):
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-class CheckUpdateCommand(YumCommand):
+class CheckUpdateCommand(Command):
     """A class containing methods needed by the cli to execute the
     check-update command.
     """
@@ -1199,7 +1199,7 @@ class CheckUpdateCommand(YumCommand):
         else:
             return result, []
 
-class SearchCommand(YumCommand):
+class SearchCommand(Command):
     """A class containing methods needed by the cli to execute the
     search command.
     """
@@ -1267,13 +1267,13 @@ class SearchCommand(YumCommand):
         """
         return False
 
-class ResolveDepCommand(YumCommand):
+class ResolveDepCommand(Command):
     """A class containing methods needed by the cli to execute the
     resolvedep command.
     """
 
     def __init__(self):
-        YumCommand.__init__(self)
+        Command.__init__(self)
         self.hidden = True
 
     def getNames(self):
@@ -1318,7 +1318,7 @@ class ResolveDepCommand(YumCommand):
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-class ShellCommand(YumCommand):
+class ShellCommand(Command):
     """A class containing methods needed by the cli to execute the
     shell command.
     """
@@ -1387,7 +1387,7 @@ class ShellCommand(YumCommand):
         return False
 
 
-class DepListCommand(YumCommand):
+class DepListCommand(Command):
     """A class containing methods needed by the cli to execute the
     deplist command.
     """
@@ -1446,7 +1446,7 @@ class DepListCommand(YumCommand):
             return 1, [str(e)]
 
 
-class RepoListCommand(YumCommand):
+class RepoListCommand(Command):
     """A class containing methods needed by the cli to execute the
     repolist command.
     """
@@ -1735,7 +1735,7 @@ class RepoListCommand(YumCommand):
         return False
 
 
-class HelpCommand(YumCommand):
+class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
     help command.
     """
@@ -1845,7 +1845,7 @@ class HelpCommand(YumCommand):
         """
         return False
 
-class ReInstallCommand(YumCommand):
+class ReInstallCommand(Command):
     """A class containing methods needed by the cli to execute the
     reinstall command.
     """
@@ -1920,7 +1920,7 @@ class ReInstallCommand(YumCommand):
         """
         return False
 
-class DowngradeCommand(YumCommand):
+class DowngradeCommand(Command):
     """A class containing methods needed by the cli to execute the
     downgrade command.
     """
@@ -1995,7 +1995,7 @@ class DowngradeCommand(YumCommand):
         return False
 
 
-class VersionCommand(YumCommand):
+class VersionCommand(Command):
     """A class containing methods needed by the cli to execute the
     version command.
     """
@@ -2172,7 +2172,7 @@ class VersionCommand(YumCommand):
         return vcmd in ('available', 'all', 'group-available', 'group-all')
 
 
-class HistoryCommand(YumCommand):
+class HistoryCommand(Command):
     """A class containing methods needed by the cli to execute the
     history command.
     """
@@ -2407,7 +2407,7 @@ class HistoryCommand(YumCommand):
         return vcmd in ('repeat', 'redo', 'undo', 'rollback')
 
 
-class CheckRpmdbCommand(YumCommand):
+class CheckRpmdbCommand(Command):
     """A class containing methods needed by the cli to execute the
     check-rpmdb command.
     """
@@ -2472,7 +2472,7 @@ class CheckRpmdbCommand(YumCommand):
         """
         return False
 
-class LoadTransactionCommand(YumCommand):
+class LoadTransactionCommand(Command):
     """A class containing methods needed by the cli to execute the
     load-transaction command.
     """
