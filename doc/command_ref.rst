@@ -32,6 +32,7 @@ Available commands are:
 * repolist
 * search
 * update
+* upgrade
 
 See the reference for each command below.
 
@@ -249,11 +250,18 @@ Search Command
 --------------
 Update Command
 --------------
-``dnf [options] update``
+    Deprecated alias for the :ref:`\upgrade_command-label`.
+
+.. _upgrade_command-label:
+
+---------------
+Upgrade Command
+---------------
+``dnf [options] upgrade``
     Updates each package to a highest version that is both available and
     resolvable.
 
-``dnf [options] update <package-specs>...``
+``dnf [options] upgrade <package-specs>...``
     Updates each specified package to the latest available version. Updates
     depdendencies as necessary.
 

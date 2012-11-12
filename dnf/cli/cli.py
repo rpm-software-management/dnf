@@ -126,7 +126,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.registerCommand(yumcommands.ProvidesCommand())
         self.registerCommand(yumcommands.CheckUpdateCommand())
         self.registerCommand(yumcommands.SearchCommand())
-        # self.registerCommand(yumcommands.UpgradeCommand())
         # self.registerCommand(yumcommands.ResolveDepCommand())
         # self.registerCommand(yumcommands.ShellCommand())
         # self.registerCommand(yumcommands.DepListCommand())
@@ -886,8 +885,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Update')]
 
-    #  Note that we aren't in __init__ yet for a couple of reasons, but we
-    # probably will get there for 3.2.28.
     def distroSyncPkgs(self, userlist):
         """Upgrade or downgrade packages to match the latest versions
         available in the enabled repositories.

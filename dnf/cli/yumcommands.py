@@ -357,7 +357,7 @@ class UpdateCommand(YumCommand):
 
         :return: a list containing the names of this command
         """
-        return ['update', 'update-to']
+        return ['update', 'upgrade']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1266,68 +1266,6 @@ class SearchCommand(YumCommand):
         :return: True if a transaction set is needed, False otherwise
         """
         return False
-
-class UpgradeCommand(YumCommand):
-    """A class containing methods needed by the cli to execute the
-    upgrade command.
-    """
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['upgrade', 'upgrade-to']
-
-    def getUsage(self):
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return 'PACKAGE...'
-
-    def getSummary(self):
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Update packages taking obsoletes into account")
-
-    def doCheck(self, base, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-
-        These include that the program is being run by the root user, and that
-        there are enabled repositories with gpg.
-
-        :param base: a :class:`dnf.yum.Yumbase` object
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkRootUID(base)
-        checkGPGKey(base)
-        checkEnabledRepo(base, extcmds)
-
-    def doCommand(self, base, basecmd, extcmds):
-        """Execute this command.
-
-        :param base: a :class:`dnf.yum.Yumbase` object
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        base.conf.obsoletes = 1
-        self.doneCommand(base, _("Setting up Upgrade Process"))
-        try:
-            return base.updatePkgs(extcmds, update_to=(basecmd == 'upgrade-to'))
-        except dnf.yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
 
 class ResolveDepCommand(YumCommand):
     """A class containing methods needed by the cli to execute the
