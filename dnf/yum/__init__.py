@@ -917,72 +917,6 @@ class YumBase(object):
             return
         self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
 
-    def _checkUpdatedLeftovers(self):
-        """
-        If multiple packages is updated the same package
-        and this package get removed because of an dep issue
-        then make sure that all the TS_UPDATED get removed.
-        """
-        for txmbr in self.tsInfo.getMembersWithState(None, [TS_UPDATED]):
-            for pkg in txmbr.updated_by:
-                # check if the updating txmbr is in the transaction
-                # else remove the updated txmbr
-                # it clean out some really wierd cases with dupes installed on the system
-                if not self.tsInfo.exists(pkg.pkgtup):
-                    self.verbose_logger.debug('SKIPBROKEN: Remove extra updated %s (%s)' % (txmbr.po,pkg) )
-                    self.tsInfo.remove(txmbr.po.pkgtup)
-
-    def _getPackagesToRemoveAllArch(self,po):
-        ''' get all compatible arch packages in pkgSack'''
-        pkgs = []
-        if self.arch.multilib:
-            n,a,e,v,r = po.pkgtup
-            # skip for all compat archs
-            for a in self.arch.archlist:
-                pkgtup = (n,a,e,v,r)
-                matched = self.pkgSack.searchNevra(n,e,v,r,a)
-                pkgs.extend(matched)
-        else:
-            pkgs.append(po)
-        return pkgs
-
-    def _skipFromTransaction(self,po):
-        skipped =  []
-        n,a,e,v,r = po.pkgtup
-        # skip for all compat archs
-        for a in self.arch.archlist:
-            pkgtup = (n,a,e,v,r)
-            if self.tsInfo.exists(pkgtup):
-                for txmbr in self.tsInfo.getMembers(pkgtup):
-                    pkg = txmbr.po
-                    skip = self._removePoFromTransaction(pkg)
-                    skipped.extend(skip)
-        return skipped
-
-    def _removePoFromTransaction(self,po):
-        skip =  []
-        if self.tsInfo.exists(po.pkgtup):
-            self.verbose_logger.debug('SKIPBROKEN: removing %s from transaction' % str(po))
-            self.tsInfo.remove(po.pkgtup)
-            if not po.repoid == 'installed':
-                skip.append(po)
-        return skip
-
-    def _buildDepTree(self):
-        ''' create a dictionary with po and deps '''
-        depTree = { }
-        for txmbr in self.tsInfo:
-            for dep in txmbr.depends_on:
-                depTree.setdefault(dep, []).append(txmbr.po)
-        # self._printDepTree(depTree)
-        return depTree
-
-    def _printDepTree(self, tree):
-        for pkg, l in tree.iteritems():
-            print pkg
-            for p in l:
-                print "\t", p
-
     def _printTransaction(self):
         #transaction set states
         state = { TS_UPDATE     : "update",
@@ -1002,29 +936,6 @@ class YumBase(object):
                 msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
                 self.verbose_logger.log(logginglevels.DEBUG_2, msg)
         self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))
-
-    def _getPackagesToRemove(self,po,deptree,toRemove):
-        '''
-        get the (related) pos to remove.
-        '''
-        toRemove.add(po)
-        for txmbr in self.tsInfo.getMembers(po.pkgtup):
-            for pkg in (txmbr.updates + txmbr.obsoletes):
-                toRemove.add(pkg)
-                self._getDepsToRemove(pkg, deptree, toRemove)
-            # Remove related packages
-            for (relative, relation) in txmbr.relatedto:
-                toRemove.add(relative)
-                self._getDepsToRemove(relative, deptree, toRemove)
-        self._getDepsToRemove(po, deptree, toRemove)
-
-    def _getDepsToRemove(self,po, deptree, toRemove):
-        for dep in deptree.get(po, []): # Loop trough all deps of po
-            for txmbr in self.tsInfo.getMembers(dep.pkgtup):
-                for pkg in (txmbr.updates + txmbr.obsoletes):
-                    toRemove.add(pkg)
-            toRemove.add(dep)
-            self._getDepsToRemove(dep, deptree, toRemove)
 
     def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd=None, header=None,
                            ignore_pkgs=[]):
@@ -2837,31 +2748,6 @@ class YumBase(object):
 
         return self.tsInfo.deselect(pat)
 
-    def _find_obsoletees(self, po):
-        """ Return the pkgs. that are obsoleted by the po we pass in. """
-        if not self.conf.obsoletes:
-            return
-
-        if not isinstance(po, YumLocalPackage):
-            for (obstup, inst_tup) in self.up.getObsoletersTuples(name=po.name):
-                if po.pkgtup == obstup:
-                    installed_pkg =  self.getInstalledPackageObject(inst_tup)
-                    yield installed_pkg
-        else:
-            for pkg in self._find_obsoletees_direct(po):
-                yield pkg
-
-    def _find_obsoletees_direct(self, po):
-        """ Return the pkgs. that are obsoleted by the po we pass in. This works
-            directly on the package data, for two reasons:
-            1. Consulting .up. has a slow setup for small/fast ops.
-            2. We need this work even if obsoletes are turned off, because rpm
-               will be doing it for us. """
-        for obs_n in po.obsoletes_names:
-            for pkg in self.rpmdb.searchNevra(name=obs_n):
-                if pkg.obsoletedBy([po]):
-                    yield pkg
-
     def _add_prob_flags(self, *flags):
         """ Add all of the passed flags to the tsInfo.probFilterFlags array. """
         for flag in flags:
@@ -3207,60 +3093,6 @@ class YumBase(object):
         if len(tx_return) > 0:
             self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
         return tx_return
-
-    @staticmethod
-    def _ui_nevra_dict(nevra_dict):
-        n = nevra_dict['name']
-        e = nevra_dict['epoch']
-        v = nevra_dict['version']
-        r = nevra_dict['release']
-        a = nevra_dict['arch']
-
-        if e and v and r:
-            evr = '%s:%s-%s' % (e, v, r)
-        elif v and r:
-            evr = '%s-%s' % (v, r)
-        elif e and v:
-            evr = '%s:%s' % (e, v)
-        elif v: # e and r etc. is just too weird to print
-            evr = v
-        else:
-            evr = ''
-        if n and evr:
-            return '%s-%s' % (n, evr)
-        if evr:
-            return '*-%s' % evr
-        if n:
-            return n
-        return '<unknown>'
-
-    def _nevra_kwarg_parse(self, kwargs):
-
-        returndict = {}
-
-        if 'pkgtup' in kwargs:
-            (n, a, e, v, r) = kwargs['pkgtup']
-            returndict['name'] = n
-            returndict['epoch'] = e
-            returndict['arch'] = a
-            returndict['version'] = v
-            returndict['release'] = r
-            return returndict
-
-        returndict['name'] = kwargs.get('name')
-        returndict['epoch'] = kwargs.get('epoch')
-        returndict['arch'] = kwargs.get('arch')
-        # get them as ver, version and rel, release - if someone
-        # specifies one of each then that's kinda silly.
-        returndict['version'] = kwargs.get('version')
-        if returndict['version'] is None:
-            returndict['version'] = kwargs.get('ver')
-
-        returndict['release'] = kwargs.get('release')
-        if returndict['release'] is None:
-            returndict['release'] = kwargs.get('rel')
-
-        return returndict
 
     def history_redo(self, transaction,
                      force_reinstall=False, force_changed_removal=False):
