@@ -26,7 +26,7 @@ import misc as misc
 import constants
 import Errors
 from constants import *
-from packages import YumInstalledPackage, YumAvailablePackage, PackageObject
+from packages import YumAvailablePackage, PackageObject
 from i18n import to_unicode, to_utf8
 from . import _
 
