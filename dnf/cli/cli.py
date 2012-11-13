@@ -1315,7 +1315,6 @@ class Cli(object):
 
         self.base = base
         self.cli_commands = {}
-        self.use_txmbr_in_callback = True
         # :hawkey -- commented out are not yet supported in dnf
         self._register_command(dnf.cli.commands.InstallCommand(self))
         self._register_command(dnf.cli.commands.UpdateCommand(self))

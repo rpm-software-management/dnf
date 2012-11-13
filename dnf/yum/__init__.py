@@ -3808,13 +3808,7 @@ class YumBase(object):
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
-                # New-style callback with just txmbr instead of full headers?
-                if self.use_txmbr_in_callback:
-                    cbkey = txmbr
-                else:
-                    cbkey = (hdr, rpmfile)
-
-                self.ts.addInstall(hdr, cbkey, txmbr.ts_state)
+                self.ts.addInstall(hdr, txmbr, txmbr.ts_state)
                 self.verbose_logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
