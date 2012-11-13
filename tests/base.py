@@ -93,12 +93,15 @@ class MockYumBase(dnf.yum.YumBase):
 
         self._yumdb = MockYumDB()
         self.conf = FakeConf()
-        self.dsCallback = mock.Mock()
         self.extra_repos = extra_repos
         self.tsInfo = dnf.yum.transactioninfo.TransactionData()
         self.term = FakeTerm()
         self.cache_c.prefix = "/tmp"
         self.cache_c.suffix = ""
+
+        self.dsCallback = mock.Mock()
+        self.setupProgressCallbacks = mock.Mock()
+        self.setupKeyImportCallbacks = mock.Mock()
 
     @property
     def sack(self):
@@ -132,10 +135,13 @@ class MockYumDB(mock.Mock):
 class FakeTerm(object):
     def __init__(self):
         self.MODE = {'bold'   : '', 'normal' : ''}
+        self.reinit = mock.Mock()
 
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
+        self.color = 'never'
+        self.commands = []
         self.installonlypkgs = ['kernel']
         self.exclude = []
         self.debuglevel = 8
@@ -147,7 +153,8 @@ class FakeConf(object):
         self.installonly_limit = 0
         self.disable_excludes = []
         self.multilib_policy = 'best'
-        self.persistdir = '/should-not-exist-bad-test!'
+        self.cachedir = '/should-not-exist-bad-test/cache'
+        self.persistdir = '/should-not-exist-bad-test/persist'
         self.showdupesfromrepos = False
         self.uid = 0
         self.groupremove_leaf_only = False

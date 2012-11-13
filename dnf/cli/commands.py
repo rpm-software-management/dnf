@@ -329,7 +329,7 @@ class UpdateCommand(Command):
 
         :return: a list containing the names of this command
         """
-        return ['update', 'upgrade']
+        return ['upgrade', 'update']
 
     def getUsage(self):
         """Return a usage string for this command.

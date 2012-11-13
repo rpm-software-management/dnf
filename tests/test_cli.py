@@ -37,3 +37,22 @@ class VersionString(unittest.TestCase):
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                            if mc[0] == 'write'])
         self.assertEqual(written, OUTPUT)
+
+class Cli(unittest.TestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase()
+        self.cli = dnf.cli.cli.Cli(self.yumbase)
+
+    def test_knows_upgrade(self):
+        upgrade = self.cli.cli_commands['upgrade']
+        update = self.cli.cli_commands['update']
+        self.assertIs(upgrade, update)
+
+    @mock.patch('dnf.cli.commands.checkEnabledRepo', returns=None)
+    def test_configure(self, mock_enabledRepo):
+        """ Test Cli.configure.
+
+            For not just see that the method runs.
+        """
+        self.cli.configure(['update'])
+        self.assertEqual(self.cli.cmdstring, "dnf update ")
