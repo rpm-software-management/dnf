@@ -183,17 +183,20 @@ class Command:
         self.hidden = False
         self.cli = cli
 
-    def doneCommand(self, base, msg, *args):
+    @property
+    def base(self):
+        return self.cli.base
+
+    def doneCommand(self, msg, *args):
         """ Output *msg* the first time that this method is called, and do
         nothing on subsequent calls.  This is to prevent duplicate
         messages from being printed for the same command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param msg: the message to be output
         :param \*args: additional arguments associated with the message
         """
         if not self.done_command_once:
-            base.verbose_logger.info(msg, *args)
+            self.base.verbose_logger.info(msg, *args)
         self.done_command_once = True
 
     def getNames(self):
@@ -219,20 +222,18 @@ class Command:
         """
         raise NotImplementedError
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that various conditions are met so that the command
         can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object.
         :param basecmd: the name of the command being checked for
         :param extcmds: a list of arguments passed to *basecmd*
         """
         pass
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute the command
 
-        :param base: a :class:`dnf.yum.Yumbase` object.
         :param basecmd: the name of the command being executed
         :param extcmds: a list of arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -245,11 +246,10 @@ class Command:
         """
         return 0, [_('Nothing to do')]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before the
         command can run
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -284,25 +284,23 @@ class InstallCommand(Command):
         """
         return _("Install a package or packages on your system")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
         These include that the program is being run by the root user,
         that there are enabled repositories with gpg keys, and that
         this command is called with appropriate arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
-        checkGPGKey(base)
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
         checkPackageArg(self.cli, basecmd, extcmds)
-        checkEnabledRepo(base, extcmds)
+        checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -313,9 +311,9 @@ class InstallCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Install Process"))
+        self.doneCommand(_("Setting up Install Process"))
         try:
-            return base.installPkgs(extcmds)
+            return self.base.installPkgs(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -347,24 +345,22 @@ class UpdateCommand(Command):
         """
         return _("Update a package or packages on your system")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
 
         These include that there are enabled repositories with gpg
         keys, and that this command is being run by the root user.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
-        checkGPGKey(base)
-        checkEnabledRepo(base, extcmds)
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
+        checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -375,9 +371,9 @@ class UpdateCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Update Process"))
+        self.doneCommand(_("Setting up Update Process"))
         try:
-            return base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
+            return self.base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -408,23 +404,21 @@ class DistroSyncCommand(Command):
         """
         return _("Synchronize installed packages to the latest available versions")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
         These include that the program is being run by the root user,
         and that there are enabled repositories with gpg keys.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
-        checkGPGKey(base)
-        checkEnabledRepo(base, extcmds)
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
+        checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -435,10 +429,10 @@ class DistroSyncCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Distribution Synchronization Process"))
+        self.doneCommand(_("Setting up Distribution Synchronization Process"))
         try:
-            base.conf.obsoletes = 1
-            return base.distroSyncPkgs(extcmds)
+            self.base.conf.obsoletes = 1
+            return self.base.distroSyncPkgs(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -495,10 +489,9 @@ class InfoCommand(Command):
         """
         return _("Display details about a package or group of packages")
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -510,8 +503,8 @@ class InfoCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         try:
-            highlight = base.term.MODE['bold']
-            ypl = base.returnPkgLists(extcmds, installed_available=highlight)
+            highlight = self.base.term.MODE['bold']
+            ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
         else:
@@ -522,7 +515,7 @@ class InfoCommand(Command):
             columns = None
             if basecmd == 'list':
                 # Dynamically size the columns
-                columns = _list_cmd_calc_columns(base, ypl)
+                columns = _list_cmd_calc_columns(self.base, ypl)
 
             if highlight and ypl.installed:
                 #  If we have installed and available lists, then do the
@@ -551,27 +544,27 @@ class InfoCommand(Command):
                         local_pkgs[(po.name, po.arch)] = po
 
             # Output the packages:
-            clio = base.conf.color_list_installed_older
-            clin = base.conf.color_list_installed_newer
-            clir = base.conf.color_list_installed_reinstall
-            clie = base.conf.color_list_installed_extra
-            rip = base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+            clio = self.base.conf.color_list_installed_older
+            clin = self.base.conf.color_list_installed_newer
+            clir = self.base.conf.color_list_installed_reinstall
+            clie = self.base.conf.color_list_installed_extra
+            rip = self.base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,
                                                  '=' : clir, 'not in' : clie})
-            clau = base.conf.color_list_available_upgrade
-            clad = base.conf.color_list_available_downgrade
-            clar = base.conf.color_list_available_reinstall
-            clai = base.conf.color_list_available_install
-            rap = base.listPkgs(ypl.available, _('Available Packages'), basecmd,
+            clau = self.base.conf.color_list_available_upgrade
+            clad = self.base.conf.color_list_available_downgrade
+            clar = self.base.conf.color_list_available_reinstall
+            clai = self.base.conf.color_list_available_install
+            rap = self.base.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
                                                  '=' : clar, 'not in' : clai})
-            rep = base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+            rep = self.base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
-            cul = base.conf.color_update_local
-            cur = base.conf.color_update_remote
-            rup = base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
+            cul = self.base.conf.color_update_local
+            cur = self.base.conf.color_update_remote
+            rup = self.base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
                                 highlight_na=local_pkgs, columns=columns,
                                 highlight_modes={'=' : cul, 'not in' : cur})
 
@@ -582,11 +575,11 @@ class InfoCommand(Command):
                 print _('Obsoleting Packages')
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    base.updatesObsoletesList(obtup, 'obsoletes', columns=columns)
+                    self.base.updatesObsoletesList(obtup, 'obsoletes', columns=columns)
             else:
-                rop = base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                rop = self.base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
                                     basecmd, columns=columns)
-            rrap = base.listPkgs(ypl.recent, _('Recently Added Packages'),
+            rrap = self.base.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
             # extcmds is pop(0)'d if they pass a "special" param like "updates"
             # in returnPkgLists(). This allows us to always return "ok" for
@@ -596,11 +589,10 @@ class InfoCommand(Command):
                 return 1, [_('No matching Packages to list')]
             return 0, []
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -659,23 +651,21 @@ class EraseCommand(Command):
         """
         return _("Remove a package or packages from your system")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  These include that the program is being run by the root
         user, and that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
+        checkRootUID(self.base)
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -686,28 +676,26 @@ class EraseCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Remove Process"))
+        self.doneCommand(_("Setting up Remove Process"))
         try:
-            return base.erasePkgs(extcmds)
+            return self.base.erasePkgs(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
         """
         return False
 
-    def needTsRemove(self, base, basecmd, extcmds):
+    def needTsRemove(self, basecmd, extcmds):
         """Return whether a transaction set for removal only must be
         set up before this command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a remove-only transaction set is needed, False otherwise
@@ -747,12 +735,12 @@ class GroupsCommand(Command):
         """
         return _("Display, or use, the groups information")
 
-    def _grp_setup_doCommand(self, base):
-        self.doneCommand(base, _("Setting up Group Process"))
+    def _grp_setup_doCommand(self):
+        self.doneCommand(_("Setting up Group Process"))
 
-        base.doRepoSetup(dosack=0)
+        self.base.doRepoSetup(dosack=0)
         try:
-            base.doGroupSetup()
+            self.base.doGroupSetup()
         except dnf.yum.Errors.GroupsError:
             return 1, [_('No Groups on which to run command')]
         except dnf.yum.Errors.YumBaseError, e:
@@ -775,18 +763,17 @@ class GroupsCommand(Command):
 
         return cmd, extcmds
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
         The exact conditions checked will vary depending on the
         subcommand that is being called.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
-        checkEnabledRepo(base)
+        checkEnabledRepo(self.base)
 
         if cmd in ('install', 'remove',
                    'mark-install', 'mark-remove',
@@ -796,23 +783,22 @@ class GroupsCommand(Command):
         if cmd in ('install', 'remove', 'upgrade',
                    'mark-install', 'mark-remove',
                    'mark-members', 'mark-members-sync'):
-            checkRootUID(base)
+            checkRootUID(self.base)
 
         if cmd in ('install', 'upgrade'):
-            checkGPGKey(base)
+            checkGPGKey(self.base)
 
         cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary',
                 'mark-install', 'mark-remove',
                 'mark-members', 'mark-members-sync')
         if cmd not in cmds:
-            base.logger.critical(_('Invalid groups sub-command, use: %s.'),
+            self.base.logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise CliError
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -825,32 +811,31 @@ class GroupsCommand(Command):
         """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
-        self._grp_setup_doCommand(base)
+        self._grp_setup_doCommand()
         if cmd == 'summary':
-            return base.returnGroupSummary(extcmds)
+            return self.base.returnGroupSummary(extcmds)
 
         if cmd == 'list':
-            return base.returnGroupLists(extcmds)
+            return self.base.returnGroupLists(extcmds)
 
         try:
             if cmd == 'info':
-                return base.returnGroupInfo(extcmds)
+                return self.base.returnGroupInfo(extcmds)
             if cmd == 'install':
-                return base.installGroups(extcmds)
+                return self.base.installGroups(extcmds)
             if cmd == 'upgrade':
-                return base.installGroups(extcmds, upgrade=True)
+                return self.base.installGroups(extcmds, upgrade=True)
             if cmd == 'remove':
-                return base.removeGroups(extcmds)
+                return self.base.removeGroups(extcmds)
 
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -861,11 +846,10 @@ class GroupsCommand(Command):
             return False
         return True
 
-    def needTsRemove(self, base, basecmd, extcmds):
+    def needTsRemove(self, basecmd, extcmds):
         """Return whether a transaction set for removal only must be
         set up before this command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a remove-only transaction set is needed, False otherwise
@@ -903,20 +887,18 @@ class MakeCacheCommand(Command):
         """
         return _("Generate the metadata cache")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is an enabled repository.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkEnabledRepo(base)
+        checkEnabledRepo(self.base)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -927,30 +909,29 @@ class MakeCacheCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.verbose_logger.debug(_("Making cache files for all metadata files."))
-        for r in base.repos.listEnabled():
+        self.base.verbose_logger.debug(_("Making cache files for all metadata files."))
+        for r in self.base.repos.listEnabled():
             (cookie, expires_in) = r.metadata_expire_in()
             if not cookie or not r.metadataCurrent():
-                base.verbose_logger.debug("%s: has expired and will be "
+                self.base.verbose_logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
                 r.metadata_force_expire()
             elif expires_in < 60 * 60: # expires within an hour
-                base.verbose_logger.debug("%s: metadata will expire after %d "
+                self.base.verbose_logger.debug("%s: metadata will expire after %d "
                                           "seconds and will be refreshed now" %
                                           (r.id, expires_in))
                 r.metadata_force_expire()
             else:
-                base.verbose_logger.debug("%s: will expire after %d "
+                self.base.verbose_logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))
 
-        sack = base.sack # triggers metadata sync
+        sack = self.base.sack # triggers metadata sync
         return 0, [_('Metadata Cache Created')]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -984,22 +965,20 @@ class CleanCommand(Command):
         """
         return _("Remove cached data")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
         These include that there is at least one enabled repository,
         and that this command is called with appropriate arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkCleanArg(self.cli, basecmd, extcmds)
-        checkEnabledRepo(base)
+        checkEnabledRepo(self.base)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1010,14 +989,13 @@ class CleanCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.conf.cache = 1
-        return base.cleanCli(extcmds)
+        self.base.conf.cache = 1
+        return self.base.cleanCli(extcmds)
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1051,20 +1029,18 @@ class ProvidesCommand(Command):
         """
         return _("Find what package provides the given value")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1075,9 +1051,9 @@ class ProvidesCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.logger.debug("Searching Packages: ")
+        self.base.logger.debug("Searching Packages: ")
         try:
-            return base.provides(extcmds)
+            return self.base.provides(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -1108,20 +1084,18 @@ class CheckUpdateCommand(Command):
         """
         return _("Check for available package updates")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkEnabledRepo(base)
+        checkEnabledRepo(self.base)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1133,20 +1107,20 @@ class CheckUpdateCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         obscmds = ['obsoletes'] + extcmds
-        base.extcmds.insert(0, 'updates')
+        self.base.extcmds.insert(0, 'updates')
         result = 0
         try:
-            ypl = base.returnPkgLists(extcmds)
-            if (base.conf.obsoletes or
-                base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
-                typl = base.returnPkgLists(obscmds)
+            ypl = self.base.returnPkgLists(extcmds)
+            if (self.base.conf.obsoletes or
+                self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
+                typl = self.base.returnPkgLists(obscmds)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
-            columns = _list_cmd_calc_columns(base, ypl)
+            columns = _list_cmd_calc_columns(self.base, ypl)
             if len(ypl.updates) > 0:
                 local_pkgs = {}
-                highlight = base.term.MODE['bold']
+                highlight = self.base.term.MODE['bold']
                 if highlight:
                     # Do the local/remote split we get in "yum updates"
                     for po in sorted(ypl.updates):
@@ -1154,9 +1128,9 @@ class CheckUpdateCommand(Command):
                         if os.path.exists(local) and po.verifyLocalPkg():
                             local_pkgs[(po.name, po.arch)] = po
 
-                cul = base.conf.color_update_local
-                cur = base.conf.color_update_remote
-                base.listPkgs(ypl.updates, '', outputType='list',
+                cul = self.base.conf.color_update_local
+                cur = self.base.conf.color_update_remote
+                self.base.listPkgs(ypl.updates, '', outputType='list',
                               highlight_na=local_pkgs, columns=columns,
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
@@ -1165,7 +1139,7 @@ class CheckUpdateCommand(Command):
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    base.updatesObsoletesList(obtup, 'obsoletes',
+                    self.base.updatesObsoletesList(obtup, 'obsoletes',
                                               columns=columns)
                 result = 100
         except dnf.yum.Errors.YumBaseError, e:
@@ -1200,20 +1174,18 @@ class SearchCommand(Command):
         """
         return _("Search package details for the given string")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1224,17 +1196,16 @@ class SearchCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.logger.debug(_("Searching Packages: "))
+        self.base.logger.debug(_("Searching Packages: "))
         try:
-            return base.search(extcmds)
+            return self.base.search(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1272,10 +1243,9 @@ class ResolveDepCommand(Command):
         """
         return "repoquery --pkgnarrow=all --whatprovides --qf '%{envra} %{ui_from_repo}'"
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1286,9 +1256,9 @@ class ResolveDepCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        base.logger.debug(_("Searching Packages for Dependency:"))
+        self.base.logger.debug(_("Searching Packages for Dependency:"))
         try:
-            return base.resolveDepCli(extcmds)
+            return self.base.resolveDepCli(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -1319,21 +1289,19 @@ class DepListCommand(Command):
         """
         return _("List a package's dependencies")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1344,9 +1312,9 @@ class DepListCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Finding dependencies: "))
+        self.doneCommand(_("Finding dependencies: "))
         try:
-            return base.deplist(extcmds)
+            return self.base.deplist(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -1378,10 +1346,9 @@ class RepoListCommand(Command):
         """
         return _('Display the configured software repositories')
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1394,9 +1361,9 @@ class RepoListCommand(Command):
         """
         def _repo_size(repo):
             ret = 0
-            for pkg in dnf.queries.by_repo(base.sack, repo.id):
+            for pkg in dnf.queries.by_repo(self.base.sack, repo.id):
                 ret += pkg.size
-            return base.format_number(ret)
+            return self.base.format_number(ret)
 
         def _repo_match(repo, patterns):
             rid = repo.id.lower()
@@ -1418,14 +1385,14 @@ class RepoListCommand(Command):
             arg = 'enabled'
         extcmds = map(lambda x: x.lower(), extcmds)
 
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
 
-        repos = base.repos.repos.values()
+        repos = self.base.repos.repos.values()
         repos.sort()
-        enabled_repos = base.repos.listEnabled()
-        on_ehibeg = base.term.FG_COLOR['green'] + base.term.MODE['bold']
-        on_dhibeg = base.term.FG_COLOR['red']
-        on_hiend  = base.term.MODE['normal']
+        enabled_repos = self.base.repos.listEnabled()
+        on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
+        on_dhibeg = self.base.term.FG_COLOR['red']
+        on_hiend  = self.base.term.MODE['normal']
         tot_num = 0
         cols = []
         for repo in repos:
@@ -1456,7 +1423,7 @@ class RepoListCommand(Command):
                     ui_size = _repo_size(repo)
                 # We don't show status for list disabled
                 if arg != 'disabled' or verbose:
-                    num = len(dnf.queries.by_repo(base.sack, repo.id))
+                    num = len(dnf.queries.by_repo(self.base.sack, repo.id))
                     ui_num     = _num2ui_num(num)
                     tot_num   += num
             else:
@@ -1481,39 +1448,39 @@ class RepoListCommand(Command):
                     md = repo.repoXML
                 else:
                     md = None
-                out = [base.fmtKeyValFill(_("Repo-id      : "), repo),
-                       base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+                out = [self.base.fmtKeyValFill(_("Repo-id      : "), repo),
+                       self.base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
 
                 if force_show or extcmds:
-                    out += [base.fmtKeyValFill(_("Repo-status  : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-status  : "),
                                                ui_enabled)]
                 if md and md.revision is not None:
-                    out += [base.fmtKeyValFill(_("Repo-revision: "),
+                    out += [self.base.fmtKeyValFill(_("Repo-revision: "),
                                                md.revision)]
                 if md and md.tags['content']:
                     tags = md.tags['content']
-                    out += [base.fmtKeyValFill(_("Repo-tags    : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-tags    : "),
                                                ", ".join(sorted(tags)))]
 
                 if md and md.tags['distro']:
                     for distro in sorted(md.tags['distro']):
                         tags = md.tags['distro'][distro]
-                        out += [base.fmtKeyValFill(_("Repo-distro-tags: "),
+                        out += [self.base.fmtKeyValFill(_("Repo-distro-tags: "),
                                                    "[%s]: %s" % (distro,
                                                    ", ".join(sorted(tags))))]
 
                 if md:
-                    out += [base.fmtKeyValFill(_("Repo-updated : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-updated : "),
                                                time.ctime(md.timestamp)),
-                            base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
-                            base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
+                            self.base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
+                            self.base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
 
                 if hasattr(repo, '_orig_baseurl'):
                     baseurls = repo._orig_baseurl
                 else:
                     baseurls = repo.baseurl
                 if baseurls:
-                    out += [base.fmtKeyValFill(_("Repo-baseurl : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "),
                                                ", ".join(baseurls))]
 
                 if enabled:
@@ -1521,20 +1488,20 @@ class RepoListCommand(Command):
                     # metalinks hack.
                     repo.urls
                 if repo.metalink:
-                    out += [base.fmtKeyValFill(_("Repo-metalink: "),
+                    out += [self.base.fmtKeyValFill(_("Repo-metalink: "),
                                                repo.metalink)]
                     if enabled:
                         ts = repo.metalink_data.repomd.timestamp
-                        out += [base.fmtKeyValFill(_("  Updated    : "),
+                        out += [self.base.fmtKeyValFill(_("  Updated    : "),
                                                    time.ctime(ts))]
                 elif repo.mirrorlist:
-                    out += [base.fmtKeyValFill(_("Repo-mirrors : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-mirrors : "),
                                                repo.mirrorlist)]
                 if enabled and repo.urls and not baseurls:
                     url = repo.urls[0]
                     if len(repo.urls) > 1:
                         url += ' (%d more)' % (len(repo.urls) - 1)
-                    out += [base.fmtKeyValFill(_("Repo-baseurl : "), url)]
+                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
                 if not os.path.exists(repo.metadata_cookie):
                     last = _("Unknown")
@@ -1550,25 +1517,25 @@ class RepoListCommand(Command):
                     num = _num2ui_num(repo.metadata_expire)
                     num = _("%s second(s) (last: %s)") % (num, last)
 
-                out += [base.fmtKeyValFill(_("Repo-expire  : "), num)]
+                out += [self.base.fmtKeyValFill(_("Repo-expire  : "), num)]
 
                 if repo.exclude:
-                    out += [base.fmtKeyValFill(_("Repo-exclude : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-exclude : "),
                                                ", ".join(repo.exclude))]
 
                 if repo.includepkgs:
-                    out += [base.fmtKeyValFill(_("Repo-include : "),
+                    out += [self.base.fmtKeyValFill(_("Repo-include : "),
                                                ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
-                    out += [base.fmtKeyValFill(_("Repo-excluded: "),
+                    out += [self.base.fmtKeyValFill(_("Repo-excluded: "),
                                                ui_excludes_num)]
 
                 if repo.repofile:
-                    out += [base.fmtKeyValFill(_("Repo-filename: "),
+                    out += [self.base.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
+                self.base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
                                         "\n".join(map(misc.to_unicode, out)))
 
         if not verbose and cols:
@@ -1590,11 +1557,11 @@ class RepoListCommand(Command):
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
-                left = base.term.columns - (id_len + 1)
+                left = self.base.term.columns - (id_len + 1)
             elif utf8_width(_('status')) > st_len:
-                left = base.term.columns - (id_len + utf8_width(_('status')) +2)
+                left = self.base.term.columns - (id_len + utf8_width(_('status')) +2)
             else:
-                left = base.term.columns - (id_len + st_len + 2)
+                left = self.base.term.columns - (id_len + st_len + 2)
 
             if left < nm_len: # Name gets chopped
                 nm_len = left
@@ -1606,14 +1573,14 @@ class RepoListCommand(Command):
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                base.verbose_logger.info("%s %s",
+                self.base.verbose_logger.info("%s %s",
                                         txt_rid, txt_rnam)
             else:
-                base.verbose_logger.info("%s %s %s",
+                self.base.verbose_logger.info("%s %s %s",
                                         txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    base.verbose_logger.info("%s %s",
+                    self.base.verbose_logger.info("%s %s",
                                             utf8_width_fill(rid, id_len),
                                             utf8_width_fill(rname, nm_len,
                                                             nm_len))
@@ -1621,18 +1588,17 @@ class RepoListCommand(Command):
 
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
-                base.verbose_logger.info("%s %s %s%s",
+                self.base.verbose_logger.info("%s %s %s%s",
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
 
         return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1668,12 +1634,11 @@ class HelpCommand(Command):
         """
         return _("Display a helpful usage message")
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that this command is called with appropriate
         arguments.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -1720,10 +1685,9 @@ class HelpCommand(Command):
 
         return help_output
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1736,14 +1700,13 @@ class HelpCommand(Command):
         """
         if extcmds[0] in self.cli.cli_commands:
             command = self.cli.cli_commands[extcmds[0]]
-            base.verbose_logger.info(self._makeOutput(command))
+            self.base.verbose_logger.info(self._makeOutput(command))
         return 0, []
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1770,26 +1733,24 @@ class ReInstallCommand(Command):
         """
         return "PACKAGE..."
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  These include that the program is being run by the root
         user, that there are enabled repositories with gpg keys, and
         that this command is called with appropriate arguments.
 
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
-        checkGPGKey(base)
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
         checkPackageArg(self.cli, basecmd, extcmds)
-        checkEnabledRepo(base, extcmds)
+        checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1800,9 +1761,9 @@ class ReInstallCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Reinstall Process"))
+        self.doneCommand(_("Setting up Reinstall Process"))
         try:
-            return base.reinstallPkgs(extcmds)
+            return self.base.reinstallPkgs(extcmds)
 
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
@@ -1814,11 +1775,10 @@ class ReInstallCommand(Command):
         """
         return _("reinstall a package")
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -1845,26 +1805,24 @@ class DowngradeCommand(Command):
         """
         return "PACKAGE..."
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  These include that the program is being run by the root
         user, that there are enabled repositories with gpg keys, and
         that this command is called with appropriate arguments.
 
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(base)
-        checkGPGKey(base)
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
         checkPackageArg(self.cli, basecmd, extcmds)
-        checkEnabledRepo(base, extcmds)
+        checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1875,9 +1833,9 @@ class DowngradeCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(base, _("Setting up Downgrade Process"))
+        self.doneCommand(_("Setting up Downgrade Process"))
         try:
-            return base.downgradePkgs(extcmds)
+            return self.base.downgradePkgs(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
@@ -1888,17 +1846,15 @@ class DowngradeCommand(Command):
         """
         return _("downgrade a package")
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
         """
         return False
-
 
 class VersionCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1927,10 +1883,9 @@ class VersionCommand(Command):
         """
         return _("Display a version for the machine and/or available repos.")
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -1959,7 +1914,7 @@ class VersionCommand(Command):
                     cols.append(("    %s" % repoid, str(cur[None])))
                 cols.extend(ncols)
 
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         groups = {}
         if vcmd in ('nogroups', 'nogroups-installed', 'nogroups-available',
                     'nogroups-all'):
@@ -1974,7 +1929,7 @@ class VersionCommand(Command):
         for group in gconf:
             groups[group] = set(gconf[group].pkglist)
             if gconf[group].run_with_packages:
-                groups[group].update(base.run_with_package_names)
+                groups[group].update(self.base.run_with_package_names)
 
         if vcmd == 'grouplist':
             print _(" Yum version groups:")
@@ -1995,22 +1950,22 @@ class VersionCommand(Command):
                 else:
                     data = {'envra' : {}, 'rid' : {}}
                     pkg_names = groups[group]
-                    pkg_names2pkgs = base._group_names2aipkgs(pkg_names)
-                    base._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
+                    pkg_names2pkgs = self.base._group_names2aipkgs(pkg_names)
+                    self.base._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
                     data = [data['envra'], data['rid']]
-                    columns = base.calcColumns(data)
+                    columns = self.base.calcColumns(data)
                     columns = (-columns[0], -columns[1])
-                    base._displayPkgsFromNames(pkg_names, True, pkg_names2pkgs,
+                    self.base._displayPkgsFromNames(pkg_names, True, pkg_names2pkgs,
                                                columns=columns)
 
             return 0, ['version groupinfo']
 
-        rel = base.conf.yumvar['releasever']
-        ba  = base.conf.yumvar['basearch']
+        rel = self.base.conf.yumvar['releasever']
+        ba  = self.base.conf.yumvar['basearch']
         cols = []
         if vcmd in ('installed', 'all', 'group-installed', 'group-all'):
             try:
-                data = base.rpmdb.simpleVersion(not verbose, groups=groups)
+                data = self.base.rpmdb.simpleVersion(not verbose, groups=groups)
                 if vcmd not in ('group-installed', 'group-all'):
                     cols.append(("%s %s/%s" % (_("Installed:"), rel, ba),
                                  str(data[0])))
@@ -2027,7 +1982,7 @@ class VersionCommand(Command):
                 return 1, [str(e)]
         if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
-                data = base.pkgSack.simpleVersion(not verbose, groups=groups)
+                data = self.base.pkgSack.simpleVersion(not verbose, groups=groups)
                 if vcmd not in ('group-available', 'group-all'):
                     cols.append(("%s %s/%s" % (_("Available:"), rel, ba),
                                  str(data[0])))
@@ -2051,19 +2006,18 @@ class VersionCommand(Command):
                 data[d].setdefault(v, 0)
                 data[d][v] += 1
         data = [data['rid'], data['ver']]
-        columns = base.calcColumns(data)
+        columns = self.base.calcColumns(data)
         columns = (-columns[0], columns[1])
 
         for line in cols:
-            print base.fmtColumns(zip(line, columns))
+            print self.base.fmtColumns(zip(line, columns))
 
         return 0, ['version']
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2071,7 +2025,7 @@ class VersionCommand(Command):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
-        verbose = base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if vcmd == 'groupinfo' and verbose:
             return True
         return vcmd in ('available', 'all', 'group-available', 'group-all')
@@ -2104,7 +2058,7 @@ class HistoryCommand(Command):
         """
         return _("Display, or use, the transaction history")
 
-    def _hcmd_redo(self, base, extcmds):
+    def _hcmd_redo(self, extcmds):
         kwargs = {'force_reinstall' : False,
                   'force_changed_removal' : False,
                   }
@@ -2127,43 +2081,43 @@ class HistoryCommand(Command):
                 break
             extcmds = [extcmds[0]] + extcmds[2:]
 
-        old = base._history_get_transaction(extcmds)
+        old = self.base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
         print "Repeating transaction %u, from %s" % (old.tid, tm)
-        base.historyInfoCmdPkgsAltered(old)
-        if base.history_redo(old, **kwargs):
+        self.base.historyInfoCmdPkgsAltered(old)
+        if self.base.history_redo(old, **kwargs):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
-    def _hcmd_undo(self, base, extcmds):
-        old = base._history_get_transaction(extcmds)
+    def _hcmd_undo(self, extcmds):
+        old = self.base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
         print "Undoing transaction %u, from %s" % (old.tid, tm)
-        base.historyInfoCmdPkgsAltered(old)
-        if base.history_undo(old):
+        self.base.historyInfoCmdPkgsAltered(old)
+        if self.base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
-    def _hcmd_rollback(self, base, extcmds):
+    def _hcmd_rollback(self, extcmds):
         force = False
         if len(extcmds) > 1 and extcmds[1] == 'force':
             force = True
             extcmds = extcmds[:]
             extcmds.pop(0)
 
-        old = base._history_get_transaction(extcmds)
+        old = self.base._history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history rollback, no transaction']
-        last = base.history.last()
+        last = self.base.history.last()
         if last is None:
             return 1, ['Failed history rollback, no last?']
         if old.tid == last.tid:
             return 0, ['Rollback to current, nothing to do']
 
         mobj = None
-        for tid in base.history.old(range(old.tid + 1, last.tid + 1)):
+        for tid in self.base.history.old(range(old.tid + 1, last.tid + 1)):
             if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
                 if tid.altered_lt_rpmdb:
                     msg = "Transaction history is incomplete, before %u."
@@ -2180,22 +2134,22 @@ class HistoryCommand(Command):
 
         tm = time.ctime(old.beg_timestamp)
         print "Rollback to transaction %u, from %s" % (old.tid, tm)
-        print base.fmtKeyValFill("  Undoing the following transactions: ",
+        print self.base.fmtKeyValFill("  Undoing the following transactions: ",
                                  ", ".join((str(x) for x in mobj.tid)))
-        base.historyInfoCmdPkgsAltered(mobj)
-        if base.history_undo(mobj):
+        self.base.historyInfoCmdPkgsAltered(mobj)
+        if self.base.history_undo(mobj):
             return 2, ["Rollback to transaction %u" % (old.tid,)]
 
-    def _hcmd_new(self, base, extcmds):
-        base.history._create_db_file()
+    def _hcmd_new(self, extcmds):
+        self.base.history._create_db_file()
 
-    def _hcmd_stats(self, base, extcmds):
-        print "File        :", base.history._db_file
-        num = os.stat(base.history._db_file).st_size
+    def _hcmd_stats(self, extcmds):
+        print "File        :", self.base.history._db_file
+        num = os.stat(self.base.history._db_file).st_size
         print "Size        :", locale.format("%d", num, True)
-        counts = base.history._pkg_stats()
-        trans_1 = base.history.old("1")[0]
-        trans_N = base.history.last()
+        counts = self.base.history._pkg_stats()
+        trans_1 = self.base.history.old("1")[0]
+        trans_N = self.base.history.last()
         print _("Transactions:"), trans_N.tid
         print _("Begin time  :"), time.ctime(trans_1.beg_timestamp)
         print _("End time    :"), time.ctime(trans_N.end_timestamp)
@@ -2207,26 +2161,25 @@ class HistoryCommand(Command):
         print _("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True)
         print _("  yum DB :"), locale.format("%6d", counts['yumdb'],  True)
 
-    def _hcmd_sync(self, base, extcmds):
+    def _hcmd_sync(self, extcmds):
         extcmds = extcmds[1:]
         if not extcmds:
             extcmds = None
-        for ipkg in sorted(base.rpmdb.returnPackages(patterns=extcmds)):
-            if base.history.pkg2pid(ipkg, create=False) is None:
+        for ipkg in sorted(self.base.rpmdb.returnPackages(patterns=extcmds)):
+            if self.base.history.pkg2pid(ipkg, create=False) is None:
                 continue
 
             print "Syncing rpm/yum DB data for:", ipkg, "...",
-            if base.history.sync_alldb(ipkg):
+            if self.base.history.sync_alldb(ipkg):
                 print "Done."
             else:
                 print "FAILED."
 
-    def doCheck(self, base, basecmd, extcmds):
+    def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  The exact conditions checked will vary depending on the
         subcommand that is being called.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
@@ -2238,20 +2191,19 @@ class HistoryCommand(Command):
                 'package', 'package-list', 'packages', 'packages-list',
                 'pkg-info', 'pkgs-info', 'package-info', 'packages-info')
         if extcmds and extcmds[0] not in cmds:
-            base.logger.critical(_('Invalid history sub-command, use: %s.'),
+            self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
-            checkRootUID(base)
-            checkGPGKey(base)
-        elif not os.access(base.history._db_file, os.R_OK):
-            base.logger.critical(_("You don't have access to the history DB."))
+            checkRootUID(self.base)
+            checkGPGKey(self.base)
+        elif not os.access(self.base.history._db_file, os.R_OK):
+            self.base.logger.critical(_("You don't have access to the history DB."))
             raise CliError
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2268,40 +2220,39 @@ class HistoryCommand(Command):
 
         if False: pass
         elif vcmd == 'list':
-            ret = base.historyListCmd(extcmds)
+            ret = self.base.historyListCmd(extcmds)
         elif vcmd == 'info':
-            ret = base.historyInfoCmd(extcmds)
+            ret = self.base.historyInfoCmd(extcmds)
         elif vcmd == 'summary':
-            ret = base.historySummaryCmd(extcmds)
+            ret = self.base.historySummaryCmd(extcmds)
         elif vcmd in ('addon', 'addon-info'):
-            ret = base.historyAddonInfoCmd(extcmds)
+            ret = self.base.historyAddonInfoCmd(extcmds)
         elif vcmd in ('pkg', 'pkgs', 'pkg-list', 'pkgs-list',
                       'package', 'package-list', 'packages', 'packages-list'):
-            ret = base.historyPackageListCmd(extcmds)
+            ret = self.base.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
-            ret = self._hcmd_undo(base, extcmds)
+            ret = self._hcmd_undo(extcmds)
         elif vcmd in ('redo', 'repeat'):
-            ret = self._hcmd_redo(base, extcmds)
+            ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':
-            ret = self._hcmd_rollback(base, extcmds)
+            ret = self._hcmd_rollback(extcmds)
         elif vcmd == 'new':
-            ret = self._hcmd_new(base, extcmds)
+            ret = self._hcmd_new(extcmds)
         elif vcmd in ('stats', 'statistics'):
-            ret = self._hcmd_stats(base, extcmds)
+            ret = self._hcmd_stats(extcmds)
         elif vcmd in ('sync', 'synchronize'):
-            ret = self._hcmd_sync(base, extcmds)
+            ret = self._hcmd_sync(extcmds)
         elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
-            ret = base.historyPackageInfoCmd(extcmds)
+            ret = self.base.historyPackageInfoCmd(extcmds)
 
         if ret is None:
             return 0, ['history %s' % (vcmd,)]
         return ret
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2339,10 +2290,9 @@ class CheckRpmdbCommand(Command):
         """
         return _("Check for problems in the rpmdb")
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2361,16 +2311,15 @@ class CheckRpmdbCommand(Command):
             print to_unicode(x.__str__())
 
         rc = 0
-        if base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
+        if self.base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
                                    header=lambda x: None):
             rc = 1
         return rc, ['%s %s' % (basecmd, chkcmd)]
 
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
@@ -2404,10 +2353,9 @@ class LoadTransactionCommand(Command):
         """
         return _("load a saved transaction from filename")
 
-    def doCommand(self, base, basecmd, extcmds):
+    def doCommand(self, basecmd, extcmds):
         """Execute this command.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         :return: (exit_code, [ errors ])
@@ -2419,24 +2367,22 @@ class LoadTransactionCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         if not extcmds:
-            base.logger.critical(_("No saved transaction file specified."))
+            self.base.logger.critical(_("No saved transaction file specified."))
             raise CliError
 
         load_file = extcmds[0]
-        self.doneCommand(base, _("loading transaction from %s") % load_file)
+        self.doneCommand(_("loading transaction from %s") % load_file)
 
         try:
-            base.load_ts(load_file)
+            self.base.load_ts(load_file)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [to_unicode(e)]
-        return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(base.tsInfo.getMembers()))]
+        return 2, [_('Transaction loaded from %s with %s members') % (load_file, len(self.base.tsInfo.getMembers()))]
 
-
-    def needTs(self, base, basecmd, extcmds):
+    def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
 
-        :param base: a :class:`dnf.yum.Yumbase` object
         :param basecmd: the name of the command
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise

@@ -1410,7 +1410,7 @@ class Cli(object):
             raise CliError
 
         command = self.cli_commands[self.base.basecmd]
-        command.doCheck(self.base, self.base.basecmd, self.base.extcmds)
+        command.doCheck(self.base.basecmd, self.base.extcmds)
 
     def _parse_setopts(self, setopts):
         """parse the setopts list handed to us and saves the results as
@@ -1593,7 +1593,7 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         command = self.cli_commands[self.base.basecmd]
-        return command.doCommand(self.base, self.base.basecmd, self.base.extcmds)
+        return command.doCommand(self.base.basecmd, self.base.extcmds)
 
     def usage(self):
         """Print out an explanation of command line usage."""
