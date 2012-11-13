@@ -36,7 +36,7 @@ import hawkey
 
 def _err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
-        cli.usage()
+        cli.print_usage()
         return
     cmd = cli.cli_commands[basecmd]
     txt = cli.cli_commands["help"]._makeOutput(cmd)
@@ -1643,10 +1643,10 @@ class HelpCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         if len(extcmds) == 0:
-            self.cli.usage()
+            self.cli.print_usage()
             raise CliError
         elif len(extcmds) > 1 or extcmds[0] not in self.cli.cli_commands:
-            self.cli.usage()
+            self.cli.print_usage()
             raise CliError
 
     @staticmethod

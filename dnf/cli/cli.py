@@ -1391,7 +1391,7 @@ class Cli(object):
             self.base.conf.commands = self.base.cmds
         if len(self.base.cmds) < 1:
             self.logger.critical(_('You need to give some command'))
-            self.base.usage()
+            self.print_usage()
             raise CliError
 
         self.base.basecmd = self.base.cmds[0] # our base command
@@ -1595,16 +1595,15 @@ class Cli(object):
         command = self.cli_commands[self.base.basecmd]
         return command.doCommand(self.base.basecmd, self.base.extcmds)
 
-    def usage(self):
-        """Print out an explanation of command line usage."""
-        sys.stdout.write(self.optparser.format_help())
+    def print_usage(self):
+        return self.optparser.print_usage()
 
 class YumOptionParser(OptionParser):
     """Subclass that makes some minor tweaks to make OptionParser do things the
     "yum way".
     """
 
-    def __init__(self,base, **kwargs):
+    def __init__(self, base, **kwargs):
         # check if this is called with a utils=True/False parameter
         if 'utils' in kwargs:
             self._utils = kwargs['utils']
@@ -1647,7 +1646,7 @@ class YumOptionParser(OptionParser):
                          '--setopt'),
                         args)
         except ValueError, arg:
-            self.base.usage()
+            self.print_usage()
             print >> sys.stderr, (_("\n\n%s: %s option requires an argument") %
                                   ('Command line error', arg))
             sys.exit(1)
@@ -1734,7 +1733,7 @@ class YumOptionParser(OptionParser):
                     self.base.conf.exclude = excludelist
                 except dnf.yum.Errors.ConfigError, e:
                     self.logger.critical(e)
-                    self.base.usage()
+                    self.print_usage()
                     sys.exit(1)
 
             if opts.rpmverbosity is not None:
@@ -1754,7 +1753,7 @@ class YumOptionParser(OptionParser):
                         self.base.repos.disableRepo(repoexp)
                 except dnf.yum.Errors.ConfigError, e:
                     self.logger.critical(e)
-                    self.base.usage()
+                    self.print_usage()
                     sys.exit(1)
 
             # Disable all gpg key checking, if requested.
@@ -1767,7 +1766,7 @@ class YumOptionParser(OptionParser):
 
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
-            self.base.usage()
+            self.print_usage()
             sys.exit(1)
 
         return opts, cmds
@@ -1807,7 +1806,7 @@ class YumOptionParser(OptionParser):
         return root
 
     def _wrapOptParseUsage(self, opt, value, parser, *args, **kwargs):
-        self.base.usage()
+        self.print_usage()
         self.exit()
 
     def _addYumBasicOptions(self):
