@@ -32,7 +32,6 @@ from weakref import proxy as weakref
 import output
 import dnf.match_counter
 import dnf.yum
-import dnf.yum.Errors
 import dnf.yum.logginglevels
 import dnf.yum.misc
 from dnf.yum.parser import varReplace
@@ -41,6 +40,7 @@ from dnf.rpmUtils.arch import isMultiLibArch
 from dnf.yum import _, P_
 from dnf.yum.rpmtrans import RPMTransaction
 import signal
+from dnf.cli import CliError
 import dnf.cli.commands
 import dnf.const
 import dnf.queries
@@ -65,13 +65,6 @@ def sigquit(signum, frame):
     """
     print >> sys.stderr, "Quit signal sent - exiting immediately"
     sys.exit(1)
-
-class CliError(dnf.yum.Errors.YumBaseError):
-    """Command line interface related Exception."""
-
-    def __init__(self, args=''):
-        dnf.yum.Errors.YumBaseError.__init__(self)
-        self.args = args
 
 def print_versions(pkgs, yumbase):
     def sm_ui_time(x):
@@ -111,43 +104,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
-        self.yum_cli_commands = {}
-        self.use_txmbr_in_callback = True
-        # :hawkey -- commented out are not yet supported in dnf
-        self.registerCommand(dnf.cli.commands.InstallCommand())
-        self.registerCommand(dnf.cli.commands.UpdateCommand())
-        self.registerCommand(dnf.cli.commands.InfoCommand())
-        self.registerCommand(dnf.cli.commands.ListCommand())
-        self.registerCommand(dnf.cli.commands.EraseCommand())
-        # self.registerCommand(dnf.cli.commands.GroupsCommand())
-        self.registerCommand(dnf.cli.commands.MakeCacheCommand())
-        self.registerCommand(dnf.cli.commands.CleanCommand())
-        self.registerCommand(dnf.cli.commands.ProvidesCommand())
-        self.registerCommand(dnf.cli.commands.CheckUpdateCommand())
-        self.registerCommand(dnf.cli.commands.SearchCommand())
-        # self.registerCommand(dnf.cli.commands.ResolveDepCommand())
-        # self.registerCommand(dnf.cli.commands.DepListCommand())
-        self.registerCommand(dnf.cli.commands.RepoListCommand())
-        self.registerCommand(dnf.cli.commands.HelpCommand())
-        # self.registerCommand(dnf.cli.commands.ReInstallCommand())
-        self.registerCommand(dnf.cli.commands.DowngradeCommand())
-        # self.registerCommand(dnf.cli.commands.VersionCommand())
-        self.registerCommand(dnf.cli.commands.HistoryCommand())
-        # self.registerCommand(dnf.cli.commands.CheckRpmdbCommand())
-        # self.registerCommand(dnf.cli.commands.DistroSyncCommand())
-        # self.registerCommand(dnf.cli.commands.LoadTransactionCommand())
-
-    def registerCommand(self, command):
-        """ Register a :class:`dnf.cli.commands.Command` so that it can be
-            called by any of the names returned by its
-            :func:`dnf.cli.commands.Command.getNames` method.
-
-            :param command: the :class:`dnf.cli.commands.Command` to register
-        """
-        for name in command.getNames():
-            if name in self.yum_cli_commands:
-                raise dnf.yum.Errors.ConfigError(_('Command "%s" already defined') % name)
-            self.yum_cli_commands[name] = command
 
     def doRepoSetup(self, thisrepo=None, dosack=1):
         """Grab the repomd.xml for each enabled and set up the basics
@@ -177,230 +133,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
 
         return self._repos
 
-    def _makeUsage(self):
-        """
-        Format an attractive usage string for yum, listing subcommand
-        names and summary usages.
-        """
-        name = dnf.const.PROGRAM_NAME
-        usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
-        commands = dnf.yum.misc.unique([x for x in self.yum_cli_commands.values()
-                                    if not (hasattr(x, 'hidden') and x.hidden)])
-        commands.sort(key=lambda x: x.getNames()[0])
-        for command in commands:
-            # XXX Remove this when getSummary is common in plugins
-            try:
-                summary = command.getSummary()
-                usage += "%-14s %s\n" % (command.getNames()[0], summary)
-            except (AttributeError, NotImplementedError):
-                usage += "%s\n" % command.getNames()[0]
-
-        return usage
-
-    def _parseSetOpts(self, setopts):
-        """parse the setopts list handed to us and saves the results as
-           repo_setopts and main_setopts in the yumbase object"""
-
-        repoopts = {}
-        mainopts = dnf.yum.misc.GenericHolder()
-        mainopts.items = []
-
-        bad_setopt_tm = []
-        bad_setopt_ne = []
-
-        for item in setopts:
-            vals = item.split('=')
-            if len(vals) > 2:
-                bad_setopt_tm.append(item)
-                continue
-            if len(vals) < 2:
-                bad_setopt_ne.append(item)
-                continue
-            k,v = vals
-            period = k.find('.')
-            if period != -1:
-                repo = k[:period]
-                k = k[period+1:]
-                if repo not in repoopts:
-                    repoopts[repo] = dnf.yum.misc.GenericHolder()
-                    repoopts[repo].items = []
-                setattr(repoopts[repo], k, v)
-                repoopts[repo].items.append(k)
-            else:
-                setattr(mainopts, k, v)
-                mainopts.items.append(k)
-
-        self.main_setopts = mainopts
-        self.repo_setopts = repoopts
-
-        return bad_setopt_tm, bad_setopt_ne
-
-    def getOptionsConfig(self, args):
-        """Parse command line arguments, and set up :attr:`self.conf` and
-        :attr:`self.cmds`, as well as logger objects in base instance.
-
-        :param args: a list of command line arguments
-        """
-        self.optparser = YumOptionParser(base=self, usage=self._makeUsage())
-
-        # Parse only command line options that affect basic yum setup
-        opts = self.optparser.firstParse(args)
-
-        # Just print out the version if that's what the user wanted
-        if opts.version:
-            print dnf.const.VERSION
-            opts.quiet = True
-            opts.verbose = False
-
-        # go through all the setopts and set the global ones
-        bad_setopt_tm, bad_setopt_ne = self._parseSetOpts(opts.setopts)
-
-        if self.main_setopts:
-            for opt in self.main_setopts.items:
-                setattr(opts, opt, getattr(self.main_setopts, opt))
-
-        # get the install root to use
-        root = self.optparser.getRoot(opts)
-
-        if opts.quiet:
-            opts.debuglevel = 0
-        if opts.verbose:
-            opts.debuglevel = opts.errorlevel = 6
-
-        # Read up configuration options and initialise plugins
-        try:
-            pc = self.preconf
-            pc.fn = opts.conffile
-            pc.root = root
-            pc.init_plugins = not opts.noplugins
-            pc.plugin_types = (dnf.yum.plugins.TYPE_CORE,
-                               dnf.yum.plugins.TYPE_INTERACTIVE)
-            pc.optparser = self.optparser
-            pc.debuglevel = opts.debuglevel
-            pc.errorlevel = opts.errorlevel
-            pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
-            pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
-            pc.releasever = opts.releasever
-            self.conf
-
-            for item in  bad_setopt_tm:
-                msg = "Setopt argument has multiple values: %s"
-                self.logger.warning(msg % item)
-            for item in  bad_setopt_ne:
-                msg = "Setopt argument has no value: %s"
-                self.logger.warning(msg % item)
-            # now set  all the non-first-start opts from main from our setopts
-            if self.main_setopts:
-                for opt in self.main_setopts.items:
-                    if not hasattr(self.conf, opt):
-                        msg ="Main config did not have a %s attr. before setopt"
-                        self.logger.warning(msg % opt)
-                    setattr(self.conf, opt, getattr(self.main_setopts, opt))
-
-        except dnf.yum.Errors.ConfigError, e:
-            self.logger.critical(_('Config Error: %s'), e)
-            sys.exit(1)
-        except IOError, e:
-            e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
-            self.logger.critical(_('Config Error: %s'), e)
-            sys.exit(1)
-        except ValueError, e:
-            self.logger.critical(_('Options Error: %s'), e)
-            sys.exit(1)
-
-        # update usage in case plugins have added commands
-        self.optparser.set_usage(self._makeUsage())
-
-        self.plugins.run('args', args=args)
-        # Now parse the command line for real and
-        # apply some of the options to self.conf
-        (opts, self.cmds) = self.optparser.setupYumConfig(args=args)
-
-        if opts.version:
-            opts.quiet = True
-            opts.verbose = False
-
-        #  Check that firstParse didn't miss anything, and warn the user if it
-        # did ... because this is really magic, and unexpected.
-        if opts.quiet:
-            opts.debuglevel = 0
-        if opts.verbose:
-            opts.debuglevel = opts.errorlevel = 6
-        if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
-            self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
-        #  getRoot() changes it, but then setupYumConfig() changes it back. So
-        # don't test for this, if we are using --installroot.
-        if root == '/' and opts.conffile != pc.fn:
-            self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
-
-        # configuration has been collected, accumulate it into sensible form
-        self.cache_c.prefix = self.conf.cachedir
-        self.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
-                                         self.conf.yumvar)
-        del self.conf.cachedir # ensure access to the value is done via cache_c
-
-        if opts.version:
-            self.conf.cache = 1
-            print_versions(self.run_with_package_names, self)
-            sys.exit(0)
-
-        if opts.sleeptime is not None:
-            sleeptime = random.randrange(opts.sleeptime*60)
-        else:
-            sleeptime = 0
-
-        # save our original args out
-        self.args = args
-        # save out as a nice command string
-        self.cmdstring = dnf.const.PROGRAM_NAME + ' '
-        for arg in self.args:
-            self.cmdstring += '%s ' % arg
-
-        try:
-            self.parseCommands() # before we return check over the base command + args
-                                 # make sure they match/make sense
-        except CliError:
-            sys.exit(1)
-
-        # run the sleep - if it's unchanged then it won't matter
-        time.sleep(sleeptime)
-
-    def parseCommands(self):
-        """Read :attr:`self.cmds` and parse them out to make sure that
-        the requested base command and argument makes any sense at
-        all.  This function will also set :attr:`self.basecmd` and
-        :attr:`self.extcmds`.
-        """
-        self.verbose_logger.debug('dnf version: %s', dnf.const.VERSION)
-        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
-                                'COMMAND: %s', self.cmdstring)
-        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
-                                'Installroot: %s', self.conf.installroot)
-        if len(self.conf.commands) == 0 and len(self.cmds) < 1:
-            self.cmds = self.conf.commands
-        else:
-            self.conf.commands = self.cmds
-        if len(self.cmds) < 1:
-            self.logger.critical(_('You need to give some command'))
-            self.usage()
-            raise CliError
-
-        self.basecmd = self.cmds[0] # our base command
-        self.extcmds = self.cmds[1:] # out extended arguments/commands
-
-        if len(self.extcmds) > 0:
-            self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
-                                    'Ext Commands:\n')
-            for arg in self.extcmds:
-                self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4, '   %s', arg)
-
-        if self.basecmd not in self.yum_cli_commands:
-            self.logger.critical(_('No such command: %s. Please use %s --help'),
-                                  self.basecmd, sys.argv[0])
-            raise CliError
-
-        self.yum_cli_commands[self.basecmd].doCheck(self, self.basecmd, self.extcmds)
-
     def errorSummary(self, errstring):
         """Parse the error string for 'interesting' errors which can
         be grouped, such as disk space issues.
@@ -429,21 +161,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         summary = _('Error Summary\n-------------\n') + summary
 
         return summary
-
-
-    def doCommands(self):
-        """Call the base command, and pass it the extended commands or
-           arguments.
-
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        return self.yum_cli_commands[self.basecmd].doCommand(self, self.basecmd, self.extcmds)
 
     def doTransaction(self):
         """Take care of package downloading, checking, user
@@ -1591,6 +1308,293 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # otherwise, don't prompt
         return False
 
+class Cli(object):
+    def __init__(self, base):
+        self.logger = logging.getLogger("yum.cli")
+        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+
+        self.base = base
+        self.cli_commands = {}
+        self.use_txmbr_in_callback = True
+        # :hawkey -- commented out are not yet supported in dnf
+        self._register_command(dnf.cli.commands.InstallCommand(self))
+        self._register_command(dnf.cli.commands.UpdateCommand(self))
+        self._register_command(dnf.cli.commands.InfoCommand(self))
+        self._register_command(dnf.cli.commands.ListCommand(self))
+        self._register_command(dnf.cli.commands.EraseCommand(self))
+        # self._register_command(dnf.cli.commands.GroupsCommand(self))
+        self._register_command(dnf.cli.commands.MakeCacheCommand(self))
+        self._register_command(dnf.cli.commands.CleanCommand(self))
+        self._register_command(dnf.cli.commands.ProvidesCommand(self))
+        self._register_command(dnf.cli.commands.CheckUpdateCommand(self))
+        self._register_command(dnf.cli.commands.SearchCommand(self))
+        # self._register_command(dnf.cli.commands.ResolveDepCommand(self))
+        # self._register_command(dnf.cli.commands.ShellCommand(self))
+        # self._register_command(dnf.cli.commands.DepListCommand(self))
+        self._register_command(dnf.cli.commands.RepoListCommand(self))
+        self._register_command(dnf.cli.commands.HelpCommand(self))
+        # self._register_command(dnf.cli.commands.ReInstallCommand(self))
+        self._register_command(dnf.cli.commands.DowngradeCommand(self))
+        # self._register_command(dnf.cli.commands.VersionCommand(self))
+        self._register_command(dnf.cli.commands.HistoryCommand(self))
+        # self._register_command(dnf.cli.commands.CheckRpmdbCommand(self))
+        # self._register_command(dnf.cli.commands.DistroSyncCommand(self))
+        # self._register_command(dnf.cli.commands.LoadTransactionCommand(self))
+
+    def _make_usage(self):
+        """
+        Format an attractive usage string for yum, listing subcommand
+        names and summary usages.
+        """
+        name = dnf.const.PROGRAM_NAME
+        usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
+        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()
+                                    if not (hasattr(x, 'hidden') and x.hidden)])
+        commands.sort(key=lambda x: x.getNames()[0])
+        for command in commands:
+            # XXX Remove this when getSummary is common in plugins
+            try:
+                summary = command.getSummary()
+                usage += "%-14s %s\n" % (command.getNames()[0], summary)
+            except (AttributeError, NotImplementedError):
+                usage += "%s\n" % command.getNames()[0]
+
+        return usage
+
+    def _register_command(self, command):
+        """ Register a :class:`dnf.cli.commands.Command` so that it can be
+            called by any of the names returned by its
+            :func:`dnf.cli.commands.Command.getNames` method.
+
+            :param command: the :class:`dnf.cli.commands.Command` to register
+        """
+        for name in command.getNames():
+            if name in self.cli_commands:
+                raise dnf.yum.Errors.ConfigError(_('Command "%s" already defined') % name)
+            self.cli_commands[name] = command
+
+
+    def _parse_commands(self):
+        """Read :attr:`self.cmds` and parse them out to make sure that
+        the requested base command and argument makes any sense at
+        all.  This function will also set :attr:`self.base.basecmd` and
+        :attr:`self.extcmds`.
+        """
+        self.verbose_logger.debug('dnf version: %s', dnf.const.VERSION)
+        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+                                'COMMAND: %s', self.cmdstring)
+        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+                                'Installroot: %s', self.base.conf.installroot)
+        if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
+            self.base.cmds = self.base.conf.commands
+        else:
+            self.base.conf.commands = self.base.cmds
+        if len(self.base.cmds) < 1:
+            self.logger.critical(_('You need to give some command'))
+            self.base.usage()
+            raise CliError
+
+        self.base.basecmd = self.base.cmds[0] # our base command
+        self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
+
+        if len(self.base.extcmds) > 0:
+            self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+                                    'Ext Commands:\n')
+            for arg in self.base.extcmds:
+                self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+                                        '   %s', arg)
+
+        if self.base.basecmd not in self.cli_commands:
+            self.logger.critical(_('No such command: %s. Please use %s --help'),
+                                  self.base.basecmd, sys.argv[0])
+            raise CliError
+
+        command = self.cli_commands[self.base.basecmd]
+        command.doCheck(self.base, self.base.basecmd, self.base.extcmds)
+
+    def _parse_setopts(self, setopts):
+        """parse the setopts list handed to us and saves the results as
+           repo_setopts and main_setopts in the yumbase object"""
+
+        repoopts = {}
+        mainopts = dnf.yum.misc.GenericHolder()
+        mainopts.items = []
+
+        bad_setopt_tm = []
+        bad_setopt_ne = []
+
+        for item in setopts:
+            vals = item.split('=')
+            if len(vals) > 2:
+                bad_setopt_tm.append(item)
+                continue
+            if len(vals) < 2:
+                bad_setopt_ne.append(item)
+                continue
+            k,v = vals
+            period = k.find('.')
+            if period != -1:
+                repo = k[:period]
+                k = k[period+1:]
+                if repo not in repoopts:
+                    repoopts[repo] = dnf.yum.misc.GenericHolder()
+                    repoopts[repo].items = []
+                setattr(repoopts[repo], k, v)
+                repoopts[repo].items.append(k)
+            else:
+                setattr(mainopts, k, v)
+                mainopts.items.append(k)
+
+        self.main_setopts = mainopts
+        self.base.repo_setopts = repoopts
+
+        return bad_setopt_tm, bad_setopt_ne
+
+    def configure(self, args):
+        """Parse command line arguments, and set up :attr:`self.base.conf` and
+        :attr:`self.cmds`, as well as logger objects in base instance.
+
+        :param args: a list of command line arguments
+        """
+        self.optparser = YumOptionParser(base=self.base, usage=self._make_usage())
+
+        # Parse only command line options that affect basic yum setup
+        opts = self.optparser.firstParse(args)
+
+        # Just print out the version if that's what the user wanted
+        if opts.version:
+            print dnf.const.VERSION
+            opts.quiet = True
+            opts.verbose = False
+
+        # go through all the setopts and set the global ones
+        bad_setopt_tm, bad_setopt_ne = self._parse_setopts(opts.setopts)
+
+        if self.main_setopts:
+            for opt in self.main_setopts.items:
+                setattr(opts, opt, getattr(self.main_setopts, opt))
+
+        # get the install root to use
+        root = self.optparser.getRoot(opts)
+
+        if opts.quiet:
+            opts.debuglevel = 0
+        if opts.verbose:
+            opts.debuglevel = opts.errorlevel = 6
+
+        # Read up configuration options and initialise plugins
+        try:
+            pc = self.base.preconf
+            pc.fn = opts.conffile
+            pc.root = root
+            pc.init_plugins = not opts.noplugins
+            pc.plugin_types = (dnf.yum.plugins.TYPE_CORE,
+                               dnf.yum.plugins.TYPE_INTERACTIVE)
+            pc.optparser = self.optparser
+            pc.debuglevel = opts.debuglevel
+            pc.errorlevel = opts.errorlevel
+            pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
+            pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
+            pc.releasever = opts.releasever
+            self.base.conf
+
+            for item in  bad_setopt_tm:
+                msg = "Setopt argument has multiple values: %s"
+                self.logger.warning(msg % item)
+            for item in  bad_setopt_ne:
+                msg = "Setopt argument has no value: %s"
+                self.logger.warning(msg % item)
+            # now set  all the non-first-start opts from main from our setopts
+            if self.main_setopts:
+                for opt in self.main_setopts.items:
+                    if not hasattr(self.base.conf, opt):
+                        msg ="Main config did not have a %s attr. before setopt"
+                        self.logger.warning(msg % opt)
+                    setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
+
+        except dnf.yum.Errors.ConfigError, e:
+            self.logger.critical(_('Config Error: %s'), e)
+            sys.exit(1)
+        except IOError, e:
+            e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
+            self.logger.critical(_('Config Error: %s'), e)
+            sys.exit(1)
+        except ValueError, e:
+            self.logger.critical(_('Options Error: %s'), e)
+            sys.exit(1)
+
+        # update usage in case plugins have added commands
+        self.optparser.set_usage(self._make_usage())
+
+        self.base.plugins.run('args', args=args)
+        # Now parse the command line for real and
+        # apply some of the options to self.base.conf
+        (opts, self.base.cmds) = self.optparser.setupYumConfig(args=args)
+
+        if opts.version:
+            opts.quiet = True
+            opts.verbose = False
+
+        #  Check that firstParse didn't miss anything, and warn the user if it
+        # did ... because this is really magic, and unexpected.
+        if opts.quiet:
+            opts.debuglevel = 0
+        if opts.verbose:
+            opts.debuglevel = opts.errorlevel = 6
+        if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
+            self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
+        #  getRoot() changes it, but then setupYumConfig() changes it back. So
+        # don't test for this, if we are using --installroot.
+        if root == '/' and opts.conffile != pc.fn:
+            self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
+
+        # configuration has been collected, accumulate it into sensible form
+        self.base.cache_c.prefix = self.base.conf.cachedir
+        self.base.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
+                                         self.base.conf.yumvar)
+        del self.base.conf.cachedir # ensure access to the value is done via cache_c
+
+        if opts.version:
+            self.base.conf.cache = 1
+            print_versions(self.base.run_with_package_names, self.base)
+            sys.exit(0)
+
+        if opts.sleeptime is not None:
+            sleeptime = random.randrange(opts.sleeptime*60)
+        else:
+            sleeptime = 0
+
+        # save our original args out
+        self.base.args = args
+        # save out as a nice command string
+        self.cmdstring = dnf.const.PROGRAM_NAME + ' '
+        for arg in self.base.args:
+            self.cmdstring += '%s ' % arg
+
+        try:
+            self._parse_commands() # before we return check over the base command
+                                  # + args make sure they match/make sense
+        except CliError:
+            sys.exit(1)
+
+        # run the sleep - if it's unchanged then it won't matter
+        time.sleep(sleeptime)
+
+    def do_commands(self):
+        """Call the base command, and pass it the extended commands or
+           arguments.
+
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+        command = self.cli_commands[self.base.basecmd]
+        return command.doCommand(self.base, self.base.basecmd, self.base.extcmds)
+
     def usage(self):
         """Print out an explanation of command line usage."""
         sys.stdout.write(self.optparser.format_help())
@@ -1625,7 +1629,7 @@ class YumOptionParser(OptionParser):
         self.logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
-    def firstParse(self,args):
+    def firstParse(self, args):
         """Parse only command line options that affect basic yum
         setup.
 

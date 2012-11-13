@@ -17,3 +17,12 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
+
+import dnf.yum.Errors
+
+class CliError(dnf.yum.Errors.YumBaseError):
+    """CLI Exception."""
+
+    def __init__(self, args=''):
+        dnf.yum.Errors.YumBaseError.__init__(self)
+        self.args = args

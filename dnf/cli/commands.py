@@ -19,7 +19,7 @@ Classes for subcommands of the yum command line interface.
 """
 
 import os
-import cli
+from dnf.cli import CliError
 from dnf.yum import logginglevels
 from dnf.yum import _
 from dnf.yum import misc
@@ -34,14 +34,14 @@ import dnf.yum.config
 import dnf.queries
 import hawkey
 
-def _err_mini_usage(base, basecmd):
-    if basecmd not in base.yum_cli_commands:
-        base.usage()
+def _err_mini_usage(cli, basecmd):
+    if basecmd not in cli.cli_commands:
+        cli.usage()
         return
-    cmd = base.yum_cli_commands[basecmd]
-    txt = base.yum_cli_commands["help"]._makeOutput(cmd)
-    base.logger.critical(_(' Mini usage:\n'))
-    base.logger.critical(txt)
+    cmd = cli.cli_commands[basecmd]
+    txt = cli.cli_commands["help"]._makeOutput(cmd)
+    cli.logger.critical(_(' Mini usage:\n'))
+    cli.logger.critical(txt)
 
 def checkRootUID(base):
     """Verify that the program is being run by the root user.
@@ -52,7 +52,7 @@ def checkRootUID(base):
     return None
     if base.conf.uid != 0:
         base.logger.critical(_('You need to be root to perform this command.'))
-        raise cli.CliError
+        raise CliError
 
 def checkGPGKey(base):
     """Verify that there are gpg keys for the enabled repositories in the
@@ -82,9 +82,9 @@ For more information contact your distribution or package provider.
 """)
                 base.logger.critical(msg)
                 base.logger.critical(_("Problem repository: %s"), repo)
-                raise cli.CliError
+                raise CliError
 
-def checkPackageArg(base, basecmd, extcmds):
+def checkPackageArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one package for
     *basecmd* to act on.
 
@@ -94,12 +94,12 @@ def checkPackageArg(base, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        base.logger.critical(
+        cli.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
-        _err_mini_usage(base, basecmd)
-        raise cli.CliError
+        _err_mini_usage(cli, basecmd)
+        raise CliError
 
-def checkItemArg(base, basecmd, extcmds):
+def checkItemArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one item for
     *basecmd* to act on.  Generally, the items are command-line
     arguments that are not the name of a package, such as a file name
@@ -111,11 +111,11 @@ def checkItemArg(base, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        base.logger.critical(_('Error: Need an item to match'))
-        _err_mini_usage(base, basecmd)
-        raise cli.CliError
+        cli.logger.critical(_('Error: Need an item to match'))
+        _err_mini_usage(cli, basecmd)
+        raise CliError
 
-def checkGroupArg(base, basecmd, extcmds):
+def checkGroupArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
     *basecmd* to act on.
 
@@ -125,11 +125,11 @@ def checkGroupArg(base, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        base.logger.critical(_('Error: Need a group or list of groups'))
-        _err_mini_usage(base, basecmd)
-        raise cli.CliError
+        cli.logger.critical(_('Error: Need a group or list of groups'))
+        _err_mini_usage(cli, basecmd)
+        raise CliError
 
-def checkCleanArg(base, basecmd, extcmds):
+def checkCleanArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains at least one argument, and that all
     arguments in *extcmds* are valid options for clean.
 
@@ -142,14 +142,14 @@ def checkCleanArg(base, basecmd, extcmds):
                   'expire-cache', 'rpmdb', 'all')
 
     if len(extcmds) == 0:
-        base.logger.critical(_('Error: clean requires an option: %s') % (
+        cli.logger.critical(_('Error: clean requires an option: %s') % (
             ", ".join(VALID_ARGS)))
 
     for cmd in extcmds:
         if cmd not in VALID_ARGS:
-            base.logger.critical(_('Error: invalid clean argument: %r') % cmd)
-            _err_mini_usage(base, basecmd)
-            raise cli.CliError
+            cli.logger.critical(_('Error: invalid clean argument: %r') % cmd)
+            _err_mini_usage(cli, basecmd)
+            raise CliError
 
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
@@ -170,7 +170,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
             ' Run "yum repolist all" to see the repos you have.\n'
             ' You can enable repos with yum-config-manager --enable <repo>')
     base.logger.critical(msg)
-    raise cli.CliError
+    raise CliError
 
 class Command:
     """An abstract base class that defines the methods needed by the cli
@@ -178,9 +178,10 @@ class Command:
     :func:`getUsage` and :func:`getSummary`.
     """
 
-    def __init__(self):
+    def __init__(self, cli):
         self.done_command_once = False
         self.hidden = False
+        self.cli = cli
 
     def doneCommand(self, base, msg, *args):
         """ Output *msg* the first time that this method is called, and do
@@ -295,7 +296,7 @@ class InstallCommand(Command):
         """
         checkRootUID(base)
         checkGPGKey(base)
-        checkPackageArg(base, basecmd, extcmds)
+        checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
@@ -669,7 +670,7 @@ class EraseCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(base)
-        checkPackageArg(base, basecmd, extcmds)
+        checkPackageArg(self.cli, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -790,7 +791,7 @@ class GroupsCommand(Command):
         if cmd in ('install', 'remove',
                    'mark-install', 'mark-remove',
                    'mark-members', 'info', 'mark-members-sync'):
-            checkGroupArg(base, cmd, extcmds)
+            checkGroupArg(self.cli, cmd, extcmds)
 
         if cmd in ('install', 'remove', 'upgrade',
                    'mark-install', 'mark-remove',
@@ -806,7 +807,7 @@ class GroupsCommand(Command):
         if cmd not in cmds:
             base.logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
-            raise cli.CliError
+            raise CliError
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -992,7 +993,7 @@ class CleanCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkCleanArg(base, basecmd, extcmds)
+        checkCleanArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(base)
 
     def doCommand(self, base, basecmd, extcmds):
@@ -1058,7 +1059,7 @@ class ProvidesCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkItemArg(base, basecmd, extcmds)
+        checkItemArg(self.cli, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -1207,7 +1208,7 @@ class SearchCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkItemArg(base, basecmd, extcmds)
+        checkItemArg(self.cli, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -1327,7 +1328,7 @@ class DepListCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkPackageArg(base, basecmd, extcmds)
+        checkPackageArg(self.cli, basecmd, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -1677,11 +1678,11 @@ class HelpCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         if len(extcmds) == 0:
-            base.usage()
-            raise cli.CliError
-        elif len(extcmds) > 1 or extcmds[0] not in base.yum_cli_commands:
-            base.usage()
-            raise cli.CliError
+            self.cli.usage()
+            raise CliError
+        elif len(extcmds) > 1 or extcmds[0] not in self.cli.cli_commands:
+            self.cli.usage()
+            raise CliError
 
     @staticmethod
     def _makeOutput(command):
@@ -1733,8 +1734,8 @@ class HelpCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        if extcmds[0] in base.yum_cli_commands:
-            command = base.yum_cli_commands[extcmds[0]]
+        if extcmds[0] in self.cli.cli_commands:
+            command = self.cli.cli_commands[extcmds[0]]
             base.verbose_logger.info(self._makeOutput(command))
         return 0, []
 
@@ -1782,7 +1783,7 @@ class ReInstallCommand(Command):
         """
         checkRootUID(base)
         checkGPGKey(base)
-        checkPackageArg(base, basecmd, extcmds)
+        checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
@@ -1857,7 +1858,7 @@ class DowngradeCommand(Command):
         """
         checkRootUID(base)
         checkGPGKey(base)
-        checkPackageArg(base, basecmd, extcmds)
+        checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(base, extcmds)
 
     def doCommand(self, base, basecmd, extcmds):
@@ -2239,13 +2240,13 @@ class HistoryCommand(Command):
         if extcmds and extcmds[0] not in cmds:
             base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
-            raise cli.CliError
+            raise CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkRootUID(base)
             checkGPGKey(base)
         elif not os.access(base.history._db_file, os.R_OK):
             base.logger.critical(_("You don't have access to the history DB."))
-            raise cli.CliError
+            raise CliError
 
     def doCommand(self, base, basecmd, extcmds):
         """Execute this command.
@@ -2419,7 +2420,7 @@ class LoadTransactionCommand(Command):
         """
         if not extcmds:
             base.logger.critical(_("No saved transaction file specified."))
-            raise cli.CliError
+            raise CliError
 
         load_file = extcmds[0]
         self.doneCommand(base, _("loading transaction from %s") % load_file)

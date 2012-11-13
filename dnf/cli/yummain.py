@@ -30,7 +30,7 @@ from dnf.yum import logginglevels
 from dnf.yum import _
 from dnf.yum.i18n import utf8_width, exception2msg
 import dnf.i18n
-import cli
+import dnf.cli.cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
@@ -90,12 +90,13 @@ def main(args):
     verbose_logger = logging.getLogger("yum.verbose.main")
 
     # our core object for the cli
-    base = cli.YumBaseCli()
+    base = dnf.cli.cli.YumBaseCli()
+    cli = dnf.cli.cli.Cli(base)
 
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
     try:
-        base.getOptionsConfig(args)
+        cli.configure(args)
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
@@ -137,7 +138,7 @@ def main(args):
             break
 
     try:
-        result, resultmsgs = base.doCommands()
+        result, resultmsgs = cli.do_commands()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:
