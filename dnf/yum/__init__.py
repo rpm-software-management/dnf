@@ -3483,40 +3483,6 @@ class YumBase(object):
             # this way skipbroken, should clean out the old one, if the new one is skipped
             txmbr.depends_on.append(rel)
 
-    def processTransaction(self, callback=None,rpmTestDisplay=None, rpmDisplay=None):
-        """Process the current transaction.  This involves the following steps:
-           - Download the packages
-           - Check the GPG signatures of the packages
-           - Run the test RPM transaction
-           - Run the RPM Transaction
-           The *callback*.event method is called at the start, and
-           between each step.
-
-           :param callback: a callback object, which must have an event
-              method
-           :param rpmTestDisplay: name of the display class to use in the
-              RPM test transaction
-           :param rpmDisplay: name of the display class to use in the rpm
-              transaction
-        """
-
-        if not callback:
-            callback = callbacks.ProcessTransNoOutputCallback()
-
-        # Download Packages
-        callback.event(callbacks.PT_DOWNLOAD)
-        pkgs = self._downloadPackages(callback)
-        # Check Package Signatures
-        if pkgs != None:
-            callback.event(callbacks.PT_GPGCHECK)
-            self._checkSignatures(pkgs,callback)
-        # Run Test Transaction
-        callback.event(callbacks.PT_TEST_TRANS)
-        self._doTestTransaction(callback,display=rpmTestDisplay)
-        # Run Transaction
-        callback.event(callbacks.PT_TRANSACTION)
-        self._doTransaction(callback,display=rpmDisplay)
-
     def _downloadPackages(self,callback):
         ''' Download the need packages in the Transaction '''
         # This can be overloaded by a subclass.
@@ -3564,70 +3530,6 @@ class YumBase(object):
         This need to be overloaded in a subclass to make GPG Key import work
         '''
         return False
-
-    def _doTestTransaction(self,callback,display=None):
-        ''' Do the RPM test transaction '''
-        self.initActionTs()
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs( keepold=0 ) # sigh
-
-        # This can be overloaded by a subclass.
-        self.verbose_logger.log(logginglevels.INFO_2,
-                 _('Running Transaction Check'))
-        msgs = self._run_rpm_check()
-        if msgs:
-            rpmlib_only = True
-            for msg in msgs:
-                if msg.startswith('rpmlib('):
-                    continue
-                rpmlib_only = False
-            if rpmlib_only:
-                retmsgs = [_("ERROR You need to update rpm to handle:")]
-                retmsgs.extend(msgs)
-                raise Errors.YumRPMCheckError, retmsgs
-            retmsgs = [_('ERROR with transaction check vs depsolve:')]
-            retmsgs.extend(msgs)
-            retmsgs.append(_('Please report this error at %s')
-                                         % self.conf.bugtracker_url)
-            raise Errors.YumRPMCheckError,retmsgs
-
-        tsConf = {}
-        for feature in ['diskspacecheck']: # more to come, I'm sure
-            tsConf[feature] = getattr( self.conf, feature )
-        #
-        testcb = RPMTransaction(self, test=True)
-        # overwrite the default display class
-        if display:
-            testcb.display = display
-
-        tserrors = self.ts.test( testcb, conf=tsConf )
-        del testcb
-
-        if len( tserrors ) > 0:
-            errstring =  _('Test Transaction Errors: ')
-            for descr in tserrors:
-                errstring += '  %s\n' % descr
-            raise Errors.YumTestTransactionError, errstring
-
-        del self.ts
-        # put back our depcheck callback
-        self.dsCallback = dscb
-
-
-    def _doTransaction(self,callback,display=None):
-        ''' do the RPM Transaction '''
-        # This can be overloaded by a subclass.
-        self.initActionTs() # make a new, blank ts to populate
-        self.populateTs( keepold=0 ) # populate the ts
-        self.ts.check() # required for ordering
-        self.ts.order() # order
-        cb = RPMTransaction(self,display=SimpleCliCallBack)
-        # overwrite the default display class
-        if display:
-            cb.display = display
-        self.runTransaction( cb=cb )
 
     def _run_rpm_check(self):
         results = []
@@ -3715,36 +3617,17 @@ class YumBase(object):
         self.repos.enableRepo(newrepo.id)
         return newrepo
 
-    def populateTs(self, test=0, keepold=1):
-        """Populate the transaction set.
-
-        :param test: unused
-        :param keepold: whether to keep old packages
-        """
-        if self.dsCallback: self.dsCallback.transactionPopulation()
-        ts_elem = {}
+    def populate_ts(self):
+        """Populate the RPM transaction set. """
+        if self.dsCallback:
+            self.dsCallback.transactionPopulation()
 
         if self.ts.ts is None:
             self.initActionTs()
 
-        if keepold:
-            for te in self.ts:
-                epoch = te.E()
-                if epoch is None:
-                    epoch = '0'
-                pkginfo = (te.N(), te.A(), epoch, te.V(), te.R())
-                if te.Type() == 1:
-                    mode = 'i'
-                elif te.Type() == 2:
-                    mode = 'e'
-
-                ts_elem[(pkginfo, mode)] = 1
-
         for txmbr in self.tsInfo.getMembers():
             self.verbose_logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
             if txmbr.ts_state in ['u', 'i']:
-                if (txmbr.pkgtup, 'i') in ts_elem:
-                    continue
                 rpmfile = txmbr.po.localPkg()
                 if not os.path.exists(rpmfile):
                     raise RuntimeError("rpm file does not exist %s", rpmfile)
@@ -3767,8 +3650,6 @@ class YumBase(object):
                     self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
 
             elif txmbr.ts_state in ['e']:
-                if (txmbr.pkgtup, txmbr.ts_state) in ts_elem:
-                    continue
                 self.ts.addErase(txmbr.po.idx)
                 if self.dsCallback:
                     if txmbr.downgraded_by:

@@ -240,8 +240,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         self.initActionTs()
         # save our dsCallback out
         dscb = self.dsCallback
-        self.dsCallback = None # dumb, dumb dumb dumb!
-        self.populateTs(keepold=0) # sigh
+        self.dsCallback = None
+        self.populate_ts()
 
         rcd_st = time.time()
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
@@ -307,7 +307,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 break
         if have_reinstalls:
             self.initActionTs() # make a new, blank ts to populate
-            self.populateTs(keepold=0) # populate the ts
+            self.populate_ts()
             self.ts.check() #required for ordering
             self.ts.order() # order
             self.ts.clean() # release memory not needed beyond this point
