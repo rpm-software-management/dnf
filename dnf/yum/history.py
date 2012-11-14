@@ -39,7 +39,6 @@ _stcode2sttxt = {TS_UPDATE : 'Update',
                  TS_UPDATED : 'Updated',
                  TS_ERASE: 'Erase',
                  TS_INSTALL: 'Install',
-                 TS_TRUEINSTALL : 'True-Install',
                  TS_OBSOLETED: 'Obsoleted',
                  TS_OBSOLETING: 'Obsoleting'}
 
@@ -47,7 +46,6 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Updated' : TS_UPDATED,
                  'Erase' : TS_ERASE,
                  'Install' : TS_INSTALL,
-                 'True-Install' : TS_TRUEINSTALL,
                  'Dep-Install' : TS_INSTALL,
                  'Reinstall' : TS_INSTALL, # Broken
                  'Downgrade' : TS_INSTALL, # Broken
@@ -801,7 +799,7 @@ class YumHistory(object):
     @staticmethod
     def txmbr2state(txmbr):
         state = None
-        if txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
+        if txmbr.output_state == TS_INSTALL:
             if txmbr.reinstall:
                 state = 'Reinstall'
             elif txmbr.downgrades:

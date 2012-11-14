@@ -72,7 +72,6 @@ class RPMBaseCallback:
         self.action = { TS_UPDATE : _('Updating'),
                         TS_ERASE: _('Erasing'),
                         TS_INSTALL: _('Installing'),
-                        TS_TRUEINSTALL : _('Installing'),
                         TS_OBSOLETED: _('Obsoleted'),
                         TS_OBSOLETING: _('Installing'),
                         TS_UPDATED: _('Cleanup'),
@@ -81,7 +80,6 @@ class RPMBaseCallback:
         self.fileaction = { TS_UPDATE: 'Updated',
                             TS_ERASE: 'Erased',
                             TS_INSTALL: 'Installed',
-                            TS_TRUEINSTALL: 'Installed',
                             TS_OBSOLETED: 'Obsoleted',
                             TS_OBSOLETING: 'Installed',
                             TS_UPDATED: 'Cleanup'}

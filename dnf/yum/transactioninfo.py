@@ -238,7 +238,7 @@ class TransactionData:
                 else:
                     self.updated.append(txmbr)
 
-            elif txmbr.output_state in (TS_INSTALL, TS_TRUEINSTALL):
+            elif txmbr.output_state == TS_INSTALL:
                 if include_reinstall and txmbr.reinstall:
                     self.reinstalled.append(txmbr)
                     continue

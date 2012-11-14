@@ -44,13 +44,11 @@ class RPMInstallCallback:
         self.myprocess = { TS_UPDATE : _('Updating'), 
                            TS_ERASE: _('Erasing'),
                            TS_INSTALL: _('Installing'), 
-                           TS_TRUEINSTALL : _('Installing'),
                            TS_OBSOLETED: _('Obsoleted'),
                            TS_OBSOLETING: _('Installing')}
         self.mypostprocess = { TS_UPDATE: _('Updated'), 
                                TS_ERASE: _('Erased'),
                                TS_INSTALL: _('Installed'), 
-                               TS_TRUEINSTALL: _('Installed'), 
                                TS_OBSOLETED: _('Obsoleted'),
                                TS_OBSOLETING: _('Installed')}
 
