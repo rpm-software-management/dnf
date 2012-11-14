@@ -800,7 +800,7 @@ class YumBase(object):
             if reason == 'user':
                 goal.userinstalled(pkg)
 
-    def buildHawkeyGoal(self, tsInfo):
+    def build_hawkey_goal(self, tsInfo):
         goal = hawkey.Goal(self.sack)
         push_userinstalled = False
         for txmbr in tsInfo:
@@ -850,7 +850,7 @@ class YumBase(object):
         self.plugins.run('preresolve')
         ds_st = time.time()
         self.dsCallback.start()
-        goal = self.buildHawkeyGoal(self.tsInfo)
+        goal = self.build_hawkey_goal(self.tsInfo)
         if not goal.run(allow_uninstall=True):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
@@ -866,6 +866,12 @@ class YumBase(object):
                 self.dsCallback.pkgAdded(downgraded, 'dd')
                 self.dsCallback.pkgAdded(pkg, 'd')
                 self.tsInfo.addDowngrade(pkg, downgraded)
+            for pkg in goal.list_reinstalls():
+                cnt += 1
+                self.dsCallback.pkgAdded(pkg, 'r')
+                txmbr = self.tsInfo.addInstall(pkg)
+                reinstalled = goal.package_obsoletes(pkg)
+                txmbr = self.tsInfo.addErase(reinstalled)
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
@@ -2885,41 +2891,30 @@ class YumBase(object):
                              rpm.RPMPROB_FILTER_REPLACENEWFILES,
                              rpm.RPMPROB_FILTER_REPLACEOLDFILES)
 
-        tx_mbrs = []
-        if po: # The po, is the "available" po ... we want the installed po
-            tx_mbrs.extend(self.remove(pkgtup=po.pkgtup))
+        tx_return = []
+        if po:
+            installed = [po]
         else:
-            tx_mbrs.extend(self.remove(**kwargs))
-        if not tx_mbrs:
-            raise Errors.ReinstallRemoveError, _("Problem in reinstall: no package matched to remove")
-        templen = len(tx_mbrs)
-        # this is a reinstall, so if we can't reinstall exactly what we uninstalled
-        # then we really shouldn't go on
-        new_members = []
-        failed = []
-        failed_pkgs = []
-        for item in tx_mbrs[:]:
-            #  Make sure obsoletes processing is off, so we can reinstall()
-            # pkgs that are obsolete.
-            old_conf_obs = self.conf.obsoletes
-            self.conf.obsoletes = False
-            if isinstance(po, YumLocalPackage):
-                members = self.install(po=po)
-            else:
-                members = self.install(pkgtup=item.pkgtup)
-            self.conf.obsoletes = old_conf_obs
-            if len(members) == 0:
-                self.tsInfo.remove(item.pkgtup)
-                tx_mbrs.remove(item)
-                failed.append(str(item.po))
-                failed_pkgs.append(item.po)
-                continue
-            new_members.extend(members)
+            pat = kwargs['pattern']
+            installed = queries.installed_by_name(self.sack, pat)
+        if not installed:
+            raise Errors.ReinstallRemoveError(
+                _("Problem in reinstall: no package matched to remove"))
 
-        if failed and not tx_mbrs:
-            raise Errors.ReinstallInstallError(_("Problem in reinstall: no package %s matched to install") % ", ".join(failed), failed_pkgs=failed_pkgs)
-        tx_mbrs.extend(new_members)
-        return tx_mbrs
+        installed = queries.per_nevra_dict(installed)
+        available = queries.available_by_name(self.sack, pat)
+        available = queries.per_nevra_dict(available)
+        for nevra in installed:
+            if not nevra in available:
+                msg = _("Problem in reinstall: no package %s matched to install")
+                msg %= nevra
+                failed_pkgs = [installed[nevra]]
+                raise Errors.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
+
+            txmbr = self.tsInfo.addInstall(available[nevra])
+            tx_return.append(txmbr)
+
+        return tx_return
 
     def _is_local_exclude(self, po, pkglist):
         """returns True if the local pkg should be excluded"""

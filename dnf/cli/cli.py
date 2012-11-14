@@ -170,7 +170,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
         """
-        # just make sure there's not, well, nothing to do
+        # make sure there's something to do
         if len(self.tsInfo) == 0:
             self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
             return -1
@@ -775,18 +775,14 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             except dnf.yum.Errors.ReinstallInstallError, e:
                 for ipkg in e.failed_pkgs:
                     xmsg = ''
-                    if 'from_repo' in ipkg.yumdb_info:
-                        xmsg = ipkg.yumdb_info.from_repo
+                    yumdb_info = self.yumdb.get_package(ipkg)
+                    if 'from_repo' in yumdb_info:
+                        xmsg = yumdb_info.from_repo
                         xmsg = _(' (from %s)') % xmsg
                     msg = _('Installed package %s%s%s%s not available.')
                     self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg,
                                             self.term.MODE['bold'], ipkg,
                                             self.term.MODE['normal'], xmsg)
-            except dnf.yum.Errors.ReinstallError, e:
-                assert False, "Shouldn't happen, but just in case"
-                self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, e)
-            else:
-                self._install_upgraded_requires(txmbrs)
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
@@ -1331,7 +1327,7 @@ class Cli(object):
         # self._register_command(dnf.cli.commands.DepListCommand(self))
         self._register_command(dnf.cli.commands.RepoListCommand(self))
         self._register_command(dnf.cli.commands.HelpCommand(self))
-        # self._register_command(dnf.cli.commands.ReInstallCommand(self))
+        self._register_command(dnf.cli.commands.ReInstallCommand(self))
         self._register_command(dnf.cli.commands.DowngradeCommand(self))
         # self._register_command(dnf.cli.commands.VersionCommand(self))
         self._register_command(dnf.cli.commands.HistoryCommand(self))

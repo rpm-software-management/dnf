@@ -54,11 +54,6 @@ class MultilibAllMainRepo(base.ResultTestCase):
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.yumbase.conf.multilib_policy = "all"
 
-    def test_reinstall_existing(self):
-        """ Do not try installing an already present package. """
-        self.yumbase.install(pattern="pepper")
-        self.assertResult(self.yumbase, self.installed)
-
     def test_install(self):
         """ Installing a package existing in multiple architectures attempts
             installing all of them.

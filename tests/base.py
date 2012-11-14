@@ -187,3 +187,6 @@ class ResultTestCase(unittest.TestCase):
             output_states=dnf.yum.constants.TS_INSTALL_STATES):
             installed.add(txmbr.po)
         self.assertItemsEqual(installed, pkgs)
+
+    def assertLength(self, collection, length):
+        return self.assertEqual(len(collection), length)
