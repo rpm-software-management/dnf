@@ -29,6 +29,7 @@ Available commands are:
 * list
 * makecache
 * provides
+* reinstall
 * repolist
 * search
 * update
@@ -228,6 +229,14 @@ Provides Command
     Finds the packages providing the given ``<provide-spec>``. This is useful
     when one knows a filename and wants to find what package (installed or not)
     provides this file.
+
+-----------------
+Reinstall Command
+-----------------
+``dnf [options] reinstall <package-specs>...``
+    Installs the specified packages, fails if some of the packages are either
+    not installed or not available (i.e. there is no repository where to
+    download the same RPM).
 
 ----------------
 Repolist Command
