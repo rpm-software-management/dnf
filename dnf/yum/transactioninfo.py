@@ -357,7 +357,6 @@ class TransactionData:
         txmbr.output_state =  TS_UPDATED
         txmbr.po.state = TS_UPDATED
         txmbr.ts_state = 'ud'
-        txmbr.updated_by.append(updating_po)
         self.add(txmbr)
         return txmbr
 
@@ -377,7 +376,6 @@ class TransactionMember:
         self.obsoletes = []
         self.obsoleted_by = []
         self.updates = []
-        self.updated_by = []
         self.downgrades = []
         self.downgraded_by = []
         self.reinstall = False
