@@ -565,11 +565,7 @@ class YumBase(object):
             the transaction. If so we don't need to setup the remote repos. """
         if self._tsInfo is None:
             self._tsInfo = transactioninfo.TransactionData()
-            self._tsInfo.installonlypkgs = self.conf.installonlypkgs # this kinda sucks
-            # this REALLY sucks, sadly (needed for group conditionals)
-            self._tsInfo.install_method = self.install
-            self._tsInfo.update_method = self.update
-            self._tsInfo.remove_method = self.remove
+            self._tsInfo.installonlypkgs = self.conf.installonlypkgs
         return self._tsInfo
 
     def _setTsInfo(self, value):
@@ -916,26 +912,6 @@ class YumBase(object):
         if pkgtup is None:
             return
         self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
-
-    def _printTransaction(self):
-        #transaction set states
-        state = { TS_UPDATE     : "update",
-                  TS_INSTALL    : "install",
-                  TS_TRUEINSTALL: "trueinstall",
-                  TS_ERASE      : "erase",
-                  TS_OBSOLETED  : "obsoleted",
-                  TS_OBSOLETING : "obsoleting",
-                  TS_AVAILABLE  : "available",
-                  TS_UPDATED    : "updated"}
-
-        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN: Current Transaction : %i member(s) " % len(self.tsInfo))
-        for txmbr in sorted(self.tsInfo):
-            msg = "SKIPBROKEN:  %-11s : %s " % (state[txmbr.output_state],txmbr.po)
-            self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-            for po,rel in sorted(set(txmbr.relatedto)):
-                msg = "SKIPBROKEN:                   %s : %s" % (rel,po)
-                self.verbose_logger.log(logginglevels.DEBUG_2, msg)
-        self.verbose_logger.log(logginglevels.DEBUG_2,"SKIPBROKEN:%s" % (60 * "="))
 
     def _rpmdb_warn_checks(self, out=None, warn=True, chkcmd=None, header=None,
                            ignore_pkgs=[]):
@@ -2721,14 +2697,6 @@ class YumBase(object):
             self.tsInfo.addInstall(pkg)
 
         return self.tsInfo
-
-    def _add_up_txmbr(self, requiringPo, upkg, ipkg):
-        txmbr = self.tsInfo.addUpdate(upkg, ipkg)
-        if requiringPo:
-            txmbr.setAsDep(requiringPo)
-        if ('reason' in ipkg.yumdb_info and ipkg.yumdb_info.reason == 'dep'):
-            txmbr.reason = 'dep'
-        return txmbr
 
     def update(self, po=None, requiringPo=None, update_to=False, **kwargs):
         """Mark the specified items to be updated.  If a package
