@@ -419,47 +419,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                                      ", ".join(matches))
             self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
 
-    def _install_upgraded_requires(self, txmbrs):
-        """Go through the given txmbrs, and for any to be installed packages
-        look for their installed deps. and try to upgrade them, if the
-        configuration is set. Returning any new transaction members to be
-        isntalled.
-
-        :param txmbrs: a list of :class:`dnf.yum.transactioninfo.TransactionMember` objects
-        :return: a list of :class:`dnf.yum.transactioninfo.TransactionMember` objects
-        """
-
-        return [] # :hawkey
-
-        if not self.conf.upgrade_requirements_on_install:
-            return []
-
-        ret = []
-        done = set()
-        def _pkg2ups(pkg, reqpo=None):
-            if pkg.name in done:
-                return []
-            if reqpo is None:
-                reqpo = pkg
-
-            done.add(pkg.name)
-
-            uret = []
-            for req in pkg.requires:
-                for npkg in self.returnInstalledPackagesByDep(req):
-                    if npkg.name in done:
-                        continue
-                    uret += self.update(name=npkg.name, requiringPo=reqpo)
-                    uret += _pkg2ups(npkg, reqpo=reqpo)
-            return uret
-
-        for txmbr in txmbrs:
-            for rtxmbr, T in txmbr.relatedto:
-                ret += _pkg2ups(rtxmbr)
-            ret += _pkg2ups(txmbr.po)
-
-        return ret
-
     def installPkgs(self, userlist):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
@@ -491,7 +450,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
                 txmbrs = self.install_local(arg)
-                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             try:
@@ -504,7 +462,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 self._maybeYouMeant(arg)
             else:
                 done = True
-                self._install_upgraded_requires([])
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package to install', '%d packages to install', change) % change]
@@ -550,11 +507,9 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 if (item.endswith('.rpm') and (dnf.yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
                     txmbrs = self.update_local(item)
-                    self._install_upgraded_requires(txmbrs)
                     continue
 
                 txmbrs = self.update(pattern=item, update_to=update_to)
-                self._install_upgraded_requires(txmbrs)
                 if not txmbrs:
                     self._checkMaybeYouMeant(item)
 
@@ -764,7 +719,6 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
                 txmbrs = self.reinstall_local(arg)
-                self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 
