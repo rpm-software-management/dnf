@@ -1328,7 +1328,6 @@ class Cli(object):
         self._register_command(dnf.cli.commands.CheckUpdateCommand(self))
         self._register_command(dnf.cli.commands.SearchCommand(self))
         # self._register_command(dnf.cli.commands.ResolveDepCommand(self))
-        # self._register_command(dnf.cli.commands.ShellCommand(self))
         # self._register_command(dnf.cli.commands.DepListCommand(self))
         self._register_command(dnf.cli.commands.RepoListCommand(self))
         self._register_command(dnf.cli.commands.HelpCommand(self))
@@ -1338,7 +1337,6 @@ class Cli(object):
         self._register_command(dnf.cli.commands.HistoryCommand(self))
         # self._register_command(dnf.cli.commands.CheckRpmdbCommand(self))
         # self._register_command(dnf.cli.commands.DistroSyncCommand(self))
-        # self._register_command(dnf.cli.commands.LoadTransactionCommand(self))
 
     def _make_usage(self):
         """
