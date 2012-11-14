@@ -176,3 +176,6 @@ def per_pkgtup_dict(pkg_list):
     for pkg in pkg_list:
         d.setdefault(pkg.pkgtup, []).append(pkg)
     return d
+
+def per_nevra_dict(pkg_list):
+    return {str(pkg):pkg for pkg in pkg_list}

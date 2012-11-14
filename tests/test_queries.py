@@ -64,3 +64,12 @@ class Queries(unittest.TestCase):
         self.assertEqual(len(pkgs), 0)
         pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "noarch")
         self.assertEqual(len(pkgs), 1)
+
+class Dicts(unittest.TestCase):
+    def test_per_nevra_dict(self):
+        sack = base.MockYumBase("main").sack
+        pkgs = dnf.queries.by_name(sack, "lotus")
+        dct = dnf.queries.per_nevra_dict(pkgs)
+        self.assertItemsEqual(dct.iterkeys(),
+                              ["lotus-3-16.x86_64", "lotus-3-16.i686"])
+        self.assertItemsEqual(dct.itervalues(), pkgs)
