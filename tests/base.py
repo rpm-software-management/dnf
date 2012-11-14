@@ -43,6 +43,7 @@ def repo_dir():
     return os.path.join(this_dir, "repos")
 
 TOUR_44_PKG_PATH = os.path.join(repo_dir(), "tour-4-4.noarch.rpm")
+TOUR_50_PKG_PATH = os.path.join(repo_dir(), "tour-5-0.noarch.rpm")
 TOUR_51_PKG_PATH = os.path.join(repo_dir(), "tour-5-1.noarch.rpm")
 
 # often used query

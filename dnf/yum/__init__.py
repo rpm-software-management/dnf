@@ -2842,7 +2842,7 @@ class YumBase(object):
             return []
         return self.update(po)
 
-    def reinstallLocal(self, pkg, po=None):
+    def reinstall_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
         repository) for reinstallation.
 
@@ -2852,26 +2852,10 @@ class YumBase(object):
         :return: a list of the transaction members added to the
            transaction set by this method
         """
+        po = self._local_common(path)
         if not po:
-            try:
-                po = YumUrlPackage(self, ts=self.rpm.readonly_ts, url=pkg,
-                                   ua=default_grabber.opts.user_agent)
-            except Errors.MiscError:
-                self.logger.critical(_('Cannot open file: %s. Skipping.'), pkg)
-                return []
-            self.verbose_logger.log(logginglevels.INFO_2,
-                _('Examining %s: %s'), po.localpath, po)
-
-        if po.arch not in self.arch.archlist:
-            self.logger.critical(_('Cannot add package %s to transaction. Not a compatible architecture: %s'), pkg, po.arch)
             return []
-
-        # handle excludes for a local reinstall
-        if self._is_local_exclude(po, [po]):
-            self.verbose_logger.debug(_('Excluding %s'), po)
-            return []
-
-        return self.reinstall(po=po)
+        return self.reinstall(po)
 
     def reinstall(self, po=None, **kwargs):
         """Mark the given package for reinstallation.  This is
@@ -2893,16 +2877,18 @@ class YumBase(object):
 
         tx_return = []
         if po:
-            installed = [po]
+            installed = queries.installed_exact(self.sack,
+                                                po.name, po.evr, po.arch)
+            available = [po]
         else:
             pat = kwargs['pattern']
             installed = queries.installed_by_name(self.sack, pat)
+            available = queries.available_by_name(self.sack, pat)
         if not installed:
             raise Errors.ReinstallRemoveError(
                 _("Problem in reinstall: no package matched to remove"))
 
         installed = queries.per_nevra_dict(installed)
-        available = queries.available_by_name(self.sack, pat)
         available = queries.per_nevra_dict(available)
         for nevra in installed:
             if not nevra in available:

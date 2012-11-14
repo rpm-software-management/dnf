@@ -763,7 +763,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                txmbrs = self.reinstallLocal(arg)
+                txmbrs = self.reinstall_local(arg)
                 self._install_upgraded_requires(txmbrs)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos

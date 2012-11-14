@@ -31,3 +31,7 @@ class Reinstall(base.ResultTestCase):
         new_set = base.installed_but(self.sack, "pepper")
         new_set += dnf.queries.available_by_name(self.sack, "pepper")
         self.assertResult(self.yumbase, new_set)
+
+    def test_reinstall_local(self):
+        txmbrs = self.yumbase.reinstall_local(base.TOUR_50_PKG_PATH)
+        self.assertLength(txmbrs, 1)
