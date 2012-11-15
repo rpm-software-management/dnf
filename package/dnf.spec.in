@@ -1,10 +1,10 @@
-%global gitrev 5d85f6b
-%global hawkey_version 0.3.1
+%global gitrev 9f050eb
+%global hawkey_version 0.3.2
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	3.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -52,7 +52,17 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
-* Wed Nov 8 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.15-3.git5d85f6b
+* Thu Nov 15 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.16-1.git9f050eb
+- massive dead code removals accross the code base (3k LOC dropped)
+- fix match_counter.sorted() tracebacks if its empty. (RhBug:873875)
+- fix: callback error in some rpm transactions because of nonexistent Package.verEQ.
+- Plain 'dnf update' ignores packages with broken deps. (RhBug:872948)
+- support 'dnf upgrade' syntax to do the same thing as 'dnf update'.
+- refactor: YumCommand is just Command now.
+- Split Cli out of the YumBaseCli eintopf.
+- Enable 'dnf reinstall <pkg> again.
+
+* Thu Nov 8 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.15-3.git5d85f6b
 - support full NEVRA specification for the erase and install commands. (RhBug: 867553)
 - Enable check-update command. (RhBug: 868810)
 - Support listing patterned obsoletes.
