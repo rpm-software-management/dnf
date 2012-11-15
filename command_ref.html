@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.15-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.2.16-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.15-1',
+        VERSION:     '0.2.16-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.15-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.16-1 documentation" href="index.html" />
     <link rel="next" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -78,6 +78,7 @@ speed and defining strict API and plugin interface.</p>
 <li>list</li>
 <li>makecache</li>
 <li>provides</li>
+<li>reinstall</li>
 <li>repolist</li>
 <li>search</li>
 <li>update</li>
@@ -251,6 +252,15 @@ when one knows a filename and wants to find what package (installed or not)
 provides this file.</dd>
 </dl>
 </div>
+<div class="section" id="reinstall-command">
+<h3>Reinstall Command<a class="headerlink" href="#reinstall-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">reinstall</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Installs the specified packages, fails if some of the packages are either
+not installed or not available (i.e. there is no repository where to
+download the same RPM).</dd>
+</dl>
+</div>
 <div class="section" id="repolist-command">
 <h3>Repolist Command<a class="headerlink" href="#repolist-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
@@ -339,6 +349,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#list-command">List Command</a></li>
 <li><a class="reference internal" href="#makecache-command">Makecache Command</a></li>
 <li><a class="reference internal" href="#provides-command">Provides Command</a></li>
+<li><a class="reference internal" href="#reinstall-command">Reinstall Command</a></li>
 <li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
@@ -395,7 +406,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

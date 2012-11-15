@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.2.15-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.2.16-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.15-1',
+        VERSION:     '0.2.16-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.15-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.16-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Command Reference" href="command_ref.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,6 +61,7 @@
 <ul class="simple">
 <li><a class="reference internal" href="#changes-in-dnf-cli-compared-to-yum" id="id1">Changes in DNF CLI compared to Yum</a><ul>
 <li><a class="reference internal" href="#no-skip-broken" id="id2">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
+<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id3">Update and Upgrade Commands are the Same</a></li>
 </ul>
 </li>
 </ul>
@@ -72,6 +73,12 @@ semantics this was supposed to trigger in Yum is now the default for plain <tt c
 <span class="pre">update</span></tt>. There is now equivalent for <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--skip-broken</span> <span class="pre">update</span> <span class="pre">foo</span></tt>, as
 silentnly skipping <tt class="docutils literal"><span class="pre">foo</span></tt> in this case only amounts to masking an error
 contradicting the user request.</p>
+</div>
+<div class="section" id="update-and-upgrade-commands-are-the-same">
+<h2><a class="toc-backref" href="#id3">Update and Upgrade Commands are the Same</a><a class="headerlink" href="#update-and-upgrade-commands-are-the-same" title="Permalink to this headline">¶</a></h2>
+<p>Invoking <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> or <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>, in all their forms, has the same
+effect in DNF, with the latter being preferred. In Yum <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">upgrade</span></tt> was
+exactly like <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--obsoletes</span> <span class="pre">update</span></tt>.</p>
 </div>
 </div>
 
@@ -85,6 +92,7 @@ contradicting the user request.</p>
   <ul>
 <li><a class="reference internal" href="#">Changes in DNF CLI compared to Yum</a><ul>
 <li><a class="reference internal" href="#no-skip-broken">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
+<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same">Update and Upgrade Commands are the Same</a></li>
 </ul>
 </li>
 </ul>
@@ -132,7 +140,7 @@ contradicting the user request.</p>
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.15-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

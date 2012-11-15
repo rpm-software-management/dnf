@@ -21,16 +21,22 @@ dnf.cli.cli
 .. automodule:: dnf.cli.cli
     :members:
 
+dnf.cli.commands
+-------------------
+
+.. automodule:: dnf.cli.commands
+    :members:
+
+dnf.cli.main
+---------------
+
+.. automodule:: dnf.cli.main
+    :members:
+
 dnf.cli.output
 --------------
 
 .. automodule:: dnf.cli.output
-    :members:
-
-dnf.cli.shell
--------------
-
-.. automodule:: dnf.cli.shell
     :members:
 
 dnf.cli.utils
@@ -38,16 +44,3 @@ dnf.cli.utils
 
 .. automodule:: dnf.cli.utils
     :members:
-
-dnf.cli.yumcommands
--------------------
-
-.. automodule:: dnf.cli.yumcommands
-    :members:
-
-dnf.cli.yummain
----------------
-
-.. automodule:: dnf.cli.yummain
-    :members:
-
