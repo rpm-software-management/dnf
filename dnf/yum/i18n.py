@@ -149,7 +149,7 @@ def __utf8_ucp_width(ucs):
 
     # if we arrive here, ucs is not a combining or C0/C1 control character
 
-    return (1 + 
+    return (1 +
       (ucs >= 0x1100 and
        (ucs <= 0x115f or                     # Hangul Jamo init. consonants
         ucs == 0x2329 or ucs == 0x232a or
@@ -456,9 +456,9 @@ def str_eq(a, b):
             return True
     elif to_utf8(a) == to_utf8(b):
         return True
-    
+
     return False
-    
+
 def exception2msg(e):
     """Convert an exception to a message.  This function will convert
     the exception using to_unicode, unicode, or str, whichever works correctly.
@@ -468,7 +468,7 @@ def exception2msg(e):
     """
 
     # DIE python DIE! Which one works:
-    # to_unicode(e.value); unicode(e); str(e); 
+    # to_unicode(e.value); unicode(e); str(e);
     # Call this so you don't have to care.
     try:
         return to_unicode(e.value)
@@ -487,7 +487,7 @@ def exception2msg(e):
     return "<exception failed to convert to text>"
 
 
-try: 
+try:
     '''
     Setup the yum translation domain and make _() and P_() translation wrappers
     available.
