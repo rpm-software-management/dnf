@@ -421,7 +421,10 @@ def utf8_text_fill(text, *args, **kwargs):
 # ----------------------------- END utf8 -----------------------------
 
 def to_unicode(obj, encoding='utf-8', errors='replace'):
-    ''' convert a 'str' to 'unicode' '''
+    """ Convert string to unicode.
+
+        Consider using the more general dnf.i18n.ucd().
+    """
     if isinstance(obj, basestring):
         if not isinstance(obj, unicode):
             obj = unicode(obj, encoding, errors)
@@ -432,14 +435,6 @@ def to_utf8(obj, errors='replace'):
     if isinstance(obj, unicode):
         obj = obj.encode('utf-8', errors)
     return obj
-
-# Don't use this, to_unicode should just work now
-def to_unicode_maybe(obj, encoding='utf-8', errors='replace'):
-    ''' Don't ask don't tell, only use when you must '''
-    try:
-        return to_unicode(obj, encoding, errors)
-    except UnicodeEncodeError:
-        return obj
 
 def to_str(obj):
     """ Convert something to a string, if it isn't one. """
@@ -463,13 +458,11 @@ def exception2msg(e):
     """Convert an exception to a message.  This function will convert
     the exception using to_unicode, unicode, or str, whichever works correctly.
 
+    deprecated, this function is not conceptual.
+
     :param e: an exception
     :return: a string representation of the exception
     """
-
-    # DIE python DIE! Which one works:
-    # to_unicode(e.value); unicode(e); str(e);
-    # Call this so you don't have to care.
     try:
         return to_unicode(e.value)
     except:
@@ -485,7 +478,6 @@ def exception2msg(e):
     except:
         pass
     return "<exception failed to convert to text>"
-
 
 try:
     '''

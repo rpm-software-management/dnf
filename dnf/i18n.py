@@ -37,6 +37,10 @@ class UnicodeStream(object):
     def __getattr__(self, name):
         return getattr(self.stream, name)
 
+def _guess_encoding():
+    """ Take the best shot at the current system's string encoding. """
+    return locale.getpreferredencoding()
+
 def setup_locale():
     try:
         locale.setlocale(locale.LC_ALL, '')
@@ -56,7 +60,7 @@ def setup_stdout():
         were needed.
     """
     if sys.stdout.encoding is None:
-        sys.stdout = UnicodeStream(sys.stdout, locale.getpreferredencoding())
+        sys.stdout = UnicodeStream(sys.stdout, _guess_encoding())
         return False
     return True
 
@@ -72,3 +76,15 @@ def input(ucstring):
     enc = sys.stdout.encoding if sys.stdout.encoding else 'utf8'
     s = ucstring.encode(enc, 'strict')
     return raw_input(s)
+
+def ucd(obj):
+    """ Like the builtin unicode() but tries to use a reasonable encoding. """
+    if hasattr(obj, '__unicode__'):
+        # see the doc for the unicode() built-in. The logic here is: if obj
+        # implements __unicode__, let it take a crack at it, but handle the
+        # situation if it fails:
+        try:
+            return unicode(obj)
+        except UnicodeError:
+            pass
+    return unicode(str(obj), _guess_encoding())

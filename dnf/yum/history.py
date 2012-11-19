@@ -29,6 +29,7 @@ from constants import *
 from packages import YumAvailablePackage, PackageObject
 from i18n import to_unicode, to_utf8
 from . import _
+import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch
 
@@ -667,7 +668,8 @@ class YumHistory(object):
             try:
                 os.makedirs(self.conf.db_path)
             except (IOError, OSError), e:
-                msg = _("Unable to initialize yumdb history: %s") % str(e)
+                error = dnf.i18n.ucd(e)
+                msg = _("Unable to initialize yumdb history: %s") % error
                 raise Errors.YumDBError(msg)
             else:
                 self.conf.writable = True

@@ -17,12 +17,16 @@
 # Red Hat, Inc.
 #
 
+import locale
 import mock
 import unittest
 import dnf.i18n
+import os
 import sys
 
-UC_TEXT=u'Šířka' # means 'Width' in Czech
+UC_TEXT          = u'Šířka' # means 'Width' in Czech
+UC_TEXT_OSERROR  = u'Soubor již existuje' # 'File already exists'
+STR_TEXT_OSERROR = 'Soubor již existuje'
 
 @mock.patch('locale.setlocale')
 class TestLocale(unittest.TestCase):
@@ -75,3 +79,21 @@ class TestInput(unittest.TestCase):
         self.assertEqual(s, UC_TEXT.encode('iso-8859-2'))
 
         self.assertRaises(TypeError, dnf.i18n.input, "string")
+
+class TestConversion(unittest.TestCase):
+    @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
+    def test_ucd(self, _unused):
+        s = UC_TEXT.encode('utf8')
+        # the assumption is this string can't be simply converted back to
+        # unicode:
+        self.assertRaises(UnicodeDecodeError, unicode, s)
+        u = dnf.i18n.ucd(s)
+        self.assertEqual(u, UC_TEXT)
+
+        # test a sample OSError, typically constructed with an error code and a
+        # utf-8 encoded string:
+        obj = OSError(17, 'Soubor již existuje')
+        # direct decode fails:
+        self.assertRaises(UnicodeDecodeError, unicode, obj)
+        expected = u"[Errno 17] %s" % UC_TEXT_OSERROR
+        self.assertEqual(dnf.i18n.ucd(obj), expected)
