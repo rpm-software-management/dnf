@@ -168,9 +168,11 @@ class FakeConf(object):
 
 # specialized test cases
 
-class ResultTestCase(unittest.TestCase):
+class TestCase(unittest.TestCase):
+    def assertLength(self, collection, length):
+        return self.assertEqual(len(collection), length)
 
-    # originally from testbase.py
+class ResultTestCase(TestCase):
     def assertResult(self, yumbase, pkgs):
         """ Check if "system" contains the given pkgs. pkgs must be present. Any
             other pkgs result in an error. Pkgs are present if they are in the
@@ -188,6 +190,3 @@ class ResultTestCase(unittest.TestCase):
             output_states=dnf.yum.constants.TS_INSTALL_STATES):
             installed.add(txmbr.po)
         self.assertItemsEqual(installed, pkgs)
-
-    def assertLength(self, collection, length):
-        return self.assertEqual(len(collection), length)

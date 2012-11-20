@@ -33,6 +33,9 @@ class YumBaseError(Exception):
     def __unicode__(self):
         return '%s' % to_unicode(self.value)
 
+class DNFValueError(YumBaseError):
+    pass
+
 class YumGPGCheckError(YumBaseError):
     pass
 

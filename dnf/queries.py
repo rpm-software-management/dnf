@@ -21,6 +21,10 @@
 import hawkey
 import itertools
 import types
+import dnf.yum.Errors
+import dnf.selector
+
+from dnf.yum.i18n import _
 
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
@@ -31,6 +35,90 @@ def is_nevra(pattern):
     except hawkey.ValueException:
         return False
     return True
+
+class Pattern(object):
+    def __init__(self, sack, pattern):
+        self.pattern = pattern
+        self.sack = sack
+        self._valid = self._parse(pattern)
+
+    def _ensure_valid(self):
+        if not self._valid:
+            msg = "Invalid pattern spec: %s" % self.pattern
+            raise dnf.yum.Errors.DNFValueError(msg)
+
+    def _from_split(self, split):
+        self._name    = split.name
+        self._epoch   = split.epoch
+        self._version = split.version
+        self._release = split.release
+        self._arch    = split.arch
+
+    def _parse(self, pattern):
+        self._valid = False
+        try:
+            split = hawkey.split_nevra(pattern)
+            if split.arch in self.sack.list_arches():
+                self._from_split(split)
+                return True
+        except hawkey.ValueException:
+            pass
+
+        try:
+            self._from_split(hawkey.split_nevra(pattern + ".noarch"))
+            self._arch = None
+            return True
+        except hawkey.ValueException:
+            return False
+
+    @property
+    def arch(self):
+        self._ensure_valid()
+        return self._arch
+
+    @property
+    def epoch(self):
+        self._ensure_valid()
+        return self._epoch
+
+    @property
+    def evr(self):
+        if self.epoch > 0:
+            return "%d:%s-%s" % (self.epoch, self.version, self.release)
+        return "%s-%s" % (self.version, self.release)
+
+    @property
+    def name(self):
+        self._ensure_valid()
+        return self._name
+
+    @property
+    def release(self):
+        self._ensure_valid()
+        return self._release
+
+    @property
+    def valid(self):
+        return self._valid
+
+    @property
+    def version(self):
+        self._ensure_valid()
+        return self._version
+
+    def to_query(self):
+        q = hawkey.Query(self.sack).filter(name=self.name,
+                                           evr=self.evr)
+        if self.arch is not None:
+            q.filter(arch=self.arch)
+        return q
+
+    def to_selector(self):
+        sltr = dnf.selector.Selector(self.sack).set(name=self.name,
+                                                    evr=self.evr)
+        if self.arch is not None:
+            sltr.set(arch=self.arch)
+        return sltr
 
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,
