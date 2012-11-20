@@ -521,6 +521,15 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Update')]
 
+    def upgrade_userlist_to(self, userlist):
+        oldcount = len(self.tsInfo)
+        map(self.upgrade_to ,userlist)
+        if len(self.tsInfo) > oldcount:
+            change = len(self.tsInfo) - oldcount
+            return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
+        else:
+            return 0, [_('No Packages marked for Update')]
+
     def distroSyncPkgs(self, userlist):
         """Upgrade or downgrade packages to match the latest versions
         available in the enabled repositories.
@@ -1267,7 +1276,8 @@ class Cli(object):
         self.cli_commands = {}
         # :hawkey -- commented out are not yet supported in dnf
         self._register_command(dnf.cli.commands.InstallCommand(self))
-        self._register_command(dnf.cli.commands.UpdateCommand(self))
+        self._register_command(dnf.cli.commands.UpgradeCommand(self))
+        self._register_command(dnf.cli.commands.UpgradeToCommand(self))
         self._register_command(dnf.cli.commands.InfoCommand(self))
         self._register_command(dnf.cli.commands.ListCommand(self))
         self._register_command(dnf.cli.commands.EraseCommand(self))

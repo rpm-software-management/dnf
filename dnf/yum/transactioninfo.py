@@ -25,6 +25,8 @@ Classes and functions for manipulating a transaction to be passed
 to rpm.
 """
 
+import operator
+
 from constants import *
 import Errors
 import warnings
@@ -45,6 +47,7 @@ class TransactionData:
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
         self.selector_installs = []
+        self.selector_upgrade_tos = []
         self.upgrade_all = False
 
         # lists of txmbrs in their states - just placeholders
@@ -62,7 +65,10 @@ class TransactionData:
         self.failed = []
 
     def __len__(self):
-        return len(self.pkgdict) + len(self.selector_installs)
+        seqs = [self.pkgdict,
+                self.selector_installs,
+                self.selector_upgrade_tos]
+        return reduce(operator.add, map(len, seqs))
 
     def __iter__(self):
         if hasattr(self.getMembers(), '__iter__'):
@@ -305,6 +311,9 @@ class TransactionData:
 
     def add_selector_install(self, sltr):
         self.selector_installs.append(sltr)
+
+    def add_selector_upgrade_to(self, sltr):
+        self.selector_upgrade_tos.append(sltr)
 
     def addErase(self, po):
         """adds a package as an erasure

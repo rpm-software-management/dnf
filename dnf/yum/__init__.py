@@ -817,6 +817,8 @@ class YumBase(object):
                                           % txmbr.ts_state)
         for sltr in tsInfo.selector_installs:
             goal.install(select=sltr)
+        for sltr in tsInfo.selector_upgrade_tos:
+            goal.upgrade_to(select=sltr)
         if tsInfo.upgrade_all:
             goal.upgrade_all()
         if push_userinstalled:
@@ -2761,6 +2763,11 @@ class YumBase(object):
         else: # we have kwargs, sort them out.
             raise NotImplementedError("not in DNF yet")
         return tx_return
+
+    def upgrade_to(self, pkg_spec):
+        pattern = queries.Pattern(self.sack, pkg_spec)
+        if pattern.valid:
+            self.tsInfo.add_selector_upgrade_to(pattern.to_selector())
 
     def remove(self, po=None, **kwargs):
         """Mark the specified packages for removal. If a package

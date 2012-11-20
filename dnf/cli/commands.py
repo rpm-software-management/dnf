@@ -317,7 +317,7 @@ class InstallCommand(Command):
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
-class UpdateCommand(Command):
+class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
     update command.
     """
@@ -373,8 +373,34 @@ class UpdateCommand(Command):
         """
         self.doneCommand(_("Setting up Update Process"))
         try:
-            return self.base.updatePkgs(extcmds, update_to=(basecmd == 'update-to'))
-        except dnf.yum.Errors.YumBaseError, e:
+            return self.base.updatePkgs(extcmds)
+        except dnf.yum.Errors.YumBaseError as e:
+            return 1, [str(e)]
+
+class UpgradeToCommand(Command):
+    """ A class containing methods needed by the cli to execute the upgrade-to
+        command.
+    """
+
+    def getNames(self):
+        return ['upgrade-to', 'update-to']
+
+    def getUsage(self):
+        return _("[PACKAGE...]")
+
+    def getSummary(self):
+        return _("Upgrade a package on your system to the specified version")
+
+    def doCheck(self, basecmd, extcmds):
+        checkRootUID(self.base)
+        checkGPGKey(self.base)
+        checkEnabledRepo(self.base, extcmds)
+
+    def doCommand(self, basecmd, extcmds):
+        self.doneCommand(_("Setting up Update Process"))
+        try:
+            return self.base.upgrade_userlist_to(extcmds)
+        except dnf.yum.Errors.YumBaseError as e:
             return 1, [str(e)]
 
 class DistroSyncCommand(Command):

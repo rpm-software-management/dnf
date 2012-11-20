@@ -33,7 +33,9 @@ Available commands are:
 * repolist
 * search
 * update
+* update-to
 * upgrade
+* upgrade-to
 
 See the reference for each command below.
 
@@ -88,6 +90,8 @@ Commands
 ========
 
 For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
+
+For an explanation of ``<package-nevr-spec>`` see :ref:`\specifying_packages_versions-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
@@ -274,6 +278,19 @@ Upgrade Command
     Updates each specified package to the latest available version. Updates
     depdendencies as necessary.
 
+-----------------
+Update-To Command
+-----------------
+    Deprecated alias for the :ref:`\upgrade_to_command-label`.
+
+.. _upgrade_to_command-label:
+
+------------------
+Upgrade-To Command
+------------------
+``dnf [options] upgrade-to <package-nevr-specs>...``
+    Upgrades packages to the specified versions.
+
 .. _specifying_packages-label:
 
 ===================
@@ -291,6 +308,16 @@ If no package matches the name pattern, DNF tries to see if the pattern
 corresponds to the ``name-[epoch:]version-release.arch`` format (also called
 *NEVRA*), and applies the operation accordingly.
 
+.. _specifying_packages_versions-label:
+
+=====================================
+Specifying Exact Versions of Packages
+=====================================
+
+Commands accepting the ``<package-nevr-spec>`` parameter need not only the name
+of the package, but also its version, release and optionally the
+architecture. Further, the version part can be preceded by an epoch when it is
+relevant (i.e. the epoch is non-zero).
 
 .. _specifying_provides-label:
 
