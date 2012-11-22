@@ -68,15 +68,18 @@ class Package(hawkey.Package):
     def size(self, val):
         self._size = val
 
+    @property
+    def pkgid(self):
+        try:
+            (_, chksum) = self.hdr_chksum
+            return binascii.hexlify(chksum)
+        except AttributeError:
+            return None
+
     @property # yum compatibility attribute
     def idx(self):
         """ Always type it to int, rpm bindings expect it like that. """
         return int(self.rpmdbid)
-
-    @property #yum compatibility attribute
-    def pkgid(self):
-        (_, chksum) = self.hdr_chksum
-        return binascii.hexlify(chksum)
 
     @property # yum compatibility attribute
     def repoid(self):

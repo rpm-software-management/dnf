@@ -165,8 +165,9 @@ class RPMDBAdditionalData(object):
             return self._packages[pkgid]
         (n, a, e, v,r) = pkgtup
         n = _sanitize(n) # Please die in a fire rpmbuild
+        str_pkgid = pkgid if pkgid else "<nopkgid>"
         thisdir = '%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path,
-                                            n[0], pkgid, n, v, r, a)
+                                            n[0], str_pkgid, n, v, r, a)
         self._packages[pkgid] = thisdir
         return thisdir
 
