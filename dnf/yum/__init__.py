@@ -2706,7 +2706,7 @@ class YumBase(object):
 
         return self.tsInfo
 
-    def update(self, po=None, requiringPo=None, update_to=False, **kwargs):
+    def update(self, po=None, pattern=None):
         """Mark the specified items to be updated.  If a package
         object is given, mark it.  Else, if a package is specified by
         the keyword arguments, mark it.  Finally, if nothing is given,
@@ -2714,23 +2714,6 @@ class YumBase(object):
 
 
         :param po: the package object to be marked for updating
-        :param requiringPo: the package object that requires the
-           upgrade
-        :param update_to: if *update_to* is True, the update will only
-           be run if it will update the given package to the given
-           version.  For example, if the package foo-1-2 is installed,::
-
-             updatePkgs(["foo-1-2], update_to=False)
-
-           will work identically to::
-
-             updatePkgs(["foo"])
-
-           but::
-
-             updatePkgs(["foo-1-2"], update_to=True)
-
-           will do nothing
         :param kwargs: if *po* is not given, the names or wildcards in
            *kwargs* will be used to find the packages to update
         :return: a list of transaction members added to the
@@ -2752,16 +2735,14 @@ class YumBase(object):
                 if len(installed) > 0 and installed[-1] < po:
                     txmbr = self.tsInfo.addUpdate(po)
                     tx_return.append(txmbr)
-        elif 'pattern' in kwargs:
-            pats = kwargs['pattern']
-            availpkgs = queries.updates_by_name(self.sack, pats, latest_only=True)
+        elif pattern:
+            availpkgs = queries.updates_by_name(self.sack, pattern,
+                                                latest_only=True)
             for pkg in availpkgs:
                 txmbr = self.tsInfo.addUpdate(pkg)
                 tx_return.append(txmbr)
-        elif not kwargs: # update everything updatable
+        else: # update everything updatable
             self.tsInfo.upgrade_all = True
-        else: # we have kwargs, sort them out.
-            raise NotImplementedError("not in DNF yet")
         return tx_return
 
     def upgrade_to(self, pkg_spec):

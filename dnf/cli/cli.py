@@ -470,20 +470,13 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
 
-    def updatePkgs(self, userlist, quiet=0, update_to=False):
+    def updatePkgs(self, userlist):
         """Take user commands and populate transaction wrapper with
         packages to be updated.
 
         :param userlist: a list of names or wildcards specifying
            packages to update.  If *userlist* is an empty list, yum
            will perform a global update
-        :param quiet: unused
-        :param update_to: if *update_to* is True, the update will only
-           be run if it will update the given package to the given
-           version.  For example, if the package foo-1-2 is installed,
-           updatePkgs(["foo-1-2], update_to=False) will work
-           identically to updatePkgs(["foo"]), but
-           updatePkgs(["foo-1-2"], update_to=True) will do nothing
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -509,7 +502,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                     txmbrs = self.update_local(item)
                     continue
 
-                txmbrs = self.update(pattern=item, update_to=update_to)
+                txmbrs = self.update(pattern=item)
                 if not txmbrs:
                     self._checkMaybeYouMeant(item)
 
