@@ -123,18 +123,19 @@ class RPMDBProblemProvides(RPMDBProblem):
 def _sanitize(path):
     return path.replace('/', '').replace('~', '')
 
-class RPMDBAdditionalData(object):
-    """class for access to the additional data not able to be stored in the
-       rpmdb"""
-    # dir: /var/lib/yum/yumdb/
-    # pkgs stored in name[0]/name[1]/pkgid-name-ver-rel-arch dirs
-    # dirs have files per piece of info we're keeping
-    #    repoid, install reason, status, blah, (group installed for?), notes?
+class AdditionalPkgDB(object):
+    """ Accesses additional package data rpmdb is unable to store.
 
-    def __init__(self, db_path='/var/lib/yum/yumdb', version_path=None):
+        Previously known as yumdb.
+    """
+    # dir: <persistdir>/yumdb
+    # pkgs stored in name[0]/pkgid-name-ver-rel-arch dirs
+    # dirs have files per piece of info we're keeping, e.g. repoid, install
+    # reason, status, etc.
+
+    def __init__(self, db_path):
         self.conf = misc.GenericHolder()
         self.conf.db_path = db_path
-        self.conf.version_path = version_path
         self.conf.writable = False
 
         self._packages = {} # pkgid = dir
@@ -148,23 +149,13 @@ class RPMDBAdditionalData(object):
         else:
             if os.access(self.conf.db_path, os.W_OK):
                 self.conf.writable = True
-        #  Don't call _load_all_package_paths to preload, as it's expensive
-        # if the dirs. aren't in cache.
         self.yumdb_cache = {'attr' : {}}
-
-    def _load_all_package_paths(self):
-        # glob the path and get a dict of pkgs to their subdir
-        glb = '%s/*/*/' % self.conf.db_path
-        pkgdirs = glob.glob(glb)
-        for d in pkgdirs:
-            pkgid = os.path.basename(d).split('-')[0]
-            self._packages[pkgid] = d
 
     def _get_dir_name(self, pkgtup, pkgid):
         if pkgid in self._packages:
             return self._packages[pkgid]
         (n, a, e, v,r) = pkgtup
-        n = _sanitize(n) # Please die in a fire rpmbuild
+        n = _sanitize(n)
         str_pkgid = pkgid if pkgid else "<nopkgid>"
         thisdir = '%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path,
                                             n[0], str_pkgid, n, v, r, a)
@@ -178,21 +169,10 @@ class RPMDBAdditionalData(object):
         elif pkgtup and pkgid:
             thisdir = self._get_dir_name(pkgtup, pkgid)
         else:
-            raise ValueError,"Pass something to RPMDBAdditionalData.get_package"
+            raise ValueError("Missing arguments.")
 
         return RPMDBAdditionalDataPackage(self.conf, thisdir,
                                           yumdb_cache=self.yumdb_cache)
-
-    def sync_with_rpmdb(self, rpmdbobj):
-        """populate out the dirs and remove all the items no longer in the rpmd
-           and/or populate various bits to the currently installed version"""
-        # TODO:
-        # get list of all items in the yumdb
-        # remove any no longer in the rpmdb/andor migrate them up to the currently
-        # installed version
-        # add entries for items in the rpmdb if they don't exist in the yumdb
-
-        pass
 
 class RPMDBAdditionalDataPackage(object):
 

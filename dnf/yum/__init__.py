@@ -256,7 +256,7 @@ class YumBase(object):
     @dnf.util.lazyattr("_yumdb")
     def yumdb(self):
         db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
-        return rpmsack.RPMDBAdditionalData(db_path)
+        return rpmsack.AdditionalPkgDB(db_path)
 
     def close(self):
         """Close the history and repo objects."""
