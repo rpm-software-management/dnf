@@ -22,8 +22,8 @@ BuildRequires:	python-librepo = %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
+BuildRequires:  systemd
 BuildRequires:  urlgrabber
-Requires:	crontabs
 Requires:	libreport-filesystem
 Requires:	python-hawkey = %{hawkey_version}
 Requires:	python-iniparse
@@ -55,9 +55,10 @@ make ARGS="-V" test
 %{python_sitelib}/dnf/
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
-%{_sysconfdir}/cron.hourly/dnf-makecache.cron
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
+%{_unitdir}/dnf-makecache.service
+%{_unitdir}/dnf-makecache.timer
 
 %changelog
 * Thu Mar 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.0-2.git3e52d13
