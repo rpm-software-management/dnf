@@ -821,6 +821,8 @@ class YumBase(object):
             goal.upgrade_to(select=sltr)
         if tsInfo.upgrade_all:
             goal.upgrade_all()
+        if tsInfo.distro_sync:
+            goal.distupgrade_all()
         if push_userinstalled:
             self._push_userinstalled(goal)
         return goal
@@ -2749,6 +2751,10 @@ class YumBase(object):
         pattern = queries.Pattern(self.sack, pkg_spec)
         if pattern.valid:
             self.tsInfo.add_selector_upgrade_to(pattern.to_selector())
+
+    def distro_sync(self, pkg=None):
+        if pkg is None:
+            self.tsInfo.distro_sync = True
 
     def remove(self, po=None, **kwargs):
         """Mark the specified packages for removal. If a package

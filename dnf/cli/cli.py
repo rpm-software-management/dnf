@@ -510,7 +510,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             change = len(self.tsInfo) - oldcount
             return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
         elif self.tsInfo.upgrade_all:
-            return 2, [_('Any healthy packages marked for Update')]
+            return 2, [_('All packages marked for Update')]
         else:
             return 0, [_('No Packages marked for Update')]
 
@@ -523,115 +523,26 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         else:
             return 0, [_('No Packages marked for Update')]
 
-    def distroSyncPkgs(self, userlist):
-        """Upgrade or downgrade packages to match the latest versions
-        available in the enabled repositories.
+    def distro_sync_userlist(self, userlist):
+        """ Upgrade or downgrade packages to match the latest versions available
+            in the enabled repositories.
 
-        :param userlist: list of names or wildcards specifying
-           packages to synchronize with the repositories.  If the
-           first string in *userlist* is "full", packages will also be
-           reinstalled if their checksums do not match the checksums
-           in the repositories.  If *userlist* is an empty list or
-           only contains "full", every installed package will be
-           synchronized
-        :return: (exit_code, [ errors ])
+            :return: (exit_code, [ errors ])
 
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
+            exit_code is::
+                0 = we're done, exit
+                1 = we've errored, exit with error string
+                2 = we've got work yet to do, onto the next stage
         """
+        oldcount = len(self.tsInfo)
+        assert(len(userlist) == 0)
+        self.distro_sync()
 
-        level = 'diff'
-        if userlist and userlist[0] in ('full', 'diff', 'different'):
-            level = userlist[0]
-            userlist = userlist[1:]
-            if level == 'different':
-                level = 'diff'
-
-        dupdates = []
-        ipkgs = {}
-        for pkg in sorted(self.rpmdb.returnPackages(patterns=userlist)):
-            ipkgs[pkg.name] = pkg
-
-        obsoletes = []
-        if self.conf.obsoletes:
-            obsoletes = self.up.getObsoletesTuples(newest=1)
-
-        for (obsoleting, installed) in obsoletes:
-            if installed[0] not in ipkgs:
-                continue
-            dupdates.extend(self.update(pkgtup=installed))
-        for (obsoleting, installed) in obsoletes:
-            if installed[0] not in ipkgs:
-                continue
-            del ipkgs[installed[0]]
-
-        apkgs = {}
-        pkgs = []
-        if ipkgs:
-            try:
-                pkgs = self.pkgSack.returnNewestByName(patterns=ipkgs.keys())
-            except dnf.yum.Errors.PackageSackError:
-                pkgs = []
-
-        for pkg in pkgs:
-            if pkg.name not in ipkgs:
-                continue
-            apkgs[pkg.name] = pkg
-
-        for ipkgname in ipkgs:
-            if ipkgname not in apkgs:
-                continue
-
-            ipkg = ipkgs[ipkgname]
-            apkg = apkgs[ipkgname]
-            if ipkg.verEQ(apkg): # Latest installed == Latest avail.
-                if level == 'diff':
-                    continue
-
-                # level == full: do reinstalls if checksum doesn't match.
-                #                do removals, if older installed versions.
-                for napkg in self.rpmdb.searchNames([ipkgname]):
-                    if (not self.allowedMultipleInstalls(apkg) and
-                        not napkg.verEQ(ipkg)):
-                        dupdates.extend(self.remove(po=napkg))
-                        continue
-
-                    nayi = napkg.yumdb_info
-                    found = False
-                    for apkg in self.pkgSack.searchPkgTuple(napkg.pkgtup):
-                        if ('checksum_type' in nayi and
-                            'checksum_data' in nayi and
-                            nayi.checksum_type == apkg.checksum_type and
-                            nayi.checksum_data == apkg.pkgId):
-                            found = True
-                            break
-                    if found:
-                        continue
-                    dupdates.extend(self.reinstall(pkgtup=napkg.pkgtup))
-                continue
-
-            if self.allowedMultipleInstalls(apkg):
-                found = False
-                for napkg in self.rpmdb.searchNames([apkg.name]):
-                    if napkg.verEQ(apkg):
-                        found = True
-                    elif napkg.verGT(apkg):
-                        dupdates.extend(self.remove(po=napkg))
-                if found:
-                    continue
-                dupdates.extend(self.install(pattern=apkg.name))
-            elif ipkg.verLT(apkg):
-                n,a,e,v,r = apkg.pkgtup
-                dupdates.extend(self.update(name=n, epoch=e, ver=v, rel=r))
-            else:
-                n,a,e,v,r = apkg.pkgtup
-                dupdates.extend(self.downgrade(name=n, epoch=e, ver=v, rel=r))
-
-        if dupdates:
-            return 2, [P_('%d package marked for Distribution Synchronization', '%d packages marked for Distribution Synchronization', len(dupdates)) % len(dupdates)]
+        change = len(self.tsInfo) - oldcount
+        if change > 0:
+            return 2, [P_('%d package marked for Distribution Synchronization', '%d packages marked for Distribution Synchronization', change) % change]
+        elif self.tsInfo.distro_sync:
+            return 2, [_('All packages marked for Distribution Synchronization')]
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
 
@@ -1289,7 +1200,7 @@ class Cli(object):
         # self._register_command(dnf.cli.commands.VersionCommand(self))
         self._register_command(dnf.cli.commands.HistoryCommand(self))
         # self._register_command(dnf.cli.commands.CheckRpmdbCommand(self))
-        # self._register_command(dnf.cli.commands.DistroSyncCommand(self))
+        self._register_command(dnf.cli.commands.DistroSyncCommand(self))
 
     def _make_usage(self):
         """

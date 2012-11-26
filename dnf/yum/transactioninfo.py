@@ -49,6 +49,7 @@ class TransactionData:
         self.selector_installs = []
         self.selector_upgrade_tos = []
         self.upgrade_all = False
+        self.distro_sync = False
 
         # lists of txmbrs in their states - just placeholders
         self.instgroups = []

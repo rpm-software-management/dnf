@@ -441,6 +441,9 @@ class DistroSyncCommand(Command):
         checkRootUID(self.base)
         checkGPGKey(self.base)
         checkEnabledRepo(self.base, extcmds)
+        if extcmds:
+            self.cli.logger.critical(_('distro-sync accepts no package specs.'))
+            raise CliError
 
     def doCommand(self, basecmd, extcmds):
         """Execute this command.
@@ -457,8 +460,7 @@ class DistroSyncCommand(Command):
         """
         self.doneCommand(_("Setting up Distribution Synchronization Process"))
         try:
-            self.base.conf.obsoletes = 1
-            return self.base.distroSyncPkgs(extcmds)
+            return self.base.distro_sync_userlist(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
