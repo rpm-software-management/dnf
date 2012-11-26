@@ -1,5 +1,5 @@
-%global gitrev 9f050eb
-%global hawkey_version 0.3.2
+%global gitrev 6a055e6
+%global hawkey_version 0.3.3
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -52,6 +52,12 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Mon Nov 26 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.17-1.git6a055e6
+- fix UnicodeDecodeError crash in history.py. (RhBug:877332)
+- Support the 'dnf upgrade-to' command.
+- fix: transaction traceback when rpmdb contains a package with no HDRID (RhBug:878823)
+- Enable 'dnf distro-sync'.
+
 * Thu Nov 15 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.16-1.git9f050eb
 - massive dead code removals accross the code base (3k LOC dropped)
 - fix match_counter.sorted() tracebacks if its empty. (RhBug:873875)
