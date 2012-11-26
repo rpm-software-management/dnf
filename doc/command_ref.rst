@@ -12,7 +12,7 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is an experimental replacent for `Yum`_, a package manager for RPM Linux
+`DNF`_ is an experimental replacement for `Yum`_, a package manager for RPM Linux
 distributions. It aims to maintain CLI compatibility with Yum while improving on
 speed and defining strict API and plugin interface.
 
@@ -20,6 +20,8 @@ Available commands are:
 
 * check-update
 * clean
+* dist-sync
+* distribution-sync
 * downgrade
 * erase
 * help
@@ -118,7 +120,7 @@ Performs cleanup of temporary files for the currently enabled repositories.
 
 ``dnf clean expire-cache``
     Removes local cookie files saying when the metadata and mirrorlists were
-    downloaded for each repo. DNF will revalidate the cache for each repo the
+    downloaded for each repo. DNF will re-validate the cache for each repo the
     next time it is used.
 
 ``dnf clean metadata``
@@ -135,6 +137,20 @@ Performs cleanup of temporary files for the currently enabled repositories.
 
 ``dnf clean all``
     Does all of the above.
+
+.. _dist_sync_command-label:
+
+-----------------
+Dist-sync command
+-----------------
+``dnf dist-sync``
+    As necessary upgrades, downgrades or keeps all installed packages to match
+    the latest version available from any enabled repository.
+
+-------------------------
+Distribution-sync command
+-------------------------
+    Deprecated alias for the :ref:`\dist_sync_command-label`.
 
 -----------------
 Downgrade Command
@@ -171,7 +187,7 @@ transactions (assuming the ``history_record`` configuration option is set).
 
 ``dnf history info [<transaction_id>]``
     Describe the given transaction. When no ID is given describes what happened
-    during the latest transacton.
+    during the latest transaction.
 
 ------------
 Info Command
@@ -257,7 +273,7 @@ Search Command
     Search package metadata for the keywords. Keywords are matched as
     case-sensitive substrings, globbing is supported. By default the command
     will only look at package names and summaries, failing that (or whenever
-    ``all`` was givin as an argument) it will match against package descriptions
+    ``all`` was given as an argument) it will match against package descriptions
     and URLs. The result is sorted from the most relevant results to the least.
 
 --------------
@@ -276,7 +292,7 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-specs>...``
     Updates each specified package to the latest available version. Updates
-    depdendencies as necessary.
+    dependencies as necessary.
 
 -----------------
 Update-To Command
