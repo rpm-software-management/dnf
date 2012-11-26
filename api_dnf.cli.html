@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.2.16-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.2.17-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.16-1',
+        VERSION:     '0.2.17-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.16-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.17-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -185,31 +185,24 @@ that should have their dependenices printed</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.distroSyncPkgs">
-<tt class="descname">distroSyncPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.distroSyncPkgs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Upgrade or downgrade packages to match the latest versions
-available in the enabled repositories.</p>
+<dt id="dnf.cli.cli.YumBaseCli.distro_sync_userlist">
+<tt class="descname">distro_sync_userlist</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.distro_sync_userlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upgrade or downgrade packages to match the latest versions available
+in the enabled repositories.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>userlist</strong> &#8211; list of names or wildcards specifying
-packages to synchronize with the repositories.  If the
-first string in <em>userlist</em> is &#8220;full&#8221;, packages will also be
-reinstalled if their checksums do not match the checksums
-in the repositories.  If <em>userlist</em> is an empty list or
-only contains &#8220;full&#8221;, every installed package will be
-synchronized</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
 </tr>
 </tbody>
 </table>
-<p>exit_code is:</p>
-<div class="highlight-python"><pre>0 = we're done, exit
-1 = we've errored, exit with error string
-2 = we've got work yet to do, onto the next stage</pre>
-</div>
+<dl class="docutils">
+<dt>exit_code is::</dt>
+<dd>0 = we&#8217;re done, exit
+1 = we&#8217;ve errored, exit with error string
+2 = we&#8217;ve got work yet to do, onto the next stage</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -605,29 +598,18 @@ successful, and a list of error messages otherwise</td>
 
 <dl class="method">
 <dt id="dnf.cli.cli.YumBaseCli.updatePkgs">
-<tt class="descname">updatePkgs</tt><big>(</big><em>userlist</em>, <em>quiet=0</em>, <em>update_to=False</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.updatePkgs" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">updatePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.updatePkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take user commands and populate transaction wrapper with
 packages to be updated.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>userlist</strong> &#8211; a list of names or wildcards specifying
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>userlist</strong> &#8211; a list of names or wildcards specifying
 packages to update.  If <em>userlist</em> is an empty list, yum
-will perform a global update</li>
-<li><strong>quiet</strong> &#8211; unused</li>
-<li><strong>update_to</strong> &#8211; if <em>update_to</em> is True, the update will only
-be run if it will update the given package to the given
-version.  For example, if the package foo-1-2 is installed,
-updatePkgs([&#8220;foo-1-2], update_to=False) will work
-identically to updatePkgs([&#8220;foo&#8221;]), but
-updatePkgs([&#8220;foo-1-2&#8221;], update_to=True) will do nothing</li>
-</ul>
-</td>
+will perform a global update</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(exit_code, [ errors ])</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
 </tr>
 </tbody>
 </table>
@@ -2874,13 +2856,13 @@ command can run.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="dnf.cli.commands.UpdateCommand">
-<em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">UpdateCommand</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand">
+<em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">UpgradeCommand</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class containing methods needed by the cli to execute the
 update command.</p>
 <dl class="method">
-<dt id="dnf.cli.commands.UpdateCommand.doCheck">
-<tt class="descname">doCheck</tt><big>(</big><em>basecmd</em>, <em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand.doCheck" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand.doCheck">
+<tt class="descname">doCheck</tt><big>(</big><em>basecmd</em>, <em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.doCheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verify that conditions are met so that this command can run.</p>
 <p>These include that there are enabled repositories with gpg
 keys, and that this command is being run by the root user.</p>
@@ -2899,8 +2881,8 @@ keys, and that this command is being run by the root user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.UpdateCommand.doCommand">
-<tt class="descname">doCommand</tt><big>(</big><em>basecmd</em>, <em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand.doCommand" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand.doCommand">
+<tt class="descname">doCommand</tt><big>(</big><em>basecmd</em>, <em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.doCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2925,8 +2907,8 @@ keys, and that this command is being run by the root user.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.UpdateCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand.getNames" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand.getNames">
+<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getNames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list containing the names of this command.  This
 command can by called from the command line by using any of
 these names.</p>
@@ -2941,8 +2923,8 @@ these names.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.UpdateCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand.getSummary">
+<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getSummary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2955,8 +2937,8 @@ these names.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.UpdateCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpdateCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.commands.UpgradeCommand.getUsage">
+<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getUsage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2968,6 +2950,13 @@ these names.</p>
 </table>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.cli.commands.UpgradeToCommand">
+<em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">UpgradeToCommand</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeToCommand" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class containing methods needed by the cli to execute the upgrade-to
+command.</p>
 </dd></dl>
 
 <dl class="class">
@@ -3758,7 +3747,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x1ab1050&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2db30c8&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -4581,7 +4570,7 @@ postfixing, occurrences of the strings in <em>needles</em></p>
 
 <dl class="class">
 <dt id="dnf.cli.output.YumTextMeter">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumTextMeter</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f1f3ecd6270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumTextMeter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumTextMeter</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f524afb8270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumTextMeter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class to display text progress bar output.</p>
 <dl class="method">
 <dt id="dnf.cli.output.YumTextMeter.update">
@@ -4949,7 +4938,7 @@ terminal after an uncaught <tt class="xref py py-class docutils literal"><span c
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

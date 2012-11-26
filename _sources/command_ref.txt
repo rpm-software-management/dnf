@@ -12,7 +12,7 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is an experimental replacent for `Yum`_, a package manager for RPM Linux
+`DNF`_ is an experimental replacement for `Yum`_, a package manager for RPM Linux
 distributions. It aims to maintain CLI compatibility with Yum while improving on
 speed and defining strict API and plugin interface.
 
@@ -20,6 +20,8 @@ Available commands are:
 
 * check-update
 * clean
+* dist-sync
+* distribution-sync
 * downgrade
 * erase
 * help
@@ -33,7 +35,9 @@ Available commands are:
 * repolist
 * search
 * update
+* update-to
 * upgrade
+* upgrade-to
 
 See the reference for each command below.
 
@@ -89,6 +93,8 @@ Commands
 
 For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
 
+For an explanation of ``<package-nevr-spec>`` see :ref:`\specifying_packages_versions-label`.
+
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
 --------------------
@@ -114,7 +120,7 @@ Performs cleanup of temporary files for the currently enabled repositories.
 
 ``dnf clean expire-cache``
     Removes local cookie files saying when the metadata and mirrorlists were
-    downloaded for each repo. DNF will revalidate the cache for each repo the
+    downloaded for each repo. DNF will re-validate the cache for each repo the
     next time it is used.
 
 ``dnf clean metadata``
@@ -131,6 +137,20 @@ Performs cleanup of temporary files for the currently enabled repositories.
 
 ``dnf clean all``
     Does all of the above.
+
+.. _dist_sync_command-label:
+
+-----------------
+Dist-sync command
+-----------------
+``dnf dist-sync``
+    As necessary upgrades, downgrades or keeps all installed packages to match
+    the latest version available from any enabled repository.
+
+-------------------------
+Distribution-sync command
+-------------------------
+    Deprecated alias for the :ref:`\dist_sync_command-label`.
 
 -----------------
 Downgrade Command
@@ -167,7 +187,7 @@ transactions (assuming the ``history_record`` configuration option is set).
 
 ``dnf history info [<transaction_id>]``
     Describe the given transaction. When no ID is given describes what happened
-    during the latest transacton.
+    during the latest transaction.
 
 ------------
 Info Command
@@ -253,7 +273,7 @@ Search Command
     Search package metadata for the keywords. Keywords are matched as
     case-sensitive substrings, globbing is supported. By default the command
     will only look at package names and summaries, failing that (or whenever
-    ``all`` was givin as an argument) it will match against package descriptions
+    ``all`` was given as an argument) it will match against package descriptions
     and URLs. The result is sorted from the most relevant results to the least.
 
 --------------
@@ -272,7 +292,20 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-specs>...``
     Updates each specified package to the latest available version. Updates
-    depdendencies as necessary.
+    dependencies as necessary.
+
+-----------------
+Update-To Command
+-----------------
+    Deprecated alias for the :ref:`\upgrade_to_command-label`.
+
+.. _upgrade_to_command-label:
+
+------------------
+Upgrade-To Command
+------------------
+``dnf [options] upgrade-to <package-nevr-specs>...``
+    Upgrades packages to the specified versions.
 
 .. _specifying_packages-label:
 
@@ -291,6 +324,16 @@ If no package matches the name pattern, DNF tries to see if the pattern
 corresponds to the ``name-[epoch:]version-release.arch`` format (also called
 *NEVRA*), and applies the operation accordingly.
 
+.. _specifying_packages_versions-label:
+
+=====================================
+Specifying Exact Versions of Packages
+=====================================
+
+Commands accepting the ``<package-nevr-spec>`` parameter need not only the name
+of the package, but also its version, release and optionally the
+architecture. Further, the version part can be preceded by an epoch when it is
+relevant (i.e. the epoch is non-zero).
 
 .. _specifying_provides-label:
 

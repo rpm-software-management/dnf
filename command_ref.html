@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.16-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.2.17-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.16-1',
+        VERSION:     '0.2.17-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.16-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.17-1 documentation" href="index.html" />
     <link rel="next" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,13 +62,15 @@
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is an experimental replacent for <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM Linux
+<p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is an experimental replacement for <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM Linux
 distributions. It aims to maintain CLI compatibility with Yum while improving on
 speed and defining strict API and plugin interface.</p>
 <p>Available commands are:</p>
 <ul class="simple">
 <li>check-update</li>
 <li>clean</li>
+<li>dist-sync</li>
+<li>distribution-sync</li>
 <li>downgrade</li>
 <li>erase</li>
 <li>help</li>
@@ -82,7 +84,9 @@ speed and defining strict API and plugin interface.</p>
 <li>repolist</li>
 <li>search</li>
 <li>update</li>
+<li>update-to</li>
 <li>upgrade</li>
+<li>upgrade-to</li>
 </ul>
 <p>See the reference for each command below.</p>
 </div>
@@ -122,6 +126,7 @@ speed and defining strict API and plugin interface.</p>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-label"><em>Specifying Packages</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-nevr-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-versions-label"><em>Specifying Exact Versions of Packages</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
@@ -142,7 +147,7 @@ if an error occurs.</div></blockquote>
 to regenerate the cache files the next time it is run.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">expire-cache</span></tt></dt>
 <dd>Removes local cookie files saying when the metadata and mirrorlists were
-downloaded for each repo. DNF will revalidate the cache for each repo the
+downloaded for each repo. DNF will re-validate the cache for each repo the
 next time it is used.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">metadata</span></tt></dt>
 <dd>Removes repository metadata. Those are the files which DNF uses to determine
@@ -156,6 +161,19 @@ automatically deleted after they are downloaded.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">all</span></tt></dt>
 <dd>Does all of the above.</dd>
 </dl>
+</div>
+<div class="section" id="dist-sync-command">
+<span id="dist-sync-command-label"></span><h3>Dist-sync command<a class="headerlink" href="#dist-sync-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">dist-sync</span></tt></dt>
+<dd>As necessary upgrades, downgrades or keeps all installed packages to match
+the latest version available from any enabled repository.</dd>
+</dl>
+</div>
+<div class="section" id="distribution-sync-command">
+<h3>Distribution-sync command<a class="headerlink" href="#distribution-sync-command" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Deprecated alias for the <a class="reference internal" href="#dist-sync-command-label"><em>Dist-sync command</em></a>.</div></blockquote>
 </div>
 <div class="section" id="downgrade-command">
 <h3>Downgrade Command<a class="headerlink" href="#downgrade-command" title="Permalink to this headline">¶</a></h3>
@@ -191,7 +209,7 @@ transactions (assuming the <tt class="docutils literal"><span class="pre">histor
 table.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;transaction_id&gt;]</span></tt></dt>
 <dd>Describe the given transaction. When no ID is given describes what happened
-during the latest transacton.</dd>
+during the latest transaction.</dd>
 </dl>
 </div>
 <div class="section" id="info-command">
@@ -277,7 +295,7 @@ detailed information when <tt class="docutils literal"><span class="pre">-v</spa
 <dd>Search package metadata for the keywords. Keywords are matched as
 case-sensitive substrings, globbing is supported. By default the command
 will only look at package names and summaries, failing that (or whenever
-<tt class="docutils literal"><span class="pre">all</span></tt> was givin as an argument) it will match against package descriptions
+<tt class="docutils literal"><span class="pre">all</span></tt> was given as an argument) it will match against package descriptions
 and URLs. The result is sorted from the most relevant results to the least.</dd>
 </dl>
 </div>
@@ -294,7 +312,19 @@ and URLs. The result is sorted from the most relevant results to the least.</dd>
 resolvable.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">upgrade</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
 <dd>Updates each specified package to the latest available version. Updates
-depdendencies as necessary.</dd>
+dependencies as necessary.</dd>
+</dl>
+</div>
+<div class="section" id="update-to-command">
+<h3>Update-To Command<a class="headerlink" href="#update-to-command" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Deprecated alias for the <a class="reference internal" href="#upgrade-to-command-label"><em>Upgrade-To Command</em></a>.</div></blockquote>
+</div>
+<div class="section" id="upgrade-to-command">
+<span id="upgrade-to-command-label"></span><h3>Upgrade-To Command<a class="headerlink" href="#upgrade-to-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">upgrade-to</span> <span class="pre">&lt;package-nevr-specs&gt;...</span></tt></dt>
+<dd>Upgrades packages to the specified versions.</dd>
 </dl>
 </div>
 </div>
@@ -309,6 +339,13 @@ trigger shell-like glob matching.</p>
 <p>If no package matches the name pattern, DNF tries to see if the pattern
 corresponds to the <tt class="docutils literal"><span class="pre">name-[epoch:]version-release.arch</span></tt> format (also called
 <em>NEVRA</em>), and applies the operation accordingly.</p>
+</div>
+<div class="section" id="specifying-exact-versions-of-packages">
+<span id="specifying-packages-versions-label"></span><h2>Specifying Exact Versions of Packages<a class="headerlink" href="#specifying-exact-versions-of-packages" title="Permalink to this headline">¶</a></h2>
+<p>Commands accepting the <tt class="docutils literal"><span class="pre">&lt;package-nevr-spec&gt;</span></tt> parameter need not only the name
+of the package, but also its version, release and optionally the
+architecture. Further, the version part can be preceded by an epoch when it is
+relevant (i.e. the epoch is non-zero).</p>
 </div>
 <div class="section" id="specifying-provides">
 <span id="specifying-provides-label"></span><h2>Specifying Provides<a class="headerlink" href="#specifying-provides" title="Permalink to this headline">¶</a></h2>
@@ -340,6 +377,8 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#commands">Commands</a><ul>
 <li><a class="reference internal" href="#check-update-command">Check Update Command</a></li>
 <li><a class="reference internal" href="#clean-command">Clean Command</a></li>
+<li><a class="reference internal" href="#dist-sync-command">Dist-sync command</a></li>
+<li><a class="reference internal" href="#distribution-sync-command">Distribution-sync command</a></li>
 <li><a class="reference internal" href="#downgrade-command">Downgrade Command</a></li>
 <li><a class="reference internal" href="#erase-command">Erase Command</a></li>
 <li><a class="reference internal" href="#help-command">Help Command</a></li>
@@ -354,9 +393,12 @@ provide. The selection is case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
 <li><a class="reference internal" href="#upgrade-command">Upgrade Command</a></li>
+<li><a class="reference internal" href="#update-to-command">Update-To Command</a></li>
+<li><a class="reference internal" href="#upgrade-to-command">Upgrade-To Command</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#specifying-packages">Specifying Packages</a></li>
+<li><a class="reference internal" href="#specifying-exact-versions-of-packages">Specifying Exact Versions of Packages</a></li>
 <li><a class="reference internal" href="#specifying-provides">Specifying Provides</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
@@ -406,7 +448,7 @@ provide. The selection is case-sensitive and globbing is supported.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.16-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
