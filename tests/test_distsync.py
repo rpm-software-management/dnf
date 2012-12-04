@@ -16,7 +16,7 @@
 #
 
 import base
-from dnf.queries import available_by_name
+from dnf.queries import available_by_name, installed_by_nevra
 
 class DistroSync(base.ResultTestCase):
     def setUp(self):
@@ -27,4 +27,5 @@ class DistroSync(base.ResultTestCase):
         self.yumbase.distro_sync()
         packages = base.installed_but(self.sack, "pepper", "librita").run()
         packages.extend(available_by_name(self.sack, ["pepper", "librita"]))
+        packages.extend(installed_by_nevra(self.sack, "librita-1-1.i686"))
         self.assertResult(self.yumbase, packages)
