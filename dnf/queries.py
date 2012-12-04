@@ -36,6 +36,36 @@ def is_nevra(pattern):
         return False
     return True
 
+class Subject(object):
+    def __init__(self, pkg_spec):
+        self.subj = hawkey.Subject(pkg_spec)
+        self._possibilities = None
+
+    @staticmethod
+    def _nevra_to_filters(query, nevra):
+        if nevra.name is not None:
+            if is_glob_pattern(nevra.name):
+                query.filterm(name__glob=nevra.name)
+            else:
+                query.filterm(name=nevra.name)
+        if nevra.arch is not None:
+            query.filterm(arch=nevra.arch)
+        if nevra.epoch is not None:
+            query.filterm(epoch=nevra.epoch)
+        if nevra.version is not None:
+            query.filterm(version=nevra.version)
+        if nevra.release is not None:
+            query.filterm(release=nevra.release)
+        return query
+
+    def get_best_query(self, sack):
+        self._possibilities = self.subj.real_possibilities(sack, allow_globs=True)
+        try:
+            nevra = self._possibilities.next()
+        except StopIteration:
+            return hawkey.Query(sack).filter(empty=True)
+        return self._nevra_to_filters(hawkey.Query(sack), nevra)
+
 class Pattern(object):
     def __init__(self, sack, pattern):
         self.pattern = pattern

@@ -563,7 +563,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
 
         all_rms = []
         for arg in userlist:
-            rms = self.remove(pattern=arg)
+            rms = self.remove(arg)
             if not rms:
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
             all_rms.extend(rms)

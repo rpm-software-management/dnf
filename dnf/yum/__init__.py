@@ -2756,35 +2756,20 @@ class YumBase(object):
         if pkg is None:
             self.tsInfo.distro_sync = True
 
-    def remove(self, po=None, **kwargs):
-        """Mark the specified packages for removal. If a package
-        object is given, mark it for removal.  Otherwise, mark the
-        package specified by the keyword arguments.
+    def remove(self, pkg_spec):
+        """Mark the specified package for removal.
 
-        :param po: the package object to mark for installation
-        :param kwargs: If *po* is not given, the keyword arguments
-           will be used to specify a package to mark for installation
         :return: a list of the transaction members that were added to
            the transaction set by this method
         :raises: :class:`Errors.RemoveError` if nothing is specified
            to mark for removal
         """
-        if not po and not kwargs:
-            raise Errors.RemoveError, 'Nothing specified to remove'
 
         tx_return = []
-        pkgs = []
-
-        if po:
-            pkgs = [po]
-        else:
-            pattern = kwargs['pattern']
-            installed = queries.installed_by_name(self.sack, pattern)
-            if not installed:
-                installed = queries.installed_by_nevra(self.sack, pattern)
-            for pkg in installed:
-                txmbr = self.tsInfo.addErase(pkg)
-                tx_return.append(txmbr)
+        matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        for pkg in matches.filter(reponame=hawkey.SYSTEM_REPO_NAME):
+            txmbr = self.tsInfo.addErase(pkg)
+            tx_return.append(txmbr)
         return tx_return
 
     def _local_common(self, path):

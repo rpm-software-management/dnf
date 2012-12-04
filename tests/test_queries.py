@@ -98,6 +98,19 @@ class Queries(base.TestCase):
         pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "noarch")
         self.assertEqual(len(pkgs), 1)
 
+class SubjectTest(base.TestCase):
+    def setUp(self):
+        self.sack = base.MockYumBase().sack
+
+    def test_wrong_name(self):
+        subj = dnf.queries.Subject("call-his-wife-in")
+        self.assertLength(subj.get_best_query(self.sack), 0)
+
+    def test_query_composing(self):
+        q = dnf.queries.Subject("librita").get_best_query(self.sack)
+        q = q.filter(arch="i686")
+        self.assertEqual(str(q[0]), "librita-1-1.i686")
+
 class Dicts(unittest.TestCase):
     def test_per_nevra_dict(self):
         sack = base.MockYumBase("main").sack
