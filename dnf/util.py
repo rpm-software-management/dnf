@@ -20,6 +20,7 @@
 
 import hawkey
 import os
+import time
 
 def am_i_root():
     return os.geteuid() == 0
@@ -43,6 +44,19 @@ def lazyattr(attrname):
                 return val
         return cached_getter
     return get_decorated
+
+def timed(fn):
+    """ Decorator, prints out the ms a function took to complete.
+
+        Used for debugging.
+    """
+    def decorated(*args, **kwargs):
+        start = time.time()
+        retval = fn(*args, **kwargs)
+        length = time.time() - start
+        print "%s took %.02f ms" % (fn.__name__, length * 1000)
+        return retval
+    return decorated
 
 def reason_name(reason):
     if reason == hawkey.REASON_DEP:
