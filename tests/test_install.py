@@ -27,14 +27,14 @@ class InstallMultilibAll(base.ResultTestCase):
 
     def test_not_available(self):
         """ Installing a nonexistent package is a void operation. """
-        tsinfo = self.yumbase.install(pattern="not-available")
+        tsinfo = self.yumbase.install("not-available")
         installed_pkgs = dnf.queries.installed(self.yumbase.sack)
         self.assertEqual(len(tsinfo), 0)
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_install(self):
         """ Simple install. """
-        self.yumbase.install(pattern="mrkite")
+        self.yumbase.install("mrkite")
         expected = available_by_name(self.yumbase.sack, ["mrkite", "trampoline"])
         # ensure sanity of the test (otherwise it would pass no matter what):
         self.assertEqual(len(expected), 2)
@@ -42,11 +42,15 @@ class InstallMultilibAll(base.ResultTestCase):
         self.assertResult(self.yumbase, new_set)
 
     def test_install_nevra(self):
-        self.yumbase.install(pattern="lotus-3-16.i686")
+        self.yumbase.install("lotus-3-16.i686")
         available = available_by_name(self.yumbase.sack, "lotus", get_query=True)
         lotus = available.filter(arch="i686")[0]
         new_set = dnf.queries.installed(self.yumbase.sack) + [lotus]
         self.assertResult(self.yumbase, new_set)
+
+    def test_install_local(self):
+        txmbrs = self.yumbase.install_local(base.TOUR_50_PKG_PATH)
+        self.assertLength(txmbrs, 1)
 
 class MultilibAllMainRepo(base.ResultTestCase):
     def setUp(self):
@@ -58,7 +62,7 @@ class MultilibAllMainRepo(base.ResultTestCase):
         """ Installing a package existing in multiple architectures attempts
             installing all of them.
         """
-        tsinfo = self.yumbase.install(pattern="lotus")
+        tsinfo = self.yumbase.install("lotus")
         arches = [txmbr.po.arch for txmbr in tsinfo]
         self.assertItemsEqual(arches, ['x86_64', 'i686'])
         new_set = self.installed + available_by_name(self.yumbase.sack, "lotus")
@@ -72,7 +76,7 @@ class MultilibBestMainRepo(base.ResultTestCase):
 
     def test_not_available(self):
         """ Installing a nonexistent package is a void operation. """
-        tsinfo = self.yumbase.install(pattern="not-available")
+        tsinfo = self.yumbase.install("not-available")
         # no query is run and so yumbase can not now it will later yield an
         # empty set:
         self.assertEqual(len(tsinfo), 1)
@@ -82,7 +86,7 @@ class MultilibBestMainRepo(base.ResultTestCase):
         """ Installing a package existing in multiple architectures only
             installs the one for our arch.
         """
-        tsinfo = self.yumbase.install(pattern="lotus")
+        tsinfo = self.yumbase.install("lotus")
         self.assertEqual(len(tsinfo), 1)
 
         new_package = hawkey.Query(self.yumbase.sack).\

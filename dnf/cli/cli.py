@@ -453,7 +453,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             try:
-                self.install(pattern=arg)
+                self.install(arg)
             except dnf.yum.Errors.InstallError:
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),

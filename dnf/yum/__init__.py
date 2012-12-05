@@ -2650,58 +2650,23 @@ class YumBase(object):
             if flag not in self.tsInfo.probFilterFlags:
                 self.tsInfo.probFilterFlags.append(flag)
 
-    def install(self, po=None, **kwargs):
-        """Mark the specified item for installation.  If a package
-        object is given, mark it for installation.  Otherwise, mark
-        the best package specified by the key word arguments for
-        installation.
+    def install(self, pkg_spec):
+        """ Mark the best package specified by the key word arguments for
+            installation.
 
-        :param po: a package object to install
-        :param kwargs: if *po* is not specified, these keyword
-           arguments will be used to find the best package to install
-        :return: a list of the transaction members added to the
-           transaction set by this function
-        :raises: :class:`Errors.InstallError` if there is a problem
-           installing the package
+            :return: a list of the transaction members added to the
+               transaction set by this function
+            :raises: :class:`Errors.InstallError` if there is a problem
+               installing the package
         """
-
-
-        #  This is kind of hacky, we really need a better way to do errors than
-        # doing them directly from .install/etc. ... but this is easy. *sigh*.
-        #  We are only using this in "groupinstall" atm. ... so we don't have
-        # a long list of "blah already installed." messages when people run
-        # "groupinstall mygroup" in yum-cron etc.
-        pkg_warn = kwargs.get('pkg_warning_level', 'flibble')
-        def _dbg2(*args, **kwargs):
-            self.verbose_logger.log(logginglevels.DEBUG_2, *args, **kwargs)
-        level2func = {'debug2' : _dbg2,
-                      'warning' : self.verbose_logger.warning}
-        if pkg_warn not in level2func:
-            pkg_warn = 'warning'
-        pkg_warn = level2func[pkg_warn]
-
-        tx_return = []
-        pkgs = []
-        was_pattern = False
-        if po:
-            if not isinstance(po, hawkey.Package):
-                raise Errors.InstallError, _('Package Object was not a package object instance')
-            txmbr = self.tsInfo.addInstall(po)
-            tx_return.append(txmbr)
-            return tx_return
-
-        if not kwargs:
-            raise Errors.InstallError, _('Nothing specified to install')
-
-        pat = kwargs['pattern']
-        if queries.is_nevra(pat):
-            availpkgs = queries.available_by_nevra(self.sack, pat)
+        if queries.is_nevra(pkg_spec):
+            availpkgs = queries.available_by_nevra(self.sack, pkg_spec)
         elif self.conf.multilib_policy == "best":
-            sltr = selector.Selector(self.sack).set_autoglob(name=pat)
+            sltr = selector.Selector(self.sack).set_autoglob(name=pkg_spec)
             self.tsInfo.add_selector_install(sltr)
             return self.tsInfo
         else:
-            availpkgs = queries.available_by_name(self.sack, pat,
+            availpkgs = queries.available_by_name(self.sack, pkg_spec,
                                                   latest_only=True)
         for pkg in availpkgs:
             self.tsInfo.addInstall(pkg)
@@ -2814,7 +2779,8 @@ class YumBase(object):
         po = self._local_common(path)
         if not po:
             return []
-        return self.install(po)
+        txmbr = self.tsInfo.addInstall(po)
+        return [txmbr]
 
     def update_local(self, path):
         po = self._local_common(path)

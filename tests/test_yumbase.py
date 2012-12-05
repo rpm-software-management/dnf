@@ -121,7 +121,7 @@ class InstallReason(base.ResultTestCase):
         self.yumbase = base.MockYumBase("main")
 
     def test_reason(self):
-        self.yumbase.install(pattern="mrkite")
+        self.yumbase.install("mrkite")
         self.yumbase.buildTransaction()
         new_pkgs = self.yumbase.tsInfo.getMembersWithState(
             output_states=dnf.yum.constants.TS_INSTALL_STATES)
