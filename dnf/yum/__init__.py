@@ -2748,9 +2748,10 @@ class YumBase(object):
         return tx_return
 
     def upgrade_to(self, pkg_spec):
-        pattern = queries.Pattern(self.sack, pkg_spec)
-        if pattern.valid:
-            self.tsInfo.add_selector_upgrade_to(pattern.to_selector())
+        forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
+        sltr = queries.Subject(pkg_spec, form=forms).get_best_selector(self.sack)
+        if sltr:
+            self.tsInfo.add_selector_upgrade_to(sltr)
 
     def distro_sync(self, pkg=None):
         if pkg is None:

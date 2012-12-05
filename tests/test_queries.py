@@ -27,38 +27,6 @@ class Queries(base.TestCase):
         assert(dnf.queries.is_glob_pattern("all?.ext"))
         assert(not dnf.queries.is_glob_pattern("not.ext"))
 
-    def test_pattern(self):
-        sack = base.MockYumBase().sack
-        split = dnf.queries.Pattern(sack, "all-2.0-1.fc6.x86_64")
-        self.assertTrue(split.valid)
-        self.assertEqual(split.name, "all")
-        self.assertEqual(split.epoch, 0)
-        self.assertEqual(split.version, "2.0")
-        self.assertEqual(split.release, "1.fc6")
-        self.assertEqual(split.arch, "x86_64")
-
-        split = dnf.queries.Pattern(sack, "all-2.0-1.fc6")
-        self.assertEqual(split.release, "1.fc6")
-        self.assertIsNone(split.arch)
-        self.assertEqual(split.version, "2.0")
-        self.assertEqual(split.evr, "2.0-1.fc6")
-
-        split = dnf.queries.Pattern(sack, "pepper-20-0.x86_64")
-        self.assertLength(split.to_query(), 1)
-        split = dnf.queries.Pattern(sack, "pepper-20-0")
-        self.assertLength(split.to_query(), 1)
-
-    def test_pattern_fail(self):
-        sack = base.MockYumBase().sack
-        split = dnf.queries.Pattern(sack, "pepper-2")
-        self.assertFalse(split.valid)
-        try:
-            split.name
-        except dnf.yum.Errors.DNFValueError as e:
-            pass
-        else:
-            self.fail("Should throw an erorr.")
-
     def test_duplicities(self):
         yumbase = base.MockYumBase()
         pepper = dnf.queries.installed_by_name(yumbase.sack, "pepper")
@@ -110,6 +78,10 @@ class SubjectTest(base.TestCase):
         q = dnf.queries.Subject("librita").get_best_query(self.sack)
         q = q.filter(arch="i686")
         self.assertEqual(str(q[0]), "librita-1-1.i686")
+
+    def test_get_best_selector(self):
+        s = dnf.queries.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
+        self.assertIsNotNone(s)
 
 class Dicts(unittest.TestCase):
     def test_per_nevra_dict(self):
