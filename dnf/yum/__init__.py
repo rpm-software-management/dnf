@@ -2651,26 +2651,20 @@ class YumBase(object):
                 self.tsInfo.probFilterFlags.append(flag)
 
     def install(self, pkg_spec):
-        """ Mark the best package specified by the key word arguments for
-            installation.
+        """ Mark package(s) specified by pkg_spec for installation.
 
             :return: a list of the transaction members added to the
                transaction set by this function
             :raises: :class:`Errors.InstallError` if there is a problem
                installing the package
         """
-        if queries.is_nevra(pkg_spec):
-            availpkgs = queries.available_by_nevra(self.sack, pkg_spec)
-        elif self.conf.multilib_policy == "best":
-            sltr = selector.Selector(self.sack).set_autoglob(name=pkg_spec)
-            self.tsInfo.add_selector_install(sltr)
-            return self.tsInfo
+        subj = queries.Subject(pkg_spec)
+        if self.conf.multilib_policy == "best":
+            sltr = subj.get_best_selector(self.sack)
+            if sltr:
+                self.tsInfo.add_selector_install(sltr)
         else:
-            availpkgs = queries.available_by_name(self.sack, pkg_spec,
-                                                  latest_only=True)
-        for pkg in availpkgs:
-            self.tsInfo.addInstall(pkg)
-
+            map(self.tsInfo.addInstall, subj.get_best_query(self.sack))
         return self.tsInfo
 
     def update(self, po=None, pattern=None):

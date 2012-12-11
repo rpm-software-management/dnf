@@ -6,6 +6,7 @@
 =Sum: It's an invitation.
 =Req: trampoline
 =Pkg: trampoline 2.1 1 noarch
+=Prv: henry(the_horse)
 =Pkg: lotus 3 16 i686
 =Pkg: lotus 3 16 x86_64
 =Pkg: tour 4.6 1 noarch

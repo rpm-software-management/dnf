@@ -39,7 +39,6 @@ def is_nevra(pattern):
 class Subject(object):
     def __init__(self, pkg_spec, form=hawkey.FORM_ALL):
         self.subj = hawkey.Subject(pkg_spec, form=form)
-        self._possibilities = None
 
     @staticmethod
     def _nevra_to_filters(query, nevra):
@@ -72,20 +71,39 @@ class Subject(object):
         return sltr
 
     def get_best_query(self, sack):
-        self._possibilities = self.subj.real_possibilities(sack, allow_globs=True)
+        possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True)
         try:
-            nevra = self._possibilities.next()
+            nevra = possibilities.next()
         except StopIteration:
-            return hawkey.Query(sack).filter(empty=True)
-        return self._nevra_to_filters(hawkey.Query(sack), nevra)
+            pass
+        else:
+            return self._nevra_to_filters(hawkey.Query(sack), nevra)
+        try:
+            reldep = self.subj.reldep_possibilities_real(sack).next()
+        except StopIteration:
+            pass
+        else:
+            return hawkey.Query(sack).filter(provides=reldep)
+        return hawkey.Query(sack).filter(empty=True)
 
     def get_best_selector(self, sack):
-        self._possibilities = self.subj.real_possibilities(sack)
+        possibilities = self.subj.nevra_possibilities_real(sack)
         try:
-            nevra = self._possibilities.next()
+            nevra = possibilities.next()
         except StopIteration:
-            return None
-        return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
+            pass
+        else:
+            return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
+        try:
+            reldep = self.subj.reldep_possibilities_real(sack).next()
+        except StopIteration:
+            pass
+        else:
+             # we can not handle full Reldeps
+            dep = str(reldep)
+            assert(not (set(dep) & set("<=>")))
+            return dnf.selector.Selector(sack).set(provides=str(reldep))
+        return None
 
 def _construct_result(sack, patterns, ignore_case,
                       include_repo=None, exclude_repo=None,

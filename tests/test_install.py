@@ -41,6 +41,11 @@ class InstallMultilibAll(base.ResultTestCase):
         new_set = dnf.queries.installed(self.yumbase.sack) + expected
         self.assertResult(self.yumbase, new_set)
 
+    def test_install_by_provides(self):
+        """ Test the package to be installed can be specified by provide. """
+        self.yumbase.install("henry(the_horse)")
+        self.assertGreater(len(self.yumbase.tsInfo), 0)
+
     def test_install_nevra(self):
         self.yumbase.install("lotus-3-16.i686")
         available = available_by_name(self.yumbase.sack, "lotus", get_query=True)
@@ -77,9 +82,7 @@ class MultilibBestMainRepo(base.ResultTestCase):
     def test_not_available(self):
         """ Installing a nonexistent package is a void operation. """
         tsinfo = self.yumbase.install("not-available")
-        # no query is run and so yumbase can not now it will later yield an
-        # empty set:
-        self.assertEqual(len(tsinfo), 1)
+        self.assertEqual(len(tsinfo), 0)
         self.assertResult(self.yumbase, self.installed)
 
     def test_install(self):
@@ -92,4 +95,12 @@ class MultilibBestMainRepo(base.ResultTestCase):
         new_package = hawkey.Query(self.yumbase.sack).\
             filter(name="lotus", arch="x86_64", reponame="main")[0]
         new_set = self.installed + [new_package]
+        self.assertResult(self.yumbase, new_set)
+
+    def test_install_by_provides(self):
+        """ Test the package to be installed can be specified by provide. """
+        self.yumbase.install("henry(the_horse)")
+        self.assertGreater(len(self.yumbase.tsInfo), 0)
+        trampoline = available_by_name(self.yumbase.sack, "trampoline")
+        new_set = self.installed + trampoline
         self.assertResult(self.yumbase, new_set)
