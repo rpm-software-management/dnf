@@ -23,6 +23,7 @@ import itertools
 import types
 import dnf.yum.Errors
 import dnf.selector
+from dnf.util import first
 
 from dnf.yum.i18n import _
 
@@ -72,33 +73,22 @@ class Subject(object):
 
     def get_best_query(self, sack):
         possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True)
-        try:
-            nevra = possibilities.next()
-        except StopIteration:
-            pass
-        else:
+        nevra = first(possibilities)
+        if nevra:
             return self._nevra_to_filters(hawkey.Query(sack), nevra)
-        try:
-            reldep = self.subj.reldep_possibilities_real(sack).next()
-        except StopIteration:
-            pass
-        else:
+
+        reldep = first(self.subj.reldep_possibilities_real(sack))
+        if reldep:
             return hawkey.Query(sack).filter(provides=reldep)
         return hawkey.Query(sack).filter(empty=True)
 
     def get_best_selector(self, sack):
-        possibilities = self.subj.nevra_possibilities_real(sack)
-        try:
-            nevra = possibilities.next()
-        except StopIteration:
-            pass
-        else:
+        nevra = first(self.subj.nevra_possibilities_real(sack))
+        if nevra:
             return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
-        try:
-            reldep = self.subj.reldep_possibilities_real(sack).next()
-        except StopIteration:
-            pass
-        else:
+
+        reldep = first(self.subj.reldep_possibilities_real(sack))
+        if reldep:
              # we can not handle full Reldeps
             dep = str(reldep)
             assert(not (set(dep) & set("<=>")))

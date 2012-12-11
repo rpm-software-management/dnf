@@ -54,6 +54,17 @@ class Util(unittest.TestCase):
             self.assertEqual(dnf.util.file_timestamp("/yeah"), 123)
         self.assertRaises(OSError, dnf.util.file_timestamp, "/does/not/ex1st")
 
+    def test_first(self):
+        self.assertEqual(dnf.util.first([5, 4, 3]), 5)
+        ge = (x for x in range(5, 8))
+        self.assertEqual(dnf.util.first(ge), 5)
+        self.assertEqual(dnf.util.first([]), None)
+
+        def generator():
+            if False:
+                yield 10
+        self.assertEqual(dnf.util.first(generator()), None)
+
     def test_lazyattr(self):
         slow = Slow(12)
 

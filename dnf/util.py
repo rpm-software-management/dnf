@@ -25,6 +25,14 @@ import time
 def am_i_root():
     return os.geteuid() == 0
 
+def first(iterable):
+    """ Returns the first item from an iterable or None if it has no elements. """
+    it = iter(iterable)
+    try:
+        return it.next()
+    except StopIteration:
+        return None
+
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
 
@@ -45,6 +53,18 @@ def lazyattr(attrname):
         return cached_getter
     return get_decorated
 
+def reason_name(reason):
+    if reason == hawkey.REASON_DEP:
+        return "dep"
+    if reason == hawkey.REASON_USER:
+        return "user"
+    raise ValueError, "Unknown reason %d" % reason
+
+def strip_prefix(s, prefix):
+    if s.startswith(prefix):
+        return s[len(prefix):]
+    return None
+
 def timed(fn):
     """ Decorator, prints out the ms a function took to complete.
 
@@ -57,15 +77,3 @@ def timed(fn):
         print "%s took %.02f ms" % (fn.__name__, length * 1000)
         return retval
     return decorated
-
-def reason_name(reason):
-    if reason == hawkey.REASON_DEP:
-        return "dep"
-    if reason == hawkey.REASON_USER:
-        return "user"
-    raise ValueError, "Unknown reason %d" % reason
-
-def strip_prefix(s, prefix):
-    if s.startswith(prefix):
-        return s[len(prefix):]
-    return None
