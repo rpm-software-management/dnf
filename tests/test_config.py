@@ -17,7 +17,7 @@
 
 import mock
 import unittest
-from dnf.yum.config import Option, BaseConfig
+from dnf.yum.config import Option, BaseConfig, YumConf
 from dnf.conf import Cache
 
 class OptionTest(unittest.TestCase):
@@ -57,3 +57,10 @@ class CacheTest(unittest.TestCase):
          # the cachedirs are cached now, getCacheDir is not called again:
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
          self.assertEqual(fn_getcachedir.call_count, 1)
+
+class YumConfTest(unittest.TestCase):
+    def test_bugtracker(self):
+        conf = YumConf()
+        self.assertEqual(conf.bugtracker_url,
+                         "https://bugzilla.redhat.com/enter_bug.cgi" +
+                         "?product=Fedora&component=dnf")
