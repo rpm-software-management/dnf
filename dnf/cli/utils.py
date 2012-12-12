@@ -91,7 +91,7 @@ def get_process_info(pid):
         pid = int(pid)
     except ValueError, e:
         return
-        
+
     # Maybe true if /proc isn't mounted, or not Linux ... or something.
     if (not os.path.exists("/proc/%d/status" % pid) or
         not os.path.exists("/proc/stat") or
@@ -131,7 +131,7 @@ def get_process_info(pid):
                    'Z' : _('Zombie'),
                    'T' : _('Traced/Stopped')
                    }.get(ps_stat[2], _('Unknown'))
-                   
+
     return ps
 
 def show_lock_owner(pid, logger):
@@ -159,7 +159,7 @@ def show_lock_owner(pid, logger):
     logger.critical(_("    Memory : %5s RSS (%5sB VSZ)") %
                     (format_number(int(ps['vmrss']) * 1024),
                      format_number(int(ps['vmsize']) * 1024)))
-    
+
     ago = seconds_to_ui_time(int(time.time()) - ps['start_time'])
     logger.critical(_("    Started: %s - %s ago") %
                     (time.ctime(ps['start_time']), ago))
@@ -170,7 +170,7 @@ def show_lock_owner(pid, logger):
 
 class YumUtilBase(YumBaseCli):
     """A class to extend the yum cli for utilities."""
-    
+
     def __init__(self,name,ver,usage):
         YumBaseCli.__init__(self)
         self._parser = YumOptionParser(base=self,utils=True,usage=usage)
@@ -233,7 +233,7 @@ class YumUtilBase(YumBaseCli):
         self.logger.critical('\n\n%s', exception2msg(e))
         if self.unlock(): return 200
         return 1
-        
+
     def unlock(self):
         """Release the yum lock.
 
@@ -245,14 +245,14 @@ class YumUtilBase(YumBaseCli):
         except Errors.LockError, e:
             return 200
         return 0
-        
-        
+
+
     def getOptionParser(self):
         """Return the :class:`cli.YumOptionParser` for this object.
 
         :return: the :class:`cli.YumOptionParser` for this object
         """
-        return self._parser        
+        return self._parser
 
     def getOptionGroup(self):
         """Return an option group to add non inherited options.
@@ -260,8 +260,8 @@ class YumUtilBase(YumBaseCli):
         :return: a :class:`optparse.OptionGroup` for adding options
            that are not inherited from :class:`YumBaseCli`.
         """
-        return self._option_group    
-    
+        return self._option_group
+
     def waitForLock(self):
         """Establish the yum lock.  If another process is already
         holding the yum lock, by default this method will keep trying
@@ -278,17 +278,17 @@ class YumUtilBase(YumBaseCli):
                     lockerr = exception2msg(e)
                     self.logger.critical(lockerr)
                 if not self.conf.exit_on_lock:
-                    self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")  
+                    self.logger.critical("Another app is currently holding the yum lock; waiting for it to exit...")
                     show_lock_owner(e.pid, self.logger)
                     time.sleep(2)
                 else:
                     raise Errors.YumBaseError, _("Another app is currently holding the yum lock; exiting as configured by exit_on_lock")
             else:
                 break
-        
+
     def _printUtilVersion(self):
         print "%s - %s (yum - %s)" % (self._utilName,self._utilVer,dnf.yum.__version__)
-        
+
     def doUtilConfigSetup(self,args = sys.argv[1:],pluginsTypes=(plugins.TYPE_CORE,)):
         """Parse command line options, and perform configuration.
 
@@ -317,7 +317,7 @@ class YumUtilBase(YumBaseCli):
             opts.debuglevel = 0
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = 6
-        
+
         # Read up configuration options and initialise plugins
         try:
             pc = self.preconf
@@ -353,11 +353,11 @@ class YumUtilBase(YumBaseCli):
         except Errors.YumBaseError, e:
             self.logger.critical(_('Yum Error: %s'), exception2msg(e))
             sys.exit(1)
-            
+
         # update usage in case plugins have added commands
         self._parser.set_usage(self._usage)
-        
-        # Now parse the command line for real and 
+
+        # Now parse the command line for real and
         # apply some of the options to self.conf
         (opts, self.cmds) = self._parser.setupYumConfig()
         if self.cmds:
@@ -400,7 +400,7 @@ class YumUtilBase(YumBaseCli):
             return self.exUserCancel()
         except IOError, e:
             return self.exIOError(e)
-       
+
         # Act on the depsolve result
         if result == 0:
             # Normal exit
@@ -426,7 +426,7 @@ class YumUtilBase(YumBaseCli):
             return 3
 
         self.verbose_logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
-        
+
     def doUtilTransaction(self):
         """Perform the transaction."""
 
@@ -444,15 +444,15 @@ class YumUtilBase(YumBaseCli):
         self.verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
         if self.unlock(): return 200
         return return_code
-        
+
 def main():
     name = 'testutil'
     ver  = '0.1'
     usage = 'testutil [options] [args]'
     util = YumUtilBase(name,ver,usage)
-    parser = util.getOptionParser() 
+    parser = util.getOptionParser()
     parser.add_option("", "--myoption", dest="myoption",
-                    action="store_true", default=False, 
+                    action="store_true", default=False,
                     help="This is an util option")
     util.logger.info("Setup Yum Config")
     opts = util.doUtilConfigSetup()
@@ -461,9 +461,7 @@ def main():
     print "Command line args: %s" % " ".join(util.cmds)
     print "Command line options :"
     print opts
-    
+
     util.logger.info("%s Completed" % name)
 if __name__ == '__main__':
     main()
-
-    
