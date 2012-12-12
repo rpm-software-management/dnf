@@ -76,16 +76,6 @@ def main(args):
             return 200
         return 0
 
-    def rpmdb_warn_checks():
-        try:
-            probs = base._rpmdb_warn_checks(out=verbose_logger.info, warn=False)
-        except Errors.YumBaseError, e:
-            # This is mainly for PackageSackError from rpmdb.
-            verbose_logger.info(_(" Yum checks failed: %s"), exception2msg(e))
-            probs = []
-        if not probs:
-            verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
-
     logger = logging.getLogger("yum.main")
     verbose_logger = logging.getLogger("yum.verbose.main")
 
@@ -234,7 +224,6 @@ def main(args):
         (result, resultmsgs) = return_code
         for msg in resultmsgs:
             logger.critical("%s", msg)
-        rpmdb_warn_checks()
         return_code = result
         if base._ts_save_file:
             verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)

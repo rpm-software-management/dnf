@@ -56,6 +56,12 @@ from dnf.yum.i18n import to_unicode, to_utf8, exception2msg
 from dnf.yum.packages import parsePackages
 # pylint: enable-msg=W0611
 
+_RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
+    'rpm -Va --nofiles --nodigest'
+_RPM_REBUILDDB=_("To fix inconsistent RPMDB, try running: '%s'.") % \
+    'rpm --rebuilddb'
+_REPORT_TMPLT=_("If the above doesn't help please report this error at '%s'.")
+
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
     error message and exit the program.
@@ -263,7 +269,8 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be updated')]
-            return 1, [_('Please report this error in %s') % self.conf.bugtracker_url]
+            return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
+                       _REPORT_TMPLT % self.conf.bugtracker_url]
 
         self.verbose_logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
 

@@ -412,8 +412,7 @@ class YumUtilBase(YumBaseCli):
                 prefix = _('Error: %s')
                 prefix2nd = (' ' * (utf8_width(prefix) - 2))
                 self.logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
-            if not self._rpmdb_warn_checks(out=self.verbose_logger.info, warn=False):
-                self.verbose_logger.info(_(" You could try running: rpm -Va --nofiles --nodigest"))
+            self.verbose_logger.info(_RPM_VERIFY)
             if self.unlock(): return 200
             return 1
         elif result == 2:
