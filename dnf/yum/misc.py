@@ -58,11 +58,7 @@ _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
 
 from Errors import MiscError
-# These are API things, so we can't remove them even if they aren't used here.
-# pylint: disable-msg=W0611
-from i18n import to_utf8, to_unicode
-# pylint: enable-msg=W0611
-
+import i18n
 import dnf.const
 
 _share_data_store   = {}
@@ -939,7 +935,7 @@ def to_xml(item, attrib=False):
         __cached_saxutils = xml.sax.saxutils
 
     item = _ugly_utf8_string_hack(item)
-    item = to_utf8(item)
+    item = i18n.to_utf8(item)
     item = item.rstrip()
     if attrib:
         item = __cached_saxutils.escape(item, entities={'"':"&quot;"})
