@@ -49,6 +49,7 @@ import stat
 import errno
 import tempfile
 
+import i18n
 import dnf.util
 
 #  If you want yum to _always_ check the MD .sqlite files then set this to
@@ -499,9 +500,9 @@ class YumRepository(Repository, config.RepoConf):
         if skipped is not None:
             # Caller cleans up for us.
             if goodurls:
-                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                print 'YumRepo Warning: Some mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % i18n.to_utf8(skipped)
             else: # And raises in this case
-                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % misc.to_utf8(skipped)
+                print 'YumRepo Error: All mirror URLs are not using ftp, http[s] or file.\n Eg. %s' % i18n.to_utf8(skipped)
         return goodurls
 
     def _geturls(self):
@@ -518,7 +519,7 @@ class YumRepository(Repository, config.RepoConf):
             self.metalink_filename = self.cachedir + '/' + 'metalink.xml'
             local = self.metalink_filename + '.tmp'
             if not self._metalinkCurrent():
-                url = misc.to_utf8(self.metalink)
+                url = i18n.to_utf8(self.metalink)
                 ugopts = self._default_grabopts()
                 try:
                     ug = URLGrabber(progress_obj = self.callback, **ugopts)
@@ -531,7 +532,7 @@ class YumRepository(Repository, config.RepoConf):
                         raise Errors.RepoError, msg
                     #  Now, we have an old usable metalink, so we can't move to
                     # a newer repomd.xml ... or checksums won't match.
-                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+                    print "Could not get metalink %s error was\n%s: %s" % (url, e.args[0], i18n.to_unicode(e.args[1]))
                     self._metadataCurrent = True
 
             if not self._metadataCurrent:
@@ -625,8 +626,8 @@ Insufficient space in download directory %s
             remote = url + '/' + relative
 
             try:
-                result = ug.urlgrab(misc.to_utf8(remote), local,
-                                    text=misc.to_utf8(text),
+                result = ug.urlgrab(i18n.to_utf8(remote), local,
+                                    text=i18n.to_utf8(text),
                                     range=(start, end),
                                     )
             except URLGrabError, e:
@@ -643,8 +644,8 @@ Insufficient space in download directory %s
         else:
             headers = tuple(self.__headersListFromDict(cache=cache))
             try:
-                result = self.grab.urlgrab(misc.to_utf8(relative), local,
-                                           text = misc.to_utf8(text),
+                result = self.grab.urlgrab(i18n.to_utf8(relative), local,
+                                           text = i18n.to_utf8(text),
                                            range = (start, end),
                                            copy_local=copy_local,
                                            reget = reget,
@@ -1511,7 +1512,7 @@ Insufficient space in download directory %s
             try:
                 fo = urlgrabber.grabber.urlopen(url, **ugopts)
             except urlgrabber.grabber.URLGrabError, e:
-                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+                print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], i18n.to_unicode(e.args[1]))
                 fo = None
 
         (returnlist, content) = self._readMirrorList(fo, url)
@@ -1669,7 +1670,7 @@ def getMirrorList(mirrorlist, pdict = None):
     try:
         fo = urlresolver.urlopen(url, proxies=pdict)
     except urlgrabber.grabber.URLGrabError, e:
-        print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], misc.to_unicode(e.args[1]))
+        print "Could not retrieve mirrorlist %s error was\n%s: %s" % (url, e.args[0], i18n.to_unicode(e.args[1]))
         fo = None
 
     if fo is not None:

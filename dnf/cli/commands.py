@@ -1564,7 +1564,7 @@ class RepoListCommand(Command):
                                                repo.repofile)]
 
                 self.base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
-                                        "\n".join(map(misc.to_unicode, out)))
+                                        "\n".join(map(to_unicode, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),

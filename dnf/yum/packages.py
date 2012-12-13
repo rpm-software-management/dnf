@@ -1098,10 +1098,10 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
         packager = url = ''
         if self.packager:
-            packager = misc.to_unicode(misc.to_xml(self.packager))
+            packager = i18n.to_unicode(misc.to_xml(self.packager))
 
         if self.url:
-            url = misc.to_unicode(misc.to_xml(self.url))
+            url = i18n.to_unicode(misc.to_xml(self.url))
         (csum_type, csum, csumid) = self.checksums[0]
         msg = """
   <name>%s</name>
@@ -1115,8 +1115,8 @@ class YumAvailablePackage(PackageObject, RpmBase):
   <time file="%s" build="%s"/>
   <size package="%s" installed="%s" archive="%s"/>\n""" % (self.name,
          self.arch, self.epoch, self.ver, self.rel, csum_type, csum,
-         misc.to_unicode(misc.to_xml(self.summary)),
-         misc.to_unicode(misc.to_xml(self.description)),
+         i18n.to_unicode(misc.to_xml(self.summary)),
+         i18n.to_unicode(misc.to_xml(self.description)),
          packager, url, self.filetime,
          self.buildtime, self.packagesize, self.installedsize, self.archivesize)
 
@@ -1289,25 +1289,25 @@ class YumAvailablePackage(PackageObject, RpmBase):
 
     def xml_dump_primary_metadata(self):
         msg = """\n<package type="rpm">"""
-        msg += misc.to_unicode(self._dump_base_items())
-        msg += misc.to_unicode(self._dump_format_items())
+        msg += i18n.to_unicode(self._dump_base_items())
+        msg += i18n.to_unicode(self._dump_format_items())
         msg += """\n</package>"""
-        return misc.to_utf8(msg)
+        return i18n.to_utf8(msg)
 
     def xml_dump_filelists_metadata(self):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name,
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += misc.to_unicode(self._dump_files())
+        msg += i18n.to_unicode(self._dump_files())
         msg += "</package>\n"
-        return misc.to_utf8(msg)
+        return i18n.to_utf8(msg)
 
     def xml_dump_other_metadata(self, clog_limit=0):
         msg = """\n<package pkgid="%s" name="%s" arch="%s">
     <version epoch="%s" ver="%s" rel="%s"/>\n""" % (self.checksum, self.name,
                                      self.arch, self.epoch, self.ver, self.rel)
-        msg += "%s\n</package>\n" % misc.to_unicode(self._dump_changelog(clog_limit))
-        return misc.to_utf8(msg)
+        msg += "%s\n</package>\n" % i18n.to_unicode(self._dump_changelog(clog_limit))
+        return i18n.to_utf8(msg)
 
 
 
@@ -1473,9 +1473,9 @@ class YumHeaderPackage(YumAvailablePackage):
         # then create a _loadChangelog() method to put them into the
         # self._changelog attr
         if len(self.hdr['changelogname']) > 0:
-            return zip(misc.to_unicode(self.hdr['changelogtime'], errors='replace'),
-                       misc.to_unicode(self.hdr['changelogname'], errors='replace'),
-                       misc.to_unicode(self.hdr['changelogtext'], errors='replace'))
+            return zip(i18n.to_unicode(self.hdr['changelogtime'], errors='replace'),
+                       i18n.to_unicode(self.hdr['changelogname'], errors='replace'),
+                       i18n.to_unicode(self.hdr['changelogtext'], errors='replace'))
         return []
 
     def returnChecksums(self):

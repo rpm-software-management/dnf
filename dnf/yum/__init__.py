@@ -2972,7 +2972,7 @@ class YumBase(object):
 
         # Go get the GPG key from the given URL
         try:
-            url = misc.to_utf8(keyurl)
+            url = i18n.to_utf8(keyurl)
             if repo is None:
                 opts = {'limit':9999}
                 text = 'global/gpgkey'
@@ -2995,7 +2995,7 @@ class YumBase(object):
         if getSig and repo and repo.gpgcakey:
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
-                url = misc.to_utf8(keyurl + '.asc')
+                url = i18n.to_utf8(keyurl + '.asc')
                 opts = repo._default_grabopts()
                 text = repo.id + '/gpgkeysig'
                 sigfile = urlgrabber.urlopen(url, **opts)
