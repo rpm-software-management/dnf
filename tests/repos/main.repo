@@ -2,6 +2,7 @@
 #
 =Pkg: pepper 20 0 x86_64
 =Req: librita >= 1-0
+=Pkg: pepper 20 0 src
 =Pkg: mrkite 2 0 x86_64
 =Sum: It's an invitation.
 =Req: trampoline

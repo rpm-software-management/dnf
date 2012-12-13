@@ -57,6 +57,12 @@ class InstallMultilibAll(base.ResultTestCase):
         txmbrs = self.yumbase.install_local(base.TOUR_50_PKG_PATH)
         self.assertLength(txmbrs, 1)
 
+    def test_install_src_fails(self):
+        self.yumbase.install("pepper-20-0.src")
+        (code, string) = self.yumbase.buildTransaction()
+        self.assertEqual(code, 0)
+        self.assertRegexpMatches(string[0], "will not install a source rpm")
+
 class MultilibAllMainRepo(base.ResultTestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")

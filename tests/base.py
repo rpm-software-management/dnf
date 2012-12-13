@@ -28,7 +28,7 @@ import unittest
 
 TOTAL_RPMDB_COUNT = 4
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
-MAIN_NSOLVABLES = 6
+MAIN_NSOLVABLES = 7
 UPDATES_NSOLVABLES = 1
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
@@ -54,13 +54,13 @@ def installed_but(sack, *args):
 
 # mock objects
 
-def create_mock_package(name, major_version):
+def create_mock_package(name, major_version, arch='noarch'):
     pkg = mock.Mock(spec_set=['pkgtup', 'summary', 'url', 'name',
                               'reponame', 'repoid',
                               'arch', 'evr', 'state', 'reason'])
     pkg.name = name
     pkg.reponame = pkg.repoid = 'main'
-    pkg.arch = 'noarch'
+    pkg.arch = arch
     pkg.evr = '%d-1' % major_version
     pkg.pkgtup = (pkg.name, pkg.arch, 0, str(major_version) , '1')
     return pkg

@@ -19,6 +19,7 @@ import base
 import mock
 import unittest
 from dnf.yum.constants import *
+import dnf.queries
 
 from dnf.yum.transactioninfo import TransactionData
 
@@ -51,6 +52,12 @@ class TransactionDataTests(unittest.TestCase):
         yumdb = mock.Mock(get_package=lambda pkg:
                               mock.Mock(spec=[], get=lambda attr: None))
         self.assertEqual(txmbr.propagated_reason(yumdb), "unknown")
+
+    def test_rpm_limitations(self):
+        pkg = base.create_mock_package('anyway', 2, 'src')
+        txmbr = self.tsInfo.addInstall(pkg)
+        msg = self.tsInfo.rpm_limitations()
+        self.assertIsNot(None, msg)
 
     def testLenght(self):
         ''' test __len__ method '''

@@ -898,6 +898,10 @@ class YumBase(object):
         self.dsCallback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
+        if rescode == 2:
+            msg = self.tsInfo.rpm_limitations()
+            if msg:
+                return (0, [msg])
         return (rescode, restring)
 
     def _add_not_found(self, pkgs, nevra_dict):

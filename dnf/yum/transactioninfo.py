@@ -28,6 +28,7 @@ to rpm.
 import operator
 
 from constants import *
+from dnf.yum.i18n import _
 import Errors
 import warnings
 import misc
@@ -356,6 +357,18 @@ class TransactionData:
             itxmbr.downgraded_by.append(po)
             atxmbr.downgrades.append(oldpo)
         return atxmbr
+
+    def rpm_limitations(self):
+        """ Ensures all the members can be passed to rpm as they are to pefrom
+            the transaction.
+        """
+        src_installs = [mbr for mbr in self.getMembers()
+                        if mbr.po.arch == 'src' and
+                        mbr.output_state == TS_INSTALL]
+        if len(src_installs):
+            return _("DNF will not install a source rpm package (%s).") % \
+                src_installs[0].po
+        return None
 
     # deprecated
     def _addUpdated(self, po, updating_po):
