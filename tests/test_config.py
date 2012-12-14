@@ -66,8 +66,6 @@ class YumConfTest(unittest.TestCase):
                          "?product=Fedora&component=dnf")
 
 class GoalParametersTest(unittest.TestCase):
-    def test_conf(self):
+    def test_default(self):
         gp = GoalParameters()
         self.assertFalse(gp.allow_uninstall)
-        gp.conf_for_run("erase")
-        self.assertTrue(gp.allow_uninstall)

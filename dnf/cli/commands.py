@@ -187,6 +187,10 @@ class Command:
     def base(self):
         return self.cli.base
 
+    def configure(self):
+        """ Do any command-specific YumBase configuration. """
+        pass
+
     def doneCommand(self, msg, *args):
         """ Output *msg* the first time that this method is called, and do
         nothing on subsequent calls.  This is to prevent duplicate
@@ -656,6 +660,9 @@ class EraseCommand(Command):
     erase command.
     """
 
+    def configure(self):
+        """ Do any command-specific YumBase configuration. """
+        self.base.goal_parameters.allow_uninstall = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This

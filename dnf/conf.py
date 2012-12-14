@@ -82,7 +82,3 @@ class Cache(object):
 class GoalParameters(object):
     def __init__(self):
         self.allow_uninstall = False
-
-    def conf_for_run(self, cmd):
-        if cmd == "erase":
-            self.allow_uninstall = True

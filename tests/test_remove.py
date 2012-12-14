@@ -17,12 +17,14 @@
 
 import base
 import dnf.queries
+import dnf.cli.commands
 import hawkey
 
 class Remove(base.ResultTestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase()
-        self.yumbase.goal_parameters.conf_for_run("erase")
+        erase_cmd = dnf.cli.commands.EraseCommand(self.yumbase.mock_cli())
+        erase_cmd.configure()
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """

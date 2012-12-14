@@ -1437,8 +1437,8 @@ class Cli(object):
                                   # + args make sure they match/make sense
         except CliError:
             sys.exit(1)
-
-        self.base.goal_parameters.conf_for_run(self.base.basecmd)
+        command = self.cli_commands[self.base.basecmd]
+        command.configure()
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
