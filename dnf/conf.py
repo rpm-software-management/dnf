@@ -78,3 +78,11 @@ class Cache(object):
     def fallback_cachedir(self):
         self._make_ready()
         return self._fallback_cachedir
+
+class GoalParameters(object):
+    def __init__(self):
+        self.allow_uninstall = False
+
+    def conf_for_run(self, cmd):
+        if cmd == "erase":
+            self.allow_uninstall = True

@@ -1255,9 +1255,7 @@ class Cli(object):
             self.print_usage()
             raise CliError
 
-        self.base.basecmd = self.base.cmds[0] # our base command
         self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
-
         if len(self.base.extcmds) > 0:
             self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
                                     'Ext Commands:\n')
@@ -1265,12 +1263,14 @@ class Cli(object):
                 self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
                                         '   %s', arg)
 
-        if self.base.basecmd not in self.cli_commands:
+        basecmd = self.base.cmds[0] # our base command
+        if basecmd not in self.cli_commands:
             self.logger.critical(_('No such command: %s. Please use %s --help'),
-                                  self.base.basecmd, sys.argv[0])
+                                  basecmd, sys.argv[0])
             raise CliError
 
-        command = self.cli_commands[self.base.basecmd]
+        command = self.cli_commands[basecmd]
+        self.base.basecmd = command.getNames()[0] # the canonical name
         command.doCheck(self.base.basecmd, self.base.extcmds)
 
     def _parse_setopts(self, setopts):
@@ -1438,6 +1438,7 @@ class Cli(object):
         except CliError:
             sys.exit(1)
 
+        self.base.goal_parameters.conf_for_run(self.base.basecmd)
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 

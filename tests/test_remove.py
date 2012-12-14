@@ -22,6 +22,7 @@ import hawkey
 class Remove(base.ResultTestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase()
+        self.yumbase.goal_parameters.conf_for_run("erase")
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """

@@ -208,6 +208,7 @@ class YumBase(object):
         self.run_with_package_names = set()
         self._cleanup = []
         self._sack = None
+        self.goal_parameters = dnf.conf.GoalParameters()
         self.cache_c = dnf.conf.Cache()
 
     def __del__(self):
@@ -267,17 +268,6 @@ class YumBase(object):
 
         if self._repos:
             self._repos.close()
-
-    def doGenericSetup(self, cache=0):
-        """Do a default setup for all the normal or necessary yum
-        components.  This function is really just a shorthand for
-        testing purposes.
-
-        :param cache: whether to run in cache only mode, which will
-           run only from the system cache
-        """
-        self.preconf.init_plugins = False
-        self.conf.cache = cache
 
     def _getConfig(self):
         '''
@@ -827,6 +817,10 @@ class YumBase(object):
             self._push_userinstalled(goal)
         return goal
 
+    def run_hawkey_goal(self, goal):
+        allow_uninstall = self.goal_parameters.allow_uninstall
+        return goal.run(allow_uninstall=allow_uninstall)
+
     def buildTransaction(self, unfinished_transactions_check=True):
         """Go through the packages in the transaction set, find them
         in the packageSack or rpmdb, and pack up the transaction set
@@ -855,7 +849,7 @@ class YumBase(object):
         ds_st = time.time()
         self.dsCallback.start()
         goal = self.build_hawkey_goal(self.tsInfo)
-        if not goal.run(allow_uninstall=True):
+        if not self.run_hawkey_goal(goal):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
             (rescode, restring) =  (1, goal.problems)

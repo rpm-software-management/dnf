@@ -18,7 +18,7 @@
 import mock
 import unittest
 from dnf.yum.config import Option, BaseConfig, YumConf
-from dnf.conf import Cache
+from dnf.conf import Cache, GoalParameters
 
 class OptionTest(unittest.TestCase):
     class Cfg(BaseConfig):
@@ -64,3 +64,10 @@ class YumConfTest(unittest.TestCase):
         self.assertEqual(conf.bugtracker_url,
                          "https://bugzilla.redhat.com/enter_bug.cgi" +
                          "?product=Fedora&component=dnf")
+
+class GoalParametersTest(unittest.TestCase):
+    def test_conf(self):
+        gp = GoalParameters()
+        self.assertFalse(gp.allow_uninstall)
+        gp.conf_for_run("erase")
+        self.assertTrue(gp.allow_uninstall)
