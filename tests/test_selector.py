@@ -22,8 +22,7 @@ import unittest
 
 class Selector(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase()
-        self.sack = self.yumbase.sack
+        self.sack = base.mock_sack()
 
     def test_set_autoglob(self):
         sltr = dnf.selector.Selector(self.sack)

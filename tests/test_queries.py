@@ -28,37 +28,36 @@ class Queries(base.TestCase):
         assert(not dnf.queries.is_glob_pattern("not.ext"))
 
     def test_duplicities(self):
-        yumbase = base.MockYumBase()
-        pepper = dnf.queries.installed_by_name(yumbase.sack, "pepper")
+        sack = base.mock_sack()
+        pepper = dnf.queries.installed_by_name(sack, "pepper")
         # make sure 'pepper' package exists:
         self.assertEqual(len(pepper), 1)
         # we shouldn't see it more than once with a tricky query below:
-        res = dnf.queries.installed_by_name(yumbase.sack, ["pep*", "*per"])
+        res = dnf.queries.installed_by_name(sack, ["pep*", "*per"])
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))
 
     def test_by_file(self):
         # check sanity first:
-        yumbase = base.MockYumBase()
-        q = hawkey.Query(yumbase.sack).filter(file__eq="/raised/smile")
+        sack = base.mock_sack()
+        q = hawkey.Query(sack).filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
 
         # now the query:
-        yumbase = base.MockYumBase()
-        res = dnf.queries.by_file(yumbase.sack, "/raised/smile")
+        res = dnf.queries.by_file(sack, "/raised/smile")
         self.assertEqual(len(res), 1)
         self.assertEqual(pkg, res[0])
 
     def test_by_repo(self):
-        yumbase = base.MockYumBase("updates", "main")
-        pkgs = dnf.queries.by_repo(yumbase.sack, "updates")
+        sack = base.mock_sack("updates", "main")
+        pkgs = dnf.queries.by_repo(sack, "updates")
         self.assertEqual(len(pkgs), base.UPDATES_NSOLVABLES)
-        pkgs = dnf.queries.by_repo(yumbase.sack, "main")
+        pkgs = dnf.queries.by_repo(sack, "main")
         self.assertEqual(len(pkgs), base.MAIN_NSOLVABLES)
 
     def test_installed_exact(self):
-        sack = base.MockYumBase().sack
+        sack = base.mock_sack()
         pkgs = dnf.queries.installed_exact(sack, "tour", "4.9-0", "noarch")
         self.assertEqual(len(pkgs), 0)
         pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "x86_64")
@@ -68,7 +67,7 @@ class Queries(base.TestCase):
 
 class SubjectTest(base.TestCase):
     def setUp(self):
-        self.sack = base.MockYumBase().sack
+        self.sack = base.mock_sack()
 
     def test_wrong_name(self):
         subj = dnf.queries.Subject("call-his-wife-in")
@@ -85,7 +84,7 @@ class SubjectTest(base.TestCase):
 
 class Dicts(unittest.TestCase):
     def test_per_nevra_dict(self):
-        sack = base.MockYumBase("main").sack
+        sack = base.mock_sack("main")
         pkgs = dnf.queries.by_name(sack, "lotus")
         dct = dnf.queries.per_nevra_dict(pkgs)
         self.assertItemsEqual(dct.iterkeys(),

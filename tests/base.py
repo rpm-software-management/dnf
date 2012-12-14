@@ -125,6 +125,9 @@ class MockYumBase(dnf.yum.YumBase):
     def mock_cli(self):
         return mock.Mock('base', base=self)
 
+def mock_sack(*extra_repos):
+    return MockYumBase(*extra_repos).sack
+
 class MockYumDB(mock.Mock):
     def __init__(self):
         super(mock.Mock, self).__init__()
