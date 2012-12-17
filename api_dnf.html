@@ -63,11 +63,11 @@
 <ul class="simple">
 <li><a class="reference internal" href="#dnf-reference" id="id2">dnf Reference</a><ul>
 <li><a class="reference internal" href="#id1" id="id3">dnf</a></li>
-<li><a class="reference internal" href="#module-dnf.conf" id="id4">dnf.conf</a></li>
+<li><a class="reference internal" href="#dnf-conf" id="id4">dnf.conf</a></li>
 <li><a class="reference internal" href="#module-dnf.const" id="id5">dnf.const</a></li>
 <li><a class="reference internal" href="#module-dnf.i18n" id="id6">dnf.i18n</a></li>
 <li><a class="reference internal" href="#module-dnf.package" id="id7">dnf.package</a></li>
-<li><a class="reference internal" href="#module-dnf.queries" id="id8">dnf.queries</a></li>
+<li><a class="reference internal" href="#dnf-queries" id="id8">dnf.queries</a></li>
 <li><a class="reference internal" href="#module-dnf.sack" id="id9">dnf.sack</a></li>
 <li><a class="reference internal" href="#module-dnf.util" id="id10">dnf.util</a></li>
 </ul>
@@ -77,20 +77,8 @@
 <div class="section" id="id1">
 <h2><a class="toc-backref" href="#id3">dnf</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-dnf"></span></div>
-<div class="section" id="module-dnf.conf">
-<span id="dnf-conf"></span><h2><a class="toc-backref" href="#id4">dnf.conf</a><a class="headerlink" href="#module-dnf.conf" title="Permalink to this headline">¶</a></h2>
-<p>The configuration classes and routines in yum are splattered over too many
-places, hard to change and debug. The new structure here will replace that. Its
-goal is to:</p>
-<ul class="simple">
-<li>accept configuration options from all three sources (the main config file,
-repo config files, command line switches)</li>
-<li>handle all the logic of storing those and producing related values.</li>
-<li>returning configuration values.</li>
-<li>optionally: asserting no value is overridden once it has been applied
-somewhere (e.g. do not let a new repo be initialized with different global
-cache path than an already existing one).</li>
-</ul>
+<div class="section" id="dnf-conf">
+<h2><a class="toc-backref" href="#id4">dnf.conf</a><a class="headerlink" href="#dnf-conf" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-dnf.const">
 <span id="dnf-const"></span><h2><a class="toc-backref" href="#id5">dnf.const</a><a class="headerlink" href="#module-dnf.const" title="Permalink to this headline">¶</a></h2>
@@ -153,8 +141,8 @@ it.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-dnf.queries">
-<span id="dnf-queries"></span><h2><a class="toc-backref" href="#id8">dnf.queries</a><a class="headerlink" href="#module-dnf.queries" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dnf-queries">
+<h2><a class="toc-backref" href="#id8">dnf.queries</a><a class="headerlink" href="#dnf-queries" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-dnf.sack">
 <span id="dnf-sack"></span><h2><a class="toc-backref" href="#id9">dnf.sack</a><a class="headerlink" href="#module-dnf.sack" title="Permalink to this headline">¶</a></h2>
@@ -162,11 +150,24 @@ it.</p>
 <div class="section" id="module-dnf.util">
 <span id="dnf-util"></span><h2><a class="toc-backref" href="#id10">dnf.util</a><a class="headerlink" href="#module-dnf.util" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="dnf.util.first">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">first</tt><big>(</big><em>iterable</em><big>)</big><a class="headerlink" href="#dnf.util.first" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first item from an iterable or None if it has no elements.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="dnf.util.lazyattr">
 <tt class="descclassname">dnf.util.</tt><tt class="descname">lazyattr</tt><big>(</big><em>attrname</em><big>)</big><a class="headerlink" href="#dnf.util.lazyattr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator to get lazy attribute initialization.</p>
 <p>Composes with &#64;property. Force reinitialization by deleting the
 &lt;attrname&gt;.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.util.timed">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">timed</tt><big>(</big><em>fn</em><big>)</big><a class="headerlink" href="#dnf.util.timed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator, prints out the ms a function took to complete.</p>
+<p>Used for debugging.</p>
 </dd></dl>
 
 </div>
@@ -182,11 +183,11 @@ it.</p>
   <ul>
 <li><a class="reference internal" href="#">dnf Reference</a><ul>
 <li><a class="reference internal" href="#id1">dnf</a></li>
-<li><a class="reference internal" href="#module-dnf.conf">dnf.conf</a></li>
+<li><a class="reference internal" href="#dnf-conf">dnf.conf</a></li>
 <li><a class="reference internal" href="#module-dnf.const">dnf.const</a></li>
 <li><a class="reference internal" href="#module-dnf.i18n">dnf.i18n</a></li>
 <li><a class="reference internal" href="#module-dnf.package">dnf.package</a></li>
-<li><a class="reference internal" href="#module-dnf.queries">dnf.queries</a></li>
+<li><a class="reference internal" href="#dnf-queries">dnf.queries</a></li>
 <li><a class="reference internal" href="#module-dnf.sack">dnf.sack</a></li>
 <li><a class="reference internal" href="#module-dnf.util">dnf.util</a></li>
 </ul>
