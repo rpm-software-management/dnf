@@ -816,19 +816,19 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        old_sdup = self.conf.showdupesfromrepos
         # always in showdups mode
+        old_sdup = self.conf.showdupesfromrepos
         self.conf.showdupesfromrepos = True
-        cb = self.matchcallback_verbose
-        matches = 0
-        for pkg in dnf.queries.by_file(self.sack, args):
-            self.matchcallback_verbose(pkg, [], args)
-            matches += 1
+
+        matches = []
+        for spec in args:
+            matches.extend(super(YumBaseCli, self). provides(spec))
+        map(lambda pkg: self.matchcallback_verbose(pkg, [], args), matches)
         self.conf.showdupesfromrepos = old_sdup
 
-        if not matches:
-            return 0, ['No Matches found']
-        return 0, []
+        if matches:
+            return 0, []
+        return 0, ['No Matches found']
 
     def resolveDepCli(self, args):
         """Print information about a package that provides the given

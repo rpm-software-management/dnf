@@ -2772,24 +2772,6 @@ class YumBase(object):
 
         return tx_return
 
-    def _is_local_exclude(self, po, pkglist):
-        """returns True if the local pkg should be excluded"""
-
-        if "all" in self.conf.disable_excludes or \
-           "main" in self.conf.disable_excludes:
-            return False
-
-        toexc = []
-        if len(self.conf.exclude) > 0:
-            exactmatch, matched, unmatched = \
-                   parsePackages(pkglist, self.conf.exclude, casematch=1)
-            toexc = exactmatch + matched
-
-        if po in toexc:
-            return True
-
-        return False
-
     def downgrade(self, po=None, pattern=None, **kwargs):
         """Mark a package to be downgraded.  This is equivalent to
         first removing the currently installed package, and then
@@ -2822,6 +2804,9 @@ class YumBase(object):
         if len(tx_return) > 0:
             self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
         return tx_return
+
+    def provides(self, provides_spec):
+        return dnf.queries.by_file(self.sack, provides_spec)
 
     def history_redo(self, transaction,
                      force_reinstall=False, force_changed_removal=False):
