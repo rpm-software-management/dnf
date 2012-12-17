@@ -314,15 +314,20 @@ Specifying Packages
 ===================
 
 Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. The specification is first taken as the name of a package. If
-multiple versions of the selected package exist in the repo, the most recent
+operation. DNF looks for interpretations of ``<package-spec>`` from the most
+specific meanings to the least, that is it first tries to see if the spec could
+mean a full ``name-[epoch:]version-release.arch`` specification, then just
+``name-[epoch:]version-release``, ``name.arch``, just name and finally
+``name-version``. ``name-version`` is generally not more specific than ``name``,
+because many package names contain the dash and version can be a string of
+almost arbitrary characters: this would cause DNF to first interpret
+``name-subname`` as ``name`` in version ``subname`` instead of looking for a
+package called ``name-subname``.
+
+If multiple versions of the selected package exist in the repo, the most recent
 version suitable for the given operation is used.  The name specification is
 case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
 trigger shell-like glob matching.
-
-If no package matches the name pattern, DNF tries to see if the pattern
-corresponds to the ``name-[epoch:]version-release.arch`` format (also called
-*NEVRA*), and applies the operation accordingly.
 
 .. _specifying_packages_versions-label:
 
@@ -342,8 +347,9 @@ Specifying Provides
 ===================
 
 ``<provide-spec>`` in command descriptions means the command operates on
-packages providing the given spec. This can currently only be a file
-provide. The selection is case-sensitive and globbing is supported.
+packages providing the given spec. This can either be an explicit provide, an
+implicit provide (i.e. name of the package) or a file provide. The selection is
+case-sensitive and globbing is supported.
 
 ========
 See Also
