@@ -1,5 +1,5 @@
-%global gitrev 6a055e6
-%global hawkey_version 0.3.3
+%global gitrev 3701ad6
+%global hawkey_version 0.3.4
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -52,6 +52,15 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Mon Dec 17 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.18-1.git3701ad6
+- Allow specifying removal with 'name.arch' and others (RhBug:877449)
+- install: use Subject class to allow installation by provides (RhBug:880303)
+- Remove rpmdb_warn_checks() and friends. (RhBug:884623)
+- DNF should not allow .src.rpm installation (RhBug:884603).
+- Some DNF commands require different Goal/Solver configuration. (RhBug:873079)
+- Match ordinary package provides in 'dnf provides <provide>', not just files. (RhBug:871892)
+- doc: update how arguments to commands can be specified.
+
 * Mon Nov 26 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.17-1.git6a055e6
 - fix UnicodeDecodeError crash in history.py. (RhBug:877332)
 - Support the 'dnf upgrade-to' command.
