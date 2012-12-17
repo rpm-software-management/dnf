@@ -2806,6 +2806,9 @@ class YumBase(object):
         return tx_return
 
     def provides(self, provides_spec):
+        providers = queries.by_provides(self.sack, provides_spec)
+        if providers:
+            return providers
         return dnf.queries.by_file(self.sack, provides_spec)
 
     def history_redo(self, transaction,

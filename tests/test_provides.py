@@ -24,3 +24,7 @@ class ProvidesTest(base.TestCase):
     def test_file(self):
         self.assertLength(self.yumbase.provides("*ais*smile"), 1)
         self.assertLength(self.yumbase.provides("/raised/smile"), 1)
+
+    def test_name(self):
+        self.assertLength(self.yumbase.provides("henry(the_horse)"), 1)
+        self.assertLength(self.yumbase.provides("lotus"), 2)

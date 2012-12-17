@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+import functools
 import hawkey
 import itertools
 import types
@@ -191,6 +192,22 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
     else:
         q.filterm(*flags, file=patterns)
 
+    if get_query:
+        return q
+    return q.run()
+
+def by_provides(sack, patterns, ignore_case=False, get_query=False):
+    if type(patterns) in types.StringTypes:
+        patterns = [patterns]
+    try:
+        reldeps = map(functools.partial(hawkey.Reldep, sack), patterns)
+    except hawkey.ValueException:
+        return hawkey.Query(sack).filter(empty=True)
+    q = hawkey.Query(sack)
+    flags = []
+    if ignore_case:
+        flags.append(hawkey.ICASE)
+    q.filterm(*flags, provides=reldeps)
     if get_query:
         return q
     return q.run()
