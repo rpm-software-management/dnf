@@ -1592,10 +1592,6 @@ Transaction Summary
         dscb = DepSolveProgressCallBack(weakref(self))
         self.dsCallback = dscb
 
-    def setupProgessCallbacks(self):
-        """This function is for API purposes only to protect the typo."""
-        self.setupProgressCallbacks()
-
     def setupKeyImportCallbacks(self):
         """Set up callbacks to import and confirm gpg public keys."""
 
