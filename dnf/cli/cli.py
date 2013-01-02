@@ -1202,6 +1202,27 @@ class Cli(object):
         # self._register_command(dnf.cli.commands.CheckRpmdbCommand(self))
         self._register_command(dnf.cli.commands.DistroSyncCommand(self))
 
+    def _configure_repos(self, opts):
+        # Process repo enables and disables in order
+        for opt, repoexp in opts.repos:
+            try:
+                if opt == '--enablerepo':
+                    self.base.repos.enableRepo(repoexp)
+                elif opt == '--disablerepo':
+                    self.base.repos.disableRepo(repoexp)
+            except dnf.yum.Errors.ConfigError, e:
+                self.logger.critical(e)
+                self.print_usage()
+                sys.exit(1)
+
+        # Disable all gpg key checking, if requested.
+        if opts.nogpgcheck:
+            #  Altering the normal configs. doesn't work too well, esp. with
+            # regard to dynamically enabled repos.
+            self.base._override_sigchecks = True
+            for repo in self.base.repos.listEnabled():
+                repo._override_sigchecks = True
+
     def _make_usage(self):
         """
         Format an attractive usage string for yum, listing subcommand
@@ -1414,6 +1435,8 @@ class Cli(object):
         self.base.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
                                          self.base.conf.yumvar)
         del self.base.conf.cachedir # ensure access to the value is done via cache_c
+        # with cache_c in place we can configure the repos:
+        self._configure_repos(opts)
 
         if opts.version:
             self.base.conf.cache = 1
@@ -1523,7 +1546,7 @@ class YumOptionParser(OptionParser):
             ret.extend(arg.replace(",", " ").split())
         return ret
 
-    def setupYumConfig(self, args=None):
+    def setupYumConfig(self, args):
         """Parse command line options.
 
         :param args: the command line arguments entered by the user
@@ -1533,10 +1556,7 @@ class YumOptionParser(OptionParser):
            For example, if args is ["install", "foo", "--verbose"],
            cmds will be ["install", "foo"].
         """
-        if not args:
-            (opts, cmds) = self.parse_args()
-        else:
-            (opts, cmds) = self.parse_args(args=args)
+        (opts, cmds) = self.parse_args(args=args)
 
         # Let the plugins know what happened on the command line
         self.base.plugins.setCmdLine(opts, cmds)
@@ -1605,26 +1625,6 @@ class YumOptionParser(OptionParser):
             self.base.setupProgressCallbacks()
             # setup the callbacks to import gpg pubkeys and confirm them
             self.base.setupKeyImportCallbacks()
-
-            # Process repo enables and disables in order
-            for opt, repoexp in opts.repos:
-                try:
-                    if opt == '--enablerepo':
-                        self.base.repos.enableRepo(repoexp)
-                    elif opt == '--disablerepo':
-                        self.base.repos.disableRepo(repoexp)
-                except dnf.yum.Errors.ConfigError, e:
-                    self.logger.critical(e)
-                    self.print_usage()
-                    sys.exit(1)
-
-            # Disable all gpg key checking, if requested.
-            if opts.nogpgcheck:
-                #  Altering the normal configs. doesn't work too well, esp. with
-                # regard to dynamically enabled repos.
-                self.base._override_sigchecks = True
-                for repo in self.base.repos.listEnabled():
-                    repo._override_sigchecks = True
 
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)

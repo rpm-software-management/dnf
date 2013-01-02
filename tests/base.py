@@ -122,6 +122,10 @@ class MockYumBase(dnf.yum.YumBase):
     def repos(self):
         return self._repos
 
+    @repos.deleter
+    def repos(self):
+        self._repos = None
+
     def mock_cli(self):
         return mock.Mock('base', base=self)
 
@@ -147,6 +151,7 @@ class FakeTerm(object):
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
+        self.assumeyes = None
         self.color = 'never'
         self.commands = []
         self.installonlypkgs = ['kernel']

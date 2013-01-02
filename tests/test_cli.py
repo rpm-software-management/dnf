@@ -18,6 +18,7 @@
 import base
 import dnf.cli.cli
 import mock
+import optparse
 import unittest
 
 OUTPUT="""\
@@ -40,7 +41,7 @@ class VersionString(unittest.TestCase):
 
 class Cli(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase()
+        self.yumbase = base.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
     def test_knows_upgrade(self):
@@ -56,3 +57,11 @@ class Cli(unittest.TestCase):
         """
         self.cli.configure(['update'])
         self.assertEqual(self.cli.cmdstring, "dnf update ")
+
+    def test_configure_repos(self):
+        opts = optparse.Values()
+        opts.nogpgcheck = True
+        opts.repos = []
+        self.cli._configure_repos(opts)
+        self.assertTrue(self.yumbase._override_sigchecks)
+        self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
