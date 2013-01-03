@@ -248,6 +248,8 @@ class YumBase(object):
         self._sack.load_system_repo(build_cache=True)
         for r in self.repos.listEnabled():
             self._add_repo_to_hawkey(r.id)
+        for excl in self.conf.exclude:
+            self._sack.add_excludes(queries.by_name(self._sack, excl))
         self._sack.installonly = self.conf.installonlypkgs
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))

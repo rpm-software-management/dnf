@@ -51,22 +51,25 @@ Options
 ``-C, --cacheonly``
     Run entirely from system cache, don't update cache
 
-``-c [config file], --config=[config file]``
+``-c <config file>, --config=<config file>``
     config file location
 
-``-R [minutes], --randomwait=[minutes]``
+``-R <minutes>, --randomwait=<minutes>``
     maximum command wait time
 
-``-d [debug level], --debuglevel=[debug level]``
+``-d <debug level>, --debuglevel=<debug level>``
     debugging output level
+
+``-x <package-spec>, --exclude=<package-spec>``
+    Exclude packages specified by a name or a glob from the operation.
 
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
-``-e [error level], --errorlevel=[error level]``
+``-e <error level>, --errorlevel=<error level>``
     error output level
 
-``--rpmverbosity=[debug level name]``
+``--rpmverbosity=<debug level name>``
     debugging output level for rpm
 
 ``-q, --quiet``
@@ -84,7 +87,7 @@ Options
 ``--version``
     show Yum version and exit
 
-``--installroot=[path]``
+``--installroot=<path>``
     set install root
 
 ========
