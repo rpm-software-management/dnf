@@ -16,12 +16,13 @@
 #
 
 import dnf.sack
+import hawkey
 import hawkey.test
 import base
 import mock
 import unittest
 
-class Sack(unittest.TestCase):
+class Sack(base.TestCase):
     def test_rpmdb_version(self):
         yumbase = base.MockYumBase()
         sack = yumbase.sack
@@ -30,3 +31,11 @@ class Sack(unittest.TestCase):
         self.assertEqual(version._num, base.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(),
                          '7229c365cd8a7eea755d0495a8216226f705d161')
+
+    def test_configuration(self):
+        yumbase = base.MockYumBase()
+        yumbase.conf.exclude=['pepper']
+        # configure() gets called through here:
+        sack = yumbase.sack
+        peppers = hawkey.Query(sack).filter(name='pepper').run()
+        self.assertLength(peppers, 0)

@@ -69,6 +69,12 @@ class Sack(hawkey.Sack):
             main.update(pkg, csum)
         return main
 
+    def configure(self, installonly=None, excluded=None):
+        if installonly:
+            self.installonly = installonly
+        for excl in excluded or []:
+            self.add_excludes(queries.by_name(self, excl))
+
 def build_sack(yumbase):
     return Sack(pkgcls=package.Package, pkginitval=yumbase,
                 cachedir=yumbase.cache_c.cachedir)

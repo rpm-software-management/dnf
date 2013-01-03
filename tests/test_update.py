@@ -44,7 +44,7 @@ class Update(base.ResultTestCase):
         """ Update all you can. """
         yumbase = base.MockYumBase("main", "updates")
         sack = yumbase.sack
-        ret = yumbase.update()
+        yumbase.update()
         self.assertTrue(yumbase.tsInfo.upgrade_all)
         expected = base.installed_but(sack, "pepper") + \
             list(available_by_nevra(sack, "pepper-20-1.x86_64"))

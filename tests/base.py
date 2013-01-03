@@ -116,6 +116,7 @@ class MockYumBase(dnf.yum.YumBase):
             fn = "%s.repo" % repo
             self._sack.load_test_repo(repo, fn)
 
+        self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
         return self._sack
 
     @property
