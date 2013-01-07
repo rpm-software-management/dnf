@@ -153,6 +153,7 @@ class FakeTerm(object):
 class FakeConf(object):
     def __init__(self):
         self.assumeyes = None
+        self.best = False
         self.color = 'never'
         self.commands = []
         self.installonlypkgs = ['kernel']

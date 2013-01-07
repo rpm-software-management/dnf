@@ -48,6 +48,9 @@ Options
 ``-h, --help``
     Shows the help.
 
+``--best``
+    Try the best available package versions in transactions.
+
 ``-C, --cacheonly``
     Run entirely from system cache, don't update cache
 

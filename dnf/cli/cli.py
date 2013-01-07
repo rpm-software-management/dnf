@@ -1564,6 +1564,8 @@ class YumOptionParser(OptionParser):
         try:
             # config file is parsed and moving us forward
             # set some things in it.
+            if opts.best:
+                self.base.conf.best = opts.best
 
             # Handle remaining options
             if opts.assumeyes:
@@ -1696,6 +1698,9 @@ class YumOptionParser(OptionParser):
                 help=_("show this help message and exit"))
         group.conflict_handler = "error"
 
+        group.add_option("-b", "--best", action="store_true",
+                         help=_("try the best available package versions in "
+                                "transactions."))
         group.add_option("-C", "--cacheonly", dest="cacheonly",
                 action="store_true",
                 help=_("run entirely from system cache, don't update cache"))
@@ -1766,9 +1771,6 @@ class YumOptionParser(OptionParser):
                 # help=_("enable plugins by name"),
                 help=SUPPRESS_HELP,
                 metavar='[plugin]')
-        group.add_option("--skip-broken", action="store_true", dest="skipbroken",
-                # help=_("skip packages with depsolving problems")
-                help=SUPPRESS_HELP)
         group.add_option("", "--color", dest="color", default=None,
                 # help=_("control whether color is used")
                 help=SUPPRESS_HELP)

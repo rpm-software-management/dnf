@@ -773,7 +773,7 @@ class YumConf(StartupConf):
                                       ('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
-
+    best = BoolOption(False)
     bugtracker_url = Option(dnf.const.BUGTRACKER)
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),

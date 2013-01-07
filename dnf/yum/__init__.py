@@ -819,7 +819,8 @@ class YumBase(object):
 
     def run_hawkey_goal(self, goal):
         allow_uninstall = self.goal_parameters.allow_uninstall
-        return goal.run(allow_uninstall=allow_uninstall)
+        return goal.run(allow_uninstall=allow_uninstall,
+                        force_best=self.conf.best)
 
     def buildTransaction(self, unfinished_transactions_check=True):
         """Go through the packages in the transaction set, find them
