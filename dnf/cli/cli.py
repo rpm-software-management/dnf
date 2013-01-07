@@ -1531,7 +1531,7 @@ class YumOptionParser(OptionParser):
                          '--setopt'),
                         args)
         except ValueError, arg:
-            self.print_usage()
+            self.print_help()
             print >> sys.stderr, (_("\n\n%s: %s option requires an argument") %
                                   ('Command line error', arg))
             sys.exit(1)
@@ -1617,7 +1617,7 @@ class YumOptionParser(OptionParser):
                     self.base.conf.exclude = excludelist
                 except dnf.yum.Errors.ConfigError, e:
                     self.logger.critical(e)
-                    self.print_usage()
+                    self.print_help()
                     sys.exit(1)
 
             if opts.rpmverbosity is not None:
@@ -1630,7 +1630,7 @@ class YumOptionParser(OptionParser):
 
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
-            self.print_usage()
+            self.print_help()
             sys.exit(1)
 
         return opts, cmds
@@ -1669,8 +1669,8 @@ class YumOptionParser(OptionParser):
             root = '/'
         return root
 
-    def _wrapOptParseUsage(self, opt, value, parser, *args, **kwargs):
-        self.print_usage()
+    def _help_callback(self, opt, value, parser, *args, **kwargs):
+        self.print_help()
         self.exit()
 
     def _addYumBasicOptions(self):
@@ -1694,7 +1694,7 @@ class YumOptionParser(OptionParser):
         # bad on unicode input.
         group.conflict_handler = "resolve"
         group.add_option("-h", "--help", action="callback",
-                        callback=self._wrapOptParseUsage,
+                        callback=self._help_callback,
                 help=_("show this help message and exit"))
         group.conflict_handler = "error"
 
