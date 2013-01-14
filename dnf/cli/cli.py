@@ -1204,16 +1204,13 @@ class Cli(object):
 
     def _configure_repos(self, opts):
         # Process repo enables and disables in order
-        for opt, repoexp in opts.repos:
-            try:
-                if opt == '--enablerepo':
-                    self.base.repos.enableRepo(repoexp)
-                elif opt == '--disablerepo':
-                    self.base.repos.disableRepo(repoexp)
-            except dnf.yum.Errors.ConfigError, e:
-                self.logger.critical(e)
-                self.print_usage()
-                sys.exit(1)
+        try:
+            map(self.base.repos.enableRepo, opts.repos_enabled)
+            map(self.base.repos.disableRepo, opts.repos_disabled)
+        except dnf.yum.Errors.ConfigError, e:
+            self.logger.critical(e)
+            self.print_usage()
+            sys.exit(1)
 
         # Disable all gpg key checking, if requested.
         if opts.nogpgcheck:
@@ -1674,15 +1671,6 @@ class YumOptionParser(OptionParser):
         self.exit()
 
     def _addYumBasicOptions(self):
-        def repo_optcb(optobj, opt, value, parser):
-            '''Callback for the enablerepo and disablerepo option.
-
-            Combines the values given for these options while preserving order
-            from command line.
-            '''
-            dest = eval('parser.values.%s' % optobj.dest)
-            dest.append((opt, value))
-
         if self._utils:
             group = OptionGroup(self, "Yum Base Options")
             self.add_option_group(group)
@@ -1734,14 +1722,12 @@ class YumOptionParser(OptionParser):
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"),
                 metavar='[path]')
-        group.add_option("--enablerepo", action='callback',
-                type='string', callback=repo_optcb, dest='repos', default=[],
-                # help=_("enable one or more repositories (wildcards allowed)"),
+        group.add_option("--enablerepo", action='append',
+                type='string', dest='repos_enabled', default=[],
                 help=SUPPRESS_HELP,
                 metavar='[repo]')
-        group.add_option("--disablerepo", action='callback',
-                type='string', callback=repo_optcb, dest='repos', default=[],
-                # help=_("disable one or more repositories (wildcards allowed)"),
+        group.add_option("--disablerepo", action='append',
+                type='string', dest='repos_disabled', default=[],
                 help=SUPPRESS_HELP,
                 metavar='[repo]')
         group.add_option("-x", "--exclude", default=[], action="append",

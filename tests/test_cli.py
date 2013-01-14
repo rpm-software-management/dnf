@@ -61,7 +61,8 @@ class Cli(unittest.TestCase):
     def test_configure_repos(self):
         opts = optparse.Values()
         opts.nogpgcheck = True
-        opts.repos = []
+        opts.repos_enabled = []
+        opts.repos_disabled = []
         self.cli._configure_repos(opts)
         self.assertTrue(self.yumbase._override_sigchecks)
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
