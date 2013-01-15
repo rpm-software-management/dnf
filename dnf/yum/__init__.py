@@ -1593,16 +1593,10 @@ class YumBase(object):
 
             # make sure it's not a local file
             repo = self.repos.repos[txmbr.po.repoid]
-            local = False
             for u in repo.baseurl:
                 if u.startswith("file:"):
-                    local = True
-                    break
-
-            if local:
-                filelist.extend([txmbr.po.localHdr()])
-            else:
-                filelist.append(txmbr.po.localPkg())
+                    continue
+            filelist.append(txmbr.po.localPkg())
 
         # now remove them
         for fn in filelist:
