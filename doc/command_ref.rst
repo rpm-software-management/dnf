@@ -149,6 +149,7 @@ Performs cleanup of temporary files for the currently enabled repositories.
 -----------------
 Dist-sync command
 -----------------
+
 ``dnf dist-sync``
     As necessary upgrades, downgrades or keeps all installed packages to match
     the latest version available from any enabled repository.
@@ -156,17 +157,21 @@ Dist-sync command
 -------------------------
 Distribution-sync command
 -------------------------
+
+``dnf distribution-sync``
     Deprecated alias for the :ref:`\dist_sync_command-label`.
 
 -----------------
 Downgrade Command
 -----------------
+
 ``dnf [options] downgrade <package-specs>...``
     Downgrades the specified packages to the highest of all known lower versions.
 
 -------------
 Erase Command
 -------------
+
 ``dnf [options] erase <package-specs>...``
     Removes the specified packages from the system along with any packages
     depending on the packages being removed. If ``clean_requirements_on_remove``
@@ -205,6 +210,7 @@ Info Command
 ---------------
 Install Command
 ---------------
+
 ``dnf [options] install <package-specs>...``
     Installs the specified packages and their dependencies. After the
     transaction is finished all the specified packages are installed on the
@@ -243,6 +249,7 @@ result to only those packages matching it.
 -----------------
 Makecache Command
 -----------------
+
 ``dnf [options] makecache``
     Downloads and caches in binary format metadata for all known repos. Tries to
     avoid downloading whenever possible (typically when the metadata timestamp
@@ -251,6 +258,7 @@ Makecache Command
 ----------------
 Provides Command
 ----------------
+
 ``dnf [options] provides <provide-spec>``
     Finds the packages providing the given ``<provide-spec>``. This is useful
     when one knows a filename and wants to find what package (installed or not)
@@ -259,6 +267,7 @@ Provides Command
 -----------------
 Reinstall Command
 -----------------
+
 ``dnf [options] reinstall <package-specs>...``
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
@@ -267,6 +276,7 @@ Reinstall Command
 ----------------
 Repolist Command
 ----------------
+
 ``dnf [options] repolist [enabled|disabled|all]``
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
@@ -275,6 +285,7 @@ Repolist Command
 --------------
 Search Command
 --------------
+
 ``dnf [options] search [all] <keywords>...``
     Search package metadata for the keywords. Keywords are matched as
     case-sensitive substrings, globbing is supported. By default the command
@@ -285,6 +296,8 @@ Search Command
 --------------
 Update Command
 --------------
+
+``dnf [options] update``
     Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _upgrade_command-label:
@@ -292,6 +305,7 @@ Update Command
 ---------------
 Upgrade Command
 ---------------
+
 ``dnf [options] upgrade``
     Updates each package to a highest version that is both available and
     resolvable.
@@ -303,6 +317,8 @@ Upgrade Command
 -----------------
 Update-To Command
 -----------------
+
+``dnf [options] update-to <package-nevr-specs>...``
     Deprecated alias for the :ref:`\upgrade_to_command-label`.
 
 .. _upgrade_to_command-label:
@@ -310,6 +326,7 @@ Update-To Command
 ------------------
 Upgrade-To Command
 ------------------
+
 ``dnf [options] upgrade-to <package-nevr-specs>...``
     Upgrades packages to the specified versions.
 
