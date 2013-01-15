@@ -760,23 +760,6 @@ class YumBase(object):
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
-    def yumUtilsMsg(self, func, prog):
-        """Output a message that the given tool requires the yum-utils
-        package, if it not installed.
-
-        :param func: the function to output the message
-        :param prog: the name of the tool that requires yum-utils
-        """
-        if self.rpmdb.contains(name="yum-utils"):
-            return
-
-        hibeg, hiend = "", ""
-        if hasattr(self, 'term'):
-            hibeg, hiend = self.term.MODE['bold'], self.term.MODE['normal']
-
-        func(_("The program %s%s%s is found in the yum-utils package.") %
-             (hibeg, prog, hiend))
-
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
         self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -839,7 +822,6 @@ class YumBase(object):
             msg = _('There are unfinished transactions remaining. You might ' \
                     'consider running yum-complete-transaction first to finish them.' )
             self.logger.critical(msg)
-            self.yumUtilsMsg(self.logger.critical, "yum-complete-transaction")
             time.sleep(3)
 
         # XXX - we could add a conditional here to avoid running the plugins and
