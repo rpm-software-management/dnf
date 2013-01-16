@@ -2540,6 +2540,7 @@ class YumBase(object):
     def distro_sync(self, pkg=None):
         if pkg is None:
             self.tsInfo.distro_sync = True
+        self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     def remove(self, pkg_spec):
         """Mark the specified package for removal.

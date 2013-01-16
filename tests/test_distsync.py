@@ -17,6 +17,7 @@
 
 import base
 from dnf.queries import available_by_name, installed_by_nevra
+import rpm
 
 class DistroSync(base.ResultTestCase):
     def setUp(self):
@@ -25,6 +26,8 @@ class DistroSync(base.ResultTestCase):
 
     def test_distro_sync(self):
         self.yumbase.distro_sync()
+        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE,
+                      self.yumbase.tsInfo.probFilterFlags)
         packages = base.installed_but(self.sack, "pepper", "librita").run()
         packages.extend(available_by_name(self.sack, ["pepper", "librita"]))
         packages.extend(installed_by_nevra(self.sack, "librita-1-1.i686"))
