@@ -1,5 +1,5 @@
-%global gitrev b901926
-%global hawkey_version 0.3.5
+%global gitrev dec970f
+%global hawkey_version 0.3.6
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -52,6 +52,13 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Fri Jan 18 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.20-1.gitdec970f
+- fix '--exclude' command-line option (related RhBug:871892)
+- Introduce --best switch to force trying latest packages in transactions ( RhBug:882211)
+- fix '--disablerepo' (related RhBug:871892)
+- Tell RPM it's OK to downgrade during dist-sync (RhBug:894339)
+- 'dnf install' should skip already installed packages and say so. (RhBug:882851)
+
 * Thu Jan 3 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.19-1.gitb901926
 - options parsing: do not access repositories before cache_c is ready. (RhBug:889706)
 - move to the latest hawkey using libsolv-0.2.3
