@@ -760,6 +760,38 @@ class YumBase(object):
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
+    def _sltr_matches_installed(self, sltr):
+        """ See if sltr matches a patches that is (in older version or different
+            architecture perhaps) already installed.
+        """
+        inst = queries.installed(self.sack, get_query=True)
+        inst = inst.filter(pkg=sltr.matches())
+        if len(inst) > 0:
+            return inst[0]
+        return None
+
+    def _query_matches_installed(self, query):
+        """ See what packages in the query match packages (also in older
+            versions, but always same architecture) that are already installed.
+
+            Unlike in case of _sltr_matches_installed(), it is practical here to
+            know even the packages in the original query that can still be
+            installed.
+        """
+        inst = query.filter(reponame=hawkey.SYSTEM_REPO_NAME)
+        inst_per_arch = queries.per_arch_dict(inst)
+        avail = query.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME,
+                             latest=True)
+        avail_per_arch = queries.per_arch_dict(avail)
+        avail_l = []
+        inst_l = []
+        for na in avail_per_arch:
+            if na in inst_per_arch:
+                inst_l.append(inst_per_arch[na][0])
+            else:
+                avail_l.extend(avail_per_arch[na])
+        return inst_l, avail_l
+
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
         self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -2483,13 +2515,27 @@ class YumBase(object):
             :raises: :class:`Errors.InstallError` if there is a problem
                installing the package
         """
+        def msg_installed(pkg):
+            name = unicode(pkg)
+            msg = _('Package %s is already installed, skipping.') % name
+            self.verbose_logger.warning(msg)
+
         subj = queries.Subject(pkg_spec)
         if self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
-            if sltr:
+            if not sltr:
+                return self.tsInfo
+            pkg = self._sltr_matches_installed(sltr)
+            if pkg:
+                msg_installed(pkg)
+            else:
                 self.tsInfo.add_selector_install(sltr)
         else:
-            map(self.tsInfo.addInstall, subj.get_best_query(self.sack))
+            q = subj.get_best_query(self.sack)
+            (already_inst, available) = self._query_matches_installed(q)
+            if already_inst:
+                map(msg_installed, already_inst)
+            map(self.tsInfo.addInstall, available)
         return self.tsInfo
 
     def update(self, po=None, pattern=None):

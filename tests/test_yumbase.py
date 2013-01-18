@@ -129,6 +129,24 @@ class InstallReason(base.ResultTestCase):
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 
+class InstalledMatching(base.ResultTestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("main")
+        self.sack = self.yumbase.sack
+
+    def test_query_matching(self):
+        subj = dnf.queries.Subject("pepper")
+        query = subj.get_best_query(self.sack)
+        (inst, avail) = self.yumbase._query_matches_installed(query)
+        self.assertLength(inst, 1)
+        self.assertLength(avail, 1)
+
+    def test_selector_matching(self):
+        subj = dnf.queries.Subject("pepper")
+        sltr = subj.get_best_selector(self.sack)
+        installed = self.yumbase._sltr_matches_installed(sltr)
+        self.assertIsInstance(installed, hawkey.Package)
+
 class CleanTest(unittest.TestCase):
     def test_clean_binary_cache(self):
         yumbase = base.MockYumBase("main")
