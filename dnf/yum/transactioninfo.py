@@ -48,6 +48,7 @@ class TransactionData:
         self.conditionals = {} # key = pkgname, val = list of pos to add
 
         self.selector_installs = []
+        self.selector_upgrades = []
         self.selector_upgrade_tos = []
         self.upgrade_all = False
         self.distro_sync = False
@@ -69,6 +70,7 @@ class TransactionData:
     def __len__(self):
         seqs = [self.pkgdict,
                 self.selector_installs,
+                self.selector_upgrades,
                 self.selector_upgrade_tos]
         return reduce(operator.add, map(len, seqs))
 
@@ -313,6 +315,9 @@ class TransactionData:
 
     def add_selector_install(self, sltr):
         self.selector_installs.append(sltr)
+
+    def add_selector_upgrade(self, sltr):
+        self.selector_upgrades.append(sltr)
 
     def add_selector_upgrade_to(self, sltr):
         self.selector_upgrade_tos.append(sltr)

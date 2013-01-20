@@ -820,6 +820,8 @@ class YumBase(object):
                                           % txmbr.ts_state)
         for sltr in tsInfo.selector_installs:
             goal.install(select=sltr)
+        for sltr in tsInfo.selector_upgrades:
+            goal.upgrade(select=sltr)
         for sltr in tsInfo.selector_upgrade_tos:
             goal.upgrade_to(select=sltr)
         if tsInfo.upgrade_all:
@@ -2564,11 +2566,10 @@ class YumBase(object):
                     txmbr = self.tsInfo.addUpdate(po)
                     tx_return.append(txmbr)
         elif pattern:
-            availpkgs = queries.updates_by_name(self.sack, pattern,
-                                                latest_only=True)
-            for pkg in availpkgs:
-                txmbr = self.tsInfo.addUpdate(pkg)
-                tx_return.append(txmbr)
+            sltr = queries.Subject(pattern).get_best_selector(self.sack)
+            if not sltr:
+                return tx_return
+            self.tsInfo.add_selector_upgrade(sltr)
         else: # update everything updatable
             self.tsInfo.upgrade_all = True
         return tx_return

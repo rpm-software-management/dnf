@@ -26,10 +26,11 @@ import mock
 import os
 import unittest
 
-TOTAL_RPMDB_COUNT = 4
+RPMDB_CHECKSUM = 'b3fa9f5ed659fa881ac901606be5e8f99ca55cc3'
+TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 7
-UPDATES_NSOLVABLES = 1
+UPDATES_NSOLVABLES = 3
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
@@ -203,3 +204,13 @@ class ResultTestCase(TestCase):
             output_states=dnf.yum.constants.TS_INSTALL_STATES):
             installed.add(txmbr.po)
         self.assertItemsEqual(installed, pkgs)
+
+    def installed_removed(self, yumbase):
+        (rcode, rstring) = yumbase.buildTransaction()
+        self.assertNotEqual(rcode, 1)
+
+        installed = [txmbr.po for txmbr in yumbase.tsInfo.getMembersWithState(
+                output_states=dnf.yum.constants.TS_INSTALL_STATES)]
+        removed = [txmbr.po for txmbr in yumbase.tsInfo.getMembersWithState(
+                output_states=dnf.yum.constants.TS_REMOVE_STATES)]
+        return installed, removed

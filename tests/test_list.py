@@ -28,7 +28,7 @@ class List(unittest.TestCase):
     def test_list_updates(self):
         yumbase = base.MockYumBase("updates", "main")
         ypl = yumbase.doPackageLists('updates')
-        self.assertEqual(len(ypl.updates), 1)
+        self.assertEqual(len(ypl.updates), base.UPDATES_NSOLVABLES)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "pepper")
         ypl = yumbase.doPackageLists('updates', ["pepper"])

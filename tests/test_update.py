@@ -28,8 +28,6 @@ class Update(base.ResultTestCase):
         yumbase = base.MockYumBase("updates")
         ret = yumbase.update(pattern="pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
-        self.assertEqual(len(new_versions), 1)
-        self.assertEqual([txmbr.po for txmbr in ret] , new_versions)
         expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
         self.assertResult(yumbase, expected)
 
@@ -46,8 +44,9 @@ class Update(base.ResultTestCase):
         sack = yumbase.sack
         yumbase.update()
         self.assertTrue(yumbase.tsInfo.upgrade_all)
-        expected = base.installed_but(sack, "pepper") + \
-            list(available_by_nevra(sack, "pepper-20-1.x86_64"))
+        expected = base.installed_but(sack, "pepper", "hole") + \
+            list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
+            list(available_by_nevra(sack, "hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
 
     def test_update_local(self):
@@ -59,6 +58,13 @@ class Update(base.ResultTestCase):
         self.assertEqual(new_pkg.evr, "5-1")
         new_set = base.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
+
+    def test_update_arches(self):
+        yumbase = base.MockYumBase("main", "updates")
+        yumbase.update(pattern="hole")
+        installed, removed = self.installed_removed(yumbase)
+        self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
+        self.assertItemsEqual(map(str, removed), ['hole-1-1.x86_64'])
 
 class SkipBroken(base.ResultTestCase):
     def setUp(self):

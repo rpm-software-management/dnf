@@ -29,8 +29,7 @@ class Sack(base.TestCase):
         yumdb = mock.MagicMock()
         version = yumbase.sack.rpmdb_version(yumdb)
         self.assertEqual(version._num, base.TOTAL_RPMDB_COUNT)
-        self.assertEqual(version._chksum.hexdigest(),
-                         '7229c365cd8a7eea755d0495a8216226f705d161')
+        self.assertEqual(version._chksum.hexdigest(), base.RPMDB_CHECKSUM)
 
     def test_configuration(self):
         yumbase = base.MockYumBase()
