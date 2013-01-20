@@ -137,15 +137,15 @@ class InstalledMatching(base.ResultTestCase):
     def test_query_matching(self):
         subj = dnf.queries.Subject("pepper")
         query = subj.get_best_query(self.sack)
-        (inst, avail) = self.yumbase._query_matches_installed(query)
-        self.assertLength(inst, 1)
-        self.assertLength(avail, 1)
+        inst, avail = self.yumbase._query_matches_installed(query)
+        self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
+        self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
 
     def test_selector_matching(self):
         subj = dnf.queries.Subject("pepper")
         sltr = subj.get_best_selector(self.sack)
-        installed = self.yumbase._sltr_matches_installed(sltr)
-        self.assertIsInstance(installed, hawkey.Package)
+        inst = self.yumbase._sltr_matches_installed(sltr)
+        self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
 
 class CleanTest(unittest.TestCase):
     def test_clean_binary_cache(self):

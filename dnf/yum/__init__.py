@@ -760,16 +760,6 @@ class YumBase(object):
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
-    def _sltr_matches_installed(self, sltr):
-        """ See if sltr matches a patches that is (in older version or different
-            architecture perhaps) already installed.
-        """
-        inst = queries.installed(self.sack, get_query=True)
-        inst = inst.filter(pkg=sltr.matches())
-        if len(inst) > 0:
-            return inst[0]
-        return None
-
     def _query_matches_installed(self, query):
         """ See what packages in the query match packages (also in older
             versions, but always same architecture) that are already installed.
@@ -791,6 +781,14 @@ class YumBase(object):
             else:
                 avail_l.extend(avail_per_arch[na])
         return inst_l, avail_l
+
+    def _sltr_matches_installed(self, sltr):
+        """ See if sltr matches a patches that is (in older version or different
+            architecture perhaps) already installed.
+        """
+        inst = queries.installed(self.sack, get_query=True)
+        inst = inst.filter(pkg=sltr.matches())
+        return list(inst)
 
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
@@ -2525,16 +2523,14 @@ class YumBase(object):
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
                 return self.tsInfo
-            pkg = self._sltr_matches_installed(sltr)
-            if pkg:
-                msg_installed(pkg)
-            else:
-                self.tsInfo.add_selector_install(sltr)
+            already_inst = self._sltr_matches_installed(sltr)
+            if already_inst:
+                msg_installed(already_inst[0])
+            self.tsInfo.add_selector_install(sltr)
         else:
             q = subj.get_best_query(self.sack)
-            (already_inst, available) = self._query_matches_installed(q)
-            if already_inst:
-                map(msg_installed, already_inst)
+            already_inst, available = self._query_matches_installed(q)
+            map(msg_installed, already_inst)
             map(self.tsInfo.addInstall, available)
         return self.tsInfo
 
