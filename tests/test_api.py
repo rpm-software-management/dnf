@@ -1,6 +1,3 @@
-# __init__.py
-# The toplevel DNF package.
-#
 # Copyright (C) 2012  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
@@ -18,5 +15,9 @@
 # Red Hat, Inc.
 #
 
-import dnf.yum
-Base = dnf.yum.YumBase
+import unittest
+import dnf
+
+class APITest(unittest.TestCase):
+    def test_base(self):
+        self.assertIsInstance(dnf.Base, type)
