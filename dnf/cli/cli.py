@@ -1543,6 +1543,19 @@ class YumOptionParser(OptionParser):
             ret.extend(arg.replace(",", " ").split())
         return ret
 
+    @staticmethod
+    def _non_nones2dict(opts):
+        in_dct =  opts.__dict__
+        dct = {k: in_dct[k] for k in in_dct
+               if in_dct[k] is not None
+               if in_dct[k] != []}
+        for k in ['enableplugins', 'disableplugins']:
+            v = dct.get(k, None)
+            if v is None:
+                continue
+            dct[k] = YumOptionParser._splitArg(v)
+        return dct
+
     def setupYumConfig(self, args):
         """Parse command line options.
 

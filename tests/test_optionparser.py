@@ -18,6 +18,7 @@
 import base
 from dnf.cli.cli import YumOptionParser
 import mock
+import optparse
 
 class OptionParserTest(base.TestCase):
     def setUp(self):
@@ -34,3 +35,11 @@ class OptionParserTest(base.TestCase):
         del self.yumbase.repos
         # this doesn't try to access yumbase.repos:
         parser.setupYumConfig(args=['update', '--nogpgcheck'])
+
+    def test_non_nones2dict(self):
+        parser = YumOptionParser(self.yumbase)
+        values = parser.parse_args(args=['-y', '--enableplugin=meter,maid'])[0]
+        self.assertIsInstance(values, optparse.Values)
+        dct = parser._non_nones2dict(values)
+        self.assertTrue(dct['assumeyes'])
+        self.assertItemsEqual(dct['enableplugins'], ['meter', 'maid'])
