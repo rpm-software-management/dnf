@@ -732,6 +732,7 @@ class YumConf(StartupConf):
 
     assumeyes = BoolOption(False)
     assumeno  = BoolOption(False)
+    defaultyes = BoolOption(False)
     alwaysprompt = BoolOption(True)
     exactarch = BoolOption(True)
     diskspacecheck = BoolOption(True)

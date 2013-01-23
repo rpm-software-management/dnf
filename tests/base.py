@@ -154,6 +154,7 @@ class FakeTerm(object):
 class FakeConf(object):
     def __init__(self):
         self.assumeyes = None
+        self.defaultyes = False
         self.best = False
         self.color = 'never'
         self.commands = []

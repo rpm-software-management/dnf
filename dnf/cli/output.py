@@ -952,8 +952,6 @@ class YumOutput:
                 return 1, ['No Packages to list']
             return 0, []
 
-
-
     def userconfirm(self):
         """Get a yes or no from the user, and default to No
 
@@ -962,31 +960,33 @@ class YumOutput:
         """
         yui = (to_unicode(_('y')), to_unicode(_('yes')))
         nui = (to_unicode(_('n')), to_unicode(_('no')))
-        aui = (yui[0], yui[1], nui[0], nui[1])
+        aui = yui + nui
         while True:
+            msg = _('Is this ok [y/N]: ')
+            if self.conf.defaultyes:
+                msg = _('Is this ok [Y/n]: ')
             try:
-                choice = dnf.i18n.input(_('Is this ok [y/N]: '))
-            except UnicodeEncodeError:
-                raise
-            except UnicodeDecodeError:
-                raise
-            except:
-                choice = ''
-            choice = to_unicode(choice)
-            choice = choice.lower()
-            if len(choice) == 0 or choice in aui:
-                break
-            # If the enlish one letter names don't mix, allow them too
-            if u'y' not in aui and u'y' == choice:
-                choice = yui[0]
-                break
-            if u'n' not in aui and u'n' == choice:
+                choice = dnf.i18n.input(msg)
+            except KeyboardInterrupt:
+                choice = nui[0]
+            choice = to_unicode(choice).lower()
+            if len(choice) == 0:
+                choice = yui[0] if self.conf.defaultyes else nui[0]
+            if choice in aui:
                 break
 
-        if len(choice) == 0 or choice not in yui:
-            return False
-        else:
+            # If the English one letter names don't mix with the translated
+            # letters, allow them too:
+            if u'y' == choice and u'y' not in aui:
+                choice = yui[0]
+                break
+            if u'n' == choice and u'n' not in aui:
+                choice = nui[0]
+                break
+
+        if choice in yui:
             return True
+        return False
 
     def _cli_confirm_gpg_key_import(self, keydict):
         # FIXME what should we be printing here?
