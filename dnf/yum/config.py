@@ -549,8 +549,10 @@ class ThrottleOption(BytesOption):
             return BytesOption.parse(self, s)
 
 class BaseConfig(object):
-    """Base class for storing configuration definitions. Subclass when
-    creating your own definitions.
+    """Base class for storing configuration definitions.
+
+    Subclass when creating your own definitions.
+
     """
 
     def __init__(self):
@@ -566,6 +568,11 @@ class BaseConfig(object):
         for name, value in self.iteritems():
             out.append('%s: %r' % (name, value))
         return '\n'.join(out)
+
+    def override(self, ovr_dict):
+        for (ovr_opt, ovr_val) in ovr_dict.iteritems():
+            opt = self.optionobj(ovr_opt)
+            setattr(self, ovr_opt, ovr_val)
 
     def populate(self, parser, section, parent=None):
         """Set option values from an INI file section.

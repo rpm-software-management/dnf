@@ -65,6 +65,20 @@ class YumConfTest(unittest.TestCase):
                          "https://bugzilla.redhat.com/enter_bug.cgi" +
                          "?product=Fedora&component=dnf")
 
+    def test_overrides(self):
+        conf = YumConf()
+        self.assertFalse(conf.assumeyes)
+        self.assertFalse(conf.assumeno)
+        self.assertEqual(conf.color_list_installed_older, 'bold')
+
+        override = {'assumeyes': True,
+                    'color_list_installed_older': 'timid'}
+        conf.override(override)
+        self.assertTrue(conf.assumeyes)
+        self.assertFalse(conf.assumeno) # no change
+        self.assertEqual(conf.color_list_installed_older, 'timid')
+        self.assertRaises(KeyError, conf.override, {'assumenothing': True})
+
 class GoalParametersTest(unittest.TestCase):
     def test_default(self):
         gp = GoalParameters()
