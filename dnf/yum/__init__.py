@@ -152,7 +152,6 @@ class YumBase(object):
     def __init__(self):
         self._conf = config.YumConf()
         self._conf.uid = 0
-        self._yumvars = None
         self._ts = None
         self._tsInfo = None
         self._comps = None
@@ -211,10 +210,6 @@ class YumBase(object):
         return self._conf
 
     @property
-    def yumvar(self):
-        return self._yumvar
-
-    @property
     @dnf.util.lazyattr("_rpm")
     def rpm(self):
         return dnf.rpmUtils.connection.RpmConnection(self.conf.installroot)
@@ -255,7 +250,6 @@ class YumBase(object):
         yumvar = config.init_yumvar(self.conf.installroot,
                                     self.arch.canonarch, self.arch.basearch,
                                     conf.releasever, conf.uuid)
-        self._yumvar = yumvar
         return yumvar
 
     def read_conf_file(self, path=None, root="/", releasever=None,
@@ -284,8 +278,8 @@ class YumBase(object):
         # repos are ver/arch specific so add $basearch/$releasever
         self._conf._repos_persistdir = os.path.normpath(
             '%s/repos/%s/%s/' % (self._conf.persistdir,
-                                 self.yumvar.get('basearch', '$basearch'),
-                                 self.yumvar.get('releasever', '$releasever')))
+                                 yumvar.get('basearch', '$basearch'),
+                                 yumvar.get('releasever', '$releasever')))
         logginglevels.setFileLogs(self.conf.logdir, self._cleanup)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         return self._conf
