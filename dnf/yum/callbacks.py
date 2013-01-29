@@ -16,7 +16,7 @@
 
 # imports
 
-import logging 
+import logging
 from urlgrabber.progress import BaseMeter,format_time,format_number
 
 
@@ -41,7 +41,7 @@ class ProcessTransBaseCallback:
     """
     def __init__(self):
         self.logger = logging.getLogger('yum.verbose.ProcessTrasactionBaseCallback')
-        
+
     def event(self,state,data=None):
         """Handle an event by logging it.
 
@@ -57,7 +57,7 @@ class ProcessTransNoOutputCallback:
     """
     def __init__(self):
         pass
-         
+
     def event(self,state,data=None):
         """Handle an event.
 
@@ -65,18 +65,18 @@ class ProcessTransNoOutputCallback:
         :param data: data associated with the callback
         """
         pass
-    
+
 class DownloadBaseCallback( BaseMeter ):
     """This is a base class that can be extended to implement a custom
     download progress handler to be used with
     :func:`Base.repos.setProgressBar`.
-    
+
     Example::
-    
+
        from callbacks import DownloadBaseCallback
-       
+
        class MyDownloadCallback(  DownloadBaseCallback ):
-   
+
            def updateProgress(self,name,frac,fread,ftime):
                '''
                Update the progressbar
@@ -87,8 +87,8 @@ class DownloadBaseCallback( BaseMeter ):
                '''
                pct = int( frac*100 )
                print " %s : %s " % (name,pct)
-   
-   
+
+
        if __name__ == '__main__':
            my = Base()
            my.doConfigSetup()
@@ -100,7 +100,7 @@ class DownloadBaseCallback( BaseMeter ):
     def __init__(self):
         BaseMeter.__init__( self )
         self.totSize = ""   # Total size to download in a formatted string (Kb, MB etc)
-        
+
     def update( self, amount_read, now=None ):
         """Update the status bar.
 
@@ -162,4 +162,3 @@ class DownloadBaseCallback( BaseMeter ):
 
         """
         pass
-        
