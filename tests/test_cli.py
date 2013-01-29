@@ -58,7 +58,7 @@ class Cli(unittest.TestCase):
         self.assertTrue(self.yumbase._override_sigchecks)
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
 
-@mock.patch('dnf.yum.YumBase.doLoggingSetup', new=mock.MagicMock)
+@mock.patch('dnf.yum.Base.doLoggingSetup', new=mock.MagicMock)
 class TestConfigure(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")

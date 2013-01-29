@@ -1938,7 +1938,7 @@ class YumUrlPackage(YumLocalPackage):
     """Class to handle an arbitrary package from a URL
        this inherits most things from YumLocalPackage, but will download a
        remote package to make it local.
-       init takes a YumBase, a ts instance and a url to the package."""
+       init takes a Base, a ts instance and a url to the package."""
 
     def __init__(self, yb=None, ts=None, url=None, ua=None):
         if url.lower().startswith("file:"):

@@ -29,12 +29,12 @@ import unittest
 
 class YumBaseTest(unittest.TestCase):
     def test_instance(self):
-        yumbase = dnf.yum.YumBase()
+        yumbase = dnf.yum.Base()
 
     @mock.patch('dnf.const.PID_FILENAME', "/var/run/dnf.unittest.pid")
     def test_locking(self):
         # tricky setup:
-        yumbase = dnf.yum.YumBase()
+        yumbase = dnf.yum.Base()
         yumbase._conf = mock.Mock()
         yumbase.conf.cache = None
         yumbase.cache_c.prefix = "/tmp"
@@ -58,7 +58,7 @@ class YumBaseTest(unittest.TestCase):
         yumbase._push_userinstalled(goal)
         goal.userinstalled.assert_called_with(pkg)
 
-# test YumBase methods that need the sack
+# test Base methods that need the sack
 class MockYumBaseTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")

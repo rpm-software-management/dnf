@@ -56,7 +56,7 @@ class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
         self._filelists = False
-        self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self.verbose_logger = logging.getLogger("yum.verbose.Base")
 
     def rpmdb_version(self, yumdb):
         pkgs = queries.installed(self)

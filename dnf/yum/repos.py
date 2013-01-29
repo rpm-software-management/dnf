@@ -24,11 +24,11 @@ import Errors
 from weakref import proxy as weakref
 
 class _wrap_ayum_getKeyForRepo:
-    """ This is a wrapper for calling YumBase.getKeyForRepo() because
+    """ This is a wrapper for calling Base.getKeyForRepo() because
         otherwise we take a real reference through the bound method and
-        that is d00m (this applies to YumBase and RepoStorage, hence why
+        that is d00m (this applies to Base and RepoStorage, hence why
         we have a seperate class).
-        A "better" fix might be to explicitly pass the YumBase instance to
+        A "better" fix might be to explicitly pass the Base instance to
         the callback ... API change! """
     def __init__(self, ayum, ca=False):
         self.ayum = weakref(ayum)
@@ -107,8 +107,8 @@ class RepoStorage:
             repoobj.quick_enable_disable = self.quick_enable_disable
         else:
             self._cache_enabled_repos = None
-        #  At least pulp reuses RepoStorage but doesn't have a "real" YumBase()
-        # so we can't guarantee new YumBase() attrs. exist.
+        #  At least pulp reuses RepoStorage but doesn't have a "real" Base()
+        # so we can't guarantee new Base() attrs. exist.
         if not hasattr(self.ayum, '_override_sigchecks'):
             repoobj._override_sigchecks = False
         else:

@@ -99,14 +99,14 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 #  Setup a default_grabber UA here that says we are yum, done using the global
 # so that other API users can easily add to it if they want.
 #  Don't do it at init time, or we'll get multiple additions if you create
-# multiple YumBase() objects.
+# multiple Base() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
 class _YumPreRepoConf:
     """This is the configuration interface for the repos configuration
     configuration.  To change configuration settings such what
     callbacks are used, change the values here. Later, when
-    :func:`YumBase.repos` is first called, all of the options will be
+    :func:`Base.repos` is first called, all of the options will be
     automatically configured.
     """
     def __init__(self):
@@ -143,7 +143,7 @@ class _YumCostExclude:
                 return True
         return False
 
-class YumBase(object):
+class Base(object):
     """This is a primary structure and base class. It houses the
     objects and methods needed to perform most things in yum. It is
     almost an abstract class in that you will need to add your own
@@ -161,8 +161,8 @@ class YumBase(object):
         self._ts_save_file = None
         self._not_found_a = {}
         self._not_found_i = {}
-        self.logger = logging.getLogger("yum.YumBase")
-        self.verbose_logger = logging.getLogger("yum.verbose.YumBase")
+        self.logger = logging.getLogger("yum.Base")
+        self.verbose_logger = logging.getLogger("yum.verbose.Base")
         self._override_sigchecks = False
         self._repos = RepoStorage(self)
         self.repo_setopts = {} # since we have to use repo_setopts in base and
@@ -219,7 +219,7 @@ class YumBase(object):
         if self._sack:
             return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
-        # class and a YumBase reference.
+        # class and a Base reference.
         start = time.time()
         self._sack = sack.build_sack(self)
         self._sack.load_system_repo(build_cache=True)

@@ -92,13 +92,13 @@ def print_versions(pkgs, yumbase):
         #                                    sm_ui_date(pkg.committime))
 
 
-class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
+class YumBaseCli(dnf.yum.Base, output.YumOutput):
     """This is the base class for yum cli."""
 
     def __init__(self):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
-        dnf.yum.YumBase.__init__(self)
+        dnf.yum.Base.__init__(self)
         output.YumOutput.__init__(self)
         logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
@@ -121,9 +121,9 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
         # Call parent class to do the bulk of work
         # (this also ensures that reposetup plugin hook is called)
         if thisrepo:
-            dnf.yum.YumBase._getRepos(self, thisrepo=thisrepo, doSetup=True)
+            dnf.yum.Base._getRepos(self, thisrepo=thisrepo, doSetup=True)
         else:
-            dnf.yum.YumBase._getRepos(self, thisrepo=thisrepo)
+            dnf.yum.Base._getRepos(self, thisrepo=thisrepo)
 
         if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
             self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
@@ -771,7 +771,7 @@ class YumBaseCli(dnf.yum.YumBase, output.YumOutput):
     def deplist(self, args):
         """Print out a formatted list of dependencies for a list of
         packages.  This is a cli wrapper method for
-        :class:`dnf.yum.YumBase.findDeps`.
+        :class:`dnf.yum.Base.findDeps`.
 
         :param args: a list of names or wildcards specifying packages
            that should have their dependenices printed

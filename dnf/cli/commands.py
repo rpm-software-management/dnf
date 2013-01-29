@@ -188,7 +188,7 @@ class Command:
         return self.cli.base
 
     def configure(self):
-        """ Do any command-specific YumBase configuration. """
+        """ Do any command-specific Base configuration. """
         pass
 
     def doneCommand(self, msg, *args):
@@ -661,7 +661,6 @@ class EraseCommand(Command):
     """
 
     def configure(self):
-        """ Do any command-specific YumBase configuration. """
         self.base.goal_parameters.allow_uninstall = True
 
     def getNames(self):

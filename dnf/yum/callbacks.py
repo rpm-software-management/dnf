@@ -37,7 +37,7 @@ PT_MESSAGES = { PT_DOWNLOAD    : "Downloading Packages",
 
 class ProcessTransBaseCallback:
     """A class to handle callbacks from
-    :func:`YumBase.processTransaction`.
+    :func:`Base.processTransaction`.
     """
     def __init__(self):
         self.logger = logging.getLogger('yum.verbose.ProcessTrasactionBaseCallback')
@@ -53,7 +53,7 @@ class ProcessTransBaseCallback:
 
 class ProcessTransNoOutputCallback:
     """A class to handle callbacks from
-    :func:`YumBase.processTransaction`, without logging them.
+    :func:`Base.processTransaction`, without logging them.
     """
     def __init__(self):
         pass
@@ -69,7 +69,7 @@ class ProcessTransNoOutputCallback:
 class DownloadBaseCallback( BaseMeter ):
     """This is a base class that can be extended to implement a custom
     download progress handler to be used with
-    :func:`YumBase.repos.setProgressBar`.
+    :func:`Base.repos.setProgressBar`.
     
     Example::
     
@@ -90,7 +90,7 @@ class DownloadBaseCallback( BaseMeter ):
    
    
        if __name__ == '__main__':
-           my = YumBase()
+           my = Base()
            my.doConfigSetup()
            dnlcb = MyDownloadCallback()
            my.repos.setProgressBar( dnlcb )

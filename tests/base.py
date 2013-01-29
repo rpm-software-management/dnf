@@ -78,7 +78,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkgcls=dnf.package.Package,
                                pkginitval=yumbase)
 
-class MockYumBase(dnf.yum.YumBase):
+class MockYumBase(dnf.yum.Base):
     """ See also: hawkey/test/python/__init__.py.
 
         Note that currently the used TestSack has always architecture set to
@@ -110,7 +110,7 @@ class MockYumBase(dnf.yum.YumBase):
         if self._sack:
             return self._sack
         # Create the Sack, tell it how to build packages, passing in the Package
-        # class and a YumBase reference.
+        # class and a Base reference.
         self._sack = TestSack(repo_dir(), self)
         self._sack.load_system_repo()
         for repo in self.extra_repos:

@@ -19,4 +19,4 @@
 #
 
 import dnf.yum
-Base = dnf.yum.YumBase
+Base = dnf.yum.Base
