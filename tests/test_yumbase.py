@@ -35,11 +35,10 @@ class YumBaseTest(unittest.TestCase):
     def test_locking(self):
         # tricky setup:
         yumbase = dnf.yum.YumBase()
-        yumbase.conf = mock.Mock()
+        yumbase._conf = mock.Mock()
         yumbase.conf.cache = None
         yumbase.cache_c.prefix = "/tmp"
         yumbase.cache_c.suffix = ""
-        del yumbase.preconf
 
         self.assertIsNone(yumbase._lockfile)
         yumbase.doLock()

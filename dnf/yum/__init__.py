@@ -102,32 +102,6 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 # multiple YumBase() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
-
-class _YumPreBaseConf:
-    """This is the configuration interface for the :class:`YumBase`
-    configuration.  To change configuration settings such as whether
-    plugins are on or off, or the value of debuglevel, change the
-    values here. Later, when :func:`YumBase.conf` is first called, all
-    of the options will be automatically configured.
-    """
-    def __init__(self):
-        self.fn = const.CONF_FILENAME
-        self.root = '/'
-        self.init_plugins = True
-        self.plugin_types = (plugins.TYPE_CORE,)
-        self.optparser = None
-        self.debuglevel = None
-        self.errorlevel = None
-        self.disabled_plugins = None
-        self.enabled_plugins = None
-        self.syslog_ident = None
-        self.syslog_facility = None
-        self.syslog_device = None
-        self.arch = None
-        self.releasever = None
-        self.uuid = None
-
-
 class _YumPreRepoConf:
     """This is the configuration interface for the repos configuration
     configuration.  To change configuration settings such what
@@ -176,12 +150,13 @@ class YumBase(object):
     class above it for most real use.
     """
     def __init__(self):
-        self._conf = None
+        self._conf = config.YumConf()
+        self._conf.uid = 0
+        self._yumvars = None
         self._ts = None
         self._tsInfo = None
         self._comps = None
         self._history = None
-        self._pkgSack = None
         self._lockfile = None
         self._tags = None
         self._ts_save_file = None
@@ -202,7 +177,6 @@ class YumBase(object):
 
         self.mediagrabber = None
         self.arch = ArchStorage()
-        self.preconf = _YumPreBaseConf()
         self.prerepoconf = _YumPreRepoConf()
 
         self.run_with_package_names = set()
@@ -231,6 +205,14 @@ class YumBase(object):
                                       yum_repo.name)
         yum_repo.hawkey_repo = repo
         self._sack.load_yum_repo(repo, build_cache=True, load_filelists=True)
+
+    @property
+    def conf(self):
+        return self._conf
+
+    @property
+    def yumvar(self):
+        return self._yumvar
 
     @property
     @dnf.util.lazyattr("_rpm")
@@ -269,101 +251,43 @@ class YumBase(object):
         if self._repos:
             self._repos.close()
 
-    def _getConfig(self):
-        '''
-        Parse and load Yum's configuration files and call hooks initialise
-        plugins and logging. Uses self.preconf for pre-configuration,
-        configuration. '''
+    def _init_yumvar(self, conf):
+        yumvar = config.init_yumvar(self.conf.installroot,
+                                    self.arch.canonarch, self.arch.basearch,
+                                    conf.releasever, conf.uuid)
+        self._yumvar = yumvar
+        return yumvar
 
-        if self._conf:
-            return self._conf
+    def read_conf_file(self, path=None, root="/", releasever=None,
+                       overrides=None):
         conf_st = time.time()
-
-        fn = self.preconf.fn
-        root = self.preconf.root
-        init_plugins = self.preconf.init_plugins
-        plugin_types = self.preconf.plugin_types
-        optparser = self.preconf.optparser
-        debuglevel = self.preconf.debuglevel
-        errorlevel = self.preconf.errorlevel
-        disabled_plugins = self.preconf.disabled_plugins
-        enabled_plugins = self.preconf.enabled_plugins
-        syslog_ident    = self.preconf.syslog_ident
-        syslog_facility = self.preconf.syslog_facility
-        syslog_device   = self.preconf.syslog_device
-        releasever = self.preconf.releasever
-        arch = self.preconf.arch
-        uuid = self.preconf.uuid
-
-        if arch: # if preconf is setting an arch we need to pass that up
-            self.arch.setup_arch(arch)
-        else:
-            arch = self.arch.canonarch
-
-        startupconf = config.readStartupConfig(fn, root, releasever)
-        startupconf.arch = arch
+        path = path or const.CONF_FILENAME
+        startupconf = config.readStartupConfig(path, root, releasever)
+        startupconf.arch = self.arch.canonarch
         startupconf.basearch = self.arch.basearch
-        if uuid:
-            startupconf.uuid = uuid
 
-        if startupconf.gaftonmode:
-            global _
-            _ = i18n.dummy_wrapper
+        yumvar = self._init_yumvar(startupconf)
+        self._conf = config.readMainConfig(startupconf, yumvar)
+        self._conf.yumvar = yumvar
+        if overrides is not None:
+            self._conf.override(overrides)
 
-        if debuglevel != None:
-            startupconf.debuglevel = debuglevel
-        if errorlevel != None:
-            startupconf.errorlevel = errorlevel
-        if syslog_ident != None:
-            startupconf.syslog_ident = syslog_ident
-        if syslog_facility != None:
-            startupconf.syslog_facility = syslog_facility
-        if syslog_device != None:
-            startupconf.syslog_device = syslog_device
-        if releasever == '/':
-            if startupconf.installroot == '/':
-                releasever = None
-            else:
-                releasever = config._getsysver("/",startupconf.distroverpkg)
-        if releasever != None:
-            startupconf.releasever = releasever
-
-        self.doLoggingSetup(startupconf.debuglevel, startupconf.errorlevel,
-                            startupconf.syslog_ident,
-                            startupconf.syslog_facility,
-                            startupconf.syslog_device)
-
-        if init_plugins and startupconf.plugins:
-            self.doPluginSetup(optparser, plugin_types, startupconf.pluginpath,
-                    startupconf.pluginconfpath,disabled_plugins,enabled_plugins)
-
-        self._conf = config.readMainConfig(startupconf)
-
-        #  We don't want people accessing/altering preconf after it becomes
-        # worthless. So we delete it, and thus. it'll raise AttributeError
-        del self.preconf
-
-        # Packages used to run yum...
+        self.doLoggingSetup(self._conf.debuglevel,
+                            self._conf.errorlevel,
+                            self._conf.syslog_ident,
+                            self._conf.syslog_facility,
+                            self._conf.syslog_device)
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
+        self._conf.uid = os.geteuid()
 
-        # run the postconfig plugin hook
-        self.plugins.run('postconfig')
-        #  Note that Pungi has historically replaced _getConfig(), and it sets
-        # up self.conf.yumvar but not self.yumvar ... and AFAIK nothing needs
-        # to use YumBase.yumvar, so it's probably easier to just semi-deprecate
-        # this (core now only uses YumBase.conf.yumvar).
-        self.yumvar = self.conf.yumvar
-
-        # who are we:
-        self.conf.uid = os.geteuid()
         # repos are ver/arch specific so add $basearch/$releasever
-        self.conf._repos_persistdir = os.path.normpath('%s/repos/%s/%s/'
-               % (self.conf.persistdir,  self.yumvar.get('basearch', '$basearch'),
-                  self.yumvar.get('releasever', '$releasever')))
+        self._conf._repos_persistdir = os.path.normpath(
+            '%s/repos/%s/%s/' % (self._conf.persistdir,
+                                 self.yumvar.get('basearch', '$basearch'),
+                                 self.yumvar.get('releasever', '$releasever')))
         logginglevels.setFileLogs(self.conf.logdir, self._cleanup)
         self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
-        self.plugins.run('init')
         return self._conf
 
     def doLoggingSetup(self, debuglevel, errorlevel,
@@ -740,10 +664,6 @@ class YumBase(object):
                      fset=lambda self, value: setattr(self, "_repos", value),
                      fdel=lambda self: self._delRepos(),
                      doc="Repo Storage object - object of yum repositories")
-    conf = property(fget=lambda self: self._getConfig(),
-                    fset=lambda self, value: setattr(self, "_conf", value),
-                    fdel=lambda self: setattr(self, "_conf", None),
-                    doc="Yum Config Object")
     tsInfo = property(fget=lambda self: self._getTsInfo(),
                       fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),
@@ -1251,16 +1171,10 @@ class YumBase(object):
            that was given as a parameter to the :func:`doLock` call
            that closed the lock is used
         """
-        # if we're not root then we don't lock - just return nicely
-        #  Note that we can get here from __del__, so if we haven't created
-        # YumBase.conf we don't want to do so here as creating stuff inside
-        # __del__ is bad.
-        if hasattr(self, 'preconf'):
-            return
-
-        #  Obviously, we can't lock random places as non-root, but we still want
-        # to get rid of our lock file. Given we now have _lockfile I'm pretty
-        # sure nothing should ever pass lockfile in here anyway.
+        # If we're not root then we don't lock - just return nicely. Obviously,
+        # we can't lock random places as non-root, but we still want to get rid
+        # of our lock file. Given we now have _lockfile I'm pretty sure nothing
+        # should ever pass lockfile in here anyway.
         if self.conf.uid != 0:
             lockfile = None
 

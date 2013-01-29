@@ -21,3 +21,11 @@ import dnf
 class APITest(unittest.TestCase):
     def test_base(self):
         self.assertIsInstance(dnf.Base, type)
+
+    def test_conf(self):
+        base = dnf.Base()
+        self.assertIsInstance(base.conf.installroot, str)
+        # reasonable default
+        self.assertEqual(base.conf.installroot, '/')
+        # assignable
+        dnf.conf.installroot = '/mnt/rootimage'

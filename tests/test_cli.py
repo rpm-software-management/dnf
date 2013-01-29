@@ -49,15 +49,6 @@ class Cli(unittest.TestCase):
         update = self.cli.cli_commands['update']
         self.assertIs(upgrade, update)
 
-    @mock.patch('dnf.cli.commands.checkEnabledRepo', returns=None)
-    def test_configure(self, mock_enabledRepo):
-        """ Test Cli.configure.
-
-            For not just see that the method runs.
-        """
-        self.cli.configure(['update'])
-        self.assertEqual(self.cli.cmdstring, "dnf update ")
-
     def test_configure_repos(self):
         opts = optparse.Values()
         opts.nogpgcheck = True
@@ -66,3 +57,23 @@ class Cli(unittest.TestCase):
         self.cli._configure_repos(opts)
         self.assertTrue(self.yumbase._override_sigchecks)
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
+
+@mock.patch('dnf.yum.YumBase.doLoggingSetup', new=mock.MagicMock)
+class TestConfigure(unittest.TestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("main")
+        self.cli = dnf.cli.cli.Cli(self.yumbase)
+
+    def test_configure(self):
+        """ Test Cli.configure.
+
+            For now just see that the method runs.
+        """
+        self.cli.configure(['update'])
+        self.assertEqual(self.cli.cmdstring, "dnf update ")
+
+    def test_configure_verbose(self):
+        self.cli.configure(['-v', 'update'])
+        self.assertEqual(self.cli.cmdstring, "dnf -v update ")
+        self.assertEqual(self.yumbase.conf.debuglevel, 6)
+        self.assertEqual(self.yumbase.conf.errorlevel, 6)

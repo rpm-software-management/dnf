@@ -1362,28 +1362,17 @@ class Cli(object):
             opts.debuglevel = opts.errorlevel = 6
 
         # Read up configuration options and initialise plugins
+        overrides = self.optparser._non_nones2dict(opts)
+        releasever = opts.releasever
         try:
-            pc = self.base.preconf
-            pc.fn = opts.conffile
-            pc.root = root
-            pc.init_plugins = not opts.noplugins
-            pc.plugin_types = (dnf.yum.plugins.TYPE_CORE,
-                               dnf.yum.plugins.TYPE_INTERACTIVE)
-            pc.optparser = self.optparser
-            pc.debuglevel = opts.debuglevel
-            pc.errorlevel = opts.errorlevel
-            pc.disabled_plugins = self.optparser._splitArg(opts.disableplugins)
-            pc.enabled_plugins  = self.optparser._splitArg(opts.enableplugins)
-            pc.releasever = opts.releasever
-            self.base.conf
+            kwargs = {'root': root,
+                      'releasever': releasever,
+                      'overrides': overrides}
+            if opts.conffile:
+                kwargs['path'] = opts.conffile,
+            self.base.read_conf_file(**kwargs)
 
-            for item in  bad_setopt_tm:
-                msg = "Setopt argument has multiple values: %s"
-                self.logger.warning(msg % item)
-            for item in  bad_setopt_ne:
-                msg = "Setopt argument has no value: %s"
-                self.logger.warning(msg % item)
-            # now set  all the non-first-start opts from main from our setopts
+            # now set all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:
                     if not hasattr(self.base.conf, opt):
@@ -1401,6 +1390,12 @@ class Cli(object):
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)
             sys.exit(1)
+        for item in bad_setopt_tm:
+            msg = "Setopt argument has multiple values: %s"
+            self.logger.warning(msg % item)
+        for item in  bad_setopt_ne:
+            msg = "Setopt argument has no value: %s"
+            self.logger.warning(msg % item)
 
         # update usage in case plugins have added commands
         self.optparser.set_usage(self._make_usage())
@@ -1414,18 +1409,10 @@ class Cli(object):
             opts.quiet = True
             opts.verbose = False
 
-        #  Check that firstParse didn't miss anything, and warn the user if it
-        # did ... because this is really magic, and unexpected.
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = 6
-        if opts.debuglevel != pc.debuglevel or opts.errorlevel != pc.errorlevel:
-            self.logger.warning("Ignored option -q, -v, -d or -e (probably due to merging: -yq != -y -q)")
-        #  getRoot() changes it, but then setupYumConfig() changes it back. So
-        # don't test for this, if we are using --installroot.
-        if root == '/' and opts.conffile != pc.fn:
-            self.logger.warning("Ignored option -c (probably due to merging -yc != -y -c)")
 
         # configuration has been collected, accumulate it into sensible form
         self.base.cache_c.prefix = self.base.conf.cachedir
@@ -1693,6 +1680,8 @@ class YumOptionParser(OptionParser):
         # Note that we can't use the default action="help" because of the
         # fact that print_help() unconditionally does .encode() ... which is
         # bad on unicode input.
+        # All defaults need to be a None, so we can always tell whether the user
+        # has set something or whether we are getting a default.
         group.conflict_handler = "resolve"
         group.add_option("-h", "--help", action="callback",
                         callback=self._help_callback,
@@ -1706,7 +1695,7 @@ class YumOptionParser(OptionParser):
                 action="store_true",
                 help=_("run entirely from system cache, don't update cache"))
         group.add_option("-c", "--config", dest="conffile",
-                default=dnf.const.CONF_FILENAME,
+                default=None,
                 help=_("config file location"), metavar='[config file]')
         group.add_option("-R", "--randomwait", dest="sleeptime", type='int',
                 default=None,

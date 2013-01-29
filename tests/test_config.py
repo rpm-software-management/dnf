@@ -77,7 +77,6 @@ class YumConfTest(unittest.TestCase):
         self.assertTrue(conf.assumeyes)
         self.assertFalse(conf.assumeno) # no change
         self.assertEqual(conf.color_list_installed_older, 'timid')
-        self.assertRaises(KeyError, conf.override, {'assumenothing': True})
 
 class GoalParametersTest(unittest.TestCase):
     def test_default(self):

@@ -94,7 +94,7 @@ class MockYumBase(dnf.yum.YumBase):
             self._repos.add(repo)
 
         self._yumdb = MockYumDB()
-        self.conf = FakeConf()
+        self._conf = FakeConf()
         self.extra_repos = extra_repos
         self.tsInfo = dnf.yum.transactioninfo.TransactionData()
         self.term = FakeTerm()

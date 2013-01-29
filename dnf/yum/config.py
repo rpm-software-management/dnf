@@ -64,13 +64,13 @@ class Option(object):
         if parse_default:
             default = self.parse(default)
         self.default = default
-        self.deleted = False
 
     def _setattrname(self):
         """Calculate the internal attribute name used to store option state in
         configuration instances.
         """
         self._attrname = '__opt%d' % id(self)
+        self._attrname_deleted = '__opt%d_deleted' % id(self)
 
     def __get__(self, obj, objtype):
         """Called when the option is read (via the descriptor protocol).
@@ -80,7 +80,7 @@ class Option(object):
         :return: The parsed option value or the default value if the value
            wasn't set in the configuration file.
         """
-        if self.deleted:
+        if getattr(obj, self._attrname_deleted, None) is True:
             raise RuntimeError("Option is no longer a part of the conf.")
         if obj is None:
             return self
@@ -104,7 +104,7 @@ class Option(object):
         setattr(obj, self._attrname, value)
 
     def __delete__(self, obj):
-        self.deleted = True
+        setattr(obj, self._attrname_deleted, True)
 
     def setup(self, obj, name):
         """Initialise the option for a config instance.
@@ -570,9 +570,14 @@ class BaseConfig(object):
         return '\n'.join(out)
 
     def override(self, ovr_dict):
+        """Override config values with those from ovr_dict.
+
+        Do nothing about the keys that are not options.
+        """
         for (ovr_opt, ovr_val) in ovr_dict.iteritems():
-            opt = self.optionobj(ovr_opt)
-            setattr(self, ovr_opt, ovr_val)
+            opt = self.optionobj(ovr_opt, exceptions=False)
+            if opt is not None:
+                setattr(self, ovr_opt, ovr_val)
 
     def populate(self, parser, section, parent=None):
         """Set option values from an INI file section.
@@ -935,6 +940,36 @@ class VersionGroupConf(BaseConfig):
     pkglist = ListOption()
     run_with_packages = BoolOption(False)
 
+def init_yumvar(installroot, canonarch, basearch, releasever, uuid):
+    yumvar = {}
+    for num in range(0, 10):
+        env = 'YUM%d' % num
+        val = os.environ.get(env, '')
+        if val:
+            yumvar[env.lower()] = val
+    yumvar['arch'] = canonarch
+    yumvar['basearch'] = basearch
+    yumvar['releasever'] = releasever
+    yumvar['uuid'] = uuid
+
+    # Read the FS yumvar
+    try:
+        dir_fsvars = installroot + "/etc/yum/vars/"
+        fsvars = os.listdir(dir_fsvars)
+    except OSError:
+        fsvars = []
+    for fsvar in fsvars:
+        if os.path.islink(dir_fsvars + fsvar):
+            continue
+        try:
+            val = open(dir_fsvars + fsvar).readline()
+            if val and val[-1] == '\n':
+                val = val[:-1]
+        except (OSError, IOError):
+            continue
+        yumvar[fsvar] = val
+
+    return yumvar
 
 def readStartupConfig(configfile, root, releasever=None):
     """Parse Yum's main configuration file and return a
@@ -977,21 +1012,12 @@ def readStartupConfig(configfile, root, releasever=None):
 
     return startupconf
 
-def readMainConfig(startupconf):
+def readMainConfig(startupconf, yumvar):
     """Parse Yum's main configuration file
 
     :param startupconf: :class:`StartupConf` instance as returned by readStartupConfig()
     :return: Populated :class:`YumConf` instance
     """
-    # Set up substitution vars
-    yumvars = _getEnvVar()
-    yumvars['basearch'] = startupconf.basearch
-    yumvars['arch'] = startupconf.arch
-    yumvars['releasever'] = startupconf.releasever
-    yumvars['uuid'] = startupconf.uuid
-    # Note: We don't setup the FS yumvars here, because we want to be able to
-    #       use the core yumvars in persistdir. Which is the base of FS yumvars.
-
     # Read [main] section
     yumconf = YumConf()
     yumconf.populate(startupconf._parser, 'main')
@@ -1002,33 +1028,14 @@ def readMainConfig(startupconf):
         ir_path = yumconf.installroot + path
         ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
                                              # it annoys me
-        ir_path = varReplace(ir_path, yumvars)
+        ir_path = varReplace(ir_path, yumvar)
         setattr(yumconf, option, ir_path)
 
-    # Read the FS yumvars
-    try:
-        dir_fsvars = yumconf.installroot + "/etc/yum/vars/"
-        fsvars = os.listdir(dir_fsvars)
-    except OSError:
-        fsvars = []
-    for fsvar in fsvars:
-        if os.path.islink(dir_fsvars + fsvar):
-            continue
-        try:
-            val = open(dir_fsvars + fsvar).readline()
-            if val and val[-1] == '\n':
-                val = val[:-1]
-        except (OSError, IOError):
-            continue
-        yumvars[fsvar] = val
-
     yumconf.logdir = logdir_fit(yumconf.logdir)
-    # These can use the above FS yumvars
     for option in ('cachedir', 'logdir', 'persistdir'):
         _apply_installroot(yumconf, option)
 
     # Add in some extra attributes which aren't actually configuration values
-    yumconf.yumvar = yumvars
     yumconf.uid = 0
     yumconf.cache = 0
     yumconf.progess_obj = None
@@ -1082,19 +1089,6 @@ def getOption(conf, section, name, option):
     except (NoSectionError, NoOptionError):
         return option.default
     return option.parse(val)
-
-def _getEnvVar():
-    '''Return variable replacements from the environment variables YUM0 to YUM9
-
-    The result is intended to be used with parser.varReplace()
-    '''
-    yumvar = {}
-    for num in range(0, 10):
-        env = 'YUM%d' % num
-        val = os.environ.get(env, '')
-        if val:
-            yumvar[env.lower()] = val
-    return yumvar
 
 def _getsysver(installroot, distroverpkg):
     '''Calculate the release version for the system.
