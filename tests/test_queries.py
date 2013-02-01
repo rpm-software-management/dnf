@@ -67,7 +67,7 @@ class Queries(base.TestCase):
 
 class SubjectTest(base.TestCase):
     def setUp(self):
-        self.sack = base.mock_sack()
+        self.sack = base.mock_sack("main")
 
     def test_wrong_name(self):
         subj = dnf.queries.Subject("call-his-wife-in")
@@ -77,6 +77,11 @@ class SubjectTest(base.TestCase):
         q = dnf.queries.Subject("librita").get_best_query(self.sack)
         q = q.filter(arch="i686")
         self.assertEqual(str(q[0]), "librita-1-1.i686")
+
+    def test_icase_name(self):
+        subj = dnf.queries.Subject("PEpper", ignore_case=True)
+        q = subj.get_best_query(self.sack)
+        self.assertLength(q, 3)
 
     def test_get_best_selector(self):
         s = dnf.queries.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)

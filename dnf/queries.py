@@ -39,16 +39,16 @@ def is_nevra(pattern):
     return True
 
 class Subject(object):
-    def __init__(self, pkg_spec, form=hawkey.FORM_ALL):
+    def __init__(self, pkg_spec, form=hawkey.FORM_ALL, ignore_case=False):
         self.subj = hawkey.Subject(pkg_spec, form=form)
+        self.icase = ignore_case
 
-    @staticmethod
-    def _nevra_to_filters(query, nevra):
+    def _nevra_to_filters(self, query, nevra):
         if nevra.name is not None:
             if is_glob_pattern(nevra.name):
-                query.filterm(name__glob=nevra.name)
+                query.filterm(*self._query_flags, name__glob=nevra.name)
             else:
-                query.filterm(name=nevra.name)
+                query.filterm(*self._query_flags, name=nevra.name)
         if nevra.arch is not None:
             query.filterm(arch=nevra.arch)
         if nevra.epoch is not None:
@@ -72,15 +72,24 @@ class Subject(object):
             sltr.set(arch=nevra.arch)
         return sltr
 
+    @property
+    def _query_flags(self):
+        flags = []
+        if self.icase:
+            flags.append(hawkey.ICASE)
+        return flags
+
     def get_best_query(self, sack):
-        possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True)
+        possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True,
+                                                           icase=self.icase)
         nevra = first(possibilities)
         if nevra:
             return self._nevra_to_filters(hawkey.Query(sack), nevra)
 
-        reldep = first(self.subj.reldep_possibilities_real(sack))
+        reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
+        reldep = first(reldeps)
         if reldep:
-            return hawkey.Query(sack).filter(provides=reldep)
+            return hawkey.Query(sack).filter(*self._query_flags, provides=reldep)
         return hawkey.Query(sack).filter(empty=True)
 
     def get_best_selector(self, sack):
@@ -122,7 +131,7 @@ def _construct_result(sack, patterns, ignore_case,
     flags = []
     q = hawkey.Query(sack)
     if ignore_case:
-        flags = [hawkey.ICASE]
+        flags.append(hawkey.ICASE)
     if len(patterns) == 0:
         pass
     elif glob:
