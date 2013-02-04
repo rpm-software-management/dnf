@@ -755,7 +755,7 @@ class YumBaseCli(dnf.yum.Base, output.YumOutput):
         matched_needles = None
         limit = None
         if not self.conf.showdupesfromrepos:
-            limit = hawkey.Query(self.sack).filter(pkg=counter.iterkeys())
+            limit = self.sack.query().filter(pkg=counter.iterkeys())
             limit = limit.filter(latest=True)
         for pkg in counter.sorted(reverse=True, limit_to=limit):
             if matched_needles != counter.matched_needles(pkg):

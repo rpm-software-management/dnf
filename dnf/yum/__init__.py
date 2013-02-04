@@ -1746,7 +1746,7 @@ class Base(object):
             if patterns:
                 inst = queries.installed_by_name(self.sack, patterns=patterns,
                                                  ignore_case=ic, get_query=True)
-            obsoletes = hawkey.Query(self.sack).filter(obsoletes=inst)
+            obsoletes = self.sack.query().filter(obsoletes=inst)
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
@@ -1819,7 +1819,7 @@ class Base(object):
         fdict = {'%s__substr' % attr : needle}
         if queries.is_glob_pattern(needle):
             fdict = {'%s__glob' % attr : needle}
-        q = hawkey.Query(self.sack).filter(**fdict)
+        q = self.sack.query().filter(**fdict)
         map(lambda pkg: counter.add(pkg, attr, needle), q.run())
         return counter
 

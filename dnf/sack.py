@@ -58,6 +58,16 @@ class Sack(hawkey.Sack):
         self._filelists = False
         self.verbose_logger = logging.getLogger("yum.verbose.Base")
 
+    def configure(self, installonly=None, excluded=None):
+        if installonly:
+            self.installonly = installonly
+        for excl in excluded or []:
+            self.add_excludes(queries.by_name(self, excl))
+
+    def query(self):
+        """Factory function returning a DNF Query."""
+        return queries.Query(self)
+
     def rpmdb_version(self, yumdb):
         pkgs = queries.installed(self)
         main = SackVersion()
@@ -68,12 +78,6 @@ class Sack(hawkey.Sack):
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
             main.update(pkg, csum)
         return main
-
-    def configure(self, installonly=None, excluded=None):
-        if installonly:
-            self.installonly = installonly
-        for excl in excluded or []:
-            self.add_excludes(queries.by_name(self, excl))
 
 def build_sack(yumbase):
     return Sack(pkgcls=package.Package, pkginitval=yumbase,

@@ -40,7 +40,7 @@ class Queries(base.TestCase):
     def test_by_file(self):
         # check sanity first:
         sack = base.mock_sack()
-        q = hawkey.Query(sack).filter(file__eq="/raised/smile")
+        q = sack.query().filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
 

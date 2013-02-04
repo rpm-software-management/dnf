@@ -36,5 +36,5 @@ class Sack(base.TestCase):
         yumbase.conf.exclude=['pepper']
         # configure() gets called through here:
         sack = yumbase.sack
-        peppers = hawkey.Query(sack).filter(name='pepper').run()
+        peppers = sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)

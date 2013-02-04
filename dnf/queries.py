@@ -38,6 +38,9 @@ def is_nevra(pattern):
         return False
     return True
 
+class Query(hawkey.Query):
+    pass
+
 class Subject(object):
     def __init__(self, pkg_spec, form=hawkey.FORM_ALL, ignore_case=False):
         self.subj = hawkey.Subject(pkg_spec, form=form)
@@ -84,13 +87,13 @@ class Subject(object):
                                                            icase=self.icase)
         nevra = first(possibilities)
         if nevra:
-            return self._nevra_to_filters(hawkey.Query(sack), nevra)
+            return self._nevra_to_filters(sack.query(), nevra)
 
         reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
         reldep = first(reldeps)
         if reldep:
-            return hawkey.Query(sack).filter(*self._query_flags, provides=reldep)
-        return hawkey.Query(sack).filter(empty=True)
+            return sack.query().filter(*self._query_flags, provides=reldep)
+        return sack.query().filter(empty=True)
 
     def get_best_selector(self, sack):
         nevra = first(self.subj.nevra_possibilities_real(sack))
@@ -129,7 +132,7 @@ def _construct_result(sack, patterns, ignore_case,
     glob = len(filter(is_glob_pattern, patterns)) > 0
 
     flags = []
-    q = hawkey.Query(sack)
+    q = sack.query()
     if ignore_case:
         flags.append(hawkey.ICASE)
     if len(patterns) == 0:
@@ -161,7 +164,7 @@ def installed_by_nevra(sack, pattern):
     try:
         installed = hawkey.split_nevra(pattern).to_query(sack)
     except hawkey.ValueException:
-        return hawkey.Query(sack).filter(empty=True)
+        return sack.query().filter(empty=True)
     return installed.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
 def available_by_name(sack, patterns, ignore_case=False, latest_only=False,
@@ -175,7 +178,7 @@ def available_by_nevra(sack, pattern):
     try:
         installed = hawkey.split_nevra(pattern).to_query(sack)
     except hawkey.ValueException:
-        return hawkey.Query(sack).filter(empty=True)
+        return sack.query().filter(empty=True)
     return installed.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
 def installed_exact(sack, name, evr, arch, get_query=False):
@@ -193,7 +196,7 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
 
     glob = len(filter(is_glob_pattern, patterns)) > 0
     flags = []
-    q = hawkey.Query(sack)
+    q = sack.query()
     if ignore_case:
         flags = [hawkey.ICASE]
     if glob:
@@ -211,8 +214,8 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
     try:
         reldeps = map(functools.partial(hawkey.Reldep, sack), patterns)
     except hawkey.ValueException:
-        return hawkey.Query(sack).filter(empty=True)
-    q = hawkey.Query(sack)
+        return sack.query().filter(empty=True)
+    q = sack.query()
     flags = []
     if ignore_case:
         flags.append(hawkey.ICASE)
