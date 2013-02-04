@@ -17,6 +17,7 @@
 
 import base
 import os.path
+import sys
 import unittest
 
 class Sanity(unittest.TestCase):
@@ -28,3 +29,6 @@ class Sanity(unittest.TestCase):
 
         sack2 = base.MockYumBase("main", "updates").sack
         self.assertEqual(len(sack2), base.TOTAL_NSOLVABLES)
+
+    def test_toplevel(self):
+        self.assertEqual(base.dnf_toplevel(), sys.path[0])

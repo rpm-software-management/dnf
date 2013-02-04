@@ -36,6 +36,9 @@ TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
 # testing infrastructure
 
+def dnf_toplevel():
+    return os.path.normpath(os.path.join(__file__, "../../"))
+
 def repo(reponame):
     return os.path.join(repo_dir(), reponame)
 
