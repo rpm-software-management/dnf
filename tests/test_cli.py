@@ -19,6 +19,7 @@ import base
 import dnf.cli.cli
 import mock
 import optparse
+import os
 import unittest
 
 OUTPUT="""\
@@ -63,17 +64,19 @@ class TestConfigure(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
+        self.conffile = os.path.join(base.dnf_toplevel(), "etc/dnf/dnf.conf")
 
     def test_configure(self):
         """ Test Cli.configure.
 
             For now just see that the method runs.
         """
-        self.cli.configure(['update'])
-        self.assertEqual(self.cli.cmdstring, "dnf update ")
+        self.cli.configure(['update', '-c', self.conffile])
+        self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
 
     def test_configure_verbose(self):
-        self.cli.configure(['-v', 'update'])
-        self.assertEqual(self.cli.cmdstring, "dnf -v update ")
+        self.cli.configure(['-v', 'update', '-c', self.conffile])
+        self.assertEqual(self.cli.cmdstring, "dnf -v update -c %s " %
+                         self.conffile)
         self.assertEqual(self.yumbase.conf.debuglevel, 6)
         self.assertEqual(self.yumbase.conf.errorlevel, 6)

@@ -1369,7 +1369,7 @@ class Cli(object):
                       'releasever': releasever,
                       'overrides': overrides}
             if opts.conffile:
-                kwargs['path'] = opts.conffile,
+                kwargs['path'] = opts.conffile
             self.base.read_conf_file(**kwargs)
 
             # now set all the non-first-start opts from main from our setopts
