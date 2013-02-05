@@ -383,6 +383,14 @@ class GenericHolder:
         else:
             raise KeyError, item
 
+    def merge_lists(self, other):
+        """ Concatenate the list attributes from 'other' to ours. """
+        for (key, val) in vars(other).iteritems():
+            if type(val) is not list:
+                continue
+            vars(self).setdefault(key, []).extend(val)
+        return self
+
 def procgpgkey(rawkey):
     '''Convert ASCII armoured GPG key to binary
     '''
