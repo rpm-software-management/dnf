@@ -21,6 +21,7 @@
 import hawkey
 import os
 import time
+import types
 
 def am_i_root():
     return os.geteuid() == 0
@@ -35,6 +36,9 @@ def first(iterable):
 
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
+
+def is_string_type(obj):
+    return type(obj) in types.StringTypes
 
 def lazyattr(attrname):
     """ Decorator to get lazy attribute initialization.

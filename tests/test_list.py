@@ -19,7 +19,7 @@ import base
 import dnf.queries
 import unittest
 
-class List(unittest.TestCase):
+class List(base.TestCase):
     def test_list_installed(self):
         yumbase = base.MockYumBase()
         ypl = yumbase.doPackageLists('installed')
@@ -38,3 +38,8 @@ class List(unittest.TestCase):
 
         ypl = yumbase.doPackageLists('updates', ["hole"])
         self.assertEqual(len(ypl.updates), 1)
+
+    def test_lists_multiple(self):
+        yumbase = base.MockYumBase("updates", "main")
+        ypl = yumbase.doPackageLists('updates', ['pepper', 'hole'])
+        self.assertLength(ypl.updates, 2)

@@ -17,6 +17,7 @@
 The Yum RPM software updater.
 """
 
+import functools
 import os
 import os.path
 import rpm
@@ -1630,6 +1631,18 @@ class Base(object):
         """
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
+        if patterns is None:
+            return self._list_pattern(pkgnarrow, patterns, showdups, ignore_case)
+
+        assert(not dnf.util.is_string_type(patterns))
+        list_fn = functools.partial(self._list_pattern, pkgnarrow,
+                                    showdups=showdups, ignore_case=ignore_case)
+        if patterns is None or len(patterns) == 0:
+            return list_fn(None)
+        yghs = map(list_fn, patterns)
+        return reduce(lambda a, b: a.merge_lists(b), yghs)
+
+    def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case):
         ygh = misc.GenericHolder(iter=pkgnarrow)
 
         installed = []
@@ -1647,7 +1660,7 @@ class Base(object):
         if pkgnarrow == 'all':
             dinst = {}
             ndinst = {} # Newest versions by name.arch
-            for po in queries.installed_by_name(self.sack, patterns=patterns,
+            for po in queries.installed_by_name(self.sack, patterns=pattern,
                                                        ignore_case=ic):
                 dinst[po.pkgtup] = po
                 if showdups:
@@ -1658,11 +1671,11 @@ class Base(object):
             installed = dinst.values()
 
             if showdups:
-                avail = queries.by_name(self.sack, patterns=patterns,
+                avail = queries.by_name(self.sack, patterns=pattern,
                                                ignore_case=ic)
             else:
                 avail = queries.latest_per_arch(self.sack,
-                                                       patterns=patterns,
+                                                       patterns=pattern,
                                                        ignore_case=ic).values()
 
             for pkg in avail:
@@ -1683,22 +1696,22 @@ class Base(object):
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
             updates = queries.updates_by_name(self.sack,
-                                                     patterns=patterns,
+                                                     patterns=pattern,
                                                      ignore_case=ic)
 
         # installed only
         elif pkgnarrow == 'installed':
             installed = queries.installed_by_name(self.sack,
-                                                         patterns=patterns,
+                                                         patterns=pattern,
                                                          ignore_case=ic)
 
         # available in a repository
         elif pkgnarrow == 'available':
             if showdups:
                 avail = queries.available_by_name(
-                    self.sack, patterns=patterns, ignore_case=ic)
+                    self.sack, patterns=pattern, ignore_case=ic)
                 inst_pkgs = queries.installed_by_name(
-                    self.sack, patterns=patterns, ignore_case=ic)
+                    self.sack, patterns=pattern, ignore_case=ic)
                 installed_dict = queries.per_arch_dict(inst_pkgs)
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
@@ -1712,9 +1725,9 @@ class Base(object):
             else:
                 # we will only look at the latest versions of packages:
                 available_dict = queries.latest_available_per_arch(
-                    self.sack, patterns=patterns, ignore_case=ic)
+                    self.sack, patterns=pattern, ignore_case=ic)
                 installed_dict = queries.latest_installed_per_arch(
-                    self.sack, patterns=patterns, ignore_case=ic)
+                    self.sack, patterns=pattern, ignore_case=ic)
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)]
                     inst_pkg = installed_dict.get((name, arch), None)
@@ -1729,10 +1742,10 @@ class Base(object):
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
             avail = queries.available_by_name(
-                self.sack, patterns=patterns, ignore_case=ic)
+                self.sack, patterns=pattern, ignore_case=ic)
             avail_dict = queries.per_pkgtup_dict(avail)
             inst = queries.installed_by_name(
-                self.sack, patterns=patterns, ignore_case=ic)
+                self.sack, patterns=pattern, ignore_case=ic)
             inst_dict = queries.per_pkgtup_dict(inst)
 
             for pkgtup in inst_dict:
@@ -1743,8 +1756,8 @@ class Base(object):
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
             inst = queries.installed(self.sack, get_query=True)
-            if patterns:
-                inst = queries.installed_by_name(self.sack, patterns=patterns,
+            if pattern:
+                inst = queries.installed_by_name(self.sack, patterns=pattern,
                                                  ignore_case=ic, get_query=True)
             obsoletes = self.sack.query().filter(obsoletes=inst)
             obsoletesTuples = []
@@ -1758,11 +1771,11 @@ class Base(object):
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=patterns,
+                avail = self.pkgSack.returnPackages(patterns=pattern,
                                                     ignore_case=ic)
             else:
                 try:
-                    avail = self.pkgSack.returnNewestByNameArch(patterns=patterns,
+                    avail = self.pkgSack.returnNewestByNameArch(patterns=pattern,
                                                               ignore_case=ic)
                 except Errors.PackageSackError:
                     avail = []
