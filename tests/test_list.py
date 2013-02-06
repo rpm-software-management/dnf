@@ -37,9 +37,34 @@ class List(base.TestCase):
         self.assertEqual(len(ypl.updates), 0)
 
         ypl = yumbase.doPackageLists('updates', ["hole"])
-        self.assertEqual(len(ypl.updates), 1)
+        self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
         yumbase = base.MockYumBase("updates", "main")
         ypl = yumbase.doPackageLists('updates', ['pepper', 'hole'])
-        self.assertLength(ypl.updates, 2)
+        self.assertLength(ypl.updates, 3)
+
+class TestListAllRepos(base.TestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("main", "updates")
+        self.yumbase.conf.multilib_policy = "all"
+
+    def test_list_pattern(self):
+        ypl = self.yumbase.doPackageLists('all', ['hole'])
+        self.assertLength(ypl.installed, 1)
+        self.assertLength(ypl.available, 2)
+
+    def test_list_pattern_arch(self):
+        ypl = self.yumbase.doPackageLists('all', ['hole.x86_64'])
+        self.assertLength(ypl.installed, 1)
+        self.assertLength(ypl.available, 1)
+
+    def test_list_available(self):
+        ypl = self.yumbase.doPackageLists('available', ['hole'], showdups=False)
+        self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
+                                                        'hole-2-1.x86_64'))
+
+        ypl = self.yumbase.doPackageLists('available', ['hole'], showdups=True)
+        self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
+                                                        'hole-2-1.x86_64',
+                                                        'hole-1-2.x86_64'))

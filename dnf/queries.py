@@ -39,7 +39,23 @@ def is_nevra(pattern):
     return True
 
 class Query(hawkey.Query):
-    pass
+    def available(self):
+        return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
+
+    def installed(self):
+        return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
+
+    def latest(self):
+        return self.filter(latest=True)
+
+    def upgrades(self):
+        return self.filter(upgrades=True)
+
+    def na_dict(self):
+        return per_arch_dict(self.run())
+
+    def pkgtup_dict(self):
+        return per_pkgtup_dict(self.run())
 
 class Subject(object):
     def __init__(self, pkg_spec, form=hawkey.FORM_ALL, ignore_case=False):

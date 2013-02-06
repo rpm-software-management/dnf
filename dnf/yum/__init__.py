@@ -1655,13 +1655,18 @@ class Base(object):
         recent = []
         extras = []
 
+        # do the initial pre-selection
         ic = ignore_case
-        # list all packages - those installed and available, don't 'think about it'
+        q = self.sack.query()
+        if pattern is not None:
+            subj = queries.Subject(pattern, ignore_case=ic)
+            q = subj.get_best_query(self.sack)
+
+        # list all packages - those installed and available:
         if pkgnarrow == 'all':
             dinst = {}
             ndinst = {} # Newest versions by name.arch
-            for po in queries.installed_by_name(self.sack, patterns=pattern,
-                                                       ignore_case=ic):
+            for po in q.installed():
                 dinst[po.pkgtup] = po
                 if showdups:
                     continue
@@ -1670,14 +1675,9 @@ class Base(object):
                     ndinst[key] = po
             installed = dinst.values()
 
-            if showdups:
-                avail = queries.by_name(self.sack, patterns=pattern,
-                                               ignore_case=ic)
-            else:
-                avail = queries.latest_per_arch(self.sack,
-                                                       patterns=pattern,
-                                                       ignore_case=ic).values()
-
+            avail = q
+            if not showdups:
+                avail = q.latest()
             for pkg in avail:
                 if showdups:
                     if pkg.pkgtup in dinst:
@@ -1695,24 +1695,17 @@ class Base(object):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'updates':
-            updates = queries.updates_by_name(self.sack,
-                                                     patterns=pattern,
-                                                     ignore_case=ic)
+            updates = q.upgrades().run()
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = queries.installed_by_name(self.sack,
-                                                         patterns=pattern,
-                                                         ignore_case=ic)
+            installed = q.installed().run()
 
         # available in a repository
         elif pkgnarrow == 'available':
             if showdups:
-                avail = queries.available_by_name(
-                    self.sack, patterns=pattern, ignore_case=ic)
-                inst_pkgs = queries.installed_by_name(
-                    self.sack, patterns=pattern, ignore_case=ic)
-                installed_dict = queries.per_arch_dict(inst_pkgs)
+                avail = q.available()
+                installed_dict = q.installed().na_dict()
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
@@ -1724,13 +1717,11 @@ class Base(object):
                         available.append(avail_pkg)
             else:
                 # we will only look at the latest versions of packages:
-                available_dict = queries.latest_available_per_arch(
-                    self.sack, patterns=pattern, ignore_case=ic)
-                installed_dict = queries.latest_installed_per_arch(
-                    self.sack, patterns=pattern, ignore_case=ic)
+                available_dict = q.available().latest().na_dict()
+                installed_dict = q.installed().latest().na_dict()
                 for (name, arch) in available_dict:
-                    avail_pkg = available_dict[(name, arch)]
-                    inst_pkg = installed_dict.get((name, arch), None)
+                    avail_pkg = available_dict[(name, arch)][0]
+                    inst_pkg = installed_dict.get((name, arch), [None])[0]
                     if not inst_pkg or avail_pkg.evr_gt(inst_pkg):
                         available.append(avail_pkg)
                     elif avail_pkg.evr_eq(inst_pkg):
@@ -1741,13 +1732,8 @@ class Base(object):
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
-            avail = queries.available_by_name(
-                self.sack, patterns=pattern, ignore_case=ic)
-            avail_dict = queries.per_pkgtup_dict(avail)
-            inst = queries.installed_by_name(
-                self.sack, patterns=pattern, ignore_case=ic)
-            inst_dict = queries.per_pkgtup_dict(inst)
-
+            avail_dict = q.available().pkgtup_dict()
+            inst_dict = q.installed().pkgtup_dict()
             for pkgtup in inst_dict:
                 if pkgtup not in avail_dict:
                     extras.extend(inst_dict[pkgtup])
@@ -1755,10 +1741,7 @@ class Base(object):
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
-            inst = queries.installed(self.sack, get_query=True)
-            if pattern:
-                inst = queries.installed_by_name(self.sack, patterns=pattern,
-                                                 ignore_case=ic, get_query=True)
+            inst = q.installed()
             obsoletes = self.sack.query().filter(obsoletes=inst)
             obsoletesTuples = []
             for new in obsoletes:
@@ -1768,6 +1751,7 @@ class Base(object):
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
+            raise NotImplementedError, "not implemented in hawkey" # :hawkey
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             if showdups:
