@@ -21,7 +21,7 @@ import dnf.yum.Errors
 import hawkey
 import unittest
 
-class Queries(base.TestCase):
+class QueriesTest(base.TestCase):
     def test_is_glob_pattern(self):
         assert(dnf.queries.is_glob_pattern("all*.ext"))
         assert(dnf.queries.is_glob_pattern("all?.ext"))
@@ -67,7 +67,7 @@ class Queries(base.TestCase):
 
 class SubjectTest(base.TestCase):
     def setUp(self):
-        self.sack = base.mock_sack("main")
+        self.sack = base.mock_sack("main", "updates")
 
     def test_wrong_name(self):
         subj = dnf.queries.Subject("call-his-wife-in")
@@ -81,13 +81,18 @@ class SubjectTest(base.TestCase):
     def test_icase_name(self):
         subj = dnf.queries.Subject("PEpper", ignore_case=True)
         q = subj.get_best_query(self.sack)
-        self.assertLength(q, 3)
+        self.assertLength(q, 4)
 
     def test_get_best_selector(self):
         s = dnf.queries.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
         self.assertIsNotNone(s)
 
-class Dicts(unittest.TestCase):
+    def test_best_selector_for_version(self):
+        sltr = dnf.queries.Subject("hole-2").get_best_selector(self.sack)
+        self.assertItemsEqual(map(str, sltr.matches()),
+                              ['hole-2-1.x86_64', 'hole-2-1.i686'])
+
+class DictsTest(unittest.TestCase):
     def test_per_nevra_dict(self):
         sack = base.mock_sack("main")
         pkgs = dnf.queries.by_name(sack, "lotus")

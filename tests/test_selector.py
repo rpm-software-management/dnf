@@ -20,7 +20,7 @@ import dnf.selector
 import mock
 import unittest
 
-class Selector(unittest.TestCase):
+class SelectorTest(unittest.TestCase):
     def setUp(self):
         self.sack = base.mock_sack()
 

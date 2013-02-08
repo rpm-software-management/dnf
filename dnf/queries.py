@@ -82,11 +82,15 @@ class Subject(object):
     def _nevra_to_selector(sltr, nevra):
         if nevra.name is not None:
             sltr.set(name=nevra.name)
-        if nevra.version is not None and nevra.release is not None:
-            evr = "%s-%s" % (nevra.version, nevra.release)
+        if nevra.version is not None:
+            evr = nevra.version
             if nevra.epoch > 0:
                 evr = "%d:%s" % (nevra.epoch, evr)
-            sltr.set(evr=evr)
+            if nevra.release is None:
+                sltr.set(version=evr)
+            else:
+                evr = "%s-%s" % (evr, nevra.release)
+                sltr.set(evr=evr)
         if nevra.arch is not None:
             sltr.set(arch=nevra.arch)
         return sltr
