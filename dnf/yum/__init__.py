@@ -752,29 +752,8 @@ class Base(object):
         return goal.run(allow_uninstall=allow_uninstall,
                         force_best=self.conf.best)
 
-    def buildTransaction(self, unfinished_transactions_check=True):
-        """Go through the packages in the transaction set, find them
-        in the packageSack or rpmdb, and pack up the transaction set
-        accordingly.
-
-        :param unfinished_transactions_check: whether to check for
-           unfinished transactions before building the new transaction
-        """
-        # FIXME: This is horrible, see below and yummain. Maybe create a real
-        #        rescode object? :(
-        self._depsolving_failed = False
-
-        if (unfinished_transactions_check and
-            misc.find_unfinished_transactions(yumlibpath=self.conf.persistdir)):
-            msg = _('There are unfinished transactions remaining. You might ' \
-                    'consider running yum-complete-transaction first to finish them.' )
-            self.logger.critical(msg)
-            time.sleep(3)
-
-        # XXX - we could add a conditional here to avoid running the plugins and
-        # limit_installonly_pkgs, etc - if we're being run from yum-complete-transaction
-        # and don't want it to happen. - skv
-
+    def buildTransaction(self):
+        """Build the transaction set."""
         self.plugins.run('preresolve')
         ds_st = time.time()
         self.dsCallback.start()
