@@ -1,7 +1,7 @@
 # match_counter.py
 # Implements class MatchCounter.
 #
-# Copyright (C) 2012  Red Hat, Inc.
+# Copyright (C) 2012-2013  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
