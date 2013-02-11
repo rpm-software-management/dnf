@@ -59,3 +59,17 @@ class RepoTest(unittest.TestCase):
         self.assertTrue(repo._preload_file_from_system_cache("a.filename"))
         # call will happen 5 times, 4 are from dirSetup()
         self.assertEqual(preload_file_method.call_count, 5)
+
+    @mock.patch("os.rename", new=mock.MagicMock)
+    def test_revert(self):
+        repo = TestedYumRepo("myid")
+        data = mock.Mock(spec=['srcfile'])
+        data.srcfile = 'backup.tmp'
+        repo._oldRepoMDData = {
+            'old_local'    : 'backup.tmp',
+            'local'        : 'real_deal',
+            'old_repo_XML' : data,
+            'new_MD_files' : [],
+            }
+        repo._revertOldRepoXML()
+        self.assertEqual(data.srcfile, 'real_deal')

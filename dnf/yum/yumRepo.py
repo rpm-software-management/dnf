@@ -899,7 +899,10 @@ Insufficient space in download directory %s
         self._oldRepoMDData = {}
 
         if 'old_local' in old_data:
-            os.rename(old_data['old_local'], old_data['local'])
+            old_local = old_data['old_local']
+            local = old_data['local']
+            os.rename(old_local, local)
+            old_data['old_repo_XML'].srcfile = local
 
         self._repoXML = old_data['old_repo_XML']
 
@@ -940,7 +943,7 @@ Insufficient space in download directory %s
 
     def _groupCheckDataMDNewer(self):
         """ We check the timestamps, if any of the timestamps for the
-            "new" data is older than what we have ... we revert. """
+            "new" data is older than what we have we revert. """
 
         if 'old_repo_XML' not in self._oldRepoMDData:
             return True
