@@ -89,15 +89,22 @@ class SearchTest(unittest.TestCase):
         self.yumbase.fmtSection = lambda str: str
         self.yumbase.matchcallback = mock.MagicMock()
 
-    @staticmethod
-    def calls_first_arg(call):
-        return call[0][0]
+    def patched_search(self, *args, **kwargs):
+        with mock.patch('sys.stdout') as stdout:
+            self.cli.search(*args, **kwargs)
+            pkgs = [c[0][0] for c in self.yumbase.matchcallback.call_args_list]
+            return (stdout, pkgs)
 
     def test_search(self):
-        with mock.patch('sys.stdout'):
-            self.cli.search(['lotus'])
-        pkgs = map(self.calls_first_arg,
-                   self.yumbase.matchcallback.call_args_list)
+        (stdout, pkgs) = self.patched_search(['lotus'])
+        pkg_names = map(str, pkgs)
+        self.assertIn('lotus-3-16.i686', pkg_names)
+        self.assertIn('lotus-3-16.x86_64', pkg_names)
+
+    def test_search_caseness(self):
+        (stdout, pkgs) = self.patched_search(['LOTUS'])
+        self.assertEqual(stdout.write.mock_calls,
+                         [mock.call(u'N/S Matched: LOTUS'), mock.call('\n')])
         pkg_names = map(str, pkgs)
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)

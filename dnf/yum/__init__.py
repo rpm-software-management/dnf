@@ -1797,7 +1797,7 @@ class Base(object):
         fdict = {'%s__substr' % attr : needle}
         if queries.is_glob_pattern(needle):
             fdict = {'%s__glob' % attr : needle}
-        q = self.sack.query().filter(**fdict)
+        q = self.sack.query().filter(hawkey.ICASE, **fdict)
         map(lambda pkg: counter.add(pkg, attr, needle), q.run())
         return counter
 

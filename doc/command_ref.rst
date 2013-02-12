@@ -288,7 +288,7 @@ Search Command
 
 ``dnf [options] search [all] <keywords>...``
     Search package metadata for the keywords. Keywords are matched as
-    case-sensitive substrings, globbing is supported. By default the command
+    case-insensitive substrings, globbing is supported. By default the command
     will only look at package names and summaries, failing that (or whenever
     ``all`` was given as an argument) it will match against package descriptions
     and URLs. The result is sorted from the most relevant results to the least.
