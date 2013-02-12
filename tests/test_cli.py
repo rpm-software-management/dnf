@@ -30,7 +30,7 @@ OUTPUT="""\
   Built    :  at 1970-01-01 00:00
 """
 
-class VersionString(unittest.TestCase):
+class VersionStringTest(unittest.TestCase):
     def test_print_versions(self):
         yumbase = base.MockYumBase()
         with mock.patch('sys.stdout') as stdout,\
@@ -40,7 +40,7 @@ class VersionString(unittest.TestCase):
                            if mc[0] == 'write'])
         self.assertEqual(written, OUTPUT)
 
-class Cli(unittest.TestCase):
+class CliTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
@@ -60,7 +60,7 @@ class Cli(unittest.TestCase):
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
 
 @mock.patch('dnf.yum.Base.doLoggingSetup', new=mock.MagicMock)
-class TestConfigure(unittest.TestCase):
+class ConfigureTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
@@ -80,3 +80,24 @@ class TestConfigure(unittest.TestCase):
                          self.conffile)
         self.assertEqual(self.yumbase.conf.debuglevel, 6)
         self.assertEqual(self.yumbase.conf.errorlevel, 6)
+
+class SearchTest(unittest.TestCase):
+    def setUp(self):
+        self.yumbase = base.MockYumBase("search")
+        self.cli = dnf.cli.cli.Cli(self.yumbase)
+
+        self.yumbase.fmtSection = lambda str: str
+        self.yumbase.matchcallback = mock.MagicMock()
+
+    @staticmethod
+    def calls_first_arg(call):
+        return call[0][0]
+
+    def test_search(self):
+        with mock.patch('sys.stdout'):
+            self.cli.search(['lotus'])
+        pkgs = map(self.calls_first_arg,
+                   self.yumbase.matchcallback.call_args_list)
+        pkg_names = map(str, pkgs)
+        self.assertIn('lotus-3-16.i686', pkg_names)
+        self.assertIn('lotus-3-16.x86_64', pkg_names)

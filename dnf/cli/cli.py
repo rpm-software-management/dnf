@@ -94,7 +94,6 @@ def print_versions(pkgs, yumbase):
         # print _("  Committed: %s at %s") % (pkg.committer,
         #                                    sm_ui_date(pkg.committime))
 
-
 class YumBaseCli(dnf.yum.Base, output.YumOutput):
     """This is the base class for yum cli."""
 
@@ -708,68 +707,6 @@ class YumBaseCli(dnf.yum.Base, output.YumOutput):
         if done_hidden_installed:
             ypl.installed = []
         return ypl
-
-    def search(self, args):
-        """Search for simple text tags in a package object.
-
-        :param args: list of names or wildcards to search for.
-           Normally this method will begin by searching the package
-           names and summaries, and will only search urls and
-           descriptions if that fails.  However, if the first string
-           in *args* is "all", this method will always search
-           everything
-        :return: a tuple where the first item is an exit code, and
-           the second item is a generator if the search is a
-           successful, and a list of error messages otherwise
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-
-        def _print_match_section(text, keys):
-            # Print them in the order they were passed
-            used_keys = [arg for arg in args if arg in keys]
-            print self.fmtSection(text % ", ".join(used_keys))
-
-        # prepare the input
-        dups = self.conf.showdupesfromrepos
-        search_all = False
-        if len(args) > 1 and args[0] == 'all':
-            args.pop(0)
-            search_all = True
-
-        counter = dnf.match_counter.MatchCounter()
-        for arg in args:
-            self.search_counted(counter, 'name', arg)
-            self.search_counted(counter, 'summary', arg)
-
-        section_text = _('N/S Matched: %s')
-        ns_only = True
-        if search_all or counter.total() == 0:
-            section_text = _('Matched: %s')
-            ns_only = False
-            for arg in args:
-                self.search_counted(counter, 'description', arg)
-                self.search_counted(counter, 'url', arg)
-
-        matched_needles = None
-        limit = None
-        if not self.conf.showdupesfromrepos:
-            limit = self.sack.query().filter(pkg=counter.iterkeys())
-            limit = limit.filter(latest=True)
-        for pkg in counter.sorted(reverse=True, limit_to=limit):
-            if matched_needles != counter.matched_needles(pkg):
-                matched_needles = counter.matched_needles(pkg)
-                _print_match_section(section_text, matched_needles)
-            self.matchcallback(pkg, counter.matched_haystacks(pkg), args)
-
-        if len(counter) == 0:
-            self.logger.warning(_('Warning: No matches found for: %s'), arg)
-            return 0, [_('No Matches found')]
-        return 0, []
 
     def deplist(self, args):
         """Print out a formatted list of dependencies for a list of
@@ -1469,6 +1406,68 @@ class Cli(object):
 
     def print_usage(self):
         return self.optparser.print_usage()
+
+    def search(self, args):
+        """Search for simple text tags in a package object.
+
+        :param args: list of names or wildcards to search for.
+           Normally this method will begin by searching the package
+           names and summaries, and will only search urls and
+           descriptions if that fails.  However, if the first string
+           in *args* is "all", this method will always search
+           everything
+        :return: a tuple where the first item is an exit code, and
+           the second item is a generator if the search is a
+           successful, and a list of error messages otherwise
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
+        """
+
+        def _print_match_section(text, keys):
+            # Print them in the order they were passed
+            used_keys = [arg for arg in args if arg in keys]
+            print self.base.fmtSection(text % ", ".join(used_keys))
+
+        # prepare the input
+        dups = self.base.conf.showdupesfromrepos
+        search_all = False
+        if len(args) > 1 and args[0] == 'all':
+            args.pop(0)
+            search_all = True
+
+        counter = dnf.match_counter.MatchCounter()
+        for arg in args:
+            self.base.search_counted(counter, 'name', arg)
+            self.base.search_counted(counter, 'summary', arg)
+
+        section_text = _('N/S Matched: %s')
+        ns_only = True
+        if search_all or counter.total() == 0:
+            section_text = _('Matched: %s')
+            ns_only = False
+            for arg in args:
+                self.base.search_counted(counter, 'description', arg)
+                self.base.search_counted(counter, 'url', arg)
+
+        matched_needles = None
+        limit = None
+        if not self.base.conf.showdupesfromrepos:
+            limit = self.base.sack.query().filter(pkg=counter.iterkeys())
+            limit = limit.filter(latest=True)
+        for pkg in counter.sorted(reverse=True, limit_to=limit):
+            if matched_needles != counter.matched_needles(pkg):
+                matched_needles = counter.matched_needles(pkg)
+                _print_match_section(section_text, matched_needles)
+            self.base.matchcallback(pkg, counter.matched_haystacks(pkg), args)
+
+        if len(counter) == 0:
+            self.logger.warning(_('Warning: No matches found for: %s'), arg)
+            return 0, [_('No Matches found')]
+        return 0, []
 
 class YumOptionParser(OptionParser):
     """Subclass that makes some minor tweaks to make OptionParser do things the

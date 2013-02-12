@@ -1235,7 +1235,7 @@ class SearchCommand(Command):
         """
         self.base.logger.debug(_("Searching Packages: "))
         try:
-            return self.base.search(extcmds)
+            return self.cli.search(extcmds)
         except dnf.yum.Errors.YumBaseError, e:
             return 1, [str(e)]
 
