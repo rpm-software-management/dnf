@@ -2462,7 +2462,7 @@ class Base(object):
 
     def upgrade_to(self, pkg_spec):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
-        sltr = queries.Subject(pkg_spec, form=forms).get_best_selector(self.sack)
+        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack, form=forms)
         if sltr:
             self.tsInfo.add_selector_upgrade_to(sltr)
 

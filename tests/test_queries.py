@@ -92,6 +92,13 @@ class SubjectTest(base.TestCase):
         self.assertItemsEqual(map(str, sltr.matches()),
                               ['hole-2-1.x86_64', 'hole-2-1.i686'])
 
+    def test_with_confusing_dashes(self):
+        sltr = dnf.queries.Subject("mrkite-k-h").get_best_selector(self.sack)
+        self.assertLength(sltr.matches(), 1)
+        sltr = dnf.queries.Subject("mrkite-k-h.x86_64").\
+            get_best_selector(self.sack)
+        self.assertLength(sltr.matches(), 1)
+
 class DictsTest(unittest.TestCase):
     def test_per_nevra_dict(self):
         sack = base.mock_sack("main")

@@ -58,8 +58,8 @@ class Query(hawkey.Query):
         return per_pkgtup_dict(self.run())
 
 class Subject(object):
-    def __init__(self, pkg_spec, form=hawkey.FORM_ALL, ignore_case=False):
-        self.subj = hawkey.Subject(pkg_spec, form=form)
+    def __init__(self, pkg_spec, ignore_case=False):
+        self.subj = hawkey.Subject(pkg_spec)
         self.icase = ignore_case
 
     def _nevra_to_filters(self, query, nevra):
@@ -115,8 +115,11 @@ class Subject(object):
             return sack.query().filter(*self._query_flags, provides=reldep)
         return sack.query().filter(empty=True)
 
-    def get_best_selector(self, sack):
-        nevra = first(self.subj.nevra_possibilities_real(sack))
+    def get_best_selector(self, sack, form=None):
+        if form:
+            nevra = first(self.subj.nevra_possibilities_real(sack, form=form))
+        else:
+            nevra = first(self.subj.nevra_possibilities_real(sack))
         if nevra:
             return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
 
