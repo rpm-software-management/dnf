@@ -17,9 +17,10 @@
 
 import base
 import dnf.match_counter
+import mock
 import unittest
 
-class TestCounter(unittest.TestCase):
+class MatchCounterTest(unittest.TestCase):
     def test_canonize_string_set(self):
         a = ['f', 'p']
         b = ['p']
@@ -39,7 +40,8 @@ class TestCounter(unittest.TestCase):
         self.assertItemsEqual(counter.matched_keys(pkg), ['url', 'summary'])
         self.assertItemsEqual(counter.matched_haystacks(pkg), [url, summary])
 
-    def test_sorted(self):
+    @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
+    def test_sorted(self, unused_eval):
         counter = dnf.match_counter.MatchCounter()
         self.assertEqual(counter.sorted(), [])
 
@@ -55,7 +57,8 @@ class TestCounter(unittest.TestCase):
         self.assertEqual(counter.sorted(), [2, 3, 1])
         self.assertEqual(counter.sorted(reverse=True), [1, 3,2])
 
-    def test_sorted_with_needles(self):
+    @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
+    def test_sorted_with_needles(self, unused_eval):
         # the same needles should be listed together:
         counter = dnf.match_counter.MatchCounter()
         counter.add(1, 'summary', 'grin')
@@ -75,7 +78,8 @@ class TestCounter(unittest.TestCase):
 
         self.assertEqual(counter.sorted(), [2, 1])
 
-    def test_sorted_limit(self):
+    @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
+    def test_sorted_limit(self, unused_eval):
         counter = dnf.match_counter.MatchCounter()
         counter.add(1, 'name', '')
         counter.add(2, 'url', '')
@@ -89,3 +93,13 @@ class TestCounter(unittest.TestCase):
         counter.add(20, 'summary', 'humbert')
         self.assertEqual(len(counter), 2)
         self.assertEqual(counter.total(), 3)
+
+    def test_distance(self):
+        pkg2 = base.create_mock_package('rust-and-stardust')
+        pkg1 = base.create_mock_package('rust')
+        counter = dnf.match_counter.MatchCounter()
+        counter.add(pkg1, 'name', 'rust')
+        counter.add(pkg2, 'name', 'rust')
+        # 'rust-and-stardust' is a worse match for 'rust' than 'rust' itself
+        self.assertSequenceEqual([x.name for x in counter.sorted()],
+                                 ['rust-and-stardust', 'rust'])

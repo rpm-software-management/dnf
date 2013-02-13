@@ -58,8 +58,8 @@ def installed_but(sack, *args):
 
 # mock objects
 
-def create_mock_package(name, major_version, arch='noarch'):
-    pkg = mock.Mock(spec_set=['pkgtup', 'summary', 'url', 'name',
+def create_mock_package(name, major_version=1, arch='noarch'):
+    pkg = mock.Mock(spec_set=['pkgtup', 'summary', 'url', 'name', 'description',
                               'reponame', 'repoid',
                               'arch', 'evr', 'state', 'reason'])
     pkg.name = name

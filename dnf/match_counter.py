@@ -32,32 +32,48 @@ def _canonize_string_set(sset, length):
     return l
 
 class MatchCounter(dict):
-    """ Map packages to which of their attributes matched in a search against
-        what values.
+    """Map packages to which of their attributes matched in a search against
+    what values.
 
-        The mapping is: ``package -> [(key, needle), ... ]``.
+    The mapping is: ``package -> [(key, needle), ... ]``.
+
     """
+
     @staticmethod
-    def _eval_matches(matches):
+    def _eval_weights(matches):
         # how much is each match worth and return their sum:
         weights = map(lambda m: WEIGHTS[m[0]], matches)
         return sum(weights)
 
-    def _key_func(self):
-        """ Get the key function used for sorting matches.
+    @staticmethod
+    def _eval_distance(pkg, matches):
+        dist = 0
+        for (key, needle) in matches:
+            haystack = getattr(pkg, key)
+            dist += len(haystack) - len(needle)
+        return dist
 
-            It is not enough to only look at the matches and order them by the
-            sum of their weighted hits. In case this number is the same we have
-            to ensure that the same matched needles are next to each other in
-            the result.
+    def _key_func(self):
+        """Get the key function used for sorting matches.
+
+        It is not enough to only look at the matches and order them by the sum
+        of their weighted hits. In case this number is the same we have to
+        ensure that the same matched needles are next to each other in the
+        result.
+
+        Returned function is:
+        pkg -> (weights_sum, canonized_needles_set, -distance)
+
         """
         max_length = self._max_needles()
         def get_key(pkg):
-            return (self._eval_matches(self[pkg]),
-                    _canonize_string_set(self.matched_needles(pkg), max_length))
+            return (self._eval_weights(self[pkg]),
+                    _canonize_string_set(self.matched_needles(pkg), max_length),
+                    -self._eval_distance(pkg, self[pkg]))
         return get_key
 
     def _max_needles(self):
+        """Return the max count of needles of all packages."""
         if self:
             return max(map(lambda pkg: len(self.matched_needles(pkg)), self))
         return 0
