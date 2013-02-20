@@ -2220,13 +2220,7 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary', 'repeat', 'redo', 'undo', 'new',
-                'rollback',
-                'addon', 'addon-info',
-                'stats', 'statistics', 'sync', 'synchronize'
-                'pkg', 'pkgs', 'pkg-list', 'pkgs-list',
-                'package', 'package-list', 'packages', 'packages-list',
-                'pkg-info', 'pkgs-info', 'package-info', 'packages-info')
+        cmds = ('list', 'info', 'summary')
         if extcmds and extcmds[0] not in cmds:
             self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
