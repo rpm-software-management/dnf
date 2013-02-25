@@ -1160,6 +1160,29 @@ class Cli(object):
             for repo in self.base.repos.listEnabled():
                 repo._override_sigchecks = True
 
+    def _root_and_conffile(self, installroot, conffile):
+        """After the first parse of the cmdline options, find initial values for
+        installroot and conffile.
+
+        :return: installroot and conffile strings
+        """
+        # If the conf file is inside the  installroot - use that.
+        # otherwise look for it in the normal root
+        if installroot and conffile:
+            abs_fn = os.path.join(installroot, conffile)
+            if os.access(abs_fn, os.R_OK):
+                conffile = abs_fn
+        elif installroot:
+            conffile = dnf.const.CONF_FILENAME
+            abs_fn = os.path.join(installroot, conffile[1:])
+            if os.access(abs_fn, os.R_OK):
+                conffile = abs_fn
+        if installroot is None:
+            installroot = '/'
+        if conffile is None:
+            conffile = dnf.const.CONF_FILENAME
+        return installroot, conffile
+
     def _make_usage(self):
         """
         Format an attractive usage string for yum, listing subcommand
@@ -1294,8 +1317,11 @@ class Cli(object):
                 setattr(opts, opt, getattr(self.main_setopts, opt))
 
         # get the install root to use
-        root = self.optparser.getRoot(opts)
-
+        self.optparser._checkAbsInstallRoot(opts.installroot)
+        (root, opts.conffile) = self._root_and_conffile(opts.installroot,
+                                                        opts.conffile)
+        # the conffile is solid now
+        assert(opts.conffile is not None)
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
@@ -1305,12 +1331,7 @@ class Cli(object):
         overrides = self.optparser._non_nones2dict(opts)
         releasever = opts.releasever
         try:
-            kwargs = {'root': root,
-                      'releasever': releasever,
-                      'overrides': overrides}
-            if opts.conffile:
-                kwargs['path'] = opts.conffile
-            self.base.read_conf_file(**kwargs)
+            self.base.read_conf_file(opts.conffile, root, releasever, overrides)
 
             # now set all the non-first-start opts from main from our setopts
             if self.main_setopts:
@@ -1581,7 +1602,7 @@ class YumOptionParser(OptionParser):
                 self.base.conf.obsoletes = 1
 
             if opts.installroot:
-                self._checkAbsInstallRoot(opts)
+                self._checkAbsInstallRoot(opts.installroot)
                 self.base.conf.installroot = opts.installroot
 
             if opts.showdupesfromrepos:
@@ -1634,39 +1655,15 @@ class YumOptionParser(OptionParser):
 
         return opts, cmds
 
-    def _checkAbsInstallRoot(self, opts):
-        if not opts.installroot:
+    def _checkAbsInstallRoot(self, installroot):
+        if not installroot:
             return
-        if opts.installroot[0] == '/':
+        if installroot[0] == '/':
             return
         # We have a relative installroot ... haha
         self.logger.critical(_('--installroot must be an absolute path: %s'),
-                             opts.installroot)
+                             installroot)
         sys.exit(1)
-
-    def getRoot(self,opts):
-        """Return the root location to use for the yum operation.
-        This location can be changed by using the --installroot
-        option.
-
-        :param opts: a dictionary containing the values of the command
-           line options
-        :return: a string representing the root location
-        """
-        self._checkAbsInstallRoot(opts)
-        # If the conf file is inside the  installroot - use that.
-        # otherwise look for it in the normal root
-        if opts.installroot:
-            if os.access(opts.installroot+'/'+opts.conffile, os.R_OK):
-                opts.conffile = opts.installroot+'/'+opts.conffile
-            elif opts.conffile == '/etc/yum/yum.conf':
-                # check if /installroot/etc/yum.conf exists.
-                if os.access(opts.installroot+'/etc/yum.conf', os.R_OK):
-                    opts.conffile = opts.installroot+'/etc/yum.conf'
-            root=opts.installroot
-        else:
-            root = '/'
-        return root
 
     def _help_callback(self, opt, value, parser, *args, **kwargs):
         self.print_help()

@@ -60,6 +60,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
 
 @mock.patch('dnf.yum.Base.doLoggingSetup', new=mock.MagicMock)
+@mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)
 class ConfigureTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")
@@ -80,6 +81,36 @@ class ConfigureTest(unittest.TestCase):
                          self.conffile)
         self.assertEqual(self.yumbase.conf.debuglevel, 6)
         self.assertEqual(self.yumbase.conf.errorlevel, 6)
+
+    @mock.patch('dnf.yum.Base.read_conf_file')
+    @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
+    def test_installroot_explicit(self, read_conf_file):
+        self.cli.base.basecmd = 'update'
+
+        self.cli.configure(['--installroot', '/roots/dnf', 'update'])
+        read_conf_file.assert_called_with('/etc/dnf/dnf.conf', '/roots/dnf', None,
+                                          {'conffile': '/etc/dnf/dnf.conf',
+                                           'installroot': '/roots/dnf'})
+
+    @mock.patch('dnf.yum.Base.read_conf_file')
+    @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
+    def test_installroot_with_etc(self, read_conf_file):
+        """Test that conffile is detected in a new installroot."""
+        self.cli.base.basecmd = 'update'
+
+        self.cli.configure(['--installroot', base.dnf_toplevel(), 'update'])
+        read_conf_file.assert_called_with(
+            '/home/akozumpl/dnf/etc/dnf/dnf.conf', '/home/akozumpl/dnf', None,
+            {'conffile': '/home/akozumpl/dnf/etc/dnf/dnf.conf',
+             'installroot': '/home/akozumpl/dnf'})
+
+    def test_installroot_configurable(self):
+        """Test that conffile is detected in a new installroot."""
+        self.cli.base.basecmd = 'update'
+
+        conf = os.path.join(base.dnf_toplevel(), "tests/etc/installroot.conf")
+        self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
+        self.assertEqual(self.yumbase.conf.installroot, '/roots/dnf')
 
 class SearchTest(unittest.TestCase):
     def setUp(self):
