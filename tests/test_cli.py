@@ -98,11 +98,12 @@ class ConfigureTest(unittest.TestCase):
         """Test that conffile is detected in a new installroot."""
         self.cli.base.basecmd = 'update'
 
-        self.cli.configure(['--installroot', base.dnf_toplevel(), 'update'])
+        tlv = base.dnf_toplevel()
+        self.cli.configure(['--installroot', tlv, 'update'])
         read_conf_file.assert_called_with(
-            '/home/akozumpl/dnf/etc/dnf/dnf.conf', '/home/akozumpl/dnf', None,
-            {'conffile': '/home/akozumpl/dnf/etc/dnf/dnf.conf',
-             'installroot': '/home/akozumpl/dnf'})
+            '%s/etc/dnf/dnf.conf' % tlv, tlv, None,
+            {'conffile': '%s/etc/dnf/dnf.conf' % tlv,
+             'installroot': tlv})
 
     def test_installroot_configurable(self):
         """Test that conffile is detected in a new installroot."""
