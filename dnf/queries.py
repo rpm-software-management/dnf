@@ -102,17 +102,18 @@ class Subject(object):
             flags.append(hawkey.ICASE)
         return flags
 
-    def get_best_query(self, sack):
+    def get_best_query(self, sack, with_provides=True):
         possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True,
                                                            icase=self.icase)
         nevra = first(possibilities)
         if nevra:
             return self._nevra_to_filters(sack.query(), nevra)
 
-        reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
-        reldep = first(reldeps)
-        if reldep:
-            return sack.query().filter(*self._query_flags, provides=reldep)
+        if with_provides:
+            reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
+            reldep = first(reldeps)
+            if reldep:
+                return sack.query().filter(provides=reldep)
         return sack.query().filter(empty=True)
 
     def get_best_selector(self, sack, form=None):
