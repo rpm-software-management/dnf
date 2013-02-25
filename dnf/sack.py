@@ -81,7 +81,8 @@ class Sack(hawkey.Sack):
 
 def build_sack(yumbase):
     return Sack(pkgcls=package.Package, pkginitval=yumbase,
-                cachedir=yumbase.cache_c.cachedir)
+                cachedir=yumbase.cache_c.cachedir,
+                rootdir=yumbase.conf.installroot)
 
 def rpmdb_sack(yumbase):
     sack = build_sack(yumbase)
