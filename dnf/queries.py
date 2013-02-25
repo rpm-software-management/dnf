@@ -81,7 +81,7 @@ class Subject(object):
     @staticmethod
     def _nevra_to_selector(sltr, nevra):
         if nevra.name is not None:
-            sltr.set(name=nevra.name)
+            sltr.set_autoglob(name=nevra.name)
         if nevra.version is not None:
             evr = nevra.version
             if nevra.epoch > 0:
@@ -118,9 +118,12 @@ class Subject(object):
 
     def get_best_selector(self, sack, form=None):
         if form:
-            nevra = first(self.subj.nevra_possibilities_real(sack, form=form))
+            nevra = first(self.subj.nevra_possibilities_real(sack,
+                                                             allow_globs=True,
+                                                             form=form))
         else:
-            nevra = first(self.subj.nevra_possibilities_real(sack))
+            nevra = first(self.subj.nevra_possibilities_real(sack,
+                                                             allow_globs=True))
         if nevra:
             return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
 

@@ -110,3 +110,12 @@ class MultilibBestMainRepo(base.ResultTestCase):
         trampoline = available_by_name(self.yumbase.sack, "trampoline")
         new_set = self.installed + trampoline
         self.assertResult(self.yumbase, new_set)
+
+    def test_install_glob(self):
+        self.yumbase.install("mrkite*")
+        new_set = self.installed + available_by_name(self.yumbase.sack, "mrkite*")
+        installed, removed = self.installed_removed(self.yumbase)
+        self.assertItemsEqual(map(str, installed),
+                              ['mrkite-2-0.x86_64',
+                               'mrkite-k-h-1-1.x86_64',
+                               'trampoline-2.1-1.noarch'])
