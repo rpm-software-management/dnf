@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.17-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.2.21-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.17-1',
+        VERSION:     '0.2.21-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.17-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.2.21-1 documentation" href="index.html" />
     <link rel="next" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -95,19 +95,23 @@ speed and defining strict API and plugin interface.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
 <dd>Shows the help.</dd>
+<dt><tt class="docutils literal"><span class="pre">--best</span></tt></dt>
+<dd>Try the best available package versions in transactions.</dd>
 <dt><tt class="docutils literal"><span class="pre">-C,</span> <span class="pre">--cacheonly</span></tt></dt>
 <dd>Run entirely from system cache, don&#8217;t update cache</dd>
-<dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">[config</span> <span class="pre">file],</span> <span class="pre">--config=[config</span> <span class="pre">file]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">&lt;config</span> <span class="pre">file&gt;,</span> <span class="pre">--config=&lt;config</span> <span class="pre">file&gt;</span></tt></dt>
 <dd>config file location</dd>
-<dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">[minutes],</span> <span class="pre">--randomwait=[minutes]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">&lt;minutes&gt;,</span> <span class="pre">--randomwait=&lt;minutes&gt;</span></tt></dt>
 <dd>maximum command wait time</dd>
-<dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">[debug</span> <span class="pre">level],</span> <span class="pre">--debuglevel=[debug</span> <span class="pre">level]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">&lt;debug</span> <span class="pre">level&gt;,</span> <span class="pre">--debuglevel=&lt;debug</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>debugging output level</dd>
+<dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
+<dd>Exclude packages specified by a name or a glob from the operation.</dd>
 <dt><tt class="docutils literal"><span class="pre">--showduplicates</span></tt></dt>
 <dd>show duplicates, in repos, in list/search commands</dd>
-<dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">[error</span> <span class="pre">level],</span> <span class="pre">--errorlevel=[error</span> <span class="pre">level]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">&lt;error</span> <span class="pre">level&gt;,</span> <span class="pre">--errorlevel=&lt;error</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>error output level</dd>
-<dt><tt class="docutils literal"><span class="pre">--rpmverbosity=[debug</span> <span class="pre">level</span> <span class="pre">name]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">--rpmverbosity=&lt;debug</span> <span class="pre">level</span> <span class="pre">name&gt;</span></tt></dt>
 <dd>debugging output level for rpm</dd>
 <dt><tt class="docutils literal"><span class="pre">-q,</span> <span class="pre">--quiet</span></tt></dt>
 <dd>quiet operation</dd>
@@ -119,14 +123,16 @@ speed and defining strict API and plugin interface.</p>
 <dd>answer no for all questions</dd>
 <dt><tt class="docutils literal"><span class="pre">--version</span></tt></dt>
 <dd>show Yum version and exit</dd>
-<dt><tt class="docutils literal"><span class="pre">--installroot=[path]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">--installroot=&lt;path&gt;</span></tt></dt>
 <dd>set install root</dd>
 </dl>
 </div>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
-<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-label"><em>Specifying Packages</em></a>.</p>
-<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-nevr-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-packages-versions-label"><em>Specifying Exact Versions of Packages</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;package-name-spec&gt;</span></tt> see
+<a class="reference internal" href="#specifying-packages-label"><em>Specifying Packages</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-nevr-spec&gt;</span></tt> see
+<a class="reference internal" href="#specifying-packages-versions-label"><em>Specifying Exact Versions of Packages</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
@@ -172,8 +178,10 @@ the latest version available from any enabled repository.</dd>
 </div>
 <div class="section" id="distribution-sync-command">
 <h3>Distribution-sync command<a class="headerlink" href="#distribution-sync-command" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>Deprecated alias for the <a class="reference internal" href="#dist-sync-command-label"><em>Dist-sync command</em></a>.</div></blockquote>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">distribution-sync</span></tt></dt>
+<dd>Deprecated alias for the <a class="reference internal" href="#dist-sync-command-label"><em>Dist-sync command</em></a>.</dd>
+</dl>
 </div>
 <div class="section" id="downgrade-command">
 <h3>Downgrade Command<a class="headerlink" href="#downgrade-command" title="Permalink to this headline">¶</a></h3>
@@ -238,16 +246,16 @@ an installed package.</p>
 <p>All the forms take a <tt class="docutils literal"><span class="pre">[&lt;package-specs&gt;...]</span></tt> parameter to further limit the
 result to only those packages matching it.</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">[all]</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">[all]</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>Lists all packages known to us, present in the RPMDB, in a repo or in both.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">installed</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">installed</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>Lists installed packages.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">available</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">available</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>Lists available packages.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">extras</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">extras</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>Lists extras, that is packages installed on the system that are not
 available in any known repository.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">obsoletes</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">obsoletes</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>List the packages installed on the system that are obsoleted by packages in
 any known repository.</dd>
 </dl>
@@ -293,7 +301,7 @@ detailed information when <tt class="docutils literal"><span class="pre">-v</spa
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">search</span> <span class="pre">[all]</span> <span class="pre">&lt;keywords&gt;...</span></tt></dt>
 <dd>Search package metadata for the keywords. Keywords are matched as
-case-sensitive substrings, globbing is supported. By default the command
+case-insensitive substrings, globbing is supported. By default the command
 will only look at package names and summaries, failing that (or whenever
 <tt class="docutils literal"><span class="pre">all</span></tt> was given as an argument) it will match against package descriptions
 and URLs. The result is sorted from the most relevant results to the least.</dd>
@@ -301,8 +309,10 @@ and URLs. The result is sorted from the most relevant results to the least.</dd>
 </div>
 <div class="section" id="update-command">
 <h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>Deprecated alias for the <a class="reference internal" href="#upgrade-command-label"><em>Upgrade Command</em></a>.</div></blockquote>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update</span></tt></dt>
+<dd>Deprecated alias for the <a class="reference internal" href="#upgrade-command-label"><em>Upgrade Command</em></a>.</dd>
+</dl>
 </div>
 <div class="section" id="upgrade-command">
 <span id="upgrade-command-label"></span><h3>Upgrade Command<a class="headerlink" href="#upgrade-command" title="Permalink to this headline">¶</a></h3>
@@ -317,8 +327,10 @@ dependencies as necessary.</dd>
 </div>
 <div class="section" id="update-to-command">
 <h3>Update-To Command<a class="headerlink" href="#update-to-command" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>Deprecated alias for the <a class="reference internal" href="#upgrade-to-command-label"><em>Upgrade-To Command</em></a>.</div></blockquote>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">update-to</span> <span class="pre">&lt;package-nevr-specs&gt;...</span></tt></dt>
+<dd>Deprecated alias for the <a class="reference internal" href="#upgrade-to-command-label"><em>Upgrade-To Command</em></a>.</dd>
+</dl>
 </div>
 <div class="section" id="upgrade-to-command">
 <span id="upgrade-to-command-label"></span><h3>Upgrade-To Command<a class="headerlink" href="#upgrade-to-command" title="Permalink to this headline">¶</a></h3>
@@ -331,19 +343,25 @@ dependencies as necessary.</dd>
 <div class="section" id="specifying-packages">
 <span id="specifying-packages-label"></span><h2>Specifying Packages<a class="headerlink" href="#specifying-packages" title="Permalink to this headline">¶</a></h2>
 <p>Many commands take a <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> parameter that selects a package for the
-operation. DNF looks for interpretations of <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> from the most
-specific meanings to the least, that is it first tries to see if the spec could
-mean a full <tt class="docutils literal"><span class="pre">name-[epoch:]version-release.arch</span></tt> specification, then just
-<tt class="docutils literal"><span class="pre">name-[epoch:]version-release</span></tt>, <tt class="docutils literal"><span class="pre">name.arch</span></tt>, just name and finally
-<tt class="docutils literal"><span class="pre">name-version</span></tt>. <tt class="docutils literal"><span class="pre">name-version</span></tt> is generally not more specific than <tt class="docutils literal"><span class="pre">name</span></tt>,
-because many package names contain the dash and version can be a string of
-almost arbitrary characters: this would cause DNF to first interpret
-<tt class="docutils literal"><span class="pre">name-subname</span></tt> as <tt class="docutils literal"><span class="pre">name</span></tt> in version <tt class="docutils literal"><span class="pre">subname</span></tt> instead of looking for a
-package called <tt class="docutils literal"><span class="pre">name-subname</span></tt>.</p>
+operation. DNF looks for interpretations of the parameter from the most commonly
+used meanings to the least, that is it tries to see if the given spec fits one
+of the following patterns (in decreasing order of priority):</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">name.arch</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">name</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">name-[epoch:]version-release.arch</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">name-[epoch:]version-release</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">name-[epoch:]version</span></tt></li>
+</ul>
+<p>Note that <tt class="docutils literal"><span class="pre">name</span></tt> can in general contain dashes (e.g. <tt class="docutils literal"><span class="pre">package-subpackage</span></tt>).</p>
+<p>Failing to match the input argument to an existing package name based on the
+patterns above, DNF tries to see if the argument matches an existing provide.</p>
 <p>If multiple versions of the selected package exist in the repo, the most recent
 version suitable for the given operation is used.  The name specification is
 case-sensitive, globbing characters &#8220;<tt class="docutils literal"><span class="pre">?</span></tt>, <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">[</span></tt> are allowed and
 trigger shell-like glob matching.</p>
+<p><tt class="docutils literal"><span class="pre">&lt;package-name-spec&gt;</span></tt> is similar to <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> except the provides
+matching is never attempted there.</p>
 </div>
 <div class="section" id="specifying-exact-versions-of-packages">
 <span id="specifying-packages-versions-label"></span><h2>Specifying Exact Versions of Packages<a class="headerlink" href="#specifying-exact-versions-of-packages" title="Permalink to this headline">¶</a></h2>
@@ -454,7 +472,7 @@ case-sensitive and globbing is supported.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

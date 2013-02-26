@@ -48,25 +48,31 @@ Options
 ``-h, --help``
     Shows the help.
 
+``--best``
+    Try the best available package versions in transactions.
+
 ``-C, --cacheonly``
     Run entirely from system cache, don't update cache
 
-``-c [config file], --config=[config file]``
+``-c <config file>, --config=<config file>``
     config file location
 
-``-R [minutes], --randomwait=[minutes]``
+``-R <minutes>, --randomwait=<minutes>``
     maximum command wait time
 
-``-d [debug level], --debuglevel=[debug level]``
+``-d <debug level>, --debuglevel=<debug level>``
     debugging output level
+
+``-x <package-spec>, --exclude=<package-spec>``
+    Exclude packages specified by a name or a glob from the operation.
 
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
-``-e [error level], --errorlevel=[error level]``
+``-e <error level>, --errorlevel=<error level>``
     error output level
 
-``--rpmverbosity=[debug level name]``
+``--rpmverbosity=<debug level name>``
     debugging output level for rpm
 
 ``-q, --quiet``
@@ -84,16 +90,18 @@ Options
 ``--version``
     show Yum version and exit
 
-``--installroot=[path]``
+``--installroot=<path>``
     set install root
 
 ========
 Commands
 ========
 
-For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
+For an explanation of ``<package-spec>`` and ``<package-name-spec>`` see
+:ref:`\specifying_packages-label`.
 
-For an explanation of ``<package-nevr-spec>`` see :ref:`\specifying_packages_versions-label`.
+For an explanation of ``<package-nevr-spec>`` see
+:ref:`\specifying_packages_versions-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
@@ -143,6 +151,7 @@ Performs cleanup of temporary files for the currently enabled repositories.
 -----------------
 Dist-sync command
 -----------------
+
 ``dnf dist-sync``
     As necessary upgrades, downgrades or keeps all installed packages to match
     the latest version available from any enabled repository.
@@ -150,17 +159,21 @@ Dist-sync command
 -------------------------
 Distribution-sync command
 -------------------------
+
+``dnf distribution-sync``
     Deprecated alias for the :ref:`\dist_sync_command-label`.
 
 -----------------
 Downgrade Command
 -----------------
+
 ``dnf [options] downgrade <package-specs>...``
     Downgrades the specified packages to the highest of all known lower versions.
 
 -------------
 Erase Command
 -------------
+
 ``dnf [options] erase <package-specs>...``
     Removes the specified packages from the system along with any packages
     depending on the packages being removed. If ``clean_requirements_on_remove``
@@ -199,6 +212,7 @@ Info Command
 ---------------
 Install Command
 ---------------
+
 ``dnf [options] install <package-specs>...``
     Installs the specified packages and their dependencies. After the
     transaction is finished all the specified packages are installed on the
@@ -217,26 +231,27 @@ an installed package.
 All the forms take a ``[<package-specs>...]`` parameter to further limit the
 result to only those packages matching it.
 
-``dnf [options] list [all] [<package-specs>...]``
+``dnf [options] list [all] [<package-name-specs>...]``
     Lists all packages known to us, present in the RPMDB, in a repo or in both.
 
-``dnf [options] list installed [<package-specs>...]``
+``dnf [options] list installed [<package-name-specs>...]``
     Lists installed packages.
 
-``dnf [options] list available [<package-specs>...]``
+``dnf [options] list available [<package-name-specs>...]``
     Lists available packages.
 
-``dnf [options] list extras [<package-specs>...]``
+``dnf [options] list extras [<package-name-specs>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list obsoletes [<package-specs>...]``
+``dnf [options] list obsoletes [<package-name-specs>...]``
     List the packages installed on the system that are obsoleted by packages in
     any known repository.
 
 -----------------
 Makecache Command
 -----------------
+
 ``dnf [options] makecache``
     Downloads and caches in binary format metadata for all known repos. Tries to
     avoid downloading whenever possible (typically when the metadata timestamp
@@ -245,6 +260,7 @@ Makecache Command
 ----------------
 Provides Command
 ----------------
+
 ``dnf [options] provides <provide-spec>``
     Finds the packages providing the given ``<provide-spec>``. This is useful
     when one knows a filename and wants to find what package (installed or not)
@@ -253,6 +269,7 @@ Provides Command
 -----------------
 Reinstall Command
 -----------------
+
 ``dnf [options] reinstall <package-specs>...``
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
@@ -261,6 +278,7 @@ Reinstall Command
 ----------------
 Repolist Command
 ----------------
+
 ``dnf [options] repolist [enabled|disabled|all]``
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
@@ -269,9 +287,10 @@ Repolist Command
 --------------
 Search Command
 --------------
+
 ``dnf [options] search [all] <keywords>...``
     Search package metadata for the keywords. Keywords are matched as
-    case-sensitive substrings, globbing is supported. By default the command
+    case-insensitive substrings, globbing is supported. By default the command
     will only look at package names and summaries, failing that (or whenever
     ``all`` was given as an argument) it will match against package descriptions
     and URLs. The result is sorted from the most relevant results to the least.
@@ -279,6 +298,8 @@ Search Command
 --------------
 Update Command
 --------------
+
+``dnf [options] update``
     Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _upgrade_command-label:
@@ -286,6 +307,7 @@ Update Command
 ---------------
 Upgrade Command
 ---------------
+
 ``dnf [options] upgrade``
     Updates each package to a highest version that is both available and
     resolvable.
@@ -297,6 +319,8 @@ Upgrade Command
 -----------------
 Update-To Command
 -----------------
+
+``dnf [options] update-to <package-nevr-specs>...``
     Deprecated alias for the :ref:`\upgrade_to_command-label`.
 
 .. _upgrade_to_command-label:
@@ -304,6 +328,7 @@ Update-To Command
 ------------------
 Upgrade-To Command
 ------------------
+
 ``dnf [options] upgrade-to <package-nevr-specs>...``
     Upgrades packages to the specified versions.
 
@@ -314,20 +339,28 @@ Specifying Packages
 ===================
 
 Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. DNF looks for interpretations of ``<package-spec>`` from the most
-specific meanings to the least, that is it first tries to see if the spec could
-mean a full ``name-[epoch:]version-release.arch`` specification, then just
-``name-[epoch:]version-release``, ``name.arch``, just name and finally
-``name-version``. ``name-version`` is generally not more specific than ``name``,
-because many package names contain the dash and version can be a string of
-almost arbitrary characters: this would cause DNF to first interpret
-``name-subname`` as ``name`` in version ``subname`` instead of looking for a
-package called ``name-subname``.
+operation. DNF looks for interpretations of the parameter from the most commonly
+used meanings to the least, that is it tries to see if the given spec fits one
+of the following patterns (in decreasing order of priority):
+
+* ``name.arch``
+* ``name``
+* ``name-[epoch:]version-release.arch``
+* ``name-[epoch:]version-release``
+* ``name-[epoch:]version``
+
+Note that ``name`` can in general contain dashes (e.g. ``package-subpackage``).
+
+Failing to match the input argument to an existing package name based on the
+patterns above, DNF tries to see if the argument matches an existing provide.
 
 If multiple versions of the selected package exist in the repo, the most recent
 version suitable for the given operation is used.  The name specification is
 case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
 trigger shell-like glob matching.
+
+``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
+matching is never attempted there.
 
 .. _specifying_packages_versions-label:
 

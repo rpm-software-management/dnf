@@ -10,9 +10,10 @@
 
 The ``--skip-broken`` command line switch is not recognized by DNF. The
 semantics this was supposed to trigger in Yum is now the default for plain ``dnf
-update``. There is now equivalent for ``yum --skip-broken update foo``, as
+update``. There is no equivalent for ``yum --skip-broken update foo``, as
 silentnly skipping ``foo`` in this case only amounts to masking an error
-contradicting the user request.
+contradicting the user request. To try using the latest versions of packages in
+transactions there is the ``--best`` command line switch.
 
 ========================================
 Update and Upgrade Commands are the Same
