@@ -18,7 +18,6 @@
 """
 Configuration parser and default values for yum.
 """
-_use_iniparse = True
 
 import os
 import sys
@@ -28,15 +27,9 @@ import copy
 import urlparse
 import shlex
 from parser import ConfigPreProcessor, varReplace
-try:
-    from iniparse import INIConfig
-    from iniparse.compat import NoSectionError, NoOptionError, ParsingError
-    from iniparse.compat import RawConfigParser as ConfigParser
-except ImportError:
-    _use_iniparse = False
-if not _use_iniparse:
-    from ConfigParser import NoSectionError, NoOptionError, ParsingError
-    from ConfigParser import ConfigParser
+from iniparse import INIConfig
+from iniparse.compat import NoSectionError, NoOptionError, ParsingError
+from iniparse.compat import RawConfigParser as ConfigParser
 import dnf.rpmUtils.transaction
 import dnf.yum.logginglevels
 import Errors
@@ -1142,9 +1135,6 @@ def writeRawRepoFile(repo,only=None):
     :param only: list of attributes to work on. If *only* is None, all
        options will be written out
     """
-    if not _use_iniparse:
-        return
-
     ini = INIConfig(open(repo.repofile))
     # b/c repoids can have $values in them we need to map both ways to figure
     # out which one is which

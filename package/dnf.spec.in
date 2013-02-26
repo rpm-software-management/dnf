@@ -14,12 +14,14 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
+BuildRequires:  python-iniparse
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  urlgrabber
 BuildRequires:	python-hawkey = %{hawkey_version}
 Requires:	python-hawkey = %{hawkey_version}
+Requires:	python-iniparse
 Requires:	crontabs
 Requires:	libreport-filesystem
 
