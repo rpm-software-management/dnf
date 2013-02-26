@@ -97,9 +97,11 @@ Options
 Commands
 ========
 
-For an explanation of ``<package-spec>`` see :ref:`\specifying_packages-label`.
+For an explanation of ``<package-spec>`` and ``<package-name-spec>`` see
+:ref:`\specifying_packages-label`.
 
-For an explanation of ``<package-nevr-spec>`` see :ref:`\specifying_packages_versions-label`.
+For an explanation of ``<package-nevr-spec>`` see
+:ref:`\specifying_packages_versions-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
@@ -229,20 +231,20 @@ an installed package.
 All the forms take a ``[<package-specs>...]`` parameter to further limit the
 result to only those packages matching it.
 
-``dnf [options] list [all] [<package-specs>...]``
+``dnf [options] list [all] [<package-name-specs>...]``
     Lists all packages known to us, present in the RPMDB, in a repo or in both.
 
-``dnf [options] list installed [<package-specs>...]``
+``dnf [options] list installed [<package-name-specs>...]``
     Lists installed packages.
 
-``dnf [options] list available [<package-specs>...]``
+``dnf [options] list available [<package-name-specs>...]``
     Lists available packages.
 
-``dnf [options] list extras [<package-specs>...]``
+``dnf [options] list extras [<package-name-specs>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list obsoletes [<package-specs>...]``
+``dnf [options] list obsoletes [<package-name-specs>...]``
     List the packages installed on the system that are obsoleted by packages in
     any known repository.
 
@@ -337,20 +339,28 @@ Specifying Packages
 ===================
 
 Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. DNF looks for interpretations of ``<package-spec>`` from the most
-specific meanings to the least, that is it first tries to see if the spec could
-mean a full ``name-[epoch:]version-release.arch`` specification, then just
-``name-[epoch:]version-release``, ``name.arch``, just name and finally
-``name-version``. ``name-version`` is generally not more specific than ``name``,
-because many package names contain the dash and version can be a string of
-almost arbitrary characters: this would cause DNF to first interpret
-``name-subname`` as ``name`` in version ``subname`` instead of looking for a
-package called ``name-subname``.
+operation. DNF looks for interpretations of the parameter from the most commonly
+used meanings to the least, that is it tries to see if the given spec fits one
+of the following patterns (in decreasing order of priority):
+
+* ``name.arch``
+* ``name``
+* ``name-[epoch:]version-release.arch``
+* ``name-[epoch:]version-release``
+* ``name-[epoch:]version``
+
+Note that ``name`` can in general contain dashes (e.g. ``package-subpackage``).
+
+Failing to match the input argument to an existing package name based on the
+patterns above, DNF tries to see if the argument matches an existing provide.
 
 If multiple versions of the selected package exist in the repo, the most recent
 version suitable for the given operation is used.  The name specification is
 case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
 trigger shell-like glob matching.
+
+``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
+matching is never attempted there.
 
 .. _specifying_packages_versions-label:
 
