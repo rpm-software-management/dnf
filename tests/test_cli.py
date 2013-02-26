@@ -53,9 +53,13 @@ class CliTest(unittest.TestCase):
     def test_configure_repos(self):
         opts = optparse.Values()
         opts.nogpgcheck = True
-        opts.repos_enabled = []
-        opts.repos_disabled = []
+        opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
+        calls = mock.Mock()
+        self.yumbase.repos.enableRepo = calls
+        self.yumbase.repos.disableRepo = calls
         self.cli._configure_repos(opts)
+        self.assertEqual(calls.call_args_list,
+                         [mock.call('*'), mock.call('comb')])
         self.assertTrue(self.yumbase._override_sigchecks)
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
 

@@ -1145,8 +1145,11 @@ class Cli(object):
     def _configure_repos(self, opts):
         # Process repo enables and disables in order
         try:
-            map(self.base.repos.enableRepo, opts.repos_enabled)
-            map(self.base.repos.disableRepo, opts.repos_disabled)
+            for (repo, operation) in opts.repos_ed:
+                if operation == "enable":
+                    self.base.repos.enableRepo(repo)
+                else:
+                    self.base.repos.disableRepo(repo)
         except dnf.yum.Errors.ConfigError, e:
             self.logger.critical(e)
             self.print_usage()
@@ -1669,6 +1672,11 @@ class YumOptionParser(OptionParser):
         self.print_help()
         self.exit()
 
+    def _repo_callback(self, option, opt_str, value, parser):
+        operation = 'disable' if opt_str == '--disablerepo' else 'enable'
+        l = getattr(parser.values, option.dest)
+        l.append((value, operation))
+
     def _addYumBasicOptions(self):
         if self._utils:
             group = OptionGroup(self, "Yum Base Options")
@@ -1723,12 +1731,14 @@ class YumOptionParser(OptionParser):
                 help=_("show Yum version and exit"))
         group.add_option("--installroot", help=_("set install root"),
                 metavar='[path]')
-        group.add_option("--enablerepo", action='append',
-                type='string', dest='repos_enabled', default=[],
+        group.add_option("--enablerepo", action='callback',
+                type='string', dest='repos_ed', default=[],
+                callback=self._repo_callback,
                 help=SUPPRESS_HELP,
                 metavar='[repo]')
-        group.add_option("--disablerepo", action='append',
-                type='string', dest='repos_disabled', default=[],
+        group.add_option("--disablerepo", action='callback',
+                type='string', dest='repos_ed', default=[],
+                callback=self._repo_callback,
                 help=SUPPRESS_HELP,
                 metavar='[repo]')
         group.add_option("-x", "--exclude", default=[], action="append",
