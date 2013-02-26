@@ -1422,7 +1422,7 @@ class RepoListCommand(Command):
             arg = 'enabled'
         extcmds = map(lambda x: x.lower(), extcmds)
 
-        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.conf.verbose
 
         repos = self.base.repos.repos.values()
         repos.sort()
