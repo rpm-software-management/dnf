@@ -42,6 +42,15 @@ class Query(hawkey.Query):
     def available(self):
         return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
+    def filter_autoglob(self, **kwargs):
+        nargs = {}
+        for (key, value) in kwargs.items():
+            if dnf.queries.is_glob_pattern(value):
+                nargs[key + "__glob"] = value
+            else:
+                nargs[key] = value
+        return self.filter(**nargs)
+
     def installed(self):
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
@@ -59,7 +68,7 @@ class Query(hawkey.Query):
 
 class Subject(object):
     def __init__(self, pkg_spec, ignore_case=False):
-        self.subj = hawkey.Subject(pkg_spec)
+        self.subj = hawkey.Subject(pkg_spec) # internal subject
         self.icase = ignore_case
 
     def _nevra_to_filters(self, query, nevra):
@@ -102,7 +111,15 @@ class Subject(object):
             flags.append(hawkey.ICASE)
         return flags
 
+    @property
+    def pattern(self):
+        return self.subj.pattern
+
     def get_best_query(self, sack, with_provides=True):
+        pat = self.subj.pattern
+        if pat.startswith('/'):
+            return sack.query().filter_autoglob(file=pat)
+
         possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True,
                                                            icase=self.icase)
         nevra = first(possibilities)

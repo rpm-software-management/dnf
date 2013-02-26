@@ -46,6 +46,11 @@ class InstallMultilibAll(base.ResultTestCase):
         self.yumbase.install("henry(the_horse)")
         self.assertGreater(len(self.yumbase.tsInfo), 0)
 
+    def test_install_by_filename(self):
+        self.yumbase.install("/usr/lib64/liblot*")
+        inst, _ = self.installed_removed(self.yumbase)
+        self.assertItemsEqual(map(str, inst), ['lotus-3-16.x86_64'])
+
     def test_install_nevra(self):
         self.yumbase.install("lotus-3-16.i686")
         available = available_by_name(self.yumbase.sack, "lotus", get_query=True)

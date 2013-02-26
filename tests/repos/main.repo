@@ -10,6 +10,10 @@
 =Pkg: trampoline 2.1 1 noarch
 =Prv: henry(the_horse)
 =Pkg: lotus 3 16 i686
+=Prv: /usr/lib/liblotus.so.3
+=Prv: /usr/lib/liblotus.so.3.16
 =Pkg: lotus 3 16 x86_64
+=Prv: /usr/lib64/liblotus.so.3
+=Prv: /usr/lib64/liblotus.so.3.16
 =Pkg: tour 4.6 1 noarch
 =Sum: Make a reservation.

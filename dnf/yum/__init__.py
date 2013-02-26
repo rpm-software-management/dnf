@@ -2407,7 +2407,12 @@ class Base(object):
             self.verbose_logger.warning(msg)
 
         subj = queries.Subject(pkg_spec)
-        if self.conf.multilib_policy == "best":
+        if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
+            q = subj.get_best_query(self.sack)
+            already_inst, available = self._query_matches_installed(q)
+            map(msg_installed, already_inst)
+            map(self.tsInfo.addInstall, available)
+        elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
                 return self.tsInfo
@@ -2415,11 +2420,6 @@ class Base(object):
             if already_inst:
                 msg_installed(already_inst[0])
             self.tsInfo.add_selector_install(sltr)
-        else:
-            q = subj.get_best_query(self.sack)
-            already_inst, available = self._query_matches_installed(q)
-            map(msg_installed, already_inst)
-            map(self.tsInfo.addInstall, available)
         return self.tsInfo
 
     def update(self, po=None, pattern=None):
@@ -2441,12 +2441,8 @@ class Base(object):
         # uninstalled pkgs called for update get returned with errors in a list, maybe?
 
         tx_return = []
-        instpkgs = []
-        availpkgs = []
         if po: # just a po
-            if po.from_system:
-                instpkgs.append(po)
-            else:
+            if not po.from_system:
                 installed = sorted(queries.installed_by_name(self.sack, po.name))
                 if len(installed) > 0 and installed[-1] < po:
                     txmbr = self.tsInfo.addUpdate(po)
