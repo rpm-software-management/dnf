@@ -131,7 +131,7 @@ def main(args):
             break
 
     try:
-        result, resultmsgs = cli.do_commands()
+        result, resultmsgs = cli.run()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:

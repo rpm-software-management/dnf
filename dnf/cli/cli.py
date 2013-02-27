@@ -1272,6 +1272,10 @@ class Cli(object):
 
         return bad_setopt_tm, bad_setopt_ne
 
+    @property
+    def command(self):
+        return self.cli_commands[self.base.basecmd]
+
     def configure(self, args):
         """Parse command line arguments, and set up :attr:`self.base.conf` and
         :attr:`self.cmds`, as well as logger objects in base instance.
@@ -1385,17 +1389,15 @@ class Cli(object):
                                   # + args make sure they match/make sense
         except CliError:
             sys.exit(1)
-        command = self.cli_commands[self.base.basecmd]
-        command.configure()
+        self.command.configure()
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
     def check(self):
         """Make sure the command line and options make sense."""
-        command = self.cli_commands[self.base.basecmd]
-        command.doCheck(self.base.basecmd, self.base.extcmds)
+        self.command.doCheck(self.base.basecmd, self.base.extcmds)
 
-    def do_commands(self):
+    def run(self):
         """Call the base command, and pass it the extended commands or
            arguments.
 
@@ -1407,8 +1409,7 @@ class Cli(object):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        command = self.cli_commands[self.base.basecmd]
-        return command.doCommand(self.base.basecmd, self.base.extcmds)
+        return self.command.doCommand(self.base.basecmd, self.base.extcmds)
 
     def print_usage(self):
         return self.optparser.print_usage()
