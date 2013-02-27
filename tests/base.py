@@ -126,7 +126,7 @@ class MockYumBase(dnf.yum.Base):
     def mock_cli(self):
         return mock.Mock('base', base=self)
 
-    def getReposFromConfig(self):
+    def read_all_repos(self):
         pass
 
 def mock_sack(*extra_repos):

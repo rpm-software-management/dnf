@@ -1115,7 +1115,7 @@ class Cli(object):
         self._register_command(dnf.cli.commands.DistroSyncCommand(self))
 
     def _configure_repos(self, opts):
-        self.base.getReposFromConfig()
+        self.base.read_all_repos()
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:

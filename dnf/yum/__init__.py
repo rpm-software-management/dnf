@@ -292,7 +292,7 @@ class Base(object):
                                      syslog_ident, syslog_facility,
                                      syslog_device)
 
-    def getReposFromConfigFile(self, repofn, repo_age=None, validate=None):
+    def read_repos(self, repofn, repo_age=None, validate=None):
         """Read in repositories from a config .repo file.
 
         :param repofn: a string specifying the path of the .repo file
@@ -364,7 +364,7 @@ class Base(object):
             except Errors.RepoError, e:
                 self.logger.warning(e)
 
-    def getReposFromConfig(self):
+    def read_all_repos(self):
         """Read in repositories from the main yum conf file, and from
         .repo files.  The location of the main yum conf file is given
         by self.conf.config_file_path, and the location of the
@@ -375,7 +375,7 @@ class Base(object):
         repo_config_age = self.conf.config_file_age
 
         # Get the repos from the main yum.conf file
-        self.getReposFromConfigFile(self.conf.config_file_path, repo_config_age)
+        self.read_repos(self.conf.config_file_path, repo_config_age)
 
         for reposdir in self.conf.reposdir:
             # this check makes sure that our dirs exist properly.
@@ -389,7 +389,7 @@ class Base(object):
                     thisrepo_age = os.stat(repofn)[8]
                     if thisrepo_age < repo_config_age:
                         thisrepo_age = repo_config_age
-                    self.getReposFromConfigFile(repofn, repo_age=thisrepo_age)
+                    self.read_repos(repofn, repo_age=thisrepo_age)
 
     def readRepoConfig(self, parser, section):
         """Parse an INI file section for a repository.
@@ -3182,7 +3182,7 @@ class Base(object):
         :return: the new repository that has been added and enabled
         """
         # out of place fixme - maybe we should make this the default repo addition
-        # routine and use it from getReposFromConfigFile(), etc.
+        # routine and use it from read_repos(), etc.
         newrepo = yumRepo.YumRepository(repoid)
         newrepo.name = repoid
 
