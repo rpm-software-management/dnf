@@ -64,30 +64,6 @@ class RepoStorage:
         self._cache_enabled_repos = []
         self.quick_enable_disable = {}
 
-    def doSetup(self, thisrepo = None):
-
-        self.ayum.plugins.run('prereposetup')
-
-        if thisrepo is None:
-            repos = self.listEnabled()
-        else:
-            repos = self.findRepos(thisrepo)
-
-        if len(repos) < 1:
-            self.logger.debug('No Repositories Available to Set Up')
-
-        for repo in repos:
-            repo.setup(self.ayum.conf.cache, self.ayum.mediagrabber,
-                   gpg_import_func = self.gpg_import_func, confirm_func=self.confirm_func,
-                   gpgca_import_func = self.gpgca_import_func)
-            # if we come back from setup NOT enabled then mark as disabled
-            # so nothing else touches us
-            if not repo.enabled:
-                self.disableRepo(repo.id)
-
-        self._setup = True
-        self.ayum.plugins.run('postreposetup')
-
     def __str__(self):
         return str(self.repos.keys())
 

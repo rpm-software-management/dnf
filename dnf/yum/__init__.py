@@ -520,11 +520,9 @@ class Base(object):
         del self._ts
         self._ts = None
 
-    def _getRepos(self, thisrepo=None, doSetup = False):
+    def _getRepos(self):
         """ For each enabled repository set up the basics of the repository. """
         if hasattr(self, 'prerepoconf'):
-            self.conf # touch the config class first
-
             self.getReposFromConfig()
 
         #  For rhnplugin, and in theory other stuff, calling
@@ -546,29 +544,6 @@ class Base(object):
             if prerepoconf.cache is not None:
                 self.repos.setCache(prerepoconf.cache)
 
-
-        if doSetup:
-            if (hasattr(urlgrabber, 'grabber') and
-                hasattr(urlgrabber.grabber, 'pycurl')):
-                # Must do basename checking, on cert. files...
-                cert_basenames = {}
-                for repo in self._repos.listEnabled():
-                    if not repo.sslclientcert:
-                        continue
-                    bn = os.path.basename(repo.sslclientcert)
-                    if bn not in cert_basenames:
-                        cert_basenames[bn] = repo
-                        continue
-                    if repo.sslclientcert == cert_basenames[bn].sslclientcert:
-                        # Exactly the same path is fine too
-                        continue
-
-                    msg = 'sslclientcert basename shared between %s and %s'
-                    raise Errors.ConfigError, msg % (repo, cert_basenames[bn])
-
-            repo_st = time.time()
-            self._repos.doSetup(thisrepo)
-            self.verbose_logger.debug('repo time: %0.3f' % (time.time() - repo_st))
         return self._repos
 
     def _delRepos(self):

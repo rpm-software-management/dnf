@@ -775,7 +775,6 @@ class GroupsCommand(Command):
     def _grp_setup_doCommand(self):
         self.doneCommand(_("Setting up Group Process"))
 
-        self.base.doRepoSetup(dosack=0)
         try:
             self.base.doGroupSetup()
         except dnf.yum.Errors.GroupsError:

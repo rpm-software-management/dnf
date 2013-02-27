@@ -106,34 +106,6 @@ class YumBaseCli(dnf.yum.Base, output.YumOutput):
         self.logger = logging.getLogger("yum.cli")
         self.verbose_logger = logging.getLogger("yum.verbose.cli")
 
-    def doRepoSetup(self, thisrepo=None, dosack=1):
-        """Grab the repomd.xml for each enabled and set up the basics
-        of the repository.
-
-        :param thisrepo: the repository to set up
-        :param dosack: whether to get the repo sack
-        """
-        if self._repos and thisrepo is None:
-            return self._repos
-
-        if not thisrepo:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
-                _('Setting up repositories'))
-
-        # Call parent class to do the bulk of work
-        # (this also ensures that reposetup plugin hook is called)
-        if thisrepo:
-            dnf.yum.Base._getRepos(self, thisrepo=thisrepo, doSetup=True)
-        else:
-            dnf.yum.Base._getRepos(self, thisrepo=thisrepo)
-
-        if dosack: # so we can make the dirs and grab the repomd.xml but not import the md
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
-                _('Reading repository metadata in from local files'))
-            self._getSacks(thisrepo=thisrepo)
-
-        return self._repos
-
     def errorSummary(self, errstring):
         """Parse the error string for 'interesting' errors which can
         be grouped, such as disk space issues.
