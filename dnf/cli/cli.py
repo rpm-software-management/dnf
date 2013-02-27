@@ -1115,6 +1115,7 @@ class Cli(object):
         self._register_command(dnf.cli.commands.DistroSyncCommand(self))
 
     def _configure_repos(self, opts):
+        self.base.getReposFromConfig()
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
@@ -1134,6 +1135,11 @@ class Cli(object):
             self.base._override_sigchecks = True
             for repo in self.base.repos.listEnabled():
                 repo._override_sigchecks = True
+
+        # setup the progress bars/callbacks
+        self.base.setupProgressCallbacks()
+        # setup the callbacks to import gpg pubkeys and confirm them
+        self.base.setupKeyImportCallbacks()
 
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
@@ -1227,7 +1233,6 @@ class Cli(object):
 
         command = self.cli_commands[basecmd]
         self.base.basecmd = command.getNames()[0] # the canonical name
-        command.doCheck(self.base.basecmd, self.base.extcmds)
 
     def _parse_setopts(self, setopts):
         """parse the setopts list handed to us and saves the results as
@@ -1384,6 +1389,11 @@ class Cli(object):
         command.configure()
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
+
+    def check(self):
+        """Make sure the command line and options make sense."""
+        command = self.cli_commands[self.base.basecmd]
+        command.doCheck(self.base.basecmd, self.base.extcmds)
 
     def do_commands(self):
         """Call the base command, and pass it the extended commands or
@@ -1617,11 +1627,6 @@ class YumOptionParser(OptionParser):
 
             if opts.rpmverbosity is not None:
                 self.base.conf.rpmverbosity = opts.rpmverbosity
-
-            # setup the progress bars/callbacks
-            self.base.setupProgressCallbacks()
-            # setup the callbacks to import gpg pubkeys and confirm them
-            self.base.setupKeyImportCallbacks()
 
         except ValueError, e:
             self.logger.critical(_('Options Error: %s'), e)

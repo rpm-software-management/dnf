@@ -105,25 +105,6 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 # multiple Base() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
-class _YumPreRepoConf:
-    """This is the configuration interface for the repos configuration
-    configuration.  To change configuration settings such what
-    callbacks are used, change the values here. Later, when
-    :func:`Base.repos` is first called, all of the options will be
-    automatically configured.
-    """
-    def __init__(self):
-        self.progressbar = None
-        self.callback = None
-        self.failure_callback = None
-        self.interrupt_callback = None
-        self.confirm_func = None
-        self.gpg_import_func = None
-        self.gpgca_import_func = None
-        self.cachedir = None
-        self.cache = None
-
-
 class _YumCostExclude:
     """ This excludes packages that are in repos. of lower cost than the passed
         repo. """
@@ -179,7 +160,6 @@ class Base(object):
 
         self.mediagrabber = None
         self.arch = ArchStorage()
-        self.prerepoconf = _YumPreRepoConf()
 
         self.run_with_package_names = set()
         self._cleanup = []
@@ -211,6 +191,14 @@ class Base(object):
     @property
     def conf(self):
         return self._conf
+
+    @property
+    def repos(self):
+        return self._repos
+
+    @repos.deleter
+    def repos(self):
+        self._repos = None
 
     @property
     @dnf.util.lazyattr("_rpm")
@@ -520,36 +508,6 @@ class Base(object):
         del self._ts
         self._ts = None
 
-    def _getRepos(self):
-        """ For each enabled repository set up the basics of the repository. """
-        if hasattr(self, 'prerepoconf'):
-            self.getReposFromConfig()
-
-        #  For rhnplugin, and in theory other stuff, calling
-        # .getReposFromConfig() recurses back into this function but only once.
-        # This means that we have two points on the stack leaving the above call
-        # but only one of them can do the repos setup. BZ 678043.
-        if hasattr(self, 'prerepoconf'):
-            # Recursion
-            prerepoconf = self.prerepoconf
-            del self.prerepoconf
-
-            self.repos.setProgressBar(prerepoconf.progressbar)
-            self.repos.callback = prerepoconf.callback
-            self.repos.setFailureCallback(prerepoconf.failure_callback)
-            self.repos.setInterruptCallback(prerepoconf.interrupt_callback)
-            self.repos.confirm_func = prerepoconf.confirm_func
-            self.repos.gpg_import_func = prerepoconf.gpg_import_func
-            self.repos.gpgca_import_func = prerepoconf.gpgca_import_func
-            if prerepoconf.cache is not None:
-                self.repos.setCache(prerepoconf.cache)
-
-        return self._repos
-
-    def _delRepos(self):
-        del self._repos
-        self._repos = RepoStorage(self)
-
     def _setGroups(self, val):
         if val is None:
             # if we unset the comps object, we need to undo which repos have
@@ -632,10 +590,6 @@ class Base(object):
         return self._history
 
     # properties so they auto-create themselves with defaults
-    repos = property(fget=lambda self: self._getRepos(),
-                     fset=lambda self, value: setattr(self, "_repos", value),
-                     fdel=lambda self: self._delRepos(),
-                     doc="Repo Storage object - object of yum repositories")
     tsInfo = property(fget=lambda self: self._getTsInfo(),
                       fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),

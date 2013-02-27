@@ -89,6 +89,7 @@ def main(args):
     # also sanity check the things being passed on the cli
     try:
         cli.configure(args)
+        cli.check()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except Errors.YumBaseError, e:

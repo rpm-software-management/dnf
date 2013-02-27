@@ -123,16 +123,11 @@ class MockYumBase(dnf.yum.Base):
         self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
         return self._sack
 
-    @property
-    def repos(self):
-        return self._repos
-
-    @repos.deleter
-    def repos(self):
-        self._repos = None
-
     def mock_cli(self):
         return mock.Mock('base', base=self)
+
+    def getReposFromConfig(self):
+        pass
 
 def mock_sack(*extra_repos):
     return MockYumBase(*extra_repos).sack

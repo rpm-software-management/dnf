@@ -1577,18 +1577,10 @@ Transaction Summary
 
         # setup callback for CTRL-C's
         interrupt_callback = self.interrupt_callback
-        if hasattr(self, 'prerepoconf'):
-            self.prerepoconf.progressbar = progressbar
-            self.prerepoconf.callback = callback
-            self.prerepoconf.failure_callback = failure_callback
-            self.prerepoconf.interrupt_callback = interrupt_callback
-        else:
-            #  Just in case some API user decides to do self.repos before
-            # calling us.
-            self.repos.setProgressBar(progressbar)
-            self.repos.callback = callback
-            self.repos.setFailureCallback(failure_callback)
-            self.repos.setInterruptCallback(interrupt_callback)
+        self.repos.setProgressBar(progressbar)
+        self.repos.callback = callback
+        self.repos.setFailureCallback(failure_callback)
+        self.repos.setInterruptCallback(interrupt_callback)
 
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
@@ -1600,14 +1592,9 @@ Transaction Summary
         confirm_func = self._cli_confirm_gpg_key_import
         gpg_import_func = self.getKeyForRepo
         gpgca_import_func = self.getCAKeyForRepo
-        if hasattr(self, 'prerepoconf'):
-            self.prerepoconf.confirm_func = confirm_func
-            self.prerepoconf.gpg_import_func = gpg_import_func
-            self.prerepoconf.gpgca_import_func = gpgca_import_func
-        else:
-            self.repos.confirm_func = confirm_func
-            self.repos.gpg_import_func = gpg_import_func
-            self.repos.gpgca_import_func = gpgca_import_func
+        self.repos.confirm_func = confirm_func
+        self.repos.gpg_import_func = gpg_import_func
+        self.repos.gpgca_import_func = gpgca_import_func
 
     def interrupt_callback(self, cbobj):
         '''Handle CTRL-C's during downloads.  If a CTRL-C occurs a
