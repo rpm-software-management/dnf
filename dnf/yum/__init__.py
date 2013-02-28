@@ -292,7 +292,7 @@ class Base(object):
                                      syslog_ident, syslog_facility,
                                      syslog_device)
 
-    def read_repos(self, repofn, repo_age=None, validate=None):
+    def read_repos(self, repofn, repo_age=None):
         """Read in repositories from a config .repo file.
 
         :param repofn: a string specifying the path of the .repo file
@@ -346,16 +346,12 @@ class Base(object):
 
                 thisrepo.base_persistdir = self.conf._repos_persistdir
 
-
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     if not hasattr(thisrepo, opt):
                         msg = "Repo %s did not have a %s attr. before setopt"
                         self.logger.warning(msg % (thisrepo.id, opt))
                     setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
-
-            if validate and not validate(thisrepo):
-                continue
 
             # Got our list of repo objects, add them to the repos
             # collection
