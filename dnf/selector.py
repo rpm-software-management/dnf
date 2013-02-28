@@ -21,13 +21,13 @@
 from __future__ import absolute_import
 
 import hawkey
-import dnf.queries
+import dnf.util
 
 class Selector(hawkey.Selector):
     def set_autoglob(self, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
-            if dnf.queries.is_glob_pattern(value):
+            if dnf.util.is_glob_pattern(value):
                 nargs[key + "__glob"] = value
             else:
                 nargs[key] = value

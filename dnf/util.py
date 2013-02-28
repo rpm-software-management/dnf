@@ -37,6 +37,9 @@ def first(iterable):
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
 
+def is_glob_pattern(pattern):
+    return set(pattern) & set("*[?")
+
 def is_string_type(obj):
     return type(obj) in types.StringTypes
 

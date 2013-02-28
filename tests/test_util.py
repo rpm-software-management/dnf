@@ -65,6 +65,11 @@ class Util(unittest.TestCase):
                 yield 10
         self.assertEqual(dnf.util.first(generator()), None)
 
+    def test_is_glob_pattern(self):
+        assert(dnf.util.is_glob_pattern("all*.ext"))
+        assert(dnf.util.is_glob_pattern("all?.ext"))
+        assert(not dnf.util.is_glob_pattern("not.ext"))
+
     def test_lazyattr(self):
         slow = Slow(12)
 

@@ -24,12 +24,9 @@ import itertools
 import types
 import dnf.yum.Errors
 import dnf.selector
-from dnf.util import first
+from dnf.util import first, is_glob_pattern
 
 from dnf.yum.i18n import _
-
-def is_glob_pattern(pattern):
-    return set(pattern) & set("*[?")
 
 def is_nevra(pattern):
     try:
