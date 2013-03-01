@@ -26,7 +26,7 @@ import misc as misc
 import constants
 import Errors
 from constants import *
-from packages import YumAvailablePackage, PackageObject
+from packages import PackageObject
 from i18n import to_unicode, to_utf8
 from . import _
 import dnf.i18n
@@ -138,7 +138,6 @@ class _YumHistPackageYumDB:
         except AttributeError:
             return default
         return res
-
 
 class YumHistoryPackage(PackageObject):
 

@@ -70,7 +70,6 @@ import history
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from packages import YumNotFoundPackage
 from constants import *
 from i18n import to_unicode, to_str, exception2msg
 
@@ -722,29 +721,6 @@ class Base(object):
             if msg:
                 return (0, [msg])
         return (rescode, restring)
-
-    def _add_not_found(self, pkgs, nevra_dict):
-        if pkgs:
-            return None
-
-        pkgtup = (nevra_dict['name'], nevra_dict['arch'],
-                  nevra_dict['epoch'], nevra_dict['version'],
-                  nevra_dict['release'])
-        if None in pkgtup:
-            return None
-        return pkgtup
-    def _add_not_found_a(self, pkgs, nevra_dict={}, pkgtup=None):
-        if pkgtup is None and nevra_dict:
-            pkgtup = self._add_not_found(pkgs, nevra_dict)
-        if pkgtup is None:
-            return
-        self._not_found_a[pkgtup] = YumNotFoundPackage(pkgtup)
-    def _add_not_found_i(self, pkgs, nevra_dict={}, pkgtup=None):
-        if pkgtup is None and nevra_dict:
-            pkgtup = self._add_not_found(pkgs, nevra_dict)
-        if pkgtup is None:
-            return
-        self._not_found_i[pkgtup] = YumNotFoundPackage(pkgtup)
 
     def _record_history(self):
         return self.conf.history_record and \
@@ -1951,68 +1927,6 @@ class Base(object):
                         self.tsInfo.remove(txmbr.po.pkgtup)
                         for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
                             self.tsInfo.remove(pkg.pkgtup)
-
-    def getPackageObject(self, pkgtup, allow_missing=False):
-        """Return a package object that corresponds to the given
-        package tuple.
-
-        :param pkgtup: the package tuple specifying the package object
-           to return
-
-        :param allow_missing: If no package corresponding to the given
-           package tuple can be found, None is returned if
-           *allow_missing* is True, and a :class:`Errors.DepError` is
-           raised if *allow_missing* is False.
-        :return: a package object corresponding to the given package tuple
-        :raises: a :class:`Errors.DepError` if no package
-           corresponding to the given package tuple can be found, and
-           *allow_missing* is False
-        """
-        raise NotImplementedError, "not implemented in hawkey" # :hawkey
-        # look it up in the self.localPackages first:
-        for po in self.localPackages:
-            if po.pkgtup == pkgtup:
-                return po
-
-        pkgs = self.pkgSack.searchPkgTuple(pkgtup)
-
-        if len(pkgs) == 0:
-            self._add_not_found_a(pkgs, pkgtup=pkgtup)
-            if allow_missing: #  This can happen due to excludes after .up has
-                return None   # happened.
-            raise Errors.DepError, _('Package tuple %s could not be found in packagesack') % str(pkgtup)
-
-        if len(pkgs) > 1: # boy it'd be nice to do something smarter here FIXME
-            result = pkgs[0]
-        else:
-            result = pkgs[0] # which should be the only
-
-            # this is where we could do something to figure out which repository
-            # is the best one to pull from
-
-        return result
-
-    def getInstalledPackageObject(self, pkgtup):
-        """Return a :class:`packages.YumInstalledPackage` object that
-        corresponds to the given package tuple.  This function should
-        be used instead of :func:`searchPkgTuple` if you are assuming
-        that the package object exists.
-
-        :param pkgtup: the package tuple specifying the package object
-           to return
-        :return: a :class:`packages.YumInstalledPackage` object corresponding
-           to the given package tuple
-        :raises: a :class:`Errors.RpmDBError` if the specified package
-           object cannot be found
-        """
-        pkgs = self.rpmdb.searchPkgTuple(pkgtup)
-        if len(pkgs) == 0:
-            self._add_not_found_i(pkgs, pkgtup=pkgtup)
-            raise Errors.RpmDBError, _('Package tuple %s could not be found in rpmdb') % str(pkgtup)
-
-        # Dito. FIXME from getPackageObject() for len() > 1 ... :)
-        po = pkgs[0] # take the first one
-        return po
 
     def gpgKeyCheck(self):
         """Checks for the presence of GPG keys in the rpmdb.

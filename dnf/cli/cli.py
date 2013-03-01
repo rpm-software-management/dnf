@@ -699,7 +699,9 @@ class YumBaseCli(dnf.yum.Base, output.YumOutput):
         for arg in args:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                thispkg = dnf.yum.packages.YumUrlPackage(self, self.ts, arg)
+                # :hawkey
+                # thispkg = dnf.yum.packages.YumUrlPackage(self, self.ts, arg)
+                thispkg = None
                 pkgs.append(thispkg)
             elif self.conf.showdupesfromrepos:
                 pkgs.extend(self.pkgSack.returnPackages(patterns=[arg]))
