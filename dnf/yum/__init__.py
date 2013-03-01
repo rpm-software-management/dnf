@@ -36,16 +36,11 @@ def _rpm_ver_atleast(vertup):
     except:
         return None # Something went wrong...
 
-import re
 import types
 import errno
 import time
 import glob
-import fnmatch
 import logging
-import logging.config
-import operator
-import tempfile
 
 import i18n
 _ = i18n._
@@ -55,8 +50,7 @@ import config
 from config import ParsingError, ConfigParser
 import Errors
 import rpmsack
-from dnf.rpmUtils.arch import archDifference, canCoinstall, ArchStorage, isMultiLibArch
-from dnf.rpmUtils.miscutils import compareEVR
+from dnf.rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import dnf.rpmUtils.transaction
 import comps
 from repos import RepoStorage
@@ -64,8 +58,9 @@ import misc
 from parser import ConfigPreProcessor, varReplace
 import transactioninfo
 import urlgrabber
-from urlgrabber.grabber import URLGrabber, URLGrabError
+from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
+from urlgrabber.grabber import default_grabber
 import plugins
 import logginglevels
 import yumRepo
@@ -75,11 +70,8 @@ import history
 import warnings
 warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
 
-from packages import parsePackages, comparePoEVR
-from packages import YumAvailablePackage, YumLocalPackage
-from packages import YumUrlPackage, YumNotFoundPackage
+from packages import YumNotFoundPackage
 from constants import *
-from rpmtrans import RPMTransaction,SimpleCliCallBack
 from i18n import to_unicode, to_str, exception2msg
 
 import string
@@ -87,14 +79,11 @@ import StringIO
 
 from weakref import proxy as weakref
 
-from urlgrabber.grabber import default_grabber
-
 import hawkey
 import dnf.conf
-import dnf.package
 import dnf.util
 import dnf.rpmUtils.connection
-from dnf import const, queries, sack, selector
+from dnf import const, queries, sack
 
 __version__ = '3.4.3'
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
