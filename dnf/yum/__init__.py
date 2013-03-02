@@ -93,28 +93,6 @@ __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 # multiple Base() objects.
 default_grabber.opts.user_agent += " yum/" + __version__
 
-class _YumCostExclude:
-    """ This excludes packages that are in repos. of lower cost than the passed
-        repo. """
-
-    def __init__(self, repo, repos):
-        self.repo   = weakref(repo)
-        self._repos = weakref(repos)
-
-    def __contains__(self, pkgtup):
-        # (n, a, e, v, r) = pkgtup
-        for repo in self._repos.listEnabled():
-            if repo.cost >= self.repo.cost:
-                break
-            #  searchNevra is a bit slower, although more generic for repos.
-            # that don't use sqlitesack as the backend ... although they are
-            # probably screwed anyway.
-            #
-            # if repo.sack.searchNevra(n, e, v, r, a):
-            if pkgtup in repo.sack._pkgtup2pkgs:
-                return True
-        return False
-
 class Base(object):
     """This is a primary structure and base class. It houses the
     objects and methods needed to perform most things in yum. It is
