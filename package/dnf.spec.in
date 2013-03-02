@@ -1,5 +1,5 @@
-%global gitrev 050524e
-%global hawkey_version 0.3.7
+%global gitrev 97180b8
+%global hawkey_version 0.3.8
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -54,6 +54,30 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Fri Mar 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.22-1.git97180b8
+- move is_glob_pattern() to dnf.util (Ales Kozumplik)
+- validate parameter never used in Base.read_repos() (Ales Kozumplik)
+- cosmetic: refactor: getReposFromConf*() -> read_*_repos() (Ales Kozumplik)
+- refactor: introduce Cli.command property. (Ales Kozumplik)
+- repos: get rid of Base.prerepoconf. (Ales Kozumplik)
+- repos: simplify how repos are set up. (Ales Kozumplik)
+- always use iniparse, do not fallback to ConfigParser. (Ales Kozumplik)
+- 'dnf repolist' is silent. (Ales Kozumplik)
+- enabling/disabling repos doesn't respect the cmdline order. (RhBug:913143) (Ales Kozumplik)
+- install by filenames and globbed filenames (RhBug:912130) (Ales Kozumplik)
+- doc: man page: better describe the input patterns. (Ales Kozumplik)
+- tests: test_installroot_with_etc() broken on other machines. (Ales Kozumplik)
+- fix globbing installs again. (Ales Kozumplik)
+- 'dnf list' shouldn't look for provides. (Ales Kozumplik)
+- pass installroot to the sack. (RhBug:915048) (Ales Kozumplik)
+- fix traceback in Cli.configure() with --installroot (Ales Kozumplik)
+- at least do not traceback if history undo doesn't work. (Ales Kozumplik)
+- adapt to new interface hawkey.Subject interface (34bae0c) (Ales Kozumplik)
+- search: try to make the better matches come on top. (Ales Kozumplik)
+- search: perform the search case-insensitive. (Ales Kozumplik)
+- tests: bring the cli.search() method under the test. (Ales Kozumplik)
+- repo: when reverting repomd.xml make sure we reset its srcfile (RhBug:904706) (Ales Kozumplik)
+
 * Mon Feb 11 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.21-1.git050524e
 - Selector.get_best_selector() should be able to handle simple version (not just EVR). (Ales Kozumplik)
 - remove YumUtilBase(). (Ales Kozumplik)
