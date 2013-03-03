@@ -18,5 +18,16 @@
 # Red Hat, Inc.
 #
 
+import dnf.const
+__version__ = dnf.const.VERSION
+
 import dnf.yum
 Base = dnf.yum.Base
+
+# setup libraries
+from urlgrabber.grabber import default_grabber
+default_grabber.opts.user_agent += " dnf/%s" % dnf.const.VERSION
+
+import urlparse
+urlparse.uses_fragment.append("media")
+

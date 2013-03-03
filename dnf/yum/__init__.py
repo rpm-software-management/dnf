@@ -24,18 +24,6 @@ import os
 import os.path
 import rpm
 
-def _rpm_ver_atleast(vertup):
-    """ Check if rpm is at least the current vertup. Can return False/True/None
-        as rpm hasn't had version info for a long time. """
-    if not hasattr(rpm, '__version_info__'):
-        return None
-    try:
-        # 4.8.x rpm used strings for the tuple members, so convert.
-        vi = tuple([ int(num) for num in rpm.__version_info__])
-        return vi >= vertup
-    except:
-        return None # Something went wrong...
-
 import types
 import errno
 import time
@@ -60,7 +48,6 @@ import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
-from urlgrabber.grabber import default_grabber
 import plugins
 import logginglevels
 import yumRepo
@@ -83,15 +70,6 @@ import dnf.conf
 import dnf.util
 import dnf.rpmUtils.connection
 from dnf import const, queries, sack
-
-__version__ = '3.4.3'
-__version_info__ = tuple([ int(num) for num in __version__.split('.')])
-
-#  Setup a default_grabber UA here that says we are yum, done using the global
-# so that other API users can easily add to it if they want.
-#  Don't do it at init time, or we'll get multiple additions if you create
-# multiple Base() objects.
-default_grabber.opts.user_agent += " yum/" + __version__
 
 class Base(object):
     """This is a primary structure and base class. It houses the

@@ -19,7 +19,6 @@ import time
 import traceback
 import types
 import urlparse
-urlparse.uses_fragment.append("media")
 import urllib
 
 import Errors
