@@ -21,9 +21,8 @@ import rpm
 import os
 import sys
 import logging
-from dnf.yum import _
+from dnf.yum.i18n import _
 from dnf.yum.constants import *
-
 
 class RPMInstallCallback:
     """Yum command line callback class for callbacks from the RPM library."""

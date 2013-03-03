@@ -21,8 +21,8 @@
 import dnf.const
 __version__ = dnf.const.VERSION
 
-import dnf.yum
-Base = dnf.yum.Base
+import dnf.yum.base
+Base = dnf.yum.base.Base
 
 # setup libraries
 from urlgrabber.grabber import default_grabber

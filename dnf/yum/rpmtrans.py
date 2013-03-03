@@ -23,7 +23,7 @@ import logging
 import types
 import sys
 from constants import *
-from . import _
+from i18n import _
 from transactioninfo import TransactionMember
 import misc
 import tempfile

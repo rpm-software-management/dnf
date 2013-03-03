@@ -28,7 +28,7 @@ import Errors
 from constants import *
 from packages import PackageObject
 from i18n import to_unicode, to_utf8
-from . import _
+from i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch

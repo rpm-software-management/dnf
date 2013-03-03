@@ -33,7 +33,7 @@ import parser
 import config
 import misc
 import comps
-from . import _
+from i18n import _
 from constants import *
 import metalink
 

@@ -24,14 +24,13 @@ Classes for subcommands of the yum command line interface.
 import os
 from dnf.cli import CliError
 from dnf.yum import logginglevels
-from dnf.yum import _
 from dnf.yum import misc
 import dnf.yum.Errors
 import operator
 import locale
 import fnmatch
 import time
-from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode
+from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
 
 import dnf.yum.config
 import dnf.queries

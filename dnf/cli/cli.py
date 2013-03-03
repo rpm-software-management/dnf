@@ -34,13 +34,12 @@ from weakref import proxy as weakref
 
 import output
 import dnf.match_counter
-import dnf.yum
+import dnf.yum.base
 import dnf.yum.logginglevels
 import dnf.yum.misc
 from dnf.yum.parser import varReplace
 import dnf.yum.plugins
 from dnf.rpmUtils.arch import isMultiLibArch
-from dnf.yum import _, P_
 from dnf.yum.rpmtrans import RPMTransaction
 import signal
 from dnf.cli import CliError
@@ -50,7 +49,7 @@ import dnf.queries
 import dnf.sack
 import hawkey
 
-from dnf.yum.i18n import to_unicode, to_utf8, exception2msg
+from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
 
 _RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'
@@ -94,13 +93,13 @@ def print_versions(pkgs, yumbase):
         # print _("  Committed: %s at %s") % (pkg.committer,
         #                                    sm_ui_date(pkg.committime))
 
-class YumBaseCli(dnf.yum.Base, output.YumOutput):
+class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
     """This is the base class for yum cli."""
 
     def __init__(self):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
-        dnf.yum.Base.__init__(self)
+        dnf.yum.base.Base.__init__(self)
         output.YumOutput.__init__(self)
         logging.basicConfig()
         self.logger = logging.getLogger("yum.cli")
@@ -683,7 +682,7 @@ class YumBaseCli(dnf.yum.Base, output.YumOutput):
     def deplist(self, args):
         """Print out a formatted list of dependencies for a list of
         packages.  This is a cli wrapper method for
-        :class:`dnf.yum.Base.findDeps`.
+        :class:`dnf.yum.base.Base.findDeps`.
 
         :param args: a list of names or wildcards specifying packages
            that should have their dependenices printed

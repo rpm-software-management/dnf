@@ -63,7 +63,7 @@ class CliTest(unittest.TestCase):
         self.assertTrue(self.yumbase._override_sigchecks)
         self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
 
-@mock.patch('dnf.yum.Base.doLoggingSetup', new=mock.MagicMock)
+@mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
 @mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)
 class ConfigureTest(unittest.TestCase):
     def setUp(self):
@@ -86,7 +86,7 @@ class ConfigureTest(unittest.TestCase):
         self.assertEqual(self.yumbase.conf.debuglevel, 6)
         self.assertEqual(self.yumbase.conf.errorlevel, 6)
 
-    @mock.patch('dnf.yum.Base.read_conf_file')
+    @mock.patch('dnf.yum.base.Base.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_explicit(self, read_conf_file):
         self.cli.base.basecmd = 'update'
@@ -96,7 +96,7 @@ class ConfigureTest(unittest.TestCase):
                                           {'conffile': '/etc/dnf/dnf.conf',
                                            'installroot': '/roots/dnf'})
 
-    @mock.patch('dnf.yum.Base.read_conf_file')
+    @mock.patch('dnf.yum.base.Base.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_with_etc(self, read_conf_file):
         """Test that conffile is detected in a new installroot."""

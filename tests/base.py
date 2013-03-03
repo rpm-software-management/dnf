@@ -18,8 +18,9 @@
 import dnf.package
 import dnf.queries
 import dnf.sack
-import dnf.yum
+import dnf.yum.base
 import dnf.yum.constants
+import dnf.yum.repos
 import dnf.yum.yumRepo
 import hawkey.test
 import mock
@@ -82,7 +83,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=yumbase,
                                make_cache_dir=True)
 
-class MockYumBase(dnf.yum.Base):
+class MockYumBase(dnf.yum.base.Base):
     """ See also: hawkey/test/python/__init__.py.
 
         Note that currently the used TestSack has always architecture set to
@@ -91,7 +92,7 @@ class MockYumBase(dnf.yum.Base):
     """
     def __init__(self, *extra_repos):
         super(MockYumBase, self).__init__()
-        self._repos = dnf.yum.RepoStorage(self)
+        self._repos = dnf.yum.repos.RepoStorage(self)
         for r in extra_repos:
             repo = dnf.yum.yumRepo.YumRepository(r)
             repo.enable()

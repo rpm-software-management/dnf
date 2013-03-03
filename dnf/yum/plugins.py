@@ -32,9 +32,7 @@ import fnmatch
 
 from weakref import proxy as weakref
 
-from . import _
-
-from i18n import utf8_width
+from i18n import _, utf8_width
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -429,7 +427,7 @@ class PluginConduit:
     def getYumVersion(self):
         """Return a string representing the current version of yum."""
 
-        from . import __version__
+        from dnf import __version__
         return __version__
 
     def getOptParser(self):

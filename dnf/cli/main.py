@@ -29,8 +29,7 @@ import errno
 from dnf.yum import Errors
 from dnf.yum import plugins
 from dnf.yum import logginglevels
-from dnf.yum import _
-from dnf.yum.i18n import utf8_width, exception2msg
+from dnf.yum.i18n import utf8_width, exception2msg, _
 import dnf.i18n
 import dnf.cli.cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner

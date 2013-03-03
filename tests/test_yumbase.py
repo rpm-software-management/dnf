@@ -20,7 +20,7 @@ import binascii
 import dnf.const
 import dnf.match_counter
 import dnf.queries
-import dnf.yum
+import dnf.yum.base
 import dnf.yum.constants
 import hawkey
 import mock
@@ -29,12 +29,12 @@ import unittest
 
 class YumBaseTest(unittest.TestCase):
     def test_instance(self):
-        yumbase = dnf.yum.Base()
+        yumbase = dnf.yum.base.Base()
 
     @mock.patch('dnf.const.PID_FILENAME', "/var/run/dnf.unittest.pid")
     def test_locking(self):
         # tricky setup:
-        yumbase = dnf.yum.Base()
+        yumbase = dnf.yum.base.Base()
         yumbase._conf = mock.Mock()
         yumbase.conf.cache = None
         yumbase.cache_c.prefix = "/tmp"
