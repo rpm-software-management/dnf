@@ -98,7 +98,6 @@ class MockYumBase(dnf.yum.base.Base):
 
         self._yumdb = MockYumDB()
         self._conf = FakeConf()
-        self.extra_repos = extra_repos
         self.tsInfo = dnf.yum.transactioninfo.TransactionData()
         self.term = FakeTerm()
         self.cache_c.prefix = "/tmp"
@@ -116,9 +115,9 @@ class MockYumBase(dnf.yum.base.Base):
         # class and a Base reference.
         self._sack = TestSack(repo_dir(), self)
         self._sack.load_system_repo()
-        for repo in self.extra_repos:
-            fn = "%s.repo" % repo
-            self._sack.load_test_repo(repo, fn)
+        for repo in self.repos.iter_enabled():
+            fn = "%s.repo" % repo.id
+            self._sack.load_test_repo(repo.id, fn)
 
         self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
         return self._sack
