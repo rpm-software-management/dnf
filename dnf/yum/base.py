@@ -3020,66 +3020,6 @@ class Base(object):
             return True
         return False # :hawkey
 
-    def add_enable_repo(self, repoid, baseurls=[], mirrorlist=None, **kwargs):
-        """Add and enable a repository.
-
-        Never used in yum/:hawkey (only plugins).
-
-        :param repoid: a string specifying the name of the repository
-        :param baseurls: a list of strings specifying the urls for
-           the repository.  At least one base url, or one mirror, must
-           be given
-        :param mirrorlist: a list of strings specifying a list of
-           mirrors for the repository.  At least one base url, or one
-           mirror must be given
-        :param kwargs: key word arguments to set any normal repository
-           attribute
-        :return: the new repository that has been added and enabled
-        """
-        # out of place fixme - maybe we should make this the default repo addition
-        # routine and use it from read_repos(), etc.
-        newrepo = yumRepo.YumRepository(repoid)
-        newrepo.name = repoid
-
-        var_convert = kwargs.get('variable_convert', True)
-
-        if baseurls:
-            replaced = []
-            if var_convert:
-                for baseurl in baseurls:
-                    if baseurl:
-                        replaced.append(varReplace(baseurl, self.conf.yumvar))
-            else:
-                replaced = baseurls
-            newrepo.baseurl = replaced
-
-        if mirrorlist:
-            if var_convert:
-                mirrorlist = varReplace(mirrorlist, self.conf.yumvar)
-            newrepo.mirrorlist = mirrorlist
-
-        # setup the repo
-        newrepo.setup(cache=self.conf.cache)
-
-        # some reasonable defaults, (imo)
-        newrepo.enablegroups = True
-        newrepo.metadata_expire = 0
-        newrepo.gpgcheck = self.conf.gpgcheck
-        newrepo.repo_gpgcheck = self.conf.repo_gpgcheck
-        newrepo.basecachedir = self.cache_c.cachedir
-        newrepo.fallback_basecachedir = self.cache_c.fallback_cachedir
-        newrepo.base_persistdir = self.conf._repos_persistdir
-
-        for key in kwargs.keys():
-            if not hasattr(newrepo, key): continue # skip the ones which aren't vars
-            setattr(newrepo, key, kwargs[key])
-
-        # add the new repo
-        self.repos.add(newrepo)
-        # enable the main repo
-        self.repos.enableRepo(newrepo.id)
-        return newrepo
-
     def populate_ts(self):
         """Populate the RPM transaction set. """
         if self.dsCallback:
