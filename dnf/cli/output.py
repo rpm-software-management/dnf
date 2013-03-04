@@ -1575,12 +1575,10 @@ Transaction Summary
         freport = (self.failureReport,(),{})
         failure_callback = freport
 
+        self.repos.all.set_progress_bar(progressbar)
+        self.repos.all.set_failure_callback(failure_callback)
         # setup callback for CTRL-C's
-        interrupt_callback = self.interrupt_callback
-        self.repos.setProgressBar(progressbar)
-        self.repos.callback = callback
-        self.repos.setFailureCallback(failure_callback)
-        self.repos.setInterruptCallback(interrupt_callback)
+        self.repos.all.set_interrupt_callback(self.interrupt_callback)
 
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))

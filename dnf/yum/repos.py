@@ -45,7 +45,6 @@ class RepoStorage:
     def __init__(self, ayum):
         self.repos = {} # list of repos by repoid pointing a repo object
                         # of repo options/misc data
-        self.callback = None # progress callback used for populateSack() for importing the xml files
         self.cache = 0
         self.logger = logging.getLogger("yum.RepoStorage")
 

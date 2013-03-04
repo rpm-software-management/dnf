@@ -27,9 +27,19 @@ class Repo(dnf.yum.config.RepoConf):
         self.basecachedir = None
         self.fallback_basecachedir = None
         self.base_persistdir = ""
+        self.yumvar = {} # empty dict of yumvariables for $string replacement
 
     def disable(self):
         self.enabled = False
 
     def enable(self):
         self.enabled = True
+
+    def set_failure_callback(self, cb):
+        pass
+
+    def set_interrupt_callback(self, cb):
+        pass
+
+    def set_progress_bar(self, cb):
+        pass
