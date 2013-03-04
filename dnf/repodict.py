@@ -46,6 +46,12 @@ class RepoDict(dict):
     def all(self):
         return MultiCallList(self.itervalues())
 
+    def any_enabled(self):
+        return not dnf.util.empty(self.iter_enabled())
+
+    def enabled(self):
+        return [r for r in self.itervalues() if r.enabled]
+
     def get_multiple(self, key):
         if dnf.util.is_glob_pattern(key):
             l = [self[k] for k in self if fnmatch.fnmatch(k, key)]

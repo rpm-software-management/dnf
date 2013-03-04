@@ -61,7 +61,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(calls.call_args_list,
                          [mock.call('*'), mock.call('comb')])
         self.assertTrue(self.yumbase._override_sigchecks)
-        self.assertTrue(self.yumbase.repos.getRepo("main")._override_sigchecks)
+        self.assertTrue(self.yumbase.repos["main"]._override_sigchecks)
 
 @mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
 @mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)

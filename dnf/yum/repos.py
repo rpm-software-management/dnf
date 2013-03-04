@@ -60,7 +60,6 @@ class RepoStorage:
         self.gpgca_import_func = _wrap_ayum_getKeyForRepo(ayum, ca=True)
         self.confirm_func = None
 
-        # This allow listEnabled() to be O(1) most of the time.
         self._cache_enabled_repos = []
         self.quick_enable_disable = {}
 

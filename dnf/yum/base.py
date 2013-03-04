@@ -41,7 +41,6 @@ import rpmsack
 from dnf.rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import dnf.rpmUtils.transaction
 import comps
-from repos import RepoStorage
 import misc
 from parser import ConfigPreProcessor, varReplace
 import transactioninfo
@@ -50,7 +49,6 @@ from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
 import plugins
 import logginglevels
-import yumRepo
 import callbacks
 import history
 
@@ -67,6 +65,8 @@ from weakref import proxy as weakref
 
 import hawkey
 import dnf.conf
+import dnf.repo
+import dnf.repodict
 import dnf.util
 import dnf.rpmUtils.connection
 from dnf import const, queries, sack
@@ -92,7 +92,7 @@ class Base(object):
         self.logger = logging.getLogger("yum.Base")
         self.verbose_logger = logging.getLogger("yum.verbose.Base")
         self._override_sigchecks = False
-        self._repos = RepoStorage(self)
+        self._repos = dnf.repodict.RepoDict()
         self.repo_setopts = {} # since we have to use repo_setopts in base and
                                # not in cli - set it up as empty so no one
                                # trips over it later
@@ -158,7 +158,7 @@ class Base(object):
         start = time.time()
         self._sack = sack.build_sack(self)
         self._sack.load_system_repo(build_cache=True)
-        for r in self.repos.listEnabled():
+        for r in self.repos.iter_enabled():
             self._add_repo_to_hawkey(r.id)
         self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
@@ -173,13 +173,9 @@ class Base(object):
 
     def close(self):
         """Close the history and repo objects."""
-
-        # We don't want to create the object, so we test if it's been created
+        # Do not trigger the lazy creation:
         if self._history is not None:
             self.history.close()
-
-        if self._repos:
-            self._repos.close()
 
     def _init_yumvar(self, conf):
         yumvar = config.init_yumvar(self.conf.installroot,
@@ -337,9 +333,9 @@ class Base(object):
         :param parser: :class:`ConfigParser` or similar object to read
            INI file values from
         :param section: INI file section to read
-        :return: :class:`yumRepo.YumRepository` instance
+        :return: :class:`dnf.repo.Repo` instance
         """
-        repo = yumRepo.YumRepository(section)
+        repo = dnf.repo.Repo(section)
         try:
             repo.populate(parser, section, self.conf)
         except ValueError, e:
@@ -397,7 +393,7 @@ class Base(object):
         """Closes down the instances of rpmdb that could be open."""
         self._ts = None
         self._tsInfo = None
-        self.comps = None
+        self._comps = None
 
     def _getTsInfo(self, remove_only=False):
         """ remove_only param. says if we are going to do _only_ remove(s) in
@@ -695,7 +691,7 @@ class Base(object):
 
         #  We may want to put this other places, eventually, but for now it's
         # good as long as we get it right for history.
-        for repo in self.repos.listEnabled():
+        for repo in self.repos.iter_enabled():
             if repo._xml2sqlite_local:
                 self.run_with_package_names.add('yum-metadata-parser')
                 break
@@ -1374,7 +1370,7 @@ class Base(object):
         """
         files = [os.path.join(self.cache_c.cachedir,
                               hawkey.SYSTEM_REPO_NAME + ".solv")]
-        for repo in self.repos.listEnabled():
+        for repo in self.repos.iter_enabled():
             basename = os.path.join(self.cache_c.cachedir, repo.id)
             files.append(basename + ".solv")
             files.append(basename + "-filenames.solvx")
@@ -1410,7 +1406,7 @@ class Base(object):
     def _cleanFiles(self, exts, pathattr, filetype):
         filelist = []
         for ext in exts:
-            for repo in self.repos.listEnabled():
+            for repo in self.repos.iter_enabled():
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)
@@ -3082,7 +3078,7 @@ class Base(object):
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
         myrepos = ''
-        for repo in self.repos.listEnabled():
+        for repo in self.repos.iter_enabled():
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)

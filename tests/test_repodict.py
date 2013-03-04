@@ -39,6 +39,15 @@ class TestRepoDict(unittest.TestCase):
         self.repos.add(self.z)
         self.full_set = {self.x, self.xx, self.y, self.z}
 
+    def test_any_enabled(self):
+        self.assertTrue(self.repos.any_enabled())
+        self.repos.get_multiple("*").disable()
+        self.assertFalse(self.repos.any_enabled())
+
+    def test_enabled(self):
+        self.assertSequenceEqual(self.repos.enabled(),
+                                 list(self.repos.iter_enabled()))
+
     def test_getmultiple(self):
         self.assertEqual(self.repos['x'], self.x)
         self.assertItemsEqual(self.repos.get_multiple('*'), self.full_set)

@@ -24,6 +24,9 @@ class Repo(dnf.yum.config.RepoConf):
     def __init__(self, id_):
         super(Repo, self).__init__()
         self.id = id_
+        self.basecachedir = None
+        self.fallback_basecachedir = None
+        self.base_persistdir = ""
 
     def disable(self):
         self.enabled = False

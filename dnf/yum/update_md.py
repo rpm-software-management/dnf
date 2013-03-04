@@ -23,7 +23,6 @@ Update metadata (updateinfo.xml) parsing.
 import sys
 
 from i18n import utf8_text_wrap, to_utf8, to_unicode
-from yumRepo import YumRepository
 from packages import FakeRepository
 from misc import to_xml, decompress, repo_gen_decompress
 from misc import cElementTree_iterparse as iterparse 

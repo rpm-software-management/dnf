@@ -66,7 +66,7 @@ def checkGPGKey(base):
     if base._override_sigchecks:
         return
     if not base.gpgKeyCheck():
-        for repo in base.repos.listEnabled():
+        for repo in base.repos.iter_enabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
                 msg = _("""
 You have enabled checking of packages via GPG keys. This is a good thing.
@@ -161,7 +161,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`:
     """
-    if base.repos.listEnabled():
+    if base.repos.any_enabled():
         return
 
     for lfile in possible_local_files:
@@ -945,7 +945,7 @@ class MakeCacheCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         self.base.verbose_logger.debug(_("Making cache files for all metadata files."))
-        for r in self.base.repos.listEnabled():
+        for r in self.base.repos.iter_enabled():
             (cookie, expires_in) = r.metadata_expire_in()
             if not cookie or not r.metadataCurrent():
                 self.base.verbose_logger.debug("%s: has expired and will be "
@@ -1424,7 +1424,7 @@ class RepoListCommand(Command):
 
         repos = self.base.repos.repos.values()
         repos.sort()
-        enabled_repos = self.base.repos.listEnabled()
+        enabled_repos = self.base.repos.enabled()
         on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
         on_dhibeg = self.base.term.FG_COLOR['red']
         on_hiend  = self.base.term.MODE['normal']

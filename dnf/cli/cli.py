@@ -807,7 +807,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         pkgcode = xmlcode = dbcode = expccode = 0
         pkgresults = xmlresults = dbresults = expcresults = []
         msg = self.fmtKeyValFill(_('Cleaning repos: '),
-                        ' '.join([ x.id for x in self.repos.listEnabled()]))
+                        ' '.join([ x.id for x in self.repos.iter_enabled()]))
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
         if 'all' in userlist:
             self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
@@ -1134,7 +1134,7 @@ class Cli(object):
             #  Altering the normal configs. doesn't work too well, esp. with
             # regard to dynamically enabled repos.
             self.base._override_sigchecks = True
-            for repo in self.base.repos.listEnabled():
+            for repo in self.base.repos.iter_enabled():
                 repo._override_sigchecks = True
 
         # setup the progress bars/callbacks
