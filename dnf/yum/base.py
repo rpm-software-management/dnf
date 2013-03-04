@@ -120,7 +120,7 @@ class Base(object):
 
     def _add_repo_to_hawkey(self, name):
         repo = hawkey.Repo(name)
-        yum_repo = self.repos.repos[name]
+        yum_repo = self.repos[name]
         repo.repomd_fn = yum_repo.repoXML.srcfile
         repo.primary_fn = yum_repo.getPrimaryXML()
         repo.filelists_fn = yum_repo.getFileListsXML()
@@ -1282,7 +1282,7 @@ class Base(object):
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:
-            repo = self.repos.getRepo(po.repoid)
+            repo = self.repos[po.repoid]
             check = repo.gpgcheck
             hasgpgkey = not not repo.gpgkey
 
@@ -1338,7 +1338,7 @@ class Base(object):
                 continue
 
             # make sure it's not a local file
-            repo = self.repos.repos[txmbr.po.repoid]
+            repo = self.repos[txmbr.po.repoid]
             for u in repo.baseurl:
                 if u.startswith("file:"):
                     continue
@@ -2662,7 +2662,7 @@ class Base(object):
         :raises: :class:`Errors.YumBaseError` if there are errors
            retrieving the keys
         """
-        repo = self.repos.getRepo(po.repoid)
+        repo = self.repos[po.repoid]
         keyurls = repo.gpgkey
         key_installed = False
 

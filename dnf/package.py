@@ -93,7 +93,7 @@ class Package(hawkey.Package):
     def repo(self):
         if self._repo:
             return self._repo
-        return self.yumbase.repos.repos[self.reponame]
+        return self.yumbase.repos[self.reponame]
 
     @repo.setter
     def repo(self, val):

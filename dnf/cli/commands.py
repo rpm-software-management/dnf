@@ -1422,8 +1422,7 @@ class RepoListCommand(Command):
 
         verbose = self.base.conf.verbose
 
-        repos = self.base.repos.repos.values()
-        repos.sort()
+        repos = self.base.repos.values().sort(key=operator.attrgetter('id'))
         enabled_repos = self.base.repos.enabled()
         on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
         on_dhibeg = self.base.term.FG_COLOR['red']
