@@ -47,6 +47,13 @@ class Util(unittest.TestCase):
         with mock.patch('os.geteuid', return_value=0):
             assert(dnf.util.am_i_root())
 
+    def test_empty(self):
+        self.assertTrue(dnf.util.empty(()))
+        self.assertFalse(dnf.util.empty([1,2,3]))
+        self.assertTrue(dnf.util.empty((x for x in [])))
+        self.assertTrue(dnf.util.empty(iter([])))
+        self.assertFalse(dnf.util.empty((x for x in [2, 3])))
+
     def test_file_timestamp(self):
         stat = mock.Mock()
         stat.st_mtime = 123

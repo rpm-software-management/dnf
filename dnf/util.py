@@ -26,6 +26,13 @@ import types
 def am_i_root():
     return os.geteuid() == 0
 
+def empty(iterable):
+    try:
+        l = len(iterable)
+    except TypeError:
+        l = len(list(iterable))
+    return l == 0
+
 def first(iterable):
     """ Returns the first item from an iterable or None if it has no elements. """
     it = iter(iterable)
