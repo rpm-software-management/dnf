@@ -18,13 +18,23 @@
 # Red Hat, Inc.
 #
 
+import dnf.const
 import hawkey
 import os
+import shutil
+import tempfile
 import time
 import types
 
 def am_i_root():
     return os.geteuid() == 0
+
+def ensure_dir(dname):
+    if os.path.exists(dname):
+        if not os.path.isdir(dname):
+            raise IOError("%s is not a directory" % dname)
+    else:
+        os.makedirs(dname, mode=0755)
 
 def empty(iterable):
     try:
@@ -74,6 +84,12 @@ def reason_name(reason):
         return "user"
     raise ValueError, "Unknown reason %d" % reason
 
+def rm_rf(path):
+    try:
+        shutil.rmtree(path)
+    except OSError:
+        pass
+
 def strip_prefix(s, prefix):
     if s.startswith(prefix):
         return s[len(prefix):]
@@ -91,3 +107,7 @@ def timed(fn):
         print "%s took %.02f ms" % (fn.__name__, length * 1000)
         return retval
     return decorated
+
+def tmpdir():
+    prefix = '%s-' % dnf.const.PREFIX
+    return tempfile.mkdtemp(prefix=prefix)

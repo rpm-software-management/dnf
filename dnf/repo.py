@@ -18,7 +18,36 @@
 # Red Hat, Inc.
 #
 
+import dnf.util
 import dnf.yum.config
+import librepo
+import os.path
+import time
+
+class _Result(object):
+    def __init__(self, res):
+        self.repo_dct = res.getinfo(librepo.LRR_YUM_REPO)
+        self.repomd_dct = res.getinfo(librepo.LRR_YUM_REPOMD)
+
+    def file_age(self, what):
+        f_ts = dnf.util.file_timestamp(self.repo_dct[what])
+        return time.time() - f_ts
+
+    @property
+    def filelists_fn(self):
+        return self.repo_dct.get('filelists')
+
+    @property
+    def presto_fn(self):
+        return self.repo_dct.get('prestodelta')
+
+    @property
+    def primary_fn(self):
+        return self.repo_dct.get('primary')
+
+    @property
+    def repomd_fn(self):
+        return self.repo_dct.get('repomd')
 
 class Repo(dnf.yum.config.RepoConf):
     def __init__(self, id_):
@@ -27,13 +56,101 @@ class Repo(dnf.yum.config.RepoConf):
         self.basecachedir = None
         self.fallback_basecachedir = None
         self.base_persistdir = ""
+        self.res = None
         self.yumvar = {} # empty dict of yumvariables for $string replacement
+
+    def _lr_handle(self):
+        h = librepo.Handle()
+        h.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
+        h.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
+        # h.setopt(librepo.LRO_PROGRESSCB, cb)
+        h.setopt(librepo.LRO_GPGCHECK, True)
+        return h
+
+    def _lr_cache_handle(self):
+        h = self._lr_handle()
+        h.setopt(librepo.LRO_DESTDIR, self.cachedir)
+        h.setopt(librepo.LRO_URL, self.cachedir)
+        h.setopt(librepo.LRO_LOCAL, True)
+        return h
+
+    def _lr_destdir(self, handle):
+        return handle.getinfo(librepo.LRI_DESTDIR)
+
+    def _lr_download_handle(self):
+        h = self._lr_handle()
+        h.setopt(librepo.LRO_DESTDIR, dnf.util.tmpdir())
+        if self.metalink:
+            h.setopt(librepo.LRO_MIRRORLIST, self.metalink)
+        elif self.mirrorlist:
+            h.setopt(librepo.LRO_MIRRORLIST, self.mirrorlist)
+        elif self.baseurl:
+            h.setopt(librepo.LRO_URL, self.baseurl[0])
+        else:
+            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
+            raise Errors.RepoError, msg
+        return h
+
+    def _lr_perform(self, handle):
+        r = librepo.Result()
+        dnf.util.ensure_dir(self.cachedir)
+        handle.perform(r)
+        return _Result(r)
+
+    @property
+    def cachedir(self):
+        return os.path.join(self.basecachedir, self.id)
 
     def disable(self):
         self.enabled = False
 
     def enable(self):
         self.enabled = True
+
+    def error_message(self, exception):
+        msg = "Problem with repo '%s': %s" % (self.id, str(exception))
+        print msg
+
+    @property
+    def filelists_fn(self):
+        return self.res.filelists_fn
+
+    @property
+    def presto_fn(self):
+        return self.res.presto_fn
+
+    @property
+    def primary_fn(self):
+        return self.res.primary_fn
+
+    def replace_cache(self, from_dir):
+        dnf.util.rm_rf(self.cachedir)
+        os.rename(from_dir, self.cachedir)
+
+    @property
+    def repomd_fn(self):
+        return self.res.repomd_fn
+
+    def sync(self):
+        try:
+            handle = self._lr_cache_handle()
+            self.res = self._lr_perform(handle)
+            if self.res.file_age("primary") < self.metadata_expire:
+                return True
+        except librepo.LibrepoException as e:
+            pass
+
+        try:
+            handle = self._lr_download_handle()
+            self.res = self._lr_perform(handle)
+            self.replace_cache(self._lr_destdir(handle))
+
+            # get everything from the cache now:
+            handle = self._lr_cache_handle()
+            self.res = self._lr_perform(handle)
+        except librepo.LibrepoException as e:
+            self.error_message(e)
+        return False
 
     def set_failure_callback(self, cb):
         pass

@@ -121,12 +121,13 @@ class Base(object):
     def _add_repo_to_hawkey(self, name):
         repo = hawkey.Repo(name)
         yum_repo = self.repos[name]
-        repo.repomd_fn = yum_repo.repoXML.srcfile
-        repo.primary_fn = yum_repo.getPrimaryXML()
-        repo.filelists_fn = yum_repo.getFileListsXML()
-        try:
-            repo.presto_fn = yum_repo.getPrestoXML()
-        except Errors.RepoMDError, e:
+        yum_repo.sync()
+        repo.repomd_fn = yum_repo.repomd_fn
+        repo.primary_fn = yum_repo.primary_fn
+        repo.filelists_fn = yum_repo.filelists_fn
+        if yum_repo.presto_fn:
+            repo.presto_fn = yum_repo.presto_fn
+        else:
             self.verbose_logger.debug("not found deltainfo for: %s" %
                                       yum_repo.name)
         yum_repo.hawkey_repo = repo
