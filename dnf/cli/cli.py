@@ -1120,10 +1120,11 @@ class Cli(object):
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
+                repolist = self.base.repos.get_multiple(repo)
                 if operation == "enable":
-                    self.base.repos.enableRepo(repo)
+                    repolist.enable()
                 else:
-                    self.base.repos.disableRepo(repo)
+                    repolist.disable()
         except dnf.yum.Errors.ConfigError, e:
             self.logger.critical(e)
             self.print_usage()
