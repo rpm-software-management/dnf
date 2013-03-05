@@ -52,6 +52,7 @@ class _Result(object):
 class Repo(dnf.yum.config.RepoConf):
     def __init__(self, id_):
         super(Repo, self).__init__()
+        self._progress = None
         self.id = id_
         self.basecachedir = None
         self.fallback_basecachedir = None
@@ -63,7 +64,6 @@ class Repo(dnf.yum.config.RepoConf):
         h = librepo.Handle()
         h.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
         h.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
-        # h.setopt(librepo.LRO_PROGRESSCB, cb)
         h.setopt(librepo.LRO_GPGCHECK, True)
         return h
 
@@ -73,9 +73,6 @@ class Repo(dnf.yum.config.RepoConf):
         h.setopt(librepo.LRO_URL, self.cachedir)
         h.setopt(librepo.LRO_LOCAL, True)
         return h
-
-    def _lr_destdir(self, handle):
-        return handle.getinfo(librepo.LRI_DESTDIR)
 
     def _lr_download_handle(self):
         h = self._lr_handle()
@@ -89,12 +86,27 @@ class Repo(dnf.yum.config.RepoConf):
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise Errors.RepoError, msg
+        if self._progress is not None:
+            h.setopt(librepo.LRO_PROGRESSCB, self._progress.librepo_cb)
         return h
+
+    def _lr_get_destdir(self, handle):
+        return handle.getinfo(librepo.LRI_DESTDIR)
+
+    def _lr_get_local(self, handle):
+        return handle.getinfo(librepo.LRI_LOCAL)
+
+    def _handle_uses_callback(self, handle):
+        return self._progress is not None and not self._lr_get_local(handle)
 
     def _lr_perform(self, handle):
         r = librepo.Result()
         dnf.util.ensure_dir(self.cachedir)
+        if self._handle_uses_callback(handle):
+            self._progress.begin(self.name)
         handle.perform(r)
+        if self._handle_uses_callback(handle):
+            self._progress.end()
         return _Result(r)
 
     @property
@@ -143,11 +155,12 @@ class Repo(dnf.yum.config.RepoConf):
         try:
             handle = self._lr_download_handle()
             self.res = self._lr_perform(handle)
-            self.replace_cache(self._lr_destdir(handle))
+            self.replace_cache(self._lr_get_destdir(handle))
 
             # get everything from the cache now:
             handle = self._lr_cache_handle()
             self.res = self._lr_perform(handle)
+            return True
         except librepo.LibrepoException as e:
             self.error_message(e)
         return False
@@ -158,5 +171,5 @@ class Repo(dnf.yum.config.RepoConf):
     def set_interrupt_callback(self, cb):
         pass
 
-    def set_progress_bar(self, cb):
-        pass
+    def set_progress_bar(self, progress):
+        self._progress = progress

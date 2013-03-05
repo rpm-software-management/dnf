@@ -429,7 +429,33 @@ class YumTerm:
         """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
 
+class LibrepoCallbackAdaptor(TextMeter):
+    """Adapt urlgrabber progress widgets for librepo callback style.
 
+    Note that TextMeter is a Python old-style class.
+    """
+
+    def __init__(self, fo=sys.stderr):
+        TextMeter.__init__(self, fo=fo)
+        self._running = False
+        self._last_downloaded = 0.0
+
+    def begin(self, text):
+        self.text = text
+
+    def end(self):
+        if self._last_downloaded > 0.0:
+            TextMeter.end(self, self._last_downloaded)
+
+    def librepo_cb(self, data, total_to_download, downloaded):
+        if self._running is False:
+            # happens early in the download and confuses the measuring:
+            if total_to_download == 0.0:
+                return
+            self._running = True
+            self.start(size=total_to_download, text=self.text)
+        self._last_downloaded = downloaded
+        self.update(downloaded)
 
 class YumOutput:
     """Main output class for the yum command line."""
@@ -1568,7 +1594,7 @@ Transaction Summary
             progressbar = None
             callback = None
         else:
-            progressbar = YumTextMeter(fo=sys.stdout)
+            progressbar = LibrepoCallbackAdaptor(fo=sys.stdout)
             callback = CacheProgressCallback()
 
         # setup our failure report for failover
