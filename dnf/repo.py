@@ -19,6 +19,7 @@
 #
 
 import dnf.util
+import dnf.yum.Errors
 import dnf.yum.config
 import librepo
 import os.path
@@ -160,10 +161,11 @@ class Repo(dnf.yum.config.RepoConf):
             # get everything from the cache now:
             handle = self._lr_cache_handle()
             self.res = self._lr_perform(handle)
-            return True
         except librepo.LibrepoException as e:
-            self.error_message(e)
-        return False
+            msg = str(e)
+            self.error_message(msg)
+            raise dnf.yum.Errors.RepoError(msg)
+        return True
 
     def set_failure_callback(self, cb):
         pass
