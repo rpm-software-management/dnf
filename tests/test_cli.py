@@ -17,6 +17,8 @@
 
 import base
 import dnf.cli.cli
+import dnf.repo
+import dnf.repodict
 import mock
 import optparse
 import os
@@ -55,13 +57,16 @@ class CliTest(unittest.TestCase):
         opts.nogpgcheck = True
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         calls = mock.Mock()
-        self.yumbase.repos.enableRepo = calls
-        self.yumbase.repos.disableRepo = calls
+        self.yumbase._repos = dnf.repodict.RepoDict()
+        self.yumbase._repos.add(dnf.repo.Repo('one'))
+        self.yumbase._repos.add(dnf.repo.Repo('two'))
+        self.yumbase._repos.add(dnf.repo.Repo('comb'))
         self.cli._configure_repos(opts)
-        self.assertEqual(calls.call_args_list,
-                         [mock.call('*'), mock.call('comb')])
+        self.assertFalse(self.yumbase.repos['one'].enabled)
+        self.assertFalse(self.yumbase.repos['two'].enabled)
+        self.assertTrue(self.yumbase.repos['comb'].enabled)
         self.assertTrue(self.yumbase._override_sigchecks)
-        self.assertTrue(self.yumbase.repos["main"]._override_sigchecks)
+        self.assertTrue(self.yumbase.repos["comb"]._override_sigchecks)
 
 @mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
 @mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)
