@@ -76,21 +76,6 @@ def _term_width():
         return 20
     return ret
 
-
-class YumTextMeter(TextMeter):
-    """A class to display text progress bar output."""
-
-    def update(self, amount_read, now=None):
-        """Update the status of the text progress bar
-
-        :param amount_read: the amount of data, in bytes, that has been read
-        :param now: the current time in seconds since the epoch.  If
-           *now* is not given, the output of :func:`time.time()` will
-           be used.
-        """
-        checkSignals()
-        TextMeter.update(self, amount_read, now)
-
 class YumTerm:
     """A class to provide some terminal "UI" helpers based on curses."""
 
