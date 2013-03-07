@@ -429,8 +429,10 @@ class LibrepoCallbackAdaptor(TextMeter):
         self.text = text
 
     def end(self):
-        if self._last_downloaded > 0.0:
-            TextMeter.end(self, self._last_downloaded)
+        if not self._running:
+            return
+        self._running = False
+        TextMeter.end(self, self._last_downloaded)
 
     def librepo_cb(self, data, total_to_download, downloaded):
         if self._running is False:
