@@ -65,7 +65,7 @@ class Repo(dnf.yum.config.RepoConf):
         h = librepo.Handle()
         h.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
         h.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
-        h.setopt(librepo.LRO_GPGCHECK, True)
+        h.setopt(librepo.LRO_GPGCHECK, self.repo_gpgcheck)
         return h
 
     def _lr_cache_handle(self):
