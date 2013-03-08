@@ -75,6 +75,16 @@ class Repo(dnf.yum.config.RepoConf):
         h.setopt(librepo.LRO_LOCAL, True)
         return h
 
+    def _lr_download(self, handle, relpath, text):
+        dnf.util.ensure_dir(self.pkgdir)
+        handle.setopt(librepo.LRO_DESTDIR, self.pkgdir)
+        if self._handle_uses_callback(handle):
+            text = text if text is not None else relpath
+            self._progress.begin(text)
+        handle.download(relpath)
+        if self._handle_uses_callback(handle):
+            self._progress.end()
+
     def _lr_download_handle(self):
         h = self._lr_handle()
         h.setopt(librepo.LRO_DESTDIR, dnf.util.tmpdir())
@@ -114,6 +124,9 @@ class Repo(dnf.yum.config.RepoConf):
     def cachedir(self):
         return os.path.join(self.basecachedir, self.id)
 
+    def dump(self):
+        return ''
+
     def disable(self):
         self.enabled = False
 
@@ -128,9 +141,18 @@ class Repo(dnf.yum.config.RepoConf):
     def filelists_fn(self):
         return self.res.filelists_fn
 
+    def get_package(self, pkg, text=None):
+        handle = self._lr_download_handle()
+        self._lr_download(handle, pkg.location, text)
+        return pkg.localPkg()
+
     @property
     def presto_fn(self):
         return self.res.presto_fn
+
+    @property
+    def pkgdir(self):
+        return os.path.join(self.cachedir, 'packages')
 
     @property
     def primary_fn(self):

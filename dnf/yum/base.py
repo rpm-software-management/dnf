@@ -690,13 +690,6 @@ class Base(object):
         """
         self.plugins.run('pretrans')
 
-        #  We may want to put this other places, eventually, but for now it's
-        # good as long as we get it right for history.
-        for repo in self.repos.iter_enabled():
-            if repo._xml2sqlite_local:
-                self.run_with_package_names.add('yum-metadata-parser')
-                break
-
         if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
@@ -1091,7 +1084,7 @@ class Base(object):
 
             if raiseError:
                 msg = _('Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata') %  po.repo.id
-                raise URLGrabError(-1, msg)
+                raise Errors.RepoError(msg)
             else:
                 return False
 
@@ -1120,7 +1113,7 @@ class Base(object):
 
         return 0
 
-    def downloadPkgs(self, pkglist, callback=None, callback_total=None):
+    def download_packages(self, pkglist, callback=None, callback_total=None):
         """Download the packages specified by the given list of
         package objects.
 
@@ -1201,25 +1194,9 @@ class Base(object):
             len(remote_pkgs) > 1):
             urlgrabber.progress.text_meter_total_size(remote_size)
         beg_download = time.time()
-        i = 0
         local_size = 0
         done_repos = set()
-        for po in remote_pkgs:
-            #  Recheck if the file is there, works around a couple of weird
-            # edge cases.
-            local = po.localPkg()
-            i += 1
-            if os.path.exists(local):
-                if self.verifyPkg(local, po, False):
-                    self.verbose_logger.debug(_("using local copy of %s") %(po,))
-                    remote_size -= po.size
-                    if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-                        urlgrabber.progress.text_meter_total_size(remote_size,
-                                                                  local_size)
-                    continue
-                if os.path.getsize(local) >= po.size:
-                    os.unlink(local)
-
+        for (i, po) in enumerate(remote_pkgs, start=1):
             checkfunc = (self.verifyPkg, (po, 1), {})
             try:
                 if i == 1 and not local_size and remote_size == po.size:
@@ -1227,11 +1204,8 @@ class Base(object):
                 else:
                     text = '(%s/%s): %s' % (i, len(remote_pkgs),
                                             os.path.basename(po.relativepath))
-                mylocal = po.repo.getPackage(po,
-                                   checkfunc=checkfunc,
-                                   text=text,
-                                   cache=po.repo.http_caching != 'none',
-                                   )
+                local = po.repo.get_package(po, text=text)
+                self.verifyPkg(local, po, True)
                 local_size += po.size
                 if hasattr(urlgrabber.progress, 'text_meter_total_size'):
                     urlgrabber.progress.text_meter_total_size(remote_size,
@@ -1247,7 +1221,6 @@ class Base(object):
             except Errors.RepoError, e:
                 adderror(po, exception2msg(e))
             else:
-                po.localpath = mylocal
                 if po in errors:
                     del errors[po]
 
@@ -2942,32 +2915,6 @@ class Base(object):
             # Add a dep relation to the new version of the package, causing this one to be erased
             # this way skipbroken, should clean out the old one, if the new one is skipped
             txmbr.depends_on.append(rel)
-
-    def _downloadPackages(self,callback):
-        ''' Download the need packages in the Transaction '''
-        # This can be overloaded by a subclass.
-        dlpkgs = map(lambda x: x.po, filter(lambda txmbr:
-                                            txmbr.ts_state in ("i", "u"),
-                                            self.tsInfo.getMembers()))
-        # Check if there is something to do
-        if len(dlpkgs) == 0:
-            return None
-        # make callback with packages to download
-        callback.event(callbacks.PT_DOWNLOAD_PKGS,dlpkgs)
-        try:
-            probs = self.downloadPkgs(dlpkgs)
-
-        except IndexError:
-            raise Errors.YumBaseError, [_("Unable to find a suitable mirror.")]
-        if len(probs) > 0:
-            errstr = [_("Errors were encountered while downloading packages.")]
-            for key in probs:
-                errors = misc.unique(probs[key])
-                for error in errors:
-                    errstr.append("%s: %s" % (key, error))
-
-            raise Errors.YumDownloadError, errstr
-        return dlpkgs
 
     def _checkSignatures(self,pkgs,callback):
         ''' The the signatures of the downloaded packages '''

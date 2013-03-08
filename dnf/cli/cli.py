@@ -194,7 +194,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
             _('Downloading Packages:'))
-        problems = self.downloadPkgs(downloadpkgs, callback_total=self.download_callback_total_cb)
+        problems = self.download_packages(downloadpkgs, callback_total=\
+                                              self.download_callback_total_cb)
 
         if len(problems) > 0:
             errstring = ''
