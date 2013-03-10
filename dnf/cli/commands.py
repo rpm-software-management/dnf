@@ -946,16 +946,16 @@ class MakeCacheCommand(Command):
         """
         self.base.verbose_logger.debug(_("Making cache files for all metadata files."))
         for r in self.base.repos.iter_enabled():
-            (cookie, expires_in) = r.metadata_expire_in()
-            if not cookie or not r.metadataCurrent():
+            (is_cache, expires_in) = r.metadata_expire_in()
+            if not is_cache or expires_in <= 0:
                 self.base.verbose_logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
-                r.metadata_force_expire()
+                r.expire_cache()
             elif expires_in < 60 * 60: # expires within an hour
                 self.base.verbose_logger.debug("%s: metadata will expire after %d "
                                           "seconds and will be refreshed now" %
                                           (r.id, expires_in))
-                r.metadata_force_expire()
+                r.expire_cache()
             else:
                 self.base.verbose_logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))

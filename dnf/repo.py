@@ -30,6 +30,10 @@ class _Result(object):
         self.repo_dct = res.getinfo(librepo.LRR_YUM_REPO)
         self.repomd_dct = res.getinfo(librepo.LRR_YUM_REPOMD)
 
+    @property
+    def age(self):
+        return self.file_age("primary")
+
     def file_age(self, what):
         f_ts = dnf.util.file_timestamp(self.repo_dct[what])
         return time.time() - f_ts
@@ -50,7 +54,12 @@ class _Result(object):
     def repomd_fn(self):
         return self.repo_dct.get('repomd')
 
+SYNC_TRY_CACHE = 1
+SYNC_NO_CACHE = 2
+
 class Repo(dnf.yum.config.RepoConf):
+    DEFAULT_SYNC = SYNC_TRY_CACHE
+
     def __init__(self, id_):
         super(Repo, self).__init__()
         self._progress = None
@@ -59,6 +68,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.fallback_basecachedir = None
         self.base_persistdir = ""
         self.res = None
+        self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
 
     def _lr_handle(self):
@@ -120,6 +130,19 @@ class Repo(dnf.yum.config.RepoConf):
             self._progress.end()
         return _Result(r)
 
+    def _try_cache(self):
+        if self.sync_strategy == SYNC_NO_CACHE:
+            self.sync_strategy = self.DEFAULT_SYNC
+            return False
+        if self.res:
+            return True
+        handle = self._lr_cache_handle()
+        try:
+            self.res = self._lr_perform(handle)
+        except librepo.LibrepoException as e:
+            return False
+        return self.res.file_age("primary") < self.metadata_expire
+
     @property
     def cachedir(self):
         return os.path.join(self.basecachedir, self.id)
@@ -137,6 +160,10 @@ class Repo(dnf.yum.config.RepoConf):
         msg = "Problem with repo '%s': %s" % (self.id, str(exception))
         print msg
 
+    def expire_cache(self):
+        self.res = None
+        self.sync_strategy = SYNC_NO_CACHE
+
     @property
     def filelists_fn(self):
         return self.res.filelists_fn
@@ -145,6 +172,18 @@ class Repo(dnf.yum.config.RepoConf):
         handle = self._lr_download_handle()
         self._lr_download(handle, pkg.location, text)
         return pkg.localPkg()
+
+    def metadata_expire_in(self):
+        """ Get the number of seconds after which the metadata will expire.
+
+            Returns a tuple, boolean whether the information can be obtained and
+            the number of seconds. Negative number means the metadata has
+            expired already.
+        """
+        self._try_cache()
+        if self.res:
+            return (True, self.metadata_expire - self.res.age)
+        return (False, 0)
 
     @property
     def presto_fn(self):
@@ -167,14 +206,9 @@ class Repo(dnf.yum.config.RepoConf):
         return self.res.repomd_fn
 
     def sync(self):
-        try:
-            handle = self._lr_cache_handle()
-            self.res = self._lr_perform(handle)
-            if self.res.file_age("primary") < self.metadata_expire:
-                return True
-        except librepo.LibrepoException as e:
-            pass
-
+        if self._try_cache():
+            return True
+        self.res = None
         try:
             handle = self._lr_download_handle()
             self.res = self._lr_perform(handle)
