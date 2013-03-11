@@ -19,6 +19,7 @@ import base
 import dnf.repo
 import dnf.util
 import dnf.yum.Errors
+import librepo
 import mock
 import os
 import tempfile
@@ -70,6 +71,10 @@ class RepoTest(unittest.TestCase):
         self.repo.expire_cache()
         self.assertTrue(self.repo.load())
 
+    def test_gpgcheck(self):
+        self.repo.gpgcheck = True
+        self.assertTrue(self.repo.load())
+
     def test_load_twice(self):
         self.assertTrue(self.repo.load())
         # the second time we only hit the cache:
@@ -96,3 +101,14 @@ class RepoTest(unittest.TestCase):
         (has, time) = self.repo.metadata_expire_in()
         self.assertTrue(has)
         self.assertGreater(time, 0)
+
+    @mock.patch('librepo.Handle.setopt')
+    def test_repo_gpgcheck(self, setopt):
+        """Test repo_gpgcheck option works."""
+        self.repo.repo_gpgcheck = False
+        handle = self.repo.handle_new_remote("/bag")
+        setopt.assert_any_call(librepo.LRO_GPGCHECK, False)
+
+        self.repo.repo_gpgcheck = True
+        handle = self.repo.handle_new_remote("/bag")
+        setopt.assert_any_call(librepo.LRO_GPGCHECK, True)

@@ -54,6 +54,46 @@ class _Result(object):
     def repomd_fn(self):
         return self.repo_dct.get('repomd')
 
+class _Handle(librepo.Handle):
+    def __init__(self, gpgcheck):
+        super(_Handle, self).__init__()
+        self.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
+        self.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
+        self.setopt(librepo.LRO_GPGCHECK, gpgcheck)
+
+    @classmethod
+    def new_local(cls, gpgcheck, cachedir):
+        h = cls(gpgcheck)
+        h.destdir = cachedir
+        h.setopt(librepo.LRO_URL, cachedir)
+        h.local = True
+        return h
+
+    @classmethod
+    def new_remote(cls, gpgcheck, destdir, mirror_setup, progress_cb):
+        h = cls(gpgcheck)
+        h.destdir = destdir
+        h.setopt(mirror_setup[0], mirror_setup[1])
+        if progress_cb is not None:
+            h.setopt(librepo.LRO_PROGRESSCB, progress_cb)
+        return h
+
+    @property
+    def destdir(self):
+        return self.getinfo(librepo.LRI_DESTDIR)
+
+    @destdir.setter
+    def destdir(self, val):
+        self.setopt(librepo.LRO_DESTDIR, val)
+
+    @property
+    def local(self):
+        return self.getinfo(librepo.LRI_LOCAL)
+
+    @local.setter
+    def local(self, val):
+        self.setopt(librepo.LRO_LOCAL, val)
+
 SYNC_TRY_CACHE = 1
 SYNC_NO_CACHE = 2
 
@@ -71,58 +111,8 @@ class Repo(dnf.yum.config.RepoConf):
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
 
-    def _lr_handle(self):
-        h = librepo.Handle()
-        h.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
-        h.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
-        h.setopt(librepo.LRO_GPGCHECK, self.repo_gpgcheck)
-        return h
-
-    def _lr_cache_handle(self):
-        h = self._lr_handle()
-        h.setopt(librepo.LRO_DESTDIR, self.cachedir)
-        h.setopt(librepo.LRO_URL, self.cachedir)
-        h.setopt(librepo.LRO_LOCAL, True)
-        return h
-
-    def _lr_download(self, handle, relpath, text):
-        dnf.util.ensure_dir(self.pkgdir)
-        handle.setopt(librepo.LRO_DESTDIR, self.pkgdir)
-        if self._handle_uses_callback(handle):
-            text = text if text is not None else relpath
-            self._progress.begin(text)
-        handle.download(relpath)
-        if self._handle_uses_callback(handle):
-            self._progress.end()
-
-    def _lr_download_handle(self):
-        h = self._lr_handle()
-        h.setopt(librepo.LRO_DESTDIR, dnf.util.tmpdir())
-        if self.metalink:
-            h.setopt(librepo.LRO_MIRRORLIST, self.metalink)
-        elif self.mirrorlist:
-            h.setopt(librepo.LRO_MIRRORLIST, self.mirrorlist)
-        elif self.baseurl:
-            h.setopt(librepo.LRO_URL, self.baseurl[0])
-        else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.yum.Errors.RepoError, msg
-        if self._progress is not None:
-            h.setopt(librepo.LRO_PROGRESSCB, self._progress.librepo_cb)
-        return h
-
-    def _lr_get_destdir(self, handle):
-        return handle.getinfo(librepo.LRI_DESTDIR)
-
-    def _lr_get_local(self, handle):
-        return handle.getinfo(librepo.LRI_LOCAL)
-
-    def _handle_uses_callback(self, handle):
-        return self._progress is not None and not self._lr_get_local(handle)
-
-    def _lr_perform(self, handle):
+    def _handle_load(self, handle):
         r = librepo.Result()
-        dnf.util.ensure_dir(self.cachedir)
         if self._handle_uses_callback(handle):
             self._progress.begin(self.name)
         handle.perform(r)
@@ -130,15 +120,39 @@ class Repo(dnf.yum.config.RepoConf):
             self._progress.end()
         return _Result(r)
 
+    def _handle_new_local(self, destdir):
+        return _Handle.new_local(self.repo_gpgcheck, destdir)
+
+    def _handle_new_remote(self, destdir):
+        cb = None
+        if self._progress is not None:
+            cb = self._progress.librepo_cb
+        return _Handle.new_remote(self.repo_gpgcheck, destdir,
+                                  self._mirror_setup_args(), cb)
+
+    def _mirror_setup_args(self):
+        if self.metalink:
+            return librepo.LRO_MIRRORLIST, self.metalink
+        elif self.mirrorlist:
+            return librepo.LRO_MIRRORLIST, self.mirrorlist
+        elif self.baseurl:
+            return librepo.LRO_URL, self.baseurl[0]
+        else:
+            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
+            raise dnf.yum.Errors.RepoError, msg
+
+    def _handle_uses_callback(self, handle):
+        return self._progress is not None and not handle.local
+
     def _try_cache(self):
         if self.sync_strategy == SYNC_NO_CACHE:
             self.sync_strategy = self.DEFAULT_SYNC
             return False
         if self.res:
             return True
-        handle = self._lr_cache_handle()
+        handle = self._handle_new_local(self.cachedir)
         try:
-            self.res = self._lr_perform(handle)
+            self.res = self._handle_load(handle)
         except librepo.LibrepoException as e:
             return False
         return self.res.file_age("primary") < self.metadata_expire
@@ -169,8 +183,14 @@ class Repo(dnf.yum.config.RepoConf):
         return self.res.filelists_fn
 
     def get_package(self, pkg, text=None):
-        handle = self._lr_download_handle()
-        self._lr_download(handle, pkg.location, text)
+        dnf.util.ensure_dir(self.pkgdir)
+        handle = self._handle_new_remote(self.pkgdir)
+        if self._handle_uses_callback(handle):
+            text = text if text is not None else pkg.location
+            self._progress.begin(text)
+        handle.download(pkg.location)
+        if self._handle_uses_callback(handle):
+            self._progress.end()
         return pkg.localPkg()
 
     def metadata_expire_in(self):
@@ -222,13 +242,13 @@ class Repo(dnf.yum.config.RepoConf):
         if self._try_cache():
             return False
         try:
-            handle = self._lr_download_handle()
-            self._lr_perform(handle)
-            self.replace_cache(self._lr_get_destdir(handle))
+            handle = self._handle_new_remote(dnf.util.tmpdir())
+            self._handle_load(handle)
+            self.replace_cache(handle.destdir)
 
             # get everything from the cache now:
-            handle = self._lr_cache_handle()
-            self.res = self._lr_perform(handle)
+            handle = self._handle_new_local(self.cachedir)
+            self.res = self._handle_load(handle)
         except librepo.LibrepoException as e:
             self.res = None
             msg = str(e)
