@@ -121,7 +121,7 @@ class Base(object):
     def _add_repo_to_hawkey(self, name):
         repo = hawkey.Repo(name)
         yum_repo = self.repos[name]
-        yum_repo.sync()
+        yum_repo.load()
         repo.repomd_fn = yum_repo.repomd_fn
         repo.primary_fn = yum_repo.primary_fn
         repo.filelists_fn = yum_repo.filelists_fn

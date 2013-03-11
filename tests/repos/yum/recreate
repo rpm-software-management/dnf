@@ -1,0 +1,7 @@
+#! /bin/bash
+
+THISDIR=$(readlink -f $(dirname $0))
+cd $THISDIR
+git rm -rf repodata/
+createrepo --no-database -o . ..
+git add repodata/

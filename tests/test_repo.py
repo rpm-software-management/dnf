@@ -15,61 +15,84 @@
 # Red Hat, Inc.
 #
 
-import unittest
+import base
+import dnf.repo
+import dnf.util
+import dnf.yum.Errors
 import mock
+import os
+import tempfile
+import unittest
 
-import dnf.yum.yumRepo
+BASEURL = "file://%s/tests/repos/yum" % base.dnf_toplevel()
 
-class TestedYumRepo(dnf.yum.yumRepo.YumRepository):
-    def __init__(self, repoid):
-        super(TestedYumRepo, self).__init__(repoid)
-        self.basecachedir = "/notmp"
-
-    def _dirSetupMkdir_p(self, dpath):
-        # create no directories
-        return
-
+@mock.patch('dnf.util.ensure_dir', new=mock.MagicMock)
 class RepoTest(unittest.TestCase):
-    def test_metadata_current(self):
-        repo = TestedYumRepo("myid")
-        self.assertFalse(repo.metadataCurrent())
-        repo._metadataCurrent = True		# override the cached value
-        self.assertTrue(repo.metadataCurrent())
-        repo.metadata_force_expire()
-        self.assertFalse(repo.metadataCurrent())
+    """Test the logic of dnf.repo.Repo.
 
-    @mock.patch("time.time", return_value = 100)
-    def test_metadata_expire_in(self, unused_time):
-        repo = TestedYumRepo("myid")
-        repo.metadata_expire = 200
-        with mock.patch('dnf.util.file_timestamp', return_value=20):
-            self.assertEqual(repo.metadata_expire_in(), (True, 120))
+    There is one cache directory for the entire TestCase, but each individual
+    test cleans up the cache after itself.
 
-    def test_preload_root(self):
-        repo = TestedYumRepo("myid")
-        repo.fallback_basecachedir = None # root has no fallback cache
-        self.assertFalse(repo._preload_file_from_system_cache("a.filename"))
+    We only test sync from a local dir. Testing all sorts of remote downloads
+    from mirrorlists etc. is up to librepo.
 
-    @mock.patch("os.path.exists", return_value=True)
-    @mock.patch.object(TestedYumRepo, "_preload_file", return_value=True)
-    def test_preload(self, unused_method, preload_file_method):
-        repo = TestedYumRepo("myid")
-        repo.fallback_basecachedir = "/global/cache"
-        self.assertEqual(preload_file_method.call_count, 0)
-        self.assertTrue(repo._preload_file_from_system_cache("a.filename"))
-        # call will happen 5 times, 4 are from dirSetup()
-        self.assertEqual(preload_file_method.call_count, 5)
+    """
+    TMP_CACHEDIR = None
 
-    @mock.patch("os.rename", new=mock.MagicMock)
-    def test_revert(self):
-        repo = TestedYumRepo("myid")
-        data = mock.Mock(spec=['srcfile'])
-        data.srcfile = 'backup.tmp'
-        repo._oldRepoMDData = {
-            'old_local'    : 'backup.tmp',
-            'local'        : 'real_deal',
-            'old_repo_XML' : data,
-            'new_MD_files' : [],
-            }
-        repo._revertOldRepoXML()
-        self.assertEqual(data.srcfile, 'real_deal')
+    def setUp(self):
+        self.repo = dnf.repo.Repo("r")
+        self.repo.basecachedir = self.TMP_CACHEDIR
+        self.repo.baseurl = [BASEURL]
+
+    @classmethod
+    def setUpClass(cls):
+         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix="dnf-repotest-")
+
+    def tearDown(self):
+        repo_path = os.path.join(self.TMP_CACHEDIR, "r")
+        dnf.util.rm_rf(repo_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        dnf.util.rm_rf(cls.TMP_CACHEDIR)
+
+    def test_cachedir(self):
+        self.assertEqual(self.repo.cachedir,
+                         os.path.join(self.TMP_CACHEDIR, self.repo.id))
+
+    def test_expire_cache(self):
+        self.repo.load()
+        # the second time we only hit the cache:
+        del self.repo
+        self.repo = dnf.repo.Repo("r")
+        self.repo.basecachedir = self.TMP_CACHEDIR
+        self.repo.baseurl = [BASEURL]
+        self.repo.expire_cache()
+        self.assertTrue(self.repo.load())
+
+    def test_load_twice(self):
+        self.assertTrue(self.repo.load())
+        # the second time we only hit the cache:
+        del self.repo
+        self.repo = dnf.repo.Repo("r")
+        self.repo.basecachedir = self.TMP_CACHEDIR
+        self.assertFalse(self.repo.load())
+        self.assertIsNotNone(self.repo.res)
+
+    def test_load(self):
+        self.assertIsNone(self.repo.res)
+        self.assertTrue(self.repo.load())
+        self.assertIsNotNone(self.repo.res)
+        repomd = os.path.join(self.TMP_CACHEDIR, "r/repodata/repomd.xml")
+        self.assertTrue(os.path.isfile(repomd))
+
+    def test_load_badconf(self):
+        self.repo.baseurl = []
+        self.assertRaises(dnf.yum.Errors.RepoError, self.repo.load)
+
+    def test_metadata_expire_in(self):
+        self.assertEqual(self.repo.metadata_expire_in(), (False, 0))
+        self.repo.load()
+        (has, time) = self.repo.metadata_expire_in()
+        self.assertTrue(has)
+        self.assertGreater(time, 0)

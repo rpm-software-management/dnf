@@ -106,7 +106,7 @@ class Repo(dnf.yum.config.RepoConf):
             h.setopt(librepo.LRO_URL, self.baseurl[0])
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise Errors.RepoError, msg
+            raise dnf.yum.Errors.RepoError, msg
         if self._progress is not None:
             h.setopt(librepo.LRO_PROGRESSCB, self._progress.librepo_cb)
         return h
@@ -174,11 +174,12 @@ class Repo(dnf.yum.config.RepoConf):
         return pkg.localPkg()
 
     def metadata_expire_in(self):
-        """ Get the number of seconds after which the metadata will expire.
+        """Get the number of seconds after which the metadata will expire.
 
-            Returns a tuple, boolean whether the information can be obtained and
-            the number of seconds. Negative number means the metadata has
-            expired already.
+        Returns a tuple, boolean whether the information can be obtained and the
+        number of seconds. Negative number means the metadata has expired
+        already.
+
         """
         self._try_cache()
         if self.res:
@@ -205,19 +206,31 @@ class Repo(dnf.yum.config.RepoConf):
     def repomd_fn(self):
         return self.res.repomd_fn
 
-    def sync(self):
+    def load(self):
+        """Load the metadata for this repo.
+
+        Depending on the configuration and the age and consistence of data
+        available on the disk cache, either loads the metadata from the cache or
+        downloads them from the mirror, baseurl or metalink.
+
+        This method will not try to refresh the loaded data if called twice, IOW
+        the loading is by default lazy.
+
+        Returns True if this call to load() caused a fresh metadata download.
+
+        """
         if self._try_cache():
-            return True
-        self.res = None
+            return False
         try:
             handle = self._lr_download_handle()
-            self.res = self._lr_perform(handle)
+            self._lr_perform(handle)
             self.replace_cache(self._lr_get_destdir(handle))
 
             # get everything from the cache now:
             handle = self._lr_cache_handle()
             self.res = self._lr_perform(handle)
         except librepo.LibrepoException as e:
+            self.res = None
             msg = str(e)
             self.error_message(msg)
             raise dnf.yum.Errors.RepoError(msg)
