@@ -28,7 +28,7 @@ class MatchCounterTest(unittest.TestCase):
                         dnf.match_counter._canonize_string_set(a, 2))
 
     def test_matched(self):
-        pkg = base.create_mock_package("humbert", 1)
+        pkg = base.MockPackage("humbert-1-1.noarch")
         pkg.url = url = "http://humbert.com"
         pkg.summary = summary = "Glimpses of an incomparably more poignant bliss."
         counter = dnf.match_counter.MatchCounter()
@@ -95,8 +95,8 @@ class MatchCounterTest(unittest.TestCase):
         self.assertEqual(counter.total(), 3)
 
     def test_distance(self):
-        pkg2 = base.create_mock_package('rust-and-stardust')
-        pkg1 = base.create_mock_package('rust')
+        pkg2 = base.MockPackage('rust-and-stardust-1-2.x86_64')
+        pkg1 = base.MockPackage('rust-1-3.x86_64')
         counter = dnf.match_counter.MatchCounter()
         counter.add(pkg1, 'name', 'rust')
         counter.add(pkg2, 'name', 'rust')

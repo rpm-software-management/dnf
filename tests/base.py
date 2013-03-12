@@ -21,6 +21,7 @@ import dnf.repo
 import dnf.sack
 import dnf.yum.base
 import dnf.yum.constants
+import hawkey
 import hawkey.test
 import mock
 import os
@@ -58,20 +59,23 @@ def installed_but(sack, *args):
 
 # mock objects
 
-def create_mock_package(name, major_version=1, arch='noarch'):
-    pkg = mock.Mock(spec_set=['pkgtup', 'summary', 'url', 'name', 'description',
-                              'reponame', 'repoid',
-                              'arch', 'evr', 'state', 'reason'])
-    pkg.name = name
-    pkg.reponame = pkg.repoid = 'main'
-    pkg.arch = arch
-    pkg.evr = '%d-1' % major_version
-    pkg.pkgtup = (pkg.name, pkg.arch, 0, str(major_version) , '1')
-    return pkg
+class MockPackage(object):
+    def __init__(self, nevra, repo=None):
+        self.location = "%s.rpm" % nevra
+        self.repo = repo
+        self.reponame = None if repo is None else repo.id
+        self.str = nevra
+        (self.name, self.epoch, self.version, self.release, self.arch) = \
+            hawkey.split_nevra(nevra)
+        self.evr = '%(epoch)d:%(version)s=%(release)s' % vars(self)
+        self.pkgtup = (self.name, self.arch, str(self.epoch), self.version,
+                       self.release)
 
-def mock_packages():
-    return [create_mock_package("within%s" % chr(i), 2)
-            for i in range(ord('A'), ord('I'))]
+    def __str__(self):
+        return self.str
+
+    def localPkg(self):
+        return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
@@ -184,11 +188,17 @@ class TestCase(unittest.TestCase):
     def assertLength(self, collection, length):
         return self.assertEqual(len(collection), length)
 
+    def assertFile(self, path):
+        """Assert the given path is a file."""
+        return self.assertTrue(os.path.isfile(path))
+
 class ResultTestCase(TestCase):
     def assertResult(self, yumbase, pkgs):
-        """ Check if "system" contains the given pkgs. pkgs must be present. Any
-            other pkgs result in an error. Pkgs are present if they are in the
-            rpmdb and are not REMOVEd or they are INSTALLed.
+        """Check whether the system contains the given pkgs.
+
+        pkgs must be present. Any other pkgs result in an error. Pkgs are
+        present if they are in the rpmdb and are not REMOVEd or they are
+        INSTALLed.
         """
         installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
 

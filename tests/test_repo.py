@@ -27,8 +27,7 @@ import unittest
 
 BASEURL = "file://%s/tests/repos/rpm" % base.dnf_toplevel()
 
-@mock.patch('dnf.util.ensure_dir', new=mock.MagicMock)
-class RepoTest(unittest.TestCase):
+class RepoTest(base.TestCase):
     """Test the logic of dnf.repo.Repo.
 
     There is one cache directory for the entire TestCase, but each individual
@@ -70,6 +69,11 @@ class RepoTest(unittest.TestCase):
         self.repo.baseurl = [BASEURL]
         self.repo.expire_cache()
         self.assertTrue(self.repo.load())
+
+    def test_get_package(self):
+        pkg = base.MockPackage("tour-4-4.noarch", repo=self.repo)
+        path = self.repo.get_package(pkg)
+        self.assertFile(path)
 
     def test_gpgcheck(self):
         self.repo.gpgcheck = True

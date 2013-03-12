@@ -28,7 +28,8 @@ class TransactionDataTests(unittest.TestCase):
 
     def setUp(self):
         self.tsInfo = TransactionData()
-        self.pkgs = base.mock_packages()
+        self.pkgs = [base.MockPackage("within%s-2-1.noarch" % chr(i))
+                     for i in range(ord('A'), ord('I'))]
 
     def test_propagated_reason(self):
         class FakeYumdbInfo(object):
@@ -54,7 +55,7 @@ class TransactionDataTests(unittest.TestCase):
         self.assertEqual(txmbr.propagated_reason(yumdb), "unknown")
 
     def test_rpm_limitations(self):
-        pkg = base.create_mock_package('anyway', 2, 'src')
+        pkg = base.MockPackage('anyway-2-0.src')
         txmbr = self.tsInfo.addInstall(pkg)
         msg = self.tsInfo.rpm_limitations()
         self.assertIsNot(None, msg)
