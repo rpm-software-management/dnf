@@ -25,7 +25,7 @@ import os
 import tempfile
 import unittest
 
-BASEURL = "file://%s/tests/repos/yum" % base.dnf_toplevel()
+BASEURL = "file://%s/tests/repos/rpm" % base.dnf_toplevel()
 
 @mock.patch('dnf.util.ensure_dir', new=mock.MagicMock)
 class RepoTest(unittest.TestCase):
@@ -106,9 +106,9 @@ class RepoTest(unittest.TestCase):
     def test_repo_gpgcheck(self, setopt):
         """Test repo_gpgcheck option works."""
         self.repo.repo_gpgcheck = False
-        handle = self.repo.handle_new_remote("/bag")
+        handle = self.repo._handle_new_remote("/bag")
         setopt.assert_any_call(librepo.LRO_GPGCHECK, False)
 
         self.repo.repo_gpgcheck = True
-        handle = self.repo.handle_new_remote("/bag")
+        handle = self.repo._handle_new_remote("/bag")
         setopt.assert_any_call(librepo.LRO_GPGCHECK, True)
