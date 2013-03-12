@@ -79,6 +79,14 @@ class RepoTest(base.TestCase):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())
 
+    def test_keep_old_pgks(self):
+        dnf.util.ensure_dir(self.repo.pkgdir)
+        survivor = os.path.join(self.repo.pkgdir, "survivor")
+        dnf.util.touch(survivor)
+        # syncing a repo shouldn't clear the pkgdir
+        self.repo.load()
+        self.assertFile(survivor)
+
     def test_load_twice(self):
         self.assertTrue(self.repo.load())
         # the second time we only hit the cache:

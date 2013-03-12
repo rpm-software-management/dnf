@@ -108,6 +108,10 @@ def timed(fn):
         return retval
     return decorated
 
+def touch(path):
+    with open(path, 'a'):
+        pass
+
 def tmpdir():
     prefix = '%s-' % dnf.const.PREFIX
     return tempfile.mkdtemp(prefix=prefix)

@@ -25,6 +25,8 @@ import librepo
 import os.path
 import time
 
+_METADATA_RELATIVE_DIR="repodata"
+
 class _Result(object):
     def __init__(self, res):
         self.repo_dct = res.getinfo(librepo.LRR_YUM_REPO)
@@ -94,6 +96,10 @@ class _Handle(librepo.Handle):
     def local(self, val):
         self.setopt(librepo.LRO_LOCAL, val)
 
+    @property
+    def metadata_dir(self):
+        return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
+
 SYNC_TRY_CACHE = 1
 SYNC_NO_CACHE = 2
 
@@ -140,6 +146,11 @@ class Repo(dnf.yum.config.RepoConf):
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.yum.Errors.RepoError, msg
+
+    def _replace_metadata(self, from_dir):
+        dnf.util.ensure_dir(self.cachedir)
+        dnf.util.rm_rf(self.metadata_dir)
+        os.rename(from_dir, self.metadata_dir)
 
     def _handle_uses_callback(self, handle):
         return self._progress is not None and not handle.local
@@ -193,6 +204,10 @@ class Repo(dnf.yum.config.RepoConf):
             self._progress.end()
         return pkg.localPkg()
 
+    @property
+    def metadata_dir(self):
+        return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+
     def metadata_expire_in(self):
         """Get the number of seconds after which the metadata will expire.
 
@@ -218,10 +233,6 @@ class Repo(dnf.yum.config.RepoConf):
     def primary_fn(self):
         return self.res.primary_fn
 
-    def replace_cache(self, from_dir):
-        dnf.util.rm_rf(self.cachedir)
-        os.rename(from_dir, self.cachedir)
-
     @property
     def repomd_fn(self):
         return self.res.repomd_fn
@@ -244,9 +255,10 @@ class Repo(dnf.yum.config.RepoConf):
         try:
             handle = self._handle_new_remote(dnf.util.tmpdir())
             self._handle_load(handle)
-            self.replace_cache(handle.destdir)
+            # override old md with the new ones:
+            self._replace_metadata(handle.metadata_dir)
 
-            # get everything from the cache now:
+            # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
             self.res = self._handle_load(handle)
         except librepo.LibrepoException as e:
