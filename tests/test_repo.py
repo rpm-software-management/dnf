@@ -43,6 +43,7 @@ class RepoTest(base.TestCase):
         self.repo = dnf.repo.Repo("r")
         self.repo.basecachedir = self.TMP_CACHEDIR
         self.repo.baseurl = [BASEURL]
+        self.repo.name = "r for riot"
 
     @classmethod
     def setUpClass(cls):
@@ -113,6 +114,14 @@ class RepoTest(base.TestCase):
         (has, time) = self.repo.metadata_expire_in()
         self.assertTrue(has)
         self.assertGreater(time, 0)
+
+    def test_progress_cb(self):
+        m = mock.Mock()
+        self.repo.set_progress_bar(m)
+        self.repo.load()
+        m.begin.assert_called_with("r for riot")
+        m.librepo_cb.assert_any_call(mock.ANY, mock.ANY, mock.ANY)
+        m.end.assert_called_with()
 
     @mock.patch('librepo.Handle.setopt')
     def test_repo_gpgcheck(self, setopt):

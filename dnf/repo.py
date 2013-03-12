@@ -59,15 +59,15 @@ class _Result(object):
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck):
         super(_Handle, self).__init__()
-        self.setopt(librepo.LRO_REPOTYPE, librepo.LR_YUMREPO)
-        self.setopt(librepo.LRO_YUMDLIST, ["primary", "filelists", "prestodelta"])
-        self.setopt(librepo.LRO_GPGCHECK, gpgcheck)
+        self.repotype = librepo.LR_YUMREPO
+        self.yumdlist = ["primary", "filelists", "prestodelta"]
+        self.gpgcheck = gpgcheck
 
     @classmethod
     def new_local(cls, gpgcheck, cachedir):
         h = cls(gpgcheck)
         h.destdir = cachedir
-        h.setopt(librepo.LRO_URL, cachedir)
+        h.url = cachedir
         h.local = True
         return h
 
@@ -76,25 +76,8 @@ class _Handle(librepo.Handle):
         h = cls(gpgcheck)
         h.destdir = destdir
         h.setopt(mirror_setup[0], mirror_setup[1])
-        if progress_cb is not None:
-            h.setopt(librepo.LRO_PROGRESSCB, progress_cb)
+        h.progresscb = progress_cb
         return h
-
-    @property
-    def destdir(self):
-        return self.getinfo(librepo.LRI_DESTDIR)
-
-    @destdir.setter
-    def destdir(self, val):
-        self.setopt(librepo.LRO_DESTDIR, val)
-
-    @property
-    def local(self):
-        return self.getinfo(librepo.LRI_LOCAL)
-
-    @local.setter
-    def local(self, val):
-        self.setopt(librepo.LRO_LOCAL, val)
 
     @property
     def metadata_dir(self):
@@ -119,10 +102,10 @@ class Repo(dnf.yum.config.RepoConf):
 
     def _handle_load(self, handle):
         r = librepo.Result()
-        if self._handle_uses_callback(handle):
+        if handle.progresscb:
             self._progress.begin(self.name)
         handle.perform(r)
-        if self._handle_uses_callback(handle):
+        if handle.progresscb:
             self._progress.end()
         return _Result(r)
 
@@ -151,9 +134,6 @@ class Repo(dnf.yum.config.RepoConf):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
         os.rename(from_dir, self.metadata_dir)
-
-    def _handle_uses_callback(self, handle):
-        return self._progress is not None and not handle.local
 
     def _try_cache(self):
         if self.sync_strategy == SYNC_NO_CACHE:
@@ -196,11 +176,11 @@ class Repo(dnf.yum.config.RepoConf):
     def get_package(self, pkg, text=None):
         dnf.util.ensure_dir(self.pkgdir)
         handle = self._handle_new_remote(self.pkgdir)
-        if self._handle_uses_callback(handle):
+        if handle.progresscb:
             text = text if text is not None else pkg.location
             self._progress.begin(text)
         handle.download(pkg.location)
-        if self._handle_uses_callback(handle):
+        if handle.progresscb:
             self._progress.end()
         return pkg.localPkg()
 
