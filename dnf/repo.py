@@ -23,6 +23,7 @@ import dnf.yum.Errors
 import dnf.yum.config
 import librepo
 import os.path
+import urlgrabber.grabber
 import time
 
 _METADATA_RELATIVE_DIR="repodata"
@@ -256,3 +257,27 @@ class Repo(dnf.yum.config.RepoConf):
 
     def set_progress_bar(self, progress):
         self._progress = progress
+
+    def urlgrabber_opts(self):
+        """Get http configuration for urlgrabber.
+
+        Deprecated. :noapi
+
+        """
+        return {'keepalive': self.keepalive,
+                'bandwidth': self.bandwidth,
+                'retry': self.retries,
+                'throttle': self.throttle,
+                'proxies': {},
+                'timeout': self.timeout,
+                'ip_resolve': self.ip_resolve,
+                'http_headers': (),
+                'ssl_verify_peer': self.sslverify,
+                'ssl_verify_host': self.sslverify,
+                'ssl_ca_cert': self.sslcacert,
+                'ssl_cert': self.sslclientcert,
+                'ssl_key': self.sslclientkey,
+                'user_agent': urlgrabber.grabber.default_grabber.opts.user_agent,
+                'username': self.username,
+                'password': self.password,
+                }

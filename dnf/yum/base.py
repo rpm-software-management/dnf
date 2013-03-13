@@ -2536,13 +2536,11 @@ class Base(object):
             url = i18n.to_utf8(keyurl)
             if repo is None:
                 opts = {'limit':9999}
-                text = 'global/gpgkey'
             else:
                 #  If we have a repo. use the proxy etc. configuration for it.
                 # In theory we have a global proxy config. too, but meh...
                 # external callers should just update.
-                opts = repo._default_grabopts()
-                text = repo.id + '/gpgkey'
+                opts = repo.urlgrabber_opts()
             rawkey = urlgrabber.urlread(url, **opts)
 
         except urlgrabber.grabber.URLGrabError, e:
