@@ -91,7 +91,6 @@ class Base(object):
         self._not_found_i = {}
         self.logger = logging.getLogger("yum.Base")
         self.verbose_logger = logging.getLogger("yum.verbose.Base")
-        self._override_sigchecks = False
         self._repos = dnf.repodict.RepoDict()
         self.repo_setopts = {} # since we have to use repo_setopts in base and
                                # not in cli - set it up as empty so no one
@@ -1249,10 +1248,7 @@ class Base(object):
                     might help.
               2 = Fatal GPG verification error, give up.
         """
-        if self._override_sigchecks:
-            check = False
-            hasgpgkey = 0
-        elif po.from_cmdline:
+        if po.from_cmdline:
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:

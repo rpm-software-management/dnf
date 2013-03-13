@@ -1092,6 +1092,8 @@ class Cli(object):
 
         self.base = base
         self.cli_commands = {}
+        self.nogpgcheck = False
+
         # :hawkey -- commented out are not yet supported in dnf
         self._register_command(dnf.cli.commands.InstallCommand(self))
         self._register_command(dnf.cli.commands.UpgradeCommand(self))
@@ -1131,13 +1133,10 @@ class Cli(object):
             self.print_usage()
             sys.exit(1)
 
-        # Disable all gpg key checking, if requested.
-        if opts.nogpgcheck:
-            #  Altering the normal configs. doesn't work too well, esp. with
-            # regard to dynamically enabled repos.
-            self.base._override_sigchecks = True
-            for repo in self.base.repos.iter_enabled():
-                repo._override_sigchecks = True
+        if self.nogpgcheck:
+            for repo in self.base.repos.itervalues():
+                repo.gpgcheck = False
+                repo.repo_gpgcheck = False
 
         # setup the progress bars/callbacks
         self.base.setupProgressCallbacks()
@@ -1356,11 +1355,11 @@ class Cli(object):
         if opts.version:
             opts.quiet = True
             opts.verbose = False
-
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = 6
+        self.nogpgcheck = opts.nogpgcheck
 
         # configuration has been collected, accumulate it into sensible form
         self.base.cache_c.prefix = self.base.conf.cachedir

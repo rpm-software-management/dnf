@@ -54,19 +54,19 @@ class CliTest(unittest.TestCase):
 
     def test_configure_repos(self):
         opts = optparse.Values()
-        opts.nogpgcheck = True
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         calls = mock.Mock()
         self.yumbase._repos = dnf.repodict.RepoDict()
         self.yumbase._repos.add(dnf.repo.Repo('one'))
         self.yumbase._repos.add(dnf.repo.Repo('two'))
         self.yumbase._repos.add(dnf.repo.Repo('comb'))
+        self.cli.nogpgcheck = True
         self.cli._configure_repos(opts)
         self.assertFalse(self.yumbase.repos['one'].enabled)
         self.assertFalse(self.yumbase.repos['two'].enabled)
         self.assertTrue(self.yumbase.repos['comb'].enabled)
-        self.assertTrue(self.yumbase._override_sigchecks)
-        self.assertTrue(self.yumbase.repos["comb"]._override_sigchecks)
+        self.assertFalse(self.yumbase.repos["comb"].gpgcheck)
+        self.assertFalse(self.yumbase.repos["comb"].repo_gpgcheck)
 
 @mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
 @mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)

@@ -56,14 +56,14 @@ def checkRootUID(base):
         base.logger.critical(_('You need to be root to perform this command.'))
         raise CliError
 
-def checkGPGKey(base):
+def checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
 
     :param base: a :class:`dnf.yum.Yumbase` object.
     :raises: :class:`cli.CliError`
     """
-    if base._override_sigchecks:
+    if cli.nogpgcheck:
         return
     if not base.gpgKeyCheck():
         for repo in base.repos.iter_enabled():
@@ -300,7 +300,7 @@ class InstallCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
@@ -361,7 +361,7 @@ class UpgradeCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
     def doCommand(self, basecmd, extcmds):
@@ -445,7 +445,7 @@ class DistroSyncCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
         if extcmds:
             self.cli.logger.critical(_('distro-sync accepts no package specs.'))
@@ -821,7 +821,7 @@ class GroupsCommand(Command):
             checkRootUID(self.base)
 
         if cmd in ('install', 'upgrade'):
-            checkGPGKey(self.base)
+            checkGPGKey(self.base, self.cli)
 
         cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary',
                 'mark-install', 'mark-remove',
@@ -1778,7 +1778,7 @@ class ReInstallCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
@@ -1850,7 +1850,7 @@ class DowngradeCommand(Command):
         :param extcmds: the command line arguments passed to *basecmd*
         """
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
@@ -2224,7 +2224,7 @@ class HistoryCommand(Command):
             raise CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkRootUID(self.base)
-            checkGPGKey(self.base)
+            checkGPGKey(self.base, self.cli)
         elif not os.access(self.base.history._db_file, os.R_OK):
             self.base.logger.critical(_("You don't have access to the history DB."))
             raise CliError
