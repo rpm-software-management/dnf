@@ -25,6 +25,7 @@ import librepo
 import os.path
 import urlgrabber.grabber
 import time
+import types
 
 _METADATA_RELATIVE_DIR="repodata"
 
@@ -153,8 +154,27 @@ class Repo(dnf.yum.config.RepoConf):
     def cachedir(self):
         return os.path.join(self.basecachedir, self.id)
 
+    _REPOCONF_ATTRS = set(dir(dnf.yum.config.RepoConf))
     def dump(self):
-        return ''
+        """Return a string representing configuration of this repo."""
+        output = '[%s]\n' % self.id
+        for attr in dir(self):
+            # exclude all vars which are not opts
+            if attr not in self._REPOCONF_ATTRS:
+                continue
+            if attr.startswith('_'):
+                continue
+
+            res = getattr(self, attr)
+            if isinstance(res, types.MethodType):
+                continue
+            if not res and type(res) not in (type(False), type(0)):
+                res = ''
+            if type(res) == types.ListType:
+                res = ',\n   '.join(res)
+            output = output + '%s = %s\n' % (attr, res)
+
+        return output
 
     def disable(self):
         self.enabled = False

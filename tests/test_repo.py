@@ -24,6 +24,8 @@ import mock
 import os
 import tempfile
 import unittest
+import ConfigParser
+import StringIO
 
 BASEURL = "file://%s/tests/repos/rpm" % base.dnf_toplevel()
 
@@ -60,6 +62,17 @@ class RepoTest(base.TestCase):
     def test_cachedir(self):
         self.assertEqual(self.repo.cachedir,
                          os.path.join(self.TMP_CACHEDIR, self.repo.id))
+
+    def test_dump(self):
+        dump = self.repo.dump()
+        f = StringIO.StringIO(dump)
+        parser = ConfigParser.ConfigParser()
+        parser.readfp(f)
+        self.assertIn('r', parser.sections())
+        opts = parser.options('r')
+        self.assertIn('bandwidth', opts)
+        self.assertIn('gpgkey', opts)
+        self.assertEqual(parser.get('r', 'timeout'), '30.0')
 
     def test_expire_cache(self):
         self.repo.load()
