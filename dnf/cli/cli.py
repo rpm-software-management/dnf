@@ -21,6 +21,7 @@
 Command line interface yum class and related.
 """
 
+import operator
 import os
 import re
 import sys
@@ -1137,6 +1138,11 @@ class Cli(object):
             for repo in self.base.repos.itervalues():
                 repo.gpgcheck = False
                 repo.repo_gpgcheck = False
+
+        if opts.cacheonly:
+            for repo in self.base.repos.itervalues():
+                repo.basecachedir = self.base.cache_c.system_cachedir
+                repo.md_only_cached()
 
         # setup the progress bars/callbacks
         self.base.setupProgressCallbacks()

@@ -55,6 +55,7 @@ class CliTest(unittest.TestCase):
     def test_configure_repos(self):
         opts = optparse.Values()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
+        opts.cacheonly = True
         calls = mock.Mock()
         self.yumbase._repos = dnf.repodict.RepoDict()
         self.yumbase._repos.add(dnf.repo.Repo('one'))
@@ -67,6 +68,8 @@ class CliTest(unittest.TestCase):
         self.assertTrue(self.yumbase.repos['comb'].enabled)
         self.assertFalse(self.yumbase.repos["comb"].gpgcheck)
         self.assertFalse(self.yumbase.repos["comb"].repo_gpgcheck)
+        self.assertEqual(self.yumbase.repos["comb"].sync_strategy,
+                         dnf.repo.SYNC_ONLY_CACHE)
 
 @mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
 @mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)

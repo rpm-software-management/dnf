@@ -950,12 +950,12 @@ class MakeCacheCommand(Command):
             if not is_cache or expires_in <= 0:
                 self.base.verbose_logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
-                r.expire_cache()
+                r.md_expire_cache()
             elif expires_in < 60 * 60: # expires within an hour
                 self.base.verbose_logger.debug("%s: metadata will expire after %d "
                                           "seconds and will be refreshed now" %
                                           (r.id, expires_in))
-                r.expire_cache()
+                r.md_expire_cache()
             else:
                 self.base.verbose_logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))

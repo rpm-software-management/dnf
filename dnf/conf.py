@@ -47,19 +47,17 @@ class Cache(object):
         # internal:
         self._ready = False
         self._cachedir = None
-        self._fallback_cachedir = None
+        self._system_cachedir = None
 
     def _make_ready(self):
         if self._ready:
             return
 
         self._ready = True
+        self._system_cachedir = self._retdir(self.prefix)
         if util.am_i_root():
-            self._cachedir = self._retdir(self.prefix)
-            self._fallback_cachedir = None
+            self._cachedir = self._system_cachedir
         else:
-            self._fallback_cachedir = self._retdir(self.prefix)
-            self._cachedir = None
             try:
                 user_prefix = yum.misc.getCacheDir()
                 self._cachedir = self._retdir(user_prefix)
@@ -75,9 +73,9 @@ class Cache(object):
         return self._cachedir
 
     @property
-    def fallback_cachedir(self):
+    def system_cachedir(self):
         self._make_ready()
-        return self._fallback_cachedir
+        return self._system_cachedir
 
 class GoalParameters(object):
     def __init__(self):

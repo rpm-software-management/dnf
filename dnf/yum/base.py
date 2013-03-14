@@ -296,7 +296,7 @@ class Base(object):
             # Got our list of repo objects, add them to the repos
             # collection
             try:
-                self._repos.add(thisrepo)
+                self.repos.add(thisrepo)
             except Errors.RepoError, e:
                 self.logger.warning(e)
 
@@ -350,7 +350,6 @@ class Base(object):
         repo.name = to_unicode(repo.name)
 
         repo.basecachedir = self.cache_c.cachedir
-        repo.fallback_basecachedir = self.cache_c.fallback_cachedir
 
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser

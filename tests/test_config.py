@@ -41,8 +41,8 @@ class CacheTest(unittest.TestCase):
          cache = Cache()
          cache.prefix = '/var/lib/spinning'
          cache.suffix = 'i286/20'
+         self.assertEqual(cache.system_cachedir, '/var/lib/spinning/i286/20')
          self.assertEqual(cache.cachedir, '/var/lib/spinning/i286/20')
-         self.assertEqual(cache.fallback_cachedir, None)
 
      @mock.patch('dnf.yum.misc.getCacheDir', return_value="/notmp/dnf-walr-yeAH")
      def test_noroot(self, fn_getcachedir):
@@ -52,7 +52,6 @@ class CacheTest(unittest.TestCase):
          self.assertEqual(fn_getcachedir.call_count, 0)
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
          self.assertEqual(fn_getcachedir.call_count, 1)
-         self.assertEqual(cache.fallback_cachedir, '/var/lib/spinning/i286/20')
 
          # the cachedirs are cached now, getCacheDir is not called again:
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')

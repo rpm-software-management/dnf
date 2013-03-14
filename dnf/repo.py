@@ -85,8 +85,9 @@ class _Handle(librepo.Handle):
     def metadata_dir(self):
         return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
 
-SYNC_TRY_CACHE = 1
-SYNC_NO_CACHE = 2
+SYNC_TRY_CACHE  = 1
+SYNC_EXPIRED   = 2
+SYNC_ONLY_CACHE = 3
 
 class Repo(dnf.yum.config.RepoConf):
     DEFAULT_SYNC = SYNC_TRY_CACHE
@@ -96,7 +97,6 @@ class Repo(dnf.yum.config.RepoConf):
         self._progress = None
         self.id = id_
         self.basecachedir = None
-        self.fallback_basecachedir = None
         self.base_persistdir = ""
         self.res = None
         self.sync_strategy = self.DEFAULT_SYNC
@@ -136,10 +136,11 @@ class Repo(dnf.yum.config.RepoConf):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
         os.rename(from_dir, self.metadata_dir)
+        # metadata is fresh, it's ok to use it
+        self.sync_strategy = SYNC_TRY_CACHE
 
     def _try_cache(self):
-        if self.sync_strategy == SYNC_NO_CACHE:
-            self.sync_strategy = self.DEFAULT_SYNC
+        if self.sync_strategy == SYNC_EXPIRED:
             return False
         if self.res:
             return True
@@ -148,6 +149,8 @@ class Repo(dnf.yum.config.RepoConf):
             self.res = self._handle_load(handle)
         except librepo.LibrepoException as e:
             return False
+        if self.sync_strategy == SYNC_ONLY_CACHE:
+            return True
         return self.res.file_age("primary") < self.metadata_expire
 
     @property
@@ -186,10 +189,6 @@ class Repo(dnf.yum.config.RepoConf):
         msg = "Problem with repo '%s': %s" % (self.id, str(exception))
         print msg
 
-    def expire_cache(self):
-        self.res = None
-        self.sync_strategy = SYNC_NO_CACHE
-
     @property
     def filelists_fn(self):
         return self.res.filelists_fn
@@ -222,6 +221,24 @@ class Repo(dnf.yum.config.RepoConf):
             return (True, self.metadata_expire - self.res.age)
         return (False, 0)
 
+    def md_expire_cache(self):
+        """Mark whatever is in the current cache expired.
+
+        This repo instance will alway try to fetch a fresh metadata after this
+        method is called.
+
+        """
+        self.res = None
+        self.sync_strategy = SYNC_EXPIRED
+
+    def md_try_cache(self):
+        """Use cache for metadata if possible, sync otherwise."""
+        self.sync_strategy = SYNC_TRY_CACHE
+
+    def md_only_cached(self):
+        """Force using only the metadata the repo has in the local cache."""
+        self.sync_strategy = SYNC_ONLY_CACHE
+
     @property
     def presto_fn(self):
         return self.res.presto_fn
@@ -253,6 +270,9 @@ class Repo(dnf.yum.config.RepoConf):
         """
         if self._try_cache():
             return False
+        if self.sync_strategy == SYNC_ONLY_CACHE:
+            msg = "Cache-only enabled but no cache for '%s'" % self.id
+            raise dnf.yum.Errors.RepoError(msg)
         try:
             handle = self._handle_new_remote(dnf.util.tmpdir())
             self._handle_load(handle)
