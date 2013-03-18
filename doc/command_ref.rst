@@ -177,7 +177,8 @@ Erase Command
 ``dnf [options] erase <package-specs>...``
     Removes the specified packages from the system along with any packages
     depending on the packages being removed. If ``clean_requirements_on_remove``
-    is enabled also removes any dependencies that are no longer needed.
+    is enabled (the default) also removes any dependencies that are no longer
+    needed.
 
 ------------
 Help Command
