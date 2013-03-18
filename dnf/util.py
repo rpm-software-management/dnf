@@ -112,6 +112,13 @@ def touch(path):
     with open(path, 'a'):
         pass
 
-def tmpdir():
-    prefix = '%s-' % dnf.const.PREFIX
-    return tempfile.mkdtemp(prefix=prefix)
+class tmpdir(object):
+    def __init__(self):
+        prefix = '%s-' % dnf.const.PREFIX
+        self.path = tempfile.mkdtemp(prefix=prefix)
+
+    def __enter__(self):
+        return self.path
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        rm_rf(self.path)

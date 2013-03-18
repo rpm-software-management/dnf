@@ -274,10 +274,11 @@ class Repo(dnf.yum.config.RepoConf):
             msg = "Cache-only enabled but no cache for '%s'" % self.id
             raise dnf.yum.Errors.RepoError(msg)
         try:
-            handle = self._handle_new_remote(dnf.util.tmpdir())
-            self._handle_load(handle)
-            # override old md with the new ones:
-            self._replace_metadata(handle.metadata_dir)
+            with dnf.util.tmpdir() as tmpdir:
+                handle = self._handle_new_remote(tmpdir)
+                self._handle_load(handle)
+                # override old md with the new ones:
+                self._replace_metadata(handle.metadata_dir)
 
             # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
