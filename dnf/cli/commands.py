@@ -1422,7 +1422,8 @@ class RepoListCommand(Command):
 
         verbose = self.base.conf.verbose
 
-        repos = self.base.repos.values().sort(key=operator.attrgetter('id'))
+        repos = self.base.repos.values()
+        repos.sort(key=operator.attrgetter('id'))
         enabled_repos = self.base.repos.enabled()
         on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
         on_dhibeg = self.base.term.FG_COLOR['red']
@@ -1470,7 +1471,7 @@ class RepoListCommand(Command):
                 ui_endis_wid = utf8_width(_('disabled'))
 
             if not verbose:
-                rid = str(repo)
+                rid = repo.id
                 if enabled and repo.metalink:
                     mdts = repo.metalink_data.repomd.timestamp
                     if mdts > repo.repoXML.timestamp:
@@ -1479,10 +1480,10 @@ class RepoListCommand(Command):
                              (ui_enabled, ui_endis_wid), ui_num))
             else:
                 if enabled:
-                    md = repo.repoXML
+                    md = repo.res
                 else:
                     md = None
-                out = [self.base.fmtKeyValFill(_("Repo-id      : "), repo),
+                out = [self.base.fmtKeyValFill(_("Repo-id      : "), repo.id),
                        self.base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
 
                 if force_show or extcmds:
@@ -1491,21 +1492,20 @@ class RepoListCommand(Command):
                 if md and md.revision is not None:
                     out += [self.base.fmtKeyValFill(_("Repo-revision: "),
                                                md.revision)]
-                if md and md.tags['content']:
-                    tags = md.tags['content']
+                if md and md.content_tags:
+                    tags = md.content_tags
                     out += [self.base.fmtKeyValFill(_("Repo-tags    : "),
                                                ", ".join(sorted(tags)))]
 
-                if md and md.tags['distro']:
-                    for distro in sorted(md.tags['distro']):
-                        tags = md.tags['distro'][distro]
+                if md and md.distro_tags:
+                    for (distro, tags) in md.distro_tags.iteritems():
                         out += [self.base.fmtKeyValFill(_("Repo-distro-tags: "),
                                                    "[%s]: %s" % (distro,
                                                    ", ".join(sorted(tags))))]
 
                 if md:
                     out += [self.base.fmtKeyValFill(_("Repo-updated : "),
-                                               time.ctime(md.timestamp)),
+                                               time.ctime(md.md_timestamp)),
                             self.base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
                             self.base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
 
@@ -1517,10 +1517,6 @@ class RepoListCommand(Command):
                     out += [self.base.fmtKeyValFill(_("Repo-baseurl : "),
                                                ", ".join(baseurls))]
 
-                if enabled:
-                    # This needs to be here due to the mirrorlists are
-                    # metalinks hack.
-                    repo.urls
                 if repo.metalink:
                     out += [self.base.fmtKeyValFill(_("Repo-metalink: "),
                                                repo.metalink)]
@@ -1531,18 +1527,10 @@ class RepoListCommand(Command):
                 elif repo.mirrorlist:
                     out += [self.base.fmtKeyValFill(_("Repo-mirrors : "),
                                                repo.mirrorlist)]
-                if enabled and repo.urls and not baseurls:
-                    url = repo.urls[0]
-                    if len(repo.urls) > 1:
-                        url += ' (%d more)' % (len(repo.urls) - 1)
-                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), url)]
+                if enabled and md.url and not baseurls:
+                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), md.url)]
 
-                if not os.path.exists(repo.metadata_cookie):
-                    last = _("Unknown")
-                else:
-                    last = os.stat(repo.metadata_cookie).st_mtime
-                    last = time.ctime(last)
-
+                last = time.ctime(md.timestamp)
                 if repo.metadata_expire <= -1:
                     num = _("Never (last: %s)") % last
                 elif not repo.metadata_expire:

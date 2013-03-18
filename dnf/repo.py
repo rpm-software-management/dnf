@@ -36,15 +36,34 @@ class _Result(object):
 
     @property
     def age(self):
-        return self.file_age("primary")
+        return self.file_age('primary')
+
+    @property
+    def content_tags(self):
+        return self.repomd_dct.get('content_tags')
+
+    @property
+    def distro_tags(self):
+        pairs = self.repomd_dct.get('distro_tags', [])
+        return {k:v for (k, v) in pairs}
 
     def file_age(self, what):
-        f_ts = dnf.util.file_timestamp(self.repo_dct[what])
-        return time.time() - f_ts
+        return time.time() - self.file_timestamp(what)
+
+    def file_timestamp(self, what):
+        return dnf.util.file_timestamp(self.repo_dct[what])
 
     @property
     def filelists_fn(self):
         return self.repo_dct.get('filelists')
+
+    @property
+    def md_timestamp(self):
+        """Gets the highest timestamp of all metadata types."""
+        timestamps = [content.get('timestamp')
+                      for (what, content) in self.repomd_dct.iteritems()
+                      if isinstance(content, dict)]
+        return max(timestamps)
 
     @property
     def presto_fn(self):
@@ -57,6 +76,18 @@ class _Result(object):
     @property
     def repomd_fn(self):
         return self.repo_dct.get('repomd')
+
+    @property
+    def revision(self):
+        return self.repomd_dct.get('revision')
+
+    @property
+    def timestamp(self):
+        return self.file_timestamp('primary')
+
+    @property
+    def url(self):
+        return self.repo_dct.get('url')
 
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck):
