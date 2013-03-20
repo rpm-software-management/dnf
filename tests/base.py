@@ -79,8 +79,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
         dnf.sack.Sack.__init__(self,
                                arch=hawkey.test.FIXED_ARCH,
                                pkgcls=dnf.package.Package,
-                               pkginitval=yumbase,
-                               make_cache_dir=True)
+                               pkginitval=yumbase)
 
 class MockYumBase(dnf.yum.Base):
     """ See also: hawkey/test/python/__init__.py.
