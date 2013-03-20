@@ -96,14 +96,14 @@ import dnf.util
 import dnf.rpmUtils.connection
 from dnf import const, queries, sack, selector
 
-__version__ = '3.4.3'
+__version__ = const.VERSION
 __version_info__ = tuple([ int(num) for num in __version__.split('.')])
 
 #  Setup a default_grabber UA here that says we are yum, done using the global
 # so that other API users can easily add to it if they want.
 #  Don't do it at init time, or we'll get multiple additions if you create
 # multiple Base() objects.
-default_grabber.opts.user_agent += " yum/" + __version__
+default_grabber.opts.user_agent = "dnf/" + __version__
 
 class _YumCostExclude:
     """ This excludes packages that are in repos. of lower cost than the passed
