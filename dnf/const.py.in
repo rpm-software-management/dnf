@@ -34,6 +34,7 @@ VERSION_PATCH=@DNF_PATCH@
 PREFIX=NAME.lower()
 PROGRAM_NAME=NAME.lower()
 VERSION="%d.%d.%d" % (VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
+USER_AGENT = "dnf/%s" % VERSION
 
 BUGTRACKER_COMPONENT=NAME.lower()
 BUGTRACKER='https://bugzilla.redhat.com/enter_bug.cgi?product=Fedora&component=%s' % BUGTRACKER_COMPONENT
