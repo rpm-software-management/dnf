@@ -1,5 +1,7 @@
-%global gitrev 97180b8
-%global hawkey_version 0.3.8
+%global gitrev 4c0def8
+%global hawkey_version 0.3.9
+%global librepo_version 0.0.2-2.20130318gitb3c3323%{dist}
+
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
@@ -14,16 +16,20 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
+BuildRequires:	python-hawkey = %{hawkey_version}
 BuildRequires:  python-iniparse
+BuildRequires:	python-librepo = %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  urlgrabber
-BuildRequires:	python-hawkey = %{hawkey_version}
-Requires:	python-hawkey = %{hawkey_version}
-Requires:	python-iniparse
 Requires:	crontabs
 Requires:	libreport-filesystem
+Requires:	python-hawkey = %{hawkey_version}
+Requires:	python-iniparse
+Requires:	python-librepo = %{librepo_version}
+Requires:	rpm-python
+Requires:	urlgrabber
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
@@ -54,6 +60,72 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Wed Mar 20 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.0-1.git4c0def8
+- create the cache dir ourselves. (Ales Kozumplik)
+- have a user_agent const. (Ales Kozumplik)
+- update readme with librepo link, tidy up. (Ales Kozumplik)
+- librepo: add interface for inspecting metadata in more detail. (Ales Kozumplik)
+- librepo: use a context manager for the temp dir. (Ales Kozumplik)
+- librepo: support --cacheonly again. (Ales Kozumplik)
+- librepo: add repo.dump() and test it using ConfigParser and StringIO. (Ales Kozumplik)
+- Make --nogpgcheck work as expected again. (Ales Kozumplik)
+- fix installation of gpg keys for RPM package verification. (Ales Kozumplik)
+- librepo: the latest librepo version has somewhat nicer python bindings. (Ales Kozumplik)
+- librepo: do not clear the packages/ when syncing new MD. (Ales Kozumplik)
+- tests: add testing of Repo.get_package(). (Ales Kozumplik)
+- tests: move rpms and the yum repo to the same folder. (Ales Kozumplik)
+- librepo: refactor dnf.repo.Repo. (Ales Kozumplik)
+- tests: bring dnf.repo.Repo under unit test. (Ales Kozumplik)
+- librepo: force expiring metadata, making 'dnf makecache' work again. (Ales Kozumplik)
+- librepo: downloading packages works again. (Ales Kozumplik)
+- fix bug in LibrepoCallbackAdaptor causing the progreess bar go nuts on 2nd repo. (Ales Kozumplik)
+- repo.gpgcheck does not mean repo.repo_gpgcheck. (Ales Kozumplik)
+- repo: better error reporting in sync() (Ales Kozumplik)
+- tests: make test_configure_repos() pass again. (Ales Kozumplik)
+- delete YumTextMeter. (Ales Kozumplik)
+- librepo: make the text progress bar work again. (Ales Kozumplik)
+- Finally: download repos through librepo. (Ales Kozumplik)
+- Cli._configure_repos() uses get_multiple(). (Ales Kozumplik)
+- base.repos is now a dict itself. (Ales Kozumplik)
+- dnf.repo.Repo: add dummy callback setters. (Ales Kozumplik)
+- tests: RepoDict allows simplifying MockYumBase. (Ales Kozumplik)
+- librepo: use the new Repo and RepoDict. (Ales Kozumplik)
+- add dnf.util.empty(). (Ales Kozumplik)
+- remove: base.add_enable_repo. (Ales Kozumplik)
+- move yum.Base to yum.base.Base. (Ales Kozumplik)
+- strip things out of dnf/yum/__init__.py (Ales Kozumplik)
+- remove: _YumCostExclude, unused. (Ales Kozumplik)
+- removing: trim down dnf.yum.packages. (Ales Kozumplik)
+- removal: pruning imports in dnf.yum.__init__ (Ales Kozumplik)
+- Repo and RepoDict. (Ales Kozumplik)
+- tests: suite hawkey change 54f4f0f introducing make_cache_dir Sack() parameter. (Ales Kozumplik)
+- doc: document clean_requirements_on_remove is on by default. (Ales Kozumplik)
+- remove yum references from the default dnf.conf (RhBug:919714) (Ales Kozumplik)
+- New build: 0.2.22-1 (Ales Kozumplik)
+- New version: dnf-0.2.22 (Ales Kozumplik)
+- move is_glob_pattern() to dnf.util (Ales Kozumplik)
+- validate parameter never used in Base.read_repos() (Ales Kozumplik)
+- cosmetic: refactor: getReposFromConf*() -> read_*_repos() (Ales Kozumplik)
+- refactor: introduce Cli.command property. (Ales Kozumplik)
+- repos: get rid of Base.prerepoconf. (Ales Kozumplik)
+- repos: simplify how repos are set up. (Ales Kozumplik)
+- always use iniparse, do not fallback to ConfigParser. (Ales Kozumplik)
+- 'dnf repolist' is silent. (Ales Kozumplik)
+- enabling/disabling repos doesn't respect the cmdline order. (RhBug:913143) (Ales Kozumplik)
+- install by filenames and globbed filenames (RhBug:912130) (Ales Kozumplik)
+- doc: man page: better describe the input patterns. (Ales Kozumplik)
+- tests: test_installroot_with_etc() broken on other machines. (Ales Kozumplik)
+- fix globbing installs again. (Ales Kozumplik)
+- 'dnf list' shouldn't look for provides. (Ales Kozumplik)
+- pass installroot to the sack. (RhBug:RhBug) (Ales Kozumplik)
+- fix traceback in Cli.configure() with --installroot (Ales Kozumplik)
+- at least do not traceback if history undo doesn't work. (Ales Kozumplik)
+- adapt to new interface hawkey.Subject interface (34bae0c) (Ales Kozumplik)
+- search: try to make the better matches come on top. (Ales Kozumplik)
+- search: perform the search case-insensitive. (Ales Kozumplik)
+- tests: bring the cli.search() method under the test. (Ales Kozumplik)
+- repo: when reverting repomd.xml make sure we reset its srcfile (RhBug:904706) (Ales Kozumplik)
+
 * Fri Mar 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.22-1.git97180b8
 - move is_glob_pattern() to dnf.util (Ales Kozumplik)
 - validate parameter never used in Base.read_repos() (Ales Kozumplik)
