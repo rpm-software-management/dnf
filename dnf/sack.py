@@ -18,7 +18,8 @@
 # Red Hat, Inc.
 #
 
-from .yum import misc
+import dnf.util
+import dnf.yum.misc
 import hawkey
 import logging
 import sys
@@ -29,7 +30,7 @@ import queries
 class SackVersion:
     def __init__(self):
         self._num = 0
-        self._chksum = misc.Checksums(['sha1'])
+        self._chksum = dnf.yum.misc.Checksums(['sha1'])
 
     def __str__(self):
         return "%u:%s" % (self._num, self._chksum.hexdigest())
@@ -80,8 +81,11 @@ class Sack(hawkey.Sack):
         return main
 
 def build_sack(yumbase):
+    cachedir = yumbase.cache_c.cachedir
+    # create the dir ourselves so we have the permissions under control:
+    dnf.util.ensure_dir(cachedir)
     return Sack(pkgcls=package.Package, pkginitval=yumbase,
-                cachedir=yumbase.cache_c.cachedir,
+                cachedir=cachedir,
                 rootdir=yumbase.conf.installroot)
 
 def rpmdb_sack(yumbase):
