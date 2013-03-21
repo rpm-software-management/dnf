@@ -22,7 +22,8 @@ import dnf.util
 import dnf.yum.Errors
 import dnf.yum.config
 import librepo
-import os.path
+import os
+import shutil
 import urlgrabber.grabber
 import time
 import types
@@ -166,7 +167,7 @@ class Repo(dnf.yum.config.RepoConf):
     def _replace_metadata(self, from_dir):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
-        os.rename(from_dir, self.metadata_dir)
+        shutil.move(from_dir, self.metadata_dir)
         # metadata is fresh, it's ok to use it
         self.sync_strategy = SYNC_TRY_CACHE
 
