@@ -1,4 +1,4 @@
-%global gitrev 97180b8
+%global gitrev 50db212
 %global hawkey_version 0.3.8
 %global confdir %{_sysconfdir}/dnf
 
@@ -54,6 +54,11 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 
 %changelog
+* Thu Mar 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.23-1.git50db212
+- Change the HTTP user agent for DNF. (Ales Kozumplik)
+- doc: document clean_requirements_on_remove is on by default. (Ales Kozumplik)
+- remove yum references from the default dnf.conf (RhBug:919714) (Ales Kozumplik)
+
 * Fri Mar 1 2013 Aleš Kozumplík <ales@redhat.com> - 0.2.22-1.git97180b8
 - move is_glob_pattern() to dnf.util (Ales Kozumplik)
 - validate parameter never used in Base.read_repos() (Ales Kozumplik)
