@@ -26,8 +26,7 @@ class DistroSync(base.ResultTestCase):
 
     def test_distro_sync(self):
         self.yumbase.distro_sync()
-        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE,
-                      self.yumbase.tsInfo.probFilterFlags)
+        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.yumbase.rpm_probfilter)
         packages = base.installed_but(self.sack, "pepper", "librita").run()
         packages.extend(available_by_name(self.sack, ["pepper", "librita"]))
         packages.extend(installed_by_nevra(self.sack, "librita-1-1.i686"))

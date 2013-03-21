@@ -33,10 +33,7 @@ import hawkey
 
 class TransactionData:
     """Data Structure designed to hold information on a yum Transaction Set"""
-    def __init__(self, prob_filter_flags=None):
-        self.probFilterFlags = []
-        if prob_filter_flags:
-            self.probFilterFlags = prob_filter_flags[:]
+    def __init__(self):
         self.pkgdict = {} # key = pkgtup, val = list of TransactionMember obj
         self._namedict = {} # name -> list of TransactionMember obj
         self.installonlypkgs = []

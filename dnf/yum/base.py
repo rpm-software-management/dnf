@@ -21,7 +21,7 @@ The Yum RPM software updater.
 
 import functools
 import os
-import os.path
+import operator
 import rpm
 
 import types
@@ -98,7 +98,10 @@ class Base(object):
 
         # Start with plugins disabled
         self.disablePlugins()
-
+        self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
+                               rpm.RPMPROB_FILTER_REPLACEPKG,
+                               rpm.RPMPROB_FILTER_REPLACENEWFILES,
+                               rpm.RPMPROB_FILTER_REPLACEOLDFILES]
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
@@ -145,8 +148,8 @@ class Base(object):
         self._repos = None
 
     @property
-    @dnf.util.lazyattr("_rpm")
-    def rpm(self):
+    @dnf.util.lazyattr("_rpmconn")
+    def rpmconn(self):
         return dnf.rpmUtils.connection.RpmConnection(self.conf.installroot)
 
     @property
@@ -413,30 +416,26 @@ class Base(object):
             self.initActionTs()
         return self._ts
 
+    _TS_FLAGS_TO_RPM = {'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
+                        'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
+                        'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
+                        'test': rpm.RPMTRANS_FLAG_TEST,
+                        'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
+                        'repackage': rpm.RPMTRANS_FLAG_REPACKAGE,
+                        'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS}
     def initActionTs(self):
         """Set up the transaction set that will be used for all the work."""
-        self._ts = dnf.rpmUtils.transaction.TransactionWrapper(self.conf.installroot)
-        ts_flags_to_rpm = { 'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
-                            'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
-                            'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
-                            'test': rpm.RPMTRANS_FLAG_TEST,
-                            'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
-                            'repackage': rpm.RPMTRANS_FLAG_REPACKAGE}
-        # This is only in newer rpm.org releases
-        if hasattr(rpm, 'RPMTRANS_FLAG_NOCONTEXTS'):
-            ts_flags_to_rpm['nocontexts'] = rpm.RPMTRANS_FLAG_NOCONTEXTS
-
+        self._ts = dnf.rpmUtils.transaction.TransactionWrapper(
+            self.conf.installroot)
         self._ts.setFlags(0) # reset everything.
-
         for flag in self.conf.tsflags:
-            if flag in ts_flags_to_rpm:
-                self._ts.addTsFlag(ts_flags_to_rpm[flag])
-            else:
+            rpm_flag = self._TS_FLAGS_TO_RPM.get(flag)
+            if rpm_flag is None:
                 self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
+                continue
+            self._ts.addTsFlag(rpm_flag)
 
-        probfilter = 0
-        for flag in self.tsInfo.probFilterFlags:
-            probfilter |= flag
+        probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
         self._ts.setProbFilter(probfilter)
 
     def _deleteTs(self):
@@ -631,8 +630,7 @@ class Base(object):
         else:
             cnt = 0
             # reset tsInfo, some packages might have gone during resolving
-            self.tsInfo = transactioninfo.TransactionData(
-                prob_filter_flags=self.tsInfo.probFilterFlags)
+            self.tsInfo = transactioninfo.TransactionData()
             for pkg in goal.list_downgrades():
                 cnt += 1
                 downgraded = goal.package_obsoletes(pkg)
@@ -1256,7 +1254,7 @@ class Base(object):
             hasgpgkey = not not repo.gpgkey
 
         if check:
-            ts = self.rpm.readonly_ts
+            ts = self.rpmconn.readonly_ts
             sigresult = dnf.rpmUtils.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
 
@@ -2136,12 +2134,6 @@ class Base(object):
 
         return self.tsInfo.deselect(pat)
 
-    def _add_prob_flags(self, *flags):
-        """ Add all of the passed flags to the tsInfo.probFilterFlags array. """
-        for flag in flags:
-            if flag not in self.tsInfo.probFilterFlags:
-                self.tsInfo.probFilterFlags.append(flag)
-
     def install(self, pkg_spec):
         """ Mark package(s) specified by pkg_spec for installation.
 
@@ -2214,7 +2206,6 @@ class Base(object):
     def distro_sync(self, pkg=None):
         if pkg is None:
             self.tsInfo.distro_sync = True
-        self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     def remove(self, pkg_spec):
         """Mark the specified package for removal.
@@ -2311,10 +2302,6 @@ class Base(object):
            :class:`Errors.ReinstallInstallError` depending the nature
            of the error that is encountered
         """
-        self._add_prob_flags(rpm.RPMPROB_FILTER_REPLACEPKG,
-                             rpm.RPMPROB_FILTER_REPLACENEWFILES,
-                             rpm.RPMPROB_FILTER_REPLACEOLDFILES)
-
         tx_return = []
         if po:
             installed = queries.installed_exact(self.sack,
@@ -2371,8 +2358,6 @@ class Base(object):
         else:
             raise Errors.DowngradeError, 'Nothing specified to downgrade'
 
-        if len(tx_return) > 0:
-            self._add_prob_flags(rpm.RPMPROB_FILTER_OLDPACKAGE)
         return tx_return
 
     def provides(self, provides_spec):
@@ -2645,7 +2630,7 @@ class Base(object):
             keys = self._retrievePublicKey(keyurl, repo)
 
             for info in keys:
-                ts = self.rpm.readonly_ts
+                ts = self.rpmconn.readonly_ts
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
                     self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
@@ -2875,7 +2860,7 @@ class Base(object):
         # SIGINT specifically, so we _must_ have got rid of all of the used tses
         # before we try downloading. This is called from buildTransaction()
         # so self.rpmdb.ts should be valid.
-        ts = self.rpm.readonly_ts
+        ts = self.rpmconn.readonly_ts
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)
         install_only_names = set(self.conf.installonlypkgs)
         for m in self.tsInfo.getMembers():
