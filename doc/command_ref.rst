@@ -72,11 +72,20 @@ Options
 ``--installroot=<path>``
     set install root
 
+``--nogpgcheck``
+    skip checking GPG signatures on packages
+
 ``-q, --quiet``
     quiet operation
 
 ``-R <minutes>, --randomwait=<minutes>``
     maximum command wait time
+
+``--releasever=<release>``
+    configure DNF as if the distribution release was ``<release>``. This can
+    affect cache paths, values in configuration files and mirrorlist URLs. Using
+    '/' for this value makes DNF detect the release number from the running
+    system.
 
 ``--rpmverbosity=<debug level name>``
     debugging output level for rpm
