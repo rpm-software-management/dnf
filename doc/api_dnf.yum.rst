@@ -111,12 +111,6 @@ dnf.yum.repoMDObject
 .. automodule:: dnf.yum.repoMDObject
     :members:
 
-dnf.yum.repos
--------------
-
-.. automodule:: dnf.yum.repos
-    :members:
-
 dnf.yum.rpmsack
 ---------------
 
@@ -145,10 +139,4 @@ dnf.yum.update_md
 -----------------
 
 .. automodule:: dnf.yum.update_md
-    :members:
-
-dnf.yum.yumRepo
----------------
-
-.. automodule:: dnf.yum.yumRepo
     :members:
