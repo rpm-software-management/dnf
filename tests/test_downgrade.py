@@ -18,7 +18,7 @@
 import base
 import dnf.queries
 
-class Downgrade(base.ResultTestCase):
+class DowngradeTest(base.ResultTestCase):
     def test_downgrade_local(self):
         yumbase = base.MockYumBase()
         sack = yumbase.sack
@@ -31,10 +31,17 @@ class Downgrade(base.ResultTestCase):
     def test_downgrade(self):
         yumbase = base.MockYumBase("main")
         sack = yumbase.sack
-        ret = yumbase.downgrade(pattern="tour")
+        ret = yumbase.downgrade("tour")
         self.assertEqual(len(ret), 1)
 
         new_pkg = dnf.queries.available_by_name(sack, "tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")
         new_set = base.installed_but(sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
+
+    def test_downgrade2(self):
+        b = base.MockYumBase("old_versions")
+        ret = b.downgrade("tour")
+        installed, removed = self.installed_removed(b)
+        self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])
+        self.assertItemsEqual(map(str, removed), ['tour-5-0.noarch'])

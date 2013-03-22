@@ -2247,7 +2247,13 @@ class Base(object):
         po = self._local_common(path)
         if not po:
             return []
-        return self.downgrade(po)
+
+        tx_return = []
+        installed = sorted(queries.installed_by_name(self.sack, po.name))
+        if len(installed) > 0 and installed[0] > po:
+            txmbrs = self.tsInfo.addDowngrade(po, installed[0])
+            tx_return.append(txmbrs)
+        return tx_return
 
     def install_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
@@ -2331,34 +2337,31 @@ class Base(object):
 
         return tx_return
 
-    def downgrade(self, po=None, pattern=None, **kwargs):
+    def downgrade(self, pkg_spec):
         """Mark a package to be downgraded.  This is equivalent to
         first removing the currently installed package, and then
-        installing the older version.
+        installing an older version.
 
-        :param po: the package object to be marked to be downgraded
-        :param kwargs: if a package object is not given, the keyword
-           arguments will be used to specify a package to be marked to
-           be downgraded
         :return: a list of the transaction members added to the
            transaction set by this method
         :raises: :class:`Errors.DowngradeError` if no packages are
            specified or available for downgrade
         """
         tx_return = []
-        if po:
-            installed = sorted(queries.installed_by_name(self.sack, po.name))
-            if len(installed) > 0 and installed[0] > po:
-                txmbrs = self.tsInfo.addDowngrade(po, installed[0])
-                tx_return.append(txmbrs)
-        elif pattern:
-            for pkg in queries.downgrades_by_name(self.sack, pattern):
-                txmbr = self.tsInfo.addDowngrade(pkg)
-                tx_return.append(txmbr)
-        elif kwargs:
-            raise NotImplementedError, "yumbase.downgrade() kwargs not implemented"
-        else:
-            raise Errors.DowngradeError, 'Nothing specified to downgrade'
+        subj = queries.Subject(pkg_spec)
+        q = subj.get_best_query(self.sack)
+        installed = sorted(q.installed())
+        installed_pkg = dnf.util.first(installed)
+        if installed_pkg is None:
+            return []
+
+        avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
+        avail_pkg = dnf.util.first(sorted(avail, reverse=True))
+        if avail_pkg is None:
+            return []
+
+        txmbr = self.tsInfo.addDowngrade(avail_pkg)
+        tx_return.append(txmbr)
 
         return tx_return
 

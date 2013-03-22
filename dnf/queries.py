@@ -39,6 +39,9 @@ class Query(hawkey.Query):
     def available(self):
         return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
+    def downgrades(self):
+        return self.filter(downgrades=True)
+
     def filter_autoglob(self, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():

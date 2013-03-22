@@ -572,7 +572,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
 
             try:
-                self.downgrade(pattern=arg)
+                self.downgrade(arg)
             except dnf.yum.Errors.DowngradeError:
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
