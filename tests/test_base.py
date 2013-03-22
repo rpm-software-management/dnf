@@ -25,9 +25,10 @@ import dnf.yum.constants
 import hawkey
 import mock
 import os
+import rpm
 import unittest
 
-class YumBaseTest(unittest.TestCase):
+class BaseTest(unittest.TestCase):
     def test_instance(self):
         yumbase = dnf.yum.base.Base()
 
@@ -57,6 +58,21 @@ class YumBaseTest(unittest.TestCase):
         # test:
         yumbase._push_userinstalled(goal)
         goal.userinstalled.assert_called_with(pkg)
+
+    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    def test_ts(self, mock_ts):
+        base = dnf.yum.base.Base()
+        self.assertEqual(base._ts, None)
+        ts = base.ts
+        # check the setup is correct
+        ts.setFlags.call_args.assert_called_with(0)
+        flags = ts.setProbFilter.call_args[0][0]
+        self.assertTrue(flags & rpm.RPMPROB_FILTER_OLDPACKAGE)
+        self.assertTrue(flags & rpm.RPMPROB_FILTER_REPLACEPKG)
+        # check we can close the connection:
+        del base.ts
+        self.assertEqual(base._ts, None)
+        ts.close.assert_called_once_with()
 
 # test Base methods that need the sack
 class MockYumBaseTest(unittest.TestCase):

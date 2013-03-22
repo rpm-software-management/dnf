@@ -176,9 +176,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     downloadpkgs.append(po)
 
         # Close the connection to the rpmdb so that rpm doesn't hold the SIGINT
-        # handler during the downloads. self.ts is reinitialised later in this
-        # function anyway (initActionTs).
-        self.ts.close()
+        # handler during the downloads.
+        del self.ts
 
         # Report the total download size to the user, so he/she can base
         # the answer on this info
@@ -211,7 +210,6 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return -1
 
-        self.initActionTs()
         # save our dsCallback out
         dscb = self.dsCallback
         self.dsCallback = None
@@ -281,7 +279,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 have_reinstalls = True
                 break
         if have_reinstalls:
-            self.initActionTs() # make a new, blank ts to populate
+            del self.ts # make a new, blank ts to populate
             self.populate_ts()
             self.ts.check() #required for ordering
             self.ts.order() # order

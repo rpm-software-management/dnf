@@ -393,7 +393,7 @@ class Base(object):
 
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
-        self._ts = None
+        del self.ts
         self._tsInfo = None
         self._comps = None
 
@@ -411,11 +411,6 @@ class Base(object):
     def _delTsInfo(self):
         self._tsInfo = None
 
-    def _getActionTs(self):
-        if not self._ts:
-            self.initActionTs()
-        return self._ts
-
     _TS_FLAGS_TO_RPM = {'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                         'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
                         'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
@@ -423,8 +418,12 @@ class Base(object):
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
                         'repackage': rpm.RPMTRANS_FLAG_REPACKAGE,
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS}
-    def initActionTs(self):
-        """Set up the transaction set that will be used for all the work."""
+
+    @property
+    def ts(self):
+        """Set up the RPM transaction set that will be used for all the work."""
+        if self._ts is not None:
+            return self._ts
         self._ts = dnf.rpmUtils.transaction.TransactionWrapper(
             self.conf.installroot)
         self._ts.setFlags(0) # reset everything.
@@ -437,8 +436,14 @@ class Base(object):
 
         probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
         self._ts.setProbFilter(probfilter)
+        return self._ts
 
-    def _deleteTs(self):
+    @ts.deleter
+    def ts(self):
+        """Releases the RPM transaction set. """
+        if self._ts is None:
+            return
+        self._ts.close()
         del self._ts
         self._ts = None
 
@@ -528,9 +533,6 @@ class Base(object):
                       fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),
                       doc="Transaction Set information object")
-    ts = property(fget=lambda self: self._getActionTs(),
-                  fdel=lambda self: self._deleteTs(),
-                  doc="TransactionSet object")
     comps = property(fget=lambda self: self._getGroups(),
                      fset=lambda self, value: self._setGroups(value),
                      fdel=lambda self: setattr(self, "_comps", None),
@@ -2946,9 +2948,6 @@ class Base(object):
         """Populate the RPM transaction set. """
         if self.dsCallback:
             self.dsCallback.transactionPopulation()
-
-        if self.ts.ts is None:
-            self.initActionTs()
 
         for txmbr in self.tsInfo.getMembers():
             self.verbose_logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
