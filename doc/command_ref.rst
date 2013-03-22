@@ -45,8 +45,8 @@ See the reference for each command below.
 Options
 =======
 
-``-h, --help``
-    Shows the help.
+``--assumeno``
+    answer no for all questions
 
 ``--best``
     Try the best available package versions in transactions.
@@ -57,41 +57,41 @@ Options
 ``-c <config file>, --config=<config file>``
     config file location
 
-``-R <minutes>, --randomwait=<minutes>``
-    maximum command wait time
-
 ``-d <debug level>, --debuglevel=<debug level>``
     debugging output level
-
-``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by a name or a glob from the operation.
-
-``--showduplicates``
-    show duplicates, in repos, in list/search commands
 
 ``-e <error level>, --errorlevel=<error level>``
     error output level
 
-``--rpmverbosity=<debug level name>``
-    debugging output level for rpm
+``-x <package-spec>, --exclude=<package-spec>``
+    Exclude packages specified by a name or a glob from the operation.
+
+``-h, --help``
+    Shows the help.
+
+``--installroot=<path>``
+    set install root
 
 ``-q, --quiet``
     quiet operation
 
+``-R <minutes>, --randomwait=<minutes>``
+    maximum command wait time
+
+``--rpmverbosity=<debug level name>``
+    debugging output level for rpm
+
+``--showduplicates``
+    show duplicates, in repos, in list/search commands
+
 ``-v, --verbose``
     verbose operation
-
-``-y, --assumeyes``
-    answer yes for all questions
-
-``--assumeno``
-    answer no for all questions
 
 ``--version``
     show Yum version and exit
 
-``--installroot=<path>``
-    set install root
+``-y, --assumeyes``
+    answer yes for all questions
 
 ========
 Commands
