@@ -129,20 +129,20 @@ class RepoTest(base.TestCase):
         self.assertGreater(time, 0)
 
     def test_md_only_cached(self):
-        self.repo.md_only_cached()
+        self.repo.md_only_cached = True
         self.assertRaises(dnf.yum.Errors.RepoError, self.repo.load)
         self.repo.md_try_cache()
         self.repo.load()
         del self.repo
         self.setUp() # get a new repo
-        self.repo.md_only_cached()
+        self.repo.md_only_cached = True
         self.assertFalse(self.repo.load())
 
         # try again with a quickly expiring cache
         del self.repo
         self.setUp()
         self.repo.metadata_expire = 0
-        self.repo.md_only_cached()
+        self.repo.md_only_cached = True
         self.assertFalse(self.repo.load())
 
     def test_progress_cb(self):

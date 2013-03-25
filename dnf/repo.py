@@ -267,9 +267,17 @@ class Repo(dnf.yum.config.RepoConf):
         """Use cache for metadata if possible, sync otherwise."""
         self.sync_strategy = SYNC_TRY_CACHE
 
+    @property
     def md_only_cached(self):
+        return self.sync_strategy == SYNC_ONLY_CACHE
+
+    @md_only_cached.setter
+    def md_only_cached(self, val):
         """Force using only the metadata the repo has in the local cache."""
-        self.sync_strategy = SYNC_ONLY_CACHE
+        if val:
+            self.sync_strategy = SYNC_ONLY_CACHE
+        else:
+            self.sync_strategy = SYNC_TRY_CACHE
 
     @property
     def presto_fn(self):

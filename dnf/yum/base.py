@@ -499,7 +499,7 @@ class Base(object):
             # open it up as a file object so iterparse can cope with our compressed file
             if groupfile:
                 groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
-                                                     cached=repo.cache)
+                                                     cached=repo.md_only_cached)
                 # Do we want a RepoError here?
 
             try:
@@ -1073,7 +1073,7 @@ class Base(object):
             # can't be redeemed. If we can, kill it and start over fresh
             cursize = os.stat(fo)[6]
             totsize = long(po.size)
-            if cursize >= totsize and not po.repo.cache:
+            if cursize >= totsize and not po.repo.md_only_cached:
                 # if the path to the file is NOT inside the cachedir then don't
                 # unlink it b/c it is probably a file:// url and possibly
                 # unlinkable
@@ -1167,7 +1167,7 @@ class Base(object):
             local = po.localPkg()
             if os.path.exists(local):
                 if not self.verifyPkg(local, po, False):
-                    if po.repo.cache:
+                    if po.repo.md_only_cached:
                         repo_cached = True
                         adderror(po, _('package fails checksum but caching is '
                             'enabled for %s') % po.repo.id)

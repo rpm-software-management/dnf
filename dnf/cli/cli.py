@@ -1140,7 +1140,7 @@ class Cli(object):
         if opts.cacheonly:
             for repo in self.base.repos.itervalues():
                 repo.basecachedir = self.base.cache_c.system_cachedir
-                repo.md_only_cached()
+                repo.md_only_cached = True
 
         # setup the progress bars/callbacks
         self.base.setupProgressCallbacks()
