@@ -978,10 +978,13 @@ class YumOutput:
         aui = yui + nui
         while True:
             msg = _('Is this ok [y/N]: ')
+            choice = ''
             if self.conf.defaultyes:
                 msg = _('Is this ok [Y/n]: ')
             try:
                 choice = dnf.i18n.input(msg)
+            except EOFError:
+                pass
             except KeyboardInterrupt:
                 choice = nui[0]
             choice = to_unicode(choice).lower()

@@ -25,6 +25,10 @@ class OutputTest(unittest.TestCase):
     def _keyboard_interrupt(*ignored):
         raise KeyboardInterrupt
 
+    @staticmethod
+    def _eof_error(*ignored):
+        raise EOFError
+
     def setUp(self):
         self.output = dnf.cli.output.YumOutput()
         self.output.conf = base.FakeConf()
@@ -46,6 +50,9 @@ class OutputTest(unittest.TestCase):
         input_fnc.return_value = 'y'
         self.assertFalse(self.output.userconfirm())
 
+        input_fnc.side_effect = self._eof_error
+        self.assertFalse(self.output.userconfirm())
+
         # with defaultyes==True
         self.output.conf.defaultyes = True
         input_fnc.side_effect = None
@@ -55,6 +62,9 @@ class OutputTest(unittest.TestCase):
         input_fnc.side_effect = self._keyboard_interrupt
         input_fnc.return_value = ''
         self.assertFalse(self.output.userconfirm())
+
+        input_fnc.side_effect = self._eof_error
+        self.assertTrue(self.output.userconfirm())
 
     def _to_unicode_mock(str):
         return {'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'}.get(str, str)
