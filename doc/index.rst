@@ -8,6 +8,7 @@ Contents:
    :maxdepth: 1
 
    command_ref
+   conf_ref
    cli_vs_yum
    api
 

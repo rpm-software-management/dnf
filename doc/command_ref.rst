@@ -400,3 +400,4 @@ See Also
 
 * `DNF`_ project homepage (https://github.com/akozumpl/dnf/)
 * `Yum`_ project homepage (http://yum.baseurl.org/)
+* :manpage:`dnf.conf(8)`

@@ -215,6 +215,8 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('command_ref', 'dnf', u'DNF Command Reference',
+     [u'Aleš Kozumplík'], 8),
+    ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
      [u'Aleš Kozumplík'], 8)
 ]
 
