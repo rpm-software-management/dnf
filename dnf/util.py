@@ -51,6 +51,9 @@ def first(iterable):
     except StopIteration:
         return None
 
+def file_age(fn):
+    return time.time() - file_timestamp(fn)
+
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
 
@@ -109,6 +112,9 @@ def timed(fn):
     return decorated
 
 def touch(path):
+    """Create an empty file if it doesn't exist or bump it's timestamps."""
+    if os.access(path, os.F_OK):
+        return os.utime(path, None)
     with open(path, 'a'):
         pass
 

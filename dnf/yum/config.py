@@ -768,6 +768,7 @@ class YumConf(StartupConf):
 
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 6) # Time in seconds (6h).
+    metadata_timer_sync = SecondsOption(60 * 60) # Time in seconds (1h)
     # Time in seconds (1 day). NOTE: This isn't used when using metalinks
     mirrorlist_expire = SecondsOption(60 * 60 * 24)
     # XXX rpm_check_debug is unused, left around for API compatibility for now

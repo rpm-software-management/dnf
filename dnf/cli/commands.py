@@ -21,6 +21,8 @@
 Classes for subcommands of the yum command line interface.
 """
 
+import dnf.persistor
+import dnf.util
 import os
 from dnf.cli import CliError
 from dnf.yum import logginglevels
@@ -945,21 +947,34 @@ class MakeCacheCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         self.base.verbose_logger.debug(_("Making cache files for all metadata files."))
+        period = self.base.conf.metadata_timer_sync
+        timer = 'timer' == dnf.util.first(extcmds)
+        persistor = dnf.persistor.Persistor(self.base.conf.persistdir)
+        if timer:
+            if period <= 0:
+                return 0, [_('Metadata timer caching disabled.')]
+            since_last_makecache = persistor.since_last_makecache()
+            if since_last_makecache is not None and since_last_makecache < period:
+                return 0, [_('Metadata cache refreshed recently.')]
+
         for r in self.base.repos.iter_enabled():
             (is_cache, expires_in) = r.metadata_expire_in()
             if not is_cache or expires_in <= 0:
                 self.base.verbose_logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
                 r.md_expire_cache()
-            elif expires_in < 60 * 60: # expires within an hour
-                self.base.verbose_logger.debug("%s: metadata will expire after %d "
-                                          "seconds and will be refreshed now" %
-                                          (r.id, expires_in))
+            elif timer and expires_in < period:
+                # expires within the checking period:
+                msg = "%s: metadata will expire after %d seconds " \
+                    "and will be refreshed now" % (r.id, expires_in)
+                self.base.verbose_logger.debug(msg)
                 r.md_expire_cache()
             else:
                 self.base.verbose_logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))
 
+        if timer:
+            persistor.reset_last_makecache()
         sack = self.base.sack # triggers metadata sync
         return 0, [_('Metadata Cache Created')]
 
