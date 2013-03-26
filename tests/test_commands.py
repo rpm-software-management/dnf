@@ -36,20 +36,24 @@ class CommandTests(unittest.TestCase):
         erase_cmd.configure()
         self.assertFalse(self.yumbase.goal_parameters.allow_uninstall)
 
+    @staticmethod
+    def _do_makecache(cmd):
+        return cmd.doCommand('makecache', ['timer'])
+
+    @mock.patch('dnf.util.on_ac_power', return_value=True)
     @mock.patch('dnf.persistor.Persistor')
-    def test_makecache(self, mock_persistor_cls):
+    def test_makecache_timer(self, mock_persistor_cls, _on_ac_power):
         mock_persistor = mock_persistor_cls()
-        makecache_cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
+        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
 
         self.yumbase.conf.metadata_timer_sync = 0
         self.assertEqual((0, [u'Metadata timer caching disabled.']),
-                         makecache_cmd.doCommand('makecache', ['timer']))
+                         self._do_makecache(cmd))
 
         self.yumbase.conf.metadata_timer_sync = 5 # resync after 5 seconds
         mock_persistor.since_last_makecache = mock.Mock(return_value=3)
         self.assertEqual((0, [u'Metadata cache refreshed recently.']),
-                         makecache_cmd.doCommand('makecache', ['timer']))
-
+                         self._do_makecache(cmd))
 
         mock_persistor.since_last_makecache = mock.Mock(return_value=10)
         self.yumbase._sack = 'nonempty'
@@ -60,7 +64,7 @@ class CommandTests(unittest.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(False, 0))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertEqual((0, [u'Metadata Cache Created']),
-                         makecache_cmd.doCommand('makecache', ['timer']))
+                         self._do_makecache(cmd))
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
         # regular case 2: metadata is cached and will expire later than
@@ -68,7 +72,7 @@ class CommandTests(unittest.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(True, 100))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertEqual((0, [u'Metadata Cache Created']),
-                         makecache_cmd.doCommand('makecache', ['timer']))
+                         self._do_makecache(cmd))
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
 
         # regular case 3: metadata is cached but will eqpire before
@@ -76,5 +80,13 @@ class CommandTests(unittest.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(True, 4))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertEqual((0, [u'Metadata Cache Created']),
-                         makecache_cmd.doCommand('makecache', ['timer']))
+                         self._do_makecache(cmd))
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
+
+    @mock.patch('dnf.util.on_ac_power', return_value=False)
+    def test_makecache_timer_battery(self, _on_ac_power):
+        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
+        self.yumbase.conf.metadata_timer_sync = 5
+        self.assertEqual((0, [u'Metadata timer caching disabled when '
+                              'running on a battery.']),
+                         self._do_makecache(cmd))

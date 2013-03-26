@@ -946,11 +946,15 @@ class MakeCacheCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.base.verbose_logger.debug(_("Making cache files for all metadata files."))
+        msg = _("Making cache files for all metadata files.")
+        self.base.verbose_logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
         timer = 'timer' == dnf.util.first(extcmds)
         persistor = dnf.persistor.Persistor(self.base.conf.persistdir)
         if timer:
+            if not dnf.util.on_ac_power():
+                return 0, [_('Metadata timer caching disabled '
+                             'when running on a battery.')]
             if period <= 0:
                 return 0, [_('Metadata timer caching disabled.')]
             since_last_makecache = persistor.since_last_makecache()

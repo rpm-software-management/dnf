@@ -22,6 +22,7 @@ import dnf.const
 import hawkey
 import os
 import shutil
+import subprocess
 import tempfile
 import time
 import types
@@ -44,7 +45,7 @@ def empty(iterable):
     return l == 0
 
 def first(iterable):
-    """ Returns the first item from an iterable or None if it has no elements. """
+    """Returns the first item from an iterable or None if it has no elements."""
     it = iter(iterable)
     try:
         return it.next()
@@ -64,11 +65,10 @@ def is_string_type(obj):
     return type(obj) in types.StringTypes
 
 def lazyattr(attrname):
-    """ Decorator to get lazy attribute initialization.
+    """Decorator to get lazy attribute initialization.
 
-        Composes with @property. Force reinitialization by deleting the
-        <attrname>.
-     """
+    Composes with @property. Force reinitialization by deleting the <attrname>.
+    """
     def get_decorated(fn):
         def cached_getter(obj):
             try:
@@ -79,6 +79,19 @@ def lazyattr(attrname):
                 return val
         return cached_getter
     return get_decorated
+
+def on_ac_power():
+    """Decide whether we are on line power.
+
+    Returns True if we are on line power, False if not, None if it can not be
+    decided.
+
+    """
+    try:
+        ret = subprocess.call('/usr/bin/on_ac_power')
+        return not ret
+    except OSError:
+        return None
 
 def reason_name(reason):
     if reason == hawkey.REASON_DEP:
@@ -99,9 +112,10 @@ def strip_prefix(s, prefix):
     return None
 
 def timed(fn):
-    """ Decorator, prints out the ms a function took to complete.
+    """Decorator, prints out the ms a function took to complete.
 
-        Used for debugging.
+    Used for debugging.
+
     """
     def decorated(*args, **kwargs):
         start = time.time()
