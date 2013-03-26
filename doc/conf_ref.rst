@@ -1,3 +1,5 @@
+.. _conf_ref-label:
+
 #############################
  DNF Configuration Reference
 #############################
@@ -24,13 +26,16 @@ one main section. The repository sections define the configuration for each
     and in the positive case the local metadata cache is updated. The default is
     48 hours.
 
+.. _metadata_timer_sync-label:
+
 ``metadata_timer_sync``
     The minimal period between two consecutive ``makecache timer`` runs. The
     command will stop immediately if it's less than this time period since its
-    last run. Does not affect simple ``makecache`` run.
+    last run. Does not affect simple ``makecache`` run. Use ``0`` to completely
+    disable automatic metadata synchronizing. The default is 3 hours.
 
 ==========
  See Also
 ==========
 
-* :manpage:`dnf(8)`
+* :manpage:`dnf(8)`, :ref:`DNF Command Reference <command_ref-label>`

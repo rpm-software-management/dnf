@@ -1,3 +1,5 @@
+.. _command_ref-label:
+
 #######################
  DNF Command Reference
 #######################
@@ -264,8 +266,15 @@ Makecache Command
 
 ``dnf [options] makecache``
     Downloads and caches in binary format metadata for all known repos. Tries to
-    avoid downloading whenever possible (typically when the metadata timestamp
-    hasn't changed).
+    avoid downloading whenever possible (e.g. when the local metadata hasn't
+    expired yet or when the metadata timestamp hasn't changed).
+
+``dnf [options] makecache timer``
+    Like plain ``makecache`` but instructs DNF to be more resource-aware,
+    meaning will not do anything if running on battery power and will terminate
+    immediately if it's too soon after the last successful ``makecache`` run
+    (see :manpage:`dnf.conf(8)`, :ref:`metadata_timer_sync
+    <metadata_timer_sync-label>`).
 
 ----------------
 Provides Command
@@ -398,6 +407,6 @@ case-sensitive and globbing is supported.
 See Also
 ========
 
+* :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * `DNF`_ project homepage (https://github.com/akozumpl/dnf/)
 * `Yum`_ project homepage (http://yum.baseurl.org/)
-* :manpage:`dnf.conf(8)`
