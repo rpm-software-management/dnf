@@ -3,4 +3,4 @@
 LOGFILE=/var/log/dnf-makecache.cron
 STAMP=`date +%c`:
 echo $STAMP >>$LOGFILE
-/usr/bin/dnf makecache >>$LOGFILE
+/usr/bin/dnf makecache timer >>$LOGFILE
