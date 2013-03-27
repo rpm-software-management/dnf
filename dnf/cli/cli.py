@@ -1224,12 +1224,8 @@ class Cli(object):
             raise CliError
 
         self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
-        if len(self.base.extcmds) > 0:
-            self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
-                                    'Ext Commands:\n')
-            for arg in self.base.extcmds:
-                self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
-                                        '   %s', arg)
+        msg = 'Ext Commands: %s' % ' '.join(self.base.extcmds)
+        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4, msg)
 
         basecmd = self.base.cmds[0] # our base command
         if basecmd not in self.cli_commands:

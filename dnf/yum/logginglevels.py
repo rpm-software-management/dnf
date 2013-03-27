@@ -165,18 +165,21 @@ def doLoggingSetup(debuglevel, errorlevel,
                 filelogger.addHandler(syslog)
 
 def setFileLogs(logdir, cleanup):
+    filelogger = logging.getLogger("yum.filelogging")
     try:
         if not os.path.exists(logdir):
             os.makedirs(logdir, mode=0755)
         mainhandler = _setFileLog(logging.getLogger("yum"),
                                   os.path.join(logdir, dnf.const.LOG), cleanup)
-        _setFileLog(logging.getLogger("yum.filelogging"),
+        _setFileLog(filelogger,
                     os.path.join(logdir, dnf.const.LOG_TRANSACTION), cleanup)
         # the main log file should end up knowing everything:
         logging.getLogger("yum.verbose").addHandler(mainhandler)
         logging.getLogger("yum.filelogging").addHandler(mainhandler)
     except IOError:
         logging.getLogger("yum").critical('Cannot open logfile %s', logfile)
+    else:
+        filelogger.info('--- logging initialized ---') # log file marker
 
 def _setFileLog(logger, logfile, cleanup=None):
     # For installroot etc.
