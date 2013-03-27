@@ -20,6 +20,13 @@ one main section. The repository sections define the configuration for each
 ================
  [main] Options
 ================
+.. _clean_requirements_on_remove-label:
+
+``clean_requirements_on_remove``
+    Remove dependencies that are no longer used during ``dnf erase``. A package
+    only qualifies for removal via ``clean_requirements_on_remove`` if it was
+    installed through DNF but not on explicit user request, i.e. it was
+    pulled in as a dependency. The default is on.
 
 ``metadata_expire``
     The period after which the remote repository is checked for metadata update

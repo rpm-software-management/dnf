@@ -22,3 +22,12 @@ Update and Upgrade Commands are the Same
 Invoking ``dnf update`` or ``dnf upgrade``, in all their forms, has the same
 effect in DNF, with the latter being preferred. In Yum ``yum upgrade`` was
 exactly like ``yum --obsoletes update``.
+
+================================================
+ ``clean_requirements_on_remove`` on by default
+================================================
+
+The :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
+switch is on by default in DNF. It can thus be confusing to compare the "erase"
+operation results between DNF and Yum as by default DNF is often going to remove
+more packages.
