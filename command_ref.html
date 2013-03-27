@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.2.21-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.3.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.21-1',
+        VERSION:     '0.3.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.21-1 documentation" href="index.html" />
-    <link rel="next" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" />
+    <link rel="top" title="DNF 0.3.0-1 documentation" href="index.html" />
+    <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
+          <a href="conf_ref.html" title="DNF Configuration Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.3.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="dnf-command-reference">
-<h1>DNF Command Reference<a class="headerlink" href="#dnf-command-reference" title="Permalink to this headline">¶</a></h1>
+<span id="command-ref-label"></span><h1>DNF Command Reference<a class="headerlink" href="#dnf-command-reference" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">&lt;command&gt;</span> <span class="pre">[&lt;args&gt;...]</span></tt></p>
@@ -93,38 +93,45 @@ speed and defining strict API and plugin interface.</p>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
-<dd>Shows the help.</dd>
+<dt><tt class="docutils literal"><span class="pre">--assumeno</span></tt></dt>
+<dd>answer no for all questions</dd>
 <dt><tt class="docutils literal"><span class="pre">--best</span></tt></dt>
 <dd>Try the best available package versions in transactions.</dd>
 <dt><tt class="docutils literal"><span class="pre">-C,</span> <span class="pre">--cacheonly</span></tt></dt>
 <dd>Run entirely from system cache, don&#8217;t update cache</dd>
 <dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">&lt;config</span> <span class="pre">file&gt;,</span> <span class="pre">--config=&lt;config</span> <span class="pre">file&gt;</span></tt></dt>
 <dd>config file location</dd>
-<dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">&lt;minutes&gt;,</span> <span class="pre">--randomwait=&lt;minutes&gt;</span></tt></dt>
-<dd>maximum command wait time</dd>
 <dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">&lt;debug</span> <span class="pre">level&gt;,</span> <span class="pre">--debuglevel=&lt;debug</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>debugging output level</dd>
-<dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
-<dd>Exclude packages specified by a name or a glob from the operation.</dd>
-<dt><tt class="docutils literal"><span class="pre">--showduplicates</span></tt></dt>
-<dd>show duplicates, in repos, in list/search commands</dd>
 <dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">&lt;error</span> <span class="pre">level&gt;,</span> <span class="pre">--errorlevel=&lt;error</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>error output level</dd>
-<dt><tt class="docutils literal"><span class="pre">--rpmverbosity=&lt;debug</span> <span class="pre">level</span> <span class="pre">name&gt;</span></tt></dt>
-<dd>debugging output level for rpm</dd>
-<dt><tt class="docutils literal"><span class="pre">-q,</span> <span class="pre">--quiet</span></tt></dt>
-<dd>quiet operation</dd>
-<dt><tt class="docutils literal"><span class="pre">-v,</span> <span class="pre">--verbose</span></tt></dt>
-<dd>verbose operation</dd>
-<dt><tt class="docutils literal"><span class="pre">-y,</span> <span class="pre">--assumeyes</span></tt></dt>
-<dd>answer yes for all questions</dd>
-<dt><tt class="docutils literal"><span class="pre">--assumeno</span></tt></dt>
-<dd>answer no for all questions</dd>
-<dt><tt class="docutils literal"><span class="pre">--version</span></tt></dt>
-<dd>show Yum version and exit</dd>
+<dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
+<dd>Exclude packages specified by a name or a glob from the operation.</dd>
+<dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
+<dd>Shows the help.</dd>
 <dt><tt class="docutils literal"><span class="pre">--installroot=&lt;path&gt;</span></tt></dt>
 <dd>set install root</dd>
+<dt><tt class="docutils literal"><span class="pre">--nogpgcheck</span></tt></dt>
+<dd>skip checking GPG signatures on packages</dd>
+<dt><tt class="docutils literal"><span class="pre">-q,</span> <span class="pre">--quiet</span></tt></dt>
+<dd>quiet operation</dd>
+<dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">&lt;minutes&gt;,</span> <span class="pre">--randomwait=&lt;minutes&gt;</span></tt></dt>
+<dd>maximum command wait time</dd>
+<dt><tt class="docutils literal"><span class="pre">--releasever=&lt;release&gt;</span></tt></dt>
+<dd>configure DNF as if the distribution release was <tt class="docutils literal"><span class="pre">&lt;release&gt;</span></tt>. This can
+affect cache paths, values in configuration files and mirrorlist URLs. Using
+&#8216;/&#8217; for this value makes DNF detect the release number from the running
+system.</dd>
+<dt><tt class="docutils literal"><span class="pre">--rpmverbosity=&lt;debug</span> <span class="pre">level</span> <span class="pre">name&gt;</span></tt></dt>
+<dd>debugging output level for rpm</dd>
+<dt><tt class="docutils literal"><span class="pre">--showduplicates</span></tt></dt>
+<dd>show duplicates, in repos, in list/search commands</dd>
+<dt><tt class="docutils literal"><span class="pre">-v,</span> <span class="pre">--verbose</span></tt></dt>
+<dd>verbose operation</dd>
+<dt><tt class="docutils literal"><span class="pre">--version</span></tt></dt>
+<dd>show Yum version and exit</dd>
+<dt><tt class="docutils literal"><span class="pre">-y,</span> <span class="pre">--assumeyes</span></tt></dt>
+<dd>answer yes for all questions</dd>
 </dl>
 </div>
 <div class="section" id="commands">
@@ -196,7 +203,8 @@ the latest version available from any enabled repository.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">erase</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
 <dd>Removes the specified packages from the system along with any packages
 depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt>
-is enabled also removes any dependencies that are no longer needed.</dd>
+is enabled (the default) also removes any dependencies that are no longer
+needed.</dd>
 </dl>
 </div>
 <div class="section" id="help-command">
@@ -265,8 +273,13 @@ any known repository.</dd>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">makecache</span></tt></dt>
 <dd>Downloads and caches in binary format metadata for all known repos. Tries to
-avoid downloading whenever possible (typically when the metadata timestamp
-hasn&#8217;t changed).</dd>
+avoid downloading whenever possible (e.g. when the local metadata hasn&#8217;t
+expired yet or when the metadata timestamp hasn&#8217;t changed).</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">makecache</span> <span class="pre">timer</span></tt></dt>
+<dd>Like plain <tt class="docutils literal"><span class="pre">makecache</span></tt> but instructs DNF to be more resource-aware,
+meaning will not do anything if running on battery power and will terminate
+immediately if it&#8217;s too soon after the last successful <tt class="docutils literal"><span class="pre">makecache</span></tt> run
+(see <em class="manpage">dnf.conf(8)</em>, <a class="reference internal" href="conf_ref.html#metadata-timer-sync-label"><em>metadata_timer_sync</em></a>).</dd>
 </dl>
 </div>
 <div class="section" id="provides-command">
@@ -380,6 +393,7 @@ case-sensitive and globbing is supported.</p>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
+<li><em class="manpage">dnf.conf(8)</em>, <a class="reference internal" href="conf_ref.html#conf-ref-label"><em>DNF Configuration Reference</em></a></li>
 <li><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> project homepage (<a class="reference external" href="https://github.com/akozumpl/dnf/">https://github.com/akozumpl/dnf/</a>)</li>
 <li><a class="reference external" href="http://yum.baseurl.org/">Yum</a> project homepage (<a class="reference external" href="http://yum.baseurl.org/">http://yum.baseurl.org/</a>)</li>
 </ul>
@@ -433,8 +447,8 @@ case-sensitive and globbing is supported.</p>
   <p class="topless"><a href="index.html"
                         title="previous chapter">DNF, Experimental Yum Replacement</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="cli_vs_yum.html"
-                        title="next chapter">Changes in DNF CLI compared to Yum</a></p>
+  <p class="topless"><a href="conf_ref.html"
+                        title="next chapter">DNF Configuration Reference</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/command_ref.txt"
@@ -467,12 +481,12 @@ case-sensitive and globbing is supported.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
+          <a href="conf_ref.html" title="DNF Configuration Reference"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.3.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

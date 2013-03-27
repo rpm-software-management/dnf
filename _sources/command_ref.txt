@@ -1,3 +1,5 @@
+.. _command_ref-label:
+
 #######################
  DNF Command Reference
 #######################
@@ -45,8 +47,8 @@ See the reference for each command below.
 Options
 =======
 
-``-h, --help``
-    Shows the help.
+``--assumeno``
+    answer no for all questions
 
 ``--best``
     Try the best available package versions in transactions.
@@ -57,41 +59,50 @@ Options
 ``-c <config file>, --config=<config file>``
     config file location
 
-``-R <minutes>, --randomwait=<minutes>``
-    maximum command wait time
-
 ``-d <debug level>, --debuglevel=<debug level>``
     debugging output level
-
-``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by a name or a glob from the operation.
-
-``--showduplicates``
-    show duplicates, in repos, in list/search commands
 
 ``-e <error level>, --errorlevel=<error level>``
     error output level
 
-``--rpmverbosity=<debug level name>``
-    debugging output level for rpm
+``-x <package-spec>, --exclude=<package-spec>``
+    Exclude packages specified by a name or a glob from the operation.
+
+``-h, --help``
+    Shows the help.
+
+``--installroot=<path>``
+    set install root
+
+``--nogpgcheck``
+    skip checking GPG signatures on packages
 
 ``-q, --quiet``
     quiet operation
 
+``-R <minutes>, --randomwait=<minutes>``
+    maximum command wait time
+
+``--releasever=<release>``
+    configure DNF as if the distribution release was ``<release>``. This can
+    affect cache paths, values in configuration files and mirrorlist URLs. Using
+    '/' for this value makes DNF detect the release number from the running
+    system.
+
+``--rpmverbosity=<debug level name>``
+    debugging output level for rpm
+
+``--showduplicates``
+    show duplicates, in repos, in list/search commands
+
 ``-v, --verbose``
     verbose operation
-
-``-y, --assumeyes``
-    answer yes for all questions
-
-``--assumeno``
-    answer no for all questions
 
 ``--version``
     show Yum version and exit
 
-``--installroot=<path>``
-    set install root
+``-y, --assumeyes``
+    answer yes for all questions
 
 ========
 Commands
@@ -177,7 +188,8 @@ Erase Command
 ``dnf [options] erase <package-specs>...``
     Removes the specified packages from the system along with any packages
     depending on the packages being removed. If ``clean_requirements_on_remove``
-    is enabled also removes any dependencies that are no longer needed.
+    is enabled (the default) also removes any dependencies that are no longer
+    needed.
 
 ------------
 Help Command
@@ -254,8 +266,15 @@ Makecache Command
 
 ``dnf [options] makecache``
     Downloads and caches in binary format metadata for all known repos. Tries to
-    avoid downloading whenever possible (typically when the metadata timestamp
-    hasn't changed).
+    avoid downloading whenever possible (e.g. when the local metadata hasn't
+    expired yet or when the metadata timestamp hasn't changed).
+
+``dnf [options] makecache timer``
+    Like plain ``makecache`` but instructs DNF to be more resource-aware,
+    meaning will not do anything if running on battery power and will terminate
+    immediately if it's too soon after the last successful ``makecache`` run
+    (see :manpage:`dnf.conf(8)`, :ref:`metadata_timer_sync
+    <metadata_timer_sync-label>`).
 
 ----------------
 Provides Command
@@ -388,5 +407,6 @@ case-sensitive and globbing is supported.
 See Also
 ========
 
+* :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * `DNF`_ project homepage (https://github.com/akozumpl/dnf/)
 * `Yum`_ project homepage (http://yum.baseurl.org/)

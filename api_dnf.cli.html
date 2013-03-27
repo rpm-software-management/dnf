@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.2.21-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.3.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.21-1',
+        VERSION:     '0.3.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.2.21-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.3.0-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -165,7 +165,7 @@ all = do all of the above</pre>
 <tt class="descname">deplist</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.deplist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print out a formatted list of dependencies for a list of
 packages.  This is a cli wrapper method for
-<a class="reference internal" href="api_dnf.yum.html#dnf.yum.Base.findDeps" title="dnf.yum.Base.findDeps"><tt class="xref py py-class docutils literal"><span class="pre">dnf.yum.Base.findDeps</span></tt></a>.</p>
+<tt class="xref py py-class docutils literal"><span class="pre">dnf.yum.base.Base.findDeps</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -203,25 +203,6 @@ in the enabled repositories.</p>
 1 = we&#8217;ve errored, exit with error string
 2 = we&#8217;ve got work yet to do, onto the next stage</dd>
 </dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.doRepoSetup">
-<tt class="descname">doRepoSetup</tt><big>(</big><em>thisrepo=None</em>, <em>dosack=1</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.doRepoSetup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Grab the repomd.xml for each enabled and set up the basics
-of the repository.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>thisrepo</strong> &#8211; the repository to set up</li>
-<li><strong>dosack</strong> &#8211; whether to get the repo sack</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="method">
@@ -3063,7 +3044,7 @@ arguments in <em>extcmds</em> are valid options for clean.</p>
 
 <dl class="function">
 <dt id="dnf.cli.commands.checkGPGKey">
-<tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">checkGPGKey</tt><big>(</big><em>base</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.checkGPGKey" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">checkGPGKey</tt><big>(</big><em>base</em>, <em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.checkGPGKey" title="Permalink to this definition">¶</a></dt>
 <dd><p>Verify that there are gpg keys for the enabled repositories in the
 rpm database.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3518,6 +3499,13 @@ process.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="dnf.cli.output.LibrepoCallbackAdaptor">
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f3708a9c270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
+<p>Note that TextMeter is a Python old-style class.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="dnf.cli.output.YumCliRPMCallBack">
 <em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumCliRPMCallBack</tt><big>(</big><em>ayum=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumCliRPMCallBack" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Yum specific callback class for RPM operations.</p>
@@ -3706,7 +3694,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x15d0578&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x19fecf8&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -4521,32 +4509,6 @@ postfixing, occurrences of the strings in <em>needles</em></p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="dnf.cli.output.YumTextMeter">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumTextMeter</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f21c3451270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumTextMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to display text progress bar output.</p>
-<dl class="method">
-<dt id="dnf.cli.output.YumTextMeter.update">
-<tt class="descname">update</tt><big>(</big><em>amount_read</em>, <em>now=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumTextMeter.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the status of the text progress bar</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>amount_read</strong> &#8211; the amount of data, in bytes, that has been read</li>
-<li><strong>now</strong> &#8211; the current time in seconds since the epoch.  If
-<em>now</em> is not given, the output of <tt class="xref py py-func docutils literal"><span class="pre">time.time()</span></tt> will
-be used.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
 <dl class="function">
 <dt id="dnf.cli.output.progressbar">
 <tt class="descclassname">dnf.cli.output.</tt><tt class="descname">progressbar</tt><big>(</big><em>current</em>, <em>total</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.progressbar" title="Permalink to this definition">¶</a></dt>
@@ -4717,7 +4679,7 @@ terminal after an uncaught <tt class="xref py py-class docutils literal"><span c
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.2.21-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
