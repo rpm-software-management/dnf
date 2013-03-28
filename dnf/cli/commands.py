@@ -401,7 +401,7 @@ class UpgradeToCommand(Command):
 
     def doCheck(self, basecmd, extcmds):
         checkRootUID(self.base)
-        checkGPGKey(self.base)
+        checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
     def doCommand(self, basecmd, extcmds):
