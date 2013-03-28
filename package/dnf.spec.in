@@ -1,4 +1,4 @@
-%global gitrev 3e52d13
+%global gitrev 7b1d503
 %global hawkey_version 0.3.9
 %global librepo_version 0.0.2-2.20130318gitb3c3323%{dist}
 
@@ -6,7 +6,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -64,8 +64,8 @@ make ARGS="-V" test
 %{_unitdir}/dnf-makecache.timer
 
 %post
-systemctl enable dnf-makecache.timer
 %systemd_post dnf-makecache.timer
+systemctl enable dnf-makecache.timer
 
 %preun
 %systemd_preun dnf-makecacache.timer
@@ -74,6 +74,31 @@ systemctl enable dnf-makecache.timer
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Thu Mar 28 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.1-3.git7b1d503
+- makecache: no on_ac_power binary means we should go ahead anyway. (Ales Kozumplik)
+- packaging: run systemd scriptlets so the timer service can be enabled by default. (Ales Kozumplik)
+- :doc release notes - the metadata_expire default has changed. (Ales Kozumplik)
+- :doc start making release notes. (Ales Kozumplik)
+- abrt: change the event to post-create so journalctl works (post-create runs under root) (Ales Kozumplik)
+- :doc clean_requiremennts_on_remove on by default. (Ales Kozumplik)
+- logging: put a log file marker on each run, nicer 'Ext Commands' output. (Ales Kozumplik)
+- :doc explain how timed metadata syncing can be tweaked and disabled. (Ales Kozumplik)
+- Do not execute the timer makecache when running on a battery. (RhBug:919769) (Ales Kozumplik)
+- :doc create dnf.config, describe 'metadata_timer_sync'. (Ales Kozumplik)
+- config defaults: timer makecache every 3 hours, bump default md expiry to 48 hours. (RhBug:892064) (Ales Kozumplik)
+- mechanism for disabling or changing the period of automatic metadata syncing. (RhBug:922664) (Ales Kozumplik)
+- run the regular makecache from a systemd timer (RhBug:878826) (Ales Kozumplik)
+- stop using the obsoleted repo.cache property (RhBug:926871) (Ales Kozumplik)
+- userconfirm() mustn't fail on EOFError. (RhBug:922521) (Ales Kozumplik)
+- :doc document --nogpgcheck and --releasever. (Ales Kozumplik)
+- :doc remove yum.repos and yum.yumRepo from the obsoleted API documentation. (Ales Kozumplik)
+- :doc sort CLI options alphabetically. (Ales Kozumplik)
+- Downgrade only once if multiple old versions are available. (RhBug:921294) (Ales Kozumplik)
+- :refactor, improve base.ts management, use properties. (Ales Kozumplik)
+- Filter rpm.RPMPROB_FILTER_OLDPACKAGE for all transactions whatsover (RhBug:916657) (Ales Kozumplik)
+- :tests :move test_yumbase.py -> test_base.py (Ales Kozumplik)
+- remove: finally drop yum/repos.py and yum/yumRepo.py (Ales Kozumplik)
+
 * Thu Mar 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.0-2.git3e52d13
 - repo: use shutil.move instead of os.rename (Ales Kozumplik)
 
