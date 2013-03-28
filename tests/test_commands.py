@@ -21,7 +21,7 @@ import dnf.repo
 import mock
 import unittest
 
-class CommandTests(unittest.TestCase):
+class CommandsTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase()
         self.cli = self.yumbase.mock_cli()
@@ -89,4 +89,11 @@ class CommandTests(unittest.TestCase):
         self.yumbase.conf.metadata_timer_sync = 5
         self.assertEqual((0, [u'Metadata timer caching disabled when '
                               'running on a battery.']),
+                         self._do_makecache(cmd))
+
+    @mock.patch('dnf.util.on_ac_power', return_value=None)
+    def test_makecache_timer_battery2(self, _on_ac_power):
+        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
+        self.yumbase.conf.metadata_timer_sync = 5
+        self.assertEqual((0, [u'Metadata Cache Created']),
                          self._do_makecache(cmd))

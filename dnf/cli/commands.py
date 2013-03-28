@@ -952,7 +952,7 @@ class MakeCacheCommand(Command):
         timer = 'timer' == dnf.util.first(extcmds)
         persistor = dnf.persistor.Persistor(self.base.conf.persistdir)
         if timer:
-            if not dnf.util.on_ac_power():
+            if dnf.util.on_ac_power() is False:
                 return 0, [_('Metadata timer caching disabled '
                              'when running on a battery.')]
             if period <= 0:
