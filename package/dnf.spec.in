@@ -66,6 +66,7 @@ make ARGS="-V" test
 %post
 %systemd_post dnf-makecache.timer
 systemctl enable dnf-makecache.timer
+systemctl start dnf-makecache.timer
 
 %preun
 %systemd_preun dnf-makecacache.timer
