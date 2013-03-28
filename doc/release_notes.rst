@@ -19,6 +19,10 @@ system's performance.
 The administrator can also easily disable the automatic metadata updates by
 setting :ref:`metadata_timer_sync <metadata_timer_sync-label>` to 0.
 
+The default value of :ref:`metadata_expire <metadata_expire-label>` was
+increased from 6 hours to 48 hours. In Fedora, the repos usually set this
+explicitly so this change is not going to cause much impact.
+
 The following reported issues are fixed in this release:
 
 * :rhbug:`916657`
