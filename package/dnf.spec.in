@@ -30,6 +30,9 @@ Requires:	python-iniparse
 Requires:	python-librepo = %{librepo_version}
 Requires:	rpm-python
 Requires:	urlgrabber
+Requires(post):		systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
@@ -59,6 +62,16 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+
+%post
+systemctl enable dnf-makecache.timer
+%systemd_post dnf-makecache.timer
+
+%preun
+%systemd_preun dnf-makecacache.timer
+
+%postun
+%systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
 * Thu Mar 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.0-2.git3e52d13
