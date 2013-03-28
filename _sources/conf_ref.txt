@@ -28,6 +28,8 @@ one main section. The repository sections define the configuration for each
     installed through DNF but not on explicit user request, i.e. it was
     pulled in as a dependency. The default is on.
 
+.. _metadata_expire-label:
+
 ``metadata_expire``
     The period after which the remote repository is checked for metadata update
     and in the positive case the local metadata cache is updated. The default is

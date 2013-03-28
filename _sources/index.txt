@@ -9,6 +9,7 @@ Contents:
 
    command_ref
    conf_ref
+   release_notes
    cli_vs_yum
    api
 
