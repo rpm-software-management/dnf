@@ -161,7 +161,7 @@ def doLoggingSetup(debuglevel, errorlevel,
                 if syslog is not None:
                     syslog.close()
             else:
-                setLoggingApp(syslog_ident or "yum")
+                setLoggingApp(syslog_ident or dnf.const.PROGRAM_NAME)
                 filelogger.addHandler(syslog)
 
 def setFileLogs(logdir, cleanup):
