@@ -18,6 +18,7 @@
 import dnf.repodict
 from dnf.repo import Repo
 import unittest
+from dnf.yum.Errors import RepoError
 
 class TestMultiCall(unittest.TestCase):
     def test_multi_call(self):
@@ -53,6 +54,8 @@ class TestRepoDict(unittest.TestCase):
         self.assertItemsEqual(self.repos.get_multiple('*'), self.full_set)
         self.assertItemsEqual(self.repos.get_multiple('y'), {self.y})
         self.assertItemsEqual(self.repos.get_multiple('x*'), {self.x, self.xx})
+
+        self.assertRaises(RepoError, self.repos.get_multiple, 'nope')
 
     def test_iter_enabled(self):
         self.assertItemsEqual(self.repos.iter_enabled(), self.full_set)

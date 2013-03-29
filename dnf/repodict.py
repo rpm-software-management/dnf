@@ -56,7 +56,10 @@ class RepoDict(dict):
         if dnf.util.is_glob_pattern(key):
             l = [self[k] for k in self if fnmatch.fnmatch(k, key)]
             return MultiCallList(l)
-        return MultiCallList([self[key]])
+        repo = self.get(key, None)
+        if repo is None:
+            raise RepoError("Repository not found: '%s'" % key)
+        return MultiCallList([repo])
 
     def iter_enabled(self):
         return (r for r in self.itervalues() if r.enabled)
