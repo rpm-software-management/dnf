@@ -1392,6 +1392,9 @@ class Cli(object):
         except CliError:
             sys.exit(1)
         self.command.configure()
+
+        if opts.debugrepodata:
+            self.write_out_metadata()
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
@@ -1477,6 +1480,14 @@ class Cli(object):
             self.logger.warning(_('Warning: No matches found for: %s'), arg)
             return 0, [_('No Matches found')]
         return 0, []
+
+    def write_out_metadata(self):
+        print(_("Writing out repository metadata for debugging."))
+        rids = [r.id for r in self.base.repos.enabled()]
+        rids.append(hawkey.SYSTEM_REPO_NAME)
+        for rid in rids:
+            with open("%s.repo" % rid, 'w') as outfile:
+                self.base.sack.susetags_for_repo(outfile, rid)
 
 class YumOptionParser(OptionParser):
     """Subclass that makes some minor tweaks to make OptionParser do things the
@@ -1690,6 +1701,9 @@ class YumOptionParser(OptionParser):
         group.add_option("-d", "--debuglevel", dest="debuglevel", default=None,
                 help=_("debugging output level"), type='int',
                 metavar='[debug level]')
+        group.add_option("--debugrepodata", dest="debugrepodata",
+                         action="store_true", default=None,
+                         help=_("dumps package metadata into files"))
         group.add_option("--showduplicates", dest="showdupesfromrepos",
                         action="store_true",
                 help=_("show duplicates, in repos, in list/search commands"))

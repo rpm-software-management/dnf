@@ -80,6 +80,22 @@ class Sack(hawkey.Sack):
             main.update(pkg, csum)
         return main
 
+    def susetags_for_repo(self, output, reponame):
+        def output_reldeps(initstr, reldeps):
+            rlines = ['%s %s\n' % (initstr, str(r)) for r in reldeps]
+            output.writelines(rlines)
+
+        output.write("=Ver: 2.0\n")
+        for p in queries.Query(self).filter(reponame=reponame):
+            nline = "=Pkg: %s %s %s %s\n" % (p.name, p.version, p.release, p.arch)
+            output.write(nline)
+            output_reldeps("=Prv:", p.provides)
+            output_reldeps("=Req:", p.requires)
+            output_reldeps("=Obs:", p.obsoletes)
+            output_reldeps("=Con:", p.conflicts)
+
+        return output
+
 def build_sack(yumbase):
     cachedir = yumbase.cache_c.cachedir
     # create the dir ourselves so we have the permissions under control:

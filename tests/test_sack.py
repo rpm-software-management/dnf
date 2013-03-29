@@ -15,14 +15,16 @@
 # Red Hat, Inc.
 #
 
+import StringIO
+import base
 import dnf.sack
 import hawkey
 import hawkey.test
-import base
+import itertools
 import mock
 import unittest
 
-class Sack(base.TestCase):
+class SackTest(base.TestCase):
     def test_rpmdb_version(self):
         yumbase = base.MockYumBase()
         sack = yumbase.sack
@@ -38,3 +40,18 @@ class Sack(base.TestCase):
         sack = yumbase.sack
         peppers = sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
+
+class SusetagsTest(base.TestCase):
+    def susetags_test(self):
+        buf = StringIO.StringIO()
+        yumbase = base.MockYumBase("main")
+        yumbase.sack.susetags_for_repo(buf, "main")
+        buf.seek(0)
+        pepper = itertools.dropwhile(lambda x: not x.startswith("=Pkg: pepper "),
+                                     buf.readlines())
+        pepper = [dnf.util.first(pepper)] + list(itertools.takewhile(
+                lambda x: not x.startswith("=Pkg: "), pepper))
+        self.assertItemsEqual(pepper,
+                              ['=Pkg: pepper 20 0 x86_64\n',
+                               '=Prv: pepper = 20-0\n',
+                               '=Req: librita >= 1-0\n'])
