@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+import dnf.const
 import dnf.util
 import dnf.yum.Errors
 import dnf.yum.config
@@ -96,6 +97,7 @@ class _Handle(librepo.Handle):
         self.repotype = librepo.LR_YUMREPO
         self.yumdlist = ["primary", "filelists", "prestodelta"]
         self.gpgcheck = gpgcheck
+        self.useragent = dnf.const.USER_AGENT
 
     @classmethod
     def new_local(cls, gpgcheck, cachedir):
