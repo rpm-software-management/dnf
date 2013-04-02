@@ -8,7 +8,7 @@
  Description
 =============
 
-`DNF`_ uses by default the global configuration file at ``/etc/dnf/dnf.conf`` and
+`DNF`_ by default uses the global configuration file at ``/etc/dnf/dnf.conf`` and
 all \*.repo files found under ``/etc/yum.repos.d``. The latter is typically used
 for repository configuration.
 
@@ -42,6 +42,14 @@ one main section. The repository sections define the configuration for each
     command will stop immediately if it's less than this time period since its
     last run. Does not affect simple ``makecache`` run. Use ``0`` to completely
     disable automatic metadata synchronizing. The default is 3 hours.
+
+==============
+ Repo Options
+==============
+
+``skip_if_unavailable``
+    If enabled, DNF will continue running if this repository cannot be contacted
+    for any reason. The default is False.
 
 ==========
  See Also
