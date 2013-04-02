@@ -182,6 +182,8 @@ class Command:
     :func:`getUsage` and :func:`getSummary`.
     """
 
+    activate_sack = False
+
     def __init__(self, cli):
         self.done_command_once = False
         self.hidden = False
@@ -269,6 +271,8 @@ class InstallCommand(Command):
     install command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of
@@ -330,6 +334,8 @@ class UpgradeCommand(Command):
     update command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can by called from the command line by using any of
@@ -390,6 +396,8 @@ class UpgradeToCommand(Command):
         command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         return ['upgrade-to', 'update-to']
 
@@ -415,6 +423,8 @@ class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
     distro-synch command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -502,6 +512,8 @@ class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -643,6 +655,8 @@ class ListCommand(InfoCommand):
     list command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -663,6 +677,8 @@ class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
     erase command.
     """
+
+    activate_sack = True
 
     def configure(self):
         self.base.goal_parameters.allow_uninstall = True
@@ -979,7 +995,7 @@ class MakeCacheCommand(Command):
 
         if timer:
             persistor.reset_last_makecache()
-        sack = self.base.sack # triggers metadata sync
+        self.base.activate_sack() # performs the md sync
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, basecmd, extcmds):
@@ -1061,6 +1077,8 @@ class ProvidesCommand(Command):
     provides command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1115,6 +1133,8 @@ class CheckUpdateCommand(Command):
     """A class containing methods needed by the cli to execute the
     check-update command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -1205,6 +1225,8 @@ class SearchCommand(Command):
     """A class containing methods needed by the cli to execute the
     search command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -1321,6 +1343,8 @@ class DepListCommand(Command):
     deplist command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1377,6 +1401,8 @@ class RepoListCommand(Command):
     """A class containing methods needed by the cli to execute the
     repolist command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This
@@ -1652,7 +1678,6 @@ class HelpCommand(Command):
     help command.
     """
 
-
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1759,6 +1784,8 @@ class ReInstallCommand(Command):
     reinstall command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
@@ -1830,6 +1857,8 @@ class DowngradeCommand(Command):
     """A class containing methods needed by the cli to execute the
     downgrade command.
     """
+
+    activate_sack = True
 
     def getNames(self):
         """Return a list containing the names of this command.  This

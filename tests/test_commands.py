@@ -37,7 +37,8 @@ class CommandsTest(unittest.TestCase):
         self.assertFalse(self.yumbase.goal_parameters.allow_uninstall)
 
     @staticmethod
-    def _do_makecache(cmd):
+    @mock.patch('dnf.yum.base.Base.activate_sack')
+    def _do_makecache(cmd, activate_sack):
         return cmd.doCommand('makecache', ['timer'])
 
     @mock.patch('dnf.util.on_ac_power', return_value=True)

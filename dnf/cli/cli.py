@@ -1414,6 +1414,8 @@ class Cli(object):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+        if self.command.activate_sack:
+            self.base.activate_sack()
         return self.command.doCommand(self.base.basecmd, self.base.extcmds)
 
     def print_usage(self):

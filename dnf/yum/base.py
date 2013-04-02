@@ -154,8 +154,9 @@ class Base(object):
 
     @property
     def sack(self):
-        if self._sack:
-            return self._sack
+        return self._sack
+
+    def activate_sack(self):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a Base reference.
         start = time.time()
@@ -832,8 +833,7 @@ class Base(object):
         # with only rpmdb in it. In the future when RPM Python bindings can tell
         # us if a particular transaction element failed or not we can skip this
         # completely.
-        rpmdb_sack = sack.build_sack(self)
-        rpmdb_sack.load_system_repo()
+        rpmdb_sack = sack.rpmdb_sack(self)
 
         # Process new packages before the old ones so we can copy values.
         for txmbr in self.tsInfo:
