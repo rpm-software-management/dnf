@@ -64,7 +64,8 @@ def main(args):
         return 200 if unlock() else 1
 
     def exFatal(e):
-        logger.critical('%s', exception2msg(e.value))
+        if e.value is not None:
+            logger.critical(exception2msg(e.value))
         return 200 if unlock() else 1
 
     def unlock():
