@@ -41,15 +41,15 @@ def main(args):
     dnf.i18n.setup_stdout()
 
     def exUserCancel():
-        logger.critical(_('\n\nExiting on user cancel'))
+        logger.critical(_('Terminated.'))
         if unlock(): return 200
         return 1
 
     def exIOError(e):
         if e.errno == 32:
-            logger.critical(_('\n\nExiting on Broken Pipe'))
+            logger.critical(_('Exiting on Broken Pipe'))
         else:
-            logger.critical(_('\n\n%s') % exception2msg(e))
+            logger.critical(exception2msg(e))
         if unlock(): return 200
         return 1
 

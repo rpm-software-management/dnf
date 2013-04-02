@@ -94,10 +94,11 @@ class _Result(object):
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck):
         super(_Handle, self).__init__()
-        self.repotype = librepo.LR_YUMREPO
-        self.yumdlist = ["primary", "filelists", "prestodelta"]
         self.gpgcheck = gpgcheck
+        self.interruptible = True
+        self.repotype = librepo.LR_YUMREPO
         self.useragent = dnf.const.USER_AGENT
+        self.yumdlist = ["primary", "filelists", "prestodelta"]
 
     @classmethod
     def new_local(cls, gpgcheck, cachedir):
