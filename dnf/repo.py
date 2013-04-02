@@ -306,8 +306,8 @@ class Repo(dnf.yum.config.RepoConf):
         available on the disk cache, either loads the metadata from the cache or
         downloads them from the mirror, baseurl or metalink.
 
-        This method will not try to refresh the loaded data if called twice, IOW
-        the loading is by default lazy.
+        This method will by default not try to refresh already loaded data if
+        called repeatedly.
 
         Returns True if this call to load() caused a fresh metadata download.
 

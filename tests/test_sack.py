@@ -17,7 +17,9 @@
 
 import StringIO
 import base
+import dnf.repo
 import dnf.sack
+import dnf.yum.Errors
 import hawkey
 import hawkey.test
 import itertools
@@ -40,6 +42,22 @@ class SackTest(base.TestCase):
         sack = yumbase.sack
         peppers = sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
+
+    def test_add_repo_to_sack(self):
+        def raiser():
+            raise dnf.yum.Errors.RepoError()
+
+        yumbase = base.MockYumBase()
+        r = dnf.repo.Repo("bag")
+        r.enable()
+        yumbase._repos.add(r)
+        r.load = mock.Mock(side_effect=raiser)
+        self.assertRaises(dnf.yum.Errors.RepoError,
+                          yumbase._add_repo_to_sack, "bag")
+        self.assertTrue(r.enabled)
+        r.skip_if_unavailable = True
+        yumbase._add_repo_to_sack("bag")
+        self.assertFalse(r.enabled)
 
 class SusetagsTest(base.TestCase):
     def susetags_test(self):

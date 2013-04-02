@@ -120,20 +120,27 @@ class Base(object):
         # call cleanup callbacks
         for cb in self._cleanup: cb()
 
-    def _add_repo_to_hawkey(self, name):
-        repo = hawkey.Repo(name)
-        yum_repo = self.repos[name]
-        yum_repo.load()
-        repo.repomd_fn = yum_repo.repomd_fn
-        repo.primary_fn = yum_repo.primary_fn
-        repo.filelists_fn = yum_repo.filelists_fn
-        if yum_repo.presto_fn:
-            repo.presto_fn = yum_repo.presto_fn
+    def _add_repo_to_sack(self, name):
+        hrepo = hawkey.Repo(name)
+        repo = self.repos[name]
+        try:
+            repo.load()
+        except Errors.RepoError as e:
+            if repo.skip_if_unavailable is False:
+                raise
+            msg = _("%s, disabling.") % str(e)
+            self.logger.warning(msg)
+            repo.disable()
+            return
+        hrepo.repomd_fn = repo.repomd_fn
+        hrepo.primary_fn = repo.primary_fn
+        hrepo.filelists_fn = repo.filelists_fn
+        if repo.presto_fn:
+            hrepo.presto_fn = repo.presto_fn
         else:
-            self.verbose_logger.debug("not found deltainfo for: %s" %
-                                      yum_repo.name)
-        yum_repo.hawkey_repo = repo
-        self._sack.load_yum_repo(repo, build_cache=True, load_filelists=True)
+            self.verbose_logger.debug("not found deltainfo for: %s" % repo.name)
+        repo.hawkey_repo = hrepo
+        self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True)
 
     @property
     def conf(self):
@@ -163,7 +170,7 @@ class Base(object):
         self._sack = sack.build_sack(self)
         self._sack.load_system_repo(build_cache=True)
         for r in self.repos.iter_enabled():
-            self._add_repo_to_hawkey(r.id)
+            self._add_repo_to_sack(r.id)
         self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
