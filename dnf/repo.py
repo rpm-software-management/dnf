@@ -137,6 +137,11 @@ class Repo(dnf.yum.config.RepoConf):
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
 
+    def _exc2msg(self, librepo_exception):
+        exc_msg = librepo_exception[1]
+        msg = "Problem with repo '%s': %s" % (self.id, exc_msg)
+        return msg
+
     def _handle_load(self, handle):
         r = librepo.Result()
         if handle.progresscb:
@@ -219,10 +224,6 @@ class Repo(dnf.yum.config.RepoConf):
 
     def enable(self):
         self.enabled = True
-
-    def error_message(self, exception):
-        msg = "Problem with repo '%s': %s" % (self.id, str(exception))
-        print msg
 
     @property
     def filelists_fn(self):
@@ -328,9 +329,7 @@ class Repo(dnf.yum.config.RepoConf):
             self.res = self._handle_load(handle)
         except librepo.LibrepoException as e:
             self.res = None
-            msg = str(e)
-            self.error_message(msg)
-            raise dnf.yum.Errors.RepoError(msg)
+            raise dnf.yum.Errors.RepoError(self._exc2msg(e))
         return True
 
     def set_failure_callback(self, cb):
