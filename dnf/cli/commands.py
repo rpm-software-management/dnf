@@ -1288,56 +1288,6 @@ class SearchCommand(Command):
         """
         return False
 
-class ResolveDepCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    resolvedep command.
-    """
-
-    def __init__(self):
-        Command.__init__(self)
-        self.hidden = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['resolvedep']
-
-    def getUsage(self):
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "DEPENDENCY"
-
-    def getSummary(self):
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return "repoquery --pkgnarrow=all --whatprovides --qf '%{envra} %{ui_from_repo}'"
-
-    def doCommand(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        self.base.logger.debug(_("Searching Packages for Dependency:"))
-        try:
-            return self.base.resolveDepCli(extcmds)
-        except dnf.yum.Errors.YumBaseError, e:
-            return 1, [str(e)]
-
 class DepListCommand(Command):
     """A class containing methods needed by the cli to execute the
     deplist command.

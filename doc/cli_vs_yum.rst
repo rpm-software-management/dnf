@@ -31,3 +31,11 @@ The :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
 switch is on by default in DNF. It can thus be confusing to compare the "erase"
 operation results between DNF and Yum as by default DNF is often going to remove
 more packages.
+
+===========================
+ No ``resolvedep`` command
+===========================
+
+The Yum version of this command is maintained for legacy reasons only. The user
+can just do ``dnf provides`` to find out what package gives a particular
+provide.

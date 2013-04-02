@@ -743,40 +743,6 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             return 0, []
         return 0, ['No Matches found']
 
-    def resolveDepCli(self, args):
-        """Print information about a package that provides the given
-        dependency.  Only one package will be printed per dependency.
-
-        :param args: a list of strings specifying dependencies to
-           search for
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        for arg in args:
-            try:
-                ipkg = self.returnInstalledPackageByDep(arg)
-            except dnf.yum.Errors.YumBaseError:
-                ipkg = None
-            else:
-                self.verbose_logger.info("%s %s" % (ipkg.envra,
-                                                    ipkg.ui_from_repo))
-            try:
-                pkg = self.returnPackageByDep(arg)
-            except dnf.yum.Errors.YumBaseError:
-                if not ipkg:
-                    self.logger.critical(_('No Package Found for %s'), arg)
-            else:
-                if not pkg.verEQ(ipkg):
-                    self.verbose_logger.info("%s %s" % (pkg.envra,
-                                                        pkg.ui_from_repo))
-
-        return 0, []
-
     def cleanCli(self, userlist):
         """Remove data from the yum cache directory.  What data is
         removed depends on the options supplied by the user.
@@ -1106,7 +1072,6 @@ class Cli(object):
         self._register_command(dnf.cli.commands.ProvidesCommand(self))
         self._register_command(dnf.cli.commands.CheckUpdateCommand(self))
         self._register_command(dnf.cli.commands.SearchCommand(self))
-        # self._register_command(dnf.cli.commands.ResolveDepCommand(self))
         # self._register_command(dnf.cli.commands.DepListCommand(self))
         self._register_command(dnf.cli.commands.RepoListCommand(self))
         self._register_command(dnf.cli.commands.HelpCommand(self))
