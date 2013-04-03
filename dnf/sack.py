@@ -59,11 +59,9 @@ class Sack(hawkey.Sack):
         self._filelists = False
         self.verbose_logger = logging.getLogger("yum.verbose.Base")
 
-    def configure(self, installonly=None, excluded=None):
+    def configure(self, installonly=None):
         if installonly:
             self.installonly = installonly
-        for excl in excluded or []:
-            self.add_excludes(queries.by_name(self, excl))
 
     def query(self):
         """Factory function returning a DNF Query."""

@@ -35,12 +35,24 @@ class SackTest(base.TestCase):
         self.assertEqual(version._num, base.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(), base.RPMDB_CHECKSUM)
 
-    def test_configuration(self):
+    def test_setup_excludes(self):
         yumbase = base.MockYumBase()
         yumbase.conf.exclude=['pepper']
-        # configure() gets called through here:
-        sack = yumbase.sack
-        peppers = sack.query().filter(name='pepper').run()
+        yumbase._setup_excludes()
+        peppers = yumbase.sack.query().filter(name='pepper').run()
+        self.assertLength(peppers, 0)
+
+        yumbase = base.MockYumBase()
+        yumbase.conf.disable_excludes = ['all']
+        yumbase.conf.exclude=['pepper']
+        yumbase._setup_excludes()
+        peppers = yumbase.sack.query().filter(name='pepper').run()
+        self.assertLength(peppers, 1)
+
+        yumbase = base.MockYumBase('main')
+        yumbase.repos['main'].exclude=['pepp*']
+        yumbase._setup_excludes()
+        peppers = yumbase.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
 
     def test_add_repo_to_sack(self):

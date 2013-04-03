@@ -123,7 +123,7 @@ class MockYumBase(dnf.yum.base.Base):
             fn = "%s.repo" % repo.id
             self._sack.load_test_repo(repo.id, fn)
 
-        self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
+        self._sack.configure(self.conf.installonlypkgs)
         return self._sack
 
     def mock_cli(self):

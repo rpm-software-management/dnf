@@ -142,6 +142,22 @@ class Base(object):
         repo.hawkey_repo = hrepo
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True)
 
+    def _setup_excludes(self):
+        disabled = set(self.conf.disable_excludes)
+        if 'all' in disabled:
+            return
+        if 'main' not in disabled:
+            for excl in self.conf.exclude:
+                pkgs = self.sack.query().filter_autoglob(name=excl)
+                self.sack.add_excludes(pkgs)
+        for r in self.repos.iter_enabled():
+            if r.id in disabled:
+                continue
+            for excl in r.exclude:
+                pkgs = self.sack.query().filter(reponame=r.id).\
+                    filter_autoglob(name=excl)
+                self.sack.add_excludes(pkgs)
+
     @property
     def conf(self):
         return self._conf
@@ -171,9 +187,10 @@ class Base(object):
         self._sack.load_system_repo(build_cache=True)
         for r in self.repos.iter_enabled():
             self._add_repo_to_sack(r.id)
-        self._sack.configure(self.conf.installonlypkgs, self.conf.exclude)
+        self._sack.configure(self.conf.installonlypkgs)
         self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
+        self._setup_excludes()
         return self._sack
 
     @property
