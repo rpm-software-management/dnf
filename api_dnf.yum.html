@@ -73,18 +73,17 @@
 <li><a class="reference internal" href="#module-dnf.yum.i18n" id="id10">dnf.yum.i18n</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.logginglevels" id="id11">dnf.yum.logginglevels</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.mdparser" id="id12">dnf.yum.mdparser</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.metalink" id="id13">dnf.yum.metalink</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.misc" id="id14">dnf.yum.misc</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.packages" id="id15">dnf.yum.packages</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.parser" id="id16">dnf.yum.parser</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.pgpmsg" id="id17">dnf.yum.pgpmsg</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.plugins" id="id18">dnf.yum.plugins</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.repoMDObject" id="id19">dnf.yum.repoMDObject</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.rpmsack" id="id20">dnf.yum.rpmsack</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.rpmtrans" id="id21">dnf.yum.rpmtrans</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.sqlutils" id="id22">dnf.yum.sqlutils</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.transactioninfo" id="id23">dnf.yum.transactioninfo</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.update_md" id="id24">dnf.yum.update_md</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.misc" id="id13">dnf.yum.misc</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.packages" id="id14">dnf.yum.packages</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.parser" id="id15">dnf.yum.parser</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.pgpmsg" id="id16">dnf.yum.pgpmsg</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.plugins" id="id17">dnf.yum.plugins</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.repoMDObject" id="id18">dnf.yum.repoMDObject</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.rpmsack" id="id19">dnf.yum.rpmsack</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.rpmtrans" id="id20">dnf.yum.rpmtrans</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.sqlutils" id="id21">dnf.yum.sqlutils</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.transactioninfo" id="id22">dnf.yum.transactioninfo</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.update_md" id="id23">dnf.yum.update_md</a></li>
 </ul>
 </li>
 </ul>
@@ -1057,47 +1056,8 @@ provided in the logging config file for debug messages.</p>
 <div class="section" id="module-dnf.yum.mdparser">
 <span id="dnf-yum-mdparser"></span><h2><a class="toc-backref" href="#id12">dnf.yum.mdparser</a><a class="headerlink" href="#module-dnf.yum.mdparser" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-dnf.yum.metalink">
-<span id="dnf-yum-metalink"></span><h2><a class="toc-backref" href="#id13">dnf.yum.metalink</a><a class="headerlink" href="#module-dnf.yum.metalink" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="dnf.yum.metalink.MetaLinkFile">
-<em class="property">class </em><tt class="descclassname">dnf.yum.metalink.</tt><tt class="descname">MetaLinkFile</tt><big>(</big><em>elem</em><big>)</big><a class="headerlink" href="#dnf.yum.metalink.MetaLinkFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the file metadata out of a metalink file.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="dnf.yum.metalink.MetaLinkRepoErrorParseFail">
-<em class="property">exception </em><tt class="descclassname">dnf.yum.metalink.</tt><tt class="descname">MetaLinkRepoErrorParseFail</tt><big>(</big><em>value=None</em><big>)</big><a class="headerlink" href="#dnf.yum.metalink.MetaLinkRepoErrorParseFail" title="Permalink to this definition">¶</a></dt>
-<dd><p>An exception thrown for an unparsable MetaLinkRepoMD file.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.metalink.MetaLinkRepoMD">
-<em class="property">class </em><tt class="descclassname">dnf.yum.metalink.</tt><tt class="descname">MetaLinkRepoMD</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#dnf.yum.metalink.MetaLinkRepoMD" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse a metalink file for repomd.xml.</p>
-<dl class="method">
-<dt id="dnf.yum.metalink.MetaLinkRepoMD.urls">
-<tt class="descname">urls</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.yum.metalink.MetaLinkRepoMD.urls" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate plain urls for the mirrors, like the old mirrorlist.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.metalink.MetaLinkURL">
-<em class="property">class </em><tt class="descclassname">dnf.yum.metalink.</tt><tt class="descname">MetaLinkURL</tt><big>(</big><em>elem</em>, <em>max_connections</em><big>)</big><a class="headerlink" href="#dnf.yum.metalink.MetaLinkURL" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the URL metadata out of a metalink file.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="dnf.yum.metalink.main">
-<tt class="descclassname">dnf.yum.metalink.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.yum.metalink.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>MetaLinkRepoMD test function.</p>
-</dd></dl>
-
-</div>
 <div class="section" id="module-dnf.yum.misc">
-<span id="dnf-yum-misc"></span><h2><a class="toc-backref" href="#id14">dnf.yum.misc</a><a class="headerlink" href="#module-dnf.yum.misc" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-misc"></span><h2><a class="toc-backref" href="#id13">dnf.yum.misc</a><a class="headerlink" href="#module-dnf.yum.misc" title="Permalink to this headline">¶</a></h2>
 <p>Assorted utility functions for yum.</p>
 <dl class="class">
 <dt id="dnf.yum.misc.AutoFileChecksums">
@@ -1443,7 +1403,7 @@ difference between &#8220;rm -f&#8221; and plain &#8220;rm&#8221;.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.packages">
-<span id="dnf-yum-packages"></span><h2><a class="toc-backref" href="#id15">dnf.yum.packages</a><a class="headerlink" href="#module-dnf.yum.packages" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-packages"></span><h2><a class="toc-backref" href="#id14">dnf.yum.packages</a><a class="headerlink" href="#module-dnf.yum.packages" title="Permalink to this headline">¶</a></h2>
 <p>Classes and functions dealing with rpm package representations.</p>
 <dl class="class">
 <dt id="dnf.yum.packages.FakeRepository">
@@ -1563,7 +1523,7 @@ exactly. Defaults to not matching.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.parser">
-<span id="dnf-yum-parser"></span><h2><a class="toc-backref" href="#id16">dnf.yum.parser</a><a class="headerlink" href="#module-dnf.yum.parser" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-parser"></span><h2><a class="toc-backref" href="#id15">dnf.yum.parser</a><a class="headerlink" href="#module-dnf.yum.parser" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.parser.ConfigPreProcessor">
 <em class="property">class </em><tt class="descclassname">dnf.yum.parser.</tt><tt class="descname">ConfigPreProcessor</tt><big>(</big><em>configfile</em>, <em>vars=None</em><big>)</big><a class="headerlink" href="#dnf.yum.parser.ConfigPreProcessor" title="Permalink to this definition">¶</a></dt>
@@ -1633,7 +1593,7 @@ arg to __init__) FLO returns EOF.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.pgpmsg">
-<span id="dnf-yum-pgpmsg"></span><h2><a class="toc-backref" href="#id17">dnf.yum.pgpmsg</a><a class="headerlink" href="#module-dnf.yum.pgpmsg" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-pgpmsg"></span><h2><a class="toc-backref" href="#id16">dnf.yum.pgpmsg</a><a class="headerlink" href="#module-dnf.yum.pgpmsg" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="dnf.yum.pgpmsg.decode_msg">
 <tt class="descclassname">dnf.yum.pgpmsg.</tt><tt class="descname">decode_msg</tt><big>(</big><em>msg</em>, <em>multi=False</em><big>)</big><a class="headerlink" href="#dnf.yum.pgpmsg.decode_msg" title="Permalink to this definition">¶</a></dt>
@@ -1707,7 +1667,7 @@ and new_idx is the index of the next element in the message</p>
 
 </div>
 <div class="section" id="module-dnf.yum.plugins">
-<span id="dnf-yum-plugins"></span><h2><a class="toc-backref" href="#id18">dnf.yum.plugins</a><a class="headerlink" href="#module-dnf.yum.plugins" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-plugins"></span><h2><a class="toc-backref" href="#id17">dnf.yum.plugins</a><a class="headerlink" href="#module-dnf.yum.plugins" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.plugins.ArgsPluginConduit">
 <em class="property">class </em><tt class="descclassname">dnf.yum.plugins.</tt><tt class="descname">ArgsPluginConduit</tt><big>(</big><em>parent</em>, <em>base</em>, <em>conf</em>, <em>args</em><big>)</big><a class="headerlink" href="#dnf.yum.plugins.ArgsPluginConduit" title="Permalink to this definition">¶</a></dt>
@@ -2329,7 +2289,7 @@ line options</li>
 
 </div>
 <div class="section" id="module-dnf.yum.repoMDObject">
-<span id="dnf-yum-repomdobject"></span><h2><a class="toc-backref" href="#id19">dnf.yum.repoMDObject</a><a class="headerlink" href="#module-dnf.yum.repoMDObject" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-repomdobject"></span><h2><a class="toc-backref" href="#id18">dnf.yum.repoMDObject</a><a class="headerlink" href="#module-dnf.yum.repoMDObject" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.repoMDObject.RepoData">
 <em class="property">class </em><tt class="descclassname">dnf.yum.repoMDObject.</tt><tt class="descname">RepoData</tt><big>(</big><em>elem=None</em><big>)</big><a class="headerlink" href="#dnf.yum.repoMDObject.RepoData" title="Permalink to this definition">¶</a></dt>
@@ -2356,7 +2316,7 @@ line options</li>
 
 </div>
 <div class="section" id="module-dnf.yum.rpmsack">
-<span id="dnf-yum-rpmsack"></span><h2><a class="toc-backref" href="#id20">dnf.yum.rpmsack</a><a class="headerlink" href="#module-dnf.yum.rpmsack" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-rpmsack"></span><h2><a class="toc-backref" href="#id19">dnf.yum.rpmsack</a><a class="headerlink" href="#module-dnf.yum.rpmsack" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.rpmsack.AdditionalPkgDB">
 <em class="property">class </em><tt class="descclassname">dnf.yum.rpmsack.</tt><tt class="descname">AdditionalPkgDB</tt><big>(</big><em>db_path</em><big>)</big><a class="headerlink" href="#dnf.yum.rpmsack.AdditionalPkgDB" title="Permalink to this definition">¶</a></dt>
@@ -2378,7 +2338,7 @@ line options</li>
 
 </div>
 <div class="section" id="module-dnf.yum.rpmtrans">
-<span id="dnf-yum-rpmtrans"></span><h2><a class="toc-backref" href="#id21">dnf.yum.rpmtrans</a><a class="headerlink" href="#module-dnf.yum.rpmtrans" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-rpmtrans"></span><h2><a class="toc-backref" href="#id20">dnf.yum.rpmtrans</a><a class="headerlink" href="#module-dnf.yum.rpmtrans" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.rpmtrans.RPMBaseCallback">
 <em class="property">class </em><tt class="descclassname">dnf.yum.rpmtrans.</tt><tt class="descname">RPMBaseCallback</tt><a class="headerlink" href="#dnf.yum.rpmtrans.RPMBaseCallback" title="Permalink to this definition">¶</a></dt>
@@ -2424,7 +2384,7 @@ output (if any).</p>
 
 </div>
 <div class="section" id="module-dnf.yum.sqlutils">
-<span id="dnf-yum-sqlutils"></span><h2><a class="toc-backref" href="#id22">dnf.yum.sqlutils</a><a class="headerlink" href="#module-dnf.yum.sqlutils" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-sqlutils"></span><h2><a class="toc-backref" href="#id21">dnf.yum.sqlutils</a><a class="headerlink" href="#module-dnf.yum.sqlutils" title="Permalink to this headline">¶</a></h2>
 <p>utility functions to handle differences in pysqlite versions
 These are from Wichert Akkerman &lt;<a class="reference external" href="mailto:wichert&#37;&#52;&#48;deephackmode&#46;org">wichert<span>&#64;</span>deephackmode<span>&#46;</span>org</a>&gt;&#8217;s python-dhm
 <a class="reference external" href="http://www.wiggy.net/code/python-dhm">http://www.wiggy.net/code/python-dhm</a></p>
@@ -2524,7 +2484,7 @@ not possible).</p>
 
 </div>
 <div class="section" id="module-dnf.yum.transactioninfo">
-<span id="dnf-yum-transactioninfo"></span><h2><a class="toc-backref" href="#id23">dnf.yum.transactioninfo</a><a class="headerlink" href="#module-dnf.yum.transactioninfo" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-transactioninfo"></span><h2><a class="toc-backref" href="#id22">dnf.yum.transactioninfo</a><a class="headerlink" href="#module-dnf.yum.transactioninfo" title="Permalink to this headline">¶</a></h2>
 <p>Classes and functions for manipulating a transaction to be passed
 to rpm.</p>
 <dl class="class">
@@ -2630,7 +2590,7 @@ updated/erased).</p>
 
 </div>
 <div class="section" id="module-dnf.yum.update_md">
-<span id="dnf-yum-update-md"></span><h2><a class="toc-backref" href="#id24">dnf.yum.update_md</a><a class="headerlink" href="#module-dnf.yum.update_md" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-update-md"></span><h2><a class="toc-backref" href="#id23">dnf.yum.update_md</a><a class="headerlink" href="#module-dnf.yum.update_md" title="Permalink to this headline">¶</a></h2>
 <p>Update metadata (updateinfo.xml) parsing.</p>
 <dl class="class">
 <dt id="dnf.yum.update_md.UpdateMetadata">
@@ -2745,7 +2705,6 @@ or tuple.</p>
 <li><a class="reference internal" href="#module-dnf.yum.i18n">dnf.yum.i18n</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.logginglevels">dnf.yum.logginglevels</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.mdparser">dnf.yum.mdparser</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.metalink">dnf.yum.metalink</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.misc">dnf.yum.misc</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.packages">dnf.yum.packages</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.parser">dnf.yum.parser</a></li>

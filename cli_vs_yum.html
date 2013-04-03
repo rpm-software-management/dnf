@@ -63,6 +63,8 @@
 <li><a class="reference internal" href="#no-skip-broken" id="id2">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
 <li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id3">Update and Upgrade Commands are the Same</a></li>
 <li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id4"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
+<li><a class="reference internal" href="#no-resolvedep-command" id="id5">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
+<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id6">Excludes and repo excludes apply to all operations</a></li>
 </ul>
 </li>
 </ul>
@@ -89,6 +91,21 @@ switch is on by default in DNF. It can thus be confusing to compare the &#8220;e
 operation results between DNF and Yum as by default DNF is often going to remove
 more packages.</p>
 </div>
+<div class="section" id="no-resolvedep-command">
+<h2><a class="toc-backref" href="#id5">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a><a class="headerlink" href="#no-resolvedep-command" title="Permalink to this headline">¶</a></h2>
+<p>The Yum version of this command is maintained for legacy reasons only. The user
+can just do <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> to find out what package gives a particular
+provide.</p>
+</div>
+<div class="section" id="excludes-and-repo-excludes-apply-to-all-operations">
+<h2><a class="toc-backref" href="#id6">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
+<p>Yum only respects excludes during installs and upgrades. DNF extends this to all
+operations, among others erasing and listing. If you e.g. want to see a list of
+all installed <tt class="docutils literal"><span class="pre">python-f*</span></tt> packages but not any of the Flask packages, the
+following will work:</p>
+<div class="highlight-python"><pre>dnf -x '*flask*' list installed 'python-f*'</pre>
+</div>
+</div>
 </div>
 
 
@@ -103,6 +120,8 @@ more packages.</p>
 <li><a class="reference internal" href="#no-skip-broken">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
 <li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same">Update and Upgrade Commands are the Same</a></li>
 <li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
+<li><a class="reference internal" href="#no-resolvedep-command">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
+<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations">Excludes and repo excludes apply to all operations</a></li>
 </ul>
 </li>
 </ul>

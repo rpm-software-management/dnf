@@ -69,12 +69,6 @@ dnf.yum.mdparser
 .. automodule:: dnf.yum.mdparser
     :members:
 
-dnf.yum.metalink
-----------------
-
-.. automodule:: dnf.yum.metalink
-    :members:
-
 dnf.yum.misc
 ------------
 

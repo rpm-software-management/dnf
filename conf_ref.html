@@ -97,6 +97,18 @@ disable automatic metadata synchronizing. The default is 3 hours.</dd>
 for any reason. The default is False.</dd>
 </dl>
 </div>
+<div class="section" id="options-for-both-main-and-repo">
+<h2>Options for both [main] and Repo<a class="headerlink" href="#options-for-both-main-and-repo" title="Permalink to this headline">¶</a></h2>
+<p>Some options can be applied in either the main section, per repository, or in a
+combination. The value provided in the main section is used for all repositories
+as the default value and concrete repositories can override it in their
+configuration.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">exclude</span></tt></dt>
+<dd>Exclude packages of this repository, specified by a name or a glob and
+separated by a comma, from all operations.</dd>
+</dl>
+</div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -117,6 +129,7 @@ for any reason. The default is False.</dd>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#main-options">[main] Options</a></li>
 <li><a class="reference internal" href="#repo-options">Repo Options</a></li>
+<li><a class="reference internal" href="#options-for-both-main-and-repo">Options for both [main] and Repo</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>

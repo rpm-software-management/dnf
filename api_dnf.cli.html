@@ -423,29 +423,6 @@ groups to be removed</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.resolveDepCli">
-<tt class="descname">resolveDepCli</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.resolveDepCli" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print information about a package that provides the given
-dependency.  Only one package will be printed per dependency.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> &#8211; a list of strings specifying dependencies to
-search for</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
-</tr>
-</tbody>
-</table>
-<p>exit_code is:</p>
-<div class="highlight-python"><pre>0 = we're done, exit
-1 = we've errored, exit with error string
-2 = we've got work yet to do, onto the next stage</pre>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="dnf.cli.cli.YumBaseCli.returnGroupInfo">
 <tt class="descname">returnGroupInfo</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.returnGroupInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print complete information about the groups that match the
@@ -2603,82 +2580,6 @@ command can run.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="dnf.cli.commands.ResolveDepCommand">
-<em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">ResolveDepCommand</tt><a class="headerlink" href="#dnf.cli.commands.ResolveDepCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class containing methods needed by the cli to execute the
-resolvedep command.</p>
-<dl class="method">
-<dt id="dnf.cli.commands.ResolveDepCommand.doCommand">
-<tt class="descname">doCommand</tt><big>(</big><em>basecmd</em>, <em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.ResolveDepCommand.doCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute this command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>basecmd</strong> &#8211; the name of the command</li>
-<li><strong>extcmds</strong> &#8211; the command line arguments passed to <em>basecmd</em></li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(exit_code, [ errors ])</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>exit_code is:</p>
-<div class="highlight-python"><pre>0 = we're done, exit
-1 = we've errored, exit with error string
-2 = we've got work yet to do, onto the next stage</pre>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ResolveDepCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ResolveDepCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ResolveDepCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ResolveDepCommand.getSummary" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a one line summary of this command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a one line summary of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ResolveDepCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ResolveDepCommand.getUsage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a usage string for this command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a usage string for this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="dnf.cli.commands.SearchCommand">
 <em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">SearchCommand</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class containing methods needed by the cli to execute the
@@ -3500,7 +3401,7 @@ process.</p>
 
 <dl class="class">
 <dt id="dnf.cli.output.LibrepoCallbackAdaptor">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7fb45a518270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7fd955099270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
 <p>Note that TextMeter is a Python old-style class.</p>
 </dd></dl>
@@ -3694,7 +3595,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x16ffa28&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x1ddccf8&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">

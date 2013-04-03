@@ -62,6 +62,14 @@ Options
 ``-d <debug level>, --debuglevel=<debug level>``
     debugging output level
 
+``--disableexcludes=[all|main|<repoid>]``
+
+    Disable the config file excludes. Takes one of three options:
+
+    * ``all``, disables all config file excludes
+    * ``main``, disables excludes defined in the ``[main]`` section
+    * ``repoid``, disables excludes defined for the given repo
+
 ``-e <error level>, --errorlevel=<error level>``
     error output level
 

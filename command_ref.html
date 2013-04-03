@@ -103,6 +103,17 @@ speed and defining strict API and plugin interface.</p>
 <dd>config file location</dd>
 <dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">&lt;debug</span> <span class="pre">level&gt;,</span> <span class="pre">--debuglevel=&lt;debug</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>debugging output level</dd>
+</dl>
+<p><tt class="docutils literal"><span class="pre">--disableexcludes=[all|main|&lt;repoid&gt;]</span></tt></p>
+<blockquote>
+<div><p>Disable the config file excludes. Takes one of three options:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">all</span></tt>, disables all config file excludes</li>
+<li><tt class="docutils literal"><span class="pre">main</span></tt>, disables excludes defined in the <tt class="docutils literal"><span class="pre">[main]</span></tt> section</li>
+<li><tt class="docutils literal"><span class="pre">repoid</span></tt>, disables excludes defined for the given repo</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">&lt;error</span> <span class="pre">level&gt;,</span> <span class="pre">--errorlevel=&lt;error</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>error output level</dd>
 <dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
