@@ -51,6 +51,19 @@ one main section. The repository sections define the configuration for each
     If enabled, DNF will continue running if this repository cannot be contacted
     for any reason. The default is False.
 
+==================================
+ Options for both [main] and Repo
+==================================
+
+Some options can be applied in either the main section, per repository, or in a
+combination. The value provided in the main section is used for all repositories
+as the default value and concrete repositories can override it in their
+configuration.
+
+``exclude``
+    Exclude packages of this repository, specified by a name or a glob and
+    separated by a comma, from all operations.
+
 ==========
  See Also
 ==========

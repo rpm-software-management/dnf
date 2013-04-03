@@ -39,3 +39,14 @@ more packages.
 The Yum version of this command is maintained for legacy reasons only. The user
 can just do ``dnf provides`` to find out what package gives a particular
 provide.
+
+====================================================
+ Excludes and repo excludes apply to all operations
+====================================================
+
+Yum only respects excludes during installs and upgrades. DNF extends this to all
+operations, among others erasing and listing. If you e.g. want to see a list of
+all installed ``python-f*`` packages but not any of the Flask packages, the
+following will work::
+
+    dnf -x '*flask*' list installed 'python-f*'
