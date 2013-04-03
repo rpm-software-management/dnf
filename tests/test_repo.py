@@ -29,6 +29,11 @@ import StringIO
 
 BASEURL = "file://%s/tests/repos/rpm" % base.dnf_toplevel()
 
+class HandleTest(base.TestCase):
+    def test_useragent(self):
+        h = dnf.repo._Handle(self)
+        self.assertTrue(h.useragent.startswith("dnf/"))
+
 class RepoTest(base.TestCase):
     """Test the logic of dnf.repo.Repo.
 
