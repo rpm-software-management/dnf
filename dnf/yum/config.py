@@ -713,6 +713,8 @@ class YumConf(StartupConf):
     logdir = Option('/var/log')
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
 
+    debug_solver = BoolOption(False)
+
     commands = ListOption()
     exclude = ListOption()
     failovermethod = Option(__main_failovermethod_default__)

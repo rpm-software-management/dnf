@@ -1360,6 +1360,8 @@ class Cli(object):
 
         if opts.debugrepodata:
             self.write_out_metadata()
+        if opts.debugsolver:
+            self.base.conf.debug_solver = True
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 
@@ -1671,6 +1673,9 @@ class YumOptionParser(OptionParser):
         group.add_option("--debugrepodata", dest="debugrepodata",
                          action="store_true", default=None,
                          help=_("dumps package metadata into files"))
+        group.add_option("--debugsolver",
+                         action="store_true", default=None,
+                         help=_("dumps detailed solving results into files"))
         group.add_option("--showduplicates", dest="showdupesfromrepos",
                         action="store_true",
                 help=_("show duplicates, in repos, in list/search commands"))

@@ -641,8 +641,11 @@ class Base(object):
 
     def run_hawkey_goal(self, goal):
         allow_uninstall = self.goal_parameters.allow_uninstall
-        return goal.run(allow_uninstall=allow_uninstall,
-                        force_best=self.conf.best)
+        ret = goal.run(allow_uninstall=allow_uninstall,
+                       force_best=self.conf.best)
+        if self.conf.debug_solver:
+            goal.write_debugdata()
+        return ret
 
     def buildTransaction(self):
         """Build the transaction set."""
