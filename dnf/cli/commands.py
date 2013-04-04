@@ -1475,7 +1475,7 @@ class RepoListCommand(Command):
                              (ui_enabled, ui_endis_wid), ui_num))
             else:
                 if enabled:
-                    md = repo.res
+                    md = repo.metadata
                 else:
                     md = None
                 out = [self.base.fmtKeyValFill(_("Repo-id      : "), repo.id),

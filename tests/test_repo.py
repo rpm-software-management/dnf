@@ -114,12 +114,12 @@ class RepoTest(base.TestCase):
         self.repo = dnf.repo.Repo("r")
         self.repo.basecachedir = self.TMP_CACHEDIR
         self.assertFalse(self.repo.load())
-        self.assertIsNotNone(self.repo.res)
+        self.assertIsNotNone(self.repo.metadata)
 
     def test_load(self):
-        self.assertIsNone(self.repo.res)
+        self.assertIsNone(self.repo.metadata)
         self.assertTrue(self.repo.load())
-        self.assertIsNotNone(self.repo.res)
+        self.assertIsNotNone(self.repo.metadata)
         repomd = os.path.join(self.TMP_CACHEDIR, "r/repodata/repomd.xml")
         self.assertTrue(os.path.isfile(repomd))
 
@@ -185,5 +185,5 @@ class LocalRepoTest(base.TestCase):
 
     def test_mirrors(self):
         self.assertFalse(self.repo.load()) # got a cache
-        self.assertLength(self.repo.res.mirrors, 4)
-        self.assertEqual(self.repo.res.mirrors[0], 'http://many/x86_64')
+        self.assertLength(self.repo.metadata.mirrors, 4)
+        self.assertEqual(self.repo.metadata.mirrors[0], 'http://many/x86_64')

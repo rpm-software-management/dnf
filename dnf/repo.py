@@ -39,10 +39,51 @@ def _metalink_path(dirname):
 def _mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
-class _Result(object):
+class _Handle(librepo.Handle):
+    def __init__(self, gpgcheck):
+        super(_Handle, self).__init__()
+        self.gpgcheck = gpgcheck
+        self.interruptible = True
+        self.repotype = librepo.LR_YUMREPO
+        self.useragent = dnf.const.USER_AGENT
+        self.yumdlist = ["primary", "filelists", "prestodelta"]
+
+    @classmethod
+    def new_local(cls, gpgcheck, cachedir):
+        h = cls(gpgcheck)
+        h.destdir = cachedir
+        h.url = cachedir
+        h.local = True
+        if os.access(h.metalink_path, os.R_OK):
+            h.mirrorlist = h.metalink_path
+        elif os.access(h.mirrorlist_path, os.R_OK):
+            h.mirrorlist = h.mirrorlist_path
+        return h
+
+    @classmethod
+    def new_remote(cls, gpgcheck, destdir, mirror_setup, progress_cb):
+        h = cls(gpgcheck)
+        h.destdir = destdir
+        h.setopt(mirror_setup[0], mirror_setup[1])
+        h.progresscb = progress_cb
+        return h
+
+    @property
+    def metadata_dir(self):
+        return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
+
+    @property
+    def metalink_path(self):
+        return _metalink_path(self.destdir)
+
+    @property
+    def mirrorlist_path(self):
+        return _mirrorlist_path(self.destdir)
+
+class Metadata(object):
     def __init__(self, res, handle):
-        self.repo_dct = res.getinfo(librepo.LRR_YUM_REPO)
-        self.repomd_dct = res.getinfo(librepo.LRR_YUM_REPOMD)
+        self.repo_dct = res.yum_repo
+        self.repomd_dct = res.yum_repomd
         if handle.local:
             # librepo adds handle.url to the first position of handle.mirrors:
             self._mirrors = handle.mirrors[1:]
@@ -104,47 +145,6 @@ class _Result(object):
     def timestamp(self):
         return self.file_timestamp('primary')
 
-class _Handle(librepo.Handle):
-    def __init__(self, gpgcheck):
-        super(_Handle, self).__init__()
-        self.gpgcheck = gpgcheck
-        self.interruptible = True
-        self.repotype = librepo.LR_YUMREPO
-        self.useragent = dnf.const.USER_AGENT
-        self.yumdlist = ["primary", "filelists", "prestodelta"]
-
-    @classmethod
-    def new_local(cls, gpgcheck, cachedir):
-        h = cls(gpgcheck)
-        h.destdir = cachedir
-        h.url = cachedir
-        h.local = True
-        if os.access(h.metalink_path, os.R_OK):
-            h.mirrorlist = h.metalink_path
-        elif os.access(h.mirrorlist_path, os.R_OK):
-            h.mirrorlist = h.mirrorlist_path
-        return h
-
-    @classmethod
-    def new_remote(cls, gpgcheck, destdir, mirror_setup, progress_cb):
-        h = cls(gpgcheck)
-        h.destdir = destdir
-        h.setopt(mirror_setup[0], mirror_setup[1])
-        h.progresscb = progress_cb
-        return h
-
-    @property
-    def metadata_dir(self):
-        return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
-
-    @property
-    def metalink_path(self):
-        return _metalink_path(self.destdir)
-
-    @property
-    def mirrorlist_path(self):
-        return _mirrorlist_path(self.destdir)
-
 SYNC_TRY_CACHE  = 1
 SYNC_EXPIRED   = 2
 SYNC_ONLY_CACHE = 3
@@ -158,7 +158,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.id = id_
         self.basecachedir = None
         self.base_persistdir = ""
-        self.res = None
+        self.metadata = None
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
 
@@ -174,7 +174,7 @@ class Repo(dnf.yum.config.RepoConf):
         handle.perform(r)
         if handle.progresscb:
             self._progress.end()
-        return _Result(r, handle)
+        return Metadata(r, handle)
 
     def _handle_new_local(self, destdir):
         return _Handle.new_local(self.repo_gpgcheck, destdir)
@@ -213,16 +213,16 @@ class Repo(dnf.yum.config.RepoConf):
     def _try_cache(self):
         if self.sync_strategy == SYNC_EXPIRED:
             return False
-        if self.res:
+        if self.metadata:
             return True
         handle = self._handle_new_local(self.cachedir)
         try:
-            self.res = self._handle_load(handle)
+            self.metadata = self._handle_load(handle)
         except librepo.LibrepoException as e:
             return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
             return True
-        return self.res.file_age("primary") < self.metadata_expire
+        return self.metadata.file_age("primary") < self.metadata_expire
 
     @property
     def cachedir(self):
@@ -258,7 +258,7 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def filelists_fn(self):
-        return self.res.filelists_fn
+        return self.metadata.filelists_fn
 
     def get_package(self, pkg, text=None):
         dnf.util.ensure_dir(self.pkgdir)
@@ -292,8 +292,8 @@ class Repo(dnf.yum.config.RepoConf):
 
         """
         self._try_cache()
-        if self.res:
-            return (True, self.metadata_expire - self.res.age)
+        if self.metadata:
+            return (True, self.metadata_expire - self.metadata.age)
         return (False, 0)
 
     def md_expire_cache(self):
@@ -303,7 +303,7 @@ class Repo(dnf.yum.config.RepoConf):
         method is called.
 
         """
-        self.res = None
+        self.metadata = None
         self.sync_strategy = SYNC_EXPIRED
 
     def md_try_cache(self):
@@ -324,7 +324,7 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def presto_fn(self):
-        return self.res.presto_fn
+        return self.metadata.presto_fn
 
     @property
     def pkgdir(self):
@@ -332,11 +332,11 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def primary_fn(self):
-        return self.res.primary_fn
+        return self.metadata.primary_fn
 
     @property
     def repomd_fn(self):
-        return self.res.repomd_fn
+        return self.metadata.repomd_fn
 
     def load(self):
         """Load the metadata for this repo.
@@ -365,9 +365,9 @@ class Repo(dnf.yum.config.RepoConf):
 
             # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
-            self.res = self._handle_load(handle)
+            self.metadata = self._handle_load(handle)
         except librepo.LibrepoException as e:
-            self.res = None
+            self.metadata = None
             raise dnf.yum.Errors.RepoError(self._exc2msg(e))
         return True
 
