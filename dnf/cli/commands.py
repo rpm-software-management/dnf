@@ -1504,14 +1504,6 @@ class RepoListCommand(Command):
                             self.base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
                             self.base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
 
-                if hasattr(repo, '_orig_baseurl'):
-                    baseurls = repo._orig_baseurl
-                else:
-                    baseurls = repo.baseurl
-                if baseurls:
-                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "),
-                                               ", ".join(baseurls))]
-
                 if repo.metalink:
                     out += [self.base.fmtKeyValFill(_("Repo-metalink: "),
                                                repo.metalink)]
@@ -1522,8 +1514,13 @@ class RepoListCommand(Command):
                 elif repo.mirrorlist:
                     out += [self.base.fmtKeyValFill(_("Repo-mirrors : "),
                                                repo.mirrorlist)]
-                if enabled and md.url and not baseurls:
-                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), md.url)]
+                baseurls = repo.baseurl
+                if baseurls:
+                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "),
+                                               ", ".join(baseurls))]
+                elif enabled and md.mirrors:
+                    url = "%s (%d more)" % (md.mirrors[0], len(md.mirrors) - 1)
+                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
                 last = time.ctime(md.timestamp)
                 if repo.metadata_expire <= -1:

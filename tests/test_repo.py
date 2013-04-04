@@ -27,7 +27,8 @@ import unittest
 import ConfigParser
 import StringIO
 
-BASEURL = "file://%s/tests/repos/rpm" % base.dnf_toplevel()
+REPOS = "%s/tests/repos" % base.dnf_toplevel()
+BASEURL = "file://%s/rpm" % REPOS
 
 class HandleTest(base.TestCase):
     def test_useragent(self):
@@ -173,3 +174,16 @@ class RepoTest(base.TestCase):
         opts = self.repo.urlgrabber_opts()
         self.assertIn('keepalive', opts)
         self.assertIn('password', opts)
+
+class LocalRepoTest(base.TestCase):
+    def setUp(self):
+        # directly loads the repo as created by createrepo
+        self.repo = dnf.repo.Repo("rpm")
+        self.repo.basecachedir = REPOS
+        self.repo.name = "r for riot"
+        self.repo.md_only_cached = True
+
+    def test_mirrors(self):
+        self.assertFalse(self.repo.load()) # got a cache
+        self.assertLength(self.repo.res.mirrors, 4)
+        self.assertEqual(self.repo.res.mirrors[0], 'http://many/x86_64')

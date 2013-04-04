@@ -30,11 +30,24 @@ import time
 import types
 
 _METADATA_RELATIVE_DIR="repodata"
+_METALINK_FILENAME="metalink.xml"
+_MIRRORLIST_FILENAME="mirrorlist"
+
+def _metalink_path(dirname):
+    return os.path.join(dirname, _METALINK_FILENAME)
+
+def _mirrorlist_path(dirname):
+    return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
 class _Result(object):
-    def __init__(self, res):
+    def __init__(self, res, handle):
         self.repo_dct = res.getinfo(librepo.LRR_YUM_REPO)
         self.repomd_dct = res.getinfo(librepo.LRR_YUM_REPOMD)
+        if handle.local:
+            # librepo adds handle.url to the first position of handle.mirrors:
+            self._mirrors = handle.mirrors[1:]
+        else:
+            self._mirrors = handle.mirrors[:]
 
     @property
     def age(self):
@@ -58,6 +71,10 @@ class _Result(object):
     @property
     def filelists_fn(self):
         return self.repo_dct.get('filelists')
+
+    @property
+    def mirrors(self):
+        return self._mirrors
 
     @property
     def md_timestamp(self):
@@ -87,10 +104,6 @@ class _Result(object):
     def timestamp(self):
         return self.file_timestamp('primary')
 
-    @property
-    def url(self):
-        return self.repo_dct.get('url')
-
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck):
         super(_Handle, self).__init__()
@@ -106,6 +119,10 @@ class _Handle(librepo.Handle):
         h.destdir = cachedir
         h.url = cachedir
         h.local = True
+        if os.access(h.metalink_path, os.R_OK):
+            h.mirrorlist = h.metalink_path
+        elif os.access(h.mirrorlist_path, os.R_OK):
+            h.mirrorlist = h.mirrorlist_path
         return h
 
     @classmethod
@@ -119,6 +136,14 @@ class _Handle(librepo.Handle):
     @property
     def metadata_dir(self):
         return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
+
+    @property
+    def metalink_path(self):
+        return _metalink_path(self.destdir)
+
+    @property
+    def mirrorlist_path(self):
+        return _mirrorlist_path(self.destdir)
 
 SYNC_TRY_CACHE  = 1
 SYNC_EXPIRED   = 2
@@ -149,7 +174,7 @@ class Repo(dnf.yum.config.RepoConf):
         handle.perform(r)
         if handle.progresscb:
             self._progress.end()
-        return _Result(r)
+        return _Result(r, handle)
 
     def _handle_new_local(self, destdir):
         return _Handle.new_local(self.repo_gpgcheck, destdir)
@@ -172,10 +197,16 @@ class Repo(dnf.yum.config.RepoConf):
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.yum.Errors.RepoError, msg
 
-    def _replace_metadata(self, from_dir):
+    def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
-        shutil.move(from_dir, self.metadata_dir)
+        dnf.util.rm_rf(self.metalink_path)
+        dnf.util.rm_rf(self.mirrorlist_path)
+        shutil.move(handle.metadata_dir, self.metadata_dir)
+        if handle.metalink:
+            shutil.move(handle.metalink_path, self.metalink_path)
+        elif handle.mirrorlist:
+            shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
         # metadata is fresh, it's ok to use it
         self.sync_strategy = SYNC_TRY_CACHE
 
@@ -243,6 +274,14 @@ class Repo(dnf.yum.config.RepoConf):
     @property
     def metadata_dir(self):
         return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+
+    @property
+    def metalink_path(self):
+        return _metalink_path(self.cachedir)
+
+    @property
+    def mirrorlist_path(self):
+        return _mirrorlist_path(self.cachedir)
 
     def metadata_expire_in(self):
         """Get the number of seconds after which the metadata will expire.
@@ -322,7 +361,7 @@ class Repo(dnf.yum.config.RepoConf):
                 handle = self._handle_new_remote(tmpdir)
                 self._handle_load(handle)
                 # override old md with the new ones:
-                self._replace_metadata(handle.metadata_dir)
+                self._replace_metadata(handle)
 
             # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
