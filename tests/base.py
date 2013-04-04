@@ -161,6 +161,7 @@ class FakeConf(object):
         self.commands = []
         self.installonlypkgs = ['kernel']
         self.exclude = []
+        self.debug_solver = False
         self.debuglevel = 8
         self.obsoletes = True
         self.exactarch = False
