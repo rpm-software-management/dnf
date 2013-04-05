@@ -271,6 +271,39 @@ class Repo(dnf.yum.config.RepoConf):
             self._progress.end()
         return pkg.localPkg()
 
+    def load(self):
+        """Load the metadata for this repo.
+
+        Depending on the configuration and the age and consistence of data
+        available on the disk cache, either loads the metadata from the cache or
+        downloads them from the mirror, baseurl or metalink.
+
+        This method will by default not try to refresh already loaded data if
+        called repeatedly.
+
+        Returns True if this call to load() caused a fresh metadata download.
+
+        """
+        if self._try_cache():
+            return False
+        if self.sync_strategy == SYNC_ONLY_CACHE:
+            msg = "Cache-only enabled but no cache for '%s'" % self.id
+            raise dnf.yum.Errors.RepoError(msg)
+        try:
+            with dnf.util.tmpdir() as tmpdir:
+                handle = self._handle_new_remote(tmpdir)
+                self._handle_load(handle)
+                # override old md with the new ones:
+                self._replace_metadata(handle)
+
+            # get md from the cache now:
+            handle = self._handle_new_local(self.cachedir)
+            self.metadata = self._handle_load(handle)
+        except librepo.LibrepoException as e:
+            self.metadata = None
+            raise dnf.yum.Errors.RepoError(self._exc2msg(e))
+        return True
+
     @property
     def metadata_dir(self):
         return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
@@ -284,11 +317,11 @@ class Repo(dnf.yum.config.RepoConf):
         return _mirrorlist_path(self.cachedir)
 
     def metadata_expire_in(self):
-        """Get the number of seconds after which the metadata will expire.
+        """Get the number of seconds after which the cached metadata will expire.
 
-        Returns a tuple, boolean whether the information can be obtained and the
-        number of seconds. Negative number means the metadata has expired
-        already.
+        Returns a tuple, boolean whether there even is cached metadata and the
+        number of seconds it will expire in. Negative number means the metadata
+        has expired already.
 
         """
         self._try_cache()
@@ -337,39 +370,6 @@ class Repo(dnf.yum.config.RepoConf):
     @property
     def repomd_fn(self):
         return self.metadata.repomd_fn
-
-    def load(self):
-        """Load the metadata for this repo.
-
-        Depending on the configuration and the age and consistence of data
-        available on the disk cache, either loads the metadata from the cache or
-        downloads them from the mirror, baseurl or metalink.
-
-        This method will by default not try to refresh already loaded data if
-        called repeatedly.
-
-        Returns True if this call to load() caused a fresh metadata download.
-
-        """
-        if self._try_cache():
-            return False
-        if self.sync_strategy == SYNC_ONLY_CACHE:
-            msg = "Cache-only enabled but no cache for '%s'" % self.id
-            raise dnf.yum.Errors.RepoError(msg)
-        try:
-            with dnf.util.tmpdir() as tmpdir:
-                handle = self._handle_new_remote(tmpdir)
-                self._handle_load(handle)
-                # override old md with the new ones:
-                self._replace_metadata(handle)
-
-            # get md from the cache now:
-            handle = self._handle_new_local(self.cachedir)
-            self.metadata = self._handle_load(handle)
-        except librepo.LibrepoException as e:
-            self.metadata = None
-            raise dnf.yum.Errors.RepoError(self._exc2msg(e))
-        return True
 
     def set_failure_callback(self, cb):
         pass
