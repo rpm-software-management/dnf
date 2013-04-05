@@ -27,7 +27,7 @@ class TestedHistory(dnf.yum.history.YumHistory):
     @mock.patch("os.path.exists", return_value=True)
     def __init__(self, unused_exists):
         self._db_date = "1962-07-12"
-        super(TestedHistory, self).__init__("/does-not-exist", mock.Mock())
+        super(TestedHistory, self).__init__(base.NONEXISTENT_FILE, mock.Mock())
 
     def _create_db_file(self):
         return None

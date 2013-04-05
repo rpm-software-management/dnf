@@ -125,9 +125,12 @@ def timed(fn):
         return retval
     return decorated
 
-def touch(path):
-    """Create an empty file if it doesn't exist or bump it's timestamps."""
-    if os.access(path, os.F_OK):
+def touch(path, no_create=False):
+    """Create an empty file if it doesn't exist or bump it's timestamps.
+
+    If no_create is True only bumps the timestamps.
+    """
+    if no_create or os.access(path, os.F_OK):
         return os.utime(path, None)
     with open(path, 'a'):
         pass

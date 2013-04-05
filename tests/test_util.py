@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import unittest
-import mock
+import base
 import dnf.util
+import mock
+import unittest
 
 class Slow(object):
     def __init__(self, val):
@@ -100,3 +101,7 @@ class Util(unittest.TestCase):
     def test_strip_prefix(self):
         self.assertIsNone(dnf.util.strip_prefix("razorblade", "blade"))
         self.assertEqual(dnf.util.strip_prefix("razorblade", "razor"), "blade")
+
+    def test_touch(self):
+        self.assertRaises(OSError, dnf.util.touch,
+                          base.NONEXISTENT_FILE, no_create=True)

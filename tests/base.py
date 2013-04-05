@@ -50,6 +50,7 @@ def repo_dir():
 TOUR_44_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-4-4.noarch.rpm")
 TOUR_50_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-0.noarch.rpm")
 TOUR_51_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-1.noarch.rpm")
+NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")
 
 # often used query
 
