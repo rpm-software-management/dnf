@@ -181,9 +181,47 @@ class LocalRepoTest(base.TestCase):
         self.repo = dnf.repo.Repo("rpm")
         self.repo.basecachedir = REPOS
         self.repo.name = "r for riot"
-        self.repo.md_only_cached = True
 
     def test_mirrors(self):
+        self.repo.md_only_cached = True
         self.assertFalse(self.repo.load()) # got a cache
         self.assertLength(self.repo.metadata.mirrors, 4)
         self.assertEqual(self.repo.metadata.mirrors[0], 'http://many/x86_64')
+
+    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch('dnf.repo._Handle.new_remote')
+    def test_reviving(self, new_remote_m, reset_age_m):
+        self.repo.md_expire_cache()
+        self.repo.metalink = 'http://meh'
+        new_remote_m().metalink = \
+            {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
+                        ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0'),
+                        ('sha256', '4394be16de62563321f6ea9604513a8a2f6b9ab67898bbed218feeca8e6a7180'),
+                        ('sha512', 'e583eeb91874954b24a376176a087462403e518563f9cb3bdc4f7eae792e8d15ac488bc6d3fb632bbf0ac6cf58bf769e94e9773df6605616a28cf2c00adf8e14')]}
+        self.assertTrue(self.repo.load())
+        self.assertEqual(self.repo.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
+        reset_age_m.assert_called()
+
+    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch('dnf.repo._Handle.new_remote')
+    def test_reviving_lame_hashes(self, new_remote_m, reset_age_m):
+        self.repo.md_expire_cache()
+        self.repo.metalink = 'http://meh'
+        new_remote_m().metalink = \
+            {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
+                        ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0')]}
+        self.repo._try_cache()
+        self.assertFalse(self.repo._try_revive())
+
+    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch('dnf.repo._Handle.new_remote')
+    def test_reviving_mismatched_hashes(self, new_remote_m, reset_age_m):
+        self.repo.md_expire_cache()
+        self.repo.metalink = 'http://meh'
+        new_remote_m().metalink = \
+            {'hashes': [('sha256', '4394be16de62563321f6ea9604513a8a2f6b9ab67898bbed218feeca8e6a7180'),
+                        ('sha512', 'obviousfail')]}
+        # can not do the entire load() here, it would run on after try_revive()
+        # failed.
+        self.repo._try_cache()
+        self.assertFalse(self.repo._try_revive())

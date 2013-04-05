@@ -22,16 +22,22 @@ import dnf.const
 import dnf.util
 import dnf.yum.Errors
 import dnf.yum.config
+import dnf.yum.misc
+import logging
 import librepo
+import operator
 import os
 import shutil
 import urlgrabber.grabber
 import time
 import types
 
-_METADATA_RELATIVE_DIR="repodata"
-_METALINK_FILENAME="metalink.xml"
-_MIRRORLIST_FILENAME="mirrorlist"
+_METADATA_RELATIVE_DIR ="repodata"
+_METALINK_FILENAME     ="metalink.xml"
+_MIRRORLIST_FILENAME   ="mirrorlist"
+_RECOGNIZED_CHKSUMS    = ['sha512', 'sha256']
+
+logger = logging.getLogger("yum.verbose.Base")
 
 def _metalink_path(dirname):
     return os.path.join(dirname, _METALINK_FILENAME)
@@ -82,6 +88,7 @@ class _Handle(librepo.Handle):
 
 class Metadata(object):
     def __init__(self, res, handle):
+        self.expired = False
         self.repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
         if handle.local:
@@ -133,6 +140,9 @@ class Metadata(object):
     def primary_fn(self):
         return self.repo_dct.get('primary')
 
+    def reset_age(self):
+        dnf.util.touch(self.primary_fn, no_create=True)
+
     @property
     def repomd_fn(self):
         return self.repo_dct.get('repomd')
@@ -146,8 +156,8 @@ class Metadata(object):
         return self.file_timestamp('primary')
 
 SYNC_TRY_CACHE  = 1
-SYNC_EXPIRED   = 2
-SYNC_ONLY_CACHE = 3
+SYNC_EXPIRED    = 2 # consider the current cache expired, no matter its real age
+SYNC_ONLY_CACHE = 3 # use the local cache, even if it's expired, never download.
 
 class Repo(dnf.yum.config.RepoConf):
     DEFAULT_SYNC = SYNC_TRY_CACHE
@@ -207,20 +217,60 @@ class Repo(dnf.yum.config.RepoConf):
             shutil.move(handle.metalink_path, self.metalink_path)
         elif handle.mirrorlist:
             shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
-        # metadata is fresh, it's ok to use it
-        self.sync_strategy = SYNC_TRY_CACHE
 
     def _try_cache(self):
-        if self.sync_strategy == SYNC_EXPIRED:
-            return False
+        """Tries to load metadata from the local cache.
+
+        Correctly sets self.metadata.expired.
+
+        Returns True if we got any (even expired) metadata locally.
+
+        """
+        assert(self.metadata is None)
         handle = self._handle_new_local(self.cachedir)
         try:
             self.metadata = self._handle_load(handle)
         except librepo.LibrepoException as e:
             return False
-        if self.sync_strategy == SYNC_ONLY_CACHE:
-            return True
-        return self.metadata.file_age("primary") < self.metadata_expire
+        if self.sync_strategy == SYNC_EXPIRED:
+            # we shouldn't exit earlier as reviving needs self.metadata
+            self.metadata.expired = True
+            return False
+        self.metadata.expired = self.metadata.age >= self.metadata_expire
+        return True
+
+    def _try_revive(self):
+        """Use metalink to check whether our metadata are still current."""
+        if not self.metadata:
+            return False
+        if not self.metalink and not self.mirrorlist:
+            return False
+        repomd_fn = self.metadata.repo_dct['repomd']
+        with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
+            handle = self._handle_new_remote(tmpdir)
+            if handle.metalink is None:
+                logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
+                return False
+            hashes = handle.metalink['hashes']
+            hashes = filter(lambda (hsh, val): hsh in _RECOGNIZED_CHKSUMS,
+                            hashes)
+            if len(hashes) < 1:
+                logger.debug("reviving: repo '%s' skipped, no usable hash.",
+                             self.id)
+                return False
+            algos = map(operator.itemgetter(0), hashes)
+            chksums = dnf.yum.misc.Checksums(algos,
+                                             ignore_missing=True,
+                                             ignore_none=True)
+            chksums.read(repomd, -1)
+            digests = chksums.hexdigests()
+            for (algo, digest) in hashes:
+                if digests[algo] != digest:
+                    logger.debug("reviving: failed for '%s', mismatched %s sum.",
+                                 self.id, algo)
+                    return False
+        logger.debug("reviving: '%s' can be revived.", self.id)
+        return True
 
     @property
     def cachedir(self):
@@ -282,13 +332,17 @@ class Repo(dnf.yum.config.RepoConf):
         Returns True if this call to load() caused a fresh metadata download.
 
         """
-        if self.metadata:
-            return False
-        if self._try_cache():
-            return False
+        if self.metadata or self._try_cache():
+            if self.sync_strategy == SYNC_ONLY_CACHE or not self.metadata.expired:
+                return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
             msg = "Cache-only enabled but no cache for '%s'" % self.id
             raise dnf.yum.Errors.RepoError(msg)
+        if self._try_revive():
+            # the metadata we have are expired, yet still reflect the origin:
+            self.metadata.reset_age()
+            self.sync_strategy = SYNC_TRY_CACHE
+            return True
         try:
             with dnf.util.tmpdir() as tmpdir:
                 handle = self._handle_new_remote(tmpdir)
@@ -302,6 +356,7 @@ class Repo(dnf.yum.config.RepoConf):
         except librepo.LibrepoException as e:
             self.metadata = None
             raise dnf.yum.Errors.RepoError(self._exc2msg(e))
+        self.sync_strategy = SYNC_TRY_CACHE
         return True
 
     @property
@@ -337,7 +392,8 @@ class Repo(dnf.yum.config.RepoConf):
         method is called.
 
         """
-        self.metadata = None
+        if self.metadata:
+            self.metadata.expired = True
         self.sync_strategy = SYNC_EXPIRED
 
     def md_try_cache(self):
