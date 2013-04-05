@@ -213,8 +213,6 @@ class Repo(dnf.yum.config.RepoConf):
     def _try_cache(self):
         if self.sync_strategy == SYNC_EXPIRED:
             return False
-        if self.metadata:
-            return True
         handle = self._handle_new_local(self.cachedir)
         try:
             self.metadata = self._handle_load(handle)
@@ -284,6 +282,8 @@ class Repo(dnf.yum.config.RepoConf):
         Returns True if this call to load() caused a fresh metadata download.
 
         """
+        if self.metadata:
+            return False
         if self._try_cache():
             return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
@@ -324,7 +324,8 @@ class Repo(dnf.yum.config.RepoConf):
         has expired already.
 
         """
-        self._try_cache()
+        if not self.metadata:
+            self._try_cache()
         if self.metadata:
             return (True, self.metadata_expire - self.metadata.age)
         return (False, 0)
