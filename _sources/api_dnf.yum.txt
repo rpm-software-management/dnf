@@ -39,12 +39,6 @@ dnf.yum.Errors
 .. automodule:: dnf.yum.Errors
     :members:
 
-dnf.yum.failover
-----------------
-
-.. automodule:: dnf.yum.failover
-    :members:
-
 dnf.yum.history
 ---------------
 

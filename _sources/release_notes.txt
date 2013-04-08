@@ -33,3 +33,21 @@ The following reported issues are fixed in this release:
 * :rhbug:`922664`
 * :rhbug:`892064`
 * :rhbug:`919769`
+
+===================
+0.3.2 Release Notes
+===================
+
+The major improvement in this version is in speeding up syncing of repositories
+using metalink by looking at the repomd.xml checksums. This effectively lets DNF
+cheaply refresh expired repositories in cases where the original has not
+changed\: for instance the main Fedora repository is refreshed with one 30 kB
+HTTP download. This functionality is present in the current Yum but hasn't
+worked in DNF since 3.0.0.
+
+Otherwise this is mainly a release fixing bugs and tracebacks. The following
+reported bugs are fixed:
+
+* :rhbug:`947258`
+* :rhbug:`889202`
+* :rhbug:`923384`
