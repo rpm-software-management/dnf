@@ -1,12 +1,12 @@
-%global gitrev 7b1d503
-%global hawkey_version 0.3.9
-%global librepo_version 0.0.2-2.20130318gitb3c3323%{dist}
+%global gitrev f3818b4
+%global hawkey_version 0.3.10
+%global librepo_version 0.0.2-3.20130408git720d68d%{dist}
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	3.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -75,6 +75,35 @@ systemctl start dnf-makecache.timer
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Mon Apr 8 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.2-1.gitf3818b4
+- remove: dnf.yum.failover. (Ales Kozumplik)
+- 'reviving' repositories using checksum information from metalink. (Ales Kozumplik)
+- dnf.util.touch() accepts 'no_create' parameter now. (Ales Kozumplik)
+- refactor: repo: move checking of existing metadata from _try_cache() to load(). (Ales Kozumplik)
+- refactor: put Repo.load() at the correct place in the class. (Ales Kozumplik)
+- refactor: call repo._Result what it really is: Metadata. (Ales Kozumplik)
+- 'repolist -v' shows the mirrorlists now. (Ales Kozumplik)
+- tests: specify debug_solver in FakeConf too. (Ales Kozumplik)
+- debugging: add '--debugsolver' CLI switch. (Ales Kozumplik)
+- doc: the excludes behavior (RhBug:947258) (Ales Kozumplik)
+- doc: fix failing documentation build after dnf.yum.metalink is gone. (Ales Kozumplik)
+- fix configuration of per-repo excludes. (Ales Kozumplik)
+- tests: repo handle: test the useragent string. (Ales Kozumplik)
+- remove: dnf.yum.metalink. (Ales Kozumplik)
+- remove: ResolveDepCommand. (Ales Kozumplik)
+- support repo.skip_if_unavailable config option. (RhBug:889202) (Ales Kozumplik)
+- refactor: base.sack is no longer a lazy attribute. (Ales Kozumplik)
+- nicer error reporting in repo.py. (Ales Kozumplik)
+- Enable 'interruptible' for librepo operations. (Ales Kozumplik)
+- set user agent for librepo communication too. (RhBug:923384) (Ales Kozumplik)
+- fix superfluous 'None' in the error output. (Ales Kozumplik)
+- don't be pompous about the newlines in error messages. (Ales Kozumplik)
+- fix traceback with --enablerepo=<repo> and an unknown repo <repo>. (Ales Kozumplik)
+- logging: journald was getting the wrong idea about the program name. (Ales Kozumplik)
+- debugging: output the package metadata on '--debugrepodata'. (Ales Kozumplik)
+- fix traceback in UpgradeToCommand.doCheck(). (Ales Kozumplik)
+- also start the dnf-makecache.timer on installation. (Ales Kozumplik)
+
 * Thu Mar 28 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.1-3.git7b1d503
 - makecache: no on_ac_power binary means we should go ahead anyway. (Ales Kozumplik)
 - packaging: run systemd scriptlets so the timer service can be enabled by default. (Ales Kozumplik)
