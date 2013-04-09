@@ -52,9 +52,6 @@ import logginglevels
 import callbacks
 import history
 
-import warnings
-warnings.simplefilter("ignore", Errors.YumFutureDeprecationWarning)
-
 from constants import *
 from i18n import to_unicode, to_str, exception2msg
 

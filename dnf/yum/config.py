@@ -21,7 +21,6 @@ Configuration parser and default values for yum.
 
 import os
 import sys
-import warnings
 import rpm
 import copy
 import urlparse

@@ -88,18 +88,3 @@ class RepoMDError(YumBaseError):
 
 class CompsException(YumBaseError):
     pass
-
-class YumDeprecationWarning(DeprecationWarning):
-    """
-    Used to mark a method as deprecated.
-    """
-    def __init__(self, value=None):
-        DeprecationWarning.__init__(self, value)
-
-class YumFutureDeprecationWarning(YumDeprecationWarning):
-    """
-    Used to mark a method as deprecated. Unlike YumDeprecationWarning,
-    YumFutureDeprecationWarnings will not be shown on the console.
-    """
-    def __init__(self, value=None):
-        YumDeprecationWarning.__init__(self, value)

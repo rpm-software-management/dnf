@@ -16,7 +16,6 @@
 import os
 import glob
 import imp
-import warnings
 import atexit
 import gettext
 import logging
@@ -501,37 +500,6 @@ class PluginConduit:
 
 class ConfigPluginConduit(PluginConduit):
     """A conduit for use in the config slot."""
-
-    def registerOpt(self, name, valuetype, where, default):
-        """Deprecated.  Register a yum configuration file option.
-
-        :param name: name of the new option
-        :param valuetype: option type (PLUG_OPT_BOOL, PLUG_OPT_STRING, etc.)
-        :param where: where the option should be available in the config file
-            (PLUG_OPT_WHERE_MAIN, PLUG_OPT_WHERE_REPO, etc)
-        :param default: default value for the option if it is not set by the user
-        """
-        warnings.warn('registerOpt() will go away in a future version of Yum.\n'
-                'Please manipulate config.YumConf and config.RepoConf directly.',
-                DeprecationWarning)
-
-        type2opt =  {
-            PLUG_OPT_STRING: config.Option,
-            PLUG_OPT_INT: config.IntOption,
-            PLUG_OPT_BOOL: config.BoolOption,
-            PLUG_OPT_FLOAT: config.FloatOption,
-            }
-
-        if where == PLUG_OPT_WHERE_MAIN:
-            setattr(config.YumConf, name, type2opt[valuetype](default))
-
-        elif where == PLUG_OPT_WHERE_REPO:
-            setattr(config.RepoConf, name, type2opt[valuetype](default))
-
-        elif where == PLUG_OPT_WHERE_ALL:
-            option = type2opt[valuetype](default)
-            setattr(config.YumConf, name, option)
-            setattr(config.RepoConf, name, config.Inherit(option))
 
     def registerCommand(self, command):
         """Register a new command.

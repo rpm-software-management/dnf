@@ -14,7 +14,6 @@
 
 import rpm
 import types
-import warnings
 import glob
 import os
 import os.path

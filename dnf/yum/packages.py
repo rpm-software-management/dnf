@@ -23,7 +23,6 @@ import misc
 import re
 import fnmatch
 import stat
-import warnings
 import dnf.rpmUtils.miscutils
 import Errors
 from constants import *
@@ -380,11 +379,6 @@ class PackageObject(object):
 
     def __repr__(self):
         return "<%s : %s (%s)>" % (self.__class__.__name__, str(self),hex(id(self)))
-
-    def returnSimple(self, varname):
-        warnings.warn("returnSimple() will go away in a future version of Yum.\n",
-                      Errors.YumFutureDeprecationWarning, stacklevel=2)
-        return getattr(self, varname)
 
     def returnChecksums(self):
         return self._checksums
