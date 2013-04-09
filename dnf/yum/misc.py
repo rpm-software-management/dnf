@@ -29,7 +29,7 @@ import binascii
 import struct
 import re
 import errno
-import Errors
+import dnf.exceptions
 import constants
 import pgpmsg
 import tempfile
@@ -58,7 +58,7 @@ import hashlib
 _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
 
-from Errors import MiscError
+from dnf.exceptions import MiscError
 import i18n
 import dnf.const
 
@@ -722,7 +722,7 @@ def string_to_prco_tuple(prcoString):
             try:
                 f = flagToString(int(f))
             except (ValueError,TypeError), e:
-                raise Errors.MiscError, 'Invalid version flag: %s' % f
+                raise dnf.exceptions.MiscError, 'Invalid version flag: %s' % f
         else:
             f = constants.SYMBOLFLAGS[f]
 
@@ -750,7 +750,7 @@ def _decompress_chunked(source, dest, ztype):
 
     if ztype not in _available_compression:
         msg = "%s compression not available" % ztype
-        raise Errors.MiscError, msg
+        raise dnf.exceptions.MiscError, msg
 
     if ztype == 'bz2':
         s_fn = bz2.BZ2File(source, 'r')
@@ -774,7 +774,7 @@ def _decompress_chunked(source, dest, ztype):
             destination.write(data)
         except (OSError, IOError), e:
             msg = "Error writing to file %s: %s" % (dest, str(e))
-            raise Errors.MiscError, msg
+            raise dnf.exceptions.MiscError, msg
 
     destination.close()
     s_fn.close()
@@ -870,7 +870,7 @@ def find_ts_remaining(timestamp, yumlibpath):
             (action, pkgspec) = item.split()
         except ValueError, e:
             msg = "Transaction journal  file %s is corrupt." % (tsallpath)
-            raise Errors.MiscError, msg
+            raise dnf.exceptions.MiscError, msg
         to_complete_items.append((action, pkgspec))
 
     return to_complete_items

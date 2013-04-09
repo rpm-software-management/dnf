@@ -26,7 +26,7 @@ import logging
 import time
 import errno
 
-from dnf.yum import Errors
+import dnf.exceptions
 from dnf.yum import plugins
 from dnf.yum import logginglevels
 from dnf.yum.i18n import utf8_width, exception2msg, _
@@ -72,7 +72,7 @@ def main(args):
         try:
             base.closeRpmDB()
             base.doUnlock()
-        except Errors.LockError, e:
+        except dnf.exceptions.LockError, e:
             return 200
         return 0
 
@@ -90,7 +90,7 @@ def main(args):
         cli.check()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except Errors.YumBaseError, e:
+    except dnf.exceptions.YumBaseError, e:
         return exFatal(e)
 
     # Try to open the current directory to see if we have
@@ -108,7 +108,7 @@ def main(args):
     while True:
         try:
             base.doLock()
-        except Errors.LockError, e:
+        except dnf.exceptions.LockError, e:
             if exception2msg(e) != lockerr:
                 lockerr = exception2msg(e)
                 logger.critical(lockerr)
@@ -132,7 +132,7 @@ def main(args):
         result, resultmsgs = cli.run()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except Errors.YumBaseError, e:
+    except dnf.exceptions.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
@@ -173,7 +173,7 @@ def main(args):
         (result, resultmsgs) = base.buildTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except Errors.YumBaseError, e:
+    except dnf.exceptions.YumBaseError, e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
@@ -213,7 +213,7 @@ def main(args):
         return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except Errors.YumBaseError, e:
+    except dnf.exceptions.YumBaseError, e:
         return exFatal(e)
     except KeyboardInterrupt:
         return exUserCancel()

@@ -31,7 +31,7 @@ from iniparse.compat import NoSectionError, NoOptionError, ParsingError
 from iniparse.compat import RawConfigParser as ConfigParser
 import dnf.rpmUtils.transaction
 import dnf.yum.logginglevels
-import Errors
+import dnf.exceptions
 import types
 import misc
 from misc import get_uuid, read_in_items_from_dot_dir
@@ -982,7 +982,7 @@ def readStartupConfig(configfile, root, releasever=None):
     :param root: the base path to use for installation (typically '/')
     :return: A :class:`StartupConf` instance
 
-    :raises: :class:`Errors.ConfigError` if a problem is detected with while parsing.
+    :raises: :class:`dnf.exceptions.ConfigError` if a problem is detected with while parsing.
     """
 
     StartupConf.installroot.default = root
@@ -993,13 +993,13 @@ def readStartupConfig(configfile, root, releasever=None):
     try:
         parser.readfp(confpp_obj)
     except ParsingError, e:
-        raise Errors.ConfigError("Parsing file failed: %s" % e)
+        raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
     startupconf.populate(parser, 'main')
 
     # Check that plugin paths are all absolute
     for path in startupconf.pluginpath:
         if not path[0] == '/':
-            raise Errors.ConfigError("All plugin search paths must be absolute")
+            raise dnf.exceptions.ConfigError("All plugin search paths must be absolute")
     # Stuff this here to avoid later re-parsing
     startupconf._parser = parser
 
@@ -1067,7 +1067,7 @@ def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
     try:
         parser.readfp(confpp_obj)
     except ParsingError, e:
-        raise Errors.ConfigError("Parsing file failed: %s" % e)
+        raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
     ret = {}
     for section in parser.sections():
         ret[section] = VersionGroupConf()
@@ -1108,13 +1108,13 @@ def _getsysver(installroot, distroverpkg):
         # this is for pep 352 compliance on python 2.6 and above :(
         if sys.hexversion < 0x02050000:
             if hasattr(e,'message'):
-                raise Errors.YumBaseError("Error: " + str(e.message))
+                raise dnf.exceptions.YumBaseError("Error: " + str(e.message))
             else:
-                raise Errors.YumBaseError("Error: " + str(e))
-        raise Errors.YumBaseError("Error: " + str(e))
+                raise dnf.exceptions.YumBaseError("Error: " + str(e))
+        raise dnf.exceptions.YumBaseError("Error: " + str(e))
     except rpm.error, e:
         # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
-        raise Errors.YumBaseError("Error: " + str(e))
+        raise dnf.exceptions.YumBaseError("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
@@ -1123,7 +1123,7 @@ def _getsysver(installroot, distroverpkg):
         try:
             hdr = idx.next()
         except StopIteration:
-            raise Errors.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
+            raise dnf.exceptions.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
         del hdr
     del idx

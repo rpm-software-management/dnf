@@ -25,7 +25,7 @@ import operator
 
 from constants import *
 from dnf.yum.i18n import _
-import Errors
+import dnf.exceptions
 import misc
 
 import hawkey

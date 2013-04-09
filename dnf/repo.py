@@ -20,7 +20,7 @@
 
 import dnf.const
 import dnf.util
-import dnf.yum.Errors
+import dnf.exceptions
 import dnf.yum.config
 import dnf.yum.misc
 import logging
@@ -205,7 +205,7 @@ class Repo(dnf.yum.config.RepoConf):
             return librepo.LRO_URL, self.baseurl[0]
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.yum.Errors.RepoError, msg
+            raise dnf.exceptions.RepoError, msg
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
@@ -337,7 +337,7 @@ class Repo(dnf.yum.config.RepoConf):
                 return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
             msg = "Cache-only enabled but no cache for '%s'" % self.id
-            raise dnf.yum.Errors.RepoError(msg)
+            raise dnf.exceptions.RepoError(msg)
         if self._try_revive():
             # the metadata we have are expired, yet still reflect the origin:
             self.metadata.reset_age()
@@ -355,7 +355,7 @@ class Repo(dnf.yum.config.RepoConf):
             self.metadata = self._handle_load(handle)
         except librepo.LibrepoException as e:
             self.metadata = None
-            raise dnf.yum.Errors.RepoError(self._exc2msg(e))
+            raise dnf.exceptions.RepoError(self._exc2msg(e))
         self.sync_strategy = SYNC_TRY_CACHE
         return True
 

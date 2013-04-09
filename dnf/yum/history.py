@@ -24,7 +24,7 @@ from weakref import proxy as weakref
 from sqlutils import sqlite, executeSQL, sql_esc_glob
 import misc as misc
 import constants
-import Errors
+import dnf.exceptions
 from constants import *
 from packages import PackageObject
 from i18n import to_unicode, to_utf8
@@ -669,7 +669,7 @@ class YumHistory(object):
             except (IOError, OSError), e:
                 error = dnf.i18n.ucd(e)
                 msg = _("Unable to initialize yumdb history: %s") % error
-                raise Errors.YumBaseError(msg)
+                raise dnf.exceptions.YumBaseError(msg)
             else:
                 self.conf.writable = True
         else:

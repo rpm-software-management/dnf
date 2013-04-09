@@ -22,7 +22,7 @@ from dnf.rpmUtils import miscutils
 from dnf.rpmUtils import arch
 from dnf.rpmUtils.transaction import initReadOnlyTransaction
 import misc
-import Errors
+import dnf.exceptions
 from packages import parsePackages
 
 # For returnPackages(patterns=)

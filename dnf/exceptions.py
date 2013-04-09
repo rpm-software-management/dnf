@@ -14,10 +14,10 @@
 # Copyright 2004 Duke University
 
 """
-Exceptions and Errors thrown by yum.
+Core DNF Errors.
 """
 
-from i18n import to_unicode
+from dnf.yum.i18n import to_unicode
 
 class YumBaseError(Exception):
     """

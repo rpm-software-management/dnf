@@ -23,7 +23,6 @@ import dnf.yum.misc
 import hawkey
 import logging
 import sys
-import yum.Errors
 import package
 import queries
 

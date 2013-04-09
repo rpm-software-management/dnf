@@ -20,7 +20,7 @@ import urlparse
 import urlgrabber
 import os.path
 
-import Errors
+import dnf.exceptions
 
 
 _KEYCRE = re.compile(r"\$(\w+)")
@@ -102,7 +102,7 @@ class ConfigPreProcessor:
         # _pushfile will return None if he couldn't open the file
         fo = self._pushfile( url )
         if fo is None:
-            raise Errors.ConfigError, 'Error accessing file: %s' % url
+            raise dnf.exceptions.ConfigError, 'Error accessing file: %s' % url
 
     def readline( self, size=0 ):
         """
@@ -143,7 +143,7 @@ class ConfigPreProcessor:
                 if m:
                     url = m.group('url')
                     if len(url) == 0:
-                        raise Errors.ConfigError, \
+                        raise dnf.exceptions.ConfigError, \
                              'Error parsing config %s: include must specify file to include.' % (self.name)
                     else:
                         # whooohoo a valid include line.. push it on the stack
@@ -213,7 +213,7 @@ class ConfigPreProcessor:
             self._incstack.append( fo )
             self._alreadyincluded.append(includetuple)
         else:
-            raise Errors.ConfigError, \
+            raise dnf.exceptions.ConfigError, \
                   'Error accessing file for config %s' % (absurl)
 
         return fo

@@ -18,11 +18,11 @@
 # Red Hat, Inc.
 #
 
-import dnf.yum.Errors
+import dnf.exceptions
 
-class CliError(dnf.yum.Errors.YumBaseError):
+class CliError(dnf.exceptions.YumBaseError):
     """CLI Exception."""
 
     def __init__(self, args=''):
-        dnf.yum.Errors.YumBaseError.__init__(self)
+        dnf.exceptions.YumBaseError.__init__(self)
         self.args = args

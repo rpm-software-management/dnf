@@ -18,7 +18,7 @@
 import dnf.repodict
 from dnf.repo import Repo
 import unittest
-from dnf.yum.Errors import RepoError
+from dnf.exceptions import RepoError
 
 class TestMultiCall(unittest.TestCase):
     def test_multi_call(self):

@@ -23,7 +23,7 @@ import logginglevels
 from constants import *
 import config 
 from config import ParsingError, ConfigParser
-import Errors
+import dnf.exceptions
 from parser import ConfigPreProcessor
 
 from textwrap import fill
@@ -319,7 +319,7 @@ class YumPlugins:
         if modname not in self._plugins:
             self._plugins[modname] = (module, conf)
         else:
-            raise Errors.ConfigError(_('Two or more plugins with the name "%s" ' \
+            raise dnf.exceptions.ConfigError(_('Two or more plugins with the name "%s" ' \
                     'exist in the plugin search path') % modname)
         
         for slot in SLOTS:
@@ -350,7 +350,7 @@ class YumPlugins:
         try:
             parser.readfp(confpp_obj)
         except ParsingError, e:
-            raise Errors.ConfigError("Couldn't parse %s: %s" % (conffilename,
+            raise dnf.exceptions.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser
 
@@ -505,13 +505,13 @@ class ConfigPluginConduit(PluginConduit):
         """Register a new command.
 
         :param command: the command to register
-        :raises: :class:`Errors.ConfigError` if the registration
+        :raises: :class:`dnf.exceptions.ConfigError` if the registration
            of commands is not supported
         """
         if hasattr(self._base, 'registerCommand'):
             self._base.registerCommand(command)
         else:
-            raise Errors.ConfigError(_('registration of commands not supported'))
+            raise dnf.exceptions.ConfigError(_('registration of commands not supported'))
 
 class PostConfigPluginConduit(ConfigPluginConduit):
     """Conduit for use in the postconfig slot."""

@@ -22,7 +22,7 @@ import functools
 import hawkey
 import itertools
 import types
-import dnf.yum.Errors
+import dnf.exceptions
 import dnf.selector
 from dnf.util import first, is_glob_pattern
 

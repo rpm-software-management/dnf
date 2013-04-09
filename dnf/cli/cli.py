@@ -34,6 +34,7 @@ import rpm
 from weakref import proxy as weakref
 
 import output
+import dnf.exceptions
 import dnf.match_counter
 import dnf.yum.base
 import dnf.yum.logginglevels
@@ -204,7 +205,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 errors = dnf.yum.misc.unique(problems[key])
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
-            raise dnf.yum.Errors.YumBaseError, errstring
+            raise dnf.exceptions.YumBaseError, errstring
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
@@ -258,7 +259,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             for descr in tserrors:
                 errstring += '  %s\n' % to_unicode(descr)
 
-            raise dnf.yum.Errors.YumBaseError, errstring + '\n' + \
+            raise dnf.exceptions.YumBaseError, errstring + '\n' + \
                  self.errorSummary(errstring)
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
              _('Transaction Test Succeeded'))
@@ -324,7 +325,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             elif result == 1:
                 ay = self.conf.assumeyes and not self.conf.assumeno
                 if not sys.stdin.isatty() and not ay:
-                    raise dnf.yum.Errors.YumBaseError, \
+                    raise dnf.exceptions.YumBaseError, \
                             _('Refusing to automatically import keys when running ' \
                             'unattended.\nUse "-y" to override.')
 
@@ -334,7 +335,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             else:
                 # Fatal error
-                raise dnf.yum.Errors.YumBaseError, errmsg
+                raise dnf.exceptions.YumBaseError, errmsg
 
         return 0
 
@@ -427,7 +428,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
             try:
                 self.install(arg)
-            except dnf.yum.Errors.YumBaseError:
+            except dnf.exceptions.YumBaseError:
                 # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -574,7 +575,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.yum.Errors.YumBaseError:
+            except dnf.exceptions.YumBaseError:
                 # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -612,9 +613,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 txmbrs = self.reinstall(pattern=arg)
-            except dnf.yum.Errors.ReinstallRemoveError:
+            except dnf.exceptions.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
-            except dnf.yum.Errors.ReinstallInstallError, e:
+            except dnf.exceptions.ReinstallInstallError, e:
                 for ipkg in e.failed_pkgs:
                     xmsg = ''
                     yumdb_info = self.yumdb.get_package(ipkg)
@@ -710,7 +711,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             else:
                 try:
                     pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
-                except dnf.yum.Errors.YumBaseError:
+                except dnf.exceptions.YumBaseError:
                     pass
 
         results = self.findDeps(pkgs)
@@ -991,7 +992,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
                 try:
                     txmbrs = self.selectGroup(group.groupid)
-                except dnf.yum.Errors.GroupsError:
+                except dnf.exceptions.GroupsError:
                     self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                     continue
                 else:
@@ -1023,7 +1024,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         for group_string in grouplist:
             try:
                 txmbrs = self.groupRemove(group_string)
-            except dnf.yum.Errors.GroupsError:
+            except dnf.exceptions.GroupsError:
                 self.logger.critical(_('No group named %s exists'), group_string)
                 continue
             else:
@@ -1095,7 +1096,7 @@ class Cli(object):
                     repolist.enable()
                 else:
                     repolist.disable()
-        except dnf.yum.Errors.ConfigError, e:
+        except dnf.exceptions.ConfigError, e:
             self.logger.critical(e)
             self.print_usage()
             sys.exit(1)
@@ -1167,7 +1168,7 @@ class Cli(object):
         """
         for name in command.getNames():
             if name in self.cli_commands:
-                raise dnf.yum.Errors.ConfigError(_('Command "%s" already defined') % name)
+                raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)
             self.cli_commands[name] = command
 
 
@@ -1295,7 +1296,7 @@ class Cli(object):
                         self.logger.warning(msg % opt)
                     setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
 
-        except dnf.yum.Errors.ConfigError, e:
+        except dnf.exceptions.ConfigError, e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
         except IOError, e:
@@ -1606,7 +1607,7 @@ class YumOptionParser(OptionParser):
                     excludelist = self.base.conf.exclude
                     excludelist.append(exclude)
                     self.base.conf.exclude = excludelist
-                except dnf.yum.Errors.ConfigError, e:
+                except dnf.exceptions.ConfigError, e:
                     self.logger.critical(e)
                     self.print_help()
                     sys.exit(1)

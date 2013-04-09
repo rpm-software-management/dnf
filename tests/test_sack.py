@@ -19,7 +19,7 @@ import StringIO
 import base
 import dnf.repo
 import dnf.sack
-import dnf.yum.Errors
+import dnf.exceptions
 import hawkey
 import hawkey.test
 import itertools
@@ -57,14 +57,14 @@ class SackTest(base.TestCase):
 
     def test_add_repo_to_sack(self):
         def raiser():
-            raise dnf.yum.Errors.RepoError()
+            raise dnf.exceptions.RepoError()
 
         yumbase = base.MockYumBase()
         r = dnf.repo.Repo("bag")
         r.enable()
         yumbase._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)
-        self.assertRaises(dnf.yum.Errors.RepoError,
+        self.assertRaises(dnf.exceptions.RepoError,
                           yumbase._add_repo_to_sack, "bag")
         self.assertTrue(r.enabled)
         r.skip_if_unavailable = True

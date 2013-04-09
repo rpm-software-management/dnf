@@ -18,7 +18,7 @@
 import base
 import dnf.repo
 import dnf.util
-import dnf.yum.Errors
+import dnf.exceptions
 import librepo
 import mock
 import os
@@ -125,7 +125,7 @@ class RepoTest(base.TestCase):
 
     def test_load_badconf(self):
         self.repo.baseurl = []
-        self.assertRaises(dnf.yum.Errors.RepoError, self.repo.load)
+        self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
     def test_metadata_expire_in(self):
         self.assertEqual(self.repo.metadata_expire_in(), (False, 0))
@@ -136,7 +136,7 @@ class RepoTest(base.TestCase):
 
     def test_md_only_cached(self):
         self.repo.md_only_cached = True
-        self.assertRaises(dnf.yum.Errors.RepoError, self.repo.load)
+        self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
         self.repo.md_try_cache()
         self.repo.load()
         del self.repo

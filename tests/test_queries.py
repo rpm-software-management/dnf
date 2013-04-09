@@ -17,7 +17,6 @@
 
 import base
 import dnf.queries
-import dnf.yum.Errors
 import hawkey
 import unittest
 

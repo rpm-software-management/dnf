@@ -16,7 +16,7 @@
 import types
 import sys
 from constants import *
-from Errors import CompsException
+from dnf.exceptions import CompsException
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
 import fnmatch

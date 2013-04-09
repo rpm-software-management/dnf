@@ -20,7 +20,7 @@
 
 import fnmatch
 import dnf.util
-from dnf.yum.Errors import DuplicateRepoError, RepoError
+from dnf.exceptions import DuplicateRepoError, RepoError
 
 class MultiCallList(list):
     def __init__(self, iterable):
@@ -39,7 +39,7 @@ class RepoDict(dict):
         id_ = repo.id
         if id_ in self:
             msg = 'Repository %s is listed more than once in the configuration'
-            raise Errors.DuplicateRepoError(msg % id_)
+            raise DuplicateRepoError(msg % id_)
         self[id_] = repo
 
     @property

@@ -26,7 +26,7 @@ from i18n import utf8_text_wrap, to_utf8, to_unicode
 from packages import FakeRepository
 from misc import to_xml, decompress, repo_gen_decompress
 from misc import cElementTree_iterparse as iterparse 
-import Errors
+import dnf.exceptions
 
 import dnf.rpmUtils.miscutils
 
@@ -366,7 +366,7 @@ class UpdateMetadata(object):
         for repo in repos:
             try: # attempt to grab the updateinfo.xml.gz from the repodata
                 self.add(repo)
-            except Errors.RepoMDError:
+            except dnf.exceptions.RepoMDError:
                 continue # No metadata found for this repo
 
     def get_notices(self, name=None):
@@ -451,7 +451,7 @@ class UpdateMetadata(object):
                 unfile = repo_gen_decompress(md, 'updateinfo.xml')
                 infile = open(unfile, 'rt')
         elif isinstance(obj, FakeRepository):
-            raise Errors.RepoMDError, "No updateinfo for local pkg"
+            raise dnf.exceptions.RepoMDError, "No updateinfo for local pkg"
         else:   # obj is a file object
             infile = obj
 

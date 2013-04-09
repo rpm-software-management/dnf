@@ -36,7 +36,7 @@ P_ = i18n.P_
 
 import config
 from config import ParsingError, ConfigParser
-import Errors
+import dnf.exceptions
 import rpmsack
 from dnf.rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import dnf.rpmUtils.transaction
@@ -122,7 +122,7 @@ class Base(object):
         repo = self.repos[name]
         try:
             repo.load()
-        except Errors.RepoError as e:
+        except dnf.exceptions.RepoError as e:
             if repo.skip_if_unavailable is False:
                 raise
             msg = _("%s, disabling.") % str(e)
@@ -274,7 +274,7 @@ class Base(object):
             parser.readfp(confpp_obj)
         except ParsingError, e:
             msg = str(e)
-            raise Errors.ConfigError, msg
+            raise dnf.exceptions.ConfigError, msg
 
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
@@ -302,7 +302,7 @@ class Base(object):
 
             try:
                 thisrepo = self.readRepoConfig(parser, section)
-            except (Errors.RepoError, Errors.ConfigError), e:
+            except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError), e:
                 self.logger.warning(e)
                 continue
             else:
@@ -322,7 +322,7 @@ class Base(object):
             # collection
             try:
                 self.repos.add(thisrepo)
-            except Errors.RepoError, e:
+            except dnf.exceptions.RepoError, e:
                 self.logger.warning(e)
 
     def read_all_repos(self):
@@ -365,7 +365,7 @@ class Base(object):
             repo.populate(parser, section, self.conf)
         except ValueError, e:
             msg = _('Repository %r: Error parsing config: %s' % (section,e))
-            raise Errors.ConfigError, msg
+            raise dnf.exceptions.ConfigError, msg
 
         # Ensure that the repo name is set
         if not repo.name:
@@ -499,10 +499,10 @@ class Base(object):
                 continue
 
             if not repo.ready():
-                raise Errors.RepoError, "Repository '%s' not yet setup" % repo
+                raise dnf.exceptions.RepoError, "Repository '%s' not yet setup" % repo
             try:
                 groupremote = repo.getGroupLocation()
-            except Errors.RepoMDError, e:
+            except dnf.exceptions.RepoMDError, e:
                 pass
             else:
                 reposWithGroups.append(repo)
@@ -526,14 +526,14 @@ class Base(object):
 
             try:
                 self._comps.add(groupfile)
-            except (Errors.GroupsError,Errors.CompsException), e:
+            except (dnf.exceptions.GroupsError,dnf.exceptions.CompsException), e:
                 msg = _('Failed to add groups file for repository: %s - %s') % (repo, str(e))
                 self.logger.critical(msg)
             else:
                 repo.groups_added = True
 
         if self._comps.compscount == 0:
-            raise Errors.GroupsError, _('No Groups Available in any repository')
+            raise dnf.exceptions.GroupsError, _('No Groups Available in any repository')
 
         self._comps.compile(self.rpmdb.simplePkgList())
         self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))
@@ -708,7 +708,7 @@ class Base(object):
         :param cb: an rpm callback object to use in the transaction
         :return: a :class:`misc.GenericHolder` containing
            information about the results of the transaction
-        :raises: :class:`Errors.YumRPMTransError` if there is a
+        :raises: :class:`dnf.exceptions.YumRPMTransError` if there is a
            transaction cannot be completed
         """
         self.plugins.run('pretrans')
@@ -784,7 +784,7 @@ class Base(object):
                 resultobject.return_code = 1
             else:
                 self.logger.critical(_("Transaction couldn't start (no root?)"))
-                raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
+                raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
                                               errors=[])
         else:
             if self._record_history():
@@ -796,7 +796,7 @@ class Base(object):
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
                 self.logger.critical(e[0]) # should this be 'to_unicoded'?
-            raise Errors.YumRPMTransError(msg=_("Could not run transaction."),
+            raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
                                           errors=errors)
 
 
@@ -966,7 +966,7 @@ class Base(object):
         """Acquire the yum lock.
 
         :param lockfile: the file to use for the lock
-        :raises: :class:`Errors.LockError`
+        :raises: :class:`dnf.exceptions.LockError`
         """
         lockfile = const.PID_FILENAME
 
@@ -994,7 +994,7 @@ class Base(object):
                 break
             # Another copy seems to be running.
             msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
-            raise Errors.LockError(0, msg, oldpid)
+            raise dnf.exceptions.LockError(0, msg, oldpid)
         # We've got the lock, store it so we can auto-unlock on __del__...
         self._lockfile = lockfile
 
@@ -1037,7 +1037,7 @@ class Base(object):
             if not msg.errno == errno.EEXIST:
                 # Whoa. What the heck happened?
                 errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
-                raise Errors.LockError(msg.errno, errmsg, int(contents))
+                raise dnf.exceptions.LockError(msg.errno, errmsg, int(contents))
             return 0
 
     @staticmethod
@@ -1049,7 +1049,7 @@ class Base(object):
         try: fd = open(lockfile, 'r')
         except (IOError, OSError), e:
             msg = _("Could not open lock %s: %s") % (lockfile, e)
-            raise Errors.LockError(errno.EPERM, msg)
+            raise dnf.exceptions.LockError(errno.EPERM, msg)
         try: oldpid = int(fd.readline())
         except ValueError:
             return None # Bogus pid
@@ -1066,7 +1066,7 @@ class Base(object):
                     return None # The pid doesn't exist
                 # Whoa. What the heck happened?
                 msg = _('Unable to check if PID %s is active') % oldpid
-                raise Errors.LockError(errno.EPERM, msg, oldpid)
+                raise dnf.exceptions.LockError(errno.EPERM, msg, oldpid)
         return oldpid
 
     def verifyPkg(self, fo, po, raiseError):
@@ -1106,7 +1106,7 @@ class Base(object):
 
             if raiseError:
                 msg = _('Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata') %  po.repo.id
-                raise Errors.RepoError(msg)
+                raise dnf.exceptions.RepoError(msg)
             else:
                 return False
 
@@ -1127,7 +1127,7 @@ class Base(object):
         """
         try:
             filesum = misc.checksum(checksumType, fo)
-        except Errors.MiscError, e:
+        except dnf.exceptions.MiscError, e:
             raise URLGrabError(-3, _('Could not perform checksum'))
 
         if filesum != csum:
@@ -1165,7 +1165,7 @@ class Base(object):
             return 0
 
         """download list of package objects handed to you, output based on
-           callback, raise Errors.YumBaseError on problems"""
+           callback, raise dnf.exceptions.YumBaseError on problems"""
 
         errors = {}
         def adderror(po, msg):
@@ -1240,7 +1240,7 @@ class Base(object):
                         self.verbose_logger.warn("%s", errmsg)
                 done_repos.add(po.repoid)
 
-            except Errors.RepoError, e:
+            except dnf.exceptions.RepoError, e:
                 adderror(po, exception2msg(e))
             else:
                 if po in errors:
@@ -1578,7 +1578,7 @@ class Base(object):
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=pattern,
                                                               ignore_case=ic)
-                except Errors.YumBaseError:
+                except dnf.exceptions.YumBaseError:
                     avail = []
 
             for po in avail:
@@ -1653,7 +1653,7 @@ class Base(object):
         available = []
 
         if self.comps.compscount == 0:
-            raise Errors.GroupsError, _('No group data available for configured repositories')
+            raise dnf.exceptions.GroupsError, _('No group data available for configured repositories')
 
         if patterns is None:
             grps = self.comps.groups
@@ -1689,7 +1689,7 @@ class Base(object):
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = True
@@ -1709,7 +1709,7 @@ class Base(object):
         """
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = False
@@ -1744,13 +1744,13 @@ class Base(object):
         """
         raise NotImplementedError, "not implemented in hawkey" # :hawkey
         if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         txmbrs_used = []
         thesegroups = self.comps.return_groups(grpid)
 
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         package_types = self.conf.group_package_types
         if group_package_types:
@@ -1776,7 +1776,7 @@ class Base(object):
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
                     txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
-                except Errors.YumBaseError as e:
+                except dnf.exceptions.YumBaseError as e:
                     # :dead
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
@@ -1795,7 +1795,7 @@ class Base(object):
                     if self.isPackageInstalled(cond):
                         try:
                             txmbrs = self.install(name = condreq)
-                        except Errors.YumBaseError:
+                        except dnf.exceptions.YumBaseError:
                             # :dead
                             # we don't care if the package doesn't exist
                             continue
@@ -1845,11 +1845,11 @@ class Base(object):
         """
 
         if not self.comps.has_group(grpid):
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.selected = False
@@ -1933,7 +1933,7 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         return self.pkgSack.getProvides(depname, depflags, depver).keys()
@@ -1946,7 +1946,7 @@ class Base(object):
            the package that fulfils
         :return: the best, or first, package that fulfils the given
            dependency
-        :raises: a :class:`Errors.YumBaseError` if no packages that
+        :raises: a :class:`dnf.exceptions.YumBaseError` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -1957,13 +1957,13 @@ class Base(object):
 
         try:
             pkglist = self.returnPackagesByDep(depstring)
-        except Errors.YumBaseError:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+        except dnf.exceptions.YumBaseError:
+            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
 
         return result
 
@@ -1996,7 +1996,7 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise Errors.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
@@ -2009,7 +2009,7 @@ class Base(object):
            the package that fulfils
         :return: the best, or first, installed package that fulfils the given
            dependency
-        :raises: a :class:`Errors.YumBaseError` if no packages that
+        :raises: a :class:`dnf.exceptions.YumBaseError` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -2020,13 +2020,13 @@ class Base(object):
 
         try:
             pkglist = self.returnInstalledPackagesByDep(depstring)
-        except Errors.YumBaseError:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+        except dnf.exceptions.YumBaseError:
+            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise Errors.YumBaseError, _('No Package found for %s') % errstring
+            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
 
         return result
 
@@ -2119,7 +2119,7 @@ class Base(object):
             try:
                 txmbrs = self.selectGroup(group.groupid)
                 tx_return.extend(txmbrs)
-            except Errors.GroupsError:
+            except dnf.exceptions.GroupsError:
                 self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
                 continue
         return tx_return
@@ -2131,7 +2131,7 @@ class Base(object):
         tx_return = []
         try:
             txmbrs = self.groupRemove(group_string)
-        except Errors.GroupsError:
+        except dnf.exceptions.GroupsError:
             self.logger.critical(_('No group named %s exists'), group_string)
         else:
             tx_return.extend(txmbrs)
@@ -2146,7 +2146,7 @@ class Base(object):
 
         thesegroups = self.comps.return_groups(grpid)
         if not thesegroups:
-            raise Errors.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
         pkgnames = set()
         for thisgroup in thesegroups:
             pkgnames.update(thisgroup.packages)
@@ -2331,7 +2331,7 @@ class Base(object):
            specify a package for reinstallation
         :return: a list of the transaction members added to the
            transaction set by this method
-        :raises: :class:`Errors.ReinstallRemoveError`
+        :raises: :class:`dnf.exceptions.ReinstallRemoveError`
 
         """
         tx_return = []
@@ -2344,7 +2344,7 @@ class Base(object):
             installed = queries.installed_by_name(self.sack, pat)
             available = queries.available_by_name(self.sack, pat)
         if not installed:
-            raise Errors.ReinstallRemoveError(
+            raise dnf.exceptions.ReinstallRemoveError(
                 _("Problem in reinstall: no package matched to remove"))
 
         installed = queries.per_nevra_dict(installed)
@@ -2354,7 +2354,7 @@ class Base(object):
                 msg = _("Problem in reinstall: no package %s matched to install")
                 msg %= nevra
                 failed_pkgs = [installed[nevra]]
-                raise Errors.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
+                raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
 
             txmbr = self.tsInfo.addInstall(available[nevra])
             tx_return.append(txmbr)
@@ -2429,7 +2429,7 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except Errors.YumBaseError:
+                except dnf.exceptions.YumBaseError:
                     # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
@@ -2497,7 +2497,7 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except Errors.YumBaseError:
+                except dnf.exceptions.YumBaseError:
                     # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
@@ -2554,7 +2554,7 @@ class Base(object):
             rawkey = urlgrabber.urlread(url, **opts)
 
         except urlgrabber.grabber.URLGrabError, e:
-            raise Errors.YumBaseError(_('GPG key retrieval failed: ') +
+            raise dnf.exceptions.YumBaseError(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
 
         # check for a .asc file accompanying it - that's our gpg sig on the key
@@ -2577,7 +2577,7 @@ class Base(object):
                                     StringIO.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
-                    raise Errors.YumBaseError(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
+                    raise dnf.exceptions.YumBaseError(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
                     self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -2587,7 +2587,7 @@ class Base(object):
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
-            raise Errors.YumBaseError(_('Invalid GPG Key from %s: %s') %
+            raise dnf.exceptions.YumBaseError(_('Invalid GPG Key from %s: %s') %
                                       (url, to_unicode(str(e))))
         keys = []
         for keyinfo in keys_info:
@@ -2595,7 +2595,7 @@ class Base(object):
             for info in ('keyid', 'timestamp', 'userid',
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
-                    raise Errors.YumBaseError, \
+                    raise dnf.exceptions.YumBaseError, \
                       _('GPG key parsing failed: key does not have value %s') + info
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
@@ -2641,7 +2641,7 @@ class Base(object):
         :param fullaskcb: Callback function to use to ask permission to
            import a key.  This differs from *askcb* in that it gets
            passed a dictionary so that we can expand the values passed.
-        :raises: :class:`Errors.YumBaseError` if there are errors
+        :raises: :class:`dnf.exceptions.YumBaseError` if there are errors
            retrieving the keys
         """
         repo = self.repos[po.repoid]
@@ -2701,12 +2701,12 @@ class Base(object):
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
-                    raise Errors.YumBaseError, _prov_key_data(msg)
+                    raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
         if not key_installed and user_cb_fail:
-            raise Errors.YumBaseError, _("Didn't install any keys")
+            raise dnf.exceptions.YumBaseError, _("Didn't install any keys")
 
         if not key_installed:
             msg = _('The GPG keys listed for the "%s" repository are ' \
@@ -2714,7 +2714,7 @@ class Base(object):
                   'package.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % repo.name
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
@@ -2722,7 +2722,7 @@ class Base(object):
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             self.logger.info(msg)
             errmsg = to_unicode(errmsg)
-            raise Errors.YumBaseError, _prov_key_data(errmsg)
+            raise dnf.exceptions.YumBaseError, _prov_key_data(errmsg)
 
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
@@ -2802,7 +2802,7 @@ class Base(object):
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
-                    raise Errors.YumBaseError, _prov_key_data(msg)
+                    raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
@@ -2819,7 +2819,7 @@ class Base(object):
 
         if not key_installed and user_cb_fail:
             msg = _("Didn't install any keys for repo %s") % repo
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
 
         if not key_installed:
             msg = \
@@ -2827,7 +2827,7 @@ class Base(object):
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
-            raise Errors.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
 
     def getKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given
