@@ -93,12 +93,6 @@ dnf.yum.plugins
 .. automodule:: dnf.yum.plugins
     :members:
 
-dnf.yum.repoMDObject
---------------------
-
-.. automodule:: dnf.yum.repoMDObject
-    :members:
-
 dnf.yum.rpmsack
 ---------------
 
