@@ -1570,7 +1570,8 @@ class Base(object):
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
-            raise NotImplementedError, "not implemented in hawkey" # :hawkey
+            raise NotImplementedError, "not implemented in DNF"
+            # :dead
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             if showdups:
@@ -1580,7 +1581,7 @@ class Base(object):
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=pattern,
                                                               ignore_case=ic)
-                except Errors.PackageSackError:
+                except Errors.YumBaseError:
                     avail = []
 
             for po in avail:
@@ -1778,7 +1779,8 @@ class Base(object):
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
                     txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
-                except Errors.InstallError, e:
+                except Errors.YumBaseError as e:
+                    # :dead
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
                 else:
@@ -1796,7 +1798,8 @@ class Base(object):
                     if self.isPackageInstalled(cond):
                         try:
                             txmbrs = self.install(name = condreq)
-                        except Errors.InstallError:
+                        except Errors.YumBaseError:
+                            # :dead
                             # we don't care if the package doesn't exist
                             continue
                         else:
@@ -2168,8 +2171,7 @@ class Base(object):
 
             :return: a list of the transaction members added to the
                transaction set by this function
-            :raises: :class:`Errors.InstallError` if there is a problem
-               installing the package
+
         """
         def msg_installed(pkg):
             name = unicode(pkg)
@@ -2241,8 +2243,7 @@ class Base(object):
 
         :return: a list of the transaction members that were added to
            the transaction set by this method
-        :raises: :class:`Errors.RemoveError` if nothing is specified
-           to mark for removal
+
         """
 
         tx_return = []
@@ -2333,9 +2334,8 @@ class Base(object):
            specify a package for reinstallation
         :return: a list of the transaction members added to the
            transaction set by this method
-        :raises: :class:`Errors.ReinstallRemoveError` or
-           :class:`Errors.ReinstallInstallError` depending the nature
-           of the error that is encountered
+        :raises: :class:`Errors.ReinstallRemoveError`
+
         """
         tx_return = []
         if po:
@@ -2371,8 +2371,7 @@ class Base(object):
 
         :return: a list of the transaction members added to the
            transaction set by this method
-        :raises: :class:`Errors.DowngradeError` if no packages are
-           specified or available for downgrade
+
         """
         tx_return = []
         subj = queries.Subject(pkg_spec)
@@ -2433,7 +2432,8 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except Errors.DowngradeError:
+                except Errors.YumBaseError:
+                    # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if force_changed_removal and pkg.state == 'Downgraded':
@@ -2500,7 +2500,8 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except Errors.DowngradeError:
+                except Errors.YumBaseError:
+                    # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if pkg.state == 'Downgraded':
@@ -2925,21 +2926,6 @@ class Base(object):
             # Add a dep relation to the new version of the package, causing this one to be erased
             # this way skipbroken, should clean out the old one, if the new one is skipped
             txmbr.depends_on.append(rel)
-
-    def _checkSignatures(self,pkgs,callback):
-        ''' The the signatures of the downloaded packages '''
-        # This can be overloaded by a subclass.
-        for po in pkgs:
-            result, errmsg = self.sigCheckPkg(po)
-            if result == 0:
-                # Verified ok, or verify not req'd
-                continue
-            elif result == 1:
-                self.getKeyForPackage(po, self._askForGPGKeyImport)
-            else:
-                raise Errors.YumGPGCheckError, errmsg
-
-        return 0
 
     def _askForGPGKeyImport(self, po, userid, hexkeyid):
         '''

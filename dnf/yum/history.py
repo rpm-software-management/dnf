@@ -669,7 +669,7 @@ class YumHistory(object):
             except (IOError, OSError), e:
                 error = dnf.i18n.ucd(e)
                 msg = _("Unable to initialize yumdb history: %s") % error
-                raise Errors.YumDBError(msg)
+                raise Errors.YumBaseError(msg)
             else:
                 self.conf.writable = True
         else:

@@ -33,24 +33,6 @@ class YumBaseError(Exception):
     def __unicode__(self):
         return '%s' % to_unicode(self.value)
 
-class DNFValueError(YumBaseError):
-    pass
-
-class YumGPGCheckError(YumBaseError):
-    pass
-
-class YumDownloadError(YumBaseError):
-    pass
-
-class YumTestTransactionError(YumBaseError):
-    pass
-
-class YumRPMCheckError(YumBaseError):
-    pass
-
-class YumDBError(YumBaseError):
-    pass
-
 class YumRPMTransError(YumBaseError):
     """ This class means rpm's .ts.run() returned known errors. We are compat.
         with YumBaseError in that we print nicely, and compat. with traditional
@@ -75,16 +57,10 @@ class LockError(YumBaseError):
         self.msg = msg
         self.pid = pid
 
-class DepError(YumBaseError):
-    pass
-
 class RepoError(YumBaseError):
     pass
 
 class DuplicateRepoError(RepoError):
-    pass
-
-class NoMoreMirrorsRepoError(RepoError):
     pass
 
 class ConfigError(YumBaseError):
@@ -94,15 +70,6 @@ class MiscError(YumBaseError):
     pass
 
 class GroupsError(YumBaseError):
-    pass
-
-class InstallError(YumBaseError):
-    pass
-
-class UpdateError(YumBaseError):
-    pass
-
-class RemoveError(YumBaseError):
     pass
 
 class ReinstallError(YumBaseError):
@@ -116,25 +83,10 @@ class ReinstallInstallError(ReinstallError):
         ReinstallError.__init__(self, value)
         self.failed_pkgs = failed_pkgs
 
-class DowngradeError(YumBaseError):
-    pass
-
 class RepoMDError(YumBaseError):
     pass
 
-class PackageSackError(YumBaseError):
-    pass
-
-class RpmDBError(YumBaseError):
-    pass
-
 class CompsException(YumBaseError):
-    pass
-
-class MediaError(YumBaseError):
-    pass
-
-class PkgTagsError(YumBaseError):
     pass
 
 class YumDeprecationWarning(DeprecationWarning):

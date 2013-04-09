@@ -427,7 +427,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
             try:
                 self.install(arg)
-            except dnf.yum.Errors.InstallError:
+            except dnf.yum.Errors.YumBaseError:
+                # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
                                         self.term.MODE['bold'], arg,
@@ -573,7 +574,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.yum.Errors.DowngradeError:
+            except dnf.yum.Errors.YumBaseError:
+                # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
                                         self.term.MODE['bold'], arg,
@@ -694,6 +696,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+        # :dead
         pkgs = []
         for arg in args:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
@@ -707,7 +710,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             else:
                 try:
                     pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
-                except dnf.yum.Errors.PackageSackError:
+                except dnf.yum.Errors.YumBaseError:
                     pass
 
         results = self.findDeps(pkgs)
