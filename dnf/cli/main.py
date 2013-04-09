@@ -90,7 +90,7 @@ def main(args):
         cli.check()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except dnf.exceptions.YumBaseError, e:
+    except dnf.exceptions.Error, e:
         return exFatal(e)
 
     # Try to open the current directory to see if we have
@@ -132,7 +132,7 @@ def main(args):
         result, resultmsgs = cli.run()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except dnf.exceptions.YumBaseError, e:
+    except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
@@ -173,7 +173,7 @@ def main(args):
         (result, resultmsgs) = base.buildTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except dnf.exceptions.YumBaseError, e:
+    except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
     except KeyboardInterrupt:
@@ -213,7 +213,7 @@ def main(args):
         return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
-    except dnf.exceptions.YumBaseError, e:
+    except dnf.exceptions.Error, e:
         return exFatal(e)
     except KeyboardInterrupt:
         return exUserCancel()

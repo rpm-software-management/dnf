@@ -20,9 +20,9 @@
 
 import dnf.exceptions
 
-class CliError(dnf.exceptions.YumBaseError):
+class CliError(dnf.exceptions.Error):
     """CLI Exception."""
 
     def __init__(self, args=''):
-        dnf.exceptions.YumBaseError.__init__(self)
+        dnf.exceptions.Error.__init__(self)
         self.args = args

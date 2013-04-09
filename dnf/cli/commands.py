@@ -326,7 +326,7 @@ class InstallCommand(Command):
         self.doneCommand(_("Setting up Install Process"))
         try:
             return self.base.installPkgs(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
 class UpgradeCommand(Command):
@@ -388,7 +388,7 @@ class UpgradeCommand(Command):
         self.doneCommand(_("Setting up Update Process"))
         try:
             return self.base.updatePkgs(extcmds)
-        except dnf.exceptions.YumBaseError as e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 class UpgradeToCommand(Command):
@@ -416,7 +416,7 @@ class UpgradeToCommand(Command):
         self.doneCommand(_("Setting up Update Process"))
         try:
             return self.base.upgrade_userlist_to(extcmds)
-        except dnf.exceptions.YumBaseError as e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 class DistroSyncCommand(Command):
@@ -479,7 +479,7 @@ class DistroSyncCommand(Command):
         self.doneCommand(_("Setting up Distribution Synchronization Process"))
         try:
             return self.base.distro_sync_userlist(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
@@ -553,7 +553,7 @@ class InfoCommand(Command):
         try:
             highlight = self.base.term.MODE['bold']
             ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
         else:
             update_pkgs = {}
@@ -733,7 +733,7 @@ class EraseCommand(Command):
         self.doneCommand(_("Setting up Remove Process"))
         try:
             return self.base.erasePkgs(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
     def needTs(self, basecmd, extcmds):
@@ -796,7 +796,7 @@ class GroupsCommand(Command):
             self.base.doGroupSetup()
         except dnf.exceptions.GroupsError:
             return 1, [_('No Groups on which to run command')]
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
     def _grp_cmd(self, basecmd, extcmds):
@@ -881,7 +881,7 @@ class GroupsCommand(Command):
             if cmd == 'remove':
                 return self.base.removeGroups(extcmds)
 
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
 
@@ -1126,7 +1126,7 @@ class ProvidesCommand(Command):
         self.base.logger.debug("Searching Packages: ")
         try:
             return self.base.provides(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
 class CheckUpdateCommand(Command):
@@ -1216,7 +1216,7 @@ class CheckUpdateCommand(Command):
                     self.base.updatesObsoletesList(obtup, 'obsoletes',
                                               columns=columns)
                 result = 100
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
         else:
             return result, []
@@ -1275,7 +1275,7 @@ class SearchCommand(Command):
         self.base.logger.debug(_("Searching Packages: "))
         try:
             return self.cli.search(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
     def needTs(self, basecmd, extcmds):
@@ -1343,7 +1343,7 @@ class DepListCommand(Command):
         self.doneCommand(_("Finding dependencies: "))
         try:
             return self.base.deplist(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
 
@@ -1780,7 +1780,7 @@ class ReInstallCommand(Command):
         try:
             return self.base.reinstallPkgs(extcmds)
 
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [to_unicode(e)]
 
     def getSummary(self):
@@ -1853,7 +1853,7 @@ class DowngradeCommand(Command):
         self.doneCommand(_("Setting up Downgrade Process"))
         try:
             return self.base.downgradePkgs(extcmds)
-        except dnf.exceptions.YumBaseError, e:
+        except dnf.exceptions.Error, e:
             return 1, [str(e)]
 
     def getSummary(self):
@@ -1995,7 +1995,7 @@ class VersionCommand(Command):
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
                         _append_repos(cols, data[3][grp])
-            except dnf.exceptions.YumBaseError, e:
+            except dnf.exceptions.Error, e:
                 return 1, [str(e)]
         if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
@@ -2014,7 +2014,7 @@ class VersionCommand(Command):
                                      str(data[2][grp])))
                         if verbose:
                             _append_repos(cols, data[3][grp])
-            except dnf.exceptions.YumBaseError, e:
+            except dnf.exceptions.Error, e:
                 return 1, [str(e)]
 
         data = {'rid' : {}, 'ver' : {}}

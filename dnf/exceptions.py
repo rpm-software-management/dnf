@@ -19,7 +19,7 @@ Core DNF Errors.
 
 from dnf.yum.i18n import to_unicode
 
-class YumBaseError(Exception):
+class Error(Exception):
     """
     Base Yum Error. All other Errors thrown by yum should inherit from
     this.
@@ -33,14 +33,14 @@ class YumBaseError(Exception):
     def __unicode__(self):
         return '%s' % to_unicode(self.value)
 
-class YumRPMTransError(YumBaseError):
+class YumRPMTransError(Error):
     """ This class means rpm's .ts.run() returned known errors. We are compat.
-        with YumBaseError in that we print nicely, and compat. with traditional
+        with Error in that we print nicely, and compat. with traditional
         usage of this error from runTransaction(). """
     def __init__(self, msg, errors):
         self.msg    = msg
         self.errors = errors
-        # old YumBaseError raises from runTransaction used to raise just this
+        # old Error raises from runTransaction used to raise just this
         self.value  = self.errors
 
     def __str__(self):
@@ -50,29 +50,29 @@ class YumRPMTransError(YumBaseError):
         return '%s' % to_unicode(self.msg)
 
 
-class LockError(YumBaseError):
+class LockError(Error):
     def __init__(self, errno, msg, pid=0):
-        YumBaseError.__init__(self, msg)
+        Error.__init__(self, msg)
         self.errno = errno
         self.msg = msg
         self.pid = pid
 
-class RepoError(YumBaseError):
+class RepoError(Error):
     pass
 
 class DuplicateRepoError(RepoError):
     pass
 
-class ConfigError(YumBaseError):
+class ConfigError(Error):
     pass
 
-class MiscError(YumBaseError):
+class MiscError(Error):
     pass
 
-class GroupsError(YumBaseError):
+class GroupsError(Error):
     pass
 
-class ReinstallError(YumBaseError):
+class ReinstallError(Error):
     pass
 
 class ReinstallRemoveError(ReinstallError):
@@ -83,8 +83,8 @@ class ReinstallInstallError(ReinstallError):
         ReinstallError.__init__(self, value)
         self.failed_pkgs = failed_pkgs
 
-class RepoMDError(YumBaseError):
+class RepoMDError(Error):
     pass
 
-class CompsException(YumBaseError):
+class CompsException(Error):
     pass

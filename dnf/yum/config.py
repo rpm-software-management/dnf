@@ -1108,13 +1108,13 @@ def _getsysver(installroot, distroverpkg):
         # this is for pep 352 compliance on python 2.6 and above :(
         if sys.hexversion < 0x02050000:
             if hasattr(e,'message'):
-                raise dnf.exceptions.YumBaseError("Error: " + str(e.message))
+                raise dnf.exceptions.Error("Error: " + str(e.message))
             else:
-                raise dnf.exceptions.YumBaseError("Error: " + str(e))
-        raise dnf.exceptions.YumBaseError("Error: " + str(e))
+                raise dnf.exceptions.Error("Error: " + str(e))
+        raise dnf.exceptions.Error("Error: " + str(e))
     except rpm.error, e:
         # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
-        raise dnf.exceptions.YumBaseError("Error: " + str(e))
+        raise dnf.exceptions.Error("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
     if idx.count() == 0:
@@ -1123,7 +1123,7 @@ def _getsysver(installroot, distroverpkg):
         try:
             hdr = idx.next()
         except StopIteration:
-            raise dnf.exceptions.YumBaseError("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
+            raise dnf.exceptions.Error("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
         del hdr
     del idx

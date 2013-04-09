@@ -205,7 +205,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 errors = dnf.yum.misc.unique(problems[key])
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
-            raise dnf.exceptions.YumBaseError, errstring
+            raise dnf.exceptions.Error, errstring
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
@@ -259,7 +259,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             for descr in tserrors:
                 errstring += '  %s\n' % to_unicode(descr)
 
-            raise dnf.exceptions.YumBaseError, errstring + '\n' + \
+            raise dnf.exceptions.Error, errstring + '\n' + \
                  self.errorSummary(errstring)
         self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
              _('Transaction Test Succeeded'))
@@ -313,7 +313,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         :param pkgs: a list of package objects to verify the GPG
            signatures of
         :return: non-zero if execution should stop due to an error
-        :raises: Will raise :class:`YumBaseError` if there's a problem
+        :raises: Will raise :class:`Error` if there's a problem
         """
         for po in pkgs:
             result, errmsg = self.sigCheckPkg(po)
@@ -325,7 +325,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             elif result == 1:
                 ay = self.conf.assumeyes and not self.conf.assumeno
                 if not sys.stdin.isatty() and not ay:
-                    raise dnf.exceptions.YumBaseError, \
+                    raise dnf.exceptions.Error, \
                             _('Refusing to automatically import keys when running ' \
                             'unattended.\nUse "-y" to override.')
 
@@ -335,7 +335,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             else:
                 # Fatal error
-                raise dnf.exceptions.YumBaseError, errmsg
+                raise dnf.exceptions.Error, errmsg
 
         return 0
 
@@ -428,7 +428,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
             try:
                 self.install(arg)
-            except dnf.exceptions.YumBaseError:
+            except dnf.exceptions.Error:
                 # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -575,7 +575,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.exceptions.YumBaseError:
+            except dnf.exceptions.Error:
                 # :dead
                 self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
@@ -711,7 +711,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             else:
                 try:
                     pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
-                except dnf.exceptions.YumBaseError:
+                except dnf.exceptions.Error:
                     pass
 
         results = self.findDeps(pkgs)

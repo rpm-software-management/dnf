@@ -1165,7 +1165,7 @@ class Base(object):
             return 0
 
         """download list of package objects handed to you, output based on
-           callback, raise dnf.exceptions.YumBaseError on problems"""
+           callback, raise dnf.exceptions.Error on problems"""
 
         errors = {}
         def adderror(po, msg):
@@ -1578,7 +1578,7 @@ class Base(object):
                 try:
                     avail = self.pkgSack.returnNewestByNameArch(patterns=pattern,
                                                               ignore_case=ic)
-                except dnf.exceptions.YumBaseError:
+                except dnf.exceptions.Error:
                     avail = []
 
             for po in avail:
@@ -1776,7 +1776,7 @@ class Base(object):
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
                     txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
-                except dnf.exceptions.YumBaseError as e:
+                except dnf.exceptions.Error as e:
                     # :dead
                     self.verbose_logger.debug(_('No package named %s available to be installed'),
                         pkg)
@@ -1795,7 +1795,7 @@ class Base(object):
                     if self.isPackageInstalled(cond):
                         try:
                             txmbrs = self.install(name = condreq)
-                        except dnf.exceptions.YumBaseError:
+                        except dnf.exceptions.Error:
                             # :dead
                             # we don't care if the package doesn't exist
                             continue
@@ -1933,7 +1933,7 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.Error, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         return self.pkgSack.getProvides(depname, depflags, depver).keys()
@@ -1946,7 +1946,7 @@ class Base(object):
            the package that fulfils
         :return: the best, or first, package that fulfils the given
            dependency
-        :raises: a :class:`dnf.exceptions.YumBaseError` if no packages that
+        :raises: a :class:`dnf.exceptions.Error` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -1957,13 +1957,13 @@ class Base(object):
 
         try:
             pkglist = self.returnPackagesByDep(depstring)
-        except dnf.exceptions.YumBaseError:
-            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
+        except dnf.exceptions.Error:
+            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
 
         return result
 
@@ -1996,7 +1996,7 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.YumBaseError, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.Error, _('Invalid version flag from: %s') % str(depstring)
                     depflags = SYMBOLFLAGS[flagsymbol]
 
         return self.rpmdb.getProvides(depname, depflags, depver).keys()
@@ -2009,7 +2009,7 @@ class Base(object):
            the package that fulfils
         :return: the best, or first, installed package that fulfils the given
            dependency
-        :raises: a :class:`dnf.exceptions.YumBaseError` if no packages that
+        :raises: a :class:`dnf.exceptions.Error` if no packages that
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
@@ -2020,13 +2020,13 @@ class Base(object):
 
         try:
             pkglist = self.returnInstalledPackagesByDep(depstring)
-        except dnf.exceptions.YumBaseError:
-            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
+        except dnf.exceptions.Error:
+            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise dnf.exceptions.YumBaseError, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
 
         return result
 
@@ -2429,7 +2429,7 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except dnf.exceptions.YumBaseError:
+                except dnf.exceptions.Error:
                     # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
@@ -2497,7 +2497,7 @@ class Base(object):
                 try:
                     if self.downgrade(pkgtup=pkg.pkgtup):
                         done = True
-                except dnf.exceptions.YumBaseError:
+                except dnf.exceptions.Error:
                     # :dead
                     self.logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
@@ -2554,7 +2554,7 @@ class Base(object):
             rawkey = urlgrabber.urlread(url, **opts)
 
         except urlgrabber.grabber.URLGrabError, e:
-            raise dnf.exceptions.YumBaseError(_('GPG key retrieval failed: ') +
+            raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
 
         # check for a .asc file accompanying it - that's our gpg sig on the key
@@ -2577,7 +2577,7 @@ class Base(object):
                                     StringIO.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
-                    raise dnf.exceptions.YumBaseError(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
+                    raise dnf.exceptions.Error(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
                     self.verbose_logger.log(logginglevels.INFO_2, msg)
@@ -2587,7 +2587,7 @@ class Base(object):
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError, e:
-            raise dnf.exceptions.YumBaseError(_('Invalid GPG Key from %s: %s') %
+            raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
                                       (url, to_unicode(str(e))))
         keys = []
         for keyinfo in keys_info:
@@ -2595,7 +2595,7 @@ class Base(object):
             for info in ('keyid', 'timestamp', 'userid',
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
-                    raise dnf.exceptions.YumBaseError, \
+                    raise dnf.exceptions.Error, \
                       _('GPG key parsing failed: key does not have value %s') + info
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
@@ -2641,7 +2641,7 @@ class Base(object):
         :param fullaskcb: Callback function to use to ask permission to
            import a key.  This differs from *askcb* in that it gets
            passed a dictionary so that we can expand the values passed.
-        :raises: :class:`dnf.exceptions.YumBaseError` if there are errors
+        :raises: :class:`dnf.exceptions.Error` if there are errors
            retrieving the keys
         """
         repo = self.repos[po.repoid]
@@ -2701,12 +2701,12 @@ class Base(object):
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
-                    raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
+                    raise dnf.exceptions.Error, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
         if not key_installed and user_cb_fail:
-            raise dnf.exceptions.YumBaseError, _("Didn't install any keys")
+            raise dnf.exceptions.Error, _("Didn't install any keys")
 
         if not key_installed:
             msg = _('The GPG keys listed for the "%s" repository are ' \
@@ -2714,7 +2714,7 @@ class Base(object):
                   'package.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % repo.name
-            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.Error, _prov_key_data(msg)
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
@@ -2722,7 +2722,7 @@ class Base(object):
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             self.logger.info(msg)
             errmsg = to_unicode(errmsg)
-            raise dnf.exceptions.YumBaseError, _prov_key_data(errmsg)
+            raise dnf.exceptions.Error, _prov_key_data(errmsg)
 
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
@@ -2802,7 +2802,7 @@ class Base(object):
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
-                    raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
+                    raise dnf.exceptions.Error, _prov_key_data(msg)
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
@@ -2819,7 +2819,7 @@ class Base(object):
 
         if not key_installed and user_cb_fail:
             msg = _("Didn't install any keys for repo %s") % repo
-            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.Error, _prov_key_data(msg)
 
         if not key_installed:
             msg = \
@@ -2827,7 +2827,7 @@ class Base(object):
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
-            raise dnf.exceptions.YumBaseError, _prov_key_data(msg)
+            raise dnf.exceptions.Error, _prov_key_data(msg)
 
     def getKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given
