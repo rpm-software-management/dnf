@@ -2054,6 +2054,8 @@ class HistoryCommand(Command):
     history command.
     """
 
+    activate_sack = True
+
     def getNames(self):
         """Return a list containing the names of this command.  This
         command can be called from the command line by using any of these names.
