@@ -14,7 +14,7 @@
 # Copyright 2005 Duke University
 # Parts Copyright 2007 Red Hat, Inc
 
-
+from __future__ import print_function
 import rpm
 import os
 import fcntl
@@ -106,7 +106,7 @@ class RPMBaseCallback:
 
     def errorlog(self, msg):
         # FIXME this should probably dump to the filelog, too
-        print >> sys.stderr, msg
+        print(msg, file=sys.stderr)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -133,17 +133,17 @@ class SimpleCliCallBack(RPMBaseCallback):
         msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package,
                                    te_current, te_total, ts_current, ts_total)
         if msg != self.lastmsg:
-            print msg
+            print(msg)
         self.lastmsg = msg
         self.lastpackage = package
 
     def scriptout(self, package, msgs):
         if msgs:
-            print msgs,
+            print(msgs, end='')
 
     def verify_txmbr(self, base, txmbr, count):
         " Callback for post transaction when we are in verifyTransaction(). "
-        print _("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr)
+        print(_("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr))
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The
@@ -165,7 +165,7 @@ class _WrapNoExceptions:
             except Exception, e:
                 # It's impossible to debug stuff without this:
                 try:
-                    print "Error:", "display callback failed:", e
+                    print("Error:", "display callback failed:", e)
                 except:
                     pass
 

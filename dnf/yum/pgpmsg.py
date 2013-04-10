@@ -14,6 +14,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import print_function
 import struct, time, cStringIO, base64, types
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
@@ -1294,4 +1295,4 @@ def decode_multiple_keys(msg):
 if __name__ == '__main__' :
     import sys
     for pgp_cert in decode_multiple_keys(open(sys.argv[1]).read()) :
-        print pgp_cert
+        print(pgp_cert)

@@ -13,6 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Copyright 2005 Duke University
 
+from __future__ import print_function
 import types
 import sys
 from constants import *
@@ -584,23 +585,23 @@ class Comps(object):
 def main():
 
     try:
-        print sys.argv[1]
+        print(sys.argv[1])
         p = Comps()
         for srcfile in sys.argv[1:]:
             p.add(srcfile)
 
         for group in p.groups:
-            print group
+            print(group)
             for pkg in group.packages:
-                print '  ' + pkg
+                print('  ' + pkg)
         
         for category in p.categories:
-            print category.name
+            print(category.name)
             for group in category.groups:
-                print '  ' + group
+                print('  ' + group)
                 
     except IOError:
-        print >> sys.stderr, "newcomps.py: No such file:\'%s\'" % sys.argv[1]
+        print("newcomps.py: No such file:\'%s\'" % sys.argv[1], file=sys.stderr)
         sys.exit(1)
         
 if __name__ == '__main__':

@@ -21,6 +21,7 @@
 Command line interface yum class and related.
 """
 
+from __future__ import print_function
 import operator
 import os
 import re
@@ -66,7 +67,7 @@ def sigquit(signum, frame):
     :param signum: unused
     :param frame: unused
     """
-    print >> sys.stderr, "Quit signal sent - exiting immediately"
+    print("Quit signal sent - exiting immediately", file=sys.stderr)
     sys.exit(1)
 
 def print_versions(pkgs, yumbase):
@@ -78,7 +79,8 @@ def print_versions(pkgs, yumbase):
     rpmdb_sack = dnf.sack.rpmdb_sack(yumbase)
     done = False
     for pkg in dnf.queries.installed_by_name(rpmdb_sack, pkgs):
-        if done: print ""
+        if done:
+            print("")
         done = True
         if pkg.epoch == '0':
             ver = '%s-%s.%s' % (pkg.version, pkg.release, pkg.arch)
@@ -87,13 +89,13 @@ def print_versions(pkgs, yumbase):
                                    pkg.version, pkg.release, pkg.arch)
         name = "%s%s%s" % (yumbase.term.MODE['bold'], pkg.name,
                            yumbase.term.MODE['normal'])
-        print _("  Installed: %s-%s at %s") %(name, ver,
-                                           sm_ui_time(pkg.installtime))
-        print _("  Built    : %s at %s") % (pkg.packager if pkg.packager else "",
-                                            sm_ui_time(pkg.buildtime))
+        print(_("  Installed: %s-%s at %s") %(name, ver,
+                                              sm_ui_time(pkg.installtime)))
+        print(_("  Built    : %s at %s") % (pkg.packager if pkg.packager else "",
+                                            sm_ui_time(pkg.buildtime)))
         # :hawkey, no changelist information yet
-        # print _("  Committed: %s at %s") % (pkg.committer,
-        #                                    sm_ui_date(pkg.committime))
+        # print(_("  Committed: %s at %s") % (pkg.committer,
+        #                                    sm_ui_date(pkg.committime)))
 
 class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
     """This is the base class for yum cli."""
@@ -227,12 +229,12 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     continue
                 rpmlib_only = False
             if rpmlib_only:
-                print _("ERROR You need to update rpm to handle:")
+                print(_("ERROR You need to update rpm to handle:"))
             else:
-                print _('ERROR with transaction check vs depsolve:')
+                print(_('ERROR with transaction check vs depsolve:'))
 
             for msg in msgs:
-                print to_utf8(msg)
+                print(to_utf8(msg))
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be updated')]
@@ -1260,7 +1262,7 @@ class Cli(object):
 
         # Just print out the version if that's what the user wanted
         if opts.version:
-            print dnf.const.VERSION
+            print(dnf.const.VERSION)
             opts.quiet = True
             opts.verbose = False
 
@@ -1415,7 +1417,7 @@ class Cli(object):
         def _print_match_section(text, keys):
             # Print them in the order they were passed
             used_keys = [arg for arg in args if arg in keys]
-            print self.base.fmtSection(text % ", ".join(used_keys))
+            print(self.base.fmtSection(text % ", ".join(used_keys)))
 
         # prepare the input
         dups = self.base.conf.showdupesfromrepos
@@ -1511,8 +1513,8 @@ class YumOptionParser(OptionParser):
                         args)
         except ValueError, arg:
             self.print_help()
-            print >> sys.stderr, (_("\n\n%s: %s option requires an argument") %
-                                  ('Command line error', arg))
+            print(_("\n\n%s: %s option requires an argument") % \
+                      ('Command line error', arg), file=sys.stderr)
             sys.exit(1)
         return self.parse_args(args=args)[0]
 

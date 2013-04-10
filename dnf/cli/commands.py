@@ -21,6 +21,7 @@
 Classes for subcommands of the yum command line interface.
 """
 
+from __future__ import print_function
 import dnf.persistor
 import dnf.util
 import os
@@ -620,7 +621,7 @@ class InfoCommand(Command):
             if len(ypl.obsoletes) > 0 and basecmd == 'list':
             # if we've looked up obsolete lists and it's a list request
                 rop = [0, '']
-                print _('Obsoleting Packages')
+                print(_('Obsoleting Packages'))
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
                     self.base.updatesObsoletesList(obtup, 'obsoletes', columns=columns)
@@ -1209,7 +1210,7 @@ class CheckUpdateCommand(Command):
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
             if len(ypl.obsoletes) > 0:
-                print _('Obsoleting Packages')
+                print(_('Obsoleting Packages'))
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
@@ -1949,9 +1950,9 @@ class VersionCommand(Command):
                 groups[group].update(self.base.run_with_package_names)
 
         if vcmd == 'grouplist':
-            print _(" Yum version groups:")
+            print(_(" Yum version groups:"))
             for group in sorted(groups):
-                print "   ", group
+                print("   ", group)
 
             return 0, ['version grouplist']
 
@@ -1959,11 +1960,11 @@ class VersionCommand(Command):
             for group in groups:
                 if group not in extcmds[1:]:
                     continue
-                print _(" Group   :"), group
-                print _(" Packages:")
+                print(_(" Group   :"), group)
+                print(_(" Packages:"))
                 if not verbose:
                     for pkgname in sorted(groups[group]):
-                        print "   ", pkgname
+                        print("   ", pkgname)
                 else:
                     data = {'envra' : {}, 'rid' : {}}
                     pkg_names = groups[group]
@@ -2027,7 +2028,7 @@ class VersionCommand(Command):
         columns = (-columns[0], columns[1])
 
         for line in cols:
-            print self.base.fmtColumns(zip(line, columns))
+            print(self.base.fmtColumns(zip(line, columns)))
 
         return 0, ['version']
 
@@ -2102,7 +2103,7 @@ class HistoryCommand(Command):
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
-        print "Repeating transaction %u, from %s" % (old.tid, tm)
+        print("Repeating transaction %u, from %s" % (old.tid, tm))
         self.base.historyInfoCmdPkgsAltered(old)
         if self.base.history_redo(old, **kwargs):
             return 2, ["Repeating transaction %u" % (old.tid,)]
@@ -2112,7 +2113,7 @@ class HistoryCommand(Command):
         if old is None:
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
-        print "Undoing transaction %u, from %s" % (old.tid, tm)
+        print("Undoing transaction %u, from %s" % (old.tid, tm))
         self.base.historyInfoCmdPkgsAltered(old)
         if self.base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
@@ -2140,8 +2141,8 @@ class HistoryCommand(Command):
                     msg = "Transaction history is incomplete, before %u."
                 else:
                     msg = "Transaction history is incomplete, after %u."
-                print msg % tid.tid
-                print " You can use 'history rollback force', to try anyway."
+                print(msg % tid.tid)
+                print(" You can use 'history rollback force', to try anyway.")
                 return 1, ['Failed history rollback, incomplete']
 
             if mobj is None:
@@ -2150,9 +2151,9 @@ class HistoryCommand(Command):
                 mobj.merge(tid)
 
         tm = time.ctime(old.beg_timestamp)
-        print "Rollback to transaction %u, from %s" % (old.tid, tm)
-        print self.base.fmtKeyValFill("  Undoing the following transactions: ",
-                                 ", ".join((str(x) for x in mobj.tid)))
+        print("Rollback to transaction %u, from %s" % (old.tid, tm))
+        print(self.base.fmtKeyValFill("  Undoing the following transactions: ",
+                                      ", ".join((str(x) for x in mobj.tid))))
         self.base.historyInfoCmdPkgsAltered(mobj)
         if self.base.history_undo(mobj):
             return 2, ["Rollback to transaction %u" % (old.tid,)]
@@ -2161,22 +2162,22 @@ class HistoryCommand(Command):
         self.base.history._create_db_file()
 
     def _hcmd_stats(self, extcmds):
-        print "File        :", self.base.history._db_file
+        print("File        :", self.base.history._db_file)
         num = os.stat(self.base.history._db_file).st_size
-        print "Size        :", locale.format("%d", num, True)
+        print("Size        :", locale.format("%d", num, True))
         counts = self.base.history._pkg_stats()
         trans_1 = self.base.history.old("1")[0]
         trans_N = self.base.history.last()
-        print _("Transactions:"), trans_N.tid
-        print _("Begin time  :"), time.ctime(trans_1.beg_timestamp)
-        print _("End time    :"), time.ctime(trans_N.end_timestamp)
-        print _("Counts      :")
-        print _("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True)
-        print _("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True)
-        print _("  NA     :"), locale.format("%6d", counts['na'],     True)
-        print _("  NEVR   :"), locale.format("%6d", counts['nevr'],   True)
-        print _("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True)
-        print _("  yum DB :"), locale.format("%6d", counts['yumdb'],  True)
+        print(_("Transactions:"), trans_N.tid)
+        print(_("Begin time  :"), time.ctime(trans_1.beg_timestamp))
+        print(_("End time    :"), time.ctime(trans_N.end_timestamp))
+        print(_("Counts      :"))
+        print(_("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True))
+        print(_("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True))
+        print(_("  NA     :"), locale.format("%6d", counts['na'],     True))
+        print(_("  NEVR   :"), locale.format("%6d", counts['nevr'],   True))
+        print(_("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True))
+        print(_("  yum DB :"), locale.format("%6d", counts['yumdb'],  True))
 
     def _hcmd_sync(self, extcmds):
         extcmds = extcmds[1:]
@@ -2186,11 +2187,11 @@ class HistoryCommand(Command):
             if self.base.history.pkg2pid(ipkg, create=False) is None:
                 continue
 
-            print "Syncing rpm/yum DB data for:", ipkg, "...",
+            print("Syncing rpm/yum DB data for:", ipkg, "...", end='')
             if self.base.history.sync_alldb(ipkg):
-                print "Done."
+                print("Done.")
             else:
-                print "FAILED."
+                print("FAILED.")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -2319,7 +2320,7 @@ class CheckRpmdbCommand(Command):
             chkcmd = extcmds
 
         def _out(x):
-            print to_unicode(x.__str__())
+            print(to_unicode(x.__str__()))
 
         rc = 0
         if self.base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,

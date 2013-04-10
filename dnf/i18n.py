@@ -17,6 +17,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 import locale
 import sys
 
@@ -48,7 +49,7 @@ def setup_locale():
         locale.setlocale(locale.LC_TIME, 'C')
     except locale.Error, e:
         # default to C locale if we get a failure.
-        print >> sys.stderr, 'Failed to set locale, defaulting to C'
+        print('Failed to set locale, defaulting to C', file=sys.stderr)
         os.environ['LC_ALL'] = 'C'
         locale.setlocale(locale.LC_ALL, 'C')
 

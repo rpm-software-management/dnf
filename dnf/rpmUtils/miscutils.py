@@ -13,6 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Copyright 2003 Duke University
 
+from __future__ import print_function
 import rpm
 import types
 import gzip
@@ -48,9 +49,9 @@ def compareEVR((e1, v1, r1), (e2, v2, r2)):
         e2 = str(e2)
     v2 = str(v2)
     r2 = str(r2)
-    #print '%s, %s, %s vs %s, %s, %s' % (e1, v1, r1, e2, v2, r2)
+    #print('%s, %s, %s vs %s, %s, %s' % (e1, v1, r1, e2, v2, r2))
     rc = rpm.labelCompare((e1, v1, r1), (e2, v2, r2))
-    #print '%s, %s, %s vs %s, %s, %s = %s' % (e1, v1, r1, e2, v2, r2, rc)
+    #print('%s, %s, %s vs %s, %s, %s = %s' % (e1, v1, r1, e2, v2, r2, rc))
     return rc
 
 def compareVerOnly(v1, v2):

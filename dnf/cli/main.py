@@ -19,6 +19,7 @@
 Entrance point for the yum command line interface.
 """
 
+from __future__ import print_function
 import os
 import os.path
 import sys
@@ -186,7 +187,7 @@ def main(args):
         # Normal exit
         if unlock(): return 200
         for msg in resultmsgs:
-            print msg
+            print(msg)
         return 0
     elif result == 1:
         # Fatal error
@@ -312,5 +313,5 @@ if __name__ == "__main__":
     try:
         user_main(sys.argv[1:], exit_code=True)
     except KeyboardInterrupt, e:
-        print >> sys.stderr, _("\n\nExiting on user cancel.")
+        print(_("\n\nExiting on user cancel."), file=sys.stderr)
         sys.exit(1)

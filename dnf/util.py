@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 import dnf.const
 import hawkey
 import os
@@ -121,7 +122,7 @@ def timed(fn):
         start = time.time()
         retval = fn(*args, **kwargs)
         length = time.time() - start
-        print "%s took %.02f ms" % (fn.__name__, length * 1000)
+        print("%s took %.02f ms" % (fn.__name__, length * 1000))
         return retval
     return decorated
 

@@ -17,6 +17,7 @@
 
 """Handle actual output from the cli."""
 
+from __future__ import print_function
 import sys
 import time
 import logging
@@ -735,7 +736,7 @@ class YumOutput:
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         columns = zip((na, pkg.evr, pkg.reponame), columns, hi_cols)
-        print self.fmtColumns(columns, text_width=len)
+        print(self.fmtColumns(columns, text_width=len))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
@@ -758,7 +759,7 @@ class YumOutput:
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = zip((envra, rid), columns, hi_cols)
-        print self.fmtColumns(columns, text_width=len)
+        print(self.fmtColumns(columns, text_width=len))
 
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
@@ -823,23 +824,23 @@ class YumOutput:
         """
         (hibeg, hiend) = self._highlight(highlight)
         yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
-        print _("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend)
-        print _("Arch        : %s") % to_unicode(pkg.arch)
+        print(_("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend))
+        print(_("Arch        : %s") % to_unicode(pkg.arch))
         if pkg.e != "0":
-            print _("Epoch       : %s") % to_unicode(pkg.e)
-        print _("Version     : %s") % to_unicode(pkg.v)
-        print _("Release     : %s") % to_unicode(pkg.r)
-        print _("Size        : %s") % self.format_number(float(pkg.size))
-        print _("Repo        : %s") % to_unicode(pkg.repoid)
+            print(_("Epoch       : %s") % to_unicode(pkg.e))
+        print(_("Version     : %s") % to_unicode(pkg.v))
+        print(_("Release     : %s") % to_unicode(pkg.r))
+        print(_("Size        : %s") % self.format_number(float(pkg.size)))
+        print(_("Repo        : %s") % to_unicode(pkg.repoid))
         if 'from_repo' in yumdb_info:
-            print _("From repo   : %s") % to_unicode(yumdb_info.from_repo)
+            print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
         if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
             # :hawkey does not support changelog information
-            # print _("Committer   : %s") % to_unicode(pkg.committer)
-            # print _("Committime  : %s") % time.ctime(pkg.committime)
-            print _("Buildtime   : %s") % time.ctime(pkg.buildtime)
+            # print(_("Committer   : %s") % to_unicode(pkg.committer))
+            # print(_("Committime  : %s") % time.ctime(pkg.committime))
+            print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
-                print _("Install time: %s") % time.ctime(pkg.installtime)
+                print(_("Install time: %s") % time.ctime(pkg.installtime))
             if pkg.repoid == 'installed':
                 uid = None
                 if 'installed_by' in pkg.yumdb_info:
@@ -847,20 +848,20 @@ class YumOutput:
                         uid = int(pkg.yumdb_info.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print _("Installed by: %s") % self._pwd_ui_username(uid)
+                print(_("Installed by: %s") % self._pwd_ui_username(uid))
                 uid = None
                 if 'changed_by' in pkg.yumdb_info:
                     try:
                         uid = int(pkg.yumdb_info.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print _("Changed by  : %s") % self._pwd_ui_username(uid)
-        print self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary))
+                print(_("Changed by  : %s") % self._pwd_ui_username(uid))
+        print(self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary)))
         if pkg.url:
-            print _("URL         : %s") % to_unicode(pkg.url)
-        print self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license))
-        print self.fmtKeyValFill(_("Description : "),self._enc(pkg.description))
-        print ""
+            print(_("URL         : %s") % to_unicode(pkg.url))
+        print(self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license)))
+        print(self.fmtKeyValFill(_("Description : "),self._enc(pkg.description)))
+        print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
         """Print a simple string that explains the relationship
@@ -895,7 +896,7 @@ class YumOutput:
         c_compact = changePkg.compactPrint()
         i_compact = '%s.%s' % (instPkg.name, instPkg.arch)
         c_repo = changePkg.repoid
-        print '%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact)
+        print('%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact))
 
     def listPkgs(self, lst, description, outputType, highlight_na={},
                  columns=None, highlight_modes={}):
@@ -941,7 +942,7 @@ class YumOutput:
             thingslisted = 0
             if len(lst) > 0:
                 thingslisted = 1
-                print '%s' % description
+                print('%s' % description)
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
@@ -1053,11 +1054,11 @@ class YumOutput:
                               indent='   ', columns=None):
         if not verbose:
             for item in sorted(pkg_names):
-                print '%s%s' % (indent, item)
+                print('%s%s' % (indent, item))
         else:
             for item in sorted(pkg_names):
                 if item not in pkg_names2pkgs:
-                    print '%s%s' % (indent, item)
+                    print('%s%s' % (indent, item))
                     continue
                 for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
                                            key=lambda x: x[1] or x[0]):
@@ -1076,18 +1077,18 @@ class YumOutput:
 
         :param group: a Group object to output information about
         """
-        print _('\nGroup: %s') % group.ui_name
+        print(_('\nGroup: %s') % group.ui_name)
 
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         if verb:
-            print _(' Group-Id: %s') % to_unicode(group.groupid)
+            print(_(' Group-Id: %s') % to_unicode(group.groupid))
         pkg_names2pkgs = None
         if verb:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
         if group.ui_description:
-            print _(' Description: %s') % to_unicode(group.ui_description)
+            print(_(' Description: %s') % to_unicode(group.ui_description))
         if group.langonly:
-            print _(' Language: %s') % group.langonly
+            print(_(' Language: %s') % group.langonly)
 
         sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
                     (_(' Default Packages:'),     group.default_packages),
@@ -1104,7 +1105,7 @@ class YumOutput:
 
         for (section_name, pkg_names) in sections:
             if len(pkg_names) > 0:
-                print section_name
+                print(section_name)
                 self._displayPkgsFromNames(pkg_names, verb, pkg_names2pkgs,
                                            columns=columns)
 
@@ -1116,16 +1117,16 @@ class YumOutput:
         """
         verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
         for pkg in sorted(results):
-            print _("package: %s") % pkg.compactPrint()
+            print(_("package: %s") % pkg.compactPrint())
             if len(results[pkg]) == 0:
-                print _("  No dependencies for this package")
+                print(_("  No dependencies for this package"))
                 continue
 
             for req in sorted(results[pkg]):
                 reqlist = results[pkg][req]
-                print _("  dependency: %s") % prco_tuple_to_string(req)
+                print(_("  dependency: %s") % prco_tuple_to_string(req))
                 if not reqlist:
-                    print _("   Unsatisfied dependency")
+                    print(_("   Unsatisfied dependency"))
                     continue
 
                 seen = {}
@@ -1134,7 +1135,7 @@ class YumOutput:
                     if not verb and key in seen:
                         continue
                     seen[key] = po
-                    print "   provider: %s" % po.compactPrint()
+                    print("   provider: %s" % po.compactPrint())
 
     def format_number(self, number, SI=0, space=' '):
         """Return a human-readable metric-like string representation
@@ -1220,14 +1221,14 @@ class YumOutput:
             if highlight is None:
                 highlight = self.conf.color_search_match
             msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
-        print msg
+        print(msg)
 
         if verbose is None:
             verbose = logginglevels.is_stdout_verbose(self.conf.debuglevel)
         if not verbose:
             return
 
-        print _("Repo        : %s") % po.ui_from_repo
+        print(_("Repo        : %s") % po.ui_from_repo)
         done = False
         for item in dnf.yum.misc.unique(values):
             item = to_utf8(item)
@@ -1235,7 +1236,7 @@ class YumOutput:
                 continue # Skip double name/summary printing
 
             if not done:
-                print _('Matched from:')
+                print(_('Matched from:'))
                 done = True
             can_overflow = True
             if False: pass
@@ -1259,10 +1260,10 @@ class YumOutput:
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print self.fmtKeyValFill(key, to_unicode(item))
+                print(self.fmtKeyValFill(key, to_unicode(item)))
             else:
-                print key % item
-        print '\n\n'
+                print(key % item)
+        print('\n\n')
 
     def matchcallback_verbose(self, po, values, matchfor=None):
         """Output search/provides type callback matches.  This will
@@ -1863,12 +1864,12 @@ to exit.
             name = _("Command line")
         else:
             name = _("Login user")
-        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
                      utf8_width_fill(name, 24, 24),
                      utf8_width_fill(_("Date and time"), 16, 16),
                      utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Altered"), 7, 7))
-        print "-" * 79
+                     utf8_width_fill(_("Altered"), 7, 7)))
+        print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
         for old in old_tids:
@@ -1901,7 +1902,7 @@ to exit.
                 rmark = '<'
             if old.altered_gt_rpmdb:
                 lmark = '>'
-            print fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark)
+            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark))
 
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
@@ -2024,7 +2025,7 @@ to exit.
                     mobj.merge(tid)
             elif mobj is not None:
                 if done:
-                    print "-" * 79
+                    print("-" * 79)
                 done = True
 
                 self._historyInfoCmd(mobj)
@@ -2036,14 +2037,14 @@ to exit.
 
             if tid.tid in utids:
                 if done:
-                    print "-" * 79
+                    print("-" * 79)
                 done = True
 
                 self._historyInfoCmd(tid, pats)
 
         if mobj is not None:
             if done:
-                print "-" * 79
+                print("-" * 79)
 
             self._historyInfoCmd(mobj)
 
@@ -2092,20 +2093,20 @@ to exit.
             ui_repo = ''
             if show_repo:
                 ui_repo = self._hpkg2from_repo(hpkg)
-            print "%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, hpkg, ui_repo)
+            print("%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
+                                        pkg_max_len, hpkg, ui_repo))
 
         if type(old.tid) == type([]):
-            print _("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1])
+            print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
         else:
-            print _("Transaction ID :"), old.tid
+            print(_("Transaction ID :"), old.tid)
         begtm = time.ctime(old.beg_timestamp)
-        print _("Begin time     :"), begtm
+        print(_("Begin time     :"), begtm)
         if old.beg_rpmdbversion is not None:
             if old.altered_lt_rpmdb:
-                print _("Begin rpmdb    :"), old.beg_rpmdbversion, "**"
+                print(_("Begin rpmdb    :"), old.beg_rpmdbversion, "**")
             else:
-                print _("Begin rpmdb    :"), old.beg_rpmdbversion
+                print(_("Begin rpmdb    :"), old.beg_rpmdbversion)
         if old.end_timestamp is not None:
             endtm = time.ctime(old.end_timestamp)
             endtms = endtm.split()
@@ -2128,37 +2129,37 @@ to exit.
                 diff = _("(%u hours)") % (diff / (60 * 60))
             else:
                 diff = _("(%u days)") % (diff / (60 * 60 * 24))
-            print _("End time       :"), endtm, diff
+            print(_("End time       :"), endtm, diff)
         if old.end_rpmdbversion is not None:
             if old.altered_gt_rpmdb:
-                print _("End rpmdb      :"), old.end_rpmdbversion, "**"
+                print(_("End rpmdb      :"), old.end_rpmdbversion, "**")
             else:
-                print _("End rpmdb      :"), old.end_rpmdbversion
+                print(_("End rpmdb      :"), old.end_rpmdbversion)
         if type(name) == type([]):
             for name in name:
-                print _("User           :"), name
+                print(_("User           :"), name)
         else:
-            print _("User           :"), name
+            print(_("User           :"), name)
         if type(old.return_code) == type([]):
             codes = old.return_code
             if codes[0] is None:
-                print _("Return-Code    :"), "**", _("Aborted"), "**"
+                print(_("Return-Code    :"), "**", _("Aborted"), "**")
                 codes = codes[1:]
             if codes:
-                print _("Return-Code    :"), _("Failures:"), ", ".join(codes)
+                print(_("Return-Code    :"), _("Failures:"), ", ".join(codes))
         elif old.return_code is None:
-            print _("Return-Code    :"), "**", _("Aborted"), "**"
+            print(_("Return-Code    :"), "**", _("Aborted"), "**")
         elif old.return_code:
-            print _("Return-Code    :"), _("Failure:"), old.return_code
+            print(_("Return-Code    :"), _("Failure:"), old.return_code)
         else:
-            print _("Return-Code    :"), _("Success")
+            print(_("Return-Code    :"), _("Success"))
 
         if old.cmdline is not None:
             if type(old.cmdline) == type([]):
                 for cmdline in old.cmdline:
-                    print _("Command Line   :"), cmdline
+                    print(_("Command Line   :"), cmdline)
             else:
-                print _("Command Line   :"), old.cmdline
+                print(_("Command Line   :"), old.cmdline)
 
         if type(old.tid) != type([]):
             addon_info = self.history.return_addon_data(old.tid)
@@ -2167,20 +2168,20 @@ to exit.
             default_addons = set(['config-main', 'config-repos', 'saved_tx'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
-                print _("Additional non-default information stored: %d"
-                            % len(non_default))
+                print(_("Additional non-default information stored: %d") % \
+                          len(non_default))
 
         if old.trans_with:
             # This is _possible_, but not common
-            print _("Transaction performed with:")
+            print(_("Transaction performed with:"))
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_with))
         for hpkg in old.trans_with:
             _simple_pkg(hpkg, 4, was_installed=True, pkg_max_len=pkg_max_len)
-        print _("Packages Altered:")
+        print(_("Packages Altered:"))
         self.historyInfoCmdPkgsAltered(old, pats)
 
         if old.trans_skip:
-            print _("Packages Skipped:")
+            print(_("Packages Skipped:"))
             pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
         for hpkg in old.trans_skip:
             #  Don't show the repo. here because we can't store it as they were,
@@ -2188,10 +2189,10 @@ to exit.
             _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len, show_repo=False)
 
         if old.rpmdb_problems:
-            print _("Rpmdb Problems:")
+            print(_("Rpmdb Problems:"))
         for prob in old.rpmdb_problems:
             key = "%s%s: " % (" " * 4, prob.problem)
-            print self.fmtKeyValFill(key, prob.text)
+            print(self.fmtKeyValFill(key, prob.text))
             if prob.packages:
                 pkg_max_len = max((len(str(hpkg)) for hpkg in prob.packages))
             for hpkg in prob.packages:
@@ -2199,17 +2200,17 @@ to exit.
                             pkg_max_len=pkg_max_len)
 
         if old.output:
-            print _("Scriptlet output:")
+            print(_("Scriptlet output:"))
             num = 0
             for line in old.output:
                 num += 1
-                print "%4d" % num, line
+                print("%4d" % num, line)
         if old.errors:
-            print _("Errors:")
+            print(_("Errors:"))
             num = 0
             for line in old.errors:
                 num += 1
-                print "%4d" % num, line
+                print("%4d" % num, line)
 
     _history_state2uistate = {'True-Install' : _('Install'),
                               'Install'      : _('Install'),
@@ -2279,9 +2280,9 @@ to exit.
                 last = None
                 if hpkg.state in ('Updated', 'Downgrade'):
                     last = hpkg
-            print "%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
+            print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
                                         pkg_max_len, cn,
-                                        self._hpkg2from_repo(hpkg))
+                                        self._hpkg2from_repo(hpkg)))
 
     def historySummaryCmd(self, extcmds):
         """Print a summary of transactions in history.
@@ -2293,11 +2294,11 @@ to exit.
             return 1, ['Failed history info']
 
         fmt = "%s | %s | %s | %s"
-        print fmt % (utf8_width_fill(_("Login user"), 26, 26),
+        print(fmt % (utf8_width_fill(_("Login user"), 26, 26),
                      utf8_width_fill(_("Time"), 19, 19),
                      utf8_width_fill(_("Action(s)"), 16, 16),
-                     utf8_width_fill(_("Altered"), 8, 8))
-        print "-" * 79
+                     utf8_width_fill(_("Altered"), 8, 8)))
+        print("-" * 79)
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
                 'fortnight' : {}, 'quarter' : {}, 'half' : {},
@@ -2343,9 +2344,9 @@ to exit.
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print fmt % (utf8_width_fill(name, 26, 26),
+                print(fmt % (utf8_width_fill(name, 26, 26),
                              utf8_width_fill(uperiod, 19, 19),
-                             utf8_width_fill(uiacts, 16, 16), count)
+                             utf8_width_fill(uiacts, 16, 16), count))
 
     def historyAddonInfoCmd(self, extcmds):
         """Print addon information about transaction in history.
@@ -2379,21 +2380,21 @@ to exit.
         hist_data = old[0]
         addon_info = self.history.return_addon_data(hist_data.tid)
         if len(extcmds) <= 2:
-            print _("Transaction ID:"), hist_data.tid
-            print _('Available additional history information:')
+            print(_("Transaction ID:"), hist_data.tid)
+            print(_('Available additional history information:'))
             for itemname in self.history.return_addon_data(hist_data.tid):
-                print '  %s' % itemname
-            print ''
+                print('  %s' % itemname)
+            print('')
 
             return 0, ['history addon-info']
 
         for item in extcmds[2:]:
             if item in addon_info:
                 self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
-                print self.history.return_addon_data(hist_data.tid, item),
+                print(self.history.return_addon_data(hist_data.tid, item), end='')
                 self.verbose_logger.log(logginglevels.INFO_2, '')
             else:
-                print _('%s: No additional data found by this name') % item
+                print(_('%s: No additional data found by this name') % item)
             self.verbose_logger.log(logginglevels.INFO_2, '')
 
     def historyPackageListCmd(self, extcmds):
@@ -2414,10 +2415,10 @@ to exit.
 
         fmt = "%s | %s | %s"
         # REALLY Needs to use columns!
-        print fmt % (utf8_width_fill(_("ID"), 6, 6),
+        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
                      utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Package"), 53, 53))
-        print "-" * 79
+                     utf8_width_fill(_("Package"), 53, 53)))
+        print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
         for old in self.history.old(tids, limit=limit):
@@ -2474,7 +2475,7 @@ to exit.
                         last = hpkg
 
                 num += 1
-                print fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark)
+                print(fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark))
 
     def historyPackageInfoCmd(self, extcmds):
         """Print information about packages in history transactions.
@@ -2504,49 +2505,49 @@ to exit.
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
                 if num:
-                    print ""
-                print _("Transaction ID :"), old.tid
+                    print("")
+                print(_("Transaction ID :"), old.tid)
                 tm = time.ctime(old.beg_timestamp)
-                print _("Begin time     :"), tm
-                print _("Package        :"), hpkg.ui_nevra
-                print _("State          :"), uistate
+                print(_("Begin time     :"), tm)
+                print(_("Package        :"), hpkg.ui_nevra)
+                print(_("State          :"), uistate)
                 if hpkg.size is not None:
                     num = int(hpkg.size)
-                    print _("Size           :"), locale.format("%d", num, True)
+                    print(_("Size           :"), locale.format("%d", num, True))
                 if hpkg.buildhost is not None:
-                    print _("Build host     :"), hpkg.buildhost
+                    print(_("Build host     :"), hpkg.buildhost)
                 if hpkg.buildtime is not None:
                     tm = time.ctime(int(hpkg.buildtime))
-                    print _("Build time     :"), tm
+                    print(_("Build time     :"), tm)
                 if hpkg.packager is not None:
-                    print _("Packager       :"), hpkg.packager
+                    print(_("Packager       :"), hpkg.packager)
                 if hpkg.vendor is not None:
-                    print _("Vendor         :"), hpkg.vendor
+                    print(_("Vendor         :"), hpkg.vendor)
                 if hpkg.license is not None:
-                    print _("License        :"), hpkg.license
+                    print(_("License        :"), hpkg.license)
                 if hpkg.url is not None:
-                    print _("URL            :"), hpkg.url
+                    print(_("URL            :"), hpkg.url)
                 if hpkg.sourcerpm is not None:
-                    print _("Source RPM     :"), hpkg.sourcerpm
+                    print(_("Source RPM     :"), hpkg.sourcerpm)
                 if hpkg.committime is not None:
                     tm = time.ctime(int(hpkg.committime))
-                    print _("Commit Time    :"), tm
+                    print(_("Commit Time    :"), tm)
                 if hpkg.committer is not None:
-                    print _("Committer      :"), hpkg.committer
+                    print(_("Committer      :"), hpkg.committer)
                 if hpkg.yumdb_info.reason is not None:
-                    print _("Reason         :"), hpkg.yumdb_info.reason
+                    print(_("Reason         :"), hpkg.yumdb_info.reason)
                 if hpkg.yumdb_info.command_line is not None:
-                    print _("Command Line   :"), hpkg.yumdb_info.command_line
+                    print(_("Command Line   :"), hpkg.yumdb_info.command_line)
                 if hpkg.yumdb_info.from_repo is not None:
-                    print _("From repo      :"), hpkg.yumdb_info.from_repo
+                    print(_("From repo      :"), hpkg.yumdb_info.from_repo)
                 if hpkg.yumdb_info.installed_by is not None:
                     uid = int(hpkg.yumdb_info.installed_by)
                     name = self._pwd_ui_username(uid)
-                    print _("Installed by   :"), name
+                    print(_("Installed by   :"), name)
                 if hpkg.yumdb_info.changed_by is not None:
                     uid = int(hpkg.yumdb_info.changed_by)
                     name = self._pwd_ui_username(uid)
-                    print _("Changed by     :"), name
+                    print(_("Changed by     :"), name)
 
                 num += 1
 
@@ -2890,7 +2891,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
-                print " "
+                print(" ")
 
     def scriptout(self, package, msgs):
         """Print messages originating from a package script.
@@ -3028,33 +3029,33 @@ def progressbar(current, total, name=None):
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "format_number":
-        print ""
-        print " Doing format_number tests, right column should align"
-        print ""
+        print("")
+        print(" Doing format_number tests, right column should align")
+        print("")
 
         x = YumOutput()
         for i in (0, 0.0, 0.1, 1, 1.0, 1.1, 10, 11, 11.1, 100, 111.1,
                   1000, 1111, 1024 * 2, 10000, 11111, 99999, 999999,
                   10**19, 10**20, 10**35):
             out = x.format_number(i)
-            print "%36s <%s> %s <%5s>" % (i, out, ' ' * (14 - len(out)), out)
+            print("%36s <%s> %s <%5s>" % (i, out, ' ' * (14 - len(out)), out))
 
     if len(sys.argv) > 1 and sys.argv[1] == "progress":
-        print ""
-        print " Doing progress, small name"
-        print ""
+        print("")
+        print(" Doing progress, small name")
+        print("")
         for i in xrange(0, 101):
             progressbar(i, 100, "abcd")
             time.sleep(0.1)
-        print ""
-        print " Doing progress, big name"
-        print ""
+        print("")
+        print(" Doing progress, big name")
+        print("")
         for i in xrange(0, 101):
             progressbar(i, 100, "_%s_" % ("123456789 " * 5))
             time.sleep(0.1)
-        print ""
-        print " Doing progress, no name"
-        print ""
+        print("")
+        print(" Doing progress, no name")
+        print("")
         for i in xrange(0, 101):
             progressbar(i, 100)
             time.sleep(0.1)
@@ -3064,15 +3065,15 @@ if __name__ == "__main__":
         cb.output = True
         cb.action["foo"] = "abcd"
         cb.action["bar"] = "_12345678_.end"
-        print ""
-        print " Doing CB, small proc / small pkg"
-        print ""
+        print("")
+        print(" Doing CB, small proc / small pkg")
+        print("")
         for i in xrange(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
             time.sleep(0.1)
-        print ""
-        print " Doing CB, big proc / big pkg"
-        print ""
+        print("")
+        print(" Doing CB, big proc / big pkg")
+        print("")
         for i in xrange(0, 101):
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
@@ -3082,21 +3083,21 @@ if __name__ == "__main__":
                                              'i18n-rpm-progress'):
         dnf.yum.misc.setup_locale()
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress"):
-        print ""
-        print " Doing progress, i18n: small name"
-        print ""
+        print("")
+        print(" Doing progress, i18n: small name")
+        print("")
         for i in xrange(0, 101):
             progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85'))
             time.sleep(0.1)
-        print ""
+        print("")
 
-        print ""
-        print " Doing progress, i18n: big name"
-        print ""
+        print("")
+        print(" Doing progress, i18n: big name")
+        print("")
         for i in xrange(0, 101):
             progressbar(i, 100, to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85' * 5 + ".end"))
             time.sleep(0.1)
-        print ""
+        print("")
 
 
     if len(sys.argv) > 1 and sys.argv[1] in ("progress", "i18n-progress",
@@ -3106,17 +3107,17 @@ if __name__ == "__main__":
         cb.output = True
         cb.action["foo"] = to_unicode('\xe6\xad\xa3\xe5\x9c\xa8\xe5\xae\x89\xe8\xa3\x85')
         cb.action["bar"] = cb.action["foo"] * 5 + ".end"
-        print ""
-        print " Doing CB, i18n: small proc / small pkg"
-        print ""
+        print("")
+        print(" Doing CB, i18n: small proc / small pkg")
+        print("")
         for i in xrange(0, 101):
             cb.event("spkg", "foo", i, 100, i, 100)
             time.sleep(0.1)
-        print ""
-        print " Doing CB, i18n: big proc / big pkg"
-        print ""
+        print("")
+        print(" Doing CB, i18n: big proc / big pkg")
+        print("")
         for i in xrange(0, 101):
             cb.event("lpkg" + "-=" * 15 + ".end", "bar", i, 100, i, 100)
             time.sleep(0.1)
-        print ""
+        print("")
 

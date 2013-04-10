@@ -16,7 +16,7 @@
 """
 Progress display callback classes for the yum command line.
 """
-
+from __future__ import print_function
 import rpm
 import os
 import sys
@@ -68,7 +68,7 @@ class RPMInstallCallback:
 
     def _localprint(self, msg):
         if self.output:
-            print msg
+            print(msg)
 
     def _makefmt(self, percent, progress = True):
         l = len(str(self.total_actions))
@@ -194,8 +194,8 @@ class RPMInstallCallback:
                         try:
                             process = self.myprocess[txmbr.output_state]
                         except KeyError, e:
-                            print _("Error: invalid output state: %s for %s") % \
-                               (txmbr.output_state, hdr['name'])
+                            print(_("Error: invalid output state: %s for %s") % \
+                                      (txmbr.output_state, hdr['name']))
                         else:
                             if self.output and (sys.stdout.isatty() or bytes == total):
                                 fmt = self._makefmt(percent)
@@ -205,7 +205,7 @@ class RPMInstallCallback:
                                     sys.stdout.flush()
                                     self.lastmsg = msg
                                 if bytes == total:
-                                    print " "
+                                    print(" ")
 
 
         elif what == rpm.RPMCALLBACK_UNINST_START:

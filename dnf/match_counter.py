@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 WEIGHTS = {
     'name'		: 7,
     'summary'		: 4,
@@ -83,7 +84,7 @@ class MatchCounter(dict):
 
     def dump(self):
         for pkg in self:
-            print '%s\t%s' % (pkg, self[pkg])
+            print('%s\t%s' % (pkg, self[pkg]))
 
     def matched_haystacks(self, pkg):
         return set(map(lambda m: getattr(pkg, m[0]) , self[pkg]))

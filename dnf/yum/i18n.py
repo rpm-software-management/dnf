@@ -12,6 +12,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+from __future__ import print_function
 
 def dummy_wrapper(str):
     '''
@@ -502,29 +503,29 @@ if __name__ == "__main__":
 
     def out(arg):
         arg = to_utf8(arg)
-        print "UTF8 :", arg
-        print "len  :", len(arg)
+        print("UTF8 :", arg)
+        print("len  :", len(arg))
         arg = to_unicode(arg)
-        print "USC  :", arg
-        print "len  :", len(arg)
-        print "valid:", utf8_valid(arg)
-        print "width:", utf8_width(arg)
-        print "4.8  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  8), '>')
-        print "4.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  3), '>')
-        print "4.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  2), '>')
-        print "4.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  1), '>')
-        print "3.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  3), '>')
-        print "3.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  2), '>')
-        print "3.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  1), '>')
-        print "40.79:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 79), '>')
-        print "40.20:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 20), '>')
-        print ''
+        print("USC  :", arg)
+        print("len  :", len(arg))
+        print("valid:", utf8_valid(arg))
+        print("width:", utf8_width(arg))
+        print("4.8  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  8), '>'))
+        print("4.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  3), '>'))
+        print("4.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  2), '>'))
+        print("4.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  4,  1), '>'))
+        print("3.3  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  3), '>'))
+        print("3.2  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  2), '>'))
+        print("3.1  :", "%s%s%s" % ('<', utf8_width_fill(arg,  3,  1), '>'))
+        print("40.79:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 79), '>'))
+        print("40.20:", "%s%s%s" % ('<', utf8_width_fill(arg, 40, 20), '>'))
+        print('')
 
-    print " ---- Arguments/str ---- "
+    print(" ---- Arguments/str ---- ")
     for arg in sys.argv[1:]:
         out(arg)
 
-    print " ---- Arguments/gettext ---- "
+    print(" ---- Arguments/gettext ---- ")
     for arg in sys.argv[1:]:
         try:
             arg = _(arg)
@@ -533,10 +534,10 @@ if __name__ == "__main__":
         out(arg)
 
     if len(sys.argv) > 2:
-        print " ---- Arguments/str/all ---- "
+        print(" ---- Arguments/str/all ---- ")
         out(sys.argv[1] % sys.argv[2:])
 
-        print " ---- Arguments/gettext/all ---- "
+        print(" ---- Arguments/gettext/all ---- ")
         try:
             arg = _(sys.argv[1]) % map(_, sys.argv[2:])
         except UnicodeDecodeError:

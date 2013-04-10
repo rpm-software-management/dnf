@@ -20,8 +20,8 @@
 Update metadata (updateinfo.xml) parsing.
 """
 
+from __future__ import print_function
 import sys
-
 from i18n import utf8_text_wrap, to_utf8, to_unicode
 from packages import FakeRepository
 from misc import to_xml, decompress, repo_gen_decompress
@@ -37,7 +37,7 @@ def safe_iterparse(filename):
         for event, elem in iterparse(filename):
             yield event, elem
     except SyntaxError: # Bad XML
-        print >> sys.stderr, "File is not valid XML:", filename
+        print("File is not valid XML:", filename, file=sys.stderr)
 
 class UpdateNoticeException(Exception):
     """ An exception thrown for bad UpdateNotice data. """
@@ -460,7 +460,7 @@ class UpdateMetadata(object):
                 try:
                     un = UpdateNotice(elem)
                 except UpdateNoticeException, e:
-                    print >> sys.stderr, "An update notice is broken, skipping."
+                    print("An update notice is broken, skipping.", file=sys.stderr)
                     # what else should we do?
                     continue
                 self.add_notice(un)
@@ -502,21 +502,21 @@ def main():
 
     misc.setup_locale()
     def usage():
-        print >> sys.stderr, "Usage: %s <update metadata> ..." % sys.argv[0]
+        print("Usage: %s <update metadata> ..." % sys.argv[0], file=sys.stderr)
         sys.exit(1)
 
     if len(sys.argv) < 2:
         usage()
 
     try:
-        print sys.argv[1]
+        print(sys.argv[1])
         um = UpdateMetadata()
         for srcfile in sys.argv[1:]:
             um.add(srcfile)
-        print unicode(um)
+        print(unicode(um))
     except IOError:
-        print >> sys.stderr, "%s: No such file:\'%s\'" % (sys.argv[0],
-                                                          sys.argv[1:])
+        print("%s: No such file:'%s'" % (sys.argv[0], sys.argv[1:]),
+              file=sys.stderr)
         usage()
 
 if __name__ == '__main__':

@@ -20,6 +20,7 @@
 Assorted utility functions for yum.
 """
 
+from __future__ import print_function
 import types
 import os
 import os.path
@@ -917,7 +918,7 @@ def _ugly_utf8_string_hack(item):
             else:
                 if x.encode(enc) == item:
                     if enc != 'utf-8':
-                        print '\n%s encoding on %s\n' % (enc, item)
+                        print('\n%s encoding on %s\n' % (enc, item))
                     return x.encode('utf-8')
 
 

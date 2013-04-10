@@ -14,8 +14,7 @@
 
 """Classes for handling various callbacks."""
 
-# imports
-
+from __future__ import print_function
 import logging
 from urlgrabber.progress import BaseMeter,format_time,format_number
 
@@ -86,7 +85,7 @@ class DownloadBaseCallback( BaseMeter ):
                @param ftime : formated string containing remaining or elapsed time
                '''
                pct = int( frac*100 )
-               print " %s : %s " % (name,pct)
+               print(" %s : %s " % (name,pct))
 
 
        if __name__ == '__main__':
@@ -95,7 +94,7 @@ class DownloadBaseCallback( BaseMeter ):
            dnlcb = MyDownloadCallback()
            my.repos.setProgressBar( dnlcb )
            for pkg in my.pkgSack:
-               print pkg.name
+               print(pkg.name)
        """
     def __init__(self):
         BaseMeter.__init__( self )
