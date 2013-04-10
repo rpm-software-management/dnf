@@ -24,7 +24,7 @@ import fnmatch
 import re
 from i18n import to_unicode
 from misc import get_my_lang_code
-from misc import cElementTree_iterparse as iterparse 
+from misc import cElementTree_iterparse as iterparse
 
 lang_attr = '{http://www.w3.org/XML/1998/namespace}lang'
 
@@ -46,7 +46,7 @@ class CompsObj(object):
     def ui_name(self):
         """ Return the "name" of the object for the current locale. """
         return self.nameByLang(get_my_lang_code())
-    
+
     @property
     def ui_description(self):
         """ Return the "description" of the object for the current locale. """
@@ -69,7 +69,7 @@ class CompsObj(object):
 
         if 'C' not in languages:
             languages.append('C')
-         
+
         # now normalize and expand the languages
         nelangs = []
         for lang in languages:
@@ -77,7 +77,7 @@ class CompsObj(object):
                 if nelang not in nelangs:
                     nelangs.append(nelang)
         return nelangs
-        
+
     def nameByLang(self, lang):
 
         for langcode in self._expand_languages(lang):
@@ -136,49 +136,49 @@ class Group(CompsObj):
                 if self.groupid is not None:
                     raise CompsException
                 self.groupid = myid
-            
+
             elif child.tag == 'name':
                 text = child.text
                 if text:
                     text = text.encode('utf8')
-                
+
                 lang = child.attrib.get(lang_attr)
                 if lang:
                     self.translated_name[lang] = text
                 else:
                     self.name = text
-    
-    
+
+
             elif child.tag == 'description':
                 text = child.text
                 if text:
                     text = text.encode('utf8')
-                    
+
                 lang = child.attrib.get(lang_attr)
                 if lang:
                     self.translated_description[lang] = text
                 else:
                     if text:
                         self.description = text
-    
+
             elif child.tag == 'uservisible':
                 self.user_visible = parse_boolean(child.text)
-    
+
             elif child.tag == 'display_order':
                 self.display_order = parse_number(child.text)
 
             elif child.tag == 'default':
                 self.default = parse_boolean(child.text)
-    
-            elif child.tag in ['langonly', 'lang_only']: 
+
+            elif child.tag in ['langonly', 'lang_only']:
                 text = child.text
                 if self.langonly is not None:
                     raise CompsException
                 self.langonly = text
-    
+
             elif child.tag == 'packagelist':
                 self.parse_package_list(child)
-    
+
     def parse_package_list(self, packagelist_elem):
         for child in packagelist_elem:
             if child.tag == 'packagereq':
@@ -204,10 +204,10 @@ class Group(CompsObj):
 
     def add(self, obj):
         """Add another group object to this object"""
-    
+
         # we only need package lists and any translation that we don't already
         # have
-        
+
         for pkg in obj.mandatory_packages:
             self.mandatory_packages[pkg] = 1
         for pkg in obj.default_packages:
@@ -216,43 +216,43 @@ class Group(CompsObj):
             self.optional_packages[pkg] = 1
         for pkg in obj.conditional_packages:
             self.conditional_packages[pkg] = obj.conditional_packages[pkg]
-        
+
         # Handle cases where a comps.xml without name & decription tags
         # has been setup first, so the name & decription for this object is blank.
-            
-        
+
+
         if self.name == '' and obj.name != '':
             self.name = obj.name
 
         if self.description == '' and obj.description != '':
             self.description = obj.description
-            
+
         # name and description translations
         for lang in obj.translated_name:
             if lang not in self.translated_name:
                 self.translated_name[lang] = obj.translated_name[lang]
-        
+
         for lang in obj.translated_description:
             if lang not in self.translated_description:
                 self.translated_description[lang] = obj.translated_description[lang]
-        
+
     def xml(self):
         """write out an xml stanza for the group object"""
-        msg ="""        
+        msg ="""
   <group>
    <id>%s</id>
    <default>%s</default>
    <uservisible>%s</uservisible>
-   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default).lower(), 
+   <display_order>%s</display_order>\n""" % (self.groupid, str(self.default).lower(),
                                   str(self.user_visible).lower(), self.display_order)
-   
+
         if self.langonly:
             msg += """   <langonly>%s</langonly>""" % self.langonly
-            
+
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in sorted(self.translated_name.items()):
             msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
-        
+
         msg += """   <description>%s</description>\n""" % self.description
         for (lang, val) in sorted(self.translated_description.items()):
             msg += """   <description xml:lang="%s">%s</description>\n""" % (lang, val)
@@ -269,7 +269,7 @@ class Group(CompsObj):
         msg += """    </packagelist>\n"""
         msg += """  </group>"""
 
-        return msg      
+        return msg
 
 
 class Category(CompsObj):
@@ -282,16 +282,16 @@ class Category(CompsObj):
         self.translated_name = {}
         self.translated_description = {}
         self.display_order = 1024
-        self._groups = {}        
+        self._groups = {}
 
         if elem:
             self.parse(elem)
-            
+
     def _groupiter(self):
         return self._groups.keys()
-    
+
     groups = property(_groupiter)
-    
+
     def parse(self, elem):
         for child in elem:
             if child.tag == 'id':
@@ -304,24 +304,24 @@ class Category(CompsObj):
                 text = child.text
                 if text:
                     text = text.encode('utf8')
-                    
+
                 lang = child.attrib.get(lang_attr)
                 if lang:
                     self.translated_name[lang] = text
                 else:
                     self.name = text
-    
+
             elif child.tag == 'description':
                 text = child.text
                 if text:
                     text = text.encode('utf8')
-                    
+
                 lang = child.attrib.get(lang_attr)
                 if lang:
                     self.translated_description[lang] = text
                 else:
                     self.description = text
-            
+
             elif child.tag == 'grouplist':
                 self.parse_group_list(child)
 
@@ -336,30 +336,30 @@ class Category(CompsObj):
 
     def add(self, obj):
         """Add another category object to this object"""
-    
+
         for grp in obj.groups:
             self._groups[grp] = 1
-        
+
         # name and description translations
         for lang in obj.translated_name:
             if lang not in self.translated_name:
                 self.translated_name[lang] = obj.translated_name[lang]
-        
+
         for lang in obj.translated_description:
             if lang not in self.translated_description:
                 self.translated_description[lang] = obj.translated_description[lang]
 
     def xml(self):
         """write out an xml stanza for the category object"""
-        msg ="""        
+        msg ="""
   <category>
    <id>%s</id>
    <display_order>%s</display_order>\n""" % (self.categoryid, self.display_order)
-   
+
         msg +="""   <name>%s</name>\n""" % self.name
         for (lang, val) in self.translated_name.items():
             msg += """   <name xml:lang="%s">%s</name>\n""" % (lang, val)
-        
+
         msg += """   <description>%s</description>\n""" % self.description
         for (lang, val) in self.translated_description.items():
             msg += """    <description xml:lang="%s">%s</description>\n""" % (lang, val)
@@ -370,8 +370,8 @@ class Category(CompsObj):
         msg += """    </grouplist>\n"""
         msg += """  </category>\n"""
 
-        return msg                
-        
+        return msg
+
 
 class Comps(object):
     def __init__(self, overwrite_groups=False):
@@ -379,7 +379,7 @@ class Comps(object):
         self._categories = {}
         self.compscount = 0
         self.overwrite_groups = overwrite_groups
-        self.compiled = False # have groups been compiled into avail/installed 
+        self.compiled = False # have groups been compiled into avail/installed
                               # lists, yet.
 
 
@@ -387,23 +387,23 @@ class Comps(object):
         grps = self._groups.values()
         grps.sort(key=lambda x: (x.display_order, x.name))
         return grps
-        
+
     def get_categories(self):
         cats = self._categories.values()
         cats.sort(key=lambda x: (x.display_order, x.name))
         return cats
-    
+
     groups = property(get_groups)
     categories = property(get_categories)
-    
+
     def has_group(self, grpid):
         exists = self.return_groups(grpid)
-            
+
         if exists:
             return True
-            
+
         return False
-    
+
     def return_group(self, grpid):
         """Return the first group which matches"""
         grps = self.return_groups(grpid)
@@ -422,7 +422,7 @@ class Comps(object):
                 thisgroup = self._groups[item]
                 returns[thisgroup.groupid] = thisgroup
                 continue
-            
+
             if case_sensitive:
                 match = re.compile(fnmatch.translate(item)).match
             else:
@@ -500,7 +500,7 @@ class Comps(object):
     def add(self, srcfile = None):
         if not srcfile:
             raise CompsException
-            
+
         if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             try:
@@ -510,10 +510,10 @@ class Comps(object):
         else:
             # srcfile is a file object
             infile = srcfile
-        
+
         self.compscount += 1
         self.compiled = False
-        
+
         parser = iterparse(infile)
         try:
             for event, elem in parser:
@@ -525,17 +525,17 @@ class Comps(object):
                     self.add_category(category)
         except SyntaxError, e:
             raise CompsException, "comps file is empty/damaged"
-            
+
         del parser
-        
+
     def compile(self, pkgtuplist):
         """ compile the groups into installed/available groups """
-        
+
         # convert the tuple list to a simple dict of pkgnames
         inst_pkg_names = {}
         for (n,a,e,v,r) in pkgtuplist:
             inst_pkg_names[n] = 1
-        
+
 
         for group in self.groups:
             # if there are mandatory packages in the group, then make sure
@@ -557,31 +557,31 @@ class Comps(object):
                     if pkgname in inst_pkg_names:
                         group.installed = True
                         break
-        
+
         self.compiled = True
-    
+
     def xml(self):
         """returns the xml of the comps files in this class, merged"""
 
         if not self._groups and not self._categories:
             return ""
-            
+
         msg = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE comps PUBLIC "-//Red Hat, Inc.//DTD Comps info//EN" "comps.dtd">
 <comps>
-""" 
- 
+"""
+
         for g in self.get_groups():
             msg += g.xml()
         for c in self.get_categories():
             msg += c.xml()
 
         msg += """\n</comps>\n"""
-        
+
         return msg
-            
-        
-        
+
+
+
 def main():
 
     try:
@@ -594,16 +594,15 @@ def main():
             print(group)
             for pkg in group.packages:
                 print('  ' + pkg)
-        
+
         for category in p.categories:
             print(category.name)
             for group in category.groups:
                 print('  ' + group)
-                
+
     except IOError:
         print("newcomps.py: No such file:\'%s\'" % sys.argv[1], file=sys.stderr)
         sys.exit(1)
-        
+
 if __name__ == '__main__':
     main()
-
