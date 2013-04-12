@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 import dnf.const
 import dnf.util
 import dnf.exceptions

@@ -18,13 +18,14 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 import dnf.util
 import dnf.yum.misc
 import hawkey
 import logging
 import sys
-import package
-import queries
+import dnf.package
+import dnf.queries
 
 class SackVersion:
     def __init__(self):
@@ -64,10 +65,10 @@ class Sack(hawkey.Sack):
 
     def query(self):
         """Factory function returning a DNF Query."""
-        return queries.Query(self)
+        return dnf.queries.Query(self)
 
     def rpmdb_version(self, yumdb):
-        pkgs = queries.installed(self)
+        pkgs = dnf.queries.installed(self)
         main = SackVersion()
         for pkg in pkgs:
             ydbi = yumdb.get_package(pkg)
@@ -83,7 +84,7 @@ class Sack(hawkey.Sack):
             output.writelines(rlines)
 
         output.write("=Ver: 2.0\n")
-        for p in queries.Query(self).filter(reponame=reponame):
+        for p in dnf.queries.Query(self).filter(reponame=reponame):
             nline = "=Pkg: %s %s %s %s\n" % (p.name, p.version, p.release, p.arch)
             output.write(nline)
             output_reldeps("=Prv:", p.provides)
@@ -97,7 +98,7 @@ def build_sack(yumbase):
     cachedir = yumbase.cache_c.cachedir
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
-    return Sack(pkgcls=package.Package, pkginitval=yumbase,
+    return Sack(pkgcls=dnf.package.Package, pkginitval=yumbase,
                 cachedir=cachedir,
                 rootdir=yumbase.conf.installroot)
 

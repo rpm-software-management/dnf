@@ -23,6 +23,7 @@
 # implementation can change, e.g. for one general file with a serialized dict of
 # data etc.
 
+from __future__ import absolute_import
 import dnf.util
 import logging
 import os
