@@ -37,7 +37,7 @@ class RPMInstallCallback:
         self.mark = "#"
         self.marks = 27
         self.lastmsg = None
-        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
+        self.logger = logging.getLogger("dnf.rpm")
         self.filelog = False
 
         self.myprocess = { TS_UPDATE : _('Updating'), 

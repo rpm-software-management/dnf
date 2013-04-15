@@ -449,8 +449,7 @@ class YumOutput:
     """Main output class for the yum command line."""
 
     def __init__(self):
-        self.logger = logging.getLogger("yum.cli")
-        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.logger = logging.getLogger("dnf")
         if hasattr(rpm, "expandMacro"):
             self.i18ndomains = rpm.expandMacro("%_i18ndomains").split(":")
         else:
@@ -834,7 +833,7 @@ class YumOutput:
         print(_("Repo        : %s") % to_unicode(pkg.repoid))
         if 'from_repo' in yumdb_info:
             print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
-        if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3):
+        if self.logger.isEnabledFor(logginglevels.DEBUG_3):
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % to_unicode(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
@@ -1079,7 +1078,7 @@ class YumOutput:
         """
         print(_('\nGroup: %s') % group.ui_name)
 
-        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verb = self.logger.isEnabledFor(logginglevels.DEBUG_3)
         if verb:
             print(_(' Group-Id: %s') % to_unicode(group.groupid))
         pkg_names2pkgs = None
@@ -1115,7 +1114,7 @@ class YumOutput:
         :param results: a list of package dependency information as
            returned by findDeps
         """
-        verb = self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verb = self.logger.isEnabledFor(logginglevels.DEBUG_3)
         for pkg in sorted(results):
             print(_("package: %s") % pkg.compactPrint())
             if len(results[pkg]) == 0:
@@ -1315,13 +1314,13 @@ class YumOutput:
 
         if (not error):
             if locsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total size: %s"),
+                self.logger.log(logginglevels.INFO_1, _("Total size: %s"),
                                         self.format_number(totsize))
             if locsize != totsize:
-                self.verbose_logger.log(logginglevels.INFO_1, _("Total download size: %s"),
+                self.logger.log(logginglevels.INFO_1, _("Total download size: %s"),
                                         self.format_number(totsize - locsize))
             if installonly:
-                self.verbose_logger.log(logginglevels.INFO_1,
+                self.logger.log(logginglevels.INFO_1,
                                         _("Installed size: %s"),
                                         self.format_number(insize))
 
@@ -1344,7 +1343,7 @@ class YumOutput:
                 self.logger.error(_('There was an error calculating installed size'))
                 break
         if (not error):
-            self.verbose_logger.log(logginglevels.INFO_1,
+            self.logger.log(logginglevels.INFO_1,
                                     _("Installed size: %s"),
                                     self.format_number(totsize))
 
@@ -1635,7 +1634,7 @@ Transaction Summary
  Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds
 to exit.
 """) % (hibeg, hiend, hibeg, delta_exit_str, hiend)
-            self.verbose_logger.log(logginglevels.INFO_2, msg)
+            self.logger.log(logginglevels.INFO_2, msg)
         elif now - self._last_interrupt < delta_exit_chk:
             # Two quick CTRL-C's, quit
             raise KeyboardInterrupt
@@ -1660,7 +1659,7 @@ to exit.
             return
 
         tl = urlgrabber.progress.TerminalLine(8)
-        self.verbose_logger.log(logginglevels.INFO_2, "-" * tl.rest())
+        self.logger.log(logginglevels.INFO_2, "-" * tl.rest())
         dl_time = time.time() - download_start_timestamp
         if dl_time <= 0: # This stops divide by zero, among other problems
             dl_time = 0.01
@@ -1670,7 +1669,7 @@ to exit.
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
         msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
                               ui_bs, ui_size, ui_time, ui_end)
-        self.verbose_logger.log(logginglevels.INFO_2, msg)
+        self.logger.log(logginglevels.INFO_2, msg)
 
     def _history_uiactions(self, hpkgs):
         actions = set()
@@ -2390,12 +2389,12 @@ to exit.
 
         for item in extcmds[2:]:
             if item in addon_info:
-                self.verbose_logger.log(logginglevels.INFO_2, '%s:', item)
+                self.logger.log(logginglevels.INFO_2, '%s:', item)
                 print(self.history.return_addon_data(hist_data.tid, item), end='')
-                self.verbose_logger.log(logginglevels.INFO_2, '')
+                self.logger.log(logginglevels.INFO_2, '')
             else:
                 print(_('%s: No additional data found by this name') % item)
-            self.verbose_logger.log(logginglevels.INFO_2, '')
+            self.logger.log(logginglevels.INFO_2, '')
 
     def historyPackageListCmd(self, extcmds):
         """Print a list of information about transactions from history
@@ -2556,7 +2555,7 @@ class DepSolveProgressCallBack:
 
     def __init__(self, ayum=None):
         """requires yum-cli log and errorlog functions as arguments"""
-        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.logger = logging.getLogger("dnf")
         self.loops = 0
         self.ayum = ayum
 
@@ -2591,7 +2590,7 @@ class DepSolveProgressCallBack:
                      'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('---> Package %s.%s %s will be %s'), n, a, evr,
             modeterm)
 
@@ -2599,24 +2598,24 @@ class DepSolveProgressCallBack:
         """Perform setup at the beginning of the dependency solving
         process.
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
                                 _('--> Starting dependency resolution'))
         self.loops += 1
 
     def tscheck(self):
         """Output a message stating that a transaction check is beginning."""
-        self.verbose_logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
+        self.logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
 
     def restartLoop(self):
         """Output a message stating that dependency resolution is restarting."""
         self.loops += 1
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Restarting Dependency Resolution with new changes.'))
-        self.verbose_logger.debug('---> Loop Number: %d', self.loops)
+        self.logger.debug('---> Loop Number: %d', self.loops)
 
     def end(self):
         """Output a message stating that dependency resolution has finished."""
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Finished dependency resolution'))
 
     def procReq(self, name, formatted_req):
@@ -2628,7 +2627,7 @@ class DepSolveProgressCallBack:
         :param formatted_req: a string representing the package that
            is being processed as a dependency of *name*
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
 
@@ -2641,7 +2640,7 @@ class DepSolveProgressCallBack:
         :param formatted_req: a string representing the package that
            is being processed as a dependency of *po*
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
 
@@ -2654,7 +2653,7 @@ class DepSolveProgressCallBack:
            not be removed
         :param hits: unused
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('---> Keeping package: %s'), po)
 
     def unresolved(self, msg):
@@ -2662,7 +2661,7 @@ class DepSolveProgressCallBack:
 
         :param msg: string giving information about the unresolved dependency.
         """
-        self.verbose_logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
+        self.logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
             msg)
 
     def procConflict(self, name, confname):
@@ -2674,7 +2673,7 @@ class DepSolveProgressCallBack:
         :param confname: the name of the second package involved in
            the conflict
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Processing Conflict: %s conflicts %s'),
                                 name, confname)
 
@@ -2687,23 +2686,22 @@ class DepSolveProgressCallBack:
         :param confname: the second package object involved in
            the conflict
         """
-        self.verbose_logger.log(logginglevels.INFO_2,
+        self.logger.log(logginglevels.INFO_2,
             _('--> Processing Conflict: %s conflicts %s'),
                                 po, confname)
 
     def transactionPopulation(self):
         """Output a message stating that the transaction set is being populated."""
 
-        self.verbose_logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
+        self.logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
             'with selected packages. Please wait.'))
 
 class CacheProgressCallback:
     """A class to handle text output callbacks during metadata cache updates."""
 
     def __init__(self):
-        self.logger = logging.getLogger("yum.cli")
-        self.verbose_logger = logging.getLogger("yum.verbose.cli")
-        self.file_logger = logging.getLogger("yum.filelogging.cli")
+        self.logger = logging.getLogger("dnf")
+        self.file_logger = logging.getLogger("dnf.rpm")
 
     def log(self, level, message):
         """Output a log message.
@@ -2711,7 +2709,7 @@ class CacheProgressCallback:
         :param level: the logging level for the message
         :param message: the message
         """
-        self.verbose_logger.log(level, message)
+        self.logger.log(level, message)
 
     def errorlog(self, level, message):
         """Output an errorlog message.

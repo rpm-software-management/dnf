@@ -86,8 +86,7 @@ class Base(object):
         self._ts_save_file = None
         self._not_found_a = {}
         self._not_found_i = {}
-        self.logger = logging.getLogger("yum.Base")
-        self.verbose_logger = logging.getLogger("yum.verbose.Base")
+        self.logger = logging.getLogger("dnf")
         self._repos = dnf.repodict.RepoDict()
         self.repo_setopts = {} # since we have to use repo_setopts in base and
                                # not in cli - set it up as empty so no one
@@ -135,7 +134,7 @@ class Base(object):
         if repo.presto_fn:
             hrepo.presto_fn = repo.presto_fn
         else:
-            self.verbose_logger.debug("not found deltainfo for: %s" % repo.name)
+            self.logger.debug("not found deltainfo for: %s" % repo.name)
         repo.hawkey_repo = hrepo
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True)
 
@@ -185,7 +184,7 @@ class Base(object):
         for r in self.repos.iter_enabled():
             self._add_repo_to_sack(r.id)
         self._sack.configure(self.conf.installonlypkgs)
-        self.verbose_logger.debug('hawkey sack setup time: %0.3f' %
+        self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         self._setup_excludes()
         return self._sack
@@ -237,7 +236,7 @@ class Base(object):
                                  yumvar.get('basearch', '$basearch'),
                                  yumvar.get('releasever', '$releasever')))
         logginglevels.setFileLogs(self.conf.logdir, self._cleanup)
-        self.verbose_logger.debug('Config time: %0.3f' % (time.time() - conf_st))
+        self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         return self._conf
 
     def doLoggingSetup(self, debuglevel, errorlevel,
@@ -487,7 +486,7 @@ class Base(object):
             return self._comps
 
         group_st = time.time()
-        self.verbose_logger.log(logginglevels.DEBUG_4,
+        self.logger.log(logginglevels.DEBUG_4,
                                 _('Getting group metadata'))
         reposWithGroups = []
         #  Need to make sure the groups data is ready to read. Really we'd want
@@ -515,7 +514,7 @@ class Base(object):
             if repo.groups_added: # already added the groups from this repo
                 continue
 
-            self.verbose_logger.log(logginglevels.DEBUG_4,
+            self.logger.log(logginglevels.DEBUG_4,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our compressed file
@@ -536,7 +535,7 @@ class Base(object):
             raise dnf.exceptions.GroupsError, _('No Groups Available in any repository')
 
         self._comps.compile(self.rpmdb.simplePkgList())
-        self.verbose_logger.debug('group time: %0.3f' % (time.time() - group_st))
+        self.logger.debug('group time: %0.3f' % (time.time() - group_st))
         return self._comps
 
     def _getHistory(self):
@@ -596,7 +595,7 @@ class Base(object):
 
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
-        self.verbose_logger.log(logginglevels.INFO_2, msg)
+        self.logger.log(logginglevels.INFO_2, msg)
         for pkg in queries.installed(self.sack):
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
@@ -691,7 +690,7 @@ class Base(object):
                 (rescode, restring) = (0, [_('Nothing to do')])
         self.dsCallback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
-        self.verbose_logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
+        self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         if rescode == 2:
             msg = self.tsInfo.rpm_limitations()
             if msg:
@@ -722,7 +721,7 @@ class Base(object):
                 lastdbv = lastdbv.end_rpmdbversion
 
             if lastdbv is None or rpmdbv != lastdbv:
-                self.verbose_logger.info("RPMDB altered outside of DNF.")
+                self.logger.info("RPMDB altered outside of DNF.")
 
             cmdline = None
             if hasattr(self, 'args') and self.args:
@@ -780,7 +779,7 @@ class Base(object):
             # case.
             if len(filter(lambda el: el.Failed(), self.ts)) > 0:
                 errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
-                self.verbose_logger.debug(errstring)
+                self.logger.debug(errstring)
                 resultobject.return_code = 1
             else:
                 self.logger.critical(_("Transaction couldn't start (no root?)"))
@@ -950,7 +949,7 @@ class Base(object):
         for txmbr in self.tsInfo:
             if txmbr.output_state not in TS_INSTALL_STATES + TS_REMOVE_STATES:
                 count = _call_txmbr_cb(txmbr, count)
-                self.verbose_logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
+                self.logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
         if self._record_history():
@@ -960,7 +959,7 @@ class Base(object):
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.plugins.run('historyend')
             self.history.end(rpmdbv, ret)
-        self.verbose_logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
+        self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def doLock(self):
         """Acquire the yum lock.
@@ -1196,7 +1195,7 @@ class Base(object):
                         adderror(po, _('package fails checksum but caching is '
                             'enabled for %s') % po.repo.id)
                 else:
-                    self.verbose_logger.debug(_("using local copy of %s") %(po,))
+                    self.logger.debug(_("using local copy of %s") %(po,))
                     continue
 
             remote_pkgs.append(po)
@@ -1237,7 +1236,7 @@ class Base(object):
                     # the user on big downloads.
                     result, errmsg = self.sigCheckPkg(po)
                     if result != 0:
-                        self.verbose_logger.warn("%s", errmsg)
+                        self.logger.warn("%s", errmsg)
                 done_repos.add(po.repoid)
 
             except dnf.exceptions.RepoError, e:
@@ -1347,7 +1346,7 @@ class Base(object):
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
+                self.logger.log(logginglevels.DEBUG_4,
                     _('%s removed'), fn)
 
     def cleanPackages(self):
@@ -1414,7 +1413,7 @@ class Base(object):
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
             else:
-                self.verbose_logger.log(logginglevels.DEBUG_4,
+                self.logger.log(logginglevels.DEBUG_4,
                     _('%s file %s removed'), filetype, item)
                 removed+=1
         msg = P_('%d %s file removed', '%d %s files removed', removed) % (removed, filetype)
@@ -1720,7 +1719,7 @@ class Base(object):
                         try:
                             txmbr.groups.remove(grpid)
                         except ValueError:
-                            self.verbose_logger.log(logginglevels.DEBUG_1,
+                            self.logger.log(logginglevels.DEBUG_1,
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
@@ -1772,13 +1771,13 @@ class Base(object):
 
             old_txmbrs = len(txmbrs_used)
             for pkg in pkgs:
-                self.verbose_logger.log(logginglevels.DEBUG_2,
+                self.logger.log(logginglevels.DEBUG_2,
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
                     txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
                 except dnf.exceptions.Error as e:
                     # :dead
-                    self.verbose_logger.debug(_('No package named %s available to be installed'),
+                    self.logger.debug(_('No package named %s available to be installed'),
                         pkg)
                 else:
                     txmbrs_used.extend(txmbrs)
@@ -1864,7 +1863,7 @@ class Base(object):
                         try:
                             txmbr.groups.remove(grpid)
                         except ValueError:
-                            self.verbose_logger.log(logginglevels.DEBUG_1,
+                            self.logger.log(logginglevels.DEBUG_1,
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
@@ -2173,7 +2172,7 @@ class Base(object):
         def msg_installed(pkg):
             name = unicode(pkg)
             msg = _('Package %s is already installed, skipping.') % name
-            self.verbose_logger.warning(msg)
+            self.logger.warning(msg)
 
         subj = queries.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
@@ -2539,7 +2538,7 @@ class Base(object):
         key_installed = False
 
         msg = _('Retrieving key from %s') % keyurl
-        self.verbose_logger.log(logginglevels.INFO_2, msg)
+        self.logger.log(logginglevels.INFO_2, msg)
 
         # Go get the GPG key from the given URL
         try:
@@ -2580,7 +2579,7 @@ class Base(object):
                     raise dnf.exceptions.Error(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
-                    self.verbose_logger.log(logginglevels.INFO_2, msg)
+                    self.logger.log(logginglevels.INFO_2, msg)
                     valid_sig = True
 
         # Parse the key
@@ -2963,7 +2962,7 @@ class Base(object):
             self.dsCallback.transactionPopulation()
 
         for txmbr in self.tsInfo.getMembers():
-            self.verbose_logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
+            self.logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
             if txmbr.ts_state in ['u', 'i']:
                 rpmfile = txmbr.po.localPkg()
                 if not os.path.exists(rpmfile):
@@ -2972,13 +2971,13 @@ class Base(object):
 
                 if txmbr.ts_state == 'u':
                     if self.allowedMultipleInstalls(txmbr.po):
-                        self.verbose_logger.log(logginglevels.DEBUG_2,
+                        self.logger.log(logginglevels.DEBUG_2,
                             _('%s converted to install'), txmbr.po)
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
                 self.ts.addInstall(hdr, txmbr, txmbr.ts_state)
-                self.verbose_logger.log(logginglevels.DEBUG_1,
+                self.logger.log(logginglevels.DEBUG_1,
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
                     dscb_ts_state = txmbr.ts_state
@@ -2992,7 +2991,7 @@ class Base(object):
                     if txmbr.downgraded_by:
                         continue
                     self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                self.verbose_logger.log(logginglevels.DEBUG_1,
+                self.logger.log(logginglevels.DEBUG_1,
                     _('Removing Package %s'), txmbr.po)
 
     def _does_this_update(self, pkg1, pkg2):

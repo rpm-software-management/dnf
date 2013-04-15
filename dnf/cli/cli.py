@@ -106,8 +106,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         dnf.yum.base.Base.__init__(self)
         output.YumOutput.__init__(self)
         logging.basicConfig()
-        self.logger = logging.getLogger("yum.cli")
-        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.logger = logging.getLogger("dnf")
 
     def errorSummary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -148,14 +147,14 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         """
         # make sure there's something to do
         if len(self.tsInfo) == 0:
-            self.verbose_logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
+            self.logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
             return -1
 
         # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
         #       gain. But it's probably doom to have a different code path.
         lsts = self.listTransaction()
-        if self.verbose_logger.isEnabledFor(dnf.yum.logginglevels.INFO_1):
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_1, lsts)
+        if self.logger.isEnabledFor(dnf.yum.logginglevels.INFO_1):
+            self.logger.log(dnf.yum.logginglevels.INFO_1, lsts)
         elif self.conf.assumeno or not self.conf.assumeyes:
             #  If we are in quiet, and assumeyes isn't on we want to output
             # at least the transaction list anyway.
@@ -192,10 +191,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # confirm with user
         if self._promptWanted():
             if self.conf.assumeno or not self.userconfirm():
-                self.verbose_logger.info(_('Exiting on user Command'))
+                self.logger.info(_('Exiting on user Command'))
                 return -1
 
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+        self.logger.log(dnf.yum.logginglevels.INFO_2,
             _('Downloading Packages:'))
         problems = self.download_packages(downloadpkgs, callback_total=\
                                               self.download_callback_total_cb)
@@ -219,7 +218,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         self.populate_ts()
 
         rcd_st = time.time()
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+        self.logger.log(dnf.yum.logginglevels.INFO_2,
              _('Running Transaction Check'))
         msgs = self._run_rpm_check()
         if msgs:
@@ -241,10 +240,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
                        _REPORT_TMPLT % self.conf.bugtracker_url]
 
-        self.verbose_logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
+        self.logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
 
         tt_st = time.time()
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+        self.logger.log(dnf.yum.logginglevels.INFO_2,
             _('Running Transaction Test'))
         if not self.conf.diskspacecheck:
             self.rpm_probfilter.append(rpm.RPMPROB_FILTER_DISKSPACE)
@@ -263,10 +262,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             raise dnf.exceptions.Error, errstring + '\n' + \
                  self.errorSummary(errstring)
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+        self.logger.log(dnf.yum.logginglevels.INFO_2,
              _('Transaction Test Succeeded'))
 
-        self.verbose_logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
+        self.logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
 
         # unset the sigquit handler
         signal.signal(signal.SIGQUIT, signal.SIG_DFL)
@@ -295,12 +294,12 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, _('Running Transaction'))
+        self.logger.log(dnf.yum.logginglevels.INFO_2, _('Running Transaction'))
         resultobject = self.runTransaction(cb=cb)
 
-        self.verbose_logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
+        self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_1,
+        self.logger.log(dnf.yum.logginglevels.INFO_1,
             self.postTransactionOutput())
 
         # put back the sigquit handler
@@ -349,7 +348,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if matches:
             msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
                                      ", ".join(matches))
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, to_unicode(msg))
+            self.logger.log(dnf.yum.logginglevels.INFO_2, to_unicode(msg))
 
     def _checkMaybeYouMeant(self, arg, always_output=True, rpmdb_only=False):
         """ If the update/remove argument doesn't match with case, or due
@@ -373,7 +372,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         hibeg = self.term.MODE['bold']
         hiend = self.term.MODE['normal']
         if matches.available:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+            self.logger.log(dnf.yum.logginglevels.INFO_2,
                 _('Package(s) %s%s%s available, but not installed.'),
                                     hibeg, arg, hiend)
             return
@@ -381,19 +380,19 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # No package name, so do the maybeYouMeant thing here too
         matches = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=[arg], ignore_case=True)
         if not matches.installed and matches.available:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+            self.logger.log(dnf.yum.logginglevels.INFO_2,
                 _('Package(s) %s%s%s available, but not installed.'),
                                     hibeg, arg, hiend)
             return
         matches = set(map(lambda x: x.name, matches.installed))
         if always_output or matches:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+            self.logger.log(dnf.yum.logginglevels.INFO_2,
                                     _('No package %s%s%s available.'),
                                     hibeg, arg, hiend)
         if matches:
             msg = self.fmtKeyValFill(_('  * Maybe you meant: '),
                                      ", ".join(matches))
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
+            self.logger.log(dnf.yum.logginglevels.INFO_2, msg)
 
     def installPkgs(self, userlist):
         """Attempt to take the user specified list of packages or
@@ -432,7 +431,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.install(arg)
             except dnf.exceptions.Error:
                 # :dead
-                self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+                self.logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
                                         self.term.MODE['bold'], arg,
                                         self.term.MODE['normal'])
@@ -579,7 +578,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.downgrade(arg)
             except dnf.exceptions.Error:
                 # :dead
-                self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+                self.logger.log(dnf.yum.logginglevels.INFO_2,
                                         _('No package %s%s%s available.'),
                                         self.term.MODE['bold'], arg,
                                         self.term.MODE['normal'])
@@ -625,7 +624,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                         xmsg = yumdb_info.from_repo
                         xmsg = _(' (from %s)') % xmsg
                     msg = _('Installed package %s%s%s%s not available.')
-                    self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg,
+                    self.logger.log(dnf.yum.logginglevels.INFO_2, msg,
                                             self.term.MODE['bold'], ipkg,
                                             self.term.MODE['normal'], xmsg)
 
@@ -780,9 +779,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         pkgresults = xmlresults = dbresults = expcresults = []
         msg = self.fmtKeyValFill(_('Cleaning repos: '),
                         ' '.join([ x.id for x in self.repos.iter_enabled()]))
-        self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
+        self.logger.log(dnf.yum.logginglevels.INFO_2, msg)
         if 'all' in userlist:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2,
+            self.logger.log(dnf.yum.logginglevels.INFO_2,
                 _('Cleaning up Everything'))
             pkgcode, pkgresults = self.cleanPackages()
             xmlcode, xmlresults = self.cleanMetadata()
@@ -819,7 +818,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         code = pkgcode + xmlcode + dbcode + expccode
         results = pkgresults + xmlresults + dbresults + expcresults
         for msg in results:
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, msg)
+            self.logger.log(dnf.yum.logginglevels.INFO_2, msg)
         return code, []
 
     def returnGroupLists(self, userlist):
@@ -855,13 +854,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         def _out_grp(sect, group):
             if not done:
-                self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, sect)
+                self.logger.log(dnf.yum.logginglevels.INFO_2, sect)
             msg = '   %s' % group.ui_name
-            if self.verbose_logger.isEnabledFor(dnf.yum.logginglevels.DEBUG_3):
+            if self.logger.isEnabledFor(dnf.yum.logginglevels.DEBUG_3):
                 msg += ' (%s)' % group.groupid
             if group.langonly:
                 msg += ' [%s]' % group.langonly
-            self.verbose_logger.info('%s', msg)
+            self.logger.info('%s', msg)
 
         done = False
         for group in installed:
@@ -919,7 +918,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         def _out_grp(sect, num):
             if not num:
                 return
-            self.verbose_logger.log(dnf.yum.logginglevels.INFO_2, '%s %u', sect,num)
+            self.logger.log(dnf.yum.logginglevels.INFO_2, '%s %u', sect,num)
         done = 0
         for group in installed:
             if group.langonly: continue
@@ -1058,8 +1057,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
 class Cli(object):
     def __init__(self, base):
-        self.logger = logging.getLogger("yum.cli")
-        self.verbose_logger = logging.getLogger("yum.verbose.cli")
+        self.logger = logging.getLogger("dnf")
 
         self.base = base
         self.cli_commands = {}
@@ -1180,10 +1178,10 @@ class Cli(object):
         all.  This function will also set :attr:`self.base.basecmd` and
         :attr:`self.extcmds`.
         """
-        self.verbose_logger.debug('dnf version: %s', dnf.const.VERSION)
-        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+        self.logger.debug('dnf version: %s', dnf.const.VERSION)
+        self.logger.log(dnf.yum.logginglevels.DEBUG_4,
                                 'COMMAND: %s', self.cmdstring)
-        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4,
+        self.logger.log(dnf.yum.logginglevels.DEBUG_4,
                                 'Installroot: %s', self.base.conf.installroot)
         if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
             self.base.cmds = self.base.conf.commands
@@ -1196,7 +1194,7 @@ class Cli(object):
 
         self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
         msg = 'Ext Commands: %s' % ' '.join(self.base.extcmds)
-        self.verbose_logger.log(dnf.yum.logginglevels.DEBUG_4, msg)
+        self.logger.log(dnf.yum.logginglevels.DEBUG_4, msg)
 
         basecmd = self.base.cmds[0] # our base command
         if basecmd not in self.cli_commands:
@@ -1477,7 +1475,7 @@ class YumOptionParser(OptionParser):
         else:
             self._utils = False
         OptionParser.__init__(self, **kwargs)
-        self.logger = logging.getLogger("yum.cli")
+        self.logger = logging.getLogger("dnf")
         self.base = base
         # self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
         # self.add_option_group(self.plugin_option_group)

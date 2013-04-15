@@ -38,7 +38,7 @@ _METALINK_FILENAME     ="metalink.xml"
 _MIRRORLIST_FILENAME   ="mirrorlist"
 _RECOGNIZED_CHKSUMS    = ['sha512', 'sha256']
 
-logger = logging.getLogger("yum.verbose.Base")
+logger = logging.getLogger("dnf")
 
 def _metalink_path(dirname):
     return os.path.join(dirname, _METALINK_FILENAME)

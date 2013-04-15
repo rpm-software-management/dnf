@@ -137,7 +137,7 @@ class YumPlugins:
         self.base = weakref(base)
         self.optparser = optparser
         self.cmdline = (None, None)
-        self.verbose_logger = logging.getLogger("yum.verbose.YumPlugins")
+        self.logger = logging.getLogger("dnf")
         self.disabledPlugins = disabled
         self.enabledPlugins  = enabled
         if types is None:
@@ -146,7 +146,7 @@ class YumPlugins:
             types = (types,)
 
         if id(TYPE_INTERFACE) in [id(t) for t in types]:
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.logger.log(logginglevels.INFO_2,
                     'Deprecated constant TYPE_INTERFACE during plugin '
                     'initialization.\nPlease use TYPE_INTERACTIVE instead.')
 
@@ -175,7 +175,7 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.verbose_logger.log(logginglevels.DEBUG_4,
+            self.logger.log(logginglevels.DEBUG_4,
                                     'Running "%s" handler for "%s" plugin',
                                     slotname, modname)
     
@@ -203,7 +203,7 @@ class YumPlugins:
 
         # If we are in verbose mode we get the full 'Loading "blah" plugin' lines
         if (self._plugins and
-            not self.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
+            not self.logger.isEnabledFor(logginglevels.DEBUG_3)):
             # Mostly copied from YumOutput._outKeyValFill()
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
@@ -211,20 +211,20 @@ class YumPlugins:
             width = 80
             if hasattr(self.base, 'term'):
                 width = self.base.term.columns
-            self.verbose_logger.log(logginglevels.INFO_2,
+            self.logger.log(logginglevels.INFO_2,
                                     fill(val, width=width, initial_indent=key,
                                          subsequent_indent=nxt))
 
         if self.disabledPlugins:
             for wc in self.disabledPlugins:
                 if wc not in self._used_disable_plugin:
-                    self.verbose_logger.log(logginglevels.INFO_2,
+                    self.logger.log(logginglevels.INFO_2,
                                             _("No plugin match for: %s") % wc)
         del self._used_disable_plugin
         if self.enabledPlugins:
             for wc in self.enabledPlugins:
                 if wc not in self._used_enable_plugin:
-                    self.verbose_logger.log(logginglevels.INFO_2,
+                    self.logger.log(logginglevels.INFO_2,
                                             _("No plugin match for: %s") % wc)
         del self._used_enable_plugin
 
@@ -255,7 +255,7 @@ class YumPlugins:
                                   config.BoolOption(False)) and
              not self._plugin_cmdline_match(modname, self.enabledPlugins,
                                             self._used_enable_plugin))):
-            self.verbose_logger.debug(_('Not loading "%s" plugin, as it is disabled'), modname)
+            self.logger.debug(_('Not loading "%s" plugin, as it is disabled'), modname)
             return
 
         try:
@@ -265,20 +265,20 @@ class YumPlugins:
             finally:
                 fp.close()
         except:
-            if self.verbose_logger.isEnabledFor(logginglevels.DEBUG_4):
+            if self.logger.isEnabledFor(logginglevels.DEBUG_4):
                 raise # Give full backtrace:
-            self.verbose_logger.error(_('Plugin "%s" can\'t be imported') %
+            self.logger.error(_('Plugin "%s" can\'t be imported') %
                                       modname)
             return
 
         # Check API version required by the plugin
         if not hasattr(module, 'requires_api_version'):
-            self.verbose_logger.error(
+            self.logger.error(
                 _('Plugin "%s" doesn\'t specify required API version') %
                 modname)
             return
         if not apiverok(API_VERSION, module.requires_api_version):
-            self.verbose_logger.error(
+            self.logger.error(
                 _('Plugin "%s" requires API %s. Supported API is %s.') % (
                     modname,
                     module.requires_api_version,
@@ -295,7 +295,7 @@ class YumPlugins:
             return
         for plugintype in plugintypes:
             if id(plugintype) == id(TYPE_INTERFACE):
-                self.verbose_logger.log(logginglevels.INFO_2,
+                self.logger.log(logginglevels.INFO_2,
                         'Plugin "%s" uses deprecated constant '
                         'TYPE_INTERFACE.\nPlease use TYPE_INTERACTIVE '
                         'instead.', modname)
@@ -312,7 +312,7 @@ class YumPlugins:
                                            self._used_enable_plugin)):
             return
 
-        self.verbose_logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
+        self.logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
                                 modname)
 
         # Store the plugin module and its configuration file
@@ -339,10 +339,10 @@ class YumPlugins:
             if os.access(conffilename, os.R_OK):
                 # Found configuration file
                 break
-            self.verbose_logger.log(logginglevels.INFO_2, _("Configuration file %s not found") % conffilename)
+            self.logger.log(logginglevels.INFO_2, _("Configuration file %s not found") % conffilename)
         else: # for
             # Configuration files for the plugin not found
-            self.verbose_logger.log(logginglevels.INFO_2, _("Unable to find configuration file for plugin %s")
+            self.logger.log(logginglevels.INFO_2, _("Unable to find configuration file for plugin %s")
                 % modname)
             return None
         parser = ConfigParser()
@@ -389,8 +389,7 @@ class PluginConduit:
         self._base = base
         self._conf = conf
 
-        self.logger = logging.getLogger("yum.plugin")
-        self.verbose_logger = logging.getLogger("yum.verbose.plugin")
+        self.logger = logging.getLogger("dnf")
 
     def info(self, level, msg):
         """Send an info message to the logger.
@@ -399,7 +398,7 @@ class PluginConduit:
         :param msg: the message to send
         """
         converted_level = logginglevels.logLevelFromDebugLevel(level)
-        self.verbose_logger.log(converted_level, msg)
+        self.logger.log(converted_level, msg)
 
     def error(self, level, msg):
         """Send an error message to the logger.

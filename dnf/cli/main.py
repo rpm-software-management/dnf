@@ -77,8 +77,7 @@ def main(args):
             return 200
         return 0
 
-    logger = logging.getLogger("yum.main")
-    verbose_logger = logging.getLogger("yum.verbose.main")
+    logger = logging.getLogger("dnf")
 
     # our core object for the cli
     base = dnf.cli.cli.YumBaseCli()
@@ -145,7 +144,7 @@ def main(args):
     if result == 0:
         # Normal exit
         for msg in resultmsgs:
-            verbose_logger.log(logginglevels.INFO_2, '%s', msg)
+            logger.log(logginglevels.INFO_2, '%s', msg)
         if unlock(): return 200
         return 0
     elif result == 1:
@@ -168,7 +167,7 @@ def main(args):
         return 3
 
     # Depsolve stage
-    verbose_logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
+    logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
 
     try:
         (result, resultmsgs) = base.buildTransaction()
@@ -207,7 +206,7 @@ def main(args):
         if unlock(): return 200
         return 3
 
-    verbose_logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
+    logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
 
     # Run the transaction
     try:
@@ -228,7 +227,7 @@ def main(args):
             logger.critical("%s", msg)
         return_code = result
         if base._ts_save_file:
-            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
+            logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     elif return_code < 0:
         return_code = 1 # Means the pre-transaction checks failed...
         #  This includes:
@@ -236,9 +235,9 @@ def main(args):
         # . Hitting N at the prompt.
         # . GPG check failures.
         if base._ts_save_file:
-            verbose_logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
+            logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
-        verbose_logger.log(logginglevels.INFO_2, _('Complete!'))
+        logger.log(logginglevels.INFO_2, _('Complete!'))
 
     if unlock(): return 200
     return return_code

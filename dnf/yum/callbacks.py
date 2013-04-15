@@ -39,7 +39,7 @@ class ProcessTransBaseCallback:
     :func:`Base.processTransaction`.
     """
     def __init__(self):
-        self.logger = logging.getLogger('yum.verbose.ProcessTrasactionBaseCallback')
+        self.logger = logging.getLogger("dnf")
 
     def event(self,state,data=None):
         """Handle an event by logging it.

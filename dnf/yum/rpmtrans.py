@@ -83,7 +83,7 @@ class RPMBaseCallback:
                             TS_OBSOLETED: 'Obsoleted',
                             TS_OBSOLETING: 'Installed',
                             TS_UPDATED: 'Cleanup'}
-        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
+        self.logger = logging.getLogger("dnf.rpm")
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
@@ -190,7 +190,7 @@ class RPMTransaction:
         self.complete_actions = 0
         self.installed_pkg_names = set()
         self.total_removed = 0
-        self.logger = logging.getLogger('yum.filelogging.RPMInstallCallback')
+        self.logger = logging.getLogger("dnf.rpm")
         self.filelog = False
 
         self._setupOutputLogging(base.conf.rpmverbosity)

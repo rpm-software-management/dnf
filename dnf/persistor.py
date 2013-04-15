@@ -31,7 +31,7 @@ import os
 class Persistor(object):
     def __init__(self, persist_dir):
         self.persist_dir = persist_dir
-        self.verbose_logger = logging.getLogger("yum.verbose.Base")
+        self.logger = logging.getLogger("dnf")
 
     @property
     def _last_makecache_path(self):
@@ -42,12 +42,12 @@ class Persistor(object):
             dnf.util.touch(self._last_makecache_path)
             return True
         except IOError:
-            self.verbose_logger.info("Failed storing last makecache time.")
+            self.logger.info("Failed storing last makecache time.")
             return False
 
     def since_last_makecache(self):
         try:
             return int(dnf.util.file_age(self._last_makecache_path))
         except OSError:
-            self.verbose_logger.info("Failed determining last makecache time.")
+            self.logger.info("Failed determining last makecache time.")
             return None

@@ -57,7 +57,7 @@ class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
         self._filelists = False
-        self.verbose_logger = logging.getLogger("yum.verbose.Base")
+        self.logger = logging.getLogger("dnf")
 
     def configure(self, installonly=None):
         if installonly:

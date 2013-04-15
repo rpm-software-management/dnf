@@ -207,7 +207,7 @@ class Command:
         :param \*args: additional arguments associated with the message
         """
         if not self.done_command_once:
-            self.base.verbose_logger.info(msg, *args)
+            self.base.logger.info(msg, *args)
         self.done_command_once = True
 
     def getNames(self):
@@ -964,7 +964,7 @@ class MakeCacheCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         msg = _("Making cache files for all metadata files.")
-        self.base.verbose_logger.debug(msg)
+        self.base.logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
         timer = 'timer' == dnf.util.first(extcmds)
         persistor = dnf.persistor.Persistor(self.base.conf.persistdir)
@@ -981,17 +981,17 @@ class MakeCacheCommand(Command):
         for r in self.base.repos.iter_enabled():
             (is_cache, expires_in) = r.metadata_expire_in()
             if not is_cache or expires_in <= 0:
-                self.base.verbose_logger.debug("%s: has expired and will be "
+                self.base.logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
                 r.md_expire_cache()
             elif timer and expires_in < period:
                 # expires within the checking period:
                 msg = "%s: metadata will expire after %d seconds " \
                     "and will be refreshed now" % (r.id, expires_in)
-                self.base.verbose_logger.debug(msg)
+                self.base.logger.debug(msg)
                 r.md_expire_cache()
             else:
-                self.base.verbose_logger.debug("%s: will expire after %d "
+                self.base.logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))
 
         if timer:
@@ -1187,7 +1187,7 @@ class CheckUpdateCommand(Command):
         try:
             ypl = self.base.returnPkgLists(extcmds)
             if (self.base.conf.obsoletes or
-                self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)):
+                self.base.logger.isEnabledFor(logginglevels.DEBUG_3)):
                 typl = self.base.returnPkgLists(obscmds)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
@@ -1550,7 +1550,7 @@ class RepoListCommand(Command):
                     out += [self.base.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                self.base.verbose_logger.log(logginglevels.DEBUG_3, "%s\n",
+                self.base.logger.log(logginglevels.DEBUG_3, "%s\n",
                                         "\n".join(map(to_unicode, out)))
 
         if not verbose and cols:
@@ -1588,14 +1588,14 @@ class RepoListCommand(Command):
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                self.base.verbose_logger.info("%s %s",
+                self.base.logger.info("%s %s",
                                         txt_rid, txt_rnam)
             else:
-                self.base.verbose_logger.info("%s %s %s",
+                self.base.logger.info("%s %s %s",
                                         txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    self.base.verbose_logger.info("%s %s",
+                    self.base.logger.info("%s %s",
                                             utf8_width_fill(rid, id_len),
                                             utf8_width_fill(rname, nm_len,
                                                             nm_len))
@@ -1603,7 +1603,7 @@ class RepoListCommand(Command):
 
                 if ui_num:
                     ui_num = utf8_width_fill(ui_num, ui_len, left=False)
-                self.base.verbose_logger.info("%s %s %s%s",
+                self.base.logger.info("%s %s %s%s",
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
@@ -1714,7 +1714,7 @@ class HelpCommand(Command):
         """
         if extcmds[0] in self.cli.cli_commands:
             command = self.cli.cli_commands[extcmds[0]]
-            self.base.verbose_logger.info(self._makeOutput(command))
+            self.base.logger.info(self._makeOutput(command))
         return 0, []
 
     def needTs(self, basecmd, extcmds):
@@ -1932,7 +1932,7 @@ class VersionCommand(Command):
                     cols.append(("    %s" % repoid, str(cur[None])))
                 cols.extend(ncols)
 
-        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.logger.isEnabledFor(logginglevels.DEBUG_3)
         groups = {}
         if vcmd in ('nogroups', 'nogroups-installed', 'nogroups-available',
                     'nogroups-all'):
@@ -2043,7 +2043,7 @@ class VersionCommand(Command):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
-        verbose = self.base.verbose_logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.logger.isEnabledFor(logginglevels.DEBUG_3)
         if vcmd == 'groupinfo' and verbose:
             return True
         return vcmd in ('available', 'all', 'group-available', 'group-all')
