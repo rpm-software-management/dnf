@@ -15,7 +15,6 @@
 # Red Hat, Inc.
 #
 
-from StringIO import StringIO
 import base
 import dnf.logging
 import logging
@@ -35,6 +34,13 @@ def _split_logfile_entry(entry):
                         message=record[3][:-1]) # strip the trailing '\n'
 
 class TestLogging(base.TestCase):
+    """Tests the logging mechanisms in DNF.
+
+    If it causes a problem in the future that loggers are singletons that don't
+    get torn down between tests, look at logging.Manager internals.
+
+    """
+
     def setUp(self):
         self.logdir = tempfile.mkdtemp(prefix="dnf-logtest-")
 
@@ -57,8 +63,7 @@ class TestLogging(base.TestCase):
 
     def test_setup(self):
         logger = logging.getLogger("dnf")
-        with mock.patch('sys.stdout', new_callable=StringIO) as stdout, \
-                mock.patch('sys.stderr', new_callable=StringIO) as stderr:
+        with base.patch_std_streams() as (stdout, stderr):
             dnf.logging.setup(logging.INFO, logging.ERROR, self.logdir)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
@@ -66,8 +71,7 @@ class TestLogging(base.TestCase):
 
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
-        with mock.patch('sys.stdout', new_callable=StringIO) as stdout, \
-                mock.patch('sys.stderr', new_callable=StringIO) as stderr:
+        with base.patch_std_streams() as (stdout, stderr):
             dnf.logging.setup(logging.DEBUG, logging.WARNING, self.logdir)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
@@ -89,8 +93,7 @@ class TestLogging(base.TestCase):
         dnf.logging.setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
                           self.logdir)
         logger = logging.getLogger("dnf")
-        with mock.patch('sys.stdout', new_callable=StringIO) as stdout, \
-                mock.patch('sys.stderr', new_callable=StringIO) as stderr:
+        with base.patch_std_streams() as (stdout, stderr):
             logger.info("i")
             logger.critical("c")
         self.assertEqual(stdout.getvalue(), '')

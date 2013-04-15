@@ -15,6 +15,8 @@
 # Red Hat, Inc.
 #
 
+import StringIO
+import contextlib
 import dnf.package
 import dnf.queries
 import dnf.repo
@@ -57,6 +59,14 @@ NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")
 def installed_but(sack, *args):
     q = sack.query().filter(reponame__eq=hawkey.SYSTEM_REPO_NAME)
     return reduce(lambda query, name: query.filter(name__neq=name), args, q)
+
+# patching the stdout
+
+@contextlib.contextmanager
+def patch_std_streams():
+    with mock.patch('sys.stdout', new_callable=StringIO.StringIO) as stdout, \
+            mock.patch('sys.stderr', new_callable=StringIO.StringIO) as stderr:
+        yield (stdout, stderr)
 
 # mock objects
 
