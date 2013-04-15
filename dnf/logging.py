@@ -98,6 +98,14 @@ def setup(verbose_level, error_level, logdir):
     handler = _create_filehandler(logfile)
     logger_dnf.addHandler(handler)
 
+    # setup RPM callbacks logger
+    logger_rpm = logging.getLogger("dnf.rpm")
+    logger_rpm.propagate = False
+    logger_rpm.setLevel(SUBDEBUG)
+    logfile = os.path.join(logdir, dnf.const.LOG_RPM)
+    handler = _create_filehandler(logfile)
+    logger_rpm.addHandler(handler)
+
 def setup_from_dnf_levels(verbose_level, error_level, logdir):
     verbose_level_r = _cfg_verbose_val2level(verbose_level)
     error_level_r = _cfg_err_val2level(error_level)

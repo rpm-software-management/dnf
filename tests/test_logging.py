@@ -29,9 +29,16 @@ LogfileEntry = collections.namedtuple('LogfileEntry', ('date', 'time', 'message'
 
 def _split_logfile_entry(entry):
     record = entry.split(' ')
+    # strip the trailing '\n' from the message:
+    message = ' '.join(record[3:])[:-1]
     return LogfileEntry(date=' '.join(record[0:2]),
-                        time=record[2],
-                        message=record[3][:-1]) # strip the trailing '\n'
+                        time=record[2], message=message)
+
+def drop_all_handlers():
+    for logger_name in ('dnf', 'dnf.rpm'):
+        logger = logging.getLogger(logger_name)
+        for handler in logger.handlers[:]:
+            logger.removeHandler(handler)
 
 class TestLogging(base.TestCase):
     """Tests the logging mechanisms in DNF.
@@ -45,6 +52,7 @@ class TestLogging(base.TestCase):
         self.logdir = tempfile.mkdtemp(prefix="dnf-logtest-")
 
     def tearDown(self):
+        drop_all_handlers()
         dnf.util.rm_rf(self.logdir)
 
     @staticmethod
@@ -105,3 +113,20 @@ class TestLogging(base.TestCase):
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(msgs, ['i', 'c'])
+
+    def test_rpm_logging(self):
+        # log everything to the console:
+        dnf.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+                          self.logdir)
+        logger = logging.getLogger("dnf.rpm")
+        with base.patch_std_streams() as (stdout, stderr):
+            logger.info('rpm transaction happens.')
+        # rpm logger never outputs to the console:
+        self.assertEqual(stdout.getvalue(), "")
+        self.assertEqual(stderr.getvalue(), "")
+        logfile = os.path.join(self.logdir, "dnf.rpm.log")
+        self.assertFile(logfile)
+        with open(logfile) as f:
+            msgs =  map(operator.attrgetter("message"),
+                        map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(msgs, ['rpm transaction happens.'])
