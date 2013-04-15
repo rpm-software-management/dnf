@@ -51,12 +51,6 @@ dnf.yum.i18n
 .. automodule:: dnf.yum.i18n
     :members:
 
-dnf.yum.logginglevels
----------------------
-
-.. automodule:: dnf.yum.logginglevels
-    :members:
-
 dnf.yum.mdparser
 ----------------
 
