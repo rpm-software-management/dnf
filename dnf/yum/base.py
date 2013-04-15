@@ -221,11 +221,9 @@ class Base(object):
         if overrides is not None:
             self._conf.override(overrides)
 
-        self.doLoggingSetup(self._conf.debuglevel,
-                            self._conf.errorlevel,
-                            self._conf.syslog_ident,
-                            self._conf.syslog_facility,
-                            self._conf.syslog_device)
+        dnf.logging.setup_from_dnf_levels(self._conf.debuglevel,
+                                          self._conf.errorlevel,
+                                          self.conf.logdir)
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
         self._conf.uid = os.geteuid()
@@ -235,26 +233,8 @@ class Base(object):
             '%s/repos/%s/%s/' % (self._conf.persistdir,
                                  yumvar.get('basearch', '$basearch'),
                                  yumvar.get('releasever', '$releasever')))
-        logginglevels.setFileLogs(self.conf.logdir, self._cleanup)
         self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         return self._conf
-
-    def doLoggingSetup(self, debuglevel, errorlevel,
-                       syslog_ident=None, syslog_facility=None,
-                       syslog_device='/dev/log'):
-        """Perform logging related setup.
-
-        :param debuglevel: the minimum debug logging level to output
-           messages from
-        :param errorlevel: the minimum error logging level to output
-           messages from
-        :param syslog_ident: the ident of the syslog to use
-        :param syslog_facility: the name of the syslog facility to use
-        :param syslog_device: the syslog device to use
-        """
-        logginglevels.doLoggingSetup(debuglevel, errorlevel,
-                                     syslog_ident, syslog_facility,
-                                     syslog_device)
 
     def read_repos(self, repofn, repo_age=None):
         """Read in repositories from a config .repo file.

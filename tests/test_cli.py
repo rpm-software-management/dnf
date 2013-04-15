@@ -71,8 +71,7 @@ class CliTest(unittest.TestCase):
         self.assertEqual(self.yumbase.repos["comb"].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
-@mock.patch('dnf.yum.base.Base.doLoggingSetup', new=mock.MagicMock)
-@mock.patch('dnf.yum.logginglevels.setFileLogs', new=mock.MagicMock)
+@mock.patch('dnf.logging.setup', new=mock.MagicMock)
 class ConfigureTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = base.MockYumBase("main")
