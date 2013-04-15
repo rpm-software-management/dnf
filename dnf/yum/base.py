@@ -595,7 +595,7 @@ class Base(object):
 
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
-        self.logger.log(logginglevels.INFO_2, msg)
+        self.logger.info(msg)
         for pkg in queries.installed(self.sack):
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
@@ -949,7 +949,7 @@ class Base(object):
         for txmbr in self.tsInfo:
             if txmbr.output_state not in TS_INSTALL_STATES + TS_REMOVE_STATES:
                 count = _call_txmbr_cb(txmbr, count)
-                self.logger.log(logginglevels.DEBUG_2, 'What is this? %s' % txmbr.po)
+                self.logger.debug('What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
         if self._record_history():
@@ -1719,7 +1719,7 @@ class Base(object):
                         try:
                             txmbr.groups.remove(grpid)
                         except ValueError:
-                            self.logger.log(logginglevels.DEBUG_1,
+                            self.logger.debug(
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
@@ -1771,7 +1771,7 @@ class Base(object):
 
             old_txmbrs = len(txmbrs_used)
             for pkg in pkgs:
-                self.logger.log(logginglevels.DEBUG_2,
+                self.logger.debug(
                     _('Adding package %s from group %s'), pkg, thisgroup.groupid)
                 try:
                     txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
@@ -1863,7 +1863,7 @@ class Base(object):
                         try:
                             txmbr.groups.remove(grpid)
                         except ValueError:
-                            self.logger.log(logginglevels.DEBUG_1,
+                            self.logger.debug(
                                _("package %s was not marked in group %s"), txmbr.po,
                                 grpid)
                             continue
@@ -2538,7 +2538,7 @@ class Base(object):
         key_installed = False
 
         msg = _('Retrieving key from %s') % keyurl
-        self.logger.log(logginglevels.INFO_2, msg)
+        self.logger.info(msg)
 
         # Go get the GPG key from the given URL
         try:
@@ -2579,7 +2579,7 @@ class Base(object):
                     raise dnf.exceptions.Error(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
-                    self.logger.log(logginglevels.INFO_2, msg)
+                    self.logger.info(msg)
                     valid_sig = True
 
         # Parse the key
@@ -2971,13 +2971,13 @@ class Base(object):
 
                 if txmbr.ts_state == 'u':
                     if self.allowedMultipleInstalls(txmbr.po):
-                        self.logger.log(logginglevels.DEBUG_2,
+                        self.logger.debug(
                             _('%s converted to install'), txmbr.po)
                         txmbr.ts_state = 'i'
                         txmbr.output_state = TS_INSTALL
 
                 self.ts.addInstall(hdr, txmbr, txmbr.ts_state)
-                self.logger.log(logginglevels.DEBUG_1,
+                self.logger.debug(
                     _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
                 if self.dsCallback:
                     dscb_ts_state = txmbr.ts_state
@@ -2991,7 +2991,7 @@ class Base(object):
                     if txmbr.downgraded_by:
                         continue
                     self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                self.logger.log(logginglevels.DEBUG_1,
+                self.logger.debug(
                     _('Removing Package %s'), txmbr.po)
 
     def _does_this_update(self, pkg1, pkg2):

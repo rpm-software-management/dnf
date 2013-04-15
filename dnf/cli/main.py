@@ -144,7 +144,7 @@ def main(args):
     if result == 0:
         # Normal exit
         for msg in resultmsgs:
-            logger.log(logginglevels.INFO_2, '%s', msg)
+            logger.info('%s', msg)
         if unlock(): return 200
         return 0
     elif result == 1:
@@ -167,7 +167,7 @@ def main(args):
         return 3
 
     # Depsolve stage
-    logger.log(logginglevels.INFO_2, _('Resolving Dependencies'))
+    logger.info(_('Resolving Dependencies'))
 
     try:
         (result, resultmsgs) = base.buildTransaction()
@@ -206,7 +206,7 @@ def main(args):
         if unlock(): return 200
         return 3
 
-    logger.log(logginglevels.INFO_2, _('\nDependencies Resolved'))
+    logger.info(_('\nDependencies Resolved'))
 
     # Run the transaction
     try:
@@ -237,7 +237,7 @@ def main(args):
         if base._ts_save_file:
             logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
-        logger.log(logginglevels.INFO_2, _('Complete!'))
+        logger.info(_('Complete!'))
 
     if unlock(): return 200
     return return_code

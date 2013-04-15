@@ -1314,13 +1314,13 @@ class YumOutput:
 
         if (not error):
             if locsize:
-                self.logger.log(logginglevels.INFO_1, _("Total size: %s"),
+                self.logger.info(_("Total size: %s"),
                                         self.format_number(totsize))
             if locsize != totsize:
-                self.logger.log(logginglevels.INFO_1, _("Total download size: %s"),
+                self.logger.info(_("Total download size: %s"),
                                         self.format_number(totsize - locsize))
             if installonly:
-                self.logger.log(logginglevels.INFO_1,
+                self.logger.info(
                                         _("Installed size: %s"),
                                         self.format_number(insize))
 
@@ -1343,7 +1343,7 @@ class YumOutput:
                 self.logger.error(_('There was an error calculating installed size'))
                 break
         if (not error):
-            self.logger.log(logginglevels.INFO_1,
+            self.logger.info(
                                     _("Installed size: %s"),
                                     self.format_number(totsize))
 
@@ -1634,7 +1634,7 @@ Transaction Summary
  Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds
 to exit.
 """) % (hibeg, hiend, hibeg, delta_exit_str, hiend)
-            self.logger.log(logginglevels.INFO_2, msg)
+            self.logger.info(msg)
         elif now - self._last_interrupt < delta_exit_chk:
             # Two quick CTRL-C's, quit
             raise KeyboardInterrupt
@@ -1659,7 +1659,7 @@ to exit.
             return
 
         tl = urlgrabber.progress.TerminalLine(8)
-        self.logger.log(logginglevels.INFO_2, "-" * tl.rest())
+        self.logger.info("-" * tl.rest())
         dl_time = time.time() - download_start_timestamp
         if dl_time <= 0: # This stops divide by zero, among other problems
             dl_time = 0.01
@@ -1669,7 +1669,7 @@ to exit.
         ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
         msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
                               ui_bs, ui_size, ui_time, ui_end)
-        self.logger.log(logginglevels.INFO_2, msg)
+        self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
         actions = set()
@@ -2389,12 +2389,12 @@ to exit.
 
         for item in extcmds[2:]:
             if item in addon_info:
-                self.logger.log(logginglevels.INFO_2, '%s:', item)
+                self.logger.info('%s:', item)
                 print(self.history.return_addon_data(hist_data.tid, item), end='')
-                self.logger.log(logginglevels.INFO_2, '')
+                self.logger.info('')
             else:
                 print(_('%s: No additional data found by this name') % item)
-            self.logger.log(logginglevels.INFO_2, '')
+            self.logger.info('')
 
     def historyPackageListCmd(self, extcmds):
         """Print a list of information about transactions from history
@@ -2590,7 +2590,7 @@ class DepSolveProgressCallBack:
                      'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('---> Package %s.%s %s will be %s'), n, a, evr,
             modeterm)
 
@@ -2598,24 +2598,24 @@ class DepSolveProgressCallBack:
         """Perform setup at the beginning of the dependency solving
         process.
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
                                 _('--> Starting dependency resolution'))
         self.loops += 1
 
     def tscheck(self):
         """Output a message stating that a transaction check is beginning."""
-        self.logger.log(logginglevels.INFO_2, _('--> Running transaction check'))
+        self.logger.info(_('--> Running transaction check'))
 
     def restartLoop(self):
         """Output a message stating that dependency resolution is restarting."""
         self.loops += 1
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Restarting Dependency Resolution with new changes.'))
         self.logger.debug('---> Loop Number: %d', self.loops)
 
     def end(self):
         """Output a message stating that dependency resolution has finished."""
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Finished dependency resolution'))
 
     def procReq(self, name, formatted_req):
@@ -2627,7 +2627,7 @@ class DepSolveProgressCallBack:
         :param formatted_req: a string representing the package that
            is being processed as a dependency of *name*
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             name)
 
@@ -2640,7 +2640,7 @@ class DepSolveProgressCallBack:
         :param formatted_req: a string representing the package that
            is being processed as a dependency of *po*
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Processing Dependency: %s for package: %s'), formatted_req,
             po)
 
@@ -2653,7 +2653,7 @@ class DepSolveProgressCallBack:
            not be removed
         :param hits: unused
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('---> Keeping package: %s'), po)
 
     def unresolved(self, msg):
@@ -2661,7 +2661,7 @@ class DepSolveProgressCallBack:
 
         :param msg: string giving information about the unresolved dependency.
         """
-        self.logger.log(logginglevels.INFO_2, _('--> Unresolved Dependency: %s'),
+        self.logger.info(_('--> Unresolved Dependency: %s'),
             msg)
 
     def procConflict(self, name, confname):
@@ -2673,7 +2673,7 @@ class DepSolveProgressCallBack:
         :param confname: the name of the second package involved in
            the conflict
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Processing Conflict: %s conflicts %s'),
                                 name, confname)
 
@@ -2686,14 +2686,14 @@ class DepSolveProgressCallBack:
         :param confname: the second package object involved in
            the conflict
         """
-        self.logger.log(logginglevels.INFO_2,
+        self.logger.info(
             _('--> Processing Conflict: %s conflicts %s'),
                                 po, confname)
 
     def transactionPopulation(self):
         """Output a message stating that the transaction set is being populated."""
 
-        self.logger.log(logginglevels.INFO_2, _('--> Populating transaction set '
+        self.logger.info(_('--> Populating transaction set '
             'with selected packages. Please wait.'))
 
 class CacheProgressCallback:

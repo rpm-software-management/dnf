@@ -146,7 +146,7 @@ class YumPlugins:
             types = (types,)
 
         if id(TYPE_INTERFACE) in [id(t) for t in types]:
-            self.logger.log(logginglevels.INFO_2,
+            self.logger.info(
                     'Deprecated constant TYPE_INTERFACE during plugin '
                     'initialization.\nPlease use TYPE_INTERACTIVE instead.')
 
@@ -210,20 +210,20 @@ class YumPlugins:
             width = 80
             if hasattr(self.base, 'term'):
                 width = self.base.term.columns
-            self.logger.log(logginglevels.INFO_2,
+            self.logger.info(
                                     fill(val, width=width, initial_indent=key,
                                          subsequent_indent=nxt))
 
         if self.disabledPlugins:
             for wc in self.disabledPlugins:
                 if wc not in self._used_disable_plugin:
-                    self.logger.log(logginglevels.INFO_2,
+                    self.logger.info(
                                             _("No plugin match for: %s") % wc)
         del self._used_disable_plugin
         if self.enabledPlugins:
             for wc in self.enabledPlugins:
                 if wc not in self._used_enable_plugin:
-                    self.logger.log(logginglevels.INFO_2,
+                    self.logger.info(
                                             _("No plugin match for: %s") % wc)
         del self._used_enable_plugin
 
@@ -294,7 +294,7 @@ class YumPlugins:
             return
         for plugintype in plugintypes:
             if id(plugintype) == id(TYPE_INTERFACE):
-                self.logger.log(logginglevels.INFO_2,
+                self.logger.info(
                         'Plugin "%s" uses deprecated constant '
                         'TYPE_INTERFACE.\nPlease use TYPE_INTERACTIVE '
                         'instead.', modname)
@@ -338,10 +338,10 @@ class YumPlugins:
             if os.access(conffilename, os.R_OK):
                 # Found configuration file
                 break
-            self.logger.log(logginglevels.INFO_2, _("Configuration file %s not found") % conffilename)
+            self.logger.info(_("Configuration file %s not found") % conffilename)
         else: # for
             # Configuration files for the plugin not found
-            self.logger.log(logginglevels.INFO_2, _("Unable to find configuration file for plugin %s")
+            self.logger.info(_("Unable to find configuration file for plugin %s")
                 % modname)
             return None
         parser = ConfigParser()
@@ -396,8 +396,7 @@ class PluginConduit:
         :param level: the level of the message to send
         :param msg: the message to send
         """
-        converted_level = logginglevels.logLevelFromDebugLevel(level)
-        self.logger.log(converted_level, msg)
+        self.logger.info(msg)
 
     def error(self, level, msg):
         """Send an error message to the logger.
@@ -405,8 +404,7 @@ class PluginConduit:
         :param level: the level of the message to send
         :param msg: the message to send
         """
-        converted_level = logginglevels.logLevelFromErrorLevel(level)
-        self.logger.log(converted_level, msg)
+        self.logger.error(msg)
 
     def promptYN(self, msg):
         """Return a yes or no response, either from assumeyes already
