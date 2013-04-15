@@ -1186,8 +1186,7 @@ class CheckUpdateCommand(Command):
         result = 0
         try:
             ypl = self.base.returnPkgLists(extcmds)
-            if (self.base.conf.obsoletes or
-                self.base.logger.isEnabledFor(logginglevels.DEBUG_3)):
+            if self.base.conf.obsoletes or self.base.conf.verbose:
                 typl = self.base.returnPkgLists(obscmds)
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
@@ -1932,7 +1931,7 @@ class VersionCommand(Command):
                     cols.append(("    %s" % repoid, str(cur[None])))
                 cols.extend(ncols)
 
-        verbose = self.base.logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.conf.verbose
         groups = {}
         if vcmd in ('nogroups', 'nogroups-installed', 'nogroups-available',
                     'nogroups-all'):
@@ -2043,7 +2042,7 @@ class VersionCommand(Command):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
-        verbose = self.base.logger.isEnabledFor(logginglevels.DEBUG_3)
+        verbose = self.base.conf.verbose
         if vcmd == 'groupinfo' and verbose:
             return True
         return vcmd in ('available', 'all', 'group-available', 'group-all')

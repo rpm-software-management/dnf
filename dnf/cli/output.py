@@ -833,7 +833,7 @@ class YumOutput:
         print(_("Repo        : %s") % to_unicode(pkg.repoid))
         if 'from_repo' in yumdb_info:
             print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
-        if self.logger.isEnabledFor(logginglevels.DEBUG_3):
+        if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % to_unicode(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
@@ -1078,7 +1078,7 @@ class YumOutput:
         """
         print(_('\nGroup: %s') % group.ui_name)
 
-        verb = self.logger.isEnabledFor(logginglevels.DEBUG_3)
+        verb = self.conf.verbose
         if verb:
             print(_(' Group-Id: %s') % to_unicode(group.groupid))
         pkg_names2pkgs = None
@@ -1114,7 +1114,7 @@ class YumOutput:
         :param results: a list of package dependency information as
            returned by findDeps
         """
-        verb = self.logger.isEnabledFor(logginglevels.DEBUG_3)
+        verb = self.conf.verbose
         for pkg in sorted(results):
             print(_("package: %s") % pkg.compactPrint())
             if len(results[pkg]) == 0:
@@ -1223,7 +1223,7 @@ class YumOutput:
         print(msg)
 
         if verbose is None:
-            verbose = logginglevels.is_stdout_verbose(self.conf.debuglevel)
+            verbose = self.conf.verbose
         if not verbose:
             return
 
@@ -2813,7 +2813,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         RPMBaseCallback.__init__(self)
         self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
-        self.output = logging.getLogger("yum.verbose.cli").isEnabledFor(logginglevels.INFO_2)
+        self.output = True
 
         # for a progress bar
         self.mark = "#"

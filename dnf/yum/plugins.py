@@ -202,8 +202,7 @@ class YumPlugins:
                 self._loadplugin(modulefile, types)
 
         # If we are in verbose mode we get the full 'Loading "blah" plugin' lines
-        if (self._plugins and
-            not self.logger.isEnabledFor(logginglevels.DEBUG_3)):
+        if self._plugins and not self.base.conf.verbose:
             # Mostly copied from YumOutput._outKeyValFill()
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
@@ -265,7 +264,7 @@ class YumPlugins:
             finally:
                 fp.close()
         except:
-            if self.logger.isEnabledFor(logginglevels.DEBUG_4):
+            if self.base.conf.verbose:
                 raise # Give full backtrace:
             self.logger.error(_('Plugin "%s" can\'t be imported') %
                                       modname)

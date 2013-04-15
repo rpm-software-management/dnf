@@ -30,7 +30,6 @@ from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ParsingError
 from iniparse.compat import RawConfigParser as ConfigParser
 import dnf.rpmUtils.transaction
-import dnf.yum.logginglevels
 import dnf.exceptions
 import types
 import misc
@@ -872,7 +871,7 @@ class YumConf(StartupConf):
 
     @property
     def verbose(self):
-        return dnf.yum.logginglevels.is_stdout_verbose(self.debuglevel)
+        return self.debuglevel >= dnf.const.VERBOSE_LEVEL
 
 class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""

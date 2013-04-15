@@ -153,13 +153,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
         #       gain. But it's probably doom to have a different code path.
         lsts = self.listTransaction()
-        if self.logger.isEnabledFor(dnf.yum.logginglevels.INFO_1):
-            self.logger.log(dnf.yum.logginglevels.INFO_1, lsts)
-        elif self.conf.assumeno or not self.conf.assumeyes:
-            #  If we are in quiet, and assumeyes isn't on we want to output
-            # at least the transaction list anyway.
-            self.logger.warn(lsts)
-
+        self.logger.info(lsts)
         # Check which packages have to be downloaded
         downloadpkgs = []
         rmpkgs = []
@@ -856,7 +850,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             if not done:
                 self.logger.log(dnf.yum.logginglevels.INFO_2, sect)
             msg = '   %s' % group.ui_name
-            if self.logger.isEnabledFor(dnf.yum.logginglevels.DEBUG_3):
+            if self.conf.verbose:
                 msg += ' (%s)' % group.groupid
             if group.langonly:
                 msg += ' [%s]' % group.langonly
@@ -1280,7 +1274,7 @@ class Cli(object):
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
-            opts.debuglevel = opts.errorlevel = 6
+            opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
 
         # Read up configuration options and initialise plugins
         overrides = self.optparser._non_nones2dict(opts)

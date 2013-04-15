@@ -28,6 +28,8 @@ PERSISTDIR='/var/lib/dnf'
 PID_FILENAME = '/var/run/dnf.pid'
 SYSTEM_CACHEDIR='/var/cache/dnf'
 TMPDIR='/var/tmp/'
+# CLI verbose values greater or equal to this are considered "verbose":
+VERBOSE_LEVEL=6
 VERSION_MAJOR=@DNF_MAJOR@
 VERSION_MINOR=@DNF_MINOR@
 VERSION_PATCH=@DNF_PATCH@
