@@ -26,7 +26,7 @@ import dnf.persistor
 import dnf.util
 import os
 from dnf.cli import CliError
-from dnf.yum import logginglevels
+import dnf.logging
 from dnf.yum import misc
 import dnf.exceptions
 import operator
@@ -1549,7 +1549,7 @@ class RepoListCommand(Command):
                     out += [self.base.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                self.base.logger.log(logginglevels.DEBUG_3, "%s\n",
+                self.base.logger.log(dnf.logging.SUBDEBUG, "%s\n",
                                         "\n".join(map(to_unicode, out)))
 
         if not verbose and cols:

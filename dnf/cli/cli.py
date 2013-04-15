@@ -36,9 +36,9 @@ from weakref import proxy as weakref
 
 import output
 import dnf.exceptions
+import dnf.logging
 import dnf.match_counter
 import dnf.yum.base
-import dnf.yum.logginglevels
 import dnf.yum.misc
 from dnf.yum.parser import varReplace
 import dnf.yum.plugins
@@ -1168,9 +1168,9 @@ class Cli(object):
         :attr:`self.extcmds`.
         """
         self.logger.debug('dnf version: %s', dnf.const.VERSION)
-        self.logger.log(dnf.yum.logginglevels.DEBUG_4,
+        self.logger.log(dnf.logging.SUBDEBUG,
                                 'COMMAND: %s', self.cmdstring)
-        self.logger.log(dnf.yum.logginglevels.DEBUG_4,
+        self.logger.log(dnf.logging.SUBDEBUG,
                                 'Installroot: %s', self.base.conf.installroot)
         if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
             self.base.cmds = self.base.conf.commands
@@ -1183,7 +1183,7 @@ class Cli(object):
 
         self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
         msg = 'Ext Commands: %s' % ' '.join(self.base.extcmds)
-        self.logger.log(dnf.yum.logginglevels.DEBUG_4, msg)
+        self.logger.log(dnf.logging.SUBDEBUG, msg)
 
         basecmd = self.base.cmds[0] # our base command
         if basecmd not in self.cli_commands:

@@ -29,7 +29,6 @@ import errno
 
 import dnf.exceptions
 from dnf.yum import plugins
-from dnf.yum import logginglevels
 from dnf.yum.i18n import utf8_width, exception2msg, _
 import dnf.i18n
 import dnf.cli.cli

@@ -22,7 +22,6 @@ import exceptions
 import dnf.yum
 from cli import *
 from dnf.yum.i18n import utf8_width, exception2msg, _
-from dnf.yum import logginglevels
 from optparse import OptionGroup
 
 import dnf.yum.plugins as plugins

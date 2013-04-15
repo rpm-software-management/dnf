@@ -37,6 +37,7 @@ P_ = i18n.P_
 import config
 from config import ParsingError, ConfigParser
 import dnf.exceptions
+import dnf.logging
 import rpmsack
 from dnf.rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
 import dnf.rpmUtils.transaction
@@ -48,7 +49,6 @@ import urlgrabber
 from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
 import plugins
-import logginglevels
 import callbacks
 import history
 
@@ -486,7 +486,7 @@ class Base(object):
             return self._comps
 
         group_st = time.time()
-        self.logger.log(logginglevels.DEBUG_4,
+        self.logger.log(dnf.logging.SUBDEBUG,
                                 _('Getting group metadata'))
         reposWithGroups = []
         #  Need to make sure the groups data is ready to read. Really we'd want
@@ -514,7 +514,7 @@ class Base(object):
             if repo.groups_added: # already added the groups from this repo
                 continue
 
-            self.logger.log(logginglevels.DEBUG_4,
+            self.logger.log(dnf.logging.SUBDEBUG,
                 _('Adding group file from repository: %s'), repo)
             groupfile = repo.getGroups()
             # open it up as a file object so iterparse can cope with our compressed file
@@ -1346,7 +1346,7 @@ class Base(object):
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
-                self.logger.log(logginglevels.DEBUG_4,
+                self.logger.log(dnf.logging.SUBDEBUG,
                     _('%s removed'), fn)
 
     def cleanPackages(self):
@@ -1413,7 +1413,7 @@ class Base(object):
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
             else:
-                self.logger.log(logginglevels.DEBUG_4,
+                self.logger.log(dnf.logging.SUBDEBUG,
                     _('%s file %s removed'), filetype, item)
                 removed+=1
         msg = P_('%d %s file removed', '%d %s files removed', removed) % (removed, filetype)
@@ -2962,7 +2962,7 @@ class Base(object):
             self.dsCallback.transactionPopulation()
 
         for txmbr in self.tsInfo.getMembers():
-            self.logger.log(logginglevels.DEBUG_3, _('Member: %s'), txmbr)
+            self.logger.log(dnf.logging.SUBDEBUG, _('Member: %s'), txmbr)
             if txmbr.ts_state in ['u', 'i']:
                 rpmfile = txmbr.po.localPkg()
                 if not os.path.exists(rpmfile):

@@ -39,7 +39,6 @@ import dnf.yum.misc
 from dnf.rpmUtils.miscutils import checkSignals, formatRequire
 from dnf.yum.constants import *
 
-from dnf.yum import logginglevels
 from dnf.yum.rpmtrans import RPMBaseCallback
 import dnf.yum.packages
 

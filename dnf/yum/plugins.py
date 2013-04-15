@@ -13,13 +13,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Copyright 2005 Duke University
 
+import dnf.logging
 import os
 import glob
 import imp
 import atexit
 import gettext
 import logging
-import logginglevels
 from constants import *
 import config 
 from config import ParsingError, ConfigParser
@@ -175,7 +175,7 @@ class YumPlugins:
         conduitcls = eval(conduitcls)       # Convert name to class object
 
         for modname, func in self._pluginfuncs[slotname]:
-            self.logger.log(logginglevels.DEBUG_4,
+            self.logger.log(dnf.logging.SUBDEBUG,
                                     'Running "%s" handler for "%s" plugin',
                                     slotname, modname)
     
@@ -311,7 +311,7 @@ class YumPlugins:
                                            self._used_enable_plugin)):
             return
 
-        self.logger.log(logginglevels.DEBUG_3, _('Loading "%s" plugin'),
+        self.logger.log(dnf.logging.SUBDEBUG, _('Loading "%s" plugin'),
                                 modname)
 
         # Store the plugin module and its configuration file
