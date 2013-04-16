@@ -1381,12 +1381,12 @@ class YumOutput:
             return a_wid
 
         for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
-                            (_('Updating'), self.tsInfo.updated),
+                            (_('Upgrading'), self.tsInfo.updated),
                             (_('Removing'), self.tsInfo.removed),
                             (_('Reinstalling'), self.tsInfo.reinstalled),
                             (_('Downgrading'), self.tsInfo.downgraded),
                             (_('Installing for dependencies'), self.tsInfo.depinstalled),
-                            (_('Updating for dependencies'), self.tsInfo.depupdated),
+                            (_('Upgrading for dependencies'), self.tsInfo.depupdated),
                             (_('Removing for dependencies'), self.tsInfo.depremoved)]:
             lines = []
             for txmbr in pkglist:
@@ -1546,8 +1546,8 @@ Transaction Summary
                                   (_('Dependency Removed'), self.tsInfo.depremoved),
                                   (_('Installed'), self.tsInfo.installed),
                                   (_('Dependency Installed'), self.tsInfo.depinstalled),
-                                  (_('Updated'), self.tsInfo.updated),
-                                  (_('Dependency Updated'), self.tsInfo.depupdated),
+                                  (_('Upgraded'), self.tsInfo.updated),
+                                  (_('Dependency Upgraded'), self.tsInfo.depupdated),
                                   (_('Replaced'), self.tsInfo.obsoleted),
                                   (_('Failed'), self.tsInfo.failed)]:
             msgs = []
@@ -2056,7 +2056,7 @@ to exit.
         name = self._pwd_ui_username(old.loginuid)
 
         _pkg_states_installed = {'i' : _('Installed'), 'e' : _('Erased'),
-                                 'o' : _('Updated'), 'n' : _('Downgraded')}
+                                 'o' : _('Upgraded'), 'n' : _('Downgraded')}
         _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
                                  'o' : _('Older'), 'n' : _('Newer')}
         maxlen = max([len(x) for x in (_pkg_states_installed.values() +
@@ -2219,8 +2219,8 @@ to exit.
                               'Reinstall'    : _('Reinstall'),
                               'Downgrade'    : _('Downgrade'),
                               'Downgraded'   : _('Downgraded'),
-                              'Update'       : _('Update'),
-                              'Updated'      : _('Updated'),
+                              'Update'       : _('Upgrade'),
+                              'Updated'      : _('Upgraded'),
                               }
     def historyInfoCmdPkgsAltered(self, old, pats=[]):
         """Print information about how packages are altered in a transaction.
@@ -2579,12 +2579,12 @@ class DepSolveProgressCallBack:
            od = the package will be obsoleted
         """
         modedict = { 'i': _('installed'),
-                     'u': _('an update'),
+                     'u': _('an upgrade'),
                      'e': _('erased'),
                      'r': _('reinstalled'),
                      'd': _('a downgrade'),
                      'o': _('obsoleting'),
-                     'ud': _('updated'),
+                     'ud': _('upgraded'),
                      'od': _('obsoleted'),
                      'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)

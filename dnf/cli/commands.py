@@ -358,7 +358,7 @@ class UpgradeCommand(Command):
 
         :return: a one line summary of this command
         """
-        return _("Update a package or packages on your system")
+        return _("Upgrade a package or packages on your system")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
@@ -386,7 +386,7 @@ class UpgradeCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Update Process"))
+        self.doneCommand(_("Setting up Upgrade Process"))
         try:
             return self.base.updatePkgs(extcmds)
         except dnf.exceptions.Error as e:
@@ -414,7 +414,7 @@ class UpgradeToCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def doCommand(self, basecmd, extcmds):
-        self.doneCommand(_("Setting up Update Process"))
+        self.doneCommand(_("Setting up Upgrade Process"))
         try:
             return self.base.upgrade_userlist_to(extcmds)
         except dnf.exceptions.Error as e:
@@ -613,7 +613,7 @@ class InfoCommand(Command):
                                 columns=columns)
             cul = self.base.conf.color_update_local
             cur = self.base.conf.color_update_remote
-            rup = self.base.listPkgs(ypl.updates, _('Updated Packages'), basecmd,
+            rup = self.base.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
                                 highlight_na=local_pkgs, columns=columns,
                                 highlight_modes={'=' : cul, 'not in' : cur})
 
@@ -1157,7 +1157,7 @@ class CheckUpdateCommand(Command):
 
         :return: a one line summary of this command
         """
-        return _("Check for available package updates")
+        return _("Check for available package upgrades")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can

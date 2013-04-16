@@ -69,7 +69,7 @@ class RPMBaseCallback:
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
-        self.action = { TS_UPDATE : _('Updating'),
+        self.action = { TS_UPDATE : _('Upgrading'),
                         TS_ERASE: _('Erasing'),
                         TS_INSTALL: _('Installing'),
                         TS_OBSOLETED: _('Obsoleted'),

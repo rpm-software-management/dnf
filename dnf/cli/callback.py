@@ -40,12 +40,12 @@ class RPMInstallCallback:
         self.logger = logging.getLogger("dnf.rpm")
         self.filelog = False
 
-        self.myprocess = { TS_UPDATE : _('Updating'), 
+        self.myprocess = { TS_UPDATE : _('Upgrading'),
                            TS_ERASE: _('Erasing'),
                            TS_INSTALL: _('Installing'), 
                            TS_OBSOLETED: _('Obsoleted'),
                            TS_OBSOLETING: _('Installing')}
-        self.mypostprocess = { TS_UPDATE: _('Updated'), 
+        self.mypostprocess = { TS_UPDATE: _('Upgraded'),
                                TS_ERASE: _('Erased'),
                                TS_INSTALL: _('Installed'), 
                                TS_OBSOLETED: _('Obsoleted'),

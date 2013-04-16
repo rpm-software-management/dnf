@@ -219,7 +219,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     continue
                 rpmlib_only = False
             if rpmlib_only:
-                print(_("ERROR You need to update rpm to handle:"))
+                print(_("ERROR You need to upgrade rpm to handle:"))
             else:
                 print(_('ERROR with transaction check vs depsolve:'))
 
@@ -227,7 +227,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 print(to_utf8(msg))
 
             if rpmlib_only:
-                return 1, [_('RPM needs to be updated')]
+                return 1, [_('RPM needs to be upgraded')]
             return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
                        _REPORT_TMPLT % self.conf.bugtracker_url]
 
@@ -473,20 +473,20 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
+            return 2, [P_('%d package marked for upgrade', '%d packages marked for upgrade', change) % change]
         elif self.tsInfo.upgrade_all:
-            return 2, [_('All packages marked for Update')]
+            return 2, [_('All packages marked for upgrade')]
         else:
-            return 0, [_('No Packages marked for Update')]
+            return 0, [_('No packages marked for upgrade')]
 
     def upgrade_userlist_to(self, userlist):
         oldcount = len(self.tsInfo)
         map(self.upgrade_to ,userlist)
         if len(self.tsInfo) > oldcount:
             change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package marked for Update', '%d packages marked for Update', change) % change]
+            return 2, [P_('%d package marked for upgrade', '%d packages marked for upgrade', change) % change]
         else:
-            return 0, [_('No Packages marked for Update')]
+            return 0, [_('No Packages marked for upgrade')]
 
     def distro_sync_userlist(self, userlist):
         """ Upgrade or downgrade packages to match the latest versions available
@@ -992,7 +992,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 continue
 
         if not pkgs_used:
-            return 0, [_('No packages in any requested group available to install or update')]
+            return 0, [_('No packages in any requested group available to install or upgrade')]
         else:
             return 2, [P_('%d package to Install', '%d packages to Install', len(pkgs_used)) % len(pkgs_used)]
 
@@ -1708,7 +1708,7 @@ class YumOptionParser(OptionParser):
                 help=SUPPRESS_HELP,
                         metavar='[repo]')
         group.add_option("--obsoletes", action="store_true",
-                # help=_("enable obsoletes processing during updates")
+                # help=_("enable obsoletes processing during upgrades")
                 help=SUPPRESS_HELP)
         group.add_option("--noplugins", action="store_true",
                 # help=_("disable Yum plugins")
