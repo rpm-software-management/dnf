@@ -108,7 +108,8 @@ def setup(verbose_level, error_level, logdir):
     handler = _create_filehandler(logfile)
     logger_rpm.addHandler(handler)
 
-def setup_from_dnf_levels(verbose_level, error_level, logdir):
-    verbose_level_r = _cfg_verbose_val2level(verbose_level)
-    error_level_r = _cfg_err_val2level(error_level)
+def setup_from_dnf_conf(conf):
+    verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
+    error_level_r = _cfg_err_val2level(conf.errorlevel)
+    logdir = conf.logdir
     return setup(verbose_level_r, error_level_r, logdir)

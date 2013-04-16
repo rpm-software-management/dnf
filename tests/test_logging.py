@@ -86,12 +86,14 @@ class TestLogging(base.TestCase):
         self.assertEqual("w\ne\n", stderr.getvalue())
 
     @mock.patch('dnf.logging.setup')
-    def test_setup_from_dnf_levels(self, setup_m):
-        dnf.logging.setup_from_dnf_levels(2, 2, self.logdir)
+    def test_setup_from_dnf_conf(self, setup_m):
+        conf = mock.Mock(debuglevel=2, errorlevel=2, logdir=self.logdir)
+        dnf.logging.setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
                                                       self.logdir))
-        dnf.logging.setup_from_dnf_levels(6, 6, self.logdir)
+        conf = mock.Mock(debuglevel=6, errorlevel=6, logdir=self.logdir)
+        dnf.logging.setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
                                                       self.logdir))

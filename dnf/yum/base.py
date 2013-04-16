@@ -221,9 +221,7 @@ class Base(object):
         if overrides is not None:
             self._conf.override(overrides)
 
-        dnf.logging.setup_from_dnf_levels(self._conf.debuglevel,
-                                          self._conf.errorlevel,
-                                          self.conf.logdir)
+        dnf.logging.setup_from_dnf_conf(self.conf)
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
         self._conf.uid = os.geteuid()
