@@ -74,11 +74,13 @@ def _create_filehandler(logfile):
         # user can attach root logfiles).
         os.chmod(logfile, 0644)
     handler = logging.FileHandler(logfile)
-    formatter = logging.Formatter("%(asctime)s %(message)s", "%b %d %H:%M:%S")
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
+                                  "%b %d %H:%M:%S")
     handler.setFormatter(formatter)
     return handler
 
 def setup(verbose_level, error_level, logdir):
+    logging.addLevelName(SUBDEBUG, "SUBDEBUG")
     logger_dnf = logging.getLogger("dnf")
     logger_dnf.setLevel(SUBDEBUG)
 

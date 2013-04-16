@@ -30,7 +30,7 @@ LogfileEntry = collections.namedtuple('LogfileEntry', ('date', 'time', 'message'
 def _split_logfile_entry(entry):
     record = entry.split(' ')
     # strip the trailing '\n' from the message:
-    message = ' '.join(record[3:])[:-1]
+    message = ' '.join(record[4:])[:-1]
     return LogfileEntry(date=' '.join(record[0:2]),
                         time=record[2], message=message)
 
