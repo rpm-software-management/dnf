@@ -21,6 +21,7 @@
 CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
 LOG='dnf.log'
+LOG_MARKER='--- logging initialized ---'
 LOG_RPM='dnf.rpm.log'
 NAME='DNF'
 PERSISTDIR='/var/lib/dnf'

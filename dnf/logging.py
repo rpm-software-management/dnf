@@ -79,10 +79,20 @@ def _create_filehandler(logfile):
     handler.setFormatter(formatter)
     return handler
 
+def _paint_mark(logger):
+    logger.log(INFO, dnf.const.LOG_MARKER)
+
 def setup(verbose_level, error_level, logdir):
     logging.addLevelName(SUBDEBUG, "SUBDEBUG")
     logger_dnf = logging.getLogger("dnf")
     logger_dnf.setLevel(SUBDEBUG)
+
+    # setup file logger
+    logfile = os.path.join(logdir, dnf.const.LOG)
+    handler = _create_filehandler(logfile)
+    logger_dnf.addHandler(handler)
+    # stdout not setup yet, put the marker in the file now:
+    _paint_mark(logger_dnf)
 
     # setup stdout
     stdout = logging.StreamHandler(sys.stdout)
@@ -95,11 +105,6 @@ def setup(verbose_level, error_level, logdir):
     stderr.setLevel(error_level)
     logger_dnf.addHandler(stderr)
 
-    # setup file logger
-    logfile = os.path.join(logdir, dnf.const.LOG)
-    handler = _create_filehandler(logfile)
-    logger_dnf.addHandler(handler)
-
     # setup RPM callbacks logger
     logger_rpm = logging.getLogger("dnf.rpm")
     logger_rpm.propagate = False
@@ -107,6 +112,7 @@ def setup(verbose_level, error_level, logdir):
     logfile = os.path.join(logdir, dnf.const.LOG_RPM)
     handler = _create_filehandler(logfile)
     logger_rpm.addHandler(handler)
+    _paint_mark(logger_rpm)
 
 def setup_from_dnf_conf(conf):
     verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)

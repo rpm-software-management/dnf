@@ -16,6 +16,7 @@
 #
 
 import base
+import dnf.const
 import dnf.logging
 import logging
 import mock
@@ -114,7 +115,7 @@ class TestLogging(base.TestCase):
         with open(logfile) as f:
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
-        self.assertSequenceEqual(msgs, ['i', 'c'])
+        self.assertSequenceEqual(msgs, [dnf.const.LOG_MARKER, 'i', 'c'])
 
     def test_rpm_logging(self):
         # log everything to the console:
@@ -131,4 +132,5 @@ class TestLogging(base.TestCase):
         with open(logfile) as f:
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
-        self.assertSequenceEqual(msgs, ['rpm transaction happens.'])
+        self.assertSequenceEqual(msgs, [dnf.const.LOG_MARKER,
+                                        'rpm transaction happens.'])
