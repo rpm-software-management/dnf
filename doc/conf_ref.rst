@@ -28,6 +28,13 @@ one main section. The repository sections define the configuration for each
     installed through DNF but not on explicit user request, i.e. it was
     pulled in as a dependency. The default is on.
 
+``debuglevel``
+    Debug messages output level, in the range 0 to 10. Default is 2.
+
+``errorlevel``
+    Error messages output level, in the range 0 to 10. Default is 2. This is
+    deprecated in DNF.
+
 .. _metadata_expire-label:
 
 ``metadata_expire``
