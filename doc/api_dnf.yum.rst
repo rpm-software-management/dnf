@@ -33,12 +33,6 @@ dnf.constants
 .. automodule:: dnf.yum.constants
     :members:
 
-dnf.yum.Errors
---------------
-
-.. automodule:: dnf.yum.Errors
-    :members:
-
 dnf.yum.history
 ---------------
 
@@ -49,12 +43,6 @@ dnf.yum.i18n
 ------------
 
 .. automodule:: dnf.yum.i18n
-    :members:
-
-dnf.yum.mdparser
-----------------
-
-.. automodule:: dnf.yum.mdparser
     :members:
 
 dnf.yum.misc
