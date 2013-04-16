@@ -42,12 +42,12 @@ class RPMInstallCallback:
 
         self.myprocess = { TS_UPDATE : _('Upgrading'),
                            TS_ERASE: _('Erasing'),
-                           TS_INSTALL: _('Installing'), 
+                           TS_INSTALL: _('Installing'),
                            TS_OBSOLETED: _('Obsoleted'),
                            TS_OBSOLETING: _('Installing')}
         self.mypostprocess = { TS_UPDATE: _('Upgraded'),
                                TS_ERASE: _('Erased'),
-                               TS_INSTALL: _('Installed'), 
+                               TS_INSTALL: _('Installed'),
                                TS_OBSOLETED: _('Obsoleted'),
                                TS_OBSOLETING: _('Installed')}
 
@@ -102,7 +102,7 @@ class RPMInstallCallback:
 
         :param what: number identifying the type of callback
         :param bytes: the number of bytes associated with the
-           callback; the exact meaning depends on the type of 
+           callback; the exact meaning depends on the type of
            the callback.  For example, for a RPMCALLBACK_INST_PROGRESS
            callback, bytes will represent the current amount of work done
         :param total: the total amount of work associated with the
@@ -147,7 +147,7 @@ class RPMInstallCallback:
 
                 # log stuff
                 pkgtup = self._dopkgtup(hdr)
-                
+
                 txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
                 for txmbr in txmbrs:
                     try:
@@ -188,7 +188,7 @@ class RPMInstallCallback:
                     else:
                         percent = (bytes*100L)/total
                     pkgtup = self._dopkgtup(hdr)
-                    
+
                     txmbrs = self.tsInfo.getMembers(pkgtup=pkgtup)
                     for txmbr in txmbrs:
                         try:
@@ -219,7 +219,7 @@ class RPMInstallCallback:
             if self.filelog and h not in self.installed_pkg_names:
                 logmsg = _('Erased: %s' % (h))
                 self.logger.info(logmsg)
-            
+
             if self.output and sys.stdout.isatty():
                 if h not in self.installed_pkg_names:
                     process = _("Removing")
@@ -237,4 +237,3 @@ class RPMInstallCallback:
             pass
         elif what == rpm.RPMCALLBACK_REPACKAGE_PROGRESS:
             pass
-
