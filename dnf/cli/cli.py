@@ -105,7 +105,6 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         signal.signal(signal.SIGQUIT, sigquit)
         dnf.yum.base.Base.__init__(self)
         output.YumOutput.__init__(self)
-        logging.basicConfig()
         self.logger = logging.getLogger("dnf")
 
     def errorSummary(self, errstring):
@@ -1316,7 +1315,7 @@ class Cli(object):
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
-            opts.debuglevel = opts.errorlevel = 6
+            opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
         self.nogpgcheck = opts.nogpgcheck
 
         # configuration has been collected, accumulate it into sensible form
