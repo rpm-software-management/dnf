@@ -1,4 +1,4 @@
-%global gitrev f3818b4
+%global gitrev 91ba5e0
 %global hawkey_version 0.3.10
 %global librepo_version 0.0.2-3.20130408git720d68d%{dist}
 
@@ -6,7 +6,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	3.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -75,6 +75,37 @@ systemctl start dnf-makecache.timer
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Wed Apr 17 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.3-3.git91ba5e0
+- packaging: do not run 'systemctl' to enable the timer service manually. (Ales Kozumplik)
+- cosmetic: trailing whitespace in dnf/cli/callback.py (Ales Kozumplik)
+- UI: call updates upgrades. (RhBug:903775) (Ales Kozumplik)
+- doc: the logging setup. (Ales Kozumplik)
+- logging: in logfiles, mark the start of the logging session. (Ales Kozumplik)
+- logging: replace setup_from_dnf_levels with a helpers that takes the conf object. (Ales Kozumplik)
+- put the name of the loglevel into the logfiles (Ales Kozumplik)
+- logging: do not do logging.basicConfig() from CLI. (Ales Kozumplik)
+- remove: dnf.const.LOG_TRANSACTION no longer needed. (Ales Kozumplik)
+- doc: fix documentation build. (Ales Kozumplik)
+- remove: dnf.yum.logginglevels (Ales Kozumplik)
+- finally, setup logging via the new module. (Ales Kozumplik)
+- Migrate the remaining DEBUG_3 and DEBUG_4 levels. (Ales Kozumplik)
+- semi-automatically migrate the old logging levels to the new ones. (Ales Kozumplik)
+- Fix how checking whether the CLI is verbose is done. (Ales Kozumplik)
+- Use the new DNF loggers instead of the old ones. (Ales Kozumplik)
+- add the logger for rpm transactions. (Ales Kozumplik)
+- tests: unified stdout/stderr patching. (Ales Kozumplik)
+- implement dnf.logging module (Ales Kozumplik)
+- refactor: add absolute imports some places so I can have dnf.logging module. (Ales Kozumplik)
+- fix traceback with 'dnf history info <number>'. (Ales Kozumplik)
+- cosmetic: trailing whitespace in comps.py (Ales Kozumplik)
+- refactor: use print() the python3 function-style. (Ales Kozumplik)
+- rename: dnf.exceptions.YumBaseError to dnf.exceptions.Error. (Ales Kozumplik)
+- move: dnf.yum.Errors to dnf.exceptions. (Ales Kozumplik)
+- remove deprecation exceptions and warnings. (Ales Kozumplik)
+- remove: dnf/yum/mdparser.py (Ales Kozumplik)
+- remove: unused exception classes. (Ales Kozumplik)
+- remove: dnf/yum/repoMDObject.py (Ales Kozumplik)
+
 * Mon Apr 8 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.2-1.gitf3818b4
 - remove: dnf.yum.failover. (Ales Kozumplik)
 - 'reviving' repositories using checksum information from metalink. (Ales Kozumplik)
