@@ -69,7 +69,7 @@ systemctl enable dnf-makecache.timer
 systemctl start dnf-makecache.timer
 
 %preun
-%systemd_preun dnf-makecacache.timer
+%systemd_preun dnf-makecache.timer
 
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
