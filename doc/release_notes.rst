@@ -51,3 +51,21 @@ reported bugs are fixed:
 * :rhbug:`947258`
 * :rhbug:`889202`
 * :rhbug:`923384`
+
+===================
+0.3.3 Release Notes
+===================
+
+The improvements in 0.3.3 are only API changes to the logging. There is a new
+module ``dnf.logging`` that defines simplified logging structure compared to
+Yum, with fewer logging levels and `simpler usage for the developers
+<https://github.com/akozumpl/dnf/wiki/Hacking#logging>`_. The RPM transaction logs are
+no longer in ``/var/log/dnf.transaction.log`` but in ``/var/log/dnf.rpm.log`` by
+default.
+
+The exception classes were simplified and moved to ``dnf.exceptions``.
+
+The following bugs are fixed in 0.3.3:
+
+* :rhbug:`950722`
+* :rhbug:`903775`
