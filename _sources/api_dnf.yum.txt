@@ -33,12 +33,6 @@ dnf.constants
 .. automodule:: dnf.yum.constants
     :members:
 
-dnf.yum.Errors
---------------
-
-.. automodule:: dnf.yum.Errors
-    :members:
-
 dnf.yum.history
 ---------------
 
@@ -49,18 +43,6 @@ dnf.yum.i18n
 ------------
 
 .. automodule:: dnf.yum.i18n
-    :members:
-
-dnf.yum.logginglevels
----------------------
-
-.. automodule:: dnf.yum.logginglevels
-    :members:
-
-dnf.yum.mdparser
-----------------
-
-.. automodule:: dnf.yum.mdparser
     :members:
 
 dnf.yum.misc
@@ -91,12 +73,6 @@ dnf.yum.plugins
 ---------------
 
 .. automodule:: dnf.yum.plugins
-    :members:
-
-dnf.yum.repoMDObject
---------------------
-
-.. automodule:: dnf.yum.repoMDObject
     :members:
 
 dnf.yum.rpmsack

@@ -60,7 +60,9 @@ Options
     config file location
 
 ``-d <debug level>, --debuglevel=<debug level>``
-    debugging output level
+    Debugging output level. This is an integer value between 0 (no additional
+    information strings) and 10 (shows all debugging information, even that not
+    understandable to the user), default is 2. Deprecated, use ``-v`` instead.
 
 ``--disableexcludes=[all|main|<repoid>]``
 
@@ -71,7 +73,8 @@ Options
     * ``repoid``, disables excludes defined for the given repo
 
 ``-e <error level>, --errorlevel=<error level>``
-    error output level
+    Error output level. This is an integer value between 0 (no error output) and
+    10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
 
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by a name or a glob from the operation.
@@ -104,7 +107,7 @@ Options
     show duplicates, in repos, in list/search commands
 
 ``-v, --verbose``
-    verbose operation
+    verbose operation, show debug messages.
 
 ``--version``
     show Yum version and exit
