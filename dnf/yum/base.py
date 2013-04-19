@@ -39,7 +39,7 @@ from config import ParsingError, ConfigParser
 import dnf.exceptions
 import dnf.logging
 import rpmsack
-from dnf.rpmUtils.arch import canCoinstall, ArchStorage, isMultiLibArch
+from dnf.rpmUtils.arch import ArchStorage
 import dnf.rpmUtils.transaction
 import comps
 import misc
@@ -2024,69 +2024,6 @@ class Base(object):
         bestlist = self._compare_providers(pkglist, None)
         return bestlist[0][0]
 
-    def bestPackagesFromList(self, pkglist, arch=None, single_name=False):
-        """Return the best packages from a list of packages.  This
-        function is multilib aware, so that it will not compare
-        multilib to singlelib packages.
-
-        :param pkglist: the list of packages to return the best
-           packages from
-        :param arch: packages will be selected that are compatible
-           with the architecture specified by *arch*
-        :param single_name: whether to return a single package name
-        :return: a list of the best packages from *pkglist*
-        """
-        returnlist = []
-        compatArchList = self.arch.get_arch_list(arch)
-        multiLib = []
-        singleLib = []
-        noarch = []
-        for po in pkglist:
-            if po.arch not in compatArchList:
-                continue
-            elif po.arch in ("noarch"):
-                noarch.append(po)
-            elif isMultiLibArch(arch=po.arch):
-                multiLib.append(po)
-            else:
-                singleLib.append(po)
-
-        # we now have three lists.  find the best package(s) of each
-        multi = self._bestPackageFromList(multiLib)
-        single = self._bestPackageFromList(singleLib)
-        no = self._bestPackageFromList(noarch)
-
-        if single_name and multi and single and multi.name != single.name:
-            # Sinlge _must_ match multi, if we want a single package name
-            single = None
-
-        # now, to figure out which arches we actually want
-        # if there aren't noarch packages, it's easy. multi + single
-        if no is None:
-            if multi: returnlist.append(multi)
-            if single: returnlist.append(single)
-        # if there's a noarch and it's newer than the multilib, we want
-        # just the noarch.  otherwise, we want multi + single
-        elif multi:
-            best = self._bestPackageFromList([multi,no])
-            if best.arch == "noarch":
-                returnlist.append(no)
-            else:
-                if multi: returnlist.append(multi)
-                if single: returnlist.append(single)
-        # similar for the non-multilib case
-        elif single:
-            best = self._bestPackageFromList([single,no])
-            if best.arch == "noarch":
-                returnlist.append(no)
-            else:
-                returnlist.append(single)
-        # if there's not a multi or single lib, then we want the noarch
-        else:
-            returnlist.append(no)
-
-        return returnlist
-
     def _at_groupinstall(self, pattern):
         " Do groupinstall via. leading @ on the cmd line, for install/update."
         assert pattern[0] == '@'
@@ -2971,24 +2908,6 @@ class Base(object):
                     self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
                 self.logger.debug(
                     _('Removing Package %s'), txmbr.po)
-
-    def _does_this_update(self, pkg1, pkg2):
-        """returns True if pkg1 can update pkg2, False if not.
-           This only checks if it can be an update it does not check if
-           it is obsoleting or anything else."""
-
-        if pkg1.name != pkg2.name:
-            return False
-        if pkg1.verLE(pkg2):
-            return False
-        if pkg1.arch not in self.arch.archlist:
-            return False
-        if dnf.rpmUtils.arch.canCoinstall(pkg1.arch, pkg2.arch):
-            return False
-        if self.allowedMultipleInstalls(pkg1):
-            return False
-
-        return True
 
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
