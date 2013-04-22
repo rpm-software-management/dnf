@@ -92,11 +92,7 @@ class Metadata(object):
         self.expired = False
         self.repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
-        if handle.local:
-            # librepo adds handle.url to the first position of handle.mirrors:
-            self._mirrors = handle.mirrors[1:]
-        else:
-            self._mirrors = handle.mirrors[:]
+        self._mirrors = handle.mirrors[:]
 
     @property
     def age(self):
