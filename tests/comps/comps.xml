@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE comps PUBLIC "-//Red Hat, Inc.//DTD Comps info//EN" "comps.dtd">
+<comps>
+  <group>
+   <id>base</id>
+   <default>true</default>
+   <uservisible>true</uservisible>
+   <display_order>1024</display_order>
+   <name>Base</name>
+   <name xml:lang="cs">Základ</name>
+   <name xml:lang="de">Basis</name>
+   <description>This group includes a minimal set of packages. Useful for creating small router/firewall boxes, for example.</description>
+   <description xml:lang="cs">Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů.</description>
+   <description xml:lang="de">Diese Gruppe enthält eine minimale Paketauswahl. Dies ist zum Beispiel nützlich zum Aufbau kleiner Router-/Firewall-Rechner.</description>
+    <packagelist>
+      <packagereq type="mandatory">traceroute</packagereq>
+      <packagereq type="default">PackageKit-yum-plugin</packagereq>
+      <packagereq type="optional">apmd</packagereq>
+      <packagereq type="conditional" requires="system-config-date">chrony</packagereq>
+    </packagelist>
+  </group>
+  <group>
+   <id>core</id>
+   <default>true</default>
+   <uservisible>false</uservisible>
+   <display_order>1024</display_order>
+   <name>Core</name>
+   <name xml:lang="cs">Úplný základ</name>
+   <name xml:lang="de">Kern</name>
+   <description>Smallest possible installation</description>
+   <description xml:lang="cs">Nejmenší možná instalace</description>
+   <description xml:lang="de">Kleinstmögliche Installation</description>
+    <packagelist>
+      <packagereq type="mandatory">bash</packagereq>
+      <packagereq type="optional">yaboot</packagereq>
+    </packagelist>
+  </group>
+  <category>
+   <id>base-system</id>
+   <display_order>99</display_order>
+   <name>Base System</name>
+   <name xml:lang="cs">Základ systému</name>
+   <name xml:lang="de">Basissystem</name>
+   <description>Various core pieces of the system.</description>
+    <description xml:lang="cs">Různé základní části systému.</description>
+    <description xml:lang="de">Verschiedene Kernstücke des Systems.</description>
+    <grouplist>
+     <groupid>input-methods</groupid>
+     <groupid>base-x</groupid>
+     <groupid>system-tools</groupid>
+     <groupid>fonts</groupid>
+     <groupid>hardware-support</groupid>
+     <groupid>dial-up</groupid>
+     <groupid>admin-tools</groupid>
+     <groupid>legacy-software-support</groupid>
+     <groupid>base</groupid>
+     <groupid>virtualization</groupid>
+     <groupid>virtualization-hypervisor</groupid>
+     <groupid>legacy-fonts</groupid>
+     <groupid>java</groupid>
+    </grouplist>
+  </category>
+</comps>
