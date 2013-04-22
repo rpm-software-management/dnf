@@ -15,16 +15,25 @@
 # Red Hat, Inc.
 #
 
-import dnf.repodict
-from dnf.repo import Repo
-import unittest
 from dnf.exceptions import RepoError
+from dnf.repo import Repo
+import dnf.repodict
+import mock
+import operator
+import unittest
 
 class TestMultiCall(unittest.TestCase):
     def test_multi_call(self):
         l = dnf.repodict.MultiCallList(["one", "two", "three"])
         self.assertEqual(l.upper(), ["ONE", "TWO", "THREE"])
         self.assertEqual(l.pop(), "three")
+
+    def test_assignment(self):
+        o1 = mock.Mock(x=3)
+        o2 = mock.Mock(x=5)
+        l = dnf.repodict.MultiCallList([o1, o2])
+        l.x = 5
+        self.assertEqual([5, 5], map(operator.attrgetter('x'), [o1, o2]))
 
 class TestRepoDict(unittest.TestCase):
     def setUp(self):

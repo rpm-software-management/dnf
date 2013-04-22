@@ -32,7 +32,7 @@ BASEURL = "file://%s/rpm" % REPOS
 
 class HandleTest(base.TestCase):
     def test_useragent(self):
-        h = dnf.repo._Handle(self)
+        h = dnf.repo._Handle(False, 0)
         self.assertTrue(h.useragent.startswith("dnf/"))
 
 class RepoTest(base.TestCase):

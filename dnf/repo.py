@@ -47,17 +47,18 @@ def _mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
 class _Handle(librepo.Handle):
-    def __init__(self, gpgcheck):
+    def __init__(self, gpgcheck, max_mirror_tries):
         super(_Handle, self).__init__()
         self.gpgcheck = gpgcheck
+        self.maxmirrortries = max_mirror_tries
         self.interruptible = True
         self.repotype = librepo.LR_YUMREPO
         self.useragent = dnf.const.USER_AGENT
         self.yumdlist = ["primary", "filelists", "prestodelta"]
 
     @classmethod
-    def new_local(cls, gpgcheck, cachedir):
-        h = cls(gpgcheck)
+    def new_local(cls, gpgcheck, max_mirror_tries, cachedir):
+        h = cls(gpgcheck, max_mirror_tries)
         h.destdir = cachedir
         h.url = cachedir
         h.local = True
@@ -68,8 +69,9 @@ class _Handle(librepo.Handle):
         return h
 
     @classmethod
-    def new_remote(cls, gpgcheck, destdir, mirror_setup, progress_cb):
-        h = cls(gpgcheck)
+    def new_remote(cls, gpgcheck, max_mirror_tries, destdir, mirror_setup,
+                   progress_cb):
+        h = cls(gpgcheck, max_mirror_tries)
         h.destdir = destdir
         h.setopt(mirror_setup[0], mirror_setup[1])
         h.progresscb = progress_cb
@@ -168,6 +170,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.metadata = None
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
+        self.max_mirror_tries = 0 # try them all
 
     def _exc2msg(self, librepo_exception):
         exc_msg = librepo_exception[1]
@@ -184,14 +187,15 @@ class Repo(dnf.yum.config.RepoConf):
         return Metadata(r, handle)
 
     def _handle_new_local(self, destdir):
-        return _Handle.new_local(self.repo_gpgcheck, destdir)
+        return _Handle.new_local(self.repo_gpgcheck, self.max_mirror_tries,
+                                 destdir)
 
     def _handle_new_remote(self, destdir):
         cb = None
         if self._progress is not None:
             cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.repo_gpgcheck, destdir,
-                                  self._mirror_setup_args(), cb)
+        return _Handle.new_remote(self.repo_gpgcheck, self.max_mirror_tries,
+                                  destdir, self._mirror_setup_args(), cb)
 
     def _mirror_setup_args(self):
         if self.metalink:

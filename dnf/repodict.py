@@ -34,6 +34,11 @@ class MultiCallList(list):
             return map(call_what, self)
         return fn
 
+    def __setattr__(self, what, val):
+        def setter(item):
+            setattr(item, what, val)
+        return map(setter, self)
+
 class RepoDict(dict):
     def add(self, repo):
         id_ = repo.id
