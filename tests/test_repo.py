@@ -193,12 +193,14 @@ class LocalRepoTest(base.TestCase):
     def test_reviving(self, new_remote_m, reset_age_m):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
-        new_remote_m().metalink = \
+        remote_handle_m = new_remote_m()
+        remote_handle_m.metalink = \
             {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
                         ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0'),
                         ('sha256', '4394be16de62563321f6ea9604513a8a2f6b9ab67898bbed218feeca8e6a7180'),
                         ('sha512', 'e583eeb91874954b24a376176a087462403e518563f9cb3bdc4f7eae792e8d15ac488bc6d3fb632bbf0ac6cf58bf769e94e9773df6605616a28cf2c00adf8e14')]}
         self.assertTrue(self.repo.load())
+        self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertEqual(self.repo.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
         reset_age_m.assert_called()
 

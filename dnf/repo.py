@@ -245,6 +245,8 @@ class Repo(dnf.yum.config.RepoConf):
         repomd_fn = self.metadata.repo_dct['repomd']
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
+            handle.fetchmirrors = True
+            handle.perform(librepo.Result())
             if handle.metalink is None:
                 logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
                 return False
