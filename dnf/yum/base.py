@@ -1351,7 +1351,7 @@ class Base(object):
     def cleanMetadata(self):
         """Delete the metadata files from the yum cache."""
 
-        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist.txt', 'asc',
+        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist', 'asc',
                 'xml.bz2', 'xml.xz']
         # Metalink is also here, but is a *.xml file
         return self._cleanFiles(exts, 'cachedir', 'metadata')
