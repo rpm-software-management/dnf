@@ -166,33 +166,33 @@ class FakeTerm(object):
 class FakeConf(object):
     def __init__(self):
         self.assumeyes = None
-        self.defaultyes = False
         self.best = False
+        self.cachedir = '/should-not-exist-bad-test/cache'
+        self.clean_requirements_on_remove = False
         self.color = 'never'
         self.commands = []
-        self.installonlypkgs = ['kernel']
-        self.exclude = []
         self.debug_solver = False
         self.debuglevel = 8
-        self.obsoletes = True
+        self.defaultyes = False
+        self.disable_excludes = []
         self.exactarch = False
         self.exactarchlist = []
-        self.installroot = '/'
-        self.tsflags = []
-        self.installonly_limit = 0
-        self.disable_excludes = []
-        self.multilib_policy = 'best'
-        self.cachedir = '/should-not-exist-bad-test/cache'
-        self.persistdir = '/should-not-exist-bad-test/persist'
-        self.showdupesfromrepos = False
-        self.uid = 0
+        self.exclude = []
         self.groupremove_leaf_only = False
-        self.protected_packages = []
+        self.history_record = False
+        self.installonly_limit = 0
+        self.installonlypkgs = ['kernel']
+        self.installroot = '/'
+        self.multilib_policy = 'best'
+        self.obsoletes = True
+        self.persistdir = '/should-not-exist-bad-test/persist'
         self.protected_multilib = False
-        self.clean_requirements_on_remove = False
+        self.protected_packages = []
+        self.showdupesfromrepos = False
+        self.tsflags = []
+        self.uid = 0
         self.upgrade_requirements_on_install = False
         self.yumvar = {'releasever' : 'Fedora69'}
-        self.history_record = False
 
 # specialized test cases
 
