@@ -155,6 +155,10 @@ class Base(object):
                 self.sack.add_excludes(pkgs)
 
     @property
+    def comps(self):
+        return self._comps
+
+    @property
     def conf(self):
         return self._conf
 
@@ -446,73 +450,36 @@ class Base(object):
         del self._ts
         self._ts = None
 
-    def _setGroups(self, val):
-        if val is None:
-            # if we unset the comps object, we need to undo which repos have
-            # been added to the group file as well
-            if self._repos:
-                for repo in self._repos.listGroupsEnabled():
-                    repo.groups_added = False
-        self._comps = val
-
-    def _getGroups(self):
-        """create the groups object that will store the comps metadata
-           finds the repos with groups, gets their comps data and merge it
-           into the group object"""
-
-        if self._comps:
-            return self._comps
-
+    def read_comps(self):
+        """Create the groups object to access the comps metadata."""
         group_st = time.time()
-        self.logger.log(dnf.logging.SUBDEBUG,
-                                _('Getting group metadata'))
-        reposWithGroups = []
-        #  Need to make sure the groups data is ready to read. Really we'd want
-        # to add groups to the mdpolicy list of the repo. but we don't atm.
-        self.pkgSack
-        for repo in self.repos.listGroupsEnabled():
-            if repo.groups_added: # already added the groups from this repo
-                reposWithGroups.append(repo)
+        self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
+        self._comps = comps.Comps(overwrite_groups=self.conf.overwrite_groups)
+
+        for repo in self.repos.iter_enabled():
+            if not repo.enablegroups:
                 continue
-
-            if not repo.ready():
-                raise dnf.exceptions.RepoError, "Repository '%s' not yet setup" % repo
-            try:
-                groupremote = repo.getGroupLocation()
-            except dnf.exceptions.RepoMDError, e:
-                pass
-            else:
-                reposWithGroups.append(repo)
-
-        # now we know which repos actually have groups files.
-        overwrite = self.conf.overwrite_groups
-        self._comps = comps.Comps(overwrite_groups = overwrite)
-
-        for repo in reposWithGroups:
-            if repo.groups_added: # already added the groups from this repo
+            comps_fn = repo.metadata.comps_fn
+            if comps_fn is None:
                 continue
 
             self.logger.log(dnf.logging.SUBDEBUG,
-                _('Adding group file from repository: %s'), repo)
-            groupfile = repo.getGroups()
-            # open it up as a file object so iterparse can cope with our compressed file
-            if groupfile:
-                groupfile = misc.repo_gen_decompress(groupfile, 'groups.xml',
-                                                     cached=repo.md_only_cached)
-                # Do we want a RepoError here?
+                            'Adding group file from repository: %s', repo.id)
+            decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
 
             try:
-                self._comps.add(groupfile)
-            except (dnf.exceptions.GroupsError,dnf.exceptions.CompsException), e:
-                msg = _('Failed to add groups file for repository: %s - %s') % (repo, str(e))
+                self._comps.add(comps_fn)
+            except (dnf.exceptions.GroupsError,
+                    dnf.exceptions.CompsException) as e:
+                msg = _('Failed to add groups file for repository: %s - %s') % \
+                    (repo.id, str(e))
                 self.logger.critical(msg)
-            else:
-                repo.groups_added = True
 
         if self._comps.compscount == 0:
-            raise dnf.exceptions.GroupsError, _('No Groups Available in any repository')
+            msg = _('No Groups Available in any repository')
+            raise dnf.exceptions.GroupsError(msg)
 
-        self._comps.compile(self.rpmdb.simplePkgList())
+        self._comps.compile(self.sack.query().installed())
         self.logger.debug('group time: %0.3f' % (time.time() - group_st))
         return self._comps
 
@@ -532,10 +499,6 @@ class Base(object):
                       fset=lambda self,value: self._setTsInfo(value),
                       fdel=lambda self: self._delTsInfo(),
                       doc="Transaction Set information object")
-    comps = property(fget=lambda self: self._getGroups(),
-                     fset=lambda self, value: self._setGroups(value),
-                     fdel=lambda self: setattr(self, "_comps", None),
-                     doc="Yum Component/groups object")
     history = property(fget=lambda self: self._getHistory(),
                        fset=lambda self, value: setattr(self, "_history",value),
                        fdel=lambda self: setattr(self, "_history", None),

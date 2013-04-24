@@ -7,32 +7,24 @@
    <uservisible>true</uservisible>
    <display_order>1024</display_order>
    <name>Base</name>
-   <name xml:lang="cs">Základ</name>
-   <name xml:lang="de">Basis</name>
    <description>This group includes a minimal set of packages. Useful for creating small router/firewall boxes, for example.</description>
    <description xml:lang="cs">Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů.</description>
    <description xml:lang="de">Diese Gruppe enthält eine minimale Paketauswahl. Dies ist zum Beispiel nützlich zum Aufbau kleiner Router-/Firewall-Rechner.</description>
     <packagelist>
-      <packagereq type="mandatory">traceroute</packagereq>
-      <packagereq type="default">PackageKit-yum-plugin</packagereq>
-      <packagereq type="optional">apmd</packagereq>
-      <packagereq type="conditional" requires="system-config-date">chrony</packagereq>
+      <packagereq type="mandatory">pepper</packagereq>
+      <packagereq type="mandatory">tour</packagereq>
     </packagelist>
   </group>
   <group>
-   <id>core</id>
+   <id>somerset</id>
    <default>true</default>
-   <uservisible>false</uservisible>
+   <uservisible>true</uservisible>
    <display_order>1024</display_order>
-   <name>Core</name>
-   <name xml:lang="cs">Úplný základ</name>
-   <name xml:lang="de">Kern</name>
-   <description>Smallest possible installation</description>
-   <description xml:lang="cs">Nejmenší možná instalace</description>
-   <description xml:lang="de">Kleinstmögliche Installation</description>
+   <name>Solid Ground</name>
+   <description>--</description>
     <packagelist>
-      <packagereq type="mandatory">bash</packagereq>
-      <packagereq type="optional">yaboot</packagereq>
+      <packagereq type="mandatory">pepper</packagereq>
+      <packagereq type="mandatory">trampoline</packagereq>
     </packagelist>
   </group>
   <category>
@@ -45,19 +37,7 @@
     <description xml:lang="cs">Různé základní části systému.</description>
     <description xml:lang="de">Verschiedene Kernstücke des Systems.</description>
     <grouplist>
-     <groupid>input-methods</groupid>
-     <groupid>base-x</groupid>
-     <groupid>system-tools</groupid>
-     <groupid>fonts</groupid>
-     <groupid>hardware-support</groupid>
-     <groupid>dial-up</groupid>
-     <groupid>admin-tools</groupid>
-     <groupid>legacy-software-support</groupid>
      <groupid>base</groupid>
-     <groupid>virtualization</groupid>
-     <groupid>virtualization-hypervisor</groupid>
-     <groupid>legacy-fonts</groupid>
-     <groupid>java</groupid>
     </grouplist>
   </category>
 </comps>

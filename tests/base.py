@@ -49,6 +49,7 @@ def repo_dir():
     this_dir=os.path.dirname(__file__)
     return os.path.join(this_dir, "repos")
 
+COMPS_PATH = os.path.join(repo_dir(), "main_comps.xml")
 TOUR_44_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-4-4.noarch.rpm")
 TOUR_50_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-0.noarch.rpm")
 TOUR_51_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-1.noarch.rpm")
@@ -185,6 +186,7 @@ class FakeConf(object):
         self.installroot = '/'
         self.multilib_policy = 'best'
         self.obsoletes = True
+        self.overwrite_groups = False
         self.persistdir = '/should-not-exist-bad-test/persist'
         self.protected_multilib = False
         self.protected_packages = []

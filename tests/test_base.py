@@ -18,6 +18,7 @@
 import base
 import binascii
 import dnf.const
+import dnf.exceptions
 import dnf.match_counter
 import dnf.queries
 import dnf.yum.base
@@ -176,3 +177,18 @@ class CleanTest(unittest.TestCase):
         assert(fname.endswith('main.solv'))
         fname = access.call_args_list[2][0][0]
         assert(fname.endswith('main-filenames.solvx'))
+
+class CompsTest(base.TestCase):
+    # Also see test_comps.py
+
+    def test_read_comps(self):
+        yumbase = base.MockYumBase("main")
+        yumbase.repos['main'].metadata = mock.Mock(comps_fn=base.COMPS_PATH)
+        yumbase.read_comps()
+        groups = yumbase.comps.groups
+        self.assertLength(groups, 2)
+
+    def test_read_comps_disabled(self):
+        yumbase = base.MockYumBase("main")
+        yumbase.repos['main'].enablegroups = False
+        self.assertRaises(dnf.exceptions.GroupsError, yumbase.read_comps)

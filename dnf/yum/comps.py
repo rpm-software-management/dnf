@@ -108,7 +108,7 @@ class Group(CompsObj):
         self.optional_packages = {}
         self.default_packages = {}
         self.conditional_packages = {}
-        self.langonly = None ## what the hell is this?
+        self.langonly = None
         self.groupid = None
         self.display_order = 1024
         self.installed = False
@@ -528,15 +528,11 @@ class Comps(object):
 
         del parser
 
-    def compile(self, pkgtuplist):
+    def compile(self, installed_pkgs):
         """ compile the groups into installed/available groups """
 
         # convert the tuple list to a simple dict of pkgnames
-        inst_pkg_names = {}
-        for (n,a,e,v,r) in pkgtuplist:
-            inst_pkg_names[n] = 1
-
-
+        inst_names = set([pkg.name for pkg in installed_pkgs])
         for group in self.groups:
             # if there are mandatory packages in the group, then make sure
             # they're all installed.  if any are missing, then the group
@@ -544,7 +540,7 @@ class Comps(object):
             if len(group.mandatory_packages) > 0:
                 group.installed = True
                 for pkgname in group.mandatory_packages:
-                    if pkgname not in inst_pkg_names:
+                    if pkgname not in inst_names:
                         group.installed = False
                         break
             # if it doesn't have any of those then see if it has ANY of the
@@ -554,7 +550,7 @@ class Comps(object):
                 check_pkgs = group.optional_packages.keys() + group.default_packages.keys() + group.conditional_packages.keys()
                 group.installed = False
                 for pkgname in check_pkgs:
-                    if pkgname in inst_pkg_names:
+                    if pkgname in inst_names:
                         group.installed = True
                         break
 

@@ -54,7 +54,7 @@ class _Handle(librepo.Handle):
         self.interruptible = True
         self.repotype = librepo.LR_YUMREPO
         self.useragent = dnf.const.USER_AGENT
-        self.yumdlist = ["primary", "filelists", "prestodelta"]
+        self.yumdlist = ["primary", "filelists", "prestodelta", "group_gz"]
 
     @classmethod
     def new_local(cls, gpgcheck, max_mirror_tries, cachedir):
@@ -99,6 +99,10 @@ class Metadata(object):
     @property
     def age(self):
         return self.file_age('primary')
+
+    @property
+    def comps_fn(self):
+        return self.repo_dct.get("group_gz") or self.repo_dct.get("group")
 
     @property
     def content_tags(self):

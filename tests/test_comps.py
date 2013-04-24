@@ -20,16 +20,30 @@
 import base
 import dnf.yum.comps
 
-COMPS_PATH="%s/tests/comps/comps.xml" % base.dnf_toplevel()
 TRANSLATION="""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
 
 class CompsTest(base.TestCase):
+    # Also see test_base.py:CompsTest
+
     def test_comps(self):
         comps = dnf.yum.comps.Comps()
-        comps.add(COMPS_PATH)
+        comps.add(base.COMPS_PATH)
         self.assertEqual([g.name for g in comps.groups],
-                         ['Base', 'Core'])
+                         ['Base', 'Solid Ground'])
         self.assertEqual([c.name for c in comps.categories],
                          ['Base System'])
         g = comps.groups[0]
         self.assertEqual(g.translated_description['cs'], TRANSLATION)
+
+    def test_compile(self):
+        yumbase = base.MockYumBase("main")
+        sack = yumbase.sack
+
+        comps = dnf.yum.comps.Comps()
+        comps.add(base.COMPS_PATH)
+        groups = comps.groups
+        self.assertLength(groups, 2)
+
+        comps.compile(sack.query().installed())
+        self.assertTrue(groups[0].installed)
+        self.assertFalse(groups[1].installed)
