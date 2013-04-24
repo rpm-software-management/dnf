@@ -50,3 +50,11 @@ all installed ``python-f*`` packages but not any of the Flask packages, the
 following will work::
 
     dnf -x '*flask*' list installed 'python-f*'
+
+===================================
+ ``protected_packages`` is ignored
+===================================
+
+DNF drops Yum's ``protected_packages`` configuration option. Generally, DNF lets
+the user do what she specified, even have DNF itself removed. Similar functionality
+can be implemented by a plugin.
