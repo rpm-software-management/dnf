@@ -21,7 +21,7 @@ import struct, time, cStringIO, base64, types
 # use import md5/import sha on the older one and import hashlib on the newer.
 #  Stupid deprecation warnings.
 
-# pylint: disable-msg=W0108 
+# pylint: disable-msg=W0108
 # Ignore :W0108: *Lambda may not be necessary*
 
 
@@ -124,7 +124,7 @@ algo_pk_to_str = {
     ALGO_PK_ECDSA : 'ECDSA',
     ALGO_PK_ELGAMAL_ENC_OR_SIGN : 'Elgamal (Encrypt or Sign)',
     ALGO_PK_DH : 'Diffie-Hellman'
-}    
+}
 
 # Symmetric Key Algorithms
 ALGO_SK_PLAIN = 0 # Plaintext or unencrypted data
@@ -317,7 +317,7 @@ def get_whole_number(msg, idx, numlen) :
 extracts a "whole number" field of length numlen from msg at index idx
 returns (<whole number>, new_idx) where the whole number is a long integer
 and new_idx is the index of the next element in the message"""
-    n = 0L 
+    n = 0L
     while numlen > 0 :
         b = (struct.unpack("B", msg[idx:idx+1]))[0]
         n = n * 256L + long(b)
@@ -339,7 +339,7 @@ def pack_long(l) :
         arr.insert(0, struct.pack("B", l & 0xff))
         l >>= 8
     return ''.join(arr)
-    
+
 def pack_mpi(l) :
     """pack_mpi(l)
     returns the PGP Multi-Precision Integer representation of unsigned long integer"""
@@ -431,7 +431,7 @@ class public_key(pgp_packet) :
         # return cached value if we have it
         if self.fingerprint_ :
             return self.fingerprint_
-        
+
         # otherwise calculate it now and cache it
         # v3 and v4 are calculated differently
         if self.version == 3 :
@@ -482,7 +482,7 @@ class public_key(pgp_packet) :
             else :
                 raise RuntimeError("unknown public key algorithm %d" % (self.pk_algo))
         return ''.join(chunks)
-    
+
     def deserialize(self, msg, idx, pkt_len) :
         idx_save = idx
         self.version, idx = get_whole_int(msg, idx, 1)
@@ -599,13 +599,13 @@ class signature(pgp_packet) :
             if i[0] == typ :
                 return i
         return None
-    
+
     def get_unhashed_subpak(self, typ) :
         for i in self.unhashed_subpaks :
             if i[0] == typ :
                 return i
         return None
-    
+
     def deserialize_subpacket(self, msg, idx) :
         sublen, idx = get_sig_subpak_len(msg, idx)
         subtype, idx = get_whole_int(msg, idx, 1)
@@ -709,7 +709,7 @@ class signature(pgp_packet) :
             if i[0] == SIG_SUB_TYPE_PRIM_USER_ID :
                 return i[1]
         return 0
-    
+
     def subpacket_to_str(self, sp) :
         if sp[0] == SIG_SUB_TYPE_CREATE_TIME : # signature creation time
             return 'creation time: ' + time.ctime(sp[1])
@@ -902,15 +902,15 @@ class pgp_certificate(object):
                 for sig in uattr[1:] :
                     sio.write("   " + str(sig))
         return sio.getvalue()
-    
+
     def get_user_id(self):
         # take the LAST one in the list, not first
         # they appear to be ordered FIFO from the key and that means if you
         # added a key later then it won't show the one you expect
         return self.user_ids[self.primary_user_id][0].id
-        
+
     user_id = property(get_user_id)
-    
+
     def expiration(self) :
         if self.version == 3 :
             if self.public_key.validity == 0 :
@@ -930,7 +930,7 @@ class pgp_certificate(object):
 
     def key_size(self) :
         return 0
-    
+
     def load(self, pkts) :
         """load(pkts)
 Initialize the pgp_certificate with a list of OpenPGP packets. The list of packets will
@@ -1015,7 +1015,7 @@ be scanned to make sure they are valid for a pgp certificate."""
 
                 # increment the pkt_idx to go to the next one
                 pkt_idx = pkt_idx + 1
-                
+
             # the following packets are:
             # User ID, signature... sets or
             # subkey, signature... sets or
@@ -1104,7 +1104,7 @@ be scanned to make sure they are valid for a pgp certificate."""
                     # increment the pkt_idx to go to the next one
                     pkt_idx = pkt_idx + 1
 
-                
+
                 else :
                     break
 
@@ -1206,16 +1206,16 @@ corresponds to a PGP "packets".
 
 A PGP message is a series of packets. You need to understand how packets are
 to be combined together in order to know what to do with them. For example
-a PGP "certificate" includes a public key, user id(s), and signature. 
+a PGP "certificate" includes a public key, user id(s), and signature.
 """
-    # first we'll break the block up into lines and trim each line of any 
+    # first we'll break the block up into lines and trim each line of any
     # carriage return chars
     pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
 
     # check out block
     in_block = 0
     in_data = 0
-    
+
     block_buf = cStringIO.StringIO()
     for l in pgpkey_lines :
         if not in_block :
@@ -1228,7 +1228,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
             if len(l) == 0 :
                 in_data = 1
             continue
-        
+
         # are we at the checksum line?
         if l and l[0] == '=' :
             # get the checksum number
@@ -1259,7 +1259,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
                     return None
                 return cert_list[0]
             return cert_list
-        
+
         # add the data to our buffer then
         block_buf.write(l)
 
@@ -1277,7 +1277,7 @@ def decode_multiple_keys(msg):
     for l in pgpkey_lines :
         if not in_block :
             if l == '-----BEGIN PGP PUBLIC KEY BLOCK-----' :
-                in_block = 1        
+                in_block = 1
                 block += '%s\n' % l
                 continue
 
