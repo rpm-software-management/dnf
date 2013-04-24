@@ -761,6 +761,8 @@ class EraseCommand(Command):
 class GroupsCommand(Command):
     """ Single sub-command interface for most groups interaction. """
 
+    activate_sack = True
+
     direct_commands = {'grouplist'    : 'list',
                        'groupinstall' : 'install',
                        'groupupdate'  : 'install',
@@ -794,7 +796,7 @@ class GroupsCommand(Command):
         self.doneCommand(_("Setting up Group Process"))
 
         try:
-            self.base.doGroupSetup()
+            self.base.read_comps()
         except dnf.exceptions.GroupsError:
             return 1, [_('No Groups on which to run command')]
         except dnf.exceptions.Error, e:

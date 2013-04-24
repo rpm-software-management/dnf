@@ -468,7 +468,7 @@ class Base(object):
             decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
 
             try:
-                self._comps.add(comps_fn)
+                self._comps.add(decompressed)
             except (dnf.exceptions.GroupsError,
                     dnf.exceptions.CompsException) as e:
                 msg = _('Failed to add groups file for repository: %s - %s') % \

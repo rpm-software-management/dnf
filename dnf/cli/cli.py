@@ -1058,7 +1058,7 @@ class Cli(object):
         self._register_command(dnf.cli.commands.InfoCommand(self))
         self._register_command(dnf.cli.commands.ListCommand(self))
         self._register_command(dnf.cli.commands.EraseCommand(self))
-        # self._register_command(dnf.cli.commands.GroupsCommand(self))
+        self._register_command(dnf.cli.commands.GroupsCommand(self))
         self._register_command(dnf.cli.commands.MakeCacheCommand(self))
         self._register_command(dnf.cli.commands.CleanCommand(self))
         self._register_command(dnf.cli.commands.ProvidesCommand(self))
