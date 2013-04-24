@@ -1550,7 +1550,7 @@ class RepoListCommand(Command):
                     out += [self.base.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                self.base.logger.log(dnf.logging.SUBDEBUG, "%s\n",
+                self.base.logger.log(dnf.logging.DEBUG, "%s\n",
                                         "\n".join(map(to_unicode, out)))
 
         if not verbose and cols:
