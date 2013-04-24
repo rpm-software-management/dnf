@@ -181,6 +181,8 @@ class CleanTest(unittest.TestCase):
 class CompsTest(base.TestCase):
     # Also see test_comps.py
 
+    # prevent creating the gen/ directory:
+    @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
         yumbase = base.MockYumBase("main")
         yumbase.repos['main'].metadata = mock.Mock(comps_fn=base.COMPS_PATH)
