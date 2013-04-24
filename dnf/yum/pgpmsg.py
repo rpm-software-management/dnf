@@ -1290,9 +1290,3 @@ def decode_multiple_keys(msg):
             block = ''
             continue
     return certs
-
-
-if __name__ == '__main__' :
-    import sys
-    for pgp_cert in decode_multiple_keys(open(sys.argv[1]).read()) :
-        print(pgp_cert)

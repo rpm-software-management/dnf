@@ -575,30 +575,3 @@ class Comps(object):
         msg += """\n</comps>\n"""
 
         return msg
-
-
-
-def main():
-
-    try:
-        print(sys.argv[1])
-        p = Comps()
-        for srcfile in sys.argv[1:]:
-            p.add(srcfile)
-
-        for group in p.groups:
-            print(group)
-            for pkg in group.packages:
-                print('  ' + pkg)
-
-        for category in p.categories:
-            print(category.name)
-            for group in category.groups:
-                print('  ' + group)
-
-    except IOError:
-        print("newcomps.py: No such file:\'%s\'" % sys.argv[1], file=sys.stderr)
-        sys.exit(1)
-
-if __name__ == '__main__':
-    main()

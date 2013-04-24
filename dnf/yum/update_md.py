@@ -494,30 +494,3 @@ class UpdateMetadata(object):
             return
 
         return msg
-
-
-def main():
-    """ update_md test function. """
-    import misc
-
-    misc.setup_locale()
-    def usage():
-        print("Usage: %s <update metadata> ..." % sys.argv[0], file=sys.stderr)
-        sys.exit(1)
-
-    if len(sys.argv) < 2:
-        usage()
-
-    try:
-        print(sys.argv[1])
-        um = UpdateMetadata()
-        for srcfile in sys.argv[1:]:
-            um.add(srcfile)
-        print(unicode(um))
-    except IOError:
-        print("%s: No such file:'%s'" % (sys.argv[0], sys.argv[1:]),
-              file=sys.stderr)
-        usage()
-
-if __name__ == '__main__':
-    main()
