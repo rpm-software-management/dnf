@@ -120,17 +120,11 @@ class Subject(object):
         if pat.startswith('/'):
             return sack.query().filter_autoglob(file=pat)
 
+        kwargs = {'allow_globs' : True,
+                  'icase'	: self.icase}
         if forms:
-            possibilities = self.subj.nevra_possibilities_real(sack,
-                                                               allow_globs=True,
-                                                               icase=self.icase,
-                                                               form=forms)
-        else:
-            possibilities = self.subj.nevra_possibilities_real(sack,
-                                                               allow_globs=True,
-                                                               icase=self.icase)
-
-        nevra = first(possibilities)
+            kwargs['form'] = forms
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         if nevra:
             return self._nevra_to_filters(sack.query(), nevra)
 
@@ -141,14 +135,11 @@ class Subject(object):
                 return sack.query().filter(provides=reldep)
         return sack.query().filter(empty=True)
 
-    def get_best_selector(self, sack, form=None):
-        if form:
-            nevra = first(self.subj.nevra_possibilities_real(sack,
-                                                             allow_globs=True,
-                                                             form=form))
-        else:
-            nevra = first(self.subj.nevra_possibilities_real(sack,
-                                                             allow_globs=True))
+    def get_best_selector(self, sack, forms=None):
+        kwargs = {'allow_globs' : True}
+        if forms:
+            kwargs['form'] = forms
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         if nevra:
             return self._nevra_to_selector(dnf.selector.Selector(sack), nevra)
 

@@ -1957,7 +1957,7 @@ class Base(object):
             q = subj.get_best_query(self.sack, with_provides=False, form=forms)
             map(self.tsInfo.addInstall, q)
         elif self.conf.multilib_policy == "best":
-            sltr = subj.get_best_selector(self.sack, form=forms)
+            sltr = subj.get_best_selector(self.sack, forms=forms)
             if sltr:
                 self.tsInfo.add_selector_install(sltr)
         return self.tsInfo
@@ -1998,7 +1998,7 @@ class Base(object):
 
     def upgrade_to(self, pkg_spec):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
-        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack, form=forms)
+        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
         if sltr:
             self.tsInfo.add_selector_upgrade_to(sltr)
 
