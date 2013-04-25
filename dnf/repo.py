@@ -182,13 +182,12 @@ class Repo(dnf.yum.config.RepoConf):
         return msg
 
     def _handle_load(self, handle):
-        r = librepo.Result()
         if handle.progresscb:
             self._progress.begin(self.name)
-        handle.perform(r)
+        result = handle.perform()
         if handle.progresscb:
             self._progress.end()
-        return Metadata(r, handle)
+        return Metadata(result, handle)
 
     def _handle_new_local(self, destdir):
         return _Handle.new_local(self.repo_gpgcheck, self.max_mirror_tries,
@@ -254,7 +253,7 @@ class Repo(dnf.yum.config.RepoConf):
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
             handle.fetchmirrors = True
-            handle.perform(librepo.Result())
+            handle.perform()
             if handle.metalink is None:
                 logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
                 return False

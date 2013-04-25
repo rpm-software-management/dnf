@@ -34,6 +34,7 @@ class HandleTest(base.TestCase):
     def test_useragent(self):
         h = dnf.repo._Handle(False, 0)
         self.assertTrue(h.useragent.startswith("dnf/"))
+        self.assertEqual(h.maxmirrortries, 0)
 
 class RepoTest(base.TestCase):
     """Test the logic of dnf.repo.Repo.
