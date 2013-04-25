@@ -22,6 +22,7 @@ import dnf.queries
 import dnf.repo
 import dnf.sack
 import dnf.yum.base
+import dnf.yum.comps
 import dnf.yum.constants
 import hawkey
 import hawkey.test
@@ -141,6 +142,13 @@ class MockYumBase(dnf.yum.base.Base):
     def mock_cli(self):
         return mock.Mock('base', base=self)
 
+    def read_mock_comps(self, fn):
+        comps = dnf.yum.comps.Comps()
+        comps.add(fn)
+        comps.compile(self.sack.query().installed())
+        self._comps = comps
+        return comps
+
     def read_all_repos(self):
         pass
 
@@ -179,6 +187,7 @@ class FakeConf(object):
         self.exactarch = False
         self.exactarchlist = []
         self.exclude = []
+        self.group_package_types = ['mandatory', 'default']
         self.groupremove_leaf_only = False
         self.history_record = False
         self.installonly_limit = 0

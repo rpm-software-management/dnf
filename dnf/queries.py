@@ -115,13 +115,21 @@ class Subject(object):
     def pattern(self):
         return self.subj.pattern
 
-    def get_best_query(self, sack, with_provides=True):
+    def get_best_query(self, sack, with_provides=True, forms=None):
         pat = self.subj.pattern
         if pat.startswith('/'):
             return sack.query().filter_autoglob(file=pat)
 
-        possibilities = self.subj.nevra_possibilities_real(sack, allow_globs=True,
-                                                           icase=self.icase)
+        if forms:
+            possibilities = self.subj.nevra_possibilities_real(sack,
+                                                               allow_globs=True,
+                                                               icase=self.icase,
+                                                               form=forms)
+        else:
+            possibilities = self.subj.nevra_possibilities_real(sack,
+                                                               allow_globs=True,
+                                                               icase=self.icase)
+
         nevra = first(possibilities)
         if nevra:
             return self._nevra_to_filters(sack.query(), nevra)

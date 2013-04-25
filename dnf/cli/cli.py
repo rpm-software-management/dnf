@@ -958,7 +958,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         return 0, []
 
-    def installGroups(self, grouplist):
+    def install_grouplist(self, grouplist):
         """Mark the packages in the given groups for installation.
 
         :param grouplist: a list of names or wildcards specifying
@@ -973,28 +973,21 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         """
         pkgs_used = []
 
+        groups = []
         for group_string in grouplist:
-            group_matched = False
-            for group in self.comps.return_groups(group_string):
-                group_matched = True
-
-
-                try:
-                    txmbrs = self.selectGroup(group.groupid)
-                except dnf.exceptions.GroupsError:
-                    self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
-                    continue
-                else:
-                    pkgs_used.extend(txmbrs)
-
-            if not group_matched:
-                self.logger.error(_('Warning: Group %s does not exist.'), group_string)
+            matched = self.comps.return_groups(group_string)
+            if len(matched) == 0:
+                msg = _('Warning: Group %s does not exist.') % group_string
+                self.logger.error(msg)
                 continue
-
-        if not pkgs_used:
-            return 0, [_('No packages in any requested group available to install or upgrade')]
+            groups.extend(matched)
+        total_cnt = reduce(operator.add, map(self.select_group, groups))
+        if not total_cnt:
+            return 0, [_('No packages in any requested group available '\
+                             'to install or upgrade')]
         else:
-            return 2, [P_('%d package to Install', '%d packages to Install', len(pkgs_used)) % len(pkgs_used)]
+            return 2, [P_('%d package to Install', '%d packages to Install',
+                          total_cnt) % total_cnt]
 
     def removeGroups(self, grouplist):
         """Mark the packages in the given groups for removal.
@@ -1784,4 +1777,3 @@ def _filtercmdline(novalopts, valopts, args):
                     out.append(a)
 
     return out
-

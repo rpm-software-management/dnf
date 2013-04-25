@@ -1669,110 +1669,44 @@ class Base(object):
                         if len(txmbr.groups) == 0:
                             self.tsInfo.remove(txmbr.po.pkgtup)
 
-
-    def selectGroup(self, grpid, group_package_types=[], enable_group_conditionals=None):
+    def select_group(self, group):
         """Mark all the packages in the given group to be installed.
 
-        :param grpid: the name of the group containing the packages to
-           mark for installation
-        :param group_package_types: a list of the types of groups to
-           work with.  This overrides self.conf.group_package_types
-        :param enable_group_conditionals: overrides
-           self.conf.enable_group_conditionals
-        :return: a list of transaction members added to the
-           transaction set by this function
+        :param group: the group containing the packages to mark for installation
+        :return: number of transaction members added to the transaction set
         """
-        raise NotImplementedError, "not implemented in hawkey" # :hawkey
-        if not self.comps.has_group(grpid):
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
-        txmbrs_used = []
-        thesegroups = self.comps.return_groups(grpid)
+        txmbrs = []
+        pkg_types = self.conf.group_package_types
+        if group.selected:
+            return []
+        group.selected = True
 
-        if not thesegroups:
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+        pkgs = []
+        if 'mandatory' in pkg_types:
+            pkgs.extend(group.mandatory_packages)
+        if 'default' in pkg_types:
+            pkgs.extend(group.default_packages)
+        if 'optional' in pkg_types:
+            pkgs.extend(group.optional_packages)
 
-        package_types = self.conf.group_package_types
-        if group_package_types:
-            package_types = group_package_types
-
-        for thisgroup in thesegroups:
-            if thisgroup.selected:
+        old_len = len(self.tsInfo)
+        inst_set = set([pkg.name for pkg in self.sack.query().installed()])
+        inst_set.update([txmbr.po.name for txmbr in self.tsInfo \
+                             if txmbr.ts_state == 'i'])
+        adding_msg = _('Adding package %s from group %s')
+        for pkg in pkgs:
+            self.logger.debug(adding_msg % (pkg, group.groupid))
+            if pkg in inst_set:
                 continue
+            inst_set.add(pkg)
+            self.install_groupie(pkg, inst_set)
 
-            thisgroup.selected = True
-
-            pkgs = []
-            if 'mandatory' in package_types:
-                pkgs.extend(thisgroup.mandatory_packages)
-            if 'default' in package_types:
-                pkgs.extend(thisgroup.default_packages)
-            if 'optional' in package_types:
-                pkgs.extend(thisgroup.optional_packages)
-
-            old_txmbrs = len(txmbrs_used)
-            for pkg in pkgs:
-                self.logger.debug(
-                    _('Adding package %s from group %s'), pkg, thisgroup.groupid)
-                try:
-                    txmbrs = self.install(name=pkg, pkg_warning_level='debug2')
-                except dnf.exceptions.Error as e:
-                    # :dead
-                    self.logger.debug(_('No package named %s available to be installed'),
-                        pkg)
-                else:
-                    txmbrs_used.extend(txmbrs)
-                    for txmbr in txmbrs:
-                        txmbr.groups.append(thisgroup.groupid)
-
-            group_conditionals = self.conf.enable_group_conditionals
-            if enable_group_conditionals is not None: # has to be this way so we can set it to False
-                group_conditionals = enable_group_conditionals
-
-            count_cond_test = 0
-            if group_conditionals:
-                for condreq, cond in thisgroup.conditional_packages.iteritems():
-                    if self.isPackageInstalled(cond):
-                        try:
-                            txmbrs = self.install(name = condreq)
-                        except dnf.exceptions.Error:
-                            # :dead
-                            # we don't care if the package doesn't exist
-                            continue
-                        else:
-                            if cond not in self.tsInfo.conditionals:
-                                self.tsInfo.conditionals[cond]=[]
-
-                        txmbrs_used.extend(txmbrs)
-                        for txmbr in txmbrs:
-                            txmbr.groups.append(thisgroup.groupid)
-                            self.tsInfo.conditionals[cond].append(txmbr.po)
-                        continue
-                    # Otherwise we hook into tsInfo.add to make sure
-                    # we'll catch it if it's added later in this transaction
-                    pkgs = self.pkgSack.searchNevra(name=condreq)
-                    if pkgs:
-                        if self.arch.multilib:
-                            if self.conf.multilib_policy == 'best':
-                                use = []
-                                best = self.arch.legit_multi_arches
-                                best.append('noarch')
-                                for pkg in pkgs:
-                                    if pkg.arch in best:
-                                        use.append(pkg)
-                                pkgs = use
-
-                        pkgs = packagesNewestByName(pkgs)
-                        count_cond_test += len(pkgs)
-
-                        if cond not in self.tsInfo.conditionals:
-                            self.tsInfo.conditionals[cond] = []
-                        self.tsInfo.conditionals[cond].extend(pkgs)
-            if len(txmbrs_used) == old_txmbrs:
-                self.logger.critical(_('Warning: Group %s does not have any packages.'), thisgroup.groupid)
-                if count_cond_test:
-                    self.logger.critical(_('Group %s does have %u conditional packages, which may get installed.'), count_cond_test)
-        return txmbrs_used
+        new_cnt = len(self.tsInfo) - old_len
+        if not new_cnt:
+            msg = _('Warning: Group %s does not have any packages.')
+            self.logger.warning(msg % group.groupid)
+        return new_cnt
 
     def deselectGroup(self, grpid, force=False):
         """Unmark the packages in the given group from being
@@ -1987,59 +1921,6 @@ class Base(object):
         bestlist = self._compare_providers(pkglist, None)
         return bestlist[0][0]
 
-    def _at_groupinstall(self, pattern):
-        " Do groupinstall via. leading @ on the cmd line, for install/update."
-        assert pattern[0] == '@'
-        group_string = pattern[1:]
-        tx_return = []
-        for group in self.comps.return_groups(group_string):
-            try:
-                txmbrs = self.selectGroup(group.groupid)
-                tx_return.extend(txmbrs)
-            except dnf.exceptions.GroupsError:
-                self.logger.critical(_('Warning: Group %s does not exist.'), group_string)
-                continue
-        return tx_return
-
-    def _at_groupremove(self, pattern):
-        " Do groupremove via. leading @ on the cmd line, for remove."
-        assert pattern[0] == '@'
-        group_string = pattern[1:]
-        tx_return = []
-        try:
-            txmbrs = self.groupRemove(group_string)
-        except dnf.exceptions.GroupsError:
-            self.logger.critical(_('No group named %s exists'), group_string)
-        else:
-            tx_return.extend(txmbrs)
-        return tx_return
-
-    #  Note that this returns available pkgs, and not txmbrs like the other
-    # _at_group* functions.
-    def _at_groupdowngrade(self, pattern):
-        " Do downgrade of a group via. leading @ on the cmd line."
-        assert pattern[0] == '@'
-        grpid = pattern[1:]
-
-        thesegroups = self.comps.return_groups(grpid)
-        if not thesegroups:
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
-        pkgnames = set()
-        for thisgroup in thesegroups:
-            pkgnames.update(thisgroup.packages)
-        return self.pkgSack.searchNames(pkgnames)
-
-    def _minus_deselect(self, pattern):
-        """ Remove things from the transaction, like kickstart. """
-        assert pattern[0] == '-'
-        pat = pattern[1:].strip()
-
-        if pat and pat[0] == '@':
-            pat = pat[1:]
-            return self.deselectGroup(pat)
-
-        return self.tsInfo.deselect(pat)
-
     def install(self, pkg_spec):
         """ Mark package(s) specified by pkg_spec for installation.
 
@@ -2066,6 +1947,19 @@ class Base(object):
             if already_inst:
                 msg_installed(already_inst[0])
             self.tsInfo.add_selector_install(sltr)
+        return self.tsInfo
+
+    def install_groupie(self, pkg_name, inst_set):
+        """Installs a group member package by name. """
+        forms = [hawkey.FORM_NAME]
+        subj = queries.Subject(pkg_name)
+        if self.conf.multilib_policy == "all":
+            q = subj.get_best_query(self.sack, with_provides=False, form=forms)
+            map(self.tsInfo.addInstall, q)
+        elif self.conf.multilib_policy == "best":
+            sltr = subj.get_best_selector(self.sack, form=forms)
+            if sltr:
+                self.tsInfo.add_selector_install(sltr)
         return self.tsInfo
 
     def update(self, po=None, pattern=None):

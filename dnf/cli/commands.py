@@ -878,9 +878,9 @@ class GroupsCommand(Command):
             if cmd == 'info':
                 return self.base.returnGroupInfo(extcmds)
             if cmd == 'install':
-                return self.base.installGroups(extcmds)
+                return self.base.install_grouplist(extcmds)
             if cmd == 'upgrade':
-                return self.base.installGroups(extcmds, upgrade=True)
+                return self.base.install_grouplist(extcmds)
             if cmd == 'remove':
                 return self.base.removeGroups(extcmds)
 
