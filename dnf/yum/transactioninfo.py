@@ -325,7 +325,7 @@ class TransactionData:
         self.add(txmbr)
         return txmbr
 
-    def addUpdate(self, po, oldpo=None):
+    def addUpdate(self, po):
         """adds a package as an update
            takes a packages object and returns a TransactionMember Object"""
 
@@ -336,9 +336,6 @@ class TransactionData:
         txmbr.output_state = TS_UPDATE
         txmbr.po.state = TS_UPDATE
         txmbr.ts_state = 'u'
-        if oldpo:
-            txmbr.updates.append(oldpo)
-            self._addUpdated(oldpo, po)
 
         self.add(txmbr)
         return txmbr
@@ -366,19 +363,6 @@ class TransactionData:
             return _("DNF will not install a source rpm package (%s).") % \
                 src_installs[0].po
         return None
-
-    # deprecated
-    def _addUpdated(self, po, updating_po):
-        """adds a package as being updated by another pkg
-           takes a packages object and returns a TransactionMember Object
-        """
-
-        txmbr = TransactionMember(po)
-        txmbr.output_state =  TS_UPDATED
-        txmbr.po.state = TS_UPDATED
-        txmbr.ts_state = 'ud'
-        self.add(txmbr)
-        return txmbr
 
 class TransactionMember:
     """Class to describe a Transaction Member (a pkg to be installed/

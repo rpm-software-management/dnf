@@ -42,7 +42,8 @@ class TransactionDataTests(unittest.TestCase):
         txmbr.reason = "user"
         self.assertEqual(txmbr.propagated_reason(None), "user")
 
-        txmbr = self.tsInfo.addUpdate(self.pkgs[1], self.pkgs[2])
+        txmbr = self.tsInfo.addUpdate(self.pkgs[1])
+        txmbr.updates.append(self.pkgs[2])
         yumdb = mock.Mock(get_package=FakeYumdbInfo)
         self.assertEqual(txmbr.propagated_reason(yumdb), str(id(self.pkgs[2])))
 
@@ -63,8 +64,8 @@ class TransactionDataTests(unittest.TestCase):
     def testLenght(self):
         ''' test __len__ method '''
         self.tsInfo.addInstall(self.pkgs[0])
-        self.tsInfo.addUpdate(self.pkgs[2], self.pkgs[1])
-        self.assertEqual(len(self.tsInfo),3)
+        self.tsInfo.addUpdate(self.pkgs[2])
+        self.assertEqual(len(self.tsInfo),2)
 
     def testAddTheSameTwice(self):
         ''' test add the same twice '''
@@ -98,17 +99,15 @@ class TransactionDataTests(unittest.TestCase):
     def testMatchNaevr(self):
         ''' test MatchNaevr '''
         self.tsInfo.addInstall(self.pkgs[0])
-        self.tsInfo.addUpdate(self.pkgs[2],self.pkgs[1])
+        self.tsInfo.addUpdate(self.pkgs[2])
         res = self.tsInfo.matchNaevr(name='withinC')
         self.assertEqual(len(res),1)
         res = self.tsInfo.matchNaevr(arch='noarch')
-        self.assertEqual(len(res),3)
+        self.assertEqual(len(res),2)
 
     def testgetMembersWithState(self):
         ''' test getMembersWithState'''
         self.tsInfo.addInstall(self.pkgs[0])
-        self.tsInfo.addUpdate(self.pkgs[2],self.pkgs[1])
+        self.tsInfo.addUpdate(self.pkgs[2])
         res = self.tsInfo.getMembersWithState(output_states=[TS_INSTALL,TS_UPDATE])
         self.assertEqual(len(res),2)
-        res = self.tsInfo.getMembersWithState(output_states=[TS_UPDATED])
-        self.assertEqual(len(res),1)

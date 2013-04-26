@@ -216,6 +216,23 @@ class TestCase(unittest.TestCase):
         return self.assertTrue(os.path.isfile(path))
 
 class ResultTestCase(TestCase):
+    @staticmethod
+    def all_installed(tsInfo):
+        return set([txmbr.po for txmbr in tsInfo.getMembersWithState(
+                    output_states=dnf.yum.constants.TS_INSTALL_STATES)])
+
+    @staticmethod
+    def all_removed(tsInfo):
+        removed = set([txmbr.po for txmbr in tsInfo.getMembersWithState(
+                    output_states=dnf.yum.constants.TS_REMOVE_STATES)])
+        installed_txmbrs = tsInfo.getMembersWithState(
+            output_states=dnf.yum.constants.TS_INSTALL_STATES)
+
+        for txmbr in installed_txmbrs:
+            map(removed.add, txmbr.updates)
+            map(removed.add, txmbr.obsoletes)
+        return removed
+
     def assertResult(self, yumbase, pkgs):
         """Check whether the system contains the given pkgs.
 
@@ -223,25 +240,18 @@ class ResultTestCase(TestCase):
         present if they are in the rpmdb and are not REMOVEd or they are
         INSTALLed.
         """
-        installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
 
         (rcode, rstring) = yumbase.buildTransaction()
         self.assertNotEqual(rcode, 1)
 
-        for txmbr in yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_REMOVE_STATES):
-            installed.remove(txmbr.po)
-        for txmbr in yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_INSTALL_STATES):
-            installed.add(txmbr.po)
+        installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
+        map(installed.remove, self.all_removed(yumbase.tsInfo))
+        installed.update(self.all_installed(yumbase.tsInfo))
         self.assertItemsEqual(installed, pkgs)
 
     def installed_removed(self, yumbase):
         (rcode, rstring) = yumbase.buildTransaction()
         self.assertNotEqual(rcode, 1)
-
-        installed = [txmbr.po for txmbr in yumbase.tsInfo.getMembersWithState(
-                output_states=dnf.yum.constants.TS_INSTALL_STATES)]
-        removed = [txmbr.po for txmbr in yumbase.tsInfo.getMembersWithState(
-                output_states=dnf.yum.constants.TS_REMOVE_STATES)]
+        installed = self.all_installed(yumbase.tsInfo)
+        removed = self.all_removed(yumbase.tsInfo)
         return installed, removed

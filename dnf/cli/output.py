@@ -1432,9 +1432,8 @@ class YumOutput:
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in sorted(obsoletes):
                     appended = _('     replacing  %s%s%s.%s %s\n')
-                    appended %= (hibeg, obspo.name, hiend,
-                                 obspo.arch, obspo.printVer())
-                    msg = msg+appended
+                    appended %= (hibeg, obspo.name, hiend, obspo.arch, obspo.evr)
+                    msg += appended
                 totalmsg = totalmsg + msg
 
             if lines:

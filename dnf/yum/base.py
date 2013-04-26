@@ -598,6 +598,8 @@ class Base(object):
             cnt = 0
             # reset tsInfo, some packages might have gone during resolving
             self.tsInfo = transactioninfo.TransactionData()
+            obsoletes = set(goal.list_obsoletes())
+
             for pkg in goal.list_downgrades():
                 cnt += 1
                 downgraded = goal.package_obsoletes(pkg)
@@ -615,14 +617,26 @@ class Base(object):
                 self.dsCallback.pkgAdded(pkg, 'i')
                 txmbr = self.tsInfo.addInstall(pkg)
                 txmbr.reason = dnf.util.reason_name(goal.get_reason(pkg))
+                obsoleted_list = goal.package_all_obsoletes(pkg)
+                txmbr.obsoletes.extend(obsoleted_list)
+                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'),
+                    obsoleted_list)
             for pkg in goal.list_upgrades():
                 cnt += 1
-                updated = goal.package_obsoletes(pkg)
-                self.dsCallback.pkgAdded(updated, 'ud')
+                txmbr = self.tsInfo.addUpdate(pkg)
+                updated_list = goal.package_all_obsoletes(pkg)
+                for updated in updated_list:
+                    if updated in obsoletes:
+                        self.dsCallback.pkgAdded(updated, 'od')
+                        txmbr.obsoletes.append(updated)
+                    else:
+                        self.dsCallback.pkgAdded(updated, 'ud')
+                        txmbr.updates.append(updated)
                 self.dsCallback.pkgAdded(pkg, 'u')
-                self.tsInfo.addUpdate(pkg, updated)
             for pkg in goal.list_erasures():
                 cnt += 1
+                if pkg in obsoletes:
+                    continue
                 self.dsCallback.pkgAdded(pkg, 'e')
                 self.tsInfo.addErase(pkg)
             if cnt > 0:
