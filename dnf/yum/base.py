@@ -602,7 +602,7 @@ class Base(object):
 
             for pkg in goal.list_downgrades():
                 cnt += 1
-                downgraded = goal.package_obsoletes(pkg)
+                downgraded = goal.obsoleted_by_package(pkg)[0]
                 self.dsCallback.pkgAdded(downgraded, 'dd')
                 self.dsCallback.pkgAdded(pkg, 'd')
                 self.tsInfo.addDowngrade(pkg, downgraded)
@@ -610,21 +610,21 @@ class Base(object):
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'r')
                 txmbr = self.tsInfo.addInstall(pkg)
-                reinstalled = goal.package_obsoletes(pkg)
+                reinstalled = goal.obsoleted_by_package(pkg)[0]
                 txmbr = self.tsInfo.addErase(reinstalled)
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
                 txmbr = self.tsInfo.addInstall(pkg)
                 txmbr.reason = dnf.util.reason_name(goal.get_reason(pkg))
-                obsoleted_list = goal.package_all_obsoletes(pkg)
+                obsoleted_list = goal.obsoleted_by_package(pkg)
                 txmbr.obsoletes.extend(obsoleted_list)
                 map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'),
                     obsoleted_list)
             for pkg in goal.list_upgrades():
                 cnt += 1
                 txmbr = self.tsInfo.addUpdate(pkg)
-                updated_list = goal.package_all_obsoletes(pkg)
+                updated_list = goal.obsoleted_by_package(pkg)
                 for updated in updated_list:
                     if updated in obsoletes:
                         self.dsCallback.pkgAdded(updated, 'od')
