@@ -635,8 +635,6 @@ class Base(object):
                 self.dsCallback.pkgAdded(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1
-                if pkg in obsoletes:
-                    continue
                 self.dsCallback.pkgAdded(pkg, 'e')
                 self.tsInfo.addErase(pkg)
             if cnt > 0:
