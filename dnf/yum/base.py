@@ -598,7 +598,7 @@ class Base(object):
             cnt = 0
             # reset tsInfo, some packages might have gone during resolving
             self.tsInfo = transactioninfo.TransactionData()
-            obsoletes = set(goal.list_obsoletes())
+            obsoletes = set(goal.list_obsoleted())
 
             for pkg in goal.list_downgrades():
                 cnt += 1
