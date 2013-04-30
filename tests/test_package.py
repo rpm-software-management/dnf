@@ -15,11 +15,12 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.package
 import dnf.queries
 import hawkey
-import mock
 import os.path
 import unittest
 import binascii

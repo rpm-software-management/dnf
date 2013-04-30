@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.cli.output
-import mock
 import unittest
 
 class OutputTest(unittest.TestCase):

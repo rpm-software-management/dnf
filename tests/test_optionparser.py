@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 from dnf.cli.cli import YumOptionParser
-import mock
 import optparse
 
 class OptionParserTest(support.TestCase):

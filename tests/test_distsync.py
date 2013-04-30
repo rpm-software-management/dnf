@@ -15,7 +15,8 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import support
 from dnf.queries import available_by_name, installed_by_nevra
 import rpm
 

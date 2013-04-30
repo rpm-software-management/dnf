@@ -15,7 +15,8 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import support
 
 class ProvidesTest(support.TestCase):
     def setUp(self):

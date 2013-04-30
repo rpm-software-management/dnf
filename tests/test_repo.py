@@ -15,12 +15,13 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.repo
 import dnf.util
 import dnf.exceptions
 import librepo
-import mock
 import os
 import tempfile
 import unittest

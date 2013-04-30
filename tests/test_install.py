@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import support
-import dnf.queries
+from __future__ import absolute_import
 from dnf.queries import available_by_name
+from tests import support
+import dnf.queries
 import hawkey
 
 class InstallMultilibAll(support.ResultTestCase):

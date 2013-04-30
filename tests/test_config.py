@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import mock
+from tests import mock
 import unittest
 from dnf.yum.config import Option, BaseConfig, YumConf
 from dnf.conf import Cache, GoalParameters

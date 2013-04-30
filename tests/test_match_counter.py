@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.match_counter
-import mock
 import unittest
 
 class MatchCounterTest(unittest.TestCase):

@@ -17,8 +17,9 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from tests import mock
 import locale
-import mock
 import unittest
 import dnf.i18n
 import os

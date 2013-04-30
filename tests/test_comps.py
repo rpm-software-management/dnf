@@ -17,7 +17,8 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import support
 import dnf.yum.comps
 
 TRANSLATION="""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""

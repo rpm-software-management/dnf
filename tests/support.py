@@ -15,6 +15,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from tests import mock
 import StringIO
 import contextlib
 import dnf.package
@@ -26,7 +28,6 @@ import dnf.yum.comps
 import dnf.yum.constants
 import hawkey
 import hawkey.test
-import mock
 import os
 import unittest
 

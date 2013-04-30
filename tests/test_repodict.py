@@ -17,8 +17,8 @@
 
 from dnf.exceptions import RepoError
 from dnf.repo import Repo
+from tests import mock
 import dnf.repodict
-import mock
 import operator
 import unittest
 

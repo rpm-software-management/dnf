@@ -15,7 +15,9 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import binascii
 import dnf.const
 import dnf.exceptions
@@ -24,7 +26,6 @@ import dnf.queries
 import dnf.yum.base
 import dnf.yum.constants
 import hawkey
-import mock
 import os
 import rpm
 import unittest

@@ -15,10 +15,11 @@
 # Red Hat, Inc.
 #
 
-import support
-import mock
-import unittest
+from __future__ import absolute_import
 from dnf.yum.constants import *
+from tests import mock
+from tests import support
+import unittest
 import dnf.queries
 
 from dnf.yum.transactioninfo import TransactionData

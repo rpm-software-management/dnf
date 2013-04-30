@@ -15,12 +15,10 @@
 # Red Hat, Inc.
 #
 
-import support
-from dnf.queries import \
-    available_by_name, \
-    available_by_nevra, \
-    installed, \
-    updates_by_name
+from __future__ import absolute_import
+from dnf.queries import (available_by_name, available_by_nevra, installed,
+                         updates_by_name)
+from tests import support
 
 class Update(support.ResultTestCase):
     def test_update(self):

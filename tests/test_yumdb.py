@@ -15,10 +15,11 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.yum.rpmsack
 from dnf.queries import installed_by_name
-import mock
 import unittest
 
 @mock.patch('os.path.exists', return_value=True)

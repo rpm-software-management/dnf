@@ -15,10 +15,11 @@
 # Red Hat, Inc.
 #
 
-import support
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import dnf.yum.history
 import hawkey
-import mock
 import unittest
 
 from dnf.queries import installed_by_name, available_by_name

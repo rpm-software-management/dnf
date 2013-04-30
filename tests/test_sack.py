@@ -15,15 +15,16 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from tests import mock
+from tests import support
 import StringIO
-import support
 import dnf.repo
 import dnf.sack
 import dnf.exceptions
 import hawkey
 import hawkey.test
 import itertools
-import mock
 import unittest
 
 class SackTest(support.TestCase):
