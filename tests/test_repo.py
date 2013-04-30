@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.repo
 import dnf.util
 import dnf.exceptions
@@ -27,16 +27,16 @@ import unittest
 import ConfigParser
 import StringIO
 
-REPOS = "%s/tests/repos" % base.dnf_toplevel()
+REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
 
-class HandleTest(base.TestCase):
+class HandleTest(support.TestCase):
     def test_useragent(self):
         h = dnf.repo._Handle(False, 0)
         self.assertTrue(h.useragent.startswith("dnf/"))
         self.assertEqual(h.maxmirrortries, 0)
 
-class RepoTest(base.TestCase):
+class RepoTest(support.TestCase):
     """Test the logic of dnf.repo.Repo.
 
     There is one cache directory for the entire TestCase, but each individual
@@ -92,7 +92,7 @@ class RepoTest(base.TestCase):
         self.assertTrue(self.repo.load())
 
     def test_get_package(self):
-        pkg = base.MockPackage("tour-4-4.noarch", repo=self.repo)
+        pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
         path = self.repo.get_package(pkg)
         self.assertFile(path)
 
@@ -176,7 +176,7 @@ class RepoTest(base.TestCase):
         self.assertIn('keepalive', opts)
         self.assertIn('password', opts)
 
-class LocalRepoTest(base.TestCase):
+class LocalRepoTest(support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
         self.repo = dnf.repo.Repo("rpm")

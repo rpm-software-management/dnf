@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.cli.cli
 import dnf.repo
 import dnf.repodict
@@ -34,7 +34,7 @@ OUTPUT="""\
 
 class VersionStringTest(unittest.TestCase):
     def test_print_versions(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         with mock.patch('sys.stdout') as stdout,\
                 mock.patch('dnf.sack.rpmdb_sack', return_value=yumbase.sack):
             dnf.cli.cli.print_versions(['pepper', 'tour'], yumbase)
@@ -44,7 +44,7 @@ class VersionStringTest(unittest.TestCase):
 
 class CliTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
     def test_knows_upgrade(self):
@@ -74,9 +74,9 @@ class CliTest(unittest.TestCase):
 @mock.patch('dnf.logging.setup', new=mock.MagicMock)
 class ConfigureTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
-        self.conffile = os.path.join(base.dnf_toplevel(), "etc/dnf/dnf.conf")
+        self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
 
     def test_configure(self):
         """ Test Cli.configure.
@@ -109,7 +109,7 @@ class ConfigureTest(unittest.TestCase):
         """Test that conffile is detected in a new installroot."""
         self.cli.base.basecmd = 'update'
 
-        tlv = base.dnf_toplevel()
+        tlv = support.dnf_toplevel()
         self.cli.configure(['--installroot', tlv, 'update'])
         read_conf_file.assert_called_with(
             '%s/etc/dnf/dnf.conf' % tlv, tlv, None,
@@ -120,13 +120,13 @@ class ConfigureTest(unittest.TestCase):
         """Test that conffile is detected in a new installroot."""
         self.cli.base.basecmd = 'update'
 
-        conf = os.path.join(base.dnf_toplevel(), "tests/etc/installroot.conf")
+        conf = os.path.join(support.dnf_toplevel(), "tests/etc/installroot.conf")
         self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
         self.assertEqual(self.yumbase.conf.installroot, '/roots/dnf')
 
 class SearchTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("search")
+        self.yumbase = support.MockYumBase("search")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
         self.yumbase.fmtSection = lambda str: str

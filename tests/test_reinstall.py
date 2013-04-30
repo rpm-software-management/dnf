@@ -15,24 +15,24 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 import hawkey
 
-class Reinstall(base.ResultTestCase):
+class Reinstall(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.yumbase.conf.multilib_policy = "all"
         self.sack = self.yumbase.sack
 
     def test_reinstall(self):
         txmbrs = self.yumbase.reinstall(pattern="pepper")
         self.assertLength(txmbrs, 1)
-        new_set = base.installed_but(self.sack, "pepper")
+        new_set = support.installed_but(self.sack, "pepper")
         new_pkg = dnf.queries.available_by_nevra(self.sack, "pepper-20-0.x86_64")
         new_set += list(new_pkg)
         self.assertResult(self.yumbase, new_set)
 
     def test_reinstall_local(self):
-        txmbrs = self.yumbase.reinstall_local(base.TOUR_50_PKG_PATH)
+        txmbrs = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
         self.assertLength(txmbrs, 1)

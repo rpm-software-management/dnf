@@ -15,13 +15,13 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import operator
 
-class SelectGroupTest(base.ResultTestCase):
+class SelectGroupTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
-        self.yumbase.read_mock_comps(base.COMPS_PATH)
+        self.yumbase = support.MockYumBase("main")
+        self.yumbase.read_mock_comps(support.COMPS_PATH)
 
     def test_install(self):
         comps = self.yumbase.comps

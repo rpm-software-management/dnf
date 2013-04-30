@@ -15,14 +15,14 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 import hawkey
 import unittest
 
-class QueriesTest(base.TestCase):
+class QueriesTest(support.TestCase):
     def test_duplicities(self):
-        sack = base.mock_sack()
+        sack = support.mock_sack()
         pepper = dnf.queries.installed_by_name(sack, "pepper")
         # make sure 'pepper' package exists:
         self.assertEqual(len(pepper), 1)
@@ -33,7 +33,7 @@ class QueriesTest(base.TestCase):
 
     def test_by_file(self):
         # check sanity first:
-        sack = base.mock_sack()
+        sack = support.mock_sack()
         q = sack.query().filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
@@ -44,14 +44,14 @@ class QueriesTest(base.TestCase):
         self.assertEqual(pkg, res[0])
 
     def test_by_repo(self):
-        sack = base.mock_sack("updates", "main")
+        sack = support.mock_sack("updates", "main")
         pkgs = dnf.queries.by_repo(sack, "updates")
-        self.assertEqual(len(pkgs), base.UPDATES_NSOLVABLES)
+        self.assertEqual(len(pkgs), support.UPDATES_NSOLVABLES)
         pkgs = dnf.queries.by_repo(sack, "main")
-        self.assertEqual(len(pkgs), base.MAIN_NSOLVABLES)
+        self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
     def test_installed_exact(self):
-        sack = base.mock_sack()
+        sack = support.mock_sack()
         pkgs = dnf.queries.installed_exact(sack, "tour", "4.9-0", "noarch")
         self.assertEqual(len(pkgs), 0)
         pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "x86_64")
@@ -59,9 +59,9 @@ class QueriesTest(base.TestCase):
         pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "noarch")
         self.assertEqual(len(pkgs), 1)
 
-class SubjectTest(base.TestCase):
+class SubjectTest(support.TestCase):
     def setUp(self):
-        self.sack = base.mock_sack("main", "updates")
+        self.sack = support.mock_sack("main", "updates")
 
     def test_wrong_name(self):
         subj = dnf.queries.Subject("call-his-wife-in")
@@ -95,7 +95,7 @@ class SubjectTest(base.TestCase):
 
 class DictsTest(unittest.TestCase):
     def test_per_nevra_dict(self):
-        sack = base.mock_sack("main")
+        sack = support.mock_sack("main")
         pkgs = dnf.queries.by_name(sack, "lotus")
         dct = dnf.queries.per_nevra_dict(pkgs)
         self.assertItemsEqual(dct.iterkeys(),

@@ -16,7 +16,7 @@
 #
 
 import StringIO
-import base
+import support
 import dnf.repo
 import dnf.sack
 import dnf.exceptions
@@ -26,30 +26,30 @@ import itertools
 import mock
 import unittest
 
-class SackTest(base.TestCase):
+class SackTest(support.TestCase):
     def test_rpmdb_version(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         sack = yumbase.sack
         yumdb = mock.MagicMock()
         version = yumbase.sack.rpmdb_version(yumdb)
-        self.assertEqual(version._num, base.TOTAL_RPMDB_COUNT)
-        self.assertEqual(version._chksum.hexdigest(), base.RPMDB_CHECKSUM)
+        self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
+        self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 
     def test_setup_excludes(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         yumbase.conf.exclude=['pepper']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         yumbase.conf.disable_excludes = ['all']
         yumbase.conf.exclude=['pepper']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
-        yumbase = base.MockYumBase('main')
+        yumbase = support.MockYumBase('main')
         yumbase.repos['main'].exclude=['pepp*']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper', reponame='main')
@@ -59,7 +59,7 @@ class SackTest(base.TestCase):
         def raiser():
             raise dnf.exceptions.RepoError()
 
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         r = dnf.repo.Repo("bag")
         r.enable()
         yumbase._repos.add(r)
@@ -71,10 +71,10 @@ class SackTest(base.TestCase):
         yumbase._add_repo_to_sack("bag")
         self.assertFalse(r.enabled)
 
-class SusetagsTest(base.TestCase):
+class SusetagsTest(support.TestCase):
     def susetags_test(self):
         buf = StringIO.StringIO()
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         yumbase.sack.susetags_for_repo(buf, "main")
         buf.seek(0)
         pepper = itertools.dropwhile(lambda x: not x.startswith("=Pkg: pepper "),

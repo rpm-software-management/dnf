@@ -15,20 +15,20 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import os.path
 import sys
 import unittest
 
 class Sanity(unittest.TestCase):
     def test_sanity(self):
-        assert(os.access(base.repo("@System.repo"), os.R_OK))
-        sack = base.mock_sack()
+        assert(os.access(support.repo("@System.repo"), os.R_OK))
+        sack = support.mock_sack()
         assert(sack)
-        self.assertEqual(len(sack), base.SYSTEM_NSOLVABLES)
+        self.assertEqual(len(sack), support.SYSTEM_NSOLVABLES)
 
-        sack2 = base.MockYumBase("main", "updates").sack
-        self.assertEqual(len(sack2), base.TOTAL_NSOLVABLES)
+        sack2 = support.MockYumBase("main", "updates").sack
+        self.assertEqual(len(sack2), support.TOTAL_NSOLVABLES)
 
     def test_toplevel(self):
-        self.assertEqual(base.dnf_toplevel(), sys.path[0])
+        self.assertEqual(support.dnf_toplevel(), sys.path[0])

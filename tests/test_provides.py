@@ -15,11 +15,11 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 
-class ProvidesTest(base.TestCase):
+class ProvidesTest(support.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
 
     def test_file(self):
         self.assertLength(self.yumbase.provides("*ais*smile"), 1)

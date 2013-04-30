@@ -15,14 +15,14 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 from dnf.cli.cli import YumOptionParser
 import mock
 import optparse
 
-class OptionParserTest(base.TestCase):
+class OptionParserTest(support.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase()
+        self.yumbase = support.MockYumBase()
 
     def test_simple(self):
         parser = YumOptionParser(self.yumbase)

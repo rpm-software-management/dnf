@@ -15,20 +15,20 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 import unittest
 
-class List(base.TestCase):
+class List(support.TestCase):
     def test_list_installed(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         ypl = yumbase.doPackageLists('installed')
-        self.assertEqual(len(ypl.installed), base.TOTAL_RPMDB_COUNT)
+        self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
     def test_list_updates(self):
-        yumbase = base.MockYumBase("updates", "main")
+        yumbase = support.MockYumBase("updates", "main")
         ypl = yumbase.doPackageLists('updates')
-        self.assertEqual(len(ypl.updates), base.UPDATES_NSOLVABLES - 1)
+        self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "pepper")
         ypl = yumbase.doPackageLists('updates', ["pepper"])
@@ -40,13 +40,13 @@ class List(base.TestCase):
         self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
-        yumbase = base.MockYumBase("updates", "main")
+        yumbase = support.MockYumBase("updates", "main")
         ypl = yumbase.doPackageLists('updates', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 3)
 
-class TestListAllRepos(base.TestCase):
+class TestListAllRepos(support.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main", "updates")
+        self.yumbase = support.MockYumBase("main", "updates")
         self.yumbase.conf.multilib_policy = "all"
 
     def test_list_pattern(self):

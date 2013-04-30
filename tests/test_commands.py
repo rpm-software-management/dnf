@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.cli.commands
 import dnf.repo
 import mock
@@ -23,7 +23,7 @@ import unittest
 
 class CommandsTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase()
+        self.yumbase = support.MockYumBase()
         self.cli = self.yumbase.mock_cli()
 
     def test_erase_configure(self):

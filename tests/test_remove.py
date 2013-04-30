@@ -15,14 +15,14 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 import dnf.cli.commands
 import hawkey
 
-class Remove(base.ResultTestCase):
+class Remove(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase()
+        self.yumbase = support.MockYumBase()
         erase_cmd = dnf.cli.commands.EraseCommand(self.yumbase.mock_cli())
         erase_cmd.configure()
 
@@ -39,13 +39,13 @@ class Remove(base.ResultTestCase):
         pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
         self.assertEqual([txmbr.po for txmbr in ret], pepper)
         self.assertResult(self.yumbase,
-                          base.installed_but(self.yumbase.sack, "pepper"))
+                          support.installed_but(self.yumbase.sack, "pepper"))
 
     def test_remove_depended(self):
         """ Remove a lib that some other package depends on. """
         ret = self.yumbase.remove("librita")
         # we should end up with nothing in this case:
-        new_set = base.installed_but(self.yumbase.sack, "librita", "pepper")
+        new_set = support.installed_but(self.yumbase.sack, "librita", "pepper")
         self.assertResult(self.yumbase, new_set)
 
     def test_remove_nevra(self):

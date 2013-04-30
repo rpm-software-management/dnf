@@ -17,17 +17,17 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.yum.comps
 
 TRANSLATION="""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
 
-class CompsTest(base.TestCase):
+class CompsTest(support.TestCase):
     # Also see test_base.py:CompsTest
 
     def test_comps(self):
         comps = dnf.yum.comps.Comps()
-        comps.add(base.COMPS_PATH)
+        comps.add(support.COMPS_PATH)
         self.assertEqual([g.name for g in comps.groups],
                          ['Base', 'Solid Ground'])
         self.assertEqual([c.name for c in comps.categories],
@@ -36,11 +36,11 @@ class CompsTest(base.TestCase):
         self.assertEqual(g.translated_description['cs'], TRANSLATION)
 
     def test_compile(self):
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         sack = yumbase.sack
 
         comps = dnf.yum.comps.Comps()
-        comps.add(base.COMPS_PATH)
+        comps.add(support.COMPS_PATH)
         groups = comps.groups
         self.assertLength(groups, 2)
 

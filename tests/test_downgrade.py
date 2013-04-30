@@ -15,32 +15,32 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 
-class DowngradeTest(base.ResultTestCase):
+class DowngradeTest(support.ResultTestCase):
     def test_downgrade_local(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         sack = yumbase.sack
 
-        ret = yumbase.downgrade_local(base.TOUR_44_PKG_PATH)
+        ret = yumbase.downgrade_local(support.TOUR_44_PKG_PATH)
         self.assertEqual(len(ret), 1)
-        new_set = base.installed_but(sack, "tour") + [ret[0].po]
+        new_set = support.installed_but(sack, "tour") + [ret[0].po]
         self.assertResult(yumbase, new_set)
 
     def test_downgrade(self):
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         sack = yumbase.sack
         ret = yumbase.downgrade("tour")
         self.assertEqual(len(ret), 1)
 
         new_pkg = dnf.queries.available_by_name(sack, "tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")
-        new_set = base.installed_but(sack, "tour") + [new_pkg]
+        new_set = support.installed_but(sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
 
     def test_downgrade2(self):
-        b = base.MockYumBase("old_versions")
+        b = support.MockYumBase("old_versions")
         ret = b.downgrade("tour")
         installed, removed = self.installed_removed(b)
         self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])

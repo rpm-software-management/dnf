@@ -15,17 +15,17 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 from dnf.queries import \
     available_by_name, \
     available_by_nevra, \
     installed, \
     updates_by_name
 
-class Update(base.ResultTestCase):
+class Update(support.ResultTestCase):
     def test_update(self):
         """ Simple update. """
-        yumbase = base.MockYumBase("updates")
+        yumbase = support.MockYumBase("updates")
         ret = yumbase.update(pattern="pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
         expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
@@ -33,42 +33,42 @@ class Update(base.ResultTestCase):
 
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         ret = yumbase.update(pattern="mrkite") # no "mrkite" installed
         self.assertEqual(ret, [])
         self.assertResult(yumbase, installed(yumbase.sack))
 
     def test_update_all(self):
         """ Update all you can. """
-        yumbase = base.MockYumBase("main", "updates")
+        yumbase = support.MockYumBase("main", "updates")
         sack = yumbase.sack
         yumbase.update()
         self.assertTrue(yumbase.tsInfo.upgrade_all)
-        expected = base.installed_but(sack, "pepper", "hole") + \
+        expected = support.installed_but(sack, "pepper", "hole") + \
             list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
             list(available_by_nevra(sack, "hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
 
     def test_update_local(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         sack = yumbase.sack
-        ret = yumbase.update_local(base.TOUR_51_PKG_PATH)
+        ret = yumbase.update_local(support.TOUR_51_PKG_PATH)
         self.assertEqual(len(ret), 1)
         new_pkg = ret[0].po
         self.assertEqual(new_pkg.evr, "5-1")
-        new_set = base.installed_but(yumbase.sack, "tour") + [new_pkg]
+        new_set = support.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
 
     def test_update_arches(self):
-        yumbase = base.MockYumBase("main", "updates")
+        yumbase = support.MockYumBase("main", "updates")
         yumbase.update(pattern="hole")
         installed, removed = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
         self.assertItemsEqual(map(str, removed), ['hole-1-1.x86_64'])
 
-class SkipBroken(base.ResultTestCase):
+class SkipBroken(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("broken_deps")
+        self.yumbase = support.MockYumBase("broken_deps")
         self.sack = self.yumbase.sack
 
     def test_update_all(self):
@@ -76,6 +76,6 @@ class SkipBroken(base.ResultTestCase):
             deps in trim. Broken packages are silently skipped.
         """
         txmbrs = self.yumbase.update()
-        new_set = base.installed_but(self.sack, "pepper").run()
+        new_set = support.installed_but(self.sack, "pepper").run()
         new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)

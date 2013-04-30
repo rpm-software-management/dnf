@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.util
 import mock
 import unittest
@@ -104,4 +104,4 @@ class Util(unittest.TestCase):
 
     def test_touch(self):
         self.assertRaises(OSError, dnf.util.touch,
-                          base.NONEXISTENT_FILE, no_create=True)
+                          support.NONEXISTENT_FILE, no_create=True)

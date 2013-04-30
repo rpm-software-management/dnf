@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.const
 import dnf.logging
 import logging
@@ -41,7 +41,7 @@ def drop_all_handlers():
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
 
-class TestLogging(base.TestCase):
+class TestLogging(support.TestCase):
     """Tests the logging mechanisms in DNF.
 
     If it causes a problem in the future that loggers are singletons that don't
@@ -72,7 +72,7 @@ class TestLogging(base.TestCase):
 
     def test_setup(self):
         logger = logging.getLogger("dnf")
-        with base.patch_std_streams() as (stdout, stderr):
+        with support.patch_std_streams() as (stdout, stderr):
             dnf.logging.setup(logging.INFO, logging.ERROR, self.logdir)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
@@ -80,7 +80,7 @@ class TestLogging(base.TestCase):
 
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
-        with base.patch_std_streams() as (stdout, stderr):
+        with support.patch_std_streams() as (stdout, stderr):
             dnf.logging.setup(logging.DEBUG, logging.WARNING, self.logdir)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
@@ -104,7 +104,7 @@ class TestLogging(base.TestCase):
         dnf.logging.setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
                           self.logdir)
         logger = logging.getLogger("dnf")
-        with base.patch_std_streams() as (stdout, stderr):
+        with support.patch_std_streams() as (stdout, stderr):
             logger.info("i")
             logger.critical("c")
         self.assertEqual(stdout.getvalue(), '')
@@ -122,7 +122,7 @@ class TestLogging(base.TestCase):
         dnf.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                           self.logdir)
         logger = logging.getLogger("dnf.rpm")
-        with base.patch_std_streams() as (stdout, stderr):
+        with support.patch_std_streams() as (stdout, stderr):
             logger.info('rpm transaction happens.')
         # rpm logger never outputs to the console:
         self.assertEqual(stdout.getvalue(), "")

@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.cli.output
 import mock
 import unittest
@@ -31,7 +31,7 @@ class OutputTest(unittest.TestCase):
 
     def setUp(self):
         self.output = dnf.cli.output.YumOutput()
-        self.output.conf = base.FakeConf()
+        self.output.conf = support.FakeConf()
 
     @mock.patch('dnf.i18n.input')
     def test_userconfirm(self, input_fnc):

@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import mock
 import unittest
 from dnf.yum.constants import *
@@ -28,7 +28,7 @@ class TransactionDataTests(unittest.TestCase):
 
     def setUp(self):
         self.tsInfo = TransactionData()
-        self.pkgs = [base.MockPackage("within%s-2-1.noarch" % chr(i))
+        self.pkgs = [support.MockPackage("within%s-2-1.noarch" % chr(i))
                      for i in range(ord('A'), ord('I'))]
 
     def test_propagated_reason(self):
@@ -56,7 +56,7 @@ class TransactionDataTests(unittest.TestCase):
         self.assertEqual(txmbr.propagated_reason(yumdb), "unknown")
 
     def test_rpm_limitations(self):
-        pkg = base.MockPackage('anyway-2-0.src')
+        pkg = support.MockPackage('anyway-2-0.src')
         txmbr = self.tsInfo.addInstall(pkg)
         msg = self.tsInfo.rpm_limitations()
         self.assertIsNot(None, msg)

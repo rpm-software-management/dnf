@@ -15,15 +15,15 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 
-class UpgradeTo(base.ResultTestCase):
+class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):
-        yumbase = base.MockYumBase("main", "updates")
+        yumbase = support.MockYumBase("main", "updates")
         sack = yumbase.sack
         yumbase.upgrade_to("pepper-20-1.x86_64")
         self.assertLength(yumbase.tsInfo, 1)
-        new_set = base.installed_but(sack, "pepper").run()
+        new_set = support.installed_but(sack, "pepper").run()
         new_set.extend(dnf.queries.available_by_nevra(sack, "pepper-20-1.x86_64"))
         self.assertResult(yumbase, new_set)

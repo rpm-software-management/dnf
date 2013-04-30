@@ -15,19 +15,19 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 from dnf.queries import available_by_name, installed_by_nevra
 import rpm
 
-class DistroSync(base.ResultTestCase):
+class DistroSync(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("distro")
+        self.yumbase = support.MockYumBase("distro")
         self.sack = self.yumbase.sack
 
     def test_distro_sync(self):
         self.yumbase.distro_sync()
         self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.yumbase.rpm_probfilter)
-        packages = base.installed_but(self.sack, "pepper", "librita").run()
+        packages = support.installed_but(self.sack, "pepper", "librita").run()
         packages.extend(available_by_name(self.sack, ["pepper", "librita"]))
         packages.extend(installed_by_nevra(self.sack, "librita-1-1.i686"))
         self.assertResult(self.yumbase, packages)

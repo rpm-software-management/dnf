@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.package
 import dnf.queries
 import hawkey
@@ -31,13 +31,13 @@ TOUR_SIZE = 2317
 
 class PackageTest(unittest.TestCase):
     def setUp(self):
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         self.sack = yumbase.sack
         self.pkg = dnf.queries.available_by_name(self.sack, "pepper")[0]
 
     def test_from_cmdline(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
         self.assertTrue(local_pkg.from_cmdline)
         self.assertFalse(self.pkg.from_cmdline)
 
@@ -56,7 +56,7 @@ class PackageTest(unittest.TestCase):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
 
     def test_verify(self):
-        self.pkg.localpath = base.TOUR_44_PKG_PATH
+        self.pkg.localpath = support.TOUR_44_PKG_PATH
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
         self.pkg.size = TOUR_SIZE
         self.assertTrue(self.pkg.verifyLocalPkg())
@@ -70,13 +70,13 @@ class PackageTest(unittest.TestCase):
 
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
 
     def test_chksum_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(base.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
         chksum = local_pkg.chksum
         self.assertEqual(chksum[0], hawkey.CHKSUM_SHA256)
         self.assertEqual(chksum[1], TOUR_SHA256)

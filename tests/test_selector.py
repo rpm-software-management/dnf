@@ -15,14 +15,14 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.selector
 import mock
 import unittest
 
 class SelectorTest(unittest.TestCase):
     def setUp(self):
-        self.sack = base.mock_sack()
+        self.sack = support.mock_sack()
 
     def test_set_autoglob(self):
         sltr = dnf.selector.Selector(self.sack)

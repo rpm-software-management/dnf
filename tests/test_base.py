@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import binascii
 import dnf.const
 import dnf.exceptions
@@ -50,7 +50,7 @@ class BaseTest(unittest.TestCase):
         self.assertFalse(os.access(lockfile, os.F_OK))
 
     def test_push_userinstalled(self):
-        yumbase = base.MockYumBase()
+        yumbase = support.MockYumBase()
         # setup:
         yumbase.conf.clean_requirements_on_remove = True
         pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
@@ -78,7 +78,7 @@ class BaseTest(unittest.TestCase):
 # test Base methods that need the sack
 class MockYumBaseTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
 
     def test_search_counted(self):
         counter = dnf.match_counter.MatchCounter()
@@ -98,7 +98,7 @@ class MockYumBaseTest(unittest.TestCase):
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():
-    return (lambda yumbase: base.TestSack(base.repo_dir(), yumbase))
+    return (lambda yumbase: support.TestSack(support.repo_dir(), yumbase))
 
 @property
 def ret_pkgid(self):
@@ -106,7 +106,7 @@ def ret_pkgid(self):
 
 class VerifyTransactionTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
     @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
@@ -132,9 +132,9 @@ class VerifyTransactionTest(unittest.TestCase):
         self.assertEqual(yumdb_info.checksum_data, HASH)
         self.yumbase.yumdb.assertLength(2)
 
-class InstallReason(base.ResultTestCase):
+class InstallReason(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
 
     def test_reason(self):
         self.yumbase.install("mrkite")
@@ -145,9 +145,9 @@ class InstallReason(base.ResultTestCase):
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 
-class InstalledMatching(base.ResultTestCase):
+class InstalledMatching(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.sack = self.yumbase.sack
 
     def test_query_matching(self):
@@ -165,7 +165,7 @@ class InstalledMatching(base.ResultTestCase):
 
 class CleanTest(unittest.TestCase):
     def test_clean_binary_cache(self):
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         with mock.patch('os.access', return_value=True) as access,\
                 mock.patch.object(yumbase, "_cleanFilelist") as _:
             yumbase.clean_binary_cache()
@@ -178,19 +178,19 @@ class CleanTest(unittest.TestCase):
         fname = access.call_args_list[2][0][0]
         assert(fname.endswith('main-filenames.solvx'))
 
-class CompsTest(base.TestCase):
+class CompsTest(support.TestCase):
     # Also see test_comps.py
 
     # prevent creating the gen/ directory:
     @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
-        yumbase = base.MockYumBase("main")
-        yumbase.repos['main'].metadata = mock.Mock(comps_fn=base.COMPS_PATH)
+        yumbase = support.MockYumBase("main")
+        yumbase.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         yumbase.read_comps()
         groups = yumbase.comps.groups
         self.assertLength(groups, 2)
 
     def test_read_comps_disabled(self):
-        yumbase = base.MockYumBase("main")
+        yumbase = support.MockYumBase("main")
         yumbase.repos['main'].enablegroups = False
         self.assertRaises(dnf.exceptions.GroupsError, yumbase.read_comps)

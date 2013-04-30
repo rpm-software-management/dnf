@@ -15,14 +15,14 @@
 # Red Hat, Inc.
 #
 
-import base
+import support
 import dnf.queries
 from dnf.queries import available_by_name
 import hawkey
 
-class InstallMultilibAll(base.ResultTestCase):
+class InstallMultilibAll(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.yumbase.conf.multilib_policy = "all"
 
     def test_not_available(self):
@@ -59,7 +59,7 @@ class InstallMultilibAll(base.ResultTestCase):
         self.assertResult(self.yumbase, new_set)
 
     def test_install_local(self):
-        txmbrs = self.yumbase.install_local(base.TOUR_50_PKG_PATH)
+        txmbrs = self.yumbase.install_local(support.TOUR_50_PKG_PATH)
         self.assertLength(txmbrs, 1)
 
     def test_install_src_fails(self):
@@ -68,9 +68,9 @@ class InstallMultilibAll(base.ResultTestCase):
         self.assertEqual(code, 0)
         self.assertRegexpMatches(string[0], "will not install a source rpm")
 
-class MultilibAllMainRepo(base.ResultTestCase):
+class MultilibAllMainRepo(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.yumbase.conf.multilib_policy = "all"
 
@@ -84,9 +84,9 @@ class MultilibAllMainRepo(base.ResultTestCase):
         new_set = self.installed + available_by_name(self.yumbase.sack, "lotus")
         self.assertResult(self.yumbase, new_set)
 
-class MultilibBestMainRepo(base.ResultTestCase):
+class MultilibBestMainRepo(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = base.MockYumBase("main")
+        self.yumbase = support.MockYumBase("main")
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.assertEqual(self.yumbase.conf.multilib_policy, "best")
 
