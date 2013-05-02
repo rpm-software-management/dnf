@@ -1,12 +1,12 @@
-%global gitrev 91ba5e0
-%global hawkey_version 0.3.10
-%global librepo_version 0.0.2-3.20130408git720d68d%{dist}
+%global gitrev 03fd687
+%global hawkey_version 0.3.11
+%global librepo_version 0.0.4
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	3.git%{gitrev}%{?dist}
+Release:	1.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -75,6 +75,33 @@ systemctl start dnf-makecache.timer
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu May 2 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.4-1.git03fd687
+- tests: python3 absolute imports. (Ales Kozumplik)
+- tests: rename: tests/base.py -> tests/support.py (Ales Kozumplik)
+- hawkey commit 8d77592 simplifies detecting obsoleted transaction members. (Ales Kozumplik)
+- adapt to hawkey change fe99cd4. (Ales Kozumplik)
+- adapt to hawkey changes f8334df and 0fee231 (Goal.obsoleted_by_package et al.) (Ales Kozumplik)
+- cli, transaction: recognize and report proper obsoletes. (RhBug:887317) (Ales Kozumplik)
+- refactor: get_best_query() and get_best_selector() both accept 'forms' now. (Ales Kozumplik)
+- comps: support 'dnf group install'. (Ales Kozumplik)
+- repo: integrate API improvements in librepo. (Ales Kozumplik)
+- comps: start readding group commands, 'dnf groups summary' works now. (Ales Kozumplik)
+- fix invisible 'repolist -v' output. (Ales Kozumplik)
+- remove: main() methods from the production code. (Ales Kozumplik)
+- cosmetic: remove trailing whitespace in dnf/yum/pgpgmsg.py (Ales Kozumplik)
+- tests: do not create repos/gen. (Ales Kozumplik)
+- comps: fix up Base.read_comps() and Comps.compile() so the comps loading works. (Ales Kozumplik)
+- tests: cosmetics: alphabetically reorder FakeConf items. (Ales Kozumplik)
+- doc: protected_packages not supported. (Ales Kozumplik)
+- tests: add sanity test for dnf.yum.comps (Ales Kozumplik)
+- repo: with timed makecache only try one mirror per repo. (RhBug:922667) (Ales Kozumplik)
+- repo: latest librepo needs explicit perform() to get the metalink. (Ales Kozumplik)
+- repo: clean mirrorlist files too on 'dnf clean'. (Ales Kozumplik)
+- repo: with librepo >= 88c90e3 the "baseurl is the first mirror" hack is gone. (Ales Kozumplik)
+- remove: some unused arch-related methods from dnf.yum.base (Ales Kozumplik)
+- fix typo in the spec. (Ales Kozumplik)
+
 * Wed Apr 17 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.3-3.git91ba5e0
 - packaging: do not run 'systemctl' to enable the timer service manually. (Ales Kozumplik)
 - cosmetic: trailing whitespace in dnf/cli/callback.py (Ales Kozumplik)
