@@ -69,3 +69,24 @@ The following bugs are fixed in 0.3.3:
 
 * :rhbug:`950722`
 * :rhbug:`903775`
+
+===================
+0.3.4 Release Notes
+===================
+
+0.3.4 is the first DNF version since the fork from Yum that is able to
+manipulate the comps data. In practice, ``dnf group install <group name>`` works
+again. No other group commands are supported yet.
+
+Support for ``librepo-0.0.4`` and related cleanups and extensions this new
+version allows are included (see the buglist below)
+
+This version has also improved reporting of obsoleted packages in the CLI (the
+Yum-style "replacing <package-nevra>" appears in the textual transaction
+overview).
+
+The follwoing bugfixes are included in 0.3.4:
+
+* :rhbug:`887317`
+* :rhbug:`914919`
+* :rhbug:`922667`
