@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.3.3-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.3.4-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.3-1',
+        VERSION:     '0.3.4-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.3-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.3.4-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.3-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.4-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -307,28 +307,6 @@ signatures of</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.installGroups">
-<tt class="descname">installGroups</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.installGroups" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mark the packages in the given groups for installation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>grouplist</strong> &#8211; a list of names or wildcards specifying
-groups to be installed</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
-</tr>
-</tbody>
-</table>
-<p>exit_code is:</p>
-<div class="highlight-python"><pre>0 = we're done, exit
-1 = we've errored, exit with error string
-2 = we've got work yet to do, onto the next stage</pre>
-</div>
-</dd></dl>
-
-<dl class="method">
 <dt id="dnf.cli.cli.YumBaseCli.installPkgs">
 <tt class="descname">installPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.installPkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to take the user specified list of packages or
@@ -342,6 +320,28 @@ removed) them to the specified version.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>userlist</strong> &#8211; a list of names or wildcards specifying
 packages to install</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
+</tr>
+</tbody>
+</table>
+<p>exit_code is:</p>
+<div class="highlight-python"><pre>0 = we're done, exit
+1 = we've errored, exit with error string
+2 = we've got work yet to do, onto the next stage</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.cli.cli.YumBaseCli.install_grouplist">
+<tt class="descname">install_grouplist</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.install_grouplist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the packages in the given groups for installation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>grouplist</strong> &#8211; a list of names or wildcards specifying
+groups to be installed</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(exit_code, [ errors ])</td>
 </tr>
@@ -3401,7 +3401,7 @@ process.</p>
 
 <dl class="class">
 <dt id="dnf.cli.output.LibrepoCallbackAdaptor">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f9caea56270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f9aad48b270&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
 <p>Note that TextMeter is a Python old-style class.</p>
 </dd></dl>
@@ -3595,7 +3595,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2864c80&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2306b90&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -4580,7 +4580,7 @@ terminal after an uncaught <tt class="xref py py-class docutils literal"><span c
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.3-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.4-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
