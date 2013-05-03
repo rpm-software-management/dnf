@@ -74,6 +74,12 @@ class Util(unittest.TestCase):
                 yield 10
         self.assertEqual(dnf.util.first(generator()), None)
 
+    def test_group_by_filter(self):
+        self.assertEqual(dnf.util.group_by_filter(lambda x: x % 2, xrange(5)),
+                         ([1, 3], [0, 2, 4]))
+        self.assertEqual(dnf.util.group_by_filter(lambda x: x, xrange(5)),
+                         ([1, 2, 3, 4], [0]))
+
     def test_is_glob_pattern(self):
         assert(dnf.util.is_glob_pattern("all*.ext"))
         assert(dnf.util.is_glob_pattern("all?.ext"))

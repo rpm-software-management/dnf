@@ -59,6 +59,12 @@ def file_age(fn):
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
 
+def group_by_filter(fn, iterable):
+    def splitter(acc, item):
+        acc[not bool(fn(item))].append(item)
+        return acc
+    return reduce(splitter, iterable, ([], []))
+
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
