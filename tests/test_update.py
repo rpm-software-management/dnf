@@ -32,8 +32,8 @@ class Update(support.ResultTestCase):
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """
         yumbase = support.MockYumBase("main")
-        ret = yumbase.update(pattern="mrkite") # no "mrkite" installed
-        self.assertEqual(ret, [])
+        # no "mrkite" installed:
+        yumbase.update(pattern="mrkite")
         self.assertResult(yumbase, installed(yumbase.sack))
 
     def test_update_all(self):
@@ -41,7 +41,6 @@ class Update(support.ResultTestCase):
         yumbase = support.MockYumBase("main", "updates")
         sack = yumbase.sack
         yumbase.update()
-        self.assertTrue(yumbase.tsInfo.upgrade_all)
         expected = support.installed_but(sack, "pepper", "hole") + \
             list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
             list(available_by_nevra(sack, "hole-2-1.x86_64"))
@@ -50,10 +49,9 @@ class Update(support.ResultTestCase):
     def test_update_local(self):
         yumbase = support.MockYumBase()
         sack = yumbase.sack
-        ret = yumbase.update_local(support.TOUR_51_PKG_PATH)
-        self.assertEqual(len(ret), 1)
-        new_pkg = ret[0].po
-        self.assertEqual(new_pkg.evr, "5-1")
+        cnt = yumbase.update_local(support.TOUR_51_PKG_PATH)
+        self.assertEqual(cnt, 1)
+        new_pkg = available_by_name(sack, "tour")[0]
         new_set = support.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
 
@@ -73,7 +71,7 @@ class SkipBroken(support.ResultTestCase):
         """ update() without parameters update everything it can that has its
             deps in trim. Broken packages are silently skipped.
         """
-        txmbrs = self.yumbase.update()
+        self.yumbase.update()
         new_set = support.installed_but(self.sack, "pepper").run()
         new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)

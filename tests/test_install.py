@@ -28,9 +28,9 @@ class InstallMultilibAll(support.ResultTestCase):
 
     def test_not_available(self):
         """ Installing a nonexistent package is a void operation. """
-        tsinfo = self.yumbase.install("not-available")
+        cnt = self.yumbase.install("not-available")
+        self.assertEqual(cnt, 0)
         installed_pkgs = dnf.queries.installed(self.yumbase.sack)
-        self.assertEqual(len(tsinfo), 0)
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_install(self):
@@ -45,7 +45,7 @@ class InstallMultilibAll(support.ResultTestCase):
     def test_install_by_provides(self):
         """ Test the package to be installed can be specified by provide. """
         self.yumbase.install("henry(the_horse)")
-        self.assertGreater(len(self.yumbase.tsInfo), 0)
+        self.assertGreater(self.yumbase._goal.req_length(), 0)
 
     def test_install_by_filename(self):
         self.yumbase.install("/usr/lib64/liblot*")
@@ -60,8 +60,8 @@ class InstallMultilibAll(support.ResultTestCase):
         self.assertResult(self.yumbase, new_set)
 
     def test_install_local(self):
-        txmbrs = self.yumbase.install_local(support.TOUR_50_PKG_PATH)
-        self.assertLength(txmbrs, 1)
+        cnt = self.yumbase.install_local(support.TOUR_50_PKG_PATH)
+        self.assertEqual(cnt, 1)
 
     def test_install_src_fails(self):
         self.yumbase.install("pepper-20-0.src")
@@ -79,9 +79,8 @@ class MultilibAllMainRepo(support.ResultTestCase):
         """ Installing a package existing in multiple architectures attempts
             installing all of them.
         """
-        tsinfo = self.yumbase.install("lotus")
-        arches = [txmbr.po.arch for txmbr in tsinfo]
-        self.assertItemsEqual(arches, ['x86_64', 'i686'])
+        cnt = self.yumbase.install("lotus")
+        self.assertEqual(cnt, 2)
         new_set = self.installed + available_by_name(self.yumbase.sack, "lotus")
         self.assertResult(self.yumbase, new_set)
 
@@ -93,16 +92,16 @@ class MultilibBestMainRepo(support.ResultTestCase):
 
     def test_not_available(self):
         """ Installing a nonexistent package is a void operation. """
-        tsinfo = self.yumbase.install("not-available")
-        self.assertEqual(len(tsinfo), 0)
+        cnt = self.yumbase.install("not-available")
+        self.assertEqual(cnt, 0)
         self.assertResult(self.yumbase, self.installed)
 
     def test_install(self):
         """ Installing a package existing in multiple architectures only
             installs the one for our arch.
         """
-        tsinfo = self.yumbase.install("lotus")
-        self.assertEqual(len(tsinfo), 1)
+        cnt = self.yumbase.install("lotus")
+        self.assertEqual(cnt, 1)
 
         new_package = hawkey.Query(self.yumbase.sack).\
             filter(name="lotus", arch="x86_64", reponame="main")[0]
@@ -112,7 +111,7 @@ class MultilibBestMainRepo(support.ResultTestCase):
     def test_install_by_provides(self):
         """ Test the package to be installed can be specified by provide. """
         self.yumbase.install("henry(the_horse)")
-        self.assertGreater(len(self.yumbase.tsInfo), 0)
+        self.assertGreater(self.yumbase._goal.req_length(), 0)
         trampoline = available_by_name(self.yumbase.sack, "trampoline")
         new_set = self.installed + trampoline
         self.assertResult(self.yumbase, new_set)

@@ -24,16 +24,17 @@ class DowngradeTest(support.ResultTestCase):
         yumbase = support.MockYumBase()
         sack = yumbase.sack
 
-        ret = yumbase.downgrade_local(support.TOUR_44_PKG_PATH)
-        self.assertEqual(len(ret), 1)
-        new_set = support.installed_but(sack, "tour") + [ret[0].po]
-        self.assertResult(yumbase, new_set)
+        cnt = yumbase.downgrade_local(support.TOUR_44_PKG_PATH)
+        self.assertGreater(cnt, 0)
+        (installed, removed) = self.installed_removed(yumbase)
+        self.assertItemsEqual(map(str, installed), ("tour-4-4.noarch", ))
+        self.assertItemsEqual(map(str, removed), ("tour-5-0.noarch", ))
 
     def test_downgrade(self):
         yumbase = support.MockYumBase("main")
         sack = yumbase.sack
-        ret = yumbase.downgrade("tour")
-        self.assertEqual(len(ret), 1)
+        cnt = yumbase.downgrade("tour")
+        self.assertGreater(cnt, 0)
 
         new_pkg = dnf.queries.available_by_name(sack, "tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")

@@ -407,13 +407,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # if we've hit a snag, return 1 and the failure explanation
         # if we've got nothing to do, return 0 and a 'nothing available to install' string
 
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
 
         done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                txmbrs = self.install_local(arg)
+                self.install_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             try:
@@ -427,9 +427,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self._maybeYouMeant(arg)
             else:
                 done = True
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package to install', '%d packages to install', change) % change]
+        cnt = self._goal.req_length() - oldcount
+        if cnt > 0:
+            msg = P_('%d package to install', '%d packages to install', cnt)
+            return 2, [msg % cnt]
 
         if not done:
             return 1, [_('Nothing to do')]
@@ -454,7 +455,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # this is probably 90% of the calls
         # if there is a userlist then it's for updating pkgs, not obsoleting
 
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
         if len(userlist) == 0: # simple case - do them all
             self.update()
 
@@ -464,27 +465,30 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             for item in userlist:
                 if (item.endswith('.rpm') and (dnf.yum.misc.re_remote_url(item) or
                                                os.path.exists(item))):
-                    txmbrs = self.update_local(item)
+                    self.update_local(item)
                     continue
 
-                txmbrs = self.update(pattern=item)
-                if not txmbrs:
+                if not self.update(pattern=item):
                     self._checkMaybeYouMeant(item)
 
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package marked for upgrade', '%d packages marked for upgrade', change) % change]
-        elif self.tsInfo.upgrade_all:
+        cnt = self._goal.req_length() - oldcount
+        if cnt > 0:
+            msg = P_('%d package marked for upgrade',
+                     '%d packages marked for upgrade', cnt)
+            return 2, [msg % cnt]
+        elif self._goal.req_has_upgrade_all():
             return 2, [_('All packages marked for upgrade')]
         else:
             return 0, [_('No packages marked for upgrade')]
 
     def upgrade_userlist_to(self, userlist):
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
         map(self.upgrade_to ,userlist)
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package marked for upgrade', '%d packages marked for upgrade', change) % change]
+        cnt = self._goal.req_length() - oldcount
+        if cnt > 0:
+            msg = P_('%d package marked for upgrade',
+                     '%d packages marked for upgrade', cnt)
+            return 2, [msg % cnt]
         else:
             return 0, [_('No Packages marked for upgrade')]
 
@@ -499,14 +503,17 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 1 = we've errored, exit with error string
                 2 = we've got work yet to do, onto the next stage
         """
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
         assert(len(userlist) == 0)
         self.distro_sync()
 
-        change = len(self.tsInfo) - oldcount
-        if change > 0:
-            return 2, [P_('%d package marked for Distribution Synchronization', '%d packages marked for Distribution Synchronization', change) % change]
-        elif self.tsInfo.distro_sync:
+        cnt = self._goal.req_length() - oldcount
+        if cnt > 0:
+            msg = P_('%d package marked for Distribution Synchronization',
+                     '%d packages marked for Distribution Synchronization',
+                     cnt)
+            return 2, [msg % cnt]
+        elif self._goal.req_has_distupgrade_all():
             return 2, [_('All packages marked for Distribution Synchronization')]
         else:
             return 0, [_('No Packages marked for Distribution Synchronization')]
@@ -526,15 +533,17 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
 
-        all_rms = []
+        cnt = 0
         for arg in userlist:
-            rms = self.remove(arg)
-            if not rms:
+            current_cnt = self.remove(arg)
+            if current_cnt == 0:
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
-            all_rms.extend(rms)
+            cnt += current_cnt
 
-        if all_rms:
-            return 2, [P_('%d package marked for removal', '%d packages marked for removal', len(all_rms)) % len(all_rms)]
+        if cnt > 0:
+            msg = P_('%d package marked for removal',
+                     '%d packages marked for removal', cnt)
+            return 2, [msg % cnt]
         else:
             return 0, [_('No Packages marked for removal')]
 
@@ -554,7 +563,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
 
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
 
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
@@ -572,9 +581,11 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                                         self.term.MODE['bold'], arg,
                                         self.term.MODE['normal'])
                 self._maybeYouMeant(arg)
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package to downgrade', '%d packages to downgrade', change) % change]
+        cnt = self._goal.req_length() - oldcount
+        if cnt > 0:
+            msg = P_('%d package to downgrade',
+                     '%d packages to downgrade', cnt)
+            return 2, [msg % cnt]
         return 0, [_('Nothing to do')]
 
     def reinstallPkgs(self, userlist):
@@ -592,17 +603,17 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             2 = we've got work yet to do, onto the next stage
         """
 
-        oldcount = len(self.tsInfo)
+        oldcount = self._goal.req_length()
 
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
-                txmbrs = self.reinstall_local(arg)
+                self.reinstall_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 
             try:
-                txmbrs = self.reinstall(pattern=arg)
+                self.reinstall(pattern=arg)
             except dnf.exceptions.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
             except dnf.exceptions.ReinstallInstallError, e:
@@ -613,13 +624,14 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                         xmsg = yumdb_info.from_repo
                         xmsg = _(' (from %s)') % xmsg
                     msg = _('Installed package %s%s%s%s not available.')
-                    self.logger.info(msg,
-                                            self.term.MODE['bold'], ipkg,
-                                            self.term.MODE['normal'], xmsg)
+                    self.logger.info(msg, self.term.MODE['bold'], ipkg,
+                                     self.term.MODE['normal'], xmsg)
 
-        if len(self.tsInfo) > oldcount:
-            change = len(self.tsInfo) - oldcount
-            return 2, [P_('%d package to reinstall', '%d packages to reinstall', change) % change]
+        cnt = self._goal.req_length() - oldcount
+        if cnt:
+            msg = P_('%d package to reinstall',
+                     '%d packages to reinstall', cnt)
+            return 2, [msg % cnt]
         return 0, [_('Nothing to do')]
 
     def returnPkgLists(self, extcmds, installed_available=False):

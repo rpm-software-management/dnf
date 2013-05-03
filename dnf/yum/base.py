@@ -77,6 +77,8 @@ class Base(object):
     def __init__(self):
         self._conf = config.YumConf()
         self._conf.uid = 0
+        self._goal = None
+        self._sack = None
         self._ts = None
         self._tsInfo = None
         self._comps = None
@@ -105,7 +107,6 @@ class Base(object):
 
         self.run_with_package_names = set()
         self._cleanup = []
-        self._sack = None
         self.goal_parameters = dnf.conf.GoalParameters()
         self.cache_c = dnf.conf.Cache()
 
@@ -180,8 +181,7 @@ class Base(object):
         return self._sack
 
     def activate_sack(self):
-        # Create the Sack, tell it how to build packages, passing in the Package
-        # class and a Base reference.
+        """Prepare the Sack and the Goal objects."""
         start = time.time()
         self._sack = sack.build_sack(self)
         self._sack.load_system_repo(build_cache=True)
@@ -191,6 +191,7 @@ class Base(object):
         self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         self._setup_excludes()
+        self._goal = hawkey.Goal(self._sack)
         return self._sack
 
     @property
@@ -589,7 +590,9 @@ class Base(object):
         self.plugins.run('preresolve')
         ds_st = time.time()
         self.dsCallback.start()
-        goal = self.build_hawkey_goal(self.tsInfo)
+        goal = self._goal
+        if goal.req_has_erase():
+            self._push_userinstalled(goal)
         if not self.run_hawkey_goal(goal):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
@@ -1691,7 +1694,7 @@ class Base(object):
         txmbrs = []
         pkg_types = self.conf.group_package_types
         if group.selected:
-            return []
+            return 0
         group.selected = True
 
         pkgs = []
@@ -1702,23 +1705,23 @@ class Base(object):
         if 'optional' in pkg_types:
             pkgs.extend(group.optional_packages)
 
-        old_len = len(self.tsInfo)
         inst_set = set([pkg.name for pkg in self.sack.query().installed()])
         inst_set.update([txmbr.po.name for txmbr in self.tsInfo \
                              if txmbr.ts_state == 'i'])
         adding_msg = _('Adding package %s from group %s')
+        cnt = 0
         for pkg in pkgs:
             self.logger.debug(adding_msg % (pkg, group.groupid))
             if pkg in inst_set:
                 continue
             inst_set.add(pkg)
-            self.install_groupie(pkg, inst_set)
+            current_cnt = self.install_groupie(pkg, inst_set)
+            cnt += current_cnt
 
-        new_cnt = len(self.tsInfo) - old_len
-        if not new_cnt:
+        if cnt == 0:
             msg = _('Warning: Group %s does not have any packages.')
             self.logger.warning(msg % group.groupid)
-        return new_cnt
+        return cnt
 
     def deselectGroup(self, grpid, force=False):
         """Unmark the packages in the given group from being
@@ -1950,16 +1953,18 @@ class Base(object):
             q = subj.get_best_query(self.sack)
             already_inst, available = self._query_matches_installed(q)
             map(msg_installed, already_inst)
-            map(self.tsInfo.addInstall, available)
+            map(self._goal.install, available)
+            return len(available)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                return self.tsInfo
+                return 0
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
-            self.tsInfo.add_selector_install(sltr)
-        return self.tsInfo
+            self._goal.install(select=sltr)
+            return 1
+        return 0
 
     def install_groupie(self, pkg_name, inst_set):
         """Installs a group member package by name. """
@@ -1967,12 +1972,14 @@ class Base(object):
         subj = queries.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
             q = subj.get_best_query(self.sack, with_provides=False, form=forms)
-            map(self.tsInfo.addInstall, q)
+            map(self._goal.install, q)
+            return len(q)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack, forms=forms)
             if sltr:
-                self.tsInfo.add_selector_install(sltr)
-        return self.tsInfo
+                self._goal.install(select=sltr)
+                return 1
+        return 0
 
     def update(self, po=None, pattern=None):
         """Mark the specified items to be updated.  If a package
@@ -1997,26 +2004,31 @@ class Base(object):
             if not po.from_system:
                 installed = sorted(queries.installed_by_name(self.sack, po.name))
                 if len(installed) > 0 and installed[-1] < po:
-                    txmbr = self.tsInfo.addUpdate(po)
-                    tx_return.append(txmbr)
+                    self._goal.upgrade_to(po)
+                    return 1
         elif pattern:
             sltr = queries.Subject(pattern).get_best_selector(self.sack)
-            if not sltr:
-                return tx_return
-            self.tsInfo.add_selector_upgrade(sltr)
+            if sltr:
+                self._goal.upgrade(select=sltr)
+                return 1
         else: # update everything updatable
-            self.tsInfo.upgrade_all = True
-        return tx_return
+            self._goal.upgrade_all()
+            return 1
+        return 0
 
     def upgrade_to(self, pkg_spec):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
         sltr = queries.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
         if sltr:
-            self.tsInfo.add_selector_upgrade_to(sltr)
+            self._goal.upgrade_to(select=sltr)
+            return 1
+        return 0
 
     def distro_sync(self, pkg=None):
         if pkg is None:
-            self.tsInfo.distro_sync = True
+            self._goal.distupgrade_all()
+            return 1
+        return 0
 
     def remove(self, pkg_spec):
         """Mark the specified package for removal.
@@ -2026,12 +2038,13 @@ class Base(object):
 
         """
 
-        tx_return = []
+        ret = 0
         matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        clean_deps = self.conf.clean_requirements_on_remove
         for pkg in matches.filter(reponame=hawkey.SYSTEM_REPO_NAME):
-            txmbr = self.tsInfo.addErase(pkg)
-            tx_return.append(txmbr)
-        return tx_return
+            self._goal.erase(pkg, clean_deps=clean_deps)
+            ret += 1
+        return ret
 
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
@@ -2054,14 +2067,14 @@ class Base(object):
         """
         po = self._local_common(path)
         if not po:
-            return []
+            return 0
 
-        tx_return = []
         installed = sorted(queries.installed_by_name(self.sack, po.name))
         if len(installed) > 0 and installed[0] > po:
-            txmbrs = self.tsInfo.addDowngrade(po, installed[0])
-            tx_return.append(txmbrs)
-        return tx_return
+            self._goal.install(po)
+            self._goal.erase(installed[0])
+            return 2
+        return 0
 
     def install_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
@@ -2079,15 +2092,16 @@ class Base(object):
         """
         po = self._local_common(path)
         if not po:
-            return []
-        txmbr = self.tsInfo.addInstall(po)
-        return [txmbr]
+            return 0
+        self._goal.install(po)
+        return 1
 
     def update_local(self, path):
         po = self._local_common(path)
         if not po:
-            return []
-        return self.update(po)
+            return 0
+        self._goal.upgrade_to(po)
+        return 1
 
     def reinstall_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
@@ -2101,7 +2115,7 @@ class Base(object):
         """
         po = self._local_common(path)
         if not po:
-            return []
+            return 0
         return self.reinstall(po)
 
     def reinstall(self, po=None, **kwargs):
@@ -2117,7 +2131,6 @@ class Base(object):
         :raises: :class:`dnf.exceptions.ReinstallRemoveError`
 
         """
-        tx_return = []
         if po:
             installed = queries.installed_exact(self.sack,
                                                 po.name, po.evr, po.arch)
@@ -2130,6 +2143,7 @@ class Base(object):
             raise dnf.exceptions.ReinstallRemoveError(
                 _("Problem in reinstall: no package matched to remove"))
 
+        cnt = 0
         installed = queries.per_nevra_dict(installed)
         available = queries.per_nevra_dict(available)
         for nevra in installed:
@@ -2139,10 +2153,10 @@ class Base(object):
                 failed_pkgs = [installed[nevra]]
                 raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
 
-            txmbr = self.tsInfo.addInstall(available[nevra])
-            tx_return.append(txmbr)
+            self._goal.install(available[nevra])
+            cnt += 1
 
-        return tx_return
+        return cnt
 
     def downgrade(self, pkg_spec):
         """Mark a package to be downgraded.  This is equivalent to
@@ -2153,23 +2167,20 @@ class Base(object):
            transaction set by this method
 
         """
-        tx_return = []
         subj = queries.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed = sorted(q.installed())
         installed_pkg = dnf.util.first(installed)
         if installed_pkg is None:
-            return []
+            return 0
 
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
         avail_pkg = dnf.util.first(sorted(avail, reverse=True))
         if avail_pkg is None:
-            return []
+            return 0
 
-        txmbr = self.tsInfo.addDowngrade(avail_pkg)
-        tx_return.append(txmbr)
-
-        return tx_return
+        self._goal.install(avail_pkg)
+        return 1
 
     def provides(self, provides_spec):
         providers = queries.by_provides(self.sack, provides_spec)

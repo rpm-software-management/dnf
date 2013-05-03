@@ -30,15 +30,13 @@ class Remove(support.ResultTestCase):
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """
         ret = self.yumbase.remove("mrkite")
-        self.assertEqual(ret, [])
+        self.assertEqual(ret, 0)
         installed_pkgs = dnf.queries.installed_by_name(self.yumbase.sack, None)
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_remove(self):
         """ Simple remove. """
         ret = self.yumbase.remove("pepper")
-        pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
-        self.assertEqual([txmbr.po for txmbr in ret], pepper)
         self.assertResult(self.yumbase,
                           support.installed_but(self.yumbase.sack, "pepper"))
 
@@ -52,9 +50,11 @@ class Remove(support.ResultTestCase):
     def test_remove_nevra(self):
         ret = self.yumbase.remove("pepper-20-0.x86_64")
         pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
-        self.assertEqual([txmbr.po for txmbr in ret], pepper)
+        (installed, removed) = self.installed_removed(self.yumbase)
+        self.assertLength(installed, 0)
+        self.assertItemsEqual(removed, pepper)
 
     def test_remove_glob(self):
         """ Test that weird input combinations with globs work. """
         ret = self.yumbase.remove("*.i686")
-        self.assertLength(ret, 1)
+        self.assertEqual(ret, 1)

@@ -27,13 +27,13 @@ class Reinstall(support.ResultTestCase):
         self.sack = self.yumbase.sack
 
     def test_reinstall(self):
-        txmbrs = self.yumbase.reinstall(pattern="pepper")
-        self.assertLength(txmbrs, 1)
+        cnt = self.yumbase.reinstall(pattern="pepper")
+        self.assertEqual(cnt, 1)
         new_set = support.installed_but(self.sack, "pepper")
         new_pkg = dnf.queries.available_by_nevra(self.sack, "pepper-20-0.x86_64")
         new_set += list(new_pkg)
         self.assertResult(self.yumbase, new_set)
 
     def test_reinstall_local(self):
-        txmbrs = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
-        self.assertLength(txmbrs, 1)
+        cnt = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
+        self.assertEqual(cnt, 1)

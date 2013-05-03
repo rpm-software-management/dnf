@@ -138,6 +138,7 @@ class MockYumBase(dnf.yum.base.Base):
             self._sack.load_test_repo(repo.id, fn)
 
         self._sack.configure(self.conf.installonlypkgs)
+        self._goal = hawkey.Goal(self._sack)
         return self._sack
 
     def mock_cli(self):
