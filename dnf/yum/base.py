@@ -2754,42 +2754,27 @@ class Base(object):
         return False # :hawkey
 
     def populate_ts(self):
-        """Populate the RPM transaction set. """
-        if self.dsCallback:
-            self.dsCallback.transactionPopulation()
+        """Populate the RPM transaction set."""
 
-        for txmbr in self.tsInfo.getMembers():
-            self.logger.log(dnf.logging.SUBDEBUG, _('Member: %s'), txmbr)
-            if txmbr.ts_state in ['u', 'i']:
-                rpmfile = txmbr.po.localPkg()
-                if not os.path.exists(rpmfile):
-                    raise RuntimeError("rpm file does not exist %s", rpmfile)
-                hdr = dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
+        def pkg2header(pkg):
+            rpmfile = pkg.localPkg()
+            if not os.path.exists(rpmfile):
+                raise RuntimeError("Rpm file does not exist: '%s'", rpmfile)
+            return dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
 
-                if txmbr.ts_state == 'u':
-                    if self.allowedMultipleInstalls(txmbr.po):
-                        self.logger.debug(
-                            _('%s converted to install'), txmbr.po)
-                        txmbr.ts_state = 'i'
-                        txmbr.output_state = TS_INSTALL
-
-                self.ts.addInstall(hdr, txmbr, txmbr.ts_state)
-                self.logger.debug(
-                    _('Adding Package %s in mode %s'), txmbr.po, txmbr.ts_state)
-                if self.dsCallback:
-                    dscb_ts_state = txmbr.ts_state
-                    if dscb_ts_state == 'u' and txmbr.downgrades:
-                        dscb_ts_state = 'd'
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, dscb_ts_state)
-
-            elif txmbr.ts_state in ['e']:
-                self.ts.addErase(txmbr.po.idx)
-                if self.dsCallback:
-                    if txmbr.downgraded_by:
-                        continue
-                    self.dsCallback.pkgAdded(txmbr.pkgtup, 'e')
-                self.logger.debug(
-                    _('Removing Package %s'), txmbr.po)
+        for tsi in self._transaction:
+            if tsi.op_type == dnf.transaction.ERASE:
+                self.ts.addErase(tsi.erased.idx)
+            elif tsi.op_type == dnf.transaction.DOWNGRADE:
+                self.ts.addErase(tsi.erased.idx)
+                hdr = pkg2header(tsi.installed)
+                self.ts.addInstall(hdr, tsi, 'i')
+            elif tsi.opt_type == dnf.transaction.UPGRADE:
+                hdr = pkg2header(tsi.installed)
+                self.ts.addInstall(hdr, tsi, 'u')
+            elif tsi.opt_type == dnf.transaction.INSTALL:
+                hdr = pkg2header(tsi.installed)
+                self.ts.addInstall(hdr, tsi, 'i')
 
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
