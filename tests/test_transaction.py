@@ -72,6 +72,9 @@ class TransactionTest(tests.support.TestCase):
         self.assertIsInstance(iter(self.ts).next(),
                               dnf.transaction.TransactionItem)
 
+    def test_length(self):
+        self.assertLength(self.ts, 4)
+
     def test_sets(self):
         self.assertItemsEqual(self.ts.install_set, ('i1', 'u1', 'u2', 'd1'))
         self.assertItemsEqual(self.ts.remove_set,

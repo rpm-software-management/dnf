@@ -63,6 +63,9 @@ class Transaction(object):
     def __iter__(self):
         return iter(self._tsis)
 
+    def __len__(self):
+        return len(self._tsis)
+
     def _items2set(self, extracting_fn):
         lists = map(extracting_fn, self._tsis)
         sets = map(set, lists)

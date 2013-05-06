@@ -145,12 +145,11 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
            occurred in the pre-transaction checks
         """
         # make sure there's something to do
-        if len(self.tsInfo) == 0:
-            self.logger.info(_('Trying to run the transaction but nothing to do. Exiting.'))
+        if len(self._transaction) == 0:
+            msg = _('Trying to run the transaction but nothing to do. Exiting.')
+            self.logger.info(msg)
             return -1
 
-        # NOTE: In theory we can skip this in -q -y mode, for a slight perf.
-        #       gain. But it's probably doom to have a different code path.
         lsts = self.listTransaction()
         self.logger.info(lsts)
         # Check which packages have to be downloaded
@@ -158,24 +157,21 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         rmpkgs = []
         stuff_to_download = False
         install_only = True
-        for txmbr in self.tsInfo.getMembers():
-            if txmbr.ts_state not in ('i', 'u'):
-                install_only = False
-                po = txmbr.po
-                if po:
-                    rmpkgs.append(po)
-            else:
+        for tsi in self._transaction:
+            installed = tsi.installed
+            if installed is not None:
                 stuff_to_download = True
-                po = txmbr.po
-                if po:
-                    downloadpkgs.append(po)
+                downloadpkgs.append(installed)
+            erased = tsi.erased
+            if erased is not None:
+                install_only = False
+                rmpkgs.append(erased)
 
         # Close the connection to the rpmdb so that rpm doesn't hold the SIGINT
         # handler during the downloads.
         del self.ts
 
-        # Report the total download size to the user, so he/she can base
-        # the answer on this info
+        # report the total download size to the user
         if not stuff_to_download:
             self.reportRemoveSize(rmpkgs)
         else:
@@ -258,23 +254,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         # unset the sigquit handler
         signal.signal(signal.SIGQUIT, signal.SIG_DFL)
-
         ts_st = time.time()
-
-        #  Reinstalls broke in: 7115478c527415cb3c8317456cdf50024de89a94 ...
-        # I assume there's a "better" fix, but this fixes reinstalls and lets
-        # other options continue as is (and they seem to work).
-        have_reinstalls = False
-        for txmbr in self.tsInfo.getMembers():
-            if txmbr.reinstall:
-                have_reinstalls = True
-                break
-        if have_reinstalls:
-            del self.ts # make a new, blank ts to populate
-            self.populate_ts()
-            self.ts.check() #required for ordering
-            self.ts.order() # order
-            self.ts.clean() # release memory not needed beyond this point
 
         # put back our depcheck callback
         self.dsCallback = dscb
@@ -288,8 +268,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things
-        self.logger.info(
-            self.postTransactionOutput())
+        self.logger.info(self.postTransactionOutput())
 
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)
