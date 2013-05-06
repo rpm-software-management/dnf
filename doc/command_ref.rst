@@ -168,22 +168,22 @@ Performs cleanup of temporary files for the currently enabled repositories.
 ``dnf clean all``
     Does all of the above.
 
-.. _dist_sync_command-label:
+.. _distro_sync_command-label:
 
------------------
-Dist-sync command
------------------
+-------------------
+Distro-sync command
+-------------------
 
-``dnf dist-sync``
+``dnf distro-sync``
     As necessary upgrades, downgrades or keeps all installed packages to match
     the latest version available from any enabled repository.
 
--------------------------
-Distribution-sync command
--------------------------
+------------------------------------
+Distribution-synchronization command
+------------------------------------
 
-``dnf distribution-sync``
-    Deprecated alias for the :ref:`\dist_sync_command-label`.
+``dnf distribution-synchronization``
+    Deprecated alias for the :ref:`\distro_sync_command-label`.
 
 -----------------
 Downgrade Command
