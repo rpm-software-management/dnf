@@ -64,6 +64,7 @@ import hawkey
 import dnf.conf
 import dnf.repo
 import dnf.repodict
+import dnf.transaction
 import dnf.util
 import dnf.rpmUtils.connection
 from dnf import const, queries, sack
@@ -79,6 +80,7 @@ class Base(object):
         self._conf.uid = 0
         self._goal = None
         self._sack = None
+        self._transaction = None
         self._ts = None
         self._tsInfo = None
         self._comps = None
@@ -599,56 +601,56 @@ class Base(object):
             (rescode, restring) =  (1, goal.problems)
         else:
             cnt = 0
-            # reset tsInfo, some packages might have gone during resolving
-            self.tsInfo = transactioninfo.TransactionData()
-            obsoletes = set(goal.list_obsoleted())
+            ts = self._transaction = dnf.transaction.Transaction()
+            all_obsoleted = set(goal.list_obsoleted())
 
             for pkg in goal.list_downgrades():
                 cnt += 1
-                downgraded = goal.obsoleted_by_package(pkg)[0]
+                obs = goal.obsoleted_by_package(pkg)
+                downgraded = obs[0]
                 self.dsCallback.pkgAdded(downgraded, 'dd')
                 self.dsCallback.pkgAdded(pkg, 'd')
-                self.tsInfo.addDowngrade(pkg, downgraded)
+                ts.add_downgrade(pkg, downgraded, obs[1:])
             for pkg in goal.list_reinstalls():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'r')
-                txmbr = self.tsInfo.addInstall(pkg)
-                reinstalled = goal.obsoleted_by_package(pkg)[0]
-                txmbr = self.tsInfo.addErase(reinstalled)
+                obs = goal.obsoleted_by_package(pkg)
+                reinstalled = obs[0]
+                ts.add_install(pkg, obs[1:])
+                ts.add_erase(reinstalled)
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
-                txmbr = self.tsInfo.addInstall(pkg)
-                txmbr.reason = dnf.util.reason_name(goal.get_reason(pkg))
-                obsoleted_list = goal.obsoleted_by_package(pkg)
-                txmbr.obsoletes.extend(obsoleted_list)
-                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'),
-                    obsoleted_list)
+                obs = goal.obsoleted_by_package(pkg)
+                reason = dnf.util.reason_name(goal.get_reason(pkg))
+                ts.add_install(pkg, obs, reason)
+                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'), obs)
             for pkg in goal.list_upgrades():
                 cnt += 1
-                txmbr = self.tsInfo.addUpdate(pkg)
-                updated_list = goal.obsoleted_by_package(pkg)
-                for updated in updated_list:
-                    if updated in obsoletes:
-                        self.dsCallback.pkgAdded(updated, 'od')
-                        txmbr.obsoletes.append(updated)
-                    else:
-                        self.dsCallback.pkgAdded(updated, 'ud')
-                        txmbr.updates.append(updated)
+                group_fn = functools.partial(operator.contains, all_obsoleted)
+                obs, upgraded = dnf.util.group_by_filter(
+                    group_fn, goal.obsoleted_by_package(pkg))
+                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'), obs)
+                if pkg.name in self.conf.installonlypkgs:
+                    ts.add_install(pkg, obs)
+                else:
+                    ts.add_upgrade(pkg, upgraded[0], obs)
+                    map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'ud'), upgraded)
                 self.dsCallback.pkgAdded(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'e')
-                self.tsInfo.addErase(pkg)
+                ts.add_erase(pkg)
             if cnt > 0:
                 (rescode, restring) = (2, [_('Success - deps resolved')])
             else:
                 (rescode, restring) = (0, [_('Nothing to do')])
+
         self.dsCallback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         if rescode == 2:
-            msg = self.tsInfo.rpm_limitations()
+            msg = ts.rpm_limitations()
             if msg:
                 return (0, [msg])
         return (rescode, restring)

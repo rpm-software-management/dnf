@@ -30,12 +30,14 @@ class TransactionItem(object):
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
 
     def __init__(self, op_type, installed=None, erased=None, obsoleted=None,
-                 reason='unknown'):
+                 reason=None):
         self.op_type = op_type
         self.installed = installed
         self.erased = erased
         self.obsoleted = list() if obsoleted is None else obsoleted
 
+        if reason is None:
+            reason = 'unknown'
         self.reason = reason # reason for it to be in the transaction set
 
     def installs(self):
@@ -71,8 +73,9 @@ class Transaction(object):
         tsi = TransactionItem(ERASE, erased=erased)
         self._tsis.append(tsi)
 
-    def add_install(self, installed, obsoleted):
-        tsi = TransactionItem(INSTALL, installed, obsoleted=obsoleted)
+    def add_install(self, installed, obsoleted, reason=None):
+        tsi = TransactionItem(INSTALL, installed, obsoleted=obsoleted,
+                              reason=reason)
         self._tsis.append(tsi)
 
     def add_upgrade(self, upgrade, upgraded, obsoleted):
@@ -91,3 +94,14 @@ class Transaction(object):
     def remove_set(self):
         fn = operator.methodcaller('removes')
         return self._items2set(fn)
+
+
+    def rpm_limitations(self):
+        """ Ensures all the members can be passed to rpm as they are to pefrom
+            the transaction.
+        """
+        src_installs = [pkg for pkg in self.install_set if pkg.arch == 'src']
+        if len(src_installs):
+            return _("DNF will not install a source rpm package (%s).") % \
+                src_installs[0].po
+        return None
