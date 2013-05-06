@@ -140,9 +140,8 @@ class InstallReason(support.ResultTestCase):
     def test_reason(self):
         self.yumbase.install("mrkite")
         self.yumbase.buildTransaction()
-        new_pkgs = self.yumbase.tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_INSTALL_STATES)
-        pkg_reasons = [(txmbr.po.name, txmbr.reason) for txmbr in new_pkgs]
+        new_pkgs = self.yumbase._transaction.get_items(dnf.transaction.INSTALL)
+        pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 

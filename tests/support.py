@@ -218,24 +218,7 @@ class TestCase(unittest.TestCase):
         return self.assertTrue(os.path.isfile(path))
 
 class ResultTestCase(TestCase):
-    @staticmethod
-    def all_installed(tsInfo):
-        return set([txmbr.po for txmbr in tsInfo.getMembersWithState(
-                    output_states=dnf.yum.constants.TS_INSTALL_STATES)])
-
-    @staticmethod
-    def all_removed(tsInfo):
-        removed = set([txmbr.po for txmbr in tsInfo.getMembersWithState(
-                    output_states=dnf.yum.constants.TS_REMOVE_STATES)])
-        installed_txmbrs = tsInfo.getMembersWithState(
-            output_states=dnf.yum.constants.TS_INSTALL_STATES)
-
-        for txmbr in installed_txmbrs:
-            map(removed.add, txmbr.updates)
-            map(removed.add, txmbr.obsoletes)
-        return removed
-
-    def assertResult(self, yumbase, pkgs):
+    def assertResult(self, base, pkgs):
         """Check whether the system contains the given pkgs.
 
         pkgs must be present. Any other pkgs result in an error. Pkgs are
@@ -243,17 +226,17 @@ class ResultTestCase(TestCase):
         INSTALLed.
         """
 
-        (rcode, rstring) = yumbase.buildTransaction()
+        (rcode, rstring) = base.buildTransaction()
         self.assertNotEqual(rcode, 1)
 
-        installed = set(dnf.queries.installed_by_name(yumbase.sack, None))
-        map(installed.remove, self.all_removed(yumbase.tsInfo))
-        installed.update(self.all_installed(yumbase.tsInfo))
+        installed = set(dnf.queries.installed_by_name(base.sack, None))
+        map(installed.remove, base._transaction.remove_set)
+        installed.update(base._transaction.install_set)
         self.assertItemsEqual(installed, pkgs)
 
-    def installed_removed(self, yumbase):
-        (rcode, rstring) = yumbase.buildTransaction()
+    def installed_removed(self, base):
+        (rcode, rstring) = base.buildTransaction()
         self.assertNotEqual(rcode, 1)
-        installed = self.all_installed(yumbase.tsInfo)
-        removed = self.all_removed(yumbase.tsInfo)
+        installed = base._transaction.install_set
+        removed = base._transaction.remove_set
         return installed, removed
