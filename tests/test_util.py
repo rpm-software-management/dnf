@@ -49,6 +49,14 @@ class Util(unittest.TestCase):
         with mock.patch('os.geteuid', return_value=0):
             assert(dnf.util.am_i_root())
 
+    def test_bunch(self):
+        b = dnf.util.Bunch()
+        self.assertRaises(AttributeError, lambda: b.more)
+        b.garden = 'weeds'
+        self.assertEqual(b['garden'], 'weeds')
+        b['digging'] = 4
+        self.assertEqual(b.digging, 4)
+
     def test_empty(self):
         self.assertTrue(dnf.util.empty(()))
         self.assertFalse(dnf.util.empty([1,2,3]))

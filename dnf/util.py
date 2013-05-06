@@ -152,3 +152,18 @@ class tmpdir(object):
 
     def __exit__(self, exc_type, exc_value, traceback):
         rm_rf(self.path)
+
+class Bunch(dict):
+    """Dictionary with attribute accessing syntax.
+
+    In DNF, prefer using this over dnf.yum.misc.GenericHolder.
+
+    Credit: Alex Martelli, Doug Hudgeon
+
+    """
+    def __init__(self, *args, **kwds):
+         super(Bunch, self).__init__(*args, **kwds)
+         self.__dict__ = self
+
+    def __hash__(self):
+        return id(self)

@@ -18,6 +18,7 @@
 """Handle actual output from the cli."""
 
 from __future__ import print_function
+import operator
 import sys
 import time
 import logging
@@ -45,6 +46,8 @@ import dnf.yum.packages
 import dnf.i18n
 import dnf.yum.history
 import dnf.queries
+import dnf.transaction
+import dnf.util
 
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 
@@ -75,6 +78,31 @@ def _term_width():
     if ret < 20:
         return 20
     return ret
+
+def _make_lists(transaction):
+    b = dnf.util.Bunch()
+    for t in ('downgraded', 'installed', 'erased', 'upgraded'):
+        b[t] = []
+    for tsi in transaction:
+        if tsi.op_type == dnf.transaction.DOWNGRADE:
+            b.downgraded.append(tsi)
+        elif tsi.op_type == dnf.transaction.ERASE:
+            b.erased.append(tsi)
+        elif tsi.op_type == dnf.transaction.INSTALL:
+            b.installed.append(tsi)
+        elif tsi.op_type == dnf.transaction.UPGRADE:
+            b.upgraded.append(tsi)
+    return b
+
+_PASSIVE_DCT = {
+    dnf.transaction.DOWNGRADE : operator.attrgetter('erased'),
+    dnf.transaction.ERASE : operator.attrgetter('erased'),
+    dnf.transaction.INSTALL : operator.attrgetter('installed'),
+    dnf.transaction.UPGRADE : operator.attrgetter('erased'),
+    }
+def _passive_pkg(tsi):
+    """Return the package from TransactionItem that takes the "passive" role."""
+    return _PASSIVE_DCT[tsi.op_type](tsi)
 
 class YumTerm:
     """A class to provide some terminal "UI" helpers based on curses."""
@@ -1350,7 +1378,7 @@ class YumOutput:
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
-        self.tsInfo.makelists(True, True)
+        list_bunch = _make_lists(self._transaction)
         pkglist_lines = []
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -1380,25 +1408,14 @@ class YumOutput:
             a_wid = max(a_wid, len(a))
             return a_wid
 
-        for (action, pkglist) in [(_('Installing'), self.tsInfo.installed),
-                            (_('Upgrading'), self.tsInfo.updated),
-                            (_('Removing'), self.tsInfo.removed),
-                            (_('Reinstalling'), self.tsInfo.reinstalled),
-                            (_('Downgrading'), self.tsInfo.downgraded),
-                            (_('Installing for dependencies'), self.tsInfo.depinstalled),
-                            (_('Upgrading for dependencies'), self.tsInfo.depupdated),
-                            (_('Removing for dependencies'), self.tsInfo.depremoved)]:
+        for (action, pkglist) in [(_('Installing'), list_bunch.installed),
+                                  (_('Upgrading'), list_bunch.upgraded),
+                                  (_('Removing'), list_bunch.erased),
+                                  (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
-            for txmbr in pkglist:
-                a_wid = _add_line(lines, data, a_wid, txmbr.po, txmbr.obsoletes)
-
-            pkglist_lines.append((action, lines))
-
-        for (action, pkglist) in [(_('Not installed'), self._not_found_i.values()),
-                                  (_('Not available'), self._not_found_a.values())]:
-            lines = []
-            for po in pkglist:
-                a_wid = _add_line(lines, data, a_wid, po)
+            for tsi in pkglist:
+                passive = _passive_pkg(tsi)
+                a_wid = _add_line(lines, data, a_wid, passive, tsi.obsoleted)
 
             pkglist_lines.append((action, lines))
 
@@ -1444,17 +1461,10 @@ Transaction Summary
 %s
 """) % ('=' * self.term.columns))
         summary_data =  (
-            (_('Install'), len(self.tsInfo.installed),
-             len(self.tsInfo.depinstalled)),
-            (_('Upgrade'), len(self.tsInfo.updated),
-             len(self.tsInfo.depupdated)),
-            (_('Remove'), len(self.tsInfo.removed),
-             len(self.tsInfo.depremoved)),
-            (_('Reinstall'), len(self.tsInfo.reinstalled), 0),
-            (_('Downgrade'), len(self.tsInfo.downgraded), 0),
-            (_('Not installed'), len(self._not_found_i.values()), 0),
-            (_('Not available'), len(self._not_found_a.values()), 0),
-        )
+            (_('Install'), len(list_bunch.installed), 0),
+            (_('Upgrade'), len(list_bunch.upgraded), 0),
+            (_('Remove'), len(list_bunch.erased), 0),
+            (_('Downgrade'), len(list_bunch.downgraded), 0))
         max_msg_action   = 0
         max_msg_count    = 0
         max_msg_pkgs     = 0

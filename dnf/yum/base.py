@@ -88,8 +88,6 @@ class Base(object):
         self._lockfile = None
         self._tags = None
         self._ts_save_file = None
-        self._not_found_a = {}
-        self._not_found_i = {}
         self.logger = logging.getLogger("dnf")
         self._repos = dnf.repodict.RepoDict()
         self.repo_setopts = {} # since we have to use repo_setopts in base and
