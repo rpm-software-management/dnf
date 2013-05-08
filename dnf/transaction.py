@@ -19,6 +19,8 @@
 #
 
 from __future__ import absolute_import
+from dnf.yum.i18n import _
+
 import operator
 
 DOWNGRADE = 1
@@ -39,6 +41,10 @@ class TransactionItem(object):
         if reason is None:
             reason = 'unknown'
         self.reason = reason # reason for it to be in the transaction set
+
+    @property
+    def active(self):
+        return self.installed if self.installed is not None else self.erased
 
     def installs(self):
         return [] if self.installed is None else [self.installed]
@@ -109,5 +115,5 @@ class Transaction(object):
         src_installs = [pkg for pkg in self.install_set if pkg.arch == 'src']
         if len(src_installs):
             return _("DNF will not install a source rpm package (%s).") % \
-                src_installs[0].po
+                src_installs[0]
         return None

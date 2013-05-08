@@ -180,6 +180,10 @@ class Base(object):
     def sack(self):
         return self._sack
 
+    @property
+    def transaction(self):
+        return self._transaction
+
     def activate_sack(self):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
@@ -668,7 +672,8 @@ class Base(object):
         """
         self.plugins.run('pretrans')
 
-        if self._record_history():
+        #if self._record_history():
+        if False: # :dead ATM for the transaction overhaul
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
             rpmdbv  = self.sack.rpmdb_version(self.yumdb)
@@ -774,7 +779,8 @@ class Base(object):
             vTcb = None
             if hasattr(cb, 'verify_txmbr'):
                 vTcb = cb.verify_txmbr
-            self.verifyTransaction(resultobject, vTcb)
+            if False: # :dead, transaction overhaul
+                self.verifyTransaction(resultobject, vTcb)
         return resultobject
 
     def verifyTransaction(self, resultobject=None, txmbr_cb=None):
@@ -2767,10 +2773,10 @@ class Base(object):
                 self.ts.addErase(tsi.erased.idx)
                 hdr = pkg2header(tsi.installed)
                 self.ts.addInstall(hdr, tsi, 'i')
-            elif tsi.opt_type == dnf.transaction.UPGRADE:
+            elif tsi.op_type == dnf.transaction.UPGRADE:
                 hdr = pkg2header(tsi.installed)
                 self.ts.addInstall(hdr, tsi, 'u')
-            elif tsi.opt_type == dnf.transaction.INSTALL:
+            elif tsi.op_type == dnf.transaction.INSTALL:
                 hdr = pkg2header(tsi.installed)
                 self.ts.addInstall(hdr, tsi, 'i')
 

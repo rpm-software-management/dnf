@@ -15,6 +15,7 @@
 # Parts Copyright 2007 Red Hat, Inc
 
 from __future__ import print_function
+import dnf.transaction
 import rpm
 import os
 import fcntl
@@ -69,20 +70,18 @@ class RPMBaseCallback:
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
-        self.action = { TS_UPDATE : _('Upgrading'),
-                        TS_ERASE: _('Erasing'),
-                        TS_INSTALL: _('Installing'),
-                        TS_OBSOLETED: _('Obsoleted'),
-                        TS_OBSOLETING: _('Installing'),
-                        TS_UPDATED: _('Cleanup'),
-                        'repackaging': _('Repackaging')}
-        # The fileaction are not translated, most sane IMHO / Tim
-        self.fileaction = { TS_UPDATE: 'Updated',
-                            TS_ERASE: 'Erased',
-                            TS_INSTALL: 'Installed',
-                            TS_OBSOLETED: 'Obsoleted',
-                            TS_OBSOLETING: 'Installed',
-                            TS_UPDATED: 'Cleanup'}
+        self.action = {dnf.transaction.DOWNGRADE : _('Downgrading'),
+                       dnf.transaction.ERASE : _('Erasing'),
+                       dnf.transaction.INSTALL : _('Installing'),
+                       dnf.transaction.UPGRADE :  _('Upgrading'),
+                       'obsoleting' : _('Obsoleting'),
+                       'cleanup' : _('Cleanup')}
+        self.fileaction = {dnf.transaction.DOWNGRADE : 'Downgraded',
+                           dnf.transaction.ERASE : 'Erased',
+                           dnf.transaction.INSTALL : 'Installed',
+                           dnf.transaction.UPGRADE :  'Upgraded',
+                           'obsoleting' : 'Obsoleted',
+                           'cleanup' : 'Cleanup'}
         self.logger = logging.getLogger("dnf.rpm")
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
@@ -261,6 +260,31 @@ class RPMTransaction:
         else: epoch = str(tmpepoch)
 
         return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
+
+    def _extract_cbkey(self, cbkey):
+        if isinstance(cbkey, dnf.transaction.TransactionItem):
+            return self._extract_tsi_cbkey(cbkey)
+        else:
+            return self._extract_str_cbkey(cbkey)
+
+    @staticmethod
+    def _extract_tsi_cbkey(tsi):
+        assert(isinstance(tsi, dnf.transaction.TransactionItem))
+        return (tsi.active, tsi)
+
+    def _extract_str_cbkey(self, name):
+        assert(isinstance(name, basestring))
+        obsoleted = obsoleted_tsi = None
+        for tsi in self.base.transaction:
+            # only walk the tsis once. prefer finding an erase over an obsoleted
+            # package:
+            if tsi.erased is not None and tsi.erased.name == name:
+                return (tsi.erased, tsi)
+            for o in tsi.obsoleted:
+                if o.name == name:
+                    obsoleted = o
+                    obsoleted_tsi = tsi
+        return (obsoleted, obsoleted_tsi)
 
     # Find out txmbr based on the callback key. On erasures we dont know
     # the exact txmbr but we always have a name, so return (name, txmbr)
@@ -487,49 +511,38 @@ class RPMTransaction:
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
-        name, txmbr = self._getTxmbr(h)
-        if txmbr is not None:
-            rpmloc = txmbr.po.localPkg()
-            try:
-                self.fd = file(rpmloc)
-            except IOError, e:
-                self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
-            else:
-                if self.trans_running:
-                    self.total_installed += 1
-                    self.complete_actions += 1
-                    self.installed_pkg_names.add(name)
-                return self.fd.fileno()
+        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        rpmloc = pkg.localPkg()
+        try:
+            self.fd = file(rpmloc)
+        except IOError, e:
+            self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:
-            self.display.errorlog("Error: No Header to INST_OPEN_FILE")
+            if self.trans_running:
+                self.total_installed += 1
+                self.complete_actions += 1
+                self.installed_pkg_names.add(pkg.name)
+            return self.fd.fileno()
 
     def _instCloseFile(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h)
-        if txmbr is not None:
-            self.fd.close()
-            self.fd = None
-            if self.test: return
-            if self.trans_running:
-                self.display.filelog(txmbr.po, txmbr.output_state)
-                self._scriptout(txmbr.po)
-                return None # :hawkey
-                pid   = self.base.history.pkg2pid(txmbr.po)
-                state = self.base.history.txmbr2state(txmbr)
-                self.base.history.trans_data_pid_end(pid, state)
-                self.ts_done(txmbr.po, txmbr.output_state)
+        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        self.fd.close()
+        self.fd = None
+        if self.test:
+            return
+        if self.trans_running:
+            self.display.filelog(pkg, tsi.op_type)
+            self._scriptout(pkg)
+            return None # :dead, transaction overhaul
+            pid   = self.base.history.pkg2pid(txmbr.po)
+            state = self.base.history.txmbr2state(txmbr)
+            self.base.history.trans_data_pid_end(pid, state)
+            self.ts_done(txmbr.po, txmbr.output_state)
 
     def _instProgress(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h)
-        if name is not None:
-            # If we only have a name, we're repackaging.
-            # Why the RPMCALLBACK_REPACKAGE_PROGRESS flag isn't set, I have no idea
-            if txmbr is None:
-                self.display.event(name, 'repackaging',  bytes, total,
-                                self.complete_actions, self.total_actions)
-            else:
-                action = txmbr.output_state
-                self.display.event(txmbr.po, action, bytes, total,
-                            self.complete_actions, self.total_actions)
+        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        self.display.event(pkg, tsi.op_type, bytes, total, self.complete_actions,
+                           self.total_actions)
 
     def _unInstStart(self, bytes, total, h):
         pass
@@ -538,27 +551,26 @@ class RPMTransaction:
         pass
 
     def _unInstStop(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h, erase=True)
+        (pkg, tsi) = self._extract_str_cbkey(h)
         self.total_removed += 1
         self.complete_actions += 1
-        if name not in self.installed_pkg_names:
-            if txmbr is not None:
-                self.display.filelog(txmbr.po, TS_ERASE)
-            else:
-                self.display.filelog(name, TS_ERASE)
-            action = TS_ERASE
+        if pkg in tsi.obsoleted:
+            action = 'obsoleting'
+        elif tsi.op_type == dnf.transaction.UPGRADE:
+            action = 'cleanup'
         else:
-            action = TS_UPDATED
+            action = dnf.transaction.ERASE
+        self.display.filelog(pkg, action)
+        self.display.event(pkg.name, action, 100, 100, self.complete_actions,
+                           self.total_actions)
 
-        # FIXME: Do we want to pass txmbr.po here too?
-        self.display.event(name, action, 100, 100, self.complete_actions,
-                            self.total_actions)
+        if self.test:
+            return
 
-        if self.test: return # and we're done
+        if tsi is not None:
+            self._scriptout(pkg)
 
-        if txmbr is not None:
-            self._scriptout(txmbr.po)
-
+            return None # :dead, transaction overhaul
             #  Note that we are currently inside the chroot, which makes
             # sqlite panic when it tries to open it's journal file.
             # So let's have some "fun" and workaround that:
@@ -588,46 +600,31 @@ class RPMTransaction:
         pass
 
     def _cpioError(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h)
-        # In the case of a remove, we only have a name, not a txmbr
-        if txmbr is not None:
-            msg = "Error in cpio payload of rpm package %s" % txmbr.po
-            txmbr.output_state = TS_FAILED
-            self.display.errorlog(msg)
-            # FIXME - what else should we do here? raise a failure and abort?
+        # In the case of a remove, we only have a name, not a tsi:
+        pkg, _ = self._extract_cbkey(h)
+        msg = "Error in cpio payload of rpm package %s" % pkg
+        self.display.errorlog(msg)
 
     def _unpackError(self, bytes, total, h):
-        name, txmbr = self._getTxmbr(h)
-        # In the case of a remove, we only have a name, not a txmbr
-        if txmbr is not None:
-            txmbr.output_state = TS_FAILED
-            msg = "Error unpacking rpm package %s" % txmbr.po
-            self.display.errorlog(msg)
-            # FIXME - should we raise? I need a test case pkg to see what the
-            # right behavior should be
+        pkg, _ = self._extract_cbkey(h)
+        msg = "Error unpacking rpm package %s" % pkg
+        self.display.errorlog(msg)
 
     def _scriptError(self, bytes, total, h):
         # "bytes" carries the failed scriptlet tag,
         # "total" carries fatal/non-fatal status
         scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
 
-        name, txmbr = self._getTxmbr(h, erase=True)
-        if txmbr is None:
-            package_name = name
-        else:
-            package_name = txmbr.po
+        pkg, _ = self._extract_cbkey(h)
+        name = pkg.name
 
         if total:
             msg = ("Error in %s scriptlet in rpm package %s" %
-                    (scriptlet_name, package_name))
-            # In the case of a remove, we only have a name, not a txmbr
-            if txmbr is not None:
-                txmbr.output_state = TS_FAILED
+                   (scriptlet_name, name))
         else:
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
-                   (scriptlet_name, package_name))
+                   (scriptlet_name, name))
         self.display.errorlog(msg)
-        # FIXME - what else should we do here? raise a failure and abort?
 
     def verify_txmbr(self, txmbr, count):
         " Callback for post transaction when we are in verifyTransaction(). "
