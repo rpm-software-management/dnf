@@ -21,8 +21,9 @@
 """ Contains the dnf.Package class. """
 
 import binascii
+import dnf.rpmUtils.miscutils
 import hawkey
-import os.path
+import os
 import yum.misc
 
 class Package(hawkey.Package):
@@ -57,6 +58,13 @@ class Package(hawkey.Package):
     @property
     def from_system(self):
         return self.reponame == hawkey.SYSTEM_REPO_NAME
+
+    @property
+    def header(self):
+        rpmfile = self.localPkg()
+        if not os.path.exists(rpmfile):
+            raise RuntimeError("Rpm file does not exist: '%s'", rpmfile)
+        return dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
 
     @property
     def size(self):

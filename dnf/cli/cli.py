@@ -203,7 +203,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         # save our dsCallback out
         dscb = self.dsCallback
         self.dsCallback = None
-        self.populate_ts()
+        self.transaction.populate_rpm_ts(self.ts)
 
         rcd_st = time.time()
         self.logger.info(_('Running Transaction Check'))

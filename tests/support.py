@@ -75,7 +75,8 @@ def patch_std_streams():
 
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
-        self.location = "%s.rpm" % nevra
+        self.header = None
+        self.location = '%s.rpm' % nevra
         self.repo = repo
         self.reponame = None if repo is None else repo.id
         self.str = nevra

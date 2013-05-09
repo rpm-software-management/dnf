@@ -15,6 +15,9 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from tests.mock import call
+import dnf.repo
 import dnf.transaction
 import tests.mock
 import tests.support
@@ -82,3 +85,18 @@ class TransactionTest(tests.support.TestCase):
 
     def test_total_package_count(self):
         self.assertEqual(self.ts.total_package_count(), 11)
+
+class PopulateTSTest(tests.support.TestCase):
+    def test_populate_rpm_ts(self):
+        ts = dnf.transaction.Transaction()
+        repo = dnf.repo.Repo('r')
+        repo.basecachedir = '/tmp'
+
+        inst = tests.support.MockPackage("ago-20.0-1.x86_64.fc69", repo)
+        upg = tests.support.MockPackage("billy-1.2-1.x86_64.fc69", repo)
+        old = tests.support.MockPackage("billy-1.1-1.x86_64.fc69", repo)
+        ts.add_install(inst, [])
+        ts.add_upgrade(upg, old, [])
+        rpm_ts = ts.populate_rpm_ts(tests.mock.Mock())
+        rpm_ts.assert_has_calls(call.addInstall(None, ts._tsis[0], 'i'))
+        rpm_ts.assert_has_calls(call.addInstall(None, ts._tsis[1], 'u'))

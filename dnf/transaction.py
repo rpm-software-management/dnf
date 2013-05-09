@@ -20,8 +20,9 @@
 
 from __future__ import absolute_import
 from dnf.yum.i18n import _
-
+import logging
 import operator
+import os
 
 DOWNGRADE = 1
 ERASE     = 2
@@ -65,6 +66,7 @@ class TransactionItem(object):
 class Transaction(object):
     def __init__(self):
         self._tsis = []
+        self.logger = logging.getLogger("dnf")
 
     def __iter__(self):
         return iter(self._tsis)
@@ -101,6 +103,35 @@ class Transaction(object):
     def install_set(self):
         fn = operator.methodcaller('installs')
         return self._items2set(fn)
+
+    def populate_rpm_ts(self, ts):
+        """Populate the RPM transaction set."""
+
+        for tsi in self._tsis:
+            if tsi.op_type == ERASE:
+                ts.addErase(tsi.erased.idx)
+                self.logger.debug("populate_rpm_ts: erase: %s" % tsi.erased)
+            elif tsi.op_type == DOWNGRADE:
+                ts.addErase(tsi.erased.idx)
+                hdr = tsi.installed.header
+                ts.addInstall(hdr, tsi, 'i')
+                self.logger.debug("populate_rpm_ts: downgrade: %s/%s" %
+                                  (tsi.installed, tsi.erased))
+            elif tsi.op_type == UPGRADE:
+                hdr = tsi.installed.header
+                ts.addInstall(hdr, tsi, 'u')
+                self.logger.debug("populate_rpm_ts: upgrade: %s" % tsi.installed)
+            elif tsi.op_type == INSTALL:
+                hdr = tsi.installed.header
+                if tsi.obsoleted:
+                    ts.addInstall(hdr, tsi, 'u')
+                    msg = "populate_rpm_ts: install: %s promoted to upgrade."
+                    self.logger.debug(msg % tsi.installed)
+                else:
+                    ts.addInstall(hdr, tsi, 'i')
+                    self.logger.debug("populate_rpm_ts: install: %s" %
+                                      tsi.installed)
+        return ts
 
     @property
     def remove_set(self):
