@@ -36,6 +36,14 @@ class TransactionItemTest(tests.support.TestCase):
         self.assertEqual(tsi.erased, 'old')
         self.assertItemsEqual(tsi.obsoleted, ())
 
+    def test_history_iterator(self):
+        tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
+                                              'old', ['o1', 'o2', 'o3'])
+        self.assertItemsEqual(tsi.history_iterator(),
+                              [('new', 'Update'), ('old', 'Updated'),
+                               ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
+                               ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
+
     def test_propagated_reason(self):
         TI = dnf.transaction.TransactionItem
         yumdb = tests.mock.Mock()

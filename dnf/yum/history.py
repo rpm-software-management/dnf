@@ -915,7 +915,7 @@ class YumHistory(object):
                          VALUES (?, ?)""", (self._tid, to_unicode(cmdline)))
         return cur.lastrowid
 
-    def beg(self, rpmdb_version, using_pkgs, txmbrs, skip_packages=[],
+    def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None):
         cur = self._get_cursor()
         if cur is None:
@@ -932,10 +932,10 @@ class YumHistory(object):
             pid = self._ipkg2pid(pkg)
             self.trans_with_pid(pid)
 
-        for txmbr in txmbrs:
-            pid   = self.pkg2pid(txmbr.po)
-            state = self.txmbr2state(txmbr)
-            self.trans_data_pid_beg(pid, state)
+        for tsi in tsis:
+            for (pkg, state) in tsi.history_iterator():
+                pid   = self.pkg2pid(pkg)
+                self.trans_data_pid_beg(pid, state)
 
         for pkg in skip_packages:
             pid   = self.pkg2pid(pkg)

@@ -47,6 +47,36 @@ class TransactionItem(object):
     def active(self):
         return self.installed if self.installed is not None else self.erased
 
+    _HISTORY_INSTALLED_STATES = {
+        DOWNGRADE : 'Downgrade',
+        UPGRADE : 'Update',
+        INSTALL : 'Install'
+        }
+    _HISTORY_ERASE_STATES = {
+        DOWNGRADE : 'Downgraded',
+        UPGRADE : 'Updated',
+        ERASE : 'Erase'
+        }
+    def history_state(self, pkg):
+        if pkg == self.installed:
+            return self._HISTORY_INSTALLED_STATES[self.op_type]
+
+        if pkg == self.erased:
+            return self._HISTORY_ERASE_STATES[self.op_type]
+
+        if pkg in self.obsoleted:
+            return 'Obsoleted'
+
+    def history_iterator(self):
+        if self.installed is not None:
+            yield(self.installed, self.history_state(self.installed))
+        if self.erased is not None:
+            yield(self.erased, self.history_state(self.erased))
+        if self.obsoleted:
+            yield(self.installed, 'Obsoleting')
+        for obs in self.obsoleted:
+            yield(obs, 'Obsoleted')
+
     def installs(self):
         return [] if self.installed is None else [self.installed]
 

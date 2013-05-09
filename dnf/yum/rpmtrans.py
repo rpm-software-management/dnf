@@ -531,11 +531,11 @@ class RPMTransaction:
         if self.trans_running:
             self.display.filelog(pkg, tsi.op_type)
             self._scriptout(pkg)
-            return None # :dead, transaction overhaul
-            pid   = self.base.history.pkg2pid(txmbr.po)
-            state = self.base.history.txmbr2state(txmbr)
+            pid   = self.base.history.pkg2pid(pkg)
+            state = tsi.history_state(pkg)
             self.base.history.trans_data_pid_end(pid, state)
-            self.ts_done(txmbr.po, txmbr.output_state)
+            # :dead
+            # self.ts_done(txmbr.po, txmbr.output_state)
 
     def _instProgress(self, bytes, total, h):
         (pkg, tsi) = self._extract_tsi_cbkey(h)
@@ -568,25 +568,23 @@ class RPMTransaction:
         if tsi is not None:
             self._scriptout(pkg)
 
-            return None # :dead, transaction overhaul
             #  Note that we are currently inside the chroot, which makes
             # sqlite panic when it tries to open it's journal file.
             # So let's have some "fun" and workaround that:
             _do_chroot = False
             if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(".")
-            pid   = self.base.history.pkg2pid(txmbr.po)
-            state = self.base.history.txmbr2state(txmbr)
+            pid   = self.base.history.pkg2pid(pkg)
+            state = tsi.history_state(pkg)
             self.base.history.trans_data_pid_end(pid, state)
             if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(self.base.conf.installroot)
-
-            self.ts_done(txmbr.po, txmbr.output_state)
+            # :dead
+            # self.ts_done(txmbr.po, txmbr.output_state)
         else:
             self._scriptout(name)
-
-            self.ts_done(name, action)
-
+            # :dead
+            # self.ts_done(name, action)
 
     def _rePackageStart(self, bytes, total, h):
         pass
