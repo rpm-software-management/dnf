@@ -9,12 +9,6 @@ dnf.cli
 .. automodule:: dnf.cli
     :members:
 
-dnf.cli.callback
-----------------
-
-.. automodule:: dnf.cli.callback
-    :members:
-
 dnf.cli.cli
 -----------
 

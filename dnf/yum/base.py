@@ -49,7 +49,6 @@ import urlgrabber
 from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
 import plugins
-import callbacks
 import history
 
 from constants import *
