@@ -2769,16 +2769,26 @@ class Base(object):
         for tsi in self._transaction:
             if tsi.op_type == dnf.transaction.ERASE:
                 self.ts.addErase(tsi.erased.idx)
+                self.logger.debug("populate_ts: erase: %s" % tsi.erased)
             elif tsi.op_type == dnf.transaction.DOWNGRADE:
                 self.ts.addErase(tsi.erased.idx)
                 hdr = pkg2header(tsi.installed)
                 self.ts.addInstall(hdr, tsi, 'i')
+                self.logger.debug("populate_ts: downgrade: %s/%s" %
+                                  (tsi.installed, tsi.erased))
             elif tsi.op_type == dnf.transaction.UPGRADE:
                 hdr = pkg2header(tsi.installed)
                 self.ts.addInstall(hdr, tsi, 'u')
+                self.logger.debug("populate_ts: upgrade: %s" % tsi.installed)
             elif tsi.op_type == dnf.transaction.INSTALL:
                 hdr = pkg2header(tsi.installed)
-                self.ts.addInstall(hdr, tsi, 'i')
+                if tsi.obsoleted:
+                    self.ts.addInstall(hdr, tsi, 'u')
+                    msg = "populate_ts: install: %s promoted to upgrade."
+                    self.logger.debug(msg % tsi.installed)
+                else:
+                    self.ts.addInstall(hdr, tsi, 'i')
+                    self.logger.debug("populate_ts: install: %s" % tsi.installed)
 
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
