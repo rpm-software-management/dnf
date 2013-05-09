@@ -671,8 +671,7 @@ class Base(object):
         """
         self.plugins.run('pretrans')
 
-        #if self._record_history():
-        if False: # :dead ATM for the transaction overhaul
+        if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
             using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
             rpmdbv  = self.sack.rpmdb_version(self.yumdb)
@@ -775,14 +774,10 @@ class Base(object):
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            vTcb = None
-            if hasattr(cb, 'verify_txmbr'):
-                vTcb = cb.verify_txmbr
-            if False: # :dead, transaction overhaul
-                self.verifyTransaction(resultobject, vTcb)
+            self.verifyTransaction(resultobject, cb.verify_pkg)
         return resultobject
 
-    def verifyTransaction(self, resultobject=None, txmbr_cb=None):
+    def verifyTransaction(self, resultobject=None, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
@@ -803,10 +798,11 @@ class Base(object):
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
 
-        def _call_txmbr_cb(txmbr, count):
-            if txmbr_cb is not None:
-                count += 1
-                txmbr_cb(txmbr, count)
+        total = self.transaction.total_package_count()
+        def display_banner(pkg, count):
+            count += 1
+            if verify_pkg_cb is not None:
+                verify_pkg_cb(pkg, count, total)
             return count
 
         vt_st = time.time()
@@ -819,25 +815,24 @@ class Base(object):
         # completely.
         rpmdb_sack = sack.rpmdb_sack(self)
 
-        # Process new packages before the old ones so we can copy values.
-        for txmbr in self.tsInfo:
-            if txmbr.output_state not in TS_INSTALL_STATES:
+        for tsi in self._transaction:
+            rpo = tsi.installed
+            if rpo is None:
                 continue
 
-            rpo = txmbr.po
             installed = queries.installed_exact(rpmdb_sack, rpo.name,
                                                 rpo.evr, rpo.arch)
             if len(installed) < 1:
                 self.logger.critical(_('%s was supposed to be installed' \
-                                           ' but is not!' % txmbr.po))
-                txmbr.output_state = TS_FAILED
-                count = _call_txmbr_cb(txmbr, count)
+                                           ' but is not!' % rpo))
+                count = display_banner(rpo, count)
                 continue
             po = installed[0]
-            count = _call_txmbr_cb(txmbr, count)
+            count = display_banner(rpo, count)
             yumdb_info = self.yumdb.get_package(po)
             yumdb_info.from_repo = rpo.repoid
-            yumdb_info.reason = txmbr.propagated_reason(self.yumdb)
+
+            yumdb_info.reason = tsi.propagated_reason(self.yumdb)
             yumdb_info.releasever = self.conf.yumvar['releasever']
             if hasattr(self, 'args') and self.args:
                 yumdb_info.command_line = ' '.join(self.args)
@@ -865,13 +860,9 @@ class Base(object):
                     yumdb_info.from_repo_timestamp = str(md.timestamp)
 
             loginuid = misc.getloginuid()
-            if txmbr.updates or txmbr.downgrades or txmbr.reinstall:
-                if txmbr.updates:
-                    opo = txmbr.updates[0]
-                elif txmbr.downgrades:
-                    opo = txmbr.downgrades[0]
-                else:
-                    opo = po
+            if tsi.op_type in (dnf.transaction.DOWNGRADE,
+                               dnf.transaction.UPGRADE):
+                opo = tsi.erased
                 opo_yumdb_info = self.yumdb.get_package(opo)
                 if 'installed_by' in opo_yumdb_info:
                     yumdb_info.installed_by = opo_yumdb_info.installed_by
@@ -883,34 +874,21 @@ class Base(object):
             if self.conf.history_record:
                 self.history.sync_alldb(po)
 
-        for txmbr in self.tsInfo:
-            if txmbr.output_state not in TS_REMOVE_STATES:
-                continue
-            rpo = txmbr.po
+        just_installed = self.sack.query().\
+            filter(pkg=self.transaction.install_set)
+        for rpo in self.transaction.remove_set:
             installed = queries.installed_exact(rpmdb_sack, rpo.name,
                                                 rpo.evr, rpo.arch)
             if len(installed) > 0:
-                if not self.tsInfo.getMembersWithState(pkgtup=txmbr.pkgtup,
-                            output_states=TS_INSTALL_STATES):
-                    # maybe a file log here, too
-                    # but raising an exception is not going to do any good
-                    # Note: This actually triggers atm. because we can't
-                    #       always find the erased txmbr to set it when
-                    #       we should.
-                    self.logger.critical(_('%s was supposed to be removed' \
-                                           ' but is not!' % txmbr.po))
-                    # Note: Get Panu to do te.Failed() so we don't have to
-                    txmbr.output_state = TS_FAILED
-                    count = _call_txmbr_cb(txmbr, count)
+                if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
+                                                 evr=rpo.evr)):
+                    msg = _('%s was supposed to be removed but is not!')
+                    self.logger.critical(msg % rpo)
+                    count = display_banner(rpo, count)
                     continue
-            count = _call_txmbr_cb(txmbr, count)
-            yumdb_item = self.yumdb.get_package(po=txmbr.po)
+            count = display_banner(rpo, count)
+            yumdb_item = self.yumdb.get_package(po=rpo)
             yumdb_item.clean()
-
-        for txmbr in self.tsInfo:
-            if txmbr.output_state not in TS_INSTALL_STATES + TS_REMOVE_STATES:
-                count = _call_txmbr_cb(txmbr, count)
-                self.logger.debug('What is this? %s' % txmbr.po)
 
         self.plugins.run('postverifytrans')
         if self._record_history():

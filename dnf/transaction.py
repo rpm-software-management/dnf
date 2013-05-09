@@ -107,7 +107,6 @@ class Transaction(object):
         fn = operator.methodcaller('removes')
         return self._items2set(fn)
 
-
     def rpm_limitations(self):
         """ Ensures all the members can be passed to rpm as they are to pefrom
             the transaction.
@@ -117,3 +116,6 @@ class Transaction(object):
             return _("DNF will not install a source rpm package (%s).") % \
                 src_installs[0]
         return None
+
+    def total_package_count(self):
+        return len(self.install_set | self.remove_set)

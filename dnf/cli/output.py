@@ -2957,19 +2957,12 @@ class YumCliRPMCallBack(RPMBaseCallback):
             wid2 = pnl
         return fmt, wid1, wid2
 
-    def verify_txmbr(self, base, txmbr, count):
+    def verify_pkg(self, pkg, count, total):
         " Callback for post transaction when we are in verifyTransaction(). "
-        te_current = count
-        te_total   = len(base.tsInfo)
-        # self.event(txmbr.name, count, len(base.tsInfo), count, )
-
-        percent = 100 # (te_current*100L)/te_total
+        percent = 100
         process = _('Verifying')
-        pkgname = str(txmbr.po)
         wid1    = max(utf8_width(process), self._max_action_width())
-        self._out_event(100, 100, te_current, te_total,
-                        percent, process, pkgname, wid1)
-
+        self._out_event(100, 100, count, total, percent, process, str(pkg), wid1)
 
 def progressbar(current, total, name=None):
     """Output the current status to the terminal using a simple

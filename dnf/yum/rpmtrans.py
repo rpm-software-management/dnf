@@ -116,7 +116,7 @@ class RPMBaseCallback:
             msg = '%s: %s' % (package, action)
         self.logger.info(msg)
 
-    def verify_txmbr(self, base, txmbr, count):
+    def verify_pkg(self, pkg, count, total):
         " Callback for post transaction when we are in verifyTransaction(). "
         pass
 
@@ -140,9 +140,9 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print(msgs, end='')
 
-    def verify_txmbr(self, base, txmbr, count):
+    def verify_pkg(self, pkg, count, total):
         " Callback for post transaction when we are in verifyTransaction(). "
-        print(_("Verify: %u/%u: %s") % (count, len(base.tsInfo), txmbr))
+        print(_("Verify: %u/%u: %s") % (count, len(base.transaction), tsi))
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The
@@ -561,7 +561,7 @@ class RPMTransaction:
         else:
             action = dnf.transaction.ERASE
         self.display.filelog(pkg, action)
-        self.display.event(pkg.name, action, 100, 100, self.complete_actions,
+        self.display.event(pkg, action, 100, 100, self.complete_actions,
                            self.total_actions)
 
         if self.test:
@@ -626,9 +626,6 @@ class RPMTransaction:
                    (scriptlet_name, name))
         self.display.errorlog(msg)
 
-    def verify_txmbr(self, txmbr, count):
+    def verify_pkg(self, pkg, count, total):
         " Callback for post transaction when we are in verifyTransaction(). "
-        if not hasattr(self.display, 'verify_txmbr'):
-            return
-
-        self.display.verify_txmbr(self.base, txmbr, count)
+        self.display.verify_pkg(pkg, count, total)

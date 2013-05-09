@@ -79,3 +79,6 @@ class TransactionTest(tests.support.TestCase):
         self.assertItemsEqual(self.ts.install_set, ('i1', 'u1', 'u2', 'd1'))
         self.assertItemsEqual(self.ts.remove_set,
                               ('o1', 'o2', 'o3', 'o4', 'r1', 'r2', 'r3'))
+
+    def test_total_package_count(self):
+        self.assertEqual(self.ts.total_package_count(), 11)

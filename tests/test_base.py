@@ -23,6 +23,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.match_counter
 import dnf.queries
+import dnf.transaction
 import dnf.yum.base
 import dnf.yum.constants
 import hawkey
@@ -108,6 +109,7 @@ def ret_pkgid(self):
 class VerifyTransactionTest(unittest.TestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
+        self.yumbase._transaction = dnf.transaction.Transaction()
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
     @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
@@ -120,8 +122,8 @@ class VerifyTransactionTest(unittest.TestCase):
         removed_pkg = dnf.queries.available_by_name(
             self.yumbase.sack, "mrkite")[0]
 
-        self.yumbase.tsInfo.addInstall(new_pkg)
-        self.yumbase.tsInfo.addErase(removed_pkg)
+        self.yumbase.transaction.add_install(new_pkg, [])
+        self.yumbase.transaction.add_erase(removed_pkg)
         self.yumbase.verifyTransaction()
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
