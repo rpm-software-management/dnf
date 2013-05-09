@@ -116,7 +116,7 @@ class RPMBaseCallback:
             msg = '%s: %s' % (package, action)
         self.logger.info(msg)
 
-    def verify_pkg(self, pkg, count, total):
+    def verify_tsi_package(self, pkg, count, total):
         pass
 
 
@@ -139,7 +139,7 @@ class SimpleCliCallBack(RPMBaseCallback):
         if msgs:
             print(msgs, end='')
 
-    def verify_pkg(self, pkg, count, total):
+    def verify_tsi_package(self, pkg, count, total):
         print(_("Verify: %u/%u: %s") % (count, len(base.transaction), tsi))
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
@@ -624,5 +624,5 @@ class RPMTransaction:
                    (scriptlet_name, name))
         self.display.errorlog(msg)
 
-    def verify_pkg(self, pkg, count, total):
-        self.display.verify_pkg(pkg, count, total)
+    def verify_tsi_package(self, pkg, count, total):
+        self.display.verify_tsi_package(pkg, count, total)

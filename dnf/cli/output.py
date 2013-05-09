@@ -2957,7 +2957,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
             wid2 = pnl
         return fmt, wid1, wid2
 
-    def verify_pkg(self, pkg, count, total):
+    def verify_tsi_package(self, pkg, count, total):
         percent = 100
         process = _('Verifying')
         wid1    = max(utf8_width(process), self._max_action_width())

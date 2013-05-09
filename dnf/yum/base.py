@@ -774,7 +774,7 @@ class Base(object):
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verify_transaction(resultobject, cb.verify_pkg)
+            self.verify_transaction(resultobject, cb.verify_tsi_package)
         return resultobject
 
     def verify_transaction(self, resultobject=None, verify_pkg_cb=None):
