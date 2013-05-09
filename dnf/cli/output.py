@@ -2958,7 +2958,6 @@ class YumCliRPMCallBack(RPMBaseCallback):
         return fmt, wid1, wid2
 
     def verify_pkg(self, pkg, count, total):
-        " Callback for post transaction when we are in verifyTransaction(). "
         percent = 100
         process = _('Verifying')
         wid1    = max(utf8_width(process), self._max_action_width())

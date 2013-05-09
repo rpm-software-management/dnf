@@ -774,10 +774,10 @@ class Base(object):
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verifyTransaction(resultobject, cb.verify_pkg)
+            self.verify_transaction(resultobject, cb.verify_pkg)
         return resultobject
 
-    def verifyTransaction(self, resultobject=None, verify_pkg_cb=None):
+    def verify_transaction(self, resultobject=None, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.

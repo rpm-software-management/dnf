@@ -117,7 +117,6 @@ class RPMBaseCallback:
         self.logger.info(msg)
 
     def verify_pkg(self, pkg, count, total):
-        " Callback for post transaction when we are in verifyTransaction(). "
         pass
 
 
@@ -141,7 +140,6 @@ class SimpleCliCallBack(RPMBaseCallback):
             print(msgs, end='')
 
     def verify_pkg(self, pkg, count, total):
-        " Callback for post transaction when we are in verifyTransaction(). "
         print(_("Verify: %u/%u: %s") % (count, len(base.transaction), tsi))
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
@@ -627,5 +625,4 @@ class RPMTransaction:
         self.display.errorlog(msg)
 
     def verify_pkg(self, pkg, count, total):
-        " Callback for post transaction when we are in verifyTransaction(). "
         self.display.verify_pkg(pkg, count, total)
