@@ -44,7 +44,6 @@ import dnf.rpmUtils.transaction
 import comps
 import misc
 from parser import ConfigPreProcessor, varReplace
-import transactioninfo
 import urlgrabber
 from urlgrabber.grabber import URLGrabError
 from urlgrabber.progress import format_number
@@ -81,7 +80,6 @@ class Base(object):
         self._sack = None
         self._transaction = None
         self._ts = None
-        self._tsInfo = None
         self._comps = None
         self._history = None
         self._lockfile = None
@@ -401,22 +399,7 @@ class Base(object):
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self.ts
-        self._tsInfo = None
         self._comps = None
-
-    def _getTsInfo(self, remove_only=False):
-        """ remove_only param. says if we are going to do _only_ remove(s) in
-            the transaction. If so we don't need to setup the remote repos. """
-        if self._tsInfo is None:
-            self._tsInfo = transactioninfo.TransactionData()
-            self._tsInfo.installonlypkgs = self.conf.installonlypkgs
-        return self._tsInfo
-
-    def _setTsInfo(self, value):
-        self._tsInfo = value
-
-    def _delTsInfo(self):
-        self._tsInfo = None
 
     _TS_FLAGS_TO_RPM = {'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                         'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
@@ -498,11 +481,6 @@ class Base(object):
                                                releasever=releasever)
         return self._history
 
-    # properties so they auto-create themselves with defaults
-    tsInfo = property(fget=lambda self: self._getTsInfo(),
-                      fset=lambda self,value: self._setTsInfo(value),
-                      fdel=lambda self: self._delTsInfo(),
-                      doc="Transaction Set information object")
     history = property(fget=lambda self: self._getHistory(),
                        fset=lambda self, value: setattr(self, "_history",value),
                        fdel=lambda self: setattr(self, "_history", None),
@@ -550,35 +528,6 @@ class Base(object):
                 pass
             if reason == 'user':
                 goal.userinstalled(pkg)
-
-    def build_hawkey_goal(self, tsInfo):
-        goal = hawkey.Goal(self.sack)
-        push_userinstalled = False
-        for txmbr in tsInfo:
-            pkg = txmbr.po
-            if txmbr.ts_state == 'i':
-                goal.install(pkg)
-            elif txmbr.ts_state == 'u':
-                goal.upgrade_to(pkg, check_installed=False)
-            elif txmbr.ts_state == 'e':
-                push_userinstalled = self.conf.clean_requirements_on_remove
-                goal.erase(pkg, clean_deps=self.conf.clean_requirements_on_remove)
-            else:
-                raise NotImplementedError("hawkey can't handle ts_state '%s'."
-                                          % txmbr.ts_state)
-        for sltr in tsInfo.selector_installs:
-            goal.install(select=sltr)
-        for sltr in tsInfo.selector_upgrades:
-            goal.upgrade(select=sltr)
-        for sltr in tsInfo.selector_upgrade_tos:
-            goal.upgrade_to(select=sltr)
-        if tsInfo.upgrade_all:
-            goal.upgrade_all()
-        if tsInfo.distro_sync:
-            goal.distupgrade_all()
-        if push_userinstalled:
-            self._push_userinstalled(goal)
-        return goal
 
     def run_hawkey_goal(self, goal):
         allow_uninstall = self.goal_parameters.allow_uninstall

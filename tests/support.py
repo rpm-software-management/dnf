@@ -117,7 +117,6 @@ class MockYumBase(dnf.yum.base.Base):
 
         self._yumdb = MockYumDB()
         self._conf = FakeConf()
-        self.tsInfo = dnf.yum.transactioninfo.TransactionData()
         self.term = FakeTerm()
         self.cache_c.prefix = "/tmp"
         self.cache_c.suffix = ""

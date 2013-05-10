@@ -87,12 +87,6 @@ dnf.yum.sqlutils
 .. automodule:: dnf.yum.sqlutils
     :members:
 
-dnf.yum.transactioninfo
------------------------
-
-.. automodule:: dnf.yum.transactioninfo
-    :members:
-
 dnf.yum.update_md
 -----------------
 
