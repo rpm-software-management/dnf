@@ -72,12 +72,14 @@ class RPMBaseCallback:
         self.action = {dnf.transaction.DOWNGRADE : _('Downgrading'),
                        dnf.transaction.ERASE : _('Erasing'),
                        dnf.transaction.INSTALL : _('Installing'),
+                       dnf.transaction.REINSTALL : _('Reinstalling'),
                        dnf.transaction.UPGRADE :  _('Upgrading'),
                        'obsoleting' : _('Obsoleting'),
                        'cleanup' : _('Cleanup')}
         self.fileaction = {dnf.transaction.DOWNGRADE : 'Downgraded',
                            dnf.transaction.ERASE : 'Erased',
                            dnf.transaction.INSTALL : 'Installed',
+                           dnf.transaction.REINSTALL : _('Reinstalled'),
                            dnf.transaction.UPGRADE :  'Upgraded',
                            'obsoleting' : 'Obsoleted',
                            'cleanup' : 'Cleanup'}

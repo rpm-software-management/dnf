@@ -81,7 +81,7 @@ def _term_width():
 
 def _make_lists(transaction):
     b = dnf.util.Bunch()
-    for t in ('downgraded', 'installed', 'erased', 'upgraded'):
+    for t in ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded'):
         b[t] = []
     for tsi in transaction:
         if tsi.op_type == dnf.transaction.DOWNGRADE:
@@ -90,6 +90,8 @@ def _make_lists(transaction):
             b.erased.append(tsi)
         elif tsi.op_type == dnf.transaction.INSTALL:
             b.installed.append(tsi)
+        elif tsi.op_type == dnf.transaction.REINSTALL:
+            b.reinstalled.append(tsi)
         elif tsi.op_type == dnf.transaction.UPGRADE:
             b.upgraded.append(tsi)
     return b
@@ -98,10 +100,11 @@ _PASSIVE_DCT = {
     dnf.transaction.DOWNGRADE : operator.attrgetter('erased'),
     dnf.transaction.ERASE : operator.attrgetter('erased'),
     dnf.transaction.INSTALL : operator.attrgetter('installed'),
+    dnf.transaction.REINSTALL : operator.attrgetter('erased'),
     dnf.transaction.UPGRADE : operator.attrgetter('erased'),
     }
 def _passive_pkg(tsi):
-    """Return the package from TransactionItem that takes the "passive" role."""
+    """Return the package from tsi that takes the verbally "passive" role."""
     return _PASSIVE_DCT[tsi.op_type](tsi)
 
 class YumTerm:
@@ -1410,6 +1413,7 @@ class YumOutput:
 
         for (action, pkglist) in [(_('Installing'), list_bunch.installed),
                                   (_('Upgrading'), list_bunch.upgraded),
+                                  (_('Reinstalling'), list_bunch.reinstalled),
                                   (_('Removing'), list_bunch.erased),
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
@@ -1550,7 +1554,8 @@ Transaction Summary
         out = ''
         list_bunch = _make_lists(self.transaction)
 
-        for (action, tsis) in [(_('Removed'), list_bunch.erased),
+        for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
+                               (_('Removed'), list_bunch.erased),
                                (_('Installed'), list_bunch.installed),
                                (_('Upgraded'), list_bunch.upgraded),
                                (_('Downgraded'), list_bunch.downgraded)]:

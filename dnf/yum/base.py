@@ -566,8 +566,7 @@ class Base(object):
                 self.dsCallback.pkgAdded(pkg, 'r')
                 obs = goal.obsoleted_by_package(pkg)
                 reinstalled = obs[0]
-                ts.add_install(pkg, obs[1:])
-                ts.add_erase(reinstalled)
+                ts.add_reinstall(pkg, reinstalled, obs[1:])
             for pkg in goal.list_installs():
                 cnt += 1
                 self.dsCallback.pkgAdded(pkg, 'i')
@@ -811,6 +810,7 @@ class Base(object):
 
             loginuid = misc.getloginuid()
             if tsi.op_type in (dnf.transaction.DOWNGRADE,
+                               dnf.transaction.REINSTALL,
                                dnf.transaction.UPGRADE):
                 opo = tsi.erased
                 opo_yumdb_info = self.yumdb.get_package(opo)

@@ -27,7 +27,8 @@ import os
 DOWNGRADE = 1
 ERASE     = 2
 INSTALL   = 3
-UPGRADE   = 4
+REINSTALL = 4
+UPGRADE   = 5
 
 class TransactionItem(object):
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
@@ -49,13 +50,15 @@ class TransactionItem(object):
 
     _HISTORY_INSTALLED_STATES = {
         DOWNGRADE : 'Downgrade',
-        UPGRADE : 'Update',
-        INSTALL : 'Install'
+        INSTALL   : 'Install',
+        REINSTALL : 'Reinstall',
+        UPGRADE   : 'Update'
         }
     _HISTORY_ERASE_STATES = {
         DOWNGRADE : 'Downgraded',
-        UPGRADE : 'Updated',
-        ERASE : 'Erase'
+        ERASE     : 'Erase',
+        REINSTALL : 'Reinstalled',
+        UPGRADE   : 'Updated'
         }
     def history_state(self, pkg):
         if pkg == self.installed:
@@ -83,7 +86,7 @@ class TransactionItem(object):
     def propagated_reason(self, yumdb):
         if self.reason == 'user':
             return self.reason
-        if self.op_type in [DOWNGRADE, UPGRADE]:
+        if self.op_type in [DOWNGRADE, REINSTALL, UPGRADE]:
             previously = yumdb.get_package(self.erased).get('reason')
             if previously:
                 return previously
@@ -122,6 +125,10 @@ class Transaction(object):
                               reason=reason)
         self._tsis.append(tsi)
 
+    def add_reinstall(self, installed, reinstalled, obsoleted):
+        tsi = TransactionItem(REINSTALL, installed, reinstalled, obsoleted)
+        self._tsis.append(tsi)
+
     def add_upgrade(self, upgrade, upgraded, obsoleted):
         tsi = TransactionItem(UPGRADE, upgrade, upgraded, obsoleted)
         self._tsis.append(tsi)
@@ -138,19 +145,15 @@ class Transaction(object):
         """Populate the RPM transaction set."""
 
         for tsi in self._tsis:
-            if tsi.op_type == ERASE:
-                ts.addErase(tsi.erased.idx)
-                self.logger.debug("populate_rpm_ts: erase: %s" % tsi.erased)
-            elif tsi.op_type == DOWNGRADE:
+            if tsi.op_type == DOWNGRADE:
                 ts.addErase(tsi.erased.idx)
                 hdr = tsi.installed.header
                 ts.addInstall(hdr, tsi, 'i')
                 self.logger.debug("populate_rpm_ts: downgrade: %s/%s" %
                                   (tsi.installed, tsi.erased))
-            elif tsi.op_type == UPGRADE:
-                hdr = tsi.installed.header
-                ts.addInstall(hdr, tsi, 'u')
-                self.logger.debug("populate_rpm_ts: upgrade: %s" % tsi.installed)
+            elif tsi.op_type == ERASE:
+                ts.addErase(tsi.erased.idx)
+                self.logger.debug("populate_rpm_ts: erase: %s" % tsi.erased)
             elif tsi.op_type == INSTALL:
                 hdr = tsi.installed.header
                 if tsi.obsoleted:
@@ -161,6 +164,16 @@ class Transaction(object):
                     ts.addInstall(hdr, tsi, 'i')
                     self.logger.debug("populate_rpm_ts: install: %s" %
                                       tsi.installed)
+            elif tsi.op_type == REINSTALL:
+                ts.addErase(tsi.erased.idx)
+                hdr = tsi.installed.header
+                ts.addInstall(hdr, tsi, 'i')
+                self.logger.debug("populate_rpm_ts: reinstall: %s" %
+                                  tsi.erased)
+            elif tsi.op_type == UPGRADE:
+                hdr = tsi.installed.header
+                ts.addInstall(hdr, tsi, 'u')
+                self.logger.debug("populate_rpm_ts: upgrade: %s" % tsi.installed)
         return ts
 
     @property
