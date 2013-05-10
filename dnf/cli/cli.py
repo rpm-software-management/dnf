@@ -268,7 +268,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # close things
-        self.logger.info(self.postTransactionOutput())
+        self.logger.info(self.post_transaction_output())
 
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)

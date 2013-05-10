@@ -1511,17 +1511,13 @@ Transaction Summary
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
-    def postTransactionOutput(self):
+    def post_transaction_output(self):
         """Returns a human-readable summary of the results of the
         transaction.
 
         :return: a string containing a human-readable summary of the
            results of the transaction
         """
-        out = ''
-
-        self.tsInfo.makelists()
-
         #  Works a bit like calcColumns, but we never overflow a column we just
         # have a dynamic number of columns.
         def _fits_in_cols(msgs, num):
@@ -1551,33 +1547,33 @@ Transaction Summary
                 col_lens[col] *= -1
             return col_lens
 
-        for (action, pkglist) in [(_('Removed'), self.tsInfo.removed),
-                                  (_('Dependency Removed'), self.tsInfo.depremoved),
-                                  (_('Installed'), self.tsInfo.installed),
-                                  (_('Dependency Installed'), self.tsInfo.depinstalled),
-                                  (_('Upgraded'), self.tsInfo.updated),
-                                  (_('Dependency Upgraded'), self.tsInfo.depupdated),
-                                  (_('Replaced'), self.tsInfo.obsoleted),
-                                  (_('Failed'), self.tsInfo.failed)]:
+        out = ''
+        list_bunch = _make_lists(self.transaction)
+
+        for (action, tsis) in [(_('Removed'), list_bunch.erased),
+                               (_('Installed'), list_bunch.installed),
+                               (_('Upgraded'), list_bunch.upgraded),
+                               (_('Downgraded'), list_bunch.downgraded)]:
+            if not tsis:
+                continue
             msgs = []
-            if len(pkglist) > 0:
-                out += '\n%s:\n' % action
-                for txmbr in pkglist:
-                    (n, a, e, v, r) = txmbr.pkgtup
-                    evr = txmbr.evr
-                    msg = "%s.%s %s" % (n, a, evr)
-                    msgs.append(msg)
-                for num in (8, 7, 6, 5, 4, 3, 2):
-                    cols = _fits_in_cols(msgs, num)
-                    if cols:
-                        break
-                if not cols:
-                    cols = [-(self.term.columns - 2)]
-                while msgs:
-                    current_msgs = msgs[:len(cols)]
-                    out += '  '
-                    out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
-                    msgs = msgs[len(cols):]
+            out += '\n%s:\n' % action
+            for pkg in [tsi.active for tsi in tsis]:
+                (n, a, e, v, r) = pkg.pkgtup
+                evr = pkg.evr
+                msg = "%s.%s %s" % (n, a, evr)
+                msgs.append(msg)
+            for num in (8, 7, 6, 5, 4, 3, 2):
+                cols = _fits_in_cols(msgs, num)
+                if cols:
+                    break
+            if not cols:
+                cols = [-(self.term.columns - 2)]
+            while msgs:
+                current_msgs = msgs[:len(cols)]
+                out += '  '
+                out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
+                msgs = msgs[len(cols):]
 
         return out
 
