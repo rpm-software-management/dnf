@@ -537,7 +537,7 @@ class Base(object):
             goal.write_debugdata()
         return ret
 
-    def buildTransaction(self):
+    def build_transaction(self):
         """Build the transaction set."""
         self.plugins.run('preresolve')
         ds_st = time.time()
@@ -2611,7 +2611,7 @@ class Base(object):
         #  We "probably" want to use either self.ts or self.rpmdb.ts if either
         # is available. However each ts takes a ref. on signals generally, and
         # SIGINT specifically, so we _must_ have got rid of all of the used tses
-        # before we try downloading. This is called from buildTransaction()
+        # before we try downloading. This is called from build_transaction()
         # so self.rpmdb.ts should be valid.
         ts = self.rpmconn.readonly_ts
         (cur_kernel_v, cur_kernel_r) = misc.get_running_kernel_version_release(ts)

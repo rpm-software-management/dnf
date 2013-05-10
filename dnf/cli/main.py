@@ -169,7 +169,7 @@ def main(args):
     logger.info(_('Resolving Dependencies'))
 
     try:
-        (result, resultmsgs) = base.buildTransaction()
+        (result, resultmsgs) = base.build_transaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except dnf.exceptions.Error, e:

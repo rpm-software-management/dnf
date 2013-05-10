@@ -65,7 +65,7 @@ class InstallMultilibAll(support.ResultTestCase):
 
     def test_install_src_fails(self):
         self.yumbase.install("pepper-20-0.src")
-        (code, string) = self.yumbase.buildTransaction()
+        (code, string) = self.yumbase.build_transaction()
         self.assertEqual(code, 0)
         self.assertRegexpMatches(string[0], "will not install a source rpm")
 

@@ -97,6 +97,16 @@ class MockYumBaseTest(unittest.TestCase):
         self.yumbase.search_counted(counter, 'summary', '*invit*')
         self.assertEqual(len(counter), 1)
 
+class BuildTransactionTest(support.TestCase):
+    def test_build_transaction(self):
+        base = support.MockYumBase("updates")
+        base.update(pattern="pepper")
+        self.assertEqual(2, base.build_transaction()[0])
+        base.dsCallback.assert_has_calls(mock.call.start())
+        base.dsCallback.assert_has_calls(mock.call.pkgAdded(mock.ANY, 'ud'))
+        base.dsCallback.assert_has_calls(mock.call.pkgAdded(mock.ANY, 'u'))
+        self.assertLength(base.transaction, 1)
+
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():
@@ -135,19 +145,19 @@ class VerifyTransactionTest(unittest.TestCase):
         self.assertEqual(yumdb_info.checksum_data, HASH)
         self.yumbase.yumdb.assertLength(2)
 
-class InstallReason(support.ResultTestCase):
+class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
 
     def test_reason(self):
         self.yumbase.install("mrkite")
-        self.yumbase.buildTransaction()
+        self.yumbase.build_transaction()
         new_pkgs = self.yumbase._transaction.get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 
-class InstalledMatching(support.ResultTestCase):
+class InstalledMatchingTest(support.ResultTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
         self.sack = self.yumbase.sack

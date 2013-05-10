@@ -226,7 +226,7 @@ class ResultTestCase(TestCase):
         INSTALLed.
         """
 
-        (rcode, rstring) = base.buildTransaction()
+        (rcode, rstring) = base.build_transaction()
         self.assertNotEqual(rcode, 1)
 
         installed = set(dnf.queries.installed_by_name(base.sack, None))
@@ -235,7 +235,7 @@ class ResultTestCase(TestCase):
         self.assertItemsEqual(installed, pkgs)
 
     def installed_removed(self, base):
-        (rcode, rstring) = base.buildTransaction()
+        (rcode, rstring) = base.build_transaction()
         self.assertNotEqual(rcode, 1)
         installed = base._transaction.install_set
         removed = base._transaction.remove_set
