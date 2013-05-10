@@ -2759,55 +2759,6 @@ class CacheProgressCallback:
         if output:
             progressbar(current, total, name)
 
-def _pkgname_ui(ayum, pkgname, ts_states=None):
-    """ Get more information on a simple pkgname, if we can. We need to search
-        packages that we are dealing with atm. and installed packages (if the
-        transaction isn't complete). """
-    if ayum is None:
-        return pkgname
-
-    if ts_states is None:
-        #  Note 'd' is a placeholder for downgrade, and
-        # 'r' is a placeholder for reinstall. Neither exist atm.
-        ts_states = ('d', 'e', 'i', 'r', 'u', 'od', 'ud')
-
-    matches = []
-    def _cond_add(po):
-        if matches and matches[0].arch == po.arch and matches[0].evr_cmp(po) == 0:
-            return
-        matches.append(po)
-
-    for txmbr in ayum.tsInfo.matchNaevr(name=pkgname):
-        if txmbr.ts_state not in ts_states:
-            continue
-        _cond_add(txmbr.po)
-
-    if not matches:
-        return pkgname
-    fmatch = matches.pop(0)
-    if not matches:
-        return str(fmatch)
-
-    show_ver  = True
-    show_arch = True
-    for match in matches:
-        if fmatch.evr_cmp(match):
-            show_ver  = False
-        if fmatch.arch != match.arch:
-            show_arch = False
-
-    if show_ver: # Multilib. *sigh*
-        if fmatch.epoch == '0':
-            return '%s-%s-%s' % (fmatch.name, fmatch.version, fmatch.release)
-        else:
-            return '%s:%s-%s-%s' % (fmatch.epoch, fmatch.name,
-                                    fmatch.version, fmatch.release)
-
-    if show_arch:
-        return '%s.%s' % (fmatch.name, fmatch.arch)
-
-    return pkgname
-
 class YumCliRPMCallBack(RPMBaseCallback):
     """A Yum specific callback class for RPM operations."""
 
@@ -2823,17 +2774,6 @@ class YumCliRPMCallBack(RPMBaseCallback):
         self.mark = "#"
         self.marks = 22
         self.ayum = ayum
-
-    #  Installing things have pkg objects passed to the events, so only need to
-    # lookup for erased/obsoleted.
-    def pkgname_ui(self, pkgname, ts_states=('e', 'od', 'ud', None)):
-        """Return more information on a simple pkgname, if possible.
-
-        :param pkgname: the name of the package to find information about
-        :param ts_states: a tuple containing the states where the
-           package might be found
-        """
-        return _pkgname_ui(self.ayum, pkgname, ts_states)
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """Output information about an rpm operation.  This may
@@ -2856,11 +2796,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
 
         wid1 = self._max_action_width()
 
-        if type(package) not in types.StringTypes:
-            pkgname = str(package)
-        else:
-            pkgname = self.pkgname_ui(package)
-
+        pkgname = str(package)
         self.lastpackage = package
         if te_total == 0:
             percent = 0
