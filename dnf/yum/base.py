@@ -760,7 +760,7 @@ class Base(object):
 
         if (not self.conf.keepcache and
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
-            self.cleanUsedHeadersPackages()
+            self.clean_used_packages()
 
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
@@ -787,14 +787,15 @@ class Base(object):
            ran the transaction
         :param txmbr_cb: the callback for the rpm transaction members
         """
-        # check to see that the rpmdb and the tsInfo roughly matches
+        # check to see that the rpmdb and the transaction roughly matches
         # push package object metadata outside of rpmdb into yumdb
         # delete old yumdb metadata entries
 
-        # for each pkg in the tsInfo
+        # for each pkg in the transaction
         # if it is an install - see that the pkg is installed
         # if it is a remove - see that the pkg is no longer installed, provided
-        #    that there is not also an install of this pkg in the tsInfo (reinstall)
+        #    that there is not also an install of this pkg in the transaction
+        #    (reinstall)
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
 
@@ -1255,25 +1256,23 @@ class Base(object):
 
         return result, msg
 
-    def cleanUsedHeadersPackages(self):
+    def clean_used_packages(self):
         """Delete the header and package files used in the
         transaction from the yum cache.
         """
         filelist = []
-        for txmbr in self.tsInfo:
-            if txmbr.po.state not in TS_INSTALL_STATES:
+        for pkg in [tsi.installed for tsi in self.transaction]:
+            if pkg is None:
                 continue
-            if txmbr.po.from_system:
-                continue
-            if txmbr.po.from_cmdline:
+            if pkg.from_system or pkg.from_cmdline:
                 continue
 
             # make sure it's not a local file
-            repo = self.repos[txmbr.po.repoid]
+            repo = self.repos[pkg.repoid]
             for u in repo.baseurl:
                 if u.startswith("file:"):
                     continue
-            filelist.append(txmbr.po.localPkg())
+            filelist.append(pkg.localPkg())
 
         # now remove them
         for fn in filelist:
@@ -1689,8 +1688,6 @@ class Base(object):
             pkgs.extend(group.optional_packages)
 
         inst_set = set([pkg.name for pkg in self.sack.query().installed()])
-        inst_set.update([txmbr.po.name for txmbr in self.tsInfo \
-                             if txmbr.ts_state == 'i'])
         adding_msg = _('Adding package %s from group %s')
         cnt = 0
         for pkg in pkgs:

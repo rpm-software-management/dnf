@@ -94,6 +94,14 @@ class TransactionTest(tests.support.TestCase):
     def test_total_package_count(self):
         self.assertEqual(self.ts.total_package_count(), 11)
 
+class RPMLimitationsTest(tests.support.TestCase):
+    def test_rpm_limitations(self):
+        ts = dnf.transaction.Transaction()
+        pkg = tests.support.MockPackage('anyway-2-0.src')
+        ts.add_install(pkg, [])
+        msg = ts.rpm_limitations()
+        self.assertIsNot(msg, None)
+
 class PopulateTSTest(tests.support.TestCase):
     def test_populate_rpm_ts(self):
         ts = dnf.transaction.Transaction()
