@@ -344,12 +344,13 @@ class Repo(dnf.yum.config.RepoConf):
         if self.sync_strategy == SYNC_ONLY_CACHE:
             msg = "Cache-only enabled but no cache for '%s'" % self.id
             raise dnf.exceptions.RepoError(msg)
-        if self._try_revive():
-            # the metadata we have are expired, yet still reflect the origin:
-            self.metadata.reset_age()
-            self.sync_strategy = SYNC_TRY_CACHE
-            return True
         try:
+            if self._try_revive():
+                # the expired metadata still reflect the origin:
+                self.metadata.reset_age()
+                self.sync_strategy = SYNC_TRY_CACHE
+                return True
+
             with dnf.util.tmpdir() as tmpdir:
                 handle = self._handle_new_remote(tmpdir)
                 self._handle_load(handle)

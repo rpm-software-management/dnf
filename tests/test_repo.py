@@ -229,3 +229,11 @@ class LocalRepoTest(support.TestCase):
         # failed.
         self.repo._try_cache()
         self.assertFalse(self.repo._try_revive())
+
+    @mock.patch('dnf.repo._Handle.new_remote')
+    def test_reviving_404(self, new_remote_m):
+        self.repo.md_expire_cache()
+        self.repo.metalink = 'http://meh'
+        exc = librepo.LibrepoException(10, 'Error HTTP/FTP status code: 404', 404)
+        new_remote_m().perform = mock.Mock(side_effect=exc)
+        self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
