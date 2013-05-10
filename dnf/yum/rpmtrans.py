@@ -119,29 +119,6 @@ class RPMBaseCallback:
     def verify_tsi_package(self, pkg, count, total):
         pass
 
-
-class SimpleCliCallBack(RPMBaseCallback):
-    def __init__(self):
-        RPMBaseCallback.__init__(self)
-        self.lastmsg = None
-        self.lastpackage = None # name of last package we looked at
-
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        # this is where a progress bar would be called
-        msg = '%s: %s %s/%s [%s/%s]' % (self.action[action], package,
-                                   te_current, te_total, ts_current, ts_total)
-        if msg != self.lastmsg:
-            print(msg)
-        self.lastmsg = msg
-        self.lastpackage = package
-
-    def scriptout(self, package, msgs):
-        if msgs:
-            print(msgs, end='')
-
-    def verify_tsi_package(self, pkg, count, total):
-        print(_("Verify: %u/%u: %s") % (count, len(base.transaction), tsi))
-
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The
 # following means that we don't really need to know/care about that in the
@@ -283,39 +260,6 @@ class RPMTransaction:
                     obsoleted = o
                     obsoleted_tsi = tsi
         return (obsoleted, obsoleted_tsi)
-
-    # Find out txmbr based on the callback key. On erasures we dont know
-    # the exact txmbr but we always have a name, so return (name, txmbr)
-    # tuples so callers have less twists to deal with.
-    def _getTxmbr(self, cbkey, erase=False):
-        if isinstance(cbkey, TransactionMember):
-            return (cbkey.name, cbkey)
-        elif isinstance(cbkey, tuple):
-            pkgtup = self._dopkgtup(cbkey[0])
-            txmbrs = self.base.tsInfo.getMembers(pkgtup=pkgtup)
-            # if this is not one, somebody screwed up
-            assert len(txmbrs) == 1
-            return (txmbrs[0].name, txmbrs[0])
-        elif isinstance(cbkey, basestring):
-            ret = None
-            #  If we don't have a tuple, it's because this is an erase txmbr and
-            # rpm doesn't provide one in that case. So we can "cheat" and look
-            # through all our txmbrs for the name we have, and if we find a
-            # single match ... that must be it.
-            if not erase:
-                return (cbkey, None)
-            for txmbr in self.base.tsInfo.matchNaevr(name=cbkey):
-                if txmbr.output_state not in TS_REMOVE_STATES:
-                    continue
-                #  If we have more than one match, then we don't know which one
-                # it is ... so just give up.
-                if ret is not None:
-                    return (cbkey, None)
-                ret = txmbr
-
-            return (cbkey, ret)
-        else:
-            return (None, None)
 
     def _fn_rm_installroot(self, filename):
         """ Remove the installroot from the filename. """
