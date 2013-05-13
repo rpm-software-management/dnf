@@ -1,5 +1,5 @@
-%global gitrev 03fd687
-%global hawkey_version 0.3.11
+%global gitrev 85c924f
+%global hawkey_version 0.3.12
 %global librepo_version 0.0.4
 
 %global confdir %{_sysconfdir}/dnf
@@ -73,6 +73,35 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon May 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.5-1.git85c924f
+- recognize 'dnf list upgrades' as an 'dnf list updates' alias. (Ales Kozumplik)
+- transaction: add reinstall as a special action. (Ales Kozumplik)
+- rename: Base.buildTransaction() -> build_transaction() (Ales Kozumplik)
+- remove: dnf.yum.output.pkgname_ui() et al. (Ales Kozumplik)
+- remove: dnf/yum/transactioninfo.py (Ales Kozumplik)
+- transaction: migrate remaining legit uses of tsInfo before it's purged. (Ales Kozumplik)
+- remove: SimpleCliCallBack, _getTxmbr from rpmtrans.py slimming it down. (Ales Kozumplik)
+- transactions: fix post_transaction_output(). (Ales Kozumplik)
+- transaction: make history work again. (Ales Kozumplik)
+- refactor: Base.populate_ts() is now Transaction.populate_rpm_ts(). (Ales Kozumplik)
+- rename: verify_pkg() -> verify_tsi_package(). (Ales Kozumplik)
+- rename: verifyTransaction() -> verify_transaction() (Ales Kozumplik)
+- transactions: reenable transaction verification. (Ales Kozumplik)
+- remove: dnf/cli/callback.py, dnf/yum/callbacks.py. (Ales Kozumplik)
+- populate_ts: handle obsoleting installs. (Ales Kozumplik)
+- transaction: bring rpmtrans.py into a shape where transactions can be tested. (Ales Kozumplik)
+- tests: adapt unit tests to dnf.transaction scheme of things. (Ales Kozumplik)
+- transaction: migrate YumBaseCli.doTransaction() to dnf.transaction. (Ales Kozumplik)
+- transaction: migrate YumOutput.list_transaction() to dnf.transaction. (Ales Kozumplik)
+- transaction: rewrite Base.populate_ts() to use dnf.transaction. (Ales Kozumplik)
+- transaction: use dnf.transaction instead of dnf.yum.transactioninfo in buildTransaction(). (Ales Kozumplik)
+- add dnf.util.group_by_filter() (Ales Kozumplik)
+- transaction: foundations of dnf.Transaction and a test. (Ales Kozumplik)
+- transactions: do not use TransactionData to store the packaging requests. (Ales Kozumplik)
+- tests: rename: test_transaction.py -> test_transactiondata.py (Ales Kozumplik)
+- repo: handle reviving exceptions like any other librepo exception. (RhBug:961549) (Ales Kozumplik)
+- doc: fix spellings of the distro-sync command. (RhBug:959990) (Ales Kozumplik)
 
 * Thu May 2 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.4-1.git03fd687
 - tests: python3 absolute imports. (Ales Kozumplik)
