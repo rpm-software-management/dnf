@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.yum Reference &mdash; DNF 0.3.4-1 documentation</title>
+    <title>dnf.yum Reference &mdash; DNF 0.3.5-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.4-1',
+        VERSION:     '0.3.5-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.4-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.3.5-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" />
     <link rel="prev" title="dnf Reference" href="api_dnf.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_dnf.html" title="dnf Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -63,22 +63,20 @@
 <ul class="simple">
 <li><a class="reference internal" href="#dnf-yum-reference" id="id1">dnf.yum Reference</a><ul>
 <li><a class="reference internal" href="#module-dnf.yum" id="id2">dnf.yum</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.callbacks" id="id3">dnf.yum.callbacks</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.comps" id="id4">dnf.yum.comps</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.config" id="id5">dnf.yum.config</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.constants" id="id6">dnf.constants</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.history" id="id7">dnf.yum.history</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.i18n" id="id8">dnf.yum.i18n</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.misc" id="id9">dnf.yum.misc</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.packages" id="id10">dnf.yum.packages</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.parser" id="id11">dnf.yum.parser</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.pgpmsg" id="id12">dnf.yum.pgpmsg</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.plugins" id="id13">dnf.yum.plugins</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.rpmsack" id="id14">dnf.yum.rpmsack</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.rpmtrans" id="id15">dnf.yum.rpmtrans</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.sqlutils" id="id16">dnf.yum.sqlutils</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.transactioninfo" id="id17">dnf.yum.transactioninfo</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.update_md" id="id18">dnf.yum.update_md</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.comps" id="id3">dnf.yum.comps</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.config" id="id4">dnf.yum.config</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.constants" id="id5">dnf.constants</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.history" id="id6">dnf.yum.history</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.i18n" id="id7">dnf.yum.i18n</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.misc" id="id8">dnf.yum.misc</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.packages" id="id9">dnf.yum.packages</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.parser" id="id10">dnf.yum.parser</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.pgpmsg" id="id11">dnf.yum.pgpmsg</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.plugins" id="id12">dnf.yum.plugins</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.rpmsack" id="id13">dnf.yum.rpmsack</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.rpmtrans" id="id14">dnf.yum.rpmtrans</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.sqlutils" id="id15">dnf.yum.sqlutils</a></li>
+<li><a class="reference internal" href="#module-dnf.yum.update_md" id="id16">dnf.yum.update_md</a></li>
 </ul>
 </li>
 </ul>
@@ -86,138 +84,8 @@
 <div class="section" id="module-dnf.yum">
 <span id="dnf-yum"></span><h2><a class="toc-backref" href="#id2">dnf.yum</a><a class="headerlink" href="#module-dnf.yum" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-dnf.yum.callbacks">
-<span id="dnf-yum-callbacks"></span><h2><a class="toc-backref" href="#id3">dnf.yum.callbacks</a><a class="headerlink" href="#module-dnf.yum.callbacks" title="Permalink to this headline">¶</a></h2>
-<p>Classes for handling various callbacks.</p>
-<dl class="class">
-<dt id="dnf.yum.callbacks.DownloadBaseCallback">
-<em class="property">class </em><tt class="descclassname">dnf.yum.callbacks.</tt><tt class="descname">DownloadBaseCallback</tt><a class="headerlink" href="#dnf.yum.callbacks.DownloadBaseCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a base class that can be extended to implement a custom
-download progress handler to be used with
-<tt class="xref py py-func docutils literal"><span class="pre">Base.repos.setProgressBar()</span></tt>.</p>
-<p>Example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">callbacks</span> <span class="kn">import</span> <span class="n">DownloadBaseCallback</span>
-
-<span class="k">class</span> <span class="nc">MyDownloadCallback</span><span class="p">(</span>  <span class="n">DownloadBaseCallback</span> <span class="p">):</span>
-
-    <span class="k">def</span> <span class="nf">updateProgress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">frac</span><span class="p">,</span><span class="n">fread</span><span class="p">,</span><span class="n">ftime</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Update the progressbar</span>
-<span class="sd">        @param name: filename</span>
-<span class="sd">        @param frac: Progress fracment (0 -&gt; 1)</span>
-<span class="sd">        @param fread: formated string containing BytesRead</span>
-<span class="sd">        @param ftime : formated string containing remaining or elapsed time</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">pct</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="n">frac</span><span class="o">*</span><span class="mi">100</span> <span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot; </span><span class="si">%s</span><span class="s"> : </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">pct</span><span class="p">))</span>
-
-
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">my</span> <span class="o">=</span> <span class="n">Base</span><span class="p">()</span>
-    <span class="n">my</span><span class="o">.</span><span class="n">doConfigSetup</span><span class="p">()</span>
-    <span class="n">dnlcb</span> <span class="o">=</span> <span class="n">MyDownloadCallback</span><span class="p">()</span>
-    <span class="n">my</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">setProgressBar</span><span class="p">(</span> <span class="n">dnlcb</span> <span class="p">)</span>
-    <span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">my</span><span class="o">.</span><span class="n">pkgSack</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="dnf.yum.callbacks.DownloadBaseCallback.update">
-<tt class="descname">update</tt><big>(</big><em>amount_read</em>, <em>now=None</em><big>)</big><a class="headerlink" href="#dnf.yum.callbacks.DownloadBaseCallback.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the status bar.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>amount_read</strong> &#8211; the amount of data, in bytes, that has been read</li>
-<li><strong>now</strong> &#8211; the current time in seconds since the epoch.  If
-<em>now</em> is not given, the output of <tt class="xref py py-func docutils literal"><span class="pre">time.time()</span></tt> will
-be used.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.callbacks.DownloadBaseCallback.updateProgress">
-<tt class="descname">updateProgress</tt><big>(</big><em>name</em>, <em>frac</em>, <em>fread</em>, <em>ftime</em><big>)</big><a class="headerlink" href="#dnf.yum.callbacks.DownloadBaseCallback.updateProgress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the progressbar.  This method should be overridden
-by subclasses to implement the handler.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; the name of the filed being downloaded</li>
-<li><strong>frac</strong> &#8211; number between 0 and 1 representing the fraction
-fraction of the file that has been downloaded</li>
-<li><strong>fread</strong> &#8211; formatted string containing the number of bytes read</li>
-<li><strong>ftime</strong> &#8211; formatted string containing remaining or elapsed time</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.callbacks.ProcessTransBaseCallback">
-<em class="property">class </em><tt class="descclassname">dnf.yum.callbacks.</tt><tt class="descname">ProcessTransBaseCallback</tt><a class="headerlink" href="#dnf.yum.callbacks.ProcessTransBaseCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to handle callbacks from
-<tt class="xref py py-func docutils literal"><span class="pre">Base.processTransaction()</span></tt>.</p>
-<dl class="method">
-<dt id="dnf.yum.callbacks.ProcessTransBaseCallback.event">
-<tt class="descname">event</tt><big>(</big><em>state</em>, <em>data=None</em><big>)</big><a class="headerlink" href="#dnf.yum.callbacks.ProcessTransBaseCallback.event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle an event by logging it.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>state</strong> &#8211; a number indicating the type of callback</li>
-<li><strong>data</strong> &#8211; data associated with the callback</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.callbacks.ProcessTransNoOutputCallback">
-<em class="property">class </em><tt class="descclassname">dnf.yum.callbacks.</tt><tt class="descname">ProcessTransNoOutputCallback</tt><a class="headerlink" href="#dnf.yum.callbacks.ProcessTransNoOutputCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to handle callbacks from
-<tt class="xref py py-func docutils literal"><span class="pre">Base.processTransaction()</span></tt>, without logging them.</p>
-<dl class="method">
-<dt id="dnf.yum.callbacks.ProcessTransNoOutputCallback.event">
-<tt class="descname">event</tt><big>(</big><em>state</em>, <em>data=None</em><big>)</big><a class="headerlink" href="#dnf.yum.callbacks.ProcessTransNoOutputCallback.event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle an event.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>state</strong> &#8211; a number indicating the type of callback</li>
-<li><strong>data</strong> &#8211; data associated with the callback</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-dnf.yum.comps">
-<span id="dnf-yum-comps"></span><h2><a class="toc-backref" href="#id4">dnf.yum.comps</a><a class="headerlink" href="#module-dnf.yum.comps" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-comps"></span><h2><a class="toc-backref" href="#id3">dnf.yum.comps</a><a class="headerlink" href="#module-dnf.yum.comps" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.comps.Category">
 <em class="property">class </em><tt class="descclassname">dnf.yum.comps.</tt><tt class="descname">Category</tt><big>(</big><em>elem=None</em><big>)</big><a class="headerlink" href="#dnf.yum.comps.Category" title="Permalink to this definition">¶</a></dt>
@@ -274,7 +142,7 @@ fraction of the file that has been downloaded</li>
 
 </div>
 <div class="section" id="module-dnf.yum.config">
-<span id="dnf-yum-config"></span><h2><a class="toc-backref" href="#id5">dnf.yum.config</a><a class="headerlink" href="#module-dnf.yum.config" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-config"></span><h2><a class="toc-backref" href="#id4">dnf.yum.config</a><a class="headerlink" href="#module-dnf.yum.config" title="Permalink to this headline">¶</a></h2>
 <p>Configuration parser and default values for yum.</p>
 <dl class="class">
 <dt id="dnf.yum.config.BaseConfig">
@@ -668,11 +536,11 @@ options will be written out</li>
 
 </div>
 <div class="section" id="module-dnf.yum.constants">
-<span id="dnf-constants"></span><h2><a class="toc-backref" href="#id6">dnf.constants</a><a class="headerlink" href="#module-dnf.yum.constants" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-constants"></span><h2><a class="toc-backref" href="#id5">dnf.constants</a><a class="headerlink" href="#module-dnf.yum.constants" title="Permalink to this headline">¶</a></h2>
 <p>Yum constants. Usually dealing with rpm magic numbers.</p>
 </div>
 <div class="section" id="module-dnf.yum.history">
-<span id="dnf-yum-history"></span><h2><a class="toc-backref" href="#id7">dnf.yum.history</a><a class="headerlink" href="#module-dnf.yum.history" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-history"></span><h2><a class="toc-backref" href="#id6">dnf.yum.history</a><a class="headerlink" href="#module-dnf.yum.history" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.history.YumHistory">
 <em class="property">class </em><tt class="descclassname">dnf.yum.history.</tt><tt class="descname">YumHistory</tt><big>(</big><em>db_path</em>, <em>yumdb</em>, <em>root='/'</em>, <em>releasever=None</em><big>)</big><a class="headerlink" href="#dnf.yum.history.YumHistory" title="Permalink to this definition">¶</a></dt>
@@ -735,7 +603,7 @@ transaction.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.i18n">
-<span id="dnf-yum-i18n"></span><h2><a class="toc-backref" href="#id8">dnf.yum.i18n</a><a class="headerlink" href="#module-dnf.yum.i18n" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-i18n"></span><h2><a class="toc-backref" href="#id7">dnf.yum.i18n</a><a class="headerlink" href="#module-dnf.yum.i18n" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="dnf.yum.i18n.dummyP_wrapper">
 <tt class="descclassname">dnf.yum.i18n.</tt><tt class="descname">dummyP_wrapper</tt><big>(</big><em>str1</em>, <em>str2</em>, <em>n</em><big>)</big><a class="headerlink" href="#dnf.yum.i18n.dummyP_wrapper" title="Permalink to this definition">¶</a></dt>
@@ -845,7 +713,7 @@ highlighting.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.misc">
-<span id="dnf-yum-misc"></span><h2><a class="toc-backref" href="#id9">dnf.yum.misc</a><a class="headerlink" href="#module-dnf.yum.misc" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-misc"></span><h2><a class="toc-backref" href="#id8">dnf.yum.misc</a><a class="headerlink" href="#module-dnf.yum.misc" title="Permalink to this headline">¶</a></h2>
 <p>Assorted utility functions for yum.</p>
 <dl class="class">
 <dt id="dnf.yum.misc.AutoFileChecksums">
@@ -1191,7 +1059,7 @@ difference between &#8220;rm -f&#8221; and plain &#8220;rm&#8221;.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.packages">
-<span id="dnf-yum-packages"></span><h2><a class="toc-backref" href="#id10">dnf.yum.packages</a><a class="headerlink" href="#module-dnf.yum.packages" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-packages"></span><h2><a class="toc-backref" href="#id9">dnf.yum.packages</a><a class="headerlink" href="#module-dnf.yum.packages" title="Permalink to this headline">¶</a></h2>
 <p>Classes and functions dealing with rpm package representations.</p>
 <dl class="class">
 <dt id="dnf.yum.packages.FakeRepository">
@@ -1311,7 +1179,7 @@ exactly. Defaults to not matching.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.parser">
-<span id="dnf-yum-parser"></span><h2><a class="toc-backref" href="#id11">dnf.yum.parser</a><a class="headerlink" href="#module-dnf.yum.parser" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-parser"></span><h2><a class="toc-backref" href="#id10">dnf.yum.parser</a><a class="headerlink" href="#module-dnf.yum.parser" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.parser.ConfigPreProcessor">
 <em class="property">class </em><tt class="descclassname">dnf.yum.parser.</tt><tt class="descname">ConfigPreProcessor</tt><big>(</big><em>configfile</em>, <em>vars=None</em><big>)</big><a class="headerlink" href="#dnf.yum.parser.ConfigPreProcessor" title="Permalink to this definition">¶</a></dt>
@@ -1381,7 +1249,7 @@ arg to __init__) FLO returns EOF.</p>
 
 </div>
 <div class="section" id="module-dnf.yum.pgpmsg">
-<span id="dnf-yum-pgpmsg"></span><h2><a class="toc-backref" href="#id12">dnf.yum.pgpmsg</a><a class="headerlink" href="#module-dnf.yum.pgpmsg" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-pgpmsg"></span><h2><a class="toc-backref" href="#id11">dnf.yum.pgpmsg</a><a class="headerlink" href="#module-dnf.yum.pgpmsg" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="dnf.yum.pgpmsg.decode_msg">
 <tt class="descclassname">dnf.yum.pgpmsg.</tt><tt class="descname">decode_msg</tt><big>(</big><em>msg</em>, <em>multi=False</em><big>)</big><a class="headerlink" href="#dnf.yum.pgpmsg.decode_msg" title="Permalink to this definition">¶</a></dt>
@@ -1455,7 +1323,7 @@ and new_idx is the index of the next element in the message</p>
 
 </div>
 <div class="section" id="module-dnf.yum.plugins">
-<span id="dnf-yum-plugins"></span><h2><a class="toc-backref" href="#id13">dnf.yum.plugins</a><a class="headerlink" href="#module-dnf.yum.plugins" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-plugins"></span><h2><a class="toc-backref" href="#id12">dnf.yum.plugins</a><a class="headerlink" href="#module-dnf.yum.plugins" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.plugins.ArgsPluginConduit">
 <em class="property">class </em><tt class="descclassname">dnf.yum.plugins.</tt><tt class="descname">ArgsPluginConduit</tt><big>(</big><em>parent</em>, <em>base</em>, <em>conf</em>, <em>args</em><big>)</big><a class="headerlink" href="#dnf.yum.plugins.ArgsPluginConduit" title="Permalink to this definition">¶</a></dt>
@@ -2056,7 +1924,7 @@ line options</li>
 
 </div>
 <div class="section" id="module-dnf.yum.rpmsack">
-<span id="dnf-yum-rpmsack"></span><h2><a class="toc-backref" href="#id14">dnf.yum.rpmsack</a><a class="headerlink" href="#module-dnf.yum.rpmsack" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-rpmsack"></span><h2><a class="toc-backref" href="#id13">dnf.yum.rpmsack</a><a class="headerlink" href="#module-dnf.yum.rpmsack" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.rpmsack.AdditionalPkgDB">
 <em class="property">class </em><tt class="descclassname">dnf.yum.rpmsack.</tt><tt class="descname">AdditionalPkgDB</tt><big>(</big><em>db_path</em><big>)</big><a class="headerlink" href="#dnf.yum.rpmsack.AdditionalPkgDB" title="Permalink to this definition">¶</a></dt>
@@ -2078,7 +1946,7 @@ line options</li>
 
 </div>
 <div class="section" id="module-dnf.yum.rpmtrans">
-<span id="dnf-yum-rpmtrans"></span><h2><a class="toc-backref" href="#id15">dnf.yum.rpmtrans</a><a class="headerlink" href="#module-dnf.yum.rpmtrans" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-rpmtrans"></span><h2><a class="toc-backref" href="#id14">dnf.yum.rpmtrans</a><a class="headerlink" href="#module-dnf.yum.rpmtrans" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="dnf.yum.rpmtrans.RPMBaseCallback">
 <em class="property">class </em><tt class="descclassname">dnf.yum.rpmtrans.</tt><tt class="descname">RPMBaseCallback</tt><a class="headerlink" href="#dnf.yum.rpmtrans.RPMBaseCallback" title="Permalink to this definition">¶</a></dt>
@@ -2114,17 +1982,11 @@ processed</li>
 output (if any).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.yum.rpmtrans.RPMBaseCallback.verify_txmbr">
-<tt class="descname">verify_txmbr</tt><big>(</big><em>base</em>, <em>txmbr</em>, <em>count</em><big>)</big><a class="headerlink" href="#dnf.yum.rpmtrans.RPMBaseCallback.verify_txmbr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Callback for post transaction when we are in verifyTransaction().</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
 <div class="section" id="module-dnf.yum.sqlutils">
-<span id="dnf-yum-sqlutils"></span><h2><a class="toc-backref" href="#id16">dnf.yum.sqlutils</a><a class="headerlink" href="#module-dnf.yum.sqlutils" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-sqlutils"></span><h2><a class="toc-backref" href="#id15">dnf.yum.sqlutils</a><a class="headerlink" href="#module-dnf.yum.sqlutils" title="Permalink to this headline">¶</a></h2>
 <p>utility functions to handle differences in pysqlite versions
 These are from Wichert Akkerman &lt;<a class="reference external" href="mailto:wichert&#37;&#52;&#48;deephackmode&#46;org">wichert<span>&#64;</span>deephackmode<span>&#46;</span>org</a>&gt;&#8217;s python-dhm
 <a class="reference external" href="http://www.wiggy.net/code/python-dhm">http://www.wiggy.net/code/python-dhm</a></p>
@@ -2223,114 +2085,8 @@ not possible).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-dnf.yum.transactioninfo">
-<span id="dnf-yum-transactioninfo"></span><h2><a class="toc-backref" href="#id17">dnf.yum.transactioninfo</a><a class="headerlink" href="#module-dnf.yum.transactioninfo" title="Permalink to this headline">¶</a></h2>
-<p>Classes and functions for manipulating a transaction to be passed
-to rpm.</p>
-<dl class="class">
-<dt id="dnf.yum.transactioninfo.TransactionData">
-<em class="property">class </em><tt class="descclassname">dnf.yum.transactioninfo.</tt><tt class="descname">TransactionData</tt><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Data Structure designed to hold information on a yum Transaction Set</p>
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.add">
-<tt class="descname">add</tt><big>(</big><em>txmember</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>add a package to the transaction</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.addDowngrade">
-<tt class="descname">addDowngrade</tt><big>(</big><em>po</em>, <em>oldpo=None</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.addDowngrade" title="Permalink to this definition">¶</a></dt>
-<dd><p>adds a package as an downgrade takes a packages object and returns
-a pair of TransactionMember Objects</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.addErase">
-<tt class="descname">addErase</tt><big>(</big><em>po</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.addErase" title="Permalink to this definition">¶</a></dt>
-<dd><p>adds a package as an erasure
-takes a packages object and returns a TransactionMember Object</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.addInstall">
-<tt class="descname">addInstall</tt><big>(</big><em>po</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.addInstall" title="Permalink to this definition">¶</a></dt>
-<dd><p>adds a package as an install but in mode &#8216;u&#8217; to the ts
-takes a packages object and returns a TransactionMember Object</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.addUpdate">
-<tt class="descname">addUpdate</tt><big>(</big><em>po</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.addUpdate" title="Permalink to this definition">¶</a></dt>
-<dd><p>adds a package as an update
-takes a packages object and returns a TransactionMember Object</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.deselect">
-<tt class="descname">deselect</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.deselect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove these packages from the transaction. This is more user
-orientated than .remove(). Used from kickstart/install -blah.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.exists">
-<tt class="descname">exists</tt><big>(</big><em>pkgtup</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.exists" title="Permalink to this definition">¶</a></dt>
-<dd><p>tells if the pkg is in the class</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.getMembers">
-<tt class="descname">getMembers</tt><big>(</big><em>pkgtup=None</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.getMembers" title="Permalink to this definition">¶</a></dt>
-<dd><p>takes an optional package tuple and returns all transaction members
-matching, no pkgtup means it returns all transaction members</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.getMode">
-<tt class="descname">getMode</tt><big>(</big><em>name=None</em>, <em>arch=None</em>, <em>epoch=None</em>, <em>ver=None</em>, <em>rel=None</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.getMode" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the mode of the first match from the transaction set,
-otherwise, returns None</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.makelists">
-<tt class="descname">makelists</tt><big>(</big><em>include_reinstall=False</em>, <em>include_downgrade=False</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.makelists" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns lists of transaction Member objects based on mode:
-updated, installed, erased, obsoleted, depupdated, depinstalled
-deperased</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.matchNaevr">
-<tt class="descname">matchNaevr</tt><big>(</big><em>name=None</em>, <em>arch=None</em>, <em>epoch=None</em>, <em>ver=None</em>, <em>rel=None</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.matchNaevr" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns the list of packages matching the args above</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.remove">
-<tt class="descname">remove</tt><big>(</big><em>pkgtup</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.remove" title="Permalink to this definition">¶</a></dt>
-<dd><p>remove a package from the transaction</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.transactioninfo.TransactionData.rpm_limitations">
-<tt class="descname">rpm_limitations</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionData.rpm_limitations" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensures all the members can be passed to rpm as they are to pefrom
-the transaction.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.transactioninfo.TransactionMember">
-<em class="property">class </em><tt class="descclassname">dnf.yum.transactioninfo.</tt><tt class="descname">TransactionMember</tt><big>(</big><em>po</em><big>)</big><a class="headerlink" href="#dnf.yum.transactioninfo.TransactionMember" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to describe a Transaction Member (a pkg to be installed/
-updated/erased).</p>
-</dd></dl>
-
-</div>
 <div class="section" id="module-dnf.yum.update_md">
-<span id="dnf-yum-update-md"></span><h2><a class="toc-backref" href="#id18">dnf.yum.update_md</a><a class="headerlink" href="#module-dnf.yum.update_md" title="Permalink to this headline">¶</a></h2>
+<span id="dnf-yum-update-md"></span><h2><a class="toc-backref" href="#id16">dnf.yum.update_md</a><a class="headerlink" href="#module-dnf.yum.update_md" title="Permalink to this headline">¶</a></h2>
 <p>Update metadata (updateinfo.xml) parsing.</p>
 <dl class="class">
 <dt id="dnf.yum.update_md.UpdateMetadata">
@@ -2429,7 +2185,6 @@ or tuple.</p>
   <ul>
 <li><a class="reference internal" href="#">dnf.yum Reference</a><ul>
 <li><a class="reference internal" href="#module-dnf.yum">dnf.yum</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.callbacks">dnf.yum.callbacks</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.comps">dnf.yum.comps</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.config">dnf.yum.config</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.constants">dnf.constants</a></li>
@@ -2443,7 +2198,6 @@ or tuple.</p>
 <li><a class="reference internal" href="#module-dnf.yum.rpmsack">dnf.yum.rpmsack</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.rpmtrans">dnf.yum.rpmtrans</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.sqlutils">dnf.yum.sqlutils</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.transactioninfo">dnf.yum.transactioninfo</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.update_md">dnf.yum.update_md</a></li>
 </ul>
 </li>
@@ -2492,7 +2246,7 @@ or tuple.</p>
         <li class="right" >
           <a href="api_dnf.html" title="dnf Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

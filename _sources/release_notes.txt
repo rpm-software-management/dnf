@@ -90,3 +90,25 @@ The follwoing bugfixes are included in 0.3.4:
 * :rhbug:`887317`
 * :rhbug:`914919`
 * :rhbug:`922667`
+
+===================
+0.3.5 Release Notes
+===================
+
+Besides few fixed bugs this version should not present any differences for the
+user. On the inside, the transaction managing mechanisms have changed
+drastically, bringing code simplification, better maintainability and better
+testability.
+
+In Fedora, there is a change in the spec file effectively preventing the
+makecache timer from running *immediatelly after installation*. The timer
+service is still enabled by default, but unless the user starts it manually with
+``systemctl start dnf-makecache.timer`` it will not run until after the first
+reboot. This is in alignment with Fedora packaging best practices.
+
+The following bugfixes are included in 0.3.5:
+
+* :rhbug:`958452`
+* :rhbug:`959990`
+* :rhbug:`961549`
+* :rhbug:`962188`
