@@ -28,21 +28,21 @@ class List(support.TestCase):
 
     def test_list_updates(self):
         yumbase = support.MockYumBase("updates", "main")
-        ypl = yumbase.doPackageLists('updates')
+        ypl = yumbase.doPackageLists('upgrades')
         self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "pepper")
-        ypl = yumbase.doPackageLists('updates', ["pepper"])
+        ypl = yumbase.doPackageLists('upgrades', ["pepper"])
         self.assertEqual(len(ypl.updates), 1)
-        ypl = yumbase.doPackageLists('updates', ["mrkite"])
+        ypl = yumbase.doPackageLists('upgrades', ["mrkite"])
         self.assertEqual(len(ypl.updates), 0)
 
-        ypl = yumbase.doPackageLists('updates', ["hole"])
+        ypl = yumbase.doPackageLists('upgrades', ["hole"])
         self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
-        yumbase = support.MockYumBase("updates", "main")
-        ypl = yumbase.doPackageLists('updates', ['pepper', 'hole'])
+        yumbase = support.MockYumBase('updates', "main")
+        ypl = yumbase.doPackageLists('upgrades', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 3)
 
 class TestListAllRepos(support.TestCase):

@@ -628,13 +628,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
              available = list of packageObjects
              installed = list of packageObjects
-             updates = tuples of packageObjects (updating, installed)
+             upgrades = tuples of packageObjects (updating, installed)
              extras = list of packageObjects
              obsoletes = tuples of packageObjects (obsoleting, installed)
              recent = list of packageObjects
         """
-        special = ['available', 'installed', 'all', 'extras', 'updates', 'recent',
-                   'obsoletes']
+        special = ['available', 'installed', 'all', 'extras', 'upgrades',
+                   'recent', 'obsoletes']
 
         pkgnarrow = 'all'
         done_hidden_available = False
@@ -645,6 +645,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 extcmds.pop(0)
             elif installed_available and extcmds[0] == 'available':
                 done_hidden_installed = True
+                extcmds.pop(0)
+            elif extcmds[0] == 'updates':
+                pkgnarrow = 'upgrades'
                 extcmds.pop(0)
             elif extcmds[0] in special:
                 pkgnarrow = extcmds.pop(0)

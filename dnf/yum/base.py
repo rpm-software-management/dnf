@@ -1326,7 +1326,7 @@ class Base(object):
 
              available = list of packageObjects
              installed = list of packageObjects
-             updates = tuples of packageObjects (updating, installed)
+             upgrades = tuples of packageObjects (updating, installed)
              extras = list of packageObjects
              obsoletes = tuples of packageObjects (obsoleting, installed)
              recent = list of packageObjects
@@ -1396,7 +1396,7 @@ class Base(object):
                         old_available.append(pkg)
 
         # produce the updates list of tuples
-        elif pkgnarrow == 'updates':
+        elif pkgnarrow == 'upgrades':
             updates = q.upgrades().run()
 
         # installed only

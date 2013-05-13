@@ -271,6 +271,9 @@ result to only those packages matching it.
     List the packages installed on the system that are obsoleted by packages in
     any known repository.
 
+``dnf [options] list upgrades [<package-name-specs>...]``
+    List upgrades available for the installed packages.
+
 -----------------
 Makecache Command
 -----------------
