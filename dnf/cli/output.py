@@ -1292,7 +1292,7 @@ class YumOutput:
                 print(self.fmtKeyValFill(key, to_unicode(item)))
             else:
                 print(key % item)
-        print('\n\n')
+        print()
 
     def matchcallback_verbose(self, po, values, matchfor=None):
         """Output search/provides type callback matches.  This will
