@@ -82,40 +82,41 @@ def _create_filehandler(logfile):
 def _paint_mark(logger):
     logger.log(INFO, dnf.const.LOG_MARKER)
 
-def setup(verbose_level, error_level, logdir):
-    logging.addLevelName(SUBDEBUG, "SUBDEBUG")
-    logger_dnf = logging.getLogger("dnf")
-    logger_dnf.setLevel(SUBDEBUG)
+class Logging(object):
+    def setup(self, verbose_level, error_level, logdir):
+        logging.addLevelName(SUBDEBUG, "SUBDEBUG")
+        logger_dnf = logging.getLogger("dnf")
+        logger_dnf.setLevel(SUBDEBUG)
 
-    # setup file logger
-    logfile = os.path.join(logdir, dnf.const.LOG)
-    handler = _create_filehandler(logfile)
-    logger_dnf.addHandler(handler)
-    # stdout not setup yet, put the marker in the file now:
-    _paint_mark(logger_dnf)
+        # setup file logger
+        logfile = os.path.join(logdir, dnf.const.LOG)
+        handler = _create_filehandler(logfile)
+        logger_dnf.addHandler(handler)
+        # stdout not setup yet, put the marker in the file now:
+        _paint_mark(logger_dnf)
 
-    # setup stdout
-    stdout = logging.StreamHandler(sys.stdout)
-    stdout.setLevel(verbose_level)
-    stdout.addFilter(MaxLevelFilter(logging.WARNING))
-    logger_dnf.addHandler(stdout)
+        # setup stdout
+        stdout = logging.StreamHandler(sys.stdout)
+        stdout.setLevel(verbose_level)
+        stdout.addFilter(MaxLevelFilter(logging.WARNING))
+        logger_dnf.addHandler(stdout)
 
-    # setup stderr
-    stderr = logging.StreamHandler(sys.stderr)
-    stderr.setLevel(error_level)
-    logger_dnf.addHandler(stderr)
+        # setup stderr
+        stderr = logging.StreamHandler(sys.stderr)
+        stderr.setLevel(error_level)
+        logger_dnf.addHandler(stderr)
 
-    # setup RPM callbacks logger
-    logger_rpm = logging.getLogger("dnf.rpm")
-    logger_rpm.propagate = False
-    logger_rpm.setLevel(SUBDEBUG)
-    logfile = os.path.join(logdir, dnf.const.LOG_RPM)
-    handler = _create_filehandler(logfile)
-    logger_rpm.addHandler(handler)
-    _paint_mark(logger_rpm)
+        # setup RPM callbacks logger
+        logger_rpm = logging.getLogger("dnf.rpm")
+        logger_rpm.propagate = False
+        logger_rpm.setLevel(SUBDEBUG)
+        logfile = os.path.join(logdir, dnf.const.LOG_RPM)
+        handler = _create_filehandler(logfile)
+        logger_rpm.addHandler(handler)
+        _paint_mark(logger_rpm)
 
-def setup_from_dnf_conf(conf):
-    verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
-    error_level_r = _cfg_err_val2level(conf.errorlevel)
-    logdir = conf.logdir
-    return setup(verbose_level_r, error_level_r, logdir)
+    def setup_from_dnf_conf(self, conf):
+        verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
+        error_level_r = _cfg_err_val2level(conf.errorlevel)
+        logdir = conf.logdir
+        return self.setup(verbose_level_r, error_level_r, logdir)

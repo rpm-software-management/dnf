@@ -52,6 +52,7 @@ class TestLogging(support.TestCase):
 
     def setUp(self):
         self.logdir = tempfile.mkdtemp(prefix="dnf-logtest-")
+        self.logging = dnf.logging.Logging()
 
     def tearDown(self):
         drop_all_handlers()
@@ -74,7 +75,7 @@ class TestLogging(support.TestCase):
     def test_setup(self):
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
-            dnf.logging.setup(logging.INFO, logging.ERROR, self.logdir)
+            self.logging.setup(logging.INFO, logging.ERROR, self.logdir)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
         self.assertEqual("e\n", stderr.getvalue())
@@ -82,27 +83,27 @@ class TestLogging(support.TestCase):
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
-            dnf.logging.setup(logging.DEBUG, logging.WARNING, self.logdir)
+            self.logging.setup(logging.DEBUG, logging.WARNING, self.logdir)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
         self.assertEqual("w\ne\n", stderr.getvalue())
 
-    @mock.patch('dnf.logging.setup')
+    @mock.patch('dnf.logging.Logging.setup')
     def test_setup_from_dnf_conf(self, setup_m):
         conf = mock.Mock(debuglevel=2, errorlevel=2, logdir=self.logdir)
-        dnf.logging.setup_from_dnf_conf(conf)
+        self.logging.setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
                                                       self.logdir))
         conf = mock.Mock(debuglevel=6, errorlevel=6, logdir=self.logdir)
-        dnf.logging.setup_from_dnf_conf(conf)
+        self.logging.setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
                                                       self.logdir))
 
     def test_file_logging(self):
         # log nothing to the console:
-        dnf.logging.setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
+        self.logging.setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
                           self.logdir)
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
@@ -120,7 +121,7 @@ class TestLogging(support.TestCase):
 
     def test_rpm_logging(self):
         # log everything to the console:
-        dnf.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                           self.logdir)
         logger = logging.getLogger("dnf.rpm")
         with support.patch_std_streams() as (stdout, stderr):
