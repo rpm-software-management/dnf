@@ -77,7 +77,6 @@ class Base(object):
         self._conf = config.YumConf()
         self._conf.uid = 0
         self._goal = None
-        self._logging = dnf.logging.Logging()
         self._sack = None
         self._transaction = None
         self._ts = None
@@ -87,6 +86,7 @@ class Base(object):
         self._tags = None
         self._ts_save_file = None
         self.logger = logging.getLogger("dnf")
+        self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self.repo_setopts = {} # since we have to use repo_setopts in base and
                                # not in cli - set it up as empty so no one
@@ -228,7 +228,7 @@ class Base(object):
         if overrides is not None:
             self._conf.override(overrides)
 
-        self._logging.setup_from_dnf_conf(self.conf)
+        self.logging.setup_from_dnf_conf(self.conf)
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
         self._conf.uid = os.geteuid()

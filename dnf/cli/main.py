@@ -80,6 +80,7 @@ def main(args):
 
     # our core object for the cli
     base = dnf.cli.cli.YumBaseCli()
+    base.logging.presetup()
     cli = dnf.cli.cli.Cli(base)
 
     # do our cli parsing and config file setup

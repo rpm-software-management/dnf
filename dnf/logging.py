@@ -33,6 +33,15 @@ INFO          = logging.INFO
 DEBUG         = logging.DEBUG
 SUBDEBUG      = 6
 
+def only_once(fn):
+    """Method decorator turning the method into noop on second or later calls."""
+    def noop(*args, **kwargs):
+        pass
+    def swan_song(self, *args, **kwargs):
+        fn(self, *args, **kwargs)
+        setattr(self, fn.__name__, noop)
+    return swan_song
+
 class MaxLevelFilter(object):
     def __init__(self, max_level):
         self.max_level = max_level
@@ -83,28 +92,45 @@ def _paint_mark(logger):
     logger.log(INFO, dnf.const.LOG_MARKER)
 
 class Logging(object):
-    def setup(self, verbose_level, error_level, logdir):
+    def __init__(self):
+        self.stdout_handler = self.stderr_handler = None
+
+    @only_once
+    def presetup(self):
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(SUBDEBUG)
+
+        # setup stdout
+        stdout = logging.StreamHandler(sys.stdout)
+        stdout.setLevel(INFO)
+        stdout.addFilter(MaxLevelFilter(logging.WARNING))
+        logger_dnf.addHandler(stdout)
+        self.stdout_handler = stdout
+
+        # setup stderr
+        stderr = logging.StreamHandler(sys.stderr)
+        stderr.setLevel(WARNING)
+        logger_dnf.addHandler(stderr)
+        self.stderr_handler = stderr
+
+    @only_once
+    def setup(self, verbose_level, error_level, logdir):
+        self.presetup()
+        logger_dnf = logging.getLogger("dnf")
 
         # setup file logger
         logfile = os.path.join(logdir, dnf.const.LOG)
         handler = _create_filehandler(logfile)
         logger_dnf.addHandler(handler)
-        # stdout not setup yet, put the marker in the file now:
+        # temporarily turn off stdout/stderr handlers:
+        self.stdout_handler.setLevel(SUPERCRITICAL)
+        self.stderr_handler.setLevel(SUPERCRITICAL)
+        # put the marker in the file now:
         _paint_mark(logger_dnf)
-
-        # setup stdout
-        stdout = logging.StreamHandler(sys.stdout)
-        stdout.setLevel(verbose_level)
-        stdout.addFilter(MaxLevelFilter(logging.WARNING))
-        logger_dnf.addHandler(stdout)
-
-        # setup stderr
-        stderr = logging.StreamHandler(sys.stderr)
-        stderr.setLevel(error_level)
-        logger_dnf.addHandler(stderr)
+        # bring std handlers to the preferred level
+        self.stdout_handler.setLevel(verbose_level)
+        self.stderr_handler.setLevel(error_level)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")

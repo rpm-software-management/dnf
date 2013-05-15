@@ -136,3 +136,15 @@ class TestLogging(support.TestCase):
                         map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(msgs, [dnf.const.LOG_MARKER,
                                         'rpm transaction happens.'])
+
+    def test_setup_only_once(self):
+        logger = logging.getLogger("dnf")
+        self.assertLength(logger.handlers, 0)
+        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+                           self.logdir)
+        cnt = len(logger.handlers)
+        self.assertGreater(cnt, 0)
+        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+                           self.logdir)
+        # no new handlers
+        self.assertEqual(cnt, len(logger.handlers))
