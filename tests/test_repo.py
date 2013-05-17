@@ -97,6 +97,9 @@ class RepoTest(support.TestCase):
         path = self.repo.get_package(pkg)
         self.assertFile(path)
 
+        pkg = support.MockPackage("magical-4-4.noarch", repo=self.repo)
+        self.assertRaises(dnf.exceptions.RepoError, self.repo.get_package, pkg)
+
     def test_gpgcheck(self):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())

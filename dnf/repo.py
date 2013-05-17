@@ -320,9 +320,13 @@ class Repo(dnf.yum.config.RepoConf):
         if handle.progresscb:
             text = text if text is not None else pkg.location
             self._progress.begin(text)
-        handle.download(pkg.location)
-        if handle.progresscb:
-            self._progress.end()
+        try:
+            handle.download(pkg.location)
+        except librepo.LibrepoException as e:
+            raise dnf.exceptions.RepoError(self._exc2msg(e))
+        finally:
+            if handle.progresscb:
+                self._progress.end()
         return pkg.localPkg()
 
     def load(self):
