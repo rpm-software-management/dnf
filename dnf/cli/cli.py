@@ -970,7 +970,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.logger.error(msg)
                 continue
             groups.extend(matched)
-        total_cnt = reduce(operator.add, map(self.select_group, groups))
+        total_cnt = reduce(operator.add, map(self.select_group, groups), 0)
         if not total_cnt:
             return 0, [_('No packages in any requested group available '\
                              'to install or upgrade')]
