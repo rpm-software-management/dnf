@@ -453,24 +453,22 @@ class LibrepoCallbackAdaptor(TextMeter):
 
     def __init__(self, fo=sys.stderr):
         TextMeter.__init__(self, fo=fo)
-        self._running = False
-        self._last_downloaded = 0.0
 
     def begin(self, text):
         self.text = text
+        self._total = None
+        self._last_downloaded = 0
 
     def end(self):
-        if not self._running:
-            return
-        self._running = False
-        TextMeter.end(self, self._last_downloaded)
+        if self._total:
+            TextMeter.end(self, self._last_downloaded)
 
     def librepo_cb(self, data, total_to_download, downloaded):
-        if self._running is False:
+        if self._total != total_to_download:
             # happens early in the download and confuses the measuring:
-            if total_to_download == 0.0:
+            if not total_to_download:
                 return
-            self._running = True
+            self._total = total_to_download
             self.start(size=total_to_download, text=self.text)
         self._last_downloaded = downloaded
         self.update(downloaded)
