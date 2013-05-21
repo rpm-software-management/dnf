@@ -1211,7 +1211,7 @@ class Base(object):
         transaction from the yum cache.
         """
         filelist = []
-        for pkg in [tsi.installed for tsi in self.transaction]:
+        for pkg in self.transaction.install_set:
             if pkg is None:
                 continue
             if pkg.from_system or pkg.from_cmdline:
@@ -1221,8 +1221,9 @@ class Base(object):
             repo = self.repos[pkg.repoid]
             for u in repo.baseurl:
                 if u.startswith("file:"):
-                    continue
-            filelist.append(pkg.localPkg())
+                    break
+            else:
+                filelist.append(pkg.localPkg())
 
         # now remove them
         for fn in filelist:

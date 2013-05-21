@@ -210,12 +210,15 @@ class FakeConf(object):
 # specialized test cases
 
 class TestCase(unittest.TestCase):
-    def assertLength(self, collection, length):
-        return self.assertEqual(len(collection), length)
-
     def assertFile(self, path):
         """Assert the given path is a file."""
         return self.assertTrue(os.path.isfile(path))
+
+    def assertLength(self, collection, length):
+        return self.assertEqual(len(collection), length)
+
+    def assertStartsWith(self, string, what):
+        return self.assertTrue(string.startswith(what))
 
 class ResultTestCase(TestCase):
     def assertResult(self, base, pkgs):

@@ -93,9 +93,19 @@ class RepoTest(support.TestCase):
         self.assertTrue(self.repo.load())
 
     def test_get_package(self):
+        """For a local repo, get_package() just returns the current location."""
         pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
         path = self.repo.get_package(pkg)
         self.assertFile(path)
+        self.assertStartsWith(path, REPOS)
+
+    # twist Repo to think it's remote:
+    @mock.patch('dnf.repo.Repo._local_origin', False)
+    def test_get_package_remote(self):
+        pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
+        path = self.repo.get_package(pkg)
+        self.assertFile(path)
+        self.assertStartsWith(path, self.TMP_CACHEDIR)
 
         pkg = support.MockPackage("magical-4-4.noarch", repo=self.repo)
         self.assertRaises(dnf.exceptions.RepoError, self.repo.get_package, pkg)
@@ -104,6 +114,7 @@ class RepoTest(support.TestCase):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())
 
+    @mock.patch('dnf.repo.Repo._local_origin', False)
     def test_keep_old_pgks(self):
         dnf.util.ensure_dir(self.repo.pkgdir)
         survivor = os.path.join(self.repo.pkgdir, "survivor")
@@ -155,6 +166,11 @@ class RepoTest(support.TestCase):
         self.repo.metadata_expire = 0
         self.repo.md_only_cached = True
         self.assertFalse(self.repo.load())
+
+    def test_pkgdir(self):
+        self.assertRegexpMatches(self.repo.pkgdir, '/.*tests/repos/rpm')
+        self.repo.mirrorlist = 'http://anything'
+        self.assertTrue(self.repo.pkgdir.startswith(self.TMP_CACHEDIR))
 
     def test_progress_cb(self):
         m = mock.Mock()
