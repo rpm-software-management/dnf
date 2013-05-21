@@ -32,4 +32,4 @@ class Sanity(unittest.TestCase):
         self.assertEqual(len(sack2), support.TOTAL_NSOLVABLES)
 
     def test_toplevel(self):
-        self.assertEqual(support.dnf_toplevel(), sys.path[0])
+        self.assertIn(support.dnf_toplevel(), sys.path)
