@@ -34,21 +34,9 @@ class Error(Exception):
         return '%s' % to_unicode(self.value)
 
 class YumRPMTransError(Error):
-    """ This class means rpm's .ts.run() returned known errors. We are compat.
-        with Error in that we print nicely, and compat. with traditional
-        usage of this error from runTransaction(). """
     def __init__(self, msg, errors):
-        self.msg    = msg
+        Error.__init__(self, msg)
         self.errors = errors
-        # old Error raises from runTransaction used to raise just this
-        self.value  = self.errors
-
-    def __str__(self):
-        return "%s" %(self.msg,)
-
-    def __unicode__(self):
-        return '%s' % to_unicode(self.msg)
-
 
 class LockError(Error):
     def __init__(self, errno, msg, pid=0):
