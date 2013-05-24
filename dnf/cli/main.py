@@ -298,9 +298,6 @@ def user_main(args, exit_code=False):
             errcode = cprof(main, args)
         if os.environ['YUM_PROF'] == 'hotshot':
             errcode = hotshot(main, args)
-    if 'YUM_PDB' in os.environ:
-        import pdb
-        pdb.run(main(args))
 
     if errcode is None:
         errcode = main(args)
