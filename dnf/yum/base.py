@@ -191,7 +191,7 @@ class Base(object):
         return self._transaction
 
     def activate_persistor(self):
-        self._persistor = dnf.persistor.Persistor(self.conf.persistdir)
+        self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
 
     def activate_sack(self):
         """Prepare the Sack and the Goal objects."""
@@ -1102,7 +1102,7 @@ class Base(object):
                         adderror(po, _('package fails checksum but caching is '
                             'enabled for %s') % po.repo.id)
                 else:
-                    self.logger.debug(_("using local copy of %s") %(po,))
+                    self.logger.info(_("using local copy of %s") %(po,))
                     continue
 
             remote_pkgs.append(po)

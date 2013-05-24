@@ -30,17 +30,17 @@ import os
 import shelve
 
 class Persistor(object):
-    def __init__(self, persist_dir):
-        self.persist_dir = persist_dir
+    def __init__(self, cachedir):
+        self.cachedir = cachedir
         self.logger = logging.getLogger("dnf")
 
     def _expired_repos(self):
-        path = os.path.join(self.persist_dir, "expired_repos")
+        path = os.path.join(self.cachedir, "expired_repos")
         return shelve.open(path)
 
     @property
     def _last_makecache_path(self):
-        return os.path.join(self.persist_dir, "last_makecache")
+        return os.path.join(self.cachedir, "last_makecache")
 
     def get_expired_repos(self):
         shelf = self._expired_repos()
