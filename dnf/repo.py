@@ -363,6 +363,7 @@ class Repo(dnf.yum.config.RepoConf):
                 # the expired metadata still reflect the origin:
                 self.metadata.reset_age()
                 self.sync_strategy = SYNC_TRY_CACHE
+                self.metadata.expired = False
                 return True
 
             with dnf.util.tmpdir() as tmpdir:
@@ -403,8 +404,11 @@ class Repo(dnf.yum.config.RepoConf):
         if not self.metadata:
             self._try_cache()
         if self.metadata:
-            return (True, self.metadata_expire - self.metadata.age)
-        return (False, 0)
+            expiration = self.metadata_expire - self.metadata.age
+            if self.metadata.expired:
+                expiration = min(0, expiration)
+            return True, expiration
+        return False, 0
 
     def md_expire_cache(self):
         """Mark whatever is in the current cache expired.

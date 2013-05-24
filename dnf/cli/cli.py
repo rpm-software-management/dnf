@@ -38,6 +38,7 @@ import output
 import dnf.exceptions
 import dnf.logging
 import dnf.match_counter
+import dnf.persistor
 import dnf.yum.base
 import dnf.yum.misc
 from dnf.yum.parser import varReplace
@@ -1081,6 +1082,9 @@ class Cli(object):
                 repo.basecachedir = self.base.cache_c.system_cachedir
                 repo.md_only_cached = True
 
+        for rid in self.base._persistor.get_expired_repos():
+            self.base.repos[rid].md_expire_cache()
+
         # setup the progress bars/callbacks
         self.base.setupProgressCallbacks()
         # setup the callbacks to import gpg pubkeys and confirm them
@@ -1305,6 +1309,7 @@ class Cli(object):
         self.base.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
                                          self.base.conf.yumvar)
         del self.base.conf.cachedir # ensure access to the value is done via cache_c
+        self.base.activate_persistor()
         # with cache_c in place we can configure the repos:
         self._configure_repos(opts)
 

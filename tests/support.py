@@ -115,8 +115,9 @@ class MockYumBase(dnf.yum.base.Base):
             repo.enable()
             self._repos.add(repo)
 
-        self._yumdb = MockYumDB()
         self._conf = FakeConf()
+        self._persistor = FakePersistor()
+        self._yumdb = MockYumDB()
         self.term = FakeTerm()
         self.cache_c.prefix = "/tmp"
         self.cache_c.suffix = ""
@@ -140,6 +141,12 @@ class MockYumBase(dnf.yum.base.Base):
         self._sack.configure(self.conf.installonlypkgs)
         self._goal = hawkey.Goal(self._sack)
         return self._sack
+
+    def activate_persistor(self):
+        pass
+
+    def close(self):
+        pass
 
     def mock_cli(self):
         return mock.Mock('base', base=self)
@@ -206,6 +213,16 @@ class FakeConf(object):
         self.uid = 0
         self.upgrade_requirements_on_install = False
         self.yumvar = {'releasever' : 'Fedora69'}
+
+class FakePersistor(object):
+    def get_expired_repos(self):
+        return set()
+
+    def reset_last_makecache(self):
+        pass
+
+    def since_last_makecache(self):
+        return None
 
 # specialized test cases
 

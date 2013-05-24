@@ -223,6 +223,7 @@ class LocalRepoTest(support.TestCase):
         self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertEqual(self.repo.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
+        self.assertFalse(self.repo.metadata.expired)
         reset_age_m.assert_called()
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')

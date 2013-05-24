@@ -43,9 +43,7 @@ class CommandsTest(unittest.TestCase):
         return cmd.doCommand('makecache', ['timer'])
 
     @mock.patch('dnf.util.on_ac_power', return_value=True)
-    @mock.patch('dnf.persistor.Persistor')
-    def test_makecache_timer(self, mock_persistor_cls, _on_ac_power):
-        mock_persistor = mock_persistor_cls()
+    def test_makecache_timer(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
 
         self.yumbase.conf.metadata_timer_sync = 0
@@ -53,11 +51,11 @@ class CommandsTest(unittest.TestCase):
                          self._do_makecache(cmd))
 
         self.yumbase.conf.metadata_timer_sync = 5 # resync after 5 seconds
-        mock_persistor.since_last_makecache = mock.Mock(return_value=3)
+        self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=3)
         self.assertEqual((0, [u'Metadata cache refreshed recently.']),
                          self._do_makecache(cmd))
 
-        mock_persistor.since_last_makecache = mock.Mock(return_value=10)
+        self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=10)
         self.yumbase._sack = 'nonempty'
         r = dnf.repo.Repo("glimpse")
         self.yumbase.repos.add(r)

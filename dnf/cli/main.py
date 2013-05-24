@@ -145,6 +145,7 @@ def main(args):
         # Normal exit
         for msg in resultmsgs:
             logger.info('%s', msg)
+        base.close()
         if unlock(): return 200
         return 0
     elif result == 1:
@@ -239,6 +240,7 @@ def main(args):
     else:
         logger.info(_('Complete!'))
 
+    base.close()
     if unlock(): return 200
     return return_code
 

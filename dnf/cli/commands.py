@@ -969,7 +969,7 @@ class MakeCacheCommand(Command):
         self.base.logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
         timer = 'timer' == dnf.util.first(extcmds)
-        persistor = dnf.persistor.Persistor(self.base.conf.persistdir)
+        persistor = self.base._persistor
         if timer:
             if dnf.util.on_ac_power() is False:
                 return 0, [_('Metadata timer caching disabled '

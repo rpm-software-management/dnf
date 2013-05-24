@@ -27,15 +27,26 @@ from __future__ import absolute_import
 import dnf.util
 import logging
 import os
+import shelve
 
 class Persistor(object):
     def __init__(self, persist_dir):
         self.persist_dir = persist_dir
         self.logger = logging.getLogger("dnf")
 
+    def _expired_repos(self):
+        path = os.path.join(self.persist_dir, "expired_repos")
+        return shelve.open(path)
+
     @property
     def _last_makecache_path(self):
         return os.path.join(self.persist_dir, "last_makecache")
+
+    def get_expired_repos(self):
+        shelf = self._expired_repos()
+        exp = shelf.get('expired_repos', set())
+        shelf.close()
+        return exp
 
     def reset_last_makecache(self):
         try:
@@ -44,6 +55,11 @@ class Persistor(object):
         except IOError:
             self.logger.info("Failed storing last makecache time.")
             return False
+
+    def set_expired_repos(self, expired_iterable):
+        shelf = self._expired_repos()
+        shelf['expired_repos'] = set(expired_iterable)
+        shelf.close()
 
     def since_last_makecache(self):
         try:

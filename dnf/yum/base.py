@@ -60,6 +60,7 @@ from weakref import proxy as weakref
 
 import hawkey
 import dnf.conf
+import dnf.persistor
 import dnf.repo
 import dnf.repodict
 import dnf.transaction
@@ -74,9 +75,11 @@ class Base(object):
     class above it for most real use.
     """
     def __init__(self):
+        self._closed = False
         self._conf = config.YumConf()
         self._conf.uid = 0
         self._goal = None
+        self._persistor = None
         self._sack = None
         self._transaction = None
         self._ts = None
@@ -153,6 +156,11 @@ class Base(object):
                     filter_autoglob(name=excl)
                 self.sack.add_excludes(pkgs)
 
+    def _store_persistent_data(self):
+        expired = [r.id for r in self.repos.iter_enabled()
+                   if r.metadata_expire_in()[1] <= 0]
+        self._persistor.set_expired_repos(expired)
+
     @property
     def comps(self):
         return self._comps
@@ -182,6 +190,9 @@ class Base(object):
     def transaction(self):
         return self._transaction
 
+    def activate_persistor(self):
+        self._persistor = dnf.persistor.Persistor(self.conf.persistdir)
+
     def activate_sack(self):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
@@ -204,9 +215,15 @@ class Base(object):
 
     def close(self):
         """Close the history and repo objects."""
+
+        if self._closed:
+            return
+        self._closed = True
         # Do not trigger the lazy creation:
         if self._history is not None:
             self.history.close()
+        if self._persistor:
+            self._store_persistent_data()
 
     def _init_yumvar(self, conf):
         yumvar = config.init_yumvar(self.conf.installroot,
@@ -1271,8 +1288,9 @@ class Base(object):
         """Delete the local data saying when the metadata and mirror
            lists were downloaded for each repository."""
 
-        exts = ['cachecookie', 'mirrorlist.txt']
-        return self._cleanFiles(exts, 'cachedir', 'metadata')
+        for repo in self.repos.iter_enabled():
+            repo.md_expire_cache()
+        return 0, [_('The enabled repos were expired')]
 
     def cleanRpmDB(self):
         """Delete any cached data from the local rpmdb."""
