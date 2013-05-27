@@ -112,3 +112,17 @@ The following bugfixes are included in 0.3.5:
 * :rhbug:`959990`
 * :rhbug:`961549`
 * :rhbug:`962188`
+
+===================
+0.3.6 Release Notes
+===================
+
+This is a bugfix release, including the following fixes:
+
+* :rhbug:`966372`
+* :rhbug:`965410`
+* :rhbug:`963627`
+* :rhbug:`965114`
+* :rhbug:`964467`
+* :rhbug:`963680`
+* :rhbug:`963133`
