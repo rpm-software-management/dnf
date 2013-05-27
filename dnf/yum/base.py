@@ -118,6 +118,12 @@ class Base(object):
         # call cleanup callbacks
         for cb in self._cleanup: cb()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_args):
+        self.close()
+
     def _add_repo_to_sack(self, name):
         hrepo = hawkey.Repo(name)
         repo = self.repos[name]

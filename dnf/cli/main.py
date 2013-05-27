@@ -35,6 +35,10 @@ import dnf.cli.cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
 def main(args):
+    with dnf.cli.cli.YumBaseCli() as base:
+        _main(base, args)
+
+def _main(base, args):
     """Run the yum program from a command line interface."""
 
     dnf.i18n.setup_locale()
@@ -79,7 +83,6 @@ def main(args):
     logger = logging.getLogger("dnf")
 
     # our core object for the cli
-    base = dnf.cli.cli.YumBaseCli()
     base.logging.presetup()
     cli = dnf.cli.cli.Cli(base)
 
@@ -145,7 +148,6 @@ def main(args):
         # Normal exit
         for msg in resultmsgs:
             logger.info('%s', msg)
-        base.close()
         if unlock(): return 200
         return 0
     elif result == 1:
@@ -240,7 +242,6 @@ def main(args):
     else:
         logger.info(_('Complete!'))
 
-    base.close()
     if unlock(): return 200
     return return_code
 
