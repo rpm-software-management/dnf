@@ -1,5 +1,5 @@
-%global gitrev 85c924f
-%global hawkey_version 0.3.12
+%global gitrev 24ce938
+%global hawkey_version 0.3.13
 %global librepo_version 0.0.4
 
 %global confdir %{_sysconfdir}/dnf
@@ -73,6 +73,22 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon May 27 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.6-1.git24ce938
+- make the dnf.Base object a context manager. (Ales Kozumplik)
+- de-support YUMPDB, not used. (Ales Kozumplik)
+- persistent data about repositories should be in cachedir. (Ales Kozumplik)
+- YumRPMTransError: use sensible e.value (RhBug:966372) (Zdenek Pavlas)
+- store and use information about forced repo expiry (RhBug:965410) (Ales Kozumplik)
+- update LibrepoCallbackAdaptor. (RhBug:963627) (Zdenek Pavlas)
+- repo: do not try to download or erase packages from a local repo. (RhBug:965114) (Ales Kozumplik)
+- tests: weaken the assertion in test_toplevel(). (Ales Kozumplik)
+- fix: traceback on 'dnf group install i-dont-exist'. (RhBug:964467) (Ales Kozumplik)
+- Handle exceptions in Repo.get_package. (RhBug:963680) (Ales Kozumplik)
+- subject parsing: inform the user if given spec matches no package on install. (RhBug:963133) (Ales Kozumplik)
+- logging: setup provisional logging even before config. (Ales Kozumplik)
+- refactor: dnf.logging, put the setup() methods inside a new class, Logging. (Ales Kozumplik)
+- provides command: there's no reason to output so many empty lines between matches. (Ales Kozumplik)
 
 * Mon May 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.5-1.git85c924f
 - recognize 'dnf list upgrades' as an 'dnf list updates' alias. (Ales Kozumplik)
