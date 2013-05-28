@@ -176,6 +176,9 @@ class Repo(dnf.yum.config.RepoConf):
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self.max_mirror_tries = 0 # try them all
 
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
+
     def _exc2msg(self, librepo_exception):
         exc_msg = librepo_exception[1]
         msg = "Problem with repo '%s': %s" % (self.id, exc_msg)
