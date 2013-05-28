@@ -64,6 +64,9 @@ class NoOutputCallBack:
            action is also the same as in event()"""
         pass
 
+    def verify_tsi_package(self, pkg, count, total):
+        pass
+
 class RPMBaseCallback:
     '''
     Base class for a RPMTransaction display callback class
