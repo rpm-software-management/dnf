@@ -652,7 +652,7 @@ class Base(object):
                 lastdbv = lastdbv.end_rpmdbversion
 
             if lastdbv is None or rpmdbv != lastdbv:
-                self.logger.info("RPMDB altered outside of DNF.")
+                self.logger.debug("RPMDB altered outside of DNF.")
 
             cmdline = None
             if hasattr(self, 'args') and self.args:
