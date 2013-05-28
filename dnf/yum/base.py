@@ -23,7 +23,7 @@ import functools
 import os
 import operator
 import rpm
-
+import signal
 import types
 import errno
 import time
@@ -38,6 +38,7 @@ import config
 from config import ParsingError, ConfigParser
 import dnf.exceptions
 import dnf.logging
+import dnf.yum.rpmtrans
 import rpmsack
 from dnf.rpmUtils.arch import ArchStorage
 import dnf.rpmUtils.transaction
@@ -199,11 +200,12 @@ class Base(object):
     def activate_persistor(self):
         self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
 
-    def activate_sack(self):
+    def activate_sack(self, load_system_repo=True):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
         self._sack = sack.build_sack(self)
-        self._sack.load_system_repo(build_cache=True)
+        if load_system_repo:
+            self._sack.load_system_repo(build_cache=True)
         for r in self.repos.iter_enabled():
             self._add_repo_to_sack(r.id)
         self._sack.configure(self.conf.installonlypkgs)
@@ -627,6 +629,82 @@ class Base(object):
             if msg:
                 return (0, [msg])
         return (rescode, restring)
+
+    def do_transaction(self, display=None):
+        # save our dsCallback out
+        dscb = self.dsCallback
+        self.dsCallback = None
+        self.transaction.populate_rpm_ts(self.ts)
+
+        rcd_st = time.time()
+        self.logger.info(_('Running Transaction Check'))
+        msgs = self._run_rpm_check()
+        if msgs:
+            rpmlib_only = True
+            for msg in msgs:
+                if msg.startswith('rpmlib('):
+                    continue
+                rpmlib_only = False
+            if rpmlib_only:
+                print(_("ERROR You need to upgrade rpm to handle:"))
+            else:
+                print(_('ERROR with transaction check vs depsolve:'))
+
+            for msg in msgs:
+                print(to_utf8(msg))
+
+            if rpmlib_only:
+                return 1, [_('RPM needs to be upgraded')]
+            return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
+                       _REPORT_TMPLT % self.conf.bugtracker_url]
+
+        self.logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
+
+        tt_st = time.time()
+        self.logger.info(_('Running Transaction Test'))
+        if not self.conf.diskspacecheck:
+            self.rpm_probfilter.append(rpm.RPMPROB_FILTER_DISKSPACE)
+
+        self.ts.order() # order the transaction
+        self.ts.clean() # release memory not needed beyond this point
+
+        testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
+        tserrors = self.ts.test(testcb)
+        del testcb
+
+        if len(tserrors) > 0:
+            errstring = _('Transaction Check Error:\n')
+            for descr in tserrors:
+                errstring += '  %s\n' % to_unicode(descr)
+
+            raise dnf.exceptions.Error, errstring + '\n' + \
+                 self.errorSummary(errstring)
+        self.logger.info(_('Transaction Test Succeeded'))
+
+        self.logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
+
+        # unset the sigquit handler
+        sigquit = signal.signal(signal.SIGQUIT, signal.SIG_DFL)
+        ts_st = time.time()
+
+        # put back our depcheck callback
+        self.dsCallback = dscb
+        # setup our rpm ts callback
+        if display is None:
+            cb = dnf.yum.rpmtrans.RPMTransaction(self)
+        else:
+            cb = dnf.yum.rpmtrans.RPMTransaction(self, display=display)
+        if self.conf.debuglevel < 2:
+            cb.display.output = False
+
+        self.logger.info(_('Running Transaction'))
+        resultobject = self.runTransaction(cb=cb)
+
+        self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
+        # put back the sigquit handler
+        signal.signal(signal.SIGQUIT, sigquit)
+
+        return resultobject
 
     def _record_history(self):
         return self.conf.history_record and \
