@@ -184,6 +184,7 @@ class Command:
     """
 
     activate_sack = False
+    load_available_repos = True
 
     def __init__(self, cli):
         self.done_command_once = False
@@ -680,6 +681,7 @@ class EraseCommand(Command):
     """
 
     activate_sack = True
+    load_available_repos = False
 
     def configure(self):
         self.base.goal_parameters.allow_uninstall = True

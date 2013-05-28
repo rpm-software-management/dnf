@@ -1290,7 +1290,8 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         if self.command.activate_sack:
-            self.base.activate_sack()
+            lar = self.command.load_available_repos
+            self.base.activate_sack(load_available_repos=lar)
         return self.command.doCommand(self.base.basecmd, self.base.extcmds)
 
     def print_usage(self):

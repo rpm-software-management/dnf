@@ -200,14 +200,15 @@ class Base(object):
     def activate_persistor(self):
         self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
 
-    def activate_sack(self, load_system_repo=True):
+    def activate_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
         self._sack = sack.build_sack(self)
         if load_system_repo:
             self._sack.load_system_repo(build_cache=True)
-        for r in self.repos.iter_enabled():
-            self._add_repo_to_sack(r.id)
+        if load_available_repos:
+            for r in self.repos.iter_enabled():
+                self._add_repo_to_sack(r.id)
         self._sack.configure(self.conf.installonlypkgs)
         self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
