@@ -35,6 +35,7 @@ class Persistor(object):
         self.logger = logging.getLogger("dnf")
 
     def _expired_repos(self):
+        dnf.util.ensure_dir(self.cachedir)
         path = os.path.join(self.cachedir, "expired_repos")
         return shelve.open(path)
 
@@ -57,8 +58,9 @@ class Persistor(object):
             return False
 
     def set_expired_repos(self, expired_iterable):
+        set_expired = set(expired_iterable)
         shelf = self._expired_repos()
-        shelf['expired_repos'] = set(expired_iterable)
+        shelf['expired_repos'] = set_expired
         shelf.close()
 
     def since_last_makecache(self):
