@@ -87,14 +87,14 @@ increased from 6 hours to 48 hours. In Fedora, the repos usually set this
 explicitly so this change is not going to cause much impact.</p>
 <p>The following reported issues are fixed in this release:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=916657">Bug 916657</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=921294">Bug 921294</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922521">Bug 922521</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=926871">Bug 926871</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=878826">Bug 878826</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922664">Bug 922664</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=892064">Bug 892064</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=919769">Bug 919769</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=916657">Bug 916657 - dnf remove wants to downgrade packages; fails on transaction check</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=921294">Bug 921294 - dnf downgrade failure</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922521">Bug 922521 - DNF crashes when passing packages to it via pipe</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=926871">Bug 926871 - [abrt] download_packages:AttributeError: &#8216;Repo&#8217; object has no attribute &#8216;cache&#8217;</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=878826">Bug 878826 - [rfe] dnf could use systemd timer unit rather than crontabs</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922664">Bug 922664 - an option for disabling the regular metadata sync</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=892064">Bug 892064 - hourly dnf makecache too frequent, also consider using ionice</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=919769">Bug 919769 - dnf runs makecache hourly despite laptop power state</a></li>
 </ul>
 </div>
 <div class="section" id="id1">
@@ -108,9 +108,9 @@ worked in DNF since 3.0.0.</p>
 <p>Otherwise this is mainly a release fixing bugs and tracebacks. The following
 reported bugs are fixed:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=947258">Bug 947258</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=889202">Bug 889202</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=923384">Bug 923384</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=947258">Bug 947258 - dnf doesn&#8217;t erase excluded packages</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=889202">Bug 889202 - [rfe] [repos] add support for skip_if_unavailable in repository config</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=923384">Bug 923384 - DNF uses yum web signature</a></li>
 </ul>
 </div>
 <div class="section" id="id2">
@@ -123,8 +123,8 @@ default.</p>
 <p>The exception classes were simplified and moved to <tt class="docutils literal"><span class="pre">dnf.exceptions</span></tt>.</p>
 <p>The following bugs are fixed in 0.3.3:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=950722">Bug 950722</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=903775">Bug 903775</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=950722">Bug 950722 - [abrt] dnf-0.3.2-1.gitf3818b4.fc20: queries.py:179:_construct_result:AttributeError: &#8216;NoneType&#8217; object has no attribute &#8216;query&#8217;</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=903775">Bug 903775 - Update command is deprecated but nomenclature still being used</a></li>
 </ul>
 </div>
 <div class="section" id="id3">
@@ -139,9 +139,9 @@ Yum-style &#8220;replacing &lt;package-nevra&gt;&#8221; appears in the textual t
 overview).</p>
 <p>The follwoing bugfixes are included in 0.3.4:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=887317">Bug 887317</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=914919">Bug 914919</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922667">Bug 922667</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=887317">Bug 887317 - Dnf should beter report upgrades via obsoletes.</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=914919">Bug 914919 - DNF does not have   group install</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=922667">Bug 922667 - the cronned &#8216;dnf makecache&#8217; runs should give up quickly if there&#8217;s network/checksumming issues</a></li>
 </ul>
 </div>
 <div class="section" id="id4">
@@ -157,31 +157,31 @@ service is still enabled by default, but unless the user starts it manually with
 reboot. This is in alignment with Fedora packaging best practices.</p>
 <p>The following bugfixes are included in 0.3.5:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=958452">Bug 958452</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=959990">Bug 959990</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=961549">Bug 961549</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=962188">Bug 962188</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=958452">Bug 958452 - dnf update Produces Log Messages Involving &#8220;ts_done state&#8221;</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=959990">Bug 959990 - dnf dist-sync recommended in manual page but is missing from dnf&#8217;s command line options</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=961549">Bug 961549 - [abrt] dnf-0.3.4-1.git03fd687.fc19: __init__.py:826:perform:Exception: (10, &#8216;Error HTTP/FTP status code: 404&#8217;, 404)</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=962188">Bug 962188 - obsoletes sometimes result in &#8220;ERROR with transaction check vs depsolve&#8221;</a></li>
 </ul>
 </div>
 <div class="section" id="id5">
 <h2><a class="toc-backref" href="#id13">0.3.6 Release Notes</a><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p>This is a bugfix release, including the following fixes:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=966372">Bug 966372</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=965410">Bug 965410</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963627">Bug 963627</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=965114">Bug 965114</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=964467">Bug 964467</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963680">Bug 963680</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963133">Bug 963133</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=966372">Bug 966372 - dnf prints an empty python list after running without root privileges</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=965410">Bug 965410 - &#8220;dnf clean expire-cache&#8221; does not have any effect</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963627">Bug 963627 - dnf shows way over 100% in its progress bar</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=965114">Bug 965114 - When running dnf using file:/// as the media, it tries to erase packages in file:///</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=964467">Bug 964467 - group install is broken</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963680">Bug 963680 - dnf dies with a traceback during update</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=963133">Bug 963133 - name is misprinted when package is not found</a></li>
 </ul>
 </div>
 <div class="section" id="id6">
 <h2><a class="toc-backref" href="#id14">0.3.7 Release Notes</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>This is a bugfix release:</p>
 <ul class="simple">
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=916662">Bug 916662</a></li>
-<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=967732">Bug 967732</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=916662">Bug 916662 - dnf remove wants to install new packages</a></li>
+<li><a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=967732">Bug 967732 - [abrt] dnf-0.3.6-1.git24ce938.fc19: __init__.py:364:hashopen:DBNoSuchFileError: (2, &#8216;Datei oder Verzeichnis nicht gefunden&#8217;)</a></li>
 </ul>
 </div>
 </div>
