@@ -1,0 +1,118 @@
+[
+    [
+        916657, 
+        "dnf remove wants to downgrade packages; fails on transaction check"
+    ], 
+    [
+        921294, 
+        "dnf downgrade failure"
+    ], 
+    [
+        922521, 
+        "DNF crashes when passing packages to it via pipe"
+    ], 
+    [
+        926871, 
+        "[abrt] download_packages:AttributeError: 'Repo' object has no attribute 'cache'"
+    ], 
+    [
+        878826, 
+        "[rfe] dnf could use systemd timer unit rather than crontabs"
+    ], 
+    [
+        922664, 
+        "an option for disabling the regular metadata sync"
+    ], 
+    [
+        892064, 
+        "hourly dnf makecache too frequent, also consider using ionice"
+    ], 
+    [
+        919769, 
+        "dnf runs makecache hourly despite laptop power state"
+    ], 
+    [
+        947258, 
+        "dnf doesn't erase excluded packages"
+    ], 
+    [
+        889202, 
+        "[rfe] [repos] add support for skip_if_unavailable in repository config"
+    ], 
+    [
+        923384, 
+        "DNF uses yum web signature"
+    ], 
+    [
+        950722, 
+        "[abrt] dnf-0.3.2-1.gitf3818b4.fc20: queries.py:179:_construct_result:AttributeError: 'NoneType' object has no attribute 'query'"
+    ], 
+    [
+        903775, 
+        "Update command is deprecated but nomenclature still being used"
+    ], 
+    [
+        887317, 
+        "Dnf should beter report upgrades via obsoletes."
+    ], 
+    [
+        914919, 
+        "DNF does not have   group install"
+    ], 
+    [
+        922667, 
+        "the cronned 'dnf makecache' runs should give up quickly if there's network/checksumming issues"
+    ], 
+    [
+        958452, 
+        "dnf update Produces Log Messages Involving \"ts_done state\""
+    ], 
+    [
+        959990, 
+        "dnf dist-sync recommended in manual page but is missing from dnf's command line options"
+    ], 
+    [
+        961549, 
+        "[abrt] dnf-0.3.4-1.git03fd687.fc19: __init__.py:826:perform:Exception: (10, 'Error HTTP/FTP status code: 404', 404)"
+    ], 
+    [
+        962188, 
+        "obsoletes sometimes result in \"ERROR with transaction check vs depsolve\""
+    ], 
+    [
+        966372, 
+        "dnf prints an empty python list after running without root privileges"
+    ], 
+    [
+        965410, 
+        "\"dnf clean expire-cache\" does not have any effect"
+    ], 
+    [
+        963627, 
+        "dnf shows way over 100% in its progress bar"
+    ], 
+    [
+        965114, 
+        "When running dnf using file:/// as the media, it tries to erase packages in file:///"
+    ], 
+    [
+        964467, 
+        "group install is broken"
+    ], 
+    [
+        963680, 
+        "dnf dies with a traceback during update"
+    ], 
+    [
+        963133, 
+        "name is misprinted when package is not found"
+    ], 
+    [
+        916662, 
+        "dnf remove wants to install new packages"
+    ], 
+    [
+        967732, 
+        "[abrt] dnf-0.3.6-1.git24ce938.fc19: __init__.py:364:hashopen:DBNoSuchFileError: (2, 'Datei oder Verzeichnis nicht gefunden')"
+    ]
+]

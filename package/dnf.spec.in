@@ -16,6 +16,7 @@ Source0:	http://akozumpl.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
 BuildRequires:	python2
+BuildRequires:	python-bugzilla
 BuildRequires:	python-hawkey = %{hawkey_version}
 BuildRequires:  python-iniparse
 BuildRequires:	python-librepo = %{librepo_version}
