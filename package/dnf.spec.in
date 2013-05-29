@@ -1,4 +1,4 @@
-%global gitrev 24ce938
+%global gitrev f8bdc98
 %global hawkey_version 0.3.13
 %global librepo_version 0.0.4
 
@@ -73,6 +73,13 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Wed May 29 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.7-1.gitf8bdc98
+- ensure the cachedir in Persistor._expired_repos(). (RhBug:967732) (Ales Kozumplik)
+- do not load available repositories into the sack for the erase command. (RhBug:916662) (Ales Kozumplik)
+- Take out the bulk of YumBaseCli.doTransaction() and put in in Base.do_transaction(). (Ales Kozumplik)
+- add noop NoOutputCallback.verify_tsi_package(). (Ales Kozumplik)
+- implement dnf.repo.Repo.__repr__(). (Ales Kozumplik)
+- output: show the RPMDB alternation warning on debug level only. (Ales Kozumplik)
 
 * Mon May 27 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.6-1.git24ce938
 - make the dnf.Base object a context manager. (Ales Kozumplik)
