@@ -126,3 +126,12 @@ This is a bugfix release, including the following fixes:
 * :rhbug:`964467`
 * :rhbug:`963680`
 * :rhbug:`963133`
+
+===================
+0.3.7 Release Notes
+===================
+
+This is a bugfix release:
+
+* :rhbug:`916662`
+* :rhbug:`967732`
