@@ -1558,24 +1558,16 @@ class Base(object):
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
-            raise NotImplementedError, "not implemented in DNF"
-            # :dead
             now = time.time()
             recentlimit = now-(self.conf.recent*86400)
             if showdups:
-                avail = self.pkgSack.returnPackages(patterns=pattern,
-                                                    ignore_case=ic)
+                avail = q.available()
             else:
-                try:
-                    avail = self.pkgSack.returnNewestByNameArch(patterns=pattern,
-                                                              ignore_case=ic)
-                except dnf.exceptions.Error:
-                    avail = []
+                avail = q.latest()
 
             for po in avail:
-                if int(po.filetime) > recentlimit:
+                if int(po.buildtime) > recentlimit:
                     recent.append(po)
-
 
         ygh.installed = installed
         ygh.available = available
