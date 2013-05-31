@@ -123,67 +123,6 @@ class TransactionWrapper:
 
         return reserrors
 
-
-    def returnLeafNodes(self, headers=False):
-        """returns a list of package tuples (n,a,e,v,r) that are not required by
-           any other package on the system
-           If headers is True then it will return a list of (header, index) tuples
-           """
-
-        req = {}
-        orphan = []
-
-        mi = self.dbMatch()
-        if mi is None: # this is REALLY unlikely but let's just say it for the moment
-            return orphan
-
-        # prebuild the req dict
-        for h in mi:
-            if h['name'] == 'gpg-pubkey':
-                continue
-            if not h[rpm.RPMTAG_REQUIRENAME]:
-                continue
-            tup = miscutils.pkgTupleFromHeader(h)
-            for r in h[rpm.RPMTAG_REQUIRENAME]:
-                if r not in req:
-                    req[r] = set()
-                req[r].add(tup)
-
-
-        mi = self.dbMatch()
-        if mi is None:
-            return orphan
-
-        def _return_all_provides(hdr):
-            """ Return all the provides, via yield. """
-            # These are done one by one, so that we get lazy loading
-            for prov in hdr[rpm.RPMTAG_PROVIDES]:
-                yield prov
-            for prov in hdr[rpm.RPMTAG_FILENAMES]:
-                yield prov
-
-        for h in mi:
-            if h['name'] == 'gpg-pubkey':
-                continue
-            preq = 0
-            tup = miscutils.pkgTupleFromHeader(h)
-            for p in _return_all_provides(h):
-                if p in req:
-                    # Don't count a package that provides its require
-                    s = req[p]
-                    if len(s) > 1 or tup not in s:
-                        preq = preq + 1
-                        break
-
-            if preq == 0:
-                if headers:
-                    orphan.append((h, mi.instance()))
-                else:
-                    orphan.append(tup)
-
-        return orphan
-
-
 def initReadOnlyTransaction(root='/'):
     read_ts =  TransactionWrapper(root=root)
     read_ts.pushVSFlags((rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
