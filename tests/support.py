@@ -77,6 +77,7 @@ class MockPackage(object):
     def __init__(self, nevra, repo=None):
         self.header = None
         self.location = '%s.rpm' % nevra
+        self.baseurl = None
         self.repo = repo
         self.reponame = None if repo is None else repo.id
         self.str = nevra
