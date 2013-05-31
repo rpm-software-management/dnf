@@ -116,29 +116,6 @@ def getSigInfo(hdr):
     infotuple = (sigtype, sigdate, sigid)
     return error, infotuple
 
-def pkgTupleFromHeader(hdr):
-    """return a pkgtuple (n, a, e, v, r) from a hdr object, converts
-       None epoch to 0, as well."""
-
-    name = hdr['name']
-
-    # RPMTAG_SOURCEPACKAGE: RPMTAG_SOURCERPM is not necessarily there for
-    # e.g. gpg-pubkeys imported with older rpm versions
-    # http://lists.baseurl.org/pipermail/yum/2009-January/022275.html
-    if hdr[rpm.RPMTAG_SOURCERPM] or hdr[rpm.RPMTAG_SOURCEPACKAGE] != 1:
-        arch = hdr['arch']
-    else:
-        arch = 'src'
-
-    ver = hdr['version']
-    rel = hdr['release']
-    epoch = hdr['epoch']
-    if epoch is None:
-        epoch = '0'
-    pkgtuple = (name, arch, epoch, ver, rel)
-    return pkgtuple
-
-
 def rangeCheck(reqtuple, pkgtuple):
     """returns true if the package epoch-ver-rel satisfy the range
        requested in the reqtuple:
