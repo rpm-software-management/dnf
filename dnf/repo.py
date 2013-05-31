@@ -334,7 +334,7 @@ class Repo(dnf.yum.config.RepoConf):
             text = text if text is not None else pkg.location
             self._progress.begin(text)
         try:
-            handle.download(pkg.location)
+            handle.download(pkg.location, base_url=pkg.baseurl)
         except librepo.LibrepoException as e:
             raise dnf.exceptions.RepoError(self._exc2msg(e))
         finally:
