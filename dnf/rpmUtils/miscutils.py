@@ -236,45 +236,6 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         out.write(tmp)
     f.close()
 
-def flagToString(flags):
-    flags = flags & 0xf
-
-    if flags == 0: return None
-    elif flags == 2: return 'LT'
-    elif flags == 4: return 'GT'
-    elif flags == 8: return 'EQ'
-    elif flags == 10: return 'LE'
-    elif flags == 12: return 'GE'
-
-    return flags
-
-def stringToVersion(verstring):
-    if verstring in [None, '']:
-        return (None, None, None)
-    i = verstring.find(':')
-    if i != -1:
-        try:
-            epoch = str(long(verstring[:i]))
-        except ValueError:
-            # look, garbage in the epoch field, how fun, kill it
-            epoch = '0' # this is our fallback, deal
-    else:
-        epoch = '0'
-    j = verstring.find('-')
-    if j != -1:
-        if verstring[i + 1:j] == '':
-            version = None
-        else:
-            version = verstring[i + 1:j]
-        release = verstring[j + 1:]
-    else:
-        if verstring[i + 1:] == '':
-            version = None
-        else:
-            version = verstring[i + 1:]
-        release = None
-    return (epoch, version, release)
-
 def hdrFromPackage(ts, package):
     """hand back the rpm header or raise an Error if the pkg is fubar"""
     try:
