@@ -37,7 +37,7 @@ import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8, to_unicode, _, P_
 import dnf.yum.misc
-from dnf.rpmUtils.miscutils import checkSignals, formatRequire
+from dnf.rpmUtils.miscutils import checkSignals
 from dnf.yum.constants import *
 
 from dnf.yum.rpmtrans import RPMBaseCallback
