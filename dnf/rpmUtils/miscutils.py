@@ -244,30 +244,6 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         out.write(tmp)
     f.close()
 
-def formatRequire (name, version, flags):
-    '''
-    Return a human readable requirement string (ex.  foobar >= 2.0)
-    @param name: requirement name (ex. foobar)
-    @param version: requirent version (ex. 2.0)
-    @param flags: binary flags ( 0010 = equal, 0100 = greater than, 1000 = less than )
-    '''
-    s = name
-
-    if flags and (type(flags) == type(0) or type(flags) == type(0L)): # Flag must be set and a int (or a long, now)
-        if flags & (rpm.RPMSENSE_LESS | rpm.RPMSENSE_GREATER |
-                    rpm.RPMSENSE_EQUAL):
-            s = s + " "
-            if flags & rpm.RPMSENSE_LESS:
-                s = s + "<"
-            if flags & rpm.RPMSENSE_GREATER:
-                s = s + ">"
-            if flags & rpm.RPMSENSE_EQUAL:
-                s = s + "="
-            if version:
-                s = "%s %s" %(s, version)
-    return s
-
-
 def flagToString(flags):
     flags = flags & 0xf
 
