@@ -47,7 +47,6 @@ try:
 except ImportError:
     lzma = None
 
-from dnf.rpmUtils.miscutils import stringToVersion, flagToString
 from stat import *
 try:
     import gpgme
@@ -699,41 +698,6 @@ def prco_tuple_to_string(prcoTuple):
         return name
 
     return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
-
-def string_to_prco_tuple(prcoString):
-    """returns a prco tuple (name, flags, (e, v, r)) for a string"""
-
-    if type(prcoString) == types.TupleType:
-        (n, f, v) = prcoString
-    else:
-        n = prcoString
-        f = v = None
-
-        # We love GPG keys as packages, esp. awesome provides like:
-        #  gpg(Fedora (13) <fedora@fedoraproject.org>)
-        if n[0] != '/' and not n.startswith("gpg("):
-            # not a file dep - look at it for being versioned
-            prco_split = n.split()
-            if len(prco_split) == 3:
-                n, f, v = prco_split
-
-    # now we have 'n, f, v' where f and v could be None and None
-    if f is not None and f not in constants.LETTERFLAGS:
-        if f not in constants.SYMBOLFLAGS:
-            try:
-                f = flagToString(int(f))
-            except (ValueError,TypeError), e:
-                raise dnf.exceptions.MiscError, 'Invalid version flag: %s' % f
-        else:
-            f = constants.SYMBOLFLAGS[f]
-
-    if type(v) in (types.StringType, types.NoneType, types.UnicodeType):
-        (prco_e, prco_v, prco_r) = stringToVersion(v)
-    elif type(v) in (types.TupleType, types.ListType):
-        (prco_e, prco_v, prco_r) = v
-
-    #now we have (n, f, (e, v, r)) for the thing specified
-    return (n, f, (prco_e, prco_v, prco_r))
 
 def refineSearchPattern(arg):
     """Takes a search string from the cli for Search or Provides
