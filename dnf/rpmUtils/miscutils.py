@@ -25,14 +25,6 @@ import signal
 from error import RpmUtilsError
 import transaction
 
-def rpmOutToStr(arg):
-    if type(arg) != types.StringType:
-    # and arg is not None:
-        arg = str(arg)
-
-    return arg
-
-
 def compareEVR((e1, v1, r1), (e2, v2, r2)):
     # return 1: a is newer than b
     # 0: a and b are the same version
