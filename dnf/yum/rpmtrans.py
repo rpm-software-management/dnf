@@ -231,13 +231,6 @@ class RPMTransaction:
     def __del__(self):
         self._shutdownOutputLogging()
 
-    def _dopkgtup(self, hdr):
-        tmpepoch = hdr['epoch']
-        if tmpepoch is None: epoch = '0'
-        else: epoch = str(tmpepoch)
-
-        return (hdr['name'], hdr['arch'], epoch, hdr['version'], hdr['release'])
-
     def _extract_cbkey(self, cbkey):
         if isinstance(cbkey, dnf.transaction.TransactionItem):
             return self._extract_tsi_cbkey(cbkey)
