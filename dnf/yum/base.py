@@ -433,7 +433,6 @@ class Base(object):
                         'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
                         'test': rpm.RPMTRANS_FLAG_TEST,
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
-                        'repackage': rpm.RPMTRANS_FLAG_REPACKAGE,
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS}
 
     @property
