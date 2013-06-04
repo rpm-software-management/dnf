@@ -83,3 +83,12 @@ class ProcessLockTest(tests.support.TestCase):
             thread.start()
             thread.join()
         self.assertIsInstance(thread.queue.get(), ThreadLockError)
+
+    def test_decorator(self):
+        l1 = dnf.lock.ProcessLock("unit-test")
+
+        @l1.decorator
+        def decorated():
+            self.assertEqual(l1.count, 1)
+
+        decorated()

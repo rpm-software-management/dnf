@@ -37,6 +37,7 @@ P_ = i18n.P_
 import config
 from config import ParsingError, ConfigParser
 import dnf.exceptions
+import dnf.lock
 import dnf.logging
 import dnf.yum.rpmtrans
 import rpmsack
@@ -201,11 +202,12 @@ class Base(object):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
         self._sack = sack.build_sack(self)
-        if load_system_repo:
-            self._sack.load_system_repo(build_cache=True)
-        if load_available_repos:
-            for r in self.repos.iter_enabled():
-                self._add_repo_to_sack(r.id)
+        with dnf.lock.metadata_cache_lock:
+            if load_system_repo:
+                self._sack.load_system_repo(build_cache=True)
+            if load_available_repos:
+                for r in self.repos.iter_enabled():
+                    self._add_repo_to_sack(r.id)
         self._sack.configure(self.conf.installonlypkgs)
         self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
@@ -709,6 +711,7 @@ class Base(object):
         return self.conf.history_record and \
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
+    @dnf.lock.rpmdb_lock.decorator
     def runTransaction(self, cb):
         """Perform the transaction.
 

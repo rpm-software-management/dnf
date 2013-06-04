@@ -85,3 +85,12 @@ class ProcessLock(object):
         if self.count == 1:
             os.unlink(self._target)
         self._unlock_thread()
+
+    def decorator(self, fn):
+        def wrapped(*args, **kwargs):
+            with self:
+                return fn(*args, **kwargs)
+        return wrapped
+
+metadata_cache_lock = ProcessLock('metadata-cache')
+rpmdb_lock = ProcessLock('package-cache-lock')
