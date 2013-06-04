@@ -45,6 +45,18 @@ class LockError(Error):
         self.msg = msg
         self.pid = pid
 
+class ProcessLockError(Error):
+    def __init__(self, value, pid):
+        super(ProcessLockError, self).__init__(value)
+        self.pid = pid
+
+    def __reduce__(self):
+        """Pickling support."""
+        return (ProcessLockError, (self.value, self.pid))
+
+class ThreadLockError(Error):
+    pass
+
 class RepoError(Error):
     pass
 

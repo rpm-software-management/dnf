@@ -235,6 +235,9 @@ class TestCase(unittest.TestCase):
     def assertLength(self, collection, length):
         return self.assertEqual(len(collection), length)
 
+    def assertPathDoesNotExist(self, path):
+        return self.assertFalse(os.access(path, os.F_OK))
+
     def assertStartsWith(self, string, what):
         return self.assertTrue(string.startswith(what))
 

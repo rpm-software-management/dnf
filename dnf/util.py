@@ -65,6 +65,9 @@ def group_by_filter(fn, iterable):
         return acc
     return reduce(splitter, iterable, ([], []))
 
+def home_dir():
+    return os.getenv('HOME')
+
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
