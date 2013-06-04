@@ -35,8 +35,7 @@ class NoOutputCallBack:
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
         @param package: A yum package object or simple string of a package name
-        @param action: A constant transaction set state or in the obscure
-                       rpm repackage case it could be the string 'repackaging'
+        @param action: A constant transaction set state
         @param te_current: current number of bytes processed in the transaction
                            element being processed
         @param te_total: total number of bytes in the transaction element being
@@ -91,8 +90,7 @@ class RPMBaseCallback:
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
         :param package: A yum package object or simple string of a package name
-        :param action: A yum.constant transaction set state or in the obscure
-          rpm repackage case it could be the string 'repackaging'
+        :param action: A yum.constant transaction set state
         :param te_current: Current number of bytes processed in the transaction
           element being processed
         :param te_total: Total number of bytes in the transaction element being
@@ -427,12 +425,6 @@ class RPMTransaction:
             self._unInstProgress( bytes, total, h )
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self._unInstStop( bytes, total, h )
-        elif what == rpm.RPMCALLBACK_REPACKAGE_START:
-            self._rePackageStart( bytes, total, h )
-        elif what == rpm.RPMCALLBACK_REPACKAGE_STOP:
-            self._rePackageStop( bytes, total, h )
-        elif what == rpm.RPMCALLBACK_REPACKAGE_PROGRESS:
-            self._rePackageProgress( bytes, total, h )
         elif what == rpm.RPMCALLBACK_CPIO_ERROR:
             self._cpioError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
@@ -533,15 +525,6 @@ class RPMTransaction:
             self._scriptout(name)
             # :dead
             # self.ts_done(name, action)
-
-    def _rePackageStart(self, bytes, total, h):
-        pass
-
-    def _rePackageStop(self, bytes, total, h):
-        pass
-
-    def _rePackageProgress(self, bytes, total, h):
-        pass
 
     def _cpioError(self, bytes, total, h):
         # In the case of a remove, we only have a name, not a tsi:
