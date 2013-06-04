@@ -32,7 +32,8 @@ class ProcessLock(object):
 
     def _lock_thread(self):
         if not self.thread_lock.acquire(blocking=False):
-            raise ThreadLockError('Already locked by a different thread')
+            msg = '%s already locked by a different thread' % self.name
+            raise ThreadLockError(msg)
         self.count += 1
 
     def _read_lock(self):
@@ -77,7 +78,8 @@ class ProcessLock(object):
             if self._try_lock():
                 return
         self._unlock_thread()
-        raise ProcessLockError('Already locked by %d' % pid, pid)
+        msg = '%s already locked by %d' % (self.name, pid)
+        raise ProcessLockError(msg, pid)
 
     def __exit__(self, *exc_args):
         if self.count == 1:

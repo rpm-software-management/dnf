@@ -27,6 +27,7 @@ class Error(Exception):
     def __init__(self, value=None):
         Exception.__init__(self)
         self.value = value
+
     def __str__(self):
         return "%s" %(self.value,)
 
@@ -39,13 +40,9 @@ class YumRPMTransError(Error):
         self.errors = errors
 
 class LockError(Error):
-    def __init__(self, errno, msg, pid=0):
-        Error.__init__(self, msg)
-        self.errno = errno
-        self.msg = msg
-        self.pid = pid
+    pass
 
-class ProcessLockError(Error):
+class ProcessLockError(LockError):
     def __init__(self, value, pid):
         super(ProcessLockError, self).__init__(value)
         self.pid = pid
@@ -54,7 +51,7 @@ class ProcessLockError(Error):
         """Pickling support."""
         return (ProcessLockError, (self.value, self.pid))
 
-class ThreadLockError(Error):
+class ThreadLockError(LockError):
     pass
 
 class RepoError(Error):

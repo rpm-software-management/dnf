@@ -86,7 +86,6 @@ class Base(object):
         self._ts = None
         self._comps = None
         self._history = None
-        self._lockfile = None
         self._tags = None
         self._ts_save_file = None
         self.logger = logging.getLogger("dnf")
@@ -114,8 +113,6 @@ class Base(object):
 
     def __del__(self):
         self.close()
-        self.closeRpmDB()
-        self.doUnlock()
         # call cleanup callbacks
         for cb in self._cleanup: cb()
 
@@ -233,6 +230,7 @@ class Base(object):
             self.history.close()
         if self._persistor:
             self._store_persistent_data()
+        self.closeRpmDB()
 
     def _init_yumvar(self, conf):
         yumvar = config.init_yumvar(self.conf.installroot,
@@ -952,113 +950,6 @@ class Base(object):
             self.plugins.run('historyend')
             self.history.end(rpmdbv, ret)
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
-
-    def doLock(self):
-        """Acquire the yum lock.
-
-        :param lockfile: the file to use for the lock
-        :raises: :class:`dnf.exceptions.LockError`
-        """
-        lockfile = const.PID_FILENAME
-
-        if self.conf.uid != 0:
-            #  If we are a user, assume we are using the root cache ... so don't
-            # bother locking.
-            if self.conf.cache:
-                return
-            root = self.cache_c.cachedir
-            # Don't want <cachedir>/var/run/yum.pid ... just: <cachedir>/yum.pid
-            lockfile = os.path.basename(lockfile)
-        else:
-            root = self.conf.installroot
-        lockfile = root + '/' + lockfile # lock in the chroot
-        lockfile = os.path.normpath(lockfile) # get rid of silly preceding extra /
-
-        mypid=str(os.getpid())
-        while not self._lock(lockfile, mypid, 0644):
-            oldpid = self._get_locker(lockfile)
-            if not oldpid:
-                # Invalid locker: unlink lockfile and retry
-                self._unlock(lockfile)
-                continue
-            if oldpid == os.getpid(): # if we own the lock, we're fine
-                break
-            # Another copy seems to be running.
-            msg = _('Existing lock %s: another copy is running as pid %s.') % (lockfile, oldpid)
-            raise dnf.exceptions.LockError(0, msg, oldpid)
-        # We've got the lock, store it so we can auto-unlock on __del__...
-        self._lockfile = lockfile
-
-    def doUnlock(self, lockfile=None):
-        """Release the yum lock.
-
-        :param lockfile: the lock file to use.  If not given, the file
-           that was given as a parameter to the :func:`doLock` call
-           that closed the lock is used
-        """
-        # If we're not root then we don't lock - just return nicely. Obviously,
-        # we can't lock random places as non-root, but we still want to get rid
-        # of our lock file. Given we now have _lockfile I'm pretty sure nothing
-        # should ever pass lockfile in here anyway.
-        if self.conf.uid != 0:
-            lockfile = None
-
-        if lockfile is not None:
-            root = self.conf.installroot
-            lockfile = root + '/' + lockfile # lock in the chroot
-        elif self._lockfile is None:
-            return # Don't delete other people's lock files on __del__
-        else:
-            lockfile = self._lockfile # Get the value we locked with
-
-        self._unlock(lockfile)
-        self._lockfile = None
-
-    @staticmethod
-    def _lock(filename, contents='', mode=0777):
-        lockdir = os.path.dirname(filename)
-        try:
-            if not os.path.exists(lockdir):
-                os.makedirs(lockdir, mode=0755)
-            fd = os.open(filename, os.O_EXCL|os.O_CREAT|os.O_WRONLY, mode)
-            os.write(fd, contents)
-            os.close(fd)
-            return 1
-        except OSError, msg:
-            if not msg.errno == errno.EEXIST:
-                # Whoa. What the heck happened?
-                errmsg = _('Could not create lock at %s: %s ') % (filename, str(msg))
-                raise dnf.exceptions.LockError(msg.errno, errmsg, int(contents))
-            return 0
-
-    @staticmethod
-    def _unlock(filename):
-        misc.unlink_f(filename)
-
-    @staticmethod
-    def _get_locker(lockfile):
-        try: fd = open(lockfile, 'r')
-        except (IOError, OSError), e:
-            msg = _("Could not open lock %s: %s") % (lockfile, e)
-            raise dnf.exceptions.LockError(errno.EPERM, msg)
-        try: oldpid = int(fd.readline())
-        except ValueError:
-            return None # Bogus pid
-
-        try:
-            stat = open("/proc/%d/stat" % oldpid).readline()
-            if stat.split()[2] == 'Z':
-                return None # The pid is a zombie
-        except IOError:
-            # process dead or /proc not mounted
-            try: os.kill(oldpid, 0)
-            except OSError, e:
-                if e[0] == errno.ESRCH:
-                    return None # The pid doesn't exist
-                # Whoa. What the heck happened?
-                msg = _('Unable to check if PID %s is active') % oldpid
-                raise dnf.exceptions.LockError(errno.EPERM, msg, oldpid)
-        return oldpid
 
     def verifyPkg(self, fo, po, raiseError):
         """Check that the checksum of a remote package matches what we

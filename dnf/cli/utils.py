@@ -147,10 +147,11 @@ def show_lock_owner(pid, logger):
         return None
 
     # This yumBackend isn't very friendly, so...
+    msg = _('  The application with PID %d is: %s')
     if ps['name'] == 'yumBackend.py':
-        nmsg = _("  The other application is: PackageKit")
+        nmsg = msg % (pid, 'PackageKit')
     else:
-        nmsg = _("  The other application is: %s") % ps['name']
+        nmsg = msg % (pid, ps['name'])
 
     logger.critical("%s", nmsg)
     logger.critical(_("    Memory : %5s RSS (%5sB VSZ)") %
@@ -160,6 +161,6 @@ def show_lock_owner(pid, logger):
     ago = seconds_to_ui_time(int(time.time()) - ps['start_time'])
     logger.critical(_("    Started: %s - %s ago") %
                     (time.ctime(ps['start_time']), ago))
-    logger.critical(_("    State  : %s, pid: %d") % (ps['state'], pid))
+    logger.critical(_("    State  : %s") % ps['state'])
 
     return ps

@@ -35,22 +35,6 @@ class BaseTest(unittest.TestCase):
     def test_instance(self):
         yumbase = dnf.yum.base.Base()
 
-    @mock.patch('dnf.const.PID_FILENAME', "/var/run/dnf.unittest.pid")
-    def test_locking(self):
-        # tricky setup:
-        yumbase = dnf.yum.base.Base()
-        yumbase._conf = mock.Mock()
-        yumbase.conf.cache = None
-        yumbase.cache_c.prefix = "/tmp"
-        yumbase.cache_c.suffix = ""
-
-        self.assertIsNone(yumbase._lockfile)
-        yumbase.doLock()
-        lockfile = yumbase._lockfile
-        self.assertTrue(os.access(lockfile, os.R_OK))
-        yumbase.doUnlock()
-        self.assertFalse(os.access(lockfile, os.F_OK))
-
     def test_push_userinstalled(self):
         yumbase = support.MockYumBase()
         # setup:

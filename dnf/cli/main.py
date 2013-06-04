@@ -34,9 +34,18 @@ import dnf.i18n
 import dnf.cli.cli
 from utils import suppress_keyboard_interrupt_message, show_lock_owner
 
+logger = logging.getLogger("dnf")
+
 def main(args):
     with dnf.cli.cli.YumBaseCli() as base:
-        _main(base, args)
+        try:
+            return _main(base, args)
+        except dnf.exceptions.ProcessLockError as e:
+            logger.critical(e.value)
+            show_lock_owner(e.pid, logger)
+        except dnf.exceptions.LockError as e:
+            logger.critical(e.value)
+            return 1
 
 def _main(base, args):
     """Run the yum program from a command line interface."""
@@ -46,7 +55,6 @@ def _main(base, args):
 
     def exUserCancel():
         logger.critical(_('Terminated.'))
-        if unlock(): return 200
         return 1
 
     def exIOError(e):
@@ -54,7 +62,6 @@ def _main(base, args):
             logger.critical(_('Exiting on Broken Pipe'))
         else:
             logger.critical(exception2msg(e))
-        if unlock(): return 200
         return 1
 
     def exPluginExit(e):
@@ -65,22 +72,12 @@ def _main(base, args):
         exitmsg = exception2msg(e)
         if exitmsg:
             logger.warn('%s', exitmsg)
-        return 200 if unlock() else 1
+        return 1
 
     def exFatal(e):
         if e.value is not None:
             logger.critical(exception2msg(e.value))
-        return 200 if unlock() else 1
-
-    def unlock():
-        try:
-            base.closeRpmDB()
-            base.doUnlock()
-        except dnf.exceptions.LockError, e:
-            return 200
-        return 0
-
-    logger = logging.getLogger("dnf")
+        return 1
 
     # our core object for the cli
     base.logging.presetup()
@@ -93,6 +90,8 @@ def _main(base, args):
         cli.check()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except dnf.exceptions.LockError:
+        raise
     except dnf.exceptions.Error, e:
         return exFatal(e)
 
@@ -107,34 +106,12 @@ def _main(base, args):
     else:
         f.close()
 
-    lockerr = ""
-    while True:
-        try:
-            base.doLock()
-        except dnf.exceptions.LockError, e:
-            if exception2msg(e) != lockerr:
-                lockerr = exception2msg(e)
-                logger.critical(lockerr)
-            if e.errno in (errno.EPERM, errno.EACCES, errno.ENOSPC):
-                logger.critical(_("Can't create lock file; exiting"))
-                return 1
-
-            if not base.conf.exit_on_lock:
-                logger.critical(_("Another app is currently holding the yum lock; waiting for it to exit..."))
-                tm = 0.1
-                if show_lock_owner(e.pid, logger):
-                    tm = 2
-                time.sleep(tm)
-            else:
-                logger.critical(_("Another app is currently holding the yum lock; exiting as configured by exit_on_lock"))
-                return 1
-        else:
-            break
-
     try:
         result, resultmsgs = cli.run()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except dnf.exceptions.LockError:
+        raise
     except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -148,25 +125,21 @@ def _main(base, args):
         # Normal exit
         for msg in resultmsgs:
             logger.info('%s', msg)
-        if unlock(): return 200
         return 0
     elif result == 1:
         # Fatal error
         for msg in resultmsgs:
             logger.critical(_('Error: %s'), msg)
-        if unlock(): return 200
         return 1
     elif result == 2:
         # Continue on
         pass
     elif result == 100:
-        if unlock(): return 200
         return 100
     else:
         logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
         for msg in resultmsgs:
             logger.critical(msg)
-        if unlock(): return 200
         return 3
 
     # Depsolve stage
@@ -176,6 +149,8 @@ def _main(base, args):
         (result, resultmsgs) = base.build_transaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except dnf.exceptions.LockError:
+        raise
     except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
@@ -187,7 +162,6 @@ def _main(base, args):
     # Act on the depsolve result
     if result == 0:
         # Normal exit
-        if unlock(): return 200
         for msg in resultmsgs:
             print(msg)
         return 0
@@ -197,7 +171,6 @@ def _main(base, args):
             prefix = _('Error: %s')
             prefix2nd = (' ' * (utf8_width(prefix) - 2))
             logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
-        if unlock(): return 200
         return 1
     elif result == 2:
         # Continue on
@@ -206,7 +179,6 @@ def _main(base, args):
         logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
         for msg in resultmsgs:
             logger.critical(msg)
-        if unlock(): return 200
         return 3
 
     logger.info(_('\nDependencies Resolved'))
@@ -216,6 +188,8 @@ def _main(base, args):
         return_code = base.doTransaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
+    except dnf.exceptions.LockError:
+        raise
     except dnf.exceptions.Error, e:
         return exFatal(e)
     except KeyboardInterrupt:
@@ -242,7 +216,6 @@ def _main(base, args):
     else:
         logger.info(_('Complete!'))
 
-    if unlock(): return 200
     return return_code
 
 def hotshot(func, *args, **kwargs):
