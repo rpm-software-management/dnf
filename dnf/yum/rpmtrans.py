@@ -424,6 +424,10 @@ class RPMTransaction:
             self._unpackError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
             self._scriptError(bytes, total, h)
+        elif what == rpm.RPMCALLBACK_SCRIPT_START:
+            self._scriptStart(bytes, total, h)
+        elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
+            self._scriptStop(bytes, total, h);
 
 
     def _transStart(self, bytes, total, h):
@@ -544,6 +548,13 @@ class RPMTransaction:
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
                    (scriptlet_name, name))
         self.display.errorlog(msg)
+
+    def _scriptStart(self, bytes, total, h):
+        pass
+
+    def _scriptStop(self, bytes, total, h):
+        (pkg, tsi) = self._extract_cbkey(h)
+        self._scriptout(tsi or pkg.name)
 
     def verify_tsi_package(self, pkg, count, total):
         self.display.verify_tsi_package(pkg, count, total)
