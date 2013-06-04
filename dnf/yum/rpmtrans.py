@@ -422,8 +422,7 @@ class RPMTransaction:
             self._cpioError(bytes, total, h)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
             self._unpackError(bytes, total, h)
-        # SCRIPT_ERROR is only in rpm >= 4.6.0
-        elif hasattr(rpm, "RPMCALLBACK_SCRIPT_ERROR") and what == rpm.RPMCALLBACK_SCRIPT_ERROR:
+        elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
             self._scriptError(bytes, total, h)
 
 
