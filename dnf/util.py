@@ -65,9 +65,6 @@ def group_by_filter(fn, iterable):
         return acc
     return reduce(splitter, iterable, ([], []))
 
-def home_dir():
-    return os.getenv('HOME')
-
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
@@ -144,6 +141,10 @@ def touch(path, no_create=False):
         return os.utime(path, None)
     with open(path, 'a'):
         pass
+
+def user_run_dir():
+    uid = str(os.getuid())
+    return os.path.join(dnf.const.USER_RUNDIR, uid, dnf.const.PROGRAM_NAME)
 
 class tmpdir(object):
     def __init__(self):

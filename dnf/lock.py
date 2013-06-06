@@ -46,9 +46,9 @@ class ProcessLock(object):
         fn = 'dnf-%s-lock.pid' % self.name
         if dnf.util.am_i_root():
             return os.path.join(dnf.const.RUNDIR, fn)
-        dnf_homedir = os.path.join(dnf.util.home_dir(), '.dnf')
-        dnf.util.ensure_dir(dnf_homedir)
-        return os.path.join(dnf_homedir, fn)
+        user_run_dir = dnf.util.user_run_dir()
+        dnf.util.ensure_dir(user_run_dir)
+        return os.path.join(user_run_dir, fn)
 
     def _try_lock(self):
         pid = str(os.getpid())
