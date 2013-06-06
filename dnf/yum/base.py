@@ -237,7 +237,7 @@ class Base(object):
     def _init_yumvar(self, conf):
         yumvar = config.init_yumvar(self.conf.installroot,
                                     self.arch.canonarch, self.arch.basearch,
-                                    conf.releasever, conf.uuid)
+                                    conf.releasever)
         return yumvar
 
     def read_conf_file(self, path=None, root="/", releasever=None,

@@ -1023,29 +1023,6 @@ def get_open_files(pid):
 
     return files
 
-def get_uuid(savepath):
-    """create, store and return a uuid. If a stored one exists, report that
-       if it cannot be stored, return a random one"""
-    if os.path.exists(savepath):
-        return open(savepath, 'r').read()
-    else:
-        try:
-            from uuid import uuid4
-        except ImportError:
-            myid = open('/proc/sys/kernel/random/uuid', 'r').read()
-        else:
-            myid = str(uuid4())
-
-        try:
-            sf = open(savepath, 'w')
-            sf.write(myid)
-            sf.flush()
-            sf.close()
-        except (IOError, OSError), e:
-            pass
-
-        return myid
-
 def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""

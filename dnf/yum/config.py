@@ -33,7 +33,7 @@ import dnf.rpmUtils.transaction
 import dnf.exceptions
 import types
 import misc
-from misc import get_uuid, read_in_items_from_dot_dir
+from misc import read_in_items_from_dot_dir
 import dnf.util
 import dnf.const
 
@@ -941,7 +941,7 @@ class VersionGroupConf(BaseConfig):
     pkglist = ListOption()
     run_with_packages = BoolOption(False)
 
-def init_yumvar(installroot, canonarch, basearch, releasever, uuid):
+def init_yumvar(installroot, canonarch, basearch, releasever):
     yumvar = {}
     for num in range(0, 10):
         env = 'YUM%d' % num
@@ -951,7 +951,6 @@ def init_yumvar(installroot, canonarch, basearch, releasever, uuid):
     yumvar['arch'] = canonarch
     yumvar['basearch'] = basearch
     yumvar['releasever'] = releasever
-    yumvar['uuid'] = uuid
 
     # Read the FS yumvar
     try:
@@ -1007,9 +1006,6 @@ def readStartupConfig(configfile, root, releasever=None):
         releasever = _getsysver(startupconf.installroot,
                                 startupconf.distroverpkg)
     startupconf.releasever = releasever
-
-    uuidfile = '%s/%s/uuid' % (startupconf.installroot, startupconf.persistdir)
-    startupconf.uuid = get_uuid(uuidfile)
 
     return startupconf
 
