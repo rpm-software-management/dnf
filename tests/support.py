@@ -93,6 +93,10 @@ class MockPackage(object):
     def localPkg(self):
         return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
+class MockRepo(dnf.repo.Repo):
+    def valid(self):
+        return None
+
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
         hawkey.test.TestSackMixin.__init__(self, repo_dir)
@@ -112,7 +116,7 @@ class MockYumBase(dnf.yum.base.Base):
     def __init__(self, *extra_repos):
         super(MockYumBase, self).__init__()
         for r in extra_repos:
-            repo = dnf.repo.Repo(r)
+            repo = MockRepo(r)
             repo.enable()
             self._repos.add(repo)
 

@@ -17,7 +17,7 @@
 
 from dnf.exceptions import RepoError
 from dnf.repo import Repo
-from tests import mock
+from tests import mock, support
 import dnf.repodict
 import operator
 import unittest
@@ -37,10 +37,10 @@ class TestMultiCall(unittest.TestCase):
 
 class TestRepoDict(unittest.TestCase):
     def setUp(self):
-        self.x  = Repo('x')
-        self.xx = Repo('xx')
-        self.y  = Repo('y')
-        self.z  = Repo('z')
+        self.x  = support.MockRepo('x')
+        self.xx = support.MockRepo('xx')
+        self.y  = support.MockRepo('y')
+        self.z  = support.MockRepo('z')
 
         self.repos = dnf.repodict.RepoDict()
         self.repos.add(self.x)

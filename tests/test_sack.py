@@ -61,7 +61,7 @@ class SackTest(support.TestCase):
             raise dnf.exceptions.RepoError()
 
         yumbase = support.MockYumBase()
-        r = dnf.repo.Repo("bag")
+        r = support.MockRepo('bag')
         r.enable()
         yumbase._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)

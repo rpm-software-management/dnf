@@ -490,3 +490,8 @@ class Repo(dnf.yum.config.RepoConf):
                 'username': self.username,
                 'password': self.password,
                 }
+
+    def valid(self):
+        if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
+            return "Repository %s has no mirror or baseurl set." % self.id
+        return None

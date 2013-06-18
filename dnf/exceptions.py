@@ -57,9 +57,6 @@ class ThreadLockError(LockError):
 class RepoError(Error):
     pass
 
-class DuplicateRepoError(RepoError):
-    pass
-
 class ConfigError(Error):
     pass
 

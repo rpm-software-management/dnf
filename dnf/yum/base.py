@@ -332,7 +332,7 @@ class Base(object):
             # collection
             try:
                 self.repos.add(thisrepo)
-            except dnf.exceptions.RepoError, e:
+            except dnf.exceptions.ConfigError as e:
                 self.logger.warning(e)
 
     def read_all_repos(self):

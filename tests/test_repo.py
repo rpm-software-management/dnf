@@ -196,6 +196,12 @@ class RepoTest(support.TestCase):
         self.assertIn('keepalive', opts)
         self.assertIn('password', opts)
 
+    def test_valid(self):
+        self.assertIsNone(self.repo.valid())
+
+        repo = dnf.repo.Repo('r')
+        self.assertRegexpMatches(repo.valid(), 'no mirror or baseurl')
+
 class LocalRepoTest(support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
