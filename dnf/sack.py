@@ -56,7 +56,6 @@ class SackVersion:
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
-        self._filelists = False
         self.logger = logging.getLogger("dnf")
 
     def configure(self, installonly=None):
