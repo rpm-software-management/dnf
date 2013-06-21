@@ -58,3 +58,12 @@ following will work::
 DNF drops Yum's ``protected_packages`` configuration option. Generally, DNF lets
 the user do what she specified, even have DNF itself removed. Similar functionality
 can be implemented by a plugin.
+
+=============================================================
+ ``dnf erase kernel`` deletes all packages called ``kernel``
+=============================================================
+
+In Yum, the running kernel is spared. There is no reason to keep this in DNF,
+the user can always specify concrete versions on the command line, e.g.::
+
+    dnf erase kernel-3.9.4

@@ -829,13 +829,6 @@ tuple for the running kernel.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="dnf.yum.misc.get_uuid">
-<tt class="descclassname">dnf.yum.misc.</tt><tt class="descname">get_uuid</tt><big>(</big><em>savepath</em><big>)</big><a class="headerlink" href="#dnf.yum.misc.get_uuid" title="Permalink to this definition">¶</a></dt>
-<dd><p>create, store and return a uuid. If a stored one exists, report that
-if it cannot be stored, return a random one</p>
-</dd></dl>
-
-<dl class="function">
 <dt id="dnf.yum.misc.getgpgkeyinfo">
 <tt class="descclassname">dnf.yum.misc.</tt><tt class="descname">getgpgkeyinfo</tt><big>(</big><em>rawkey</em>, <em>multiple=False</em><big>)</big><a class="headerlink" href="#dnf.yum.misc.getgpgkeyinfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a dict of info for the given ASCII armoured key text</p>
@@ -1009,12 +1002,6 @@ if the value isn&#8217;t in the store this one becomes the shared version.</p>
 <dt id="dnf.yum.misc.stat_f">
 <tt class="descclassname">dnf.yum.misc.</tt><tt class="descname">stat_f</tt><big>(</big><em>filename</em>, <em>ignore_EACCES=False</em><big>)</big><a class="headerlink" href="#dnf.yum.misc.stat_f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call os.stat(), but don&#8217;t die if the file isn&#8217;t there. Returns None.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="dnf.yum.misc.string_to_prco_tuple">
-<tt class="descclassname">dnf.yum.misc.</tt><tt class="descname">string_to_prco_tuple</tt><big>(</big><em>prcoString</em><big>)</big><a class="headerlink" href="#dnf.yum.misc.string_to_prco_tuple" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a prco tuple (name, flags, (e, v, r)) for a string</p>
 </dd></dl>
 
 <dl class="function">
@@ -1960,8 +1947,7 @@ line options</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>package</strong> &#8211; A yum package object or simple string of a package name</li>
-<li><strong>action</strong> &#8211; A yum.constant transaction set state or in the obscure
-rpm repackage case it could be the string &#8216;repackaging&#8217;</li>
+<li><strong>action</strong> &#8211; A yum.constant transaction set state</li>
 <li><strong>te_current</strong> &#8211; Current number of bytes processed in the transaction
 element being processed</li>
 <li><strong>te_total</strong> &#8211; Total number of bytes in the transaction element being

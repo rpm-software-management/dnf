@@ -66,6 +66,7 @@
 <li><a class="reference internal" href="#no-resolvedep-command" id="id5">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
 <li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id6">Excludes and repo excludes apply to all operations</a></li>
 <li><a class="reference internal" href="#protected-packages-is-ignored" id="id7"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
+<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id8"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
 </ul>
 </li>
 </ul>
@@ -113,6 +114,13 @@ following will work:</p>
 the user do what she specified, even have DNF itself removed. Similar functionality
 can be implemented by a plugin.</p>
 </div>
+<div class="section" id="dnf-erase-kernel-deletes-all-packages-called-kernel">
+<h2><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
+<p>In Yum, the running kernel is spared. There is no reason to keep this in DNF,
+the user can always specify concrete versions on the command line, e.g.:</p>
+<div class="highlight-python"><pre>dnf erase kernel-3.9.4</pre>
+</div>
+</div>
 </div>
 
 
@@ -130,6 +138,7 @@ can be implemented by a plugin.</p>
 <li><a class="reference internal" href="#no-resolvedep-command">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
 <li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations">Excludes and repo excludes apply to all operations</a></li>
 <li><a class="reference internal" href="#protected-packages-is-ignored"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
+<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
 </ul>
 </li>
 </ul>
