@@ -203,8 +203,12 @@ class Base(object):
         start = time.time()
         self._sack = sack.build_sack(self)
         with dnf.lock.metadata_cache_lock:
-            if load_system_repo:
-                self._sack.load_system_repo(build_cache=True)
+            if load_system_repo is not False:
+                try:
+                    self._sack.load_system_repo(build_cache=True)
+                except IOError:
+                    if load_system_repo != 'auto':
+                        raise
             if load_available_repos:
                 for r in self.repos.iter_enabled():
                     self._add_repo_to_sack(r.id)

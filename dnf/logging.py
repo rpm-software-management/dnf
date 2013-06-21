@@ -78,6 +78,7 @@ def _cfg_err_val2level(cfg_errval):
 
 def _create_filehandler(logfile):
     if not os.path.exists(logfile):
+        dnf.util.ensure_dir(os.path.dirname(logfile))
         dnf.util.touch(logfile)
         # By default, make logfiles readable by the user (so the reporting ABRT
         # user can attach root logfiles).

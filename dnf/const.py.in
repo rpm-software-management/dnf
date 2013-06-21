@@ -26,6 +26,8 @@ LOG_RPM='dnf.rpm.log'
 NAME='DNF'
 PERSISTDIR='/var/lib/dnf'
 PID_FILENAME = '/var/run/dnf.pid'
+RUNDIR='/run'
+USER_RUNDIR='/run/user'
 SYSTEM_CACHEDIR='/var/cache/dnf'
 TMPDIR='/var/tmp/'
 # CLI verbose values greater or equal to this are considered "verbose":
