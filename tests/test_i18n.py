@@ -47,6 +47,10 @@ class TestStdout(unittest.TestCase):
             mock_stdout.encoding = 'UTF-8'
             retval = dnf.i18n.setup_stdout()
             self.assertTrue(retval)
+        with mock.patch('sys.stdout') as mock_stdout:
+            mock_stdout.encoding = 'ISO-8859-2'
+            retval = dnf.i18n.setup_stdout()
+            self.assertFalse(retval)
 
     def test_stream(self):
         fileobj = mock.Mock()

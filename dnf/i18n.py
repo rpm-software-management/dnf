@@ -39,6 +39,23 @@ class UnicodeStream(object):
     def __getattr__(self, name):
         return getattr(self.stream, name)
 
+def _full_ucd_support(encoding):
+    """Return true if encoding can express any Unicode character.
+
+    Even if an encoding can express all accented letters in the given language,
+    we can't generally settle for it in DNF since sometimes we output special
+    characters like the registered trademark symbol (U+00AE) and surprisingly
+    many national non-unicode encodings, including e.g. ASCII and ISO-8859-2,
+    don't contain it.
+
+    """
+    if encoding is None:
+        return False
+    lower = encoding.lower()
+    if lower.startswith('utf-') or lower.startswith('utf_'):
+        return True
+    return False
+
 def _guess_encoding():
     """ Take the best shot at the current system's string encoding. """
     return locale.getpreferredencoding()
@@ -61,7 +78,7 @@ def setup_stdout():
         Returns True if stdout was of suitable encoding already and no chagnes
         were needed.
     """
-    if sys.stdout.encoding is None:
+    if not _full_ucd_support(sys.stdout.encoding):
         sys.stdout = UnicodeStream(sys.stdout, _guess_encoding())
         return False
     return True
