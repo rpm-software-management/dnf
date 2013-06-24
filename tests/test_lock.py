@@ -27,7 +27,9 @@ from dnf.exceptions import ProcessLockError, ThreadLockError
 
 import Queue
 import dnf.lock
+import dnf.util
 import multiprocessing
+import tests.mock as mock
 import tests.support
 import threading
 
@@ -54,7 +56,12 @@ class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.queue = multiprocessing.Queue(1)
 
+@mock.patch('dnf.const.USER_RUNDIR', tests.support.USER_RUNDIR)
 class ProcessLockTest(tests.support.TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        dnf.util.rm_rf(tests.support.USER_RUNDIR)
+
     def test_simple(self):
         l1 = dnf.lock.ProcessLock("unit-test")
         target = l1._target

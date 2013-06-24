@@ -52,10 +52,11 @@ def repo_dir():
     return os.path.join(this_dir, "repos")
 
 COMPS_PATH = os.path.join(repo_dir(), "main_comps.xml")
+NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")
 TOUR_44_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-4-4.noarch.rpm")
 TOUR_50_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-0.noarch.rpm")
 TOUR_51_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-1.noarch.rpm")
-NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")
+USER_RUNDIR = '/tmp/dnf-user-rundir'
 
 # often used query
 
