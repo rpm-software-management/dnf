@@ -1,12 +1,12 @@
-%global gitrev f8bdc98
-%global hawkey_version 0.3.13
+%global gitrev 85524ae
+%global hawkey_version 0.3.14
 %global librepo_version 0.0.4
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -74,6 +74,35 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+* Mon Jun 24 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.8-1.git85524ae
+- fix: tracebacks when installing to an empty installroot (RhBug:975858) (Ales Kozumplik)
+- doc: 'dnf erase kernel' erases all the kernels. (Ales Kozumplik)
+- i18n: even if we have a legit encoding, don't assume it covers the entire UCD (RhBug:976652) (Ales Kozumplik)
+- stray self._filelists in Sack. (Ales Kozumplik)
+- fix: traceback on check-update when there's a repo without any source. (RhBug:974866) (Ales Kozumplik)
+- fix: missing os import in i18n.py (RhBug:974427) (Ales Kozumplik)
+- fix: traceback for a regular user when /var/lib/dnf/uuid is not world-readable. (Ales Kozumplik)
+- put user locks in /run/user/$UID/dnf. (Ales Kozumplik)
+- Minimally teach dnf about rpm rpm >= 4.10 scriptlet start and stop callbacks (Panu Matilainen)
+- remove: unnecessary testing for prehistoric rpm versions in callback (Panu Matilainen)
+- remove: unused rpmtrans internal _dopkgtup() helper (Panu Matilainen)
+- remove: unused rpm repackaging support remnants (Panu Matilainen)
+- locking: as an example introduce rpmdb_lock and metadata_cache_lock. (Ales Kozumplik)
+- locking: remove the old global locking code. (Ales Kozumplik)
+- locking: implement and test ProcessLock class. (Ales Kozumplik)
+- Add base_url arg to librepo.download(). (RhBug:968159) (Zdenek Pavlas)
+- remove: unused miscutils.compareVerOnly() (Panu Matilainen)
+- remove: unused miscutils.stringToVersion() and .flagToString() (Panu Matilainen)
+- remove: unused string_to_prco_tuple() and imports used only by it (Panu Matilainen)
+- remove: unused miscutils.rpmOutToStr() (Panu Matilainen)
+- remove: miscutils.formatRequire() (Panu Matilainen)
+- remove: miscutils.rangeCompare() and rangeCheck() (Panu Matilainen)
+- remove: miscutils.pkgTupleFromHeader() (Panu Matilainen)
+- remove: rpmUtils.TransactionWrapper.returnLeafNodes() method (Panu Matilainen)
+- doc: what 'list recent' does. (Ales Kozumplik)
+- Resurrect "list recent" functionality (RhBug:908491) (Panu Matilainen)
+- doc: add bug summaries to the release notes. (Ales Kozumplik)
+
 * Wed May 29 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.7-1.gitf8bdc98
 - ensure the cachedir in Persistor._expired_repos(). (RhBug:967732) (Ales Kozumplik)
 - do not load available repositories into the sack for the erase command. (RhBug:916662) (Ales Kozumplik)
