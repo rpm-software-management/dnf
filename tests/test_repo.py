@@ -37,6 +37,11 @@ class HandleTest(support.TestCase):
         self.assertTrue(h.useragent.startswith("dnf/"))
         self.assertEqual(h.maxmirrortries, 0)
 
+    def test_substs(self):
+        subst_dct = {'version': '69'}
+        h = dnf.repo._Handle.new_local(subst_dct, False, 1, '/')
+        self.assertItemsEqual(h.varsub, [('version', '69'),])
+
 class RepoTest(support.TestCase):
     """Test the logic of dnf.repo.Repo.
 

@@ -46,6 +46,9 @@ def _metalink_path(dirname):
 def _mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
+def _subst2tuples(subst_dct):
+    return [(k, v) for (k, v) in subst_dct.iteritems()]
+
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):
         super(_Handle, self).__init__()
@@ -57,8 +60,9 @@ class _Handle(librepo.Handle):
         self.yumdlist = ["primary", "filelists", "prestodelta", "group_gz"]
 
     @classmethod
-    def new_local(cls, gpgcheck, max_mirror_tries, cachedir):
+    def new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
         h = cls(gpgcheck, max_mirror_tries)
+        h.varsub = _subst2tuples(subst_dct)
         h.destdir = cachedir
         h.url = cachedir
         h.local = True
@@ -69,9 +73,10 @@ class _Handle(librepo.Handle):
         return h
 
     @classmethod
-    def new_remote(cls, gpgcheck, max_mirror_tries, destdir, mirror_setup,
-                   progress_cb):
+    def new_remote(cls, subst_dct, gpgcheck, max_mirror_tries, destdir,
+                   mirror_setup, progress_cb):
         h = cls(gpgcheck, max_mirror_tries)
+        h.varsub = _subst2tuples(subst_dct)
         h.destdir = destdir
         h.setopt(mirror_setup[0], mirror_setup[1])
         h.progresscb = progress_cb
@@ -193,15 +198,16 @@ class Repo(dnf.yum.config.RepoConf):
         return Metadata(result, handle)
 
     def _handle_new_local(self, destdir):
-        return _Handle.new_local(self.repo_gpgcheck, self.max_mirror_tries,
-                                 destdir)
+        return _Handle.new_local(self.yumvar, self.repo_gpgcheck,
+                                 self.max_mirror_tries, destdir)
 
     def _handle_new_remote(self, destdir):
         cb = None
         if self._progress is not None:
             cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.repo_gpgcheck, self.max_mirror_tries,
-                                  destdir, self._mirror_setup_args(), cb)
+        return _Handle.new_remote(self.yumvar, self.repo_gpgcheck,
+                                  self.max_mirror_tries, destdir,
+                                  self._mirror_setup_args(), cb)
 
     @property
     def _local_origin(self):
