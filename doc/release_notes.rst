@@ -135,3 +135,22 @@ This is a bugfix release:
 
 * :rhbug:`916662`
 * :rhbug:`967732`
+
+===================
+0.3.8 Release Notes
+===================
+
+A new locking module has been integrated in this version, clients should see the
+message about DNF lock being taken less often.
+
+Panu Matilainen has submitted many patches to this release to cleanup the RPM
+interfacing modules.
+
+The following bugs are fixed in this release:
+
+* :rhbug:`908491`
+* :rhbug:`968159`
+* :rhbug:`974427`
+* :rhbug:`974866`
+* :rhbug:`976652`
+* :rhbug:`975858`

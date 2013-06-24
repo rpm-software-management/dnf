@@ -114,5 +114,29 @@
     [
         967732, 
         "[abrt] dnf-0.3.6-1.git24ce938.fc19: __init__.py:364:hashopen:DBNoSuchFileError: (2, 'Datei oder Verzeichnis nicht gefunden')"
+    ], 
+    [
+        908491, 
+        "[rfe] list recent"
+    ], 
+    [
+        968159, 
+        "repo_rpmmd.c: base:xml attr in <location> is ignored"
+    ], 
+    [
+        974427, 
+        "dnf fails on all commands with fatal error: \"global name 'os' is not defined\""
+    ], 
+    [
+        974866, 
+        "dnf crashes if neither baseurl nor mirrorlist are defined"
+    ], 
+    [
+        976652, 
+        "[abrt] UnicodeEncodeError with 'dnf info checkpolicy'"
+    ], 
+    [
+        975858, 
+        "dnf can't install in an empty installroot"
     ]
 ]
