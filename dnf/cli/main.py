@@ -20,19 +20,40 @@ Entrance point for the yum command line interface.
 """
 
 from __future__ import print_function
-import os
-import os.path
-import sys
-import logging
-import time
-import errno
 
-import dnf.exceptions
+import sys
+def suppress_keyboard_interrupt_message():
+    """Prevent unsightly KeyboardInterrupt tracebacks.
+
+    Nothing will be printed to the terminal after an uncaught
+    :class:`exceptions.KeyboardInterrupt`.
+
+    """
+    old_excepthook = sys.excepthook
+
+    def new_hook(type, value, traceback):
+        if type != KeyboardInterrupt:
+            old_excepthook(type, value, traceback)
+        else:
+            pass
+
+    sys.excepthook = new_hook
+
+# do this ASAP to prevent tracebacks after ^C during imports
+suppress_keyboard_interrupt_message()
+
 from dnf.yum import plugins
 from dnf.yum.i18n import utf8_width, exception2msg, _
-import dnf.i18n
+from utils import show_lock_owner
+
 import dnf.cli.cli
-from utils import suppress_keyboard_interrupt_message, show_lock_owner
+import dnf.exceptions
+import dnf.i18n
+import errno
+import logging
+import os
+import os.path
+import time
 
 logger = logging.getLogger("dnf")
 
@@ -43,19 +64,20 @@ def main(args):
         except dnf.exceptions.ProcessLockError as e:
             logger.critical(e.value)
             show_lock_owner(e.pid, logger)
+            return 1
         except dnf.exceptions.LockError as e:
             logger.critical(e.value)
             return 1
+        except KeyboardInterrupt as e:
+            print(_("Terminated."), file=sys.stderr)
+            return 1
+    return 0
 
 def _main(base, args):
     """Run the yum program from a command line interface."""
 
     dnf.i18n.setup_locale()
     dnf.i18n.setup_stdout()
-
-    def exUserCancel():
-        logger.critical(_('Terminated.'))
-        return 1
 
     def exIOError(e):
         if e.errno == 32:
@@ -115,8 +137,6 @@ def _main(base, args):
     except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
-    except KeyboardInterrupt:
-        return exUserCancel()
     except IOError, e:
         return exIOError(e)
 
@@ -154,8 +174,6 @@ def _main(base, args):
     except dnf.exceptions.Error, e:
         result = 1
         resultmsgs = [exception2msg(e)]
-    except KeyboardInterrupt:
-        return exUserCancel()
     except IOError, e:
         return exIOError(e)
 
@@ -192,8 +210,6 @@ def _main(base, args):
         raise
     except dnf.exceptions.Error, e:
         return exFatal(e)
-    except KeyboardInterrupt:
-        return exUserCancel()
     except IOError, e:
         return exIOError(e)
 
@@ -279,11 +295,5 @@ def user_main(args, exit_code=False):
         sys.exit(errcode)
     return errcode
 
-suppress_keyboard_interrupt_message()
-
 if __name__ == "__main__":
-    try:
-        user_main(sys.argv[1:], exit_code=True)
-    except KeyboardInterrupt, e:
-        print(_("\n\nExiting on user cancel."), file=sys.stderr)
-        sys.exit(1)
+    user_main(sys.argv[1:], exit_code=True)

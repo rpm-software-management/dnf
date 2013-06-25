@@ -17,7 +17,6 @@
 import os
 import sys
 import time
-import exceptions
 
 import dnf.yum
 from cli import *
@@ -32,20 +31,6 @@ try:
 except (AttributeError, KeyError):
     # Huh, non-Unix platform? Or just really old?
     _USER_HZ = 100
-
-def suppress_keyboard_interrupt_message():
-    """Change settings so that nothing will be printed to the
-    terminal after an uncaught :class:`exceptions.KeyboardInterrupt`.
-    """
-    old_excepthook = sys.excepthook
-
-    def new_hook(type, value, traceback):
-        if type != exceptions.KeyboardInterrupt:
-            old_excepthook(type, value, traceback)
-        else:
-            pass
-
-    sys.excepthook = new_hook
 
 def jiffies_to_seconds(jiffies):
     """Convert a number of jiffies to seconds. How many jiffies are in a second
