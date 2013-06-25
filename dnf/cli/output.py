@@ -860,7 +860,7 @@ class YumOutput:
         print(_("Size        : %s") % self.format_number(float(pkg.size)))
         print(_("Repo        : %s") % to_unicode(pkg.repoid))
         if 'from_repo' in yumdb_info:
-            print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
+            print(_("From repo   : %s") % to_unicode(pkg.yumdb_info.from_repo))
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % to_unicode(pkg.committer))
