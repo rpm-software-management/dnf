@@ -20,6 +20,7 @@ Entrance point for the yum command line interface.
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 import sys
 def suppress_keyboard_interrupt_message():
@@ -44,7 +45,7 @@ suppress_keyboard_interrupt_message()
 
 from dnf.yum import plugins
 from dnf.yum.i18n import utf8_width, exception2msg, _
-from utils import show_lock_owner
+from dnf.cli.utils import show_lock_owner
 
 import dnf.cli.cli
 import dnf.exceptions
