@@ -219,6 +219,11 @@ class Base(object):
         self._goal = hawkey.Goal(self._sack)
         return self._sack
 
+    def build_repo(self, id_):
+        repo = dnf.repo.Repo(id_)
+        repo.basecachedir = self.cache_c.cachedir
+        return repo
+
     @property
     @dnf.util.lazyattr("_yumdb")
     def yumdb(self):
@@ -374,7 +379,7 @@ class Base(object):
         :param section: INI file section to read
         :return: :class:`dnf.repo.Repo` instance
         """
-        repo = dnf.repo.Repo(section)
+        repo = self.build_repo(section)
         try:
             repo.populate(parser, section, self.conf)
         except ValueError, e:
@@ -387,8 +392,6 @@ class Base(object):
             self.logger.error(_('Repository %r is missing name in configuration, '
                     'using id') % section)
         repo.name = to_unicode(repo.name)
-
-        repo.basecachedir = self.cache_c.cachedir
 
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
