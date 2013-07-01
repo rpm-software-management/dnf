@@ -1012,7 +1012,9 @@ class Cli(object):
                 repo.md_only_cached = True
 
         for rid in self.base._persistor.get_expired_repos():
-            self.base.repos[rid].md_expire_cache()
+            repo = self.base.repos.get(rid)
+            if repo:
+                repo.md_expire_cache()
 
         # setup the progress bars/callbacks
         self.base.setupProgressCallbacks()
