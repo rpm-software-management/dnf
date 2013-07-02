@@ -122,7 +122,10 @@ class Metadata(object):
         return time.time() - self.file_timestamp(what)
 
     def file_timestamp(self, what):
-        return dnf.util.file_timestamp(self.repo_dct[what])
+        try:
+            return dnf.util.file_timestamp(self.repo_dct[what])
+        except OSError as e:
+            raise dnf.exceptions.MetadataError(str(e))
 
     @property
     def filelists_fn(self):

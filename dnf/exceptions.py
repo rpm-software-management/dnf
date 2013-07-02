@@ -60,6 +60,9 @@ class RepoError(Error):
 class ConfigError(Error):
     pass
 
+class MetadataError(Error):
+    pass
+
 class MiscError(Error):
     pass
 
@@ -76,9 +79,6 @@ class ReinstallInstallError(ReinstallError):
     def __init__(self, value=None, failed_pkgs=[]):
         ReinstallError.__init__(self, value)
         self.failed_pkgs = failed_pkgs
-
-class RepoMDError(Error):
-    pass
 
 class CompsException(Error):
     pass

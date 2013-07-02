@@ -162,9 +162,13 @@ class Base(object):
                 self.sack.add_excludes(pkgs)
 
     def _store_persistent_data(self):
-        expired = [r.id for r in self.repos.iter_enabled()
-                   if r.metadata_expire_in()[1] <= 0]
-        self._persistor.set_expired_repos(expired)
+        def check_expired(repo):
+            try:
+                return rerpo.metadata_expire_in()[1] <= 0
+            except dnf.exceptions.MetadataError:
+                return False
+
+        expired = [r.id for r in self.repos.iter_enabled() if check_expired(r)]
 
     @property
     def comps(self):

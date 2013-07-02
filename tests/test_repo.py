@@ -24,7 +24,6 @@ import dnf.exceptions
 import librepo
 import os
 import tempfile
-import unittest
 import ConfigParser
 import StringIO
 
@@ -41,6 +40,18 @@ class HandleTest(support.TestCase):
         subst_dct = {'version': '69'}
         h = dnf.repo._Handle.new_local(subst_dct, False, 1, '/')
         self.assertItemsEqual(h.varsub, [('version', '69'),])
+
+class MetadataTest(support.TestCase):
+    def setUp(self):
+        result = mock.Mock(spec=['yum_repo', 'yum_repomd'])
+        result.yum_repo = {'primary': support.NONEXISTENT_FILE}
+        handle = mock.Mock(spec=['mirrors'])
+        handle.mirrors = []
+        self.md = dnf.repo.Metadata(result, handle)
+
+    def test_file_timestamp(self):
+        self.assertRaises(dnf.exceptions.MetadataError,
+                          self.md.file_timestamp, 'primary')
 
 class RepoTest(support.TestCase):
     """Test the logic of dnf.repo.Repo.
