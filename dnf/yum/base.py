@@ -164,7 +164,7 @@ class Base(object):
     def _store_persistent_data(self):
         def check_expired(repo):
             try:
-                return rerpo.metadata_expire_in()[1] <= 0
+                return repo.metadata_expire_in()[1] <= 0
             except dnf.exceptions.MetadataError:
                 return False
 
