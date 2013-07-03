@@ -31,6 +31,8 @@ import hawkey.test
 import os
 import unittest
 
+skip = unittest.skip
+
 RPMDB_CHECKSUM = 'b3fa9f5ed659fa881ac901606be5e8f99ca55cc3'
 TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
