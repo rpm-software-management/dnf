@@ -80,3 +80,35 @@ class LibcompsTest(support.TestCase):
 
         c = c1 + c2
         x = c.groups[0].packages[0].name
+
+    @support.skip
+    def test_environment_parse(self):
+        xml = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE comps PUBLIC "-//Red Hat, Inc.//DTD Comps info//EN" "comps.dtd">
+<comps>
+  <group>
+   <id>somerset</id>
+   <default>true</default>
+   <uservisible>true</uservisible>
+   <display_order>1024</display_order>
+   <name>Solid Ground</name>
+   <description>--</description>
+    <packagelist>
+      <packagereq type="mandatory">pepper</packagereq>
+      <packagereq type="mandatory">trampoline</packagereq>
+    </packagelist>
+  </group>
+  <environment>
+    <id>minimal</id>
+    <name>Min install</name>
+    <description>Basic functionality.</description>
+    <display_order>5</display_order>
+    <grouplist>
+      <groupid>somerset</groupid>
+    </grouplist>
+  </environment>
+</comps>
+"""
+        errors = libcomps.Comps().fromxml_str(xml)
+        self.assertLength(errors, 0)
