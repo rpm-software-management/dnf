@@ -118,7 +118,7 @@ class VerifyTransactionTest(unittest.TestCase):
 
         self.yumbase.transaction.add_install(new_pkg, [])
         self.yumbase.transaction.add_erase(removed_pkg)
-        self.yumbase.verify_transaction()
+        self.yumbase.verify_transaction(0)
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
         yumdb_info = self.yumbase.yumdb.get_package(new_pkg)

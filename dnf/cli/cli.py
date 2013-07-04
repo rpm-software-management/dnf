@@ -54,12 +54,6 @@ import hawkey
 
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
 
-_RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
-    'rpm -Va --nofiles --nodigest'
-_RPM_REBUILDDB=_("To fix inconsistent RPMDB, try running: '%s'.") % \
-    'rpm --rebuilddb'
-_REPORT_TMPLT=_("If the above doesn't help please report this error at '%s'.")
-
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
     error message and exit the program.
@@ -136,7 +130,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         return summary
 
-    def doTransaction(self):
+    def do_transaction(self):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
 
@@ -148,7 +142,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if len(self._transaction) == 0:
             msg = _('Trying to run the transaction but nothing to do. Exiting.')
             self.logger.info(msg)
-            return -1
+            return -1, None
 
         lsts = self.listTransaction()
         self.logger.info(lsts)
@@ -181,7 +175,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if self._promptWanted():
             if self.conf.assumeno or not self.userconfirm():
                 self.logger.info(_('Exiting on user Command'))
-                return -1
+                return -1, None
 
         self.logger.info(_('Downloading Packages:'))
         problems = self.download_packages(downloadpkgs, callback_total=\
@@ -198,12 +192,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
-            return -1
+            return -1, None
 
         display = output.YumCliRPMCallBack(weakref(self))
-        resultobject = super(YumBaseCli, self).do_transaction(display)
-        self.logger.info(self.post_transaction_output())
-        return resultobject.return_code
+        return_code, resultmsgs = super(YumBaseCli, self).do_transaction(display)
+        if return_code == 0:
+            self.logger.info(self.post_transaction_output())
+        return return_code, resultmsgs
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,

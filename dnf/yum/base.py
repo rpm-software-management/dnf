@@ -70,6 +70,12 @@ import dnf.util
 import dnf.rpmUtils.connection
 from dnf import const, queries, sack
 
+_RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
+    'rpm -Va --nofiles --nodigest'
+_RPM_REBUILDDB=_("To fix inconsistent RPMDB, try running: '%s'.") % \
+    'rpm --rebuilddb'
+_REPORT_TMPLT=_("If the above doesn't help please report this error at '%s'.")
+
 class Base(object):
     """This is a primary structure and base class. It houses the
     objects and methods needed to perform most things in yum. It is
@@ -662,7 +668,7 @@ class Base(object):
                 print(_('ERROR with transaction check vs depsolve:'))
 
             for msg in msgs:
-                print(to_utf8(msg))
+                print(i18n.to_utf8(msg))
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be upgraded')]
@@ -709,13 +715,13 @@ class Base(object):
             cb.display.output = False
 
         self.logger.info(_('Running Transaction'))
-        resultobject = self.runTransaction(cb=cb)
+        return_code = self.runTransaction(cb=cb)
 
         self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)
 
-        return resultobject
+        return return_code, None
 
     def _record_history(self):
         return self.conf.history_record and \
@@ -788,9 +794,7 @@ class Base(object):
             except:
                 pass
 
-        # make resultobject - just a plain yumgenericholder object
-        resultobject = misc.GenericHolder()
-        resultobject.return_code = 0
+        return_code = 0
         if errors is None:
             pass
         elif len(errors) == 0:
@@ -801,7 +805,7 @@ class Base(object):
             if len(filter(lambda el: el.Failed(), self.ts)) > 0:
                 errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
                 self.logger.debug(errstring)
-                resultobject.return_code = 1
+                return_code = 1
             else:
                 self.logger.critical(_("Transaction couldn't start (no root?)"))
                 raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
@@ -836,10 +840,10 @@ class Base(object):
         self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verify_transaction(resultobject, cb.verify_tsi_package)
-        return resultobject
+            self.verify_transaction(return_code, cb.verify_tsi_package)
+        return return_code
 
-    def verify_transaction(self, resultobject=None, verify_pkg_cb=None):
+    def verify_transaction(self, return_code, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
@@ -956,12 +960,9 @@ class Base(object):
 
         self.plugins.run('postverifytrans')
         if self._record_history():
-            ret = -1
-            if resultobject is not None:
-                ret = resultobject.return_code
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.plugins.run('historyend')
-            self.history.end(rpmdbv, ret)
+            self.history.end(rpmdbv, return_code)
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def verifyPkg(self, fo, po, raiseError):

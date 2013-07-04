@@ -204,7 +204,7 @@ def _main(base, args):
 
     # Run the transaction
     try:
-        return_code = base.doTransaction()
+        return_code, resultmsgs = base.do_transaction()
     except plugins.PluginYumExit, e:
         return exPluginExit(e)
     except dnf.exceptions.LockError:
@@ -215,11 +215,9 @@ def _main(base, args):
         return exIOError(e)
 
     # rpm ts.check() failed.
-    if type(return_code) == type((0,)) and len(return_code) == 2:
-        (result, resultmsgs) = return_code
+    if resultmsgs:
         for msg in resultmsgs:
             logger.critical("%s", msg)
-        return_code = result
         if base._ts_save_file:
             logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     elif return_code < 0:
