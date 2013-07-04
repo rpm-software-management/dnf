@@ -39,6 +39,10 @@ class Group(Forwarder):
         return [pkg for pkg in self.packages if pkg.type == type_]
 
     @property
+    def conditional_packages(self):
+        return self._packages_of_type(libcomps.PACKAGE_TYPE_CONDITIONAL)
+
+    @property
     def default_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_DEFAULT)
 
