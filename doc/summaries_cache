@@ -138,5 +138,21 @@
     [
         975858, 
         "dnf can't install in an empty installroot"
+    ], 
+    [
+        964584, 
+        "dnf doesn't replace $releasever/$basearch in mirror url"
+    ], 
+    [
+        979942, 
+        "[abrt] cli.py:1015:_configure_repos:KeyError: <repo id>"
+    ], 
+    [
+        980227, 
+        "[locking] OSError when a long running transaction gets metadata files written over by a concurrent 'dnf makecache'"
+    ], 
+    [
+        981310, 
+        "NameError: global name 'to_utf8' is not defined"
     ]
 ]
