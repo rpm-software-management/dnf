@@ -214,7 +214,6 @@ class FakeConf(object):
         self.installroot = '/'
         self.multilib_policy = 'best'
         self.obsoletes = True
-        self.overwrite_groups = False
         self.persistdir = '/should-not-exist-bad-test/persist'
         self.protected_multilib = False
         self.protected_packages = []

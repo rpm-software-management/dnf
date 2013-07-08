@@ -736,7 +736,6 @@ class YumConf(StartupConf):
     alwaysprompt = BoolOption(True)
     exactarch = BoolOption(True)
     diskspacecheck = BoolOption(True)
-    overwrite_groups = BoolOption(False)
     keepalive = BoolOption(True)
     # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = BoolOption(False)

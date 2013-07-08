@@ -481,7 +481,7 @@ class Base(object):
         """Create the groups object to access the comps metadata."""
         group_st = time.time()
         self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
-        self._comps = comps.Comps(overwrite_groups=self.conf.overwrite_groups)
+        self._comps = comps.Comps()
 
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
