@@ -22,6 +22,7 @@ from dnf.exceptions import CompsException
 
 import itertools
 import libcomps
+import operator
 
 class Forwarder(object):
     def __init__(self, iobj):
@@ -61,10 +62,17 @@ class Group(Forwarder):
 class Category(Forwarder):
     pass
 
+class Environment(Forwarder):
+    pass
+
 class Comps(object):
     def __init__(self):
         self._i = libcomps.Comps()
         self._installed_groups = set()
+
+    def __len__(self):
+        collections = (self._i.categories, self._i.groups, self._i.environments)
+        return reduce(operator.__add__, map(len, collections))
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
@@ -72,6 +80,10 @@ class Comps(object):
         if errors:
             raise CompsException(' '.join(errors))
         self._i = self._i + comps
+
+    @property
+    def categories(self):
+        return list(self.categories_iter)
 
     @property
     def categories_iter(self):
@@ -100,6 +112,14 @@ class Comps(object):
                     if pkg.name in inst_names:
                         self._installed_groups.add(group.id)
                         break
+
+    @property
+    def environments(self):
+        return list(self.environments_iter)
+
+    @property
+    def environments_iter(self):
+        return (Environment(e) for e in self._i.environments)
 
     @property
     def groups(self):

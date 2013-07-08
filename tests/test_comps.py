@@ -61,6 +61,13 @@ class CompsTest(support.TestCase):
         self.assertTrue(groups[0].installed)
         self.assertFalse(groups[1].installed)
 
+    def test_size(self):
+        comps = self.comps
+        self.assertLength(comps, 3)
+        self.assertLength(comps.groups, 2)
+        self.assertLength(comps.categories, 1)
+        self.assertLength(comps.environments, 0)
+
 class LibcompsTest(support.TestCase):
 
     """Sanity tests of the Libcomps library."""
