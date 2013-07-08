@@ -32,6 +32,24 @@ class CompsTest(support.TestCase):
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
+    def test_by_pattern(self):
+        comps = self.comps
+        self.assertLength(comps.groups_by_pattern('Base'), 1)
+        self.assertLength(comps.groups_by_pattern('*'), 2)
+        self.assertLength(comps.groups_by_pattern('Base, Solid*'), 2)
+
+    def test_compile(self):
+        yumbase = support.MockYumBase("main")
+        sack = yumbase.sack
+
+        comps = self.comps
+        groups = comps.groups
+        self.assertLength(groups, 2)
+        comps.compile(sack.query().installed())
+        # ensure even groups obtained before compile() have the property set:
+        self.assertTrue(groups[0].installed)
+        self.assertFalse(groups[1].installed)
+
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter],
@@ -48,18 +66,6 @@ class CompsTest(support.TestCase):
                                  (u'pepper', u'tour'))
         self.assertSequenceEqual([pkg.name for pkg in group.mandatory_packages],
                                  (u'pepper', u'tour'))
-
-    def test_compile(self):
-        yumbase = support.MockYumBase("main")
-        sack = yumbase.sack
-
-        comps = self.comps
-        groups = comps.groups
-        self.assertLength(groups, 2)
-        comps.compile(sack.query().installed())
-        # ensure even groups obtained before compile() have the property set:
-        self.assertTrue(groups[0].installed)
-        self.assertFalse(groups[1].installed)
 
     def test_size(self):
         comps = self.comps

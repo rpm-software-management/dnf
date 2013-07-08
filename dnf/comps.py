@@ -20,9 +20,35 @@
 
 from dnf.exceptions import CompsException
 
+import dnf.i18n
+import fnmatch
 import itertools
 import libcomps
 import operator
+import re
+
+def _by_pattern(self, pattern, case_sensitive, sqn):
+    """Return items from sqn matching either exactly or glob-wise."""
+
+    pattern = dnf.i18n.ucd(pattern)
+    ret = set()
+
+    for item in pattern.split(','):
+        item = item.strip()
+        exact = [g for g in sqn if g.name == item or g.id == item]
+        if exact:
+            ret.update(exact)
+            continue
+
+        if case_sensitive:
+            match = re.compile(fnmatch.translate(item)).match
+        else:
+            match = re.compile(fnmatch.translate(item), flags=re.I).match
+
+        matching = [g for g in sqn if match(g.name) or match(g.id)]
+        ret.update(matching)
+
+    return ret
 
 class Forwarder(object):
     def __init__(self, iobj):
@@ -124,6 +150,9 @@ class Comps(object):
     @property
     def groups(self):
         return list(self.groups_iter)
+
+    def groups_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(self, pattern, case_sensitive, self.groups)
 
     @property
     def groups_iter(self):
