@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.3.8-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.3.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.8-1',
+        VERSION:     '0.3.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.3.9-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -167,8 +167,8 @@ in the enabled repositories.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.doTransaction">
-<tt class="descname">doTransaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.doTransaction" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.YumBaseCli.do_transaction">
+<tt class="descname">do_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.do_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take care of package downloading, checking, user
 confirmation and actually running the transaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3059,6 +3059,14 @@ passed to provides.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="dnf.cli.main.suppress_keyboard_interrupt_message">
+<tt class="descclassname">dnf.cli.main.</tt><tt class="descname">suppress_keyboard_interrupt_message</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.main.suppress_keyboard_interrupt_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prevent unsightly KeyboardInterrupt tracebacks.</p>
+<p>Nothing will be printed to the terminal after an uncaught
+<tt class="xref py py-class docutils literal"><span class="pre">exceptions.KeyboardInterrupt</span></tt>.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="dnf.cli.main.user_main">
 <tt class="descclassname">dnf.cli.main.</tt><tt class="descname">user_main</tt><big>(</big><em>args</em>, <em>exit_code=False</em><big>)</big><a class="headerlink" href="#dnf.cli.main.user_main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call one of the multiple main() functions based on environment variables.</p>
@@ -3356,7 +3364,7 @@ process.</p>
 
 <dl class="class">
 <dt id="dnf.cli.output.LibrepoCallbackAdaptor">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f64f3d5c1e0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f717d6071e0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
 <p>Note that TextMeter is a Python old-style class.</p>
 </dd></dl>
@@ -3525,7 +3533,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x1545398&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x13a9320&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -4443,13 +4451,6 @@ This is the same as the dictionary returned by
 </table>
 </dd></dl>
 
-<dl class="function">
-<dt id="dnf.cli.utils.suppress_keyboard_interrupt_message">
-<tt class="descclassname">dnf.cli.utils.</tt><tt class="descname">suppress_keyboard_interrupt_message</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.utils.suppress_keyboard_interrupt_message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Change settings so that nothing will be printed to the
-terminal after an uncaught <tt class="xref py py-class docutils literal"><span class="pre">exceptions.KeyboardInterrupt</span></tt>.</p>
-</dd></dl>
-
 </div>
 </div>
 
@@ -4509,7 +4510,7 @@ terminal after an uncaught <tt class="xref py py-class docutils literal"><span c
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

@@ -154,3 +154,14 @@ The following bugs are fixed in this release:
 * :rhbug:`974866`
 * :rhbug:`976652`
 * :rhbug:`975858`
+
+===================
+0.3.9 Release Notes
+===================
+
+This is a quick bugfix release dealing with reported bugs and tracebacks:
+
+* :rhbug:`964584`
+* :rhbug:`979942`
+* :rhbug:`980227`
+* :rhbug:`981310`

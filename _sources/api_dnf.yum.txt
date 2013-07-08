@@ -86,9 +86,3 @@ dnf.yum.sqlutils
 
 .. automodule:: dnf.yum.sqlutils
     :members:
-
-dnf.yum.update_md
------------------
-
-.. automodule:: dnf.yum.update_md
-    :members:

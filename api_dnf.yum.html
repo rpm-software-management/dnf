@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.yum Reference &mdash; DNF 0.3.8-1 documentation</title>
+    <title>dnf.yum Reference &mdash; DNF 0.3.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.8-1',
+        VERSION:     '0.3.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.3.9-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" />
     <link rel="prev" title="dnf Reference" href="api_dnf.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_dnf.html" title="dnf Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -76,7 +76,6 @@
 <li><a class="reference internal" href="#module-dnf.yum.rpmsack" id="id13">dnf.yum.rpmsack</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.rpmtrans" id="id14">dnf.yum.rpmtrans</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.sqlutils" id="id15">dnf.yum.sqlutils</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.update_md" id="id16">dnf.yum.update_md</a></li>
 </ul>
 </li>
 </ul>
@@ -2071,94 +2070,6 @@ not possible).</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-dnf.yum.update_md">
-<span id="dnf-yum-update-md"></span><h2><a class="toc-backref" href="#id16">dnf.yum.update_md</a><a class="headerlink" href="#module-dnf.yum.update_md" title="Permalink to this headline">¶</a></h2>
-<p>Update metadata (updateinfo.xml) parsing.</p>
-<dl class="class">
-<dt id="dnf.yum.update_md.UpdateMetadata">
-<em class="property">class </em><tt class="descclassname">dnf.yum.update_md.</tt><tt class="descname">UpdateMetadata</tt><big>(</big><em>repos=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>The root update metadata object.</p>
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateMetadata.add">
-<tt class="descname">add</tt><big>(</big><em>obj</em>, <em>mdtype='updateinfo'</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse a metadata from a given YumRepository, file, or filename.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateMetadata.add_notice">
-<tt class="descname">add_notice</tt><big>(</big><em>un</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.add_notice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add an UpdateNotice object. This should be fully populated with
-data, esp. update_id and pkglist/packages.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateMetadata.get_applicable_notices">
-<tt class="descname">get_applicable_notices</tt><big>(</big><em>pkgtup</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.get_applicable_notices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve any update notices which are newer than a
-given std. pkgtup (name, arch, epoch, version, release) tuple.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of (pkgtup, notice) that are newer than the given pkgtup,
-in the order of newest pkgtups first.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateMetadata.get_notice">
-<tt class="descname">get_notice</tt><big>(</big><em>nvr</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.get_notice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve an update notice for a given (name, version, release) string
-or tuple.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateMetadata.get_notices">
-<tt class="descname">get_notices</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.get_notices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all notices.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="dnf.yum.update_md.UpdateMetadata.notices">
-<tt class="descname">notices</tt><a class="headerlink" href="#dnf.yum.update_md.UpdateMetadata.notices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return all notices.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.yum.update_md.UpdateNotice">
-<em class="property">class </em><tt class="descclassname">dnf.yum.update_md.</tt><tt class="descname">UpdateNotice</tt><big>(</big><em>elem=None</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateNotice" title="Permalink to this definition">¶</a></dt>
-<dd><p>A single update notice (for instance, a security fix).</p>
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateNotice.get_metadata">
-<tt class="descname">get_metadata</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateNotice.get_metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the metadata dict.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.yum.update_md.UpdateNotice.xml">
-<tt class="descname">xml</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.yum.update_md.UpdateNotice.xml" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate the xml for this update notice object</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="exception">
-<dt id="dnf.yum.update_md.UpdateNoticeException">
-<em class="property">exception </em><tt class="descclassname">dnf.yum.update_md.</tt><tt class="descname">UpdateNoticeException</tt><a class="headerlink" href="#dnf.yum.update_md.UpdateNoticeException" title="Permalink to this definition">¶</a></dt>
-<dd><p>An exception thrown for bad UpdateNotice data.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="dnf.yum.update_md.safe_iterparse">
-<tt class="descclassname">dnf.yum.update_md.</tt><tt class="descname">safe_iterparse</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#dnf.yum.update_md.safe_iterparse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Works like iterparse, but hides XML errors (prints a warning).</p>
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -2184,7 +2095,6 @@ or tuple.</p>
 <li><a class="reference internal" href="#module-dnf.yum.rpmsack">dnf.yum.rpmsack</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.rpmtrans">dnf.yum.rpmtrans</a></li>
 <li><a class="reference internal" href="#module-dnf.yum.sqlutils">dnf.yum.sqlutils</a></li>
-<li><a class="reference internal" href="#module-dnf.yum.update_md">dnf.yum.update_md</a></li>
 </ul>
 </li>
 </ul>
@@ -2232,7 +2142,7 @@ or tuple.</p>
         <li class="right" >
           <a href="api_dnf.html" title="dnf Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.3.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
