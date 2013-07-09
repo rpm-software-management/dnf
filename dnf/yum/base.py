@@ -33,6 +33,7 @@ from weakref import proxy as weakref
 import StringIO
 import comps
 import config
+import dnf.comps
 import dnf.conf
 import dnf.exceptions
 import dnf.lock
@@ -481,7 +482,7 @@ class Base(object):
         """Create the groups object to access the comps metadata."""
         group_st = time.time()
         self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
-        self._comps = comps.Comps()
+        self._comps = dnf.comps.Comps()
 
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
@@ -495,14 +496,12 @@ class Base(object):
             decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
 
             try:
-                self._comps.add(decompressed)
-            except (dnf.exceptions.GroupsError,
-                    dnf.exceptions.CompsException) as e:
-                msg = _('Failed to add groups file for repository: %s - %s') % \
-                    (repo.id, str(e))
-                self.logger.critical(msg)
+                self._comps.add_from_xml_filename(decompressed)
+            except dnf.exceptions.CompsException as e:
+                msg = _('Failed to add groups file for repository: %s - %s')
+                self.logger.critical(msg % (repo.id, str(e)))
 
-        if self._comps.compscount == 0:
+        if len(self._comps) == 0:
             msg = _('No Groups Available in any repository')
             raise dnf.exceptions.GroupsError(msg)
 
@@ -1629,16 +1628,16 @@ class Base(object):
         adding_msg = _('Adding package %s from group %s')
         cnt = 0
         for pkg in pkgs:
-            self.logger.debug(adding_msg % (pkg, group.groupid))
-            if pkg in inst_set:
+            self.logger.debug(adding_msg % (pkg, group.id))
+            if pkg.name in inst_set:
                 continue
-            inst_set.add(pkg)
-            current_cnt = self.install_groupie(pkg, inst_set)
+            inst_set.add(pkg.name)
+            current_cnt = self.install_groupie(pkg.name, inst_set)
             cnt += current_cnt
 
         if cnt == 0:
             msg = _('Warning: Group %s does not have any packages.')
-            self.logger.warning(msg % group.groupid)
+            self.logger.warning(msg % group.id)
         return cnt
 
     def deselectGroup(self, grpid, force=False):

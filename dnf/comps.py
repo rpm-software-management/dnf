@@ -61,6 +61,7 @@ class Group(Forwarder):
     def __init__(self, iobj, installed_groups):
         super(Group, self).__init__(iobj)
         self._installed_groups = installed_groups
+        self.selected = False
 
     def _packages_of_type(self, type_):
         return [pkg for pkg in self.packages if pkg.type == type_]

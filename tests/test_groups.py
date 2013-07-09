@@ -18,16 +18,17 @@
 from __future__ import absolute_import
 from tests import support
 import operator
+import dnf.util
 
 class SelectGroupTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
-        self.yumbase.read_mock_comps(support.COMPS_PATH)
+        self.base = support.MockYumBase("main")
+        self.base.read_mock_comps(support.COMPS_PATH)
 
     def test_install(self):
-        comps = self.yumbase.comps
-        grp = comps.return_group("Solid Ground")
-        self.assertEqual(self.yumbase.select_group(grp), 1)
-        inst, removed = self.installed_removed(self.yumbase)
+        comps = self.base.comps
+        grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
+        self.assertEqual(self.base.select_group(grp), 1)
+        inst, removed = self.installed_removed(self.base)
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)
