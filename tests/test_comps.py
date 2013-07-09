@@ -78,22 +78,6 @@ class LibcompsTest(support.TestCase):
 
     """Sanity tests of the Libcomps library."""
 
-    def test_segv(self):
-        c1 = libcomps.Comps()
-        c2 = libcomps.Comps()
-        c2.fromxml_f(support.COMPS_PATH)
-        c = c1 + c2 # sigsegved here
-
-    def test_segv2(self):
-        c1 = libcomps.Comps()
-        c1.fromxml_f(support.COMPS_PATH)
-
-        c2 = libcomps.Comps()
-        c2.fromxml_f(support.COMPS_PATH)
-
-        c = c1 + c2
-        x = c.groups[0].packages[0].name
-
     @support.skip
     def test_environment_parse(self):
         xml = """\
@@ -125,3 +109,19 @@ class LibcompsTest(support.TestCase):
 """
         errors = libcomps.Comps().fromxml_str(xml)
         self.assertLength(errors, 0)
+
+    def test_segv(self):
+        c1 = libcomps.Comps()
+        c2 = libcomps.Comps()
+        c2.fromxml_f(support.COMPS_PATH)
+        c = c1 + c2 # sigsegved here
+
+    def test_segv2(self):
+        c1 = libcomps.Comps()
+        c1.fromxml_f(support.COMPS_PATH)
+
+        c2 = libcomps.Comps()
+        c2.fromxml_f(support.COMPS_PATH)
+
+        c = c1 + c2
+        x = c.groups[0].packages[0].name
