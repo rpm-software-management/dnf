@@ -1532,7 +1532,7 @@ class Base(object):
         if patterns is None:
             grps = self.comps.groups
         else:
-            grps = self.comps.return_groups(",".join(patterns),
+            grps = self.comps.groups_by_pattern(",".join(patterns),
                                             case_sensitive=not ignore_case)
         for grp in grps:
             if grp.installed:
@@ -1561,7 +1561,7 @@ class Base(object):
         """
         txmbrs_used = []
 
-        thesegroups = self.comps.return_groups(grpid)
+        thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
             raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -1581,7 +1581,7 @@ class Base(object):
 
         :param grpid: the name of the group to unmark the packages of
         """
-        thesegroups = self.comps.return_groups(grpid)
+        thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
             raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
@@ -1653,7 +1653,7 @@ class Base(object):
         if not self.comps.has_group(grpid):
             raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
-        thesegroups = self.comps.return_groups(grpid)
+        thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
             raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
 
