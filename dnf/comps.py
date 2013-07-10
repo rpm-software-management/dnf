@@ -27,6 +27,10 @@ import libcomps
 import operator
 import re
 
+def _internal_comps_length(comps):
+    collections = (comps.categories, comps.groups, comps.environments)
+    return reduce(operator.__add__, map(len, collections))
+
 def _by_pattern(self, pattern, case_sensitive, sqn):
     """Return items from sqn matching either exactly or glob-wise."""
 
@@ -98,13 +102,12 @@ class Comps(object):
         self._installed_groups = set()
 
     def __len__(self):
-        collections = (self._i.categories, self._i.groups, self._i.environments)
-        return reduce(operator.__add__, map(len, collections))
+        return _internal_comps_length(self._i)
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
         errors = comps.fromxml_f(fn)
-        if errors:
+        if errors and not _internal_comps_length(self._i):
             raise CompsException(' '.join(errors))
         self._i = self._i + comps
 

@@ -1511,7 +1511,7 @@ class Base(object):
         map(lambda pkg: counter.add(pkg, attr, needle), q.run())
         return counter
 
-    def doGroupLists(self, uservisible=0, patterns=None, ignore_case=True):
+    def group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available
         groups.
 
@@ -1526,30 +1526,21 @@ class Base(object):
         installed = []
         available = []
 
-        if self.comps.compscount == 0:
+        if not len(self.comps):
             raise dnf.exceptions.GroupsError, _('No group data available for configured repositories')
 
         if patterns is None:
             grps = self.comps.groups
         else:
-            grps = self.comps.groups_by_pattern(",".join(patterns),
-                                            case_sensitive=not ignore_case)
+            grps = self.comps.groups_by_pattern(",".join(patterns))
         for grp in grps:
+            tgt_list = available
             if grp.installed:
-                if uservisible:
-                    if grp.user_visible:
-                        installed.append(grp)
-                else:
-                    installed.append(grp)
-            else:
-                if uservisible:
-                    if grp.user_visible:
-                        available.append(grp)
-                else:
-                    available.append(grp)
+                tgt_list = installed
+            if not uservisible or grp.uservisible:
+                tgt_list.append(grp)
 
         return sorted(installed), sorted(available)
-
 
     def groupRemove(self, grpid):
         """Mark all the packages in the given group to be removed.
@@ -1572,7 +1563,7 @@ class Base(object):
                 txmbrs = self.remove(name=pkg, silence_warnings=True)
                 txmbrs_used.extend(txmbrs)
                 for txmbr in txmbrs:
-                    txmbr.groups.append(thisgroup.groupid)
+                    txmbr.groups.append(thisgroup.id)
 
         return txmbrs_used
 
