@@ -85,3 +85,7 @@ will fail still (as it does in Yum now). To find what provides a particular
 binary use the actual path for binaries on Fedora::
 
     dnf provides /usr/bin/<file>
+
+Also see related Fedora bugzillas `982947
+<https://bugzilla.redhat.com/show_bug.cgi?id=982947>`_ and `982664
+<https://bugzilla.redhat.com/show_bug.cgi?id=982664>`_.
