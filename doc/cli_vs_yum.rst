@@ -67,3 +67,21 @@ In Yum, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.::
 
     dnf erase kernel-3.9.4
+
+=====================================================================
+``dnf provides /bin/<file>`` does not find any packages on Fedora
+=====================================================================
+
+After `UsrMove <https://fedoraproject.org/wiki/Features/UsrMove>`_ there's no
+directory ``/bin`` on Fedora systems and no files get installed there,
+``/bin`` is only a symlink created by the ``filesystem`` package to point to
+``/usr/bin``. Resolving the symlinks to their real path would only give the
+user false sense that this works while in fact provides requests using globs
+such as::
+
+    dnf provides /b*/<file>
+
+will fail still (as it does in Yum now). To find what provides a particular
+binary use the actual path for binaries on Fedora::
+
+    dnf provides /usr/bin/<file>
