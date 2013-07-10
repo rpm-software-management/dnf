@@ -67,6 +67,7 @@
 <li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id6">Excludes and repo excludes apply to all operations</a></li>
 <li><a class="reference internal" href="#protected-packages-is-ignored" id="id7"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
 <li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id8"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id9"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
 </ul>
 </li>
 </ul>
@@ -121,6 +122,21 @@ the user can always specify concrete versions on the command line, e.g.:</p>
 <div class="highlight-python"><pre>dnf erase kernel-3.9.4</pre>
 </div>
 </div>
+<div class="section" id="dnf-provides-bin-file-does-not-find-any-packages-on-fedora">
+<h2><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
+<p>After <a class="reference external" href="https://fedoraproject.org/wiki/Features/UsrMove">UsrMove</a> there&#8217;s no
+directory <tt class="docutils literal"><span class="pre">/bin</span></tt> on Fedora systems and no files get installed there,
+<tt class="docutils literal"><span class="pre">/bin</span></tt> is only a symlink created by the <tt class="docutils literal"><span class="pre">filesystem</span></tt> package to point to
+<tt class="docutils literal"><span class="pre">/usr/bin</span></tt>. Resolving the symlinks to their real path would only give the
+user false sense that this works while in fact provides requests using globs
+such as:</p>
+<div class="highlight-python"><pre>dnf provides /b*/&lt;file&gt;</pre>
+</div>
+<p>will fail still (as it does in Yum now). To find what provides a particular
+binary use the actual path for binaries on Fedora:</p>
+<div class="highlight-python"><pre>dnf provides /usr/bin/&lt;file&gt;</pre>
+</div>
+</div>
 </div>
 
 
@@ -139,6 +155,7 @@ the user can always specify concrete versions on the command line, e.g.:</p>
 <li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations">Excludes and repo excludes apply to all operations</a></li>
 <li><a class="reference internal" href="#protected-packages-is-ignored"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
 <li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
 </ul>
 </li>
 </ul>
