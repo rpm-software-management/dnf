@@ -55,25 +55,25 @@
           <div class="body">
             
   <div class="section" id="changes-in-dnf-cli-compared-to-yum">
-<h1><a class="toc-backref" href="#id1">Changes in DNF CLI compared to Yum</a><a class="headerlink" href="#changes-in-dnf-cli-compared-to-yum" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id3">Changes in DNF CLI compared to Yum</a><a class="headerlink" href="#changes-in-dnf-cli-compared-to-yum" title="Permalink to this headline">¶</a></h1>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#changes-in-dnf-cli-compared-to-yum" id="id1">Changes in DNF CLI compared to Yum</a><ul>
-<li><a class="reference internal" href="#no-skip-broken" id="id2">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
-<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id3">Update and Upgrade Commands are the Same</a></li>
-<li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id4"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
-<li><a class="reference internal" href="#no-resolvedep-command" id="id5">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
-<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id6">Excludes and repo excludes apply to all operations</a></li>
-<li><a class="reference internal" href="#protected-packages-is-ignored" id="id7"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
-<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id8"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
-<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id9"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
+<li><a class="reference internal" href="#changes-in-dnf-cli-compared-to-yum" id="id3">Changes in DNF CLI compared to Yum</a><ul>
+<li><a class="reference internal" href="#no-skip-broken" id="id4">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
+<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id5">Update and Upgrade Commands are the Same</a></li>
+<li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id6"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
+<li><a class="reference internal" href="#no-resolvedep-command" id="id7">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
+<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id8">Excludes and repo excludes apply to all operations</a></li>
+<li><a class="reference internal" href="#protected-packages-is-ignored" id="id9"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
+<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id10"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id11"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="no-skip-broken">
-<h2><a class="toc-backref" href="#id2">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a><a class="headerlink" href="#no-skip-broken" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a><a class="headerlink" href="#no-skip-broken" title="Permalink to this headline">¶</a></h2>
 <p>The <tt class="docutils literal"><span class="pre">--skip-broken</span></tt> command line switch is not recognized by DNF. The
 semantics this was supposed to trigger in Yum is now the default for plain <tt class="docutils literal"><span class="pre">dnf</span>
 <span class="pre">update</span></tt>. There is no equivalent for <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--skip-broken</span> <span class="pre">update</span> <span class="pre">foo</span></tt>, as
@@ -82,26 +82,26 @@ contradicting the user request. To try using the latest versions of packages in
 transactions there is the <tt class="docutils literal"><span class="pre">--best</span></tt> command line switch.</p>
 </div>
 <div class="section" id="update-and-upgrade-commands-are-the-same">
-<h2><a class="toc-backref" href="#id3">Update and Upgrade Commands are the Same</a><a class="headerlink" href="#update-and-upgrade-commands-are-the-same" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Update and Upgrade Commands are the Same</a><a class="headerlink" href="#update-and-upgrade-commands-are-the-same" title="Permalink to this headline">¶</a></h2>
 <p>Invoking <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> or <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>, in all their forms, has the same
 effect in DNF, with the latter being preferred. In Yum <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">upgrade</span></tt> was
 exactly like <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--obsoletes</span> <span class="pre">update</span></tt>.</p>
 </div>
 <div class="section" id="clean-requirements-on-remove-on-by-default">
-<h2><a class="toc-backref" href="#id4"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a><a class="headerlink" href="#clean-requirements-on-remove-on-by-default" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a><a class="headerlink" href="#clean-requirements-on-remove-on-by-default" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="conf_ref.html#clean-requirements-on-remove-label"><em>clean_requirements_on_remove</em></a>
 switch is on by default in DNF. It can thus be confusing to compare the &#8220;erase&#8221;
 operation results between DNF and Yum as by default DNF is often going to remove
 more packages.</p>
 </div>
 <div class="section" id="no-resolvedep-command">
-<h2><a class="toc-backref" href="#id5">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a><a class="headerlink" href="#no-resolvedep-command" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a><a class="headerlink" href="#no-resolvedep-command" title="Permalink to this headline">¶</a></h2>
 <p>The Yum version of this command is maintained for legacy reasons only. The user
 can just do <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> to find out what package gives a particular
 provide.</p>
 </div>
 <div class="section" id="excludes-and-repo-excludes-apply-to-all-operations">
-<h2><a class="toc-backref" href="#id6">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
 <p>Yum only respects excludes during installs and upgrades. DNF extends this to all
 operations, among others erasing and listing. If you e.g. want to see a list of
 all installed <tt class="docutils literal"><span class="pre">python-f*</span></tt> packages but not any of the Flask packages, the
@@ -110,20 +110,20 @@ following will work:</p>
 </div>
 </div>
 <div class="section" id="protected-packages-is-ignored">
-<h2><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a><a class="headerlink" href="#protected-packages-is-ignored" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a><a class="headerlink" href="#protected-packages-is-ignored" title="Permalink to this headline">¶</a></h2>
 <p>DNF drops Yum&#8217;s <tt class="docutils literal"><span class="pre">protected_packages</span></tt> configuration option. Generally, DNF lets
 the user do what she specified, even have DNF itself removed. Similar functionality
 can be implemented by a plugin.</p>
 </div>
 <div class="section" id="dnf-erase-kernel-deletes-all-packages-called-kernel">
-<h2><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
 <p>In Yum, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.:</p>
 <div class="highlight-python"><pre>dnf erase kernel-3.9.4</pre>
 </div>
 </div>
 <div class="section" id="dnf-provides-bin-file-does-not-find-any-packages-on-fedora">
-<h2><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
 <p>After <a class="reference external" href="https://fedoraproject.org/wiki/Features/UsrMove">UsrMove</a> there&#8217;s no
 directory <tt class="docutils literal"><span class="pre">/bin</span></tt> on Fedora systems and no files get installed there,
 <tt class="docutils literal"><span class="pre">/bin</span></tt> is only a symlink created by the <tt class="docutils literal"><span class="pre">filesystem</span></tt> package to point to
@@ -136,6 +136,7 @@ such as:</p>
 binary use the actual path for binaries on Fedora:</p>
 <div class="highlight-python"><pre>dnf provides /usr/bin/&lt;file&gt;</pre>
 </div>
+<p>Also see related Fedora bugzillas <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982947">982947</a> and <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982664">982664</a>.</p>
 </div>
 </div>
 
