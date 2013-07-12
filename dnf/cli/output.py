@@ -1115,8 +1115,8 @@ class YumOutput:
             pkg_names2pkgs = self._group_names2aipkgs(group.packages)
         if group.ui_description:
             print(_(' Description: %s') % to_unicode(group.ui_description))
-        if group.langonly:
-            print(_(' Language: %s') % group.langonly)
+        if group.lang_only:
+            print(_(' Language: %s') % group.lang_only)
 
         sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
                     (_(' Default Packages:'),     group.default_packages),

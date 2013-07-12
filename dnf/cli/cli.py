@@ -758,31 +758,31 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             msg = '   %s' % group.ui_name
             if self.conf.verbose:
                 msg += ' (%s)' % group.id
-            if group.langonly:
-                msg += ' [%s]' % group.langonly
+            if group.lang_only:
+                msg += ' [%s]' % group.lang_only
             self.logger.info('%s', msg)
 
         done = False
         for group in installed:
-            if group.langonly: continue
+            if group.lang_only: continue
             _out_grp(_('Installed Groups:'), group)
             done = True
 
         done = False
         for group in installed:
-            if not group.langonly: continue
+            if not group.lang_only: continue
             _out_grp(_('Installed Language Groups:'), group)
             done = True
 
         done = False
         for group in available:
-            if group.langonly: continue
+            if group.lang_only: continue
             _out_grp(_('Available Groups:'), group)
             done = True
 
         done = False
         for group in available:
-            if not group.langonly: continue
+            if not group.lang_only: continue
             _out_grp(_('Available Language Groups:'), group)
             done = True
 
@@ -820,25 +820,25 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             self.logger.info('%s %u', sect,num)
         done = 0
         for group in installed:
-            if group.langonly: continue
+            if group.lang_only: continue
             done += 1
         _out_grp(_('Installed Groups:'), done)
 
         done = 0
         for group in installed:
-            if not group.langonly: continue
+            if not group.lang_only: continue
             done += 1
         _out_grp(_('Installed Language Groups:'), done)
 
         done = False
         for group in available:
-            if group.langonly: continue
+            if group.lang_only: continue
             done += 1
         _out_grp(_('Available Groups:'), done)
 
         done = False
         for group in available:
-            if not group.langonly: continue
+            if not group.lang_only: continue
             done += 1
         _out_grp(_('Available Language Groups:'), done)
 
