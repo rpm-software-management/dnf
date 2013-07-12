@@ -917,8 +917,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         for group_string in grouplist:
             try:
                 txmbrs = self.groupRemove(group_string)
-            except dnf.exceptions.GroupsError:
-                self.logger.critical(_('No group named %s exists'), group_string)
+            except dnf.exceptions.CompsError as e:
+                self.logger.critical(e)
                 continue
             else:
                 pkgs_used.extend(txmbrs)

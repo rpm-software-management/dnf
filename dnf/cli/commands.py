@@ -799,9 +799,7 @@ class GroupsCommand(Command):
 
         try:
             self.base.read_comps()
-        except dnf.exceptions.GroupsError:
-            return 1, [_('No Groups on which to run command')]
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
     def _grp_cmd(self, basecmd, extcmds):

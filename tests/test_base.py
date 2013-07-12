@@ -189,4 +189,4 @@ class CompsTest(support.TestCase):
     def test_read_comps_disabled(self):
         yumbase = support.MockYumBase("main")
         yumbase.repos['main'].enablegroups = False
-        self.assertRaises(dnf.exceptions.GroupsError, yumbase.read_comps)
+        self.assertRaises(dnf.exceptions.CompsError, yumbase.read_comps)

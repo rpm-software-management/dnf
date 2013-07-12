@@ -18,7 +18,7 @@
 # Red Hat, Inc.
 #
 
-from dnf.exceptions import CompsException
+from dnf.exceptions import CompsError
 
 import dnf.i18n
 import fnmatch
@@ -156,7 +156,7 @@ class Comps(object):
         comps = libcomps.Comps()
         errors = comps.fromxml_f(fn)
         if errors and not _internal_comps_length(self._i):
-            raise CompsException(' '.join(errors))
+            raise CompsError(' '.join(errors))
         self._i = self._i + comps
 
     @property

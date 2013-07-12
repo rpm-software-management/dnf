@@ -34,6 +34,9 @@ class Error(Exception):
     def __unicode__(self):
         return '%s' % to_unicode(self.value)
 
+class CompsError(Error):
+    pass
+
 class YumRPMTransError(Error):
     def __init__(self, msg, errors):
         Error.__init__(self, msg)
@@ -66,9 +69,6 @@ class MetadataError(Error):
 class MiscError(Error):
     pass
 
-class GroupsError(Error):
-    pass
-
 class ReinstallError(Error):
     pass
 
@@ -79,6 +79,3 @@ class ReinstallInstallError(ReinstallError):
     def __init__(self, value=None, failed_pkgs=[]):
         ReinstallError.__init__(self, value)
         self.failed_pkgs = failed_pkgs
-
-class CompsException(Error):
-    pass

@@ -17,7 +17,7 @@ from __future__ import print_function
 import types
 import sys
 from constants import *
-from dnf.exceptions import CompsException
+from dnf.exceptions import CompsError
 #FIXME - compsexception isn't caught ANYWHERE so it's pointless to raise it
 # switch all compsexceptions to grouperrors after api break
 import fnmatch
@@ -134,7 +134,7 @@ class Group(CompsObj):
             if child.tag == 'id':
                 myid = child.text
                 if self.groupid is not None:
-                    raise CompsException
+                    raise CompsError
                 self.groupid = myid
 
             elif child.tag == 'name':
@@ -173,7 +173,7 @@ class Group(CompsObj):
             elif child.tag in ['langonly', 'lang_only']:
                 text = child.text
                 if self.langonly is not None:
-                    raise CompsException
+                    raise CompsError
                 self.langonly = text
 
             elif child.tag == 'packagelist':
@@ -297,7 +297,7 @@ class Category(CompsObj):
             if child.tag == 'id':
                 myid = child.text
                 if self.categoryid is not None:
-                    raise CompsException
+                    raise CompsError
                 self.categoryid = myid
 
             elif child.tag == 'name':
@@ -499,14 +499,14 @@ class Comps(object):
 
     def add(self, srcfile = None):
         if not srcfile:
-            raise CompsException
+            raise CompsError
 
         if type(srcfile) in types.StringTypes:
             # srcfile is a filename string
             try:
                 infile = open(srcfile, 'rt')
             except IOError, e:
-                raise CompsException, 'open(%s): #%u %s' % (srcfile, e.errno, e.strerror)
+                raise CompsError, 'open(%s): #%u %s' % (srcfile, e.errno, e.strerror)
         else:
             # srcfile is a file object
             infile = srcfile
@@ -524,7 +524,7 @@ class Comps(object):
                     category = Category(elem)
                     self.add_category(category)
         except SyntaxError, e:
-            raise CompsException, "comps file is empty/damaged"
+            raise CompsError, "comps file is empty/damaged"
 
         del parser
 

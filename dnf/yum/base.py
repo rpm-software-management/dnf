@@ -497,13 +497,13 @@ class Base(object):
 
             try:
                 self._comps.add_from_xml_filename(decompressed)
-            except dnf.exceptions.CompsException as e:
+            except dnf.exceptions.CompsError as e:
                 msg = _('Failed to add groups file for repository: %s - %s')
                 self.logger.critical(msg % (repo.id, str(e)))
 
         if len(self._comps) == 0:
             msg = _('No Groups Available in any repository')
-            raise dnf.exceptions.GroupsError(msg)
+            raise dnf.exceptions.CompsError(msg)
 
         self._comps.compile(self.sack.query().installed())
         self.logger.debug('group time: %0.3f' % (time.time() - group_st))
@@ -1527,7 +1527,7 @@ class Base(object):
         available = []
 
         if not len(self.comps):
-            raise dnf.exceptions.GroupsError, _('No group data available for configured repositories')
+            raise dnf.exceptions.CompsError, _('No group data available for configured repositories')
 
         if patterns is None:
             grps = self.comps.groups
@@ -1554,7 +1554,7 @@ class Base(object):
 
         thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = True
@@ -1574,7 +1574,7 @@ class Base(object):
         """
         thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.toremove = False
@@ -1642,11 +1642,11 @@ class Base(object):
         """
 
         if not self.comps.has_group(grpid):
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
 
         thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
-            raise dnf.exceptions.GroupsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
 
         for thisgroup in thesegroups:
             thisgroup.selected = False
