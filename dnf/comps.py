@@ -22,8 +22,10 @@ from dnf.exceptions import CompsException
 
 import dnf.i18n
 import fnmatch
+import gettext
 import itertools
 import libcomps
+import locale
 import operator
 import re
 
@@ -54,6 +56,38 @@ def _by_pattern(self, pattern, case_sensitive, sqn):
 
     return ret
 
+class _Langs(object):
+
+    """Get all usable abbreviations for the current language."""
+
+    def __init__(self):
+        self.last_locale = None
+        self.cache = None
+
+    @staticmethod
+    def _dotted_locale_str():
+        lcl = locale.getlocale(locale.LC_MESSAGES)
+        if lcl == (None, None):
+            return 'C'
+        return'.'.join(lcl)
+
+    def get(self):
+        current_locale = self._dotted_locale_str()
+        if self.last_locale == current_locale:
+            return self.cache
+
+        self.cache = []
+        locales = [current_locale]
+        if current_locale != 'C':
+            locales.append('C')
+        for l in locales:
+            for nlang in gettext._expand_lang(l):
+                if nlang not in self.cache:
+                    self.cache.append(nlang)
+
+        self.last_locale = current_locale
+        return self.cache
+
 class Forwarder(object):
     def __init__(self, iobj):
         self._i = iobj
@@ -62,10 +96,11 @@ class Forwarder(object):
         return getattr(self._i, name)
 
 class Group(Forwarder):
-    def __init__(self, iobj, installed_groups):
+    def __init__(self, iobj, installed_groups, langs):
         super(Group, self).__init__(iobj)
         self._installed_groups = installed_groups
         self.selected = False
+        self._langs = langs
 
     def _packages_of_type(self, type_):
         return [pkg for pkg in self.packages if pkg.type == type_]
@@ -90,6 +125,15 @@ class Group(Forwarder):
     def optional_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_OPTIONAL)
 
+    @property
+    def ui_name(self):
+        for l in self._langs.get():
+            l = self.name_by_lang[l]
+            # oddity in libcomps, doesn't throw KeyError
+            if l is not None:
+                return l
+        return self.name
+
 class Category(Forwarder):
     pass
 
@@ -100,9 +144,13 @@ class Comps(object):
     def __init__(self):
         self._i = libcomps.Comps()
         self._installed_groups = set()
+        self._langs = _Langs()
 
     def __len__(self):
         return _internal_comps_length(self._i)
+
+    def _build_group(self, igroup):
+        return Group(igroup, self._installed_groups, self._langs)
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
@@ -160,4 +208,4 @@ class Comps(object):
 
     @property
     def groups_iter(self):
-        return (Group(g, self._installed_groups) for g in self._i.groups)
+        return (self._build_group(g) for g in self._i.groups)

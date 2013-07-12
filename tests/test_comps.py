@@ -18,13 +18,19 @@
 #
 
 from __future__ import absolute_import
-from tests import support
+from tests import support, mock
 import dnf.comps
 import dnf.yum.comps
 import dnf.util
 import libcomps
 
 TRANSLATION=u"""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
+
+class LangsTest(support.TestCase):
+    @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    def test_get(self, _unused):
+        langs = dnf.comps._Langs().get()
+        self.assertEqual(langs, ['cs_CZ.UTF-8', 'cs_CZ', 'cs.UTF-8', 'cs', 'C'])
 
 class CompsTest(support.TestCase):
     def setUp(self):
@@ -37,6 +43,9 @@ class CompsTest(support.TestCase):
         self.assertLength(comps.groups_by_pattern('Base'), 1)
         self.assertLength(comps.groups_by_pattern('*'), 2)
         self.assertLength(comps.groups_by_pattern('Base, Solid*'), 2)
+
+        group = dnf.util.first(comps.groups_by_pattern('Base'))
+        self.assertIsInstance(group, dnf.comps.Group)
 
     def test_compile(self):
         yumbase = support.MockYumBase("main")
@@ -73,6 +82,12 @@ class CompsTest(support.TestCase):
         self.assertLength(comps.groups, 2)
         self.assertLength(comps.categories, 1)
         self.assertLength(comps.environments, 0)
+
+    @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    def test_ui_name(self, _unused):
+        comps = self.comps
+        group = dnf.util.first(comps.groups_by_pattern('base'))
+        self.assertEqual(group.ui_name, u'Kritická cesta (Základ)')
 
 class LibcompsTest(support.TestCase):
 

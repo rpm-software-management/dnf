@@ -7,6 +7,8 @@
    <uservisible>true</uservisible>
    <display_order>1024</display_order>
    <name>Base</name>
+   <name xml:lang="cs">Kritická cesta (Základ)</name>
+   <name xml:lang="de">Kritischer Pfad (Basis)</name>
    <description>This group includes a minimal set of packages. Useful for creating small router/firewall boxes, for example.</description>
    <description xml:lang="cs">Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů.</description>
    <description xml:lang="de">Diese Gruppe enthält eine minimale Paketauswahl. Dies ist zum Beispiel nützlich zum Aufbau kleiner Router-/Firewall-Rechner.</description>
