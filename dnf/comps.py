@@ -154,8 +154,9 @@ class Comps(object):
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
-        errors = comps.fromxml_f(fn)
-        if errors and not _internal_comps_length(self._i):
+        ret = comps.fromxml_f(fn)
+        if ret == -1:
+            errors = comps.get_last_parse_errors()
             raise CompsError(' '.join(errors))
         self._i = self._i + comps
 

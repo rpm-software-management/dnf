@@ -42,4 +42,21 @@
      <groupid>base</groupid>
     </grouplist>
   </category>
+  <environment>
+    <id>sugar-desktop-environment</id>
+    <name>Sugar Desktop Environment</name>
+    <name xml:lang="cs">Prostředí Sugar</name>
+    <name xml:lang="de">Sugar-Arbeitsumgebung</name>
+    <description>A software playground for learning about learning.</description>
+    <description xml:lang="cs">Software pro výuku o vyučování.</description>
+    <description xml:lang="de">Eine Software-Spielwiese zum Lernen des Lernens.</description>
+    <display_order>25</display_order>
+    <grouplist>
+      <groupid>somerset</groupid>
+      <groupid>base-system</groupid>
+    </grouplist>
+    <optionlist>
+      <groupid>base</groupid>
+    </optionlist>
+  </environment>
 </comps>

@@ -58,6 +58,12 @@ class CompsTest(support.TestCase):
         self.assertTrue(groups[0].installed)
         self.assertFalse(groups[1].installed)
 
+    def test_environments(self):
+        env = self.comps.environments[0]._i
+        self.assertEqual(env.name_by_lang['cs'], u'Prostředí Sugar')
+        self.assertEqual(env.desc_by_lang['de'],
+                         u'Eine Software-Spielwiese zum Lernen des Lernens.')
+
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter],
@@ -77,10 +83,10 @@ class CompsTest(support.TestCase):
 
     def test_size(self):
         comps = self.comps
-        self.assertLength(comps, 3)
+        self.assertLength(comps, 4)
         self.assertLength(comps.groups, 2)
         self.assertLength(comps.categories, 1)
-        self.assertLength(comps.environments, 0)
+        self.assertLength(comps.environments, 1)
 
     @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
     def test_ui_name(self, _unused):
@@ -92,7 +98,6 @@ class LibcompsTest(support.TestCase):
 
     """Sanity tests of the Libcomps library."""
 
-    @support.skip
     def test_environment_parse(self):
         xml = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -121,8 +126,9 @@ class LibcompsTest(support.TestCase):
   </environment>
 </comps>
 """
-        errors = libcomps.Comps().fromxml_str(xml)
-        self.assertLength(errors, 0)
+        comps = libcomps.Comps()
+        ret = comps.fromxml_str(xml)
+        self.assertGreaterEqual(ret, 0)
 
     def test_segv(self):
         c1 = libcomps.Comps()
