@@ -20,7 +20,6 @@
 from __future__ import absolute_import
 from tests import support, mock
 import dnf.comps
-import dnf.yum.comps
 import dnf.util
 import libcomps
 
