@@ -933,7 +933,7 @@ class RepoConf(BaseConfig):
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
 
-    skip_if_unavailable = BoolOption(False)
+    skip_if_unavailable = BoolOption(True)
 
 class VersionGroupConf(BaseConfig):
     """Option definitions for version groups."""

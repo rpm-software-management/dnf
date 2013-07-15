@@ -65,6 +65,7 @@ class SackTest(support.TestCase):
         r.enable()
         yumbase._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)
+        r.skip_if_unavailable = False
         self.assertRaises(dnf.exceptions.RepoError,
                           yumbase._add_repo_to_sack, "bag")
         self.assertTrue(r.enabled)
