@@ -580,7 +580,7 @@ class Base(object):
         """Build the transaction set."""
         self.plugins.run('preresolve')
         ds_st = time.time()
-        self.dsCallback.start()
+        self.ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
             self._push_userinstalled(goal)
@@ -597,44 +597,44 @@ class Base(object):
                 cnt += 1
                 obs = goal.obsoleted_by_package(pkg)
                 downgraded = obs[0]
-                self.dsCallback.pkg_added(downgraded, 'dd')
-                self.dsCallback.pkg_added(pkg, 'd')
+                self.ds_callback.pkg_added(downgraded, 'dd')
+                self.ds_callback.pkg_added(pkg, 'd')
                 ts.add_downgrade(pkg, downgraded, obs[1:])
             for pkg in goal.list_reinstalls():
                 cnt += 1
-                self.dsCallback.pkg_added(pkg, 'r')
+                self.ds_callback.pkg_added(pkg, 'r')
                 obs = goal.obsoleted_by_package(pkg)
                 reinstalled = obs[0]
                 ts.add_reinstall(pkg, reinstalled, obs[1:])
             for pkg in goal.list_installs():
                 cnt += 1
-                self.dsCallback.pkg_added(pkg, 'i')
+                self.ds_callback.pkg_added(pkg, 'i')
                 obs = goal.obsoleted_by_package(pkg)
                 reason = dnf.util.reason_name(goal.get_reason(pkg))
                 ts.add_install(pkg, obs, reason)
-                map(lambda pkg: self.dsCallback.pkg_added(pkg, 'od'), obs)
+                map(lambda pkg: self.ds_callback.pkg_added(pkg, 'od'), obs)
             for pkg in goal.list_upgrades():
                 cnt += 1
                 group_fn = functools.partial(operator.contains, all_obsoleted)
                 obs, upgraded = dnf.util.group_by_filter(
                     group_fn, goal.obsoleted_by_package(pkg))
-                map(lambda pkg: self.dsCallback.pkg_added(pkg, 'od'), obs)
+                map(lambda pkg: self.ds_callback.pkg_added(pkg, 'od'), obs)
                 if pkg.name in self.conf.installonlypkgs:
                     ts.add_install(pkg, obs)
                 else:
                     ts.add_upgrade(pkg, upgraded[0], obs)
-                    map(lambda pkg: self.dsCallback.pkg_added(pkg, 'ud'), upgraded)
-                self.dsCallback.pkg_added(pkg, 'u')
+                    map(lambda pkg: self.ds_callback.pkg_added(pkg, 'ud'), upgraded)
+                self.ds_callback.pkg_added(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1
-                self.dsCallback.pkg_added(pkg, 'e')
+                self.ds_callback.pkg_added(pkg, 'e')
                 ts.add_erase(pkg)
             if cnt > 0:
                 (rescode, restring) = (2, [_('Success - deps resolved')])
             else:
                 (rescode, restring) = (0, [_('Nothing to do')])
 
-        self.dsCallback.end()
+        self.ds_callback.end()
         self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
         if rescode == 2:
@@ -644,9 +644,9 @@ class Base(object):
         return (rescode, restring)
 
     def do_transaction(self, display=None):
-        # save our dsCallback out
-        dscb = self.dsCallback
-        self.dsCallback = None
+        # save our ds_callback out
+        dscb = self.ds_callback
+        self.ds_callback = None
         self.transaction.populate_rpm_ts(self.ts)
 
         rcd_st = time.time()
@@ -701,7 +701,7 @@ class Base(object):
         ts_st = time.time()
 
         # put back our depcheck callback
-        self.dsCallback = dscb
+        self.ds_callback = dscb
         # setup our rpm ts callback
         if display is None:
             cb = dnf.yum.rpmtrans.RPMTransaction(self)

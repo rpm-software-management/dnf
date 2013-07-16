@@ -1606,7 +1606,7 @@ Transaction Summary
 
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
-        self.dsCallback = dscb
+        self.ds_callback = dscb
 
     def setupKeyImportCallbacks(self):
         """Set up callbacks to import and confirm gpg public keys."""

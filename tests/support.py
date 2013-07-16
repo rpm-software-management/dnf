@@ -130,7 +130,7 @@ class MockYumBase(dnf.yum.base.Base):
         self.cache_c.prefix = "/tmp"
         self.cache_c.suffix = ""
 
-        self.dsCallback = mock.Mock()
+        self.ds_callback = mock.Mock()
         self.setupProgressCallbacks = mock.Mock()
         self.setupKeyImportCallbacks = mock.Mock()
 
