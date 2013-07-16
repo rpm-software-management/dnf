@@ -597,37 +597,37 @@ class Base(object):
                 cnt += 1
                 obs = goal.obsoleted_by_package(pkg)
                 downgraded = obs[0]
-                self.dsCallback.pkgAdded(downgraded, 'dd')
-                self.dsCallback.pkgAdded(pkg, 'd')
+                self.dsCallback.pkg_added(downgraded, 'dd')
+                self.dsCallback.pkg_added(pkg, 'd')
                 ts.add_downgrade(pkg, downgraded, obs[1:])
             for pkg in goal.list_reinstalls():
                 cnt += 1
-                self.dsCallback.pkgAdded(pkg, 'r')
+                self.dsCallback.pkg_added(pkg, 'r')
                 obs = goal.obsoleted_by_package(pkg)
                 reinstalled = obs[0]
                 ts.add_reinstall(pkg, reinstalled, obs[1:])
             for pkg in goal.list_installs():
                 cnt += 1
-                self.dsCallback.pkgAdded(pkg, 'i')
+                self.dsCallback.pkg_added(pkg, 'i')
                 obs = goal.obsoleted_by_package(pkg)
                 reason = dnf.util.reason_name(goal.get_reason(pkg))
                 ts.add_install(pkg, obs, reason)
-                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'), obs)
+                map(lambda pkg: self.dsCallback.pkg_added(pkg, 'od'), obs)
             for pkg in goal.list_upgrades():
                 cnt += 1
                 group_fn = functools.partial(operator.contains, all_obsoleted)
                 obs, upgraded = dnf.util.group_by_filter(
                     group_fn, goal.obsoleted_by_package(pkg))
-                map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'od'), obs)
+                map(lambda pkg: self.dsCallback.pkg_added(pkg, 'od'), obs)
                 if pkg.name in self.conf.installonlypkgs:
                     ts.add_install(pkg, obs)
                 else:
                     ts.add_upgrade(pkg, upgraded[0], obs)
-                    map(lambda pkg: self.dsCallback.pkgAdded(pkg, 'ud'), upgraded)
-                self.dsCallback.pkgAdded(pkg, 'u')
+                    map(lambda pkg: self.dsCallback.pkg_added(pkg, 'ud'), upgraded)
+                self.dsCallback.pkg_added(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1
-                self.dsCallback.pkgAdded(pkg, 'e')
+                self.dsCallback.pkg_added(pkg, 'e')
                 ts.add_erase(pkg)
             if cnt > 0:
                 (rescode, restring) = (2, [_('Success - deps resolved')])

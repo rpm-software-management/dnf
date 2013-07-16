@@ -87,8 +87,8 @@ class BuildTransactionTest(support.TestCase):
         base.update(pattern="pepper")
         self.assertEqual(2, base.build_transaction()[0])
         base.dsCallback.assert_has_calls(mock.call.start())
-        base.dsCallback.assert_has_calls(mock.call.pkgAdded(mock.ANY, 'ud'))
-        base.dsCallback.assert_has_calls(mock.call.pkgAdded(mock.ANY, 'u'))
+        base.dsCallback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
+        base.dsCallback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'u'))
         self.assertLength(base.transaction, 1)
 
 # verify transaction test helpers

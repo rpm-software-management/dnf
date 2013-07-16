@@ -2567,7 +2567,7 @@ class DepSolveProgressCallBack:
         self.loops = 0
         self.ayum = ayum
 
-    def pkgAdded(self, pkg, mode):
+    def pkg_added(self, pkg, mode):
         """Print information about a package being added to the
         transaction set.
 
