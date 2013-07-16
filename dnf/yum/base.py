@@ -38,6 +38,7 @@ import dnf.conf
 import dnf.exceptions
 import dnf.lock
 import dnf.logging
+import dnf.output
 import dnf.persistor
 import dnf.repo
 import dnf.repodict
@@ -93,6 +94,7 @@ class Base(object):
         self._history = None
         self._tags = None
         self._ts_save_file = None
+        self.ds_callback = dnf.output.DepsolveCallback()
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()

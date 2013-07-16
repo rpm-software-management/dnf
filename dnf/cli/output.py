@@ -34,6 +34,7 @@ import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
 
 import dnf.conf
+import dnf.output
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8, to_unicode, _, P_
 import dnf.yum.misc
@@ -2558,7 +2559,7 @@ to exit.
 
                 num += 1
 
-class DepSolveProgressCallBack:
+class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
     """A class to provide text output callback functions for Dependency Solver callback."""
 
     def __init__(self, ayum=None):
