@@ -94,6 +94,12 @@ class CompsTest(support.TestCase):
         group = dnf.util.first(comps.groups_by_pattern('base'))
         self.assertEqual(group.ui_name, u'Kritická cesta (Základ)')
 
+    @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    def test_ui_desc(self, _unused):
+        comps = self.comps
+        env = dnf.util.first(comps.environments_by_pattern('sugar-*'))
+        self.assertEqual(env.ui_description, u'Software pro výuku o vyučování.')
+
 class LibcompsTest(support.TestCase):
 
     """Sanity tests of the Libcomps library."""

@@ -89,18 +89,34 @@ class _Langs(object):
         return self.cache
 
 class Forwarder(object):
-    def __init__(self, iobj):
+    def __init__(self, iobj, langs):
         self._i = iobj
+        self._langs = langs
 
     def __getattr__(self, name):
         return getattr(self._i, name)
 
+    def _ui_text(self, default, dct):
+        for l in self._langs.get():
+            t = dct[l]
+            # oddity in libcomps, doesn't throw KeyError
+            if t is not None:
+                return t
+        return default
+
+    @property
+    def ui_description(self):
+        return self._ui_text(self.desc, self.desc_by_lang)
+
+    @property
+    def ui_name(self):
+        return self._ui_text(self.name, self.name_by_lang)
+
 class Group(Forwarder):
-    def __init__(self, iobj, installed_groups, langs):
-        super(Group, self).__init__(iobj)
+    def __init__(self, iobj, langs, installed_groups):
+        super(Group, self).__init__(iobj, langs)
         self._installed_groups = installed_groups
         self.selected = False
-        self._langs = langs
 
     def _packages_of_type(self, type_):
         return [pkg for pkg in self.packages if pkg.type == type_]
@@ -125,15 +141,6 @@ class Group(Forwarder):
     def optional_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_OPTIONAL)
 
-    @property
-    def ui_name(self):
-        for l in self._langs.get():
-            l = self.name_by_lang[l]
-            # oddity in libcomps, doesn't throw KeyError
-            if l is not None:
-                return l
-        return self.name
-
 class Category(Forwarder):
     pass
 
@@ -149,8 +156,14 @@ class Comps(object):
     def __len__(self):
         return _internal_comps_length(self._i)
 
+    def _build_category(self, icategory):
+        return Category(icategory, self._langs)
+
+    def _build_environment(self, ienvironment):
+        return Environment(ienvironment, self._langs)
+
     def _build_group(self, igroup):
-        return Group(igroup, self._installed_groups, self._langs)
+        return Group(igroup, self._langs, self._installed_groups)
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
@@ -164,9 +177,12 @@ class Comps(object):
     def categories(self):
         return list(self.categories_iter)
 
+    def categories_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(self, pattern, case_sensitive, self.categories)
+
     @property
     def categories_iter(self):
-        return (Category(c) for c in self._i.categories)
+        return (self._build_category(c) for c in self._i.categories)
 
     def compile(self, installed_pkgs):
         """ compile the groups into installed/available groups """
@@ -196,9 +212,12 @@ class Comps(object):
     def environments(self):
         return list(self.environments_iter)
 
+    def environments_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(self, pattern, case_sensitive, self.environments)
+
     @property
     def environments_iter(self):
-        return (Environment(e) for e in self._i.environments)
+        return (self._build_environment(e) for e in self._i.environments)
 
     @property
     def groups(self):
