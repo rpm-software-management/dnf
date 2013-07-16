@@ -21,6 +21,7 @@
 from dnf.exceptions import CompsError
 
 import dnf.i18n
+import dnf.util
 import fnmatch
 import gettext
 import itertools
@@ -33,7 +34,12 @@ def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
     return reduce(operator.__add__, map(len, collections))
 
-def _by_pattern(self, pattern, case_sensitive, sqn):
+def _first_if_iterable(seq):
+    if seq is None:
+        return None
+    return dnf.util.first(seq)
+
+def _by_pattern(pattern, case_sensitive, sqn):
     """Return items from sqn matching either exactly or glob-wise."""
 
     pattern = dnf.i18n.ucd(pattern)
@@ -177,8 +183,12 @@ class Comps(object):
     def categories(self):
         return list(self.categories_iter)
 
+    def category_by_pattern(self, pattern, case_sensitive=False):
+        cats = self.categories_by_pattern(pattern, case_sensitive)
+        return _first_if_iterable(cats)
+
     def categories_by_pattern(self, pattern, case_sensitive=False):
-        return _by_pattern(self, pattern, case_sensitive, self.categories)
+        return _by_pattern(pattern, case_sensitive, self.categories)
 
     @property
     def categories_iter(self):
@@ -212,8 +222,12 @@ class Comps(object):
     def environments(self):
         return list(self.environments_iter)
 
+    def environment_by_pattern(self, pattern, case_sensitive=False):
+        envs = self.environments_by_pattern(pattern, case_sensitive)
+        return _first_if_iterable(envs)
+
     def environments_by_pattern(self, pattern, case_sensitive=False):
-        return _by_pattern(self, pattern, case_sensitive, self.environments)
+        return _by_pattern(pattern, case_sensitive, self.environments)
 
     @property
     def environments_iter(self):
@@ -223,8 +237,12 @@ class Comps(object):
     def groups(self):
         return list(self.groups_iter)
 
+    def group_by_pattern(self, pattern, case_sensitive=False):
+        grps = self.groups_by_pattern(pattern, case_sensitive)
+        return _first_if_iterable(grps)
+
     def groups_by_pattern(self, pattern, case_sensitive=False):
-        return _by_pattern(self, pattern, case_sensitive, self.groups)
+        return _by_pattern(pattern, case_sensitive, self.groups)
 
     @property
     def groups_iter(self):

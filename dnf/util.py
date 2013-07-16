@@ -28,6 +28,12 @@ import tempfile
 import time
 import types
 
+"""DNF Utilities.
+
+Generally these are not a part of the public DNF API.
+
+"""
+
 def am_i_root():
     return os.geteuid() == 0
 
