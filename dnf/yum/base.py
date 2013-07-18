@@ -261,10 +261,10 @@ class Base(object):
                        overrides=None):
         conf_st = time.time()
         path = path or const.CONF_FILENAME
-        startupconf = config.readStartupConfig(path, root, releasever)
+        startupconf = config.readStartupConfig(path, root)
         # replace the yumvar
         startupconf.yumvar = self._conf.yumvar
-        startupconf.yumvar['releasever'] = startupconf.releasever
+        startupconf.releasever = releasever
         startupconf.yumvar_update_from_etc()
 
         self._conf = config.readMainConfig(startupconf)
