@@ -118,6 +118,10 @@ class Base(object):
         self.goal_parameters = dnf.conf.GoalParameters()
         self.cache_c = dnf.conf.Cache()
 
+        self._conf.yumvar['arch'] = self.arch.canonarch
+        self._conf.yumvar['basearch'] = self.arch.basearch
+        self._conf.yumvar_update_from_env()
+
     def __del__(self):
         self.close()
         # call cleanup callbacks
@@ -253,23 +257,17 @@ class Base(object):
             self._store_persistent_data()
         self.closeRpmDB()
 
-    def _init_yumvar(self, conf):
-        yumvar = config.init_yumvar(self.conf.installroot,
-                                    self.arch.canonarch, self.arch.basearch,
-                                    conf.releasever)
-        return yumvar
-
     def read_conf_file(self, path=None, root="/", releasever=None,
                        overrides=None):
         conf_st = time.time()
         path = path or const.CONF_FILENAME
         startupconf = config.readStartupConfig(path, root, releasever)
-        startupconf.arch = self.arch.canonarch
-        startupconf.basearch = self.arch.basearch
+        # replace the yumvar
+        startupconf.yumvar = self._conf.yumvar
+        startupconf.yumvar['releasever'] = startupconf.releasever
+        startupconf.yumvar_update_from_etc()
 
-        yumvar = self._init_yumvar(startupconf)
-        self._conf = config.readMainConfig(startupconf, yumvar)
-        self._conf.yumvar = yumvar
+        self._conf = config.readMainConfig(startupconf)
         if overrides is not None:
             self._conf.override(overrides)
 
@@ -279,6 +277,7 @@ class Base(object):
         self._conf.uid = os.geteuid()
 
         # repos are ver/arch specific so add $basearch/$releasever
+        yumvar = self._conf.yumvar
         self._conf._repos_persistdir = os.path.normpath(
             '%s/repos/%s/%s/' % (self._conf.persistdir,
                                  yumvar.get('basearch', '$basearch'),

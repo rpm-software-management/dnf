@@ -689,6 +689,34 @@ class StartupConf(BaseConfig):
     syslog_device = Option('/dev/log')
     persistdir = Option(dnf.const.PERSISTDIR)
 
+    def __init__(self):
+        super(StartupConf, self).__init__()
+        self.yumvar = {}
+
+    def yumvar_update_from_env(self):
+        for num in range(0, 10):
+            env = 'YUM%d' % num
+            val = os.environ.get(env, '')
+            if val:
+                self.yumvar[env.lower()] = val
+
+    def yumvar_update_from_etc(self):
+        try:
+            dir_fsvars = self.installroot + "/etc/yum/vars/"
+            fsvars = os.listdir(dir_fsvars)
+        except OSError:
+            fsvars = []
+        for fsvar in fsvars:
+            if os.path.islink(dir_fsvars + fsvar):
+                continue
+            try:
+                val = open(dir_fsvars + fsvar).readline()
+                if val and val[-1] == '\n':
+                    val = val[:-1]
+            except (OSError, IOError):
+                continue
+            self.yumvar[fsvar] = val
+
 class YumConf(StartupConf):
     """Configuration option definitions for yum.conf's [main] section.
 
@@ -924,36 +952,6 @@ class VersionGroupConf(BaseConfig):
     pkglist = ListOption()
     run_with_packages = BoolOption(False)
 
-def init_yumvar(installroot, canonarch, basearch, releasever):
-    yumvar = {}
-    for num in range(0, 10):
-        env = 'YUM%d' % num
-        val = os.environ.get(env, '')
-        if val:
-            yumvar[env.lower()] = val
-    yumvar['arch'] = canonarch
-    yumvar['basearch'] = basearch
-    yumvar['releasever'] = releasever
-
-    # Read the FS yumvar
-    try:
-        dir_fsvars = installroot + "/etc/yum/vars/"
-        fsvars = os.listdir(dir_fsvars)
-    except OSError:
-        fsvars = []
-    for fsvar in fsvars:
-        if os.path.islink(dir_fsvars + fsvar):
-            continue
-        try:
-            val = open(dir_fsvars + fsvar).readline()
-            if val and val[-1] == '\n':
-                val = val[:-1]
-        except (OSError, IOError):
-            continue
-        yumvar[fsvar] = val
-
-    return yumvar
-
 def readStartupConfig(configfile, root, releasever=None):
     """Parse Yum's main configuration file and return a
     :class:`StartupConf` instance.  This is required in order to
@@ -992,7 +990,7 @@ def readStartupConfig(configfile, root, releasever=None):
 
     return startupconf
 
-def readMainConfig(startupconf, yumvar):
+def readMainConfig(startupconf):
     """Parse Yum's main configuration file
 
     :param startupconf: :class:`StartupConf` instance as returned by readStartupConfig()
@@ -1000,6 +998,7 @@ def readMainConfig(startupconf, yumvar):
     """
     # Read [main] section
     yumconf = YumConf()
+    yumconf.yumvar = startupconf.yumvar
     yumconf.populate(startupconf._parser, 'main')
 
     # Apply the installroot to directory options, substitutes variables.
@@ -1008,7 +1007,7 @@ def readMainConfig(startupconf, yumvar):
         ir_path = yumconf.installroot + path
         ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
                                              # it annoys me
-        ir_path = varReplace(ir_path, yumvar)
+        ir_path = varReplace(ir_path, yumconf.yumvar)
         setattr(yumconf, option, ir_path)
 
     yumconf.logdir = logdir_fit(yumconf.logdir)
