@@ -89,3 +89,17 @@ binary use the actual path for binaries on Fedora::
 Also see related Fedora bugzillas `982947
 <https://bugzilla.redhat.com/show_bug.cgi?id=982947>`_ and `982664
 <https://bugzilla.redhat.com/show_bug.cgi?id=982664>`_.
+
+
+.. _skip_if_unavailable_default:
+
+============================================
+ ``skip_if_unavailable`` enabled by default
+============================================
+
+The important system repos should never be down and we see the third party repos
+down often enough to warrant this change. Note that without this setting and
+without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
+DNF immediately stops on a repo error, confusing and bothering the user.
+
+See the related `Fedora bugzilla <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.

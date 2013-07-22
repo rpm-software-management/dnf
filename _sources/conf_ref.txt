@@ -56,7 +56,7 @@ one main section. The repository sections define the configuration for each
 
 ``skip_if_unavailable``
     If enabled, DNF will continue running if this repository cannot be contacted
-    for any reason. The default is False.
+    for any reason. The default is True.
 
 ==================================
  Options for both [main] and Repo

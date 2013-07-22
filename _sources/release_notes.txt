@@ -165,3 +165,17 @@ This is a quick bugfix release dealing with reported bugs and tracebacks:
 * :rhbug:`979942`
 * :rhbug:`980227`
 * :rhbug:`981310`
+
+====================
+0.3.10 Release Notes
+====================
+
+The only major change is that ``skip_if_unavailable`` is :ref:`enabled by
+default now <skip_if_unavailable_default>`.
+
+A minor release otherwise, mainly to get a new version of DNF out that uses a
+fresh librepo. The follwoing issues are now a thing of the past:
+
+* :rhbug:`977661`
+* :rhbug:`984483`
+* :rhbug:`986545`
