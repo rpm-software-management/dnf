@@ -1,6 +1,6 @@
-%global gitrev eff4c49
-%global hawkey_version 0.3.14
-%global librepo_version 0.0.4
+%global gitrev eb9dddb
+%global hawkey_version 0.3.16
+%global librepo_version 0.0.5
 
 %global confdir %{_sysconfdir}/dnf
 
@@ -74,6 +74,11 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1giteb9dddb
+- repos: skip_if_unavailable is True by default now. (RhBug:984483) (Ales Kozumplik)
+- doc: omitted from 6f70d2b, also mention the related bugzillas. (Ales Kozumplik)
+- doc: why 'dnf provides /bin/python' fails on Fedora. (Ales Kozumplik)
 
 * Thu Jul 4 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.9-1.giteff4c49
 - fix: errors handling messages in do_transaction(). (RhBug:981310) (Ales Kozumplik)
