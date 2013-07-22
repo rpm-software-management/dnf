@@ -90,6 +90,9 @@ Also see related Fedora bugzillas `982947
 <https://bugzilla.redhat.com/show_bug.cgi?id=982947>`_ and `982664
 <https://bugzilla.redhat.com/show_bug.cgi?id=982664>`_.
 
+
+.. _skip_if_unavailable_default:
+
 ============================================
  ``skip_if_unavailable`` enabled by default
 ============================================

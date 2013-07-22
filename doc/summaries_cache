@@ -154,5 +154,17 @@
     [
         981310, 
         "NameError: global name 'to_utf8' is not defined"
+    ], 
+    [
+        977661, 
+        "[abrt] Ctrl+C ends up with a TypeError traceback involving Base.__exit__() and Repo._handle_load()"
+    ], 
+    [
+        984483, 
+        "default to skip_if_unavailable=True"
+    ], 
+    [
+        986545, 
+        "dnf mismatching it's librepo dep in rawhide"
     ]
 ]
