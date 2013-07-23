@@ -1595,7 +1595,7 @@ class Base(object):
                         if len(txmbr.groups) == 0:
                             self.tsInfo.remove(txmbr.po.pkgtup)
 
-    def select_group(self, group):
+    def select_group(self, group, pkg_types=None):
         """Mark all the packages in the given group to be installed.
 
         :param group: the group containing the packages to mark for installation
@@ -1603,7 +1603,8 @@ class Base(object):
         """
 
         txmbrs = []
-        pkg_types = self.conf.group_package_types
+        if pkg_types is None:
+            pkg_types = self.conf.group_package_types
         if group.selected:
             return 0
         group.selected = True
