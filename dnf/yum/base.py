@@ -1892,7 +1892,7 @@ class Base(object):
         forms = [hawkey.FORM_NAME]
         subj = queries.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
-            q = subj.get_best_query(self.sack, with_provides=False, form=forms)
+            q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
             map(self._goal.install, q)
             return len(q)
         elif self.conf.multilib_policy == "best":
