@@ -1621,7 +1621,7 @@ class Base(object):
         adding_msg = _('Adding package %s from group %s')
         cnt = 0
         for pkg in pkgs:
-            self.logger.debug(adding_msg % (pkg, group.id))
+            self.logger.debug(adding_msg % (pkg.name, group.id))
             if pkg.name in inst_set:
                 continue
             inst_set.add(pkg.name)

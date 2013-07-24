@@ -390,6 +390,7 @@ class Repo(dnf.yum.config.RepoConf):
         """
         if self.metadata or self._try_cache():
             if self.sync_strategy == SYNC_ONLY_CACHE or not self.metadata.expired:
+                logger.debug('repo: using cache for: %s' % self.id)
                 return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
             msg = "Cache-only enabled but no cache for '%s'" % self.id
