@@ -1021,7 +1021,6 @@ def readMainConfig(startupconf):
 
     # Add in some extra attributes which aren't actually configuration values
     yumconf.uid = 0
-    yumconf.cache = 0
     yumconf.progess_obj = None
 
     # items related to the originating config file

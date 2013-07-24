@@ -1063,7 +1063,6 @@ class CleanCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.base.conf.cache = 1
         return self.base.cleanCli(extcmds)
 
     def needTs(self, basecmd, extcmds):

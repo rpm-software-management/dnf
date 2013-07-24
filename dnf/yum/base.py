@@ -1088,9 +1088,8 @@ class Base(object):
             # caching is enabled and the package
             # just failed to check out there's no
             # way to save this, report the error and return
-            if (self.conf.cache or repo_cached) and errors:
+            if repo_cached and errors:
                 return errors
-
 
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,

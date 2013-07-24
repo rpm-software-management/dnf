@@ -1237,7 +1237,6 @@ class Cli(object):
         self._configure_repos(opts)
 
         if opts.version:
-            self.base.conf.cache = 1
             print_versions(self.base.run_with_package_names, self.base)
             sys.exit(0)
 
@@ -1464,11 +1463,6 @@ class YumOptionParser(OptionParser):
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
                 self.base.conf.assumeno  = 1
-
-            #  Instead of going cache-only for a non-root user, try to use a
-            # user writable cachedir. If that fails fall back to cache-only.
-            if opts.cacheonly:
-                self.base.conf.cache = 1
 
             if opts.obsoletes:
                 self.base.conf.obsoletes = 1
