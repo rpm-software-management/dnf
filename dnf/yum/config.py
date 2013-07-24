@@ -766,11 +766,6 @@ class YumConf(StartupConf):
     # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()
-    #  Note that "instant" is the old behaviour, but group:primary is very
-    # similar but better :).
-    mdpolicy = ListOption(['group:primary'])
-    mddownloadpolicy = SelectionOption('xml', ('xml'))
-    #  ('instant', 'group:all', 'group:main', 'group:small', 'group:primary'))
     multilib_policy = SelectionOption('best', ('best', 'all'))
                  # all == install any/all arches you can
                  # best == use the 'best  arch' for the system
@@ -915,8 +910,6 @@ class RepoConf(BaseConfig):
     mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
     # NOTE: metalink expire _must_ be the same as metadata_expire, due to the
     #       checksumming of the repomd.xml.
-    mdpolicy = Inherit(YumConf.mdpolicy)
-    mddownloadpolicy = Inherit(YumConf.mddownloadpolicy)
     cost = IntOption(1000)
 
     sslcacert = Inherit(YumConf.sslcacert)
