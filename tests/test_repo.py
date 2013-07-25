@@ -218,6 +218,15 @@ class RepoTest(support.TestCase):
         repo = dnf.repo.Repo('r')
         self.assertRegexpMatches(repo.valid(), 'no mirror or baseurl')
 
+    def test_handle_new_pkg_download(self):
+        """Ensure mirrors are never resolved for package download."""
+        repo = self.repo
+        repo.mirrorlist = 'http://anything'
+        repo.metadata = mock.Mock()
+        repo.metadata.mirrors = ['resolved']
+        h = repo._handle_new_pkg_download()
+        self.assertIsNone(h.mirrorlist)
+
 class LocalRepoTest(support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
