@@ -20,6 +20,13 @@ one main section. The repository sections define the configuration for each
 ================
  [main] Options
 ================
+
+``best``
+    When upgrading a package, always try to install its highest version
+    available, even only to find out some of its deps are not
+    satisfiable. Enable this if you want to experience broken dependencies in
+    the repositories firsthand. The default is off.
+
 .. _clean_requirements_on_remove-label:
 
 ``clean_requirements_on_remove``
