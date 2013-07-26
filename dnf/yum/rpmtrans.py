@@ -28,7 +28,7 @@ from i18n import _
 import misc
 import tempfile
 
-class NoOutputCallBack:
+class NoOutputCallBack(object):
     def __init__(self):
         pass
 
@@ -54,7 +54,6 @@ class NoOutputCallBack:
 
     def errorlog(self, msg):
         """takes a simple error msg string"""
-
         pass
 
     def filelog(self, package, action):
@@ -66,11 +65,12 @@ class NoOutputCallBack:
     def verify_tsi_package(self, pkg, count, total):
         pass
 
-class RPMBaseCallback:
+class RPMTransactionLoggingCallback(NoOutputCallBack):
     '''
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
+        super(RPMTransactionLoggingCallback, self).__init__()
         self.action = {dnf.transaction.DOWNGRADE : _('Downgrading'),
                        dnf.transaction.ERASE : _('Erasing'),
                        dnf.transaction.INSTALL : _('Installing'),
@@ -87,24 +87,6 @@ class RPMBaseCallback:
                            'cleanup' : 'Cleanup'}
         self.logger = logging.getLogger("dnf.rpm")
 
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        """
-        :param package: A yum package object or simple string of a package name
-        :param action: A yum.constant transaction set state
-        :param te_current: Current number of bytes processed in the transaction
-          element being processed
-        :param te_total: Total number of bytes in the transaction element being
-          processed
-        :param ts_current: number of processes completed in whole transaction
-        :param ts_total: total number of processes in the transaction.
-        """
-        raise NotImplementedError()
-
-    def scriptout(self, package, msgs):
-        """package is the package.  msgs is the messages that were
-        output (if any)."""
-        pass
-
     def errorlog(self, msg):
         # FIXME this should probably dump to the filelog, too
         print(msg, file=sys.stderr)
@@ -117,9 +99,6 @@ class RPMBaseCallback:
         else:
             msg = '%s: %s' % (package, action)
         self.logger.info(msg)
-
-    def verify_tsi_package(self, pkg, count, total):
-        pass
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
 # without the "install" phase if it gets an exception in it's callback. The

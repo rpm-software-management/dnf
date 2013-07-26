@@ -41,7 +41,7 @@ import dnf.yum.misc
 from dnf.rpmUtils.miscutils import checkSignals
 from dnf.yum.constants import *
 
-from dnf.yum.rpmtrans import RPMBaseCallback
+from dnf.yum.rpmtrans import RPMTransactionLoggingCallback
 import dnf.yum.packages
 
 import dnf.i18n
@@ -2703,13 +2703,13 @@ class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
         self.logger.info(_('--> Populating transaction set '
             'with selected packages. Please wait.'))
 
-class YumCliRPMCallBack(RPMBaseCallback):
+class YumCliRPMCallBack(RPMTransactionLoggingCallback):
     """A Yum specific callback class for RPM operations."""
 
     width = property(lambda x: _term_width())
 
     def __init__(self, ayum=None):
-        RPMBaseCallback.__init__(self)
+        super(YumCliRPMCallBack, self).__init__()
         self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
         self.output = True
@@ -2726,7 +2726,7 @@ class YumCliRPMCallBack(RPMBaseCallback):
         :param package: the package involved in the event
         :param action: the type of action that is taking place.  Valid
            values are given by
-           :func:`rpmtrans.RPMBaseCallback.action.keys()`
+           :func:`rpmtrans.RPMTransactionLoggingCallback.action.keys()`
         :param te_current: a number representing the amount of work
            already done in the current transaction
         :param te_total: a number representing the total amount of work

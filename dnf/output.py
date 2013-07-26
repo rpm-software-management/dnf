@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+import dnf.yum.rpmtrans
+
 class DepsolveCallback(object):
     def start(self):
         pass
@@ -27,3 +29,6 @@ class DepsolveCallback(object):
 
     def end(self):
         pass
+
+# alias for RPM transaction callback that logs things to a file
+RPMTransactionLoggingCallback = dnf.yum.rpmtrans.RPMTransactionLoggingCallback
