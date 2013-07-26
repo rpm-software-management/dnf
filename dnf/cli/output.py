@@ -1591,10 +1591,8 @@ Transaction Summary
         # One of these is a download
         if self.conf.debuglevel < 2 or not sys.stdout.isatty():
             progressbar = None
-            callback = None
         else:
             progressbar = LibrepoCallbackAdaptor(fo=sys.stdout)
-            callback = CacheProgressCallback()
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
@@ -2704,65 +2702,6 @@ class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
 
         self.logger.info(_('--> Populating transaction set '
             'with selected packages. Please wait.'))
-
-class CacheProgressCallback:
-    """A class to handle text output callbacks during metadata cache updates."""
-
-    def __init__(self):
-        self.logger = logging.getLogger("dnf")
-        self.file_logger = logging.getLogger("dnf.rpm")
-
-    def log(self, level, message):
-        """Output a log message.
-
-        :param level: the logging level for the message
-        :param message: the message
-        """
-        self.logger.log(level, message)
-
-    def errorlog(self, level, message):
-        """Output an errorlog message.
-
-        :param level: the logging level for the message
-        :param message: the message
-        """
-        self.logger.log(level, message)
-
-    def filelog(self, level, message):
-        """Output a file log message.
-
-        :param level: the logging level for the message
-        :param message: the message
-        """
-        self.file_logger.log(level, message)
-
-    def progressbar(self, current, total, name=None):
-        """Output the current status to the terminal using a progress
-        status bar.
-
-        :param current: a number representing the amount of work
-           already done
-        :param total: a number representing the total amount of work
-           to be done
-        :param name: a name to label the progress bar with
-        """
-        #  We can easily have 10k+ packages in a repo. and we don't want to
-        # output 80 * 10k lines to the screen, esp. when the user probably
-        # doesn't care about 10k updates ... some serial consoles also get
-        # really unhappy, as they can't deal with the IO fast enough.
-        num_outputs = 200
-        output = False
-        opc = total / num_outputs
-        if opc <= 1:
-            output = True
-        elif current <= 1:
-            output = True # output the begining
-        elif current == total:
-            output = True # output the end
-        elif not (current % opc):
-            output = True
-        if output:
-            progressbar(current, total, name)
 
 class YumCliRPMCallBack(RPMBaseCallback):
     """A Yum specific callback class for RPM operations."""
