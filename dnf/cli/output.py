@@ -96,16 +96,17 @@ def _make_lists(transaction):
             b.upgraded.append(tsi)
     return b
 
-_PASSIVE_DCT = {
-    dnf.transaction.DOWNGRADE : operator.attrgetter('erased'),
+_ACTIVE_DCT = {
+    dnf.transaction.DOWNGRADE : operator.attrgetter('installed'),
     dnf.transaction.ERASE : operator.attrgetter('erased'),
     dnf.transaction.INSTALL : operator.attrgetter('installed'),
-    dnf.transaction.REINSTALL : operator.attrgetter('erased'),
-    dnf.transaction.UPGRADE : operator.attrgetter('erased'),
+    dnf.transaction.REINSTALL : operator.attrgetter('installed'),
+    dnf.transaction.UPGRADE : operator.attrgetter('installed'),
     }
-def _passive_pkg(tsi):
-    """Return the package from tsi that takes the verbally "passive" role."""
-    return _PASSIVE_DCT[tsi.op_type](tsi)
+def _active_pkg(tsi):
+    """Return the package from tsi that takes the active role in the transaction.
+    """
+    return _ACTIVE_DCT[tsi.op_type](tsi)
 
 class YumTerm:
     """A class to provide some terminal "UI" helpers based on curses."""
@@ -1416,8 +1417,8 @@ class YumOutput:
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
             for tsi in pkglist:
-                passive = _passive_pkg(tsi)
-                a_wid = _add_line(lines, data, a_wid, passive, tsi.obsoleted)
+                active = _active_pkg(tsi)
+                a_wid = _add_line(lines, data, a_wid, active, tsi.obsoleted)
 
             pkglist_lines.append((action, lines))
 

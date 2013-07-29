@@ -194,6 +194,8 @@ class FakeConf(object):
         self.cachedir = '/should-not-exist-bad-test/cache'
         self.clean_requirements_on_remove = False
         self.color = 'never'
+        self.color_update_installed = 'normal'
+        self.color_update_remote = 'normal'
         self.commands = []
         self.debug_solver = False
         self.debuglevel = 8

@@ -19,7 +19,21 @@ from __future__ import absolute_import
 from tests import mock
 from tests import support
 import dnf.cli.output
+import dnf.transaction
 import unittest
+
+OUTPUT=u"""
+================================================================================
+ Package           Arch              Version           Repository          Size
+================================================================================
+Upgrading:
+ pepper            x86_64            20-1              updates              0  
+     replacing  hole.x86_64 1-1
+
+Transaction Summary
+================================================================================
+Upgrade  1 Package
+"""
 
 class OutputTest(unittest.TestCase):
     @staticmethod
@@ -33,6 +47,19 @@ class OutputTest(unittest.TestCase):
     def setUp(self):
         self.output = dnf.cli.output.YumOutput()
         self.output.conf = support.FakeConf()
+
+    @mock.patch('dnf.cli.output._term_width', return_value=80)
+    def test_list_transaction(self, _term_width):
+        sack = support.MockYumBase('updates').sack
+        q = sack.query().filter(name='pepper')
+        i = q.installed()[0]
+        u = q.available()[0]
+        obs = sack.query().filter(name='hole').installed()[0]
+
+        transaction = dnf.transaction.Transaction()
+        transaction.add_upgrade(u, i, [obs])
+        self.output._transaction = transaction
+        self.assertEqual(self.output.list_transaction(), OUTPUT)
 
     @mock.patch('dnf.i18n.input')
     def test_userconfirm(self, input_fnc):
