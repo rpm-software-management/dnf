@@ -144,7 +144,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             self.logger.info(msg)
             return -1, None
 
-        lsts = self.listTransaction()
+        lsts = self.list_transaction()
         self.logger.info(lsts)
         # Check which packages have to be downloaded
         downloadpkgs = []

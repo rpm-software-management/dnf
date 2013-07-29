@@ -1375,7 +1375,7 @@ class YumOutput:
                                     _("Installed size: %s"),
                                     self.format_number(totsize))
 
-    def listTransaction(self):
+    def list_transaction(self):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
