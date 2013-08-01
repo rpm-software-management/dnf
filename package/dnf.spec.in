@@ -61,6 +61,7 @@ make ARGS="-V" test
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
+%{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 
