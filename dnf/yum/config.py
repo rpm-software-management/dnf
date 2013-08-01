@@ -765,9 +765,6 @@ class YumConf(StartupConf):
                                           names_of_0=["0", "<off>"])
     kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
             'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
-    exactarchlist = ListOption(['kernel', 'kernel-smp',
-            'kernel-hugemem', 'kernel-enterprise', 'kernel-bigmem',
-            'kernel-devel', 'kernel-PAE', 'kernel-PAE-debug'])
     tsflags = ListOption()
 
     assumeyes = BoolOption(False)

@@ -24,7 +24,6 @@ Command line interface yum class and related.
 from __future__ import print_function
 from dnf.cli import CliError
 from dnf.i18n import ucd
-from dnf.rpmUtils.arch import isMultiLibArch
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
 from dnf.yum.parser import varReplace
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP

@@ -23,7 +23,6 @@ from __future__ import print_function
 from config import ParsingError, ConfigParser
 from constants import *
 from dnf import const, queries, sack
-from dnf.rpmUtils.arch import ArchStorage
 from i18n import to_unicode, to_str, exception2msg
 from parser import ConfigPreProcessor, varReplace
 from urlgrabber.grabber import URLGrabError
@@ -42,6 +41,7 @@ import dnf.output
 import dnf.persistor
 import dnf.repo
 import dnf.repodict
+import dnf.rpmUtils.arch
 import dnf.rpmUtils.connection
 import dnf.rpmUtils.transaction
 import dnf.transaction
@@ -111,7 +111,7 @@ class Base(object):
         self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
-        self.arch = ArchStorage()
+        self.arch = dnf.rpmUtils.arch.Arch()
 
         self.run_with_package_names = set()
         self._cleanup = []

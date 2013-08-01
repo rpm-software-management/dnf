@@ -204,7 +204,6 @@ class FakeConf(object):
         self.defaultyes = False
         self.disable_excludes = []
         self.exactarch = False
-        self.exactarchlist = []
         self.exclude = []
         self.group_package_types = ['mandatory', 'default']
         self.groupremove_leaf_only = False
