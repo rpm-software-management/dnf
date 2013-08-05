@@ -31,4 +31,4 @@ class DepsolveCallback(object):
         pass
 
 # alias for RPM transaction callback that logs things to a file
-RPMTransactionLoggingCallback = dnf.yum.rpmtrans.RPMTransactionLoggingCallback
+LoggingTransactionDisplay = dnf.yum.rpmtrans.LoggingTransactionDisplay

@@ -192,7 +192,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return -1, None
 
-        display = output.YumCliRPMCallBack(weakref(self))
+        display = output.CliTransactionDisplay(weakref(self))
         return_code, resultmsgs = super(YumBaseCli, self).do_transaction(display)
         if return_code == 0:
             self.logger.info(self.post_transaction_output())

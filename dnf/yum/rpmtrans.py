@@ -49,7 +49,7 @@ class TransactionDisplay(object):
         dnf.transaction.UPGRADE   : PKG_UPGRADE
         }
 
-class NoOutputCallBack(TransactionDisplay):
+class NoOutputTransactionDisplay(TransactionDisplay):
     def __init__(self):
         pass
 
@@ -86,12 +86,12 @@ class NoOutputCallBack(TransactionDisplay):
     def verify_tsi_package(self, pkg, count, total):
         pass
 
-class RPMTransactionLoggingCallback(NoOutputCallBack):
+class LoggingTransactionDisplay(NoOutputTransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
-        super(RPMTransactionLoggingCallback, self).__init__()
+        super(LoggingTransactionDisplay, self).__init__()
         self.action = {self.PKG_CLEANUP   : _('Cleanup'),
                        self.PKG_DOWNGRADE : _('Downgrading'),
                        self.PKG_ERASE     : _('Erasing'),
@@ -151,7 +151,7 @@ class _WrapNoExceptions:
         return newFunc
 
 class RPMTransaction:
-    def __init__(self, base, test=False, display=NoOutputCallBack):
+    def __init__(self, base, test=False, display=NoOutputTransactionDisplay):
         if not callable(display):
             self.display = display
         else:
