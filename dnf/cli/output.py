@@ -2736,7 +2736,9 @@ class YumCliRPMCallBack(RPMTransactionLoggingCallback):
         :param ts_total: the total number of transactions in the
            transaction set
         """
-        process = self.action[action]
+        process = self.action.get(action)
+        if process is None:
+            return
 
         wid1 = self._max_action_width()
 

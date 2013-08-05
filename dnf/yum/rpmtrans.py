@@ -28,7 +28,28 @@ from i18n import _
 import misc
 import tempfile
 
-class NoOutputCallBack(object):
+class TransactionDisplay(object):
+    # per-package events
+    PKG_CLEANUP   = 1
+    PKG_DOWNGRADE = 2
+    PKG_ERASE     = 3
+    PKG_INSTALL   = 4
+    PKG_OBSOLETE  = 5
+    PKG_REINSTALL = 6
+    PKG_UPGRADE   = 7
+
+    # transaction-wide events
+    TRANS_POST      = 10
+
+    ACTION_FROM_OP_TYPE = {
+        dnf.transaction.DOWNGRADE : PKG_DOWNGRADE,
+        dnf.transaction.ERASE     : PKG_ERASE,
+        dnf.transaction.INSTALL   : PKG_INSTALL,
+        dnf.transaction.REINSTALL : PKG_REINSTALL,
+        dnf.transaction.UPGRADE   : PKG_UPGRADE
+        }
+
+class NoOutputCallBack(TransactionDisplay):
     def __init__(self):
         pass
 
@@ -71,20 +92,20 @@ class RPMTransactionLoggingCallback(NoOutputCallBack):
     '''
     def __init__(self):
         super(RPMTransactionLoggingCallback, self).__init__()
-        self.action = {dnf.transaction.DOWNGRADE : _('Downgrading'),
-                       dnf.transaction.ERASE : _('Erasing'),
-                       dnf.transaction.INSTALL : _('Installing'),
-                       dnf.transaction.REINSTALL : _('Reinstalling'),
-                       dnf.transaction.UPGRADE :  _('Upgrading'),
-                       'obsoleting' : _('Obsoleting'),
-                       'cleanup' : _('Cleanup')}
-        self.fileaction = {dnf.transaction.DOWNGRADE : 'Downgraded',
-                           dnf.transaction.ERASE : 'Erased',
-                           dnf.transaction.INSTALL : 'Installed',
-                           dnf.transaction.REINSTALL : _('Reinstalled'),
-                           dnf.transaction.UPGRADE :  'Upgraded',
-                           'obsoleting' : 'Obsoleted',
-                           'cleanup' : 'Cleanup'}
+        self.action = {self.PKG_CLEANUP   : _('Cleanup'),
+                       self.PKG_DOWNGRADE : _('Downgrading'),
+                       self.PKG_ERASE     : _('Erasing'),
+                       self.PKG_INSTALL   : _('Installing'),
+                       self.PKG_OBSOLETE  : _('Obsoleting'),
+                       self.PKG_REINSTALL : _('Reinstalling'),
+                       self.PKG_UPGRADE   : _('Upgrading')}
+        self.fileaction = {self.PKG_CLEANUP   : 'Cleanup',
+                           self.PKG_DOWNGRADE : 'Downgraded',
+                           self.PKG_ERASE     : 'Erased',
+                           self.PKG_INSTALL   : 'Installed',
+                           self.PKG_OBSOLETE  : 'Obsoleted',
+                           self.PKG_REINSTALL : 'Reinstalled',
+                           self.PKG_UPGRADE   :  'Upgraded'}
         self.logger = logging.getLogger("dnf.rpm")
 
     def errorlog(self, msg):
@@ -94,10 +115,10 @@ class RPMTransactionLoggingCallback(NoOutputCallBack):
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
         # hurky but, sadly, not much else
-        if action in self.fileaction:
-            msg = '%s: %s' % (self.fileaction[action], package)
-        else:
-            msg = '%s: %s' % (package, action)
+        process = self.fileaction[action]
+        if process is None:
+            return
+        msg = '%s: %s' % (process, package)
         self.logger.info(msg)
 
 #  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
@@ -444,7 +465,8 @@ class RPMTransaction:
         if self.test:
             return
         if self.trans_running:
-            self.display.filelog(pkg, tsi.op_type)
+            action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+            self.display.filelog(pkg, action)
             self._scriptout(pkg)
             pid   = self.base.history.pkg2pid(pkg)
             state = tsi.history_state(pkg)
@@ -454,7 +476,8 @@ class RPMTransaction:
 
     def _instProgress(self, bytes, total, h):
         (pkg, tsi) = self._extract_tsi_cbkey(h)
-        self.display.event(pkg, tsi.op_type, bytes, total, self.complete_actions,
+        action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+        self.display.event(pkg, action, bytes, total, self.complete_actions,
                            self.total_actions)
 
     def _unInstStart(self, bytes, total, h):
@@ -468,11 +491,11 @@ class RPMTransaction:
         self.total_removed += 1
         self.complete_actions += 1
         if pkg in tsi.obsoleted:
-            action = 'obsoleting'
+            action = TransactionDisplay.PKG_OBSOLETE
         elif tsi.op_type == dnf.transaction.UPGRADE:
-            action = 'cleanup'
+            action = TransactionDisplay.PKG_CLEANUP
         else:
-            action = dnf.transaction.ERASE
+            action = TransactionDisplay.PKG_ERASE
         self.display.filelog(pkg, action)
         self.display.event(pkg, action, 100, 100, self.complete_actions,
                            self.total_actions)
