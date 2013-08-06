@@ -121,42 +121,11 @@ class LoggingTransactionDisplay(NoOutputTransactionDisplay):
         msg = '%s: %s' % (process, package)
         self.logger.info(msg)
 
-#  This is ugly, but atm. rpm can go insane and run the "cleanup" phase
-# without the "install" phase if it gets an exception in it's callback. The
-# following means that we don't really need to know/care about that in the
-# display callback functions.
-#  Note try/except's in RPMTransaction are for the same reason.
-class _WrapNoExceptions:
-    def __init__(self, parent):
-        self.__parent = parent
-
-    def __getattr__(self, name):
-        """ Wraps all access to the parent functions. This is so it'll eat all
-            exceptions because rpm doesn't like exceptions in the callback. """
-        func = getattr(self.__parent, name)
-
-        def newFunc(*args, **kwargs):
-            try:
-                func(*args, **kwargs)
-            except Exception, e:
-                # It's impossible to debug stuff without this:
-                try:
-                    print("Error:", "display callback failed:", e)
-                except:
-                    pass
-
-        newFunc.__name__ = func.__name__
-        newFunc.__doc__ = func.__doc__
-        newFunc.__dict__.update(func.__dict__)
-        return newFunc
-
-class RPMTransaction:
+class RPMTransaction(object):
     def __init__(self, base, test=False, display=NoOutputTransactionDisplay):
-        if not callable(display):
-            self.display = display
-        else:
-            self.display = display() # display callback
-        self.display = _WrapNoExceptions(self.display)
+        self.display = display
+        if callable(display):
+            self.display = display()
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
         self.trans_running = False
