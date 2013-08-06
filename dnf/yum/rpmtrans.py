@@ -462,17 +462,23 @@ class RPMTransaction:
         (pkg, tsi) = self._extract_tsi_cbkey(h)
         self.fd.close()
         self.fd = None
-        if self.test:
+
+        if self.test or not self.trans_running:
             return
-        if self.trans_running:
-            action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
-            self.display.filelog(pkg, action)
-            self._scriptout(pkg)
-            pid   = self.base.history.pkg2pid(pkg)
-            state = tsi.history_state(pkg)
-            self.base.history.trans_data_pid_end(pid, state)
-            # :dead
-            # self.ts_done(txmbr.po, txmbr.output_state)
+
+        action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+        self.display.filelog(pkg, action)
+        self._scriptout(pkg)
+        pid = self.base.history.pkg2pid(pkg)
+        state = tsi.history_state(pkg)
+        self.base.history.trans_data_pid_end(pid, state)
+        # :dead
+        # self.ts_done(txmbr.po, txmbr.output_state)
+
+        if self.complete_actions == self.total_actions:
+            # RPM doesn't explicitly report when post-trans phase starts
+            action = TransactionDisplay.TRANS_POST
+            self.display.event(None, action, None, None, None, None)
 
     def _instProgress(self, bytes, total, h):
         (pkg, tsi) = self._extract_tsi_cbkey(h)
