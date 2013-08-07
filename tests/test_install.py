@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from dnf.queries import available_by_name
 from tests import support
+import dnf.exceptions
 import dnf.queries
 import hawkey
 
@@ -65,9 +66,9 @@ class InstallMultilibAll(support.ResultTestCase):
 
     def test_install_src_fails(self):
         self.yumbase.install("pepper-20-0.src")
-        (code, string) = self.yumbase.build_transaction()
-        self.assertEqual(code, 0)
-        self.assertRegexpMatches(string[0], "will not install a source rpm")
+        re = 'will not install a source rpm'
+        self.assertRaisesRegexp(dnf.exceptions.Error, re,
+                                self.yumbase.build_transaction)
 
 class MultilibAllMainRepo(support.ResultTestCase):
     def setUp(self):

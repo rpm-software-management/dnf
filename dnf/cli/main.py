@@ -164,43 +164,23 @@ def _main(base, args):
         return 3
 
     # Depsolve stage
-    logger.info(_('Resolving Dependencies'))
+    logger.info(_('Resolving dependencies'))
 
     try:
-        (result, resultmsgs) = base.build_transaction()
-    except plugins.PluginYumExit, e:
+        got_transaction = base.build_transaction()
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
-    except dnf.exceptions.LockError:
-        raise
-    except dnf.exceptions.Error, e:
-        result = 1
-        resultmsgs = [exception2msg(e)]
-    except IOError, e:
-        return exIOError(e)
+    except dnf.exceptions.Error as e:
+        prefix = _('Error: %s')
+        logger.critical(prefix, str(e))
+        return 1
 
     # Act on the depsolve result
-    if result == 0:
-        # Normal exit
-        for msg in resultmsgs:
-            print(msg)
+    if not got_transaction:
+        print(_('Nothing to do.'))
         return 0
-    elif result == 1:
-        # Fatal error
-        for msg in resultmsgs:
-            prefix = _('Error: %s')
-            prefix2nd = (' ' * (utf8_width(prefix) - 2))
-            logger.critical(prefix, msg.replace('\n', '\n' + prefix2nd))
-        return 1
-    elif result == 2:
-        # Continue on
-        pass
-    else:
-        logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
-        for msg in resultmsgs:
-            logger.critical(msg)
-        return 3
-
-    logger.info(_('\nDependencies Resolved'))
+    logger.info('\n')
+    logger.info(_('Dependencies resolved.'))
 
     # Run the transaction
     try:

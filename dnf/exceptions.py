@@ -63,6 +63,9 @@ class RepoError(Error):
 class ConfigError(Error):
     pass
 
+class DepsolveError(Error):
+    pass
+
 class MetadataError(Error):
     pass
 

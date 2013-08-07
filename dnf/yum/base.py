@@ -580,6 +580,9 @@ class Base(object):
     def build_transaction(self):
         """Build the transaction set."""
         self.plugins.run('preresolve')
+        ts = exc = None
+        cnt = 0
+
         ds_st = time.time()
         self.ds_callback.start()
         goal = self._goal
@@ -588,9 +591,8 @@ class Base(object):
         if not self.run_hawkey_goal(goal):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
-            (rescode, restring) =  (1, goal.problems)
+            exc = dnf.exceptions.DepsolveError('. '.join(goal.problems))
         else:
-            cnt = 0
             ts = self._transaction = dnf.transaction.Transaction()
             all_obsoleted = set(goal.list_obsoleted())
 
@@ -630,19 +632,21 @@ class Base(object):
                 cnt += 1
                 self.ds_callback.pkg_added(pkg, 'e')
                 ts.add_erase(pkg)
-            if cnt > 0:
-                (rescode, restring) = (2, [_('Success - deps resolved')])
-            else:
-                (rescode, restring) = (0, [_('Nothing to do')])
 
         self.ds_callback.end()
-        self.plugins.run('postresolve', rescode=rescode, restring=restring)
         self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
-        if rescode == 2:
+
+        if ts is not None:
             msg = ts.rpm_limitations()
             if msg:
-                return (0, [msg])
-        return (rescode, restring)
+                exc = dnf.exceptions.Error(msg)
+
+        got_transaction = cnt > 0
+        self.plugins.run('postresolve', exception=exc,
+                         got_transaction=got_transaction)
+        if exc is not None:
+            raise exc
+        return got_transaction
 
     def do_transaction(self, display=None):
         # save our ds_callback out

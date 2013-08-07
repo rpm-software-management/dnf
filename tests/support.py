@@ -20,6 +20,7 @@ from tests import mock
 import StringIO
 import contextlib
 import dnf.comps
+import dnf.exceptions
 import dnf.package
 import dnf.queries
 import dnf.repo
@@ -257,8 +258,10 @@ class ResultTestCase(TestCase):
         INSTALLed.
         """
 
-        (rcode, rstring) = base.build_transaction()
-        self.assertNotEqual(rcode, 1)
+        try:
+            base.build_transaction()
+        except dnf.exceptions.DepsolveError:
+            self.fail()
 
         installed = set(dnf.queries.installed_by_name(base.sack, None))
         map(installed.remove, base._transaction.remove_set)
@@ -266,8 +269,11 @@ class ResultTestCase(TestCase):
         self.assertItemsEqual(installed, pkgs)
 
     def installed_removed(self, base):
-        (rcode, rstring) = base.build_transaction()
-        self.assertNotEqual(rcode, 1)
+        try:
+            base.build_transaction()
+        except dnf.exceptions.DepsolveError:
+            self.fail()
+
         installed = base._transaction.install_set
         removed = base._transaction.remove_set
         return installed, removed

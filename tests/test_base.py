@@ -85,7 +85,7 @@ class BuildTransactionTest(support.TestCase):
     def test_build_transaction(self):
         base = support.MockYumBase("updates")
         base.update(pattern="pepper")
-        self.assertEqual(2, base.build_transaction()[0])
+        self.assertTrue(base.build_transaction())
         base.ds_callback.assert_has_calls(mock.call.start())
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'u'))
