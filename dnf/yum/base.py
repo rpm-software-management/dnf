@@ -337,8 +337,6 @@ class Base(object):
                 thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
 
-                thisrepo.base_persistdir = self.conf._repos_persistdir
-
             if thisrepo.id in self.repo_setopts:
                 for opt in self.repo_setopts[thisrepo.id].items:
                     if not hasattr(thisrepo, opt):
@@ -2471,7 +2469,7 @@ class Base(object):
                 # Try installing/updating GPG key
                 if is_cakey:
                     # know where the 'imported_cakeys' file is
-                    ikf = repo.base_persistdir + '/imported_cakeys'
+                    ikf = self.conf._repos_persistdir + '/imported_cakeys'
                     keytype = 'CA'
                     cakeys  = []
                     try:

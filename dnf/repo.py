@@ -178,7 +178,6 @@ class Repo(dnf.yum.config.RepoConf):
         self._progress = None
         self.id = id_
         self.basecachedir = None
-        self.base_persistdir = ""
         self.metadata = None
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
