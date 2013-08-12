@@ -693,7 +693,6 @@ class StartupConf(BaseConfig):
         super(StartupConf, self).__init__()
         self.yumvar = {}
 
-
     @property
     def releasever(self):
         return self.yumvar.get('releasever')
@@ -858,6 +857,10 @@ class YumConf(StartupConf):
                                      mapper={'cmds'          : 'commands',
                                              'default' :'single-user-commands'})
     _reposlist = []
+
+    def __init__(self):
+        super(YumConf, self).__init__()
+        self.config_file_age = 0
 
     def dump(self):
         """Return a string representing the values of all the
@@ -1024,8 +1027,6 @@ def readMainConfig(startupconf):
     yumconf.config_file_path = startupconf.config_file_path
     if os.path.exists(startupconf.config_file_path):
         yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
-    else:
-        yumconf.config_file_age = 0
 
     # propagate the debuglevel and errorlevel values:
     yumconf.debuglevel = startupconf.debuglevel
