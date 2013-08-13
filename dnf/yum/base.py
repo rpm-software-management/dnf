@@ -19,56 +19,53 @@
 The Yum RPM software updater.
 """
 
-import functools
-import os
-import operator
-import rpm
-import signal
-import types
-import errno
-import time
-import glob
-import logging
-
-import i18n
-_ = i18n._
-P_ = i18n.P_
-
-import config
+from __future__ import print_function
 from config import ParsingError, ConfigParser
+from constants import *
+from dnf import const, queries, sack
+from dnf.rpmUtils.arch import ArchStorage
+from i18n import to_unicode, to_str, exception2msg
+from parser import ConfigPreProcessor, varReplace
+from urlgrabber.grabber import URLGrabError
+from urlgrabber.progress import format_number
+from weakref import proxy as weakref
+
+import StringIO
+import comps
+import config
+import dnf.conf
 import dnf.exceptions
 import dnf.lock
 import dnf.logging
-import dnf.yum.rpmtrans
-import rpmsack
-from dnf.rpmUtils.arch import ArchStorage
-import dnf.rpmUtils.transaction
-import comps
-import misc
-from parser import ConfigPreProcessor, varReplace
-import urlgrabber
-from urlgrabber.grabber import URLGrabError
-from urlgrabber.progress import format_number
-import plugins
-import history
-
-from constants import *
-from i18n import to_unicode, to_str, exception2msg
-
-import string
-import StringIO
-
-from weakref import proxy as weakref
-
-import hawkey
-import dnf.conf
 import dnf.persistor
 import dnf.repo
 import dnf.repodict
+import dnf.rpmUtils.connection
+import dnf.rpmUtils.transaction
 import dnf.transaction
 import dnf.util
-import dnf.rpmUtils.connection
-from dnf import const, queries, sack
+import dnf.yum.rpmtrans
+import errno
+import functools
+import glob
+import hawkey
+import history
+import i18n
+import logging
+import misc
+import os
+import operator
+import plugins
+import rpm
+import rpmsack
+import signal
+import time
+import types
+import urlgrabber
+import string
+
+_ = i18n._
+P_ = i18n.P_
 
 _RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'

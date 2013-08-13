@@ -22,39 +22,36 @@ Command line interface yum class and related.
 """
 
 from __future__ import print_function
-
+from dnf.cli import CliError
 from dnf.i18n import ucd
-import operator
-import os
-import re
-import sys
-import time
-import random
-import logging
+from dnf.rpmUtils.arch import isMultiLibArch
+from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
+from dnf.yum.parser import varReplace
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
-import rpm
-
 from weakref import proxy as weakref
 
-import output
+import dnf.cli.commands
+import dnf.const
 import dnf.exceptions
 import dnf.logging
 import dnf.match_counter
 import dnf.persistor
-import dnf.yum.base
-import dnf.yum.misc
-from dnf.yum.parser import varReplace
-import dnf.yum.plugins
-from dnf.rpmUtils.arch import isMultiLibArch
-import signal
-from dnf.cli import CliError
-import dnf.cli.commands
-import dnf.const
 import dnf.queries
 import dnf.sack
+import dnf.yum.base
+import dnf.yum.misc
+import dnf.yum.plugins
 import hawkey
-
-from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
+import logging
+import operator
+import os
+import output
+import random
+import re
+import signal
+import sys
+import time
+import rpm
 
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
