@@ -278,7 +278,7 @@ class Repo(dnf.yum.config.RepoConf):
         handle = self._handle_new_local(self.cachedir)
         try:
             self.metadata = self._handle_load(handle)
-        except librepo.LibrepoException as e:
+        except (librepo.LibrepoException, IOError) as e:
             return False
         if self.sync_strategy == SYNC_EXPIRED:
             # we shouldn't exit earlier as reviving needs self.metadata
