@@ -166,5 +166,21 @@
     [
         986545, 
         "dnf mismatching it's librepo dep in rawhide"
+    ], 
+    [
+        979042, 
+        "Slow download of packages"
+    ], 
+    [
+        977753, 
+        "Repository \"@System\" instead of \"fedora\""
+    ], 
+    [
+        996138, 
+        "[abrt] install_grouplist:UnicodeDecodeError during 'dnf group install'"
+    ], 
+    [
+        993916, 
+        "'upgrade' command displays old version numbers in summary, rather than new version numbers"
     ]
 ]
