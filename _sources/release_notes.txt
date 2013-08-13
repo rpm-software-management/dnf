@@ -179,3 +179,20 @@ fresh librepo. The follwoing issues are now a thing of the past:
 * :rhbug:`977661`
 * :rhbug:`984483`
 * :rhbug:`986545`
+
+====================
+0.3.11 Release Notes
+====================
+
+The default multilib policy configuration value is ``best`` now. This does not
+pose any change for the Fedora users because exactly the same default had been
+previously achieved by a setting in ``/etc/dnf/dnf.conf`` shipped with the
+Fedora package.
+
+An important fix to the repo module speeds up package downloads again is present
+in this release. The full list of fixes is:
+
+* :rhbug:`979042`
+* :rhbug:`977753`
+* :rhbug:`996138`
+* :rhbug:`993916`
