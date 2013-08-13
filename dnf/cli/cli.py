@@ -22,6 +22,8 @@ Command line interface yum class and related.
 """
 
 from __future__ import print_function
+
+from dnf.i18n import ucd
 import operator
 import os
 import re
@@ -891,7 +893,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         for group_string in grouplist:
             matched = self.comps.return_groups(group_string)
             if len(matched) == 0:
-                msg = _('Warning: Group %s does not exist.') % group_string
+                msg = _('Warning: Group %s does not exist.') % ucd(group_string)
                 self.logger.error(msg)
                 continue
             groups.extend(matched)
