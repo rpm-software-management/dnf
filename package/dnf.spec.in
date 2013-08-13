@@ -1,4 +1,4 @@
-%global gitrev eb9dddb
+%global gitrev 7d717c7
 %global hawkey_version 0.3.16
 %global librepo_version 0.0.5
 
@@ -54,7 +54,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 make ARGS="-V" test
 
 %files
-%doc AUTHORS README.md COPYING PACKAGE-LICENSING
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %{python_sitelib}/dnf/
 %dir %{confdir}
@@ -76,7 +76,20 @@ make ARGS="-V" test
 
 %changelog
 
-* Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1giteb9dddb
+* Tue Aug 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.11-1.git7d717c7
+- fix: UnicodeDecodeError during group install (RhBug:996138) (Ales Kozumplik)
+- doc: update the README, move it to .rst (Ales Kozumplik)
+- doc: dnf.conf.8 missing from the RPM. (Ales Kozumplik)
+- remove: TODO file (Ales Kozumplik)
+- output: in list_transaction() list the active transaction members. (RhBug:977753) (Ales Kozumplik)
+- rename: Output.listTransaction() -> list_transaction(). (Ales Kozumplik)
+- doc: 'best' config option. (Ales Kozumplik)
+- repo: do not let librepo resolve mirrorlists on each package download. (RhBug:979042) (Ales Kozumplik)
+- remove: mdpolicy and mddownloadpolicy from config. (Ales Kozumplik)
+- The DNF default multilib policy is 'best'. (Ales Kozumplik)
+- fix: typo in subj.get_best_query() call. (Ales Kozumplik)
+
+* Mon Jul 22 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.10-1.giteb9dddb
 - repos: skip_if_unavailable is True by default now. (RhBug:984483) (Ales Kozumplik)
 - doc: omitted from 6f70d2b, also mention the related bugzillas. (Ales Kozumplik)
 - doc: why 'dnf provides /bin/python' fails on Fedora. (Ales Kozumplik)
