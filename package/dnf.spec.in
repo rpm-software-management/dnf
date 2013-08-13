@@ -18,7 +18,8 @@ BuildRequires:	cmake
 BuildRequires:	python2
 BuildRequires:	python-bugzilla
 BuildRequires:	python-hawkey = %{hawkey_version}
-BuildRequires:  python-iniparse
+BuildRequires:	python-iniparse
+BuildRequires:	python-libcomps
 BuildRequires:	python-librepo = %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
@@ -28,6 +29,7 @@ BuildRequires:  urlgrabber
 Requires:	libreport-filesystem
 Requires:	python-hawkey = %{hawkey_version}
 Requires:	python-iniparse
+Requires:	python-libcomps
 Requires:	python-librepo = %{librepo_version}
 Requires:	rpm-python
 Requires:	urlgrabber
