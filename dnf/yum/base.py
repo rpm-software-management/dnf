@@ -30,7 +30,6 @@ from urlgrabber.progress import format_number
 from weakref import proxy as weakref
 
 import StringIO
-import comps
 import config
 import dnf.comps
 import dnf.conf
