@@ -59,10 +59,12 @@ class CompsTest(support.TestCase):
         self.assertFalse(groups[1].installed)
 
     def test_environments(self):
-        env = self.comps.environments[0]._i
+        env = self.comps.environments[0]
         self.assertEqual(env.name_by_lang['cs'], u'Prostředí Sugar')
         self.assertEqual(env.desc_by_lang['de'],
                          u'Eine Software-Spielwiese zum Lernen des Lernens.')
+        self.assertItemsEqual(env.group_ids, ('somerset', 'base-system'))
+        self.assertItemsEqual(env.option_ids, ('base',))
 
     def test_iteration(self):
         comps = self.comps
