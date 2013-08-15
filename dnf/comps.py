@@ -147,6 +147,10 @@ class Group(Forwarder):
     def optional_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_OPTIONAL)
 
+    @property
+    def visible(self):
+        return self._i.uservisible
+
 class Category(Forwarder):
     pass
 

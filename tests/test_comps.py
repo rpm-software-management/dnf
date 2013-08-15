@@ -66,6 +66,12 @@ class CompsTest(support.TestCase):
         self.assertItemsEqual(env.group_ids, ('somerset', 'base-system'))
         self.assertItemsEqual(env.option_ids, ('base',))
 
+    def test_groups(self):
+        g = self.comps.group_by_pattern('base')
+        self.assertTrue(g.visible)
+        g = self.comps.group_by_pattern('somerset')
+        self.assertFalse(g.visible)
+
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter],

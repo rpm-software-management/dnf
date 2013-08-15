@@ -20,7 +20,7 @@
   <group>
    <id>somerset</id>
    <default>true</default>
-   <uservisible>true</uservisible>
+   <uservisible>false</uservisible>
    <display_order>1024</display_order>
    <name>Solid Ground</name>
    <description>--</description>
