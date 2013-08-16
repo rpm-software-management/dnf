@@ -652,7 +652,7 @@ class Base(object):
         self.transaction.populate_rpm_ts(self.ts)
 
         rcd_st = time.time()
-        self.logger.info(_('Running Transaction Check'))
+        self.logger.info(_('Running transaction check'))
         msgs = self._run_rpm_check()
         if msgs:
             rpmlib_only = True
@@ -673,10 +673,12 @@ class Base(object):
             return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
                        _REPORT_TMPLT % self.conf.bugtracker_url]
 
-        self.logger.debug('Transaction Check time: %0.3f' % (time.time() - rcd_st))
+        self.logger.info(_('Transaction check succeeded.'))
+        self.logger.debug('Transaction check time: %0.3f' %
+                          (time.time() - rcd_st))
 
         tt_st = time.time()
-        self.logger.info(_('Running Transaction Test'))
+        self.logger.info(_('Running transaction test'))
         if not self.conf.diskspacecheck:
             self.rpm_probfilter.append(rpm.RPMPROB_FILTER_DISKSPACE)
 
@@ -688,15 +690,15 @@ class Base(object):
         del testcb
 
         if len(tserrors) > 0:
-            errstring = _('Transaction Check Error:\n')
+            errstring = _('Transaction check error:\n')
             for descr in tserrors:
                 errstring += '  %s\n' % to_unicode(descr)
 
             raise dnf.exceptions.Error, errstring + '\n' + \
                  self.errorSummary(errstring)
-        self.logger.info(_('Transaction Test Succeeded'))
 
-        self.logger.debug('Transaction Test time: %0.3f' % (time.time() - tt_st))
+        self.logger.info(_('Transaction test succeeded.'))
+        self.logger.debug('Transaction test time: %0.3f' % (time.time() - tt_st))
 
         # unset the sigquit handler
         sigquit = signal.signal(signal.SIGQUIT, signal.SIG_DFL)
@@ -712,7 +714,7 @@ class Base(object):
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
-        self.logger.info(_('Running Transaction'))
+        self.logger.info(_('Running transaction'))
         return_code = self.runTransaction(cb=cb)
 
         self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
