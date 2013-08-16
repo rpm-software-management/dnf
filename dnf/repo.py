@@ -246,9 +246,9 @@ class Repo(dnf.yum.config.RepoConf):
 
         """
         if self.metalink or self.mirrorlist:
-            url = self.metadata.mirrors[0]
+            url = self.metadata.mirrors
         elif self.baseurl:
-            url = self.baseurl[0]
+            url = self.baseurl
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.exceptions.RepoError, msg
