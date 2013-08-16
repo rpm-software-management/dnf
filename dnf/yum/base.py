@@ -999,7 +999,9 @@ class Base(object):
                     os.unlink(fo)
 
             if raiseError:
-                msg = _('Package does not match intended download. Suggestion: run yum --enablerepo=%s clean metadata') %  po.repo.id
+                msg = _("Package does not match intended download. "
+                        "Suggestion: run '%s --enablerepo=%s clean metadata'")
+                msg %= (const.PROGRAM_NAME, po.repo.id)
                 raise dnf.exceptions.RepoError(msg)
             else:
                 return False
