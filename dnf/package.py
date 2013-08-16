@@ -20,11 +20,16 @@
 
 """ Contains the dnf.Package class. """
 
+from __future__ import absolute_import
+
 import binascii
 import dnf.rpmUtils.miscutils
+import dnf.yum.misc
 import hawkey
+import logging
 import os
-import yum.misc
+
+logger = logging.getLogger("dnf")
 
 class Package(hawkey.Package):
     """ Represents a package. """
@@ -41,8 +46,8 @@ class Package(hawkey.Package):
         if self._chksum:
             return self._chksum
         if self.from_cmdline:
-            chksum_type = yum.misc.get_default_chksum_type()
-            chksum_val = yum.misc.checksum(chksum_type, self.location)
+            chksum_type = dnf.yum.misc.get_default_chksum_type()
+            chksum_val = dnf.yum.misc.checksum(chksum_type, self.location)
             return (hawkey.chksum_type(chksum_type),
                     binascii.unhexlify(chksum_val))
         return super(Package, self).chksum
@@ -174,6 +179,10 @@ class Package(hawkey.Package):
         if self.from_cmdline:
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()
-        real_sum = yum.misc.checksum(chksum_type, self.localPkg(),
-                                     datasize=self.size)
-        return real_sum == chksum
+        real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
+                                         datasize=self.size)
+        if real_sum != chksum:
+            logger.debug('%s: %s check failed: %s vs %s' %
+                         (self, chksum_type, real_sum, chksum))
+            return False
+        return True
