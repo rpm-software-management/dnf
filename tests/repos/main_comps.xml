@@ -52,7 +52,7 @@
     <description xml:lang="de">Eine Software-Spielwiese zum Lernen des Lernens.</description>
     <display_order>25</display_order>
     <grouplist>
-      <groupid>somerset</groupid>
+      <groupid default="true">somerset</groupid>
       <groupid>base-system</groupid>
     </grouplist>
     <optionlist>

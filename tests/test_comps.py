@@ -63,7 +63,10 @@ class CompsTest(support.TestCase):
         self.assertEqual(env.name_by_lang['cs'], u'Prostředí Sugar')
         self.assertEqual(env.desc_by_lang['de'],
                          u'Eine Software-Spielwiese zum Lernen des Lernens.')
-        self.assertItemsEqual(env.group_ids, ('somerset', 'base-system'))
+        self.assertItemsEqual((id_.name for id_ in env.group_ids),
+                              ('somerset', 'base-system'))
+        self.assertItemsEqual((id_.default for id_ in env.group_ids),
+                              (True, False))
         self.assertItemsEqual(env.option_ids, ('base',))
 
     def test_groups(self):
