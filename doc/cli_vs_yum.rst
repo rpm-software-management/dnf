@@ -103,3 +103,10 @@ without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
 DNF immediately stops on a repo error, confusing and bothering the user.
 
 See the related `Fedora bugzilla <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
+
+============================================================================
+ ``overwrite_groups`` dropped, comps functions acting as if always disabled
+============================================================================
+
+This config option has been dropped. When DNF sees several groups with the same
+group id it merges the groups' contents together.

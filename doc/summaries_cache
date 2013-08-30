@@ -182,5 +182,17 @@
     [
         993916, 
         "'upgrade' command displays old version numbers in summary, rather than new version numbers"
+    ], 
+    [
+        1002798, 
+        "Error when checking librepo explicit requires"
+    ], 
+    [
+        997403, 
+        "Error message instructs users to invoke 'yum' rather than 'dnf' to fix a problem"
+    ], 
+    [
+        1002508, 
+        "Updated to install any packages \"An Curl handle error: Unsupported protocol\""
     ]
 ]
