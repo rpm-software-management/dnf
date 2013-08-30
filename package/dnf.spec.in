@@ -1,6 +1,7 @@
-%global gitrev 7d717c7
-%global hawkey_version 0.3.16
-%global librepo_version 0.0.5
+%global gitrev bfccb5c
+%global hawkey_version 0.4.0
+%global librepo_version 1.0.0
+%global libcomps_version 0.1.3
 
 %global confdir %{_sysconfdir}/dnf
 
@@ -19,7 +20,7 @@ BuildRequires:	python2
 BuildRequires:	python-bugzilla
 BuildRequires:	python-hawkey = %{hawkey_version}
 BuildRequires:	python-iniparse
-BuildRequires:	python-libcomps
+BuildRequires:	python-libcomps = %{libcomps_version}
 BuildRequires:	python-librepo = %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python-sphinx
@@ -29,7 +30,7 @@ BuildRequires:  urlgrabber
 Requires:	libreport-filesystem
 Requires:	python-hawkey = %{hawkey_version}
 Requires:	python-iniparse
-Requires:	python-libcomps
+Requires:	python-libcomps = %{libcomps_version}
 Requires:	python-librepo = %{librepo_version}
 Requires:	rpm-python
 Requires:	urlgrabber
@@ -77,6 +78,59 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Fri Aug 30 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.0-1.gitbfccb5c
+- Adapt to librepo-1.0.0, handle.url is handle.urls now. (Ales Kozumplik)
+- comps: adapt to changes in libcomps handling of env.group_ids. (Ales Kozumplik)
+- logging: start and stop of the actual RPM transaction. (Ales Kozumplik)
+- logging: nicer logging during transaction. (Ales Kozumplik)
+- repo: use all mirrors/baseurls when downloading a package. (Ales Kozumplik)
+- logging: log failed checksum check in verifyLocalPkg() (Ales Kozumplik)
+- strings: fix suggestion to clean metadata to use 'dnf' (RhBug:997403) (Ales Kozumplik)
+- compos: add group.visible property. (Ales Kozumplik)
+- tests: comps.environment.group_ids and environment.option.ids. (Ales Kozumplik)
+- logging: log when Repo.load() is about to download from remote. (Ales Kozumplik)
+- Librepo API changes (Zdenek Pavlas)
+- packaging: add libcomps to requires before somebody tries to build this without. (Ales Kozumplik)
+- fix: traceback after a merge error, missing comps import. (Ales Kozumplik)
+- remove: Repo.base_persistdir. (Ales Kozumplik)
+- YumConf: make config_file_age always defined. (Ales Kozumplik)
+- make what Base.build_transaction() returns and raises more sane. (Ales Kozumplik)
+- remove: dnf.yum.rpmtrans._WrapNoExceptions (Ales Kozumplik)
+- transaction displays: report when the TRANS_POST phase starts. (Ales Kozumplik)
+- rename: RPM transaction callback hierarchy has now a common name: TransactionDisplay. (Ales Kozumplik)
+- Stop the transaction callback's event() accepting both string and id for the action. (Ales Kozumplik)
+- Drastically slim down dnf.rpmUtils.arch (Ales Kozumplik)
+- refactor: rename: transaction callbacks in rpmtrans.py (Ales Kozumplik)
+- remove: dnf.cli.output.CacheProgressCallback. (Ales Kozumplik)
+- remove: Config.cache. (Ales Kozumplik)
+- logging tweaks. (Ales Kozumplik)
+- api: let Base.select_group() take pkg_types. (Ales Kozumplik)
+- getter/setter for config.releasever (it is part of the yumvar). (Ales Kozumplik)
+- better streamline how conf.yumvar is created and initialized. (Ales Kozumplik)
+- add default depsloving callback. (Ales Kozumplik)
+- rename: base.dsCallback -> base.ds_callback (Ales Kozumplik)
+- rename: DepSolveProgressCallback.pkgAdded()->DepSolveProgressCallback.pkg_added() (Ales Kozumplik)
+- comps: *_by_pattern counterparts to *_by_patterns. (Ales Kozumplik)
+- comps: better environments and categories support. (Ales Kozumplik)
+- tests: basic environemnt parsing works in libcomps now. (Ales Kozumplik)
+- tests: there's no dnf.yum.comps any more. (Ales Kozumplik)
+- doc: group commands. (Ales Kozumplik)
+- remove: dnf.yum.comps. (Ales Kozumplik)
+- refactor: GroupsError and CompsException are now both CompsError (Ales Kozumplik)
+- comps: rename: group.langonly -> group.lang_only. (Ales Kozumplik)
+- comps: implement Group.ui_name (Ales Kozumplik)
+- comps: adapt Base.group_lists() to the new comps interface. (Ales Kozumplik)
+- libcomps: rename: comps.returnGroups()->comps.groups_by_pattern(). (Ales Kozumplik)
+- libcomps: support Base.select_groups() through the new comps. (Ales Kozumplik)
+- tests: sort tests in LibcompsTest better. (Ales Kozumplik)
+- libcomps: add Comps.groups_by_pattern(). (Ales Kozumplik)
+- libcomps: measuring the size of the comps objects. (Ales Kozumplik)
+- drop 'overwrite_groups' config option. (Ales Kozumplik)
+- libcomps: tests: add sanity test for GH issue 12. (Ales Kozumplik)
+- libcomps: add conditional packages. (Ales Kozumplik)
+- libcomps: add dnf.comps (wrapper) and a basic UT. (Ales Kozumplik)
+- cosmetic: reorder the imports in base.py and cli.py to match the Hacking guidelines[1] (Ales Kozumplik)
 
 * Tue Aug 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.11-1.git7d717c7
 - fix: UnicodeDecodeError during group install (RhBug:996138) (Ales Kozumplik)
