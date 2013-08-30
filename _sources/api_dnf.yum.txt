@@ -9,12 +9,6 @@ dnf.yum
 .. automodule:: dnf.yum
     :members:
 
-dnf.yum.comps
--------------
-
-.. automodule:: dnf.yum.comps
-    :members:
-
 dnf.yum.config
 --------------
 

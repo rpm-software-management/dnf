@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.3.11-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.11-1',
+        VERSION:     '0.4.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.11-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.0-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,6 +73,7 @@ speed and defining strict API and plugin interface.</p>
 <li>distribution-sync</li>
 <li>downgrade</li>
 <li>erase</li>
+<li>group</li>
 <li>help</li>
 <li>history</li>
 <li>info</li>
@@ -155,6 +156,7 @@ system.</dd>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;package-nevr-spec&gt;</span></tt> see
 <a class="reference internal" href="#specifying-packages-versions-label"><em>Specifying Exact Versions of Packages</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;group-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-groups-label"><em>Specifying Groups</em></a>.</p>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
@@ -219,6 +221,16 @@ the latest version available from any enabled repository.</dd>
 depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt>
 is enabled (the default) also removes any dependencies that are no longer
 needed.</dd>
+</dl>
+</div>
+<div class="section" id="group-command">
+<h3>Group Command<a class="headerlink" href="#group-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">list</span> <span class="pre">[&lt;group-spec&gt;]</span></tt></dt>
+<dd>List all matching groups, either among installed or available groups. If
+nothing is specified list all known groups.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">install</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
+<dd>Install packages in the specified group that are not currently installed.</dd>
 </dl>
 </div>
 <div class="section" id="help-command">
@@ -408,6 +420,13 @@ packages providing the given spec. This can either be an explicit provide, an
 implicit provide (i.e. name of the package) or a file provide. The selection is
 case-sensitive and globbing is supported.</p>
 </div>
+<div class="section" id="specifying-groups">
+<span id="specifying-groups-label"></span><h2>Specifying Groups<a class="headerlink" href="#specifying-groups" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">&lt;group-spec&gt;</span></tt> allows one to select groups a particular operation should work
+on. It is a case insensitive string (supporting globbing characters) that is
+matched against a group&#8217;s ID, canonical name and name translated into the
+current LC_MESSAGES locale (if possible).</p>
+</div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -437,6 +456,7 @@ case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#distribution-synchronization-command">Distribution-synchronization command</a></li>
 <li><a class="reference internal" href="#downgrade-command">Downgrade Command</a></li>
 <li><a class="reference internal" href="#erase-command">Erase Command</a></li>
+<li><a class="reference internal" href="#group-command">Group Command</a></li>
 <li><a class="reference internal" href="#help-command">Help Command</a></li>
 <li><a class="reference internal" href="#history-command">History Command</a></li>
 <li><a class="reference internal" href="#info-command">Info Command</a></li>
@@ -456,6 +476,7 @@ case-sensitive and globbing is supported.</p>
 <li><a class="reference internal" href="#specifying-packages">Specifying Packages</a></li>
 <li><a class="reference internal" href="#specifying-exact-versions-of-packages">Specifying Exact Versions of Packages</a></li>
 <li><a class="reference internal" href="#specifying-provides">Specifying Provides</a></li>
+<li><a class="reference internal" href="#specifying-groups">Specifying Groups</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
@@ -504,7 +525,7 @@ case-sensitive and globbing is supported.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

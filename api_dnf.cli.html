@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.3.11-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.4.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.11-1',
+        VERSION:     '0.4.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.3.11-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.0-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.11-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -3094,20 +3094,31 @@ Otherwise, it will return its exit code.</li>
 <span id="dnf-cli-output"></span><h2><a class="toc-backref" href="#id6">dnf.cli.output</a><a class="headerlink" href="#module-dnf.cli.output" title="Permalink to this headline">¶</a></h2>
 <p>Handle actual output from the cli.</p>
 <dl class="class">
-<dt id="dnf.cli.output.CacheProgressCallback">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">CacheProgressCallback</tt><a class="headerlink" href="#dnf.cli.output.CacheProgressCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class to handle text output callbacks during metadata cache updates.</p>
+<dt id="dnf.cli.output.CliTransactionDisplay">
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">CliTransactionDisplay</tt><big>(</big><em>ayum=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Yum specific callback class for RPM operations.</p>
 <dl class="method">
-<dt id="dnf.cli.output.CacheProgressCallback.errorlog">
-<tt class="descname">errorlog</tt><big>(</big><em>level</em>, <em>message</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CacheProgressCallback.errorlog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output an errorlog message.</p>
+<dt id="dnf.cli.output.CliTransactionDisplay.event">
+<tt class="descname">event</tt><big>(</big><em>package</em>, <em>action</em>, <em>te_current</em>, <em>te_total</em>, <em>ts_current</em>, <em>ts_total</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay.event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output information about an rpm operation.  This may
+include a text progress bar.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>level</strong> &#8211; the logging level for the message</li>
-<li><strong>message</strong> &#8211; the message</li>
+<li><strong>package</strong> &#8211; the package involved in the event</li>
+<li><strong>action</strong> &#8211; the type of action that is taking place.  Valid
+values are given by
+<tt class="xref py py-func docutils literal"><span class="pre">rpmtrans.LoggingTransactionDisplay.action.keys()</span></tt></li>
+<li><strong>te_current</strong> &#8211; a number representing the amount of work
+already done in the current transaction</li>
+<li><strong>te_total</strong> &#8211; a number representing the total amount of work
+to be done in the current transaction</li>
+<li><strong>ts_current</strong> &#8211; the number of the current transaction in
+transaction set</li>
+<li><strong>ts_total</strong> &#8211; the total number of transactions in the
+transaction set</li>
 </ul>
 </td>
 </tr>
@@ -3116,56 +3127,16 @@ Otherwise, it will return its exit code.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.CacheProgressCallback.filelog">
-<tt class="descname">filelog</tt><big>(</big><em>level</em>, <em>message</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CacheProgressCallback.filelog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a file log message.</p>
+<dt id="dnf.cli.output.CliTransactionDisplay.scriptout">
+<tt class="descname">scriptout</tt><big>(</big><em>package</em>, <em>msgs</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay.scriptout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print messages originating from a package script.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>level</strong> &#8211; the logging level for the message</li>
-<li><strong>message</strong> &#8211; the message</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.CacheProgressCallback.log">
-<tt class="descname">log</tt><big>(</big><em>level</em>, <em>message</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CacheProgressCallback.log" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output a log message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>level</strong> &#8211; the logging level for the message</li>
-<li><strong>message</strong> &#8211; the message</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.CacheProgressCallback.progressbar">
-<tt class="descname">progressbar</tt><big>(</big><em>current</em>, <em>total</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CacheProgressCallback.progressbar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output the current status to the terminal using a progress
-status bar.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>current</strong> &#8211; a number representing the amount of work
-already done</li>
-<li><strong>total</strong> &#8211; a number representing the total amount of work
-to be done</li>
-<li><strong>name</strong> &#8211; a name to label the progress bar with</li>
+<li><strong>package</strong> &#8211; unused</li>
+<li><strong>msgs</strong> &#8211; the messages coming from the script</li>
 </ul>
 </td>
 </tr>
@@ -3207,8 +3178,8 @@ not be removed</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.DepSolveProgressCallBack.pkgAdded">
-<tt class="descname">pkgAdded</tt><big>(</big><em>pkg</em>, <em>mode</em><big>)</big><a class="headerlink" href="#dnf.cli.output.DepSolveProgressCallBack.pkgAdded" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.DepSolveProgressCallBack.pkg_added">
+<tt class="descname">pkg_added</tt><big>(</big><em>pkg</em>, <em>mode</em><big>)</big><a class="headerlink" href="#dnf.cli.output.DepSolveProgressCallBack.pkg_added" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print information about a package being added to the
 transaction set.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3364,62 +3335,9 @@ process.</p>
 
 <dl class="class">
 <dt id="dnf.cli.output.LibrepoCallbackAdaptor">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7ffcf9bba1e0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7fa4845f41e0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
 <p>Note that TextMeter is a Python old-style class.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="dnf.cli.output.YumCliRPMCallBack">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumCliRPMCallBack</tt><big>(</big><em>ayum=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumCliRPMCallBack" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Yum specific callback class for RPM operations.</p>
-<dl class="method">
-<dt id="dnf.cli.output.YumCliRPMCallBack.event">
-<tt class="descname">event</tt><big>(</big><em>package</em>, <em>action</em>, <em>te_current</em>, <em>te_total</em>, <em>ts_current</em>, <em>ts_total</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumCliRPMCallBack.event" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output information about an rpm operation.  This may
-include a text progress bar.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>package</strong> &#8211; the package involved in the event</li>
-<li><strong>action</strong> &#8211; the type of action that is taking place.  Valid
-values are given by
-<tt class="xref py py-func docutils literal"><span class="pre">rpmtrans.RPMBaseCallback.action.keys()</span></tt></li>
-<li><strong>te_current</strong> &#8211; a number representing the amount of work
-already done in the current transaction</li>
-<li><strong>te_total</strong> &#8211; a number representing the total amount of work
-to be done in the current transaction</li>
-<li><strong>ts_current</strong> &#8211; the number of the current transaction in
-transaction set</li>
-<li><strong>ts_total</strong> &#8211; the total number of transactions in the
-transaction set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.YumCliRPMCallBack.scriptout">
-<tt class="descname">scriptout</tt><big>(</big><em>package</em>, <em>msgs</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumCliRPMCallBack.scriptout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print messages originating from a package script.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>package</strong> &#8211; unused</li>
-<li><strong>msgs</strong> &#8211; the messages coming from the script</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -3533,7 +3451,7 @@ containing information about the error</td>
 
 <dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x25f1398&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2efcde8&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -4510,7 +4428,7 @@ This is the same as the dictionary returned by
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.3.11-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

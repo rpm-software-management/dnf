@@ -26,6 +26,7 @@ Available commands are:
 * distribution-sync
 * downgrade
 * erase
+* group
 * help
 * history
 * info
@@ -127,6 +128,8 @@ For an explanation of ``<package-nevr-spec>`` see
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
+For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
+
 --------------------
 Check Update Command
 --------------------
@@ -201,6 +204,17 @@ Erase Command
     depending on the packages being removed. If ``clean_requirements_on_remove``
     is enabled (the default) also removes any dependencies that are no longer
     needed.
+
+-------------
+Group Command
+-------------
+
+``dnf [options] group list [<group-spec>]``
+    List all matching groups, either among installed or available groups. If
+    nothing is specified list all known groups.
+
+``dnf [options] group install <group-spec>``
+    Install packages in the specified group that are not currently installed.
 
 ------------
 Help Command
@@ -419,6 +433,17 @@ Specifying Provides
 packages providing the given spec. This can either be an explicit provide, an
 implicit provide (i.e. name of the package) or a file provide. The selection is
 case-sensitive and globbing is supported.
+
+.. _specifying_groups-label:
+
+=================
+Specifying Groups
+=================
+
+``<group-spec>`` allows one to select groups a particular operation should work
+on. It is a case insensitive string (supporting globbing characters) that is
+matched against a group's ID, canonical name and name translated into the
+current LC_MESSAGES locale (if possible).
 
 ========
 See Also

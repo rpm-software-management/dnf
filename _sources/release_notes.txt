@@ -196,3 +196,29 @@ in this release. The full list of fixes is:
 * :rhbug:`977753`
 * :rhbug:`996138`
 * :rhbug:`993916`
+
+===================
+0.4.0 Release Notes
+===================
+
+The new minor version brings many internal changes to the comps code, most comps
+parsing and processing is now delegated to `libcomps
+<https://github.com/midnightercz/libcomps>`_ by Jindřich Luža.
+
+The ``overwrite_groups`` config option has been dropped in this version and DNF
+acts if it was 0, that is groups with the same name are merged together.
+
+The currently supported groups commands (``group list`` and ``group install``)
+are documented on the manpage now.
+
+The 0.4.0 version is the first one supported by the DNF Payload for Anaconda and
+many changes since 0.3.11 make that possible by cleaning up the API and making
+it more sane (cleanup of ``yumvars`` initialization API, unifying the RPM
+transaction callback objects hierarchy, slimming down ``dnf.rpmUtils.arch``,
+improved logging).
+
+Fixes for the following are contained in this version:
+
+* :rhbug:`997403`
+* :rhbug:`1002508`
+* :rhbug:`1002798`
