@@ -64,7 +64,7 @@ class _Handle(librepo.Handle):
         h = cls(gpgcheck, max_mirror_tries)
         h.varsub = _subst2tuples(subst_dct)
         h.destdir = cachedir
-        h.url = cachedir
+        h.urls = cachedir
         h.local = True
         if os.access(h.metalink_path, os.R_OK):
             h.mirrorlist = h.metalink_path
@@ -234,7 +234,7 @@ class Repo(dnf.yum.config.RepoConf):
         elif self.mirrorlist:
             return librepo.LRO_MIRRORLIST, self.mirrorlist
         elif self.baseurl:
-            return librepo.LRO_URL, self.baseurl[0]
+            return librepo.LRO_URLS, self.baseurl[0]
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.exceptions.RepoError, msg
@@ -253,7 +253,7 @@ class Repo(dnf.yum.config.RepoConf):
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.exceptions.RepoError, msg
-        return librepo.LRO_URL, url
+        return librepo.LRO_URLS, url
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
