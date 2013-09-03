@@ -1,12 +1,12 @@
-%global gitrev 7d717c7
+%global gitrev 54f55e0
 %global hawkey_version 0.3.16
-%global librepo_version 0.0.5
+%global librepo_version 1.0.0
 
 %global confdir %{_sysconfdir}/dnf
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1.git%{gitrev}%{?dist}
+Release:	2.git%{gitrev}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -75,6 +75,13 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Sep 3 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.11-2.git54f55e0
+- Adapt to librepo-1.0.0, handle.url is handle.urls now. (Ales Kozumplik)
+- repo: use all mirrors/baseurls when downloading a package. (Ales Kozumplik)
+- Librepo API changes (Zdenek Pavlas)
+- logging: log failed checksum check in verifyLocalPkg() (Ales Kozumplik)
+- strings: fix suggestion to clean metadata to use 'dnf' (RhBug:997403) (Ales Kozumplik)
 
 * Tue Aug 13 2013 Aleš Kozumplík <ales@redhat.com> - 0.3.11-1.git7d717c7
 - fix: UnicodeDecodeError during group install (RhBug:996138) (Ales Kozumplik)
