@@ -25,12 +25,27 @@ import optparse
 import os
 import unittest
 
-OUTPUT="""\
+VERSIONS_OUTPUT="""\
   Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
   Built    :  at 1970-01-01 00:00
 
   Installed: tour-0:5-0.noarch at 1970-01-01 00:00
   Built    :  at 1970-01-01 00:00
+"""
+
+INFOOUTPUT_OUTPUT="""\
+Name        : tour
+Arch        : noarch
+Epoch       : 0
+Version     : 5
+Release     : 0
+Size        : 0.0  
+Repo        : None
+Summary     : A summary of the package.
+URL         : http://example.com
+Licence     : GPL+
+Description : 
+
 """
 
 class VersionStringTest(unittest.TestCase):
@@ -41,7 +56,30 @@ class VersionStringTest(unittest.TestCase):
             dnf.cli.cli.print_versions(['pepper', 'tour'], yumbase)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                            if mc[0] == 'write'])
-        self.assertEqual(written, OUTPUT)
+        self.assertEqual(written, VERSIONS_OUTPUT)
+
+class YumBaseCliTest(unittest.TestCase):
+    def setUp(self):
+        self.yumbase = dnf.cli.cli.YumBaseCli()
+        self.pkg = support.MockPackage('tour-5-0.noarch')
+        self.pkg.from_system = False
+        self.pkg.size = 0
+        self.pkg.pkgid = None
+        self.pkg.repoid = None
+        self.pkg.e = self.pkg.epoch
+        self.pkg.v = self.pkg.version
+        self.pkg.r = self.pkg.release
+        self.pkg.summary = 'A summary of the package.'
+        self.pkg.url = 'http://example.com'
+        self.pkg.license = 'GPL+'
+        self.pkg.description = None
+
+    def test_infoOutput_with_none_description(self):
+        with mock.patch('sys.stdout') as stdout:
+            self.yumbase.infoOutput(self.pkg)
+        written = ''.join([mc[1][0] for mc in stdout.method_calls
+                          if mc[0] == 'write'])
+        self.assertEqual(written, INFOOUTPUT_OUTPUT)
 
 class CliTest(unittest.TestCase):
     def setUp(self):

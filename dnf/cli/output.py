@@ -834,6 +834,8 @@ class YumOutput:
     def _enc(self, s):
         """Get the translated version from specspo and ensure that
         it's actually encoded in UTF-8."""
+        if s is None:
+            s = ''
         s = to_utf8(s)
         if len(s) > 0:
             for d in self.i18ndomains:
