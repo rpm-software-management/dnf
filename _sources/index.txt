@@ -12,6 +12,7 @@ Contents:
    release_notes
    cli_vs_yum
    api
+   user_faq
 
 Indices and tables
 
