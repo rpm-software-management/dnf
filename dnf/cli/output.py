@@ -30,7 +30,6 @@ import rpm
 from weakref import proxy as weakref
 
 from urlgrabber.progress import TextMeter
-import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
 
 import dnf.conf
@@ -1668,20 +1667,15 @@ to exit.
         """
         if len(remote_pkgs) <= 1:
             return
-        if not hasattr(urlgrabber.progress, 'TerminalLine'):
-            return
 
-        tl = urlgrabber.progress.TerminalLine(8)
-        self.logger.info("-" * tl.rest())
-        dl_time = time.time() - download_start_timestamp
-        if dl_time <= 0: # This stops divide by zero, among other problems
-            dl_time = 0.01
-        ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
-        ui_time = tl.add(' %9s' % self.format_time(dl_time))
-        ui_end  = tl.add(' ' * 5)
-        ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
-        msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
-                              ui_bs, ui_size, ui_time, ui_end)
+        width = _term_width()
+        self.logger.info("-" * width)
+        dl_time = max(0.01, time.time() - download_start_timestamp)
+        msg = ' %5sB/s | %5sB %9s     ' % (
+            self.format_number(remote_size / dl_time),
+            self.format_number(remote_size),
+            self.format_time(dl_time))
+        msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
         self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
