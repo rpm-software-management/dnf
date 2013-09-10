@@ -51,6 +51,7 @@ import dnf.transaction
 import dnf.util
 
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+from dnf.cli.term import _term_width
 
 import locale
 
@@ -68,17 +69,6 @@ except:
         for y in args:
             if x < y: x = y
         return x
-
-def _term_width():
-    """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
-    if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        return 80
-    ret = urlgrabber.progress.terminal_width_cached()
-    if ret == 0:
-        return 80
-    if ret < 20:
-        return 20
-    return ret
 
 def _make_lists(transaction):
     b = dnf.util.Bunch()
@@ -121,8 +111,7 @@ class YumTerm:
 
     __enabled = True
 
-    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        columns = property(lambda self: _term_width())
+    columns = property(lambda self: _term_width())
 
     __cap_names = {
         'underline' : 'smul',
@@ -197,8 +186,6 @@ class YumTerm:
            colorize.
         """
         self.__enabled = True
-        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = 80
         self.lines = 24
 
         if color == 'always':
@@ -266,8 +253,6 @@ class YumTerm:
             return
         self._ctigetstr = curses.tigetstr
 
-        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = curses.tigetnum('cols')
         self.lines = curses.tigetnum('lines')
 
         # Look up string capabilities.
@@ -2708,7 +2693,7 @@ class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
 class CliTransactionDisplay(LoggingTransactionDisplay):
     """A Yum specific callback class for RPM operations."""
 
-    width = property(lambda x: _term_width())
+    width = property(lambda self: _term_width())
 
     def __init__(self, ayum=None):
         super(CliTransactionDisplay, self).__init__()
