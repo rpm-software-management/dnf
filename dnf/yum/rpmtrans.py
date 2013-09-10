@@ -49,7 +49,6 @@ class TransactionDisplay(object):
         dnf.transaction.UPGRADE   : PKG_UPGRADE
         }
 
-class NoOutputTransactionDisplay(TransactionDisplay):
     def __init__(self):
         pass
 
@@ -75,7 +74,7 @@ class NoOutputTransactionDisplay(TransactionDisplay):
 
     def errorlog(self, msg):
         """takes a simple error msg string"""
-        pass
+        print(msg, file=sys.stderr)
 
     def filelog(self, package, action):
         # check package object type - if it is a string - just output it
@@ -86,7 +85,7 @@ class NoOutputTransactionDisplay(TransactionDisplay):
     def verify_tsi_package(self, pkg, count, total):
         pass
 
-class LoggingTransactionDisplay(NoOutputTransactionDisplay):
+class LoggingTransactionDisplay(TransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''
@@ -109,8 +108,8 @@ class LoggingTransactionDisplay(NoOutputTransactionDisplay):
         self.logger = logging.getLogger("dnf.rpm")
 
     def errorlog(self, msg):
-        # FIXME this should probably dump to the filelog, too
-        print(msg, file=sys.stderr)
+        super(LoggingTransactionDisplay, self).errorlog(msg)
+        self.logger.error(msg)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -122,7 +121,7 @@ class LoggingTransactionDisplay(NoOutputTransactionDisplay):
         self.logger.info(msg)
 
 class RPMTransaction(object):
-    def __init__(self, base, test=False, display=NoOutputTransactionDisplay):
+    def __init__(self, base, test=False, display=TransactionDisplay):
         self.display = display
         if callable(display):
             self.display = display()
