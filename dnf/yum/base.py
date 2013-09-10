@@ -26,6 +26,7 @@ from dnf import const, queries, sack
 from i18n import to_unicode, to_str, exception2msg
 from parser import ConfigPreProcessor, varReplace
 from urlgrabber.grabber import URLGrabError
+from dnf.yum.parser import urlopen
 from weakref import proxy as weakref
 
 import StringIO
@@ -2267,9 +2268,9 @@ class Base(object):
                 # In theory we have a global proxy config. too, but meh...
                 # external callers should just update.
                 opts = repo.urlgrabber_opts()
-            rawkey = urlgrabber.urlread(url, **opts)
+            rawkey = urlopen(url, **opts).read()
 
-        except urlgrabber.grabber.URLGrabError, e:
+        except URLGrabError, e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
 
@@ -2281,11 +2282,10 @@ class Base(object):
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
                 url = i18n.to_utf8(keyurl + '.asc')
-                opts = repo._default_grabopts()
-                text = repo.id + '/gpgkeysig'
-                sigfile = urlgrabber.urlopen(url, **opts)
+                opts = repo.urlgrabber_opts()
+                sigfile = urlopen(url, **opts)
 
-            except urlgrabber.grabber.URLGrabError, e:
+            except URLGrabError, e:
                 sigfile = None
 
             if sigfile:
