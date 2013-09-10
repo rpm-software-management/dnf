@@ -446,7 +446,10 @@ class Base(object):
                         'nodocs': rpm.RPMTRANS_FLAG_NODOCS,
                         'test': rpm.RPMTRANS_FLAG_TEST,
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
-                        'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS}
+                        'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS,
+                        'nocrypto' : rpm.RPMTRANS_FLAG_NOFILEDIGEST}
+    _TS_VSFLAGS_TO_RPM = {'nocrypto' : rpm._RPMVSF_NOSIGNATURES |
+                          rpm._RPMVSF_NODIGESTS }
 
     @property
     def ts(self):
@@ -462,6 +465,9 @@ class Base(object):
                 self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
                 continue
             self._ts.addTsFlag(rpm_flag)
+            vs_flag = self._TS_VSFLAGS_TO_RPM.get(flag)
+            if vs_flag is not None:
+                self._ts.pushVSFlags(vs_flag)
 
         probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
         self._ts.setProbFilter(probfilter)
