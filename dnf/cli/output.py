@@ -1167,6 +1167,8 @@ class YumOutput:
         :return: a human-readable metric-like string representation of
            *number*
         """
+
+        # copied from from urlgrabber.progress
         symbols = [ ' ', # (none)
                     'k', # kilo
                     'M', # mega
@@ -1215,7 +1217,23 @@ class YumOutput:
            minutes, and seconds
         :return: a human-readable string representation of *seconds*
         """
-        return urlgrabber.progress.format_time(seconds, use_hours)
+
+        # copied from from urlgrabber.progress
+        if seconds is None or seconds < 0:
+            if use_hours: return '--:--:--'
+            else:         return '--:--'
+        elif seconds == float('inf'):
+            return 'Infinite'
+        else:
+            seconds = int(seconds)
+            minutes = seconds / 60
+            seconds = seconds % 60
+            if use_hours:
+                hours = minutes / 60
+                minutes = minutes % 60
+                return '%02i:%02i:%02i' % (hours, minutes, seconds)
+            else:
+                return '%02i:%02i' % (minutes, seconds)
 
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
