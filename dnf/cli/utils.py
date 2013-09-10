@@ -24,7 +24,8 @@ from dnf.yum.i18n import utf8_width, exception2msg, _
 from optparse import OptionGroup
 
 import dnf.yum.plugins as plugins
-from urlgrabber.progress import format_number
+from dnf.cli.output import YumOutput
+format_number = YumOutput.format_number
 
 try:
     _USER_HZ = os.sysconf(os.sysconf_names['SC_CLK_TCK'])

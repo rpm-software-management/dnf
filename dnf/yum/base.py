@@ -26,7 +26,6 @@ from dnf import const, queries, sack
 from i18n import to_unicode, to_str, exception2msg
 from parser import ConfigPreProcessor, varReplace
 from urlgrabber.grabber import URLGrabError
-from urlgrabber.progress import format_number
 from weakref import proxy as weakref
 
 import StringIO
