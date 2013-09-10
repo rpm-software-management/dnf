@@ -1,5 +1,6 @@
 [Unit]
 Description=dnf makecache timer
+ConditionKernelCommandLine=!rd.live.image
 
 [Timer]
 OnBootSec=10min
