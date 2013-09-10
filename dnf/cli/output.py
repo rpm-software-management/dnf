@@ -1153,7 +1153,8 @@ class YumOutput:
                     seen[key] = po
                     print("   provider: %s" % po.compactPrint())
 
-    def format_number(self, number, SI=0, space=' '):
+    @staticmethod
+    def format_number(number, SI=0, space=' '):
         """Return a human-readable metric-like string representation
         of a number.
 
