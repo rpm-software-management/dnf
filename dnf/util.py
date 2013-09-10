@@ -21,6 +21,7 @@
 from __future__ import print_function
 import dnf.const
 import hawkey
+import librepo
 import os
 import shutil
 import subprocess
@@ -177,3 +178,15 @@ class Bunch(dict):
 
     def __hash__(self):
         return id(self)
+
+default_handle = librepo.Handle()
+default_handle.useragent = dnf.const.USER_AGENT
+
+def urlopen(absurl, **opts):
+    """Open the specified absolute url, return a file object.
+       'opts' argument is not used atm.
+    """
+    fo = tempfile.TemporaryFile()
+    librepo.download_url(absurl, fo.fileno(), default_handle)
+    fo.seek(0)
+    return fo
