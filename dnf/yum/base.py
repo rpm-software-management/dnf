@@ -28,6 +28,7 @@ from parser import ConfigPreProcessor, varReplace
 from urlgrabber.grabber import URLGrabError
 from dnf.yum.parser import urlopen
 from weakref import proxy as weakref
+from dnf.cli.progress import MultiProgressMeter
 
 import StringIO
 import config
@@ -65,6 +66,8 @@ import types
 import urlgrabber
 import urlgrabber.progress
 import string
+import librepo
+import sys
 
 _ = i18n._
 P_ = i18n.P_
@@ -1074,10 +1077,6 @@ class Base(object):
         """download list of package objects handed to you, output based on
            callback, raise dnf.exceptions.Error on problems"""
 
-        errors = {}
-        def adderror(po, msg):
-            errors.setdefault(po, []).append(msg)
-
         self.plugins.run('predownload', pkglist=pkglist)
         repo_cached = False
         remote_pkgs = []
@@ -1100,44 +1099,36 @@ class Base(object):
             remote_size += po.size
 
         remote_pkgs.sort(mediasort)
-        #  This is kind of a hack and does nothing in non-Fedora versions,
-        # we'll fix it one way or anther soon.
-        if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
-            len(remote_pkgs) > 1):
-            urlgrabber.progress.text_meter_total_size(remote_size)
         beg_download = time.time()
-        local_size = 0
-        done_repos = set()
-        for (i, po) in enumerate(remote_pkgs, start=1):
-            checkfunc = (self.verifyPkg, (po, 1), {})
-            try:
-                if i == 1 and not local_size and remote_size == po.size:
-                    text = os.path.basename(po.relativepath)
-                else:
-                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                            os.path.basename(po.relativepath))
-                local = po.repo.get_package(po, text=text)
-                self.verifyPkg(local, po, True)
-                local_size += po.size
-                if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-                    urlgrabber.progress.text_meter_total_size(remote_size,
-                                                              local_size)
-                if po.repoid not in done_repos:
-                    #  Check a single package per. repo. ... to give a hint to
-                    # the user on big downloads.
-                    result, errmsg = self.sigCheckPkg(po)
-                    if result != 0:
-                        self.logger.warn("%s", errmsg)
-                done_repos.add(po.repoid)
+        handles = {}
+        targets = []
+        progress = None
+        if self.conf.debuglevel >= 2 and sys.stdout.isatty():
+            progress = MultiProgressMeter(len(remote_pkgs), remote_size)
+        for po in remote_pkgs:
+            # new handle for each repository
+            handle = handles.get(po.repo)
+            if handle is None:
+                dnf.util.ensure_dir(po.repo.pkgdir)
+                handle = po.repo._handle_new_pkg_download()
+                handles[po.repo] = handle
 
-            except dnf.exceptions.RepoError, e:
-                adderror(po, exception2msg(e))
-            else:
-                if po in errors:
-                    del errors[po]
+            # include checksum if supported
+            ctype, csum = po.returnIdSum()
+            ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
+            if ctype_code == librepo.CHECKSUM_UNKNOWN:
+                self.logger.warn(_("unsupported checksum type: %s") % ctype)
 
-        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-            urlgrabber.progress.text_meter_total_size(0)
+            # new download target
+            text = os.path.basename(po.relativepath)
+            t = librepo.PackageTarget(po.location, po.repo.pkgdir, ctype_code, csum,
+                                      po.size, po.baseurl, True, progress, text, handle)
+            t.po = po
+            targets.append(t)
+
+        # run downloads
+        librepo.download_packages(targets)
+        errors = dict((t.po, [t.err]) for t in targets if t.err is not None)
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
 

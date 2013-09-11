@@ -26,7 +26,6 @@ class MultiProgressMeter:
     def __init__(self, total_files, total_size):
         # const
         self.fo = sys.stdout
-        self.isatty = os.isatty(self.fo.fileno())
         self.total_files = int(total_files)
         self.total_size = int(total_size)
         # downloading state
@@ -74,7 +73,7 @@ class MultiProgressMeter:
         # bail out when called too fast
         if not blank and now < self.last_time + 0.3:
             return
-        if self.isatty and self.meters:
+        if self.meters:
             # cycle through active meters
             if now > self.index_time:
                 self.index_time = now + 1.0
