@@ -25,9 +25,6 @@ import dnf.yum.base
 Base = dnf.yum.base.Base
 
 # setup libraries
-from urlgrabber.grabber import default_grabber
-default_grabber.opts.user_agent = const.USER_AGENT
-
 import urlparse
 urlparse.uses_fragment.append("media")
 

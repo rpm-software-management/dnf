@@ -30,7 +30,6 @@ import rpm
 from weakref import proxy as weakref
 
 from urlgrabber.progress import TextMeter
-import urlgrabber.progress
 from urlgrabber.grabber import URLGrabError
 
 import dnf.conf
@@ -51,6 +50,7 @@ import dnf.transaction
 import dnf.util
 
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+from dnf.cli.term import _term_width
 
 import locale
 
@@ -68,17 +68,6 @@ except:
         for y in args:
             if x < y: x = y
         return x
-
-def _term_width():
-    """ Simple terminal width, limit to 20 chars. and make 0 == 80. """
-    if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        return 80
-    ret = urlgrabber.progress.terminal_width_cached()
-    if ret == 0:
-        return 80
-    if ret < 20:
-        return 20
-    return ret
 
 def _make_lists(transaction):
     b = dnf.util.Bunch()
@@ -121,8 +110,7 @@ class YumTerm:
 
     __enabled = True
 
-    if hasattr(urlgrabber.progress, 'terminal_width_cached'):
-        columns = property(lambda self: _term_width())
+    columns = property(lambda self: _term_width())
 
     __cap_names = {
         'underline' : 'smul',
@@ -197,8 +185,6 @@ class YumTerm:
            colorize.
         """
         self.__enabled = True
-        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = 80
         self.lines = 24
 
         if color == 'always':
@@ -266,8 +252,6 @@ class YumTerm:
             return
         self._ctigetstr = curses.tigetstr
 
-        if not hasattr(urlgrabber.progress, 'terminal_width_cached'):
-            self.columns = curses.tigetnum('cols')
         self.lines = curses.tigetnum('lines')
 
         # Look up string capabilities.
@@ -1168,7 +1152,8 @@ class YumOutput:
                     seen[key] = po
                     print("   provider: %s" % po.compactPrint())
 
-    def format_number(self, number, SI=0, space=' '):
+    @staticmethod
+    def format_number(number, SI=0, space=' '):
         """Return a human-readable metric-like string representation
         of a number.
 
@@ -1181,6 +1166,8 @@ class YumOutput:
         :return: a human-readable metric-like string representation of
            *number*
         """
+
+        # copied from from urlgrabber.progress
         symbols = [ ' ', # (none)
                     'k', # kilo
                     'M', # mega
@@ -1229,7 +1216,23 @@ class YumOutput:
            minutes, and seconds
         :return: a human-readable string representation of *seconds*
         """
-        return urlgrabber.progress.format_time(seconds, use_hours)
+
+        # copied from from urlgrabber.progress
+        if seconds is None or seconds < 0:
+            if use_hours: return '--:--:--'
+            else:         return '--:--'
+        elif seconds == float('inf'):
+            return 'Infinite'
+        else:
+            seconds = int(seconds)
+            minutes = seconds / 60
+            seconds = seconds % 60
+            if use_hours:
+                hours = minutes / 60
+                minutes = minutes % 60
+                return '%02i:%02i:%02i' % (hours, minutes, seconds)
+            else:
+                return '%02i:%02i' % (minutes, seconds)
 
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
@@ -1664,20 +1667,15 @@ to exit.
         """
         if len(remote_pkgs) <= 1:
             return
-        if not hasattr(urlgrabber.progress, 'TerminalLine'):
-            return
 
-        tl = urlgrabber.progress.TerminalLine(8)
-        self.logger.info("-" * tl.rest())
-        dl_time = time.time() - download_start_timestamp
-        if dl_time <= 0: # This stops divide by zero, among other problems
-            dl_time = 0.01
-        ui_size = tl.add(' | %5sB' % self.format_number(remote_size))
-        ui_time = tl.add(' %9s' % self.format_time(dl_time))
-        ui_end  = tl.add(' ' * 5)
-        ui_bs   = tl.add(' %5sB/s' % self.format_number(remote_size / dl_time))
-        msg = "%s%s%s%s%s" % (utf8_width_fill(_("Total"), tl.rest(), tl.rest()),
-                              ui_bs, ui_size, ui_time, ui_end)
+        width = _term_width()
+        self.logger.info("-" * width)
+        dl_time = max(0.01, time.time() - download_start_timestamp)
+        msg = ' %5sB/s | %5sB %9s     ' % (
+            self.format_number(remote_size / dl_time),
+            self.format_number(remote_size),
+            self.format_time(dl_time))
+        msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
         self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
@@ -2708,7 +2706,7 @@ class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
 class CliTransactionDisplay(LoggingTransactionDisplay):
     """A Yum specific callback class for RPM operations."""
 
-    width = property(lambda x: _term_width())
+    width = property(lambda self: _term_width())
 
     def __init__(self, ayum=None):
         super(CliTransactionDisplay, self).__init__()
