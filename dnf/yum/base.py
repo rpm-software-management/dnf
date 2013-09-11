@@ -64,6 +64,7 @@ import types
 import urlgrabber
 import urlgrabber.progress
 import string
+import librepo
 
 _ = i18n._
 P_ = i18n.P_
@@ -1080,85 +1081,25 @@ class Base(object):
         """download list of package objects handed to you, output based on
            callback, raise dnf.exceptions.Error on problems"""
 
-        errors = {}
-        def adderror(po, msg):
-            errors.setdefault(po, []).append(msg)
-
         self.plugins.run('predownload', pkglist=pkglist)
-        repo_cached = False
-        remote_pkgs = []
-        remote_size = 0
-        for po in pkglist:
-            if po.from_cmdline:
-                continue
-            local = po.localPkg()
-            if os.path.exists(local):
-                if not self.verifyPkg(local, po, False):
-                    if po.repo.md_only_cached:
-                        repo_cached = True
-                        adderror(po, _('package fails checksum but caching is '
-                            'enabled for %s') % po.repo.id)
-                else:
-                    self.logger.info(_("using local copy of %s") %(po,))
-                    continue
 
-            remote_pkgs.append(po)
-            remote_size += po.size
-
-            # caching is enabled and the package
-            # just failed to check out there's no
-            # way to save this, report the error and return
-            if repo_cached and errors:
-                return errors
-
+        # select and sort packages to download
+        remote_pkgs = filter(lambda po: not (po.from_cmdline or po.repo.local), pkglist)
         remote_pkgs.sort(mediasort)
-        #  This is kind of a hack and does nothing in non-Fedora versions,
-        # we'll fix it one way or anther soon.
-        if (hasattr(urlgrabber.progress, 'text_meter_total_size') and
-            len(remote_pkgs) > 1):
-            urlgrabber.progress.text_meter_total_size(remote_size)
+        remote_size = sum(po.size for po in remote_pkgs)
+
+        # run downloads
         beg_download = time.time()
-        local_size = 0
-        done_repos = set()
-        for (i, po) in enumerate(remote_pkgs, start=1):
-            checkfunc = (self.verifyPkg, (po, 1), {})
-            try:
-                if i == 1 and not local_size and remote_size == po.size:
-                    text = os.path.basename(po.relativepath)
-                else:
-                    text = '(%s/%s): %s' % (i, len(remote_pkgs),
-                                            os.path.basename(po.relativepath))
-                local = po.repo.get_package(po, text=text)
-                self.verifyPkg(local, po, True)
-                local_size += po.size
-                if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-                    urlgrabber.progress.text_meter_total_size(remote_size,
-                                                              local_size)
-                if po.repoid not in done_repos:
-                    #  Check a single package per. repo. ... to give a hint to
-                    # the user on big downloads.
-                    result, errmsg = self.sigCheckPkg(po)
-                    if result != 0:
-                        self.logger.warn("%s", errmsg)
-                done_repos.add(po.repoid)
+        if self.progress:
+            self.progress.start(len(remote_pkgs), remote_size)
+        targets = [po.repo.get_package_target(po, self.progress) for po in remote_pkgs]
+        librepo.download_packages(targets)
+        errors = dict((t.po, [t.err]) for t in targets
+                      if t.err not in (None, 'Already downloaded'))
 
-            except dnf.exceptions.RepoError, e:
-                adderror(po, exception2msg(e))
-            else:
-                if po in errors:
-                    del errors[po]
-
-        if hasattr(urlgrabber.progress, 'text_meter_total_size'):
-            urlgrabber.progress.text_meter_total_size(0)
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
-
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
-
-        # Close curl object after we've downloaded everything.
-        if hasattr(urlgrabber.grabber, 'reset_curl_obj'):
-            urlgrabber.grabber.reset_curl_obj()
-
         return errors
 
     def sigCheckPkg(self, po):

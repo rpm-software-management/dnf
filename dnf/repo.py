@@ -182,6 +182,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self.max_mirror_tries = 0 # try them all
+        self._handle = None
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.id)
@@ -356,6 +357,20 @@ class Repo(dnf.yum.config.RepoConf):
     @property
     def filelists_fn(self):
         return self.metadata.filelists_fn
+
+    def get_package_target(self, po, progress):
+        if not self._handle:
+            dnf.util.ensure_dir(self.pkgdir)
+            self._handle = self._handle_new_pkg_download()
+        ctype, csum = po.returnIdSum()
+        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
+        if ctype_code == librepo.CHECKSUM_UNKNOWN:
+            logger.warn(_("unsupported checksum type: %s") % ctype)
+        target = librepo.PackageTarget(
+            po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl,
+            True, progress, os.path.basename(po.relativepath), self._handle)
+        target.po = po
+        return target
 
     def get_package(self, pkg, text=None):
         if self.local:

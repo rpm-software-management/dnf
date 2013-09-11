@@ -441,7 +441,7 @@ class YumOutput:
             self.i18ndomains = ["redhat-dist"]
 
         self.term = YumTerm()
-        self._last_interrupt = None
+        self.progress = None
 
 
     def printtime(self):
@@ -1487,6 +1487,7 @@ Transaction Summary
             progressbar = None
         else:
             progressbar = dnf.cli.progress.LibrepoCallbackAdaptor(fo=sys.stdout)
+            self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
