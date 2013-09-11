@@ -1085,25 +1085,19 @@ class Base(object):
         for po in pkglist:
             if po.from_cmdline:
                 continue
+            if po.repo._local_origin:
+                continue
             local = po.localPkg()
             if os.path.exists(local):
-                if not self.verifyPkg(local, po, False):
-                    if po.repo.md_only_cached:
-                        repo_cached = True
-                        adderror(po, _('package fails checksum but caching is '
-                            'enabled for %s') % po.repo.id)
-                else:
-                    self.logger.info(_("using local copy of %s") %(po,))
+                if self.verifyPkg(local, po, False):
+                    self.logger.info(_("using local copy of %s") % po)
                     continue
+                if po.repo.md_only_cached:
+                    msg = _('package fails checksum but caching is enabled for %s') % po.repo.id
+                    return { po: [msg] }
 
             remote_pkgs.append(po)
             remote_size += po.size
-
-            # caching is enabled and the package
-            # just failed to check out there's no
-            # way to save this, report the error and return
-            if repo_cached and errors:
-                return errors
 
         remote_pkgs.sort(mediasort)
         #  This is kind of a hack and does nothing in non-Fedora versions,
@@ -1148,11 +1142,6 @@ class Base(object):
             callback_total(remote_pkgs, remote_size, beg_download)
 
         self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
-
-        # Close curl object after we've downloaded everything.
-        if hasattr(urlgrabber.grabber, 'reset_curl_obj'):
-            urlgrabber.grabber.reset_curl_obj()
-
         return errors
 
     def sigCheckPkg(self, po):
