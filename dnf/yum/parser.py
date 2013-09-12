@@ -17,11 +17,19 @@
 
 import re
 import urlparse
-import urlgrabber
+from urlgrabber.grabber import URLGrabError
+import librepo, tempfile
 import os.path
 
 import dnf.exceptions
 
+def urlopen(absurl, **opts):
+    """Open the specified absolute url, return a file object.
+    """
+    fo = tempfile.TemporaryFile()
+    librepo.download_url(absurl, fo.fileno())
+    fo.seek(0)
+    return fo
 
 _KEYCRE = re.compile(r"\$(\w+)")
 
@@ -205,8 +213,8 @@ class ConfigPreProcessor:
         if self._isalreadyincluded(includetuple):
             return None
         try:
-            fo = urlgrabber.grabber.urlopen(absurl)
-        except urlgrabber.grabber.URLGrabError, e:
+            fo = urlopen(absurl)
+        except URLGrabError, e:
             fo = None
         if fo is not None:
             self.name = absurl
