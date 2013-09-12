@@ -62,6 +62,7 @@ import signal
 import time
 import types
 import urlgrabber
+import urlgrabber.progress
 import string
 
 _ = i18n._
