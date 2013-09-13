@@ -356,7 +356,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         oldcount = self._goal.req_length()
         if len(userlist) == 0: # simple case - do them all
-            self.update()
+            self.update_all()
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
@@ -367,7 +367,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     self.update_local(item)
                     continue
 
-                if not self.update(pattern=item):
+                if not self.update(item):
                     self._checkMaybeYouMeant(item)
 
         cnt = self._goal.req_length() - oldcount
