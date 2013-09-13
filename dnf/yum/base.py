@@ -404,6 +404,13 @@ class Base(object):
 
         return repo
 
+    def reset(self, sack=False, repos=False):
+        """Make the Base object forget about various things."""
+        if sack:
+            self._sack = None
+        if repos:
+            self._repos = dnf.repodict.RepoDict()
+
     def disablePlugins(self):
         """Disable yum plugins."""
 

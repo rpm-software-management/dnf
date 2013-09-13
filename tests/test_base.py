@@ -31,7 +31,7 @@ import os
 import rpm
 import unittest
 
-class BaseTest(unittest.TestCase):
+class BaseTest(support.TestCase):
     def test_instance(self):
         yumbase = dnf.yum.base.Base()
 
@@ -45,6 +45,12 @@ class BaseTest(unittest.TestCase):
         # test:
         yumbase._push_userinstalled(goal)
         goal.userinstalled.assert_called_with(pkg)
+
+    def test_reset(self):
+        base = support.MockYumBase('main')
+        base.reset(sack=True, repos=False)
+        self.assertIsNone(base._sack)
+        self.assertLength(base.repos, 1)
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_ts(self, mock_ts):
