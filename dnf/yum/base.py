@@ -2267,9 +2267,9 @@ class Base(object):
                 # In theory we have a global proxy config. too, but meh...
                 # external callers should just update.
                 opts = repo.urlgrabber_opts()
-            rawkey = urlgrabber.urlread(url, **opts)
+            rawkey = dnf.util.urlopen(url, **opts).read()
 
-        except urlgrabber.grabber.URLGrabError, e:
+        except IOError, e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
 
@@ -2281,11 +2281,10 @@ class Base(object):
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
                 url = i18n.to_utf8(keyurl + '.asc')
-                opts = repo._default_grabopts()
-                text = repo.id + '/gpgkeysig'
-                sigfile = urlgrabber.urlopen(url, **opts)
+                opts = repo.urlgrabber_opts()
+                sigfile = dnf.util.urlopen(url, **opts)
 
-            except urlgrabber.grabber.URLGrabError, e:
+            except IOError, e:
                 sigfile = None
 
             if sigfile:

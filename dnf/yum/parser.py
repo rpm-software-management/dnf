@@ -17,10 +17,10 @@
 
 import re
 import urlparse
-import urlgrabber
 import os.path
 
 import dnf.exceptions
+import dnf.util
 
 
 _KEYCRE = re.compile(r"\$(\w+)")
@@ -205,8 +205,8 @@ class ConfigPreProcessor:
         if self._isalreadyincluded(includetuple):
             return None
         try:
-            fo = urlgrabber.grabber.urlopen(absurl)
-        except urlgrabber.grabber.URLGrabError, e:
+            fo = dnf.util.urlopen(absurl)
+        except IOError, e:
             fo = None
         if fo is not None:
             self.name = absurl
