@@ -1,10 +1,6 @@
 *.pyc
 *.pyo
 *~
-*.bak
-*.swp
-*.tar.*
-.tx
 .project
 .pydevproject
 asthelper.completions
