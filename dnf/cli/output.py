@@ -50,6 +50,7 @@ import dnf.transaction
 import dnf.util
 
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 
 import locale
@@ -845,7 +846,7 @@ class YumOutput:
             print(_("Epoch       : %s") % to_unicode(pkg.e))
         print(_("Version     : %s") % to_unicode(pkg.v))
         print(_("Release     : %s") % to_unicode(pkg.r))
-        print(_("Size        : %s") % self.format_number(float(pkg.size)))
+        print(_("Size        : %s") % format_number(float(pkg.size)))
         print(_("Repo        : %s") % to_unicode(pkg.repoid))
         if 'from_repo' in yumdb_info:
             print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
@@ -1152,88 +1153,6 @@ class YumOutput:
                     seen[key] = po
                     print("   provider: %s" % po.compactPrint())
 
-    @staticmethod
-    def format_number(number, SI=0, space=' '):
-        """Return a human-readable metric-like string representation
-        of a number.
-
-        :param number: the number to be converted to a human-readable form
-        :param SI: If is 0, this function will use the convention
-           that 1 kilobyte = 1024 bytes, otherwise, the convention
-           that 1 kilobyte = 1000 bytes will be used
-        :param space: string that will be placed between the number
-           and the SI prefix
-        :return: a human-readable metric-like string representation of
-           *number*
-        """
-
-        # copied from from urlgrabber.progress
-        symbols = [ ' ', # (none)
-                    'k', # kilo
-                    'M', # mega
-                    'G', # giga
-                    'T', # tera
-                    'P', # peta
-                    'E', # exa
-                    'Z', # zetta
-                    'Y'] # yotta
-
-        if SI: step = 1000.0
-        else: step = 1024.0
-
-        thresh = 999
-        depth = 0
-        max_depth = len(symbols) - 1
-
-        # we want numbers between 0 and thresh, but don't exceed the length
-        # of our list.  In that event, the formatting will be screwed up,
-        # but it'll still show the right number.
-        while number > thresh and depth < max_depth:
-            depth  = depth + 1
-            number = number / step
-
-        if type(number) == type(1) or type(number) == type(1L):
-            format = '%i%s%s'
-        elif number < 9.95:
-            # must use 9.95 for proper sizing.  For example, 9.99 will be
-            # rounded to 10.0 with the .1f format string (which is too long)
-            format = '%.1f%s%s'
-        else:
-            format = '%.0f%s%s'
-
-        return(format % (float(number or 0), space, symbols[depth]))
-
-    @staticmethod
-    def format_time(seconds, use_hours=0):
-        """Return a human-readable string representation of a number
-        of seconds.  The string will show seconds, minutes, and
-        optionally hours.
-
-        :param seconds: the number of seconds to convert to a
-           human-readable form
-        :param use_hours: If use_hours is 0, the representation will
-           be in minutes and seconds. Otherwise, it will be in hours,
-           minutes, and seconds
-        :return: a human-readable string representation of *seconds*
-        """
-
-        # copied from from urlgrabber.progress
-        if seconds is None or seconds < 0:
-            if use_hours: return '--:--:--'
-            else:         return '--:--'
-        elif seconds == float('inf'):
-            return 'Infinite'
-        else:
-            seconds = int(seconds)
-            minutes = seconds / 60
-            seconds = seconds % 60
-            if use_hours:
-                hours = minutes / 60
-                minutes = minutes % 60
-                return '%02i:%02i:%02i' % (hours, minutes, seconds)
-            else:
-                return '%02i:%02i' % (minutes, seconds)
-
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
         """Output search/provides type callback matches.
@@ -1350,14 +1269,14 @@ class YumOutput:
         if (not error):
             if locsize:
                 self.logger.info(_("Total size: %s"),
-                                        self.format_number(totsize))
+                                        format_number(totsize))
             if locsize != totsize:
                 self.logger.info(_("Total download size: %s"),
-                                        self.format_number(totsize - locsize))
+                                        format_number(totsize - locsize))
             if installonly:
                 self.logger.info(
                                         _("Installed size: %s"),
-                                        self.format_number(insize))
+                                        format_number(insize))
 
     def reportRemoveSize(self, packages):
         """Report the total size of packages being removed.
@@ -1380,7 +1299,7 @@ class YumOutput:
         if (not error):
             self.logger.info(
                                     _("Installed size: %s"),
-                                    self.format_number(totsize))
+                                    format_number(totsize))
 
     def list_transaction(self):
         """Return a string representation of the transaction in an
@@ -1395,7 +1314,7 @@ class YumOutput:
             (n, a, e, v, r) = po.pkgtup
             evr = po.evr
             repoid = po.reponame
-            size = self.format_number(po.size)
+            size = format_number(po.size)
 
             if a is None: # gpgkeys are weird
                 a = 'noarch'
@@ -1672,9 +1591,9 @@ to exit.
         self.logger.info("-" * width)
         dl_time = max(0.01, time.time() - download_start_timestamp)
         msg = ' %5sB/s | %5sB %9s     ' % (
-            self.format_number(remote_size / dl_time),
-            self.format_number(remote_size),
-            self.format_time(dl_time))
+            format_number(remote_size / dl_time),
+            format_number(remote_size),
+            format_time(dl_time))
         msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
         self.logger.info(msg)
 

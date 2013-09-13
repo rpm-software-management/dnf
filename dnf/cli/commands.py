@@ -26,6 +26,7 @@ import dnf.persistor
 import dnf.util
 import os
 from dnf.cli import CliError
+from dnf.cli.format import format_number
 import dnf.logging
 from dnf.yum import misc
 import dnf.exceptions
@@ -1395,7 +1396,7 @@ class RepoListCommand(Command):
             ret = 0
             for pkg in dnf.queries.by_repo(self.base.sack, repo.id):
                 ret += pkg.size
-            return self.base.format_number(ret)
+            return format_number(ret)
 
         def _repo_match(repo, patterns):
             rid = repo.id.lower()
