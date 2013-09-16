@@ -762,15 +762,12 @@ class YumConf(StartupConf):
     # so you probably want to use 3 as a minimum ... if you turn it on.
     installonly_limit = PositiveIntOption(0, range_min=2,
                                           names_of_0=["0", "<off>"])
-    kernelpkgnames = ListOption(['kernel','kernel-smp', 'kernel-enterprise',
-            'kernel-bigmem', 'kernel-BOOT', 'kernel-PAE', 'kernel-PAE-debug'])
     tsflags = ListOption()
 
     assumeyes = BoolOption(False)
     assumeno  = BoolOption(False)
     defaultyes = BoolOption(False)
     alwaysprompt = BoolOption(True)
-    exactarch = BoolOption(True)
     diskspacecheck = BoolOption(True)
     keepalive = BoolOption(True)
     # FIXME: rename gpgcheck to pkgs_gpgcheck
@@ -796,8 +793,6 @@ class YumConf(StartupConf):
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
-    # XXX rpm_check_debug is unused, left around for API compatibility for now
-    rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()
     multilib_policy = SelectionOption('best', ('best', 'all'))
                  # all == install any/all arches you can
