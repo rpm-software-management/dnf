@@ -102,7 +102,7 @@ down often enough to warrant this change. Note that without this setting and
 without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
 DNF immediately stops on a repo error, confusing and bothering the user.
 
-See the related `Fedora bugzilla <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
+See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
 ============================================================================
  ``overwrite_groups`` dropped, comps functions acting as if always disabled
@@ -110,3 +110,24 @@ See the related `Fedora bugzilla <https://bugzilla.redhat.com/show_bug.cgi?id=98
 
 This config option has been dropped. When DNF sees several groups with the same
 group id it merges the groups' contents together.
+
+===============================
+ ``mirrorlist_expire`` dropped
+===============================
+
+To simplify things for the user, DNF uses ``metadata_expire`` for both expiring
+metadata and the mirrorlist file (which is a kind of metadata itself).
+
+===========================================================
+ metalink not recognized in the ``mirrorlist`` repo option
+===========================================================
+
+The following part of ``yum.conf(5)`` no longer applies for the ``mirrorlist``
+option:
+
+    As a special hack is the mirrorlist URL contains the word "metalink" then
+    the value of mirrorlist is copied to metalink (if metalink is not set).
+
+The relevant repository configuration files have been fixed to respect this, see
+the related `Fedora bug 948788
+<https://bugzilla.redhat.com/show_bug.cgi?id=948788>`_.

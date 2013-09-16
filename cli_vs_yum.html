@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.0-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.1-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.0-1',
+        VERSION:     '0.4.1-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.0-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.1-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.1-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -70,6 +70,8 @@
 <li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id11"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
 <li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default" id="id12"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
 <li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id13"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
+<li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id14"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id15">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
 </ul>
 </li>
 </ul>
@@ -146,12 +148,27 @@ binary use the actual path for binaries on Fedora:</p>
 down often enough to warrant this change. Note that without this setting and
 without an explicit <tt class="docutils literal"><span class="pre">skip_if_unavailable=True</span></tt> in the relevant repo .ini file
 DNF immediately stops on a repo error, confusing and bothering the user.</p>
-<p>See the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=984483">Fedora bugzilla</a>.</p>
+<p>See the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=984483">Fedora bug 984483</a>.</p>
 </div>
 <div class="section" id="overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled">
 <h2><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a><a class="headerlink" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" title="Permalink to this headline">¶</a></h2>
 <p>This config option has been dropped. When DNF sees several groups with the same
 group id it merges the groups&#8217; contents together.</p>
+</div>
+<div class="section" id="mirrorlist-expire-dropped">
+<h2><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a><a class="headerlink" href="#mirrorlist-expire-dropped" title="Permalink to this headline">¶</a></h2>
+<p>To simplify things for the user, DNF uses <tt class="docutils literal"><span class="pre">metadata_expire</span></tt> for both expiring
+metadata and the mirrorlist file (which is a kind of metadata itself).</p>
+</div>
+<div class="section" id="metalink-not-recognized-in-the-mirrorlist-repo-option">
+<h2><a class="toc-backref" href="#id15">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a><a class="headerlink" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" title="Permalink to this headline">¶</a></h2>
+<p>The following part of <tt class="docutils literal"><span class="pre">yum.conf(5)</span></tt> no longer applies for the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt>
+option:</p>
+<blockquote>
+<div>As a special hack is the mirrorlist URL contains the word &#8220;metalink&#8221; then
+the value of mirrorlist is copied to metalink (if metalink is not set).</div></blockquote>
+<p>The relevant repository configuration files have been fixed to respect this, see
+the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=948788">Fedora bug 948788</a>.</p>
 </div>
 </div>
 
@@ -174,6 +191,8 @@ group id it merges the groups&#8217; contents together.</p>
 <li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
 <li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
 <li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
+<li><a class="reference internal" href="#mirrorlist-expire-dropped"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
 </ul>
 </li>
 </ul>
@@ -221,7 +240,7 @@ group id it merges the groups&#8217; contents together.</p>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.0-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.1-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
