@@ -29,8 +29,7 @@ import re
 import rpm
 from weakref import proxy as weakref
 
-from urlgrabber.progress import TextMeter
-
+import dnf.cli.progress
 import dnf.conf
 import dnf.output
 from dnf.yum.misc import prco_tuple_to_string
@@ -430,34 +429,6 @@ class YumTerm:
           in *needles*
         """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
-
-class LibrepoCallbackAdaptor(TextMeter):
-    """Adapt urlgrabber progress widgets for librepo callback style.
-
-    Note that TextMeter is a Python old-style class.
-    """
-
-    def __init__(self, fo=sys.stderr):
-        TextMeter.__init__(self, fo=fo)
-
-    def begin(self, text):
-        self.text = text
-        self._total = None
-        self._last_downloaded = 0
-
-    def end(self):
-        if self._total:
-            TextMeter.end(self, self._last_downloaded)
-
-    def librepo_cb(self, data, total_to_download, downloaded):
-        if self._total != total_to_download:
-            # happens early in the download and confuses the measuring:
-            if not total_to_download:
-                return
-            self._total = total_to_download
-            self.start(size=total_to_download, text=self.text)
-        self._last_downloaded = downloaded
-        self.update(downloaded)
 
 class YumOutput:
     """Main output class for the yum command line."""
@@ -1515,7 +1486,7 @@ Transaction Summary
         if self.conf.debuglevel < 2 or not sys.stdout.isatty():
             progressbar = None
         else:
-            progressbar = LibrepoCallbackAdaptor(fo=sys.stdout)
+            progressbar = dnf.cli.progress.LibrepoCallbackAdaptor(fo=sys.stdout)
 
         # setup our failure report for failover
         freport = (self.failureReport,(),{})
