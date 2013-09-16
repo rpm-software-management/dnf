@@ -194,5 +194,21 @@
     [
         1002508, 
         "Updated to install any packages \"An Curl handle error: Unsupported protocol\""
+    ], 
+    [
+        1006366, 
+        "dnf makecache runs on LiveCD"
+    ], 
+    [
+        1008444, 
+        "confusing message when removing packages"
+    ], 
+    [
+        1003220, 
+        "[abrt] dnf-0.3.11-1.git7d717c7.fc19: output.py:838:_enc:TypeError: object of type 'NoneType' has no len()"
+    ], 
+    [
+        998859, 
+        "\"dnf upgrade --best\" will always install 64bits package when 32bit package is installed"
     ]
 ]

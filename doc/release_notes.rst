@@ -222,3 +222,26 @@ Fixes for the following are contained in this version:
 * :rhbug:`997403`
 * :rhbug:`1002508`
 * :rhbug:`1002798`
+
+===================
+0.4.1 Release Notes
+===================
+
+The focus of this release was to support our efforts in implementing the DNF
+Payload for Anaconda, with changes on the API side of things (better logging,
+new ``Base.reset()`` method).
+
+Support for some irrelevant config options has been dropped (``kernelpkgnames``,
+``exactarch``, ``rpm_check_debug``). We also no longer detect metalinks in the
+``mirrorlist`` option (see `Fedora bug 948788
+<https://bugzilla.redhat.com/show_bug.cgi?id=948788>`_).
+
+DNF is on its way to drop the urlgrabber dependency and the first set of patches
+towards this goal is already in.
+
+Expect the following bugs to go away with upgrade to 0.4.1:
+
+* :rhbug:`998859`
+* :rhbug:`1006366`
+* :rhbug:`1008444`
+* :rhbug:`1003220`
