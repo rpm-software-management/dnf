@@ -796,8 +796,6 @@ class YumConf(StartupConf):
     http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
-    # Time in seconds (1 day). NOTE: This isn't used when using metalinks
-    mirrorlist_expire = SecondsOption(60 * 60 * 24)
     # XXX rpm_check_debug is unused, left around for API compatibility for now
     rpm_check_debug = BoolOption(True)
     disable_excludes = ListOption()
@@ -946,9 +944,6 @@ class RepoConf(BaseConfig):
 
     http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
-    mirrorlist_expire = Inherit(YumConf.mirrorlist_expire)
-    # NOTE: metalink expire _must_ be the same as metadata_expire, due to the
-    #       checksumming of the repomd.xml.
     cost = IntOption(1000)
 
     sslcacert = Inherit(YumConf.sslcacert)
