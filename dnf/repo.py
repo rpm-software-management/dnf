@@ -290,7 +290,7 @@ class Repo(dnf.yum.config.RepoConf):
         """Use metalink to check whether our metadata are still current."""
         if not self.metadata:
             return False
-        if not self.metalink and not self.mirrorlist:
+        if not self.metalink:
             return False
         repomd_fn = self.metadata.repo_dct['repomd']
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
