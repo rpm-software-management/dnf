@@ -30,7 +30,6 @@ import rpm
 from weakref import proxy as weakref
 
 from urlgrabber.progress import TextMeter
-from urlgrabber.grabber import URLGrabError
 
 import dnf.conf
 import dnf.output
@@ -1524,8 +1523,6 @@ Transaction Summary
 
         self.repos.all.set_progress_bar(progressbar)
         self.repos.all.set_failure_callback(failure_callback)
-        # setup callback for CTRL-C's
-        self.repos.all.set_interrupt_callback(self.interrupt_callback)
 
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
@@ -1540,39 +1537,6 @@ Transaction Summary
         self.repos.confirm_func = confirm_func
         self.repos.gpg_import_func = gpg_import_func
         self.repos.gpgca_import_func = gpgca_import_func
-
-    def interrupt_callback(self, cbobj):
-        '''Handle CTRL-C's during downloads.  If a CTRL-C occurs a
-        URLGrabError will be raised to push the download onto the next
-        mirror.  If two CTRL-C's occur in quick succession then yum
-        will exit.
-
-        :param cbobj: :class:`urlgrabber.grabber.CallbackObject`
-        '''
-        delta_exit_chk = 2.0      # Delta between C-c's so we treat as exit
-        delta_exit_str = _("two") # Human readable version of above
-
-        now = time.time()
-
-        if not self._last_interrupt:
-            hibeg = self.term.MODE['bold']
-            hiend = self.term.MODE['normal']
-            # For translators: This is output like:
-#  Current download cancelled, interrupt (ctrl-c) again within two seconds
-# to exit.
-            # Where "interupt (ctrl-c) again" and "two" are highlighted.
-            msg = _("""
- Current download cancelled, %sinterrupt (ctrl-c) again%s within %s%s%s seconds
-to exit.
-""") % (hibeg, hiend, hibeg, delta_exit_str, hiend)
-            self.logger.info(msg)
-        elif now - self._last_interrupt < delta_exit_chk:
-            # Two quick CTRL-C's, quit
-            raise KeyboardInterrupt
-
-        # Go to next mirror
-        self._last_interrupt = now
-        raise URLGrabError(15, _('user interrupt'))
 
     def download_callback_total_cb(self, remote_pkgs, remote_size,
                                    download_start_timestamp):
