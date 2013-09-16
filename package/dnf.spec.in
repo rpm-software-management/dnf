@@ -1,6 +1,6 @@
-%global gitrev bfccb5c
-%global hawkey_version 0.4.0
-%global librepo_version 1.0.0
+%global gitrev 55e6369
+%global hawkey_version 0.4.1
+%global librepo_version 1.1.0
 %global libcomps_version 0.1.3
 
 %global confdir %{_sysconfdir}/dnf
@@ -78,6 +78,26 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Sep 16 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.1-1.git55e6369
+- logging: do not show 'Downloading packages:' on remove. (RhBug:1008444) (Ales Kozumplik)
+- remove: couple of config options (kernelpkgnames, exactarch, rpm_check_debug). (Ales Kozumplik)
+- remove: dnf.yum.config.mirrorlist_expire, it's unused. (Ales Kozumplik)
+- The Fedora .repo files no longer use mirrorlist= for metalink. (Ales Kozumplik)
+- leaner .gitignore. (Ales Kozumplik)
+- Add Base.reset(). (Ales Kozumplik)
+- reimplement urlopen() on top of librepo (Zdenek Pavlas)
+- Add '--nocrypto' tsflag config value. (Ales Kozumplik)
+- logging: TransactionDisplay.errorlog() logs to stderr. (Ales Kozumplik)
+- Until urlbrabber is gone completely, the urlgrabber.progress must stay. (Ales Kozumplik)
+- remove all users of urlgrabber.progress.TerminalLine() (Zdenek Pavlas)
+- remove all users of urlgrabber.progress.format_time() (Zdenek Pavlas)
+- remove all users of urlgrabber.progress.format_number() (Zdenek Pavlas)
+- remove all users of urlgrabber.progress.terminal_width_cached() (Zdenek Pavlas)
+- remove all users of urlgrabber.grabber.default_grabber (Zdenek Pavlas)
+- makecache: do not run makecache on the LiveCD. (Ales Kozumplik)
+- doc: what to do on failing %preun. (Ales Kozumplik)
+- Fix TypeError raised when _enc called with None (RhBug:1003220) (Radek Holy)
 
 * Fri Aug 30 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.0-1.gitbfccb5c
 - Adapt to librepo-1.0.0, handle.url is handle.urls now. (Ales Kozumplik)
