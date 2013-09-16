@@ -175,7 +175,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.logger.info(_('Exiting on user Command'))
                 return -1, None
 
-        self.logger.info(_('Downloading Packages:'))
+
+        if downloadpkgs:
+            self.logger.info(_('Downloading Packages:'))
         problems = self.download_packages(downloadpkgs, callback_total=\
                                               self.download_callback_total_cb)
 
