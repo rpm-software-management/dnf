@@ -19,10 +19,14 @@ from __future__ import absolute_import
 from tests import mock
 from tests import support
 import dnf.cli.cli
+from dnf.cli.format import format_time, format_number
+import dnf.cli.progress
 import dnf.repo
 import dnf.repodict
 import optparse
 import os
+import sys
+import time
 import unittest
 
 INFOOUTPUT_OUTPUT="""\
@@ -190,3 +194,100 @@ class SearchTest(unittest.TestCase):
         pkg_names = map(str, pkgs)
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)
+
+class FormatTest(unittest.TestCase):
+    def test_format_time(self):
+        self.assertEquals(format_time(None), '--:--')
+        self.assertEquals(format_time(-1), '--:--')
+        self.assertEquals(format_time(12*60+34), '12:34')
+        self.assertEquals(format_time(12*3600+34*60+56), '754:56')
+        self.assertEquals(format_time(12*3600+34*60+56, use_hours=True), '12:34:56')
+    def test_format_number(self):
+        self.assertEquals(format_number(None), '0.0  ')
+        self.assertEquals(format_number(-1), '-1  ')
+        self.assertEquals(format_number(1.0), '1.0  ')
+        self.assertEquals(format_number(999.0), '999  ')
+        self.assertEquals(format_number(1000.0), '1.0 k')
+        self.assertEquals(format_number(1 << 20), '1.0 M')
+        self.assertEquals(format_number(1 << 30), '1.0 G')
+        self.assertEquals(format_number(1e6, SI=1), '1.0 M')
+        self.assertEquals(format_number(1e9, SI=1), '1.0 G')
+
+class ProgressTest(unittest.TestCase):
+    def test_single(self):
+        now = 1379406823.9
+        out = []
+        with mock.patch('dnf.cli.progress._term_width', return_value=60), \
+             mock.patch('dnf.cli.progress.time', lambda: now), \
+             mock.patch('sys.stdout.write', lambda s: out.append(s)):
+
+            p = dnf.cli.progress.LibrepoCallbackAdaptor(sys.stdout)
+            p.begin('dummy-text')
+            for i in range(6):
+                p.librepo_cb(None, 5, i)
+                self.assertEquals(len(out), i + 1) # always update
+                now += 1.0
+            p.end()
+
+        # this is straightforward..
+        self.assertEquals(out, [
+            'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
+            'dummy-text 20% [==        ] 1.0  B/s |   1  B     00:04 ETA\r',
+            'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
+            'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
+            'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
+            'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
+
+    def test_restart(self):
+        now = 1379406823.9
+        out = []
+        with mock.patch('dnf.cli.progress._term_width', return_value=60), \
+             mock.patch('dnf.cli.progress.time', lambda: now), \
+             mock.patch('sys.stdout.write', lambda s: out.append(s)):
+
+            p = dnf.cli.progress.LibrepoCallbackAdaptor(sys.stdout)
+            p.begin('dummy-text')
+            for i in range(6):
+                p.librepo_cb(None, 2 if i < 3 else 5, i)
+                now += 1
+            p.end()
+
+        # when librepo downloads multiple metadata files, it changes the total
+        # size reported by the callback. we should calculate progress with
+        # the current total, and report both "finished" events.
+        self.assertEquals(out, [
+            'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
+            'dummy-text 50% [=====     ] 1.0  B/s |   1  B     00:01 ETA\r',
+            'dummy-text                  1.0  B/s |   2  B     00:02    \n',
+            'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
+            'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
+            'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
+
+    def test_multi(self):
+        now = 1379406823.9
+        out = []
+        with mock.patch('dnf.cli.progress._term_width', return_value=60), \
+             mock.patch('dnf.cli.progress.time', lambda: now), \
+             mock.patch('sys.stdout.write', lambda s: out.append(s)):
+
+            p = dnf.cli.progress.MultiFileProgressMeter(sys.stdout)
+            p.start(2, 30)
+            for i in range(11):
+                # emit 1 update, or <end> & update
+                n = len(out) + 1 + (i == 10)
+                p('foo', 10.0, float(i))
+                self.assertEquals(len(out), n)
+                now += 0.5
+
+                # on <end>, there should be no active dl
+                n = len(out) + 1
+                p('bar', 20.0, float(i*2))
+                self.assertEquals(len(out), n)
+                now += 0.5
+
+        # check "end" events
+        self.assertEquals([o for o in out if o.endswith('\n')], [
+'(1/2): foo                  1.0  B/s |  10  B     00:10    \n',
+'(2/2): bar                  2.0  B/s |  20  B     00:10    \n'])
+        # verify we estimated a sane rate (should be around 3 B/s)
+        self.assertTrue(2.0 < p.rate < 4.0)
