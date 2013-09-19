@@ -220,7 +220,7 @@ class Repo(dnf.yum.config.RepoConf):
                                   self._no_mirror_setup_args(), cb)
 
     @property
-    def _local_origin(self):
+    def local(self):
         if self.metalink or self.mirrorlist:
             return False
         if self.baseurl[0].startswith('file://'):
@@ -358,7 +358,7 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.filelists_fn
 
     def get_package(self, pkg, text=None):
-        if self._local_origin:
+        if self.local:
             return pkg.localPkg()
         dnf.util.ensure_dir(self.pkgdir)
         handle = self._handle_new_pkg_download()
@@ -480,7 +480,7 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def pkgdir(self):
-        if self._local_origin:
+        if self.local:
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
         return os.path.join(self.cachedir, 'packages')
 

@@ -116,7 +116,7 @@ class RepoTest(support.TestCase):
         self.assertStartsWith(path, REPOS)
 
     # twist Repo to think it's remote:
-    @mock.patch('dnf.repo.Repo._local_origin', False)
+    @mock.patch('dnf.repo.Repo.local', False)
     def test_get_package_remote(self):
         pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
         path = self.repo.get_package(pkg)
@@ -130,7 +130,7 @@ class RepoTest(support.TestCase):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())
 
-    @mock.patch('dnf.repo.Repo._local_origin', False)
+    @mock.patch('dnf.repo.Repo.local', False)
     def test_keep_old_pgks(self):
         dnf.util.ensure_dir(self.repo.pkgdir)
         survivor = os.path.join(self.repo.pkgdir, "survivor")
