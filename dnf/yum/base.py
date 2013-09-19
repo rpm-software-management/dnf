@@ -2103,6 +2103,7 @@ class Base(object):
         if installed_pkg is None:
             return 0
 
+        q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
         avail_pkg = dnf.util.first(sorted(avail, reverse=True))
         if avail_pkg is None:
