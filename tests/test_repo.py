@@ -53,7 +53,7 @@ class MetadataTest(support.TestCase):
         self.assertRaises(dnf.exceptions.MetadataError,
                           self.md.file_timestamp, 'primary')
 
-class RepoTest(support.TestCase):
+class RepoTest(support.ResultTestCase):
     """Test the logic of dnf.repo.Repo.
 
     There is one cache directory for the entire TestCase, but each individual
@@ -97,6 +97,22 @@ class RepoTest(support.TestCase):
         self.assertIn('bandwidth', opts)
         self.assertIn('gpgkey', opts)
         self.assertEqual(parser.get('r', 'timeout'), '30.0')
+
+    def test_cost_install(self):
+        repo2 = dnf.repo.Repo("r2")
+        repo2.basecachedir = self.TMP_CACHEDIR
+        repo2.baseurl = [BASEURL]
+        repo2.name = "r2 repo"
+        self.repo.cost = 500
+        repo2.cost = 700
+        yumbase = support.MockYumBase()
+        yumbase._repos.add(self.repo)
+        yumbase._repos.add(repo2)
+        yumbase.activate_sack(load_system_repo=False)
+        self.assertEqual(500, self.repo.hawkey_repo.cost)
+        yumbase.install("tour")
+        installed = self._get_installed(yumbase)
+        self.assertEqual(["r"], map(lambda pkg: pkg.reponame, installed))
 
     def test_expire_cache(self):
         self.repo.load()

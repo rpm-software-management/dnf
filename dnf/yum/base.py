@@ -148,6 +148,7 @@ class Base(object):
         hrepo.repomd_fn = repo.repomd_fn
         hrepo.primary_fn = repo.primary_fn
         hrepo.filelists_fn = repo.filelists_fn
+        hrepo.cost = repo.cost
         if repo.presto_fn:
             hrepo.presto_fn = repo.presto_fn
         else:
