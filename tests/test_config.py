@@ -77,6 +77,12 @@ class YumConfTest(unittest.TestCase):
         self.assertFalse(conf.assumeno) # no change
         self.assertEqual(conf.color_list_installed_older, 'timid')
 
+    def test_prepend_installroot(self):
+        conf = YumConf()
+        conf.installroot = '/mnt/root'
+        conf.prepend_installroot('persistdir')
+        self.assertEqual(conf.persistdir, '/mnt/root/var/lib/dnf')
+
 class GoalParametersTest(unittest.TestCase):
     def test_default(self):
         gp = GoalParameters()

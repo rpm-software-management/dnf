@@ -693,6 +693,15 @@ class StartupConf(BaseConfig):
         super(StartupConf, self).__init__()
         self.yumvar = {}
 
+    def _var_replace(self, option):
+        path = getattr(self, option)
+        setattr(self, option, varReplace(path, self.yumvar))
+
+    def prepend_installroot(self, option):
+        path = getattr(self, option)
+        path = path.lstrip('/')
+        setattr(self, option, os.path.join(self.installroot, path))
+
     @property
     def releasever(self):
         return self.yumvar.get('releasever')
@@ -995,19 +1004,10 @@ def readMainConfig(startupconf):
     yumconf = YumConf()
     yumconf.yumvar = startupconf.yumvar
     yumconf.populate(startupconf._parser, 'main')
-
-    # Apply the installroot to directory options, substitutes variables.
-    def _apply_installroot(yumconf, option):
-        path = getattr(yumconf, option)
-        ir_path = yumconf.installroot + path
-        ir_path = ir_path.replace('//', '/') # os.path.normpath won't fix this and
-                                             # it annoys me
-        ir_path = varReplace(ir_path, yumconf.yumvar)
-        setattr(yumconf, option, ir_path)
-
     yumconf.logdir = logdir_fit(yumconf.logdir)
-    for option in ('cachedir', 'logdir', 'persistdir'):
-        _apply_installroot(yumconf, option)
+    for opt in ('cachedir', 'logdir', 'persistdir'):
+        yumconf.prepend_installroot(opt)
+        yumconf._var_replace(opt)
 
     # Add in some extra attributes which aren't actually configuration values
     yumconf.uid = 0

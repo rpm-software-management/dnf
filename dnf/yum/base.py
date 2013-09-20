@@ -24,7 +24,7 @@ from config import ParsingError, ConfigParser
 from constants import *
 from dnf import const, queries, sack
 from i18n import to_unicode, to_str, exception2msg
-from parser import ConfigPreProcessor, varReplace
+from parser import ConfigPreProcessor
 from weakref import proxy as weakref
 
 import StringIO
