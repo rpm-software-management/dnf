@@ -249,14 +249,7 @@ class TestCase(unittest.TestCase):
         return self.assertTrue(string.startswith(what))
 
 class ResultTestCase(TestCase):
-    def assertResult(self, base, pkgs):
-        """Check whether the system contains the given pkgs.
-
-        pkgs must be present. Any other pkgs result in an error. Pkgs are
-        present if they are in the rpmdb and are not REMOVEd or they are
-        INSTALLed.
-        """
-
+    def _get_installed(self, base):
         try:
             base.build_transaction()
         except dnf.exceptions.DepsolveError:
@@ -265,7 +258,17 @@ class ResultTestCase(TestCase):
         installed = set(dnf.queries.installed_by_name(base.sack, None))
         map(installed.remove, base._transaction.remove_set)
         installed.update(base._transaction.install_set)
-        self.assertItemsEqual(installed, pkgs)
+        return installed
+
+    def assertResult(self, base, pkgs):
+        """Check whether the system contains the given pkgs.
+
+        pkgs must be present. Any other pkgs result in an error. Pkgs are
+        present if they are in the rpmdb and are not REMOVEd or they are
+        INSTALLed.
+        """
+
+        self.assertItemsEqual(self._get_installed(base), pkgs)
 
     def installed_removed(self, base):
         try:
