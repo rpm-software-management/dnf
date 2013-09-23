@@ -25,7 +25,6 @@ from constants import *
 from dnf import const, queries, sack
 from i18n import to_unicode, to_str, exception2msg
 from parser import ConfigPreProcessor, varReplace
-from urlgrabber.grabber import URLGrabError
 from weakref import proxy as weakref
 
 import StringIO
@@ -61,8 +60,6 @@ import rpmsack
 import signal
 import time
 import types
-import urlgrabber
-import urlgrabber.progress
 import string
 import librepo
 
@@ -982,74 +979,6 @@ class Base(object):
             self.history.end(rpmdbv, return_code)
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
-    def verifyPkg(self, fo, po, raiseError):
-        """Check that the checksum of a remote package matches what we
-        expect it to be.  If the checksum of the package file is
-        wrong, and the file is also larger than expected, it cannot be
-        redeemed, so delete it.
-
-        :param fo: the file object of the package
-        :param po: the package object to verify
-        :param raiseError: if *raiseError* is 1, and the package
-           does not check out, a :class:`URLGrabError` will be raised.
-           Defaults to 0
-        :return: True if the package is verified successfully.
-           Otherwise, False will be returned, unless *raiseError* is
-           1, in which case a :class:`URLGrabError` will be raised
-        :raises: :class:`URLGrabError` if verification fails, and
-           *raiseError* is 1
-        """
-        if type(fo) is types.InstanceType:
-            fo = fo.filename
-
-        if fo != po.localPkg():
-            po.localpath = fo
-
-        if not po.verifyLocalPkg():
-            # if the file is wrong AND it is >= what we expected then it
-            # can't be redeemed. If we can, kill it and start over fresh
-            cursize = os.stat(fo)[6]
-            totsize = long(po.size)
-            if cursize >= totsize and not po.repo.md_only_cached:
-                # if the path to the file is NOT inside the cachedir then don't
-                # unlink it b/c it is probably a file:// url and possibly
-                # unlinkable
-                if fo.startswith(po.repo.cachedir):
-                    os.unlink(fo)
-
-            if raiseError:
-                msg = _("Package does not match intended download. "
-                        "Suggestion: run '%s --enablerepo=%s clean metadata'")
-                msg %= (const.PROGRAM_NAME, po.repo.id)
-                raise dnf.exceptions.RepoError(msg)
-            else:
-                return False
-
-
-        return True
-
-
-    def verifyChecksum(self, fo, checksumType, csum):
-        """Verify that the checksum of the given file matches the
-        given checksum.
-
-        :param fo: the file object to verify the checksum of
-        :param checksumType: the type of checksum to use
-        :parm csum: the checksum to check against
-        :return: 0 if the checksums match
-        :raises: :class:`URLGrabError` if there is an error performing
-           the checksums, or the checksums do not match
-        """
-        try:
-            filesum = misc.checksum(checksumType, fo)
-        except dnf.exceptions.MiscError, e:
-            raise URLGrabError(-3, _('Could not perform checksum'))
-
-        if filesum != csum:
-            raise URLGrabError(-1, _('Package does not match checksum'))
-
-        return 0
-
     def download_packages(self, pkglist, callback=None, callback_total=None):
         """Download the packages specified by the given list of
         package objects.
@@ -1060,7 +989,6 @@ class Base(object):
         :param callback_total: a callback to output messages about the
            download operation
         :return: a dictionary containing errors from the downloading process
-        :raises: :class:`URLGrabError`
         """
         def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
