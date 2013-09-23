@@ -29,7 +29,6 @@ import librepo
 import operator
 import os
 import shutil
-import urlgrabber.grabber
 import time
 import types
 
@@ -529,7 +528,7 @@ class Repo(dnf.yum.config.RepoConf):
                 'ssl_ca_cert': self.sslcacert,
                 'ssl_cert': self.sslclientcert,
                 'ssl_key': self.sslclientkey,
-                'user_agent': urlgrabber.grabber.default_grabber.opts.user_agent,
+                'user_agent': dnf.const.USER_AGENT,
                 'username': self.username,
                 'password': self.password,
                 }
