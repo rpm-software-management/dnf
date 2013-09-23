@@ -458,18 +458,6 @@ class YumOutput:
               time.strftime(' %d %T ', now)
         return ret
 
-    def failureReport(self, errobj):
-        """Perform failure output for failovers from urlgrabber
-
-        :param errobj: :class:`urlgrabber.grabber.CallbackObject`
-           containing information about the error
-        :raises: *errobj*.exception
-        """
-        self.logger.error('%s: %s', errobj.url, errobj.exception)
-        self.logger.error(_('Trying other mirror.'))
-        raise errobj.exception
-
-
     def simpleProgressBar(self, current, total, name=None):
         """Output the current status to the terminal using a simple
         status bar.
@@ -1488,13 +1476,7 @@ Transaction Summary
         else:
             progressbar = dnf.cli.progress.LibrepoCallbackAdaptor(fo=sys.stdout)
             self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
-
-        # setup our failure report for failover
-        freport = (self.failureReport,(),{})
-        failure_callback = freport
-
         self.repos.all.set_progress_bar(progressbar)
-        self.repos.all.set_failure_callback(failure_callback)
 
         # setup our depsolve progress callback
         dscb = DepSolveProgressCallBack(weakref(self))
