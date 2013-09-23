@@ -26,14 +26,12 @@ BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  systemd
-BuildRequires:  urlgrabber
 Requires:	libreport-filesystem
 Requires:	python-hawkey = %{hawkey_version}
 Requires:	python-iniparse
 Requires:	python-libcomps = %{libcomps_version}
 Requires:	python-librepo = %{librepo_version}
 Requires:	rpm-python
-Requires:	urlgrabber
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
