@@ -50,40 +50,31 @@ class MultiFileProgressMeter:
         self.last_size = 0
         self.rate = None
 
-    def __call__(self, text, total, done):
-        """This is the librepo callback entry point.
+    def progress(self, text, total, done):
+        """This is the librepo "progresscb" callback entry point.
+           text: the file identifier
+           total/done: current progress
         """
         now = time()
         total = int(total)
         done = int(done)
-        update_period = self.update_period
 
+        # update done_size
         if text not in self.state:
-            # start event
             self.state[text] = now, 0
             self.active.append(text)
         start, old = self.state[text]
-        if done != old:
-            # update event
-            self.state[text] = start, done
-            self.done_size += done - old
-            if text not in self.active:
-                self.active.append(text)
-                self.done_files -= 1 # resume
-            if done == total:
-                self.active.remove(text)
-                self.done_files += 1
-                self._end(text, total, now - start)
-                update_period = 0 # force update
+        self.state[text] = start, done
+        self.done_size += done - old
 
-        # update if enough time has elapsed
-        if self.active and now - self.last_time > update_period:
+        # update screen if enough time has elapsed
+        if now - self.last_time > self.update_period:
             if total > self.total_size:
                 self.total_size = total
             self._update(now)
 
     def _update(self, now):
-        if self.last_time:
+        if self.last_time and now > self.last_time:
             # update the average rate
             delta = now - self.last_time
             rate = (self.done_size - self.last_size)/delta
@@ -111,37 +102,51 @@ class MultiFileProgressMeter:
         bl = (left - 7)/2
         if bl > 8:
             # use part of the remaining space for progress bar
-            pct = self.done_size*100 / self.total_size
+            pct = min(self.done_size*100 / self.total_size, 99)
             n, p = divmod(self.done_size*bl*2 / self.total_size, 2)
             msg = ' %2d%% [%-*s]%s' % (pct, bl, '='*n + '-'*p, msg)
             left -= bl + 7
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def _end(self, text, size, tm):
-        """One of the files has just finished downloading.
+    def end(self, text):
+        """This is the librepo "endcb" callback entry point.
+           text: the file that just finished downloading
         """
+        now = time()
+
+        # update state
+        tm, size = self.state.pop(text)
+        tm = max(now - tm, 0.001)
+        self.active.remove(text)
+        self.done_files += 1
+
+        # enumerate
         if self.total_files > 1:
             text = '(%d/%d): %s' % (self.done_files, self.total_files, text)
 
         # average rate, file size, download time
         msg = ' %5sB/s | %5sB %9s    \n' % (
-            format_number(float(size)/(tm or 0.001)),
+            format_number(float(size)/tm),
             format_number(size),
             format_time(tm))
         left = _term_width() - len(msg)
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
+        # now there's a blank line. fill it if possible.
+        if self.active:
+            self._update(now)
+
 class LibrepoCallbackAdaptor(MultiFileProgressMeter):
     """Use it as single-file progress, too
     """
     def begin(self, text):
         self.text = text
-        self.start(1, 1)
-
-    def end(self):
-        pass
+        MultiFileProgressMeter.start(self, 1, 1)
 
     def librepo_cb(self, data, total, done):
-        self(self.text, total, done)
+        MultiFileProgressMeter.progress(self, self.text, total, done)
+
+    def end(self):
+        MultiFileProgressMeter.end(self, self.text)

@@ -357,7 +357,7 @@ class Repo(dnf.yum.config.RepoConf):
     def filelists_fn(self):
         return self.metadata.filelists_fn
 
-    def get_package_target(self, po, progress):
+    def get_package_target(self, po, cb):
         if not self._handle:
             dnf.util.ensure_dir(self.pkgdir)
             self._handle = self._handle_new_pkg_download()
@@ -367,7 +367,8 @@ class Repo(dnf.yum.config.RepoConf):
             logger.warn(_("unsupported checksum type: %s") % ctype)
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl,
-            True, progress, os.path.basename(po.relativepath), self._handle)
+            True, cb.progress, os.path.basename(po.relativepath), self._handle,
+            cb.end)
         target.po = po
         return target
 

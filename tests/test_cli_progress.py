@@ -34,9 +34,9 @@ class ProgressTest(unittest.TestCase):
             p = dnf.cli.progress.LibrepoCallbackAdaptor(fo)
             p.begin('dummy-text')
             for i in range(6):
+                now += 1.0
                 p.librepo_cb(None, 5, i)
                 self.assertEquals(len(fo.out), i + 1) # always update
-                now += 1.0
             p.end()
 
         # this is straightforward..
@@ -46,31 +46,7 @@ class ProgressTest(unittest.TestCase):
             'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
             'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
             'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
-            'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
-
-    def test_restart(self):
-        now = 1379406823.9
-        fo = MockStdout()
-        with mock.patch('dnf.cli.progress._term_width', return_value=60), \
-             mock.patch('dnf.cli.progress.time', lambda: now):
-
-            p = dnf.cli.progress.LibrepoCallbackAdaptor(fo)
-            p.begin('dummy-text')
-            for i in range(6):
-                p.librepo_cb(None, 2 if i < 3 else 5, i)
-                self.assertEquals(len(fo.out), i + 1) # always update
-                now += 1
-            p.end()
-
-        # when librepo downloads multiple metadata files, it changes the total
-        # size reported by the callback. we should calculate progress with
-        # the current total, and report both "finished" events.
-        self.assertEquals(fo.out, [
-            'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
-            'dummy-text 50% [=====     ] 1.0  B/s |   1  B     00:01 ETA\r',
-            'dummy-text                  1.0  B/s |   2  B     00:02    \n',
-            'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
-            'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
+            'dummy-text 99% [==========] 1.0  B/s |   5  B     00:00 ETA\r',
             'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
 
     def test_multi(self):
@@ -82,16 +58,14 @@ class ProgressTest(unittest.TestCase):
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
             p.start(2, 30)
             for i in range(11):
-                # emit 1 update, or <end> & update
-                n = len(fo.out) + 1 + (i == 10)
-                p('foo', 10.0, float(i))
-                self.assertEquals(len(fo.out), n)
+                p.progress('foo', 10.0, float(i))
+                self.assertEquals(len(fo.out), i*2 + 1)
+                if i == 10: p.end('foo')
                 now += 0.5
 
-                # on <end>, there should be no active dl
-                n = len(fo.out) + 1
-                p('bar', 20.0, float(i*2))
-                self.assertEquals(len(fo.out), n)
+                p.progress('bar', 20.0, float(i*2))
+                self.assertEquals(len(fo.out), i*2 + 2 + (i == 10 and 2))
+                if i == 10: p.end('bar')
                 now += 0.5
 
         # check "end" events
