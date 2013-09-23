@@ -507,12 +507,6 @@ class Repo(dnf.yum.config.RepoConf):
     def repomd_fn(self):
         return self.metadata.repomd_fn
 
-    def set_failure_callback(self, cb):
-        pass
-
-    def set_interrupt_callback(self, cb):
-        pass
-
     def set_progress_bar(self, progress):
         self._progress = progress
 
