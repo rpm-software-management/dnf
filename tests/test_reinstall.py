@@ -49,22 +49,22 @@ class Reinstall(support.ResultTestCase):
         self.assertEqual(self.goal.mock_calls, [mock.call.install(pkg)])
     
     def test_reinstall_notfound(self):
-        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self.yumbase.reinstall, 'non-existent')
         self.assertEqual(self.goal.mock_calls, [])
         
     def test_reinstall_notinstalled(self):
-        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self.yumbase.reinstall, 'lotus')
         self.assertEqual(self.goal.mock_calls, [])
         
     def test_reinstall_notavailable(self):
         pkgs = [support.PackageMatcher(name='hole')]
         
-        with self.assertRaises(dnf.exceptions.ReinstallInstallError) as context:
+        with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
             self.yumbase.reinstall('hole')
         
-        self.assertEquals(context.exception.failed_pkgs, pkgs)
+        self.assertEquals(context.exception.packages, pkgs)
         self.assertEqual(self.goal.mock_calls, [])
         
     def test_reinstall_notavailable_available(self):

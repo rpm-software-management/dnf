@@ -1900,8 +1900,9 @@ class Base(object):
         installed_pkgs = q.installed().run()
         available_nevra2pkg = queries.per_nevra_dict(q.available())
         if not installed_pkgs:
-            raise dnf.exceptions.ReinstallRemoveError(
-                _("Problem in reinstall: no package matched to remove"))
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in reinstall: no package matched to remove"),
+                available_nevra2pkg.values())
 
         cnt = 0
         for installed_pkg in installed_pkgs:
@@ -1916,7 +1917,7 @@ class Base(object):
         if cnt == 0:
             msg = _("Problem in reinstall: no package %s matched to install")
             msg %= ", ".join(str(pkg) for pkg in installed_pkgs)
-            raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=installed_pkgs)
+            raise dnf.exceptions.PackagesNotAvailableError(msg, installed_pkgs)
 
         return cnt
 

@@ -72,13 +72,12 @@ class MetadataError(Error):
 class MiscError(Error):
     pass
 
-class ReinstallError(Error):
-    pass
+class PackagesNotInstalledError(Error):
+    def __init__(self, value=None, packages=[]):
+        Error.__init__(self, value)
+        self.packages = packages
 
-class ReinstallRemoveError(ReinstallError):
-    pass
-
-class ReinstallInstallError(ReinstallError):
-    def __init__(self, value=None, failed_pkgs=[]):
-        ReinstallError.__init__(self, value)
-        self.failed_pkgs = failed_pkgs
+class PackagesNotAvailableError(Error):
+    def __init__(self, value=None, packages=[]):
+        Error.__init__(self, value)
+        self.packages = packages
