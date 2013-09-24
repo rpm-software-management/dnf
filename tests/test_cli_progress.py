@@ -46,7 +46,7 @@ class ProgressTest(unittest.TestCase):
             'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
             'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
             'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
-            'dummy-text 99% [==========] 1.0  B/s |   5  B     00:00 ETA\r',
+            'dummy-text100% [==========] 1.0  B/s |   5  B     00:00 ETA\r',
             'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
 
     def test_multi(self):
