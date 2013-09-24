@@ -104,9 +104,10 @@ class MultiFileProgressMeter:
         bl = (left - 7)/2
         if bl > 8:
             # use part of the remaining space for progress bar
-            pct = min(self.done_size*100 / self.total_size, 99)
+            pct = self.done_size*100 / self.total_size
             n, p = divmod(self.done_size*bl*2 / self.total_size, 2)
-            msg = ' %2d%% [%-*s]%s' % (pct, bl, '='*n + '-'*p, msg)
+            bar = '='*n + '-'*p
+            msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
             left -= bl + 7
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
