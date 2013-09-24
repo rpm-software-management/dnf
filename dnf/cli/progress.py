@@ -74,14 +74,16 @@ class MultiFileProgressMeter:
             self._update(now)
 
     def _update(self, now):
-        if self.last_time and now > self.last_time:
-            # update the average rate
-            delta = now - self.last_time
-            rate = (self.done_size - self.last_size)/delta
-            if self.rate is not None:
-                weight = min(delta/self.rate_average, 1)
-                rate = rate*weight + self.rate*(1 - weight)
-            self.rate = rate
+        if self.last_time:
+            delta_time = now - self.last_time
+            delta_size = self.done_size - self.last_size
+            if delta_time > 0 and delta_size > 0:
+                # update the average rate
+                rate = delta_size / delta_time
+                if self.rate is not None:
+                    weight = min(delta_time/self.rate_average, 1)
+                    rate = rate*weight + self.rate*(1 - weight)
+                self.rate = rate
         self.last_time = now
         self.last_size = self.done_size
 
