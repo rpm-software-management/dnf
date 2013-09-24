@@ -13,6 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
+from dnf.pycomp import is_py2str_py3bytes, unicode, basestring
 
 def dummy_wrapper(str):
     '''
@@ -168,22 +169,25 @@ def __utf8_ucp_width(ucs):
 
 def __utf8_iter_ints(msg):
     for byte in to_utf8(msg):
-        yield ord(byte)
+        if isinstance(byte, int):
+            yield byte
+        else:
+            yield ord(byte)
 def __utf8_iter_ucs(msg):
     uiter = __utf8_iter_ints(msg)
     for byte0 in uiter:
         if byte0 < 0x80:             # 0xxxxxxx
             yield (byte0, 1)
         elif (byte0 & 0xe0) == 0xc0: # 110XXXXx 10xxxxxx
-            byte1 = uiter.next()
+            byte1 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or
                 ((byte0 & 0xfe) == 0xc0)):                          # overlong?
                 yield (None, 2)
                 return
             yield ((((byte0 & 0x1f) << 6) | (byte1 & 0x3f)), 2)
         elif (byte0 & 0xf0) == 0xe0: # 1110XXXX 10Xxxxxx 10xxxxxx
-            byte1 = uiter.next()
-            byte2 = uiter.next()
+            byte1 = next(uiter)
+            byte2 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or ((byte2 & 0xc0) != 0x80) or
                 ((byte0 == 0xe0) and ((byte1 & 0xe0) == 0x80)) or   # overlong?
                 ((byte0 == 0xed) and ((byte1 & 0xe0) == 0xa0)) or   # surrogate?
@@ -194,9 +198,9 @@ def __utf8_iter_ucs(msg):
             yield ((((byte0 & 0x0f) << 12) | ((byte1 & 0x3f) << 6) |
                    (byte2 & 0x3f)), 3)
         elif (byte0 & 0xf8) == 0xf0: # 11110XXX 10XXxxxx 10xxxxxx 10xxxxxx
-            byte1 = uiter.next()
-            byte2 = uiter.next()
-            byte3 = uiter.next()
+            byte1 = next(uiter)
+            byte2 = next(uiter)
+            byte3 = next(uiter)
             if (((byte1 & 0xc0) != 0x80) or
                 ((byte2 & 0xc0) != 0x80) or
                 ((byte3 & 0xc0) != 0x80) or
@@ -344,7 +348,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
             if byte != ' ':
                 break
             count += 1
-        if byte not in ("-", "*", ".", "o", '\xe2'):
+        if byte not in (u"-", u"*", u".", u"o", u'\xe2'):
             return count, 0
         list_chr = utf8_width_chop(line[count:], 1)[1]
         if list_chr in ("-", "*", ".", "o",
@@ -355,12 +359,9 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
                 return count, count + 1 + nxt
         return count, 0
 
-    initial_indent = to_utf8(initial_indent)
-    subsequent_indent = to_utf8(subsequent_indent)
-
-    text = to_utf8(text).rstrip('\n')
-    lines = to_utf8(text).replace('\t', ' ' * 8).split('\n')
-
+    text = text.rstrip('\n')
+    lines = text.replace('\t', ' ' * 8).split('\n')
+    
     ret = []
     indent = initial_indent
     wrap_last = False
@@ -402,7 +403,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
             spcs = csab
         for word in words:
             if (not _utf8_width_le(width, line, word) and
-                utf8_width(line) > utf8_width(subsequent_indent)):
+                utf8_width(to_utf8(line)) > utf8_width(to_utf8(subsequent_indent))):
                 ret.append(line.rstrip(' '))
                 line = subsequent_indent + ' ' * spcs
             line += word
@@ -412,8 +413,8 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         ret.append(indent.rstrip(' '))
 
     if passed_unicode:
-        return map(to_unicode, ret)
-    return ret
+        return list(map(to_unicode, ret))
+    return list(map(to_utf8, ret))
 
 def utf8_text_fill(text, *args, **kwargs):
     """ Works like we want textwrap.fill() to work, uses utf-8 data and
@@ -426,9 +427,8 @@ def to_unicode(obj, encoding='utf-8', errors='replace'):
 
         Consider using the more general dnf.i18n.ucd().
     """
-    if isinstance(obj, basestring):
-        if not isinstance(obj, unicode):
-            obj = unicode(obj, encoding, errors)
+    if is_py2str_py3bytes(obj):
+        obj = unicode(obj, encoding, errors)
     return obj
 
 def to_utf8(obj, errors='replace'):

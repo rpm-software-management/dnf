@@ -51,9 +51,9 @@ class ProcessLock(object):
         return os.path.join(user_run_dir, fn)
 
     def _try_lock(self):
-        pid = str(os.getpid())
+        pid = str(os.getpid()).encode()
         try:
-            fd = os.open(self._target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0644)
+            fd = os.open(self._target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
             os.write(fd, pid)
             os.close(fd)
             return True

@@ -16,7 +16,10 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.yum.rpmsack
 from dnf.queries import installed_by_name

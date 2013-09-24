@@ -17,12 +17,17 @@
 
 from dnf.exceptions import RepoError
 from dnf.repo import Repo
-from tests import mock, support
+from tests import support
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 import dnf.repodict
 import operator
 import unittest
+from tests.support import PycompTestCase
 
-class TestMultiCall(unittest.TestCase):
+class TestMultiCall(PycompTestCase):
     def test_multi_call(self):
         l = dnf.repodict.MultiCallList(["one", "two", "three"])
         self.assertEqual(l.upper(), ["ONE", "TWO", "THREE"])
@@ -33,9 +38,9 @@ class TestMultiCall(unittest.TestCase):
         o2 = mock.Mock(x=5)
         l = dnf.repodict.MultiCallList([o1, o2])
         l.x = 5
-        self.assertEqual([5, 5], map(operator.attrgetter('x'), [o1, o2]))
+        self.assertEqual([5, 5], list(map(operator.attrgetter('x'), [o1, o2])))
 
-class TestRepoDict(unittest.TestCase):
+class TestRepoDict(PycompTestCase):
     def setUp(self):
         self.x  = support.MockRepo('x')
         self.xx = support.MockRepo('xx')

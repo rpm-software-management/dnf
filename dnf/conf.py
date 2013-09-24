@@ -34,10 +34,11 @@ goal is to:
 
 """
 
+from __future__ import absolute_import
 import dnf.const
 import os.path
-import util
-import yum.misc
+from . import util
+from .yum import misc
 
 class Cache(object):
     def __init__(self):
@@ -59,9 +60,9 @@ class Cache(object):
             self._cachedir = self._system_cachedir
         else:
             try:
-                user_prefix = yum.misc.getCacheDir()
+                user_prefix = misc.getCacheDir()
                 self._cachedir = self._retdir(user_prefix)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 self.logger.critical(_('Could not set cachedir: %s') % str(e))
 
     def _retdir(self, dir):

@@ -17,8 +17,9 @@
 
 import unittest
 import dnf
+from tests.support import PycompTestCase
 
-class APITest(unittest.TestCase):
+class APITest(PycompTestCase):
     def test_base(self):
         self.assertIsInstance(dnf.Base, type)
 

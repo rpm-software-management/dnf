@@ -18,14 +18,15 @@
 Classes and functions dealing with rpm package representations.
 """
 
+from __future__ import absolute_import
 import os.path
-import misc
+from . import misc
 import re
 import fnmatch
 import stat
 import dnf.rpmUtils.miscutils
 import dnf.exceptions
-from constants import *
+from .constants import *
 
 def comparePoEVR(po1, po2):
     """
@@ -129,11 +130,11 @@ def parsePackages(pkgs, usercommands, casematch=0,
             for pkg in pkgs:
                 mark = "%s%s" % (pkg.repo.id, pkg.pkgKey)
                 u[mark] = pkg
-            return u.values()
+            return list(u.values())
         matched    = pkgunique(matched)
         exactmatch = pkgunique(exactmatch)
     else:
-        raise ValueError, "Bad value for unique: %s" % unique
+        raise ValueError("Bad value for unique: %s" % unique)
     return exactmatch, matched, unmatched
 
 class FakeSack:

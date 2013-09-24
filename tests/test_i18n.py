@@ -18,24 +18,29 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 import locale
 import unittest
 import dnf.i18n
 import os
 import sys
+from dnf.pycomp import PY3
+from tests.support import PycompTestCase
 
 UC_TEXT          = u'Šířka' # means 'Width' in Czech
 UC_TEXT_OSERROR  = u'Soubor již existuje' # 'File already exists'
 STR_TEXT_OSERROR = 'Soubor již existuje'
 
 @mock.patch('locale.setlocale')
-class TestLocale(unittest.TestCase):
+class TestLocale(PycompTestCase):
     def test_setup_locale(self, mock_setlocale):
         dnf.i18n.setup_locale()
         self.assertTrue(2 <= mock_setlocale.call_count <= 3)
 
-class TestStdout(unittest.TestCase):
+class TestStdout(PycompTestCase):
     def test_setup_stdout(self):
         # No stdout output can be seen when sys.stdout is patched, debug msgs,
         # etc. included.
@@ -58,10 +63,11 @@ class TestStdout(unittest.TestCase):
         stream = dnf.i18n.UnicodeStream(fileobj, "ISO-8859-2")
         stream.write(UC_TEXT)
         output = fileobj.write.call_args[0][0]
-        self.assertEqual(output, '\xa9\xed\xf8ka')
+        self.assertEqual(output, b'\xa9\xed\xf8ka')
         self.assertEqual(len(output), len(UC_TEXT))
 
-class TestInput(unittest.TestCase):
+class TestInput(PycompTestCase):
+    @unittest.skipIf(PY3, "builtin input accepts unicode and bytes")
     def test_assumption(self):
         """ Test that raw_input() always fails on a unicode string with accented
             characters. If this is not the case we might not need i18n.input()
@@ -72,6 +78,7 @@ class TestInput(unittest.TestCase):
             # way, for instance when nosetests is run without the -s switch).
             self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
 
+    @unittest.skipIf(PY3, "in python3 there's no conversion in dnf.i18n.input")
     @mock.patch('sys.stdout')
     @mock.patch('__builtin__.raw_input', lambda x: x)
     def test_input(self, stdout):
@@ -85,20 +92,21 @@ class TestInput(unittest.TestCase):
 
         self.assertRaises(TypeError, dnf.i18n.ucd_input, "string")
 
-class TestConversion(unittest.TestCase):
+class TestConversion(PycompTestCase):
     @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
     def test_ucd(self, _unused):
         s = UC_TEXT.encode('utf8')
         # the assumption is this string can't be simply converted back to
         # unicode:
-        self.assertRaises(UnicodeDecodeError, unicode, s)
         u = dnf.i18n.ucd(s)
         self.assertEqual(u, UC_TEXT)
-
         # test a sample OSError, typically constructed with an error code and a
         # utf-8 encoded string:
         obj = OSError(17, 'Soubor již existuje')
-        # direct decode fails:
-        self.assertRaises(UnicodeDecodeError, unicode, obj)
+        if not PY3:
+            # in Python 3 string already in unicode
+            # direct decode fails:
+            self.assertRaises(UnicodeDecodeError, unicode, s)
+            self.assertRaises(UnicodeDecodeError, unicode, obj)
         expected = u"[Errno 17] %s" % UC_TEXT_OSERROR
         self.assertEqual(dnf.i18n.ucd(obj), expected)

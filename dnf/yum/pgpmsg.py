@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
-import struct, time, cStringIO, base64, types
+import struct, time, io, base64, types
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
@@ -39,7 +39,7 @@ except ImportError:
                 return md5.new()
             if algo == 'sha1':
                 return sha.new()
-            raise ValueError, "Bad checksum type"
+            raise ValueError("Bad checksum type")
 
 debug = None
 
@@ -317,10 +317,10 @@ def get_whole_number(msg, idx, numlen) :
 extracts a "whole number" field of length numlen from msg at index idx
 returns (<whole number>, new_idx) where the whole number is a long integer
 and new_idx is the index of the next element in the message"""
-    n = 0L
+    n = long(0)
     while numlen > 0 :
         b = (struct.unpack("B", msg[idx:idx+1]))[0]
-        n = n * 256L + long(b)
+        n = n * long(256) + long(b)
         idx = idx + 1
         numlen = numlen - 1
     return (n, idx)
@@ -403,7 +403,7 @@ def duration_to_str(s) :
 def map_to_str(m, vals) :
     slist = []
     # change to a list if it's a single value
-    if type(vals) != types.ListType and type(vals) != types.TupleType :
+    if not isinstance(vals, list) and not isinstance(vals, tuple):
         vals = list((vals,))
     for i in vals :
         if i in m :
@@ -455,7 +455,7 @@ class public_key(pgp_packet) :
 
     def key_id(self) :
         if self.version == 3 :
-            return pack_long(self.pk_rsa_mod & 0xffffffffffffffffL)
+            return pack_long(self.pk_rsa_mod & long(0xffffffffffffffff))
         elif self.version == 4 :
             return self.fingerprint()[-8:]
 
@@ -512,7 +512,7 @@ class public_key(pgp_packet) :
             raise RuntimeError("unknown public key algorithm %d at %d" % (self.pk_algo, idx_save))
 
     def __str__(self) :
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         sio.write(pgp_packet.__str__(self) + "\n")
         sio.write("version: " + str(self.version) + "\n")
         sio.write("timestamp: " + time.ctime(self.timestamp) + "\n")
@@ -627,7 +627,7 @@ class signature(pgp_packet) :
             idx = idx + sublen - 1
             return (subtype, expr), idx
         if subtype == SIG_SUB_TYPE_PREF_SYMM_ALGO or subtype == SIG_SUB_TYPE_PREF_HASH_ALGO or subtype == SIG_SUB_TYPE_PREF_COMP_ALGO or subtype == SIG_SUB_TYPE_KEY_FLAGS :
-            algo_list = map(lambda x : ord(x), list(msg[idx:idx+sublen-1]))
+            algo_list = [ord(x) for x in list(msg[idx:idx+sublen-1])]
             idx = idx + sublen - 1
             return (subtype, algo_list), idx
         if subtype == SIG_SUB_TYPE_REVOKE_KEY : # revocation key
@@ -847,7 +847,7 @@ class signature(pgp_packet) :
         return idx
 
     def __str__(self) :
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         sio.write(pgp_packet.__str__(self) + "\n")
         sio.write("version: " + str(self.version) + "\n")
         sio.write("type: " + sig_type_to_str[self.sig_type] + "\n")
@@ -886,7 +886,7 @@ class pgp_certificate(object):
         self.primary_user_id = -1 # index of the primary user id
 
     def __str__(self) :
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         sio.write("PGP Public Key Certificate v%d\n" % self.version)
         sio.write("Cert ID: %s\n" % str_to_hex(self.public_key.key_id()))
         sio.write("Primary ID: %s\n" % self.user_id)
@@ -1148,9 +1148,9 @@ in the message"""
             plen, idx = get_whole_int(msg, idx, 4)
             return b & CTB_PKT_MASK, plen, idx
         else :
-            raise Exception, 'partial message bodies are not supported by this version (%d)', b
+            raise Exception('partial message bodies are not supported by this version (%d)').with_traceback(b)
     else :
-        raise Exception, "unknown (not \"normal\") cypher type bit %d at byte %d" % (b, idx)
+        raise Exception("unknown (not \"normal\") cypher type bit %d at byte %d" % (b, idx))
 
 def crc24(msg) :
     crc24_init = 0xb704ce
@@ -1216,7 +1216,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
     in_block = 0
     in_data = 0
 
-    block_buf = cStringIO.StringIO()
+    block_buf = io.StringIO()
     for l in pgpkey_lines :
         if not in_block :
             if l == '-----BEGIN PGP PUBLIC KEY BLOCK-----' :
@@ -1242,7 +1242,7 @@ a PGP "certificate" includes a public key, user id(s), and signature.
 
             # check the checksum
             if csum != crc24(cert_msg) :
-                raise Exception, 'bad checksum on pgp message'
+                raise Exception('bad checksum on pgp message')
 
             # ok, the sum looks ok so we'll actually decode the thing
             pkt_list = decode(cert_msg)

@@ -16,7 +16,10 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 from dnf.cli.cli import YumOptionParser
 import optparse

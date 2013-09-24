@@ -18,7 +18,12 @@
 #
 
 from __future__ import absolute_import
-from tests import support, mock
+from __future__ import print_function
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
+from tests import support
 import dnf.comps
 import dnf.util
 import libcomps

@@ -14,7 +14,7 @@
 # Copyright 2005 Duke University
 # Parts Copyright 2007 Red Hat, Inc
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import dnf.transaction
 import rpm
 import os
@@ -23,10 +23,11 @@ import time
 import logging
 import types
 import sys
-from constants import *
-from i18n import _
-import misc
+from .constants import *
+from .i18n import _
+from . import misc
 import tempfile
+import collections
 
 class TransactionDisplay(object):
     # per-package events
@@ -123,7 +124,7 @@ class LoggingTransactionDisplay(TransactionDisplay):
 class RPMTransaction(object):
     def __init__(self, base, test=False, display=TransactionDisplay):
         self.display = display
-        if callable(display):
+        if isinstance(display, collections.Callable):
             self.display = display()
         self.base = base # base yum object b/c we need so much
         self.test = test # are we a test?
@@ -249,7 +250,7 @@ class RPMTransaction(object):
 
         try:
             self._ts_done = open(ts_done_fn, 'w')
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self.display.errorlog('could not open ts_done file: %s' % e)
             self._ts_done = None
             return False
@@ -264,7 +265,7 @@ class RPMTransaction(object):
         try:
             self._ts_done.write(msg)
             self._ts_done.flush()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
             self.display.errorlog('could not write to ts_done file: %s' % e)
@@ -299,7 +300,7 @@ class RPMTransaction(object):
                 self.display.filelog(package, msg)
 
         # check the pkg name out to make sure it matches
-        if type(package) in types.StringTypes:
+        if isinstance(package, basestring):
             name = package
         else:
             name = package.name
@@ -349,7 +350,7 @@ class RPMTransaction(object):
             if not os.path.exists(os.path.dirname(tsfn)):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             self.display.errorlog('could not open ts_all file: %s' % e)
             self._ts_done = None
             return
@@ -360,7 +361,7 @@ class RPMTransaction(object):
                 fo.write(msg)
             fo.flush()
             fo.close()
-        except (IOError, OSError), e:
+        except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
             self.display.errorlog('could not write to ts_all file: %s' % e)
@@ -417,7 +418,7 @@ class RPMTransaction(object):
         rpmloc = pkg.localPkg()
         try:
             self.fd = file(rpmloc)
-        except IOError, e:
+        except IOError as e:
             self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:
             if self.trans_running:

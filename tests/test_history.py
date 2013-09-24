@@ -16,11 +16,15 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.yum.history
 import hawkey
 import unittest
+from tests.support import PycompTestCase
 
 from dnf.queries import installed_by_name, available_by_name
 
@@ -33,7 +37,7 @@ class TestedHistory(dnf.yum.history.YumHistory):
     def _create_db_file(self):
         return None
 
-class History(unittest.TestCase):
+class History(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
         self.sack = self.yumbase.sack

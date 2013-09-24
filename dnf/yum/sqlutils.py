@@ -88,10 +88,10 @@ def Tokenize(str, whitespace=" \t\r\n", quotes="\"", escapes="\\"):
 
             buffer=buffer[1:]
     except IndexError:
-        raise TokenizeError, "Unexpected end of string"
+        raise TokenizeError("Unexpected end of string")
     
     if quote:
-        raise TokenizeError, "Unexpected end of string in quoted text"
+        raise TokenizeError("Unexpected end of string in quoted text")
 
     if curtoken!=None:
         tokens.append(curtoken)

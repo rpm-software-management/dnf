@@ -110,11 +110,11 @@ class MultiFileProgressMeter(object):
             format_number(self.done_size),
             format_time((self.total_size - self.done_size) / self.rate) if self.rate else '--:--')
         left = _term_width() - len(msg)
-        bl = (left - 7)/2
+        bl = (left - 7)//2
         if bl > 8:
             # use part of the remaining space for progress bar
             pct = self.done_size*100 / self.total_size
-            n, p = divmod(self.done_size*bl*2 / self.total_size, 2)
+            n, p = divmod(self.done_size*bl*2 // self.total_size, 2)
             bar = '='*n + '-'*p
             msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
             left -= bl + 7

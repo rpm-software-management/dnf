@@ -20,8 +20,9 @@ from tests import support
 import os.path
 import sys
 import unittest
+from tests.support import PycompTestCase
 
-class Sanity(unittest.TestCase):
+class Sanity(PycompTestCase):
     def test_sanity(self):
         assert(os.access(support.repo("@System.repo"), os.R_OK))
         sack = support.mock_sack()

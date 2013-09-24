@@ -24,8 +24,12 @@ import dnf.exceptions
 import librepo
 import os
 import tempfile
-import ConfigParser
-import StringIO
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+import io
+from dnf.pycomp import unicode
 
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
@@ -104,8 +108,8 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_dump(self):
         dump = self.repo.dump()
-        f = StringIO.StringIO(dump)
-        parser = ConfigParser.ConfigParser()
+        f = io.StringIO(unicode(dump))
+        parser = configparser.ConfigParser()
         parser.readfp(f)
         self.assertIn('r', parser.sections())
         opts = parser.options('r')

@@ -13,7 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Copyright 2003 Duke University
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import rpm
 import types
 import gzip
@@ -22,13 +22,15 @@ import sys
 import locale
 import signal
 
-from error import RpmUtilsError
-import transaction
+from .error import RpmUtilsError
+from . import transaction
 
-def compareEVR((e1, v1, r1), (e2, v2, r2)):
+def compareEVR(first, second):
     # return 1: a is newer than b
     # 0: a and b are the same version
     # -1: b is newer than a
+    (e1, v1, r1) = first
+    (e2, v2, r2) = second
     if e1 is None:
         e1 = '0'
     else:
@@ -59,7 +61,7 @@ def checkSig(ts, package):
     fdno = os.open(package, os.O_RDONLY)
     try:
         hdr = ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error as e:
         if str(e) == "public key not availaiable":
             value = 1
         if str(e) == "public key not available":
@@ -79,7 +81,7 @@ def checkSig(ts, package):
 
     try:
         os.close(fdno)
-    except OSError, e: # if we're not opened, don't scream about it
+    except OSError as e: # if we're not opened, don't scream about it
         pass
 
     ts.setVSFlags(currentflags) # put things back like they were before
@@ -145,7 +147,7 @@ def unique(s):
     except TypeError:
         del u  # move on to the next method
     else:
-        return u.keys()
+        return list(u.keys())
 
     # We can't hash all the elements.  Second fastest is to sort,
     # which brings the equal elements together; then duplicates are
@@ -223,8 +225,7 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         # TODO: someone implement me!
     #el
     if compr != 'gzip':
-        raise RpmUtilsError, \
-              'Unsupported payload compressor: "%s"' % compr
+        raise RpmUtilsError('Unsupported payload compressor: "%s"' % compr)
     f = gzip.GzipFile(None, 'rb', None, os.fdopen(fdno, 'rb', bufsize))
     while 1:
         tmp = f.read(bufsize)
@@ -236,20 +237,20 @@ def hdrFromPackage(ts, package):
     """hand back the rpm header or raise an Error if the pkg is fubar"""
     try:
         fdno = os.open(package, os.O_RDONLY)
-    except OSError, e:
-        raise RpmUtilsError, 'Unable to open file'
+    except OSError as e:
+        raise RpmUtilsError('Unable to open file')
 
     # XXX: We should start a readonly ts here, so we don't get the options
     # from the other one (sig checking, etc)
     try:
         hdr = ts.hdrFromFdno(fdno)
-    except rpm.error, e:
+    except rpm.error as e:
         os.close(fdno)
         msg = "RPM error opening package '%s': %s"
         raise RpmUtilsError(msg % (package, str(e)))
     if type(hdr) != rpm.hdr:
         os.close(fdno)
-        raise RpmUtilsError, "RPM Error opening Package (type)"
+        raise RpmUtilsError("RPM Error opening Package (type)")
 
     os.close(fdno)
     return hdr

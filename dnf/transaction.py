@@ -23,6 +23,7 @@ from dnf.yum.i18n import _
 import logging
 import operator
 import os
+from functools import reduce
 
 DOWNGRADE = 1
 ERASE     = 2

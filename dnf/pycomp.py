@@ -1,7 +1,7 @@
-# __init__.py
-# The toplevel DNF package.
+# pycomp.py
+# Python 2 and Python 3 compatibility module
 #
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2013  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,16 +18,39 @@
 # Red Hat, Inc.
 #
 
-import dnf.const
-__version__ = dnf.const.VERSION
+from sys import version_info
+from unittest import TestCase
 
-import dnf.yum.base
-Base = dnf.yum.base.Base
+if version_info.major >= 3:
+    PY3 = True
+    basestring = unicode = str
+    long = int
+    xrange = range
+    raw_input = input
+    def is_py2str_py3bytes(o):
+        return isinstance(o, bytes)
 
-# setup libraries
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
-urlparse.uses_fragment.append("media")
+    def is_py3bytes(o):
+        return isinstance(o, bytes)
 
+    class PycompDict(dict):
+        def iteritems(self):
+            return self.items()
+
+        def iterkeys(self):
+            return self.keys()
+
+        def itervalues(self):
+            return self.values()
+
+else:
+    from __builtin__ import unicode, basestring, long, xrange, raw_input
+    PY3 = False
+    def is_py2str_py3bytes(o):
+        return isinstance(o, str)
+
+    def is_py3bytes(o):
+        return False
+
+    class PycompDict(dict):
+        pass

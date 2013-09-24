@@ -17,8 +17,9 @@
 
 import dnf.yum.misc
 import unittest
+from tests.support import PycompTestCase
 
-class TestGenericHolder(unittest.TestCase):
+class TestGenericHolder(PycompTestCase):
     def test_merge_lists(self):
         gh = dnf.yum.misc.GenericHolder()
         gh2 = dnf.yum.misc.GenericHolder()

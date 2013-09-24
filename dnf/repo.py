@@ -46,7 +46,7 @@ def _mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
 def _subst2tuples(subst_dct):
-    return [(k, v) for (k, v) in subst_dct.iteritems()]
+    return [(k, v) for (k, v) in subst_dct.items()]
 
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):
@@ -187,7 +187,7 @@ class Repo(dnf.yum.config.RepoConf):
         return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def _exc2msg(self, librepo_exception):
-        exc_msg = librepo_exception[1]
+        exc_msg = librepo_exception.args[1]
         msg = "Problem with repo '%s': %s" % (self.id, exc_msg)
         return msg
 
@@ -236,7 +236,7 @@ class Repo(dnf.yum.config.RepoConf):
             return librepo.LRO_URLS, self.baseurl[0]
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
+            raise dnf.exceptions.RepoError(msg)
 
     def _no_mirror_setup_args(self):
         """Return handle URL setup arguments that are not a mirror.
@@ -251,7 +251,7 @@ class Repo(dnf.yum.config.RepoConf):
             url = self.baseurl
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
+            raise dnf.exceptions.RepoError(msg)
         return librepo.LRO_URLS, url
 
     def _replace_metadata(self, handle):
@@ -301,13 +301,12 @@ class Repo(dnf.yum.config.RepoConf):
                 logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
                 return False
             hashes = handle.metalink['hashes']
-            hashes = filter(lambda (hsh, val): hsh in _RECOGNIZED_CHKSUMS,
-                            hashes)
+            hashes = [hsh_val for hsh_val in hashes if hsh_val[0] in _RECOGNIZED_CHKSUMS]
             if len(hashes) < 1:
                 logger.debug("reviving: repo '%s' skipped, no usable hash.",
                              self.id)
                 return False
-            algos = map(operator.itemgetter(0), hashes)
+            algos = list(map(operator.itemgetter(0), hashes))
             chksums = dnf.yum.misc.Checksums(algos,
                                              ignore_missing=True,
                                              ignore_none=True)
@@ -341,7 +340,7 @@ class Repo(dnf.yum.config.RepoConf):
                 continue
             if not res and type(res) not in (type(False), type(0)):
                 res = ''
-            if type(res) == types.ListType:
+            if isinstance(res, list):
                 res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 

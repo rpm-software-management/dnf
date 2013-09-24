@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 from dnf.exceptions import CompsError
 
 import dnf.i18n
@@ -29,6 +30,7 @@ import libcomps
 import locale
 import operator
 import re
+from functools import reduce
 
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)

@@ -82,7 +82,7 @@ def _create_filehandler(logfile):
         dnf.util.touch(logfile)
         # By default, make logfiles readable by the user (so the reporting ABRT
         # user can attach root logfiles).
-        os.chmod(logfile, 0644)
+        os.chmod(logfile, 0o644)
     handler = logging.FileHandler(logfile)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
                                   "%b %d %H:%M:%S")

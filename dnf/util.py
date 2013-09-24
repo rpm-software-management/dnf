@@ -19,6 +19,7 @@
 #
 
 from __future__ import print_function
+from __future__ import absolute_import
 import dnf.const
 import hawkey
 import librepo
@@ -28,7 +29,8 @@ import subprocess
 import tempfile
 import time
 import types
-
+from functools import reduce
+from .pycomp import PycompDict, PY3, basestring
 """DNF Utilities.
 
 Generally these are not a part of the public DNF API.
@@ -43,7 +45,7 @@ def ensure_dir(dname):
         if not os.path.isdir(dname):
             raise IOError("%s is not a directory" % dname)
     else:
-        os.makedirs(dname, mode=0755)
+        os.makedirs(dname, mode=0o755)
 
 def empty(iterable):
     try:
@@ -56,7 +58,7 @@ def first(iterable):
     """Returns the first item from an iterable or None if it has no elements."""
     it = iter(iterable)
     try:
-        return it.next()
+        return next(it)
     except StopIteration:
         return None
 
@@ -76,7 +78,7 @@ def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
 def is_string_type(obj):
-    return type(obj) in types.StringTypes
+    return isinstance(obj, basestring)
 
 def lazyattr(attrname):
     """Decorator to get lazy attribute initialization.
@@ -112,7 +114,7 @@ def reason_name(reason):
         return "dep"
     if reason == hawkey.REASON_USER:
         return "user"
-    raise ValueError, "Unknown reason %d" % reason
+    raise ValueError("Unknown reason %d" % reason)
 
 def rm_rf(path):
     try:
@@ -164,7 +166,7 @@ class tmpdir(object):
     def __exit__(self, exc_type, exc_value, traceback):
         rm_rf(self.path)
 
-class Bunch(dict):
+class Bunch(PycompDict):
     """Dictionary with attribute accessing syntax.
 
     In DNF, prefer using this over dnf.yum.misc.GenericHolder.
@@ -186,7 +188,10 @@ def urlopen(absurl, **opts):
     """Open the specified absolute url, return a file object.
        'opts' argument is not used atm.
     """
-    fo = tempfile.TemporaryFile()
+    if PY3:
+        fo = tempfile.TemporaryFile(mode='w+', encoding='utf-8')
+    else:
+        fo = tempfile.TemporaryFile()
     librepo.download_url(absurl, fo.fileno(), default_handle)
     fo.seek(0)
     return fo

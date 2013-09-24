@@ -16,7 +16,11 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+from sys import version_info
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import binascii
 import dnf.const
@@ -29,7 +33,7 @@ import dnf.yum.constants
 import hawkey
 import os
 import rpm
-import unittest
+from tests.support import PycompTestCase
 
 class BaseTest(support.TestCase):
     def test_instance(self):
@@ -70,7 +74,7 @@ class BaseTest(support.TestCase):
         ts.close.assert_called_once_with()
 
 # test Base methods that need the sack
-class MockYumBaseTest(unittest.TestCase):
+class MockYumBaseTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
 
@@ -108,7 +112,7 @@ def mock_sack_fn():
 def ret_pkgid(self):
     return self.name
 
-class VerifyTransactionTest(unittest.TestCase):
+class VerifyTransactionTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
         self.yumbase._transaction = dnf.transaction.Transaction()
@@ -167,7 +171,7 @@ class InstalledMatchingTest(support.ResultTestCase):
         inst = self.yumbase._sltr_matches_installed(sltr)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
 
-class CleanTest(unittest.TestCase):
+class CleanTest(PycompTestCase):
     def test_clean_binary_cache(self):
         yumbase = support.MockYumBase("main")
         with mock.patch('os.access', return_value=True) as access,\

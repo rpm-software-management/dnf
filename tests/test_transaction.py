@@ -16,10 +16,13 @@
 #
 
 from __future__ import absolute_import
-from tests.mock import call
+
 import dnf.repo
 import dnf.transaction
-import tests.mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):
@@ -46,7 +49,7 @@ class TransactionItemTest(tests.support.TestCase):
 
     def test_propagated_reason(self):
         TI = dnf.transaction.TransactionItem
-        yumdb = tests.mock.Mock()
+        yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: 'dep'
 
         tsi = TI(dnf.transaction.INSTALL, installed='i1', reason='user')
@@ -57,7 +60,7 @@ class TransactionItemTest(tests.support.TestCase):
         self.assertEqual(tsi.propagated_reason(yumdb), 'dep')
 
         # test the call can survive if no reason is known:
-        yumdb = tests.mock.Mock()
+        yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: None
         self.assertEqual(tsi.propagated_reason(yumdb), 'unknown')
 
@@ -80,7 +83,7 @@ class TransactionTest(tests.support.TestCase):
 
     def test_iter(self):
         self.assertLength(list(self.ts), 4)
-        self.assertIsInstance(iter(self.ts).next(),
+        self.assertIsInstance(next(iter(self.ts)),
                               dnf.transaction.TransactionItem)
 
     def test_length(self):
@@ -113,6 +116,6 @@ class PopulateTSTest(tests.support.TestCase):
         old = tests.support.MockPackage("billy-1.1-1.x86_64.fc69", repo)
         ts.add_install(inst, [])
         ts.add_upgrade(upg, old, [])
-        rpm_ts = ts.populate_rpm_ts(tests.mock.Mock())
-        rpm_ts.assert_has_calls(call.addInstall(None, ts._tsis[0], 'i'))
-        rpm_ts.assert_has_calls(call.addInstall(None, ts._tsis[1], 'u'))
+        rpm_ts = ts.populate_rpm_ts(mock.Mock())
+        rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[0], 'i'))
+        rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[1], 'u'))

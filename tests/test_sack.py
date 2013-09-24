@@ -16,9 +16,12 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
-import StringIO
+import io
 import dnf.repo
 import dnf.sack
 import dnf.exceptions
@@ -75,7 +78,7 @@ class SackTest(support.TestCase):
 
 class SusetagsTest(support.TestCase):
     def susetags_test(self):
-        buf = StringIO.StringIO()
+        buf = io.StringIO()
         yumbase = support.MockYumBase("main")
         yumbase.sack.susetags_for_repo(buf, "main")
         buf.seek(0)

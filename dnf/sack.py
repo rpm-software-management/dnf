@@ -26,6 +26,7 @@ import logging
 import sys
 import dnf.package
 import dnf.queries
+import dnf.pycomp
 
 class SackVersion(object):
     def __init__(self):
@@ -37,7 +38,7 @@ class SackVersion(object):
 
     def __eq__(self, other):
         if other is None: return False
-        if type(other) in (type(''), type(u'')):
+        if isinstance(other, basestring):
             return str(self) == other
         if self._num != other._num: return False
         if self._chksum.digest() != other._chksum.digest(): return False
@@ -79,12 +80,12 @@ class Sack(hawkey.Sack):
 
     def susetags_for_repo(self, output, reponame):
         def output_reldeps(initstr, reldeps):
-            rlines = ['%s %s\n' % (initstr, str(r)) for r in reldeps]
+            rlines = [u'%s %s\n' % (initstr, str(r)) for r in reldeps]
             output.writelines(rlines)
 
-        output.write("=Ver: 2.0\n")
+        output.write(u"=Ver: 2.0\n")
         for p in dnf.queries.Query(self).filter(reponame=reponame):
-            nline = "=Pkg: %s %s %s %s\n" % (p.name, p.version, p.release, p.arch)
+            nline = u"=Pkg: %s %s %s %s\n" % (p.name, p.version, p.release, p.arch)
             output.write(nline)
             output_reldeps("=Prv:", p.provides)
             output_reldeps("=Req:", p.requires)

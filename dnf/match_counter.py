@@ -18,7 +18,11 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import print_function
+from functools import reduce
+from .pycomp import PycompDict
+
 WEIGHTS = {
     'name'		: 7,
     'summary'		: 4,
@@ -32,7 +36,7 @@ def _canonize_string_set(sset, length):
     l = [''] * (length - current) + sorted(sset)
     return l
 
-class MatchCounter(dict):
+class MatchCounter(PycompDict):
     """Map packages to which of their attributes matched in a search against
     what values.
 
@@ -96,7 +100,7 @@ class MatchCounter(dict):
         return set(map(lambda m: m[1], self[pkg]))
 
     def sorted(self, reverse=False, limit_to=None):
-        keys = limit_to if limit_to else self.iterkeys()
+        keys = limit_to if limit_to else self.keys()
         return sorted(keys, key=self._key_func(), reverse=reverse)
 
     def total(self):

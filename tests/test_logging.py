@@ -16,7 +16,10 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.const
 import dnf.logging
@@ -60,10 +63,10 @@ class TestLogging(support.TestCase):
 
     @staticmethod
     def _bench(logger):
-        logger.debug("d")
-        logger.info("i")
-        logger.warning("w")
-        logger.error("e")
+        logger.debug(u"d")
+        logger.info(u"i")
+        logger.warning(u"w")
+        logger.error(u"e")
 
     def test_level_conversion(self):
         self.assertRaises(AssertionError, dnf.logging._cfg_verbose_val2level, 11)
@@ -117,7 +120,7 @@ class TestLogging(support.TestCase):
         with open(logfile) as f:
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
-        self.assertSequenceEqual(msgs, [dnf.const.LOG_MARKER, 'i', 'c'])
+        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c'])
 
     def test_rpm_logging(self):
         # log everything to the console:
@@ -134,7 +137,7 @@ class TestLogging(support.TestCase):
         with open(logfile) as f:
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
-        self.assertSequenceEqual(msgs, [dnf.const.LOG_MARKER,
+        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER,
                                         'rpm transaction happens.'])
 
     def test_setup_only_once(self):

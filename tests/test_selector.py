@@ -16,12 +16,15 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.selector
-import unittest
+from tests.support import PycompTestCase
 
-class SelectorTest(unittest.TestCase):
+class SelectorTest(PycompTestCase):
     def setUp(self):
         self.sack = support.mock_sack()
 

@@ -16,8 +16,12 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
-import StringIO
+from sys import version_info as python_version
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
+import io
 import contextlib
 import dnf.comps
 import dnf.exceptions
@@ -31,6 +35,7 @@ import hawkey
 import hawkey.test
 import os
 import unittest
+from functools import reduce
 
 skip = unittest.skip
 
@@ -72,8 +77,8 @@ def installed_but(sack, *args):
 
 @contextlib.contextmanager
 def patch_std_streams():
-    with mock.patch('sys.stdout', new_callable=StringIO.StringIO) as stdout, \
-            mock.patch('sys.stderr', new_callable=StringIO.StringIO) as stderr:
+    with mock.patch('sys.stdout', new_callable=io.StringIO) as stdout, \
+            mock.patch('sys.stderr', new_callable=io.StringIO) as stderr:
         yield (stdout, stderr)
 
 # mock objects
@@ -261,7 +266,15 @@ class PackageMatcher(object):
 
 # test cases
 
-class TestCase(unittest.TestCase):
+if python_version.major < 3:
+    class PycompTestCase(unittest.TestCase):
+        pass
+else:
+    class PycompTestCase(unittest.TestCase):
+        def assertItemsEqual(self, item1, item2):
+            super().assertCountEqual(item1, item2)
+
+class TestCase(PycompTestCase):
     def assertFile(self, path):
         """Assert the given path is a file."""
         return self.assertTrue(os.path.isfile(path))
@@ -283,7 +296,8 @@ class ResultTestCase(TestCase):
             self.fail()
 
         installed = set(dnf.queries.installed_by_name(base.sack, None))
-        map(installed.remove, base._transaction.remove_set)
+        for r in base._transaction.remove_set:
+            installed.remove(r)
         installed.update(base._transaction.install_set)
         return installed
 

@@ -9,8 +9,8 @@
 #    can share transactions instead of creating new ones all over
 #
 
+from __future__ import absolute_import
 import rpm
-import miscutils
 
 read_ts = None
 ts = None
@@ -62,7 +62,7 @@ class TransactionWrapper(object):
         if attr in self._methods:
             return self.getMethod(attr)
         else:
-            raise AttributeError, attr
+            raise AttributeError(attr)
 
     def __iter__(self):
         return self.ts

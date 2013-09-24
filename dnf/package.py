@@ -170,12 +170,12 @@ class Package(hawkey.Package):
             it.
         """
         (chksum_type, chksum) = self.chksum
-        return (hawkey.chksum_name(chksum_type), binascii.hexlify(chksum))
+        return (hawkey.chksum_name(chksum_type), binascii.hexlify(chksum).decode())
 
     # yum compatibility method
     def verifyLocalPkg(self):
         if self.from_system:
-            raise ValueError, "Can not verify an installed package."
+            raise ValueError("Can not verify an installed package.")
         if self.from_cmdline:
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()

@@ -16,12 +16,16 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.match_counter
 import unittest
+from tests.support import PycompTestCase
 
-class MatchCounterTest(unittest.TestCase):
+class MatchCounterTest(PycompTestCase):
     def test_canonize_string_set(self):
         a = ['f', 'p']
         b = ['p']

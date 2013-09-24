@@ -18,8 +18,9 @@
 from dnf.rpmUtils.connection import RpmConnection
 import inspect
 import unittest
+from tests.support import PycompTestCase
 
-class TestConnection(unittest.TestCase):
+class TestConnection(PycompTestCase):
     def test_sanity(self):
         rpm = RpmConnection('/')
         ts = rpm.readonly_ts

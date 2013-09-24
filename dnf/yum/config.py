@@ -19,23 +19,29 @@
 Configuration parser and default values for yum.
 """
 
+from __future__ import absolute_import
 import os
 import sys
 import rpm
 import copy
-import urlparse
 import shlex
-from parser import ConfigPreProcessor, varReplace
+from .parser import ConfigPreProcessor, varReplace
 from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ParsingError
 from iniparse.compat import RawConfigParser as ConfigParser
 import dnf.rpmUtils.transaction
 import dnf.exceptions
 import types
-import misc
-from misc import read_in_items_from_dot_dir
+from . import misc
+from .misc import read_in_items_from_dot_dir
 import dnf.util
 import dnf.const
+from dnf.pycomp import is_py3bytes, basestring
+
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 class Option(object):
     """
@@ -84,7 +90,7 @@ class Option(object):
         if isinstance(value, basestring):
             try:
                 value = self.parse(value)
-            except ValueError, e:
+            except ValueError as e:
                 # Add the field name onto the error
                 raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
                                                                  value, str(e)))
@@ -283,7 +289,7 @@ class IntOption(Option):
         """
         try:
             val = int(s)
-        except (ValueError, TypeError), e:
+        except (ValueError, TypeError) as e:
             raise ValueError('invalid integer value')
         if self._range_max is not None and val > self._range_max:
             raise ValueError('out of range integer value')
@@ -359,7 +365,7 @@ class SecondsOption(Option):
 
         try:
             n = float(n)
-        except (ValueError, TypeError), e:
+        except (ValueError, TypeError) as e:
             raise ValueError('invalid value')
 
         if n < 0:
@@ -561,7 +567,7 @@ class BaseConfig(object):
 
         Do nothing about the keys that are not options.
         """
-        for (ovr_opt, ovr_val) in ovr_dict.iteritems():
+        for (ovr_opt, ovr_val) in ovr_dict.items():
             opt = self.optionobj(ovr_opt, exceptions=False)
             if opt is not None:
                 setattr(self, ovr_opt, ovr_val)
@@ -890,7 +896,7 @@ class YumConf(StartupConf):
                 continue
             if not res and type(res) not in (type(False), type(0)):
                 res = ''
-            if type(res) == types.ListType:
+            if isinstance(res, list):
                 res = ',\n   '.join(res)
             output = output + '%s = %s\n' % (attr, res)
 
@@ -982,7 +988,7 @@ def readStartupConfig(configfile, root):
     confpp_obj = ConfigPreProcessor(configfile)
     try:
         parser.readfp(confpp_obj)
-    except ParsingError, e:
+    except ParsingError as e:
         raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
     startupconf.populate(parser, 'main')
 
@@ -1035,7 +1041,7 @@ def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
     confpp_obj = ConfigPreProcessor(configfile)
     try:
         parser.readfp(confpp_obj)
-    except ParsingError, e:
+    except ParsingError as e:
         raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
     ret = {}
     for section in parser.sections():
@@ -1072,7 +1078,7 @@ def _getsysver(installroot, distroverpkg):
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
     try:
         idx = ts.dbMatch('provides', distroverpkg)
-    except TypeError, e:
+    except TypeError as e:
         # This is code for "cannot open rpmdb"
         # this is for pep 352 compliance on python 2.6 and above :(
         if sys.hexversion < 0x02050000:
@@ -1081,7 +1087,7 @@ def _getsysver(installroot, distroverpkg):
             else:
                 raise dnf.exceptions.Error("Error: " + str(e))
         raise dnf.exceptions.Error("Error: " + str(e))
-    except rpm.error, e:
+    except rpm.error as e:
         # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
         raise dnf.exceptions.Error("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
@@ -1090,10 +1096,12 @@ def _getsysver(installroot, distroverpkg):
         releasever = '$releasever'
     else:
         try:
-            hdr = idx.next()
+            hdr = next(idx)
         except StopIteration:
             raise dnf.exceptions.Error("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
         releasever = hdr['version']
+        if is_py3bytes(releasever):
+            releasever = str(releasever, "utf-8")
         del hdr
     del idx
     del ts

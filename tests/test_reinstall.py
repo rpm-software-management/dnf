@@ -16,11 +16,15 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.yum.base
 import hawkey
 import unittest
+from tests.support import PycompTestCase
 
 class Reinstall(support.ResultTestCase):
     def setUp(self):
@@ -40,7 +44,7 @@ class Reinstall(support.ResultTestCase):
         cnt = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
         self.assertEqual(cnt, 1)
 
-class ReinstallTest(unittest.TestCase):
+class ReinstallTest(PycompTestCase):
     def setUp(self):
         self._base = dnf.yum.base.Base()
         self._base._sack = support.mock_sack('main')

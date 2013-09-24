@@ -14,6 +14,8 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
+from dnf.pycomp import long
+
 def format_number(number, SI=0, space=' '):
     """Return a human-readable metric-like string representation
     of a number.
@@ -46,6 +48,9 @@ def format_number(number, SI=0, space=' '):
     depth = 0
     max_depth = len(symbols) - 1
 
+    if number is None:
+        number = 0.0
+
     # we want numbers between 0 and thresh, but don't exceed the length
     # of our list.  In that event, the formatting will be screwed up,
     # but it'll still show the right number.
@@ -53,7 +58,7 @@ def format_number(number, SI=0, space=' '):
         depth  = depth + 1
         number = number / step
 
-    if type(number) == type(1) or type(number) == type(1L):
+    if isinstance(number, int) or isinstance(number, long):
         format = '%i%s%s'
     elif number < 9.95:
         # must use 9.95 for proper sizing.  For example, 9.99 will be

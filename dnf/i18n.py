@@ -21,6 +21,7 @@ from __future__ import print_function
 import locale
 import os
 import sys
+from dnf.pycomp import PY3, is_py3bytes, unicode
 
 """
 Centralize i18n stuff here. Must be unittested.
@@ -65,7 +66,7 @@ def setup_locale():
         locale.setlocale(locale.LC_ALL, '')
         # set time to C so that we output sane things in the logs (#433091)
         locale.setlocale(locale.LC_TIME, 'C')
-    except locale.Error, e:
+    except locale.Error as e:
         # default to C locale if we get a failure.
         print('Failed to set locale, defaulting to C', file=sys.stderr)
         os.environ['LC_ALL'] = 'C'
@@ -92,18 +93,27 @@ def ucd_input(ucstring):
     """
     if not isinstance(ucstring, unicode):
         raise TypeError("input() accepts Unicode strings")
+    if PY3:
+        return input(ucstring)
     enc = sys.stdout.encoding if sys.stdout.encoding else 'utf8'
     s = ucstring.encode(enc, 'strict')
     return raw_input(s)
 
 def ucd(obj):
     """ Like the builtin unicode() but tries to use a reasonable encoding. """
-    if hasattr(obj, '__unicode__'):
-        # see the doc for the unicode() built-in. The logic here is: if obj
-        # implements __unicode__, let it take a crack at it, but handle the
-        # situation if it fails:
-        try:
-            return unicode(obj)
-        except UnicodeError:
-            pass
-    return unicode(str(obj), _guess_encoding())
+    if PY3:
+        if is_py3bytes(obj):
+            return str(obj, _guess_encoding())
+        elif isinstance(obj, str):
+            return obj
+        return str(obj)
+    else:
+        if hasattr(obj, '__unicode__'):
+            # see the doc for the unicode() built-in. The logic here is: if obj
+            # implements __unicode__, let it take a crack at it, but handle the
+            # situation if it fails:
+            try:
+                return unicode(obj)
+            except UnicodeError:
+                pass
+        return unicode(str(obj), _guess_encoding())

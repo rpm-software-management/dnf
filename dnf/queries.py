@@ -27,6 +27,7 @@ import dnf.selector
 from dnf.util import first, is_glob_pattern
 
 from dnf.yum.i18n import _
+from .pycomp import basestring
 
 def is_nevra(pattern):
     try:
@@ -99,7 +100,7 @@ class Subject(object):
             sltr.set_autoglob(name=nevra.name)
         if nevra.version is not None:
             evr = nevra.version
-            if nevra.epoch > 0:
+            if nevra.epoch is not None and nevra.epoch > 0:
                 evr = "%d:%s" % (nevra.epoch, evr)
             if nevra.release is None:
                 sltr.set(version=evr)
@@ -174,11 +175,11 @@ def _construct_result(sack, patterns, ignore_case,
         packages returned. Otherwise the query itself is returned (for instance
         to be further specified and then evaluated).
     """
-    if type(patterns) in types.StringTypes:
+    if isinstance(patterns, basestring):
         patterns = [patterns]
     elif patterns is None:
         patterns = []
-    glob = len(filter(is_glob_pattern, patterns)) > 0
+    glob = len(list(filter(is_glob_pattern, patterns))) > 0
 
     flags = []
     q = sack.query()
@@ -240,10 +241,10 @@ def by_name(sack, patterns, ignore_case=False, get_query=False):
     return _construct_result(sack, patterns, ignore_case, get_query=get_query)
 
 def by_file(sack, patterns, ignore_case=False, get_query=False):
-    if type(patterns) in types.StringTypes:
+    if isinstance(patterns, basestring):
         patterns = [patterns]
 
-    glob = len(filter(is_glob_pattern, patterns)) > 0
+    glob = len(list(filter(is_glob_pattern, patterns))) > 0
     flags = []
     q = sack.query()
     if ignore_case:
@@ -258,10 +259,10 @@ def by_file(sack, patterns, ignore_case=False, get_query=False):
     return q.run()
 
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
-    if type(patterns) in types.StringTypes:
+    if isinstance(patterns, basestring):
         patterns = [patterns]
     try:
-        reldeps = map(functools.partial(hawkey.Reldep, sack), patterns)
+        reldeps = list(map(functools.partial(hawkey.Reldep, sack), patterns))
     except hawkey.ValueException:
         return sack.query().filter(empty=True)
     q = sack.query()

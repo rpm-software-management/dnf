@@ -55,6 +55,7 @@ from dnf.cli.term import _term_width
 import locale
 
 import hawkey
+from dnf.pycomp import xrange, basestring, is_py3bytes
 
 try:
     assert max(2, 4) == 4
@@ -287,6 +288,10 @@ class YumTerm(object):
         # For any modern terminal, we should be able to just ignore
         # these, so strip them out.
         cap = self._ctigetstr(cap_name) or ''
+        if is_py3bytes(cap):
+            cap = str(cap, encoding=locale.getpreferredencoding())
+            re.sub(r'\$<\d+>[/*]?', '', cap)
+            return bytes(cap, locale.getpreferredencoding())
         return re.sub(r'\$<\d+>[/*]?', '', cap)
 
     def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
@@ -609,7 +614,7 @@ class YumOutput(object):
             if overflowed_columns:
                 #  Split the remaining spaces among each overflowed column
                 # equally
-                norm = total_width / overflowed_columns
+                norm = total_width // overflowed_columns
                 for d in xrange(0, cols):
                     if not data[d]:
                         continue
@@ -619,7 +624,7 @@ class YumOutput(object):
             #  Split the remaining spaces among each column equally, except the
             # last one. And put the rest into the remainder column
             cols -= 1
-            norm = total_width / cols
+            norm = total_width // cols
             for d in xrange(0, cols):
                 columns[d] += norm
             columns[remainder_column] += total_width - (cols * norm)
@@ -710,7 +715,7 @@ class YumOutput(object):
             columns = (-40, -22, -16) # Old default
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((na, pkg.evr, pkg.reponame), columns, hi_cols)
+        columns = list(zip((na, pkg.evr, pkg.reponame), columns, hi_cols))
         print(self.fmtColumns(columns, text_width=len))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -733,7 +738,7 @@ class YumOutput(object):
         envra = '%s%s' % (indent, str(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
-        columns = zip((envra, rid), columns, hi_cols)
+        columns = list(zip((envra, rid), columns, hi_cols))
         print(self.fmtColumns(columns, text_width=len))
 
     def fmtKeyValFill(self, key, val):
@@ -960,7 +965,7 @@ class YumOutput(object):
             if self.conf.defaultyes:
                 msg = _('Is this ok [Y/n]: ')
             try:
-                choice = dnf.i18n.input(msg)
+                choice = dnf.i18n.ucd_input(msg)
             except EOFError:
                 pass
             except KeyboardInterrupt:
@@ -992,8 +997,9 @@ class YumOutput(object):
         installed = self.sack.query().installed().name_dict()
         available = self.sack.query().available().name_dict()
 
+        import sys; sys.stdout.flush()
         d = {}
-        for pkg_name in itertools.chain(*zip(*sections)[1]):
+        for pkg_name in itertools.chain(*list(zip(*sections))[1]):
             if pkg_name in installed:
                 d[pkg_name] = installed[pkg_name][0]
             elif pkg_name in available:
@@ -1003,7 +1009,7 @@ class YumOutput(object):
     def _pkgs2col_lengths(self, sections, name_dict):
         nevra_lengths = {}
         repo_lengths = {}
-        for pkg_name in itertools.chain(*zip(*sections)[1]):
+        for pkg_name in itertools.chain(*list(zip(*sections))[1]):
             pkg = name_dict.get(pkg_name)
             if pkg is None:
                 continue
@@ -1443,7 +1449,7 @@ Transaction Summary
             while msgs:
                 current_msgs = msgs[:len(cols)]
                 out += '  '
-                out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
+                out += self.fmtColumns(list(zip(current_msgs, cols)), end=u'\n')
                 msgs = msgs[len(cols):]
 
         return out
@@ -1888,8 +1894,8 @@ Transaction Summary
                                  'o' : _('Upgraded'), 'n' : _('Downgraded')}
         _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
                                  'o' : _('Older'), 'n' : _('Newer')}
-        maxlen = max([len(x) for x in (_pkg_states_installed.values() +
-                                       _pkg_states_available.values())])
+        maxlen = max([len(x) for x in (list(_pkg_states_installed.itervalues()) +
+                                       list(_pkg_states_available.itervalues()))])
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,
@@ -2568,14 +2574,14 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if te_total == 0:
             percent = 0
         else:
-            percent = (te_current*100L)/te_total
+            percent = (te_current*long(100))/te_total
         self._out_event(te_current, te_total, ts_current, ts_total,
                         percent, process, pkgname, wid1)
 
     def _max_action_width(self):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
-            for val in self.action.values():
+            for val in self.action.itervalues():
                 wid_val = utf8_width(val)
                 if wid1 < wid_val:
                     wid1 = wid_val

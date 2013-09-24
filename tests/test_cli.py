@@ -16,7 +16,10 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.cli.cli
 import dnf.repo
@@ -25,6 +28,7 @@ import hawkey
 import optparse
 import os
 import unittest
+from tests.support import PycompTestCase
 
 INFOOUTPUT_OUTPUT="""\
 Name        : tour
@@ -49,7 +53,7 @@ VERSIONS_OUTPUT="""\
   Built    :  at 1970-01-01 00:00
 """
 
-class VersionStringTest(unittest.TestCase):
+class VersionStringTest(PycompTestCase):
     def test_print_versions(self):
         yumbase = support.MockYumBase()
         with mock.patch('sys.stdout') as stdout,\
@@ -59,7 +63,7 @@ class VersionStringTest(unittest.TestCase):
                            if mc[0] == 'write'])
         self.assertEqual(written, VERSIONS_OUTPUT)
 
-class YumBaseCliTest(unittest.TestCase):
+class YumBaseCliTest(PycompTestCase):
     def setUp(self):
         self._yumbase = dnf.cli.cli.YumBaseCli()
         self._yumbase._sack = support.mock_sack('main')
@@ -202,7 +206,7 @@ class YumBaseCliTest(unittest.TestCase):
                           if mc[0] == 'write'])
         self.assertEqual(written, INFOOUTPUT_OUTPUT)
 
-class CliTest(unittest.TestCase):
+class CliTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
@@ -232,7 +236,7 @@ class CliTest(unittest.TestCase):
                          dnf.repo.SYNC_ONLY_CACHE)
 
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
-class ConfigureTest(unittest.TestCase):
+class ConfigureTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
@@ -284,7 +288,7 @@ class ConfigureTest(unittest.TestCase):
         self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
         self.assertEqual(self.yumbase.conf.installroot, '/roots/dnf')
 
-class SearchTest(unittest.TestCase):
+class SearchTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase("search")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
@@ -300,7 +304,7 @@ class SearchTest(unittest.TestCase):
 
     def test_search(self):
         (stdout, pkgs) = self.patched_search(['lotus'])
-        pkg_names = map(str, pkgs)
+        pkg_names = list(map(str, pkgs))
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)
 

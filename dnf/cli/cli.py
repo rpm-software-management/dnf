@@ -22,6 +22,7 @@ Command line interface yum class and related.
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
 from dnf.cli import CliError
 from dnf.i18n import ucd
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
@@ -44,13 +45,15 @@ import hawkey
 import logging
 import operator
 import os
-import output
+from . import output
 import random
 import re
 import signal
 import sys
 import time
 import rpm
+from functools import reduce
+from dnf.pycomp import unicode
 
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
@@ -188,7 +191,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 errors = dnf.yum.misc.unique(problems[key])
                 for error in errors:
                     errstring += '  %s: %s\n' % (key, error)
-            raise dnf.exceptions.Error, errstring
+            raise dnf.exceptions.Error(errstring)
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
@@ -219,9 +222,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             elif result == 1:
                 ay = self.conf.assumeyes and not self.conf.assumeno
                 if not sys.stdin.isatty() and not ay:
-                    raise dnf.exceptions.Error, \
-                            _('Refusing to automatically import keys when running ' \
-                            'unattended.\nUse "-y" to override.')
+                    raise dnf.exceptions.Error(_('Refusing to automatically import keys when running ' \
+                            'unattended.\nUse "-y" to override.'))
 
                 # the callback here expects to be able to take options which
                 # userconfirm really doesn't... so fake it
@@ -229,7 +231,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             else:
                 # Fatal error
-                raise dnf.exceptions.Error, errmsg
+                raise dnf.exceptions.Error(errmsg)
 
         return 0
 
@@ -387,7 +389,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
     def upgrade_userlist_to(self, userlist):
         oldcount = self._goal.req_length()
-        map(self.upgrade_to ,userlist)
+        for l in userlist:
+            self.upgrade_to(l)
         cnt = self._goal.req_length() - oldcount
         if cnt > 0:
             msg = P_('%d package marked for upgrade',
@@ -522,7 +525,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             except dnf.exceptions.PackagesNotInstalledError:
                 self.logger.info(_('No match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False)
-            except dnf.exceptions.PackagesNotAvailableError, e:
+            except dnf.exceptions.PackagesNotAvailableError as e:
                 for ipkg in e.packages:
                     xmsg = ''
                     yumdb_info = self.yumdb.get_package(ipkg)
@@ -656,7 +659,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
         matches = []
         for spec in args:
             matches.extend(super(YumBaseCli, self). provides(spec))
-        map(lambda pkg: self.matchcallback_verbose(pkg, [], args), matches)
+        for pkg in matches:
+            self.matchcallback_verbose(pkg, [], args)
         self.conf.showdupesfromrepos = old_sdup
 
         if matches:
@@ -1000,7 +1004,7 @@ class Cli(object):
                     repolist.enable()
                 else:
                     repolist.disable()
-        except dnf.exceptions.ConfigError, e:
+        except dnf.exceptions.ConfigError as e:
             self.logger.critical(e)
             self.print_usage()
             sys.exit(1)
@@ -1205,14 +1209,14 @@ class Cli(object):
                         self.logger.warning(msg % opt)
                     setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
 
-        except dnf.exceptions.ConfigError, e:
+        except dnf.exceptions.ConfigError as e:
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
-        except IOError, e:
+        except IOError as e:
             e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
             self.logger.critical(_('Config Error: %s'), e)
             sys.exit(1)
-        except ValueError, e:
+        except ValueError as e:
             self.logger.critical(_('Options Error: %s'), e)
             sys.exit(1)
         for item in bad_setopt_tm:
@@ -1352,7 +1356,7 @@ class Cli(object):
         matched_needles = None
         limit = None
         if not self.base.conf.showdupesfromrepos:
-            limit = self.base.sack.query().filter(pkg=counter.iterkeys())
+            limit = self.base.sack.query().filter(pkg=counter.keys())
             limit = limit.filter(latest=True)
         for pkg in counter.sorted(reverse=True, limit_to=limit):
             if matched_needles != counter.matched_needles(pkg):
@@ -1420,7 +1424,7 @@ class YumOptionParser(OptionParser):
                          '--disableplugin', '--enableplugin', '--releasever',
                          '--setopt'),
                         args)
-        except ValueError, arg:
+        except ValueError as arg:
             self.print_help()
             print(_("\n\n%s: %s option requires an argument") % \
                       ('Command line error', arg), file=sys.stderr)
@@ -1488,7 +1492,7 @@ class YumOptionParser(OptionParser):
 
             if opts.color not in (None, 'auto', 'always', 'never',
                                   'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
-                raise ValueError, _("--color takes one of: auto, always, never")
+                raise ValueError(_("--color takes one of: auto, always, never"))
             elif opts.color is None:
                 if self.base.conf.color != 'auto':
                     self.base.term.reinit(color=self.base.conf.color)
@@ -1513,7 +1517,7 @@ class YumOptionParser(OptionParser):
                     excludelist = self.base.conf.exclude
                     excludelist.append(exclude)
                     self.base.conf.exclude = excludelist
-                except dnf.exceptions.ConfigError, e:
+                except dnf.exceptions.ConfigError as e:
                     self.logger.critical(e)
                     self.print_help()
                     sys.exit(1)
@@ -1521,7 +1525,7 @@ class YumOptionParser(OptionParser):
             if opts.rpmverbosity is not None:
                 self.base.conf.rpmverbosity = opts.rpmverbosity
 
-        except ValueError, e:
+        except ValueError as e:
             self.logger.critical(_('Options Error: %s'), e)
             self.print_help()
             sys.exit(1)
@@ -1687,10 +1691,10 @@ def _filtercmdline(novalopts, valopts, args):
 
         elif a in valopts:
             if len(args) < 1:
-                raise ValueError, a
+                raise ValueError(a)
             next = args.pop(0)
             if next[0] == '-':
-                raise ValueError, a
+                raise ValueError(a)
 
             out.extend([a, next])
 

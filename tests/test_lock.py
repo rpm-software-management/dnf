@@ -25,11 +25,17 @@ just a sanity check.
 from __future__ import absolute_import
 from dnf.exceptions import ProcessLockError, ThreadLockError
 
-import Queue
 import dnf.lock
 import dnf.util
 import multiprocessing
-import tests.mock as mock
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 import tests.support
 import threading
 
@@ -48,7 +54,7 @@ class OtherThread(ConcurrencyMixin, threading.Thread):
     def __init__(self, lock):
         ConcurrencyMixin.__init__(self, lock)
         threading.Thread.__init__(self)
-        self.queue = Queue.Queue(1)
+        self.queue = queue.Queue(1)
 
 class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
     def __init__(self, lock):

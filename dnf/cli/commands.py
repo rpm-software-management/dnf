@@ -329,7 +329,7 @@ class InstallCommand(Command):
         self.doneCommand(_("Setting up Install Process"))
         try:
             return self.base.installPkgs(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 class UpgradeCommand(Command):
@@ -482,7 +482,7 @@ class DistroSyncCommand(Command):
         self.doneCommand(_("Setting up Distribution Synchronization Process"))
         try:
             return self.base.distro_sync_userlist(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
@@ -556,7 +556,7 @@ class InfoCommand(Command):
         try:
             highlight = self.base.term.MODE['bold']
             ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
         else:
             update_pkgs = {}
@@ -737,7 +737,7 @@ class EraseCommand(Command):
         self.doneCommand(_("Setting up Remove Process"))
         try:
             return self.base.erasePkgs(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
     def needTs(self, basecmd, extcmds):
@@ -779,7 +779,7 @@ class GroupsCommand(Command):
 
         :return: a list containing the names of this command
         """
-        return ['groups', 'group'] + self.direct_commands.keys()
+        return ['groups', 'group'] + list(self.direct_commands.keys())
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -885,7 +885,7 @@ class GroupsCommand(Command):
             if cmd == 'remove':
                 return self.base.removeGroups(extcmds)
 
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 
@@ -1130,7 +1130,7 @@ class ProvidesCommand(Command):
         self.base.logger.debug("Searching Packages: ")
         try:
             return self.base.provides(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 class CheckUpdateCommand(Command):
@@ -1219,7 +1219,7 @@ class CheckUpdateCommand(Command):
                     self.base.updatesObsoletesList(obtup, 'obsoletes',
                                               columns=columns)
                 result = 100
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
         else:
             return result, []
@@ -1278,7 +1278,7 @@ class SearchCommand(Command):
         self.base.logger.debug(_("Searching Packages: "))
         try:
             return self.cli.search(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
     def needTs(self, basecmd, extcmds):
@@ -1346,7 +1346,7 @@ class DepListCommand(Command):
         self.doneCommand(_("Finding dependencies: "))
         try:
             return self.base.deplist(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
 
@@ -1416,11 +1416,11 @@ class RepoListCommand(Command):
             extcmds = extcmds[1:]
         else:
             arg = 'enabled'
-        extcmds = map(lambda x: x.lower(), extcmds)
+        extcmds = [x.lower() for x in extcmds]
 
         verbose = self.base.conf.verbose
 
-        repos = self.base.repos.values()
+        repos = list(self.base.repos.values())
         repos.sort(key=operator.attrgetter('id'))
         enabled_repos = self.base.repos.enabled()
         on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
@@ -1783,7 +1783,7 @@ class ReInstallCommand(Command):
         try:
             return self.base.reinstallPkgs(extcmds)
 
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [to_unicode(e)]
 
     def getSummary(self):
@@ -1856,7 +1856,7 @@ class DowngradeCommand(Command):
         self.doneCommand(_("Setting up Downgrade Process"))
         try:
             return self.base.downgradePkgs(extcmds)
-        except dnf.exceptions.Error, e:
+        except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
     def getSummary(self):
@@ -1998,7 +1998,7 @@ class VersionCommand(Command):
                         cols.append(("%s %s" % (_("Group-Installed:"), grp),
                                      str(data[2][grp])))
                         _append_repos(cols, data[3][grp])
-            except dnf.exceptions.Error, e:
+            except dnf.exceptions.Error as e:
                 return 1, [str(e)]
         if vcmd in ('available', 'all', 'group-available', 'group-all'):
             try:
@@ -2017,7 +2017,7 @@ class VersionCommand(Command):
                                      str(data[2][grp])))
                         if verbose:
                             _append_repos(cols, data[3][grp])
-            except dnf.exceptions.Error, e:
+            except dnf.exceptions.Error as e:
                 return 1, [str(e)]
 
         data = {'rid' : {}, 'ver' : {}}
@@ -2030,7 +2030,7 @@ class VersionCommand(Command):
         columns = (-columns[0], columns[1])
 
         for line in cols:
-            print(self.base.fmtColumns(zip(line, columns)))
+            print(self.base.fmtColumns(list(zip(line, columns))))
 
         return 0, ['version']
 
@@ -2139,7 +2139,7 @@ class HistoryCommand(Command):
             return 0, ['Rollback to current, nothing to do']
 
         mobj = None
-        for tid in self.base.history.old(range(old.tid + 1, last.tid + 1)):
+        for tid in self.base.history.old(list(range(old.tid + 1, last.tid + 1))):
             if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
                 if tid.altered_lt_rpmdb:
                     msg = "Transaction history is incomplete, before %u."

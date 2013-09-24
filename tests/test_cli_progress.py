@@ -18,13 +18,14 @@ import dnf.cli.progress
 from tests import mock
 import time
 import unittest
+from tests.support import PycompTestCase
 
 class MockStdout(object):
     def __init__(self): self.out = []
     def write(self, s): self.out.append(s)
     def flush(self): pass
 
-class ProgressTest(unittest.TestCase):
+class ProgressTest(PycompTestCase):
     def test_single(self):
         now = 1379406823.9
         fo = MockStdout()

@@ -19,16 +19,17 @@
 The Yum RPM software updater.
 """
 
+from __future__ import absolute_import
 from __future__ import print_function
-from config import ParsingError, ConfigParser
-from constants import *
+from .config import ParsingError, ConfigParser
+from .constants import *
 from dnf import const, queries, sack
-from i18n import to_unicode, to_str, exception2msg
-from parser import ConfigPreProcessor
+from .i18n import to_unicode, to_str, exception2msg
+from .parser import ConfigPreProcessor
 from weakref import proxy as weakref
 
-import StringIO
-import config
+import io
+from . import config
 import dnf.comps
 import dnf.conf
 import dnf.exceptions
@@ -48,20 +49,22 @@ import errno
 import functools
 import glob
 import hawkey
-import history
-import i18n
+from . import history
+from . import i18n
 import logging
-import misc
+from . import misc
 import os
 import operator
-import plugins
+from . import plugins
 import rpm
-import rpmsack
+from . import rpmsack
 import signal
 import time
 import types
 import string
 import librepo
+from functools import reduce
+from dnf.pycomp import unicode
 
 _ = i18n._
 P_ = i18n.P_
@@ -297,9 +300,9 @@ class Base(object):
         parser = ConfigParser()
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ParsingError as e:
             msg = str(e)
-            raise dnf.exceptions.ConfigError, msg
+            raise dnf.exceptions.ConfigError(msg)
 
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
@@ -327,7 +330,7 @@ class Base(object):
 
             try:
                 thisrepo = self.readRepoConfig(parser, section)
-            except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError), e:
+            except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError) as e:
                 self.logger.warning(e)
                 continue
             else:
@@ -386,9 +389,9 @@ class Base(object):
         repo = self.build_repo(section)
         try:
             repo.populate(parser, section, self.conf)
-        except ValueError, e:
+        except ValueError as e:
             msg = _('Repository %r: Error parsing config: %s' % (section,e))
-            raise dnf.exceptions.ConfigError, msg
+            raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
         if not repo.name:
@@ -627,18 +630,21 @@ class Base(object):
                 obs = goal.obsoleted_by_package(pkg)
                 reason = dnf.util.reason_name(goal.get_reason(pkg))
                 ts.add_install(pkg, obs, reason)
-                map(lambda pkg: self.ds_callback.pkg_added(pkg, 'od'), obs)
+                for pkg in obs:
+                    self.ds_callback.pkg_added(pkg, 'od')
             for pkg in goal.list_upgrades():
                 cnt += 1
                 group_fn = functools.partial(operator.contains, all_obsoleted)
                 obs, upgraded = dnf.util.group_by_filter(
                     group_fn, goal.obsoleted_by_package(pkg))
-                map(lambda pkg: self.ds_callback.pkg_added(pkg, 'od'), obs)
+                for pkg in obs:
+                    self.ds_callback.pkg_added(pkg, 'od')
                 if pkg.name in self.conf.installonlypkgs:
                     ts.add_install(pkg, obs)
                 else:
                     ts.add_upgrade(pkg, upgraded[0], obs)
-                    map(lambda pkg: self.ds_callback.pkg_added(pkg, 'ud'), upgraded)
+                    for pkg in upgraded:
+                        self.ds_callback.pkg_added(pkg, 'ud')
                 self.ds_callback.pkg_added(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1
@@ -709,8 +715,8 @@ class Base(object):
             for descr in tserrors:
                 errstring += '  %s\n' % to_unicode(descr)
 
-            raise dnf.exceptions.Error, errstring + '\n' + \
-                 self.errorSummary(errstring)
+            raise dnf.exceptions.Error(errstring + '\n' + \
+                 self.errorSummary(errstring))
 
         self.logger.info(_('Transaction test succeeded.'))
         self.logger.debug('Transaction test time: %0.3f' % (time.time() - tt_st))
@@ -787,7 +793,7 @@ class Base(object):
 
             try:
                 os.unlink(self._ts_save_file)
-            except (IOError, OSError), e:
+            except (IOError, OSError) as e:
                 pass
         self._ts_save_file = None
 
@@ -819,7 +825,7 @@ class Base(object):
             # to obtain the transaction lock. We can only try to see if a
             # particular element failed and if not, decide that is the
             # case.
-            if len(filter(lambda el: el.Failed(), self.ts)) > 0:
+            if len([el for el in self.ts if el.Failed()]) > 0:
                 errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
                 self.logger.debug(errstring)
                 return_code = 1
@@ -850,7 +856,7 @@ class Base(object):
                 fn = getattr(cb, i)
                 try:
                     misc.unlink_f(fn)
-                except (IOError, OSError), e:
+                except (IOError, OSError) as e:
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
 
@@ -925,7 +931,7 @@ class Base(object):
             csum = rpo.returnIdSum()
             if csum is not None:
                 yumdb_info.checksum_type = str(csum[0])
-                yumdb_info.checksum_data = str(csum[1])
+                yumdb_info.checksum_data = csum[1]
 
             if rpo.from_cmdline:
                 try:
@@ -1116,7 +1122,7 @@ class Base(object):
                 continue
             try:
                 misc.unlink_f(fn)
-            except OSError, e:
+            except OSError as e:
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
@@ -1140,7 +1146,7 @@ class Base(object):
             basename = os.path.join(self.cache_c.cachedir, repo.id)
             files.append(basename + ".solv")
             files.append(basename + "-filenames.solvx")
-        files = filter(lambda f: os.access(f, os.F_OK), files)
+        files = [f for f in files if os.access(f, os.F_OK)]
 
         return self._cleanFilelist('dbcache', files)
 
@@ -1184,7 +1190,7 @@ class Base(object):
         for item in filelist:
             try:
                 misc.unlink_f(item)
-            except OSError, e:
+            except OSError as e:
                 self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
                 continue
             else:
@@ -1263,7 +1269,7 @@ class Base(object):
                 key = (po.name, po.arch)
                 if key not in ndinst or po > ndinst[key]:
                     ndinst[key] = po
-            installed = dinst.values()
+            installed = list(dinst.values())
 
             avail = q
             if not showdups:
@@ -1299,8 +1305,7 @@ class Base(object):
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
-                    same_ver = filter(lambda pkg: pkg.evr == avail_pkg.evr,
-                                      installed_pkgs)
+                    same_ver = [pkg for pkg in installed_pkgs if pkg.evr == avail_pkg.evr]
                     if len(same_ver) > 0:
                         reinstall_available.append(avail_pkg)
                     else:
@@ -1400,7 +1405,8 @@ class Base(object):
         if dnf.util.is_glob_pattern(needle):
             fdict = {'%s__glob' % attr : needle}
         q = self.sack.query().filter(hawkey.ICASE, **fdict)
-        map(lambda pkg: counter.add(pkg, attr, needle), q.run())
+        for pkg in q.run():
+            counter.add(pkg, attr, needle)
         return counter
 
     def group_lists(self, uservisible, patterns):
@@ -1419,7 +1425,7 @@ class Base(object):
         available = []
 
         if not len(self.comps):
-            raise dnf.exceptions.CompsError, _('No group data available for configured repositories')
+            raise dnf.exceptions.CompsError(_('No group data available for configured repositories'))
 
         if patterns is None:
             grps = self.comps.groups
@@ -1437,7 +1443,7 @@ class Base(object):
     def group_remove(self, grp_spec):
         groups = self.comps.groups_by_pattern(grp_spec)
         if not groups:
-            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
 
         cnt = 0
         for pkg in (pkg for grp in groups for pkg in grp.packages):
@@ -1456,7 +1462,7 @@ class Base(object):
         """
         thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
-            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
 
         for thisgroup in thesegroups:
             thisgroup.toremove = False
@@ -1525,11 +1531,11 @@ class Base(object):
         """
 
         if not self.comps.has_group(grpid):
-            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
 
         thesegroups = self.comps.groups_by_pattern(grpid)
         if not thesegroups:
-            raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
+            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
 
         for thisgroup in thesegroups:
             thisgroup.selected = False
@@ -1600,7 +1606,7 @@ class Base(object):
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
         #  or packagename
-        if type(depstring) == types.TupleType:
+        if isinstance(depstring, tuple):
             (depname, depflags, depver) = depstring
         else:
             depname = depstring
@@ -1613,10 +1619,10 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.Error, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.Error(_('Invalid version flag from: %s') % str(depstring))
                     depflags = SYMBOLFLAGS[flagsymbol]
 
-        return self.pkgSack.getProvides(depname, depflags, depver).keys()
+        return list(self.pkgSack.getProvides(depname, depflags, depver).keys())
 
     def returnPackageByDep(self, depstring):
         """Return the best, or first, package object that provides the
@@ -1630,20 +1636,20 @@ class Base(object):
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
-        raise NotImplementedError, "not implemented in hawkey" # :hawkey
+        raise NotImplementedError("not implemented in hawkey") # :hawkey
         errstring = depstring
-        if type(depstring) not in types.StringTypes:
+        if isinstance(depstring, basestring):
             errstring = str(depstring)
 
         try:
             pkglist = self.returnPackagesByDep(depstring)
         except dnf.exceptions.Error:
-            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
 
         return result
 
@@ -1663,7 +1669,7 @@ class Base(object):
         #  either it is 'dep (some operator) e:v-r'
         #  or /file/dep
         #  or packagename
-        if type(depstring) == types.TupleType:
+        if isinstance(depstring, tuple):
             (depname, depflags, depver) = depstring
         else:
             depname = depstring
@@ -1676,10 +1682,10 @@ class Base(object):
                 if len(dep_split) == 3:
                     depname, flagsymbol, depver = dep_split
                     if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.Error, _('Invalid version flag from: %s') % str(depstring)
+                        raise dnf.exceptions.Error(_('Invalid version flag from: %s') % str(depstring))
                     depflags = SYMBOLFLAGS[flagsymbol]
 
-        return self.rpmdb.getProvides(depname, depflags, depver).keys()
+        return list(self.rpmdb.getProvides(depname, depflags, depver).keys())
 
     def returnInstalledPackageByDep(self, depstring):
         """Return the best, or first, installed package object that provides the
@@ -1693,20 +1699,20 @@ class Base(object):
            fulfil the given dependency can be found
         """
         # we get all sorts of randomness here
-        raise NotImplementedError, "not implemented in hawkey" # :hawkey
+        raise NotImplementedError("not implemented in hawkey") # :hawkey
         errstring = depstring
-        if type(depstring) not in types.StringTypes:
+        if not isinstance(depstring, basestring):
             errstring = str(depstring)
 
         try:
             pkglist = self.returnInstalledPackagesByDep(depstring)
         except dnf.exceptions.Error:
-            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
 
         ps = ListPackageSack(pkglist)
         result = self._bestPackageFromList(ps.returnNewestByNameArch())
         if result is None:
-            raise dnf.exceptions.Error, _('No Package found for %s') % errstring
+            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
 
         return result
 
@@ -1743,8 +1749,10 @@ class Base(object):
         if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
             q = subj.get_best_query(self.sack)
             already_inst, available = self._query_matches_installed(q)
-            map(msg_installed, already_inst)
-            map(self._goal.install, available)
+            for i in already_inst:
+                msg_installed(i)
+            for a in available:
+                self._goal.install(a)
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
@@ -1764,7 +1772,8 @@ class Base(object):
         subj = queries.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
             q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
-            map(self._goal.install, q)
+            for pkg in q:
+                self._goal.install(pkg)
             return len(q)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack, forms=forms)
@@ -2109,7 +2118,7 @@ class Base(object):
                 opts = repo.urlgrabber_opts()
             rawkey = dnf.util.urlopen(url, **opts).read()
 
-        except IOError, e:
+        except IOError as e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
                                       to_unicode(str(e)))
 
@@ -2124,12 +2133,12 @@ class Base(object):
                 opts = repo.urlgrabber_opts()
                 sigfile = dnf.util.urlopen(url, **opts)
 
-            except IOError, e:
+            except IOError as e:
                 sigfile = None
 
             if sigfile:
                 if not misc.valid_detached_sig(sigfile,
-                                    StringIO.StringIO(rawkey), repo.gpgcadir):
+                                    io.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
                     raise dnf.exceptions.Error(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
@@ -2141,7 +2150,7 @@ class Base(object):
         # Parse the key
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
-        except ValueError, e:
+        except ValueError as e:
             raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
                                       (url, to_unicode(str(e))))
         keys = []
@@ -2150,8 +2159,9 @@ class Base(object):
             for info in ('keyid', 'timestamp', 'userid',
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
-                    raise dnf.exceptions.Error, \
-                      _('GPG key parsing failed: key does not have value %s') + info
+                    raise dnf.exceptions.Error(
+                        _('GPG key parsing failed: key does not have value %s') + info
+                    )
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
             thiskey['valid_sig'] = valid_sig
@@ -2256,12 +2266,12 @@ class Base(object):
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
-                    raise dnf.exceptions.Error, _prov_key_data(msg)
+                    raise dnf.exceptions.Error(_prov_key_data(msg))
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
 
         if not key_installed and user_cb_fail:
-            raise dnf.exceptions.Error, _("Didn't install any keys")
+            raise dnf.exceptions.Error(_("Didn't install any keys"))
 
         if not key_installed:
             msg = _('The GPG keys listed for the "%s" repository are ' \
@@ -2269,7 +2279,7 @@ class Base(object):
                   'package.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % repo.name
-            raise dnf.exceptions.Error, _prov_key_data(msg)
+            raise dnf.exceptions.Error(_prov_key_data(msg))
 
         # Check if the newly installed keys helped
         result, errmsg = self.sigCheckPkg(po)
@@ -2277,7 +2287,7 @@ class Base(object):
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             self.logger.info(msg)
             errmsg = to_unicode(errmsg)
-            raise dnf.exceptions.Error, _prov_key_data(errmsg)
+            raise dnf.exceptions.Error(_prov_key_data(errmsg))
 
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
         """
@@ -2357,7 +2367,7 @@ class Base(object):
                 result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
-                    raise dnf.exceptions.Error, _prov_key_data(msg)
+                    raise dnf.exceptions.Error(_prov_key_data(msg))
                 self.logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
@@ -2374,7 +2384,7 @@ class Base(object):
 
         if not key_installed and user_cb_fail:
             msg = _("Didn't install any keys for repo %s") % repo
-            raise dnf.exceptions.Error, _prov_key_data(msg)
+            raise dnf.exceptions.Error(_prov_key_data(msg))
 
         if not key_installed:
             msg = \
@@ -2382,7 +2392,7 @@ class Base(object):
                   'already installed but they are not correct.\n' \
                   'Check that the correct key URLs are configured for ' \
                   'this repository.') % (repo.name)
-            raise dnf.exceptions.Error, _prov_key_data(msg)
+            raise dnf.exceptions.Error(_prov_key_data(msg))
 
     def getKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given

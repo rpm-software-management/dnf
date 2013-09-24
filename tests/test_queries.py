@@ -20,6 +20,7 @@ from tests import support
 import dnf.queries
 import hawkey
 import unittest
+from tests.support import PycompTestCase
 
 class QueriesTest(support.TestCase):
     def test_duplicities(self):
@@ -94,11 +95,11 @@ class SubjectTest(support.TestCase):
             get_best_selector(self.sack)
         self.assertLength(sltr.matches(), 1)
 
-class DictsTest(unittest.TestCase):
+class DictsTest(PycompTestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
         pkgs = dnf.queries.by_name(sack, "lotus")
         dct = dnf.queries.per_nevra_dict(pkgs)
-        self.assertItemsEqual(dct.iterkeys(),
+        self.assertItemsEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
-        self.assertItemsEqual(dct.itervalues(), pkgs)
+        self.assertItemsEqual(dct.values(), pkgs)

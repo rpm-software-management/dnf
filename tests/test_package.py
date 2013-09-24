@@ -16,7 +16,10 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.package
 import dnf.queries
@@ -24,13 +27,15 @@ import hawkey
 import os.path
 import unittest
 import binascii
+from tests.support import PycompTestCase
+from dnf.pycomp import long
 
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
 TOUR_SHA256 = binascii.unhexlify("ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62")
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
-class PackageTest(unittest.TestCase):
+class PackageTest(PycompTestCase):
     def setUp(self):
         yumbase = support.MockYumBase("main")
         self.sack = yumbase.sack
@@ -47,7 +52,7 @@ class PackageTest(unittest.TestCase):
         self.assertTrue(pkg.from_system)
         self.assertFalse(self.pkg.from_system)
 
-    @mock.patch("dnf.package.Package.rpmdbid", 3l)
+    @mock.patch("dnf.package.Package.rpmdbid", long(3))
     def test_idx(self):
         """ pkg.idx is an int. """
         pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]

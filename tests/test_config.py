@@ -15,10 +15,14 @@
 # Red Hat, Inc.
 #
 
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 import unittest
 from dnf.yum.config import Option, BaseConfig, YumConf
 from dnf.conf import Cache, GoalParameters
+from tests.support import PycompTestCase
 
 class OptionTest(unittest.TestCase):
     class Cfg(BaseConfig):
@@ -35,7 +39,7 @@ class OptionTest(unittest.TestCase):
         else:
             self.fail("option should be deleted now.")
 
-class CacheTest(unittest.TestCase):
+class CacheTest(PycompTestCase):
      @mock.patch('dnf.util.am_i_root', return_value=True)
      def test_root(self, unused_am_i_root):
          cache = Cache()
@@ -57,7 +61,7 @@ class CacheTest(unittest.TestCase):
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
          self.assertEqual(fn_getcachedir.call_count, 1)
 
-class YumConfTest(unittest.TestCase):
+class YumConfTest(PycompTestCase):
     def test_bugtracker(self):
         conf = YumConf()
         self.assertEqual(conf.bugtracker_url,
@@ -83,7 +87,7 @@ class YumConfTest(unittest.TestCase):
         conf.prepend_installroot('persistdir')
         self.assertEqual(conf.persistdir, '/mnt/root/var/lib/dnf')
 
-class GoalParametersTest(unittest.TestCase):
+class GoalParametersTest(PycompTestCase):
     def test_default(self):
         gp = GoalParameters()
         self.assertFalse(gp.allow_uninstall)

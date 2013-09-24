@@ -14,12 +14,13 @@
 
 """Various utility functions, and a utility class."""
 
+from __future__ import absolute_import
 import os
 import sys
 import time
 
 import dnf.yum
-from cli import *
+from .cli import *
 from dnf.yum.i18n import utf8_width, exception2msg, _
 from optparse import OptionGroup
 
@@ -71,7 +72,7 @@ def get_process_info(pid):
 
     try:
         pid = int(pid)
-    except ValueError, e:
+    except ValueError as e:
         return
 
     # Maybe true if /proc isn't mounted, or not Linux ... or something.

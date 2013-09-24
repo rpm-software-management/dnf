@@ -15,8 +15,12 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 import re
-import urlparse
+try:
+    import urlparse
+except ImportError:
+	import urllib.parse as urlparse
 import os.path
 
 import dnf.exceptions
@@ -102,7 +106,7 @@ class ConfigPreProcessor(object):
         # _pushfile will return None if he couldn't open the file
         fo = self._pushfile( url )
         if fo is None:
-            raise dnf.exceptions.ConfigError, 'Error accessing file: %s' % url
+            raise dnf.exceptions.ConfigError('Error accessing file: %s' % url)
 
     def readline( self, size=0 ):
         """
@@ -143,8 +147,7 @@ class ConfigPreProcessor(object):
                 if m:
                     url = m.group('url')
                     if len(url) == 0:
-                        raise dnf.exceptions.ConfigError, \
-                             'Error parsing config %s: include must specify file to include.' % (self.name)
+                        raise dnf.exceptions.ConfigError('Error parsing config %s: include must specify file to include.' % (self.name))
                     else:
                         # whooohoo a valid include line.. push it on the stack
                         fo = self._pushfile( url )
@@ -206,15 +209,14 @@ class ConfigPreProcessor(object):
             return None
         try:
             fo = dnf.util.urlopen(absurl)
-        except IOError, e:
+        except IOError as e:
             fo = None
         if fo is not None:
             self.name = absurl
             self._incstack.append( fo )
             self._alreadyincluded.append(includetuple)
         else:
-            raise dnf.exceptions.ConfigError, \
-                  'Error accessing file for config %s' % (absurl)
+            raise dnf.exceptions.ConfigError('Error accessing file for config %s' % (absurl))
 
         return fo
 

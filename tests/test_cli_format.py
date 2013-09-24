@@ -16,8 +16,9 @@
 
 from dnf.cli.format import format_time, format_number
 import unittest
+from tests.support import PycompTestCase
 
-class FormatTest(unittest.TestCase):
+class FormatTest(PycompTestCase):
     def test_format_time(self):
         self.assertEquals(format_time(None), '--:--')
         self.assertEquals(format_time(-1), '--:--')

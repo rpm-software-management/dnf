@@ -16,10 +16,14 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.util
 import unittest
+from dnf.pycomp import xrange
 
 class Slow(object):
     def __init__(self, val):

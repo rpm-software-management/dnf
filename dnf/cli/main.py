@@ -111,18 +111,18 @@ def _main(base, args):
     try:
         cli.configure(args)
         cli.check()
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
-    except dnf.exceptions.Error, e:
+    except dnf.exceptions.Error as e:
         return exFatal(e)
 
     # Try to open the current directory to see if we have
     # read and execute access. If not, chdir to /
     try:
         f = open(".")
-    except IOError, e:
+    except IOError as e:
         if e.errno == errno.EACCES:
             logger.critical(_('No read/execute access in current directory, moving to /'))
             os.chdir("/")
@@ -131,14 +131,14 @@ def _main(base, args):
 
     try:
         result, resultmsgs = cli.run()
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
-    except dnf.exceptions.Error, e:
+    except dnf.exceptions.Error as e:
         result = 1
         resultmsgs = [exception2msg(e)]
-    except IOError, e:
+    except IOError as e:
         return exIOError(e)
 
     # Act on the command/shell result
@@ -185,13 +185,13 @@ def _main(base, args):
     # Run the transaction
     try:
         return_code, resultmsgs = base.do_transaction()
-    except plugins.PluginYumExit, e:
+    except plugins.PluginYumExit as e:
         return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
-    except dnf.exceptions.Error, e:
+    except dnf.exceptions.Error as e:
         return exFatal(e)
-    except IOError, e:
+    except IOError as e:
         return exIOError(e)
 
     # rpm ts.check() failed.

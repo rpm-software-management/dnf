@@ -13,6 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # Copyright 2005 Duke University
 
+from __future__ import absolute_import
 import dnf.logging
 import os
 import glob
@@ -20,18 +21,18 @@ import imp
 import atexit
 import gettext
 import logging
-from constants import *
-import config 
-from config import ParsingError, ConfigParser
+from .constants import *
+from . import config
+from .config import ParsingError, ConfigParser
 import dnf.exceptions
-from parser import ConfigPreProcessor
+from .parser import ConfigPreProcessor
 
 from textwrap import fill
 import fnmatch
 
 from weakref import proxy as weakref
 
-from i18n import _, utf8_width
+from .i18n import _, utf8_width
 
 # TODO: expose rpm package sack objects to plugins (once finished)
 # TODO: allow plugins to use the existing config stuff to define options for
@@ -348,7 +349,7 @@ class YumPlugins:
         confpp_obj = ConfigPreProcessor(conffilename)
         try:
             parser.readfp(confpp_obj)
-        except ParsingError, e:
+        except ParsingError as e:
             raise dnf.exceptions.ConfigError("Couldn't parse %s: %s" % (conffilename,
                 str(e)))
         return parser

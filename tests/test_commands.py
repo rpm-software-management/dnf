@@ -16,13 +16,17 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 from tests import support
 import dnf.cli.commands
 import dnf.repo
 import unittest
+from tests.support import PycompTestCase
 
-class CommandsTest(unittest.TestCase):
+class CommandsTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockYumBase()
         self.cli = self.yumbase.mock_cli()

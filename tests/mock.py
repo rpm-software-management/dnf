@@ -616,7 +616,7 @@ class NonCallableMock(Base):
         self.call_args_list = _CallList()
         self.method_calls = _CallList()
 
-        for child in self._mock_children.values():
+        for child in self._mock_children.itervalues():
             if isinstance(child, _SpecState):
                 continue
             child.reset_mock()

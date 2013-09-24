@@ -21,6 +21,7 @@
 import fnmatch
 import dnf.util
 from dnf.exceptions import ConfigError, RepoError
+from dnf.pycomp import PycompDict
 
 class MultiCallList(list):
     def __init__(self, iterable):
@@ -31,15 +32,15 @@ class MultiCallList(list):
             def call_what(v):
                 method = getattr(v, what)
                 return method(*args, **kwargs)
-            return map(call_what, self)
+            return list(map(call_what, self))
         return fn
 
     def __setattr__(self, what, val):
         def setter(item):
             setattr(item, what, val)
-        return map(setter, self)
+        return list(map(setter, self))
 
-class RepoDict(dict):
+class RepoDict(PycompDict):
     def add(self, repo):
         id_ = repo.id
         if id_ in self:
