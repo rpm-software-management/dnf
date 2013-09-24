@@ -55,22 +55,22 @@ class ReinstallTest(unittest.TestCase):
         self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
     
     def test_reinstall_notfound(self):
-        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self._base.reinstall, 'non-existent')
         self.assertEqual(self._goal.mock_calls, [])
         
     def test_reinstall_notinstalled(self):
-        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self._base.reinstall, 'lotus')
         self.assertEqual(self._goal.mock_calls, [])
         
     def test_reinstall_notavailable(self):
         pkgs = [support.PackageMatcher(name='hole')]
         
-        with self.assertRaises(dnf.exceptions.ReinstallInstallError) as context:
+        with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
             self._base.reinstall('hole')
         
-        self.assertEquals(context.exception.failed_pkgs, pkgs)
+        self.assertEquals(context.exception.packages, pkgs)
         self.assertEqual(self._goal.mock_calls, [])
         
     def test_reinstall_notavailable_available(self):

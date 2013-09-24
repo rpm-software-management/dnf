@@ -514,11 +514,11 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.reinstall(arg)
-            except dnf.exceptions.ReinstallRemoveError:
+            except dnf.exceptions.PackagesNotInstalledError:
                 self.logger.info(_('No Match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False)
-            except dnf.exceptions.ReinstallInstallError, e:
-                for ipkg in e.failed_pkgs:
+            except dnf.exceptions.PackagesNotAvailableError, e:
+                for ipkg in e.packages:
                     xmsg = ''
                     yumdb_info = self.yumdb.get_package(ipkg)
                     if 'from_repo' in yumdb_info:
