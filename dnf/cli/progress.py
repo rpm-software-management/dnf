@@ -112,26 +112,27 @@ class MultiFileProgressMeter:
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def end(self, text):
+    def end(self, text, size):
         """This is the librepo "endcb" callback entry point.
            text: the file that just finished downloading
+           size: the file size
         """
-        now = time()
-
         # update state
-        tm, size = self.state.pop(text)
-        tm = max(now - tm, 0.001)
+        start, done = self.state.pop(text)
         self.active.remove(text)
         self.done_files += 1
+        self.done_size += size - done
 
         # enumerate
         if self.total_files > 1:
             text = '(%d/%d): %s' % (self.done_files, self.total_files, text)
 
         # average rate, file size, download time
+        now = time()
+        tm = max(now - start, 0.001)
         msg = ' %5sB/s | %5sB %9s    \n' % (
-            format_number(float(size)/tm),
-            format_number(size),
+            format_number(float(done) / tm),
+            format_number(done),
             format_time(tm))
         left = _term_width() - len(msg)
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
@@ -140,6 +141,29 @@ class MultiFileProgressMeter:
         # now there's a blank line. fill it if possible.
         if self.active:
             self._update(now)
+
+    def failure(self, text, err, size):
+        """This is the librepo "failurecb" callback entry point.
+           text: the file that just finished downloading
+           err: error message
+           size: the file size
+        """
+        # update state
+        if text in self.state:
+            start, done = self.state.pop(text)
+            self.active.remove(text)
+            size -= done
+        self.done_files += 1
+        self.done_size += size
+
+        # print the error message
+        msg = '[FAILED] %s: ' % text
+        self.fo.write('%s%-*s\n' % (msg, _term_width() - len(msg), err))
+        self.fo.flush()
+
+        # now there's a blank line. fill it if possible.
+        if self.active:
+            self._update(time())
 
 class LibrepoCallbackAdaptor(MultiFileProgressMeter):
     """Use it as single-file progress, too
@@ -152,4 +176,4 @@ class LibrepoCallbackAdaptor(MultiFileProgressMeter):
         MultiFileProgressMeter.progress(self, self.text, total, done)
 
     def end(self):
-        MultiFileProgressMeter.end(self, self.text)
+        MultiFileProgressMeter.end(self, self.text, 0)
