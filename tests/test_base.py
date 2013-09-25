@@ -152,12 +152,21 @@ class InstalledMatchingTest(support.ResultTestCase):
         self.yumbase = support.MockYumBase("main")
         self.sack = self.yumbase.sack
 
-    def test_query_matching(self):
+    def test_query_matching_installed_available(self):
         subj = dnf.queries.Subject("pepper")
         query = subj.get_best_query(self.sack)
-        inst, avail = self.yumbase._query_matches_installed(query)
+        inst, avail, not_avail = self.yumbase._query_matches_installed(query)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
         self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
+        self.assertItemsEqual([], map(str, not_avail))
+
+    def test_query_matching_unavailable(self):
+        subj = dnf.queries.Subject("hole")
+        query = subj.get_best_query(self.sack)
+        inst, avail, not_avail = self.yumbase._query_matches_installed(query)
+        self.assertItemsEqual([], map(str, inst))
+        self.assertItemsEqual([], map(str, avail))
+        self.assertItemsEqual(['hole-1-1.x86_64'], map(str, not_avail))
 
     def test_selector_matching(self):
         subj = dnf.queries.Subject("pepper")

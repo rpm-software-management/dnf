@@ -550,12 +550,16 @@ class Base(object):
         avail_per_arch = queries.per_arch_dict(avail)
         avail_l = []
         inst_l = []
-        for na in avail_per_arch:
-            if na in inst_per_arch:
-                inst_l.append(inst_per_arch[na][0])
+        navail_l = []
+        for na in set(inst_per_arch) | set(avail_per_arch):
+            if na in avail_per_arch:
+                if na in inst_per_arch:
+                    inst_l.append(inst_per_arch[na][0])
+                else:
+                    avail_l.extend(avail_per_arch[na])
             else:
-                avail_l.extend(avail_per_arch[na])
-        return inst_l, avail_l
+                navail_l.append(inst_per_arch[na][0])
+        return inst_l, avail_l, navail_l
 
     def _sltr_matches_installed(self, sltr):
         """ See if sltr matches a patches that is (in older version or different
@@ -1750,14 +1754,18 @@ class Base(object):
         subj = queries.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
             q = subj.get_best_query(self.sack)
-            already_inst, available = self._query_matches_installed(q)
+            already_inst, avail, not_avail = self._query_matches_installed(q)
+            if not already_inst and not avail and not not_avail:
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             map(msg_installed, already_inst)
-            map(self._goal.install, available)
-            return len(available)
+            map(self._goal.install, avail)
+            return len(avail)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                return 0
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
