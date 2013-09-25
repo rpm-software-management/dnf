@@ -96,6 +96,24 @@ class YumBaseCliTest(unittest.TestCase):
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('mrkite')])
 
+    def test_erasePkgs(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('pepper',))
+        
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package marked for removal'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+
+    def test_erasePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('non-existent',))
+        
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['No Packages marked for removal'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No Match for argument: %s', 'non-existent')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('non-existent', always_output=False, rpmdb_only=True)])
+
     def test_downgradePkgs(self):
         result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
         
