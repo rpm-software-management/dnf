@@ -121,43 +121,15 @@ class MultiFileProgressMeter:
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def end(self, text, size):
-        """This is the librepo "endcb" callback entry point.
-           text: the file that just finished downloading
-           size: the file size
+    def end(self, text, size, err):
+        """Display a message that file has finished downloading
+
+        text -- the file id
+        size -- the file size
+        err -- None if ok, error message otherwise
         """
         # update state
-        start, done = self.state.pop(text)
-        self.active.remove(text)
-        self.done_files += 1
-        self.done_size += size - done
-
-        # enumerate
-        if self.total_files > 1:
-            text = '(%d/%d): %s' % (self.done_files, self.total_files, text)
-
-        # average rate, file size, download time
-        now = time()
-        tm = max(now - start, 0.001)
-        msg = ' %5sB/s | %5sB %9s    \n' % (
-            format_number(float(done) / tm),
-            format_number(done),
-            format_time(tm))
-        left = _term_width() - len(msg)
-        self.fo.write('%-*.*s%s' % (left, left, text, msg))
-        self.fo.flush()
-
-        # now there's a blank line. fill it if possible.
-        if self.active:
-            self._update(now)
-
-    def failure(self, text, err, size):
-        """This is the librepo "failurecb" callback entry point.
-           text: the file that just finished downloading
-           err: error message
-           size: the file size
-        """
-        # update state
+        start = now = time()
         if text in self.state:
             start, done = self.state.pop(text)
             self.active.remove(text)
@@ -165,14 +137,29 @@ class MultiFileProgressMeter:
         self.done_files += 1
         self.done_size += size
 
-        # print the error message
-        msg = '[FAILED] %s: ' % text
-        self.fo.write('%s%-*s\n' % (msg, _term_width() - len(msg), err))
+        if err:
+            # the error message, no trimming
+            msg = '[FAILED] %s: ' % text
+            left = _term_width() - len(msg) - 1
+            msg = '%s%-*s\n' % (msg, left, err)
+        else:
+            if self.total_files > 1:
+                text = '(%d/%d): %s' % (self.done_files, self.total_files, text)
+
+            # average rate, file size, download time
+            tm = max(now - start, 0.001)
+            msg = ' %5sB/s | %5sB %9s    \n' % (
+                format_number(float(done) / tm),
+                format_number(done),
+                format_time(tm))
+            left = _term_width() - len(msg)
+            msg = '%-*.*s%s' % (left, left, text, msg)
+        self.fo.write(msg)
         self.fo.flush()
 
         # now there's a blank line. fill it if possible.
         if self.active:
-            self._update(time())
+            self._update(now)
 
 class LibrepoCallbackAdaptor(MultiFileProgressMeter):
     """Use it as single-file progress, too
@@ -185,4 +172,4 @@ class LibrepoCallbackAdaptor(MultiFileProgressMeter):
         MultiFileProgressMeter.progress(self, self.text, total, done)
 
     def end(self):
-        MultiFileProgressMeter.end(self, self.text, 0)
+        MultiFileProgressMeter.end(self, self.text, 0, None)
