@@ -361,6 +361,7 @@ class Repo(dnf.yum.config.RepoConf):
         if not self._handle:
             dnf.util.ensure_dir(self.pkgdir)
             self._handle = self._handle_new_pkg_download()
+            self._handle.setopt(librepo.LRO_FASTESTMIRROR, True)
         ctype, csum = po.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
