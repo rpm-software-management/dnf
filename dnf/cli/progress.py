@@ -20,12 +20,14 @@ from dnf.cli.term import _term_width
 from time import time
 
 class MultiFileProgressMeter:
-    """Multi-file download progress meter
-    """
+    """Multi-file download progress meter"""
+
     def __init__(self, fo=sys.stderr, update_period=0.3, tick_period=1.0, rate_average=5.0):
-        """update_period: how often to update the progress bar
-           tick_period: how fast to cycle through concurrent downloads
-           rate_average: time constant for average speed calculation
+        """Creates a new progress meter instance
+
+        update_period -- how often to update the progress bar
+        tick_period -- how fast to cycle through concurrent downloads
+        rate_average -- time constant for average speed calculation
         """
         self.fo = fo
         self.update_period = update_period
@@ -33,8 +35,13 @@ class MultiFileProgressMeter:
         self.rate_average = rate_average
 
     def start(self, total_files, total_size):
-        """This must be called first to initialize the progress object.
-           We should know the number of files and total size in advance.
+        """Initialize the progress meter
+
+        This must be called first to initialize the progress object.
+        We should know the number of files and total size in advance.
+
+        total_files -- the number of files to download
+        total_size -- the total size of all files
         """
         self.total_files = total_files
         self.total_size = total_size
@@ -51,9 +58,11 @@ class MultiFileProgressMeter:
         self.rate = None
 
     def progress(self, text, total, done):
-        """This is the librepo "progresscb" callback entry point.
-           text: the file identifier
-           total/done: current progress
+        """Update the progress display
+
+        text -- the file id
+        total -- file total size (mostly ignored)
+        done -- how much of this file is already downloaded
         """
         now = time()
         total = int(total)
