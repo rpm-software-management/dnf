@@ -17,3 +17,4 @@
 =Prv: /usr/lib64/liblotus.so.3.16
 =Pkg: tour 4.6 1 noarch
 =Sum: Make a reservation.
+=Pkg: librita 1 1 x86_64
