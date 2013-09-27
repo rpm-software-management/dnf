@@ -504,6 +504,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         oldcount = self._goal.req_length()
 
+        done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
@@ -514,6 +515,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             try:
                 self.reinstall(arg)
             except dnf.exceptions.ReinstallRemoveError:
+                self.logger.info(_('No Match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False)
             except dnf.exceptions.ReinstallInstallError, e:
                 for ipkg in e.failed_pkgs:
@@ -525,12 +527,17 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     msg = _('Installed package %s%s%s%s not available.')
                     self.logger.info(msg, self.term.MODE['bold'], ipkg,
                                      self.term.MODE['normal'], xmsg)
+            else:
+                done = True
 
         cnt = self._goal.req_length() - oldcount
         if cnt:
             msg = P_('%d package to reinstall',
                      '%d packages to reinstall', cnt)
             return 2, [msg % cnt]
+        
+        if not done:
+            return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
 
     def returnPkgLists(self, extcmds, installed_available=False):
