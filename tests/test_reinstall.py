@@ -16,24 +16,62 @@
 #
 
 from __future__ import absolute_import
+from tests import mock
 from tests import support
-import dnf.queries
+import dnf.yum.base
 import hawkey
 
 class Reinstall(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = dnf.yum.base.Base()
         self.yumbase.conf.multilib_policy = "all"
-        self.sack = self.yumbase.sack
-
-    def test_reinstall(self):
-        cnt = self.yumbase.reinstall("pepper")
-        self.assertEqual(cnt, 1)
-        new_set = support.installed_but(self.sack, "pepper")
-        new_pkg = dnf.queries.available_by_nevra(self.sack, "pepper-20-0.x86_64")
-        new_set += list(new_pkg)
-        self.assertResult(self.yumbase, new_set)
+        self.yumbase._sack = support.mock_sack('main', 'only_i686')
+        self.yumbase._goal = self.goal = mock.create_autospec(hawkey.Goal)
 
     def test_reinstall_local(self):
         cnt = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
         self.assertEqual(cnt, 1)
+
+    def test_reinstall_pkgname(self):
+        pkg = support.PackageMatcher(name='pepper')
+        
+        reinstalled_count = self.yumbase.reinstall('pepper')
+        
+        self.assertEqual(reinstalled_count, 1)
+        self.assertEqual(self.goal.mock_calls, [mock.call.install(pkg)])
+
+    def test_reinstall_pkgnevra(self):
+        pkg = support.PackageMatcher(name='pepper', evr='20-0', arch='x86_64')
+        
+        reinstalled_count = self.yumbase.reinstall('pepper-0:20-0.x86_64')
+        
+        self.assertEqual(reinstalled_count, 1)
+        self.assertEqual(self.goal.mock_calls, [mock.call.install(pkg)])
+    
+    def test_reinstall_notfound(self):
+        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+                          self.yumbase.reinstall, 'non-existent')
+        self.assertEqual(self.goal.mock_calls, [])
+        
+    def test_reinstall_notinstalled(self):
+        self.assertRaises(dnf.exceptions.ReinstallRemoveError,
+                          self.yumbase.reinstall, 'lotus')
+        self.assertEqual(self.goal.mock_calls, [])
+        
+    def test_reinstall_notavailable(self):
+        pkgs = [support.PackageMatcher(name='hole')]
+        
+        with self.assertRaises(dnf.exceptions.ReinstallInstallError) as context:
+            self.yumbase.reinstall('hole')
+        
+        self.assertEquals(context.exception.failed_pkgs, pkgs)
+        self.assertEqual(self.goal.mock_calls, [])
+        
+    def test_reinstall_notavailable_available(self):
+        pkg = support.PackageMatcher(name='librita')
+        
+        reinstalled_count = self.yumbase.reinstall('librita')
+        
+        self.assertEqual(reinstalled_count, 1)
+        self.assertEqual(self.goal.mock_calls, [mock.call.install(pkg)])
+

@@ -1908,13 +1908,15 @@ class Base(object):
             try:
                 available_pkg = available_nevra2pkg[str(installed_pkg)]
             except KeyError:
-                msg = _("Problem in reinstall: no package %s matched to install")
-                msg %= installed_pkg
-                failed_pkgs = [installed_pkg]
-                raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
-                
+                continue
+            
             self._goal.install(available_pkg)
             cnt += 1
+
+        if cnt == 0:
+            msg = _("Problem in reinstall: no package %s matched to install")
+            msg %= ", ".join(str(pkg) for pkg in installed_pkgs)
+            raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=installed_pkgs)
 
         return cnt
 
