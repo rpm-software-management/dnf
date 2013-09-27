@@ -187,6 +187,7 @@ class MockYumDB(mock.Mock):
 class FakeTerm(object):
     def __init__(self):
         self.MODE = {'bold'   : '', 'normal' : ''}
+        self.columns = 80
         self.reinit = mock.Mock()
 
 # mock object taken from testbase.py in yum/test:
