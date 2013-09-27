@@ -90,7 +90,7 @@ class MockYumBaseTest(unittest.TestCase):
 class BuildTransactionTest(support.TestCase):
     def test_build_transaction(self):
         base = support.MockYumBase("updates")
-        base.update(pattern="pepper")
+        base.update("pepper")
         self.assertTrue(base.build_transaction())
         base.ds_callback.assert_has_calls(mock.call.start())
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))

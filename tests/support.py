@@ -87,7 +87,7 @@ class MockPackage(object):
         self.str = nevra
         (self.name, self.epoch, self.version, self.release, self.arch) = \
             hawkey.split_nevra(nevra)
-        self.evr = '%(epoch)d:%(version)s=%(release)s' % vars(self)
+        self.evr = '%(epoch)d:%(version)s-%(release)s' % vars(self)
         self.pkgtup = (self.name, self.arch, str(self.epoch), self.version,
                        self.release)
 
@@ -231,6 +231,26 @@ class FakePersistor(object):
 
     def since_last_makecache(self):
         return None
+
+# object matchers for asserts
+
+class PackageMatcher(object):
+    
+    def __init__(self, **kwargs):
+        self._kwargs = kwargs
+    
+    def __eq__(self, other):
+        if not isinstance(other, hawkey.Package):
+            return False
+        for name, value in self._kwargs.items():
+            if getattr(other, name) != value:
+                return False
+        return True
+    
+    def __repr__(self):
+        kwargs_str = ', '.join('%s=%s' % (name, repr(value))
+                               for name, value in self._kwargs.items())
+        return '%s(%s)' % (type(self).__name__, kwargs_str)
 
 # specialized test cases
 

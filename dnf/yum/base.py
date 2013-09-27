@@ -1780,40 +1780,16 @@ class Base(object):
                 return 1
         return 0
 
-    def update(self, po=None, pattern=None):
-        """Mark the specified items to be updated.  If a package
-        object is given, mark it.  Else, if a package is specified by
-        the keyword arguments, mark it.  Finally, if nothing is given,
-        mark all installed packages to be updated.
-
-
-        :param po: the package object to be marked for updating
-        :param kwargs: if *po* is not given, the names or wildcards in
-           *kwargs* will be used to find the packages to update
-        :return: a list of transaction members added to the
-           transaction set by this function
-        """
-        # check for args - if no po nor kwargs, do them all
-        # if po, do it, ignore all else
-        # if no po do kwargs
-        # uninstalled pkgs called for update get returned with errors in a list, maybe?
-
-        tx_return = []
-        if po: # just a po
-            if not po.from_system:
-                installed = sorted(queries.installed_by_name(self.sack, po.name))
-                if len(installed) > 0 and installed[-1] < po:
-                    self._goal.upgrade_to(po)
-                    return 1
-        elif pattern:
-            sltr = queries.Subject(pattern).get_best_selector(self.sack)
-            if sltr:
-                self._goal.upgrade(select=sltr)
-                return 1
-        else: # update everything updatable
-            self._goal.upgrade_all()
+    def update(self, pkg_spec):
+        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack)
+        if sltr:
+            self._goal.upgrade(select=sltr)
             return 1
         return 0
+
+    def update_all(self):
+        self._goal.upgrade_all()
+        return 1
 
     def upgrade_to(self, pkg_spec):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
@@ -1915,45 +1891,33 @@ class Base(object):
         po = self._local_common(path)
         if not po:
             return 0
-        return self.reinstall(po)
+        self._goal.install(po)
+        return 1 
 
-    def reinstall(self, po=None, **kwargs):
-        """Mark the given package for reinstallation.  This is
-        accomplished by setting problem filters to allow a reinstall
-        take place, then calling :func:`install`.
-
-        :param po: the package object to mark for reinstallation
-        :param kwargs: if po is not given, the keyword will be used to
-           specify a package for reinstallation
-        :return: a list of the transaction members added to the
-           transaction set by this method
-        :raises: :class:`dnf.exceptions.ReinstallRemoveError`
-
-        """
-        if po:
-            installed = queries.installed_exact(self.sack,
-                                                po.name, po.evr, po.arch)
-            available = [po]
-        else:
-            pat = kwargs['pattern']
-            installed = queries.installed_by_name(self.sack, pat)
-            available = queries.available_by_name(self.sack, pat)
-        if not installed:
-            raise dnf.exceptions.ReinstallRemoveError(
-                _("Problem in reinstall: no package matched to remove"))
+    def reinstall(self, pkg_spec):
+        subj = queries.Subject(pkg_spec)
+        q = subj.get_best_query(self.sack)
+        installed_pkgs = q.installed().run()
+        available_nevra2pkg = queries.per_nevra_dict(q.available())
+        if not installed_pkgs:
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in reinstall: no package matched to remove"),
+                available_nevra2pkg.values())
 
         cnt = 0
-        installed = queries.per_nevra_dict(installed)
-        available = queries.per_nevra_dict(available)
-        for nevra in installed:
-            if not nevra in available:
-                msg = _("Problem in reinstall: no package %s matched to install")
-                msg %= nevra
-                failed_pkgs = [installed[nevra]]
-                raise dnf.exceptions.ReinstallInstallError(msg, failed_pkgs=failed_pkgs)
-
-            self._goal.install(available[nevra])
+        for installed_pkg in installed_pkgs:
+            try:
+                available_pkg = available_nevra2pkg[str(installed_pkg)]
+            except KeyError:
+                continue
+            
+            self._goal.install(available_pkg)
             cnt += 1
+
+        if cnt == 0:
+            msg = _("Problem in reinstall: no package %s matched to install")
+            msg %= ", ".join(str(pkg) for pkg in installed_pkgs)
+            raise dnf.exceptions.PackagesNotAvailableError(msg, installed_pkgs)
 
         return cnt
 
