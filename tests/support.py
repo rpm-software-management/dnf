@@ -37,7 +37,7 @@ skip = unittest.skip
 RPMDB_CHECKSUM = 'b3fa9f5ed659fa881ac901606be5e8f99ca55cc3'
 TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
-MAIN_NSOLVABLES = 8
+MAIN_NSOLVABLES = 9
 UPDATES_NSOLVABLES = 4
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
@@ -87,7 +87,7 @@ class MockPackage(object):
         self.str = nevra
         (self.name, self.epoch, self.version, self.release, self.arch) = \
             hawkey.split_nevra(nevra)
-        self.evr = '%(epoch)d:%(version)s=%(release)s' % vars(self)
+        self.evr = '%(epoch)d:%(version)s-%(release)s' % vars(self)
         self.pkgtup = (self.name, self.arch, str(self.epoch), self.version,
                        self.release)
 
@@ -187,6 +187,7 @@ class MockYumDB(mock.Mock):
 class FakeTerm(object):
     def __init__(self):
         self.MODE = {'bold'   : '', 'normal' : ''}
+        self.columns = 80
         self.reinit = mock.Mock()
 
 # mock object taken from testbase.py in yum/test:
@@ -231,6 +232,26 @@ class FakePersistor(object):
 
     def since_last_makecache(self):
         return None
+
+# object matchers for asserts
+
+class PackageMatcher(object):
+    
+    def __init__(self, **kwargs):
+        self._kwargs = kwargs
+    
+    def __eq__(self, other):
+        if not isinstance(other, hawkey.Package):
+            return False
+        for name, value in self._kwargs.items():
+            if getattr(other, name) != value:
+                return False
+        return True
+    
+    def __repr__(self):
+        kwargs_str = ', '.join('%s=%s' % (name, repr(value))
+                               for name, value in self._kwargs.items())
+        return '%s(%s)' % (type(self).__name__, kwargs_str)
 
 # specialized test cases
 

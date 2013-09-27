@@ -24,7 +24,7 @@ class Update(support.ResultTestCase):
     def test_update(self):
         """ Simple update. """
         yumbase = support.MockYumBase("updates")
-        ret = yumbase.update(pattern="pepper")
+        ret = yumbase.update("pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
         expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
         self.assertResult(yumbase, expected)
@@ -33,14 +33,14 @@ class Update(support.ResultTestCase):
         """ Updating an uninstalled package is a void operation. """
         yumbase = support.MockYumBase("main")
         # no "mrkite" installed:
-        yumbase.update(pattern="mrkite")
+        yumbase.update("mrkite")
         self.assertResult(yumbase, installed(yumbase.sack))
 
     def test_update_all(self):
         """ Update all you can. """
         yumbase = support.MockYumBase("main", "updates")
         sack = yumbase.sack
-        yumbase.update()
+        yumbase.update_all()
         expected = support.installed_but(sack, "pepper", "hole") + \
             list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
             list(available_by_nevra(sack, "hole-2-1.x86_64"))
@@ -57,7 +57,7 @@ class Update(support.ResultTestCase):
 
     def test_update_arches(self):
         yumbase = support.MockYumBase("main", "updates")
-        yumbase.update(pattern="hole")
+        yumbase.update("hole")
         installed, removed = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
         self.assertItemsEqual(map(str, removed), ['hole-1-1.x86_64'])
@@ -71,7 +71,7 @@ class SkipBroken(support.ResultTestCase):
         """ update() without parameters update everything it can that has its
             deps in trim. Broken packages are silently skipped.
         """
-        self.yumbase.update()
+        self.yumbase.update_all()
         new_set = support.installed_but(self.sack, "pepper").run()
         new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)

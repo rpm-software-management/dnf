@@ -16,9 +16,11 @@
 #
 
 from __future__ import absolute_import
+from tests import mock
 from tests import support
-import dnf.queries
+import dnf.yum.base
 import hawkey
+import unittest
 
 class Reinstall(support.ResultTestCase):
     def setUp(self):
@@ -27,7 +29,7 @@ class Reinstall(support.ResultTestCase):
         self.sack = self.yumbase.sack
 
     def test_reinstall(self):
-        cnt = self.yumbase.reinstall(pattern="pepper")
+        cnt = self.yumbase.reinstall("pepper")
         self.assertEqual(cnt, 1)
         new_set = support.installed_but(self.sack, "pepper")
         new_pkg = dnf.queries.available_by_nevra(self.sack, "pepper-20-0.x86_64")
@@ -37,3 +39,44 @@ class Reinstall(support.ResultTestCase):
     def test_reinstall_local(self):
         cnt = self.yumbase.reinstall_local(support.TOUR_50_PKG_PATH)
         self.assertEqual(cnt, 1)
+
+class ReinstallTest(unittest.TestCase):
+    def setUp(self):
+        self._base = dnf.yum.base.Base()
+        self._base._sack = support.mock_sack('main')
+        self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
+
+    def test_reinstall_pkgnevra(self):
+        pkg = support.PackageMatcher(name='pepper', evr='20-0', arch='x86_64')
+        
+        reinstalled_count = self._base.reinstall('pepper-0:20-0.x86_64')
+        
+        self.assertEqual(reinstalled_count, 1)
+        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
+    
+    def test_reinstall_notfound(self):
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
+                          self._base.reinstall, 'non-existent')
+        self.assertEqual(self._goal.mock_calls, [])
+        
+    def test_reinstall_notinstalled(self):
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
+                          self._base.reinstall, 'lotus')
+        self.assertEqual(self._goal.mock_calls, [])
+        
+    def test_reinstall_notavailable(self):
+        pkgs = [support.PackageMatcher(name='hole')]
+        
+        with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
+            self._base.reinstall('hole')
+        
+        self.assertEquals(context.exception.packages, pkgs)
+        self.assertEqual(self._goal.mock_calls, [])
+        
+    def test_reinstall_notavailable_available(self):
+        pkg = support.PackageMatcher(name='librita')
+        
+        reinstalled_count = self._base.reinstall('librita')
+        
+        self.assertEqual(reinstalled_count, 1)
+        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])

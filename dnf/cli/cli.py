@@ -356,7 +356,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         oldcount = self._goal.req_length()
         if len(userlist) == 0: # simple case - do them all
-            self.update()
+            self.update_all()
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
@@ -367,7 +367,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     self.update_local(item)
                     continue
 
-                if not self.update(pattern=item):
+                if not self.update(item):
                     self._checkMaybeYouMeant(item)
 
         cnt = self._goal.req_length() - oldcount
@@ -504,6 +504,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         oldcount = self._goal.req_length()
 
+        done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
@@ -512,11 +513,12 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
 
             try:
-                self.reinstall(pattern=arg)
-            except dnf.exceptions.ReinstallRemoveError:
+                self.reinstall(arg)
+            except dnf.exceptions.PackagesNotInstalledError:
+                self.logger.info(_('No Match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False)
-            except dnf.exceptions.ReinstallInstallError, e:
-                for ipkg in e.failed_pkgs:
+            except dnf.exceptions.PackagesNotAvailableError, e:
+                for ipkg in e.packages:
                     xmsg = ''
                     yumdb_info = self.yumdb.get_package(ipkg)
                     if 'from_repo' in yumdb_info:
@@ -525,12 +527,17 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     msg = _('Installed package %s%s%s%s not available.')
                     self.logger.info(msg, self.term.MODE['bold'], ipkg,
                                      self.term.MODE['normal'], xmsg)
+            else:
+                done = True
 
         cnt = self._goal.req_length() - oldcount
         if cnt:
             msg = P_('%d package to reinstall',
                      '%d packages to reinstall', cnt)
             return 2, [msg % cnt]
+        
+        if not done:
+            return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
 
     def returnPkgLists(self, extcmds, installed_available=False):

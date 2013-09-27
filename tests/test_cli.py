@@ -21,6 +21,7 @@ from tests import support
 import dnf.cli.cli
 import dnf.repo
 import dnf.repodict
+import hawkey
 import optparse
 import os
 import unittest
@@ -60,23 +61,58 @@ class VersionStringTest(unittest.TestCase):
 
 class YumBaseCliTest(unittest.TestCase):
     def setUp(self):
-        self.yumbase = dnf.cli.cli.YumBaseCli()
-        self.pkg = support.MockPackage('tour-5-0.noarch')
-        self.pkg.from_system = False
-        self.pkg.size = 0
-        self.pkg.pkgid = None
-        self.pkg.repoid = None
-        self.pkg.e = self.pkg.epoch
-        self.pkg.v = self.pkg.version
-        self.pkg.r = self.pkg.release
-        self.pkg.summary = 'A summary of the package.'
-        self.pkg.url = 'http://example.com'
-        self.pkg.license = 'GPL+'
-        self.pkg.description = None
+        self._yumbase = dnf.cli.cli.YumBaseCli()
+        self._yumbase._sack = support.mock_sack('main')
+        self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
+        self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
+        self._yumbase.term = support.FakeTerm()
+        self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
+    
+    def test_reinstallPkgs(self):
+        result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
+        
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to reinstall'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+
+    def test_reinstallPkgs_notinstalled(self):
+        result, resultmsgs = self._yumbase.reinstallPkgs(('lotus',))
+        
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No Match for argument: %s', 'lotus')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('lotus', always_output=False)])
+
+    def test_reinstallPkgs_notavailable(self):
+        pkg = support.PackageMatcher(name='hole')
+        
+        result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
+        
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('Installed package %s%s%s%s not available.', '', pkg, '', '')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
 
     def test_infoOutput_with_none_description(self):
+        pkg = support.MockPackage('tour-5-0.noarch')
+        pkg.from_system = False
+        pkg.size = 0
+        pkg.pkgid = None
+        pkg.repoid = None
+        pkg.e = pkg.epoch
+        pkg.v = pkg.version
+        pkg.r = pkg.release
+        pkg.summary = 'A summary of the package.'
+        pkg.url = 'http://example.com'
+        pkg.license = 'GPL+'
+        pkg.description = None
+        
         with mock.patch('sys.stdout') as stdout:
-            self.yumbase.infoOutput(self.pkg)
+            self._yumbase.infoOutput(pkg)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                           if mc[0] == 'write'])
         self.assertEqual(written, INFOOUTPUT_OUTPUT)
