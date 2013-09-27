@@ -512,7 +512,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                          # no matter what we don't go looking at repos
 
             try:
-                self.reinstall(pattern=arg)
+                self.reinstall(arg)
             except dnf.exceptions.ReinstallRemoveError:
                 self._checkMaybeYouMeant(arg, always_output=False)
             except dnf.exceptions.ReinstallInstallError, e:
