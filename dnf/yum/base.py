@@ -1781,11 +1781,18 @@ class Base(object):
         return 0
 
     def update(self, pkg_spec):
-        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack)
-        if sltr:
-            self._goal.upgrade(select=sltr)
-            return 1
-        return 0
+        subj = queries.Subject(pkg_spec)
+        sltr = subj.get_best_selector(self.sack)
+        if not sltr:
+            raise dnf.exceptions.PackageNotFoundError(
+                _("Problem in update: no package matched to update"))
+        
+        if not subj.get_best_query(self.sack).installed().run():
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in update: no package matched to update"))
+            
+        self._goal.upgrade(select=sltr)
+        return 1
 
     def update_all(self):
         self._goal.upgrade_all()
