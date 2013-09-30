@@ -367,7 +367,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     self.update_local(item)
                     continue
 
-                if not self.update(item):
+                try:
+                    self.update(item)
+                except dnf.exceptions.PackageNotFoundError:
+                    self.logger.info(_('No Match for argument: %s'), unicode(item))
                     self._checkMaybeYouMeant(item)
 
         cnt = self._goal.req_length() - oldcount
