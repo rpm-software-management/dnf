@@ -464,6 +464,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         oldcount = self._goal.req_length()
 
+        done = False
         for arg in userlist:
             if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
                                           os.path.exists(arg))):
@@ -473,18 +474,23 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.exceptions.Error:
-                # :dead
-                self.logger.info(
-                                        _('No package %s%s%s available.'),
-                                        self.term.MODE['bold'], arg,
-                                        self.term.MODE['normal'])
+            except dnf.exceptions.PackageNotFoundError:
                 self._maybeYouMeant(arg)
+            except dnf.exceptions.PackagesNotInstalledError as err:
+                for pkg in err.packages:
+                    self.logger.info(_('No Match for available package: %s'), pkg)
+                done = True
+            else:
+                done = True
+                
         cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
+        if cnt:
             msg = P_('%d package to downgrade',
                      '%d packages to downgrade', cnt)
             return 2, [msg % cnt]
+        
+        if not done:
+            return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]
 
     def reinstallPkgs(self, userlist):

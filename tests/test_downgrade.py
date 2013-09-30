@@ -16,8 +16,10 @@
 #
 
 from __future__ import absolute_import
+from tests import mock
 from tests import support
-import dnf.queries
+import dnf.yum.base
+import hawkey
 
 class DowngradeTest(support.ResultTestCase):
     def test_downgrade_local(self):
@@ -35,7 +37,7 @@ class DowngradeTest(support.ResultTestCase):
         sack = yumbase.sack
         cnt = yumbase.downgrade("tour")
         self.assertGreater(cnt, 0)
-
+ 
         new_pkg = dnf.queries.available_by_name(sack, "tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")
         new_set = support.installed_but(sack, "tour") + [new_pkg]
@@ -47,3 +49,39 @@ class DowngradeTest(support.ResultTestCase):
         installed, removed = self.installed_removed(b)
         self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])
         self.assertItemsEqual(map(str, removed), ['tour-5-0.noarch'])
+
+class MoreIsolatedDowngradeTest(support.TestCase):
+    
+    def setUp(self):
+        self._base = dnf.yum.base.Base()
+        self._base._sack = support.mock_sack('main')
+        self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
+
+    def test_downgrade_pkgnevra(self):
+        pkg = support.PackageMatcher(name='tour', evr='4.6-1', arch='noarch')
+        
+        downgraded_count = self._base.downgrade('tour-0:5-0.noarch')
+        
+        self.assertEqual(downgraded_count, 1)
+        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
+
+    def test_downgrade_notfound(self):
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          self._base.downgrade, 'non-existent')
+        self.assertEqual(self._goal.mock_calls, [])
+        
+    def test_downgrade_notinstalled(self):
+        pkgs = [support.PackageMatcher(name='lotus'),
+                support.PackageMatcher(name='lotus')]
+            
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
+            self._base.downgrade('lotus')
+            
+        self.assertEquals(context.exception.packages, pkgs)
+        self.assertEqual(self._goal.mock_calls, [])
+        
+    def test_downgrade_notavailable(self):
+        downgraded_count = self._base.downgrade('pepper')
+        
+        self.assertEqual(downgraded_count, 0)
+        self.assertEqual(self._goal.mock_calls, [])
