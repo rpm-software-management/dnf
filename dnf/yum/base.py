@@ -1814,13 +1814,16 @@ class Base(object):
 
         """
 
-        ret = 0
         matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        installed = matches.installed().run()
+        if not installed:
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in remove: no package matched to remove"))
+
         clean_deps = self.conf.clean_requirements_on_remove
-        for pkg in matches.filter(reponame=hawkey.SYSTEM_REPO_NAME):
+        for pkg in installed:
             self._goal.erase(pkg, clean_deps=clean_deps)
-            ret += 1
-        return ret
+        return len(installed)
 
     def _local_common(self, path):
         self.sack.create_cmdline_repo()

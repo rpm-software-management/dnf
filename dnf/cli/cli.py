@@ -437,10 +437,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         cnt = 0
         for arg in userlist:
-            current_cnt = self.remove(arg)
-            if current_cnt == 0:
+            try:
+                current_cnt = self.remove(arg)
+            except dnf.exceptions.PackagesNotInstalledError:
+                self.logger.info(_('No Match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
-            cnt += current_cnt
+            else:
+                cnt += current_cnt
 
         if cnt > 0:
             msg = P_('%d package marked for removal',
