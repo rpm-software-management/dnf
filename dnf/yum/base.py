@@ -550,12 +550,16 @@ class Base(object):
         avail_per_arch = queries.per_arch_dict(avail)
         avail_l = []
         inst_l = []
-        for na in avail_per_arch:
-            if na in inst_per_arch:
-                inst_l.append(inst_per_arch[na][0])
+        navail_l = []
+        for na in set(inst_per_arch) | set(avail_per_arch):
+            if na in avail_per_arch:
+                if na in inst_per_arch:
+                    inst_l.append(inst_per_arch[na][0])
+                else:
+                    avail_l.extend(avail_per_arch[na])
             else:
-                avail_l.extend(avail_per_arch[na])
-        return inst_l, avail_l
+                navail_l.append(inst_per_arch[na][0])
+        return inst_l, avail_l, navail_l
 
     def _sltr_matches_installed(self, sltr):
         """ See if sltr matches a patches that is (in older version or different
@@ -1750,14 +1754,18 @@ class Base(object):
         subj = queries.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
             q = subj.get_best_query(self.sack)
-            already_inst, available = self._query_matches_installed(q)
+            already_inst, avail, not_avail = self._query_matches_installed(q)
+            if not already_inst and not avail and not not_avail:
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             map(msg_installed, already_inst)
-            map(self._goal.install, available)
-            return len(available)
+            map(self._goal.install, avail)
+            return len(avail)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                return 0
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
@@ -1781,11 +1789,18 @@ class Base(object):
         return 0
 
     def update(self, pkg_spec):
-        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack)
-        if sltr:
-            self._goal.upgrade(select=sltr)
-            return 1
-        return 0
+        subj = queries.Subject(pkg_spec)
+        sltr = subj.get_best_selector(self.sack)
+        if not sltr:
+            raise dnf.exceptions.PackageNotFoundError(
+                _("Problem in update: no package matched to update"))
+        
+        if not subj.get_best_query(self.sack).installed().run():
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in update: no package matched to update"))
+            
+        self._goal.upgrade(select=sltr)
+        return 1
 
     def update_all(self):
         self._goal.upgrade_all()
@@ -1812,14 +1827,16 @@ class Base(object):
            the transaction set by this method
 
         """
-
-        ret = 0
-        matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        q = queries.Subject(pkg_spec).get_best_query(self.sack)
+        installed = q.installed().run()
+        if not installed:
+            raise dnf.exceptions.PackageNotFoundError(
+                _("Problem in remove: no package matched to remove"))
+        
         clean_deps = self.conf.clean_requirements_on_remove
-        for pkg in matches.filter(reponame=hawkey.SYSTEM_REPO_NAME):
+        for pkg in installed:
             self._goal.erase(pkg, clean_deps=clean_deps)
-            ret += 1
-        return ret
+        return len(installed)
 
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
@@ -1935,7 +1952,11 @@ class Base(object):
         installed = sorted(q.installed())
         installed_pkg = dnf.util.first(installed)
         if installed_pkg is None:
-            return 0
+            msg = _("Problem in downgrade: no package matched to downgrade")
+            avail = q.available().run()
+            if avail:
+                raise dnf.exceptions.PackagesNotInstalledError(msg, avail)
+            raise dnf.exceptions.PackageNotFoundError(msg)
 
         q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]

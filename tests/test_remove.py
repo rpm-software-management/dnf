@@ -27,10 +27,17 @@ class Remove(support.ResultTestCase):
         erase_cmd = dnf.cli.commands.EraseCommand(self.yumbase.mock_cli())
         erase_cmd.configure()
 
+    def test_not_found(self):
+        """ Removing a non-existent package is a void operation. """
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          self.yumbase.remove, "non-existent")
+        installed_pkgs = dnf.queries.installed_by_name(self.yumbase.sack, None)
+        self.assertResult(self.yumbase, installed_pkgs)
+
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """
-        ret = self.yumbase.remove("mrkite")
-        self.assertEqual(ret, 0)
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          self.yumbase.remove, "mrkite")
         installed_pkgs = dnf.queries.installed_by_name(self.yumbase.sack, None)
         self.assertResult(self.yumbase, installed_pkgs)
 

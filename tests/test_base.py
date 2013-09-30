@@ -152,12 +152,21 @@ class InstalledMatchingTest(support.ResultTestCase):
         self.yumbase = support.MockYumBase("main")
         self.sack = self.yumbase.sack
 
-    def test_query_matching(self):
+    def test_query_matching_installed_available(self):
         subj = dnf.queries.Subject("pepper")
         query = subj.get_best_query(self.sack)
-        inst, avail = self.yumbase._query_matches_installed(query)
+        inst, avail, not_avail = self.yumbase._query_matches_installed(query)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
         self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
+        self.assertItemsEqual([], map(str, not_avail))
+
+    def test_query_matching_unavailable(self):
+        subj = dnf.queries.Subject("hole")
+        query = subj.get_best_query(self.sack)
+        inst, avail, not_avail = self.yumbase._query_matches_installed(query)
+        self.assertItemsEqual([], map(str, inst))
+        self.assertItemsEqual([], map(str, avail))
+        self.assertItemsEqual(['hole-1-1.x86_64'], map(str, not_avail))
 
     def test_selector_matching(self):
         subj = dnf.queries.Subject("pepper")
@@ -196,33 +205,3 @@ class CompsTest(support.TestCase):
         yumbase = support.MockYumBase("main")
         yumbase.repos['main'].enablegroups = False
         self.assertRaises(dnf.exceptions.CompsError, yumbase.read_comps)
-
-class DowngradeTest(support.TestCase):
-    
-    def __init__(self, methodName='runTest'):
-        support.TestCase.__init__(self, methodName)
-        self._base = None
-        self._goal = None
-    
-    def setUp(self):
-        self._base = dnf.yum.base.Base()
-        self._base._sack = support.mock_sack('main')
-        self._base._goal = self._goal = mock.Mock()
-
-    def test_downgrade_pkgname(self):
-        pkg, = self._base.sack.query().filter(
-            reponame='main', name='tour', evr='0:4.6-1', arch='noarch')
-        
-        affected = self._base.downgrade('tour')
-        
-        self.assertEqual(affected, 1)
-        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
-
-    def test_downgrade_pkgnevra(self):
-        pkg, = self._base.sack.query().filter(
-            reponame='main', name='tour', evr='0:4.6-1', arch='noarch')
-        
-        affected_count = self._base.downgrade('tour-0:5-0.noarch')
-        
-        self.assertEqual(affected_count, 1)
-        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
