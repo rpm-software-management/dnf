@@ -71,16 +71,6 @@ class _Handle(librepo.Handle):
             h.mirrorlist = h.mirrorlist_path
         return h
 
-    @classmethod
-    def new_remote(cls, subst_dct, gpgcheck, max_mirror_tries, destdir,
-                   mirror_setup, progress_cb):
-        h = cls(gpgcheck, max_mirror_tries)
-        h.varsub = _subst2tuples(subst_dct)
-        h.destdir = destdir
-        h.setopt(mirror_setup[0], mirror_setup[1])
-        h.progresscb = progress_cb
-        return h
-
     @property
     def metadata_dir(self):
         return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
@@ -203,21 +193,33 @@ class Repo(dnf.yum.config.RepoConf):
         return _Handle.new_local(self.yumvar, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
-    def _handle_new_remote(self, destdir):
-        cb = None
-        if self._progress is not None:
-            cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.yumvar, self.repo_gpgcheck,
-                                  self.max_mirror_tries, destdir,
-                                  self._mirror_setup_args(), cb)
+    def _handle_new_remote(self, destdir, mirror_setup=True):
+        h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
+        h.varsub = _subst2tuples(self.yumvar)
+        h.destdir = destdir
+
+        # setup mirror URLs
+        mirrorlist = self.metalink or self.mirrorlist
+        if mirrorlist:
+            if mirror_setup:
+                h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
+            else:
+                # use already resolved mirror list
+                h.setopt(librepo.LRO_URLS, self.metadata.mirrors)
+        elif self.baseurl:
+            h.setopt(librepo.LRO_URLS, self.baseurl)
+        else:
+            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
+            raise dnf.exceptions.RepoError, msg
+
+        # single-file download progress
+        if self._progress:
+            h.progresscb = self._progress.librepo_cb
+
+        return h
 
     def _handle_new_pkg_download(self):
-        cb = None
-        if self._progress is not None:
-            cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.yumvar, self.repo_gpgcheck,
-                                  self.max_mirror_tries, self.pkgdir,
-                                  self._no_mirror_setup_args(), cb)
+        return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
     @property
     def local(self):
@@ -226,33 +228,6 @@ class Repo(dnf.yum.config.RepoConf):
         if self.baseurl[0].startswith('file://'):
             return True
         return False
-
-    def _mirror_setup_args(self):
-        if self.metalink:
-            return librepo.LRO_MIRRORLIST, self.metalink
-        elif self.mirrorlist:
-            return librepo.LRO_MIRRORLIST, self.mirrorlist
-        elif self.baseurl:
-            return librepo.LRO_URLS, self.baseurl[0]
-        else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
-
-    def _no_mirror_setup_args(self):
-        """Return handle URL setup arguments that are not a mirror.
-
-        Needed for package download, we don't want the handle to waste time
-        resolving the mirrorlist first.
-
-        """
-        if self.metalink or self.mirrorlist:
-            url = self.metadata.mirrors
-        elif self.baseurl:
-            url = self.baseurl
-        else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
-        return librepo.LRO_URLS, url
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
