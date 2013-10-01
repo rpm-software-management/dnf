@@ -1757,7 +1757,8 @@ class Base(object):
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                return 0
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])

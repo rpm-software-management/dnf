@@ -69,9 +69,27 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
+        self._yumbase.install = mock.Mock(wraps=self._yumbase.install)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
         self._yumbase.update = mock.Mock(wraps=self._yumbase.update)
+
+    def test_installPkgs(self):
+        result, resultmsgs = self._yumbase.installPkgs(('lotus',))
+
+        self.assertEqual(self._yumbase.install.mock_calls, [mock.call('lotus')])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to install'])
+
+    def test_installPkgs_notfound(self):
+        result, resultmsgs = self._yumbase.installPkgs(('non-existent',))
+
+        self.assertEqual(self._yumbase.install.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_updatePkgs(self):
         result, resultmsgs = self._yumbase.updatePkgs(('pepper',))
