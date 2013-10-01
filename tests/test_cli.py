@@ -67,7 +67,76 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.term = support.FakeTerm()
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
-    
+        self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
+
+    def test_installPkgs(self):
+        result, resultmsgs = self._yumbase.installPkgs(('lotus',))
+
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to install'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+
+    def test_installPkgs_notfound(self):
+        result, resultmsgs = self._yumbase.installPkgs(('non-existent',))
+
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
+
+    def test_updatePkgs(self):
+        result, resultmsgs = self._yumbase.updatePkgs(('pepper',))
+
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package marked for upgrade'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+
+    def test_updatePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.updatePkgs(('non-existent',))
+
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['No packages marked for upgrade'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No Match for argument: %s', 'non-existent')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('non-existent')])
+
+    def test_erasePkgs(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('pepper',))
+
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package marked for removal'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+
+    def test_erasePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('non-existent',))
+
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['No Packages marked for removal'])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No Match for argument: %s', 'non-existent')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('non-existent', always_output=False, rpmdb_only=True)])
+
+    def test_downgradePkgs(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
+
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to downgrade'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
+
+    def test_downgradePkgs_notinstalled(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('lotus',))
+
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
+                         [mock.call('lotus')])
+
     def test_reinstallPkgs(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
         

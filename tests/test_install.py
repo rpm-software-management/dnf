@@ -91,11 +91,19 @@ class MultilibBestMainRepo(support.ResultTestCase):
         self.installed = dnf.queries.installed(self.yumbase.sack)
         self.assertEqual(self.yumbase.conf.multilib_policy, "best")
 
-    def test_not_available(self):
+    def test_non_existent(self):
         """ Installing a nonexistent package is a void operation. """
-        cnt = self.yumbase.install("not-available")
-        self.assertEqual(cnt, 0)
-        self.assertResult(self.yumbase, self.installed)
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          self.yumbase.install, "not-available")
+        installed_pkgs = dnf.queries.installed(self.yumbase.sack)
+        self.assertResult(self.yumbase, installed_pkgs)
+
+    def test_not_available(self):
+        """ Installing a unavailable package is a void operation. """
+        cnt = self.yumbase.install("hole")
+        self.assertEqual(cnt, 1)
+        installed_pkgs = dnf.queries.installed(self.yumbase.sack)
+        self.assertResult(self.yumbase, installed_pkgs)
 
     def test_install(self):
         """ Installing a package existing in multiple architectures only

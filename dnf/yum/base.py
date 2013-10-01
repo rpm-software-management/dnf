@@ -1757,7 +1757,8 @@ class Base(object):
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                return 0
+                raise dnf.exceptions.PackageNotFoundError(
+                    _("Problem in install: no package matched to install"))
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
@@ -1785,7 +1786,8 @@ class Base(object):
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
-        return 0
+        raise dnf.exceptions.PackageNotFoundError(
+            _("Problem in update: no package matched to update"))
 
     def update_all(self):
         self._goal.upgrade_all()
@@ -1813,13 +1815,16 @@ class Base(object):
 
         """
 
-        ret = 0
         matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        installed = matches.installed().run()
+        if not installed:
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in remove: no package matched to remove"))
+
         clean_deps = self.conf.clean_requirements_on_remove
-        for pkg in matches.filter(reponame=hawkey.SYSTEM_REPO_NAME):
+        for pkg in installed:
             self._goal.erase(pkg, clean_deps=clean_deps)
-            ret += 1
-        return ret
+        return len(installed)
 
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
@@ -1935,7 +1940,8 @@ class Base(object):
         installed = sorted(q.installed())
         installed_pkg = dnf.util.first(installed)
         if installed_pkg is None:
-            return 0
+            raise dnf.exceptions.PackagesNotInstalledError(
+                _("Problem in downgrade: no package matched to downgrade"))
 
         q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
