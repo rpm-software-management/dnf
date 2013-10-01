@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.4.1-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.4.2-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.1-1',
+        VERSION:     '0.4.2-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.1-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.2-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="DNF User’s FAQ" href="user_faq.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.1-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.2-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -3338,13 +3338,6 @@ process.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="dnf.cli.output.LibrepoCallbackAdaptor">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">LibrepoCallbackAdaptor</tt><big>(</big><em>fo=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x7f038745e1e0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.LibrepoCallbackAdaptor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adapt urlgrabber progress widgets for librepo callback style.</p>
-<p>Note that TextMeter is a Python old-style class.</p>
-</dd></dl>
-
-<dl class="class">
 <dt id="dnf.cli.output.YumOutput">
 <em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumOutput</tt><a class="headerlink" href="#dnf.cli.output.YumOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main output class for the yum command line.</p>
@@ -3437,25 +3430,8 @@ process started, in seconds since the epoch</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.failureReport">
-<tt class="descname">failureReport</tt><big>(</big><em>errobj</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.failureReport" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform failure output for failovers from urlgrabber</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>errobj</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">urlgrabber.grabber.CallbackObject</span></tt>
-containing information about the error</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><em>errobj</em>.exception</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x153acf8&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2154c08&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3522,59 +3498,6 @@ to fill an entire line.  <em>fill</em> must be a single character.</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a string formatted to be a section header</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="dnf.cli.output.YumOutput.format_number">
-<em class="property">static </em><tt class="descname">format_number</tt><big>(</big><em>number</em>, <em>SI=0</em>, <em>space=' '</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.format_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a human-readable metric-like string representation
-of a number.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>number</strong> &#8211; the number to be converted to a human-readable form</li>
-<li><strong>SI</strong> &#8211; If is 0, this function will use the convention
-that 1 kilobyte = 1024 bytes, otherwise, the convention
-that 1 kilobyte = 1000 bytes will be used</li>
-<li><strong>space</strong> &#8211; string that will be placed between the number
-and the SI prefix</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a human-readable metric-like string representation of
-<em>number</em></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="dnf.cli.output.YumOutput.format_time">
-<em class="property">static </em><tt class="descname">format_time</tt><big>(</big><em>seconds</em>, <em>use_hours=0</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.format_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a human-readable string representation of a number
-of seconds.  The string will show seconds, minutes, and
-optionally hours.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>seconds</strong> &#8211; the number of seconds to convert to a
-human-readable form</li>
-<li><strong>use_hours</strong> &#8211; If use_hours is 0, the representation will
-be in minutes and seconds. Otherwise, it will be in hours,
-minutes, and seconds</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a human-readable string representation of <em>seconds</em></p>
 </td>
 </tr>
 </tbody>
@@ -3713,23 +3636,6 @@ that involve the given package or packages.</p>
 package</li>
 </ul>
 </td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.YumOutput.interrupt_callback">
-<tt class="descname">interrupt_callback</tt><big>(</big><em>cbobj</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.interrupt_callback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Handle CTRL-C&#8217;s during downloads.  If a CTRL-C occurs a
-URLGrabError will be raised to push the download onto the next
-mirror.  If two CTRL-C&#8217;s occur in quick succession then yum
-will exit.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cbobj</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">urlgrabber.grabber.CallbackObject</span></tt></td>
 </tr>
 </tbody>
 </table>
@@ -4438,7 +4344,7 @@ This is the same as the dictionary returned by
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.1-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.2-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

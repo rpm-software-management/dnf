@@ -245,3 +245,31 @@ Expect the following bugs to go away with upgrade to 0.4.1:
 * :rhbug:`1006366`
 * :rhbug:`1008444`
 * :rhbug:`1003220`
+
+===================
+0.4.2 Release Notes
+===================
+
+DNF now downloads packages for the transaction in parallel with progress bars
+updated to effectively represent this. Since so many things in the downloading
+code were changing, we figured it was a good idea to finally drop urlgrabber
+dependency at the same time. Indeed, this is the first version that doesn't
+require urlgrabber for neither build nor run.
+
+Similarly, since `librepo started to support this
+<https://github.com/Tojaj/librepo/commit/acf458f29f7234d2d8d93a68391334343beae4b9>`_,
+downloads in DNF now use the fastests mirrors available by default.
+
+The option to :ref:`specify repositories' costs <repo_cost-label>` has been
+readded.
+
+Internally, DNF has seen first part of ongoing refactorings of the basic
+operations (install, update) as well as a couple of new API methods supporting
+development of extensions.
+
+These bugzillas are fixed in 0.4.2:
+
+* :rhbug:`909744`
+* :rhbug:`984529`
+* :rhbug:`967798`
+* :rhbug:`995459`

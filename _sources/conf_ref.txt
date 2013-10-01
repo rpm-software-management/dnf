@@ -65,6 +65,13 @@ one main section. The repository sections define the configuration for each
     If enabled, DNF will continue running if this repository cannot be contacted
     for any reason. The default is True.
 
+.. _repo_cost-label:
+
+``cost``
+    The relative cost of accessing this repository, defaulting to 1000. If the
+    same package can be downloaded from two or more repositories, the repository
+    with the lowest cost is preferred.
+
 ==================================
  Options for both [main] and Repo
 ==================================
