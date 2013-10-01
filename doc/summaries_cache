@@ -210,5 +210,21 @@
     [
         998859, 
         "\"dnf upgrade --best\" will always install 64bits package when 32bit package is installed"
+    ], 
+    [
+        909744, 
+        "[rfe] support parallel downloads"
+    ], 
+    [
+        984529, 
+        "[rfe] fastest mirror"
+    ], 
+    [
+        967798, 
+        "[RFE] repositories costs"
+    ], 
+    [
+        995459, 
+        "conflicting requests when trying to install locally available packages"
     ]
 ]
