@@ -320,7 +320,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.install_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
-            if self.install(arg) == 0:
+            try:
+                self.install(arg)
+            except dnf.exceptions.PackageNotFoundError:
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.term.MODE['bold'], arg,
                                  self.term.MODE['normal'])
