@@ -473,12 +473,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.exceptions.Error:
-                # :dead
-                self.logger.info(
-                                        _('No package %s%s%s available.'),
-                                        self.term.MODE['bold'], arg,
-                                        self.term.MODE['normal'])
+            except dnf.exceptions.PackagesNotInstalledError as err:
+                for pkg in err.packages:
+                    self.logger.info(_('No Match for available package: %s'), pkg)
                 self._maybeYouMeant(arg)
         cnt = self._goal.req_length() - oldcount
         if cnt > 0:

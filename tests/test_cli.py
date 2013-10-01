@@ -67,7 +67,25 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.term = support.FakeTerm()
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
+        self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
     
+    def test_downgradePkgs(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
+
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to downgrade'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
+
+    def test_downgradePkgs_notinstalled(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('lotus',))
+
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
+                         [mock.call('lotus')])
+
     def test_reinstallPkgs(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
         

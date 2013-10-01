@@ -196,33 +196,3 @@ class CompsTest(support.TestCase):
         yumbase = support.MockYumBase("main")
         yumbase.repos['main'].enablegroups = False
         self.assertRaises(dnf.exceptions.CompsError, yumbase.read_comps)
-
-class DowngradeTest(support.TestCase):
-    
-    def __init__(self, methodName='runTest'):
-        support.TestCase.__init__(self, methodName)
-        self._base = None
-        self._goal = None
-    
-    def setUp(self):
-        self._base = dnf.yum.base.Base()
-        self._base._sack = support.mock_sack('main')
-        self._base._goal = self._goal = mock.Mock()
-
-    def test_downgrade_pkgname(self):
-        pkg, = self._base.sack.query().filter(
-            reponame='main', name='tour', evr='0:4.6-1', arch='noarch')
-        
-        affected = self._base.downgrade('tour')
-        
-        self.assertEqual(affected, 1)
-        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
-
-    def test_downgrade_pkgnevra(self):
-        pkg, = self._base.sack.query().filter(
-            reponame='main', name='tour', evr='0:4.6-1', arch='noarch')
-        
-        affected_count = self._base.downgrade('tour-0:5-0.noarch')
-        
-        self.assertEqual(affected_count, 1)
-        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
