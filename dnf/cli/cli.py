@@ -320,7 +320,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                 self.install_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
-            if self.install(arg) == 0:
+            try:
+                self.install(arg)
+            except dnf.exceptions.PackageNotFoundError:
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.term.MODE['bold'], arg,
                                  self.term.MODE['normal'])
@@ -367,7 +369,10 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
                     self.update_local(item)
                     continue
 
-                if not self.update(item):
+                try:
+                    self.update(item)
+                except dnf.exceptions.PackageNotFoundError:
+                    self.logger.info(_('No match for argument: %s'), unicode(item))
                     self._checkMaybeYouMeant(item)
 
         cnt = self._goal.req_length() - oldcount
@@ -434,10 +439,13 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         cnt = 0
         for arg in userlist:
-            current_cnt = self.remove(arg)
-            if current_cnt == 0:
+            try:
+                current_cnt = self.remove(arg)
+            except dnf.exceptions.PackagesNotInstalledError:
+                self.logger.info(_('No match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
-            cnt += current_cnt
+            else:
+                cnt += current_cnt
 
         if cnt > 0:
             msg = P_('%d package marked for removal',
@@ -473,12 +481,9 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
             try:
                 self.downgrade(arg)
-            except dnf.exceptions.Error:
-                # :dead
-                self.logger.info(
-                                        _('No package %s%s%s available.'),
-                                        self.term.MODE['bold'], arg,
-                                        self.term.MODE['normal'])
+            except dnf.exceptions.PackagesNotInstalledError as err:
+                for pkg in err.packages:
+                    self.logger.info(_('No match for available package: %s'), pkg)
                 self._maybeYouMeant(arg)
         cnt = self._goal.req_length() - oldcount
         if cnt > 0:
@@ -515,7 +520,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             try:
                 self.reinstall(arg)
             except dnf.exceptions.PackagesNotInstalledError:
-                self.logger.info(_('No Match for argument: %s'), unicode(arg))
+                self.logger.info(_('No match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False)
             except dnf.exceptions.PackagesNotAvailableError, e:
                 for ipkg in e.packages:
