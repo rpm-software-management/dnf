@@ -139,6 +139,12 @@ class MockYumBase(dnf.yum.base.Base):
     def sack(self):
         if self._sack:
             return self._sack
+        return self.init_sack()
+
+    def activate_persistor(self):
+        pass
+
+    def init_sack(self):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a Base reference.
         self._sack = TestSack(repo_dir(), self)
@@ -150,9 +156,6 @@ class MockYumBase(dnf.yum.base.Base):
         self._sack.configure(self.conf.installonlypkgs)
         self._goal = hawkey.Goal(self._sack)
         return self._sack
-
-    def activate_persistor(self):
-        pass
 
     def close(self):
         pass
@@ -236,10 +239,10 @@ class FakePersistor(object):
 # object matchers for asserts
 
 class PackageMatcher(object):
-    
+
     def __init__(self, **kwargs):
         self._kwargs = kwargs
-    
+
     def __eq__(self, other):
         if not isinstance(other, hawkey.Package):
             return False
@@ -247,13 +250,13 @@ class PackageMatcher(object):
             if getattr(other, name) != value:
                 return False
         return True
-    
+
     def __repr__(self):
         kwargs_str = ', '.join('%s=%s' % (name, repr(value))
                                for name, value in self._kwargs.items())
         return '%s(%s)' % (type(self).__name__, kwargs_str)
 
-# specialized test cases
+# test cases
 
 class TestCase(unittest.TestCase):
     def assertFile(self, path):
