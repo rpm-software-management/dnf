@@ -1897,7 +1897,7 @@ class Base(object):
         if not po:
             return 0
         self._goal.install(po)
-        return 1 
+        return 1
 
     def reinstall(self, pkg_spec):
         subj = queries.Subject(pkg_spec)
@@ -1915,7 +1915,7 @@ class Base(object):
                 available_pkg = available_nevra2pkg[str(installed_pkg)]
             except KeyError:
                 continue
-            
+
             self._goal.install(available_pkg)
             cnt += 1
 

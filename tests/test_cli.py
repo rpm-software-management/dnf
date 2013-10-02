@@ -152,7 +152,7 @@ class YumBaseCliTest(unittest.TestCase):
 
     def test_reinstallPkgs(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
-        
+
         self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('pepper')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
@@ -161,7 +161,7 @@ class YumBaseCliTest(unittest.TestCase):
 
     def test_reinstallPkgs_notinstalled(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('lotus',))
-        
+
         self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for argument: %s', 'lotus')])
@@ -172,9 +172,9 @@ class YumBaseCliTest(unittest.TestCase):
 
     def test_reinstallPkgs_notavailable(self):
         pkg = support.PackageMatcher(name='hole')
-        
+
         result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
-        
+
         self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('hole')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('Installed package %s%s%s%s not available.', '', pkg, '', '')])
@@ -195,7 +195,7 @@ class YumBaseCliTest(unittest.TestCase):
         pkg.url = 'http://example.com'
         pkg.license = 'GPL+'
         pkg.description = None
-        
+
         with mock.patch('sys.stdout') as stdout:
             self._yumbase.infoOutput(pkg)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
