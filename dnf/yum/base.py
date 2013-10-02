@@ -1785,7 +1785,8 @@ class Base(object):
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
-        return 0
+        raise dnf.exceptions.PackageNotFoundError(
+            _("Problem in update: no package matched to update"))
 
     def update_all(self):
         self._goal.upgrade_all()
