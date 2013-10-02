@@ -72,6 +72,9 @@ class MetadataError(Error):
 class MiscError(Error):
     pass
 
+class PackageNotFoundError(Error):
+    pass
+
 class PackagesNotInstalledError(Error):
     def __init__(self, value=None, packages=[]):
         Error.__init__(self, value)

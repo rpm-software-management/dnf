@@ -18,7 +18,10 @@
 from __future__ import absolute_import
 from dnf.queries import (available_by_name, available_by_nevra, installed,
                          updates_by_name)
+from tests import mock
 from tests import support
+import dnf.yum
+import hawkey
 
 class Update(support.ResultTestCase):
     def test_update(self):
@@ -28,6 +31,15 @@ class Update(support.ResultTestCase):
         new_versions = updates_by_name(yumbase.sack, "pepper")
         expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
         self.assertResult(yumbase, expected)
+
+    def test_update_not_found(self):
+        base = dnf.yum.base.Base()
+        base._sack = support.mock_sack('updates')
+        base._goal = goal = mock.create_autospec(hawkey.Goal)
+
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          base.update, 'non-existent')
+        self.assertEqual(goal.mock_calls, [])
 
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """

@@ -70,7 +70,28 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
+        self._yumbase.update = mock.Mock(wraps=self._yumbase.update)
     
+    def test_updatePkgs(self):
+        result, resultmsgs = self._yumbase.updatePkgs(('pepper',))
+
+        self.assertEqual(self._yumbase.update.mock_calls, [mock.call('pepper')])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package marked for upgrade'])
+
+    def test_updatePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.updatePkgs(('non-existent',))
+
+        self.assertEqual(self._yumbase.update.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No match for argument: %s', 'non-existent')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('non-existent')])
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['No packages marked for upgrade'])
+
     def test_downgradePkgs(self):
         result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
 
