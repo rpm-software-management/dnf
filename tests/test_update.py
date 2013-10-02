@@ -20,6 +20,9 @@ from dnf.queries import (available_by_name, available_by_nevra, installed,
                          updates_by_name)
 from tests import support
 
+import dnf.util
+import tests.test_repo
+
 class Update(support.ResultTestCase):
     def test_update(self):
         """ Simple update. """
@@ -75,3 +78,21 @@ class SkipBroken(support.ResultTestCase):
         new_set = support.installed_but(self.sack, "pepper").run()
         new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)
+
+class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):
+    def test_cost(self):
+        """Test the repo costs are respected."""
+        r1 = self.build_repo('r1')
+        r2 = self.build_repo('r2')
+        r1.cost = 500
+        r2.cost = 700
+
+        base = support.MockYumBase()
+        base.init_sack()
+        base.repos.add(r1)
+        base.repos.add(r2)
+        base._add_repo_to_sack('r1')
+        base._add_repo_to_sack('r2')
+        base.update("tour")
+        (installed, _) = self.installed_removed(base)
+        self.assertEqual('r1', dnf.util.first(installed).reponame)

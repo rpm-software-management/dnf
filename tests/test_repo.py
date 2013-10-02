@@ -30,6 +30,37 @@ import StringIO
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
 
+class RepoTestMixin(object):
+    """Test the logic of dnf.repo.Repo.
+
+    There is one cache directory for the entire TestCase, but each individual
+    test cleans up the cache after itself.
+
+    We only test sync from a local dir. Testing all sorts of remote downloads
+    from mirrorlists etc. is up to librepo.
+
+    """
+    TMP_CACHEDIR = None
+
+    @classmethod
+    def setUpClass(cls):
+         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix="dnf-repotest-")
+
+    @classmethod
+    def tearDownClass(cls):
+        dnf.util.rm_rf(cls.TMP_CACHEDIR)
+
+    def build_repo(self, id_, name=None):
+        repo = dnf.repo.Repo(id_)
+        repo.basecachedir = self.TMP_CACHEDIR
+        repo.baseurl = [BASEURL]
+        repo.name = id_ if name is None else name
+        return repo
+
+    def tearDown(self):
+        repo_path = os.path.join(self.TMP_CACHEDIR, "r")
+        dnf.util.rm_rf(repo_path)
+
 class HandleTest(support.TestCase):
     def test_useragent(self):
         h = dnf.repo._Handle(False, 0)
@@ -53,7 +84,7 @@ class MetadataTest(support.TestCase):
         self.assertRaises(dnf.exceptions.MetadataError,
                           self.md.file_timestamp, 'primary')
 
-class RepoTest(support.ResultTestCase):
+class RepoTest(RepoTestMixin, support.TestCase):
     """Test the logic of dnf.repo.Repo.
 
     There is one cache directory for the entire TestCase, but each individual
@@ -63,25 +94,9 @@ class RepoTest(support.ResultTestCase):
     from mirrorlists etc. is up to librepo.
 
     """
-    TMP_CACHEDIR = None
 
     def setUp(self):
-        self.repo = dnf.repo.Repo("r")
-        self.repo.basecachedir = self.TMP_CACHEDIR
-        self.repo.baseurl = [BASEURL]
-        self.repo.name = "r for riot"
-
-    @classmethod
-    def setUpClass(cls):
-         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix="dnf-repotest-")
-
-    def tearDown(self):
-        repo_path = os.path.join(self.TMP_CACHEDIR, "r")
-        dnf.util.rm_rf(repo_path)
-
-    @classmethod
-    def tearDownClass(cls):
-        dnf.util.rm_rf(cls.TMP_CACHEDIR)
+        self.repo = self.build_repo('r', 'r for riot')
 
     def test_cachedir(self):
         self.assertEqual(self.repo.cachedir,
@@ -98,22 +113,23 @@ class RepoTest(support.ResultTestCase):
         self.assertIn('gpgkey', opts)
         self.assertEqual(parser.get('r', 'timeout'), '30.0')
 
-    @support.skip("doesn't pass build in Koji")
-    def test_cost_install(self):
+    def test_cost(self):
+        """Test the cost is passed down to the hawkey repo instance."""
         repo2 = dnf.repo.Repo("r2")
         repo2.basecachedir = self.TMP_CACHEDIR
         repo2.baseurl = [BASEURL]
         repo2.name = "r2 repo"
         self.repo.cost = 500
         repo2.cost = 700
-        yumbase = support.MockYumBase()
-        yumbase._repos.add(self.repo)
-        yumbase._repos.add(repo2)
-        yumbase.activate_sack(load_system_repo=False)
+
+        base = support.MockYumBase()
+        base.init_sack()
+        base.repos.add(self.repo)
+        base.repos.add(repo2)
+        base._add_repo_to_sack('r')
+        base._add_repo_to_sack('r2')
         self.assertEqual(500, self.repo.hawkey_repo.cost)
-        yumbase.install("tour")
-        installed = self._get_installed(yumbase)
-        self.assertEqual(["r"], map(lambda pkg: pkg.reponame, installed))
+        self.assertEqual(700, repo2.hawkey_repo.cost)
 
     def test_expire_cache(self):
         self.repo.load()
