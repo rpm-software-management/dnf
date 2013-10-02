@@ -70,8 +70,9 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
+        self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
         self._yumbase.update = mock.Mock(wraps=self._yumbase.update)
-    
+
     def test_updatePkgs(self):
         result, resultmsgs = self._yumbase.updatePkgs(('pepper',))
 
@@ -91,6 +92,26 @@ class YumBaseCliTest(unittest.TestCase):
                          [mock.call('non-existent')])
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['No packages marked for upgrade'])
+
+    def test_erasePkgs(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('pepper',))
+
+        self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('pepper')])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package marked for removal'])
+
+    def test_erasePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.erasePkgs(('non-existent',))
+
+        self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No match for argument: %s', 'non-existent')])
+        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
+                         [mock.call('non-existent', always_output=False, rpmdb_only=True)])
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['No Packages marked for removal'])
 
     def test_downgradePkgs(self):
         result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
