@@ -16,8 +16,10 @@
 #
 
 from __future__ import absolute_import
+from tests import mock
 from tests import support
-import dnf.queries
+import dnf.yum.base
+import hawkey
 
 class DowngradeTest(support.ResultTestCase):
     def test_downgrade_local(self):
@@ -47,3 +49,30 @@ class DowngradeTest(support.ResultTestCase):
         installed, removed = self.installed_removed(b)
         self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])
         self.assertItemsEqual(map(str, removed), ['tour-5-0.noarch'])
+
+class DowngradeTest2(support.TestCase):
+
+    def setUp(self):
+        self._base = dnf.yum.base.Base()
+        self._base._sack = support.mock_sack('main')
+        self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
+
+    def test_downgrade_pkgnevra(self):
+        """ Downgrade should handle full NEVRAs. """
+        pkg = support.PackageMatcher(name='tour')
+
+        downgraded_count = self._base.downgrade('tour-0:5-0.noarch')
+
+        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
+        self.assertEqual(downgraded_count, 1)
+
+    def test_downgrade_notinstalled(self):
+        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
+                          self._base.downgrade, 'lotus')
+        self.assertEqual(self._goal.mock_calls, [])
+
+    def test_downgrade_notavailable(self):
+        downgraded_count = self._base.downgrade('pepper')
+
+        self.assertEqual(self._goal.mock_calls, [])
+        self.assertEqual(downgraded_count, 0)

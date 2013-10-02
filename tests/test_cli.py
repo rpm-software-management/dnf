@@ -67,35 +67,60 @@ class YumBaseCliTest(unittest.TestCase):
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.term = support.FakeTerm()
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
+        self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
+        self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
+        self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
     
+    def test_downgradePkgs(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
+
+        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('tour')])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to downgrade'])
+
+    def test_downgradePkgs_notinstalled(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('lotus',))
+
+        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('lotus')])
+        self.assertEqual(self._yumbase.logger.mock_calls, [])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
+                         [mock.call('lotus')])
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+
     def test_reinstallPkgs(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
         
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package to reinstall'])
+        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('pepper')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+        self.assertEqual(result, 2)
+        self.assertEqual(resultmsgs, ['1 package to reinstall'])
 
     def test_reinstallPkgs_notinstalled(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('lotus',))
         
-        self.assertEqual(result, 1)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No Match for argument: %s', 'lotus')])
+                         [mock.call.info('No match for argument: %s', 'lotus')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('lotus', always_output=False)])
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_reinstallPkgs_notavailable(self):
         pkg = support.PackageMatcher(name='hole')
         
         result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
         
-        self.assertEqual(result, 1)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
+        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('hole')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('Installed package %s%s%s%s not available.', '', pkg, '', '')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
+        self.assertEqual(result, 1)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_infoOutput_with_none_description(self):
         pkg = support.MockPackage('tour-5-0.noarch')
