@@ -40,6 +40,7 @@ SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 9
 UPDATES_NSOLVABLES = 4
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
+TOTAL_GROUPS = 3
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
 # testing infrastructure
@@ -203,6 +204,7 @@ class FakeConf(object):
         self.color = 'never'
         self.color_update_installed = 'normal'
         self.color_update_remote = 'normal'
+        self.color_list_available_install = 'normal'
         self.commands = []
         self.debug_solver = False
         self.debuglevel = 8
@@ -224,6 +226,7 @@ class FakeConf(object):
         self.tsflags = []
         self.uid = 0
         self.upgrade_requirements_on_install = False
+        self.verbose = False
         self.yumvar = {'releasever' : 'Fedora69'}
 
 class FakePersistor(object):

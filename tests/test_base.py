@@ -190,7 +190,7 @@ class CompsTest(support.TestCase):
         yumbase.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         yumbase.read_comps()
         groups = yumbase.comps.groups
-        self.assertLength(groups, 2)
+        self.assertLength(groups, support.TOTAL_GROUPS)
 
     def test_read_comps_disabled(self):
         yumbase = support.MockYumBase("main")

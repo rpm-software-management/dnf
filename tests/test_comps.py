@@ -40,7 +40,7 @@ class CompsTest(support.TestCase):
     def test_by_pattern(self):
         comps = self.comps
         self.assertLength(comps.groups_by_pattern('Base'), 1)
-        self.assertLength(comps.groups_by_pattern('*'), 2)
+        self.assertLength(comps.groups_by_pattern('*'), support.TOTAL_GROUPS)
         self.assertLength(comps.groups_by_pattern('Base, Solid*'), 2)
 
         group = dnf.util.first(comps.groups_by_pattern('Base'))
@@ -52,7 +52,7 @@ class CompsTest(support.TestCase):
 
         comps = self.comps
         groups = comps.groups
-        self.assertLength(groups, 2)
+        self.assertLength(groups, support.TOTAL_GROUPS)
         comps.compile(sack.query().installed())
         # ensure even groups obtained before compile() have the property set:
         self.assertTrue(groups[0].installed)
@@ -78,7 +78,7 @@ class CompsTest(support.TestCase):
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter],
-                         ['Base', 'Solid Ground'])
+                         ['Base', 'Solid Ground', "Pepper's"])
         self.assertEqual([c.name for c in comps.categories_iter],
                          ['Base System'])
         g = dnf.util.first(comps.groups_iter)
@@ -94,8 +94,8 @@ class CompsTest(support.TestCase):
 
     def test_size(self):
         comps = self.comps
-        self.assertLength(comps, 4)
-        self.assertLength(comps.groups, 2)
+        self.assertLength(comps, 5)
+        self.assertLength(comps.groups, support.TOTAL_GROUPS)
         self.assertLength(comps.categories, 1)
         self.assertLength(comps.environments, 1)
 
