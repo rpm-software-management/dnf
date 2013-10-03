@@ -22,7 +22,7 @@ import dnf.cli.output
 import dnf.transaction
 import unittest
 
-OUTPUT=u"""
+LIST_TRANSACTION_OUTPUT=u"""
 ================================================================================
  Package           Arch              Version           Repository          Size
 ================================================================================
@@ -59,7 +59,7 @@ class OutputTest(unittest.TestCase):
         transaction = dnf.transaction.Transaction()
         transaction.add_upgrade(u, i, [obs])
         self.output._transaction = transaction
-        self.assertEqual(self.output.list_transaction(), OUTPUT)
+        self.assertEqual(self.output.list_transaction(), LIST_TRANSACTION_OUTPUT)
 
     @mock.patch('dnf.i18n.input')
     def test_userconfirm(self, input_fnc):
@@ -122,3 +122,46 @@ class OutputTest(unittest.TestCase):
         with mock.patch('dnf.i18n.input', input_fnc):
             self.assertFalse(self.output.userconfirm())
         self.assertEqual(input_fnc.called, 3)
+
+PKGS_IN_GROUPS_OUTPUT = u"""\
+
+Group: Pepper's
+ Mandatory Packages:
+   hole
+   lotus
+"""
+
+PKGS_IN_GROUPS_VERBOSE_OUTPUT = u"""\
+
+Group: Pepper's
+ Group-Id: Peppers
+ Mandatory Packages:
+   hole-1-1.x86_64                                                       @System
+   lotus-3-16.i686                                                       main   
+"""
+
+class GroupOutputTest(unittest.TestCase):
+    def setUp(self):
+        base = support.MockYumBase('main')
+        base.read_mock_comps(support.COMPS_PATH)
+        output = dnf.cli.output.YumOutput()
+        output.conf = support.FakeConf()
+        output.sack = base.sack
+
+        self.base = base
+        self.output = output
+
+    @mock.patch('dnf.cli.output._term_width', return_value=80)
+    def test_group_info(self, _term_width):
+        group = self.base.comps.group_by_pattern('Peppers')
+        with support.patch_std_streams() as (stdout, stderr):
+            self.output.displayPkgsInGroups(group)
+        self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
+
+    @mock.patch('dnf.cli.output._term_width', return_value=80)
+    def test_group_verbose_info(self, _term_width):
+        group = self.base.comps.group_by_pattern('Peppers')
+        self.output.conf.verbose = True
+        with support.patch_std_streams() as (stdout, stderr):
+            self.output.displayPkgsInGroups(group)
+        self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)

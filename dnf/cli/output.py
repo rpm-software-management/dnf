@@ -18,6 +18,7 @@
 """Handle actual output from the cli."""
 
 from __future__ import print_function
+import itertools
 import operator
 import sys
 import time
@@ -432,6 +433,8 @@ class YumTerm:
 
 class YumOutput:
     """Main output class for the yum command line."""
+
+    GRP_PACKAGE_INDENT = ' ' * 3
 
     def __init__(self):
         self.logger = logging.getLogger("dnf")
@@ -985,103 +988,84 @@ class YumOutput:
         # FIXME what should we be printing here?
         return self.userconfirm()
 
-    def _group_names2aipkgs(self, pkg_names):
-        """ Convert pkg_names to installed pkgs or available pkgs, return
-            value is a dict on pkg.name returning (apkg, ipkg). """
-        raise NotImplementedError, "not implemented in hawkey" # :hawkey
-        ipkgs = self.rpmdb.searchNames(pkg_names)
-        apkgs = self.pkgSack.searchNames(pkg_names)
-        apkgs = packagesNewestByNameArch(apkgs)
+    def _pkgs2name_dict(self, sections):
+        installed = self.sack.query().installed().name_dict()
+        available = self.sack.query().available().name_dict()
 
-        # This is somewhat similar to doPackageLists()
-        pkgs = {}
-        for pkg in ipkgs:
-            pkgs[(pkg.name, pkg.arch)] = (None, pkg)
-        for pkg in apkgs:
-            key = (pkg.name, pkg.arch)
-            if key not in pkgs:
-                pkgs[(pkg.name, pkg.arch)] = (pkg, None)
-            elif pkg.verGT(pkgs[key][1]):
-                pkgs[(pkg.name, pkg.arch)] = (pkg, pkgs[key][1])
+        d = {}
+        for pkg_name in itertools.chain(*zip(*sections)[1]):
+            if pkg_name in installed:
+                d[pkg_name] = installed[pkg_name][0]
+            elif pkg_name in available:
+                d[pkg_name] = available[pkg_name][0]
+        return d
 
-        # Convert (pkg.name, pkg.arch) to pkg.name dict
-        ret = {}
-        for (apkg, ipkg) in pkgs.itervalues():
-            pkg = apkg or ipkg
-            ret.setdefault(pkg.name, []).append((apkg, ipkg))
-        return ret
-
-    def _calcDataPkgColumns(self, data, pkg_names, pkg_names2pkgs,
-                            indent='   '):
-        for item in pkg_names:
-            if item not in pkg_names2pkgs:
+    def _pkgs2col_lengths(self, sections, name_dict):
+        nevra_lengths = {}
+        repo_lengths = {}
+        for pkg_name in itertools.chain(*zip(*sections)[1]):
+            pkg = name_dict.get(pkg_name)
+            if pkg is None:
                 continue
-            for (apkg, ipkg) in pkg_names2pkgs[item]:
-                pkg = ipkg or apkg
-                envra = utf8_width(str(pkg)) + utf8_width(indent)
-                rid = len(pkg.ui_from_repo)
-                for (d, v) in (('envra', envra), ('rid', rid)):
-                    data[d].setdefault(v, 0)
-                    data[d][v] += 1
+            nevra_l = utf8_width(str(pkg)) + utf8_width(self.GRP_PACKAGE_INDENT)
+            repo_l = len(pkg.reponame)
+            nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
+            repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
+        return (nevra_lengths, repo_lengths)
 
-    def _displayPkgsFromNames(self, pkg_names, verbose, pkg_names2pkgs,
-                              indent='   ', columns=None):
-        if not verbose:
-            for item in sorted(pkg_names):
-                print('%s%s' % (indent, item))
-        else:
-            for item in sorted(pkg_names):
-                if item not in pkg_names2pkgs:
-                    print('%s%s' % (indent, item))
-                    continue
-                for (apkg, ipkg) in sorted(pkg_names2pkgs[item],
-                                           key=lambda x: x[1] or x[0]):
-                    if ipkg and apkg:
-                        highlight = self.conf.color_list_installed_older
-                    elif apkg:
-                        highlight = self.conf.color_list_available_install
-                    else:
-                        highlight = False
-                    self.simpleEnvraList(ipkg or apkg, ui_overflow=True,
-                                         indent=indent, highlight=highlight,
-                                         columns=columns)
+    def _display_packages(self, pkg_names):
+        for name in pkg_names:
+            print('%s%s' % (self.GRP_PACKAGE_INDENT, name))
+
+    def _display_packages_verbose(self, pkg_names, name_dict, columns):
+        for name in pkg_names:
+            pkg = name_dict[name]
+            highlight = False
+            if not pkg.from_system:
+                highlight = self.conf.color_list_available_install
+            self.simpleEnvraList(pkg, ui_overflow=True,
+                                 indent=self.GRP_PACKAGE_INDENT,
+                                 highlight=highlight,
+                                 columns=columns)
 
     def displayPkgsInGroups(self, group):
         """Output information about the packages in a given group
 
         :param group: a Group object to output information about
         """
+        def names(packages):
+            return sorted(pkg.name for pkg in packages)
         print(_('\nGroup: %s') % group.ui_name)
 
-        verb = self.conf.verbose
-        if verb:
-            print(_(' Group-Id: %s') % to_unicode(group.groupid))
-        pkg_names2pkgs = None
-        if verb:
-            pkg_names2pkgs = self._group_names2aipkgs(group.packages)
+        verbose = self.conf.verbose
+        if verbose:
+            print(_(' Group-Id: %s') % to_unicode(group.id))
         if group.ui_description:
             print(_(' Description: %s') % to_unicode(group.ui_description))
         if group.lang_only:
             print(_(' Language: %s') % group.lang_only)
 
-        sections = ((_(' Mandatory Packages:'),   group.mandatory_packages),
-                    (_(' Default Packages:'),     group.default_packages),
-                    (_(' Optional Packages:'),    group.optional_packages),
-                    (_(' Conditional Packages:'), group.conditional_packages))
-        columns = None
-        if verb:
-            data = {'envra' : {}, 'rid' : {}}
-            for (section_name, pkg_names) in sections:
-                self._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
-            data = [data['envra'], data['rid']]
-            columns = self.calcColumns(data)
+        sections = (
+            (_(' Mandatory Packages:'), names(group.mandatory_packages)),
+            (_(' Default Packages:'), names(group.default_packages)),
+            (_(' Optional Packages:'), names(group.optional_packages)),
+            (_(' Conditional Packages:'), names(group.conditional_packages)))
+        if verbose:
+            name_dict = self._pkgs2name_dict(sections)
+            col_lengths = self._pkgs2col_lengths(sections, name_dict)
+            columns = self.calcColumns(col_lengths)
             columns = (-columns[0], -columns[1])
-
-        for (section_name, pkg_names) in sections:
-            if len(pkg_names) > 0:
+            for (section_name, packages) in sections:
+                if len(packages) < 1:
+                    continue
                 print(section_name)
-                self._displayPkgsFromNames(pkg_names, verb, pkg_names2pkgs,
-                                           columns=columns)
+                self._display_packages_verbose(packages, name_dict, columns)
+        else:
+            for (section_name, packages) in sections:
+                if len(packages) < 1:
+                    continue
+                print(section_name)
+                self._display_packages(packages)
 
     def depListOutput(self, results):
         """Format and output a list of findDeps results

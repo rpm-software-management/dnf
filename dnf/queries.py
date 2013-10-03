@@ -60,6 +60,12 @@ class Query(hawkey.Query):
     def upgrades(self):
         return self.filter(upgrades=True)
 
+    def name_dict(self):
+        d = {}
+        for pkg in self:
+            d.setdefault(pkg.name, []).append(pkg)
+        return d
+
     def na_dict(self):
         return per_arch_dict(self.run())
 
