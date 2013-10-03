@@ -216,6 +216,10 @@ Group Command
 ``dnf [options] group install <group-spec>``
     Install packages in the specified group that are not currently installed.
 
+``dnf [options] group info <group-spec>``
+    Display package lists of a group. Shows which packages are installed or
+    available from a repo when ``-v`` is used.
+
 ------------
 Help Command
 ------------
