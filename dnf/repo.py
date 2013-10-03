@@ -216,6 +216,9 @@ class Repo(dnf.yum.config.RepoConf):
         if self._progress:
             h.progresscb = self._progress.librepo_cb
 
+        # apply repo options
+        h.proxy = self.proxy
+
         return h
 
     def _handle_new_pkg_download(self):
