@@ -2100,14 +2100,8 @@ class Base(object):
         # Go get the GPG key from the given URL
         try:
             url = i18n.to_utf8(keyurl)
-            if repo is None:
-                opts = {'limit':9999}
-            else:
-                #  If we have a repo. use the proxy etc. configuration for it.
-                # In theory we have a global proxy config. too, but meh...
-                # external callers should just update.
-                opts = repo.urlgrabber_opts()
-            rawkey = dnf.util.urlopen(url, **opts).read()
+            # If we have a repo, use the proxy etc. configuration for it.
+            rawkey = dnf.util.urlopen(url, repo).read()
 
         except IOError, e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
@@ -2121,8 +2115,7 @@ class Base(object):
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
                 url = i18n.to_utf8(keyurl + '.asc')
-                opts = repo.urlgrabber_opts()
-                sigfile = dnf.util.urlopen(url, **opts)
+                sigfile = dnf.util.urlopen(url, repo)
 
             except IOError, e:
                 sigfile = None
