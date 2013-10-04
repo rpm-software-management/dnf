@@ -67,7 +67,8 @@ class CompsTest(support.TestCase):
                               ('somerset', 'base-system'))
         self.assertItemsEqual((id_.default for id_ in env.group_ids),
                               (True, False))
-        self.assertItemsEqual(env.option_ids, ('base',))
+        self.assertItemsEqual((id_.name for id_ in env.option_ids),
+                              ('base',))
 
     def test_groups(self):
         g = self.comps.group_by_pattern('base')
