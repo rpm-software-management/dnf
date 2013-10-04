@@ -226,6 +226,14 @@ class Repo(dnf.yum.config.RepoConf):
         return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
     @property
+    def handle(self):
+        """Get the shared librepo handle for this repo"""
+        if not self._handle:
+            dnf.util.ensure_dir(self.pkgdir)
+            self._handle = self._handle_new_pkg_download()
+        return self._handle
+
+    @property
     def local(self):
         if self.metalink or self.mirrorlist:
             return False
@@ -337,16 +345,13 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.filelists_fn
 
     def get_package_target(self, po, cb):
-        if not self._handle:
-            dnf.util.ensure_dir(self.pkgdir)
-            self._handle = self._handle_new_pkg_download()
         ctype, csum = po.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
             logger.warn(_("unsupported checksum type: %s") % ctype)
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl,
-            True, cb.progress, os.path.basename(po.relativepath), self._handle,
+            True, cb.progress, os.path.basename(po.relativepath), self.handle,
             endcb=lambda text, status, err: cb.end(text, po.size, err),
         )
         target.po = po
@@ -356,7 +361,7 @@ class Repo(dnf.yum.config.RepoConf):
         if self.local:
             return pkg.localPkg()
         dnf.util.ensure_dir(self.pkgdir)
-        handle = self._handle_new_pkg_download()
+        handle = self.handle
         if handle.progresscb:
             text = text if text is not None else pkg.location
             self._progress.begin(text)
