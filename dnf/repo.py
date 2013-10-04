@@ -506,30 +506,6 @@ class Repo(dnf.yum.config.RepoConf):
     def set_progress_bar(self, progress):
         self._progress = progress
 
-    def urlgrabber_opts(self):
-        """Get http configuration for urlgrabber.
-
-        Deprecated. :noapi
-
-        """
-        return {'keepalive': self.keepalive,
-                'bandwidth': self.bandwidth,
-                'retry': self.retries,
-                'throttle': self.throttle,
-                'proxies': {},
-                'timeout': self.timeout,
-                'ip_resolve': self.ip_resolve,
-                'http_headers': (),
-                'ssl_verify_peer': self.sslverify,
-                'ssl_verify_host': self.sslverify,
-                'ssl_ca_cert': self.sslcacert,
-                'ssl_cert': self.sslclientcert,
-                'ssl_key': self.sslclientkey,
-                'user_agent': dnf.const.USER_AGENT,
-                'username': self.username,
-                'password': self.password,
-                }
-
     def valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
             return "Repository %s has no mirror or baseurl set." % self.id
