@@ -370,7 +370,10 @@ class Repo(dnf.yum.config.RepoConf):
         progresscb = endcb = None
         if cb:
             progresscb = cb.progress
-            endcb = lambda text, status, err: cb.end(text, po.size, err)
+            def endcb(text, status, msg):
+                # using a local file with good checksum is not a failure
+                status = 'SKIPPED' if status == librepo.TRANSFER_ALREADYEXISTS else 'FAILED'
+                cb.end(text, po.size, msg, status)
 
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,

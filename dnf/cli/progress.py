@@ -121,12 +121,13 @@ class MultiFileProgressMeter(object):
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def end(self, text, size, err):
+    def end(self, text, size, err, status='FAILED'):
         """Display a message that file has finished downloading
 
         text -- the file id
         size -- the file size
         err -- None if ok, error message otherwise
+        status -- Download status (relevant when err != None)
         """
         # update state
         start = now = time()
@@ -139,7 +140,7 @@ class MultiFileProgressMeter(object):
 
         if err:
             # the error message, no trimming
-            msg = '[FAILED] %s: ' % text
+            msg = '[%s] %s: ' % (status, text)
             left = _term_width() - len(msg) - 1
             msg = '%s%-*s\n' % (msg, left, err)
         else:
