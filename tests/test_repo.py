@@ -240,11 +240,6 @@ class RepoTest(RepoTestMixin, support.TestCase):
         handle = self.repo._handle_new_remote("/bag")
         setopt.assert_any_call(librepo.LRO_GPGCHECK, True)
 
-    def test_urlgrabber_opts(self):
-        opts = self.repo.urlgrabber_opts()
-        self.assertIn('keepalive', opts)
-        self.assertIn('password', opts)
-
     def test_valid(self):
         self.assertIsNone(self.repo.valid())
 
