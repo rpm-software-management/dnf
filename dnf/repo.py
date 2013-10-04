@@ -203,6 +203,7 @@ class Repo(dnf.yum.config.RepoConf):
         if mirrorlist:
             if mirror_setup:
                 h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
+                h.setopt(librepo.LRO_FASTESTMIRROR, True)
             else:
                 # use already resolved mirror list
                 h.setopt(librepo.LRO_URLS, self.metadata.mirrors)
@@ -339,7 +340,6 @@ class Repo(dnf.yum.config.RepoConf):
         if not self._handle:
             dnf.util.ensure_dir(self.pkgdir)
             self._handle = self._handle_new_pkg_download()
-            self._handle.setopt(librepo.LRO_FASTESTMIRROR, True)
         ctype, csum = po.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
