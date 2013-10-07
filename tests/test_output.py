@@ -61,7 +61,7 @@ class OutputTest(unittest.TestCase):
         self.output._transaction = transaction
         self.assertEqual(self.output.list_transaction(), LIST_TRANSACTION_OUTPUT)
 
-    @mock.patch('dnf.i18n.input')
+    @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm(self, input_fnc):
         # with defaultyes==False
         input_fnc.return_value = 'y'
@@ -98,7 +98,7 @@ class OutputTest(unittest.TestCase):
         return {'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'}.get(str, str)
 
     @mock.patch('dnf.cli.output._', _to_unicode_mock)
-    @mock.patch('dnf.i18n.input')
+    @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm_translated(self, input_fnc):
         input_fnc.return_value = 'ee'
         self.assertFalse(self.output.userconfirm())
@@ -119,7 +119,7 @@ class OutputTest(unittest.TestCase):
 
     def test_userconfirm_bad_input(self):
         input_fnc = self._InputGenerator()
-        with mock.patch('dnf.i18n.input', input_fnc):
+        with mock.patch('dnf.i18n.ucd_input', input_fnc):
             self.assertFalse(self.output.userconfirm())
         self.assertEqual(input_fnc.called, 3)
 

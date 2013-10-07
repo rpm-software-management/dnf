@@ -83,7 +83,7 @@ def setup_stdout():
         return False
     return True
 
-def input(ucstring):
+def ucd_input(ucstring):
     """ Take input from user.
 
         What the raw_input() builitn does, but encode the prompt first
