@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -77,7 +77,7 @@ make ARGS="-V" test
 
 %changelog
 
-* Mon Oct 7 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.3-1
+* Mon Oct 7 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.3-2
 - remove: dnf.yum.rpmsack.RPMDBProblem*. (Ales Kozumplik)
 - Update some old-style classes. (Ales Kozumplik)
 - support 'dnf group remove' (RhBug:1013764) (Ales Kozumplik)
