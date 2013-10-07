@@ -240,11 +240,6 @@ class RepoTest(RepoTestMixin, support.TestCase):
         handle = self.repo._handle_new_remote("/bag")
         setopt.assert_any_call(librepo.LRO_GPGCHECK, True)
 
-    def test_urlgrabber_opts(self):
-        opts = self.repo.urlgrabber_opts()
-        self.assertIn('keepalive', opts)
-        self.assertIn('password', opts)
-
     def test_valid(self):
         self.assertIsNone(self.repo.valid())
 
@@ -274,7 +269,7 @@ class LocalRepoTest(support.TestCase):
         self.assertEqual(self.repo.metadata.mirrors[0], 'http://many/x86_64')
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
-    @mock.patch('dnf.repo._Handle.new_remote')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving(self, new_remote_m, reset_age_m):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
@@ -291,7 +286,7 @@ class LocalRepoTest(support.TestCase):
         reset_age_m.assert_called()
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
-    @mock.patch('dnf.repo._Handle.new_remote')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_lame_hashes(self, new_remote_m, reset_age_m):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
@@ -302,7 +297,7 @@ class LocalRepoTest(support.TestCase):
         self.assertFalse(self.repo._try_revive())
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
-    @mock.patch('dnf.repo._Handle.new_remote')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_mismatched_hashes(self, new_remote_m, reset_age_m):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
@@ -314,7 +309,7 @@ class LocalRepoTest(support.TestCase):
         self.repo._try_cache()
         self.assertFalse(self.repo._try_revive())
 
-    @mock.patch('dnf.repo._Handle.new_remote')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_404(self, new_remote_m):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'

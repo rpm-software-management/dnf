@@ -182,11 +182,12 @@ class Bunch(dict):
 default_handle = librepo.Handle()
 default_handle.useragent = dnf.const.USER_AGENT
 
-def urlopen(absurl, **opts):
+def urlopen(absurl, handle=None):
     """Open the specified absolute url, return a file object.
-       'opts' argument is not used atm.
+
+    handle -- Librepo handle to use instead of the default one.
     """
     fo = tempfile.TemporaryFile()
-    librepo.download_url(absurl, fo.fileno(), default_handle)
+    librepo.download_url(absurl, fo.fileno(), handle or default_handle)
     fo.seek(0)
     return fo

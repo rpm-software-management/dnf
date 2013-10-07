@@ -71,16 +71,6 @@ class _Handle(librepo.Handle):
             h.mirrorlist = h.mirrorlist_path
         return h
 
-    @classmethod
-    def new_remote(cls, subst_dct, gpgcheck, max_mirror_tries, destdir,
-                   mirror_setup, progress_cb):
-        h = cls(gpgcheck, max_mirror_tries)
-        h.varsub = _subst2tuples(subst_dct)
-        h.destdir = destdir
-        h.setopt(mirror_setup[0], mirror_setup[1])
-        h.progresscb = progress_cb
-        return h
-
     @property
     def metadata_dir(self):
         return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
@@ -203,21 +193,45 @@ class Repo(dnf.yum.config.RepoConf):
         return _Handle.new_local(self.yumvar, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
-    def _handle_new_remote(self, destdir):
-        cb = None
-        if self._progress is not None:
-            cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.yumvar, self.repo_gpgcheck,
-                                  self.max_mirror_tries, destdir,
-                                  self._mirror_setup_args(), cb)
+    def _handle_new_remote(self, destdir, mirror_setup=True):
+        h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
+        h.varsub = _subst2tuples(self.yumvar)
+        h.destdir = destdir
+
+        # setup mirror URLs
+        mirrorlist = self.metalink or self.mirrorlist
+        if mirrorlist:
+            if mirror_setup:
+                h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
+                h.setopt(librepo.LRO_FASTESTMIRROR, True)
+            else:
+                # use already resolved mirror list
+                h.setopt(librepo.LRO_URLS, self.metadata.mirrors)
+        elif self.baseurl:
+            h.setopt(librepo.LRO_URLS, self.baseurl)
+        else:
+            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
+            raise dnf.exceptions.RepoError, msg
+
+        # single-file download progress
+        if self._progress:
+            h.progresscb = self._progress.librepo_cb
+
+        # apply repo options
+        h.proxy = self.proxy
+
+        return h
 
     def _handle_new_pkg_download(self):
-        cb = None
-        if self._progress is not None:
-            cb = self._progress.librepo_cb
-        return _Handle.new_remote(self.yumvar, self.repo_gpgcheck,
-                                  self.max_mirror_tries, self.pkgdir,
-                                  self._no_mirror_setup_args(), cb)
+        return self._handle_new_remote(self.pkgdir, mirror_setup=False)
+
+    @property
+    def handle(self):
+        """Get the shared librepo handle for this repo"""
+        if not self._handle:
+            dnf.util.ensure_dir(self.pkgdir)
+            self._handle = self._handle_new_pkg_download()
+        return self._handle
 
     @property
     def local(self):
@@ -226,33 +240,6 @@ class Repo(dnf.yum.config.RepoConf):
         if self.baseurl[0].startswith('file://'):
             return True
         return False
-
-    def _mirror_setup_args(self):
-        if self.metalink:
-            return librepo.LRO_MIRRORLIST, self.metalink
-        elif self.mirrorlist:
-            return librepo.LRO_MIRRORLIST, self.mirrorlist
-        elif self.baseurl:
-            return librepo.LRO_URLS, self.baseurl[0]
-        else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
-
-    def _no_mirror_setup_args(self):
-        """Return handle URL setup arguments that are not a mirror.
-
-        Needed for package download, we don't want the handle to waste time
-        resolving the mirrorlist first.
-
-        """
-        if self.metalink or self.mirrorlist:
-            url = self.metadata.mirrors
-        elif self.baseurl:
-            url = self.baseurl
-        else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
-        return librepo.LRO_URLS, url
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
@@ -358,17 +345,13 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.filelists_fn
 
     def get_package_target(self, po, cb):
-        if not self._handle:
-            dnf.util.ensure_dir(self.pkgdir)
-            self._handle = self._handle_new_pkg_download()
-            self._handle.setopt(librepo.LRO_FASTESTMIRROR, True)
         ctype, csum = po.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
             logger.warn(_("unsupported checksum type: %s") % ctype)
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl,
-            True, cb.progress, os.path.basename(po.relativepath), self._handle,
+            True, cb.progress, os.path.basename(po.relativepath), self.handle,
             endcb=lambda text, status, err: cb.end(text, po.size, err),
         )
         target.po = po
@@ -378,7 +361,7 @@ class Repo(dnf.yum.config.RepoConf):
         if self.local:
             return pkg.localPkg()
         dnf.util.ensure_dir(self.pkgdir)
-        handle = self._handle_new_pkg_download()
+        handle = self.handle
         if handle.progresscb:
             text = text if text is not None else pkg.location
             self._progress.begin(text)
@@ -511,30 +494,6 @@ class Repo(dnf.yum.config.RepoConf):
 
     def set_progress_bar(self, progress):
         self._progress = progress
-
-    def urlgrabber_opts(self):
-        """Get http configuration for urlgrabber.
-
-        Deprecated. :noapi
-
-        """
-        return {'keepalive': self.keepalive,
-                'bandwidth': self.bandwidth,
-                'retry': self.retries,
-                'throttle': self.throttle,
-                'proxies': {},
-                'timeout': self.timeout,
-                'ip_resolve': self.ip_resolve,
-                'http_headers': (),
-                'ssl_verify_peer': self.sslverify,
-                'ssl_verify_host': self.sslverify,
-                'ssl_ca_cert': self.sslcacert,
-                'ssl_cert': self.sslclientcert,
-                'ssl_key': self.sslclientkey,
-                'user_agent': dnf.const.USER_AGENT,
-                'username': self.username,
-                'password': self.password,
-                }
 
     def valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
