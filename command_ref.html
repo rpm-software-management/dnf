@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.2-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.2-1',
+        VERSION:     '0.4.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.3-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -226,11 +226,17 @@ needed.</dd>
 <div class="section" id="group-command">
 <h3>Group Command<a class="headerlink" href="#group-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">info</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
+<dd>Display package lists of a group. Shows which packages are installed or
+available from a repo when <tt class="docutils literal"><span class="pre">-v</span></tt> is used.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">install</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
+<dd>Install packages in the specified group that are not currently installed.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">list</span> <span class="pre">[&lt;group-spec&gt;]</span></tt></dt>
 <dd>List all matching groups, either among installed or available groups. If
 nothing is specified list all known groups.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">install</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
-<dd>Install packages in the specified group that are not currently installed.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">remove</span> <span class="pre">[&lt;group-spec&gt;]</span></tt></dt>
+<dd>Removes all packages (default, mandatory and conditional) in the group from
+the system.</dd>
 </dl>
 </div>
 <div class="section" id="help-command">
@@ -525,7 +531,7 @@ current LC_MESSAGES locale (if possible).</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

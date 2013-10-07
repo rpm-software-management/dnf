@@ -209,12 +209,20 @@ Erase Command
 Group Command
 -------------
 
+``dnf [options] group info <group-spec>``
+    Display package lists of a group. Shows which packages are installed or
+    available from a repo when ``-v`` is used.
+
+``dnf [options] group install <group-spec>``
+    Install packages in the specified group that are not currently installed.
+
 ``dnf [options] group list [<group-spec>]``
     List all matching groups, either among installed or available groups. If
     nothing is specified list all known groups.
 
-``dnf [options] group install <group-spec>``
-    Install packages in the specified group that are not currently installed.
+``dnf [options] group remove [<group-spec>]``
+    Removes all packages (default, mandatory and conditional) in the group from
+    the system.
 
 ------------
 Help Command
