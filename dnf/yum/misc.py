@@ -220,7 +220,7 @@ def unique(s):
             u.append(x)
     return u
 
-class Checksums:
+class Checksums(object):
     """ Generate checksum(s), on given pieces of data. Producing the
         Length and the result(s) when complete. """
 
@@ -297,7 +297,7 @@ class Checksums:
         return self.digests()[checksum]
 
 
-class AutoFileChecksums:
+class AutoFileChecksums(object):
     """ Generate checksum(s), on given file/fileobject. Pretending to be a file
         object (overrrides read). """
 
@@ -365,7 +365,7 @@ def getFileList(path, ext, filelist):
 
     return filelist
 
-class GenericHolder:
+class GenericHolder(object):
     """Generic Holder class used to hold other objects of known types
        It exists purely to be able to do object.somestuff, object.someotherstuff
        or object[key] and pass object to another function that will

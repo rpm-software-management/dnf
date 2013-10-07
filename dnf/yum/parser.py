@@ -54,7 +54,7 @@ def varReplace(raw, vars):
 
     return ''.join(done)
 
-class ConfigPreProcessor:
+class ConfigPreProcessor(object):
     """
     ConfigParser Include Pre-Processor
 

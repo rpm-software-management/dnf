@@ -19,7 +19,7 @@ from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 from time import time
 
-class MultiFileProgressMeter:
+class MultiFileProgressMeter(object):
     """Multi-file download progress meter"""
 
     def __init__(self, fo=sys.stderr, update_period=0.3, tick_period=1.0, rate_average=5.0):

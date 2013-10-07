@@ -178,7 +178,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
     base.logger.critical(msg)
     raise CliError
 
-class Command:
+class Command(object):
     """An abstract base class that defines the methods needed by the cli
     to execute a specific command.  Subclasses must override at least
     :func:`getUsage` and :func:`getSummary`.

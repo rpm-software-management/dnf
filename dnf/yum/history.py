@@ -92,7 +92,7 @@ def _setupHistorySearchSQL(patterns=None, ignore_case=False):
         patterns = tmp
     return (need_full, patterns, fields, False)
 
-class _YumHistPackageYumDB:
+class _YumHistPackageYumDB(object):
     """ Class to pretend to be yumdb_info for history packages. """
 
     def __init__(self, pkg):
@@ -216,7 +216,7 @@ class YumHistoryPackageState(YumHistoryPackage):
         self.state = state
 
 
-class YumHistoryRpmdbProblem:
+class YumHistoryRpmdbProblem(object):
     """ Class representing an rpmdb problem that existed at the time of the
         transaction. """
 
@@ -245,7 +245,7 @@ class YumHistoryRpmdbProblem:
     packages = property(fget=lambda self: self._getProbPkgs())
 
 
-class YumHistoryTransaction:
+class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
 
     def __init__(self, history, row):

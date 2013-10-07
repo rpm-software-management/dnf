@@ -19,7 +19,7 @@ from tests import mock
 import time
 import unittest
 
-class MockStdout:
+class MockStdout(object):
     def __init__(self): self.out = []
     def write(self, s): self.out.append(s)
     def flush(self): pass

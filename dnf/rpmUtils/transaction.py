@@ -17,7 +17,7 @@ ts = None
 
 # wrapper/proxy class for rpm.Transaction so we can
 # instrument it, etc easily
-class TransactionWrapper:
+class TransactionWrapper(object):
     def __init__(self, root='/'):
         self.ts = rpm.TransactionSet(root)
         self._methods = ['check',

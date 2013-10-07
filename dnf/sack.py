@@ -27,7 +27,7 @@ import sys
 import dnf.package
 import dnf.queries
 
-class SackVersion:
+class SackVersion(object):
     def __init__(self):
         self._num = 0
         self._chksum = dnf.yum.misc.Checksums(['sha1'])

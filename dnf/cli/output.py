@@ -98,7 +98,7 @@ def _active_pkg(tsi):
     """
     return _ACTIVE_DCT[tsi.op_type](tsi)
 
-class YumTerm:
+class YumTerm(object):
     """A class to provide some terminal "UI" helpers based on curses."""
 
     # From initial search for "terminfo and python" got:
@@ -431,7 +431,7 @@ class YumTerm:
         """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
 
-class YumOutput:
+class YumOutput(object):
     """Main output class for the yum command line."""
 
     GRP_PACKAGE_INDENT = ' ' * 3
