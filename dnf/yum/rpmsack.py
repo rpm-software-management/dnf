@@ -69,56 +69,6 @@ def _iopen(*args):
         return None, e
     return ret, None
 
-class RPMDBProblem:
-    '''
-    Represents a problem in the rpmdb, from the check_*() functions.
-    '''
-    def __init__(self, pkg, problem, **kwargs):
-        self.pkg = pkg
-        self.problem = problem
-        for kwarg in kwargs:
-            setattr(self, kwarg, kwargs[kwarg])
-
-    def __cmp__(self, other):
-        if other is None:
-            return 1
-        return cmp(self.pkg, other.pkg) or cmp(self.problem, other.problem)
-
-
-class RPMDBProblemDependency(RPMDBProblem):
-    def __str__(self):
-        if self.problem == 'requires':
-            return "%s %s %s" % (self.pkg, _('has missing requires of'),
-                                 self.missing)
-
-        return "%s %s %s: %s" % (self.pkg, _('has installed conflicts'),
-                                 self.found,', '.join(map(str, self.conflicts)))
-
-
-class RPMDBProblemDuplicate(RPMDBProblem):
-    def __init__(self, pkg, **kwargs):
-        RPMDBProblem.__init__(self, pkg, "duplicate", **kwargs)
-
-    def __str__(self):
-        return _("%s is a duplicate with %s") % (self.pkg, self.duplicate)
-
-
-class RPMDBProblemObsoleted(RPMDBProblem):
-    def __init__(self, pkg, **kwargs):
-        RPMDBProblem.__init__(self, pkg, "obsoleted", **kwargs)
-
-    def __str__(self):
-        return _("%s is obsoleted by %s") % (self.pkg, self.obsoleter)
-
-
-class RPMDBProblemProvides(RPMDBProblem):
-    def __init__(self, pkg, **kwargs):
-        RPMDBProblem.__init__(self, pkg, "provides", **kwargs)
-
-    def __str__(self):
-        return _("%s provides %s but it cannot be found") % (self.pkg,
-                                                             self.provide)
-
 def _sanitize(path):
     return path.replace('/', '').replace('~', '')
 
