@@ -226,5 +226,13 @@
     [
         995459, 
         "conflicting requests when trying to install locally available packages"
+    ], 
+    [
+        1013764, 
+        "DNF group remove doesn't work"
+    ], 
+    [
+        1013773, 
+        "DNF group info doesn't work"
     ]
 ]

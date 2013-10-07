@@ -273,3 +273,22 @@ These bugzillas are fixed in 0.4.2:
 * :rhbug:`984529`
 * :rhbug:`967798`
 * :rhbug:`995459`
+
+===================
+0.4.3 Release Notes
+===================
+
+This is an early release to get the latest DNF out with the latest librepo
+fixing the `Too many open files
+<https://bugzilla.redhat.com/show_bug.cgi?id=1015957>`_ bug.
+
+In Fedora, the spec file has been updated to no longer depend on precise
+versions of the libraries so in the future they can be released
+independently.
+
+This release sees the finished refactoring in error handling during basic
+operations and adds support for ``group remove`` and ``group info`` commands,
+i.e. the following two bugs:
+
+* :rhbug:`1013764`
+* :rhbug:`1013773`
