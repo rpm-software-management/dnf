@@ -926,20 +926,19 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        pkgs_used = []
+        cnt = 0
         for group_string in grouplist:
             try:
-                txmbrs = self.groupRemove(group_string)
+                cnt += self.group_remove(group_string)
             except dnf.exceptions.CompsError as e:
                 self.logger.critical(e)
                 continue
-            else:
-                pkgs_used.extend(txmbrs)
 
-        if not pkgs_used:
-            return 0, [_('No packages to remove from groups')]
+        if cnt:
+            msg = P_('%d package to remove', '%d packages to remove', cnt)
+            return 2, [msg % cnt]
         else:
-            return 2, [P_('%d package to remove', '%d packages to remove', len(pkgs_used)) % len(pkgs_used)]
+            return 0, [_('No packages to remove from groups')]
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options

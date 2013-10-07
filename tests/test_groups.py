@@ -32,3 +32,9 @@ class SelectGroupTest(support.ResultTestCase):
         inst, removed = self.installed_removed(self.base)
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)
+
+    def test_group_remove(self):
+        self.assertEqual(self.base.group_remove('Solid Ground'), 1)
+        inst, removed = self.installed_removed(self.base)
+        self.assertLength(inst, 0)
+        self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))

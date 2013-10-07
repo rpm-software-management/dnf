@@ -1432,30 +1432,20 @@ class Base(object):
 
         return sorted(installed), sorted(available)
 
-    def groupRemove(self, grpid):
-        """Mark all the packages in the given group to be removed.
-
-        :param grpid: the name of the group containing the packages to
-           mark for removal
-        :return: a list of transaction members added to the
-           transaction set by this function
-        """
-        txmbrs_used = []
-
-        thesegroups = self.comps.groups_by_pattern(grpid)
-        if not thesegroups:
+    def group_remove(self, grp_spec):
+        groups = self.comps.groups_by_pattern(grp_spec)
+        if not groups:
             raise dnf.exceptions.CompsError, _("No Group named %s exists") % to_unicode(grpid)
 
-        for thisgroup in thesegroups:
-            thisgroup.toremove = True
-            pkgs = thisgroup.packages
-            for pkg in thisgroup.packages:
-                txmbrs = self.remove(name=pkg, silence_warnings=True)
-                txmbrs_used.extend(txmbrs)
-                for txmbr in txmbrs:
-                    txmbr.groups.append(thisgroup.id)
+        cnt = 0
+        for pkg in (pkg for grp in groups for pkg in grp.packages):
+            try:
+                self.remove(pkg.name)
+            except dnf.exceptions.PackagesNotInstalledError:
+                continue
+            cnt += 1
 
-        return txmbrs_used
+        return cnt
 
     def groupUnremove(self, grpid):
         """Unmark any packages in the given group from being removed.
