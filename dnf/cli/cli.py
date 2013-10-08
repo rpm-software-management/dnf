@@ -178,8 +178,8 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
 
         if downloadpkgs:
             self.logger.info(_('Downloading Packages:'))
-        problems = self.download_packages(downloadpkgs, callback_total=\
-                                              self.download_callback_total_cb)
+        problems = self.download_packages(downloadpkgs, self.progress,
+                                          self.download_callback_total_cb)
 
         if len(problems) > 0:
             errstring = ''
@@ -540,7 +540,7 @@ class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
             msg = P_('%d package to reinstall',
                      '%d packages to reinstall', cnt)
             return 2, [msg % cnt]
-        
+
         if not done:
             return 1, [_('Nothing to do')]
         return 0, [_('Nothing to do')]

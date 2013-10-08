@@ -366,11 +366,18 @@ class Repo(dnf.yum.config.RepoConf):
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
             logger.warn(_("unsupported checksum type: %s") % ctype)
+
+        progresscb = endcb = None
+        if cb:
+            progresscb = cb.progress
+            endcb = lambda text, status, err: cb.end(text, po.size, err)
+
         target = librepo.PackageTarget(
-            po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl,
-            True, cb.progress, os.path.basename(po.relativepath), self._handle,
-            endcb=lambda text, status, err: cb.end(text, po.size, err),
-        )
+            po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,
+            progresscb=progresscb,
+            cbdata=os.path.basename(po.relativepath),
+            handle=self._handle,
+            endcb=endcb)
         target.po = po
         return target
 

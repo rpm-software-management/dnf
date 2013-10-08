@@ -979,13 +979,12 @@ class Base(object):
             self.history.end(rpmdbv, return_code)
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
-    def download_packages(self, pkglist, callback=None, callback_total=None):
+    def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of
         package objects.
 
         :param pkglist: a list of package objects specifying the
            packages to download
-        :param callback: unused
         :param callback_total: a callback to output messages about the
            download operation
         :return: a dictionary containing errors from the downloading process
@@ -1019,9 +1018,9 @@ class Base(object):
 
         # run downloads
         beg_download = time.time()
-        if self.progress:
-            self.progress.start(len(remote_pkgs), remote_size)
-        targets = [po.repo.get_package_target(po, self.progress) for po in remote_pkgs]
+        if progress:
+            progress.start(len(remote_pkgs), remote_size)
+        targets = [po.repo.get_package_target(po, progress) for po in remote_pkgs]
         librepo.download_packages(targets)
         errors = dict((t.po, [t.err]) for t in targets
                       if t.err not in (None, 'Already downloaded'))
