@@ -633,6 +633,9 @@ class Base(object):
 
     def build_transaction(self):
         """Build the transaction set."""
+        if self.transaction is not None:
+            raise ValueError('transaction already built')
+
         self.plugins.run('preresolve')
         exc = None
 
@@ -662,7 +665,6 @@ class Base(object):
                          got_transaction=got_transaction)
         if exc is not None:
             raise exc
-        return got_transaction
 
     def do_transaction(self, display=None):
         # save our ds_callback out
