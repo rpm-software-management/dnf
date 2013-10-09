@@ -163,23 +163,27 @@ def _main(base, args):
             logger.critical(msg)
         return 3
 
-    # Depsolve stage
-    logger.info(_('Resolving dependencies'))
+    # Depsolve stage (if needed)
+    if base.transaction is None:
+        logger.info(_('Resolving dependencies'))
 
-    try:
-        got_transaction = base.build_transaction()
-    except plugins.PluginYumExit as e:
-        return exPluginExit(e)
-    except dnf.exceptions.Error as e:
-        prefix = _('Error: %s')
-        logger.critical(prefix, str(e))
-        return 1
+        try:
+            got_transaction = base.build_transaction()
+        except plugins.PluginYumExit as e:
+            return exPluginExit(e)
+        except dnf.exceptions.Error as e:
+            prefix = _('Error: %s')
+            logger.critical(prefix, str(e))
+            return 1
+
+        logger.info(_('Dependencies resolved.'))
+    else:
+        got_transaction = len(base.transaction)
 
     # Act on the depsolve result
     if not got_transaction:
         print(_('Nothing to do.'))
         return 0
-    logger.info(_('Dependencies resolved.'))
 
     # Run the transaction
     try:
