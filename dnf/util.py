@@ -74,6 +74,13 @@ def group_by_filter(fn, iterable):
         return acc
     return reduce(splitter, iterable, ([], []))
 
+def insert(item, iterable, condition):
+    """Insert an item into an iterable by a condition."""
+    for original_item in iterable:
+        if condition(original_item):
+            yield item
+        yield original_item
+
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 
@@ -130,6 +137,22 @@ def rm_rf(path):
         shutil.rmtree(path)
     except OSError:
         pass
+
+def split(iterable, condition):
+    """Split an iterable into tuples by a condition."""
+    separator = object()  # A unique object.
+    next_subsequence = lambda iterator: tuple(iter(iterator.next, separator))
+
+    marked = insert(separator, iterable, condition)
+
+    # The 1st subsequence may be empty if the 1st item meets the condition.
+    yield next_subsequence(marked)
+
+    while True:
+        subsequence = next_subsequence(marked)
+        if not subsequence:
+            break
+        yield subsequence
 
 def strip_prefix(s, prefix):
     if s.startswith(prefix):
