@@ -62,7 +62,9 @@ class BaseTest(support.TestCase):
         flags = ts.setProbFilter.call_args[0][0]
         self.assertTrue(flags & rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertTrue(flags & rpm.RPMPROB_FILTER_REPLACEPKG)
-        # check we can close the connection:
+        # check file conflicts are reported:
+        self.assertFalse(flags & rpm.RPMPROB_FILTER_REPLACENEWFILES)
+        # check we can close the connection
         del base.ts
         self.assertEqual(base._ts, None)
         ts.close.assert_called_once_with()

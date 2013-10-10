@@ -103,7 +103,6 @@ class Base(object):
         self.disablePlugins()
         self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
                                rpm.RPMPROB_FILTER_REPLACEPKG,
-                               rpm.RPMPROB_FILTER_REPLACENEWFILES,
                                rpm.RPMPROB_FILTER_REPLACEOLDFILES]
         self.localPackages = [] # for local package handling
 
