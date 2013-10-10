@@ -92,6 +92,22 @@ class Util(unittest.TestCase):
         self.assertEqual(dnf.util.group_by_filter(lambda x: x, xrange(5)),
                          ([1, 2, 3, 4], [0]))
 
+    def test_insert_if(self):
+        """Test insert_if with sometimes fulfilled condition."""
+        item = object()
+        iterable = range(4)
+        condition = lambda item: item % 2 == 0
+
+        iterator = dnf.util.insert_if(item, iterable, condition)
+
+        self.assertEqual(next(iterator), item)
+        self.assertEqual(next(iterator), 0)
+        self.assertEqual(next(iterator), 1)
+        self.assertEqual(next(iterator), item)
+        self.assertEqual(next(iterator), 2)
+        self.assertEqual(next(iterator), 3)
+        self.assertRaises(StopIteration, next, iterator)
+
     def test_is_glob_pattern(self):
         assert(dnf.util.is_glob_pattern("all*.ext"))
         assert(dnf.util.is_glob_pattern("all?.ext"))
@@ -122,6 +138,29 @@ class Util(unittest.TestCase):
         out = dnf.util.mapall(lambda n: 2 * n, l)
         self.assertIsInstance(out, list)
         self.assertEqual(out, [2, 4, 6])
+
+    def test_split_by(self):
+        """Test split_by with sometimes fulfilled condition."""
+        iterable = range(7)
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split_by(iterable, condition)
+
+        self.assertEqual(next(iterator), ())
+        self.assertEqual(next(iterator), (0, 1, 2))
+        self.assertEqual(next(iterator), (3, 4, 5))
+        self.assertEqual(next(iterator), (6,))
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_split_by_empty(self):
+        """Test split with empty iterable."""
+        iterable = []
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split_by(iterable, condition)
+
+        self.assertEqual(next(iterator), ())
+        self.assertRaises(StopIteration, next, iterator)
 
     def test_strip_prefix(self):
         self.assertIsNone(dnf.util.strip_prefix("razorblade", "blade"))
