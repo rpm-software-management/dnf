@@ -245,7 +245,8 @@ def hdrFromPackage(ts, package):
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error, e:
         os.close(fdno)
-        raise RpmUtilsError, "RPM Error opening Package"
+        msg = "RPM error opening package '%s': %s"
+        raise RpmUtilsError(msg % (package, str(e)))
     if type(hdr) != rpm.hdr:
         os.close(fdno)
         raise RpmUtilsError, "RPM Error opening Package (type)"
