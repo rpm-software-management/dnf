@@ -113,7 +113,7 @@ class MultiFileProgressMeter(object):
         bl = (left - 7)//2
         if bl > 8:
             # use part of the remaining space for progress bar
-            pct = self.done_size*100 / self.total_size
+            pct = self.done_size*100 // self.total_size
             n, p = divmod(self.done_size*bl*2 // self.total_size, 2)
             bar = '='*n + '-'*p
             msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
