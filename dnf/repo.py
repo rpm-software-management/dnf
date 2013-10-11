@@ -225,6 +225,15 @@ class Repo(dnf.yum.config.RepoConf):
     def _handle_new_pkg_download(self):
         return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
+    def get_handle(self):
+        """Returns a librepo handle, set as per the repo options
+
+        Note that destdir is None, and the handle is cached.
+        """
+        if not self._handle:
+            self._handle = self._handle_new_remote(None)
+        return self._handle
+
     @property
     def local(self):
         if self.metalink or self.mirrorlist:
@@ -337,9 +346,7 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.filelists_fn
 
     def get_package_target(self, po, cb):
-        if not self._handle:
-            dnf.util.ensure_dir(self.pkgdir)
-            self._handle = self._handle_new_pkg_download()
+        dnf.util.ensure_dir(self.pkgdir)
         ctype, csum = po.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
@@ -357,7 +364,7 @@ class Repo(dnf.yum.config.RepoConf):
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,
             progresscb=progresscb,
             cbdata=os.path.basename(po.relativepath),
-            handle=self._handle,
+            handle=self.get_handle(),
             endcb=endcb)
         target.po = po
         return target
