@@ -292,3 +292,19 @@ i.e. the following two bugs:
 
 * :rhbug:`1013764`
 * :rhbug:`1013773`
+
+===================
+0.4.4 Release Notes
+===================
+
+The initial support for Python 3 in DNF has been merged in this version. In
+practice one can not yet run the ``dnf`` command in Py3 but the unit tests
+already pass there. We expect to give Py3 and DNF heavy testing during the
+Fedora 21 development cycle and eventually switch to it as the default. The plan
+is to drop Python 2 support as soon as Anaconda is running in Python 3.
+
+Minor adjustments to allow Anaconda support also happened during the last week,
+as well as a fix to a possibly severe bug that one is however not really likely
+to see with non-devel Fedora repos:
+
+* :rhbug:`1017278`
