@@ -192,6 +192,9 @@ def urlopen(absurl, **opts):
         fo = tempfile.TemporaryFile(mode='w+', encoding='utf-8')
     else:
         fo = tempfile.TemporaryFile()
-    librepo.download_url(absurl, fo.fileno(), default_handle)
+    try:
+        librepo.download_url(absurl, fo.fileno(), default_handle)
+    except librepo.LibrepoException as e:
+        raise IOError(e.args[1])
     fo.seek(0)
     return fo
