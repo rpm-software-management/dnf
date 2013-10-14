@@ -234,5 +234,9 @@
     [
         1013773, 
         "DNF group info doesn't work"
+    ], 
+    [
+        1017278, 
+        "dnf does not notice file conflicts"
     ]
 ]
