@@ -20,10 +20,10 @@ from dnf.queries import (available_by_name, available_by_nevra, installed,
                          updates_by_name)
 from tests import mock
 from tests import support
-import dnf.yum
-import hawkey
 
+import dnf
 import dnf.util
+import hawkey
 import tests.test_repo
 
 class Update(support.ResultTestCase):
@@ -36,7 +36,7 @@ class Update(support.ResultTestCase):
         self.assertResult(yumbase, expected)
 
     def test_update_not_found(self):
-        base = dnf.yum.base.Base()
+        base = dnf.Base()
         base._sack = support.mock_sack('updates')
         base._goal = goal = mock.create_autospec(hawkey.Goal)
 

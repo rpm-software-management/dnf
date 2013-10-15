@@ -23,13 +23,13 @@ except ImportError:
     from tests import mock
 import io
 import contextlib
+import dnf
 import dnf.comps
 import dnf.exceptions
 import dnf.package
 import dnf.queries
 import dnf.repo
 import dnf.sack
-import dnf.yum.base
 import dnf.yum.constants
 import hawkey
 import hawkey.test
@@ -116,7 +116,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=yumbase,
                                make_cache_dir=True)
 
-class MockYumBase(dnf.yum.base.Base):
+class MockYumBase(dnf.Base):
     """ See also: hawkey/test/python/__init__.py.
 
         Note that currently the used TestSack has always architecture set to

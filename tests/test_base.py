@@ -23,12 +23,12 @@ except ImportError:
     from tests import mock
 from tests import support
 import binascii
+import dnf
 import dnf.const
 import dnf.exceptions
 import dnf.match_counter
 import dnf.queries
 import dnf.transaction
-import dnf.yum.base
 import dnf.yum.constants
 import hawkey
 import os
@@ -37,7 +37,7 @@ from tests.support import PycompTestCase
 
 class BaseTest(support.TestCase):
     def test_instance(self):
-        yumbase = dnf.yum.base.Base()
+        yumbase = dnf.Base()
 
     def test_push_userinstalled(self):
         yumbase = support.MockYumBase()
@@ -58,7 +58,7 @@ class BaseTest(support.TestCase):
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_ts(self, mock_ts):
-        base = dnf.yum.base.Base()
+        base = dnf.Base()
         self.assertEqual(base._ts, None)
         ts = base.ts
         # check the setup is correct

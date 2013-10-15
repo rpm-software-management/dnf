@@ -42,7 +42,7 @@ class CommandsTest(PycompTestCase):
         self.assertFalse(self.yumbase.goal_parameters.allow_uninstall)
 
     @staticmethod
-    @mock.patch('dnf.yum.base.Base.activate_sack')
+    @mock.patch('dnf.Base.activate_sack')
     def _do_makecache(cmd, activate_sack):
         return cmd.doCommand('makecache', ['timer'])
 

@@ -21,15 +21,22 @@ The Yum RPM software updater.
 
 from __future__ import absolute_import
 from __future__ import print_function
-from .config import ParsingError, ConfigParser
-from .constants import *
 from dnf import const, queries, sack
-from .i18n import to_unicode, to_str, exception2msg
-from .parser import ConfigPreProcessor
+from dnf.pycomp import unicode
+from dnf.yum import config
+from dnf.yum import history
+from dnf.yum import i18n
+from dnf.yum import misc
+from dnf.yum import plugins
+from dnf.yum import rpmsack
+from dnf.yum.config import ParsingError, ConfigParser
+from dnf.yum.constants import *
+from dnf.yum.i18n import to_unicode, to_str, exception2msg
+from dnf.yum.parser import ConfigPreProcessor
+from functools import reduce
 from weakref import proxy as weakref
 
 import io
-from . import config
 import dnf.comps
 import dnf.conf
 import dnf.exceptions
@@ -49,22 +56,15 @@ import errno
 import functools
 import glob
 import hawkey
-from . import history
-from . import i18n
 import logging
-from . import misc
 import os
 import operator
-from . import plugins
 import rpm
-from . import rpmsack
 import signal
 import time
 import types
 import string
 import librepo
-from functools import reduce
-from dnf.pycomp import unicode
 
 _ = i18n._
 P_ = i18n.P_

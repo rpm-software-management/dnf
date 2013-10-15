@@ -18,7 +18,8 @@
 from __future__ import absolute_import
 from tests import mock
 from tests import support
-import dnf.yum.base
+
+import dnf
 import hawkey
 
 class DowngradeTest(support.ResultTestCase):
@@ -53,7 +54,7 @@ class DowngradeTest(support.ResultTestCase):
 class DowngradeTest2(support.TestCase):
 
     def setUp(self):
-        self._base = dnf.yum.base.Base()
+        self._base = dnf.Base()
         self._base._sack = support.mock_sack('main')
         self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
 

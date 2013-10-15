@@ -21,8 +21,8 @@
 import dnf.const
 __version__ = dnf.const.VERSION
 
-import dnf.yum.base
-Base = dnf.yum.base.Base
+import dnf.base
+Base = dnf.base.Base
 
 # setup libraries
 try:

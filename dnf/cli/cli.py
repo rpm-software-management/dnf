@@ -30,6 +30,7 @@ from dnf.yum.parser import varReplace
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 from weakref import proxy as weakref
 
+import dnf
 import dnf.cli.commands
 import dnf.const
 import dnf.exceptions
@@ -38,7 +39,6 @@ import dnf.match_counter
 import dnf.persistor
 import dnf.queries
 import dnf.sack
-import dnf.yum.base
 import dnf.yum.misc
 import dnf.yum.plugins
 import hawkey
@@ -92,13 +92,13 @@ def print_versions(pkgs, yumbase):
         # print(_("  Committed: %s at %s") % (pkg.committer,
         #                                    sm_ui_date(pkg.committime)))
 
-class YumBaseCli(dnf.yum.base.Base, output.YumOutput):
+class YumBaseCli(dnf.Base, output.YumOutput):
     """This is the base class for yum cli."""
 
     def __init__(self):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
-        dnf.yum.base.Base.__init__(self)
+        dnf.Base.__init__(self)
         output.YumOutput.__init__(self)
         self.logger = logging.getLogger("dnf")
 

@@ -21,7 +21,7 @@ try:
 except ImportError:
     from tests import mock
 from tests import support
-import dnf.yum.base
+import dnf
 import hawkey
 import unittest
 from tests.support import PycompTestCase
@@ -46,41 +46,41 @@ class Reinstall(support.ResultTestCase):
 
 class ReinstallTest(PycompTestCase):
     def setUp(self):
-        self._base = dnf.yum.base.Base()
+        self._base = dnf.Base()
         self._base._sack = support.mock_sack('main')
         self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
 
     def test_reinstall_pkgnevra(self):
         pkg = support.PackageMatcher(name='pepper', evr='20-0', arch='x86_64')
-        
+
         reinstalled_count = self._base.reinstall('pepper-0:20-0.x86_64')
-        
+
         self.assertEqual(reinstalled_count, 1)
         self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
-    
+
     def test_reinstall_notfound(self):
         self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self._base.reinstall, 'non-existent')
         self.assertEqual(self._goal.mock_calls, [])
-        
+
     def test_reinstall_notinstalled(self):
         self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self._base.reinstall, 'lotus')
         self.assertEqual(self._goal.mock_calls, [])
-        
+
     def test_reinstall_notavailable(self):
         pkgs = [support.PackageMatcher(name='hole')]
-        
+
         with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
             self._base.reinstall('hole')
-        
+
         self.assertEquals(context.exception.packages, pkgs)
         self.assertEqual(self._goal.mock_calls, [])
-        
+
     def test_reinstall_notavailable_available(self):
         pkg = support.PackageMatcher(name='librita')
-        
+
         reinstalled_count = self._base.reinstall('librita')
-        
+
         self.assertEqual(reinstalled_count, 1)
         self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])

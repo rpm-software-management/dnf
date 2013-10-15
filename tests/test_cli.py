@@ -257,7 +257,7 @@ class ConfigureTest(PycompTestCase):
         self.assertEqual(self.yumbase.conf.debuglevel, 6)
         self.assertEqual(self.yumbase.conf.errorlevel, 6)
 
-    @mock.patch('dnf.yum.base.Base.read_conf_file')
+    @mock.patch('dnf.Base.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_explicit(self, read_conf_file):
         self.cli.base.basecmd = 'update'
@@ -267,7 +267,7 @@ class ConfigureTest(PycompTestCase):
                                           {'conffile': '/etc/dnf/dnf.conf',
                                            'installroot': '/roots/dnf'})
 
-    @mock.patch('dnf.yum.base.Base.read_conf_file')
+    @mock.patch('dnf.Base.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_with_etc(self, read_conf_file):
         """Test that conffile is detected in a new installroot."""
