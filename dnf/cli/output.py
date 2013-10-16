@@ -451,33 +451,6 @@ class Output(object):
         self.term = YumTerm()
         self.progress = None
 
-
-    def printtime(self):
-        """Return a string representing the current time in the form::
-
-           Mon dd hh:mm:ss
-
-        :return: a string representing the current time
-        """
-        months = [_('Jan'), _('Feb'), _('Mar'), _('Apr'), _('May'), _('Jun'),
-                  _('Jul'), _('Aug'), _('Sep'), _('Oct'), _('Nov'), _('Dec')]
-        now = time.localtime(time.time())
-        ret = months[int(time.strftime('%m', now)) - 1] + \
-              time.strftime(' %d %T ', now)
-        return ret
-
-    def simpleProgressBar(self, current, total, name=None):
-        """Output the current status to the terminal using a simple
-        status bar.
-
-        :param current: a number representing the amount of work
-           already done
-        :param total: a number representing the total amount of work
-           to be done
-        :param name: a name to label the progress bar with
-        """
-        progressbar(current, total, name)
-
     def _highlight(self, highlight):
         hibeg = ''
         hiend = ''
