@@ -59,7 +59,7 @@ import time
 logger = logging.getLogger("dnf")
 
 def main(args):
-    with dnf.cli.cli.YumBaseCli() as base:
+    with dnf.cli.cli.BaseCli() as base:
         try:
             return _main(base, args)
         except dnf.exceptions.ProcessLockError as e:

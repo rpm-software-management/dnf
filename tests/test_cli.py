@@ -65,7 +65,7 @@ class VersionStringTest(PycompTestCase):
 
 class YumBaseCliTest(PycompTestCase):
     def setUp(self):
-        self._yumbase = dnf.cli.cli.YumBaseCli()
+        self._yumbase = dnf.cli.cli.BaseCli()
         self._yumbase._sack = support.mock_sack('main')
         self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)

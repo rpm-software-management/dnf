@@ -92,7 +92,7 @@ def print_versions(pkgs, yumbase):
         # print(_("  Committed: %s at %s") % (pkg.committer,
         #                                    sm_ui_date(pkg.committime)))
 
-class YumBaseCli(dnf.Base, output.Output):
+class BaseCli(dnf.Base, output.Output):
     """This is the base class for yum cli."""
 
     def __init__(self):
@@ -198,7 +198,7 @@ class YumBaseCli(dnf.Base, output.Output):
             return -1, None
 
         display = output.CliTransactionDisplay(weakref(self))
-        return_code, resultmsgs = super(YumBaseCli, self).do_transaction(display)
+        return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
         if return_code == 0:
             self.logger.info(self.post_transaction_output())
         return return_code, resultmsgs
@@ -658,7 +658,7 @@ class YumBaseCli(dnf.Base, output.Output):
 
         matches = []
         for spec in args:
-            matches.extend(super(YumBaseCli, self). provides(spec))
+            matches.extend(super(BaseCli, self). provides(spec))
         for pkg in matches:
             self.matchcallback_verbose(pkg, [], args)
         self.conf.showdupesfromrepos = old_sdup
