@@ -196,6 +196,9 @@ def urlopen(absurl, repo=None):
     handle = default_handle
     if repo:
         handle = repo.get_handle()
-    librepo.download_url(absurl, fo.fileno(), handle)
+    try:
+        librepo.download_url(absurl, fo.fileno(), handle)
+    except librepo.LibrepoException as e:
+        raise IOError(e.args[1])
     fo.seek(0)
     return fo
