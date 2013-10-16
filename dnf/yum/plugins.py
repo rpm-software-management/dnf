@@ -204,7 +204,7 @@ class YumPlugins:
 
         # If we are in verbose mode we get the full 'Loading "blah" plugin' lines
         if self._plugins and not self.base.conf.verbose:
-            # Mostly copied from YumOutput._outKeyValFill()
+            # Mostly copied from Output._outKeyValFill()
             key = _("Loaded plugins: ")
             val = ", ".join(sorted(self._plugins))
             nxt = ' ' * (utf8_width(key) - 2) + ': '

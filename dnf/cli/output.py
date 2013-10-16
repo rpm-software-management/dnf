@@ -436,7 +436,7 @@ class YumTerm(object):
         """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
 
-class YumOutput(object):
+class Output(object):
     """Main output class for the yum command line."""
 
     GRP_PACKAGE_INDENT = ' ' * 3

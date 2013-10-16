@@ -49,7 +49,7 @@ class OutputTest(PycompTestCase):
         raise EOFError
 
     def setUp(self):
-        self.output = dnf.cli.output.YumOutput()
+        self.output = dnf.cli.output.Output()
         self.output.conf = support.FakeConf()
 
     @mock.patch('dnf.cli.output._term_width', return_value=80)
@@ -148,7 +148,7 @@ class GroupOutputTest(unittest.TestCase):
     def setUp(self):
         base = support.MockYumBase('main')
         base.read_mock_comps(support.COMPS_PATH)
-        output = dnf.cli.output.YumOutput()
+        output = dnf.cli.output.Output()
         output.conf = support.FakeConf()
         output.sack = base.sack
 
