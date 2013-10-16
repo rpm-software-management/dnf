@@ -26,6 +26,21 @@ import dnf.transaction
 import unittest
 from tests.support import PycompTestCase
 
+INFOOUTPUT_OUTPUT="""\
+Name        : tour
+Arch        : noarch
+Epoch       : 0
+Version     : 5
+Release     : 0
+Size        : 0.0  
+Repo        : None
+Summary     : A summary of the package.
+URL         : http://example.com
+License     : GPL+
+Description : 
+
+"""
+
 LIST_TRANSACTION_OUTPUT=u"""
 ================================================================================
  Package           Arch              Version           Repository          Size
@@ -49,12 +64,12 @@ class OutputTest(PycompTestCase):
         raise EOFError
 
     def setUp(self):
-        self.output = dnf.cli.output.Output()
-        self.output.conf = support.FakeConf()
+        self.base = support.MockBase('updates')
+        self.output = dnf.cli.output.Output(self.base)
 
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_list_transaction(self, _term_width):
-        sack = support.MockBase('updates').sack
+        sack = self.base.sack
         q = sack.query().filter(name='pepper')
         i = q.installed()[0]
         u = q.available()[0]
@@ -62,8 +77,8 @@ class OutputTest(PycompTestCase):
 
         transaction = dnf.transaction.Transaction()
         transaction.add_upgrade(u, i, [obs])
-        self.output._transaction = transaction
-        self.assertEqual(self.output.list_transaction(), LIST_TRANSACTION_OUTPUT)
+        self.assertEqual(self.output.list_transaction(transaction),
+                         LIST_TRANSACTION_OUTPUT)
 
     @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm(self, input_fnc):
@@ -127,6 +142,26 @@ class OutputTest(PycompTestCase):
             self.assertFalse(self.output.userconfirm())
         self.assertEqual(input_fnc.called, 3)
 
+    def test_infoOutput_with_none_description(self):
+        pkg = support.MockPackage('tour-5-0.noarch')
+        pkg.from_system = False
+        pkg.size = 0
+        pkg.pkgid = None
+        pkg.repoid = None
+        pkg.e = pkg.epoch
+        pkg.v = pkg.version
+        pkg.r = pkg.release
+        pkg.summary = 'A summary of the package.'
+        pkg.url = 'http://example.com'
+        pkg.license = 'GPL+'
+        pkg.description = None
+
+        with mock.patch('sys.stdout') as stdout:
+            self.output.infoOutput(pkg)
+        written = ''.join([mc[1][0] for mc in stdout.method_calls
+                          if mc[0] == 'write'])
+        self.assertEqual(written, INFOOUTPUT_OUTPUT)
+
 PKGS_IN_GROUPS_OUTPUT = u"""\
 
 Group: Pepper's
@@ -148,8 +183,7 @@ class GroupOutputTest(unittest.TestCase):
     def setUp(self):
         base = support.MockBase('main')
         base.read_mock_comps(support.COMPS_PATH)
-        output = dnf.cli.output.Output()
-        output.conf = support.FakeConf()
+        output = dnf.cli.output.Output(base)
         output.sack = base.sack
 
         self.base = base

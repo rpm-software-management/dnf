@@ -83,6 +83,15 @@ def patch_std_streams():
 
 # mock objects
 
+class MockOutput(object):
+    _cli_confirm_gpg_key_import = None
+
+    def __init__(self):
+        self.term = FakeTerm()
+
+    def setup_progress_callbacks(self):
+        return (None, None)
+
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
         self.header = None
@@ -133,13 +142,10 @@ class MockBase(dnf.Base):
         self._conf = FakeConf()
         self._persistor = FakePersistor()
         self._yumdb = MockYumDB()
-        self.term = FakeTerm()
         self.cache_c.prefix = "/tmp"
         self.cache_c.suffix = ""
 
         self.ds_callback = mock.Mock()
-        self.setupProgressCallbacks = mock.Mock()
-        self.setupKeyImportCallbacks = mock.Mock()
 
     @property
     def sack(self):

@@ -27,6 +27,8 @@ import optparse
 class OptionParserTest(support.TestCase):
     def setUp(self):
         self.yumbase = support.MockBase()
+        output = support.MockOutput()
+        self.yumbase.output = output
 
     def test_simple(self):
         parser = YumOptionParser(self.yumbase)

@@ -30,21 +30,6 @@ import os
 import unittest
 from tests.support import PycompTestCase
 
-INFOOUTPUT_OUTPUT="""\
-Name        : tour
-Arch        : noarch
-Epoch       : 0
-Version     : 5
-Release     : 0
-Size        : 0.0  
-Repo        : None
-Summary     : A summary of the package.
-URL         : http://example.com
-License     : GPL+
-Description : 
-
-"""
-
 VERSIONS_OUTPUT="""\
   Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
   Built    :  at 1970-01-01 00:00
@@ -55,10 +40,11 @@ VERSIONS_OUTPUT="""\
 
 class VersionStringTest(PycompTestCase):
     def test_print_versions(self):
-        yumbase = support.MockBase()
+        base = support.MockBase()
+        output = support.MockOutput()
         with mock.patch('sys.stdout') as stdout,\
-                mock.patch('dnf.sack.rpmdb_sack', return_value=yumbase.sack):
-            dnf.cli.cli.print_versions(['pepper', 'tour'], yumbase)
+                mock.patch('dnf.sack.rpmdb_sack', return_value=base.sack):
+            dnf.cli.cli.print_versions(['pepper', 'tour'], base, output)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                            if mc[0] == 'write'])
         self.assertEqual(written, VERSIONS_OUTPUT)
@@ -186,29 +172,10 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 1)
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
-    def test_infoOutput_with_none_description(self):
-        pkg = support.MockPackage('tour-5-0.noarch')
-        pkg.from_system = False
-        pkg.size = 0
-        pkg.pkgid = None
-        pkg.repoid = None
-        pkg.e = pkg.epoch
-        pkg.v = pkg.version
-        pkg.r = pkg.release
-        pkg.summary = 'A summary of the package.'
-        pkg.url = 'http://example.com'
-        pkg.license = 'GPL+'
-        pkg.description = None
-
-        with mock.patch('sys.stdout') as stdout:
-            self._yumbase.infoOutput(pkg)
-        written = ''.join([mc[1][0] for mc in stdout.method_calls
-                          if mc[0] == 'write'])
-        self.assertEqual(written, INFOOUTPUT_OUTPUT)
-
 class CliTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
+        self.yumbase.output = support.MockOutput()
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
     def test_knows_upgrade(self):
@@ -239,6 +206,7 @@ class CliTest(PycompTestCase):
 class ConfigureTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
+        self.yumbase.output = support.MockOutput()
         self.cli = dnf.cli.cli.Cli(self.yumbase)
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
 
@@ -293,14 +261,15 @@ class SearchTest(PycompTestCase):
         self.yumbase = support.MockBase("search")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
-        self.yumbase.fmtSection = lambda str: str
-        self.yumbase.matchcallback = mock.MagicMock()
+        self.yumbase.output = mock.MagicMock()
+        self.yumbase.output.fmtSection = lambda str: str
 
     def patched_search(self, *args, **kwargs):
-        with mock.patch('sys.stdout') as stdout:
+        with support.patch_std_streams() as (stdout, stderr):
             self.cli.search(*args, **kwargs)
-            pkgs = [c[0][0] for c in self.yumbase.matchcallback.call_args_list]
-            return (stdout, pkgs)
+            call_args = self.yumbase.output.matchcallback.call_args_list
+            pkgs = [c[0][0] for c in call_args]
+            return (stdout.getvalue(), pkgs)
 
     def test_search(self):
         (stdout, pkgs) = self.patched_search(['lotus'])
@@ -310,8 +279,7 @@ class SearchTest(PycompTestCase):
 
     def test_search_caseness(self):
         (stdout, pkgs) = self.patched_search(['LOTUS'])
-        self.assertEqual(stdout.write.mock_calls,
-                         [mock.call(u'N/S Matched: LOTUS'), mock.call('\n')])
+        self.assertEqual(stdout, 'N/S Matched: LOTUS\n')
         pkg_names = map(str, pkgs)
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)

@@ -2386,16 +2386,6 @@ class Base(object):
                   'this repository.') % (repo.name)
             raise dnf.exceptions.Error(_prov_key_data(msg))
 
-    def getKeyForRepo(self, repo, callback=None):
-        """Retrieve a key for a repository.  If needed, use the given
-        callback to prompt whether the key should be imported.
-
-        :param repo: repository object to retrieve the key of
-        :param callback: callback function to use for asking for
-           verification of key information
-        """
-        self._getAnyKeyForRepo(repo, repo.gpgdir, repo.gpgkey, is_cakey=False, callback=callback)
-
     def getCAKeyForRepo(self, repo, callback=None):
         """Retrieve a key for a repository.  If needed, use the given
         callback to prompt whether the key should be imported.

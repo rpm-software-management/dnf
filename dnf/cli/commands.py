@@ -196,6 +196,10 @@ class Command(object):
     def base(self):
         return self.cli.base
 
+    @property
+    def output(self):
+        return self.cli.base.output
+
     def configure(self):
         """ Do any command-specific Base configuration. """
         pass
@@ -495,7 +499,7 @@ def _add_pkg_simple_list_lens(data, pkg, indent=''):
         data[d].setdefault(v, 0)
         data[d][v] += 1
 
-def _list_cmd_calc_columns(base, ypl):
+def _list_cmd_calc_columns(output, ypl):
     """ Work out the dynamic size of the columns to pass to fmtColumns. """
     data = {'na' : {}, 'ver' : {}, 'rid' : {}}
     for lst in (ypl.installed, ypl.available, ypl.extras,
@@ -508,7 +512,7 @@ def _list_cmd_calc_columns(base, ypl):
             _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
 
     data = [data['na'], data['ver'], data['rid']]
-    columns = base.calcColumns(data, remainder_column=1)
+    columns = output.calcColumns(data, remainder_column=1)
     return (-columns[0], -columns[1], -columns[2])
 
 class InfoCommand(Command):
@@ -554,7 +558,7 @@ class InfoCommand(Command):
             2 = we've got work yet to do, onto the next stage
         """
         try:
-            highlight = self.base.term.MODE['bold']
+            highlight = self.output.term.MODE['bold']
             ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
@@ -566,7 +570,7 @@ class InfoCommand(Command):
             columns = None
             if basecmd == 'list':
                 # Dynamically size the columns
-                columns = _list_cmd_calc_columns(self.base, ypl)
+                columns = _list_cmd_calc_columns(self.output, ypl)
 
             if highlight and ypl.installed:
                 #  If we have installed and available lists, then do the
@@ -599,7 +603,7 @@ class InfoCommand(Command):
             clin = self.base.conf.color_list_installed_newer
             clir = self.base.conf.color_list_installed_reinstall
             clie = self.base.conf.color_list_installed_extra
-            rip = self.base.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+            rip = self.output.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
                                 highlight_na=update_pkgs, columns=columns,
                                 highlight_modes={'>' : clio, '<' : clin,
                                                  '=' : clir, 'not in' : clie})
@@ -607,15 +611,15 @@ class InfoCommand(Command):
             clad = self.base.conf.color_list_available_downgrade
             clar = self.base.conf.color_list_available_reinstall
             clai = self.base.conf.color_list_available_install
-            rap = self.base.listPkgs(ypl.available, _('Available Packages'), basecmd,
+            rap = self.output.listPkgs(ypl.available, _('Available Packages'), basecmd,
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
                                                  '=' : clar, 'not in' : clai})
-            rep = self.base.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+            rep = self.output.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
             cul = self.base.conf.color_update_local
             cur = self.base.conf.color_update_remote
-            rup = self.base.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
+            rup = self.output.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
                                 highlight_na=local_pkgs, columns=columns,
                                 highlight_modes={'=' : cul, 'not in' : cur})
 
@@ -626,11 +630,12 @@ class InfoCommand(Command):
                 print(_('Obsoleting Packages'))
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    self.base.updatesObsoletesList(obtup, 'obsoletes', columns=columns)
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
             else:
-                rop = self.base.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                rop = self.output.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
                                     basecmd, columns=columns)
-            rrap = self.base.listPkgs(ypl.recent, _('Recently Added Packages'),
+            rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
             # extcmds is pop(0)'d if they pass a "special" param like "updates"
             # in returnPkgLists(). This allows us to always return "ok" for
@@ -1194,10 +1199,10 @@ class CheckUpdateCommand(Command):
                 ypl.obsoletes = typl.obsoletes
                 ypl.obsoletesTuples = typl.obsoletesTuples
 
-            columns = _list_cmd_calc_columns(self.base, ypl)
+            columns = _list_cmd_calc_columns(self.output, ypl)
             if len(ypl.updates) > 0:
                 local_pkgs = {}
-                highlight = self.base.term.MODE['bold']
+                highlight = self.output.term.MODE['bold']
                 if highlight:
                     # Do the local/remote split we get in "yum updates"
                     for po in sorted(ypl.updates):
@@ -1207,7 +1212,7 @@ class CheckUpdateCommand(Command):
 
                 cul = self.base.conf.color_update_local
                 cur = self.base.conf.color_update_remote
-                self.base.listPkgs(ypl.updates, '', outputType='list',
+                self.output.listPkgs(ypl.updates, '', outputType='list',
                               highlight_na=local_pkgs, columns=columns,
                               highlight_modes={'=' : cul, 'not in' : cur})
                 result = 100
@@ -1216,8 +1221,8 @@ class CheckUpdateCommand(Command):
                 # The tuple is (newPkg, oldPkg) ... so sort by new
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
-                    self.base.updatesObsoletesList(obtup, 'obsoletes',
-                                              columns=columns)
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
                 result = 100
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
@@ -1423,9 +1428,9 @@ class RepoListCommand(Command):
         repos = list(self.base.repos.values())
         repos.sort(key=operator.attrgetter('id'))
         enabled_repos = self.base.repos.enabled()
-        on_ehibeg = self.base.term.FG_COLOR['green'] + self.base.term.MODE['bold']
-        on_dhibeg = self.base.term.FG_COLOR['red']
-        on_hiend  = self.base.term.MODE['normal']
+        on_ehibeg = self.output.term.FG_COLOR['green'] + self.output.term.MODE['bold']
+        on_dhibeg = self.output.term.FG_COLOR['red']
+        on_hiend  = self.output.term.MODE['normal']
         tot_num = 0
         cols = []
         for repo in repos:
@@ -1481,49 +1486,49 @@ class RepoListCommand(Command):
                     md = repo.metadata
                 else:
                     md = None
-                out = [self.base.fmtKeyValFill(_("Repo-id      : "), repo.id),
-                       self.base.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+                out = [self.output.fmtKeyValFill(_("Repo-id      : "), repo.id),
+                       self.output.fmtKeyValFill(_("Repo-name    : "), repo.name)]
 
                 if force_show or extcmds:
-                    out += [self.base.fmtKeyValFill(_("Repo-status  : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-status  : "),
                                                ui_enabled)]
                 if md and md.revision is not None:
-                    out += [self.base.fmtKeyValFill(_("Repo-revision: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-revision: "),
                                                md.revision)]
                 if md and md.content_tags:
                     tags = md.content_tags
-                    out += [self.base.fmtKeyValFill(_("Repo-tags    : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
                                                ", ".join(sorted(tags)))]
 
                 if md and md.distro_tags:
                     for (distro, tags) in md.distro_tags.iteritems():
-                        out += [self.base.fmtKeyValFill(_("Repo-distro-tags: "),
+                        out += [self.output.fmtKeyValFill(_("Repo-distro-tags: "),
                                                    "[%s]: %s" % (distro,
                                                    ", ".join(sorted(tags))))]
 
                 if md:
-                    out += [self.base.fmtKeyValFill(_("Repo-updated : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-updated : "),
                                                time.ctime(md.md_timestamp)),
-                            self.base.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
-                            self.base.fmtKeyValFill(_("Repo-size    : "),ui_size)]
+                            self.output.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
+                            self.output.fmtKeyValFill(_("Repo-size    : "),ui_size)]
 
                 if repo.metalink:
-                    out += [self.base.fmtKeyValFill(_("Repo-metalink: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
                                                repo.metalink)]
                     if enabled:
                         ts = repo.metadata.timestamp
-                        out += [self.base.fmtKeyValFill(_("  Updated    : "),
+                        out += [self.output.fmtKeyValFill(_("  Updated    : "),
                                                    time.ctime(ts))]
                 elif repo.mirrorlist:
-                    out += [self.base.fmtKeyValFill(_("Repo-mirrors : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-mirrors : "),
                                                repo.mirrorlist)]
                 baseurls = repo.baseurl
                 if baseurls:
-                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-baseurl : "),
                                                ", ".join(baseurls))]
                 elif enabled and md.mirrors:
                     url = "%s (%d more)" % (md.mirrors[0], len(md.mirrors) - 1)
-                    out += [self.base.fmtKeyValFill(_("Repo-baseurl : "), url)]
+                    out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
                 last = time.ctime(md.timestamp)
                 if repo.metadata_expire <= -1:
@@ -1534,22 +1539,22 @@ class RepoListCommand(Command):
                     num = _num2ui_num(repo.metadata_expire)
                     num = _("%s second(s) (last: %s)") % (num, last)
 
-                out += [self.base.fmtKeyValFill(_("Repo-expire  : "), num)]
+                out += [self.output.fmtKeyValFill(_("Repo-expire  : "), num)]
 
                 if repo.exclude:
-                    out += [self.base.fmtKeyValFill(_("Repo-exclude : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
                                                ", ".join(repo.exclude))]
 
                 if repo.includepkgs:
-                    out += [self.base.fmtKeyValFill(_("Repo-include : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-include : "),
                                                ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
-                    out += [self.base.fmtKeyValFill(_("Repo-excluded: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
                                                ui_excludes_num)]
 
                 if repo.repofile:
-                    out += [self.base.fmtKeyValFill(_("Repo-filename: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
                 self.base.logger.log(dnf.logging.DEBUG, "%s\n",
@@ -1574,11 +1579,11 @@ class RepoListCommand(Command):
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
-                left = self.base.term.columns - (id_len + 1)
+                left = self.output.term.columns - (id_len + 1)
             elif utf8_width(_('status')) > st_len:
-                left = self.base.term.columns - (id_len + utf8_width(_('status')) +2)
+                left = self.output.term.columns - (id_len + utf8_width(_('status')) +2)
             else:
-                left = self.base.term.columns - (id_len + st_len + 2)
+                left = self.output.term.columns - (id_len + st_len + 2)
 
             if left < nm_len: # Name gets chopped
                 nm_len = left
@@ -1973,7 +1978,7 @@ class VersionCommand(Command):
                     pkg_names2pkgs = self.base._group_names2aipkgs(pkg_names)
                     self.base._calcDataPkgColumns(data, pkg_names, pkg_names2pkgs)
                     data = [data['envra'], data['rid']]
-                    columns = self.base.calcColumns(data)
+                    columns = self.output.calcColumns(data)
                     columns = (-columns[0], -columns[1])
                     self.base._displayPkgsFromNames(pkg_names, True, pkg_names2pkgs,
                                                columns=columns)
@@ -2026,11 +2031,11 @@ class VersionCommand(Command):
                 data[d].setdefault(v, 0)
                 data[d][v] += 1
         data = [data['rid'], data['ver']]
-        columns = self.base.calcColumns(data)
+        columns = self.output.calcColumns(data)
         columns = (-columns[0], columns[1])
 
         for line in cols:
-            print(self.base.fmtColumns(list(zip(line, columns))))
+            print(self.output.fmtColumns(list(zip(line, columns))))
 
         return 0, ['version']
 
@@ -2108,7 +2113,7 @@ class HistoryCommand(Command):
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
         print("Repeating transaction %u, from %s" % (old.tid, tm))
-        self.base.historyInfoCmdPkgsAltered(old)
+        self.output.historyInfoCmdPkgsAltered(old)
         if self.base.history_redo(old, **kwargs):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
@@ -2118,7 +2123,7 @@ class HistoryCommand(Command):
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
         print("Undoing transaction %u, from %s" % (old.tid, tm))
-        self.base.historyInfoCmdPkgsAltered(old)
+        self.output.historyInfoCmdPkgsAltered(old)
         if self.base.history_undo(old):
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
@@ -2156,9 +2161,9 @@ class HistoryCommand(Command):
 
         tm = time.ctime(old.beg_timestamp)
         print("Rollback to transaction %u, from %s" % (old.tid, tm))
-        print(self.base.fmtKeyValFill("  Undoing the following transactions: ",
+        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
                                       ", ".join((str(x) for x in mobj.tid))))
-        self.base.historyInfoCmdPkgsAltered(mobj)
+        self.output.historyInfoCmdPkgsAltered(mobj)
         if self.base.history_undo(mobj):
             return 2, ["Rollback to transaction %u" % (old.tid,)]
 
@@ -2236,16 +2241,16 @@ class HistoryCommand(Command):
 
         if False: pass
         elif vcmd == 'list':
-            ret = self.base.historyListCmd(extcmds)
+            ret = self.output.historyListCmd(extcmds)
         elif vcmd == 'info':
-            ret = self.base.historyInfoCmd(extcmds)
+            ret = self.output.historyInfoCmd(extcmds)
         elif vcmd == 'summary':
-            ret = self.base.historySummaryCmd(extcmds)
+            ret = self.output.historySummaryCmd(extcmds)
         elif vcmd in ('addon', 'addon-info'):
-            ret = self.base.historyAddonInfoCmd(extcmds)
+            ret = self.output.historyAddonInfoCmd(extcmds)
         elif vcmd in ('pkg', 'pkgs', 'pkg-list', 'pkgs-list',
                       'package', 'package-list', 'packages', 'packages-list'):
-            ret = self.base.historyPackageListCmd(extcmds)
+            ret = self.output.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(extcmds)
         elif vcmd in ('redo', 'repeat'):
@@ -2259,7 +2264,7 @@ class HistoryCommand(Command):
         elif vcmd in ('sync', 'synchronize'):
             ret = self._hcmd_sync(extcmds)
         elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
-            ret = self.base.historyPackageInfoCmd(extcmds)
+            ret = self.output.historyPackageInfoCmd(extcmds)
 
         if ret is None:
             return 0, ['history %s' % (vcmd,)]

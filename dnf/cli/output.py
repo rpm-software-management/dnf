@@ -441,7 +441,8 @@ class Output(object):
 
     GRP_PACKAGE_INDENT = ' ' * 3
 
-    def __init__(self):
+    def __init__(self, base):
+        self.base = base
         self.logger = logging.getLogger("dnf")
         if hasattr(rpm, "expandMacro"):
             self.i18ndomains = rpm.expandMacro("%_i18ndomains").split(":")
@@ -494,6 +495,10 @@ class Output(object):
                 break
             ret += tup[1]
         return ret
+
+    @property
+    def conf(self):
+        return self.base.conf
 
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):
@@ -1221,11 +1226,11 @@ class Output(object):
                                     _("Installed size: %s"),
                                     format_number(totsize))
 
-    def list_transaction(self):
+    def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
-        list_bunch = _make_lists(self._transaction)
+        list_bunch = _make_lists(transaction)
         pkglist_lines = []
         data  = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -1359,7 +1364,7 @@ Transaction Summary
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
-    def post_transaction_output(self):
+    def post_transaction_output(self, transaction):
         """Returns a human-readable summary of the results of the
         transaction.
 
@@ -1396,7 +1401,7 @@ Transaction Summary
             return col_lens
 
         out = ''
-        list_bunch = _make_lists(self.transaction)
+        list_bunch = _make_lists(transaction)
 
         for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
                                (_('Removed'), list_bunch.erased),
@@ -1426,33 +1431,17 @@ Transaction Summary
 
         return out
 
-    def setupProgressCallbacks(self):
+    def setup_progress_callbacks(self):
         """Set up the progress callbacks and various
            output bars based on debug level.
         """
-        # if we're below 2 on the debug level we don't need to be outputting
-        # progress bars - this is hacky - I'm open to other options
-        # One of these is a download
-        if self.conf.debuglevel < 2 or not sys.stdout.isatty():
-            progressbar = None
-        else:
+        progressbar = None
+        if self.conf.debuglevel >= 2 and sys.stdout.isatty():
             progressbar = dnf.cli.progress.LibrepoCallbackAdaptor(fo=sys.stdout)
             self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
-        self.repos.all.set_progress_bar(progressbar)
 
         # setup our depsolve progress callback
-        dscb = DepSolveProgressCallBack(weakref(self))
-        self.ds_callback = dscb
-
-    def setupKeyImportCallbacks(self):
-        """Set up callbacks to import and confirm gpg public keys."""
-
-        confirm_func = self._cli_confirm_gpg_key_import
-        gpg_import_func = self.getKeyForRepo
-        gpgca_import_func = self.getCAKeyForRepo
-        self.repos.confirm_func = confirm_func
-        self.repos.gpg_import_func = gpg_import_func
-        self.repos.gpgca_import_func = gpgca_import_func
+        return (progressbar, DepSolveProgressCallBack(weakref(self)))
 
     def download_callback_total_cb(self, remote_pkgs, remote_size,
                                    download_start_timestamp):
