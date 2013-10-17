@@ -28,6 +28,7 @@ from .i18n import _
 from . import misc
 import tempfile
 import collections
+from dnf.pycomp import basestring
 
 class TransactionDisplay(object):
     # per-package events
@@ -417,7 +418,7 @@ class RPMTransaction(object):
         (pkg, tsi) = self._extract_tsi_cbkey(h)
         rpmloc = pkg.localPkg()
         try:
-            self.fd = file(rpmloc)
+            self.fd = open(rpmloc)
         except IOError as e:
             self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:

@@ -55,7 +55,7 @@ from dnf.cli.term import _term_width
 import locale
 
 import hawkey
-from dnf.pycomp import xrange, basestring, is_py3bytes
+from dnf.pycomp import xrange, basestring, is_py3bytes, long
 
 try:
     assert max(2, 4) == 4
@@ -332,7 +332,7 @@ class YumTerm(object):
         if not escape:
             escape = re.escape
 
-        render = lambda match: beg + match.group() + end
+        render = lambda match: beg.decode() + match.group() + end.decode()
         for needle in needles:
             pat = escape(needle)
             if ignore_case:
@@ -728,7 +728,7 @@ class Output(object):
         nxt = ' ' * (keylen - 2) + ': '
         ret = utf8_text_fill(val, width=cols,
                              initial_indent=key, subsequent_indent=nxt)
-        if ret.count("\n") > 1 and keylen > (cols / 3):
+        if ret.count("\n") > 1 and keylen > (cols // 3):
             # If it's big, redo it again with a smaller subsequent off
             ret = utf8_text_fill(val, width=cols,
                                  initial_indent=key,
@@ -751,7 +751,7 @@ class Output(object):
         if name_len >= (cols - 4):
             beg = end = fill * 2
         else:
-            beg = fill * ((cols - name_len) / 2)
+            beg = fill * ((cols - name_len) // 2)
             end = fill * (cols - name_len - len(beg))
 
         return "%s %s %s" % (beg, name, end)
@@ -1392,7 +1392,7 @@ Transaction Summary
                 col %= len(col_lens)
 
             for col in range(len(col_lens)):
-                col_lens[col] += left / num
+                col_lens[col] += left // num
                 col_lens[col] *= -1
             return col_lens
 
@@ -1472,7 +1472,7 @@ Transaction Summary
         self.logger.info("-" * width)
         dl_time = max(0.01, time.time() - download_start_timestamp)
         msg = ' %5sB/s | %5sB %9s     ' % (
-            format_number(remote_size / dl_time),
+            format_number(remote_size // dl_time),
             format_number(remote_size),
             format_time(dl_time))
         msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
@@ -1662,7 +1662,7 @@ Transaction Summary
                 if old.cmdline is None:
                     blanks += 1
                 uids.add(old.loginuid)
-            if len(uids) == 1 and blanks > (done / 2):
+            if len(uids) == 1 and blanks > (done // 2):
                 uids.add('blah')
 
         fmt = "%s | %s | %s | %s | %s"
@@ -1930,11 +1930,11 @@ Transaction Summary
             if diff < 5 * 60:
                 diff = _("(%u seconds)") % diff
             elif diff < 5 * 60 * 60:
-                diff = _("(%u minutes)") % (diff / 60)
+                diff = _("(%u minutes)") % (diff // 60)
             elif diff < 5 * 60 * 60 * 24:
-                diff = _("(%u hours)") % (diff / (60 * 60))
+                diff = _("(%u hours)") % (diff // (60 * 60))
             else:
-                diff = _("(%u days)") % (diff / (60 * 60 * 24))
+                diff = _("(%u days)") % (diff // (60 * 60 * 24))
             print(_("End time       :"), endtm, diff)
         if old.end_rpmdbversion is not None:
             if old.altered_gt_rpmdb:
@@ -2547,14 +2547,14 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if te_total == 0:
             percent = 0
         else:
-            percent = (te_current*long(100))/te_total
+            percent = (te_current*long(100))//te_total
         self._out_event(te_current, te_total, ts_current, ts_total,
                         percent, process, pkgname, wid1)
 
     def _max_action_width(self):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
-            for val in self.action.itervalues():
+            for val in self.action.values():
                 wid_val = utf8_width(val)
                 if wid1 < wid_val:
                     wid1 = wid_val
@@ -2610,8 +2610,8 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if width < overhead:
             width = overhead    # Give up
         width -= overhead
-        if pnl > width / 2:
-            pnl = width / 2
+        if pnl > width // 2:
+            pnl = width // 2
 
         marks = self.width - (overhead + pnl)
         width = "%s.%s" % (marks, marks)
@@ -2686,7 +2686,7 @@ def progressbar(current, total, name=None):
         width -= 4
         if width < 0:
             width = 0
-        nwid = width / 2
+        nwid = width // 2
         if nwid > utf8_width(name):
             nwid = utf8_width(name)
         width -= nwid

@@ -26,7 +26,7 @@ import logging
 import sys
 import dnf.package
 import dnf.queries
-import dnf.pycomp
+from dnf.pycomp import basestring
 
 class SackVersion(object):
     def __init__(self):

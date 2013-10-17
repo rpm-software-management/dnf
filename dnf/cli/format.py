@@ -90,10 +90,10 @@ def format_time(seconds, use_hours=0):
         return 'Infinite'
     else:
         seconds = int(seconds)
-        minutes = seconds / 60
+        minutes = seconds // 60
         seconds = seconds % 60
         if use_hours:
-            hours = minutes / 60
+            hours = minutes // 60
             minutes = minutes % 60
             return '%02i:%02i:%02i' % (hours, minutes, seconds)
         else:
