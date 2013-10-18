@@ -16,7 +16,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import (available_by_name, available_by_nevra, installed,
+from dnf.queries import (available_by_name, available_by_nevra,
                          updates_by_name)
 from tests import mock
 from tests import support
@@ -32,7 +32,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockBase("updates")
         ret = yumbase.update("pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
-        expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
+        expected = yumbase.sack.query().installed().filter(name__neq="pepper") + new_versions
         self.assertResult(yumbase, expected)
 
     def test_update_not_found(self):
@@ -49,7 +49,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockBase("main")
         # no "mrkite" installed:
         yumbase.update("mrkite")
-        self.assertResult(yumbase, installed(yumbase.sack))
+        self.assertResult(yumbase, yumbase.sack.query().installed().run())
 
     def test_update_all(self):
         """ Update all you can. """

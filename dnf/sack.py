@@ -68,7 +68,7 @@ class Sack(hawkey.Sack):
         return dnf.queries.Query(self)
 
     def rpmdb_version(self, yumdb):
-        pkgs = dnf.queries.installed(self)
+        pkgs = self.query().installed().run()
         main = SackVersion()
         for pkg in pkgs:
             ydbi = yumdb.get_package(pkg)

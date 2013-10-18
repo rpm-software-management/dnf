@@ -31,7 +31,7 @@ class InstallMultilibAll(support.ResultTestCase):
         """ Installing a nonexistent package is a void operation. """
         cnt = self.yumbase.install("not-available")
         self.assertEqual(cnt, 0)
-        installed_pkgs = dnf.queries.installed(self.yumbase.sack)
+        installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_install(self):
@@ -40,7 +40,7 @@ class InstallMultilibAll(support.ResultTestCase):
         expected = available_by_name(self.yumbase.sack, ["mrkite", "trampoline"])
         # ensure sanity of the test (otherwise it would pass no matter what):
         self.assertEqual(len(expected), 2)
-        new_set = dnf.queries.installed(self.yumbase.sack) + expected
+        new_set = self.yumbase.sack.query().installed() + expected
         self.assertResult(self.yumbase, new_set)
 
     def test_install_by_provides(self):
@@ -57,7 +57,7 @@ class InstallMultilibAll(support.ResultTestCase):
         self.yumbase.install("lotus-3-16.i686")
         available = available_by_name(self.yumbase.sack, "lotus", get_query=True)
         lotus = available.filter(arch="i686")[0]
-        new_set = dnf.queries.installed(self.yumbase.sack) + [lotus]
+        new_set = self.yumbase.sack.query().installed() + [lotus]
         self.assertResult(self.yumbase, new_set)
 
     def test_install_local(self):
@@ -73,7 +73,7 @@ class InstallMultilibAll(support.ResultTestCase):
 class MultilibAllMainRepo(support.ResultTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
-        self.installed = dnf.queries.installed(self.yumbase.sack)
+        self.installed = self.yumbase.sack.query().installed().run()
         self.yumbase.conf.multilib_policy = "all"
 
     def test_install(self):
@@ -88,21 +88,21 @@ class MultilibAllMainRepo(support.ResultTestCase):
 class MultilibBestMainRepo(support.ResultTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
-        self.installed = dnf.queries.installed(self.yumbase.sack)
+        self.installed = self.yumbase.sack.query().installed().run()
         self.assertEqual(self.yumbase.conf.multilib_policy, "best")
 
     def test_non_existent(self):
         """ Installing a nonexistent package is a void operation. """
         self.assertRaises(dnf.exceptions.PackageNotFoundError,
                           self.yumbase.install, "not-available")
-        installed_pkgs = dnf.queries.installed(self.yumbase.sack)
+        installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_not_available(self):
         """ Installing a unavailable package is a void operation. """
         cnt = self.yumbase.install("hole")
         self.assertEqual(cnt, 1)
-        installed_pkgs = dnf.queries.installed(self.yumbase.sack)
+        installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_install(self):

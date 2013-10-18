@@ -606,14 +606,14 @@ class Base(object):
         """ See if sltr matches a patches that is (in older version or different
             architecture perhaps) already installed.
         """
-        inst = queries.installed(self.sack, get_query=True)
+        inst = self.sack.query().installed()
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
         self.logger.info(msg)
-        for pkg in queries.installed(self.sack):
+        for pkg in self.sack.query().installed().run():
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
             try:
