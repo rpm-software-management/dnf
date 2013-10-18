@@ -202,11 +202,6 @@ def _construct_result(sack, patterns, ignore_case,
         return q
     return q.run()
 
-def installed_by_name(sack, patterns, ignore_case=False, get_query=False):
-    return _construct_result(sack, patterns, ignore_case,
-                             include_repo=hawkey.SYSTEM_REPO_NAME,
-                             get_query=get_query)
-
 def installed_by_nevra(sack, pattern):
     try:
         installed = hawkey.split_nevra(pattern).to_query(sack)

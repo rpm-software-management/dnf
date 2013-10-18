@@ -760,7 +760,8 @@ class Base(object):
 
         if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
-            using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
+            installed_query = self.sack.query().installed()
+            using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
             rpmdbv  = self.sack.rpmdb_version(self.yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
@@ -1848,7 +1849,7 @@ class Base(object):
         if not po:
             return 0
 
-        installed = sorted(queries.installed_by_name(self.sack, po.name))
+        installed = sorted(self.sack.query().installed().filter(name=po.name))
         if len(installed) > 0 and installed[0] > po:
             self._goal.install(po)
             self._goal.erase(installed[0])

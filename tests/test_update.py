@@ -32,7 +32,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockBase("updates")
         ret = yumbase.update("pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
-        expected = yumbase.sack.query().installed().filter(name__neq="pepper") + new_versions
+        expected = yumbase.sack.query().installed().filter(name__neq="pepper").run() + new_versions
         self.assertResult(yumbase, expected)
 
     def test_update_not_found(self):

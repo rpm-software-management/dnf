@@ -48,14 +48,14 @@ class PackageTest(PycompTestCase):
         self.assertFalse(self.pkg.from_cmdline)
 
     def test_from_system(self):
-        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        pkg = self.sack.query().installed().filter(name="pepper")[0]
         self.assertTrue(pkg.from_system)
         self.assertFalse(self.pkg.from_system)
 
     @mock.patch("dnf.package.Package.rpmdbid", long(3))
     def test_idx(self):
         """ pkg.idx is an int. """
-        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        pkg = self.sack.query().installed().filter(name="pepper")[0]
         self.assertEqual(type(pkg.idx), int)
 
     def test_pkgtup(self):
@@ -88,5 +88,5 @@ class PackageTest(PycompTestCase):
         self.assertEqual(chksum[1], TOUR_SHA256)
 
     def test_verify_installed(self):
-        pkg = dnf.queries.installed_by_name(self.sack, "pepper")[0]
+        pkg = self.sack.query().installed().filter(name="pepper")[0]
         self.assertRaises(ValueError, pkg.verifyLocalPkg)

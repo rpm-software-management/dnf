@@ -1834,7 +1834,7 @@ Transaction Summary
             else:
                 _pkg_states = _pkg_states_available
             state  = _pkg_states['i']
-            ipkgs = dnf.queries.installed_by_name(self.sack, hpkg.name)
+            ipkgs = self.sack.query().installed().filter(name=hpkg.name).run()
             ipkgs.sort()
             if not ipkgs:
                 state  = _pkg_states['e']

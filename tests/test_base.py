@@ -43,7 +43,7 @@ class BaseTest(support.TestCase):
         yumbase = support.MockBase()
         # setup:
         yumbase.conf.clean_requirements_on_remove = True
-        pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
+        pkg = yumbase.sack.query().installed().filter(name="pepper")[0]
         goal = mock.Mock(spec=["userinstalled"])
         yumbase.yumdb.get_package(pkg).reason = "user"
         # test:

@@ -22,7 +22,6 @@ except ImportError:
     from tests import mock
 from tests import support
 import dnf.yum.rpmsack
-from dnf.queries import installed_by_name
 import unittest
 
 @mock.patch('os.path.exists', return_value=True)
@@ -31,7 +30,7 @@ class TestAdditionalPkgDB(unittest.TestCase):
         yumbase = support.MockBase()
         path = yumbase.conf.persistdir + '/yumdb'
         pkgdb = dnf.yum.rpmsack.AdditionalPkgDB(path)
-        pkg = installed_by_name(yumbase.sack, "pepper")[0]
+        pkg = yumbase.sack.query().installed().filter(name="pepper")[0]
         directory = pkgdb._get_dir_name(pkg.pkgtup, pkg.pkgid)
         self.assertEqual("%s/yumdb/p/<nopkgid>-pepper-20-0-x86_64" %
                          yumbase.conf.persistdir,
