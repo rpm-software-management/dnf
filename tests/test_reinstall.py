@@ -36,8 +36,8 @@ class Reinstall(support.ResultTestCase):
         cnt = self.yumbase.reinstall("pepper")
         self.assertEqual(cnt, 1)
         new_set = support.installed_but(self.sack, "pepper")
-        new_pkg = dnf.queries.available_by_nevra(self.sack, "pepper-20-0.x86_64")
-        new_set += list(new_pkg)
+        available_query = self.sack.query().available()
+        new_set += list(available_query.nevra("pepper-20-0.x86_64"))
         self.assertResult(self.yumbase, new_set)
 
     def test_reinstall_local(self):

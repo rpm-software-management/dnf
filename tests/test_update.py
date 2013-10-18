@@ -16,7 +16,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import (available_by_name, available_by_nevra,
+from dnf.queries import (available_by_name,
                          updates_by_name)
 from tests import mock
 from tests import support
@@ -57,8 +57,8 @@ class Update(support.ResultTestCase):
         sack = yumbase.sack
         yumbase.update_all()
         expected = support.installed_but(sack, "pepper", "hole", "tour") + \
-            list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
-            list(available_by_nevra(sack, "hole-2-1.x86_64"))
+            list(sack.query().available().nevra("pepper-20-1.x86_64")) + \
+            list(sack.query().available().nevra("hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
 
     def test_update_local(self):
@@ -89,7 +89,7 @@ class SkipBroken(support.ResultTestCase):
         """
         self.yumbase.update_all()
         new_set = support.installed_but(self.sack, "pepper").run()
-        new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
+        new_set.extend(self.sack.query().available().nevra("pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)
 
 class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):

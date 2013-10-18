@@ -215,13 +215,6 @@ def available_by_name(sack, patterns, ignore_case=False, latest_only=False,
                              latest_only=latest_only,
                              get_query=get_query)
 
-def available_by_nevra(sack, pattern):
-    try:
-        installed = hawkey.split_nevra(pattern).to_query(sack)
-    except hawkey.ValueException:
-        return sack.query().filter(empty=True)
-    return installed.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
-
 def installed_exact(sack, name, evr, arch, get_query=False):
     q = _construct_result(sack, name, False, get_query=True,
                           include_repo=hawkey.SYSTEM_REPO_NAME)
