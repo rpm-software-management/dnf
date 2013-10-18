@@ -73,6 +73,12 @@ class Query(hawkey.Query):
     def pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
+    def nevra(self, pattern):
+        nevra = hawkey.split_nevra(pattern)
+        return self.filter(
+            name=nevra.name, epoch=nevra.epoch, version=nevra.version,
+            release=nevra.release, arch=nevra.arch)
+
 class Subject(object):
     def __init__(self, pkg_spec, ignore_case=False):
         self.subj = hawkey.Subject(pkg_spec) # internal subject
@@ -201,13 +207,6 @@ def _construct_result(sack, patterns, ignore_case,
     if get_query:
         return q
     return q.run()
-
-def installed_by_nevra(sack, pattern):
-    try:
-        installed = hawkey.split_nevra(pattern).to_query(sack)
-    except hawkey.ValueException:
-        return sack.query().filter(empty=True)
-    return installed.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
 def available_by_name(sack, patterns, ignore_case=False, latest_only=False,
                       get_query=False):
