@@ -319,4 +319,5 @@ this release contains a fix for that. Also, a basic proxy support has been
 readded now.
 
 Bugs fixed in 0.4.5:
+
 * :rhbug:`1021087`
