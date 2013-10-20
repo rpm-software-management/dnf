@@ -238,5 +238,9 @@
     [
         1017278, 
         "dnf does not notice file conflicts"
+    ], 
+    [
+        1021087, 
+        "traceback during download after a transaction with obsoletes"
     ]
 ]

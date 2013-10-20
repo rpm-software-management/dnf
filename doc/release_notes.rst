@@ -308,3 +308,15 @@ as well as a fix to a possibly severe bug that one is however not really likely
 to see with non-devel Fedora repos:
 
 * :rhbug:`1017278`
+
+===================
+0.4.5 Release Notes
+===================
+
+A serious bug causing `tracebacks during package downloads
+<https://bugzilla.redhat.com/show_bug.cgi?id=1021087>`_ made it into 0.4.4 and
+this release contains a fix for that. Also, a basic proxy support has been
+readded now.
+
+Bugs fixed in 0.4.5:
+* :rhbug:`1021087`
