@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.4.4-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.4.5-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.4-1',
+        VERSION:     '0.4.5-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.4-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="DNF User’s FAQ" href="user_faq.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -85,12 +85,12 @@
 <span id="dnf-cli-cli"></span><h2><a class="toc-backref" href="#id3">dnf.cli.cli</a><a class="headerlink" href="#module-dnf.cli.cli" title="Permalink to this headline">¶</a></h2>
 <p>Command line interface yum class and related.</p>
 <dl class="class">
-<dt id="dnf.cli.cli.YumBaseCli">
-<em class="property">class </em><tt class="descclassname">dnf.cli.cli.</tt><tt class="descname">YumBaseCli</tt><a class="headerlink" href="#dnf.cli.cli.YumBaseCli" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli">
+<em class="property">class </em><tt class="descclassname">dnf.cli.cli.</tt><tt class="descname">BaseCli</tt><a class="headerlink" href="#dnf.cli.cli.BaseCli" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the base class for yum cli.</p>
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.cleanCli">
-<tt class="descname">cleanCli</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.cleanCli" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.cleanCli">
+<tt class="descname">cleanCli</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.cleanCli" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove data from the yum cache directory.  What data is
 removed depends on the options supplied by the user.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -126,8 +126,8 @@ all = do all of the above</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.deplist">
-<tt class="descname">deplist</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.deplist" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.deplist">
+<tt class="descname">deplist</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.deplist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print out a formatted list of dependencies for a list of
 packages.  This is a cli wrapper method for
 <tt class="xref py py-class docutils literal"><span class="pre">dnf.yum.base.Base.findDeps</span></tt>.</p>
@@ -150,8 +150,8 @@ that should have their dependenices printed</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.distro_sync_userlist">
-<tt class="descname">distro_sync_userlist</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.distro_sync_userlist" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.distro_sync_userlist">
+<tt class="descname">distro_sync_userlist</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.distro_sync_userlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Upgrade or downgrade packages to match the latest versions available
 in the enabled repositories.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -171,8 +171,8 @@ in the enabled repositories.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.do_transaction">
-<tt class="descname">do_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.do_transaction" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.do_transaction">
+<tt class="descname">do_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.do_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take care of package downloading, checking, user
 confirmation and actually running the transaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -188,8 +188,8 @@ occurred in the pre-transaction checks</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.downgradePkgs">
-<tt class="descname">downgradePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.downgradePkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.downgradePkgs">
+<tt class="descname">downgradePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.downgradePkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to take the user specified list of packages or
 wildcards and downgrade them. If a complete version number if
 specified, attempt to downgrade them to the specified version</p>
@@ -212,8 +212,8 @@ packages to downgrade</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.erasePkgs">
-<tt class="descname">erasePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.erasePkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.erasePkgs">
+<tt class="descname">erasePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.erasePkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take user commands and populate a transaction wrapper with
 packages to be erased.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -235,8 +235,8 @@ packages to erase</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.errorSummary">
-<tt class="descname">errorSummary</tt><big>(</big><em>errstring</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.errorSummary" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.errorSummary">
+<tt class="descname">errorSummary</tt><big>(</big><em>errstring</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.errorSummary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse the error string for &#8216;interesting&#8217; errors which can
 be grouped, such as disk space issues.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -252,8 +252,8 @@ be grouped, such as disk space issues.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.gpgsigcheck">
-<tt class="descname">gpgsigcheck</tt><big>(</big><em>pkgs</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.gpgsigcheck" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.gpgsigcheck">
+<tt class="descname">gpgsigcheck</tt><big>(</big><em>pkgs</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.gpgsigcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform GPG signature verification on the given packages,
 installing keys if possible.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -272,8 +272,8 @@ signatures of</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.installPkgs">
-<tt class="descname">installPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.installPkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.installPkgs">
+<tt class="descname">installPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.installPkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to take the user specified list of packages or
 wildcards and install them, or if they are installed, update
 them to a newer version. If a complete version number is
@@ -298,8 +298,8 @@ packages to install</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.install_grouplist">
-<tt class="descname">install_grouplist</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.install_grouplist" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.install_grouplist">
+<tt class="descname">install_grouplist</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.install_grouplist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark the packages in the given groups for installation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -320,8 +320,8 @@ groups to be installed</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.provides">
-<tt class="descname">provides</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.provides" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.provides">
+<tt class="descname">provides</tt><big>(</big><em>args</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.provides" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print out a list of packages that provide the given file or
 feature.  This a cli wrapper to the provides methods in the
 rpmdb and pkgsack.</p>
@@ -343,8 +343,8 @@ rpmdb and pkgsack.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.reinstallPkgs">
-<tt class="descname">reinstallPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.reinstallPkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.reinstallPkgs">
+<tt class="descname">reinstallPkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.reinstallPkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Attempt to take the user specified list of packages or
 wildcards and reinstall them.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -366,8 +366,8 @@ packages to reinstall</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.removeGroups">
-<tt class="descname">removeGroups</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.removeGroups" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.removeGroups">
+<tt class="descname">removeGroups</tt><big>(</big><em>grouplist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.removeGroups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark the packages in the given groups for removal.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -388,8 +388,8 @@ groups to be removed</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.returnGroupInfo">
-<tt class="descname">returnGroupInfo</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.returnGroupInfo" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.returnGroupInfo">
+<tt class="descname">returnGroupInfo</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.returnGroupInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print complete information about the groups that match the
 given names or wildcards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -411,8 +411,8 @@ groups to print information about</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.returnGroupLists">
-<tt class="descname">returnGroupLists</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.returnGroupLists" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.returnGroupLists">
+<tt class="descname">returnGroupLists</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.returnGroupLists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print out a list of groups that match the given names or
 wildcards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -434,8 +434,8 @@ groups to list</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.returnGroupSummary">
-<tt class="descname">returnGroupSummary</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.returnGroupSummary" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.returnGroupSummary">
+<tt class="descname">returnGroupSummary</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.returnGroupSummary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of the groups that match the given names or
 wildcards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -458,8 +458,8 @@ installed and available packages will be summarised</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.returnPkgLists">
-<tt class="descname">returnPkgLists</tt><big>(</big><em>extcmds</em>, <em>installed_available=False</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.returnPkgLists" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.returnPkgLists">
+<tt class="descname">returnPkgLists</tt><big>(</big><em>extcmds</em>, <em>installed_available=False</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.returnPkgLists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a <a class="reference internal" href="api_dnf.yum.html#dnf.yum.misc.GenericHolder" title="dnf.yum.misc.GenericHolder"><tt class="xref py py-class docutils literal"><span class="pre">dnf.yum.misc.GenericHolder</span></tt></a> object containing
 lists of package objects that match the given names or wildcards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -492,8 +492,8 @@ recent = list of packageObjects</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.cli.YumBaseCli.updatePkgs">
-<tt class="descname">updatePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.YumBaseCli.updatePkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.cli.BaseCli.updatePkgs">
+<tt class="descname">updatePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.updatePkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take user commands and populate transaction wrapper with
 packages to be updated.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3338,12 +3338,12 @@ process.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="dnf.cli.output.YumOutput">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">YumOutput</tt><a class="headerlink" href="#dnf.cli.output.YumOutput" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output">
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">Output</tt><a class="headerlink" href="#dnf.cli.output.Output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main output class for the yum command line.</p>
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.calcColumns">
-<tt class="descname">calcColumns</tt><big>(</big><em>data</em>, <em>columns=None</em>, <em>remainder_column=0</em>, <em>total_width=None</em>, <em>indent=''</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.calcColumns" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.calcColumns">
+<tt class="descname">calcColumns</tt><big>(</big><em>data</em>, <em>columns=None</em>, <em>remainder_column=0</em>, <em>total_width=None</em>, <em>indent=''</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.calcColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dynamically calculate the widths of the columns that the
 fields in data should be placed into for output.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3380,8 +3380,8 @@ in data should be placed into for output</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.depListOutput">
-<tt class="descname">depListOutput</tt><big>(</big><em>results</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.depListOutput" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.depListOutput">
+<tt class="descname">depListOutput</tt><big>(</big><em>results</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.depListOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format and output a list of findDeps results</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3395,8 +3395,8 @@ returned by findDeps</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.displayPkgsInGroups">
-<tt class="descname">displayPkgsInGroups</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.displayPkgsInGroups" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.displayPkgsInGroups">
+<tt class="descname">displayPkgsInGroups</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.displayPkgsInGroups" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output information about the packages in a given group</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3409,8 +3409,8 @@ returned by findDeps</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.download_callback_total_cb">
-<tt class="descname">download_callback_total_cb</tt><big>(</big><em>remote_pkgs</em>, <em>remote_size</em>, <em>download_start_timestamp</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.download_callback_total_cb" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.download_callback_total_cb">
+<tt class="descname">download_callback_total_cb</tt><big>(</big><em>remote_pkgs</em>, <em>remote_size</em>, <em>download_start_timestamp</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.download_callback_total_cb" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outputs summary information about the download process.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3430,8 +3430,8 @@ process started, in seconds since the epoch</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x2ac4938&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.fmtColumns">
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x1527d70&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3459,8 +3459,8 @@ to len() if you know it&#8217;ll be fine</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.fmtKeyValFill">
-<tt class="descname">fmtKeyValFill</tt><big>(</big><em>key</em>, <em>val</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtKeyValFill" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.fmtKeyValFill">
+<tt class="descname">fmtKeyValFill</tt><big>(</big><em>key</em>, <em>val</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.fmtKeyValFill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a key value pair in the common two column output
 format.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3481,8 +3481,8 @@ format.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.fmtSection">
-<tt class="descname">fmtSection</tt><big>(</big><em>name</em>, <em>fill='='</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.fmtSection" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.fmtSection">
+<tt class="descname">fmtSection</tt><big>(</big><em>name</em>, <em>fill='='</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.fmtSection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format and return a section header.  The format of the
 header is a line with <em>name</em> centred, and <em>fill</em> repeated on
 either side to fill an entire line on the terminal.</p>
@@ -3505,8 +3505,8 @@ to fill an entire line.  <em>fill</em> must be a single character.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyAddonInfoCmd">
-<tt class="descname">historyAddonInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyAddonInfoCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyAddonInfoCmd">
+<tt class="descname">historyAddonInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyAddonInfoCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print addon information about transaction in history.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3519,8 +3519,8 @@ to fill an entire line.  <em>fill</em> must be a single character.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyInfoCmd">
-<tt class="descname">historyInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyInfoCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyInfoCmd">
+<tt class="descname">historyInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyInfoCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output information about a transaction in history</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3539,8 +3539,8 @@ to fill an entire line.  <em>fill</em> must be a single character.</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyInfoCmdPkgsAltered">
-<tt class="descname">historyInfoCmdPkgsAltered</tt><big>(</big><em>old</em>, <em>pats=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyInfoCmdPkgsAltered" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyInfoCmdPkgsAltered">
+<tt class="descname">historyInfoCmdPkgsAltered</tt><big>(</big><em>old</em>, <em>pats=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyInfoCmdPkgsAltered" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print information about how packages are altered in a transaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3559,8 +3559,8 @@ in <em>pats</em> will be highlighted in the output</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyListCmd">
-<tt class="descname">historyListCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyListCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyListCmd">
+<tt class="descname">historyListCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyListCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output a list of information about the history of yum
 transactions.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3580,8 +3580,8 @@ transactions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyPackageInfoCmd">
-<tt class="descname">historyPackageInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyPackageInfoCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyPackageInfoCmd">
+<tt class="descname">historyPackageInfoCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyPackageInfoCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print information about packages in history transactions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3594,8 +3594,8 @@ transactions.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historyPackageListCmd">
-<tt class="descname">historyPackageListCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historyPackageListCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historyPackageListCmd">
+<tt class="descname">historyPackageListCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historyPackageListCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a list of information about transactions from history
 that involve the given package or packages.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3609,8 +3609,8 @@ that involve the given package or packages.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.historySummaryCmd">
-<tt class="descname">historySummaryCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.historySummaryCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.historySummaryCmd">
+<tt class="descname">historySummaryCmd</tt><big>(</big><em>extcmds</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.historySummaryCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of transactions in history.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3623,8 +3623,8 @@ that involve the given package or packages.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.infoOutput">
-<tt class="descname">infoOutput</tt><big>(</big><em>pkg</em>, <em>highlight=False</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.infoOutput" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.infoOutput">
+<tt class="descname">infoOutput</tt><big>(</big><em>pkg</em>, <em>highlight=False</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.infoOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print information about the given package.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3642,8 +3642,8 @@ package</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.listPkgs">
-<tt class="descname">listPkgs</tt><big>(</big><em>lst</em>, <em>description</em>, <em>outputType</em>, <em>highlight_na={}</em>, <em>columns=None</em>, <em>highlight_modes={}</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.listPkgs" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.listPkgs">
+<tt class="descname">listPkgs</tt><big>(</big><em>lst</em>, <em>description</em>, <em>outputType</em>, <em>highlight_na={}</em>, <em>columns=None</em>, <em>highlight_modes={}</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.listPkgs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints information about the given list of packages.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3696,15 +3696,15 @@ about to highlight the packages in <em>highlight_na</em>.
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.list_transaction">
-<tt class="descname">list_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.list_transaction" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.list_transaction">
+<tt class="descname">list_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.list_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string representation of the transaction in an
 easy-to-read format.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.matchcallback">
-<tt class="descname">matchcallback</tt><big>(</big><em>po</em>, <em>values</em>, <em>matchfor=None</em>, <em>verbose=None</em>, <em>highlight=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.matchcallback" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.matchcallback">
+<tt class="descname">matchcallback</tt><big>(</big><em>po</em>, <em>values</em>, <em>matchfor=None</em>, <em>verbose=None</em>, <em>highlight=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.matchcallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output search/provides type callback matches.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3726,10 +3726,10 @@ output</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.matchcallback_verbose">
-<tt class="descname">matchcallback_verbose</tt><big>(</big><em>po</em>, <em>values</em>, <em>matchfor=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.matchcallback_verbose" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.matchcallback_verbose">
+<tt class="descname">matchcallback_verbose</tt><big>(</big><em>po</em>, <em>values</em>, <em>matchfor=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.matchcallback_verbose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output search/provides type callback matches.  This will
-output more information than <a class="reference internal" href="#dnf.cli.output.YumOutput.matchcallback" title="dnf.cli.output.YumOutput.matchcallback"><tt class="xref py py-func docutils literal"><span class="pre">matchcallback()</span></tt></a>.</p>
+output more information than <a class="reference internal" href="#dnf.cli.output.Output.matchcallback" title="dnf.cli.output.Output.matchcallback"><tt class="xref py py-func docutils literal"><span class="pre">matchcallback()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -3748,8 +3748,8 @@ output</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.post_transaction_output">
-<tt class="descname">post_transaction_output</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.post_transaction_output" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.post_transaction_output">
+<tt class="descname">post_transaction_output</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.post_transaction_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a human-readable summary of the results of the
 transaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3764,24 +3764,8 @@ results of the transaction</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.printtime">
-<tt class="descname">printtime</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.printtime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a string representing the current time in the form:</p>
-<div class="highlight-python"><pre>Mon dd hh:mm:ss</pre>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a string representing the current time</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.YumOutput.reportDownloadSize">
-<tt class="descname">reportDownloadSize</tt><big>(</big><em>packages</em>, <em>installonly=False</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.reportDownloadSize" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.reportDownloadSize">
+<tt class="descname">reportDownloadSize</tt><big>(</big><em>packages</em>, <em>installonly=False</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.reportDownloadSize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Report the total download size for a set of packages</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3798,8 +3782,8 @@ results of the transaction</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.reportRemoveSize">
-<tt class="descname">reportRemoveSize</tt><big>(</big><em>packages</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.reportRemoveSize" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.reportRemoveSize">
+<tt class="descname">reportRemoveSize</tt><big>(</big><em>packages</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.reportRemoveSize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Report the total size of packages being removed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3812,21 +3796,21 @@ results of the transaction</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.setupKeyImportCallbacks">
-<tt class="descname">setupKeyImportCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.setupKeyImportCallbacks" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.setupKeyImportCallbacks">
+<tt class="descname">setupKeyImportCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.setupKeyImportCallbacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set up callbacks to import and confirm gpg public keys.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.setupProgressCallbacks">
-<tt class="descname">setupProgressCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.setupProgressCallbacks" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.setupProgressCallbacks">
+<tt class="descname">setupProgressCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.setupProgressCallbacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set up the progress callbacks and various
 output bars based on debug level.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.simpleEnvraList">
-<tt class="descname">simpleEnvraList</tt><big>(</big><em>pkg</em>, <em>ui_overflow=False</em>, <em>indent=''</em>, <em>highlight=False</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.simpleEnvraList" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.simpleEnvraList">
+<tt class="descname">simpleEnvraList</tt><big>(</big><em>pkg</em>, <em>ui_overflow=False</em>, <em>indent=''</em>, <em>highlight=False</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.simpleEnvraList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a package as a line, with the package itself in envra
 format so it can be passed to list/install/etc.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3851,8 +3835,8 @@ repository</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.simpleList">
-<tt class="descname">simpleList</tt><big>(</big><em>pkg</em>, <em>ui_overflow=False</em>, <em>indent=''</em>, <em>highlight=False</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.simpleList" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.simpleList">
+<tt class="descname">simpleList</tt><big>(</big><em>pkg</em>, <em>ui_overflow=False</em>, <em>indent=''</em>, <em>highlight=False</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.simpleList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a package as a line.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3876,30 +3860,8 @@ and repository</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.simpleProgressBar">
-<tt class="descname">simpleProgressBar</tt><big>(</big><em>current</em>, <em>total</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.simpleProgressBar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output the current status to the terminal using a simple
-status bar.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>current</strong> &#8211; a number representing the amount of work
-already done</li>
-<li><strong>total</strong> &#8211; a number representing the total amount of work
-to be done</li>
-<li><strong>name</strong> &#8211; a name to label the progress bar with</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.YumOutput.updatesObsoletesList">
-<tt class="descname">updatesObsoletesList</tt><big>(</big><em>uotup</em>, <em>changetype</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.updatesObsoletesList" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.updatesObsoletesList">
+<tt class="descname">updatesObsoletesList</tt><big>(</big><em>uotup</em>, <em>changetype</em>, <em>columns=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.updatesObsoletesList" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a simple string that explains the relationship
 between the members of an update or obsoletes tuple.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3927,8 +3889,8 @@ The columns of output are the package name, version, and repository</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.YumOutput.userconfirm">
-<tt class="descname">userconfirm</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.YumOutput.userconfirm" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.userconfirm">
+<tt class="descname">userconfirm</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.userconfirm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a yes or no from the user, and default to No</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -4344,7 +4306,7 @@ This is the same as the dictionary returned by
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

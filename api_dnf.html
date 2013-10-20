@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf Reference &mdash; DNF 0.4.4-1 documentation</title>
+    <title>dnf Reference &mdash; DNF 0.4.5-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.4-1',
+        VERSION:     '0.4.5-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.4-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="dnf.yum Reference" href="api_dnf.yum.html" />
     <link rel="prev" title="DNF API Reference" href="api.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -183,6 +183,14 @@ it.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="dnf.util.mapall">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">mapall</tt><big>(</big><em>fn</em>, <em>*seq</em><big>)</big><a class="headerlink" href="#dnf.util.mapall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like functools.map(), but return a list instead of an iterator.</p>
+<p>This means all side effects of fn take place even without iterating the
+result.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="dnf.util.on_ac_power">
 <tt class="descclassname">dnf.util.</tt><tt class="descname">on_ac_power</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.util.on_ac_power" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decide whether we are on line power.</p>
@@ -206,9 +214,9 @@ decided.</p>
 
 <dl class="function">
 <dt id="dnf.util.urlopen">
-<tt class="descclassname">dnf.util.</tt><tt class="descname">urlopen</tt><big>(</big><em>absurl</em>, <em>**opts</em><big>)</big><a class="headerlink" href="#dnf.util.urlopen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Open the specified absolute url, return a file object.
-&#8216;opts&#8217; argument is not used atm.</p>
+<tt class="descclassname">dnf.util.</tt><tt class="descname">urlopen</tt><big>(</big><em>absurl</em>, <em>repo=None</em><big>)</big><a class="headerlink" href="#dnf.util.urlopen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open the specified absolute url, return a file object.</p>
+<p>repo &#8211; Use this repo-specific config (proxies, certs)</p>
 </dd></dl>
 
 </div>
@@ -278,7 +286,7 @@ decided.</p>
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
