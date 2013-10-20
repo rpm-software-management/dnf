@@ -637,14 +637,14 @@ class Base(object):
                 group_fn = functools.partial(operator.contains, all_obsoleted)
                 obs, upgraded = dnf.util.group_by_filter(
                     group_fn, goal.obsoleted_by_package(pkg))
-                for pkg in obs:
-                    self.ds_callback.pkg_added(pkg, 'od')
+                cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
+                dnf.util.mapall(cb, obs)
                 if pkg.name in self.conf.installonlypkgs:
                     ts.add_install(pkg, obs)
                 else:
                     ts.add_upgrade(pkg, upgraded[0], obs)
-                    for pkg in upgraded:
-                        self.ds_callback.pkg_added(pkg, 'ud')
+                    cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'ud')
+                    dnf.util.mapall(cb, upgraded)
                 self.ds_callback.pkg_added(pkg, 'u')
             for pkg in goal.list_erasures():
                 cnt += 1

@@ -117,6 +117,12 @@ class Util(unittest.TestCase):
         self.assertEqual(slow.square2, 169)
         self.assertEqual(slow.computed, 4)
 
+    def test_mapall(self):
+        l = [1, 2, 3]
+        out = dnf.util.mapall(lambda n: 2 * n, l)
+        self.assertIsInstance(out, list)
+        self.assertEqual(out, [2, 4, 6])
+
     def test_strip_prefix(self):
         self.assertIsNone(dnf.util.strip_prefix("razorblade", "blade"))
         self.assertEqual(dnf.util.strip_prefix("razorblade", "razor"), "blade")

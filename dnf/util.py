@@ -96,6 +96,15 @@ def lazyattr(attrname):
         return cached_getter
     return get_decorated
 
+def mapall(fn, *seq):
+    """Like functools.map(), but return a list instead of an iterator.
+
+    This means all side effects of fn take place even without iterating the
+    result.
+
+    """
+    return list(map(fn, *seq))
+
 def on_ac_power():
     """Decide whether we are on line power.
 
