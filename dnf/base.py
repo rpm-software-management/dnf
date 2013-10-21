@@ -561,8 +561,8 @@ class Base(object):
             obs = goal.obsoleted_by_package(pkg)
             reason = dnf.util.reason_name(goal.get_reason(pkg))
             ts.add_install(pkg, obs, reason)
-            for pkg in obs:
-                self.ds_callback.pkg_added(pkg, 'od')
+            cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
+            dnf.util.mapall(cb, obs)
         for pkg in goal.list_upgrades():
             group_fn = functools.partial(operator.contains, all_obsoleted)
             obs, upgraded = dnf.util.group_by_filter(
