@@ -18,6 +18,8 @@
 from __future__ import absolute_import
 import dnf.persistor
 import tempfile
+import shelve
+import os
 import tests.support
 
 IDS = set(['one', 'two', 'three'])
@@ -25,15 +27,28 @@ IDS = set(['one', 'two', 'three'])
 class PersistorTest(tests.support.TestCase):
     def setUp(self):
         self.persistdir = tempfile.mkdtemp(prefix="dnf-repotest-")
+        self.prst = dnf.persistor.Persistor(self.persistdir)
 
     def tearDown(self):
         dnf.util.rm_rf(self.persistdir)
 
     def test_expired_repos(self):
-        prst = dnf.persistor.Persistor(self.persistdir)
-        self.assertLength(prst.get_expired_repos(), 0)
-        prst.set_expired_repos(IDS)
-        self.assertEqual(prst.get_expired_repos(), IDS)
+        self.assertLength(self.prst.get_expired_repos(), 0)
+        self.prst.set_expired_repos(IDS)
+        self.assertEqual(self.prst.get_expired_repos(), IDS)
 
         prst = dnf.persistor.Persistor(self.persistdir)
         self.assertEqual(prst.get_expired_repos(), IDS)
+
+    def test_shelve_to_json(self):
+        shelve_db_path = os.path.join(self.prst.cachedir, "expired_repos")
+        json_db_path = os.path.join(self.prst.cachedir, "expired_repos.json")
+        self.assertFalse(os.path.isfile(json_db_path))
+        self.assertLength(self.prst.get_expired_repos(), 0)
+        shelf = shelve.open(shelve_db_path)
+        shelf["expired_repos"] = IDS
+        shelf.close()
+        self.assertTrue(os.path.isfile(shelve_db_path))
+        self.assertEqual(self.prst.get_expired_repos(), IDS)
+        self.assertTrue(os.path.isfile(json_db_path))
+        self.assertFalse(os.path.isfile(shelve_db_path))

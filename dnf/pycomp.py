@@ -35,13 +35,22 @@ if version_info.major >= 3:
 
     class PycompDict(dict):
         def iteritems(self):
-            return self.items()
+            return super().items()
 
         def iterkeys(self):
-            return self.keys()
+            return super().keys()
 
         def itervalues(self):
-            return self.values()
+            return super().values()
+
+        def items(self):
+            return list(super().items())
+
+        def keys(self):
+            return list(super().keys())
+
+        def values(self):
+            return list(super().values())
 
 else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input

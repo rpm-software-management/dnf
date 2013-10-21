@@ -1055,7 +1055,7 @@ class YumHistory(object):
         data_fn = tid_dir + '/' + safename
         try:
             # open file in append
-            fo = open(data_fn, 'w+')
+            fo = open(data_fn, 'wb+')
             # write data
             fo.write(to_utf8(data))
             # flush data
