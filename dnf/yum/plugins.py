@@ -30,8 +30,6 @@ from .parser import ConfigPreProcessor
 from textwrap import fill
 import fnmatch
 
-from weakref import proxy as weakref
-
 from .i18n import _, utf8_width
 
 # TODO: expose rpm package sack objects to plugins (once finished)
@@ -50,12 +48,12 @@ from .i18n import _, utf8_width
 # to decided whether or not plugins can be loaded. It is compared against the
 # 'requires_api_version' attribute of each plugin. The version number has the
 # format: "major_version.minor_version".
-# 
+#
 # For a plugin to be loaded the major version required by the plugin must match
 # the major version in API_VERSION. Additionally, the minor version in
 # API_VERSION must be greater than or equal the minor version required by the
 # plugin.
-# 
+#
 # If a change to yum is made that break backwards compatibility wrt the plugin
 # API, the major version number must be incremented and the minor version number
 # reset to 0. If a change is made that doesn't break backwards compatibility,
@@ -112,11 +110,11 @@ class PluginYumExit(Exception):
             return gettext.dgettext(self.translation_domain, self.value)
         else:
             return self.value
-    
+
 class YumPlugins:
     """Manager class for Yum plugins."""
 
-    def __init__(self, base, searchpath, optparser=None, types=None, 
+    def __init__(self, base, searchpath, optparser=None, types=None,
             pluginconfpath=None,disabled=None,enabled=None):
         '''Initialise the instance.
 
@@ -135,7 +133,7 @@ class YumPlugins:
 
         self.searchpath = searchpath
         self.pluginconfpath = pluginconfpath
-        self.base = weakref(base)
+        self.base = base
         self.optparser = optparser
         self.cmdline = (None, None)
         self.logger = logging.getLogger("dnf")
@@ -179,7 +177,7 @@ class YumPlugins:
             self.logger.log(dnf.logging.SUBDEBUG,
                                     'Running "%s" handler for "%s" plugin',
                                     slotname, modname)
-    
+
             _, conf = self._plugins[modname]
             func(conduitcls(self, self.base, conf, **kwargs))
 
@@ -193,7 +191,7 @@ class YumPlugins:
         for slot in SLOTS:
             self._pluginfuncs[slot] = []
 
-        # Import plugins 
+        # Import plugins
         self._used_disable_plugin = set()
         self._used_enable_plugin  = set()
         for dir in self.searchpath:
@@ -321,7 +319,7 @@ class YumPlugins:
         else:
             raise dnf.exceptions.ConfigError(_('Two or more plugins with the name "%s" ' \
                     'exist in the plugin search path') % modname)
-        
+
         for slot in SLOTS:
             funcname = slot+'_hook'
             if hasattr(module, funcname):
@@ -602,8 +600,8 @@ class DownloadPluginConduit(PostRepoSetupPluginConduit):
         return self._pkglist
 
     def getErrors(self):
-        """Return a dictionary of download errors. 
-        
+        """Return a dictionary of download errors.
+
         :return: a dictionary of download errors. This dictionary is
            indexed by package object. Each element is a list of
            strings describing the error
@@ -631,7 +629,7 @@ class MainPluginConduit(PostRepoSetupPluginConduit):
     def getPackageByNevra(self, nevra):
         """Retrieve a package object from the packages loaded by Yum using
         nevra information.
-        
+
         :param nevra: a tuple holding (name, epoch, version, release, arch)
             for a package
         :return: a :class:`packages.PackageObject` instance (or subclass)

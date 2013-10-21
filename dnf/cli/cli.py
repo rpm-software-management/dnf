@@ -28,7 +28,6 @@ from dnf.i18n import ucd
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
 from dnf.yum.parser import varReplace
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
-from weakref import proxy as weakref
 
 import dnf
 import dnf.cli.commands
@@ -197,7 +196,7 @@ class BaseCli(dnf.Base):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return -1, None
 
-        display = output.CliTransactionDisplay(weakref(self))
+        display = output.CliTransactionDisplay()
         return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
         if return_code == 0:
             msg = self.output.post_transaction_output(self.transaction)

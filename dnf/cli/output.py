@@ -28,7 +28,6 @@ import gettext
 import pwd
 import re
 import rpm
-from weakref import proxy as weakref
 
 import dnf.cli.progress
 import dnf.conf
@@ -1441,7 +1440,7 @@ Transaction Summary
             self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
 
         # setup our depsolve progress callback
-        return (progressbar, DepSolveProgressCallBack(weakref(self)))
+        return (progressbar, DepSolveProgressCallBack())
 
     def download_callback_total_cb(self, remote_pkgs, remote_size,
                                    download_start_timestamp):
@@ -2348,11 +2347,10 @@ Transaction Summary
 class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
     """A class to provide text output callback functions for Dependency Solver callback."""
 
-    def __init__(self, ayum=None):
+    def __init__(self):
         """requires yum-cli log and errorlog functions as arguments"""
         self.logger = logging.getLogger("dnf")
         self.loops = 0
-        self.ayum = ayum
 
     def pkg_added(self, pkg, mode):
         """Print information about a package being added to the
@@ -2496,7 +2494,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
 
     width = property(lambda self: _term_width())
 
-    def __init__(self, ayum=None):
+    def __init__(self):
         super(CliTransactionDisplay, self).__init__()
         self.lastmsg = to_unicode("")
         self.lastpackage = None # name of last package we looked at
@@ -2505,7 +2503,6 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         # for a progress bar
         self.mark = "#"
         self.marks = 22
-        self.ayum = ayum
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """Output information about an rpm operation.  This may

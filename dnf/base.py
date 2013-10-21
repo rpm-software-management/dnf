@@ -34,7 +34,6 @@ from dnf.yum.constants import *
 from dnf.yum.i18n import to_unicode, to_str, exception2msg
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce, cmp_to_key
-from weakref import proxy as weakref
 
 import io
 import dnf.comps

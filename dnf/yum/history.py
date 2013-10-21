@@ -20,7 +20,6 @@ from __future__ import absolute_import
 import time
 import os, os.path
 import glob
-from weakref import proxy as weakref
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
@@ -222,7 +221,7 @@ class YumHistoryRpmdbProblem(object):
         transaction. """
 
     def __init__(self, history, rpid, problem, text):
-        self._history = weakref(history)
+        self._history = history
 
         self.rpid = rpid
         self.problem = problem
@@ -250,7 +249,7 @@ class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
 
     def __init__(self, history, row):
-        self._history = weakref(history)
+        self._history = history
 
         self.tid              = row[0]
         self.beg_timestamp    = row[1]
