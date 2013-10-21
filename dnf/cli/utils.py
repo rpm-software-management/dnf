@@ -51,14 +51,14 @@ def seconds_to_ui_time(seconds):
       the time interval
     """
     if seconds >= 60 * 60 * 24:
-        return "%d day(s) %d:%02d:%02d" % (seconds / (60 * 60 * 24),
-                                           (seconds / (60 * 60)) % 24,
-                                           (seconds / 60) % 60,
+        return "%d day(s) %d:%02d:%02d" % (seconds // (60 * 60 * 24),
+                                           (seconds // (60 * 60)) % 24,
+                                           (seconds // 60) % 60,
                                            seconds % 60)
     if seconds >= 60 * 60:
-        return "%d:%02d:%02d" % (seconds / (60 * 60), (seconds / 60) % 60,
+        return "%d:%02d:%02d" % (seconds // (60 * 60), (seconds // 60) % 60,
                                  (seconds % 60))
-    return "%02d:%02d" % ((seconds / 60), seconds % 60)
+    return "%02d:%02d" % ((seconds // 60), seconds % 60)
 
 def get_process_info(pid):
     """Return information about a process taken from

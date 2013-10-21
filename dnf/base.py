@@ -22,7 +22,7 @@ The Yum RPM software updater.
 from __future__ import absolute_import
 from __future__ import print_function
 from dnf import const, queries, sack
-from dnf.pycomp import unicode
+from dnf.pycomp import unicode, basestring
 from dnf.yum import config
 from dnf.yum import history
 from dnf.yum import i18n
@@ -33,7 +33,7 @@ from dnf.yum.config import ParsingError, ConfigParser
 from dnf.yum.constants import *
 from dnf.yum.i18n import to_unicode, to_str, exception2msg
 from dnf.yum.parser import ConfigPreProcessor
-from functools import reduce
+from functools import reduce, cmp_to_key
 from weakref import proxy as weakref
 
 import io
@@ -1020,8 +1020,8 @@ class Base(object):
         self.plugins.run('predownload', pkglist=pkglist)
 
         # select and sort packages to download
-        remote_pkgs = filter(lambda po: not (po.from_cmdline or po.repo.local), pkglist)
-        remote_pkgs.sort(mediasort)
+        remote_pkgs = list(filter(lambda po: not (po.from_cmdline or po.repo.local), pkglist))
+        remote_pkgs.sort(key=cmp_to_key(mediasort))
         remote_size = sum(po.size for po in remote_pkgs)
 
         # run downloads

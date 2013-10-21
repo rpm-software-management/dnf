@@ -61,7 +61,7 @@ _default_checksums = ['sha256']
 from dnf.exceptions import MiscError
 from . import i18n
 import dnf.const
-from dnf.pycomp import is_py2str_py3bytes, basestring, unicode
+from dnf.pycomp import is_py2str_py3bytes, basestring, unicode, long
 
 _share_data_store   = {}
 _share_data_store_u = {}

@@ -16,6 +16,7 @@
 
 from __future__ import print_function
 import struct, time, io, base64, types
+from dnf.pycomp import long
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
@@ -392,11 +393,11 @@ def duration_to_str(s) :
     if s == 0 :
         return 'never'
     secs = s % 60
-    s = s / 60
+    s = s // 60
     mins = s % 60
-    s = s / 60
+    s = s // 60
     hrs = s % 60
-    s = s / 24
+    s = s // 24
     days = s
     return '%d days %02d:%02d:%02d' % (days, hrs, mins, secs)
 
