@@ -21,7 +21,7 @@ import dnf.queries
 
 class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):
-        yumbase = support.MockYumBase("main", "updates")
+        yumbase = support.MockBase("main", "updates")
         sack = yumbase.sack
         yumbase.upgrade_to("pepper-20-1.x86_64")
         new_set = support.installed_but(sack, "pepper").run()

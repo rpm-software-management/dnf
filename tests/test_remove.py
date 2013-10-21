@@ -23,7 +23,7 @@ import hawkey
 
 class Remove(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase()
+        self.yumbase = support.MockBase()
         erase_cmd = dnf.cli.commands.EraseCommand(self.yumbase.mock_cli())
         erase_cmd.configure()
 

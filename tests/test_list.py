@@ -22,12 +22,12 @@ import unittest
 
 class List(support.TestCase):
     def test_list_installed(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         ypl = yumbase.doPackageLists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
     def test_list_updates(self):
-        yumbase = support.MockYumBase("updates", "main")
+        yumbase = support.MockBase("updates", "main")
         ypl = yumbase.doPackageLists('upgrades')
         self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
@@ -41,13 +41,13 @@ class List(support.TestCase):
         self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
-        yumbase = support.MockYumBase('updates', "main")
+        yumbase = support.MockBase('updates', "main")
         ypl = yumbase.doPackageLists('upgrades', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 3)
 
 class TestListAllRepos(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main", "updates")
+        self.yumbase = support.MockBase("main", "updates")
         self.yumbase.conf.multilib_policy = "all"
 
     def test_list_pattern(self):

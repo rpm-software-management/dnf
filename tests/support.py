@@ -116,7 +116,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=yumbase,
                                make_cache_dir=True)
 
-class MockYumBase(dnf.Base):
+class MockBase(dnf.Base):
     """ See also: hawkey/test/python/__init__.py.
 
         Note that currently the used TestSack has always architecture set to
@@ -124,7 +124,7 @@ class MockYumBase(dnf.Base):
         different arches.
     """
     def __init__(self, *extra_repos):
-        super(MockYumBase, self).__init__()
+        super(MockBase, self).__init__()
         for r in extra_repos:
             repo = MockRepo(r)
             repo.enable()
@@ -180,7 +180,7 @@ class MockYumBase(dnf.Base):
         pass
 
 def mock_sack(*extra_repos):
-    return MockYumBase(*extra_repos).sack
+    return MockBase(*extra_repos).sack
 
 class MockYumDB(mock.Mock):
     def __init__(self):

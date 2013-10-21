@@ -54,7 +54,7 @@ class OutputTest(PycompTestCase):
 
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_list_transaction(self, _term_width):
-        sack = support.MockYumBase('updates').sack
+        sack = support.MockBase('updates').sack
         q = sack.query().filter(name='pepper')
         i = q.installed()[0]
         u = q.available()[0]
@@ -146,7 +146,7 @@ Group: Pepper's
 
 class GroupOutputTest(unittest.TestCase):
     def setUp(self):
-        base = support.MockYumBase('main')
+        base = support.MockBase('main')
         base.read_mock_comps(support.COMPS_PATH)
         output = dnf.cli.output.Output()
         output.conf = support.FakeConf()

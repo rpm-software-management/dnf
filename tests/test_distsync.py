@@ -22,7 +22,7 @@ import rpm
 
 class DistroSync(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("distro")
+        self.yumbase = support.MockBase("distro")
         self.sack = self.yumbase.sack
 
     def test_distro_sync(self):

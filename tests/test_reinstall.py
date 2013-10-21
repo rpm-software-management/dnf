@@ -28,7 +28,7 @@ from tests.support import PycompTestCase
 
 class Reinstall(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.yumbase.conf.multilib_policy = "all"
         self.sack = self.yumbase.sack
 

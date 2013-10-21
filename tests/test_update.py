@@ -29,7 +29,7 @@ import tests.test_repo
 class Update(support.ResultTestCase):
     def test_update(self):
         """ Simple update. """
-        yumbase = support.MockYumBase("updates")
+        yumbase = support.MockBase("updates")
         ret = yumbase.update("pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
         expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
@@ -46,14 +46,14 @@ class Update(support.ResultTestCase):
 
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         # no "mrkite" installed:
         yumbase.update("mrkite")
         self.assertResult(yumbase, installed(yumbase.sack))
 
     def test_update_all(self):
         """ Update all you can. """
-        yumbase = support.MockYumBase("main", "updates")
+        yumbase = support.MockBase("main", "updates")
         sack = yumbase.sack
         yumbase.update_all()
         expected = support.installed_but(sack, "pepper", "hole", "tour") + \
@@ -62,7 +62,7 @@ class Update(support.ResultTestCase):
         self.assertResult(yumbase, expected)
 
     def test_update_local(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         sack = yumbase.sack
         cnt = yumbase.update_local(support.TOUR_51_PKG_PATH)
         self.assertEqual(cnt, 1)
@@ -71,7 +71,7 @@ class Update(support.ResultTestCase):
         self.assertResult(yumbase, new_set)
 
     def test_update_arches(self):
-        yumbase = support.MockYumBase("main", "updates")
+        yumbase = support.MockBase("main", "updates")
         yumbase.update("hole")
         installed, removed = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
@@ -80,7 +80,7 @@ class Update(support.ResultTestCase):
 
 class SkipBroken(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("broken_deps")
+        self.yumbase = support.MockBase("broken_deps")
         self.sack = self.yumbase.sack
 
     def test_update_all(self):
@@ -100,7 +100,7 @@ class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):
         r1.cost = 500
         r2.cost = 700
 
-        base = support.MockYumBase()
+        base = support.MockBase()
         base.init_sack()
         base.repos.add(r1)
         base.repos.add(r2)

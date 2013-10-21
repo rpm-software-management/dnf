@@ -28,7 +28,7 @@ import unittest
 @mock.patch('os.path.exists', return_value=True)
 class TestAdditionalPkgDB(unittest.TestCase):
     def test_instantiate(self, mock_exists):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         path = yumbase.conf.persistdir + '/yumdb'
         pkgdb = dnf.yum.rpmsack.AdditionalPkgDB(path)
         pkg = installed_by_name(yumbase.sack, "pepper")[0]

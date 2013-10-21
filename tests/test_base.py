@@ -40,7 +40,7 @@ class BaseTest(support.TestCase):
         yumbase = dnf.Base()
 
     def test_push_userinstalled(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         # setup:
         yumbase.conf.clean_requirements_on_remove = True
         pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
@@ -51,7 +51,7 @@ class BaseTest(support.TestCase):
         goal.userinstalled.assert_called_with(pkg)
 
     def test_reset(self):
-        base = support.MockYumBase('main')
+        base = support.MockBase('main')
         base.reset(sack=True, repos=False)
         self.assertIsNone(base._sack)
         self.assertLength(base.repos, 1)
@@ -76,7 +76,7 @@ class BaseTest(support.TestCase):
 # test Base methods that need the sack
 class MockYumBaseTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
 
     def test_search_counted(self):
         counter = dnf.match_counter.MatchCounter()
@@ -95,7 +95,7 @@ class MockYumBaseTest(PycompTestCase):
 
 class BuildTransactionTest(support.TestCase):
     def test_build_transaction(self):
-        base = support.MockYumBase("updates")
+        base = support.MockBase("updates")
         base.update("pepper")
         self.assertTrue(base.build_transaction())
         base.ds_callback.assert_has_calls(mock.call.start())
@@ -114,7 +114,7 @@ def ret_pkgid(self):
 
 class VerifyTransactionTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.yumbase._transaction = dnf.transaction.Transaction()
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
@@ -143,7 +143,7 @@ class VerifyTransactionTest(PycompTestCase):
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
 
     def test_reason(self):
         self.yumbase.install("mrkite")
@@ -155,7 +155,7 @@ class InstallReasonTest(support.ResultTestCase):
 
 class InstalledMatchingTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.sack = self.yumbase.sack
 
     def test_query_matching(self):
@@ -173,7 +173,7 @@ class InstalledMatchingTest(support.ResultTestCase):
 
 class CleanTest(PycompTestCase):
     def test_clean_binary_cache(self):
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         with mock.patch('os.access', return_value=True) as access,\
                 mock.patch.object(yumbase, "_cleanFilelist") as _:
             yumbase.clean_binary_cache()
@@ -192,20 +192,20 @@ class CompsTest(support.TestCase):
     # prevent creating the gen/ directory:
     @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         yumbase.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         yumbase.read_comps()
         groups = yumbase.comps.groups
         self.assertLength(groups, support.TOTAL_GROUPS)
 
     def test_read_comps_disabled(self):
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         yumbase.repos['main'].enablegroups = False
         self.assertRaises(dnf.exceptions.CompsError, yumbase.read_comps)
 
 class Goal2TransactionTest(support.TestCase):
     def test_upgrade(self):
-        base = support.MockYumBase("main", "updates")
+        base = support.MockBase("main", "updates")
         base.update("hole")
         goal = base._goal
         self.assertTrue(base.run_hawkey_goal(goal))

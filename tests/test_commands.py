@@ -28,7 +28,7 @@ from tests.support import PycompTestCase
 
 class CommandsTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase()
+        self.yumbase = support.MockBase()
         self.cli = self.yumbase.mock_cli()
 
     def test_erase_configure(self):

@@ -126,7 +126,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.cost = 500
         repo2.cost = 700
 
-        base = support.MockYumBase()
+        base = support.MockBase()
         base.init_sack()
         base.repos.add(self.repo)
         base.repos.add(repo2)

@@ -20,7 +20,7 @@ from tests import support
 
 class ProvidesTest(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
 
     def test_file(self):
         self.assertLength(self.yumbase.provides("*ais*smile"), 1)

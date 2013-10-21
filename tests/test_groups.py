@@ -22,7 +22,7 @@ import dnf.util
 
 class SelectGroupTest(support.ResultTestCase):
     def setUp(self):
-        self.base = support.MockYumBase("main")
+        self.base = support.MockBase("main")
         self.base.read_mock_comps(support.COMPS_PATH)
 
     def test_install(self):

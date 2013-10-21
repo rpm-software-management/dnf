@@ -55,7 +55,7 @@ VERSIONS_OUTPUT="""\
 
 class VersionStringTest(PycompTestCase):
     def test_print_versions(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         with mock.patch('sys.stdout') as stdout,\
                 mock.patch('dnf.sack.rpmdb_sack', return_value=yumbase.sack):
             dnf.cli.cli.print_versions(['pepper', 'tour'], yumbase)
@@ -208,7 +208,7 @@ class YumBaseCliTest(PycompTestCase):
 
 class CliTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
     def test_knows_upgrade(self):
@@ -238,7 +238,7 @@ class CliTest(PycompTestCase):
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
 class ConfigureTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
 
@@ -290,7 +290,7 @@ class ConfigureTest(PycompTestCase):
 
 class SearchTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("search")
+        self.yumbase = support.MockBase("search")
         self.cli = dnf.cli.cli.Cli(self.yumbase)
 
         self.yumbase.fmtSection = lambda str: str

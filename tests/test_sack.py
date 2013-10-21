@@ -32,7 +32,7 @@ import unittest
 
 class SackTest(support.TestCase):
     def test_rpmdb_version(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         sack = yumbase.sack
         yumdb = mock.MagicMock()
         version = yumbase.sack.rpmdb_version(yumdb)
@@ -40,20 +40,20 @@ class SackTest(support.TestCase):
         self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 
     def test_setup_excludes(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         yumbase.conf.exclude=['pepper']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         yumbase.conf.disable_excludes = ['all']
         yumbase.conf.exclude=['pepper']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
-        yumbase = support.MockYumBase('main')
+        yumbase = support.MockBase('main')
         yumbase.repos['main'].exclude=['pepp*']
         yumbase._setup_excludes()
         peppers = yumbase.sack.query().filter(name='pepper', reponame='main')
@@ -63,7 +63,7 @@ class SackTest(support.TestCase):
         def raiser():
             raise dnf.exceptions.RepoError()
 
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         r = support.MockRepo('bag')
         r.enable()
         yumbase._repos.add(r)
@@ -79,7 +79,7 @@ class SackTest(support.TestCase):
 class SusetagsTest(support.TestCase):
     def susetags_test(self):
         buf = io.StringIO()
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         yumbase.sack.susetags_for_repo(buf, "main")
         buf.seek(0)
         pepper = itertools.dropwhile(lambda x: not x.startswith("=Pkg: pepper "),

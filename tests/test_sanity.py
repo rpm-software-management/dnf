@@ -29,7 +29,7 @@ class Sanity(PycompTestCase):
         assert(sack)
         self.assertEqual(len(sack), support.SYSTEM_NSOLVABLES)
 
-        sack2 = support.MockYumBase("main", "updates").sack
+        sack2 = support.MockBase("main", "updates").sack
         self.assertEqual(len(sack2), support.TOTAL_NSOLVABLES)
 
     def test_toplevel(self):

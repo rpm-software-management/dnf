@@ -24,7 +24,7 @@ import hawkey
 
 class DowngradeTest(support.ResultTestCase):
     def test_downgrade_local(self):
-        yumbase = support.MockYumBase()
+        yumbase = support.MockBase()
         sack = yumbase.sack
 
         cnt = yumbase.downgrade_local(support.TOUR_44_PKG_PATH)
@@ -34,7 +34,7 @@ class DowngradeTest(support.ResultTestCase):
         self.assertItemsEqual(map(str, removed), ("tour-5-0.noarch", ))
 
     def test_downgrade(self):
-        yumbase = support.MockYumBase("main")
+        yumbase = support.MockBase("main")
         sack = yumbase.sack
         cnt = yumbase.downgrade("tour")
         self.assertGreater(cnt, 0)
@@ -45,7 +45,7 @@ class DowngradeTest(support.ResultTestCase):
         self.assertResult(yumbase, new_set)
 
     def test_downgrade2(self):
-        b = support.MockYumBase("old_versions")
+        b = support.MockBase("old_versions")
         ret = b.downgrade("tour")
         installed, removed = self.installed_removed(b)
         self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])

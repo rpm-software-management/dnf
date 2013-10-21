@@ -39,7 +39,7 @@ class TestedHistory(dnf.yum.history.YumHistory):
 
 class History(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockYumBase("main")
+        self.yumbase = support.MockBase("main")
         self.sack = self.yumbase.sack
         self.history = TestedHistory()
 
