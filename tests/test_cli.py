@@ -55,7 +55,7 @@ class YumBaseCliTest(PycompTestCase):
         self._yumbase._sack = support.mock_sack('main')
         self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
-        self._yumbase.term = support.FakeTerm()
+        self._yumbase.output.term = support.FakeTerm()
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
