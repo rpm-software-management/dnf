@@ -26,6 +26,7 @@ import sys
 from .constants import *
 from .i18n import _
 from . import misc
+from dnf.pycomp import basestring
 import tempfile
 import collections
 
@@ -417,7 +418,7 @@ class RPMTransaction(object):
         (pkg, tsi) = self._extract_tsi_cbkey(h)
         rpmloc = pkg.localPkg()
         try:
-            self.fd = file(rpmloc)
+            self.fd = open(rpmloc)
         except IOError as e:
             self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:

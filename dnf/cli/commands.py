@@ -1584,8 +1584,8 @@ class RepoListCommand(Command):
                 nm_len = left
             else: # Share the extra...
                 left -= nm_len
-                id_len += left / 2
-                nm_len += left - (left / 2)
+                id_len += left // 2
+                nm_len += left - (left // 2)
 
             txt_rid  = utf8_width_fill(_('repo id'), id_len)
             txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)

@@ -1144,7 +1144,7 @@ def writeRawRepoFile(repo,only=None):
             continue
 
         ini[section_id][name] = ovalue
-    fp =file(repo.repofile,"w")
+    fp = open(repo.repofile,"w")
     fp.write(str(ini))
     fp.close()
 

@@ -211,7 +211,7 @@ class Repo(dnf.yum.config.RepoConf):
             h.setopt(librepo.LRO_URLS, self.baseurl)
         else:
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
-            raise dnf.exceptions.RepoError, msg
+            raise dnf.exceptions.RepoError(msg)
 
         # single-file download progress
         if self._progress:

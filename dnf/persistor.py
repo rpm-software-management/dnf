@@ -24,7 +24,9 @@
 # data etc.
 
 from __future__ import absolute_import
+import dbm
 import dnf.util
+import json
 import logging
 import os
 import shelve
@@ -34,20 +36,53 @@ class Persistor(object):
         self.cachedir = cachedir
         self.logger = logging.getLogger("dnf")
 
-    def _expired_repos(self):
-        dnf.util.ensure_dir(self.cachedir)
-        path = os.path.join(self.cachedir, "expired_repos")
-        return shelve.open(path)
+    def _get_expired_from_shelve(self, path):
+        try:
+            shelf = shelve.open(path)
+        except dbm.error:
+            # doesn't work in Python 3 if db was created in Python 2
+            return set()
+        exp = shelf.get('expired_repos', set())
+        shelf.close()
+        return exp
+
+    def _check_shelve_db(self):
+        db_path = os.path.join(self.cachedir, "expired_repos")
+        if os.path.isfile(db_path):
+            # transfer data from shelve to json
+            shelf_data = self._get_expired_from_shelve(db_path)
+            all_data = self._get_expired_from_json().union(shelf_data)
+            json_path = os.path.join(self.cachedir, "expired_repos.json")
+            self._write_json_data(json_path, list(all_data))
+            os.remove(db_path)
+
+    def _check_json_db(self):
+        json_path = os.path.join(self.cachedir, "expired_repos.json")
+        if not os.path.isfile(json_path):
+            # inicialize new db
+            dnf.util.ensure_dir(self.cachedir)
+            self._write_json_data(json_path, [])
+
+    def _get_expired_from_json(self):
+        json_path = os.path.join(self.cachedir, "expired_repos.json")
+        f = open(json_path, 'r')
+        data = json.load(f)
+        f.close()
+        return set(data)
+
+    def _write_json_data(self, path, expired_repos):
+        f = open(path, 'w')
+        json.dump(expired_repos, f)
+        f.close()
 
     @property
     def _last_makecache_path(self):
         return os.path.join(self.cachedir, "last_makecache")
 
     def get_expired_repos(self):
-        shelf = self._expired_repos()
-        exp = shelf.get('expired_repos', set())
-        shelf.close()
-        return exp
+        self._check_json_db()
+        self._check_shelve_db()
+        return self._get_expired_from_json()
 
     def reset_last_makecache(self):
         try:
@@ -58,10 +93,10 @@ class Persistor(object):
             return False
 
     def set_expired_repos(self, expired_iterable):
-        set_expired = set(expired_iterable)
-        shelf = self._expired_repos()
-        shelf['expired_repos'] = set_expired
-        shelf.close()
+        self._check_json_db()
+        self._check_shelve_db()
+        json_path = os.path.join(self.cachedir, "expired_repos.json")
+        self._write_json_data(json_path, list(set(expired_iterable)))
 
     def since_last_makecache(self):
         try:
