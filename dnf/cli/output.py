@@ -970,7 +970,6 @@ class Output(object):
         installed = self.sack.query().installed().name_dict()
         available = self.sack.query().available().name_dict()
 
-        import sys; sys.stdout.flush()
         d = {}
         for pkg_name in itertools.chain(*list(zip(*sections))[1]):
             if pkg_name in installed:
