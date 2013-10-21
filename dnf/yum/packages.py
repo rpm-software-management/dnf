@@ -338,7 +338,7 @@ class PackageObject(object):
             UI package comparison. """
         if not other:
             return False
-        if self.pkgtup != other.pkgtup:
+        if not hasattr(other, 'pkgtup') or self.pkgtup != other.pkgtup:
             return False
         if hasattr(self, 'repoid') and hasattr(other, 'repoid'):
             if self.repoid != other.repoid:

@@ -21,6 +21,7 @@ try:
 except ImportError:
     from tests import mock
 from tests import support
+import dnf.history
 import dnf.yum.history
 import hawkey
 import unittest
@@ -57,3 +58,95 @@ class History(PycompTestCase):
         with mock.patch.object(self.history, "_apkg2pid") as apkg2pid:
             self.history.pkg2pid(apkg)
             apkg2pid.assert_called_with(apkg, True)
+
+class HistoryWrapperTest(unittest.TestCase):
+    """Unit tests of dnf.history._HistoryWrapper."""
+
+    def _create_wrapper(self, yum_history):
+        """Create new instance of _HistoryWrapper."""
+        wrapper = dnf.history.open_history(yum_history, support.mock_sack())
+        assert isinstance(wrapper, dnf.history._HistoryWrapper)
+        return wrapper
+
+    def test_context_manager(self):
+        """Test whether _HistoryWrapper can be used as a context manager."""
+        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
+        history = self._create_wrapper(yum_history)
+
+        with history as instance:
+            pass
+
+        self.assertIs(instance, history)
+        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
+
+    def test_close(self):
+        """Test close."""
+        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
+        history = self._create_wrapper(yum_history)
+
+        history.close()
+
+        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
+
+    def test_has_transaction_absent(self):
+        """Test has_transaction without any transaction."""
+        with self._create_wrapper(support.HistoryStub()) as history:
+            present = history.has_transaction(1)
+
+        self.assertFalse(present)
+
+    def test_has_transaction_present(self):
+        """Test has_transaction with a transaction present."""
+        yum_history = support.HistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Erase',
+                history=yum_history),)
+
+        with self._create_wrapper(yum_history) as history:
+            present = history.has_transaction(1)
+
+        self.assertTrue(present)
+
+    def test_transaction_items_ops_all(self):
+        """Test transaction_items_ops with all states."""
+        yum_history = support.HistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Install',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
+                history=yum_history))
+
+        with self._create_wrapper(yum_history) as history:
+            items_ops = history.transaction_items_ops(1)
+
+        item_ops = next(items_ops)
+        self.assertRaises(StopIteration, next, items_ops)
+        self.assertEqual(next(item_ops),
+                         ('pepper-0:20-0.x86_64', 'Install'))
+        self.assertEqual(next(item_ops),
+                         ('pepper-0:20-0.x86_64', 'Obsoleting'))
+        self.assertEqual(next(item_ops),
+                         ('lotus-0:3-16.x86_64', 'Obsoleted'))
+        self.assertRaises(StopIteration, next, item_ops)
+
+    def test_transaction_items_ops_badfirst(self):
+        """Test transaction_items_ops with an invalid first state."""
+        yum_history = support.HistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Obsoleted',
+                history=yum_history),)
+
+        with self._create_wrapper(yum_history) as history:
+            self.assertRaises(ValueError, history.transaction_items_ops, 1)
+
+    def test_transaction_items_ops_notransaction(self):
+        """Test transaction_items_ops without any transaction."""
+        with self._create_wrapper(support.HistoryStub()) as history:
+            self.assertRaises(ValueError, history.transaction_items_ops, 0)

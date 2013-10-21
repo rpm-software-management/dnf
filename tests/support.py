@@ -33,6 +33,7 @@ import dnf.sack
 import dnf.yum.constants
 import hawkey
 import hawkey.test
+import itertools
 import os
 import unittest
 from functools import reduce
@@ -82,6 +83,36 @@ def patch_std_streams():
         yield (stdout, stderr)
 
 # mock objects
+
+class HistoryStub(dnf.yum.history.YumHistory):
+    """Stub of dnf.yum.history.YumHistory for easier testing."""
+
+    def __init__(self):
+        """Initialize a stub instance."""
+        self.old_data_pkgs = {}
+
+    def _old_data_pkgs(self, tid, sort=True):
+        """Get packages of a transaction."""
+        if sort:
+            raise NotImplementedError('sorting not implemented yet')
+        return self.old_data_pkgs.get(tid, ())[:]
+
+    def close(self):
+        """Close the history."""
+        pass
+
+    def old(self, tids=[], limit=None, *_args, **_kwargs):
+        """Get transactions with given IDs."""
+        create = lambda tid: dnf.yum.history.YumHistoryTransaction(self,
+            (int(tid), 0, '0:685cc4ac4ce31b9190df1604a96a3c62a3100c35',
+             1, '1:685cc4ac4ce31b9190df1604a96a3c62a3100c36', 0, 0))
+
+        sorted_all_tids = sorted(self.old_data_pkgs.keys(), reverse=True)
+
+        trxs = (create(tid) for tid in tids or sorted_all_tids
+                if tid in self.old_data_pkgs)
+        limited = trxs if limit is None else itertools.islice(trxs, limit)
+        return tuple(limited)
 
 class MockOutput(object):
     _cli_confirm_gpg_key_import = None
