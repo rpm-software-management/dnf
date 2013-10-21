@@ -1471,8 +1471,8 @@ class RepoListCommand(Command):
             if not verbose:
                 rid = repo.id
                 if enabled and repo.metalink:
-                    mdts = repo.metalink_data.repomd.timestamp
-                    if mdts > repo.repoXML.timestamp:
+                    mdts = repo.metadata.timestamp
+                    if mdts > repo.metadata.md_timestamp:
                         rid = '*' + rid
                 cols.append((rid, repo.name,
                              (ui_enabled, ui_endis_wid), ui_num))
@@ -1511,7 +1511,7 @@ class RepoListCommand(Command):
                     out += [self.base.fmtKeyValFill(_("Repo-metalink: "),
                                                repo.metalink)]
                     if enabled:
-                        ts = repo.metalink_data.repomd.timestamp
+                        ts = repo.metadata.timestamp
                         out += [self.base.fmtKeyValFill(_("  Updated    : "),
                                                    time.ctime(ts))]
                 elif repo.mirrorlist:
