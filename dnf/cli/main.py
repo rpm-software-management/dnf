@@ -179,7 +179,6 @@ def _main(base, args):
     if not got_transaction:
         print(_('Nothing to do.'))
         return 0
-    logger.info('\n')
     logger.info(_('Dependencies resolved.'))
 
     # Run the transaction
