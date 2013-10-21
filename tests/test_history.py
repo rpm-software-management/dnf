@@ -21,6 +21,7 @@ try:
 except ImportError:
     from tests import mock
 from tests import support
+import dnf.history
 import dnf.yum.history
 import hawkey
 import unittest
@@ -59,3 +60,160 @@ class History(PycompTestCase):
         with mock.patch.object(self.history, "_apkg2pid") as apkg2pid:
             self.history.pkg2pid(apkg)
             apkg2pid.assert_called_with(apkg, True)
+
+class OpenHistoryTest(unittest.TestCase):
+    """Unit tests of dnf.history.open_history."""
+
+    def test_yumhistory(self):
+        """Test open_history with a YumHistory."""
+        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
+        sack = support.mock_sack()
+
+        history = dnf.history.open_history(yum_history, sack)
+
+        self.assertIsInstance(history, dnf.history._YumHistoryWrapper)
+
+class YumHistoryWrapperTest(unittest.TestCase):
+    """Unit tests of dnf.history._YumHistoryWrapper."""
+
+    def _create_wrapper(self, yum_history):
+        """Create new instance of _YumHistoryWrapper."""
+        wrapper = dnf.history.open_history(yum_history, support.mock_sack())
+        assert isinstance(wrapper, dnf.history._YumHistoryWrapper)
+        return wrapper
+
+    def test_context_manager(self):
+        """Test whether _YumHistoryWrapper can be used as a context manager."""
+        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
+        history = self._create_wrapper(yum_history)
+
+        with history as instance:
+            pass
+
+        self.assertIs(instance, history)
+        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
+
+    def test_close(self):
+        """Test whether _YumHistoryWrapper can be used as a context manager."""
+        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
+        history = self._create_wrapper(yum_history)
+
+        history.close()
+
+        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
+
+    def test_has_transaction_absent(self):
+        """Test has_transaction without any transaction."""
+        with self._create_wrapper(support.YumHistoryStub()) as history:
+            present = history.has_transaction(1)
+
+        self.assertFalse(present)
+
+    def test_has_transaction_present(self):
+        """Test has_transaction with a transaction present."""
+        yum_history = support.YumHistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Erase',
+                history=yum_history),)
+
+        with self._create_wrapper(yum_history) as history:
+            present = history.has_transaction(1)
+
+        self.assertTrue(present)
+
+    def test_transaction_items_ops_all(self):
+        """Test transaction_items_ops with all states."""
+        yum_history = support.YumHistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Erase',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Install',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Reinstall',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Reinstalled',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Downgrade',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '1', 'Downgraded',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'tour', 'noarch', '0', '5', '1', 'Update',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'tour', 'noarch', '0', '4.6', '1', 'Updated',
+                history=yum_history))
+
+        with self._create_wrapper(yum_history) as history:
+            items_ops = history.transaction_items_ops(1)
+
+        erase_ops = next(items_ops)
+        install_ops = next(items_ops)
+        reinstall_ops = next(items_ops)
+        downgrade_ops = next(items_ops)
+        update_ops = next(items_ops)
+        self.assertRaises(StopIteration, next, items_ops)
+        self.assertEqual(next(erase_ops),
+                         ('lotus-0:3-16.x86_64', 'Erase'))
+        self.assertRaises(StopIteration, next, erase_ops)
+        self.assertEqual(next(install_ops),
+                         ('pepper-0:20-0.x86_64', 'Install'))
+        self.assertEqual(next(install_ops),
+                         ('pepper-0:20-0.x86_64', 'Obsoleting'))
+        self.assertEqual(next(install_ops),
+                         ('lotus-0:3-16.x86_64', 'Obsoleted'))
+        self.assertRaises(StopIteration, next, install_ops)
+        self.assertEqual(next(reinstall_ops),
+                         ('pepper-0:20-0.x86_64', 'Reinstall'))
+        self.assertEqual(next(reinstall_ops),
+                         ('pepper-0:20-0.x86_64', 'Reinstalled'))
+        self.assertRaises(StopIteration, next, reinstall_ops)
+        self.assertEqual(next(downgrade_ops),
+                         ('pepper-0:20-0.x86_64', 'Downgrade'))
+        self.assertEqual(next(downgrade_ops),
+                         ('pepper-0:20-1.x86_64', 'Downgraded'))
+        self.assertRaises(StopIteration, next, downgrade_ops)
+        self.assertEqual(next(update_ops),
+                         ('tour-0:5-1.noarch', 'Update'))
+        self.assertEqual(next(update_ops),
+                         ('tour-0:4.6-1.noarch', 'Updated'))
+        self.assertRaises(StopIteration, next, update_ops)
+
+    def test_transaction_items_ops_badfirst(self):
+        """Test transaction_items_ops with an invalid first state."""
+        yum_history = support.YumHistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Obsoleted',
+                history=yum_history),)
+
+        with self._create_wrapper(yum_history) as history:
+            self.assertRaises(ValueError, history.transaction_items_ops, 1)
+
+    def test_transaction_items_ops_emptytransaction(self):
+        """Test transaction_items_ops with an empty transaction."""
+        yum_history = support.YumHistoryStub()
+        yum_history.old_data_pkgs['1'] = ()
+
+        with self._create_wrapper(yum_history) as history:
+            items_ops = history.transaction_items_ops(1)
+
+        self.assertRaises(StopIteration, next, items_ops)
+
+    def test_transaction_items_ops_notransaction(self):
+        """Test transaction_items_ops without any transaction."""
+        with self._create_wrapper(support.YumHistoryStub()) as history:
+            self.assertRaises(ValueError, history.transaction_items_ops, 0)
