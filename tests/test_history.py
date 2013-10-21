@@ -122,6 +122,30 @@ class YumHistoryWrapperTest(unittest.TestCase):
 
         self.assertTrue(present)
 
+    def test_last_transaction_id(self):
+        """Test last_transaction_id with some transactions."""
+        yum_history = support.YumHistoryStub()
+        yum_history.old_data_pkgs['1'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'lotus', 'x86_64', '0', '3', '16', 'Erase',
+                history=yum_history),)
+        yum_history.old_data_pkgs['2'] = (
+            dnf.yum.history.YumHistoryPackageState(
+                'pepper', 'x86_64', '0', '20', '0', 'Install',
+                history=yum_history),)
+
+        with self._create_wrapper(yum_history) as history:
+            id_ = history.last_transaction_id()
+
+        self.assertEqual(id_, 2)
+
+    def test_last_transaction_id_notransaction(self):
+        """Test last_transaction_id without any transaction."""
+        with self._create_wrapper(support.YumHistoryStub()) as history:
+            id_ = history.last_transaction_id()
+
+        self.assertIsNone(id_)
+
     def test_transaction_items_ops_all(self):
         """Test transaction_items_ops with all states."""
         yum_history = support.YumHistoryStub()

@@ -57,6 +57,11 @@ class _YumHistoryWrapper(object):
         """Test whether a transaction with given ID is stored."""
         return bool(self._yum_history.old((str(id_),)))
 
+    def last_transaction_id(self):
+        """Get ID of the last stored transaction."""
+        last_tx = self._yum_history.last(complete_transactions_only=False)
+        return last_tx.tid if last_tx else None
+
     def transaction_items_ops(self, id_):
         """Get iterable of package manipulations of each transaction item."""
         if not self.has_transaction(id_):
