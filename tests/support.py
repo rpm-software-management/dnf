@@ -87,7 +87,7 @@ class MockOutput(object):
     _cli_confirm_gpg_key_import = None
 
     def __init__(self):
-        self.term = FakeTerm()
+        self.term = MockTerminal()
 
     def setup_progress_callbacks(self):
         return (None, None)
@@ -115,6 +115,12 @@ class MockPackage(object):
 class MockRepo(dnf.repo.Repo):
     def valid(self):
         return None
+
+class MockTerminal(object):
+    def __init__(self):
+        self.MODE = {'bold'   : '', 'normal' : ''}
+        self.columns = 80
+        self.reinit = mock.Mock()
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, yumbase):
@@ -198,12 +204,6 @@ class MockYumDB(mock.Mock):
 
     def assertLength(self, length):
         assert(len(self.db) == length)
-
-class FakeTerm(object):
-    def __init__(self):
-        self.MODE = {'bold'   : '', 'normal' : ''}
-        self.columns = 80
-        self.reinit = mock.Mock()
 
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
