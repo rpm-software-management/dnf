@@ -542,7 +542,7 @@ class Base(object):
                        doc="Yum History Object")
 
     def _goal2transaction(self, goal):
-        ts = self._transaction = dnf.transaction.Transaction()
+        ts = dnf.transaction.Transaction()
         all_obsoleted = set(goal.list_obsoleted())
 
         for pkg in goal.list_downgrades():
