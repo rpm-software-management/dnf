@@ -541,6 +541,46 @@ class Base(object):
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
+    def _goal2transaction(self, goal):
+        ts = self._transaction = dnf.transaction.Transaction()
+        all_obsoleted = set(goal.list_obsoleted())
+
+        for pkg in goal.list_downgrades():
+            obs = goal.obsoleted_by_package(pkg)
+            downgraded = obs[0]
+            self.ds_callback.pkg_added(downgraded, 'dd')
+            self.ds_callback.pkg_added(pkg, 'd')
+            ts.add_downgrade(pkg, downgraded, obs[1:])
+        for pkg in goal.list_reinstalls():
+            self.ds_callback.pkg_added(pkg, 'r')
+            obs = goal.obsoleted_by_package(pkg)
+            reinstalled = obs[0]
+            ts.add_reinstall(pkg, reinstalled, obs[1:])
+        for pkg in goal.list_installs():
+            self.ds_callback.pkg_added(pkg, 'i')
+            obs = goal.obsoleted_by_package(pkg)
+            reason = dnf.util.reason_name(goal.get_reason(pkg))
+            ts.add_install(pkg, obs, reason)
+            for pkg in obs:
+                self.ds_callback.pkg_added(pkg, 'od')
+        for pkg in goal.list_upgrades():
+            group_fn = functools.partial(operator.contains, all_obsoleted)
+            obs, upgraded = dnf.util.group_by_filter(
+                group_fn, goal.obsoleted_by_package(pkg))
+            cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
+            dnf.util.mapall(cb, obs)
+            if pkg.name in self.conf.installonlypkgs:
+                ts.add_install(pkg, obs)
+            else:
+                ts.add_upgrade(pkg, upgraded[0], obs)
+                cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'ud')
+                dnf.util.mapall(cb, upgraded)
+            self.ds_callback.pkg_added(pkg, 'u')
+        for pkg in goal.list_erasures():
+            self.ds_callback.pkg_added(pkg, 'e')
+            ts.add_erase(pkg)
+        return ts
+
     def _query_matches_installed(self, query):
         """ See what packages in the query match packages (also in older
             versions, but always same architecture) that are already installed.
@@ -595,8 +635,7 @@ class Base(object):
     def build_transaction(self):
         """Build the transaction set."""
         self.plugins.run('preresolve')
-        ts = exc = None
-        cnt = 0
+        exc = None
 
         ds_st = time.time()
         self.ds_callback.start()
@@ -608,58 +647,18 @@ class Base(object):
                 goal.log_decisions()
             exc = dnf.exceptions.DepsolveError('. '.join(goal.problems))
         else:
-            ts = self._transaction = dnf.transaction.Transaction()
-            all_obsoleted = set(goal.list_obsoleted())
-
-            for pkg in goal.list_downgrades():
-                cnt += 1
-                obs = goal.obsoleted_by_package(pkg)
-                downgraded = obs[0]
-                self.ds_callback.pkg_added(downgraded, 'dd')
-                self.ds_callback.pkg_added(pkg, 'd')
-                ts.add_downgrade(pkg, downgraded, obs[1:])
-            for pkg in goal.list_reinstalls():
-                cnt += 1
-                self.ds_callback.pkg_added(pkg, 'r')
-                obs = goal.obsoleted_by_package(pkg)
-                reinstalled = obs[0]
-                ts.add_reinstall(pkg, reinstalled, obs[1:])
-            for pkg in goal.list_installs():
-                cnt += 1
-                self.ds_callback.pkg_added(pkg, 'i')
-                obs = goal.obsoleted_by_package(pkg)
-                reason = dnf.util.reason_name(goal.get_reason(pkg))
-                ts.add_install(pkg, obs, reason)
-                for pkg in obs:
-                    self.ds_callback.pkg_added(pkg, 'od')
-            for pkg in goal.list_upgrades():
-                cnt += 1
-                group_fn = functools.partial(operator.contains, all_obsoleted)
-                obs, upgraded = dnf.util.group_by_filter(
-                    group_fn, goal.obsoleted_by_package(pkg))
-                cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
-                dnf.util.mapall(cb, obs)
-                if pkg.name in self.conf.installonlypkgs:
-                    ts.add_install(pkg, obs)
-                else:
-                    ts.add_upgrade(pkg, upgraded[0], obs)
-                    cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'ud')
-                    dnf.util.mapall(cb, upgraded)
-                self.ds_callback.pkg_added(pkg, 'u')
-            for pkg in goal.list_erasures():
-                cnt += 1
-                self.ds_callback.pkg_added(pkg, 'e')
-                ts.add_erase(pkg)
+            self._transaction = self._goal2transaction(goal)
 
         self.ds_callback.end()
         self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
 
-        if ts is not None:
-            msg = ts.rpm_limitations()
+        got_transaction = self._transaction is not None and \
+                          len(self._transaction) > 0
+        if got_transaction:
+            msg = self._transaction.rpm_limitations()
             if msg:
                 exc = dnf.exceptions.Error(msg)
 
-        got_transaction = cnt > 0
         self.plugins.run('postresolve', exception=exc,
                          got_transaction=got_transaction)
         if exc is not None:

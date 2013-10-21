@@ -202,3 +202,16 @@ class CompsTest(support.TestCase):
         yumbase = support.MockYumBase("main")
         yumbase.repos['main'].enablegroups = False
         self.assertRaises(dnf.exceptions.CompsError, yumbase.read_comps)
+
+class Goal2TransactionTest(support.TestCase):
+    def test_upgrade(self):
+        base = support.MockYumBase("main", "updates")
+        base.update("hole")
+        goal = base._goal
+        self.assertTrue(base.run_hawkey_goal(goal))
+        ts = base._goal2transaction(goal)
+        self.assertLength(ts._tsis, 1)
+        tsi = ts._tsis[0]
+        self.assertItemsEqual(map(str, tsi.installs()), ('hole-2-1.x86_64',))
+        self.assertItemsEqual(map(str, tsi.removes()),
+                              ('hole-1-1.x86_64', 'tour-5-0.noarch'))
