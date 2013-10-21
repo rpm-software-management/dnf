@@ -964,6 +964,24 @@ class BaseCli(dnf.Base):
         # otherwise, don't prompt
         return False
 
+    @staticmethod
+    def transaction_id_or_offset(extcmd):
+        """Convert user input to a transaction ID or an offset from the end."""
+        try:
+            offset_str, = re.match('^last(-\d+)?$', extcmd).groups()
+        except AttributeError:  # extcmd does not match the regex.
+            id_ = int(extcmd)
+            if id_ < 0:
+                # Negative return values are reserved for offsets.
+                raise ValueError('bad transaction ID given: %s' % extcmd)
+            return id_
+        else:
+            # Was extcmd 'last-N' or just 'last'?
+            offset = int(offset_str) if offset_str else 0
+            # Return offsets as negative numbers, where -1 means the last
+            # transaction as when indexing sequences.
+            return offset - 1
+
     def _history_get_transactions(self, extcmds):
         if len(extcmds) < 2:
             self.logger.critical(_('No transaction ID given'))
@@ -973,27 +991,21 @@ class BaseCli(dnf.Base):
         last = None
         for extcmd in extcmds[1:]:
             try:
-                if extcmd == 'last' or extcmd.startswith('last-'):
-                    if last is None:
-                        cto = False
-                        last = self.history.last(complete_transactions_only=cto)
-                        if last is None:
-                            int("z")
-                    tid = last.tid
-                    if extcmd.startswith('last-'):
-                        off = int(extcmd[len('last-'):])
-                        if off <= 0:
-                            int("z")
-                        tid -= off
-                    tids.append(str(tid))
-                    continue
-
-                if int(extcmd) <= 0:
-                    int("z")
-                tids.append(extcmd)
+                id_or_offset = self.transaction_id_or_offset(extcmd)
             except ValueError:
                 self.logger.critical(_('Bad transaction ID given'))
                 return None
+
+            if id_or_offset < 0:
+                if last is None:
+                    cto = False
+                    last = self.history.last(complete_transactions_only=cto)
+                    if last is None:
+                        self.logger.critical(_('Bad transaction ID given'))
+                        return None
+                tids.append(str(last.tid + id_or_offset + 1))
+            else:
+                tids.append(str(id_or_offset))
 
         old = self.history.old(tids)
         if not old:
