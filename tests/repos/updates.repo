@@ -4,4 +4,6 @@
 =Req: librita >= 1-0
 =Pkg: hole 1 2 x86_64
 =Pkg: hole 2 1 x86_64
+=Obs: tour
 =Pkg: hole 2 1 i686
+=Obs: tour

@@ -56,7 +56,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockYumBase("main", "updates")
         sack = yumbase.sack
         yumbase.update_all()
-        expected = support.installed_but(sack, "pepper", "hole") + \
+        expected = support.installed_but(sack, "pepper", "hole", "tour") + \
             list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
             list(available_by_nevra(sack, "hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
@@ -75,7 +75,8 @@ class Update(support.ResultTestCase):
         yumbase.update("hole")
         installed, removed = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
-        self.assertItemsEqual(map(str, removed), ['hole-1-1.x86_64'])
+        self.assertItemsEqual(map(str, removed),
+                              ['hole-1-1.x86_64', 'tour-5-0.noarch'])
 
 class SkipBroken(support.ResultTestCase):
     def setUp(self):
