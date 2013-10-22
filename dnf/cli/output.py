@@ -499,6 +499,10 @@ class Output(object):
     def conf(self):
         return self.base.conf
 
+    @property
+    def sack(self):
+        return self.base.sack
+
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):
         """Dynamically calculate the widths of the columns that the
