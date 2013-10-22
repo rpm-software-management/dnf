@@ -283,23 +283,43 @@ class FakePersistor(object):
 
 # object matchers for asserts
 
-class PackageMatcher(object):
+class ObjectMatcher(object):
+    """Class allowing partial matching of objects."""
 
-    def __init__(self, **kwargs):
-        self._kwargs = kwargs
+    def __init__(self, type_=None, attrs=None):
+        """Initialize a matcher instance."""
+        self._type = type_
+        self._attrs = attrs
 
     def __eq__(self, other):
-        if not isinstance(other, hawkey.Package):
-            return False
-        for name, value in self._kwargs.items():
-            if getattr(other, name) != value:
+        """Test whether this object is equal to the *other* one."""
+        if self._type is not None:
+            if type(other) is not self._type:
                 return False
+
+        if self._attrs:
+            for attr, value in self._attrs.items():
+                if value != getattr(other, attr):
+                    return False
         return True
 
+    def __ne__(self, other):
+        """Test whether this object is not equal to the *other* one."""
+        return not self == other
+
     def __repr__(self):
-        kwargs_str = ', '.join('%s=%s' % (name, repr(value))
-                               for name, value in self._kwargs.items())
-        return '%s(%s)' % (type(self).__name__, kwargs_str)
+        """Compute the "official" string representation of this object."""
+        args_strs = []
+
+        if self._type is not None:
+            args_strs.append('type_=%s' % repr(self._type))
+
+        if self._attrs:
+            attrs_str = ', '.join('%s: %s' % (str(attr), repr(value))
+                                  for attr, value in self._attrs.items())
+            args_strs.append('attrs={%s}' % attrs_str)
+
+        return '%s(%s)' % (type(self).__name__, ", ".join(args_strs))
 
 # test cases
 

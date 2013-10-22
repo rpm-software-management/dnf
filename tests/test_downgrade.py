@@ -60,7 +60,7 @@ class DowngradeTest2(support.TestCase):
 
     def test_downgrade_pkgnevra(self):
         """ Downgrade should handle full NEVRAs. """
-        pkg = support.PackageMatcher(name='tour')
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'tour'})
 
         downgraded_count = self._base.downgrade('tour-0:5-0.noarch')
 
