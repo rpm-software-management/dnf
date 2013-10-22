@@ -1095,9 +1095,9 @@ class Cli(object):
         """
         self.logger.debug('dnf version: %s', dnf.const.VERSION)
         self.logger.log(dnf.logging.SUBDEBUG,
-                                'COMMAND: %s', self.cmdstring)
+                        'Command: %s', self.cmdstring)
         self.logger.log(dnf.logging.SUBDEBUG,
-                                'Installroot: %s', self.base.conf.installroot)
+                        'Installroot: %s', self.base.conf.installroot)
         if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
             self.base.cmds = self.base.conf.commands
         else:
@@ -1107,18 +1107,18 @@ class Cli(object):
             self.print_usage()
             raise CliError
 
-        self.base.extcmds = self.base.cmds[1:] # out extended arguments/commands
-        msg = 'Ext Commands: %s' % ' '.join(self.base.extcmds)
-        self.logger.log(dnf.logging.SUBDEBUG, msg)
-
         basecmd = self.base.cmds[0] # our base command
-        if basecmd not in self.cli_commands:
+        command = self.cli_commands.get(basecmd)
+        if command is None:
             self.logger.critical(_('No such command: %s. Please use %s --help'),
                                   basecmd, sys.argv[0])
             raise CliError
 
-        command = self.cli_commands[basecmd]
-        self.base.basecmd = command.getNames()[0] # the canonical name
+        (base, ext) = command.canonical(self.base.cmds)
+        self.base.basecmd, self.base.extcmds = (base, ext)
+        ext_str = ' '.join(ext)
+        self.logger.log(dnf.logging.SUBDEBUG, 'Base command: %s', base)
+        self.logger.log(dnf.logging.SUBDEBUG, 'Extra commands: %s', ext)
 
     def _parse_setopts(self, setopts):
         """parse the setopts list handed to us and saves the results as
@@ -1202,7 +1202,7 @@ class Cli(object):
         releasever = opts.releasever
         try:
             self.base.read_conf_file(opts.conffile, root, releasever, overrides)
-
+ 
             # now set all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:

@@ -200,6 +200,16 @@ class Command(object):
     def output(self):
         return self.cli.base.output
 
+    def canonical(self, command_list):
+        """Turn list of comamnds into a canonical form.
+
+        Returns the base command and a list of exta commands.
+
+        """
+        base = self.getNames()[0]
+        extra = command_list[1:]
+        return (base, extra)
+
     def configure(self):
         """ Do any command-specific Base configuration. """
         pass

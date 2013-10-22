@@ -24,9 +24,8 @@ from tests import support
 import dnf.cli.commands
 import dnf.repo
 import unittest
-from tests.support import PycompTestCase
 
-class CommandsTest(PycompTestCase):
+class CommandsCliTest(support.TestCase):
     def setUp(self):
         self.yumbase = support.MockBase()
         self.cli = self.yumbase.mock_cli()
@@ -101,3 +100,10 @@ class CommandsTest(PycompTestCase):
         self.yumbase.conf.metadata_timer_sync = 5
         self.assertEqual((0, [u'Metadata Cache Created']),
                          self._do_makecache(cmd))
+
+class CommandTest(support.TestCase):
+    def test_canonical(self):
+        cmd = dnf.cli.commands.UpgradeCommand(None)
+        (base, ext) = cmd.canonical(['update', 'cracker', 'filling'])
+        self.assertEqual(base, 'upgrade')
+        self.assertEqual(ext, ['cracker', 'filling'])
