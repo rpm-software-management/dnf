@@ -39,6 +39,7 @@ import io
 import dnf.comps
 import dnf.conf
 import dnf.exceptions
+import dnf.history
 import dnf.lock
 import dnf.logging
 import dnf.output
@@ -2036,64 +2037,134 @@ class Base(object):
         self.conf.obsoletes = old_conf_obs
         return done
 
-    def history_undo(self, transaction):
-        """Undo the transaction represented by the given
-        :class:`history.YumHistoryTransaction` object.
+    def history_undo(self, id_or_offset):
+        """Undo the transaction represented by the given ID or offset from
+        the last transaction.
 
-        :param transaction: a
-           :class:`history.YumHistoryTransaction` object
+        :param id_or_offset: an ID or offset from the last transaction
            representing the transaction to be undone
-        :return: whether the transaction was undone successfully
+        :return: (exit_code, [ errors ])
+
+        exit_code is::
+
+            0 = we're done, exit
+            1 = we've errored, exit with error string
+            2 = we've got work yet to do, onto the next stage
         """
-        # NOTE: This is somewhat basic atm. ... for instance we don't check
-        #       that we are going from the old new version. However it's still
-        #       better than the RHN rollback code, and people pay for that :).
-        #  We turn obsoletes off because we want the specific versions of stuff
-        # from history ... even if they've been obsoleted since then.
-        old_conf_obs = self.conf.obsoletes
-        self.conf.obsoletes = False
-        done = False
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Reinstall':
-                if self.reinstall(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Updated':
-                try:
-                    if self.downgrade(pkgtup=pkg.pkgtup):
-                        done = True
-                except dnf.exceptions.Error:
-                    # :dead
-                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Downgraded':
-                if self.update(pkgtup=pkg.pkgtup):
-                    done = True
-                else:
-                    self.logger.critical(_('Failed to upgrade: %s'), pkg)
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Obsoleting':
-                #  Note that obsoleting can mean anything, so if this is part of
-                # something else, it should be done by now (so do nothing).
-                if self.tsInfo.getMembers(pkg.pkgtup):
-                    continue
-                #  If not it should be an install/obsolete ... so remove it.
-                if self.remove(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state in ('Dep-Install', 'Install', 'True-Install'):
-                if self.remove(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Obsoleted':
-                if self.install(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Erase':
-                if self.install(pkgtup=pkg.pkgtup):
-                    done = True
-        self.conf.obsoletes = old_conf_obs
-        return done
+
+        def add_install(nevra):
+            """Add a package to install."""
+            pkgs = queries.available_by_nevra(self.sack, nevra)
+            if not pkgs:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to install not available"))
+            assert len(pkgs) == 1
+            self._transaction.add_install(pkgs[0], None)
+
+        def add_erase(nevra):
+            """Add a package to erase."""
+            pkgs = queries.installed_by_nevra(self.sack, nevra)
+            if not pkgs:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in undo: package to remove not installed"))
+            assert len(pkgs) == 1
+            self._transaction.add_erase(pkgs[0])
+
+        def add_reinstall(new_nevra, old_nevra, obsoleted_nevras):
+            """Add a package to reinstall."""
+            news = queries.available_by_nevra(self.sack, new_nevra)
+            if not news:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to reinstall not available"))
+            olds = queries.installed_by_nevra(self.sack, old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in undo: package to reinstall not installed"))
+            obsoleteds = []
+            for nevra in obsoleted_nevras:
+                obsoleteds_ = queries.installed_by_nevra(self.sack, nevra)
+                if obsoleteds_:
+                    assert len(obsoleteds_) == 1
+                    obsoleteds.append(obsoleteds_[0])
+            assert len(news) == 1 and len(olds) == 1
+            self._transaction.add_reinstall(news[0], olds[0], obsoleteds)
+
+        def add_upgrade(new_nevra, old_nevra):
+            """Add a package to upgrade."""
+            news = queries.available_by_nevra(self.sack, new_nevra)
+            if not news:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to update not available"))
+            olds = queries.installed_by_nevra(self.sack, old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in undo: package to update not installed"))
+            assert len(news) == 1 and len(olds) == 1
+            self._transaction.add_upgrade(news[0], olds[0], None)
+
+        def add_downgrade(new_nevra, old_nevra):
+            """Add a package to downgrade."""
+            news = queries.available_by_nevra(self.sack, new_nevra)
+            if not news:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to downgrade not available"))
+            olds = queries.installed_by_nevra(self.sack, old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in undo: package to downgrade not installed"))
+            assert len(news) == 1 and len(olds) == 1
+            self._transaction.add_downgrade(news[0], olds[0], None)
+
+        history = dnf.history.open_history(self.history, self.sack)
+        last_id = history.last_transaction_id()
+        if not last_id:
+            raise ValueError('no transaction in history')
+        id_ = last_id + id_or_offset + 1 if id_or_offset < 0 else id_or_offset
+
+        # Build the transaction directly, because the depsolve is not needed.
+        self._transaction = dnf.transaction.Transaction()
+        for item_ops in history.transaction_items_ops(id_):
+            obsoleted_nevras = []
+            obsoleting_nevra = None
+            replaced_nevra = None
+
+            # It is easier to traverse the item in the reversed order.
+            reversed_it = reversed(tuple(item_ops))
+            nevra, state = next(reversed_it)
+
+            while state == 'Obsoleted':
+                obsoleted_nevras.append(nevra)
+                nevra, state = next(reversed_it)
+            if obsoleted_nevras:
+                assert state == 'Obsoleting'
+                obsoleting_nevra = nevra
+                nevra, state = next(reversed_it)
+            if state in {'Reinstalled', 'Downgraded', 'Updated'}:
+                replaced_nevra = nevra
+                nevra, state = next(reversed_it)
+            assert dnf.util.is_exhausted(reversed_it)
+
+            assert not obsoleting_nevra or obsoleting_nevra == nevra
+            if state == 'Install':
+                assert not replaced_nevra
+                add_erase(nevra)
+                for obsoleted_nevra in obsoleted_nevras:
+                    add_install(obsoleted_nevra)
+            elif state == 'Erase':
+                assert not replaced_nevra and not obsoleted_nevras
+                add_install(nevra)
+            elif state == 'Reinstall':
+                add_reinstall(replaced_nevra, nevra, obsoleted_nevras)
+            elif state == 'Downgrade':
+                add_upgrade(replaced_nevra, nevra)
+                for obsoleted_nevra in obsoleted_nevras:
+                    add_install(obsoleted_nevra)
+            elif state == 'Update':
+                add_downgrade(replaced_nevra, nevra)
+                for obsoleted_nevra in obsoleted_nevras:
+                    add_install(obsoleted_nevra)
+            else:
+                assert False
 
     def _retrievePublicKey(self, keyurl, repo=None, getSig=True):
         """
