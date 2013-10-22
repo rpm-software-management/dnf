@@ -2016,7 +2016,12 @@ class HistoryCommand(Command):
         tm = time.ctime(old.beg_timestamp)
         print("Undoing transaction %u, from %s" % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
-        if self.base.history_undo(old):
+        try:
+            self.base.history_undo(old.tid)
+        except (dnf.exceptions.PackagesNotInstalledError,
+                dnf.exceptions.PackagesNotAvailableError) as err:
+            return 1, [str(err)]
+        else:
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
     def _hcmd_rollback(self, extcmds):
