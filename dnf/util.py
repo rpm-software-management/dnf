@@ -81,6 +81,15 @@ def insert_if(item, iterable, condition):
             yield item
         yield original_item
 
+def is_exhausted(iterator):
+    """Test whether an iterator is exhausted."""
+    try:
+        next(iterator)
+    except StopIteration:
+        return True
+    else:
+        return False
+
 def is_glob_pattern(pattern):
     return set(pattern) & set("*[?")
 

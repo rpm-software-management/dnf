@@ -108,6 +108,22 @@ class Util(unittest.TestCase):
         self.assertEqual(next(iterator), 3)
         self.assertRaises(StopIteration, next, iterator)
 
+    def test_is_exhausted_true(self):
+        """Test is_exhausted with an iterator which is exhausted."""
+        iterator = iter(())
+
+        result = dnf.util.is_exhausted(iterator)
+
+        self.assertTrue(result)
+
+    def test_is_exhausted_false(self):
+        """Test is_exhausted with an iterator which is not exhausted."""
+        iterator = iter((1,))
+
+        result = dnf.util.is_exhausted(iterator)
+
+        self.assertFalse(result)
+
     def test_is_glob_pattern(self):
         assert(dnf.util.is_glob_pattern("all*.ext"))
         assert(dnf.util.is_glob_pattern("all?.ext"))
