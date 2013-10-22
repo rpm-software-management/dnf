@@ -161,7 +161,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_reinstallPkgs_notavailable(self):
-        pkg = support.PackageMatcher(name='hole')
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})
 
         result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
 
