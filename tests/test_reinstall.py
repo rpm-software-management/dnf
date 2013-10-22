@@ -51,7 +51,9 @@ class ReinstallTest(PycompTestCase):
         self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
 
     def test_reinstall_pkgnevra(self):
-        pkg = support.PackageMatcher(name='pepper', evr='20-0', arch='x86_64')
+        pkg = support.ObjectMatcher(
+            dnf.package.Package,
+            {'name': 'pepper', 'evr': '20-0', 'arch': 'x86_64'})
 
         reinstalled_count = self._base.reinstall('pepper-0:20-0.x86_64')
 
@@ -69,7 +71,7 @@ class ReinstallTest(PycompTestCase):
         self.assertEqual(self._goal.mock_calls, [])
 
     def test_reinstall_notavailable(self):
-        pkgs = [support.PackageMatcher(name='hole')]
+        pkgs = [support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})]
 
         with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
             self._base.reinstall('hole')
@@ -78,7 +80,7 @@ class ReinstallTest(PycompTestCase):
         self.assertEqual(self._goal.mock_calls, [])
 
     def test_reinstall_notavailable_available(self):
-        pkg = support.PackageMatcher(name='librita')
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'librita'})
 
         reinstalled_count = self._base.reinstall('librita')
 
