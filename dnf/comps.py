@@ -106,8 +106,7 @@ class Forwarder(object):
 
     def _ui_text(self, default, dct):
         for l in self._langs.get():
-            t = dct[l]
-            # oddity in libcomps, doesn't throw KeyError
+            t = dct.get(l)
             if t is not None:
                 return t
         return default
