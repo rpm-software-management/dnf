@@ -209,6 +209,11 @@ Erase Command
 Group Command
 -------------
 
+``dnf [options] group [summary] <group-spec>``
+    Display overview of how many groups are installed and available. With a
+    spec, limit the output to the matching groups. ``summary`` is the default
+    groups subcommand.
+
 ``dnf [options] group info <group-spec>``
     Display package lists of a group. Shows which packages are installed or
     available from a repo when ``-v`` is used.

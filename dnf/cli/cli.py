@@ -830,7 +830,7 @@ class BaseCli(dnf.Base):
         if not userlist:
             userlist = None # Match everything...
 
-        installed, available = self.group_lists(uservisible, patterns)
+        installed, available = self.group_lists(uservisible, userlist)
 
         def _out_grp(sect, num):
             if not num:
