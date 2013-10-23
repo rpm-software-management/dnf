@@ -214,18 +214,6 @@ class Command(object):
         """ Do any command-specific Base configuration. """
         pass
 
-    def doneCommand(self, msg, *args):
-        """ Output *msg* the first time that this method is called, and do
-        nothing on subsequent calls.  This is to prevent duplicate
-        messages from being printed for the same command.
-
-        :param msg: the message to be output
-        :param \*args: additional arguments associated with the message
-        """
-        if not self.done_command_once:
-            self.base.logger.info(msg, *args)
-        self.done_command_once = True
-
     def getNames(self):
         """Return a list of strings that are the names of the command.
         The command can be called from the command line by using any
@@ -340,7 +328,6 @@ class InstallCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Install Process"))
         try:
             return self.base.installPkgs(extcmds)
         except dnf.exceptions.Error as e:
@@ -402,7 +389,6 @@ class UpgradeCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Upgrade Process"))
         try:
             return self.base.updatePkgs(extcmds)
         except dnf.exceptions.Error as e:
@@ -430,7 +416,6 @@ class UpgradeToCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def doCommand(self, basecmd, extcmds):
-        self.doneCommand(_("Setting up Upgrade Process"))
         try:
             return self.base.upgrade_userlist_to(extcmds)
         except dnf.exceptions.Error as e:
@@ -493,7 +478,6 @@ class DistroSyncCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Distribution Synchronization Process"))
         try:
             return self.base.distro_sync_userlist(extcmds)
         except dnf.exceptions.Error as e:
@@ -749,7 +733,6 @@ class EraseCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Remove Process"))
         try:
             return self.base.erasePkgs(extcmds)
         except dnf.exceptions.Error as e:
@@ -811,8 +794,6 @@ class GroupsCommand(Command):
         return _("Display, or use, the groups information")
 
     def _grp_setup_doCommand(self):
-        self.doneCommand(_("Setting up Group Process"))
-
         try:
             self.base.read_comps()
         except dnf.exceptions.Error as e:
@@ -1362,7 +1343,6 @@ class DepListCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Finding dependencies: "))
         try:
             return self.base.deplist(extcmds)
         except dnf.exceptions.Error as e:
@@ -1798,7 +1778,6 @@ class ReInstallCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Reinstall Process"))
         try:
             return self.base.reinstallPkgs(extcmds)
 
@@ -1872,7 +1851,6 @@ class DowngradeCommand(Command):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        self.doneCommand(_("Setting up Downgrade Process"))
         try:
             return self.base.downgradePkgs(extcmds)
         except dnf.exceptions.Error as e:

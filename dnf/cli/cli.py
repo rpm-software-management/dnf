@@ -804,7 +804,7 @@ class BaseCli(dnf.Base):
             _out_grp(_('Available Language Groups:'), group)
             done = True
 
-        return 0, [_('Done')]
+        return 0, []
 
     def returnGroupSummary(self, userlist):
         """Print a summary of the groups that match the given names or
@@ -860,7 +860,7 @@ class BaseCli(dnf.Base):
             done += 1
         _out_grp(_('Available Language Groups:'), done)
 
-        return 0, [_('Done')]
+        return 0, []
 
     def returnGroupInfo(self, userlist):
         """Print complete information about the groups that match the
