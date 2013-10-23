@@ -15,8 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
+from __future__ import unicode_literals
 import struct, time, io, base64, types
-from dnf.pycomp import long
+from dnf.pycomp import long, to_ord
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
@@ -320,7 +321,7 @@ returns (<whole number>, new_idx) where the whole number is a long integer
 and new_idx is the index of the next element in the message"""
     n = long(0)
     while numlen > 0 :
-        b = (struct.unpack("B", msg[idx:idx+1]))[0]
+        b = (struct.unpack(b"B", msg[idx:idx+1]))[0]
         n = n * long(256) + long(b)
         idx = idx + 1
         numlen = numlen - 1
@@ -337,9 +338,9 @@ def pack_long(l) :
     returns big-endian representation of unsigned long integer"""
     arr = []
     while l > 0 :
-        arr.insert(0, struct.pack("B", l & 0xff))
+        arr.insert(0, struct.pack(b"B", l & 0xff))
         l >>= 8
-    return ''.join(arr)
+    return b''.join(arr)
 
 def pack_mpi(l) :
     """pack_mpi(l)
@@ -349,13 +350,13 @@ def pack_mpi(l) :
     # so we need to account for that
     bits = (len(s) - 1) * 8
     if len(s) > 0 :
-        n = ord(s[0])
+        n = to_ord(s[0])
         while n != 0 :
             bits += 1
             n >>= 1
     else :
         bits = 0 # otherwise bits == -8
-    return struct.pack(">H", bits) + s
+    return struct.pack(b">H", bits) + s
 
 def get_sig_subpak_len(msg, idx) :
     """get_sig_subpak_len(msg, idx)
@@ -376,7 +377,7 @@ def get_n_mpi(msg, idx) :
     the index of the next element in the message and n is the number of bits of
     precision in <mpi>"""
     ln, idx = get_whole_int(msg, idx, 2)
-    return (ln,) + get_whole_number(msg, idx, (ln+7)/8)
+    return (ln,) + get_whole_number(msg, idx, (ln+7)//8)
 
 def get_mpi(msg, idx) :
     """get_mpi(msg, idx)
@@ -444,10 +445,10 @@ class public_key(pgp_packet) :
             # we hash what would be the whole PGP message containing
             # the pgp certificate
             h = hashlib.new('sha1')
-            h.update('\x99')
+            h.update(b'\x99')
             # we need to has the length of the packet as well
             buf = self.serialize()
-            h.update(struct.pack(">H", len(buf)))
+            h.update(struct.pack(b">H", len(buf)))
             h.update(buf)
             self.fingerprint_ = h.digest()
         else :
@@ -463,11 +464,11 @@ class public_key(pgp_packet) :
     def serialize(self) :
         chunks = []
         if self.version == 3 :
-            chunks.append(struct.pack('>BIHB', self.version, int(self.timestamp), self.validity, self.pk_algo))
+            chunks.append(struct.pack(b'>BIHB', self.version, int(self.timestamp), self.validity, self.pk_algo))
             chunks.append(pack_mpi(self.pk_rsa_mod))
             chunks.append(pack_mpi(self.pk_rsa_exp))
         elif self.version == 4 :
-            chunks.append(struct.pack('>BIB', self.version, int(self.timestamp), self.pk_algo))
+            chunks.append(struct.pack(b'>BIB', self.version, int(self.timestamp), self.pk_algo))
             if self.pk_algo == ALGO_PK_RSA_ENC_OR_SIGN or self.pk_algo == ALGO_PK_RSA_SIGN_ONLY :
                 chunks.append(pack_mpi(self.pk_rsa_mod))
                 chunks.append(pack_mpi(self.pk_rsa_exp))
@@ -482,7 +483,7 @@ class public_key(pgp_packet) :
                 chunks.append(pack_mpi(self.pk_elgamal_pub_key))
             else :
                 raise RuntimeError("unknown public key algorithm %d" % (self.pk_algo))
-        return ''.join(chunks)
+        return b''.join(chunks)
 
     def deserialize(self, msg, idx, pkt_len) :
         idx_save = idx
@@ -628,7 +629,7 @@ class signature(pgp_packet) :
             idx = idx + sublen - 1
             return (subtype, expr), idx
         if subtype == SIG_SUB_TYPE_PREF_SYMM_ALGO or subtype == SIG_SUB_TYPE_PREF_HASH_ALGO or subtype == SIG_SUB_TYPE_PREF_COMP_ALGO or subtype == SIG_SUB_TYPE_KEY_FLAGS :
-            algo_list = [ord(x) for x in list(msg[idx:idx+sublen-1])]
+            algo_list = [to_ord(x) for x in list(msg[idx:idx+sublen-1])]
             idx = idx + sublen - 1
             return (subtype, algo_list), idx
         if subtype == SIG_SUB_TYPE_REVOKE_KEY : # revocation key
@@ -654,7 +655,7 @@ class signature(pgp_packet) :
             idx = idx + val_len
             return (subtype, flg1, flg2, flg3, flg4, nam, val), idx
         if subtype == SIG_SUB_TYPE_KEY_SRV_PREF : # key server preferences
-            prefs = [ ord(x) for x in msg[idx:idx+sublen-1] ]
+            prefs = [ to_ord(x) for x in msg[idx:idx+sublen-1] ]
             idx = idx + sublen - 1
             return (subtype, prefs), idx
         if subtype == SIG_SUB_TYPE_PREF_KEY_SRVR : # preferred key server
@@ -1159,7 +1160,7 @@ def crc24(msg) :
 
     crc = crc24_init
     for i in list(msg) :
-        crc = crc ^ (ord(i) << 16)
+        crc = crc ^ (to_ord(i) << 16)
         for j in range(0, 8) :
             crc = crc << 1
             if crc & 0x1000000 :
@@ -1233,12 +1234,12 @@ a PGP "certificate" includes a public key, user id(s), and signature.
         # are we at the checksum line?
         if l and l[0] == '=' :
             # get the checksum number
-            csum = base64.decodestring(l[1:5])
+            csum = base64.decodestring(l[1:5].encode())
             i = 0
             csum, i = get_whole_number(csum, i, 3)
 
             # convert the base64 cert data to binary data
-            cert_msg = base64.decodestring(block_buf.getvalue())
+            cert_msg = base64.decodestring(block_buf.getvalue().encode())
             block_buf.close()
 
             # check the checksum

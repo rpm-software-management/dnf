@@ -2106,9 +2106,8 @@ class Base(object):
 
         # Go get the GPG key from the given URL
         try:
-            url = i18n.to_utf8(keyurl)
             # If we have a repo, use the proxy etc. configuration for it.
-            rawkey = dnf.util.urlopen(url, repo).read()
+            rawkey = dnf.util.urlopen(keyurl, repo).read()
 
         except IOError as e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
@@ -2121,8 +2120,7 @@ class Base(object):
         if getSig and repo and repo.gpgcakey:
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
-                url = i18n.to_utf8(keyurl + '.asc')
-                sigfile = dnf.util.urlopen(url, repo)
+                sigfile = dnf.util.urlopen(url + '.asc', repo)
 
             except IOError as e:
                 sigfile = None
