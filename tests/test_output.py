@@ -184,7 +184,6 @@ class GroupOutputTest(unittest.TestCase):
         base = support.MockBase('main')
         base.read_mock_comps(support.COMPS_PATH)
         output = dnf.cli.output.Output(base)
-        output.sack = base.sack
 
         self.base = base
         self.output = output
