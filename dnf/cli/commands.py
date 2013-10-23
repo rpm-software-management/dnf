@@ -185,6 +185,7 @@ class Command(object):
     """
 
     activate_sack = False
+    aliases = []
     load_available_repos = True
 
     def __init__(self, cli):
@@ -200,28 +201,20 @@ class Command(object):
     def output(self):
         return self.cli.base.output
 
-    def canonical(self, command_list):
+    @classmethod
+    def canonical(cls, command_list):
         """Turn list of comamnds into a canonical form.
 
         Returns the base command and a list of extra commands.
 
         """
-        base = self.getNames()[0]
+        base = cls.aliases[0]
         extra = command_list[1:]
         return (base, extra)
 
     def configure(self):
         """ Do any command-specific Base configuration. """
         pass
-
-    def getNames(self):
-        """Return a list of strings that are the names of the command.
-        The command can be called from the command line by using any
-        of these names.
-
-        :return: a list containing the names of the command
-        """
-        return []
 
     def getUsage(self):
         """Return a usage string for the command, including arguments.
@@ -276,16 +269,8 @@ class InstallCommand(Command):
     install command.
     """
 
+    aliases = ('install',)
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of
-        these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['install']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -337,17 +322,8 @@ class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
     update command.
     """
-
+    aliases = ('upgrade', 'update')
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can by called from the command line by using any of
-        these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['upgrade', 'update']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -399,10 +375,8 @@ class UpgradeToCommand(Command):
         command.
     """
 
+    aliases = ('upgrade-to', 'update-to')
     activate_sack = True
-
-    def getNames(self):
-        return ['upgrade-to', 'update-to']
 
     def getUsage(self):
         return _("[PACKAGE...]")
@@ -426,15 +400,8 @@ class DistroSyncCommand(Command):
     distro-synch command.
     """
 
+    aliases = ('distribution-synchronization', 'distro-sync')
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['distribution-synchronization', 'distro-sync']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -514,15 +481,8 @@ class InfoCommand(Command):
     info command.
     """
 
+    aliases = ('info',)
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['info']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -657,15 +617,8 @@ class ListCommand(InfoCommand):
     list command.
     """
 
+    aliases = ('list',)
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['list']
 
     def getSummary(self):
         """Return a one line summary of this command.
@@ -681,18 +634,11 @@ class EraseCommand(Command):
     """
 
     activate_sack = True
+    aliases = ('erase', 'remove')
     load_available_repos = False
 
     def configure(self):
         self.base.goal_parameters.allow_uninstall = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['erase', 'remove']
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -763,21 +709,13 @@ class GroupsCommand(Command):
     """ Single sub-command interface for most groups interaction. """
 
     activate_sack = True
-
     direct_commands = {'grouplist'    : 'list',
                        'groupinstall' : 'install',
                        'groupupdate'  : 'install',
                        'groupremove'  : 'remove',
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['groups', 'group'] + list(self.direct_commands.keys())
+    aliases = ('group', 'groups') + tuple(direct_commands.keys())
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -806,16 +744,17 @@ class GroupsCommand(Command):
                     'erase'      : 'remove',
                     'mark-erase' : 'mark-remove'}
 
-    def canonical(self, command_list):
+    @classmethod
+    def canonical(cls, command_list):
         first = command_list[0]
         rest = command_list[1:]
 
-        cmd = self.direct_commands.get(first)
+        cmd = cls.direct_commands.get(first)
         if cmd is None:
             cmd = 'summary'
             if rest:
                 cmd = rest.pop(0)
-        cmd = self._CMD_ALIASES.get(cmd, cmd)
+        cmd = cls._CMD_ALIASES.get(cmd, cmd)
 
         rest.insert(0, cmd)
         return ('groups', rest)
@@ -922,13 +861,7 @@ class MakeCacheCommand(Command):
     makecache command.
     """
 
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['makecache']
+    aliases = ('makecache',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1018,13 +951,7 @@ class CleanCommand(Command):
     clean command.
     """
 
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['clean']
+    aliases = ('clean',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1082,14 +1009,7 @@ class ProvidesCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['provides', 'whatprovides']
+    aliases = ('provides', 'whatprovides')
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1139,14 +1059,7 @@ class CheckUpdateCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['check-update']
+    aliases = ('check-update',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1230,14 +1143,7 @@ class SearchCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['search']
+    aliases = ('search',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1297,14 +1203,7 @@ class DepListCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['deplist']
+    aliases = ('deplist',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1355,14 +1254,7 @@ class RepoListCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ('repolist',)
+    aliases = ('repolist',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1627,13 +1519,7 @@ class HelpCommand(Command):
     help command.
     """
 
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['help']
+    aliases = ('help',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1666,7 +1552,7 @@ class HelpCommand(Command):
 
     @staticmethod
     def _makeOutput(command):
-        canonical_name = command.getNames()[0]
+        canonical_name = command.aliases[0]
 
         # Check for the methods in case we have plugins that don't
         # implement these.
@@ -1690,13 +1576,13 @@ class HelpCommand(Command):
         if usage is None and summary is None:
             help_output = _("No help available for %s") % canonical_name
 
-        command_names = command.getNames()
+        command_names = command.aliases
         if len(command_names) > 1:
             if len(command_names) > 2:
                 help_output += _("\n\naliases: ")
             else:
                 help_output += _("\n\nalias: ")
-            help_output += ', '.join(command.getNames()[1:])
+            help_output += ', '.join(command.aliases[1:])
 
         return help_output
 
@@ -1734,14 +1620,7 @@ class ReInstallCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['reinstall']
+    aliases = ('reinstall',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1807,14 +1686,7 @@ class DowngradeCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['downgrade']
+    aliases = ('downgrade',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -1878,13 +1750,7 @@ class VersionCommand(Command):
     version command.
     """
 
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['version']
+    aliases = ('version',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -2054,14 +1920,7 @@ class HistoryCommand(Command):
     """
 
     activate_sack = True
-
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['history']
+    aliases = ('history',)
 
     def getUsage(self):
         """Return a usage string for this command.
@@ -2281,13 +2140,7 @@ class CheckRpmdbCommand(Command):
     check-rpmdb command.
     """
 
-    def getNames(self):
-        """Return a list containing the names of this command.  This
-        command can be called from the command line by using any of these names.
-
-        :return: a list containing the names of this command
-        """
-        return ['check', 'check-rpmdb']
+    aliases = ('check', 'check-rpmdb')
 
     def getUsage(self):
         """Return a usage string for this command.

@@ -1063,14 +1063,14 @@ class Cli(object):
         usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
         commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()
                                     if not (hasattr(x, 'hidden') and x.hidden)])
-        commands.sort(key=lambda x: x.getNames()[0])
+        commands.sort(key=lambda x: x.aliases[0])
         for command in commands:
             # XXX Remove this when getSummary is common in plugins
             try:
                 summary = command.getSummary()
-                usage += "%-14s %s\n" % (command.getNames()[0], summary)
+                usage += "%-14s %s\n" % (command.aliases[0], summary)
             except (AttributeError, NotImplementedError):
-                usage += "%s\n" % command.getNames()[0]
+                usage += "%s\n" % command.aliases[0]
 
         return usage
 
@@ -1081,7 +1081,7 @@ class Cli(object):
 
             :param command: the :class:`dnf.cli.commands.Command` to register
         """
-        for name in command.getNames():
+        for name in command.aliases:
             if name in self.cli_commands:
                 raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)
             self.cli_commands[name] = command
