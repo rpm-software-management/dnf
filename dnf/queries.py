@@ -208,13 +208,6 @@ def _construct_result(sack, patterns, ignore_case,
         return q
     return q.run()
 
-def available_by_name(sack, patterns, ignore_case=False, latest_only=False,
-                      get_query=False):
-    return _construct_result(sack, patterns, ignore_case,
-                             exclude_repo=hawkey.SYSTEM_REPO_NAME,
-                             latest_only=latest_only,
-                             get_query=get_query)
-
 def installed_exact(sack, name, evr, arch, get_query=False):
     q = _construct_result(sack, name, False, get_query=True,
                           include_repo=hawkey.SYSTEM_REPO_NAME)

@@ -39,7 +39,7 @@ class DowngradeTest(support.ResultTestCase):
         cnt = yumbase.downgrade("tour")
         self.assertGreater(cnt, 0)
 
-        new_pkg = dnf.queries.available_by_name(sack, "tour")[0]
+        new_pkg = sack.query().available().filter(name="tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")
         new_set = support.installed_but(sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)

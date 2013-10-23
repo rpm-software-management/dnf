@@ -26,8 +26,6 @@ import hawkey
 import unittest
 from tests.support import PycompTestCase
 
-from dnf.queries import available_by_name
-
 class TestedHistory(dnf.yum.history.YumHistory):
     @mock.patch("os.path.exists", return_value=True)
     def __init__(self, unused_exists):
@@ -55,7 +53,7 @@ class History(PycompTestCase):
             self.history.pkg2pid(ipkg)
             ipkg2pid.assert_called_with(ipkg, True)
 
-        apkg = available_by_name(self.sack, "lotus")[0]
+        apkg = self.sack.query().available().filter(name="lotus")[0]
         with mock.patch.object(self.history, "_apkg2pid") as apkg2pid:
             self.history.pkg2pid(apkg)
             apkg2pid.assert_called_with(apkg, True)

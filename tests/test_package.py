@@ -39,7 +39,7 @@ class PackageTest(PycompTestCase):
     def setUp(self):
         yumbase = support.MockBase("main")
         self.sack = yumbase.sack
-        self.pkg = dnf.queries.available_by_name(self.sack, "pepper")[0]
+        self.pkg = self.sack.query().available().filter(name="pepper")[0]
 
     def test_from_cmdline(self):
         self.sack.create_cmdline_repo()

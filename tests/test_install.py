@@ -16,7 +16,6 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import available_by_name
 from tests import support
 import dnf.exceptions
 import dnf.queries
@@ -37,7 +36,8 @@ class InstallMultilibAll(support.ResultTestCase):
     def test_install(self):
         """ Simple install. """
         self.yumbase.install("mrkite")
-        expected = available_by_name(self.yumbase.sack, ["mrkite", "trampoline"])
+        available = self.yumbase.sack.query().available()
+        expected = available.filter(name=["mrkite", "trampoline"]).run()
         # ensure sanity of the test (otherwise it would pass no matter what):
         self.assertEqual(len(expected), 2)
         new_set = self.yumbase.sack.query().installed() + expected
@@ -55,8 +55,8 @@ class InstallMultilibAll(support.ResultTestCase):
 
     def test_install_nevra(self):
         self.yumbase.install("lotus-3-16.i686")
-        available = available_by_name(self.yumbase.sack, "lotus", get_query=True)
-        lotus = available.filter(arch="i686")[0]
+        available = self.yumbase.sack.query().available()
+        lotus = available.filter(name="lotus", arch="i686")[0]
         new_set = self.yumbase.sack.query().installed() + [lotus]
         self.assertResult(self.yumbase, new_set)
 
@@ -82,7 +82,8 @@ class MultilibAllMainRepo(support.ResultTestCase):
         """
         cnt = self.yumbase.install("lotus")
         self.assertEqual(cnt, 2)
-        new_set = self.installed + available_by_name(self.yumbase.sack, "lotus")
+        q = self.yumbase.sack.query().available().filter(name="lotus")
+        new_set = self.installed + q.run()
         self.assertResult(self.yumbase, new_set)
 
 class MultilibBestMainRepo(support.ResultTestCase):
@@ -121,13 +122,15 @@ class MultilibBestMainRepo(support.ResultTestCase):
         """ Test the package to be installed can be specified by provide. """
         self.yumbase.install("henry(the_horse)")
         self.assertGreater(self.yumbase._goal.req_length(), 0)
-        trampoline = available_by_name(self.yumbase.sack, "trampoline")
-        new_set = self.installed + trampoline
+        trampoline = self.yumbase.sack.query().available().filter(
+            name="trampoline")
+        new_set = self.installed + trampoline.run()
         self.assertResult(self.yumbase, new_set)
 
     def test_install_glob(self):
         self.yumbase.install("mrkite*")
-        new_set = self.installed + available_by_name(self.yumbase.sack, "mrkite*")
+        q = self.yumbase.sack.query().available().filter(name="mrkite*")
+        new_set = self.installed + q.run()
         installed, removed = self.installed_removed(self.yumbase)
         self.assertItemsEqual(map(str, installed),
                               ['mrkite-2-0.x86_64',

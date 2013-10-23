@@ -16,8 +16,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import (available_by_name,
-                         updates_by_name)
+from dnf.queries import updates_by_name
 from tests import mock
 from tests import support
 
@@ -66,7 +65,7 @@ class Update(support.ResultTestCase):
         sack = yumbase.sack
         cnt = yumbase.update_local(support.TOUR_51_PKG_PATH)
         self.assertEqual(cnt, 1)
-        new_pkg = available_by_name(sack, "tour")[0]
+        new_pkg = sack.query().available().filter(name="tour")[0]
         new_set = support.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
 
