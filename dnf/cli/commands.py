@@ -181,7 +181,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
 class Command(object):
     """An abstract base class that defines the methods needed by the cli
     to execute a specific command.  Subclasses must override at least
-    :func:`getUsage` and :func:`getSummary`.
+    :func:`get_usage` and :func:`get_summary`.
     """
 
     activate_sack = False
@@ -216,14 +216,16 @@ class Command(object):
         """ Do any command-specific Base configuration. """
         pass
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for the command, including arguments.
 
         :return: a usage string for the command
         """
         raise NotImplementedError
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of what the command does.
 
         :return: a one line summary of what the command does
@@ -272,14 +274,16 @@ class InstallCommand(Command):
     aliases = ('install',)
     activate_sack = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return _("PACKAGE...")
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -325,14 +329,16 @@ class UpgradeCommand(Command):
     aliases = ('upgrade', 'update')
     activate_sack = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return _("[PACKAGE...]")
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -378,10 +384,12 @@ class UpgradeToCommand(Command):
     aliases = ('upgrade-to', 'update-to')
     activate_sack = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         return _("[PACKAGE...]")
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         return _("Upgrade a package on your system to the specified version")
 
     def doCheck(self, basecmd, extcmds):
@@ -403,14 +411,16 @@ class DistroSyncCommand(Command):
     aliases = ('distribution-synchronization', 'distro-sync')
     activate_sack = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return _("[PACKAGE...]")
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -484,14 +494,16 @@ class InfoCommand(Command):
     aliases = ('info',)
     activate_sack = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -620,7 +632,8 @@ class ListCommand(InfoCommand):
     aliases = ('list',)
     activate_sack = True
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -640,14 +653,16 @@ class EraseCommand(Command):
     def configure(self):
         self.base.goal_parameters.allow_uninstall = True
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "PACKAGE..."
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -717,14 +732,16 @@ class GroupsCommand(Command):
                        'groupinfo'    : 'info'}
     aliases = ('group', 'groups') + tuple(direct_commands.keys())
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[list|info|summary|install|upgrade|remove|mark] [GROUP]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -863,14 +880,16 @@ class MakeCacheCommand(Command):
 
     aliases = ('makecache',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return ""
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -953,14 +972,16 @@ class CleanCommand(Command):
 
     aliases = ('clean',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[packages|metadata|dbcache|plugins|expire-cache|all]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1011,14 +1032,16 @@ class ProvidesCommand(Command):
     activate_sack = True
     aliases = ('provides', 'whatprovides')
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "SOME_STRING"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1061,14 +1084,16 @@ class CheckUpdateCommand(Command):
     activate_sack = True
     aliases = ('check-update',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[PACKAGE...]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1145,14 +1170,16 @@ class SearchCommand(Command):
     activate_sack = True
     aliases = ('search',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "SOME_STRING"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1205,14 +1232,16 @@ class DepListCommand(Command):
     activate_sack = True
     aliases = ('deplist',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return 'PACKAGE...'
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1256,14 +1285,16 @@ class RepoListCommand(Command):
     activate_sack = True
     aliases = ('repolist',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return '[all|enabled|disabled]'
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1521,14 +1552,16 @@ class HelpCommand(Command):
 
     aliases = ('help',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "COMMAND"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1558,11 +1591,11 @@ class HelpCommand(Command):
         # implement these.
         # XXX Remove this once usage/summary are common enough
         try:
-            usage = command.getUsage()
+            usage = command.get_usage()
         except (AttributeError, NotImplementedError):
             usage = None
         try:
-            summary = command.getSummary()
+            summary = command.get_summary()
         except (AttributeError, NotImplementedError):
             summary = None
 
@@ -1622,7 +1655,8 @@ class ReInstallCommand(Command):
     activate_sack = True
     aliases = ('reinstall',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
@@ -1663,7 +1697,8 @@ class ReInstallCommand(Command):
         except dnf.exceptions.Error as e:
             return 1, [to_unicode(e)]
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1688,7 +1723,8 @@ class DowngradeCommand(Command):
     activate_sack = True
     aliases = ('downgrade',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
@@ -1728,7 +1764,8 @@ class DowngradeCommand(Command):
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1752,14 +1789,16 @@ class VersionCommand(Command):
 
     aliases = ('version',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[all|installed|available]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -1922,14 +1961,16 @@ class HistoryCommand(Command):
     activate_sack = True
     aliases = ('history',)
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command
@@ -2142,14 +2183,16 @@ class CheckRpmdbCommand(Command):
 
     aliases = ('check', 'check-rpmdb')
 
-    def getUsage(self):
+    @staticmethod
+    def get_usage():
         """Return a usage string for this command.
 
         :return: a usage string for this command
         """
         return "[dependencies|duplicates|all]"
 
-    def getSummary(self):
+    @staticmethod
+    def get_summary():
         """Return a one line summary of this command.
 
         :return: a one line summary of this command

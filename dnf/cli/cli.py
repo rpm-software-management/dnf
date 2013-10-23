@@ -968,32 +968,33 @@ class Cli(object):
     def __init__(self, base):
         self.logger = logging.getLogger("dnf")
 
+        self.command = None
         self.base = base
         self.cli_commands = {}
         self.nogpgcheck = False
 
         # :hawkey -- commented out are not yet supported in dnf
-        self._register_command(dnf.cli.commands.InstallCommand(self))
-        self._register_command(dnf.cli.commands.UpgradeCommand(self))
-        self._register_command(dnf.cli.commands.UpgradeToCommand(self))
-        self._register_command(dnf.cli.commands.InfoCommand(self))
-        self._register_command(dnf.cli.commands.ListCommand(self))
-        self._register_command(dnf.cli.commands.EraseCommand(self))
-        self._register_command(dnf.cli.commands.GroupsCommand(self))
-        self._register_command(dnf.cli.commands.MakeCacheCommand(self))
-        self._register_command(dnf.cli.commands.CleanCommand(self))
-        self._register_command(dnf.cli.commands.ProvidesCommand(self))
-        self._register_command(dnf.cli.commands.CheckUpdateCommand(self))
-        self._register_command(dnf.cli.commands.SearchCommand(self))
-        # self._register_command(dnf.cli.commands.DepListCommand(self))
-        self._register_command(dnf.cli.commands.RepoListCommand(self))
-        self._register_command(dnf.cli.commands.HelpCommand(self))
-        self._register_command(dnf.cli.commands.ReInstallCommand(self))
-        self._register_command(dnf.cli.commands.DowngradeCommand(self))
-        # self._register_command(dnf.cli.commands.VersionCommand(self))
-        self._register_command(dnf.cli.commands.HistoryCommand(self))
-        # self._register_command(dnf.cli.commands.CheckRpmdbCommand(self))
-        self._register_command(dnf.cli.commands.DistroSyncCommand(self))
+        self._register_command(dnf.cli.commands.InstallCommand)
+        self._register_command(dnf.cli.commands.UpgradeCommand)
+        self._register_command(dnf.cli.commands.UpgradeToCommand)
+        self._register_command(dnf.cli.commands.InfoCommand)
+        self._register_command(dnf.cli.commands.ListCommand)
+        self._register_command(dnf.cli.commands.EraseCommand)
+        self._register_command(dnf.cli.commands.GroupsCommand)
+        self._register_command(dnf.cli.commands.MakeCacheCommand)
+        self._register_command(dnf.cli.commands.CleanCommand)
+        self._register_command(dnf.cli.commands.ProvidesCommand)
+        self._register_command(dnf.cli.commands.CheckUpdateCommand)
+        self._register_command(dnf.cli.commands.SearchCommand)
+        # self._register_command(dnf.cli.commands.DepListCommand)
+        self._register_command(dnf.cli.commands.RepoListCommand)
+        self._register_command(dnf.cli.commands.HelpCommand)
+        self._register_command(dnf.cli.commands.ReInstallCommand)
+        self._register_command(dnf.cli.commands.DowngradeCommand)
+        # self._register_command(dnf.cli.commands.VersionCommand)
+        self._register_command(dnf.cli.commands.HistoryCommand)
+        # self._register_command(dnf.cli.commands.CheckRpmdbCommand)
+        self._register_command(dnf.cli.commands.DistroSyncCommand)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos()
@@ -1065,27 +1066,25 @@ class Cli(object):
                                     if not (hasattr(x, 'hidden') and x.hidden)])
         commands.sort(key=lambda x: x.aliases[0])
         for command in commands:
-            # XXX Remove this when getSummary is common in plugins
             try:
-                summary = command.getSummary()
+                summary = command.get_summary()
                 usage += "%-14s %s\n" % (command.aliases[0], summary)
             except (AttributeError, NotImplementedError):
                 usage += "%s\n" % command.aliases[0]
 
         return usage
 
-    def _register_command(self, command):
+    def _register_command(self, command_cls):
         """ Register a :class:`dnf.cli.commands.Command` so that it can be
             called by any of the names returned by its
             :func:`dnf.cli.commands.Command.getNames` method.
 
-            :param command: the :class:`dnf.cli.commands.Command` to register
+            :param command_cls: the :class:`dnf.cli.commands.Command` to register
         """
-        for name in command.aliases:
+        for name in command_cls.aliases:
             if name in self.cli_commands:
                 raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)
-            self.cli_commands[name] = command
-
+            self.cli_commands[name] = command_cls
 
     def _parse_commands(self):
         """Read :attr:`self.cmds` and parse them out to make sure that
@@ -1108,13 +1107,14 @@ class Cli(object):
             raise CliError
 
         basecmd = self.base.cmds[0] # our base command
-        command = self.cli_commands.get(basecmd)
-        if command is None:
+        command_cls = self.cli_commands.get(basecmd)
+        if command_cls is None:
             self.logger.critical(_('No such command: %s. Please use %s --help'),
                                   basecmd, sys.argv[0])
             raise CliError
+        self.command = command_cls(self)
 
-        (base, ext) = command.canonical(self.base.cmds)
+        (base, ext) = self.command.canonical(self.base.cmds)
         self.base.basecmd, self.base.extcmds = (base, ext)
         ext_str = ' '.join(ext)
         self.logger.log(dnf.logging.SUBDEBUG, 'Base command: %s', base)
@@ -1158,10 +1158,6 @@ class Cli(object):
 
         return bad_setopt_tm, bad_setopt_ne
 
-    @property
-    def command(self):
-        return self.cli_commands[self.base.basecmd]
-
     def configure(self, args):
         """Parse command line arguments, and set up :attr:`self.base.conf` and
         :attr:`self.cmds`, as well as logger objects in base instance.
@@ -1202,7 +1198,7 @@ class Cli(object):
         releasever = opts.releasever
         try:
             self.base.read_conf_file(opts.conffile, root, releasever, overrides)
- 
+
             # now set all the non-first-start opts from main from our setopts
             if self.main_setopts:
                 for opt in self.main_setopts.items:
