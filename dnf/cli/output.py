@@ -1709,50 +1709,6 @@ Transaction Summary
                 lmark = '>'
             print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark))
 
-    def _history_get_transactions(self, extcmds):
-        if len(extcmds) < 2:
-            self.logger.critical(_('No transaction ID given'))
-            return None
-
-        tids = []
-        last = None
-        for extcmd in extcmds[1:]:
-            try:
-                if extcmd == 'last' or extcmd.startswith('last-'):
-                    if last is None:
-                        cto = False
-                        last = self.history.last(complete_transactions_only=cto)
-                        if last is None:
-                            int("z")
-                    tid = last.tid
-                    if extcmd.startswith('last-'):
-                        off = int(extcmd[len('last-'):])
-                        if off <= 0:
-                            int("z")
-                        tid -= off
-                    tids.append(str(tid))
-                    continue
-
-                if int(extcmd) <= 0:
-                    int("z")
-                tids.append(extcmd)
-            except ValueError:
-                self.logger.critical(_('Bad transaction ID given'))
-                return None
-
-        old = self.history.old(tids)
-        if not old:
-            self.logger.critical(_('Not found given transaction ID'))
-            return None
-        return old
-    def _history_get_transaction(self, extcmds):
-        old = self._history_get_transactions(extcmds)
-        if old is None:
-            return None
-        if len(old) > 1:
-            self.logger.critical(_('Found more than one transaction ID!'))
-        return old[0]
-
     def historyInfoCmd(self, extcmds):
         """Output information about a transaction in history
 
