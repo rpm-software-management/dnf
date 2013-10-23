@@ -500,8 +500,16 @@ class Output(object):
         return self.base.conf
 
     @property
+    def history(self):
+        return self.base.history
+
+    @property
     def sack(self):
         return self.base.sack
+
+    @property
+    def yumdb(self):
+        return self.base.yumdb
 
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):
