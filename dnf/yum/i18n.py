@@ -13,7 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
-from dnf.pycomp import is_py2str_py3bytes, unicode, basestring
+from dnf.pycomp import is_py2str_py3bytes, unicode, basestring, to_ord
 
 def dummy_wrapper(str):
     '''
@@ -169,10 +169,8 @@ def __utf8_ucp_width(ucs):
 
 def __utf8_iter_ints(msg):
     for byte in to_utf8(msg):
-        if isinstance(byte, int):
-            yield byte
-        else:
-            yield ord(byte)
+        yield to_ord(byte)
+
 def __utf8_iter_ucs(msg):
     uiter = __utf8_iter_ints(msg)
     for byte0 in uiter:
