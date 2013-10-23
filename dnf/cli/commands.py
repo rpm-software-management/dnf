@@ -203,7 +203,7 @@ class Command(object):
     def canonical(self, command_list):
         """Turn list of comamnds into a canonical form.
 
-        Returns the base command and a list of exta commands.
+        Returns the base command and a list of extra commands.
 
         """
         base = self.getNames()[0]
@@ -819,21 +819,25 @@ class GroupsCommand(Command):
             return 1, [str(e)]
 
     def _grp_cmd(self, basecmd, extcmds):
-        if basecmd in self.direct_commands:
-            cmd = self.direct_commands[basecmd]
-        elif extcmds:
-            cmd = extcmds[0]
-            extcmds = extcmds[1:]
-        else:
+        return extcmds[0], extcmds[1:]
+
+    _CMD_ALIASES = {'update'     : 'upgrade',
+                    'erase'      : 'remove',
+                    'mark-erase' : 'mark-remove'}
+
+    def canonical(self, command_list):
+        first = command_list[0]
+        rest = command_list[1:]
+
+        cmd = self.direct_commands.get(first)
+        if cmd is None:
             cmd = 'summary'
+            if rest:
+                cmd = rest.pop(0)
+        cmd = self._CMD_ALIASES.get(cmd, cmd)
 
-        remap = {'update' : 'upgrade',
-                 'erase' : 'remove',
-                 'mark-erase' : 'mark-remove',
-                 }
-        cmd = remap.get(cmd, cmd)
-
-        return cmd, extcmds
+        rest.insert(0, cmd)
+        return ('groups', rest)
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.

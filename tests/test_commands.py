@@ -107,3 +107,18 @@ class CommandTest(support.TestCase):
         (base, ext) = cmd.canonical(['update', 'cracker', 'filling'])
         self.assertEqual(base, 'upgrade')
         self.assertEqual(ext, ['cracker', 'filling'])
+
+    def test_group_canonical(self):
+        cmd = dnf.cli.commands.GroupsCommand(None)
+        (basecmd, extcmds) = cmd.canonical(['grouplist', 'crack'])
+        self.assertEqual(basecmd, 'groups')
+        self.assertEqual(extcmds, ['list', 'crack'])
+
+        (_, extcmds) = cmd.canonical(['groups'])
+        self.assertEqual(extcmds, ['summary'])
+
+        (_, extcmds) = cmd.canonical(['group', 'info', 'crack'])
+        self.assertEqual(extcmds, ['info', 'crack'])
+
+        (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
+        self.assertEqual(extcmds, ['upgrade', 'crack'])
