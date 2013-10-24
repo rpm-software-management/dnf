@@ -26,6 +26,24 @@ except ImportError:
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):
+    def test_active_history_state_erase(self):
+        """Test active_history_state with the erase op_type."""
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.ERASE, erased='old')
+
+        history_state = tsi.active_history_state
+
+        self.assertEqual(history_state, 'Erase')
+
+    def test_active_history_state_install(self):
+        """Test active_history_state with the install op_type."""
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL, installed='new', obsoleted=['o1', 'o2'])
+
+        history_state = tsi.active_history_state
+
+        self.assertEqual(history_state, 'Install')
+
     def test_creating(self):
         tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
                                               'old', ['o1', 'o2', 'o3'])
@@ -39,7 +57,17 @@ class TransactionItemTest(tests.support.TestCase):
         self.assertEqual(tsi.erased, 'old')
         self.assertItemsEqual(tsi.obsoleted, ())
 
-    def test_history_iterator(self):
+    def test_history_iterator_reinstall(self):
+        """Test history_iterator with the reinstall op_type."""
+        tsi = dnf.transaction.TransactionItem(dnf.transaction.REINSTALL, 'new',
+                                              'old', ['o1', 'o2', 'o3'])
+        self.assertItemsEqual(tsi.history_iterator(),
+                              [('new', 'Reinstall'), ('old', 'Reinstalled'),
+                               ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
+                               ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
+
+    def test_history_iterator_upgrade(self):
+        """Test history_iterator with the upgrade op_type."""
         tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
                                               'old', ['o1', 'o2', 'o3'])
         self.assertItemsEqual(tsi.history_iterator(),

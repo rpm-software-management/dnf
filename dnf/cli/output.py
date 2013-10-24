@@ -2530,10 +2530,9 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             if te_current == te_total:
                 print(" ")
 
-    def scriptout(self, package, msgs):
+    def scriptout(self, msgs):
         """Print messages originating from a package script.
 
-        :param package: unused
         :param msgs: the messages coming from the script
         """
         if msgs:
