@@ -2000,7 +2000,7 @@ class HistoryCommand(Command):
                 break
             extcmds = [extcmds[0]] + extcmds[2:]
 
-        old = self.base._history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
@@ -2010,7 +2010,7 @@ class HistoryCommand(Command):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, extcmds):
-        old = self.base._history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history undo']
         tm = time.ctime(old.beg_timestamp)
@@ -2026,7 +2026,7 @@ class HistoryCommand(Command):
             extcmds = extcmds[:]
             extcmds.pop(0)
 
-        old = self.base._history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history rollback, no transaction']
         last = self.base.history.last()
