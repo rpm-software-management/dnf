@@ -962,8 +962,7 @@ class YumHistory(object):
                           (tid, msg) VALUES (?, ?)""", (self._tid, error))
         self._commit()
 
-    def log_scriptlet_output(self, data, msg):
-        """ Note that data can be either a real pkg. ... or not. """
+    def log_scriptlet_output(self, msg):
         if msg is None or not hasattr(self, '_tid'):
             return # Not configured to run
 

@@ -69,9 +69,8 @@ class TransactionDisplay(object):
 
         pass
 
-    def scriptout(self, package, msgs):
-        """package is the package.  msgs is the messages that were
-        output (if any)."""
+    def scriptout(self, msgs):
+        """msgs is the messages that were output (if any)."""
         pass
 
     def errorlog(self, msg):
@@ -193,10 +192,10 @@ class RPMTransaction(object):
         except IOError:
             pass
 
-    def _scriptout(self, data):
+    def _scriptout(self):
         msgs = self._scriptOutput()
-        self.display.scriptout(data, msgs)
-        self.base.history.log_scriptlet_output(data, msgs)
+        self.display.scriptout(msgs)
+        self.base.history.log_scriptlet_output(msgs)
 
     def __del__(self):
         self._shutdownOutputLogging()
@@ -439,7 +438,7 @@ class RPMTransaction(object):
 
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         self.display.filelog(pkg, action)
-        self._scriptout(pkg)
+        self._scriptout()
         pid = self.base.history.pkg2pid(pkg)
         self.base.history.trans_data_pid_end(pid, state)
         # :dead
@@ -480,7 +479,7 @@ class RPMTransaction(object):
             return
 
         if state is not None:
-            self._scriptout(pkg)
+            self._scriptout()
 
             #  Note that we are currently inside the chroot, which makes
             # sqlite panic when it tries to open it's journal file.
@@ -495,7 +494,7 @@ class RPMTransaction(object):
             # :dead
             # self.ts_done(txmbr.po, txmbr.output_state)
         else:
-            self._scriptout(name)
+            self._scriptout()
             # :dead
             # self.ts_done(name, action)
 
@@ -530,8 +529,7 @@ class RPMTransaction(object):
         pass
 
     def _scriptStop(self, bytes, total, h):
-        pkg, _, tsi = self._extract_cbkey(h)
-        self._scriptout(tsi or pkg.name)
+        self._scriptout()
 
     def verify_tsi_package(self, pkg, count, total):
         self.display.verify_tsi_package(pkg, count, total)
