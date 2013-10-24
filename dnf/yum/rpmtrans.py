@@ -210,21 +210,22 @@ class RPMTransaction(object):
     @staticmethod
     def _extract_tsi_cbkey(tsi):
         assert(isinstance(tsi, dnf.transaction.TransactionItem))
-        return (tsi.active, tsi)
+        return tsi.active, tsi.active_history_state, tsi
 
     def _extract_str_cbkey(self, name):
         assert(isinstance(name, basestring))
-        obsoleted = obsoleted_tsi = None
+        obsoleted = obsoleted_state = obsoleted_tsi = None
         for tsi in self.base.transaction:
             # only walk the tsis once. prefer finding an erase over an obsoleted
             # package:
             if tsi.erased is not None and tsi.erased.name == name:
-                return (tsi.erased, tsi)
+                return tsi.erased, tsi.erased_history_state, tsi
             for o in tsi.obsoleted:
                 if o.name == name:
                     obsoleted = o
+                    obsoleted_state = tsi.obsoleted_history_state
                     obsoleted_tsi = tsi
-        return (obsoleted, obsoleted_tsi)
+        return obsoleted, obsoleted_state, obsoleted_tsi
 
     def _fn_rm_installroot(self, filename):
         """ Remove the installroot from the filename. """
@@ -415,7 +416,7 @@ class RPMTransaction(object):
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
-        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        pkg, _, _ = self._extract_tsi_cbkey(h)
         rpmloc = pkg.localPkg()
         try:
             self.fd = open(rpmloc)
@@ -429,7 +430,7 @@ class RPMTransaction(object):
             return self.fd.fileno()
 
     def _instCloseFile(self, bytes, total, h):
-        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        pkg, state, tsi = self._extract_tsi_cbkey(h)
         self.fd.close()
         self.fd = None
 
@@ -440,7 +441,6 @@ class RPMTransaction(object):
         self.display.filelog(pkg, action)
         self._scriptout(pkg)
         pid = self.base.history.pkg2pid(pkg)
-        state = tsi.history_state(pkg)
         self.base.history.trans_data_pid_end(pid, state)
         # :dead
         # self.ts_done(txmbr.po, txmbr.output_state)
@@ -451,7 +451,7 @@ class RPMTransaction(object):
             self.display.event(None, action, None, None, None, None)
 
     def _instProgress(self, bytes, total, h):
-        (pkg, tsi) = self._extract_tsi_cbkey(h)
+        pkg, _, tsi = self._extract_tsi_cbkey(h)
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         self.display.event(pkg, action, bytes, total, self.complete_actions,
                            self.total_actions)
@@ -463,12 +463,12 @@ class RPMTransaction(object):
         pass
 
     def _unInstStop(self, bytes, total, h):
-        (pkg, tsi) = self._extract_str_cbkey(h)
+        pkg, state, _ = self._extract_str_cbkey(h)
         self.total_removed += 1
         self.complete_actions += 1
-        if pkg in tsi.obsoleted:
+        if state == 'Obsoleted':
             action = TransactionDisplay.PKG_OBSOLETE
-        elif tsi.op_type == dnf.transaction.UPGRADE:
+        elif state == 'Updated':
             action = TransactionDisplay.PKG_CLEANUP
         else:
             action = TransactionDisplay.PKG_ERASE
@@ -479,7 +479,7 @@ class RPMTransaction(object):
         if self.test:
             return
 
-        if tsi is not None:
+        if state is not None:
             self._scriptout(pkg)
 
             #  Note that we are currently inside the chroot, which makes
@@ -489,7 +489,6 @@ class RPMTransaction(object):
             if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(".")
             pid   = self.base.history.pkg2pid(pkg)
-            state = tsi.history_state(pkg)
             self.base.history.trans_data_pid_end(pid, state)
             if _do_chroot and self.base.conf.installroot != '/':
                 os.chroot(self.base.conf.installroot)
@@ -502,12 +501,12 @@ class RPMTransaction(object):
 
     def _cpioError(self, bytes, total, h):
         # In the case of a remove, we only have a name, not a tsi:
-        pkg, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(h)
         msg = "Error in cpio payload of rpm package %s" % pkg
         self.display.errorlog(msg)
 
     def _unpackError(self, bytes, total, h):
-        pkg, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(h)
         msg = "Error unpacking rpm package %s" % pkg
         self.display.errorlog(msg)
 
@@ -516,7 +515,7 @@ class RPMTransaction(object):
         # "total" carries fatal/non-fatal status
         scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
 
-        pkg, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(h)
         name = pkg.name
 
         if total:
@@ -531,7 +530,7 @@ class RPMTransaction(object):
         pass
 
     def _scriptStop(self, bytes, total, h):
-        (pkg, tsi) = self._extract_cbkey(h)
+        pkg, _, tsi = self._extract_cbkey(h)
         self._scriptout(tsi or pkg.name)
 
     def verify_tsi_package(self, pkg, count, total):

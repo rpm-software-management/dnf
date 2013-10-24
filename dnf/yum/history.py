@@ -49,6 +49,7 @@ _sttxt2stcode = {'Update' : TS_UPDATE,
                  'Install' : TS_INSTALL,
                  'Dep-Install' : TS_INSTALL,
                  'Reinstall' : TS_INSTALL, # Broken
+                 'Reinstalled' : TS_INSTALL,
                  'Downgrade' : TS_INSTALL, # Broken
                  'Downgraded' : TS_INSTALL, # Broken
                  'Obsoleted' : TS_OBSOLETED,
