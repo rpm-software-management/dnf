@@ -49,40 +49,53 @@ class TransactionItem(object):
     def active(self):
         return self.installed if self.installed is not None else self.erased
 
+    @property
+    def active_history_state(self):
+        return (self.installed_history_state if self.installed is not None
+                else self.erased_history_state)
+
+    @property
+    def erased_history_state(self):
+        return self._HISTORY_ERASE_STATES[self.op_type]
+
     _HISTORY_INSTALLED_STATES = {
         DOWNGRADE : 'Downgrade',
         INSTALL   : 'Install',
         REINSTALL : 'Reinstall',
         UPGRADE   : 'Update'
         }
+
     _HISTORY_ERASE_STATES = {
         DOWNGRADE : 'Downgraded',
         ERASE     : 'Erase',
         REINSTALL : 'Reinstalled',
         UPGRADE   : 'Updated'
         }
-    def history_state(self, pkg):
-        if pkg == self.installed:
-            return self._HISTORY_INSTALLED_STATES[self.op_type]
-
-        if pkg == self.erased:
-            return self._HISTORY_ERASE_STATES[self.op_type]
-
-        if pkg in self.obsoleted:
-            return 'Obsoleted'
 
     def history_iterator(self):
         if self.installed is not None:
-            yield(self.installed, self.history_state(self.installed))
+            yield(self.installed, self.installed_history_state)
         if self.erased is not None:
-            yield(self.erased, self.history_state(self.erased))
+            yield(self.erased, self.erased_history_state)
         if self.obsoleted:
-            yield(self.installed, 'Obsoleting')
+            yield(self.installed, self.obsoleting_history_state)
         for obs in self.obsoleted:
-            yield(obs, 'Obsoleted')
+            yield(obs, self.obsoleted_history_state)
+
+    @property
+    def installed_history_state(self):
+        return self._HISTORY_INSTALLED_STATES[self.op_type]
 
     def installs(self):
         return [] if self.installed is None else [self.installed]
+
+    @property
+    def obsoleted_history_state(self):
+        return 'Obsoleted'
+
+    @property
+    def obsoleting_history_state(self):
+        return 'Obsoleting'
 
     def propagated_reason(self, yumdb):
         if self.reason == 'user':
