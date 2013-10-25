@@ -204,6 +204,8 @@ class Repo(dnf.yum.config.RepoConf):
             if mirror_setup:
                 h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
                 h.setopt(librepo.LRO_FASTESTMIRROR, True)
+                h.setopt(librepo.LRO_FASTESTMIRRORCACHE,
+                         os.path.join(self.basecachedir, 'fastestmirror.cache'))
             else:
                 # use already resolved mirror list
                 h.setopt(librepo.LRO_URLS, self.metadata.mirrors)
