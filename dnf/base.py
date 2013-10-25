@@ -69,12 +69,6 @@ import librepo
 _ = i18n._
 P_ = i18n.P_
 
-_RPM_VERIFY=_("To diagnose the problem, try running: '%s'.") % \
-    'rpm -Va --nofiles --nodigest'
-_RPM_REBUILDDB=_("To fix inconsistent RPMDB, try running: '%s'.") % \
-    'rpm --rebuilddb'
-_REPORT_TMPLT=_("If the above doesn't help please report this error at '%s'.")
-
 class Base(object):
     """This is a primary structure and base class. It houses the
     objects and methods needed to perform most things in yum. It is
@@ -692,8 +686,8 @@ class Base(object):
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be upgraded')]
-            return 1, [_RPM_VERIFY, _RPM_REBUILDDB,
-                       _REPORT_TMPLT % self.conf.bugtracker_url]
+            raise dnf.exceptions.TransactionCheckError(
+                'transaction not consistent with package database')
 
         self.logger.info(_('Transaction check succeeded.'))
         self.logger.debug('Transaction check time: %0.3f' %
