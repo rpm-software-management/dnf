@@ -33,6 +33,7 @@ import dnf.sack
 import dnf.yum.constants
 import hawkey
 import hawkey.test
+import itertools
 import os
 import unittest
 from functools import reduce
@@ -205,6 +206,36 @@ class MockYumDB(mock.Mock):
     def assertLength(self, length):
         assert(len(self.db) == length)
 
+class YumHistoryStub(dnf.yum.history.YumHistory):
+    """Stub of dnf.yum.history.YumHistory for easier testing."""
+
+    def __init__(self):
+        """Initialize a stub instance."""
+        self.old_data_pkgs = {}
+
+    def _old_data_pkgs(self, tid, sort=True):
+        """Get packages of a transaction."""
+        if sort:
+            raise NotImplementedError('sorting not implemented yet')
+        return self.old_data_pkgs.get(tid, ())[:]
+
+    def close(self):
+        """Close the history."""
+        pass
+
+    def old(self, tids=[], limit=None, *_args, **_kwargs):
+        """Get transactions with given IDs."""
+        create = lambda tid: dnf.yum.history.YumHistoryTransaction(self,
+            (int(tid), 0, '0:685cc4ac4ce31b9190df1604a96a3c62a3100c35',
+             1, '1:685cc4ac4ce31b9190df1604a96a3c62a3100c36', 0, 0))
+
+        sorted_all_tids = sorted(self.old_data_pkgs.keys(), reverse=True)
+
+        trxs = (create(tid) for tid in tids or sorted_all_tids
+                if tid in self.old_data_pkgs)
+        limited = trxs if limit is None else itertools.islice(trxs, limit)
+        return tuple(limited)
+
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
@@ -252,23 +283,43 @@ class FakePersistor(object):
 
 # object matchers for asserts
 
-class PackageMatcher(object):
+class ObjectMatcher(object):
+    """Class allowing partial matching of objects."""
 
-    def __init__(self, **kwargs):
-        self._kwargs = kwargs
+    def __init__(self, type_=None, attrs=None):
+        """Initialize a matcher instance."""
+        self._type = type_
+        self._attrs = attrs
 
     def __eq__(self, other):
-        if not isinstance(other, hawkey.Package):
-            return False
-        for name, value in self._kwargs.items():
-            if getattr(other, name) != value:
+        """Test whether this object is equal to the *other* one."""
+        if self._type is not None:
+            if type(other) is not self._type:
                 return False
+
+        if self._attrs:
+            for attr, value in self._attrs.items():
+                if value != getattr(other, attr):
+                    return False
         return True
 
+    def __ne__(self, other):
+        """Test whether this object is not equal to the *other* one."""
+        return not self == other
+
     def __repr__(self):
-        kwargs_str = ', '.join('%s=%s' % (name, repr(value))
-                               for name, value in self._kwargs.items())
-        return '%s(%s)' % (type(self).__name__, kwargs_str)
+        """Compute the "official" string representation of this object."""
+        args_strs = []
+
+        if self._type is not None:
+            args_strs.append('type_=%s' % repr(self._type))
+
+        if self._attrs:
+            attrs_str = ', '.join('%s: %s' % (str(attr), repr(value))
+                                  for attr, value in self._attrs.items())
+            args_strs.append('attrs={%s}' % attrs_str)
+
+        return '%s(%s)' % (type(self).__name__, ", ".join(args_strs))
 
 # test cases
 

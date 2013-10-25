@@ -161,7 +161,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_reinstallPkgs_notavailable(self):
-        pkg = support.PackageMatcher(name='hole')
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})
 
         result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
 
@@ -171,6 +171,31 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
         self.assertEqual(result, 1)
         self.assertEqual(resultmsgs, ['Nothing to do'])
+
+    def test_transaction_id_or_offset_bad(self):
+        """Test transaction_id_or_offset with a bad input."""
+        self.assertRaises(ValueError,
+                          dnf.cli.cli.BaseCli.transaction_id_or_offset, 'bad')
+
+    def test_transaction_id_or_offset_last(self):
+        """Test transaction_id_or_offset with the zero offset."""
+        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last')
+        self.assertEqual(id_or_offset, -1)
+
+    def test_transaction_id_or_offset_negativeid(self):
+        """Test transaction_id_or_offset with a negative ID."""
+        self.assertRaises(ValueError,
+                          dnf.cli.cli.BaseCli.transaction_id_or_offset, '-1')
+
+    def test_transaction_id_or_offset_offset(self):
+        """Test transaction_id_or_offset with an offset."""
+        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last-1')
+        self.assertEqual(id_or_offset, -2)
+
+    def test_transaction_id_or_offset_positiveid(self):
+        """Test transaction_id_or_offset with a positive ID."""
+        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('1')
+        self.assertEqual(id_or_offset, 1)
 
 class CliTest(PycompTestCase):
     def setUp(self):

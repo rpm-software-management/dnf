@@ -94,14 +94,29 @@ class MockYumBaseTest(PycompTestCase):
         self.assertEqual(len(counter), 1)
 
 class BuildTransactionTest(support.TestCase):
+    def setUp(self):
+        """Prepare the test fixture."""
+        self._base = support.MockBase("updates")
+
     def test_build_transaction(self):
-        base = support.MockBase("updates")
-        base.update("pepper")
-        self.assertTrue(base.build_transaction())
-        base.ds_callback.assert_has_calls(mock.call.start())
-        base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
-        base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'u'))
-        self.assertLength(base.transaction, 1)
+        self._base.update("pepper")
+        self._base.build_transaction()
+
+        self._base.ds_callback.assert_has_calls(mock.call.start())
+        self._base.ds_callback.assert_has_calls(
+            mock.call.pkg_added(mock.ANY, 'ud'))
+        self._base.ds_callback.assert_has_calls(
+            mock.call.pkg_added(mock.ANY, 'u'))
+        self.assertLength(self._base.transaction, 1)
+
+    def test_build_transaction_alreadybuilt(self):
+        """Test build_transaction with an already built transaction."""
+        self._base._transaction = dnf.transaction.Transaction()
+        self._base.update('pepper')
+
+        self.assertRaises(ValueError, self._base.build_transaction)
+        self.assertEqual(self._base.ds_callback.mock_calls, [])
+        self.assertLength(self._base.transaction, 0)
 
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"

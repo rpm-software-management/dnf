@@ -40,6 +40,12 @@ import dnf.yum.config
 import dnf.queries
 import hawkey
 
+_RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
+    'rpm -Va --nofiles --nodigest'
+_RPM_REBUILDDB = _("To fix inconsistent RPMDB, try running: '%s'.") % \
+    'rpm --rebuilddb'
+_REPORT_TMPLT = _("If the above doesn't help please report this error at '%s'.")
+
 def _err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
         cli.print_usage()
@@ -215,6 +221,13 @@ class Command(object):
     def configure(self):
         """ Do any command-specific Base configuration. """
         pass
+
+    def get_error_output(self, error):
+        """Get suggestions for resolving the given error."""
+        if isinstance(error, dnf.exceptions.TransactionCheckError):
+            return (_RPM_VERIFY, _RPM_REBUILDDB,
+                    _REPORT_TMPLT % self.base.conf.bugtracker_url)
+        raise NotImplementedError('error not supported yet: %s' % error)
 
     @staticmethod
     def get_usage():
@@ -1961,6 +1974,18 @@ class HistoryCommand(Command):
     activate_sack = True
     aliases = ('history',)
 
+    def get_error_output(self, error):
+        """Get suggestions for resolving the given error."""
+        basecmd, extcmds = self.base.basecmd, self.base.extcmds
+        if isinstance(error, dnf.exceptions.TransactionCheckError):
+            assert basecmd == 'history'
+            if extcmds and extcmds[0] == 'undo':
+                assert len(extcmds) == 2
+                return (_('Cannot undo transaction %s, doing so would result '
+                          'in an inconsistent package database.') %
+                        extcmds[1],)
+        return Command.get_error_output(self, error)
+
     @staticmethod
     def get_usage():
         """Return a usage string for this command.
@@ -2016,7 +2041,12 @@ class HistoryCommand(Command):
         tm = time.ctime(old.beg_timestamp)
         print("Undoing transaction %u, from %s" % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
-        if self.base.history_undo(old):
+        try:
+            self.base.history_undo(old.tid)
+        except (dnf.exceptions.PackagesNotInstalledError,
+                dnf.exceptions.PackagesNotAvailableError) as err:
+            return 1, [str(err)]
+        else:
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
     def _hcmd_rollback(self, extcmds):
@@ -2102,7 +2132,7 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary')
+        cmds = ('list', 'info', 'summary', 'undo')
         if extcmds and extcmds[0] not in cmds:
             self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))

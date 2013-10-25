@@ -1094,14 +1094,15 @@ class YumHistory(object):
                                     history=self)
             ret.append(obj)
         return ret
-    def _old_data_pkgs(self, tid):
+    def _old_data_pkgs(self, tid, sort=True):
         cur = self._get_cursor()
-        executeSQL(cur,
-                   """SELECT name, arch, epoch, version, release,
-                             checksum, done, state
-                      FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
-                      WHERE tid = ?
-                      ORDER BY name ASC, epoch ASC, state DESC""", (tid,))
+        sql = """SELECT name, arch, epoch, version, release,
+                        checksum, done, state
+                 FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
+                 WHERE tid = ?"""
+        if sort:
+            sql = " ".join((sql, "ORDER BY name ASC, epoch ASC, state DESC"))
+        executeSQL(cur, sql, (tid,))
         ret = []
         for row in cur:
             obj = YumHistoryPackageState(row[0],row[1],row[2],row[3],row[4],

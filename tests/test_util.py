@@ -92,6 +92,38 @@ class Util(unittest.TestCase):
         self.assertEqual(dnf.util.group_by_filter(lambda x: x, xrange(5)),
                          ([1, 2, 3, 4], [0]))
 
+    def test_insert(self):
+        """Test insert with sometimes fulfilled condition."""
+        item = object()
+        iterable = range(4)
+        condition = lambda item: item % 2 == 0
+
+        iterator = dnf.util.insert(item, iterable, condition)
+
+        self.assertEqual(next(iterator), item)
+        self.assertEqual(next(iterator), 0)
+        self.assertEqual(next(iterator), 1)
+        self.assertEqual(next(iterator), item)
+        self.assertEqual(next(iterator), 2)
+        self.assertEqual(next(iterator), 3)
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_is_exhausted_true(self):
+        """Test is_exhausted with an iterator which is exhausted."""
+        iterator = iter(())
+
+        result = dnf.util.is_exhausted(iterator)
+
+        self.assertTrue(result)
+
+    def test_is_exhausted_false(self):
+        """Test is_exhausted with an iterator which is not exhausted."""
+        iterator = iter((1,))
+
+        result = dnf.util.is_exhausted(iterator)
+
+        self.assertFalse(result)
+
     def test_is_glob_pattern(self):
         assert(dnf.util.is_glob_pattern("all*.ext"))
         assert(dnf.util.is_glob_pattern("all?.ext"))
@@ -122,6 +154,50 @@ class Util(unittest.TestCase):
         out = dnf.util.mapall(lambda n: 2 * n, l)
         self.assertIsInstance(out, list)
         self.assertEqual(out, [2, 4, 6])
+
+    def test_split(self):
+        """Test split with sometimes fulfilled condition."""
+        iterable = range(7)
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split(iterable, condition)
+
+        self.assertEqual(next(iterator), ())
+        self.assertEqual(next(iterator), (0, 1, 2))
+        self.assertEqual(next(iterator), (3, 4, 5))
+        self.assertEqual(next(iterator), (6,))
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_split_nocut(self):
+        """Test split with never fulfilled condition."""
+        iterable = range(1, 3)
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split(iterable, condition)
+
+        self.assertEqual(next(iterator), (1, 2))
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_split_onecut(self):
+        """Test split with once fulfilled condition."""
+        iterable = range(1)
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split(iterable, condition)
+
+        self.assertEqual(next(iterator), ())
+        self.assertEqual(next(iterator), (0,))
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_split_empty(self):
+        """Test split with empty iterable."""
+        iterable = []
+        condition = lambda item: item % 3 == 0
+
+        iterator = dnf.util.split(iterable, condition)
+
+        self.assertEqual(next(iterator), ())
+        self.assertRaises(StopIteration, next, iterator)
 
     def test_strip_prefix(self):
         self.assertIsNone(dnf.util.strip_prefix("razorblade", "blade"))

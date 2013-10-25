@@ -130,6 +130,8 @@ For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
 For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 
+For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
+
 --------------------
 Check Update Command
 --------------------
@@ -242,7 +244,8 @@ History Command
 ---------------
 
 The history command allows the user to view what has happened in past
-transactions (assuming the ``history_record`` configuration option is set).
+transactions and act according to this information (assuming the
+``history_record`` configuration option is set).
 
 ``dnf history [list]``
     The default history action is listing all known transaction information in a
@@ -251,6 +254,11 @@ transactions (assuming the ``history_record`` configuration option is set).
 ``dnf history info [<transaction_id>]``
     Describe the given transaction. When no ID is given describes what happened
     during the latest transaction.
+
+``dnf history undo <transaction-spec>``
+    Performs the opposite operation to all operations performed in the
+    specified transaction. If it is not possible to undo any operation due to
+    the current state of RPMDB, DNF does not undo any operation.
 
 ------------
 Info Command
@@ -457,6 +465,19 @@ Specifying Groups
 on. It is a case insensitive string (supporting globbing characters) that is
 matched against a group's ID, canonical name and name translated into the
 current LC_MESSAGES locale (if possible).
+
+.. _specifying_transactions-label:
+
+=======================
+Specifying Transactions
+=======================
+
+``<transaction-spec>`` has two possible interpretations. If it is an integer,
+it specifies a transaction ID. Otherwise, the parameter must be in form
+``last[-offset]``, which specifies the transaction relative to the most recent
+transaction. It means that ``last`` represents the ID of the most recent
+transaction and ``last-offset`` represents the ID of the most recent
+transaction minus an integer offset.
 
 ========
 See Also
