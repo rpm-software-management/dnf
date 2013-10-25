@@ -84,3 +84,6 @@ class PackagesNotAvailableError(Error):
     def __init__(self, value=None, packages=[]):
         Error.__init__(self, value)
         self.packages = packages
+
+class TransactionCheckError(Error):
+    pass
