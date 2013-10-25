@@ -40,11 +40,6 @@ class QueriesTest(support.TestCase):
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
 
-        # now the query:
-        res = dnf.queries.by_file(sack, "/raised/smile")
-        self.assertEqual(len(res), 1)
-        self.assertEqual(pkg, res[0])
-
     def test_by_repo(self):
         sack = support.mock_sack("updates", "main")
         pkgs = sack.query().filter(reponame__eq="updates")

@@ -220,24 +220,6 @@ def _construct_result(sack, patterns, ignore_case,
         return q
     return q.run()
 
-def by_file(sack, patterns, ignore_case=False, get_query=False):
-    if isinstance(patterns, basestring):
-        patterns = [patterns]
-
-    glob = len(list(filter(is_glob_pattern, patterns))) > 0
-    flags = []
-    q = sack.query()
-    if ignore_case:
-        flags = [hawkey.ICASE]
-    if glob:
-        q.filterm(*flags, file__glob=patterns)
-    else:
-        q.filterm(*flags, file=patterns)
-
-    if get_query:
-        return q
-    return q.run()
-
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
