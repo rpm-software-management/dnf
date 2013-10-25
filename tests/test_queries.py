@@ -98,7 +98,7 @@ class SubjectTest(support.TestCase):
 class DictsTest(PycompTestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
-        pkgs = dnf.queries.by_name(sack, "lotus")
+        pkgs = sack.query().filter(name="lotus")
         dct = dnf.queries.per_nevra_dict(pkgs)
         self.assertItemsEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])

@@ -218,9 +218,6 @@ def installed_exact(sack, name, evr, arch, get_query=False):
     q.filterm(arch__eq=arch, evr__eq=evr);
     return q if get_query else q.run()
 
-def by_name(sack, patterns, ignore_case=False, get_query=False):
-    return _construct_result(sack, patterns, ignore_case, get_query=get_query)
-
 def by_file(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
