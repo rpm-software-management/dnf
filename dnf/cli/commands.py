@@ -40,6 +40,12 @@ import dnf.yum.config
 import dnf.queries
 import hawkey
 
+_RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
+    'rpm -Va --nofiles --nodigest'
+_RPM_REBUILDDB = _("To fix inconsistent RPMDB, try running: '%s'.") % \
+    'rpm --rebuilddb'
+_REPORT_TMPLT = _("If the above doesn't help please report this error at '%s'.")
+
 def _err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
         cli.print_usage()
@@ -215,6 +221,13 @@ class Command(object):
     def configure(self):
         """ Do any command-specific Base configuration. """
         pass
+
+    def get_error_output(self, error):
+        """Get suggestions for resolving the given error."""
+        if isinstance(error, dnf.exceptions.TransactionCheckError):
+            return (_RPM_VERIFY, _RPM_REBUILDDB,
+                    _REPORT_TMPLT % self.base.conf.bugtracker_url)
+        raise NotImplementedError('error not supported yet: %s' % error)
 
     @staticmethod
     def get_usage():

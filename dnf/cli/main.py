@@ -190,6 +190,8 @@ def _main(base, args):
         return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
+    except dnf.exceptions.TransactionCheckError as err:
+        return_code, resultmsgs = 1, cli.command.get_error_output(err)
     except dnf.exceptions.Error as e:
         return exFatal(e)
     except IOError as e:
