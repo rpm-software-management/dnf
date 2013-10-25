@@ -16,7 +16,6 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import updates_by_name
 from tests import mock
 from tests import support
 
@@ -30,8 +29,9 @@ class Update(support.ResultTestCase):
         """ Simple update. """
         yumbase = support.MockBase("updates")
         ret = yumbase.update("pepper")
-        new_versions = updates_by_name(yumbase.sack, "pepper")
-        expected = yumbase.sack.query().installed().filter(name__neq="pepper").run() + new_versions
+        new_versions = yumbase.sack.query().upgrades().filter(name="pepper")
+        other_installed = yumbase.sack.query().installed().filter(name__neq="pepper")
+        expected = other_installed.run() + new_versions.run()
         self.assertResult(yumbase, expected)
 
     def test_update_not_found(self):
