@@ -47,9 +47,9 @@ class QueriesTest(support.TestCase):
 
     def test_by_repo(self):
         sack = support.mock_sack("updates", "main")
-        pkgs = dnf.queries.by_repo(sack, "updates")
+        pkgs = sack.query().filter(reponame__eq="updates")
         self.assertEqual(len(pkgs), support.UPDATES_NSOLVABLES)
-        pkgs = dnf.queries.by_repo(sack, "main")
+        pkgs = sack.query().filter(reponame__eq="main")
         self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
     def test_installed_exact(self):
