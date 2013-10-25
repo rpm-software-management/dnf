@@ -247,11 +247,6 @@ def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
         latest[key] = pkg
     return latest
 
-def downgrades_by_name(sack, patterns, ignore_case=False, latest_only=False):
-    return _construct_result(sack, patterns, ignore_case,
-                             latest_only=latest_only,
-                             downgrades_only=True)
-
 def updates_by_name(sack, patterns, ignore_case=False, latest_only=False):
     return _construct_result(sack, patterns, ignore_case,
                              latest_only=latest_only,
