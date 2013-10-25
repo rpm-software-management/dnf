@@ -905,8 +905,8 @@ class Base(object):
             if rpo is None:
                 continue
 
-            installed = queries.installed_exact(rpmdb_sack, rpo.name,
-                                                rpo.evr, rpo.arch)
+            installed = rpmdb_sack.query().installed().nevra(
+                rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
                 self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % rpo))
@@ -963,8 +963,8 @@ class Base(object):
         just_installed = self.sack.query().\
             filter(pkg=self.transaction.install_set)
         for rpo in self.transaction.remove_set:
-            installed = queries.installed_exact(rpmdb_sack, rpo.name,
-                                                rpo.evr, rpo.arch)
+            installed = rpmdb_sack.query().installed().nevra(
+                rpo.name, rpo.evr, rpo.arch)
             if len(installed) > 0:
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
                                                  evr=rpo.evr)):

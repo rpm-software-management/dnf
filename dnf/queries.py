@@ -73,8 +73,16 @@ class Query(hawkey.Query):
     def pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
-    def nevra(self, pattern):
-        nevra = hawkey.split_nevra(pattern)
+    def nevra(self, *args):
+        args_len = len(args)
+        if args_len == 3:
+            return self.filter(name=args[0], evr=args[1], arch=args[2])
+        if args_len == 1:
+            nevra = hawkey.split_nevra(args[0])
+        elif args_len == 5:
+            nevra = args
+        else:
+            raise TypeError("nevra() takes 1, 3 or 5 str params")
         return self.filter(
             name=nevra.name, epoch=nevra.epoch, version=nevra.version,
             release=nevra.release, arch=nevra.arch)
@@ -211,12 +219,6 @@ def _construct_result(sack, patterns, ignore_case,
     if get_query:
         return q
     return q.run()
-
-def installed_exact(sack, name, evr, arch, get_query=False):
-    q = _construct_result(sack, name, False, get_query=True,
-                          include_repo=hawkey.SYSTEM_REPO_NAME)
-    q.filterm(arch__eq=arch, evr__eq=evr);
-    return q if get_query else q.run()
 
 def by_file(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):

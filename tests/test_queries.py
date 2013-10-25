@@ -54,11 +54,11 @@ class QueriesTest(support.TestCase):
 
     def test_installed_exact(self):
         sack = support.mock_sack()
-        pkgs = dnf.queries.installed_exact(sack, "tour", "4.9-0", "noarch")
+        pkgs = sack.query().installed().nevra("tour-4.9-0.noarch")
         self.assertEqual(len(pkgs), 0)
-        pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "x86_64")
+        pkgs = sack.query().installed().nevra("tour-5-0.x86_64")
         self.assertEqual(len(pkgs), 0)
-        pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "noarch")
+        pkgs = sack.query().installed().nevra("tour-5-0.noarch")
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
