@@ -43,7 +43,7 @@ class BaseTest(support.TestCase):
         yumbase = support.MockBase()
         # setup:
         yumbase.conf.clean_requirements_on_remove = True
-        pkg = dnf.queries.installed_by_name(yumbase.sack, "pepper")[0]
+        pkg = yumbase.sack.query().installed().filter(name="pepper")[0]
         goal = mock.Mock(spec=["userinstalled"])
         yumbase.yumdb.get_package(pkg).reason = "user"
         # test:
@@ -122,11 +122,11 @@ class VerifyTransactionTest(PycompTestCase):
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
-        new_pkg = dnf.queries.available_by_name(self.yumbase.sack, "pepper")[0]
+        new_pkg = self.yumbase.sack.query().available().filter(name="pepper")[0]
         new_pkg.chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
-        removed_pkg = dnf.queries.available_by_name(
-            self.yumbase.sack, "mrkite")[0]
+        removed_pkg = self.yumbase.sack.query().available().filter(
+            name="mrkite")[0]
 
         self.yumbase.transaction.add_install(new_pkg, [])
         self.yumbase.transaction.add_erase(removed_pkg)

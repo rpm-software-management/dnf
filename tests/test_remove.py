@@ -31,7 +31,7 @@ class Remove(support.ResultTestCase):
         """ Removing a not-installed package is a void operation. """
         self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
                           self.yumbase.remove, "mrkite")
-        installed_pkgs = dnf.queries.installed_by_name(self.yumbase.sack, None)
+        installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)
 
     def test_remove(self):
@@ -49,10 +49,10 @@ class Remove(support.ResultTestCase):
 
     def test_remove_nevra(self):
         ret = self.yumbase.remove("pepper-20-0.x86_64")
-        pepper = dnf.queries.installed_by_name(self.yumbase.sack, "pepper")
+        pepper = self.yumbase.sack.query().installed().filter(name="pepper")
         (installed, removed) = self.installed_removed(self.yumbase)
         self.assertLength(installed, 0)
-        self.assertItemsEqual(removed, pepper)
+        self.assertItemsEqual(removed, pepper.run())
 
     def test_remove_glob(self):
         """ Test that weird input combinations with globs work. """

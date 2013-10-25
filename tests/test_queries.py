@@ -25,11 +25,11 @@ from tests.support import PycompTestCase
 class QueriesTest(support.TestCase):
     def test_duplicities(self):
         sack = support.mock_sack()
-        pepper = dnf.queries.installed_by_name(sack, "pepper")
+        pepper = sack.query().installed().filter(name="pepper")
         # make sure 'pepper' package exists:
         self.assertEqual(len(pepper), 1)
         # we shouldn't see it more than once with a tricky query below:
-        res = dnf.queries.installed_by_name(sack, ["pep*", "*per"])
+        res = sack.query().installed().filter(name=["pep*", "*per"])
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))
 

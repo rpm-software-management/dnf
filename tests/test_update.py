@@ -16,8 +16,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.queries import (available_by_name, available_by_nevra, installed,
-                         updates_by_name)
+from dnf.queries import updates_by_name
 from tests import mock
 from tests import support
 
@@ -32,7 +31,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockBase("updates")
         ret = yumbase.update("pepper")
         new_versions = updates_by_name(yumbase.sack, "pepper")
-        expected = installed(yumbase.sack, get_query=True).filter(name__neq="pepper") + new_versions
+        expected = yumbase.sack.query().installed().filter(name__neq="pepper").run() + new_versions
         self.assertResult(yumbase, expected)
 
     def test_update_not_found(self):
@@ -49,7 +48,7 @@ class Update(support.ResultTestCase):
         yumbase = support.MockBase("main")
         # no "mrkite" installed:
         yumbase.update("mrkite")
-        self.assertResult(yumbase, installed(yumbase.sack))
+        self.assertResult(yumbase, yumbase.sack.query().installed().run())
 
     def test_update_all(self):
         """ Update all you can. """
@@ -57,8 +56,8 @@ class Update(support.ResultTestCase):
         sack = yumbase.sack
         yumbase.update_all()
         expected = support.installed_but(sack, "pepper", "hole", "tour") + \
-            list(available_by_nevra(sack, "pepper-20-1.x86_64")) + \
-            list(available_by_nevra(sack, "hole-2-1.x86_64"))
+            list(sack.query().available().nevra("pepper-20-1.x86_64")) + \
+            list(sack.query().available().nevra("hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
 
     def test_update_local(self):
@@ -66,7 +65,7 @@ class Update(support.ResultTestCase):
         sack = yumbase.sack
         cnt = yumbase.update_local(support.TOUR_51_PKG_PATH)
         self.assertEqual(cnt, 1)
-        new_pkg = available_by_name(sack, "tour")[0]
+        new_pkg = sack.query().available().filter(name="tour")[0]
         new_set = support.installed_but(yumbase.sack, "tour") + [new_pkg]
         self.assertResult(yumbase, new_set)
 
@@ -89,7 +88,7 @@ class SkipBroken(support.ResultTestCase):
         """
         self.yumbase.update_all()
         new_set = support.installed_but(self.sack, "pepper").run()
-        new_set.extend(available_by_nevra(self.sack, "pepper-20-1.x86_64"))
+        new_set.extend(self.sack.query().available().nevra("pepper-20-1.x86_64"))
         self.assertResult(self.yumbase, new_set)
 
 class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):

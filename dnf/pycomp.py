@@ -27,6 +27,7 @@ if version_info.major >= 3:
     long = int
     xrange = range
     raw_input = input
+    to_ord = lambda i: i
     def is_py2str_py3bytes(o):
         return isinstance(o, bytes)
 
@@ -46,6 +47,7 @@ if version_info.major >= 3:
 else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     PY3 = False
+    to_ord = lambda i: ord(i)
     def is_py2str_py3bytes(o):
         return isinstance(o, str)
 

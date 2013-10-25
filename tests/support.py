@@ -301,7 +301,7 @@ class ResultTestCase(TestCase):
         except dnf.exceptions.DepsolveError:
             self.fail()
 
-        installed = set(dnf.queries.installed_by_name(base.sack, None))
+        installed = set(base.sack.query().installed())
         for r in base._transaction.remove_set:
             installed.remove(r)
         installed.update(base._transaction.install_set)

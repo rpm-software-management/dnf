@@ -20,7 +20,7 @@ def _term_width(fd=1):
     try:
         buf = 'abcdefgh'
         buf = fcntl.ioctl(fd, termios.TIOCGWINSZ, buf)
-        ret = struct.unpack('hhhh', buf)[1]
+        ret = struct.unpack(b'hhhh', buf)[1]
         if ret == 0:
             return 80
         if ret < 20:

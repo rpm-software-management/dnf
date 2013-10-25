@@ -72,7 +72,7 @@ def print_versions(pkgs, base, output):
 
     rpmdb_sack = dnf.sack.rpmdb_sack(base)
     done = False
-    for pkg in dnf.queries.installed_by_name(rpmdb_sack, pkgs):
+    for pkg in rpmdb_sack.query().installed().filter(name=pkgs):
         if done:
             print("")
         done = True

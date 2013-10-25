@@ -25,5 +25,6 @@ class UpgradeTo(support.ResultTestCase):
         sack = yumbase.sack
         yumbase.upgrade_to("pepper-20-1.x86_64")
         new_set = support.installed_but(sack, "pepper").run()
-        new_set.extend(dnf.queries.available_by_nevra(sack, "pepper-20-1.x86_64"))
+        q = sack.query().available().nevra("pepper-20-1.x86_64")
+        new_set.extend(q)
         self.assertResult(yumbase, new_set)

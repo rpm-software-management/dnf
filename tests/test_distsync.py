@@ -17,7 +17,6 @@
 
 from __future__ import absolute_import
 from tests import support
-from dnf.queries import available_by_name, installed_by_nevra
 import rpm
 
 class DistroSync(support.ResultTestCase):
@@ -29,6 +28,8 @@ class DistroSync(support.ResultTestCase):
         self.yumbase.distro_sync()
         self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.yumbase.rpm_probfilter)
         packages = support.installed_but(self.sack, "pepper", "librita").run()
-        packages.extend(available_by_name(self.sack, ["pepper", "librita"]))
-        packages.extend(installed_by_nevra(self.sack, "librita-1-1.i686"))
+        q = self.sack.query().available().filter(name=["pepper", "librita"])
+        packages.extend(q)
+        q = self.sack.query().installed().nevra("librita-1-1.i686")
+        packages.extend(q)
         self.assertResult(self.yumbase, packages)

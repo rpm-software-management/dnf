@@ -606,14 +606,14 @@ class Base(object):
         """ See if sltr matches a patches that is (in older version or different
             architecture perhaps) already installed.
         """
-        inst = queries.installed(self.sack, get_query=True)
+        inst = self.sack.query().installed()
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
         self.logger.info(msg)
-        for pkg in queries.installed(self.sack):
+        for pkg in self.sack.query().installed().run():
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
             try:
@@ -760,7 +760,8 @@ class Base(object):
 
         if self._record_history():
             using_pkgs_pats = list(self.run_with_package_names)
-            using_pkgs = queries.installed_by_name(self.sack, using_pkgs_pats)
+            installed_query = self.sack.query().installed()
+            using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
             rpmdbv  = self.sack.rpmdb_version(self.yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
@@ -1848,7 +1849,7 @@ class Base(object):
         if not po:
             return 0
 
-        installed = sorted(queries.installed_by_name(self.sack, po.name))
+        installed = sorted(self.sack.query().installed().filter(name=po.name))
         if len(installed) > 0 and installed[0] > po:
             self._goal.install(po)
             self._goal.erase(installed[0])
@@ -2106,9 +2107,8 @@ class Base(object):
 
         # Go get the GPG key from the given URL
         try:
-            url = i18n.to_utf8(keyurl)
             # If we have a repo, use the proxy etc. configuration for it.
-            rawkey = dnf.util.urlopen(url, repo).read()
+            rawkey = dnf.util.urlopen(keyurl, repo).read()
 
         except IOError as e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
@@ -2121,8 +2121,7 @@ class Base(object):
         if getSig and repo and repo.gpgcakey:
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
-                url = i18n.to_utf8(keyurl + '.asc')
-                sigfile = dnf.util.urlopen(url, repo)
+                sigfile = dnf.util.urlopen(url + '.asc', repo)
 
             except IOError as e:
                 sigfile = None
