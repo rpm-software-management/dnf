@@ -1974,6 +1974,18 @@ class HistoryCommand(Command):
     activate_sack = True
     aliases = ('history',)
 
+    def get_error_output(self, error):
+        """Get suggestions for resolving the given error."""
+        basecmd, extcmds = self.base.basecmd, self.base.extcmds
+        if isinstance(error, dnf.exceptions.TransactionCheckError):
+            assert basecmd == 'history'
+            if extcmds and extcmds[0] == 'undo':
+                assert len(extcmds) == 2
+                return (_('Cannot undo transaction %s, doing so would result '
+                          'in an inconsistent package database.') %
+                        extcmds[1],)
+        return Command.get_error_output(self, error)
+
     @staticmethod
     def get_usage():
         """Return a usage string for this command.
