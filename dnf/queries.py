@@ -247,10 +247,6 @@ def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
         latest[key] = pkg
     return latest
 
-def latest_available_per_arch(sack, patterns, ignore_case=False):
-    return latest_per_arch(sack, patterns, ignore_case,
-                           exclude_repo=hawkey.SYSTEM_REPO_NAME)
-
 def downgrades_by_name(sack, patterns, ignore_case=False, latest_only=False):
     return _construct_result(sack, patterns, ignore_case,
                              latest_only=latest_only,
