@@ -178,6 +178,7 @@ class Base(object):
                 return False
 
         expired = [r.id for r in self.repos.iter_enabled() if check_expired(r)]
+        self._persistor.set_expired_repos(expired)
 
     @property
     def comps(self):
