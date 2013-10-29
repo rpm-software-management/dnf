@@ -20,6 +20,19 @@
 
 CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
+INSTALLONLYPKGS=['kernel',
+                 'kernel-PAE',
+                 'kernel-PAE-debug'
+                 'kernel-debug',
+                 'kernel-devel',
+                 'kernel-bigmem',
+                 'kernel-enterprise',
+                 'kernel-modules',
+                 'kernel-smp',
+                 'kernel-source',
+                 'kernel-unsupported',
+                 'installonlypkg(kernel-module)',
+                 'installonlypkg(vm)']
 LOG='dnf.log'
 LOG_MARKER='--- logging initialized ---'
 LOG_RPM='dnf.rpm.log'
