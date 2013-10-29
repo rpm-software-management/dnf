@@ -46,6 +46,8 @@ one main section. The repository sections define the configuration for each
     List of provide names of packages that should only ever be installed, never
     upgraded. Kernels in particular fall into this category.
 
+.. _installonly-limit-label:
+
 ``installonly_limit``
     Number of installonly packages allowed to be installed
     concurrently. Defaults to 3.

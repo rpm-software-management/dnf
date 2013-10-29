@@ -242,5 +242,29 @@
     [
         1021087, 
         "traceback during download after a transaction with obsoletes"
+    ], 
+    [
+        878348, 
+        "'dnf history undo' support missing"
+    ], 
+    [
+        880524, 
+        "[kernel] managing multiple kernel packages"
+    ], 
+    [
+        1019957, 
+        "'dnf groups summary' traceback (global name 'patterns' is not defined)"
+    ], 
+    [
+        1020101, 
+        "'dnf grouplist' throws NameError"
+    ], 
+    [
+        1020934, 
+        "traceback in \"dnf repolist\""
+    ], 
+    [
+        1023486, 
+        "groups operations failing due to a libcomps API change in its latest version (KeyError: 'en_US.UTF-8')"
     ]
 ]
