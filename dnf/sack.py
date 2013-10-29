@@ -59,9 +59,10 @@ class Sack(hawkey.Sack):
         super(Sack, self).__init__(*args, **kwargs)
         self.logger = logging.getLogger("dnf")
 
-    def configure(self, installonly=None):
+    def configure(self, installonly=None, installonly_limit=0):
         if installonly:
             self.installonly = installonly
+        self.installonly_limit = installonly_limit
 
     def query(self):
         """Factory function returning a DNF Query."""

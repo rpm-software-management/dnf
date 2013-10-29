@@ -225,7 +225,8 @@ class Base(object):
             if load_available_repos:
                 for r in self.repos.iter_enabled():
                     self._add_repo_to_sack(r.id)
-        self._sack.configure(self.conf.installonlypkgs)
+        conf = self.conf
+        self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
         self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         self._setup_excludes()
