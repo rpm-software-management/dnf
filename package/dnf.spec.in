@@ -1,4 +1,4 @@
-%global gitrev 57d1d09
+%global gitrev cc96d1f
 %global hawkey_version 0.4.4
 %global librepo_version 1.2.0
 %global libcomps_version 0.1.3
@@ -76,6 +76,60 @@ make ARGS="-V" test
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+*  Wed Oct 30 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.6-1
+- doc: add documentation for the installonly options. (Ales Kozumplik)
+- Add history-undo-specific transaction check error output. (Radek Holy)
+- Move transaction check error output into commands. (Radek Holy)
+- Enable the "history undo" command. (Radek Holy)
+- Fix TypeError raised when Base.history_undo called with a nonempty transaction (RhBug:878348) (Radek Holy)
+- Add iterators exhaustion testing function. (Radek Holy)
+- Generalize the PackageMatcher to an ObjectMatcher. (Radek Holy)
+- Support querying the last transaction ID in the history. (Radek Holy)
+- refactor: Extract transaction IDs/offsets conversion to a standalone method. (Radek Holy)
+- Create a YumHistory wrapper. (Radek Holy)
+- Add iterables splitting function. (Radek Holy)
+- Support skipping the depsolve stage. (Radek Holy)
+- store the expired repos. (Ales Kozumplik)
+- update the installonlies list. (Ales Kozumplik)
+- installonly packages: enable enforcing the limit (RhBug:880524) (Ales Kozumplik)
+- downloader: use LRO_FASTESTMIRRORCACHE (Zdenek Pavlas)
+- downloader: enable failfast (Zdenek Pavlas)
+- removed available_by_name function from dnf.queries (Jan Silhan)
+- removed available_by_nevra function from dnf.queries (Jan Silhan)
+- removed installed_by_nevra function from dnf.queries, added nevra Query method (Jan Silhan)
+- removed installed_by_name function from dnf.queries (Jan Silhan)
+- removed installed function from dnf.queries (Jan Silhan)
+- fixed GPG key retrieval error (Jan Silhan)
+- added to_ord function to pycomp.py (Jan Silhan)
+- refactor: Remove unused parameter from CliTransactionDisplay.scriptout. (Radek Holy)
+- Fix return of Reinstalled history state by TransactionItem.history_iterator. (Radek Holy)
+- Move the _history_get_transaction to the BaseCli. (Radek Holy)
+- cli: Output.history and Output.yumdb. (Ales Kozumplik)
+- cli: do not register command instances, register command classes. (Ales Kozumplik)
+- refactor: cli: command.getNames() is now command.aliases. (Ales Kozumplik)
+- cli: do not display 'Setting up ... Process'. (Ales Kozumplik)
+- fix: traceback in 'dnf group summary' (RhBug:1019957) (Ales Kozumplik)
+- commands: recognize one-word group commands (e.g. 'grouplist') (RhBug:1020101) (Ales Kozumplik)
+- tests: fix GroupOutputTest. (Ales Kozumplik)
+- fix: traceback 'dnf -v group list Group'. (Ales Kozumplik)
+- cli: add Command.canonical(). (Ales Kozumplik)
+- comps: adapt to the latest libcomps that correctly throws KeyError in dict[]. (Ales Kozumplik)
+- cli: cosmetic: remove two extra newlines before 'Dependencies resolved.' (Ales Kozumplik)
+- remove: use of weakref.proxy. (Ales Kozumplik)
+- remove extra member variable assignment in Base._goal2transaction(). (Ales Kozumplik)
+- tests: rename: FakeTerm->MockTerminal. (Ales Kozumplik)
+- tests: fixed broken test_installPkgs_notfound(). (Ales Kozumplik)
+- refactor: split Output and Base objects in CLI. (Ales Kozumplik)
+- full Python 3 support added (Jan Silhan)
+- expired repos are saved in json instead of shelve (Jan Silhan)
+- fixed shadowing of variable (Jan Silhan)
+- removed needless flush from output.py (Jan Silhan)
+- repo.metalink_data is gone (RhBug:1020934) (Zdenek Pavlas)
+- tests: rename MockYumBase to MockBase. (Ales Kozumplik)
+- refactor: Base.build_transaction() so we can unit test its core. (Ales Kozumplik)
+- tests: test some obsoletes. (Ales Kozumplik)
+- doc: missing newline breaking format. (Ales Kozumplik)
 
 * Sun Oct 20 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.5-1
 - Fix tracebacks during downloads of obsoleting transactions. (RhBug:1021087) (Ales Kozumplik)
