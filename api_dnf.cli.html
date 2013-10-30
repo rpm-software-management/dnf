@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf.cli Reference &mdash; DNF 0.4.5-1 documentation</title>
+    <title>dnf.cli Reference &mdash; DNF 0.4.6-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.5-1',
+        VERSION:     '0.4.6-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="DNF User’s FAQ" href="user_faq.html" />
     <link rel="prev" title="dnf.rpmUtils Reference" href="api_dnf.rpmUtils.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -491,6 +491,12 @@ recent = list of packageObjects</pre>
 </table>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="dnf.cli.cli.BaseCli.transaction_id_or_offset">
+<em class="property">static </em><tt class="descname">transaction_id_or_offset</tt><big>(</big><em>extcmd</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.transaction_id_or_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert user input to a transaction ID or an offset from the end.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="dnf.cli.cli.BaseCli.updatePkgs">
 <tt class="descname">updatePkgs</tt><big>(</big><em>userlist</em><big>)</big><a class="headerlink" href="#dnf.cli.cli.BaseCli.updatePkgs" title="Permalink to this definition">¶</a></dt>
@@ -631,24 +637,9 @@ check-rpmdb command.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CheckRpmdbCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckRpmdbCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.CheckRpmdbCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckRpmdbCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CheckRpmdbCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckRpmdbCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -660,9 +651,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CheckRpmdbCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckRpmdbCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CheckRpmdbCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckRpmdbCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -748,24 +739,9 @@ run; namely that there is at least one enabled repository.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CheckUpdateCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckUpdateCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.CheckUpdateCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckUpdateCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CheckUpdateCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckUpdateCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -777,9 +753,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CheckUpdateCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckUpdateCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CheckUpdateCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CheckUpdateCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -844,24 +820,9 @@ and that this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CleanCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CleanCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.CleanCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CleanCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CleanCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CleanCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -873,9 +834,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.CleanCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CleanCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.CleanCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.CleanCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -916,7 +877,14 @@ command can run.</p>
 <em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">Command</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command" title="Permalink to this definition">¶</a></dt>
 <dd><p>An abstract base class that defines the methods needed by the cli
 to execute a specific command.  Subclasses must override at least
-<a class="reference internal" href="#dnf.cli.commands.Command.getUsage" title="dnf.cli.commands.Command.getUsage"><tt class="xref py py-func docutils literal"><span class="pre">getUsage()</span></tt></a> and <a class="reference internal" href="#dnf.cli.commands.Command.getSummary" title="dnf.cli.commands.Command.getSummary"><tt class="xref py py-func docutils literal"><span class="pre">getSummary()</span></tt></a>.</p>
+<a class="reference internal" href="#dnf.cli.commands.Command.get_usage" title="dnf.cli.commands.Command.get_usage"><tt class="xref py py-func docutils literal"><span class="pre">get_usage()</span></tt></a> and <a class="reference internal" href="#dnf.cli.commands.Command.get_summary" title="dnf.cli.commands.Command.get_summary"><tt class="xref py py-func docutils literal"><span class="pre">get_summary()</span></tt></a>.</p>
+<dl class="classmethod">
+<dt id="dnf.cli.commands.Command.canonical">
+<em class="property">classmethod </em><tt class="descname">canonical</tt><big>(</big><em>command_list</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.canonical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn list of comamnds into a canonical form.</p>
+<p>Returns the base command and a list of extra commands.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="dnf.cli.commands.Command.configure">
 <tt class="descname">configure</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.configure" title="Permalink to this definition">¶</a></dt>
@@ -969,44 +937,14 @@ can run.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.Command.doneCommand">
-<tt class="descname">doneCommand</tt><big>(</big><em>msg</em>, <em>*args</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.doneCommand" title="Permalink to this definition">¶</a></dt>
-<dd><p>Output <em>msg</em> the first time that this method is called, and do
-nothing on subsequent calls.  This is to prevent duplicate
-messages from being printed for the same command.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>msg</strong> &#8211; the message to be output</li>
-<li><strong>*args</strong> &#8211; additional arguments associated with the message</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="dnf.cli.commands.Command.get_error_output">
+<tt class="descname">get_error_output</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.get_error_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get suggestions for resolving the given error.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.Command.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of strings that are the names of the command.
-The command can be called from the command line by using any
-of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of the command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.Command.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.Command.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of what the command does.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1018,9 +956,9 @@ of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.Command.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.Command.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.Command.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for the command, including arguments.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1107,24 +1045,9 @@ arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DepListCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DepListCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.DepListCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DepListCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DepListCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DepListCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1136,9 +1059,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DepListCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DepListCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DepListCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DepListCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1203,24 +1126,9 @@ and that there are enabled repositories with gpg keys.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DistroSyncCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DistroSyncCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.DistroSyncCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DistroSyncCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DistroSyncCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DistroSyncCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1232,9 +1140,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DistroSyncCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DistroSyncCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DistroSyncCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DistroSyncCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1300,24 +1208,9 @@ that this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DowngradeCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DowngradeCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.DowngradeCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DowngradeCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DowngradeCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DowngradeCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1329,9 +1222,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.DowngradeCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DowngradeCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.DowngradeCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.DowngradeCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1419,24 +1312,9 @@ arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.EraseCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.EraseCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.EraseCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.EraseCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.EraseCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.EraseCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1448,9 +1326,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.EraseCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.EraseCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.EraseCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.EraseCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1558,24 +1436,9 @@ subcommand that is being called.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.GroupsCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.GroupsCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.GroupsCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.GroupsCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.GroupsCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.GroupsCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1587,9 +1450,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.GroupsCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.GroupsCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.GroupsCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.GroupsCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1698,24 +1561,9 @@ arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.HelpCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HelpCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.HelpCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HelpCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.HelpCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HelpCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1727,9 +1575,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.HelpCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HelpCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.HelpCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HelpCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1817,23 +1665,14 @@ subcommand that is being called.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.commands.HistoryCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
+<dt id="dnf.cli.commands.HistoryCommand.get_error_output">
+<tt class="descname">get_error_output</tt><big>(</big><em>error</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.get_error_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get suggestions for resolving the given error.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.HistoryCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.HistoryCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1845,9 +1684,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.HistoryCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.HistoryCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.HistoryCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1914,24 +1753,9 @@ info command.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.InfoCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InfoCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.InfoCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InfoCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.InfoCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InfoCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1943,9 +1767,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.InfoCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InfoCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.InfoCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InfoCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2033,25 +1857,9 @@ this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.InstallCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InstallCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of
-these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.InstallCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InstallCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.InstallCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InstallCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2063,9 +1871,9 @@ these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.InstallCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InstallCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.InstallCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.InstallCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2084,24 +1892,9 @@ these names.</p>
 <em class="property">class </em><tt class="descclassname">dnf.cli.commands.</tt><tt class="descname">ListCommand</tt><big>(</big><em>cli</em><big>)</big><a class="headerlink" href="#dnf.cli.commands.ListCommand" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class containing methods needed by the cli to execute the
 list command.</p>
-<dl class="method">
-<dt id="dnf.cli.commands.ListCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ListCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ListCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ListCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.ListCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ListCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2165,24 +1958,9 @@ run; namely that there is an enabled repository.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.MakeCacheCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.MakeCacheCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.MakeCacheCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.MakeCacheCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.MakeCacheCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.MakeCacheCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2194,9 +1972,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.MakeCacheCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.MakeCacheCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.MakeCacheCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.MakeCacheCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2282,24 +2060,9 @@ run; namely that this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.ProvidesCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ProvidesCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ProvidesCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ProvidesCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.ProvidesCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ProvidesCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2311,9 +2074,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.ProvidesCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ProvidesCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.ProvidesCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ProvidesCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2379,24 +2142,9 @@ that this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.ReInstallCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ReInstallCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.ReInstallCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ReInstallCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.ReInstallCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ReInstallCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2408,9 +2156,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.ReInstallCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ReInstallCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.ReInstallCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.ReInstallCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2477,24 +2225,9 @@ repolist command.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.RepoListCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.RepoListCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.RepoListCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.RepoListCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.RepoListCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.RepoListCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2506,9 +2239,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.RepoListCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.RepoListCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.RepoListCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.RepoListCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2594,24 +2327,9 @@ run; namely that this command is called with appropriate arguments.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.SearchCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.SearchCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.SearchCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2623,9 +2341,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.SearchCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.SearchCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.SearchCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2712,25 +2430,9 @@ keys, and that this command is being run by the root user.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.UpgradeCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can by called from the command line by using any of
-these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.UpgradeCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.UpgradeCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2742,9 +2444,9 @@ these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.UpgradeCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.UpgradeCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.UpgradeCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2796,24 +2498,9 @@ version command.</p>
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.VersionCommand.getNames">
-<tt class="descname">getNames</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.VersionCommand.getNames" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list containing the names of this command.  This
-command can be called from the command line by using any of these names.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list containing the names of this command</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.commands.VersionCommand.getSummary">
-<tt class="descname">getSummary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.VersionCommand.getSummary" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.VersionCommand.get_summary">
+<em class="property">static </em><tt class="descname">get_summary</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.VersionCommand.get_summary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a one line summary of this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -2825,9 +2512,9 @@ command can be called from the command line by using any of these names.</p>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="dnf.cli.commands.VersionCommand.getUsage">
-<tt class="descname">getUsage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.VersionCommand.getUsage" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="dnf.cli.commands.VersionCommand.get_usage">
+<em class="property">static </em><tt class="descname">get_usage</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.commands.VersionCommand.get_usage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a usage string for this command.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -3099,7 +2786,7 @@ Otherwise, it will return its exit code.</li>
 <p>Handle actual output from the cli.</p>
 <dl class="class">
 <dt id="dnf.cli.output.CliTransactionDisplay">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">CliTransactionDisplay</tt><big>(</big><em>ayum=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">CliTransactionDisplay</tt><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Yum specific callback class for RPM operations.</p>
 <dl class="method">
 <dt id="dnf.cli.output.CliTransactionDisplay.event">
@@ -3132,17 +2819,13 @@ transaction set</li>
 
 <dl class="method">
 <dt id="dnf.cli.output.CliTransactionDisplay.scriptout">
-<tt class="descname">scriptout</tt><big>(</big><em>package</em>, <em>msgs</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay.scriptout" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">scriptout</tt><big>(</big><em>msgs</em><big>)</big><a class="headerlink" href="#dnf.cli.output.CliTransactionDisplay.scriptout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print messages originating from a package script.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>package</strong> &#8211; unused</li>
-<li><strong>msgs</strong> &#8211; the messages coming from the script</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>msgs</strong> &#8211; the messages coming from the script</td>
 </tr>
 </tbody>
 </table>
@@ -3152,7 +2835,7 @@ transaction set</li>
 
 <dl class="class">
 <dt id="dnf.cli.output.DepSolveProgressCallBack">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">DepSolveProgressCallBack</tt><big>(</big><em>ayum=None</em><big>)</big><a class="headerlink" href="#dnf.cli.output.DepSolveProgressCallBack" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">DepSolveProgressCallBack</tt><a class="headerlink" href="#dnf.cli.output.DepSolveProgressCallBack" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class to provide text output callback functions for Dependency Solver callback.</p>
 <dl class="method">
 <dt id="dnf.cli.output.DepSolveProgressCallBack.end">
@@ -3339,7 +3022,7 @@ process.</p>
 
 <dl class="class">
 <dt id="dnf.cli.output.Output">
-<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">Output</tt><a class="headerlink" href="#dnf.cli.output.Output" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">dnf.cli.output.</tt><tt class="descname">Output</tt><big>(</big><em>base</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main output class for the yum command line.</p>
 <dl class="method">
 <dt id="dnf.cli.output.Output.calcColumns">
@@ -3431,7 +3114,7 @@ process started, in seconds since the epoch</li>
 
 <dl class="method">
 <dt id="dnf.cli.output.Output.fmtColumns">
-<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x1527d70&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.fmtColumns" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fmtColumns</tt><big>(</big><em>columns</em>, <em>msg=u''</em>, <em>end=u''</em>, <em>text_width=&lt;function utf8_width at 0x288baa0&gt;</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.fmtColumns" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a row of data formatted into a string for output.
 Items can overflow their columns.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3697,7 +3380,7 @@ about to highlight the packages in <em>highlight_na</em>.
 
 <dl class="method">
 <dt id="dnf.cli.output.Output.list_transaction">
-<tt class="descname">list_transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.list_transaction" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">list_transaction</tt><big>(</big><em>transaction</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.list_transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string representation of the transaction in an
 easy-to-read format.</p>
 </dd></dl>
@@ -3749,7 +3432,7 @@ output</li>
 
 <dl class="method">
 <dt id="dnf.cli.output.Output.post_transaction_output">
-<tt class="descname">post_transaction_output</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.post_transaction_output" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">post_transaction_output</tt><big>(</big><em>transaction</em><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.post_transaction_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a human-readable summary of the results of the
 transaction.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -3796,14 +3479,8 @@ results of the transaction</td>
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.cli.output.Output.setupKeyImportCallbacks">
-<tt class="descname">setupKeyImportCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.setupKeyImportCallbacks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set up callbacks to import and confirm gpg public keys.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="dnf.cli.output.Output.setupProgressCallbacks">
-<tt class="descname">setupProgressCallbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.setupProgressCallbacks" title="Permalink to this definition">¶</a></dt>
+<dt id="dnf.cli.output.Output.setup_progress_callbacks">
+<tt class="descname">setup_progress_callbacks</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.cli.output.Output.setup_progress_callbacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set up the progress callbacks and various
 output bars based on debug level.</p>
 </dd></dl>
@@ -4306,7 +3983,7 @@ This is the same as the dictionary returned by
         <li class="right" >
           <a href="api_dnf.rpmUtils.html" title="dnf.rpmUtils Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

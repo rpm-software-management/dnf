@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; DNF 0.4.5-1 documentation</title>
+    <title>Index &mdash; DNF 0.4.6-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.5-1',
+        VERSION:     '0.4.6-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -147,6 +147,10 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.calcColumns">calcColumns() (dnf.cli.output.Output method)</a>
+  </dt>
+
+      
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.canonical">canonical() (dnf.cli.commands.Command class method)</a>
   </dt>
 
       
@@ -399,12 +403,12 @@
   <dt><a href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.error">dnf.rpmUtils.error (module)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.miscutils">dnf.rpmUtils.miscutils (module)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.rpmUtils.html#module-dnf.rpmUtils.transaction">dnf.rpmUtils.transaction (module)</a>
   </dt>
@@ -622,10 +626,6 @@
 
       </dl></dd>
       
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.doneCommand">doneCommand() (dnf.cli.commands.Command method)</a>
-  </dt>
-
-      
   <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand">DowngradeCommand (class in dnf.cli.commands)</a>
   </dt>
 
@@ -774,6 +774,16 @@
   </dt>
 
       
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.get_error_output">get_error_output() (dnf.cli.commands.Command method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.get_error_output">(dnf.cli.commands.HistoryCommand method)</a>
+  </dt>
+
+      </dl></dd>
+      
   <dt><a href="api_dnf.yum.html#dnf.yum.pgpmsg.get_mpi">get_mpi() (in module dnf.yum.pgpmsg)</a>
   </dt>
 
@@ -805,6 +815,174 @@
   <dt><a href="api_dnf.yum.html#dnf.yum.pgpmsg.get_sig_subpak_len">get_sig_subpak_len() (in module dnf.yum.pgpmsg)</a>
   </dt>
 
+      
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckRpmdbCommand.get_summary">get_summary() (dnf.cli.commands.CheckRpmdbCommand static method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckUpdateCommand.get_summary">(dnf.cli.commands.CheckUpdateCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CleanCommand.get_summary">(dnf.cli.commands.CleanCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.get_summary">(dnf.cli.commands.Command static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DepListCommand.get_summary">(dnf.cli.commands.DepListCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DistroSyncCommand.get_summary">(dnf.cli.commands.DistroSyncCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand.get_summary">(dnf.cli.commands.DowngradeCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.EraseCommand.get_summary">(dnf.cli.commands.EraseCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.GroupsCommand.get_summary">(dnf.cli.commands.GroupsCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HelpCommand.get_summary">(dnf.cli.commands.HelpCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.get_summary">(dnf.cli.commands.HistoryCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InfoCommand.get_summary">(dnf.cli.commands.InfoCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InstallCommand.get_summary">(dnf.cli.commands.InstallCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ListCommand.get_summary">(dnf.cli.commands.ListCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.MakeCacheCommand.get_summary">(dnf.cli.commands.MakeCacheCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ProvidesCommand.get_summary">(dnf.cli.commands.ProvidesCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ReInstallCommand.get_summary">(dnf.cli.commands.ReInstallCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.RepoListCommand.get_summary">(dnf.cli.commands.RepoListCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.SearchCommand.get_summary">(dnf.cli.commands.SearchCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.UpgradeCommand.get_summary">(dnf.cli.commands.UpgradeCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.VersionCommand.get_summary">(dnf.cli.commands.VersionCommand static method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckRpmdbCommand.get_usage">get_usage() (dnf.cli.commands.CheckRpmdbCommand static method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckUpdateCommand.get_usage">(dnf.cli.commands.CheckUpdateCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CleanCommand.get_usage">(dnf.cli.commands.CleanCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.get_usage">(dnf.cli.commands.Command static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DepListCommand.get_usage">(dnf.cli.commands.DepListCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DistroSyncCommand.get_usage">(dnf.cli.commands.DistroSyncCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand.get_usage">(dnf.cli.commands.DowngradeCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.EraseCommand.get_usage">(dnf.cli.commands.EraseCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.GroupsCommand.get_usage">(dnf.cli.commands.GroupsCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HelpCommand.get_usage">(dnf.cli.commands.HelpCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.get_usage">(dnf.cli.commands.HistoryCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InfoCommand.get_usage">(dnf.cli.commands.InfoCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InstallCommand.get_usage">(dnf.cli.commands.InstallCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.MakeCacheCommand.get_usage">(dnf.cli.commands.MakeCacheCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ProvidesCommand.get_usage">(dnf.cli.commands.ProvidesCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ReInstallCommand.get_usage">(dnf.cli.commands.ReInstallCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.RepoListCommand.get_usage">(dnf.cli.commands.RepoListCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.SearchCommand.get_usage">(dnf.cli.commands.SearchCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.UpgradeCommand.get_usage">(dnf.cli.commands.UpgradeCommand static method)</a>
+  </dt>
+
+        
+  <dt><a href="api_dnf.cli.html#dnf.cli.commands.VersionCommand.get_usage">(dnf.cli.commands.VersionCommand static method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.pgpmsg.get_whole_int">get_whole_int() (in module dnf.yum.pgpmsg)</a>
   </dt>
@@ -839,6 +1017,8 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.plugins.DownloadPluginConduit.getDownloadPackages">getDownloadPackages() (dnf.yum.plugins.DownloadPluginConduit method)</a>
   </dt>
@@ -851,8 +1031,6 @@
   <dt><a href="api_dnf.yum.html#dnf.yum.misc.getFileList">getFileList() (in module dnf.yum.misc)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.misc.getgpgkeyinfo">getgpgkeyinfo() (in module dnf.yum.misc)</a>
   </dt>
@@ -865,92 +1043,6 @@
   <dt><a href="api_dnf.yum.html#dnf.yum.misc.getloginuid">getloginuid() (in module dnf.yum.misc)</a>
   </dt>
 
-      
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckRpmdbCommand.getNames">getNames() (dnf.cli.commands.CheckRpmdbCommand method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckUpdateCommand.getNames">(dnf.cli.commands.CheckUpdateCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CleanCommand.getNames">(dnf.cli.commands.CleanCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.getNames">(dnf.cli.commands.Command method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DepListCommand.getNames">(dnf.cli.commands.DepListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DistroSyncCommand.getNames">(dnf.cli.commands.DistroSyncCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand.getNames">(dnf.cli.commands.DowngradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.EraseCommand.getNames">(dnf.cli.commands.EraseCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.GroupsCommand.getNames">(dnf.cli.commands.GroupsCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HelpCommand.getNames">(dnf.cli.commands.HelpCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.getNames">(dnf.cli.commands.HistoryCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InfoCommand.getNames">(dnf.cli.commands.InfoCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InstallCommand.getNames">(dnf.cli.commands.InstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ListCommand.getNames">(dnf.cli.commands.ListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.MakeCacheCommand.getNames">(dnf.cli.commands.MakeCacheCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ProvidesCommand.getNames">(dnf.cli.commands.ProvidesCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ReInstallCommand.getNames">(dnf.cli.commands.ReInstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.RepoListCommand.getNames">(dnf.cli.commands.RepoListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.SearchCommand.getNames">(dnf.cli.commands.SearchCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.UpgradeCommand.getNames">(dnf.cli.commands.UpgradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.VersionCommand.getNames">(dnf.cli.commands.VersionCommand method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.config.getOption">getOption() (in module dnf.yum.config)</a>
   </dt>
@@ -980,177 +1072,9 @@
   </dt>
 
       
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckRpmdbCommand.getSummary">getSummary() (dnf.cli.commands.CheckRpmdbCommand method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckUpdateCommand.getSummary">(dnf.cli.commands.CheckUpdateCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CleanCommand.getSummary">(dnf.cli.commands.CleanCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.getSummary">(dnf.cli.commands.Command method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DepListCommand.getSummary">(dnf.cli.commands.DepListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DistroSyncCommand.getSummary">(dnf.cli.commands.DistroSyncCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand.getSummary">(dnf.cli.commands.DowngradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.EraseCommand.getSummary">(dnf.cli.commands.EraseCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.GroupsCommand.getSummary">(dnf.cli.commands.GroupsCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HelpCommand.getSummary">(dnf.cli.commands.HelpCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.getSummary">(dnf.cli.commands.HistoryCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InfoCommand.getSummary">(dnf.cli.commands.InfoCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InstallCommand.getSummary">(dnf.cli.commands.InstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ListCommand.getSummary">(dnf.cli.commands.ListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.MakeCacheCommand.getSummary">(dnf.cli.commands.MakeCacheCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ProvidesCommand.getSummary">(dnf.cli.commands.ProvidesCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ReInstallCommand.getSummary">(dnf.cli.commands.ReInstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.RepoListCommand.getSummary">(dnf.cli.commands.RepoListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.SearchCommand.getSummary">(dnf.cli.commands.SearchCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.UpgradeCommand.getSummary">(dnf.cli.commands.UpgradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.VersionCommand.getSummary">(dnf.cli.commands.VersionCommand method)</a>
-  </dt>
-
-      </dl></dd>
-      
   <dt><a href="api_dnf.yum.html#dnf.yum.plugins.MainPluginConduit.getTsInfo">getTsInfo() (dnf.yum.plugins.MainPluginConduit method)</a>
   </dt>
 
-      
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckRpmdbCommand.getUsage">getUsage() (dnf.cli.commands.CheckRpmdbCommand method)</a>
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CheckUpdateCommand.getUsage">(dnf.cli.commands.CheckUpdateCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.CleanCommand.getUsage">(dnf.cli.commands.CleanCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.Command.getUsage">(dnf.cli.commands.Command method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DepListCommand.getUsage">(dnf.cli.commands.DepListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DistroSyncCommand.getUsage">(dnf.cli.commands.DistroSyncCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.DowngradeCommand.getUsage">(dnf.cli.commands.DowngradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.EraseCommand.getUsage">(dnf.cli.commands.EraseCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.GroupsCommand.getUsage">(dnf.cli.commands.GroupsCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HelpCommand.getUsage">(dnf.cli.commands.HelpCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.HistoryCommand.getUsage">(dnf.cli.commands.HistoryCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InfoCommand.getUsage">(dnf.cli.commands.InfoCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.InstallCommand.getUsage">(dnf.cli.commands.InstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.MakeCacheCommand.getUsage">(dnf.cli.commands.MakeCacheCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ProvidesCommand.getUsage">(dnf.cli.commands.ProvidesCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.ReInstallCommand.getUsage">(dnf.cli.commands.ReInstallCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.RepoListCommand.getUsage">(dnf.cli.commands.RepoListCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.SearchCommand.getUsage">(dnf.cli.commands.SearchCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.UpgradeCommand.getUsage">(dnf.cli.commands.UpgradeCommand method)</a>
-  </dt>
-
-        
-  <dt><a href="api_dnf.cli.html#dnf.cli.commands.VersionCommand.getUsage">(dnf.cli.commands.VersionCommand method)</a>
-  </dt>
-
-      </dl></dd>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.plugins.PluginConduit.getYumVersion">getYumVersion() (dnf.yum.plugins.PluginConduit method)</a>
   </dt>
@@ -1262,6 +1186,10 @@
   </dt>
 
       
+  <dt><a href="api_dnf.html#dnf.util.insert_if">insert_if() (in module dnf.util)</a>
+  </dt>
+
+      
   <dt><a href="api_dnf.cli.html#dnf.cli.cli.BaseCli.install_grouplist">install_grouplist() (dnf.cli.cli.BaseCli method)</a>
   </dt>
 
@@ -1277,6 +1205,10 @@
 
       
   <dt><a href="api_dnf.yum.html#dnf.yum.config.IntOption">IntOption (in module dnf.yum.config)</a>
+  </dt>
+
+      
+  <dt><a href="api_dnf.html#dnf.util.is_exhausted">is_exhausted() (in module dnf.util)</a>
   </dt>
 
       
@@ -1349,22 +1281,18 @@
   <dt><a href="api_dnf.cli.html#dnf.cli.commands.ListCommand">ListCommand (class in dnf.cli.commands)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.config.ListOption">ListOption (in module dnf.yum.config)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.listPkgs">listPkgs() (dnf.cli.output.Output method)</a>
   </dt>
 
       
   <dt><a href="api_dnf.html#dnf.package.Package.localPkg">localPkg() (dnf.package.Package method)</a>
-  </dt>
-
-      
-  <dt><a href="api_dnf.yum.html#dnf.yum.history.YumHistory.log_scriptlet_output">log_scriptlet_output() (dnf.yum.history.YumHistory method)</a>
   </dt>
 
       
@@ -1828,15 +1756,11 @@
 
       </dl></dd>
       
+  <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.setup_progress_callbacks">setup_progress_callbacks() (dnf.cli.output.Output method)</a>
+  </dt>
+
+      
   <dt><a href="api_dnf.html#dnf.i18n.setup_stdout">setup_stdout() (in module dnf.i18n)</a>
-  </dt>
-
-      
-  <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.setupKeyImportCallbacks">setupKeyImportCallbacks() (dnf.cli.output.Output method)</a>
-  </dt>
-
-      
-  <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.setupProgressCallbacks">setupProgressCallbacks() (dnf.cli.output.Output method)</a>
   </dt>
 
       
@@ -1863,10 +1787,14 @@
   <dt><a href="api_dnf.cli.html#dnf.cli.output.Output.simpleList">simpleList() (dnf.cli.output.Output method)</a>
   </dt>
 
+      
+  <dt><a href="api_dnf.yum.html#dnf.yum.misc.sortPkgObj">sortPkgObj() (in module dnf.yum.misc)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api_dnf.yum.html#dnf.yum.misc.sortPkgObj">sortPkgObj() (in module dnf.yum.misc)</a>
+  <dt><a href="api_dnf.html#dnf.util.split_by">split_by() (in module dnf.util)</a>
   </dt>
 
       
@@ -1955,18 +1883,22 @@
   <dt><a href="api_dnf.yum.html#dnf.yum.i18n.to_utf8">to_utf8() (in module dnf.yum.i18n)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.sqlutils.Tokenize">Tokenize() (in module dnf.yum.sqlutils)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_dnf.yum.html#dnf.yum.sqlutils.TokenizeError">TokenizeError</a>
   </dt>
 
       
   <dt><a href="api_dnf.html#dnf.util.touch">touch() (in module dnf.util)</a>
+  </dt>
+
+      
+  <dt><a href="api_dnf.cli.html#dnf.cli.cli.BaseCli.transaction_id_or_offset">transaction_id_or_offset() (dnf.cli.cli.BaseCli static method)</a>
   </dt>
 
       
@@ -2226,7 +2158,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

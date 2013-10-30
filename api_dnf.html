@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>dnf Reference &mdash; DNF 0.4.5-1 documentation</title>
+    <title>dnf Reference &mdash; DNF 0.4.6-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.5-1',
+        VERSION:     '0.4.6-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="dnf.yum Reference" href="api_dnf.yum.html" />
     <link rel="prev" title="DNF API Reference" href="api.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -176,6 +176,18 @@ it.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="dnf.util.insert_if">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">insert_if</tt><big>(</big><em>item</em>, <em>iterable</em>, <em>condition</em><big>)</big><a class="headerlink" href="#dnf.util.insert_if" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert an item into an iterable by a condition.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.util.is_exhausted">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">is_exhausted</tt><big>(</big><em>iterator</em><big>)</big><a class="headerlink" href="#dnf.util.is_exhausted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether an iterator is exhausted.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="dnf.util.lazyattr">
 <tt class="descclassname">dnf.util.</tt><tt class="descname">lazyattr</tt><big>(</big><em>attrname</em><big>)</big><a class="headerlink" href="#dnf.util.lazyattr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Decorator to get lazy attribute initialization.</p>
@@ -196,6 +208,14 @@ result.</p>
 <dd><p>Decide whether we are on line power.</p>
 <p>Returns True if we are on line power, False if not, None if it can not be
 decided.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="dnf.util.split_by">
+<tt class="descclassname">dnf.util.</tt><tt class="descname">split_by</tt><big>(</big><em>iterable</em>, <em>condition</em><big>)</big><a class="headerlink" href="#dnf.util.split_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split an iterable into tuples by a condition.</p>
+<p>Inserts a separator before each item which meets the condition and then
+cuts the iterable by these separators.</p>
 </dd></dl>
 
 <dl class="function">
@@ -286,7 +306,7 @@ decided.</p>
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.5-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.6-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.5-1',
+        VERSION:     '0.4.6-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.5-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -157,6 +157,7 @@ system.</dd>
 <a class="reference internal" href="#specifying-packages-versions-label"><em>Specifying Exact Versions of Packages</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;group-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-groups-label"><em>Specifying Groups</em></a>.</p>
+<p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-transactions-label"><em>Specifying Transactions</em></a>.</p>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
@@ -226,6 +227,10 @@ needed.</dd>
 <div class="section" id="group-command">
 <h3>Group Command<a class="headerlink" href="#group-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">[summary]</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
+<dd>Display overview of how many groups are installed and available. With a
+spec, limit the output to the matching groups. <tt class="docutils literal"><span class="pre">summary</span></tt> is the default
+groups subcommand.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">info</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
 <dd>Display package lists of a group. Shows which packages are installed or
 available from a repo when <tt class="docutils literal"><span class="pre">-v</span></tt> is used.</dd>
@@ -250,7 +255,8 @@ displays the help for that particular command.</dd>
 <div class="section" id="history-command">
 <h3>History Command<a class="headerlink" href="#history-command" title="Permalink to this headline">¶</a></h3>
 <p>The history command allows the user to view what has happened in past
-transactions (assuming the <tt class="docutils literal"><span class="pre">history_record</span></tt> configuration option is set).</p>
+transactions and act according to this information (assuming the
+<tt class="docutils literal"><span class="pre">history_record</span></tt> configuration option is set).</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">[list]</span></tt></dt>
 <dd>The default history action is listing all known transaction information in a
@@ -258,6 +264,10 @@ table.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;transaction_id&gt;]</span></tt></dt>
 <dd>Describe the given transaction. When no ID is given describes what happened
 during the latest transaction.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">undo</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
+<dd>Performs the opposite operation to all operations performed in the
+specified transaction. If it is not possible to undo any operation due to
+the current state of RPMDB, DNF does not undo any operation.</dd>
 </dl>
 </div>
 <div class="section" id="info-command">
@@ -433,6 +443,15 @@ on. It is a case insensitive string (supporting globbing characters) that is
 matched against a group&#8217;s ID, canonical name and name translated into the
 current LC_MESSAGES locale (if possible).</p>
 </div>
+<div class="section" id="specifying-transactions">
+<span id="specifying-transactions-label"></span><h2>Specifying Transactions<a class="headerlink" href="#specifying-transactions" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt> has two possible interpretations. If it is an integer,
+it specifies a transaction ID. Otherwise, the parameter must be in form
+<tt class="docutils literal"><span class="pre">last[-offset]</span></tt>, which specifies the transaction relative to the most recent
+transaction. It means that <tt class="docutils literal"><span class="pre">last</span></tt> represents the ID of the most recent
+transaction and <tt class="docutils literal"><span class="pre">last-offset</span></tt> represents the ID of the most recent
+transaction minus an integer offset.</p>
+</div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -483,6 +502,7 @@ current LC_MESSAGES locale (if possible).</p>
 <li><a class="reference internal" href="#specifying-exact-versions-of-packages">Specifying Exact Versions of Packages</a></li>
 <li><a class="reference internal" href="#specifying-provides">Specifying Provides</a></li>
 <li><a class="reference internal" href="#specifying-groups">Specifying Groups</a></li>
+<li><a class="reference internal" href="#specifying-transactions">Specifying Transactions</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
@@ -531,7 +551,7 @@ current LC_MESSAGES locale (if possible).</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
