@@ -95,7 +95,11 @@ class Subject(object):
         if nevra.epoch is not None:
             query.filterm(epoch=nevra.epoch)
         if nevra.version is not None:
-            query.filterm(version=nevra.version)
+            version = nevra.version
+            if is_glob_pattern(version):
+                query.filterm(version__glob=version)
+            else:
+                query.filterm(version=version)
         if nevra.release is not None:
             query.filterm(release=nevra.release)
         return query
