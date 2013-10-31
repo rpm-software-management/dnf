@@ -2028,7 +2028,7 @@ class Base(object):
             2 = we've got work yet to do, onto the next stage
         """
 
-        def handle_downgrade(new_nevra, old_nevra):
+        def handle_downgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a downgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
@@ -2040,6 +2040,8 @@ class Base(object):
                     _("Problem in undo: package to update not available"))
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_upgrade(olds[0], news[0], None)
+            for obsoleted_nevra in obsoleted_nevras:
+                handle_erase(obsoleted_nevra)
 
         def handle_erase(old_nevra):
             """Handle an erased package."""
@@ -2050,7 +2052,7 @@ class Base(object):
             assert len(pkgs) == 1
             self._transaction.add_install(pkgs[0], None)
 
-        def handle_install(new_nevra):
+        def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
             pkgs = self.sack.query().installed().nevra(new_nevra)
             if not pkgs:
@@ -2058,6 +2060,8 @@ class Base(object):
                     _("Problem in undo: package to remove not installed"))
             assert len(pkgs) == 1
             self._transaction.add_erase(pkgs[0])
+            for obsoleted_nevra in obsoleted_nevras:
+                handle_erase(obsoleted_nevra)
 
         def handle_reinstall(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a reinstalled package."""
@@ -2078,7 +2082,7 @@ class Base(object):
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_reinstall(olds[0], news[0], obsoleteds)
 
-        def handle_upgrade(new_nevra, old_nevra):
+        def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle an upgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
@@ -2090,6 +2094,8 @@ class Base(object):
                     _("Problem in undo: package to downgrade not available"))
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_downgrade(olds[0], news[0], None)
+            for obsoleted_nevra in obsoleted_nevras:
+                handle_erase(obsoleted_nevra)
 
         history = dnf.history.open_history(self.history)
         last_id = history.last_transaction_id()
@@ -2103,22 +2109,16 @@ class Base(object):
             state, nevra, replaced_nevra, obsoleted_nevras = operation
             if state == 'Install':
                 assert not replaced_nevra
-                handle_install(nevra)
-                for obsoleted_nevra in obsoleted_nevras:
-                    handle_erase(obsoleted_nevra)
+                handle_install(nevra, obsoleted_nevras)
             elif state == 'Erase':
                 assert not replaced_nevra and not obsoleted_nevras
                 handle_erase(nevra)
             elif state == 'Reinstall':
                 handle_reinstall(nevra, replaced_nevra, obsoleted_nevras)
             elif state == 'Downgrade':
-                handle_downgrade(nevra, replaced_nevra)
-                for obsoleted_nevra in obsoleted_nevras:
-                    handle_erase(obsoleted_nevra)
+                handle_downgrade(nevra, replaced_nevra, obsoleted_nevras)
             elif state == 'Update':
-                handle_upgrade(nevra, replaced_nevra)
-                for obsoleted_nevra in obsoleted_nevras:
-                    handle_erase(obsoleted_nevra)
+                handle_upgrade(nevra, replaced_nevra, obsoleted_nevras)
             else:
                 assert False
 
