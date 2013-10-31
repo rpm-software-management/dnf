@@ -2028,34 +2028,47 @@ class Base(object):
             2 = we've got work yet to do, onto the next stage
         """
 
-        def add_install(nevra):
-            """Add a package to install."""
-            pkgs = self.sack.query().available().nevra(nevra)
+        def handle_downgrade(new_nevra, old_nevra):
+            """Handle a downgraded package."""
+            news = self.sack.query().installed().nevra(new_nevra)
+            if not news:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in undo: package to update not installed"))
+            olds = self.sack.query().available().nevra(old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to update not available"))
+            assert len(news) == 1 and len(olds) == 1
+            self._transaction.add_upgrade(olds[0], news[0], None)
+
+        def handle_erase(old_nevra):
+            """Handle an erased package."""
+            pkgs = self.sack.query().available().nevra(old_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     _("Problem in undo: package to install not available"))
             assert len(pkgs) == 1
             self._transaction.add_install(pkgs[0], None)
 
-        def add_erase(nevra):
-            """Add a package to erase."""
-            pkgs = self.sack.query().installed().nevra(nevra)
+        def handle_install(new_nevra):
+            """Handle an installed package."""
+            pkgs = self.sack.query().installed().nevra(new_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     _("Problem in undo: package to remove not installed"))
             assert len(pkgs) == 1
             self._transaction.add_erase(pkgs[0])
 
-        def add_reinstall(new_nevra, old_nevra, obsoleted_nevras):
-            """Add a package to reinstall."""
-            news = self.sack.query().available().nevra(new_nevra)
+        def handle_reinstall(new_nevra, old_nevra, obsoleted_nevras):
+            """Handle a reinstalled package."""
+            news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to reinstall not available"))
-            olds = self.sack.query().installed().nevra(old_nevra)
-            if not olds:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     _("Problem in undo: package to reinstall not installed"))
+            olds = self.sack.query().available().nevra(old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to reinstall not available"))
             obsoleteds = []
             for nevra in obsoleted_nevras:
                 obsoleteds_ = self.sack.query().installed().nevra(nevra)
@@ -2063,33 +2076,20 @@ class Base(object):
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
             assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_reinstall(news[0], olds[0], obsoleteds)
+            self._transaction.add_reinstall(olds[0], news[0], obsoleteds)
 
-        def add_upgrade(new_nevra, old_nevra):
-            """Add a package to upgrade."""
-            news = self.sack.query().available().nevra(new_nevra)
+        def handle_upgrade(new_nevra, old_nevra):
+            """Handle an upgraded package."""
+            news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to update not available"))
-            olds = self.sack.query().installed().nevra(old_nevra)
-            if not olds:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to update not installed"))
-            assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_upgrade(news[0], olds[0], None)
-
-        def add_downgrade(new_nevra, old_nevra):
-            """Add a package to downgrade."""
-            news = self.sack.query().available().nevra(new_nevra)
-            if not news:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to downgrade not available"))
-            olds = self.sack.query().installed().nevra(old_nevra)
-            if not olds:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     _("Problem in undo: package to downgrade not installed"))
+            olds = self.sack.query().available().nevra(old_nevra)
+            if not olds:
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Problem in undo: package to downgrade not available"))
             assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_downgrade(news[0], olds[0], None)
+            self._transaction.add_downgrade(olds[0], news[0], None)
 
         history = dnf.history.open_history(self.history)
         last_id = history.last_transaction_id()
@@ -2103,22 +2103,22 @@ class Base(object):
             state, nevra, replaced_nevra, obsoleted_nevras = operation
             if state == 'Install':
                 assert not replaced_nevra
-                add_erase(nevra)
+                handle_install(nevra)
                 for obsoleted_nevra in obsoleted_nevras:
-                    add_install(obsoleted_nevra)
+                    handle_erase(obsoleted_nevra)
             elif state == 'Erase':
                 assert not replaced_nevra and not obsoleted_nevras
-                add_install(nevra)
+                handle_erase(nevra)
             elif state == 'Reinstall':
-                add_reinstall(replaced_nevra, nevra, obsoleted_nevras)
+                handle_reinstall(nevra, replaced_nevra, obsoleted_nevras)
             elif state == 'Downgrade':
-                add_upgrade(replaced_nevra, nevra)
+                handle_downgrade(nevra, replaced_nevra)
                 for obsoleted_nevra in obsoleted_nevras:
-                    add_install(obsoleted_nevra)
+                    handle_erase(obsoleted_nevra)
             elif state == 'Update':
-                add_downgrade(replaced_nevra, nevra)
+                handle_upgrade(nevra, replaced_nevra)
                 for obsoleted_nevra in obsoleted_nevras:
-                    add_install(obsoleted_nevra)
+                    handle_erase(obsoleted_nevra)
             else:
                 assert False
 
