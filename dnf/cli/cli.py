@@ -1044,7 +1044,7 @@ class BaseCli(dnf.Base):
         history = dnf.history.open_history(self.history)  # :todo
 
         try:
-            self.history_undo(history.transaction_nevra_ops(old.tid))
+            self.history_undo_operations(history.transaction_nevra_ops(old.tid))
         except ValueError:
             assert False
         except (dnf.exceptions.PackagesNotInstalledError,

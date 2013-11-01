@@ -61,13 +61,13 @@ class BaseTest(TestCase):
         self._base = Base()
         self._base._sack = mock_sack('main', 'updates')
 
-    def test_history_undo_downgrade(self):
-        """Test history_undo with a downgrade."""
+    def test_history_undo_operations_downgrade(self):
+        """Test history_undo_operations with a downgrade."""
         operations = NEVRAOperations()
         operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-1.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -79,33 +79,33 @@ class BaseTest(TestCase):
                             INSTALL, installed='lotus-3-16.x86_64'))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_downgrade_notavailable(self):
-        """Test history_undo with an unavailable downgrade."""
+    def test_history_undo_operations_downgrade_notavailable(self):
+        """Test history_undo_operations with an unavailable downgrade."""
         operations = NEVRAOperations()
         operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-2.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotAvailableError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_downgrade_notinstalled(self):
-        """Test history_undo with a not installed downgrade."""
+    def test_history_undo_operations_downgrade_notinstalled(self):
+        """Test history_undo_operations with a not installed downgrade."""
         operations = NEVRAOperations()
         operations.add('Downgrade', 'lotus-3-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotInstalledError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_erase(self):
-        """Test history_undo with an erase."""
+    def test_history_undo_operations_erase(self):
+        """Test history_undo_operations with an erase."""
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -113,23 +113,23 @@ class BaseTest(TestCase):
                              INSTALL, installed='lotus-3-16.x86_64'))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_erase_notavailable(self):
-        """Test history_undo with an unavailable erase."""
+    def test_history_undo_operations_erase_notavailable(self):
+        """Test history_undo_operations with an unavailable erase."""
         operations = NEVRAOperations()
         operations.add('Erase', 'hole-1-1.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotAvailableError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_install(self):
-        """Test history_undo with an install."""
+    def test_history_undo_operations_install(self):
+        """Test history_undo_operations with an install."""
         operations = NEVRAOperations()
         operations.add('Install', 'pepper-20-0.x86_64', obsoleted_nevras=('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -140,23 +140,23 @@ class BaseTest(TestCase):
                              INSTALL, installed='lotus-3-16.x86_64'))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_install_notinstalled(self):
-        """Test history_undo with a not installed install."""
+    def test_history_undo_operations_install_notinstalled(self):
+        """Test history_undo_operations with a not installed install."""
         operations = NEVRAOperations()
         operations.add('Install', 'mrkite-2-0.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotInstalledError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_reinstall(self):
-        """Test history_undo with a reinstall."""
+    def test_history_undo_operations_reinstall(self):
+        """Test history_undo_operations with a reinstall."""
         operations = NEVRAOperations()
         operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('hole-1-1.x86_64',))
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -166,33 +166,33 @@ class BaseTest(TestCase):
                              obsoleted=('hole-1-1.x86_64',)))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_reinstall_notavailable(self):
-        """Test history_undo with an unvailable reinstall."""
+    def test_history_undo_operations_reinstall_notavailable(self):
+        """Test history_undo_operations with an unvailable reinstall."""
         operations = NEVRAOperations()
         operations.add('Reinstall', 'mrkite-2-0.x86_64', 'mrkite-2-0.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotInstalledError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_reinstall_notinstalled(self):
-        """Test history_undo with a not installed reinstall."""
+    def test_history_undo_operations_reinstall_notinstalled(self):
+        """Test history_undo_operations with a not installed reinstall."""
         operations = NEVRAOperations()
         operations.add('Reinstall', 'hole-1-1.x86_64', 'hole-1-1.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotAvailableError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_reinstall_notinstalled_obsoleted(self):
-        """Test history_undo with a not installed obsoleted of a reinstall."""
+    def test_history_undo_operations_reinstall_notinstalled_obsoleted(self):
+        """Test history_undo_operations with a not installed obsoleted of a reinstall."""
         operations = NEVRAOperations()
         operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -201,13 +201,13 @@ class BaseTest(TestCase):
                              erased='pepper-20-0.x86_64', obsoleted=()))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_update(self):
-        """Test history_undo with an update."""
+    def test_history_undo_operations_update(self):
+        """Test history_undo_operations with an update."""
         operations = NEVRAOperations()
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-1.noarch', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(operations)
+            self._base.history_undo_operations(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -219,22 +219,22 @@ class BaseTest(TestCase):
                              INSTALL, installed='lotus-3-16.x86_64'))
         self.assertRaises(StopIteration, next, transaction_it)
 
-    def test_history_undo_update_notavailable(self):
-        """Test history_undo with an unavailable update."""
+    def test_history_undo_operations_update_notavailable(self):
+        """Test history_undo_operations with an unavailable update."""
         operations = NEVRAOperations()
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-2.noarch')
 
         with self._base:
             self.assertRaises(
                 PackagesNotAvailableError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)
 
-    def test_history_undo_update_notinstalled(self):
-        """Test history_undo with a not installed update."""
+    def test_history_undo_operations_update_notinstalled(self):
+        """Test history_undo_operations with a not installed update."""
         operations = NEVRAOperations()
         operations.add('Update', 'lotus-4-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base:
             self.assertRaises(
                 PackagesNotInstalledError,
-                self._base.history_undo, operations)
+                self._base.history_undo_operations, operations)

@@ -2013,7 +2013,7 @@ class Base(object):
         self.conf.obsoletes = old_conf_obs
         return done
 
-    def history_undo(self, operations):
+    def history_undo_operations(self, operations):
         """Undo the operations on packages by their NEVRAs.
 
         :param operations: a NEVRAOperations to be undone
