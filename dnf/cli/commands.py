@@ -2028,44 +2028,30 @@ class HistoryCommand(Command):
             return 1, [str(err)]
 
     def _hcmd_rollback(self, extcmds):
+        # Parse the force extcmd and pop it.
         force = False
-        if len(extcmds) > 1 and extcmds[1] == 'force':
-            force = True
-            extcmds = extcmds[:]
-            extcmds.pop(0)
-
-        old = self.base.history_get_transaction(extcmds[1:])
-        if old is None:
+        try:
+            force_str = extcmds[0]
+        except IndexError:
+            self.base.logger.critical(_('No transaction ID given'))
             return 1, ['Failed history rollback, no transaction']
-        last = self.base.history.last()
-        if last is None:
-            return 1, ['Failed history rollback, no last?']
-        if old.tid == last.tid:
-            return 0, ['Rollback to current, nothing to do']
+        else:
+            if force_str == 'force':
+                force = True
+                # Pop the force extcmd (but do not modify the instance).
+                extcmds = extcmds[1:]
 
-        mobj = None
-        for tid in self.base.history.old(list(range(old.tid + 1, last.tid + 1))):
-            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
-                if tid.altered_lt_rpmdb:
-                    msg = "Transaction history is incomplete, before %u."
-                else:
-                    msg = "Transaction history is incomplete, after %u."
-                print(msg % tid.tid)
-                print(" You can use 'history rollback force', to try anyway.")
-                return 1, ['Failed history rollback, incomplete']
+        # Parse the transaction specification.
+        try:
+            extcmd, = extcmds
+        except ValueError:
+            self.base.logger.critical(_('Found more than one transaction ID!'))
+            return 1, ['Failed history rollback']
 
-            if mobj is None:
-                mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
-            else:
-                mobj.merge(tid)
-
-        tm = time.ctime(old.beg_timestamp)
-        print("Rollback to transaction %u, from %s" % (old.tid, tm))
-        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
-                                      ", ".join((str(x) for x in mobj.tid))))
-        self.output.historyInfoCmdPkgsAltered(mobj)
-        if self.base.history_undo(mobj):
-            return 2, ["Rollback to transaction %u" % (old.tid,)]
+        try:
+            return self.base.history_rollback_transaction(extcmd, force)
+        except dnf.exceptions.Error as err:
+            return 1, [str(err)]
 
     def _hcmd_new(self, extcmds):
         self.base.history._create_db_file()
@@ -2155,7 +2141,7 @@ class HistoryCommand(Command):
         elif vcmd in ('redo', 'repeat'):
             ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':
-            ret = self._hcmd_rollback(extcmds)
+            ret = self._hcmd_rollback(extcmds[1:])
         elif vcmd == 'new':
             ret = self._hcmd_new(extcmds)
         elif vcmd in ('stats', 'statistics'):

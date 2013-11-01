@@ -1031,6 +1031,42 @@ class BaseCli(dnf.Base):
             self.logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
+    def history_rollback_transaction(self, extcmd, force=False):
+        """Rollback given transaction."""
+        old = self.history_get_transaction((extcmd,))
+        if old is None:
+            return 1, ['Failed history rollback, no transaction']
+        last = self.history.last()
+        if last is None:
+            return 1, ['Failed history rollback, no last?']
+        if old.tid == last.tid:
+            return 0, ['Rollback to current, nothing to do']
+
+        mobj = None
+        for tid in self.history.old(list(range(old.tid + 1, last.tid + 1))):
+            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
+                if tid.altered_lt_rpmdb:
+                    msg = "Transaction history is incomplete, before %u."
+                else:
+                    msg = "Transaction history is incomplete, after %u."
+                print(msg % tid.tid)
+                print(" You can use 'history rollback force', to try anyway.")
+                return 1, ['Failed history rollback, incomplete']
+
+            if mobj is None:
+                mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
+            else:
+                mobj.merge(tid)
+
+        tm = time.ctime(old.beg_timestamp)
+        print("Rollback to transaction %u, from %s" % (old.tid, tm))
+        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
+                                      ", ".join((str(x) for x in mobj.tid))))
+        self.output.historyInfoCmdPkgsAltered(mobj)
+
+        if self.history_undo(mobj):
+            return 2, ["Rollback to transaction %u" % (old.tid,)]
+
     def history_undo_transaction(self, extcmd):
         """Undo given transaction."""
         old = self.history_get_transaction((extcmd,))
