@@ -108,6 +108,8 @@ def ucd(obj):
             return obj
         return str(obj)
     else:
+        if isinstance(obj, unicode):
+            return obj
         if hasattr(obj, '__unicode__'):
             # see the doc for the unicode() built-in. The logic here is: if obj
             # implements __unicode__, let it take a crack at it, but handle the
