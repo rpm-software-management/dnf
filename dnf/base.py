@@ -2013,12 +2013,10 @@ class Base(object):
         self.conf.obsoletes = old_conf_obs
         return done
 
-    def history_undo(self, id_or_offset):
-        """Undo the transaction represented by the given ID or offset from
-        the last transaction.
+    def history_undo(self, operations):
+        """Undo the operations on packages by their NEVRAs.
 
-        :param id_or_offset: an ID or offset from the last transaction
-           representing the transaction to be undone
+        :param operations: a NEVRAOperations to be undone
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -2097,16 +2095,9 @@ class Base(object):
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
-        history = dnf.history.open_history(self.history)
-        last_id = history.last_transaction_id()
-        if not last_id:
-            raise ValueError('no transaction in history')
-        id_ = last_id + id_or_offset + 1 if id_or_offset < 0 else id_or_offset
-
         # Build the transaction directly, because the depsolve is not needed.
         self._transaction = dnf.transaction.Transaction()
-        for operation in history.transaction_nevra_ops(id_):
-            state, nevra, replaced_nevra, obsoleted_nevras = operation
+        for state, nevra, replaced_nevra, obsoleted_nevras in operations:
             if state == 'Install':
                 assert not replaced_nevra
                 handle_install(nevra, obsoleted_nevras)

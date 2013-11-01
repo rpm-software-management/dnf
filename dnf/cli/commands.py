@@ -2002,7 +2002,7 @@ class HistoryCommand(Command):
                 break
             extcmds = [extcmds[0]] + extcmds[2:]
 
-        old = self.base.history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds[1:])
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
@@ -2012,19 +2012,20 @@ class HistoryCommand(Command):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, extcmds):
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history undo']
-        tm = time.ctime(old.beg_timestamp)
-        print("Undoing transaction %u, from %s" % (old.tid, tm))
-        self.output.historyInfoCmdPkgsAltered(old)
+        # Parse the transaction specification.
         try:
-            self.base.history_undo(old.tid)
-        except (dnf.exceptions.PackagesNotInstalledError,
-                dnf.exceptions.PackagesNotAvailableError) as err:
+            extcmd, = extcmds
+        except ValueError:
+            if not extcmds:
+                self.base.logger.critical(_('No transaction ID given'))
+            elif len(extcmds) > 1:
+                self.base.logger.critical(_('Found more than one transaction ID!'))
+            return 1, ['Failed history undo']
+
+        try:
+            return self.base.history_undo_transaction(extcmd)
+        except dnf.exceptions.Error as err:
             return 1, [str(err)]
-        else:
-            return 2, ["Undoing transaction %u" % (old.tid,)]
 
     def _hcmd_rollback(self, extcmds):
         force = False
@@ -2033,7 +2034,7 @@ class HistoryCommand(Command):
             extcmds = extcmds[:]
             extcmds.pop(0)
 
-        old = self.base.history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds[1:])
         if old is None:
             return 1, ['Failed history rollback, no transaction']
         last = self.base.history.last()
@@ -2150,7 +2151,7 @@ class HistoryCommand(Command):
                       'package', 'package-list', 'packages', 'packages-list'):
             ret = self.output.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
-            ret = self._hcmd_undo(extcmds)
+            ret = self._hcmd_undo(extcmds[1:])
         elif vcmd in ('redo', 'repeat'):
             ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':

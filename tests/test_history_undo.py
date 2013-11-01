@@ -23,12 +23,12 @@
 from __future__ import absolute_import
 from dnf import Base
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
+from dnf.history import NEVRAOperations
 from dnf.package import Package
 from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
                              TransactionItem, UPGRADE)
-from dnf.yum.history import YumHistoryPackageState
 from hawkey import split_nevra
-from tests.support import mock_sack, ObjectMatcher, HistoryStub
+from tests.support import mock_sack, ObjectMatcher
 from unittest import TestCase
 
 class BaseTest(TestCase):
@@ -60,36 +60,14 @@ class BaseTest(TestCase):
         """Prepare the test fixture."""
         self._base = Base()
         self._base._sack = mock_sack('main', 'updates')
-        self._base.history = HistoryStub()
-
-    def test_history_undo_badid(self):
-        """Test history_undo with a bad transaction ID."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'hole', 'x86_64', '0', '1', '1', 'Erase',
-                history=self._base.history),)
-
-        with self._base:
-            self.assertRaises(ValueError, self._base.history_undo, 2)
 
     def test_history_undo_downgrade(self):
         """Test history_undo with a downgrade."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Downgrade',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '1', 'Downgraded',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-1.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -103,40 +81,31 @@ class BaseTest(TestCase):
 
     def test_history_undo_downgrade_notavailable(self):
         """Test history_undo with an unavailable downgrade."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Downgrade',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '2', 'Downgraded',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-2.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotAvailableError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotAvailableError,
+                self._base.history_undo, operations)
 
     def test_history_undo_downgrade_notinstalled(self):
         """Test history_undo with a not installed downgrade."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '0', 'Downgrade',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Downgraded',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Downgrade', 'lotus-3-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotInstalledError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotInstalledError,
+                self._base.history_undo, operations)
 
     def test_history_undo_erase(self):
         """Test history_undo with an erase."""
-        self._base.history.old_data_pkgs['1'] = (YumHistoryPackageState(
-            'lotus', 'x86_64', '0', '3', '16', 'Erase',
-            history=self._base.history),)
+        operations = NEVRAOperations()
+        operations.add('Erase', 'lotus-3-16.x86_64')
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -146,30 +115,21 @@ class BaseTest(TestCase):
 
     def test_history_undo_erase_notavailable(self):
         """Test history_undo with an unavailable erase."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'hole', 'x86_64', '0', '1', '1', 'Erase',
-                history=self._base.history),)
+        operations = NEVRAOperations()
+        operations.add('Erase', 'hole-1-1.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotAvailableError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotAvailableError,
+                self._base.history_undo, operations)
 
     def test_history_undo_install(self):
         """Test history_undo with an install."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Install',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Install', 'pepper-20-0.x86_64', obsoleted_nevras=('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -182,57 +142,21 @@ class BaseTest(TestCase):
 
     def test_history_undo_install_notinstalled(self):
         """Test history_undo with a not installed install."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'mrkite', 'x86_64', '0', '2', '0', 'Install',
-                history=self._base.history),)
+        operations = NEVRAOperations()
+        operations.add('Install', 'mrkite-2-0.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotInstalledError,
-                              self._base.history_undo, 1)
-
-    def test_history_undo_notransaction(self):
-        """Test history_undo without any transaction."""
-        with self._base:
-            self.assertRaises(ValueError, self._base.history_undo, 1)
-
-    def test_history_undo_offset(self):
-        """Test history_undo with a transaction offset from the end."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Install',
-                history=self._base.history),)
-        self._base.history.old_data_pkgs['2'] = (YumHistoryPackageState(
-            'lotus', 'x86_64', '0', '3', '16', 'Erase',
-            history=self._base.history),)
-
-        with self._base:
-            self._base.history_undo(-1)
-
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            self.assertRaises(
+                PackagesNotInstalledError,
+                self._base.history_undo, operations)
 
     def test_history_undo_reinstall(self):
         """Test history_undo with a reinstall."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Reinstall',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Reinstalled',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'hole', 'x86_64', '0', '1', '1', 'Obsoleted',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('hole-1-1.x86_64',))
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -244,50 +168,31 @@ class BaseTest(TestCase):
 
     def test_history_undo_reinstall_notavailable(self):
         """Test history_undo with an unvailable reinstall."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'mrkite', 'x86_64', '0', '2', '0', 'Reinstall',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'mrkite', 'x86_64', '0', '2', '0', 'Reinstalled',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Reinstall', 'mrkite-2-0.x86_64', 'mrkite-2-0.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotInstalledError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotInstalledError,
+                self._base.history_undo, operations)
 
     def test_history_undo_reinstall_notinstalled(self):
         """Test history_undo with a not installed reinstall."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'hole', 'x86_64', '0', '1', '1', 'Reinstall',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'hole', 'x86_64', '0', '1', '1', 'Reinstalled',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Reinstall', 'hole-1-1.x86_64', 'hole-1-1.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotAvailableError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotAvailableError,
+                self._base.history_undo, operations)
 
     def test_history_undo_reinstall_notinstalled_obsoleted(self):
         """Test history_undo with a not installed obsoleted of a reinstall."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Reinstall',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Reinstalled',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -298,22 +203,11 @@ class BaseTest(TestCase):
 
     def test_history_undo_update(self):
         """Test history_undo with an update."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'tour', 'noarch', '0', '5', '0', 'Update',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'tour', 'noarch', '0', '4.6', '1', 'Updated',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'tour', 'noarch', '0', '5', '0', 'Obsoleting',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-1.noarch', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base.history_undo(1)
+            self._base.history_undo(operations)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -327,28 +221,20 @@ class BaseTest(TestCase):
 
     def test_history_undo_update_notavailable(self):
         """Test history_undo with an unavailable update."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'tour', 'noarch', '0', '5', '0', 'Update',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'tour', 'noarch', '0', '4.6', '2', 'Updated',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-2.noarch')
 
         with self._base:
-            self.assertRaises(PackagesNotAvailableError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotAvailableError,
+                self._base.history_undo, operations)
 
     def test_history_undo_update_notinstalled(self):
         """Test history_undo with a not installed update."""
-        self._base.history.old_data_pkgs['1'] = (
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '4', '0', 'Update',
-                history=self._base.history),
-            YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Updated',
-                history=self._base.history))
+        operations = NEVRAOperations()
+        operations.add('Update', 'lotus-4-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base:
-            self.assertRaises(PackagesNotInstalledError,
-                              self._base.history_undo, 1)
+            self.assertRaises(
+                PackagesNotInstalledError,
+                self._base.history_undo, operations)
