@@ -110,3 +110,5 @@ class TestConversion(PycompTestCase):
             self.assertRaises(UnicodeDecodeError, unicode, obj)
         expected = u"[Errno 17] %s" % UC_TEXT_OSERROR
         self.assertEqual(dnf.i18n.ucd(obj), expected)
+        # ucd() should return unicode unmodified
+        self.assertEqual(dnf.i18n.ucd(expected), expected)
