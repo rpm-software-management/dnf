@@ -587,8 +587,7 @@ class Base(object):
         """
         inst = query.filter(reponame=hawkey.SYSTEM_REPO_NAME)
         inst_per_arch = queries.per_arch_dict(inst)
-        avail = query.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME,
-                             latest=True)
+        avail = query.latest().available()
         avail_per_arch = queries.per_arch_dict(avail)
         avail_l = []
         inst_l = []

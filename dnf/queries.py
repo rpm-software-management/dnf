@@ -56,7 +56,7 @@ class Query(hawkey.Query):
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
     def latest(self):
-        return self.filter(latest=True)
+        return self.filter(latest_per_arch=True)
 
     def upgrades(self):
         return self.filter(upgrades=True)
