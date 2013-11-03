@@ -1329,7 +1329,7 @@ class RepoListCommand(Command):
         """
         def _repo_size(repo):
             ret = 0
-            for pkg in dnf.queries.by_repo(self.base.sack, repo.id):
+            for pkg in self.base.sack.query().filter(reponame__eq=repo.id):
                 ret += pkg.size
             return format_number(ret)
 
@@ -1391,7 +1391,8 @@ class RepoListCommand(Command):
                     ui_size = _repo_size(repo)
                 # We don't show status for list disabled
                 if arg != 'disabled' or verbose:
-                    num = len(dnf.queries.by_repo(self.base.sack, repo.id))
+                    num = len(self.base.sack.query().filter(
+                        reponame__eq=repo.id))
                     ui_num     = _num2ui_num(num)
                     tot_num   += num
             else:

@@ -587,8 +587,7 @@ class Base(object):
         """
         inst = query.filter(reponame=hawkey.SYSTEM_REPO_NAME)
         inst_per_arch = queries.per_arch_dict(inst)
-        avail = query.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME,
-                             latest=True)
+        avail = query.latest().available()
         avail_per_arch = queries.per_arch_dict(avail)
         avail_l = []
         inst_l = []
@@ -906,8 +905,8 @@ class Base(object):
             if rpo is None:
                 continue
 
-            installed = queries.installed_exact(rpmdb_sack, rpo.name,
-                                                rpo.evr, rpo.arch)
+            installed = rpmdb_sack.query().installed().nevra(
+                rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
                 self.logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % rpo))
@@ -964,8 +963,8 @@ class Base(object):
         just_installed = self.sack.query().\
             filter(pkg=self.transaction.install_set)
         for rpo in self.transaction.remove_set:
-            installed = queries.installed_exact(rpmdb_sack, rpo.name,
-                                                rpo.evr, rpo.arch)
+            installed = rpmdb_sack.query().installed().nevra(
+                rpo.name, rpo.evr, rpo.arch)
             if len(installed) > 0:
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
                                                  evr=rpo.evr)):
@@ -1956,7 +1955,9 @@ class Base(object):
         providers = queries.by_provides(self.sack, provides_spec)
         if providers:
             return providers
-        return dnf.queries.by_file(self.sack, provides_spec)
+        if any(map(dnf.util.is_glob_pattern, provides_spec)):
+            return self.sack.query().filter(file__glob=provides_spec)
+        return self.sack.query().filter(file=provides_spec)
 
     def history_redo(self, transaction,
                      force_reinstall=False, force_changed_removal=False):
@@ -2234,7 +2235,7 @@ class Base(object):
         msg = None
         fname = dnf.util.strip_prefix(keyurl, "file://")
         if fname:
-            pkgs = queries.by_file(self.sack, fname)
+            pkgs = self.sack.query().filter(file=fname)
             if pkgs:
                 pkg = pkgs[0]
                 msg = (_('Importing %s key 0x%s:\n'

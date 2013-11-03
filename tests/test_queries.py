@@ -40,25 +40,20 @@ class QueriesTest(support.TestCase):
         self.assertEqual(len(q.run()), 1)
         pkg = q.result[0]
 
-        # now the query:
-        res = dnf.queries.by_file(sack, "/raised/smile")
-        self.assertEqual(len(res), 1)
-        self.assertEqual(pkg, res[0])
-
     def test_by_repo(self):
         sack = support.mock_sack("updates", "main")
-        pkgs = dnf.queries.by_repo(sack, "updates")
+        pkgs = sack.query().filter(reponame__eq="updates")
         self.assertEqual(len(pkgs), support.UPDATES_NSOLVABLES)
-        pkgs = dnf.queries.by_repo(sack, "main")
+        pkgs = sack.query().filter(reponame__eq="main")
         self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
     def test_installed_exact(self):
         sack = support.mock_sack()
-        pkgs = dnf.queries.installed_exact(sack, "tour", "4.9-0", "noarch")
+        pkgs = sack.query().installed().nevra("tour-4.9-0.noarch")
         self.assertEqual(len(pkgs), 0)
-        pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "x86_64")
+        pkgs = sack.query().installed().nevra("tour-5-0.x86_64")
         self.assertEqual(len(pkgs), 0)
-        pkgs = dnf.queries.installed_exact(sack, "tour", "5-0", "noarch")
+        pkgs = sack.query().installed().nevra("tour-5-0.noarch")
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
@@ -98,7 +93,7 @@ class SubjectTest(support.TestCase):
 class DictsTest(PycompTestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
-        pkgs = dnf.queries.by_name(sack, "lotus")
+        pkgs = sack.query().filter(name="lotus")
         dct = dnf.queries.per_nevra_dict(pkgs)
         self.assertItemsEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])

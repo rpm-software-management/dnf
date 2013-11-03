@@ -56,7 +56,7 @@ class Query(hawkey.Query):
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
     def latest(self):
-        return self.filter(latest=True)
+        return self.filter(latest_per_arch=True)
 
     def upgrades(self):
         return self.filter(upgrades=True)
@@ -73,8 +73,16 @@ class Query(hawkey.Query):
     def pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
-    def nevra(self, pattern):
-        nevra = hawkey.split_nevra(pattern)
+    def nevra(self, *args):
+        args_len = len(args)
+        if args_len == 3:
+            return self.filter(name=args[0], evr=args[1], arch=args[2])
+        if args_len == 1:
+            nevra = hawkey.split_nevra(args[0])
+        elif args_len == 5:
+            nevra = args
+        else:
+            raise TypeError("nevra() takes 1, 3 or 5 str params")
         return self.filter(
             name=nevra.name, epoch=nevra.epoch, version=nevra.version,
             release=nevra.release, arch=nevra.arch)
@@ -212,33 +220,6 @@ def _construct_result(sack, patterns, ignore_case,
         return q
     return q.run()
 
-def installed_exact(sack, name, evr, arch, get_query=False):
-    q = _construct_result(sack, name, False, get_query=True,
-                          include_repo=hawkey.SYSTEM_REPO_NAME)
-    q.filterm(arch__eq=arch, evr__eq=evr);
-    return q if get_query else q.run()
-
-def by_name(sack, patterns, ignore_case=False, get_query=False):
-    return _construct_result(sack, patterns, ignore_case, get_query=get_query)
-
-def by_file(sack, patterns, ignore_case=False, get_query=False):
-    if isinstance(patterns, basestring):
-        patterns = [patterns]
-
-    glob = len(list(filter(is_glob_pattern, patterns))) > 0
-    flags = []
-    q = sack.query()
-    if ignore_case:
-        flags = [hawkey.ICASE]
-    if glob:
-        q.filterm(*flags, file__glob=patterns)
-    else:
-        q.filterm(*flags, file=patterns)
-
-    if get_query:
-        return q
-    return q.run()
-
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
@@ -255,9 +236,6 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
-def by_repo(sack, reponame):
-    return _construct_result(sack, None, ignore_case=False, include_repo=reponame)
-
 def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
                     exclude_repo=None):
     matching = _construct_result(sack, patterns, ignore_case,
@@ -268,24 +246,6 @@ def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
         key = (pkg.name, pkg.arch)
         latest[key] = pkg
     return latest
-
-def latest_installed_per_arch(sack, patterns, ignore_case=False):
-    return latest_per_arch(sack, patterns, ignore_case,
-                           include_repo=hawkey.SYSTEM_REPO_NAME)
-
-def latest_available_per_arch(sack, patterns, ignore_case=False):
-    return latest_per_arch(sack, patterns, ignore_case,
-                           exclude_repo=hawkey.SYSTEM_REPO_NAME)
-
-def downgrades_by_name(sack, patterns, ignore_case=False, latest_only=False):
-    return _construct_result(sack, patterns, ignore_case,
-                             latest_only=latest_only,
-                             downgrades_only=True)
-
-def updates_by_name(sack, patterns, ignore_case=False, latest_only=False):
-    return _construct_result(sack, patterns, ignore_case,
-                             latest_only=latest_only,
-                             updates_only=True)
 
 def per_arch_dict(pkg_list):
     d = {}

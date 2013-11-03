@@ -1413,8 +1413,7 @@ class Cli(object):
         matched_needles = None
         limit = None
         if not self.base.conf.showdupesfromrepos:
-            limit = self.base.sack.query().filter(pkg=counter.keys())
-            limit = limit.filter(latest=True)
+            limit = self.base.sack.query().filter(pkg=counter.keys()).latest()
         for pkg in counter.sorted(reverse=True, limit_to=limit):
             if matched_needles != counter.matched_needles(pkg):
                 matched_needles = counter.matched_needles(pkg)
