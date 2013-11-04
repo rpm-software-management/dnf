@@ -16,7 +16,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 """
-The Yum RPM software updater.
+Supplies the Base class.
 """
 
 from __future__ import absolute_import
@@ -70,12 +70,8 @@ _ = i18n._
 P_ = i18n.P_
 
 class Base(object):
-    """This is a primary structure and base class. It houses the
-    objects and methods needed to perform most things in yum. It is
-    almost an abstract class in that you will need to add your own
-    class above it for most real use.
-    """
     def __init__(self):
+        # :api
         self._closed = False
         self._conf = config.YumConf()
         self._conf.uid = 0
@@ -177,10 +173,12 @@ class Base(object):
 
     @property
     def comps(self):
+        # :api
         return self._comps
 
     @property
     def conf(self):
+        # :api
         return self._conf
 
     @property
@@ -208,7 +206,7 @@ class Base(object):
         self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
-        """Prepare the Sack and the Goal objects."""
+        """Prepare the Sack and the Goal objects. :api."""
         start = time.time()
         self._sack = sack.build_sack(self)
         with dnf.lock.metadata_cache_lock:
@@ -491,7 +489,7 @@ class Base(object):
         self._ts = None
 
     def read_comps(self):
-        """Create the groups object to access the comps metadata."""
+        """Create the groups object to access the comps metadata. :api"""
         group_st = time.time()
         self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
         self._comps = dnf.comps.Comps()
@@ -661,6 +659,7 @@ class Base(object):
         return got_transaction
 
     def do_transaction(self, display=None):
+        # :api
         # save our ds_callback out
         dscb = self.ds_callback
         self.ds_callback = None
@@ -984,14 +983,14 @@ class Base(object):
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
-        """Download the packages specified by the given list of
-        package objects.
+        """Download the packages specified by the given list of packages. :api
 
         :param pkglist: a list of package objects specifying the
            packages to download
         :param callback_total: a callback to output messages about the
            download operation
         :return: a dictionary containing errors from the downloading process
+
         """
         def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
@@ -1481,10 +1480,11 @@ class Base(object):
                             self.tsInfo.remove(txmbr.po.pkgtup)
 
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
-        """Mark all the packages in the given group to be installed.
+        """Mark all the packages in the given group to be installed. :api
 
         :param group: the group containing the packages to mark for installation
         :return: number of transaction members added to the transaction set
+
         """
 
         txmbrs = []
@@ -1730,12 +1730,8 @@ class Base(object):
         return bestlist[0][0]
 
     def install(self, pkg_spec):
-        """ Mark package(s) specified by pkg_spec for installation.
+        """Mark package(s) specified by pkg_spec for installation. :api"""
 
-            :return: a list of the transaction members added to the
-               transaction set by this function
-
-        """
         def msg_installed(pkg):
             name = unicode(pkg)
             msg = _('Package %s is already installed, skipping.') % name

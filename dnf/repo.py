@@ -160,12 +160,13 @@ SYNC_EXPIRED    = 2 # consider the current cache expired, no matter its real age
 SYNC_ONLY_CACHE = 3 # use the local cache, even if it's expired, never download.
 
 class Repo(dnf.yum.config.RepoConf):
+    # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
     def __init__(self, id_):
         super(Repo, self).__init__()
         self._progress = None
-        self.id = id_
+        self.id = id_ # :api
         self.basecachedir = None
         self.metadata = None
         self.sync_strategy = self.DEFAULT_SYNC
@@ -337,9 +338,11 @@ class Repo(dnf.yum.config.RepoConf):
         return output
 
     def disable(self):
+        # :api
         self.enabled = False
 
     def enable(self):
+        # :api
         self.enabled = True
 
     @property
@@ -388,7 +391,7 @@ class Repo(dnf.yum.config.RepoConf):
         return pkg.localPkg()
 
     def load(self):
-        """Load the metadata for this repo.
+        """Load the metadata for this repo. :api
 
         Depending on the configuration and the age and consistence of data
         available on the disk cache, either loads the metadata from the cache or

@@ -680,11 +680,11 @@ class StartupConf(BaseConfig):
     that are required early in the initialisation process or before
     the other [main] options can be parsed.
     """
-    debuglevel = IntOption(2, 0, 10)
+    debuglevel = IntOption(2, 0, 10) # :api
     errorlevel = IntOption(2, 0, 10)
 
     distroverpkg = Option('redhat-release')
-    installroot = Option('/')
+    installroot = Option('/') # :api
     config_file_path = Option(dnf.const.CONF_FILENAME)
     plugins = BoolOption(False)
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
@@ -704,16 +704,19 @@ class StartupConf(BaseConfig):
         setattr(self, option, varReplace(path, self.yumvar))
 
     def prepend_installroot(self, option):
+        # :api
         path = getattr(self, option)
         path = path.lstrip('/')
         setattr(self, option, os.path.join(self.installroot, path))
 
     @property
     def releasever(self):
+        # :api
         return self.yumvar.get('releasever')
 
     @releasever.setter
     def releasever(self, val):
+        # :api
         if val is None:
             val = _getsysver(self.installroot,
                              self.distroverpkg)
@@ -755,7 +758,7 @@ class YumConf(StartupConf):
     cachedir = Option(dnf.const.SYSTEM_CACHEDIR)
 
     keepcache = BoolOption(True)
-    logdir = Option('/var/log')
+    logdir = Option('/var/log') # :api
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
 
     debug_solver = BoolOption(False)
@@ -774,7 +777,7 @@ class YumConf(StartupConf):
     # so you probably want to use 3 as a minimum ... if you turn it on.
     installonly_limit = PositiveIntOption(0, range_min=2,
                                           names_of_0=["0", "<off>"])
-    tsflags = ListOption()
+    tsflags = ListOption() # :api
 
     assumeyes = BoolOption(False)
     assumeno  = BoolOption(False)
@@ -805,10 +808,8 @@ class YumConf(StartupConf):
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
     disable_excludes = ListOption()
-    multilib_policy = SelectionOption('best', ('best', 'all'))
-                 # all == install any/all arches you can
-                 # best == use the 'best  arch' for the system
-    best = BoolOption(False)
+    multilib_policy = SelectionOption('best', ('best', 'all')) # :api
+    best = BoolOption(False) # :api
     bugtracker_url = Option(dnf.const.BUGTRACKER)
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),
@@ -916,11 +917,11 @@ class RepoConf(BaseConfig):
         for name in self.__cached_keys:
             yield name
 
-    name = Option()
+    name = Option() # :api
     enabled = Inherit(YumConf.enabled)
-    baseurl = UrlListOption()
-    mirrorlist = UrlOption()
-    metalink   = UrlOption()
+    baseurl = UrlListOption() # :api
+    mirrorlist = UrlOption() # :api
+    metalink   = UrlOption() # :api
     mediaid = Option()
     gpgkey = UrlListOption()
     gpgcakey = UrlListOption()
@@ -951,7 +952,7 @@ class RepoConf(BaseConfig):
     cost = IntOption(1000)
 
     sslcacert = Inherit(YumConf.sslcacert)
-    sslverify = Inherit(YumConf.sslverify)
+    sslverify = Inherit(YumConf.sslverify) # :api
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
 

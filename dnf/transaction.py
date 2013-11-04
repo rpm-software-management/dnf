@@ -111,6 +111,8 @@ class TransactionItem(object):
         return l + self.obsoleted
 
 class Transaction(object):
+    # :api
+
     def __init__(self):
         self._tsis = []
         self.logger = logging.getLogger("dnf")

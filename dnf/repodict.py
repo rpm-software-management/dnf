@@ -41,7 +41,9 @@ class MultiCallList(list):
         return list(map(setter, self))
 
 class RepoDict(PycompDict):
+    # :api
     def add(self, repo):
+        # :api
         id_ = repo.id
         if id_ in self:
             msg = 'Repository %s is listed more than once in the configuration'
@@ -71,4 +73,5 @@ class RepoDict(PycompDict):
         return MultiCallList([repo])
 
     def iter_enabled(self):
+        # :api
         return (r for r in self.itervalues() if r.enabled)

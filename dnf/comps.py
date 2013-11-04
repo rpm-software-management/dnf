@@ -120,6 +120,7 @@ class Forwarder(object):
         return self._ui_text(self.name, self.name_by_lang)
 
 class Group(Forwarder):
+    # :api
     def __init__(self, iobj, langs, installed_groups):
         super(Group, self).__init__(iobj, langs)
         self._installed_groups = installed_groups
@@ -153,12 +154,15 @@ class Group(Forwarder):
         return self._i.uservisible
 
 class Category(Forwarder):
+    # :api
     pass
 
 class Environment(Forwarder):
+    # :api
     pass
 
 class Comps(object):
+    # :api
     def __init__(self):
         self._i = libcomps.Comps()
         self._installed_groups = set()
@@ -186,16 +190,20 @@ class Comps(object):
 
     @property
     def categories(self):
+        # :api
         return list(self.categories_iter())
 
     def category_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         cats = self.categories_by_pattern(pattern, case_sensitive)
         return _first_if_iterable(cats)
 
     def categories_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         return _by_pattern(pattern, case_sensitive, self.categories)
 
     def categories_iter(self):
+        # :api
         return (self._build_category(c) for c in self._i.categories)
 
     def compile(self, installed_pkgs):
@@ -224,28 +232,36 @@ class Comps(object):
 
     @property
     def environments(self):
+        # :api
         return list(self.environments_iter())
 
     def environment_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         envs = self.environments_by_pattern(pattern, case_sensitive)
         return _first_if_iterable(envs)
 
     def environments_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         return _by_pattern(pattern, case_sensitive, self.environments)
 
     def environments_iter(self):
+        # :api
         return (self._build_environment(e) for e in self._i.environments)
 
     @property
     def groups(self):
+        # :api
         return list(self.groups_iter())
 
     def group_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         grps = self.groups_by_pattern(pattern, case_sensitive)
         return _first_if_iterable(grps)
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
+        # :api
         return _by_pattern(pattern, case_sensitive, self.groups)
 
     def groups_iter(self):
+        # :api
         return (self._build_group(g) for g in self._i.groups)

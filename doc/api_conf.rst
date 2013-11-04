@@ -1,0 +1,54 @@
+===============
+ Configuration
+===============
+
+Configurable settings of the :class:`dnf.Base` object are stored into a :class:`dnf.conf.Conf` instance. The various options are described here.
+
+.. class:: dnf.conf.Conf
+
+  .. attribute:: best
+
+    Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``False``.
+
+  .. attribute:: debuglevel
+
+    Debug messages output level, in the range 0 to 10. Default is 2.
+
+  .. attribute:: installroot
+
+    The root of the filesystem for all packaging operations.
+
+  .. attribute:: logdir
+
+    Directory where the log files will be stored. Default is ``"/var/log"``.
+
+  .. attribute:: multilib_policy
+
+    Controls how multilib packages are treated during install operations. Can either be ``"best"`` (the default) for the depsolver to prefer packages which best match the system's architecture, or ``"all"`` to install all available packages with compatible architectures.
+
+  .. attribute:: releasever
+
+    Used for substitution of ``$releasever`` in the repository configuration.
+
+  .. attribute:: tsflags
+
+    List of strings adding extra flags for the RPM transaction.
+
+    ==========              ===========================
+    tsflag                  RPM Transaction Flag
+    ==========              ===========================
+    noscripts               RPMTRANS_FLAG_NOSCRIPTS
+    test                    RPMTRANS_FLAG_TEST
+    notriggers              RPMTRANS_FLAG_NOTRIGGERS
+    nodocs                  RPMTRANS_FLAG_NODOCS
+    justdb                  RPMTRANS_FLAG_JUSTDB
+    nocontexts              RPMTRANS_FLAG_NOCONTEXTS
+    nocrypto                RPMTRANS_FLAG_NOFILEDIGEST
+    ==========              ===========================
+
+    The ``"nocrypto"`` option will also set the ``_RPMVSF_NOSIGNATURES`` and ``_RPMVSF_NODIGESTS`` VS flags.
+
+  .. method:: prepend_installroot(option)
+
+    Prefix config option named `option` with :attr:`installroot`.
+

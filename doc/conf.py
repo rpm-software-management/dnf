@@ -42,7 +42,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DNF'
-copyright = u'2012, Red Hat'
+copyright = u'2012-2013, Red Hat'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -248,4 +248,5 @@ rst_prolog = """
 .. default-domain:: py
 .. _DNF: https://github.com/akozumpl/dnf/
 .. _Yum: http://yum.baseurl.org/
+.. _bugzilla: https://bugzilla.redhat.com/enter_bug.cgi?product=Fedora&component=dnf
 """

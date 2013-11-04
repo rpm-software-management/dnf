@@ -20,7 +20,7 @@
 
 CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
-GROUP_PACKAGE_TYPES = ('mandatory', 'default')
+GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
 INSTALLONLYPKGS=['kernel',
                  'kernel-PAE',
                  'kernel-PAE-debug',

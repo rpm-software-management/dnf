@@ -22,7 +22,7 @@ import dnf.const
 __version__ = dnf.const.VERSION
 
 import dnf.base
-Base = dnf.base.Base
+Base = dnf.base.Base # :api
 
 # setup libraries
 try:

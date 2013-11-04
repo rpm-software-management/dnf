@@ -36,11 +36,12 @@ one main section. The repository sections define the configuration for each
     pulled in as a dependency. The default is on.
 
 ``debuglevel``
-    Debug messages output level, in the range 0 to 10. Default is 2.
+    Debug messages output level, in the range 0 to 10. The higher the number the
+    more debug output is put to stdout. Default is 2.
 
 ``errorlevel``
-    Error messages output level, in the range 0 to 10. Default is 2. This is
-    deprecated in DNF.
+    Error messages output level, in the range 0 to 10. The higher the number the
+    more error output is put to stderr. Default is 2. This is deprecated in DNF.
 
 ``installonlypkgs``
     List of provide names of packages that should only ever be installed, never

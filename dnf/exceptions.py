@@ -20,9 +20,10 @@ Core DNF Errors.
 from dnf.yum.i18n import to_unicode
 
 class Error(Exception):
-    """
-    Base Yum Error. All other Errors thrown by yum should inherit from
-    this.
+    """Base Error. All other Errors thrown by DNF should inherit from this.
+
+    :api
+
     """
     def __init__(self, value=None):
         Exception.__init__(self)
@@ -58,12 +59,14 @@ class ThreadLockError(LockError):
     pass
 
 class RepoError(Error):
+    # :api
     pass
 
 class ConfigError(Error):
     pass
 
 class DepsolveError(Error):
+    # :api
     pass
 
 class MetadataError(Error):
@@ -73,6 +76,7 @@ class MiscError(Error):
     pass
 
 class PackageNotFoundError(Error):
+    # :api
     pass
 
 class PackagesNotInstalledError(Error):
