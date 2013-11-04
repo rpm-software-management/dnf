@@ -22,7 +22,7 @@ CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf'
 INSTALLONLYPKGS=['kernel',
                  'kernel-PAE',
-                 'kernel-PAE-debug'
+                 'kernel-PAE-debug',
                  'kernel-debug',
                  'kernel-devel',
                  'kernel-bigmem',
