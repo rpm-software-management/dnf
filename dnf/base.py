@@ -207,7 +207,7 @@ class Base(object):
     def activate_persistor(self):
         self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
 
-    def activate_sack(self, load_system_repo=True, load_available_repos=True):
+    def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects."""
         start = time.time()
         self._sack = sack.build_sack(self)

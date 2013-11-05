@@ -65,8 +65,8 @@ class CommandsCliTest(support.TestCase):
         self.assertFalse(self.yumbase.goal_parameters.allow_uninstall)
 
     @staticmethod
-    @mock.patch('dnf.Base.activate_sack')
-    def _do_makecache(cmd, activate_sack):
+    @mock.patch('dnf.Base.fill_sack')
+    def _do_makecache(cmd, fill_sack):
         return cmd.doCommand('makecache', ['timer'])
 
     @mock.patch('dnf.util.on_ac_power', return_value=True)

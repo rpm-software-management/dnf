@@ -965,7 +965,7 @@ class MakeCacheCommand(Command):
 
         if timer:
             persistor.reset_last_makecache()
-        self.base.activate_sack() # performs the md sync
+        self.base.fill_sack() # performs the md sync
         return 0, [_('Metadata Cache Created')]
 
     def needTs(self, basecmd, extcmds):
