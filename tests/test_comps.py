@@ -83,16 +83,16 @@ class CompsTest(support.TestCase):
 
     def test_iteration(self):
         comps = self.comps
-        self.assertEqual([g.name for g in comps.groups_iter],
+        self.assertEqual([g.name for g in comps.groups_iter()],
                          ['Base', 'Solid Ground', "Pepper's"])
-        self.assertEqual([c.name for c in comps.categories_iter],
+        self.assertEqual([c.name for c in comps.categories_iter()],
                          ['Base System'])
-        g = dnf.util.first(comps.groups_iter)
+        g = dnf.util.first(comps.groups_iter())
         self.assertEqual(g.desc_by_lang['cs'], TRANSLATION)
 
     def test_packages(self):
         comps = self.comps
-        group = dnf.util.first(comps.groups_iter)
+        group = dnf.util.first(comps.groups_iter())
         self.assertSequenceEqual([pkg.name for pkg in group.packages],
                                  (u'pepper', u'tour'))
         self.assertSequenceEqual([pkg.name for pkg in group.mandatory_packages],

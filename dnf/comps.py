@@ -186,7 +186,7 @@ class Comps(object):
 
     @property
     def categories(self):
-        return list(self.categories_iter)
+        return list(self.categories_iter())
 
     def category_by_pattern(self, pattern, case_sensitive=False):
         cats = self.categories_by_pattern(pattern, case_sensitive)
@@ -195,7 +195,6 @@ class Comps(object):
     def categories_by_pattern(self, pattern, case_sensitive=False):
         return _by_pattern(pattern, case_sensitive, self.categories)
 
-    @property
     def categories_iter(self):
         return (self._build_category(c) for c in self._i.categories)
 
@@ -205,7 +204,7 @@ class Comps(object):
         self._installed_groups.clear()
         # convert the tuple list to a simple dict of pkgnames
         inst_names = set([pkg.name for pkg in installed_pkgs])
-        for group in self.groups_iter:
+        for group in self.groups_iter():
             # if there are mandatory packages in the group, then make sure
             # they're all installed.  if any are missing, then the group
             # isn't installed.
@@ -225,7 +224,7 @@ class Comps(object):
 
     @property
     def environments(self):
-        return list(self.environments_iter)
+        return list(self.environments_iter())
 
     def environment_by_pattern(self, pattern, case_sensitive=False):
         envs = self.environments_by_pattern(pattern, case_sensitive)
@@ -234,13 +233,12 @@ class Comps(object):
     def environments_by_pattern(self, pattern, case_sensitive=False):
         return _by_pattern(pattern, case_sensitive, self.environments)
 
-    @property
     def environments_iter(self):
         return (self._build_environment(e) for e in self._i.environments)
 
     @property
     def groups(self):
-        return list(self.groups_iter)
+        return list(self.groups_iter())
 
     def group_by_pattern(self, pattern, case_sensitive=False):
         grps = self.groups_by_pattern(pattern, case_sensitive)
@@ -249,6 +247,5 @@ class Comps(object):
     def groups_by_pattern(self, pattern, case_sensitive=False):
         return _by_pattern(pattern, case_sensitive, self.groups)
 
-    @property
     def groups_iter(self):
         return (self._build_group(g) for g in self._i.groups)
