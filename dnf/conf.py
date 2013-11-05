@@ -36,9 +36,12 @@ goal is to:
 
 from __future__ import absolute_import
 import dnf.const
+import dnf.yum.config
 import os.path
 from . import util
 from .yum import misc
+
+Conf = dnf.yum.config.YumConf
 
 class Cache(object):
     def __init__(self):
