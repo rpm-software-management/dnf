@@ -168,7 +168,7 @@ def _main(base, args):
         logger.info(_('Resolving dependencies'))
 
         try:
-            got_transaction = base.build_transaction()
+            got_transaction = base.resolve()
         except plugins.PluginYumExit as e:
             return exPluginExit(e)
         except dnf.exceptions.Error as e:

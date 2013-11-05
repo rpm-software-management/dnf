@@ -627,7 +627,7 @@ class Base(object):
             goal.write_debugdata()
         return ret
 
-    def build_transaction(self):
+    def resolve(self):
         """Build the transaction set."""
         self.plugins.run('preresolve')
         exc = None

@@ -68,7 +68,7 @@ class InstallMultilibAll(support.ResultTestCase):
         self.yumbase.install("pepper-20-0.src")
         re = 'will not install a source rpm'
         self.assertRaisesRegexp(dnf.exceptions.Error, re,
-                                self.yumbase.build_transaction)
+                                self.yumbase.resolve)
 
 class MultilibAllMainRepo(support.ResultTestCase):
     def setUp(self):

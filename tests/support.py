@@ -346,7 +346,7 @@ class TestCase(PycompTestCase):
 class ResultTestCase(TestCase):
     def _get_installed(self, base):
         try:
-            base.build_transaction()
+            base.resolve()
         except dnf.exceptions.DepsolveError:
             self.fail()
 
@@ -368,7 +368,7 @@ class ResultTestCase(TestCase):
 
     def installed_removed(self, base):
         try:
-            base.build_transaction()
+            base.resolve()
         except dnf.exceptions.DepsolveError:
             self.fail()
 

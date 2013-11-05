@@ -94,10 +94,10 @@ class MockYumBaseTest(PycompTestCase):
         self.assertEqual(len(counter), 1)
 
 class BuildTransactionTest(support.TestCase):
-    def test_build_transaction(self):
+    def test_resolve(self):
         base = support.MockBase("updates")
         base.update("pepper")
-        self.assertTrue(base.build_transaction())
+        self.assertTrue(base.resolve())
         base.ds_callback.assert_has_calls(mock.call.start())
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'u'))
@@ -147,7 +147,7 @@ class InstallReasonTest(support.ResultTestCase):
 
     def test_reason(self):
         self.yumbase.install("mrkite")
-        self.yumbase.build_transaction()
+        self.yumbase.resolve()
         new_pkgs = self.yumbase._transaction.get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
