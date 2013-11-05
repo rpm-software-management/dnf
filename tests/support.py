@@ -253,7 +253,6 @@ class FakeConf(object):
         self.defaultyes = False
         self.disable_excludes = []
         self.exclude = []
-        self.group_package_types = ['mandatory', 'default']
         self.groupremove_leaf_only = False
         self.history_record = False
         self.installonly_limit = 0

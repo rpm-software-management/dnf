@@ -131,3 +131,10 @@ option:
 The relevant repository configuration files have been fixed to respect this, see
 the related `Fedora bug 948788
 <https://bugzilla.redhat.com/show_bug.cgi?id=948788>`_.
+
+=================================
+ ``group_package_types`` dropped
+=================================
+
+Done to simplify the configuration. User will typically want to decide what
+packages to install per-group and not via a global setting.
