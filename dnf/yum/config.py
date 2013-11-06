@@ -853,8 +853,6 @@ class YumConf(StartupConf):
 
     clean_requirements_on_remove = BoolOption(False)
 
-    upgrade_requirements_on_install = BoolOption(False)
-
     history_list_view = SelectionOption('single-user-commands',
                                         ('single-user-commands', 'users',
                                          'commands'),

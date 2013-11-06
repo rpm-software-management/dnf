@@ -266,7 +266,6 @@ class FakeConf(object):
         self.showdupesfromrepos = False
         self.tsflags = []
         self.uid = 0
-        self.upgrade_requirements_on_install = False
         self.verbose = False
         self.yumvar = {'releasever' : 'Fedora69'}
 

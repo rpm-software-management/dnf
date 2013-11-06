@@ -138,3 +138,11 @@ the related `Fedora bug 948788
 
 Done to simplify the configuration. User will typically want to decide what
 packages to install per-group and not via a global setting.
+
+=============================================
+ ``upgrade_requirements_on_install`` dropped
+=============================================
+
+Dropping this config option with blurry semantics simplifies the
+configuration. DNF behaves as if this was disabled. If the user wanted to
+upgrade everything to the latest version she'd simply use ``dnf upgrade``.
