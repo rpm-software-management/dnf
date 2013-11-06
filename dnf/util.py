@@ -30,6 +30,7 @@ import tempfile
 import time
 import types
 from functools import reduce
+from itertools import takewhile
 from .pycomp import PycompDict, PY3, basestring
 """DNF Utilities.
 
@@ -156,7 +157,8 @@ def split_by(iterable, condition):
     """
     separator = object()  # A unique object.
     # Create a function returning tuple of objects before the separator.
-    next_subsequence = lambda iterator: tuple(iter(iterator.next, separator))
+    def next_subsequence(it):
+        return tuple(takewhile(lambda e: e != separator, it))
 
     # Mark each place where the condition is met by the separator.
     marked = insert_if(separator, iterable, condition)
