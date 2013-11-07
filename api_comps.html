@@ -1,0 +1,235 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Comps, or the Ditribution Compose Metadata &mdash; DNF 0.4.6-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.6-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="DNF User’s FAQ" href="user_faq.html" />
+    <link rel="prev" title="Transaction" href="api_transaction.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="user_faq.html" title="DNF User’s FAQ"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_transaction.html" title="Transaction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="comps-or-the-ditribution-compose-metadata">
+<h1>Comps, or the Ditribution Compose Metadata<a class="headerlink" href="#comps-or-the-ditribution-compose-metadata" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dnf.comps.Comps">
+<em class="property">class </em><tt class="descclassname">dnf.comps.</tt><tt class="descname">Comps</tt><a class="headerlink" href="#dnf.comps.Comps" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object of this class can merges comps information from arbitrary repositories. It typically is instantiated from <a class="reference internal" href="api_base.html#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a> and covers all the available repositories.</p>
+<p>The <tt class="docutils literal"><span class="pre">*_by_pattern</span></tt> methods all take a <cite>pattern</cite> and an optional <cite>case_sensitive</cite> parameter. The pattern is matched against names and IDs of objects in the domain (groups, categories, environments), the globbing characters in <cite>pattern</cite> retain their usual expanding meaning. If <cite>case_sensitive</cite> is <tt class="docutils literal"><span class="pre">True</span></tt>, matching is done in a case-sensitive manner.</p>
+<dl class="attribute">
+<dt id="dnf.comps.Comps.categories">
+<tt class="descname">categories</tt><a class="headerlink" href="#dnf.comps.Comps.categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all contained <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Comps.environments">
+<tt class="descname">environments</tt><a class="headerlink" href="#dnf.comps.Comps.environments" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all contained <a class="reference internal" href="#dnf.comps.Environment" title="dnf.comps.Environment"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Environment</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Comps.groups">
+<tt class="descname">groups</tt><a class="headerlink" href="#dnf.comps.Comps.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all contained <a class="reference internal" href="#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.category_by_pattern">
+<tt class="descname">category_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.category_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a> object matching <cite>pattern</cite>, or <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.categories_by_pattern">
+<tt class="descname">categories_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.categories_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterable of <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a> objects matching <cite>pattern</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.categories_iter">
+<tt class="descname">categories_iter</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.comps.Comps.categories_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over all contained <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.environment_by_pattern">
+<tt class="descname">environment_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.environment_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#dnf.comps.Environment" title="dnf.comps.Environment"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Environment</span></tt></a> object matching <cite>pattern</cite>, or <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.environments_by_pattern">
+<tt class="descname">environments_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.environments_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterable of <a class="reference internal" href="#dnf.comps.Environment" title="dnf.comps.Environment"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Environment</span></tt></a> objects matching <cite>pattern</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Comps.environments_iter">
+<tt class="descname">environments_iter</tt><a class="headerlink" href="#dnf.comps.Comps.environments_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over all contained <a class="reference internal" href="#dnf.comps.Environment" title="dnf.comps.Environment"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Environment</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.group_by_pattern">
+<tt class="descname">group_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.group_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> object matching <cite>pattern</cite>, or <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.comps.Comps.groups_by_pattern">
+<tt class="descname">groups_by_pattern</tt><big>(</big><em>pattern</em>, <em>case_sensitive=False</em><big>)</big><a class="headerlink" href="#dnf.comps.Comps.groups_by_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterable of <a class="reference internal" href="#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> objects matching <cite>pattern</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Comps.groups_iter">
+<tt class="descname">groups_iter</tt><a class="headerlink" href="#dnf.comps.Comps.groups_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return iterator over all contained <a class="reference internal" href="#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.comps.Category">
+<em class="property">class </em><tt class="descclassname">dnf.comps.</tt><tt class="descname">Category</tt><a class="headerlink" href="#dnf.comps.Category" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="dnf.comps.Category.id">
+<tt class="descname">id</tt><a class="headerlink" href="#dnf.comps.Category.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique identifier of the category.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Category.name">
+<tt class="descname">name</tt><a class="headerlink" href="#dnf.comps.Category.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the category.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Category.ui_name">
+<tt class="descname">ui_name</tt><a class="headerlink" href="#dnf.comps.Category.ui_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the category translated to the language given by the current locale.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.comps.Category.ui_description">
+<tt class="descname">ui_description</tt><a class="headerlink" href="#dnf.comps.Category.ui_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>The description of the category translated to the language given by the current locale.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.comps.Environment">
+<em class="property">class </em><tt class="descclassname">dnf.comps.</tt><tt class="descname">Environment</tt><a class="headerlink" href="#dnf.comps.Environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Has the same set of attributes as <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.comps.Group">
+<em class="property">class </em><tt class="descclassname">dnf.comps.</tt><tt class="descname">Group</tt><a class="headerlink" href="#dnf.comps.Group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Has the same set of attributes as <a class="reference internal" href="#dnf.comps.Category" title="dnf.comps.Category"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Category</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_transaction.html"
+                        title="previous chapter">Transaction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="user_faq.html"
+                        title="next chapter">DNF User&#8217;s FAQ</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_comps.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="user_faq.html" title="DNF User’s FAQ"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_transaction.html" title="Transaction"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2013, Red Hat.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

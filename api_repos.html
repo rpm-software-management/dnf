@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Repository Configuration &mdash; DNF 0.4.6-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.6-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="Queries" href="api_queries.html" />
+    <link rel="prev" title="Configuration" href="api_conf.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="api_queries.html" title="Queries"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_conf.html" title="Configuration"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="repository-configuration">
+<h1>Repository Configuration<a class="headerlink" href="#repository-configuration" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dnf.repodict.RepoDict">
+<em class="property">class </em><tt class="descclassname">dnf.repodict.</tt><tt class="descname">RepoDict</tt><a class="headerlink" href="#dnf.repodict.RepoDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary mapping repository IDs to the respective <a class="reference internal" href="#dnf.repo.Repo" title="dnf.repo.Repo"><tt class="xref py py-class docutils literal"><span class="pre">dnf.repo.Repo</span></tt></a> objects. Derived from the standard <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt>.</p>
+<dl class="method">
+<dt id="dnf.repodict.RepoDict.add">
+<tt class="descname">add</tt><big>(</big><em>repo</em><big>)</big><a class="headerlink" href="#dnf.repodict.RepoDict.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <cite>repo</cite> to the repodict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repodict.RepoDict.iter_enabled">
+<tt class="descname">iter_enabled</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.repodict.RepoDict.iter_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator over all enabled repos from the dict.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.repo.Repo">
+<em class="property">class </em><tt class="descclassname">dnf.repo.</tt><tt class="descname">Repo</tt><a class="headerlink" href="#dnf.repo.Repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Repository object used for metadata download. To configure it properly one has to give it either <a class="reference internal" href="#dnf.repo.Repo.metalink" title="dnf.repo.Repo.metalink"><tt class="xref py py-attr docutils literal"><span class="pre">metalink</span></tt></a>, <a class="reference internal" href="#dnf.repo.Repo.mirrorlist" title="dnf.repo.Repo.mirrorlist"><tt class="xref py py-attr docutils literal"><span class="pre">mirrorlist</span></tt></a> or <a class="reference internal" href="#dnf.repo.Repo.baseurl" title="dnf.repo.Repo.baseurl"><tt class="xref py py-attr docutils literal"><span class="pre">baseurl</span></tt></a> parameter.</p>
+<dl class="attribute">
+<dt id="dnf.repo.Repo.baseurl">
+<tt class="descname">baseurl</tt><a class="headerlink" href="#dnf.repo.Repo.baseurl" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of URLs for this repository. Defaults to <tt class="docutils literal"><span class="pre">[]</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.id">
+<tt class="descname">id</tt><a class="headerlink" href="#dnf.repo.Repo.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>ID of this repo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.metalink">
+<tt class="descname">metalink</tt><a class="headerlink" href="#dnf.repo.Repo.metalink" title="Permalink to this definition">¶</a></dt>
+<dd><p>URL of a metalink for this repository. Defaults to <tt class="docutils literal"><span class="pre">None</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.mirrorlist">
+<tt class="descname">mirrorlist</tt><a class="headerlink" href="#dnf.repo.Repo.mirrorlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>URL of a mirrorlist for this repository. Defaults to <tt class="docutils literal"><span class="pre">None</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.name">
+<tt class="descname">name</tt><a class="headerlink" href="#dnf.repo.Repo.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string with the repo&#8217;s name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.sslverify">
+<tt class="descname">sslverify</tt><a class="headerlink" href="#dnf.repo.Repo.sslverify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether SSL certificate checking should be performed at all. Defaults to <tt class="docutils literal"><span class="pre">True</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repo.Repo.disable">
+<tt class="descname">disable</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.repo.Repo.disable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable the repository. Repositories are enabled by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repo.Repo.enable">
+<tt class="descname">enable</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.repo.Repo.enable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable the repository (the default).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repo.Repo.load">
+<tt class="descname">load</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.repo.Repo.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the metadata of this repository. Will try to use local cache if possible and initiate and finish download if not. Returns <tt class="docutils literal"><span class="pre">True</span></tt> if fresh metadata has been downloaded and <tt class="docutils literal"><span class="pre">False</span></tt> if cache was used. Raises <a class="reference internal" href="api_exceptions.html#dnf.exceptions.RepoError" title="dnf.exceptions.RepoError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.RepoError</span></tt></a> if the repo metadata could not be obtained.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_conf.html"
+                        title="previous chapter">Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_queries.html"
+                        title="next chapter">Queries</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_repos.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="api_queries.html" title="Queries"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_conf.html" title="Configuration"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2013, Red Hat.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
