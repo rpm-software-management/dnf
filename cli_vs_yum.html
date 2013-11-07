@@ -37,9 +37,6 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="api.html" title="DNF API Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -72,6 +69,8 @@
 <li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id13"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
 <li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id14"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id15">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
+<li><a class="reference internal" href="#group-package-types-dropped" id="id16"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id17"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 </ul>
 </li>
 </ul>
@@ -170,6 +169,17 @@ the value of mirrorlist is copied to metalink (if metalink is not set).</div></b
 <p>The relevant repository configuration files have been fixed to respect this, see
 the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=948788">Fedora bug 948788</a>.</p>
 </div>
+<div class="section" id="group-package-types-dropped">
+<h2><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
+<p>Done to simplify the configuration. User will typically want to decide what
+packages to install per-group and not via a global setting.</p>
+</div>
+<div class="section" id="upgrade-requirements-on-install-dropped">
+<h2><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
+<p>Dropping this config option with blurry semantics simplifies the
+configuration. DNF behaves as if this was disabled. If the user wanted to
+upgrade everything to the latest version she&#8217;d simply use <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>.</p>
+</div>
 </div>
 
 
@@ -193,6 +203,8 @@ the related <a class="reference external" href="https://bugzilla.redhat.com/show
 <li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
 <li><a class="reference internal" href="#mirrorlist-expire-dropped"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
+<li><a class="reference internal" href="#group-package-types-dropped"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 </ul>
 </li>
 </ul>
@@ -232,9 +244,6 @@ the related <a class="reference external" href="https://bugzilla.redhat.com/show
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="api.html" title="DNF API Reference"
              >next</a> |</li>
         <li class="right" >
@@ -244,7 +253,7 @@ the related <a class="reference external" href="https://bugzilla.redhat.com/show
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012, Red Hat.
+        &copy; Copyright 2012-2013, Red Hat.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
