@@ -356,3 +356,19 @@ Bugs fixed in 0.4.6:
 * :rhbug:`1020101`
 * :rhbug:`1020934`
 * :rhbug:`1023486`
+
+===================
+0.4.7 Release Notes
+===================
+
+We start to publish the :doc:`api` with this release. It is largely
+incomprehensive at the moment, yet outlines the shape of the documentation and
+the process the project is going to use to maintain it.
+
+There are two Yum configuration options that were dropped: :ref:`group_package_types <group_package_types_dropped>` and :ref:`upgrade_requirements_on_install <upgrade_requirements_on_install_dropped>`.
+
+Bugs fixed in 0.4.7:
+
+* :rhbug:`1019170`
+* :rhbug:`1024776`
+* :rhbug:`1025650`

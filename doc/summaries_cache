@@ -266,5 +266,17 @@
     [
         1023486, 
         "groups operations failing due to a libcomps API change in its latest version (KeyError: 'en_US.UTF-8')"
+    ], 
+    [
+        1019170, 
+        "handling wildcards in the version"
+    ], 
+    [
+        1024776, 
+        "librepo version mismatch (no attribute 'LRO_FASTESTMIRRORCACHE')"
+    ], 
+    [
+        1025650, 
+        "[abrt] dnf-0.4.6-1.fc20: i18n.py:119:ucd:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 51: ordinal not in range(128)"
     ]
 ]
