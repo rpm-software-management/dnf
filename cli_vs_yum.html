@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.6-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.7-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.6-1',
+        VERSION:     '0.4.7-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.6-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -42,7 +42,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,31 +52,31 @@
           <div class="body">
             
   <div class="section" id="changes-in-dnf-cli-compared-to-yum">
-<h1><a class="toc-backref" href="#id3">Changes in DNF CLI compared to Yum</a><a class="headerlink" href="#changes-in-dnf-cli-compared-to-yum" title="Permalink to this headline">¶</a></h1>
+<h1><a class="toc-backref" href="#id5">Changes in DNF CLI compared to Yum</a><a class="headerlink" href="#changes-in-dnf-cli-compared-to-yum" title="Permalink to this headline">¶</a></h1>
 <div class="contents topic" id="contents">
 <p class="topic-title first">Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#changes-in-dnf-cli-compared-to-yum" id="id3">Changes in DNF CLI compared to Yum</a><ul>
-<li><a class="reference internal" href="#no-skip-broken" id="id4">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
-<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id5">Update and Upgrade Commands are the Same</a></li>
-<li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id6"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
-<li><a class="reference internal" href="#no-resolvedep-command" id="id7">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
-<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id8">Excludes and repo excludes apply to all operations</a></li>
-<li><a class="reference internal" href="#protected-packages-is-ignored" id="id9"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
-<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id10"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
-<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id11"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
-<li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default" id="id12"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
-<li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id13"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
-<li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id14"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
-<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id15">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
-<li><a class="reference internal" href="#group-package-types-dropped" id="id16"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
-<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id17"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#changes-in-dnf-cli-compared-to-yum" id="id5">Changes in DNF CLI compared to Yum</a><ul>
+<li><a class="reference internal" href="#no-skip-broken" id="id6">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a></li>
+<li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id7">Update and Upgrade Commands are the Same</a></li>
+<li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id8"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
+<li><a class="reference internal" href="#no-resolvedep-command" id="id9">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
+<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id10">Excludes and repo excludes apply to all operations</a></li>
+<li><a class="reference internal" href="#protected-packages-is-ignored" id="id11"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a></li>
+<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id12"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id13"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
+<li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default" id="id14"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
+<li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id15"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
+<li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id16"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id17">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
+<li><a class="reference internal" href="#group-package-types-dropped" id="id18"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id19"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="no-skip-broken">
-<h2><a class="toc-backref" href="#id4">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a><a class="headerlink" href="#no-skip-broken" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">No <tt class="docutils literal"><span class="pre">--skip-broken</span></tt></a><a class="headerlink" href="#no-skip-broken" title="Permalink to this headline">¶</a></h2>
 <p>The <tt class="docutils literal"><span class="pre">--skip-broken</span></tt> command line switch is not recognized by DNF. The
 semantics this was supposed to trigger in Yum is now the default for plain <tt class="docutils literal"><span class="pre">dnf</span>
 <span class="pre">update</span></tt>. There is no equivalent for <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--skip-broken</span> <span class="pre">update</span> <span class="pre">foo</span></tt>, as
@@ -85,26 +85,26 @@ contradicting the user request. To try using the latest versions of packages in
 transactions there is the <tt class="docutils literal"><span class="pre">--best</span></tt> command line switch.</p>
 </div>
 <div class="section" id="update-and-upgrade-commands-are-the-same">
-<h2><a class="toc-backref" href="#id5">Update and Upgrade Commands are the Same</a><a class="headerlink" href="#update-and-upgrade-commands-are-the-same" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Update and Upgrade Commands are the Same</a><a class="headerlink" href="#update-and-upgrade-commands-are-the-same" title="Permalink to this headline">¶</a></h2>
 <p>Invoking <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> or <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>, in all their forms, has the same
 effect in DNF, with the latter being preferred. In Yum <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">upgrade</span></tt> was
 exactly like <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--obsoletes</span> <span class="pre">update</span></tt>.</p>
 </div>
 <div class="section" id="clean-requirements-on-remove-on-by-default">
-<h2><a class="toc-backref" href="#id6"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a><a class="headerlink" href="#clean-requirements-on-remove-on-by-default" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a><a class="headerlink" href="#clean-requirements-on-remove-on-by-default" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="conf_ref.html#clean-requirements-on-remove-label"><em>clean_requirements_on_remove</em></a>
 switch is on by default in DNF. It can thus be confusing to compare the &#8220;erase&#8221;
 operation results between DNF and Yum as by default DNF is often going to remove
 more packages.</p>
 </div>
 <div class="section" id="no-resolvedep-command">
-<h2><a class="toc-backref" href="#id7">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a><a class="headerlink" href="#no-resolvedep-command" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a><a class="headerlink" href="#no-resolvedep-command" title="Permalink to this headline">¶</a></h2>
 <p>The Yum version of this command is maintained for legacy reasons only. The user
 can just do <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> to find out what package gives a particular
 provide.</p>
 </div>
 <div class="section" id="excludes-and-repo-excludes-apply-to-all-operations">
-<h2><a class="toc-backref" href="#id8">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id10">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
 <p>Yum only respects excludes during installs and upgrades. DNF extends this to all
 operations, among others erasing and listing. If you e.g. want to see a list of
 all installed <tt class="docutils literal"><span class="pre">python-f*</span></tt> packages but not any of the Flask packages, the
@@ -113,20 +113,20 @@ following will work:</p>
 </div>
 </div>
 <div class="section" id="protected-packages-is-ignored">
-<h2><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a><a class="headerlink" href="#protected-packages-is-ignored" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is ignored</a><a class="headerlink" href="#protected-packages-is-ignored" title="Permalink to this headline">¶</a></h2>
 <p>DNF drops Yum&#8217;s <tt class="docutils literal"><span class="pre">protected_packages</span></tt> configuration option. Generally, DNF lets
 the user do what she specified, even have DNF itself removed. Similar functionality
 can be implemented by a plugin.</p>
 </div>
 <div class="section" id="dnf-erase-kernel-deletes-all-packages-called-kernel">
-<h2><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
 <p>In Yum, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.:</p>
 <div class="highlight-python"><pre>dnf erase kernel-3.9.4</pre>
 </div>
 </div>
 <div class="section" id="dnf-provides-bin-file-does-not-find-any-packages-on-fedora">
-<h2><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
 <p>After <a class="reference external" href="https://fedoraproject.org/wiki/Features/UsrMove">UsrMove</a> there&#8217;s no
 directory <tt class="docutils literal"><span class="pre">/bin</span></tt> on Fedora systems and no files get installed there,
 <tt class="docutils literal"><span class="pre">/bin</span></tt> is only a symlink created by the <tt class="docutils literal"><span class="pre">filesystem</span></tt> package to point to
@@ -142,7 +142,7 @@ binary use the actual path for binaries on Fedora:</p>
 <p>Also see related Fedora bugzillas <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982947">982947</a> and <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982664">982664</a>.</p>
 </div>
 <div class="section" id="skip-if-unavailable-enabled-by-default">
-<span id="skip-if-unavailable-default"></span><h2><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a><a class="headerlink" href="#skip-if-unavailable-enabled-by-default" title="Permalink to this headline">¶</a></h2>
+<span id="skip-if-unavailable-default"></span><h2><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a><a class="headerlink" href="#skip-if-unavailable-enabled-by-default" title="Permalink to this headline">¶</a></h2>
 <p>The important system repos should never be down and we see the third party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit <tt class="docutils literal"><span class="pre">skip_if_unavailable=True</span></tt> in the relevant repo .ini file
@@ -150,17 +150,17 @@ DNF immediately stops on a repo error, confusing and bothering the user.</p>
 <p>See the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=984483">Fedora bug 984483</a>.</p>
 </div>
 <div class="section" id="overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled">
-<h2><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a><a class="headerlink" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a><a class="headerlink" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" title="Permalink to this headline">¶</a></h2>
 <p>This config option has been dropped. When DNF sees several groups with the same
 group id it merges the groups&#8217; contents together.</p>
 </div>
 <div class="section" id="mirrorlist-expire-dropped">
-<h2><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a><a class="headerlink" href="#mirrorlist-expire-dropped" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a><a class="headerlink" href="#mirrorlist-expire-dropped" title="Permalink to this headline">¶</a></h2>
 <p>To simplify things for the user, DNF uses <tt class="docutils literal"><span class="pre">metadata_expire</span></tt> for both expiring
 metadata and the mirrorlist file (which is a kind of metadata itself).</p>
 </div>
 <div class="section" id="metalink-not-recognized-in-the-mirrorlist-repo-option">
-<h2><a class="toc-backref" href="#id15">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a><a class="headerlink" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id17">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a><a class="headerlink" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" title="Permalink to this headline">¶</a></h2>
 <p>The following part of <tt class="docutils literal"><span class="pre">yum.conf(5)</span></tt> no longer applies for the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt>
 option:</p>
 <blockquote>
@@ -170,12 +170,12 @@ the value of mirrorlist is copied to metalink (if metalink is not set).</div></b
 the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=948788">Fedora bug 948788</a>.</p>
 </div>
 <div class="section" id="group-package-types-dropped">
-<h2><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a class="toc-backref" href="#id18"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
 <p>Done to simplify the configuration. User will typically want to decide what
 packages to install per-group and not via a global setting.</p>
 </div>
 <div class="section" id="upgrade-requirements-on-install-dropped">
-<h2><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
 <p>Dropping this config option with blurry semantics simplifies the
 configuration. DNF behaves as if this was disabled. If the user wanted to
 upgrade everything to the latest version she&#8217;d simply use <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>.</p>
@@ -249,7 +249,7 @@ upgrade everything to the latest version she&#8217;d simply use <tt class="docut
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.6-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
