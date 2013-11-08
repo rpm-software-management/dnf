@@ -14,6 +14,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Debug messages output level, in the range 0 to 10. Default is 2.
 
+  .. attribute:: installonly_limit
+
+    An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
+
   .. attribute:: installroot
 
     The root of the filesystem for all packaging operations.

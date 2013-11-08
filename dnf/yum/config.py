@@ -775,7 +775,7 @@ class YumConf(StartupConf):
     # NOTE: If you set this to 2, then because it keeps the current kernel it
     # means if you ever install an "old" kernel it'll get rid of the newest one
     # so you probably want to use 3 as a minimum ... if you turn it on.
-    installonly_limit = PositiveIntOption(0, range_min=2,
+    installonly_limit = PositiveIntOption(0, range_min=2, # :api
                                           names_of_0=["0", "<off>"])
     tsflags = ListOption() # :api
 
