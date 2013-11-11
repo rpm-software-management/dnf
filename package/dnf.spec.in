@@ -39,25 +39,58 @@ Requires(postun):	systemd
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package -n python3-dnf
+Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
+Group:		System Environment/Base
+BuildRequires:	python3
+BuildRequires:	python3-devel
+BuildRequires:	python3-hawkey >= %{hawkey_version}
+BuildRequires:	python3-iniparse
+BuildRequires:	python3-libcomps >= %{libcomps_version}
+BuildRequires:	python3-librepo >= %{librepo_version}
+BuildRequires:	python3-nose
+BuildRequires:	rpm-python3
+Requires:	python3-hawkey >= %{hawkey_version}
+Requires:	python3-iniparse
+Requires:	python3-libcomps >= %{libcomps_version}
+Requires:	python3-librepo >= %{librepo_version}
+Requires:	rpm-python3
+
+%description -n python3-dnf
+Package manager forked from Yum, using libsolv as a dependency resolver.
+
 %prep
 %setup -q -n dnf
+rm -rf py3
+mkdir ../py3
+cp -a . ../py3/
+mv ../py3 ./
 
 %build
 %cmake .
 make %{?_smp_mflags}
 make doc-man
+pushd py3
+%cmake -DPYTHON_DESIRED:str=3 -DWITH_MAN=0 .
+make %{?_smp_mflags}
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+pushd py3
+make install DESTDIR=$RPM_BUILD_ROOT
+popd
 
 %check
 make ARGS="-V" test
+pushd py3
+make ARGS="-V" test
+popd
 
 %files
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
-%{python_sitelib}/dnf/
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
@@ -65,6 +98,19 @@ make ARGS="-V" test
 %{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{python_sitelib}/dnf/
+
+%files -n python3-dnf
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
+%{_bindir}/dnf
+%dir %{confdir}
+%config(noreplace) %{confdir}/dnf.conf
+%{_sysconfdir}/libreport/events.d/collect_dnf.conf
+%{_mandir}/man8/dnf.8.gz
+%{_mandir}/man8/dnf.conf.8.gz
+%{_unitdir}/dnf-makecache.service
+%{_unitdir}/dnf-makecache.timer
+%{python3_sitelib}/dnf/
 
 %post
 %systemd_post dnf-makecache.timer
