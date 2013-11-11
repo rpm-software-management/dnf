@@ -26,11 +26,11 @@ from __future__ import absolute_import
 from dnf.cli import CliError
 from dnf.i18n import ucd
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
-from dnf.yum.parser import varReplace
 from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
 
 import dnf
 import dnf.cli.commands
+import dnf.conf
 import dnf.const
 import dnf.exceptions
 import dnf.logging
@@ -38,7 +38,9 @@ import dnf.match_counter
 import dnf.persistor
 import dnf.queries
 import dnf.sack
+import dnf.util
 import dnf.yum.misc
+import dnf.yum.parser
 import dnf.yum.plugins
 import hawkey
 import logging
@@ -1023,8 +1025,8 @@ class BaseCli(dnf.Base):
 
 class Cli(object):
     def __init__(self, base):
+        self._system_cachedir = None
         self.logger = logging.getLogger("dnf")
-
         self.command = None
         self.base = base
         self.cli_commands = {}
@@ -1053,6 +1055,15 @@ class Cli(object):
         # self._register_command(dnf.cli.commands.CheckRpmdbCommand)
         self._register_command(dnf.cli.commands.DistroSyncCommand)
 
+    def _configure_cachedir(self):
+        # perform the CLI-specific cachedir tricks
+        conf = self.base.conf
+        suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, conf.yumvar)
+        cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
+        conf.cachedir = cli_cache.cachedir
+        self._system_cachedir = cli_cache.system_cachedir
+        self.logger.debug("cachedir: %s", conf.cachedir)
+
     def _configure_repos(self, opts):
         self.base.read_all_repos()
         # Process repo enables and disables in order
@@ -1075,7 +1086,7 @@ class Cli(object):
 
         if opts.cacheonly:
             for repo in self.base.repos.itervalues():
-                repo.basecachedir = self.base.cache_c.system_cachedir
+                repo.basecachedir = self._system_cachedir
                 repo.md_only_cached = True
 
         for rid in self.base._persistor.get_expired_repos():
@@ -1298,13 +1309,10 @@ class Cli(object):
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
         self.nogpgcheck = opts.nogpgcheck
 
-        # configuration has been collected, accumulate it into sensible form
-        self.base.cache_c.prefix = self.base.conf.cachedir
-        self.base.cache_c.suffix = varReplace(dnf.const.CACHEDIR_SUFFIX,
-                                         self.base.conf.yumvar)
-        del self.base.conf.cachedir # ensure access to the value is done via cache_c
+        # the configuration reading phase is now concluded, finish the init
+        self._configure_cachedir()
+        # with cachedir in place we can configure stuff depending on it:
         self.base.activate_persistor()
-        # with cache_c in place we can configure the repos:
         self._configure_repos(opts)
 
         if opts.version:

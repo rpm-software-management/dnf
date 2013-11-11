@@ -10,6 +10,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``False``.
 
+  .. attribute:: cachedir
+
+    Path to a directory used by various DNF subsystems for storing cache data. Has a reasonable root-writable default depending on the distribution. It is up to the client to set this to a location where files and directories can be created under the running user. The directory can be safely deleted after the :class:`dnf.Base` object is destroyed
+
   .. attribute:: debuglevel
 
     Debug messages output level, in the range 0 to 10. Default is 2.

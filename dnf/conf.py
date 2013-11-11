@@ -43,11 +43,11 @@ from .yum import misc
 
 Conf = dnf.yum.config.YumConf
 
-class Cache(object):
-    def __init__(self):
+class CliCache(object):
+    def __init__(self, prefix, suffix):
         # set from the client, at most once:
-        self.prefix = None
-        self.suffix = None
+        self.prefix = prefix
+        self.suffix = suffix
         # internal:
         self._ready = False
         self._cachedir = None

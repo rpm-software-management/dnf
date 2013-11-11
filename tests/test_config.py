@@ -21,7 +21,7 @@ except ImportError:
     from tests import mock
 import unittest
 from dnf.yum.config import Option, BaseConfig, YumConf
-from dnf.conf import Cache, GoalParameters
+from dnf.conf import CliCache, GoalParameters
 from tests.support import PycompTestCase
 
 class OptionTest(unittest.TestCase):
@@ -42,17 +42,13 @@ class OptionTest(unittest.TestCase):
 class CacheTest(PycompTestCase):
      @mock.patch('dnf.util.am_i_root', return_value=True)
      def test_root(self, unused_am_i_root):
-         cache = Cache()
-         cache.prefix = '/var/lib/spinning'
-         cache.suffix = 'i286/20'
+         cache = CliCache('/var/lib/spinning', 'i286/20')
          self.assertEqual(cache.system_cachedir, '/var/lib/spinning/i286/20')
          self.assertEqual(cache.cachedir, '/var/lib/spinning/i286/20')
 
      @mock.patch('dnf.yum.misc.getCacheDir', return_value="/notmp/dnf-walr-yeAH")
      def test_noroot(self, fn_getcachedir):
-         cache = Cache()
-         cache.prefix = '/var/lib/spinning'
-         cache.suffix = 'i286/20'
+         cache = CliCache('/var/lib/spinning', 'i286/20')
          self.assertEqual(fn_getcachedir.call_count, 0)
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
          self.assertEqual(fn_getcachedir.call_count, 1)

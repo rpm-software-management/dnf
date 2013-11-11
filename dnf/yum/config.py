@@ -755,7 +755,7 @@ class YumConf(StartupConf):
     recent = IntOption(7, range_min=0)
     reset_nice = BoolOption(True)
 
-    cachedir = Option(dnf.const.SYSTEM_CACHEDIR)
+    cachedir = Option(dnf.const.SYSTEM_CACHEDIR) # :api
 
     keepcache = BoolOption(True)
     logdir = Option('/var/log') # :api

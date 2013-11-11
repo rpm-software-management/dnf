@@ -105,7 +105,6 @@ class Base(object):
         self.run_with_package_names = set()
         self._cleanup = []
         self.goal_parameters = dnf.conf.GoalParameters()
-        self.cache_c = dnf.conf.Cache()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
         self._conf.yumvar['basearch'] = self.arch.basearch
@@ -203,7 +202,7 @@ class Base(object):
         return self._transaction
 
     def activate_persistor(self):
-        self._persistor = dnf.persistor.Persistor(self.cache_c.cachedir)
+        self._persistor = dnf.persistor.Persistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""
@@ -229,7 +228,7 @@ class Base(object):
 
     def build_repo(self, id_):
         repo = dnf.repo.Repo(id_)
-        repo.basecachedir = self.cache_c.cachedir
+        repo.basecachedir = self.conf.cachedir
         return repo
 
     @property
@@ -1137,10 +1136,10 @@ class Base(object):
 
             IOW, clean up the .solv and .solvx hawkey cache files.
         """
-        files = [os.path.join(self.cache_c.cachedir,
+        files = [os.path.join(self.conf.cachedir,
                               hawkey.SYSTEM_REPO_NAME + ".solv")]
         for repo in self.repos.iter_enabled():
-            basename = os.path.join(self.cache_c.cachedir, repo.id)
+            basename = os.path.join(self.conf.cachedir, repo.id)
             files.append(basename + ".solv")
             files.append(basename + "-filenames.solvx")
         files = [f for f in files if os.access(f, os.F_OK)]
@@ -1564,7 +1563,7 @@ class Base(object):
         :return: 0 if there are no GPG keys in the rpmdb, and 1 if
            there are keys
         """
-        gpgkeyschecked = self.cache_c.cachedir + '/.gpgkeyschecked.yum'
+        gpgkeyschecked = self.conf.cachedir + '/.gpgkeyschecked.yum'
         if os.path.exists(gpgkeyschecked):
             return 1
 

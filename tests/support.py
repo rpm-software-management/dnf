@@ -179,9 +179,6 @@ class MockBase(dnf.Base):
         self._conf = FakeConf()
         self._persistor = FakePersistor()
         self._yumdb = MockYumDB()
-        self.cache_c.prefix = "/tmp"
-        self.cache_c.suffix = ""
-
         self.ds_callback = mock.Mock()
 
     @property
@@ -241,7 +238,7 @@ class FakeConf(object):
     def __init__(self):
         self.assumeyes = None
         self.best = False
-        self.cachedir = '/should-not-exist-bad-test/cache'
+        self.cachedir = dnf.const.TMPDIR
         self.clean_requirements_on_remove = False
         self.color = 'never'
         self.color_update_installed = 'normal'

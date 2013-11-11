@@ -95,13 +95,13 @@ class Sack(hawkey.Sack):
 
         return output
 
-def build_sack(yumbase):
-    cachedir = yumbase.cache_c.cachedir
+def build_sack(base):
+    cachedir = base.conf.cachedir
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
-    return Sack(pkgcls=dnf.package.Package, pkginitval=yumbase,
+    return Sack(pkgcls=dnf.package.Package, pkginitval=base,
                 cachedir=cachedir,
-                rootdir=yumbase.conf.installroot)
+                rootdir=base.conf.installroot)
 
 def rpmdb_sack(yumbase):
     sack = build_sack(yumbase)
