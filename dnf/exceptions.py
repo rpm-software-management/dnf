@@ -35,6 +35,9 @@ class Error(Exception):
     def __unicode__(self):
         return '%s' % to_unicode(self.value)
 
+class DeprecationWarning(DeprecationWarning):
+    pass
+
 class CompsError(Error):
     pass
 

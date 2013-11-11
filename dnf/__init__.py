@@ -18,6 +18,11 @@
 # Red Hat, Inc.
 #
 
+import warnings
+import dnf.exceptions
+
+warnings.filterwarnings('once', category=dnf.exceptions.DeprecationWarning)
+
 import dnf.const
 __version__ = dnf.const.VERSION
 

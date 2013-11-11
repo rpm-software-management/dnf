@@ -19,11 +19,13 @@
 #
 
 from __future__ import absolute_import
+import dnf.exceptions
 import dnf.const
 import dnf.util
 import logging
 import os
 import sys
+import warnings
 
 SUPERCRITICAL = 100 # do not use this for logging
 CRITICAL      = logging.CRITICAL
@@ -92,6 +94,9 @@ def _create_filehandler(logfile):
 def _paint_mark(logger):
     logger.log(INFO, dnf.const.LOG_MARKER)
 
+def depr(msg):
+    warnings.warn(msg, dnf.exceptions.DeprecationWarning, 2)
+
 class Logging(object):
     def __init__(self):
         self.stdout_handler = self.stderr_handler = None
@@ -132,6 +137,12 @@ class Logging(object):
         # bring std handlers to the preferred level
         self.stdout_handler.setLevel(verbose_level)
         self.stderr_handler.setLevel(error_level)
+
+        # setup Python warnings
+        logging.captureWarnings(True)
+        logger_warnings = logging.getLogger("py.warnings")
+        logger_warnings.addHandler(self.stderr_handler)
+        logger_warnings.addHandler(handler)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
