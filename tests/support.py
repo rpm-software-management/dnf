@@ -172,7 +172,7 @@ class MockBase(dnf.Base):
     def __init__(self, *extra_repos):
         super(MockBase, self).__init__()
         for r in extra_repos:
-            repo = MockRepo(r)
+            repo = MockRepo(r, None)
             repo.enable()
             self._repos.add(repo)
 

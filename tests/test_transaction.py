@@ -136,8 +136,7 @@ class RPMLimitationsTest(tests.support.TestCase):
 class PopulateTSTest(tests.support.TestCase):
     def test_populate_rpm_ts(self):
         ts = dnf.transaction.Transaction()
-        repo = dnf.repo.Repo('r')
-        repo.basecachedir = '/tmp'
+        repo = dnf.repo.Repo('r', '/tmp')
 
         inst = tests.support.MockPackage("ago-20.0-1.x86_64.fc69", repo)
         upg = tests.support.MockPackage("billy-1.2-1.x86_64.fc69", repo)

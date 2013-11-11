@@ -42,6 +42,10 @@ Repository Configuration
 
     Whether SSL certificate checking should be performed at all. Defaults to ``True``.
 
+  .. method:: __init__(id_, cachedir=None)
+
+    Init repository with ID `id_` and using the `cachedir` path for storing downloaded and temporary files.
+
   .. method:: disable()
 
     Disable the repository. Repositories are enabled by default.

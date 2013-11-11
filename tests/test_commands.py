@@ -84,7 +84,7 @@ class CommandsCliTest(support.TestCase):
 
         self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=10)
         self.yumbase._sack = 'nonempty'
-        r = support.MockRepo("glimpse")
+        r = support.MockRepo("glimpse", None)
         self.yumbase.repos.add(r)
 
         # regular case 1: metadata is already expired:

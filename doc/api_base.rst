@@ -24,7 +24,7 @@
 
   .. method:: __init__()
 
-    Produce an instance with a reasonable default configuration. The constructor takes no arguments.
+    Init an instance with a reasonable default configuration. The constructor takes no arguments.
 
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 

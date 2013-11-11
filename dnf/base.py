@@ -226,11 +226,6 @@ class Base(object):
         self._goal = hawkey.Goal(self._sack)
         return self._sack
 
-    def build_repo(self, id_):
-        repo = dnf.repo.Repo(id_)
-        repo.basecachedir = self.conf.cachedir
-        return repo
-
     @property
     @dnf.util.lazyattr("_yumdb")
     def yumdb(self):
@@ -379,7 +374,7 @@ class Base(object):
         :param section: INI file section to read
         :return: :class:`dnf.repo.Repo` instance
         """
-        repo = self.build_repo(section)
+        repo = dnf.repo.Repo(section, self.conf.cachedir)
         try:
             repo.populate(parser, section, self.conf)
         except ValueError as e:

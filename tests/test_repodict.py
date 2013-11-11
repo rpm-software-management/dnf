@@ -42,10 +42,10 @@ class TestMultiCall(PycompTestCase):
 
 class TestRepoDict(PycompTestCase):
     def setUp(self):
-        self.x  = support.MockRepo('x')
-        self.xx = support.MockRepo('xx')
-        self.y  = support.MockRepo('y')
-        self.z  = support.MockRepo('z')
+        self.x  = support.MockRepo('x', None)
+        self.xx = support.MockRepo('xx', None)
+        self.y  = support.MockRepo('y', None)
+        self.z  = support.MockRepo('z', None)
 
         self.repos = dnf.repodict.RepoDict()
         self.repos.add(self.x)

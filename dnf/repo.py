@@ -163,11 +163,12 @@ class Repo(dnf.yum.config.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
-    def __init__(self, id_):
+    def __init__(self, id_, basecachedir):
+        # :api
         super(Repo, self).__init__()
         self._progress = None
         self.id = id_ # :api
-        self.basecachedir = None
+        self.basecachedir = basecachedir
         self.metadata = None
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement

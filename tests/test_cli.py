@@ -214,9 +214,9 @@ class CliTest(PycompTestCase):
         opts.cacheonly = True
         calls = mock.Mock()
         self.yumbase._repos = dnf.repodict.RepoDict()
-        self.yumbase._repos.add(support.MockRepo('one'))
-        self.yumbase._repos.add(support.MockRepo('two'))
-        self.yumbase._repos.add(support.MockRepo('comb'))
+        self.yumbase._repos.add(support.MockRepo('one', None))
+        self.yumbase._repos.add(support.MockRepo('two', None))
+        self.yumbase._repos.add(support.MockRepo('comb', None))
         self.cli.nogpgcheck = True
         self.cli._configure_repos(opts)
         self.assertFalse(self.yumbase.repos['one'].enabled)

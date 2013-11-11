@@ -55,8 +55,7 @@ class RepoTestMixin(object):
         dnf.util.rm_rf(cls.TMP_CACHEDIR)
 
     def build_repo(self, id_, name=None):
-        repo = dnf.repo.Repo(id_)
-        repo.basecachedir = self.TMP_CACHEDIR
+        repo = dnf.repo.Repo(id_, self.TMP_CACHEDIR)
         repo.baseurl = [BASEURL]
         repo.name = id_ if name is None else name
         return repo
@@ -119,8 +118,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_cost(self):
         """Test the cost is passed down to the hawkey repo instance."""
-        repo2 = dnf.repo.Repo("r2")
-        repo2.basecachedir = self.TMP_CACHEDIR
+        repo2 = dnf.repo.Repo("r2", self.TMP_CACHEDIR)
         repo2.baseurl = [BASEURL]
         repo2.name = "r2 repo"
         self.repo.cost = 500
@@ -139,8 +137,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.load()
         # the second time we only hit the cache:
         del self.repo
-        self.repo = dnf.repo.Repo("r")
-        self.repo.basecachedir = self.TMP_CACHEDIR
+        self.repo = dnf.repo.Repo("r", self.TMP_CACHEDIR)
         self.repo.baseurl = [BASEURL]
         self.repo.md_expire_cache()
         self.assertTrue(self.repo.load())
@@ -180,8 +177,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertTrue(self.repo.load())
         # the second time we only hit the cache:
         del self.repo
-        self.repo = dnf.repo.Repo("r")
-        self.repo.basecachedir = self.TMP_CACHEDIR
+        self.repo = dnf.repo.Repo("r", self.TMP_CACHEDIR)
         self.assertFalse(self.repo.load())
         self.assertIsNotNone(self.repo.metadata)
 
@@ -247,7 +243,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_valid(self):
         self.assertIsNone(self.repo.valid())
 
-        repo = dnf.repo.Repo('r')
+        repo = dnf.repo.Repo('r', None)
         self.assertRegexpMatches(repo.valid(), 'no mirror or baseurl')
 
     def test_handle_new_pkg_download(self):
@@ -262,8 +258,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
 class LocalRepoTest(support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
-        self.repo = dnf.repo.Repo("rpm")
-        self.repo.basecachedir = REPOS
+        self.repo = dnf.repo.Repo("rpm", REPOS)
         self.repo.name = "r for riot"
 
     def test_mirrors(self):
