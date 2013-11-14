@@ -27,7 +27,7 @@ import dnf
 import dnf.const
 import dnf.exceptions
 import dnf.match_counter
-import dnf.queries
+import dnf.subject
 import dnf.transaction
 import dnf.yum.constants
 import hawkey
@@ -159,14 +159,14 @@ class InstalledMatchingTest(support.ResultTestCase):
         self.sack = self.yumbase.sack
 
     def test_query_matching(self):
-        subj = dnf.queries.Subject("pepper")
+        subj = dnf.subject.Subject("pepper")
         query = subj.get_best_query(self.sack)
         inst, avail = self.yumbase._query_matches_installed(query)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
         self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
 
     def test_selector_matching(self):
-        subj = dnf.queries.Subject("pepper")
+        subj = dnf.subject.Subject("pepper")
         sltr = subj.get_best_selector(self.sack)
         inst = self.yumbase._sltr_matches_installed(sltr)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))

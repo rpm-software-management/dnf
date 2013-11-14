@@ -17,7 +17,8 @@
 
 from __future__ import absolute_import
 from tests import support
-import dnf.queries
+import dnf.query
+import dnf.subject
 import hawkey
 import unittest
 from tests.support import PycompTestCase
@@ -61,32 +62,32 @@ class SubjectTest(support.TestCase):
         self.sack = support.mock_sack("main", "updates")
 
     def test_wrong_name(self):
-        subj = dnf.queries.Subject("call-his-wife-in")
+        subj = dnf.subject.Subject("call-his-wife-in")
         self.assertLength(subj.get_best_query(self.sack), 0)
 
     def test_query_composing(self):
-        q = dnf.queries.Subject("librita").get_best_query(self.sack)
+        q = dnf.subject.Subject("librita").get_best_query(self.sack)
         q = q.filter(arch="i686")
         self.assertEqual(str(q[0]), "librita-1-1.i686")
 
     def test_icase_name(self):
-        subj = dnf.queries.Subject("PEpper", ignore_case=True)
+        subj = dnf.subject.Subject("PEpper", ignore_case=True)
         q = subj.get_best_query(self.sack)
         self.assertLength(q, 4)
 
     def test_get_best_selector(self):
-        s = dnf.queries.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
+        s = dnf.subject.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
         self.assertIsNotNone(s)
 
     def test_best_selector_for_version(self):
-        sltr = dnf.queries.Subject("hole-2").get_best_selector(self.sack)
+        sltr = dnf.subject.Subject("hole-2").get_best_selector(self.sack)
         self.assertItemsEqual(map(str, sltr.matches()),
                               ['hole-2-1.x86_64', 'hole-2-1.i686'])
 
     def test_with_confusing_dashes(self):
-        sltr = dnf.queries.Subject("mrkite-k-h").get_best_selector(self.sack)
+        sltr = dnf.subject.Subject("mrkite-k-h").get_best_selector(self.sack)
         self.assertLength(sltr.matches(), 1)
-        sltr = dnf.queries.Subject("mrkite-k-h.x86_64").\
+        sltr = dnf.subject.Subject("mrkite-k-h.x86_64").\
             get_best_selector(self.sack)
         self.assertLength(sltr.matches(), 1)
 
@@ -94,7 +95,7 @@ class DictsTest(PycompTestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
         pkgs = sack.query().filter(name="lotus")
-        dct = dnf.queries.per_nevra_dict(pkgs)
+        dct = dnf.query.per_nevra_dict(pkgs)
         self.assertItemsEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
         self.assertItemsEqual(dct.values(), pkgs)

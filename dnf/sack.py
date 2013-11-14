@@ -25,7 +25,7 @@ import hawkey
 import logging
 import sys
 import dnf.package
-import dnf.queries
+import dnf.query
 from dnf.pycomp import basestring
 
 class SackVersion(object):
@@ -66,7 +66,7 @@ class Sack(hawkey.Sack):
 
     def query(self):
         """Factory function returning a DNF Query."""
-        return dnf.queries.Query(self)
+        return dnf.query.Query(self)
 
     def rpmdb_version(self, yumdb):
         pkgs = self.query().installed().run()
@@ -85,7 +85,7 @@ class Sack(hawkey.Sack):
             output.writelines(rlines)
 
         output.write(u"=Ver: 2.0\n")
-        for p in dnf.queries.Query(self).filter(reponame=reponame):
+        for p in dnf.query.Query(self).filter(reponame=reponame):
             nline = u"=Pkg: %s %s %s %s\n" % (p.name, p.version, p.release, p.arch)
             output.write(nline)
             output_reldeps("=Prv:", p.provides)

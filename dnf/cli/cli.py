@@ -36,7 +36,6 @@ import dnf.exceptions
 import dnf.logging
 import dnf.match_counter
 import dnf.persistor
-import dnf.queries
 import dnf.sack
 import dnf.util
 import dnf.yum.misc

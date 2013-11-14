@@ -17,7 +17,6 @@
 
 from __future__ import absolute_import
 from tests import support
-import dnf.queries
 
 class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):

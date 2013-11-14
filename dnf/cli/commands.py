@@ -37,7 +37,6 @@ import time
 from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
 
 import dnf.yum.config
-import dnf.queries
 import hawkey
 
 _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \

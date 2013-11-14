@@ -21,7 +21,7 @@ Supplies the Base class.
 
 from __future__ import absolute_import
 from __future__ import print_function
-from dnf import const, queries, sack
+from dnf import const, query, sack
 from dnf.pycomp import unicode, basestring
 from dnf.yum import config
 from dnf.yum import history
@@ -49,6 +49,7 @@ import dnf.repodict
 import dnf.rpmUtils.arch
 import dnf.rpmUtils.connection
 import dnf.rpmUtils.transaction
+import dnf.subject
 import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
@@ -569,7 +570,7 @@ class Base(object):
             ts.add_erase(pkg)
         return ts
 
-    def _query_matches_installed(self, query):
+    def _query_matches_installed(self, q):
         """ See what packages in the query match packages (also in older
             versions, but always same architecture) that are already installed.
 
@@ -577,10 +578,10 @@ class Base(object):
             know even the packages in the original query that can still be
             installed.
         """
-        inst = query.filter(reponame=hawkey.SYSTEM_REPO_NAME)
-        inst_per_arch = queries.per_arch_dict(inst)
-        avail = query.latest().available()
-        avail_per_arch = queries.per_arch_dict(avail)
+        inst = q.installed()
+        inst_per_arch = query.per_arch_dict(inst)
+        avail = q.latest().available()
+        avail_per_arch = query.per_arch_dict(avail)
         avail_l = []
         inst_l = []
         for na in avail_per_arch:
@@ -1246,7 +1247,7 @@ class Base(object):
         ic = ignore_case
         q = self.sack.query()
         if pattern is not None:
-            subj = queries.Subject(pattern, ignore_case=ic)
+            subj = dnf.subject.Subject(pattern, ignore_case=ic)
             q = subj.get_best_query(self.sack, with_provides=False)
 
         # list all packages - those installed and available:
@@ -1731,7 +1732,7 @@ class Base(object):
             msg = _('Package %s is already installed, skipping.') % name
             self.logger.warning(msg)
 
-        subj = queries.Subject(pkg_spec)
+        subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
             q = subj.get_best_query(self.sack)
             already_inst, available = self._query_matches_installed(q)
@@ -1755,7 +1756,7 @@ class Base(object):
     def install_groupie(self, pkg_name, inst_set):
         """Installs a group member package by name. """
         forms = [hawkey.FORM_NAME]
-        subj = queries.Subject(pkg_name)
+        subj = dnf.subject.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
             q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
             for pkg in q:
@@ -1769,7 +1770,7 @@ class Base(object):
         return 0
 
     def update(self, pkg_spec):
-        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack)
+        sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
@@ -1782,7 +1783,7 @@ class Base(object):
 
     def upgrade_to(self, pkg_spec):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
-        sltr = queries.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
+        sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
         if sltr:
             self._goal.upgrade_to(select=sltr)
             return 1
@@ -1802,7 +1803,7 @@ class Base(object):
 
         """
 
-        matches = queries.Subject(pkg_spec).get_best_query(self.sack)
+        matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
         installed = matches.installed().run()
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError(
@@ -1887,10 +1888,10 @@ class Base(object):
         return 1
 
     def reinstall(self, pkg_spec):
-        subj = queries.Subject(pkg_spec)
+        subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed_pkgs = q.installed().run()
-        available_nevra2pkg = queries.per_nevra_dict(q.available())
+        available_nevra2pkg = query.per_nevra_dict(q.available())
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
                 _("Problem in reinstall: no package matched to remove"),
@@ -1922,7 +1923,7 @@ class Base(object):
            transaction set by this method
 
         """
-        subj = queries.Subject(pkg_spec)
+        subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed = sorted(q.installed())
         installed_pkg = dnf.util.first(installed)
@@ -1940,7 +1941,7 @@ class Base(object):
         return 1
 
     def provides(self, provides_spec):
-        providers = queries.by_provides(self.sack, provides_spec)
+        providers = query.by_provides(self.sack, provides_spec)
         if providers:
             return providers
         if any(map(dnf.util.is_glob_pattern, provides_spec)):

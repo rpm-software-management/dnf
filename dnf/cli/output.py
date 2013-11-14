@@ -43,7 +43,6 @@ import dnf.yum.packages
 
 import dnf.i18n
 import dnf.yum.history
-import dnf.queries
 import dnf.transaction
 import dnf.util
 

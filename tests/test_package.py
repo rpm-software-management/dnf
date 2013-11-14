@@ -22,7 +22,6 @@ except ImportError:
     from tests import mock
 from tests import support
 import dnf.package
-import dnf.queries
 import hawkey
 import os.path
 import unittest

@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 from tests import support
 import dnf.exceptions
-import dnf.queries
 import hawkey
 
 class InstallMultilibAll(support.ResultTestCase):

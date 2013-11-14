@@ -27,7 +27,6 @@ import dnf
 import dnf.comps
 import dnf.exceptions
 import dnf.package
-import dnf.queries
 import dnf.repo
 import dnf.sack
 import dnf.yum.constants
