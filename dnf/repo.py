@@ -221,6 +221,21 @@ class Repo(dnf.yum.config.RepoConf):
         if self._progress:
             h.progresscb = self._progress.librepo_cb
 
+            fo = self._progress.fo
+            def callback(cbdata, stage, data):
+                if stage == librepo.FMSTAGE_DETECTION:
+                    # pinging mirrors, this might take a while
+                    msg = 'determining the fastest mirror (%d hosts).. ' % data
+                elif stage == librepo.FMSTAGE_STATUS:
+                    # done.. report but ignore any errors
+                    msg = 'error: %s\n' % data if data else 'done.\n'
+                else:
+                    # ignore other stages
+                    return
+                fo.write(msg)
+                fo.flush()
+            h.fastestmirrorcb = callback
+
         # apply repo options
         h.proxy = self.proxy
 
