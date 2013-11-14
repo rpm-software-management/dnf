@@ -37,10 +37,15 @@ def is_nevra(pattern):
     return True
 
 class Query(hawkey.Query):
+    # :api
+    # :api also includes hawkey.Query.filter
+
     def available(self):
+        # :api
         return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
     def downgrades(self):
+        # :api
         return self.filter(downgrades=True)
 
     def filter_autoglob(self, **kwargs):
@@ -53,12 +58,15 @@ class Query(hawkey.Query):
         return self.filter(**nargs)
 
     def installed(self):
+        # :api
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
     def latest(self):
+        # :api
         return self.filter(latest_per_arch=True)
 
     def upgrades(self):
+        # :api
         return self.filter(upgrades=True)
 
     def name_dict(self):

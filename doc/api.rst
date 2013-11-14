@@ -17,6 +17,8 @@ The provided Python API to DNF is supposed to mainly allow writing the following
 
   The API consists of exactly those elements described in this document, items not documented here can change release to release. Opening a `bugzilla`_ if certain needed functionality is not exposed is the right thing to do.
 
+.. _deprecating-label:
+
 ====================
  Deprecation Policy
 ====================
@@ -42,15 +44,17 @@ This deprecation policy will tighten as the project nears its wide adoption in F
 API Documentation Contents
 
 .. toctree::
-   :maxdepth: 2
+  :maxdepth: 2
 
-   api_base
-   api_exceptions
-   api_conf
-   api_repos
-   api_queries
-   api_transaction
-   api_comps
+  api_base
+  api_exceptions
+  api_conf
+  api_repos
+  api_sack
+  api_queries
+  api_package
+  api_transaction
+  api_comps
 
 Indices:
 

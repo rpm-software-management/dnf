@@ -65,7 +65,7 @@ class Sack(hawkey.Sack):
         self.installonly_limit = installonly_limit
 
     def query(self):
-        """Factory function returning a DNF Query."""
+        """Factory function returning a DNF Query. :api"""
         return dnf.query.Query(self)
 
     def rpmdb_version(self, yumdb):

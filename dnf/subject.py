@@ -27,6 +27,7 @@ import hawkey
 
 class Subject(object):
     # :api
+
     def __init__(self, pkg_spec, ignore_case=False):
         self.subj = hawkey.Subject(pkg_spec) # internal subject
         self.icase = ignore_case
