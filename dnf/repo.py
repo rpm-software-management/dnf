@@ -222,11 +222,13 @@ class Repo(dnf.yum.config.RepoConf):
             h.progresscb = self._progress.librepo_cb
 
             fo = self._progress.fo
+            running = [False]
             def callback(cbdata, stage, data):
                 if stage == librepo.FMSTAGE_DETECTION:
                     # pinging mirrors, this might take a while
                     msg = 'determining the fastest mirror (%d hosts).. ' % data
-                elif stage == librepo.FMSTAGE_STATUS:
+                    running[0] = True
+                elif stage == librepo.FMSTAGE_STATUS and running[0]:
                     # done.. report but ignore any errors
                     msg = 'error: %s\n' % data if data else 'done.\n'
                 else:
