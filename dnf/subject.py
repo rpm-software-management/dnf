@@ -81,6 +81,7 @@ class Subject(object):
         return self.subj.pattern
 
     def get_best_query(self, sack, with_provides=True, forms=None):
+        # :api
         pat = self.subj.pattern
         if pat.startswith('/'):
             return sack.query().filter_autoglob(file=pat)
@@ -101,6 +102,7 @@ class Subject(object):
         return sack.query().filter(empty=True)
 
     def get_best_selector(self, sack, forms=None):
+        # :api
         kwargs = {'allow_globs' : True}
         if forms:
             kwargs['form'] = forms

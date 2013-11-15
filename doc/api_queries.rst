@@ -66,6 +66,20 @@
 
 .. class:: dnf.subject.Subject
 
+  As :ref:`explained on the DNF man page <specifying_packages-label>`, users of the CLI are able to select packages for an operation in different formats, leaving seemingly arbitrary parts out of the spec and even using globbing characters. This class implements a common approach to parsing such input and produce a :class:`~dnf.query.Query` listing all packages matching the input or a :class:`~dnf.selector.Selector` selecting a single package that best matches the input given a transaction operation.
+
+  .. method:: __init__(pkg_spec, ignore_case=False)
+
+    Initialize the :class:`Subject` with `pkg_spec` input string. If `ignore_case` is ``True`` ignore the case of characters in `pkg_spec`.
+
+  .. method:: get_best_query(sack, with_provides=True, forms=None)
+
+    Return a :class:`~Query` yielding packages matching the given input. The result of the returned query can be an empty set if no package matches. `sack` is the :class:`~dnf.sack.Sack` that the returned query will search. `with_provides` indicates whether besides package names also packages' provides are searched for a match. `forms` is a list of pattern forms from `hawkey`_. Leaving the parameter to ``None`` results in using a reasonable default list of forms.
+
+  .. method:: get_best_selector(sack, forms=None)
+
+    Return a :class:`~dnf.selector.Selector` that will select a single best-matching package when used in a transaction operation. `sack` and `forms` have the same meaning as in :meth:`get_best_query`.
+
 .. module:: dnf.queries
   :deprecated:
 
