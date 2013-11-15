@@ -95,49 +95,6 @@ class Query(hawkey.Query):
             name=nevra.name, epoch=nevra.epoch, version=nevra.version,
             release=nevra.release, arch=nevra.arch)
 
-def _construct_result(sack, patterns, ignore_case,
-                      include_repo=None, exclude_repo=None,
-                      downgrades_only=False,
-                      updates_only=False,
-                      latest_only=False,
-                      get_query=False):
-    """ Generic query builder.
-
-        patterns can be:
-        :: a string pattern we will use to match against package names
-        :: a list of strings representing patterns that are ORed together
-        :: None in which case we query over all names.
-
-        If 'get_query' is False the built query is evaluated and matching
-        packages returned. Otherwise the query itself is returned (for instance
-        to be further specified and then evaluated).
-    """
-    if isinstance(patterns, basestring):
-        patterns = [patterns]
-    elif patterns is None:
-        patterns = []
-    glob = len(list(filter(is_glob_pattern, patterns))) > 0
-
-    flags = []
-    q = sack.query()
-    if ignore_case:
-        flags.append(hawkey.ICASE)
-    if len(patterns) == 0:
-        pass
-    elif glob:
-        q.filterm(*flags, name__glob=patterns)
-    else:
-        q.filterm(*flags, name=patterns)
-    if include_repo:
-        q.filterm(reponame__eq=include_repo)
-    if exclude_repo:
-        q.filterm(reponame__neq=exclude_repo)
-    q.filterm(downgrades=downgrades_only)
-    q.filterm(upgrades=updates_only)
-    q.filterm(latest__eq=latest_only)
-    if get_query:
-        return q
-    return q.run()
 
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
