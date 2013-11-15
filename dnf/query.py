@@ -155,17 +155,6 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
-def latest_per_arch(sack, patterns, ignore_case=False, include_repo=None,
-                    exclude_repo=None):
-    matching = _construct_result(sack, patterns, ignore_case,
-                                 include_repo, exclude_repo,
-                                 latest_only=True)
-    latest = {} # (name, arch) -> pkg mapping
-    for pkg in matching:
-        key = (pkg.name, pkg.arch)
-        latest[key] = pkg
-    return latest
-
 def per_arch_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
