@@ -38,3 +38,8 @@ class SelectGroupTest(support.ResultTestCase):
         inst, removed = self.installed_removed(self.base)
         self.assertLength(inst, 0)
         self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))
+
+    def test_environment_list(self):
+        l = self.base._environment_list(['sugar*'])
+        self.assertLength(l, 1)
+        self.assertEqual(l[0].name, 'Sugar Desktop Environment')

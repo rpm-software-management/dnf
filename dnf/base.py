@@ -1402,6 +1402,20 @@ class Base(object):
             counter.add(pkg, attr, needle)
         return counter
 
+    def _assert_comps(self):
+        msg = _('No group data available for configured repositories.')
+        if not len(self.comps):
+            raise dnf.exceptions.CompsError(msg)
+
+    def _environment_list(self, patterns):
+        self._assert_comps()
+
+        if patterns is None:
+            envs = self.comps.environments
+        else:
+            envs = self.comps.environments_by_pattern(",".join(patterns))
+        return sorted(envs)
+
     def group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available
         groups.
@@ -1417,8 +1431,7 @@ class Base(object):
         installed = []
         available = []
 
-        if not len(self.comps):
-            raise dnf.exceptions.CompsError(_('No group data available for configured repositories'))
+        self._assert_comps()
 
         if patterns is None:
             grps = self.comps.groups
