@@ -1416,7 +1416,7 @@ class Base(object):
             envs = self.comps.environments_by_pattern(",".join(patterns))
         return sorted(envs)
 
-    def group_lists(self, uservisible, patterns):
+    def _group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available
         groups.
 

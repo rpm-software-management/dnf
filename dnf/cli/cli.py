@@ -765,7 +765,7 @@ class BaseCli(dnf.Base):
             userlist = None # Match everything...
 
         envs = self._environment_list(userlist)
-        installed, available = self.group_lists(uservisible, userlist)
+        installed, available = self._group_lists(uservisible, userlist)
 
         if not envs and not installed and not available:
             self.logger.error(_('Warning: No groups match: %s'),
@@ -840,7 +840,7 @@ class BaseCli(dnf.Base):
         if not userlist:
             userlist = None # Match everything...
 
-        installed, available = self.group_lists(uservisible, userlist)
+        installed, available = self._group_lists(uservisible, userlist)
 
         def _out_grp(sect, num):
             if not num:
