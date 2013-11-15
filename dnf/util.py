@@ -31,7 +31,7 @@ import time
 import types
 from functools import reduce
 from itertools import takewhile
-from .pycomp import PycompDict, PY3, basestring
+from .pycomp import PY3, basestring
 """DNF Utilities.
 
 Generally these are not a part of the public DNF API.
@@ -216,7 +216,7 @@ class tmpdir(object):
     def __exit__(self, exc_type, exc_value, traceback):
         rm_rf(self.path)
 
-class Bunch(PycompDict):
+class Bunch(dict):
     """Dictionary with attribute accessing syntax.
 
     In DNF, prefer using this over dnf.yum.misc.GenericHolder.

@@ -1079,12 +1079,12 @@ class Cli(object):
             sys.exit(1)
 
         if self.nogpgcheck:
-            for repo in self.base.repos.itervalues():
+            for repo in self.base.repos.values():
                 repo.gpgcheck = False
                 repo.repo_gpgcheck = False
 
         if opts.cacheonly:
-            for repo in self.base.repos.itervalues():
+            for repo in self.base.repos.values():
                 repo.basecachedir = self._system_cachedir
                 repo.md_only_cached = True
 

@@ -598,7 +598,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
                 fpkgtup2pkg[x] = npkgtup2pkg[x]
             for x in npkgstate2pkg:
                 fpkgstate2pkg[x] = npkgstate2pkg[x]
-        return sorted(fpkgtup2pkg.itervalues())
+        return sorted(fpkgtup2pkg.values())
 
     def _getProblems(self):
         probs = set()
@@ -892,7 +892,7 @@ class YumHistory(object):
         if problem.problem == 'duplicates':
             pkgs[problem.duplicate.pkgtup] = problem.duplicate
 
-        for pkg in pkgs.itervalues():
+        for pkg in pkgs.values():
             pid = self.pkg2pid(pkg)
             if pkg.pkgtup == problem.pkg.pkgtup:
                 main = 'TRUE'

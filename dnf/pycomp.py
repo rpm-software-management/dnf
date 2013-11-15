@@ -34,16 +34,6 @@ if version_info.major >= 3:
     def is_py3bytes(o):
         return isinstance(o, bytes)
 
-    class PycompDict(dict):
-        def iteritems(self):
-            return self.items()
-
-        def iterkeys(self):
-            return self.keys()
-
-        def itervalues(self):
-            return self.values()
-
 else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     PY3 = False
@@ -53,6 +43,3 @@ else:
 
     def is_py3bytes(o):
         return False
-
-    class PycompDict(dict):
-        pass

@@ -128,7 +128,7 @@ class Metadata(object):
     def md_timestamp(self):
         """Gets the highest timestamp of all metadata types."""
         timestamps = [content.get('timestamp')
-                      for (what, content) in self.repomd_dct.iteritems()
+                      for (what, content) in self.repomd_dct.items()
                       if isinstance(content, dict)]
         return max(timestamps)
 
