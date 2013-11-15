@@ -1821,8 +1821,8 @@ Transaction Summary
                                  'o' : _('Upgraded'), 'n' : _('Downgraded')}
         _pkg_states_available = {'i' : _('Installed'), 'e' : _('Not installed'),
                                  'o' : _('Older'), 'n' : _('Newer')}
-        maxlen = max([len(x) for x in (list(_pkg_states_installed.itervalues()) +
-                                       list(_pkg_states_available.itervalues()))])
+        maxlen = max([len(x) for x in (list(_pkg_states_installed.values()) +
+                                       list(_pkg_states_available.values()))])
         _pkg_states_installed['maxlen'] = maxlen
         _pkg_states_available['maxlen'] = maxlen
         def _simple_pkg(pkg, prefix_len, was_installed=False, highlight=False,

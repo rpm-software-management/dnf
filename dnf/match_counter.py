@@ -21,7 +21,6 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from functools import reduce
-from .pycomp import PycompDict
 
 WEIGHTS = {
     'name'		: 7,
@@ -36,7 +35,7 @@ def _canonize_string_set(sset, length):
     l = [''] * (length - current) + sorted(sset)
     return l
 
-class MatchCounter(PycompDict):
+class MatchCounter(dict):
     """Map packages to which of their attributes matched in a search against
     what values.
 

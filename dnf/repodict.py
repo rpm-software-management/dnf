@@ -21,7 +21,6 @@
 import fnmatch
 import dnf.util
 from dnf.exceptions import ConfigError, RepoError
-from dnf.pycomp import PycompDict
 
 class MultiCallList(list):
     def __init__(self, iterable):
@@ -40,7 +39,7 @@ class MultiCallList(list):
             setattr(item, what, val)
         return list(map(setter, self))
 
-class RepoDict(PycompDict):
+class RepoDict(dict):
     # :api
     def add(self, repo):
         # :api
@@ -55,13 +54,13 @@ class RepoDict(PycompDict):
 
     @property
     def all(self):
-        return MultiCallList(self.itervalues())
+        return MultiCallList(self.values())
 
     def any_enabled(self):
         return not dnf.util.empty(self.iter_enabled())
 
     def enabled(self):
-        return [r for r in self.itervalues() if r.enabled]
+        return [r for r in self.values() if r.enabled]
 
     def get_multiple(self, key):
         if dnf.util.is_glob_pattern(key):
@@ -74,4 +73,4 @@ class RepoDict(PycompDict):
 
     def iter_enabled(self):
         # :api
-        return (r for r in self.itervalues() if r.enabled)
+        return (r for r in self.values() if r.enabled)
