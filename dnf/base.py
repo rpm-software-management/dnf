@@ -575,9 +575,8 @@ class Base(object):
             installed.
         """
         inst = q.installed()
-        inst_per_arch = query.per_arch_dict(inst)
-        avail = q.latest().available()
-        avail_per_arch = query.per_arch_dict(avail)
+        inst_per_arch = inst.na_dict()
+        avail_per_arch = q.latest().available().na_dict()
         avail_l = []
         inst_l = []
         for na in avail_per_arch:
