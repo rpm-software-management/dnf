@@ -76,7 +76,11 @@ class Query(hawkey.Query):
         return d
 
     def na_dict(self):
-        return per_arch_dict(self.run())
+        d = {}
+        for pkg in self.run():
+            key = (pkg.name, pkg.arch)
+            d.setdefault(key, []).append(pkg)
+        return d
 
     def pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
@@ -111,13 +115,6 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if get_query:
         return q
     return q.run()
-
-def per_arch_dict(pkg_list):
-    d = {}
-    for pkg in pkg_list:
-        key = (pkg.name, pkg.arch)
-        d.setdefault(key, []).append(pkg)
-    return d
 
 def per_pkgtup_dict(pkg_list):
     d = {}
