@@ -52,6 +52,7 @@ API Documentation Contents
   api_repos
   api_sack
   api_queries
+  api_selector
   api_package
   api_transaction
   api_comps

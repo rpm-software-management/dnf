@@ -35,14 +35,11 @@ class TransactionItem(object):
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
 
     def __init__(self, op_type, installed=None, erased=None, obsoleted=None,
-                 reason=None):
+                 reason='unknown'):
         self.op_type = op_type
         self.installed = installed
         self.erased = erased
         self.obsoleted = list() if obsoleted is None else obsoleted
-
-        if reason is None:
-            reason = 'unknown'
         self.reason = reason # reason for it to be in the transaction set
 
     @property
@@ -114,6 +111,7 @@ class Transaction(object):
     # :api
 
     def __init__(self):
+        # :api
         self._tsis = []
         self.logger = logging.getLogger("dnf")
 
@@ -128,24 +126,29 @@ class Transaction(object):
         sets = map(set, lists)
         return reduce(operator.or_, sets, set())
 
-    def add_downgrade(self, downgrade, downgraded, obsoleted):
-        tsi = TransactionItem(DOWNGRADE, downgrade, downgraded, obsoleted)
+    def add_downgrade(self, new, downgraded, obsoleted):
+        # :api
+        tsi = TransactionItem(DOWNGRADE, new, downgraded, obsoleted)
         self._tsis.append(tsi)
 
     def add_erase(self, erased):
+        # :api
         tsi = TransactionItem(ERASE, erased=erased)
         self._tsis.append(tsi)
 
-    def add_install(self, installed, obsoleted, reason=None):
-        tsi = TransactionItem(INSTALL, installed, obsoleted=obsoleted,
+    def add_install(self, new, obsoleted, reason='unknown'):
+        # :api
+        tsi = TransactionItem(INSTALL, new, obsoleted=obsoleted,
                               reason=reason)
         self._tsis.append(tsi)
 
-    def add_reinstall(self, installed, reinstalled, obsoleted):
-        tsi = TransactionItem(REINSTALL, installed, reinstalled, obsoleted)
+    def add_reinstall(self, new, reinstalled, obsoleted):
+        # :api
+        tsi = TransactionItem(REINSTALL, new, reinstalled, obsoleted)
         self._tsis.append(tsi)
 
     def add_upgrade(self, upgrade, upgraded, obsoleted):
+        # :api
         tsi = TransactionItem(UPGRADE, upgrade, upgraded, obsoleted)
         self._tsis.append(tsi)
 

@@ -24,6 +24,7 @@ import hawkey
 import dnf.util
 
 class Selector(hawkey.Selector):
+    # :api
     def set_autoglob(self, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
