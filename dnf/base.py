@@ -1747,7 +1747,7 @@ class Base(object):
             self.logger.warning(msg)
 
         subj = dnf.subject.Subject(pkg_spec)
-        if self.conf.multilib_policy == "all" or subj.pattern.startswith('/'):
+        if self.conf.multilib_policy == "all" or subj.filename_pattern:
             q = subj.get_best_query(self.sack)
             already_inst, available = self._query_matches_installed(q)
             for i in already_inst:

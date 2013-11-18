@@ -9,6 +9,7 @@
 =Pkg: mrkite-k-h 1 1 x86_64
 =Pkg: trampoline 2.1 1 noarch
 =Prv: henry(the_horse)
+=Prv: /all/be/there
 =Pkg: lotus 3 16 i686
 =Prv: /usr/lib/liblotus.so.3
 =Prv: /usr/lib/liblotus.so.3.16

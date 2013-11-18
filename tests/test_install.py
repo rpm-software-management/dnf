@@ -126,6 +126,16 @@ class MultilibBestMainRepo(support.ResultTestCase):
         new_set = self.installed + trampoline.run()
         self.assertResult(self.yumbase, new_set)
 
+    def test_install_by_filename_glob(self):
+        self.yumbase.install("/*/be/there")
+        (installed, _) = self.installed_removed(self.yumbase)
+        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+
+        self.yumbase.reset(goal=True)
+        self.yumbase.install("*/there")
+        (installed, _) = self.installed_removed(self.yumbase)
+        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+
     def test_install_glob(self):
         self.yumbase.install("mrkite*")
         q = self.yumbase.sack.query().available().filter(name="mrkite*")

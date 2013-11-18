@@ -77,13 +77,17 @@ class Subject(object):
         return flags
 
     @property
+    def filename_pattern(self):
+        return self.subj.pattern.find('/') != -1
+
+    @property
     def pattern(self):
         return self.subj.pattern
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
         pat = self.subj.pattern
-        if pat.startswith('/'):
+        if self.filename_pattern:
             return sack.query().filter_autoglob(file=pat)
 
         kwargs = {'allow_globs' : True,
