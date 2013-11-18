@@ -234,15 +234,16 @@ class Bunch(dict):
 default_handle = librepo.Handle()
 default_handle.useragent = dnf.const.USER_AGENT
 
-def urlopen(absurl, repo=None):
+def urlopen(absurl, repo=None, **kwargs):
     """Open the specified absolute url, return a file object.
 
     repo -- Use this repo-specific config (proxies, certs)
+    kwargs -- These are passed to TemporaryFile
     """
     if PY3:
-        fo = tempfile.TemporaryFile(mode='w+', encoding='utf-8')
-    else:
-        fo = tempfile.TemporaryFile()
+        kwargs['mode'] = 'w+'
+        kwargs['encoding'] = 'utf-8'
+    fo = tempfile.NamedTemporaryFile(**kwargs)
     handle = default_handle
     if repo:
         handle = repo.get_handle()

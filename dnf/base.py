@@ -85,6 +85,7 @@ class Base(object):
         self._history = None
         self._tags = None
         self._ts_save_file = None
+        self._tempfiles = []
         self.ds_callback = dnf.output.DepsolveCallback()
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
@@ -1090,7 +1091,7 @@ class Base(object):
         """Delete the header and package files used in the
         transaction from the yum cache.
         """
-        filelist = []
+        filelist = self._tempfiles
         for pkg in self.transaction.install_set:
             if pkg is None:
                 continue
@@ -1827,6 +1828,10 @@ class Base(object):
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
         try:
+            if not os.path.exists(path) and '://' in path:
+                # download remote rpm to a tempfile
+                path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
+                self._tempfiles.append(path)
             po = self.sack.add_cmdline_package(path)
         except IOError:
             self.logger.critical(_('Cannot open: %s. Skipping.'), path)
