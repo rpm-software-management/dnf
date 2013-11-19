@@ -319,8 +319,7 @@ class BaseCli(dnf.Base):
 
         done = False
         for arg in userlist:
-            if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
-                                          os.path.exists(arg))):
+            if arg.endswith('.rpm'):
                 self.install_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
@@ -368,8 +367,7 @@ class BaseCli(dnf.Base):
             # go through the userlist - look for items that are local rpms. If we find them
             # pass them off to installLocal() and then move on
             for item in userlist:
-                if (item.endswith('.rpm') and (dnf.yum.misc.re_remote_url(item) or
-                                               os.path.exists(item))):
+                if item.endswith('.rpm'):
                     self.update_local(item)
                     continue
 
@@ -478,8 +476,7 @@ class BaseCli(dnf.Base):
         oldcount = self._goal.req_length()
 
         for arg in userlist:
-            if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
-                                          os.path.exists(arg))):
+            if arg.endswith('.rpm'):
                 self.downgrade_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
@@ -516,8 +513,7 @@ class BaseCli(dnf.Base):
 
         done = False
         for arg in userlist:
-            if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
-                                          os.path.exists(arg))):
+            if arg.endswith('.rpm'):
                 self.reinstall_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
@@ -621,8 +617,7 @@ class BaseCli(dnf.Base):
         # :dead
         pkgs = []
         for arg in args:
-            if (arg.endswith('.rpm') and (dnf.yum.misc.re_remote_url(arg) or
-                                          os.path.exists(arg))):
+            if arg.endswith('.rpm'):
                 # :hawkey
                 # thispkg = dnf.yum.packages.YumUrlPackage(self, self.ts, arg)
                 thispkg = None

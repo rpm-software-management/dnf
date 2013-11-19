@@ -85,6 +85,7 @@ class Base(object):
         self._history = None
         self._tags = None
         self._ts_save_file = None
+        self._tempfiles = []
         self.ds_callback = dnf.output.DepsolveCallback()
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
@@ -98,13 +99,11 @@ class Base(object):
         self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
                                rpm.RPMPROB_FILTER_REPLACEPKG,
                                rpm.RPMPROB_FILTER_REPLACEOLDFILES]
-        self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
         self.arch = dnf.rpmUtils.arch.Arch()
 
         self.run_with_package_names = set()
-        self._cleanup = []
         self.goal_parameters = dnf.conf.GoalParameters()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
@@ -113,8 +112,6 @@ class Base(object):
 
     def __del__(self):
         self.close()
-        # call cleanup callbacks
-        for cb in self._cleanup: cb()
 
     def __enter__(self):
         return self
@@ -836,11 +833,6 @@ class Base(object):
             raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
                                           errors=errors)
 
-
-        if (not self.conf.keepcache and
-            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
-            self.clean_used_packages()
-
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
                 fn = getattr(cb, i)
@@ -854,6 +846,11 @@ class Base(object):
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.verify_transaction(return_code, cb.verify_tsi_package)
+
+        if (not self.conf.keepcache and
+            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
+            self.clean_used_packages()
+
         return return_code
 
     def verify_transaction(self, return_code, verify_pkg_cb=None):
@@ -1094,7 +1091,7 @@ class Base(object):
         """Delete the header and package files used in the
         transaction from the yum cache.
         """
-        filelist = []
+        filelist = self._tempfiles
         for pkg in self.transaction.install_set:
             if pkg is None:
                 continue
@@ -1831,6 +1828,10 @@ class Base(object):
     def _local_common(self, path):
         self.sack.create_cmdline_repo()
         try:
+            if not os.path.exists(path) and '://' in path:
+                # download remote rpm to a tempfile
+                path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
+                self._tempfiles.append(path)
             po = self.sack.add_cmdline_package(path)
         except IOError:
             self.logger.critical(_('Cannot open: %s. Skipping.'), path)
