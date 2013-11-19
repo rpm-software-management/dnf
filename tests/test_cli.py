@@ -130,13 +130,26 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 2)
         self.assertEqual(resultmsgs, ['1 package to downgrade'])
 
+    def test_downgradePkgs_notfound(self):
+        result, resultmsgs = self._yumbase.downgradePkgs(('non-existent',))
+
+        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
+                         [mock.call('non-existent')])
+        self.assertEqual(result, 0)
+        self.assertEqual(resultmsgs, ['Nothing to do'])
+
     def test_downgradePkgs_notinstalled(self):
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
+
         result, resultmsgs = self._yumbase.downgradePkgs(('lotus',))
 
         self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('lotus')])
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
-                         [mock.call('lotus')])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.info('No match for available package: %s', pkg)] * 2)
+        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['Nothing to do'])
 

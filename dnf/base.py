@@ -1941,8 +1941,13 @@ class Base(object):
         installed = sorted(q.installed())
         installed_pkg = dnf.util.first(installed)
         if installed_pkg is None:
-            raise dnf.exceptions.PackagesNotInstalledError(
-                _("Problem in downgrade: no package matched to downgrade"))
+            available_pkgs = q.available()
+            if available_pkgs:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    _("Problem in downgrade: no package matched to downgrade"),
+                    available_pkgs)
+            raise dnf.exceptions.PackageNotFoundError(
+                _("Problem in downgrade: no package matched to install"))
 
         q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]

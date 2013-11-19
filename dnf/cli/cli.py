@@ -483,10 +483,14 @@ class BaseCli(dnf.Base):
 
             try:
                 self.downgrade(arg)
+            except dnf.exceptions.PackageNotFoundError as err:
+                msg = _('No package %s%s%s available.')
+                self.logger.info(msg, self.output.term.MODE['bold'], arg,
+                                 self.output.term.MODE['normal'])
+                self._maybeYouMeant(arg)
             except dnf.exceptions.PackagesNotInstalledError as err:
                 for pkg in err.packages:
                     self.logger.info(_('No match for available package: %s'), pkg)
-                self._maybeYouMeant(arg)
         cnt = self._goal.req_length() - oldcount
         if cnt > 0:
             msg = P_('%d package to downgrade',

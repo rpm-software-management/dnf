@@ -68,11 +68,19 @@ class DowngradeTest2(support.TestCase):
         self.assertEqual(downgraded_count, 1)
 
     def test_downgrade_notinstalled(self):
-        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
-                          self._base.downgrade, 'lotus')
+        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
+
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
+            self._base.downgrade('lotus')
+        self.assertEqual(tuple(context.exception.packages), (pkg,) * 2)
         self.assertEqual(self._goal.mock_calls, [])
 
-    def test_downgrade_notavailable(self):
+    def test_downgrade_notfound(self):
+        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+                          self._base.downgrade, 'non-existent')
+        self.assertEqual(self._goal.mock_calls, [])
+
+    def test_downgrade_nodowngrade(self):
         downgraded_count = self._base.downgrade('pepper')
 
         self.assertEqual(self._goal.mock_calls, [])
