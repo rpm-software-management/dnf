@@ -38,6 +38,7 @@ import dnf.match_counter
 import dnf.persistor
 import dnf.sack
 import dnf.util
+import dnf.yum.config
 import dnf.yum.misc
 import dnf.yum.parser
 import dnf.yum.plugins
@@ -1272,7 +1273,7 @@ class Cli(object):
         overrides = self.optparser._non_nones2dict(opts)
         releasever = opts.releasever
         try:
-            self.base.read_conf_file(opts.conffile, root, releasever, overrides)
+            self.read_conf_file(opts.conffile, root, releasever, overrides)
 
             # now set all the non-first-start opts from main from our setopts
             if self.main_setopts:
@@ -1356,6 +1357,36 @@ class Cli(object):
     def check(self):
         """Make sure the command line and options make sense."""
         self.command.doCheck(self.base.basecmd, self.base.extcmds)
+
+    def read_conf_file(self, path=None, root="/", releasever=None,
+                       overrides=None):
+        conf_st = time.time()
+        conf = self.base.conf
+        conf.installroot = root
+        conf.read(path)
+        conf.releasever = releasever
+        conf.yumvar_update_from_etc()
+
+        if overrides is not None:
+            conf.override(overrides)
+
+        conf.logdir = dnf.yum.config.logdir_fit(conf.logdir)
+        for opt in ('cachedir', 'logdir', 'persistdir'):
+            conf.prepend_installroot(opt)
+            conf._var_replace(opt)
+
+        self.base.logging.setup_from_dnf_conf(conf)
+        for pkgname in conf.history_record_packages:
+            self.base.run_with_package_names.add(pkgname)
+
+        # repos are ver/arch specific so add $basearch/$releasever
+        yumvar = conf.yumvar
+        conf._repos_persistdir = os.path.normpath(
+            '%s/repos/%s/%s/' % (conf.persistdir,
+                                 yumvar.get('basearch', '$basearch'),
+                                 yumvar.get('releasever', '$releasever')))
+        self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
+        return conf
 
     def run(self):
         """Call the base command, and pass it the extended commands or
