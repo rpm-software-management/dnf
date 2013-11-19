@@ -75,7 +75,6 @@ class Base(object):
         # :api
         self._closed = False
         self._conf = config.YumConf()
-        self._conf.uid = 0
         self._goal = None
         self._persistor = None
         self._sack = None
@@ -261,7 +260,6 @@ class Base(object):
         self.logging.setup_from_dnf_conf(self.conf)
         for pkgname in self.conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
-        self._conf.uid = os.geteuid()
 
         # repos are ver/arch specific so add $basearch/$releasever
         yumvar = self._conf.yumvar

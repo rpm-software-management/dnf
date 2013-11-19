@@ -54,17 +54,6 @@ def _err_mini_usage(cli, basecmd):
     cli.logger.critical(_(' Mini usage:\n'))
     cli.logger.critical(txt)
 
-def checkRootUID(base):
-    """Verify that the program is being run by the root user.
-
-    :param base: a :class:`dnf.yum.Yumbase` object.
-    :raises: :class:`cli.CliError`
-    """
-    return None
-    if base.conf.uid != 0:
-        base.logger.critical(_('You need to be root to perform this command.'))
-        raise CliError
-
 def checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
@@ -311,7 +300,6 @@ class InstallCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
@@ -366,7 +354,6 @@ class UpgradeCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
@@ -405,7 +392,6 @@ class UpgradeToCommand(Command):
         return _("Upgrade a package on your system to the specified version")
 
     def doCheck(self, basecmd, extcmds):
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
@@ -447,7 +433,6 @@ class DistroSyncCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
         if extcmds:
@@ -690,7 +675,6 @@ class EraseCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkPackageArg(self.cli, basecmd, extcmds)
 
     def doCommand(self, basecmd, extcmds):
@@ -804,11 +788,6 @@ class GroupsCommand(Command):
                    'mark-install', 'mark-remove',
                    'mark-members', 'info', 'mark-members-sync'):
             checkGroupArg(self.cli, cmd, extcmds)
-
-        if cmd in ('install', 'remove', 'upgrade',
-                   'mark-install', 'mark-remove',
-                   'mark-members', 'mark-members-sync'):
-            checkRootUID(self.base)
 
         if cmd in ('install', 'upgrade'):
             checkGPGKey(self.base, self.cli)
@@ -1686,7 +1665,6 @@ class ReInstallCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
@@ -1754,7 +1732,6 @@ class DowngradeCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        checkRootUID(self.base)
         checkGPGKey(self.base, self.cli)
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
@@ -2138,7 +2115,6 @@ class HistoryCommand(Command):
                                  ", ".join(cmds))
             raise CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
-            checkRootUID(self.base)
             checkGPGKey(self.base, self.cli)
         elif not os.access(self.base.history._db_file, os.R_OK):
             self.base.logger.critical(_("You don't have access to the history DB."))

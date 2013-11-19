@@ -874,9 +874,8 @@ class YumConf(StartupConf):
         """
         output = '[main]\n'
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ('cfg', 'uid', 'yumvar', 'progress_obj', 'failure_obj',
-                         'disable_excludes', 'config_file_age', 'config_file_path',
-                         )
+        excluded_vars = ('cfg', 'yumvar', 'disable_excludes', 'config_file_age',
+                         'config_file_path')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -1009,10 +1008,6 @@ def readMainConfig(startupconf):
     for opt in ('cachedir', 'logdir', 'persistdir'):
         yumconf.prepend_installroot(opt)
         yumconf._var_replace(opt)
-
-    # Add in some extra attributes which aren't actually configuration values
-    yumconf.uid = 0
-    yumconf.progess_obj = None
 
     # items related to the originating config file
     yumconf.config_file_path = startupconf.config_file_path

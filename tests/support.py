@@ -261,7 +261,6 @@ class FakeConf(object):
         self.protected_packages = []
         self.showdupesfromrepos = False
         self.tsflags = []
-        self.uid = 0
         self.verbose = False
         self.yumvar = {'releasever' : 'Fedora69'}
 
