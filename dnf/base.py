@@ -104,7 +104,6 @@ class Base(object):
         self.arch = dnf.rpmUtils.arch.Arch()
 
         self.run_with_package_names = set()
-        self._cleanup = []
         self.goal_parameters = dnf.conf.GoalParameters()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
@@ -113,8 +112,6 @@ class Base(object):
 
     def __del__(self):
         self.close()
-        # call cleanup callbacks
-        for cb in self._cleanup: cb()
 
     def __enter__(self):
         return self
