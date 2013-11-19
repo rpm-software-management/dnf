@@ -896,6 +896,22 @@ class YumConf(StartupConf):
 
         return output
 
+    def read(self, filename=None):
+        if filename is None:
+            filename = self.config_file_path
+        parser = ConfigParser()
+        config_pp = ConfigPreProcessor(filename)
+        try:
+            parser.readfp(config_pp)
+        except ParsingError as e:
+            raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
+        self.populate(parser, 'main')
+
+        # update to where we read the file from
+        self.config_file_path = filename
+        # not really a config value:
+        self.config_file_age = os.stat(filename)[8]
+
     @property
     def verbose(self):
         return self.debuglevel >= dnf.const.VERBOSE_LEVEL
@@ -962,63 +978,6 @@ class VersionGroupConf(BaseConfig):
 
     pkglist = ListOption()
     run_with_packages = BoolOption(False)
-
-def readStartupConfig(configfile, root):
-    """Parse Yum's main configuration file and return a
-    :class:`StartupConf` instance.  This is required in order to
-    access configuration settings required as Yum starts up.
-
-    :param configfile: the path to yum.conf
-    :param root: the base path to use for installation (typically '/')
-    :return: A :class:`StartupConf` instance
-
-    :raises: :class:`dnf.exceptions.ConfigError` if a problem is detected with while parsing.
-    """
-
-    StartupConf.installroot.default = root
-    startupconf = StartupConf()
-    startupconf.config_file_path = configfile
-    parser = ConfigParser()
-    confpp_obj = ConfigPreProcessor(configfile)
-    try:
-        parser.readfp(confpp_obj)
-    except ParsingError as e:
-        raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
-    startupconf.populate(parser, 'main')
-
-    # Check that plugin paths are all absolute
-    for path in startupconf.pluginpath:
-        if not path[0] == '/':
-            raise dnf.exceptions.ConfigError("All plugin search paths must be absolute")
-    # Stuff this here to avoid later re-parsing
-    startupconf._parser = parser
-    return startupconf
-
-def readMainConfig(startupconf):
-    """Parse Yum's main configuration file
-
-    :param startupconf: :class:`StartupConf` instance as returned by readStartupConfig()
-    :return: Populated :class:`YumConf` instance
-    """
-    # Read [main] section
-    yumconf = YumConf()
-    yumconf.yumvar = startupconf.yumvar
-    yumconf.populate(startupconf._parser, 'main')
-    yumconf.logdir = logdir_fit(yumconf.logdir)
-    for opt in ('cachedir', 'logdir', 'persistdir'):
-        yumconf.prepend_installroot(opt)
-        yumconf._var_replace(opt)
-
-    # items related to the originating config file
-    yumconf.config_file_path = startupconf.config_file_path
-    if os.path.exists(startupconf.config_file_path):
-        yumconf.config_file_age = os.stat(startupconf.config_file_path)[8]
-
-    # propagate the debuglevel and errorlevel values:
-    yumconf.debuglevel = startupconf.debuglevel
-    yumconf.errorlevel = startupconf.errorlevel
-
-    return yumconf
 
 def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
     """Parse the configuration file for version groups.

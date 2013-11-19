@@ -246,24 +246,27 @@ class Base(object):
     def read_conf_file(self, path=None, root="/", releasever=None,
                        overrides=None):
         conf_st = time.time()
-        path = path or const.CONF_FILENAME
-        startupconf = config.readStartupConfig(path, root)
-        # replace the yumvar
-        startupconf.yumvar = self._conf.yumvar
-        startupconf.releasever = releasever
-        startupconf.yumvar_update_from_etc()
+        conf = self.conf
+        conf.installroot = root
+        conf.read(path)
+        conf.releasever = releasever
+        conf.yumvar_update_from_etc()
 
-        self._conf = config.readMainConfig(startupconf)
         if overrides is not None:
-            self._conf.override(overrides)
+            conf.override(overrides)
 
-        self.logging.setup_from_dnf_conf(self.conf)
-        for pkgname in self.conf.history_record_packages:
+        conf.logdir = config.logdir_fit(conf.logdir)
+        for opt in ('cachedir', 'logdir', 'persistdir'):
+            conf.prepend_installroot(opt)
+            conf._var_replace(opt)
+
+        self.logging.setup_from_dnf_conf(conf)
+        for pkgname in conf.history_record_packages:
             self.run_with_package_names.add(pkgname)
 
         # repos are ver/arch specific so add $basearch/$releasever
-        yumvar = self._conf.yumvar
-        self._conf._repos_persistdir = os.path.normpath(
+        yumvar = conf.yumvar
+        conf._repos_persistdir = os.path.normpath(
             '%s/repos/%s/%s/' % (self._conf.persistdir,
                                  yumvar.get('basearch', '$basearch'),
                                  yumvar.get('releasever', '$releasever')))

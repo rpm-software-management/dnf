@@ -21,14 +21,16 @@ try:
 except ImportError:
     from tests import mock
 from tests import support
+from tests.support import PycompTestCase
+
 import dnf.cli.cli
+import dnf.conf
 import dnf.repo
 import dnf.repodict
 import hawkey
 import optparse
 import os
 import unittest
-from tests.support import PycompTestCase
 
 VERSIONS_OUTPUT="""\
   Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
@@ -243,9 +245,10 @@ class CliTest(PycompTestCase):
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
 class ConfigureTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
-        self.yumbase.output = support.MockOutput()
-        self.cli = dnf.cli.cli.Cli(self.yumbase)
+        self.base = support.MockBase("main")
+        self.base._conf = dnf.conf.Conf()
+        self.base.output = support.MockOutput()
+        self.cli = dnf.cli.cli.Cli(self.base)
         self.cli.command = mock.Mock()
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
 
@@ -261,8 +264,8 @@ class ConfigureTest(PycompTestCase):
         self.cli.configure(['-v', 'update', '-c', self.conffile])
         self.assertEqual(self.cli.cmdstring, "dnf -v update -c %s " %
                          self.conffile)
-        self.assertEqual(self.yumbase.conf.debuglevel, 6)
-        self.assertEqual(self.yumbase.conf.errorlevel, 6)
+        self.assertEqual(self.base.conf.debuglevel, 6)
+        self.assertEqual(self.base.conf.errorlevel, 6)
 
     @mock.patch('dnf.Base.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
@@ -293,7 +296,7 @@ class ConfigureTest(PycompTestCase):
 
         conf = os.path.join(support.dnf_toplevel(), "tests/etc/installroot.conf")
         self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
-        self.assertEqual(self.yumbase.conf.installroot, '/roots/dnf')
+        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
 
 class SearchTest(PycompTestCase):
     def setUp(self):
