@@ -98,7 +98,6 @@ class Base(object):
         self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
                                rpm.RPMPROB_FILTER_REPLACEPKG,
                                rpm.RPMPROB_FILTER_REPLACEOLDFILES]
-        self.localPackages = [] # for local package handling
 
         self.mediagrabber = None
         self.arch = dnf.rpmUtils.arch.Arch()
