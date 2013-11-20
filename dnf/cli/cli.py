@@ -1324,8 +1324,8 @@ class Cli(object):
         self._configure_repos(opts)
 
         if opts.version:
-            print_versions(self.base.run_with_package_names,
-                           self.base, self.base.output)
+            print_versions(self.base.conf.history_record_packages, self.base,
+                           self.base.output)
             sys.exit(0)
 
         if opts.sleeptime is not None:
@@ -1376,8 +1376,6 @@ class Cli(object):
             conf._var_replace(opt)
 
         self.base.logging.setup_from_dnf_conf(conf)
-        for pkgname in conf.history_record_packages:
-            self.base.run_with_package_names.add(pkgname)
 
         # repos are ver/arch specific so add $basearch/$releasever
         yumvar = conf.yumvar

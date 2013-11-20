@@ -1841,7 +1841,7 @@ class VersionCommand(Command):
         for group in gconf:
             groups[group] = set(gconf[group].pkglist)
             if gconf[group].run_with_packages:
-                groups[group].update(self.base.run_with_package_names)
+                groups[group].update(self.base.conf.history_record_packages)
 
         if vcmd == 'grouplist':
             print(_(" Yum version groups:"))

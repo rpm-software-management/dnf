@@ -101,8 +101,6 @@ class Base(object):
 
         self.mediagrabber = None
         self.arch = dnf.rpmUtils.arch.Arch()
-
-        self.run_with_package_names = set()
         self.goal_parameters = dnf.conf.GoalParameters()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
@@ -717,7 +715,7 @@ class Base(object):
         self.plugins.run('pretrans')
 
         if self._record_history():
-            using_pkgs_pats = list(self.run_with_package_names)
+            using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
             rpmdbv  = self.sack.rpmdb_version(self.yumdb)

@@ -490,7 +490,7 @@ class PluginConduit:
 
         :param name: the name of the package to register
         """
-        self._base.run_with_package_names.add(name)
+        self._base.conf.history_record_packages.insert(0, name)
 
 
 class ConfigPluginConduit(PluginConduit):
