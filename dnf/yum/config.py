@@ -675,11 +675,9 @@ class BaseConfig(object):
         # write the updated ConfigParser to the fileobj.
         self.cfg.write(fileobj)
 
-class StartupConf(BaseConfig):
-    """Configuration option definitions for yum.conf's [main] section
-    that are required early in the initialisation process or before
-    the other [main] options can be parsed.
-    """
+class YumConf(BaseConfig):
+    """Configuration option definitions for yum.conf's [main] section."""
+
     debuglevel = IntOption(2, 0, 10) # :api
     errorlevel = IntOption(2, 0, 10)
 
@@ -696,8 +694,9 @@ class StartupConf(BaseConfig):
     persistdir = Option(dnf.const.PERSISTDIR) # :api
 
     def __init__(self):
-        super(StartupConf, self).__init__()
+        super(YumConf, self).__init__()
         self.yumvar = {}
+        self.config_file_age = 0
 
     def _var_replace(self, option):
         path = getattr(self, option)
@@ -746,11 +745,6 @@ class StartupConf(BaseConfig):
                 continue
             self.yumvar[fsvar] = val
 
-class YumConf(StartupConf):
-    """Configuration option definitions for yum.conf's [main] section.
-
-    Note: see also options inherited from :class:`StartupConf`
-    """
     retries = PositiveIntOption(10, names_of_0=["<forever>"])
     recent = IntOption(7, range_min=0)
     reset_nice = BoolOption(True)
@@ -860,10 +854,6 @@ class YumConf(StartupConf):
                                      mapper={'cmds'          : 'commands',
                                              'default' :'single-user-commands'})
     _reposlist = []
-
-    def __init__(self):
-        super(YumConf, self).__init__()
-        self.config_file_age = 0
 
     def dump(self):
         """Return a string representing the values of all the
