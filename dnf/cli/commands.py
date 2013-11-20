@@ -2165,7 +2165,7 @@ class HistoryCommand(Command):
             ret = self.output.historyPackageInfoCmd(extcmds)
 
         if ret is None:
-            return 0, ['history %s' % (vcmd,)]
+            return 0, []
         return ret
 
     def needTs(self, basecmd, extcmds):
