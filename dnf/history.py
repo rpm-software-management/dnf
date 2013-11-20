@@ -44,21 +44,20 @@ STATE2COMPLEMENT = {'Reinstall': 'Reinstalled',
                     'Downgrade': 'Downgraded',
                     'Downgraded': 'Downgrade'}
 
-def open_history(database, sack):
+def open_history(database):
     """Open a history of transactions."""
     if isinstance(database, YumHistory):
-        return _HistoryWrapper(database, sack)
+        return _HistoryWrapper(database)
     else:
         raise TypeError("unsupported database type: %s" % type(database))
 
 class _HistoryWrapper(object):
     """Transactions history interface on top of an YumHistory."""
 
-    def __init__(self, yum_history, sack):
+    def __init__(self, yum_history):
         """Initialize a wrapper instance."""
         object.__init__(self)
         self._history = yum_history
-        self._sack = sack
 
     def __enter__(self):
         """Enter the runtime context."""

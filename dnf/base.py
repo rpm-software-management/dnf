@@ -2091,7 +2091,7 @@ class Base(object):
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_downgrade(news[0], olds[0], None)
 
-        history = dnf.history.open_history(self.history, self.sack)
+        history = dnf.history.open_history(self.history)
         last_id = history.last_transaction_id()
         if not last_id:
             raise ValueError('no transaction in history')

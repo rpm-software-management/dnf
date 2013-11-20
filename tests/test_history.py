@@ -64,7 +64,7 @@ class HistoryWrapperTest(unittest.TestCase):
 
     def _create_wrapper(self, yum_history):
         """Create new instance of _HistoryWrapper."""
-        wrapper = dnf.history.open_history(yum_history, support.mock_sack())
+        wrapper = dnf.history.open_history(yum_history)
         assert isinstance(wrapper, dnf.history._HistoryWrapper)
         return wrapper
 
