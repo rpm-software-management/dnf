@@ -1609,6 +1609,10 @@ class YumHistory(object):
             os.close(fo)
 
         cur = self._get_cursor()
+        if cur is None:
+            raise IOError(_("Can not create history database at '%s'.") % \
+                          self._db_file)
+
         ops = ['''\
  CREATE TABLE trans_beg (
      tid INTEGER PRIMARY KEY,

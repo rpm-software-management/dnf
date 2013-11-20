@@ -117,6 +117,8 @@ def _main(base, args):
         raise
     except dnf.exceptions.Error as e:
         return exFatal(e)
+    except IOError as e:
+        return exIOError(e)
 
     # Try to open the current directory to see if we have
     # read and execute access. If not, chdir to /
