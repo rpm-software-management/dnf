@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 import dnf.persistor
 import os
-import shelve
 import tempfile
 import tests.support
 
@@ -39,16 +38,3 @@ class PersistorTest(tests.support.TestCase):
 
         prst = dnf.persistor.Persistor(self.persistdir)
         self.assertEqual(prst.get_expired_repos(), IDS)
-
-    def test_shelve_to_json(self):
-        shelve_db_path = os.path.join(self.prst.cachedir, "expired_repos")
-        json_db_path = os.path.join(self.prst.cachedir, "expired_repos.json")
-        self.assertFalse(os.path.isfile(json_db_path))
-        self.assertLength(self.prst.get_expired_repos(), 0)
-        shelf = shelve.open(shelve_db_path)
-        shelf["expired_repos"] = IDS
-        shelf.close()
-        self.assertTrue(os.path.isfile(shelve_db_path))
-        self.assertEqual(self.prst.get_expired_repos(), IDS)
-        self.assertTrue(os.path.isfile(json_db_path))
-        self.assertFalse(os.path.isfile(shelve_db_path))

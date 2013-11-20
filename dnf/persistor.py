@@ -29,32 +29,11 @@ import dnf.util
 import json
 import logging
 import os
-import shelve
 
 class Persistor(object):
     def __init__(self, cachedir):
         self.cachedir = cachedir
         self.logger = logging.getLogger("dnf")
-
-    def _get_expired_from_shelve(self, path):
-        try:
-            shelf = shelve.open(path)
-        except dbm.error:
-            # doesn't work in Python 3 if db was created in Python 2
-            return set()
-        exp = shelf.get('expired_repos', set())
-        shelf.close()
-        return exp
-
-    def _check_shelve_db(self):
-        db_path = os.path.join(self.cachedir, "expired_repos")
-        if os.path.isfile(db_path):
-            # transfer data from shelve to json
-            shelf_data = self._get_expired_from_shelve(db_path)
-            all_data = self._get_expired_from_json().union(shelf_data)
-            json_path = os.path.join(self.cachedir, "expired_repos.json")
-            self._write_json_data(json_path, list(all_data))
-            os.remove(db_path)
 
     def _check_json_db(self):
         json_path = os.path.join(self.cachedir, "expired_repos.json")
@@ -81,7 +60,6 @@ class Persistor(object):
 
     def get_expired_repos(self):
         self._check_json_db()
-        self._check_shelve_db()
         return self._get_expired_from_json()
 
     def reset_last_makecache(self):
@@ -94,7 +72,6 @@ class Persistor(object):
 
     def set_expired_repos(self, expired_iterable):
         self._check_json_db()
-        self._check_shelve_db()
         json_path = os.path.join(self.cachedir, "expired_repos.json")
         self._write_json_data(json_path, list(set(expired_iterable)))
 
