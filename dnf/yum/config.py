@@ -685,7 +685,7 @@ class StartupConf(BaseConfig):
 
     distroverpkg = Option('redhat-release')
     installroot = Option('/') # :api
-    config_file_path = Option(dnf.const.CONF_FILENAME)
+    config_file_path = Option(dnf.const.CONF_FILENAME) # :api
     plugins = BoolOption(False)
     pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
     pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
@@ -693,7 +693,7 @@ class StartupConf(BaseConfig):
     syslog_ident = Option()
     syslog_facility = Option('LOG_USER')
     syslog_device = Option('/dev/log')
-    persistdir = Option(dnf.const.PERSISTDIR)
+    persistdir = Option(dnf.const.PERSISTDIR) # :api
 
     def __init__(self):
         super(StartupConf, self).__init__()
@@ -897,6 +897,7 @@ class YumConf(StartupConf):
         return output
 
     def read(self, filename=None):
+        # :api
         if filename is None:
             filename = self.config_file_path
         parser = ConfigParser()
