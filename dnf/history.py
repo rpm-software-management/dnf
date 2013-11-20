@@ -22,7 +22,7 @@
 
 from __future__ import absolute_import
 from collections import defaultdict, Container, Iterable, Sized
-from dnf.util import split_by
+from dnf.util import is_exhausted, split_by
 from dnf.yum.history import YumHistory
 
 INSTALLING_STATES = {'Install', 'Reinstall', 'Update', 'Downgrade'}
@@ -81,8 +81,8 @@ class _HistoryWrapper(object):
         last_tx = self._history.last(complete_transactions_only=False)
         return last_tx.tid if last_tx else None
 
-    def transaction_items_ops(self, id_):
-        """Get iterable of package manipulations of each transaction item."""
+    def transaction_nevra_ops(self, id_):
+        """Get operations on packages (by their NEVRAs) in the transaction."""
         if not self.has_transaction(id_):
             raise ValueError('no transaction with given ID: %d' % id_)
 
@@ -93,13 +93,35 @@ class _HistoryWrapper(object):
 
         # First item should be empty if the first state is valid.
         empty_item_hpkgs = next(items_hpkgs)
-        if empty_item_hpkgs:  # not empty
-            msg = 'corrupted history starting with: %s'
-            raise ValueError(msg % empty_item_hpkgs[0].state)
+        assert not empty_item_hpkgs  # is empty
 
-        # Return the items.
-        return (((hpkg.nevra, hpkg.state) for hpkg in item_hpkgs)
-                for item_hpkgs in items_hpkgs)
+        # Return the operations.
+        operations = NEVRAOperations()
+        for item_hpkgs in items_hpkgs:
+            obsoleted_nevras = []
+            obsoleting_nevra = None
+            replaced_nevra, replaced_state = None, None
+
+            # It is easier to traverse the packages in the reversed order.
+            reversed_it = reversed(tuple(item_hpkgs))
+            hpkg = next(reversed_it)
+
+            while hpkg.state == 'Obsoleted':  # Read obsoleted packages.
+                obsoleted_nevras.append(hpkg.nevra)
+                hpkg = next(reversed_it)
+            if obsoleted_nevras:  # Read obsoleting package.
+                assert hpkg.state == 'Obsoleting'
+                obsoleting_nevra = hpkg.nevra
+                hpkg = next(reversed_it)
+            if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:  # Replaced.
+                replaced_nevra, replaced_state = hpkg.nevra, hpkg.state
+                hpkg = next(reversed_it)
+            assert is_exhausted(reversed_it)
+            assert not obsoleting_nevra or obsoleting_nevra == hpkg.nevra
+            assert not replaced_state or replaced_state == STATE2COMPLEMENT[hpkg.state]
+
+            operations.add(hpkg.state, hpkg.nevra, replaced_nevra, obsoleted_nevras)
+        return operations
 
 class NEVRAOperations(Sized, Iterable, Container):
     """Mutable container of operations on packages by their NEVRAs."""

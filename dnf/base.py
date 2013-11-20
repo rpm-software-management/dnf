@@ -2099,28 +2099,8 @@ class Base(object):
 
         # Build the transaction directly, because the depsolve is not needed.
         self._transaction = dnf.transaction.Transaction()
-        for item_ops in history.transaction_items_ops(id_):
-            obsoleted_nevras = []
-            obsoleting_nevra = None
-            replaced_nevra = None
-
-            # It is easier to traverse the item in the reversed order.
-            reversed_it = reversed(tuple(item_ops))
-            nevra, state = next(reversed_it)
-
-            while state == 'Obsoleted':
-                obsoleted_nevras.append(nevra)
-                nevra, state = next(reversed_it)
-            if obsoleted_nevras:
-                assert state == 'Obsoleting'
-                obsoleting_nevra = nevra
-                nevra, state = next(reversed_it)
-            if state in {'Reinstalled', 'Downgraded', 'Updated'}:
-                replaced_nevra = nevra
-                nevra, state = next(reversed_it)
-            assert dnf.util.is_exhausted(reversed_it)
-
-            assert not obsoleting_nevra or obsoleting_nevra == nevra
+        for operation in history.transaction_nevra_ops(id_):
+            state, nevra, replaced_nevra, obsoleted_nevras = operation
             if state == 'Install':
                 assert not replaced_nevra
                 add_erase(nevra)

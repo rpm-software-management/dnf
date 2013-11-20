@@ -132,48 +132,34 @@ class HistoryWrapperTest(unittest.TestCase):
 
         self.assertIsNone(id_)
 
-    def test_transaction_items_ops_all(self):
-        """Test transaction_items_ops with all states."""
+    def test_transaction_nevra_ops_notransaction(self):
+        """Test transaction_nevra_ops without any transaction."""
+        with self._create_wrapper(support.HistoryStub()) as history:
+            self.assertRaises(ValueError, history.transaction_nevra_ops, 0)
+
+    def test_transaction_nevra_ops_update(self):
+        """Test transaction_nevra_ops with a downgrade operation."""
         yum_history = support.HistoryStub()
         yum_history.old_data_pkgs['1'] = (
             dnf.yum.history.YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Install',
+                'tour', 'noarch', '0', '4.8', '1', 'Update',
                 history=yum_history),
             dnf.yum.history.YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleting',
+                'tour', 'noarch', '0', '4.6', '1', 'Updated',
+                history=yum_history),
+            dnf.yum.history.YumHistoryPackageState(
+                'tour', 'noarch', '0', '4.8', '1', 'Obsoleting',
                 history=yum_history),
             dnf.yum.history.YumHistoryPackageState(
                 'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
                 history=yum_history))
+        expected_ops = dnf.history.NEVRAOperations()
+        expected_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch', ('lotus-0:3-16.x86_64',))
 
         with self._create_wrapper(yum_history) as history:
-            items_ops = history.transaction_items_ops(1)
+            result_ops = history.transaction_nevra_ops(1)
 
-        item_ops = next(items_ops)
-        self.assertRaises(StopIteration, next, items_ops)
-        self.assertEqual(next(item_ops),
-                         ('pepper-0:20-0.x86_64', 'Install'))
-        self.assertEqual(next(item_ops),
-                         ('pepper-0:20-0.x86_64', 'Obsoleting'))
-        self.assertEqual(next(item_ops),
-                         ('lotus-0:3-16.x86_64', 'Obsoleted'))
-        self.assertRaises(StopIteration, next, item_ops)
-
-    def test_transaction_items_ops_badfirst(self):
-        """Test transaction_items_ops with an invalid first state."""
-        yum_history = support.HistoryStub()
-        yum_history.old_data_pkgs['1'] = (
-            dnf.yum.history.YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Obsoleted',
-                history=yum_history),)
-
-        with self._create_wrapper(yum_history) as history:
-            self.assertRaises(ValueError, history.transaction_items_ops, 1)
-
-    def test_transaction_items_ops_notransaction(self):
-        """Test transaction_items_ops without any transaction."""
-        with self._create_wrapper(support.HistoryStub()) as history:
-            self.assertRaises(ValueError, history.transaction_items_ops, 0)
+        self.assertItemsEqual(result_ops, expected_ops)
 
 class NEVRAOperationsTest(unittest.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
