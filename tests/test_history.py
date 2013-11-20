@@ -174,3 +174,338 @@ class HistoryWrapperTest(unittest.TestCase):
         """Test transaction_items_ops without any transaction."""
         with self._create_wrapper(support.HistoryStub()) as history:
             self.assertRaises(ValueError, history.transaction_items_ops, 0)
+
+class NEVRAOperationsTest(unittest.TestCase):
+    """Unit tests of dnf.history.NEVRAOperations."""
+
+    def test_add_erase_installed(self):
+        """Test add with an erasure of NEVRA which was installed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64',))
+        ops.add('Erase', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Erase', 'lotus-0:3-16.x86_64', None, set()),))
+
+    def test_add_erase_removed(self):
+        """Test add with an erasure of NEVRA which was removed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'tour-0:4.6-1.noarch')
+
+        self.assertRaises(
+            ValueError,
+            ops.add, 'Erase', 'tour-0:4.6-1.noarch')
+
+    def test_add_install_installed(self):
+        """Test add with two installs of the same NEVRA."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'tour-0:4.6-1.noarch')
+
+        self.assertRaises(
+            ValueError,
+            ops.add, 'Install', 'tour-0:4.6-1.noarch')
+
+    def test_add_install_removed(self):
+        """Test add with an install of NEVRA which was removed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'tour-0:4.6-1.noarch')
+        ops.add('Install', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch', set()),))
+
+    def test_add_obsoleted_installed(self):
+        """Test add with an obsoleted NEVRA which was installed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'lotus-0:3-16.x86_64')
+        ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64',))
+
+        self.assertItemsEqual(
+            ops,
+            (('Install', 'tour-0:4.6-1.noarch', None, set()),))
+
+    def test_add_obsoleted_obsoleted(self):
+        """Test add with an obsoleted NEVRA which was obsoleted before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'))
+        ops.add('Install', 'pepper-0:20-0.x86_64', obsoleted_nevras=('lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'))
+
+        self.assertItemsEqual(
+            ops,
+            (('Install', 'tour-0:4.6-1.noarch', None, {'lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'}),
+             ('Install', 'pepper-0:20-0.x86_64', None, {'lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'})))
+
+    def test_add_obsoleted_removed(self):
+        """Test add with an obsoleted NEVRA which was removed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'lotus-0:3-16.x86_64')
+
+        self.assertRaises(
+            ValueError,
+            ops.add, 'Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64',))
+
+    def test_add_reinstall_installed(self):
+        """Test add with a reinstall of NEVRA which was installed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'tour-0:4.6-1.noarch')
+        ops.add('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Install', 'tour-0:4.6-1.noarch', None, set()),))
+
+    def test_add_replace_installed(self):
+        """Test add with a replacing NEVRA which was installed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Install', 'tour-0:4.8-1.noarch')
+
+        self.assertRaises(
+            ValueError,
+            ops.add, 'Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+    def test_add_replace_opposite(self):
+        """Test add with a replacement which was done before, but swapped."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.8-1.noarch')
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),))
+
+    def test_add_replace_opposite_manual(self):
+        """Test add with a manual replacement which was done before, but swapped."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'tour-0:4.8-1.noarch')
+        ops.add('Install', 'tour-0:4.6-1.noarch')
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),))
+
+    def test_add_replace_removed(self):
+        """Test add with a replacing NEVRA which was removed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'tour-0:4.8-1.noarch')
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),
+             ('Erase', 'tour-0:4.6-1.noarch', None, set())))
+
+    def test_add_replaced_opposite(self):
+        """Test add with a replaced NEVRA which replaced a NEVRA before in the opposite direction."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.9-1.noarch')
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Erase', 'tour-0:4.9-1.noarch', None, set()),
+             ('Install', 'tour-0:4.8-1.noarch', None, set())))
+
+    def test_add_replaced_removed(self):
+        """Test add with a replaced NEVRA which was removed before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Erase', 'tour-0:4.6-1.noarch')
+
+        self.assertRaises(
+            ValueError,
+            ops.add, 'Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+    def test_add_replaced_reinstall(self):
+        """Test add with a replaced NEVRA which was reinstalled before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch')
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch', set()),))
+
+    def test_add_replaced_replacement(self):
+        """Test add with a replaced NEVRA which replaced a NEVRA before."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        self.assertItemsEqual(
+            ops,
+            (('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.6-1.noarch', set()),))
+
+    def test_addition(self):
+        """Test addition of two instances."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+        expected_ops = dnf.history.NEVRAOperations()
+        expected_ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.6-1.noarch')
+
+        result_ops = left_ops + right_ops
+
+        self.assertEqual(result_ops, expected_ops)
+
+    def test_addition_inplace(self):
+        """Test in-place addition of two instances."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+        expected_ops = dnf.history.NEVRAOperations()
+        expected_ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.6-1.noarch')
+
+        left_ops += right_ops
+
+        self.assertEqual(left_ops, expected_ops)
+
+    def test_equality(self):
+        """Test equality of two equal instances."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_equal = left_ops == right_ops
+
+        self.assertTrue(is_equal)
+
+    def test_equality_differentcontent(self):
+        """Test equality of two instances with different contents."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.8-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_equal = left_ops == right_ops
+
+        self.assertFalse(is_equal)
+
+    def test_equality_differentlength(self):
+        """Test equality of two instances with different lengths."""
+        left_ops = dnf.history.NEVRAOperations()
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_equal = left_ops == right_ops
+
+        self.assertFalse(is_equal)
+
+    def test_equality_differenttype(self):
+        """Test equality of an instance and an object of a different type."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_equal = ops == 'tour-0:4.8-1.noarch'
+
+        self.assertFalse(is_equal)
+
+    def test_equality_identity(self):
+        """Test equality of the same instance."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_equal = ops == ops
+
+        self.assertTrue(is_equal)
+
+    def test_inequality(self):
+        """Test inequality of two different instances."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.8-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_inequal = left_ops != right_ops
+
+        self.assertTrue(is_inequal)
+
+    def test_inequality_equal(self):
+        """Test inequality of two equal instances."""
+        left_ops = dnf.history.NEVRAOperations()
+        left_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+        right_ops = dnf.history.NEVRAOperations()
+        right_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        is_inequal = left_ops != right_ops
+
+        self.assertFalse(is_inequal)
+
+    def test_iterator(self):
+        """Test iterator of an instance."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        iterator = iter(ops)
+
+        self.assertEqual(
+            next(iterator),
+            ('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch', set()))
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_length(self):
+        """Test length of an instance."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
+
+        length = len(ops)
+
+        self.assertEqual(length, 1)
+
+    def test_membership(self):
+        """Test membership of a contained operation."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = ('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch', ()) in ops
+
+        self.assertTrue(is_in)
+
+    def test_membership_differentnevra(self):
+        """Test membership of an operation with different (replacing) NEVRA."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = ('Update', 'pepper-0:20-0.x86_64', 'tour-0:4.8-1.noarch', ()) in ops
+
+        self.assertFalse(is_in)
+
+    def test_membership_differentobsoleted(self):
+        """Test membership of an operation with different obsoleted NEVRAs."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = ('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch', ('pepper-0:20-0.x86_64',)) in ops
+
+        self.assertFalse(is_in)
+
+    def test_membership_differentreplaced(self):
+        """Test membership of an operation with different replaced NEVRA."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = ('Update', 'tour-0:4.9-1.noarch', 'pepper-0:20-0.x86_64', ()) in ops
+
+        self.assertFalse(is_in)
+
+    def test_membership_differentstate(self):
+        """Test membership of an operation with different state."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = ('Downgrade', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch', ()) in ops
+
+        self.assertFalse(is_in)
+
+    def test_membership_differenttype(self):
+        """Test membership of an object of a different type."""
+        ops = dnf.history.NEVRAOperations()
+        ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
+
+        is_in = 'tour-0:4.9-1.noarch' in ops
+
+        self.assertFalse(is_in)
