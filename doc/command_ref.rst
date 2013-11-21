@@ -261,9 +261,9 @@ transactions and act according to this information (assuming the
     do not undo any transaction.
 
 ``dnf history undo <transaction-spec>``
-    Performs the opposite operation to all operations performed in the
+    Perform the opposite operation to all operations performed in the
     specified transaction. If it is not possible to undo any operation due to
-    the current state of RPMDB, DNF does not undo any operation.
+    the current state of RPMDB, do not undo any operation.
 
 ------------
 Info Command
