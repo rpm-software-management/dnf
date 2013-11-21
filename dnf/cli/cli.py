@@ -1062,9 +1062,21 @@ class BaseCli(dnf.Base):
         print("Rollback to transaction %u, from %s" % (old.tid, tm))
         print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
                                       ", ".join((str(x) for x in mobj.tid))))
-        self.output.historyInfoCmdPkgsAltered(mobj)
+        self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
 
-        if self.history_undo(mobj):
+        history = dnf.history.open_history(self.history)  # :todo
+        operations = dnf.history.NEVRAOperations()
+        for id_ in range(old.tid + 1, last.tid + 1):
+            operations += history.transaction_nevra_ops(id_)
+
+        try:
+            self.history_undo_operations(operations)
+        except ValueError:
+            assert False
+        except (dnf.exceptions.PackagesNotInstalledError,
+                dnf.exceptions.PackagesNotAvailableError) as err:
+            return 1, [str(err)]
+        else:
             return 2, ["Rollback to transaction %u" % (old.tid,)]
 
     def history_undo_transaction(self, extcmd):
