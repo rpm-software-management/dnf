@@ -255,6 +255,11 @@ transactions and act according to this information (assuming the
     Describe the given transaction. When no ID is given describes what happened
     during the latest transaction.
 
+``dnf history rollback <transaction-spec>``
+    Undoes all transactions performed after the specified transaction. If it
+    is not possible to undo any transaction due to the current state of RPMDB,
+    DNF does not undo any transaction.
+
 ``dnf history undo <transaction-spec>``
     Performs the opposite operation to all operations performed in the
     specified transaction. If it is not possible to undo any operation due to
