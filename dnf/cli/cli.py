@@ -1031,7 +1031,7 @@ class BaseCli(dnf.Base):
             self.logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
-    def history_rollback_transaction(self, extcmd, force=False):
+    def history_rollback_transaction(self, extcmd):
         """Rollback given transaction."""
         old = self.history_get_transaction((extcmd,))
         if old is None:
@@ -1044,14 +1044,10 @@ class BaseCli(dnf.Base):
 
         mobj = None
         for tid in self.history.old(list(range(old.tid + 1, last.tid + 1))):
-            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
-                if tid.altered_lt_rpmdb:
-                    msg = "Transaction history is incomplete, before %u."
-                else:
-                    msg = "Transaction history is incomplete, after %u."
-                print(msg % tid.tid)
-                print(" You can use 'history rollback force', to try anyway.")
-                return 1, ['Failed history rollback, incomplete']
+            if tid.altered_lt_rpmdb:
+                self.logger.warning(_('Transaction history is incomplete, before %u.'), tid.tid)
+            elif tid.altered_gt_rpmdb:
+                self.logger.warning(_('Transaction history is incomplete, after %u.'), tid.tid)
 
             if mobj is None:
                 mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)

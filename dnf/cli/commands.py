@@ -2032,28 +2032,18 @@ class HistoryCommand(Command):
             return 1, [str(err)]
 
     def _hcmd_rollback(self, extcmds):
-        # Parse the force extcmd and pop it.
-        force = False
-        try:
-            force_str = extcmds[0]
-        except IndexError:
-            self.base.logger.critical(_('No transaction ID given'))
-            return 1, ['Failed history rollback, no transaction']
-        else:
-            if force_str == 'force':
-                force = True
-                # Pop the force extcmd (but do not modify the instance).
-                extcmds = extcmds[1:]
-
         # Parse the transaction specification.
         try:
             extcmd, = extcmds
         except ValueError:
-            self.base.logger.critical(_('Found more than one transaction ID!'))
+            if not extcmds:
+                self.base.logger.critical(_('No transaction ID given'))
+            elif len(extcmds) > 1:
+                self.base.logger.critical(_('Found more than one transaction ID!'))
             return 1, ['Failed history rollback']
 
         try:
-            return self.base.history_rollback_transaction(extcmd, force)
+            return self.base.history_rollback_transaction(extcmd)
         except dnf.exceptions.Error as err:
             return 1, [str(err)]
 
