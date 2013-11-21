@@ -1,4 +1,4 @@
-%global gitrev e200267
+%global gitrev 7db68be
 %global hawkey_version 0.4.5
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -122,6 +122,42 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Nov 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.8-1
+- doc: api: add DeprecationWarning. (Ales Kozumplik)
+- remove: Base.run_with_package_names. (Ales Kozumplik)
+- history: do not traceback if a regular user tries to look into the history DB. (Ales Kozumplik)
+- cli: do not print the command name when concluding a history command. (Ales Kozumplik)
+- refactor: StartupConf is no longer needed. (Ales Kozumplik)
+- doc: api: reading configuration from filesystem. (Ales Kozumplik)
+- refactor: move Base.read_conf_file to Cli. (Ales Kozumplik)
+- config: do away with the two-phase parsing. (Ales Kozumplik)
+- removed shelve support in persistor.py (Jan Silhan)
+- removed per_arch_dict function from query.py (Jan Silhan)
+- removed _construct_result function from query.py (Jan Silhan)
+- removed latest_per_arch function from query.py (Jan Silhan)
+- Fix output when downgrading not installed package (RhBug:1030980) (Radek Holy)
+- remove: Conf.uid, Conf.progress_obj. (Ales Kozumplik)
+- Handle remote URLs. (RhBug:1030297) (Zdenek Pavlas)
+- runTransaction(): clean_used_packages() should run after verify_transaction() (Zdenek Pavlas)
+- remove: dnf.yum.misc.re_remote_url() (Zdenek Pavlas)
+- remove: Base.localPackages (Zdenek Pavlas)
+- remove: Base._cleanup (Zdenek Pavlas)
+- doc: api: document dnf.transaction.Transaction. (Ales Kozumplik)
+- fix: installs globbing for a file without a slash at the start. (RhBug:1030998) (Ales Kozumplik)
+- doc: api: document the dnf.subject.Subject API. (Ales Kozumplik)
+- rename: Base.group_lists -> Base._group_lists. (Ales Kozumplik)
+- groups: also display available environment groups. (RhBug:1029948) (Ales Kozumplik)
+- removed PycompDict (Jan Silhan)
+- doc: api: document Query. (Ales Kozumplik)
+- No fastestmirror "status" message if detection didn't run. (Zdenek Pavlas)
+- Add the "determining the fastest mirror" progress code. (Zdenek Pavlas)
+- rename: queries.Query -> query.Query. queries.Subject -> subject.Subject. (Ales Kozumplik)
+- refactor: initializing a Repo. (Ales Kozumplik)
+- setup deprecation warnings. (Ales Kozumplik)
+- refactor: do not rely on CliCache (dnf.conf.Cache previously) outside of Cli. (Ales Kozumplik)
+- spec file now generates dnf and dnf-python3 packages (Jan Silhan)
+- fixed py3 error when called next method (Jan Silhan)
 
 * Fri Nov 8 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.7-1
 - doc: api: Conf.installonly_limit. (Ales Kozumplik)
