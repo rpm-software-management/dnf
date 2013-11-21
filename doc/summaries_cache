@@ -278,5 +278,25 @@
     [
         1025650, 
         "[abrt] dnf-0.4.6-1.fc20: i18n.py:119:ucd:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 51: ordinal not in range(128)"
+    ], 
+    [
+        1014563, 
+        "Support Python 3 in DNF"
+    ], 
+    [
+        1029948, 
+        "dnf does not show all desktop environments in dnf groups list output"
+    ], 
+    [
+        1030998, 
+        "install doesn't work for '*/binaryname' patterns"
+    ], 
+    [
+        1030297, 
+        "dnf doesn't support http urls"
+    ], 
+    [
+        1030980, 
+        "dnf downgrade PACKAGE, misleading message about possible typo if PACKAGE is not installed"
     ]
 ]

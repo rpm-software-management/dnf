@@ -27,7 +27,7 @@ The provided Python API to DNF is supposed to mainly allow writing the following
 
   The DNF project has not fully stabilized yet and it is possible parts the API described in this document can change. All such changes are documented per-version in the release notes and are subject to our deprecation policy. We do our best to reduce their number to a necessary minimum.
 
-Depracated API items (classes, methods, etc.) are designated as such in the relese notes. The first release where support for such items can be dropped entirely must be issued at least three months after the issue of the release that announced the deprecation and at the same time have, relatively to the deprecating release, either:
+Depracated API items (classes, methods, etc.) are designated as such in the :doc:`release_notes`. The first release where support for such items can be dropped entirely must be issued at least three months after the issue of the release that announced the deprecation and at the same time have, relatively to the deprecating release, either:
 
 * a higher major version number, or
 * a higher minor version number, or

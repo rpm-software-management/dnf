@@ -2,7 +2,9 @@
  Queries and Subjects
 ======================
 
-.. class:: dnf.query.Query
+.. module:: dnf.query
+
+.. class:: Query
 
   Facilitates lookup of packages in a :class:`~dnf.sack.Sack` based on given criteria. Query actually does not consult the information in the :class:`~!dnf.sack.Sack` until it is evaluated. The evaluation happens either explicitly using :meth:`~dnf.query.Query.run` or by iterating the query, for example::
 
@@ -64,7 +66,9 @@
 
     Return a new query that limits the result only to packages that can be upgrade candidates to at least one package in the current set. Upgrade candidate has the same name, higher EVR and the architectures of the original and the upgrade candidate package are suitable for an upgrade. Specifically, the filtering does not take any steps to establish that the upgrade candidate can actually be installed.
 
-.. class:: dnf.subject.Subject
+.. module:: dnf.subject
+
+.. class:: Subject
 
   As :ref:`explained on the DNF man page <specifying_packages-label>`, users of the CLI are able to select packages for an operation in different formats, leaving seemingly arbitrary parts out of the spec and even using globbing characters. This class implements a common approach to parsing such input and produce a :class:`~dnf.query.Query` listing all packages matching the input or a :class:`~dnf.selector.Selector` selecting a single package that best matches the input given a transaction operation.
 

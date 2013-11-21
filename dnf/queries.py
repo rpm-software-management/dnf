@@ -23,5 +23,8 @@ from dnf.subject import Subject
 
 import dnf.logging
 
+# :deprecated in 0.4.8, eligible for dropping after 2013-02-21 AND no sooner
+# than in 0.4.11
+
 msg = "dnf.queries is deprecated. Use dnf.query or dnf.subject."
-dnf.logging.depr(msg) # :deprecated in 0.4.8
+dnf.logging.depr(msg)
