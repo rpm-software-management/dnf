@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; DNF 0.4.7-1 documentation</title>
+    <title>Index &mdash; DNF 0.4.8-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.7-1',
+        VERSION:     '0.4.8-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +36,10 @@
         <li class="right" style="margin-right: 10px">
           <a href="#" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,6 +65,7 @@
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -75,6 +79,16 @@
   <dt><a href="api_base.html#dnf.Base.__init__">__init__() (dnf.Base method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="api_repos.html#dnf.repo.Repo.__init__">(dnf.repo.Repo method)</a>
+  </dt>
+
+        
+  <dt><a href="api_queries.html#dnf.subject.Subject.__init__">(dnf.subject.Subject method)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -83,6 +97,32 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_repos.html#dnf.repodict.RepoDict.add">add() (dnf.repodict.RepoDict method)</a>
+  </dt>
+
+      
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_downgrade">add_downgrade() (dnf.transaction.Transaction method)</a>
+  </dt>
+
+      
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_erase">add_erase() (dnf.transaction.Transaction method)</a>
+  </dt>
+
+      
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_install">add_install() (dnf.transaction.Transaction method)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_reinstall">add_reinstall() (dnf.transaction.Transaction method)</a>
+  </dt>
+
+      
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_upgrade">add_upgrade() (dnf.transaction.Transaction method)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#dnf.query.Query.available">available() (dnf.query.Query method)</a>
   </dt>
 
   </dl></td>
@@ -108,6 +148,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="api_conf.html#dnf.conf.Conf.cachedir">cachedir (dnf.conf.Conf attribute)</a>
+  </dt>
+
+      
   <dt><a href="api_comps.html#dnf.comps.Comps.categories">categories (dnf.comps.Comps attribute)</a>
   </dt>
 
@@ -131,6 +175,10 @@
 
       
   <dt><a href="api_base.html#dnf.Base.conf">conf (dnf.Base attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.config_file_path">config_file_path (dnf.conf.Conf attribute)</a>
   </dt>
 
   </dl></td>
@@ -172,11 +220,13 @@
   </dt>
 
       
+  <dt><a href="api_exceptions.html#dnf.exceptions.DeprecationWarning">dnf.exceptions.DeprecationWarning</a>
+  </dt>
+
+      
   <dt><a href="api_exceptions.html#dnf.exceptions.DepsolveError">dnf.exceptions.DepsolveError</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_exceptions.html#dnf.exceptions.Error">dnf.exceptions.Error</a>
   </dt>
@@ -189,8 +239,18 @@
   <dt><a href="api_exceptions.html#dnf.exceptions.RepoError">dnf.exceptions.RepoError</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api_queries.html#dnf.queries.Subject">dnf.queries.Subject (built-in class)</a>
+  <dt><a href="api_package.html#dnf.package.Package">dnf.package.Package (built-in class)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#module-dnf.queries">dnf.queries (module)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#module-dnf.query">dnf.query (module)</a>
   </dt>
 
       
@@ -202,11 +262,27 @@
   </dt>
 
       
+  <dt><a href="api_sack.html#dnf.sack.Sack">dnf.sack.Sack (built-in class)</a>
+  </dt>
+
+      
+  <dt><a href="api_selector.html#dnf.selector.Selector">dnf.selector.Selector (built-in class)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#module-dnf.subject">dnf.subject (module)</a>
+  </dt>
+
+      
   <dt><a href="api_transaction.html#dnf.transaction.Transaction">dnf.transaction.Transaction (built-in class)</a>
   </dt>
 
       
   <dt><a href="api_base.html#dnf.Base.do_transaction">do_transaction() (dnf.Base method)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#dnf.query.Query.downgrades">downgrades() (dnf.query.Query method)</a>
   </dt>
 
       
@@ -252,21 +328,35 @@
   </dt>
 
   </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_queries.html#dnf.query.Query.filter">filter() (dnf.query.Query method)</a>
+  </dt>
+
+  </dl></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api_comps.html#dnf.comps.Comps.group_by_pattern">group_by_pattern() (dnf.comps.Comps method)</a>
+  <dt><a href="api_queries.html#dnf.subject.Subject.get_best_query">get_best_query() (dnf.subject.Subject method)</a>
   </dt>
 
       
-  <dt><a href="api_comps.html#dnf.comps.Comps.groups">groups (dnf.comps.Comps attribute)</a>
+  <dt><a href="api_queries.html#dnf.subject.Subject.get_best_selector">get_best_selector() (dnf.subject.Subject method)</a>
+  </dt>
+
+      
+  <dt><a href="api_comps.html#dnf.comps.Comps.group_by_pattern">group_by_pattern() (dnf.comps.Comps method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_comps.html#dnf.comps.Comps.groups">groups (dnf.comps.Comps attribute)</a>
+  </dt>
+
       
   <dt><a href="api_comps.html#dnf.comps.Comps.groups_by_pattern">groups_by_pattern() (dnf.comps.Comps method)</a>
   </dt>
@@ -296,11 +386,15 @@
   </dt>
 
       
-  <dt><a href="api_conf.html#dnf.conf.Conf.installonly_limit">installonly_limit (dnf.conf.Conf attribute)</a>
+  <dt><a href="api_queries.html#dnf.query.Query.installed">installed() (dnf.query.Query method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.installonly_limit">installonly_limit (dnf.conf.Conf attribute)</a>
+  </dt>
+
       
   <dt><a href="api_conf.html#dnf.conf.Conf.installroot">installroot (dnf.conf.Conf attribute)</a>
   </dt>
@@ -315,6 +409,10 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_queries.html#dnf.query.Query.latest">latest() (dnf.query.Query method)</a>
+  </dt>
+
       
   <dt><a href="api_repos.html#dnf.repo.Repo.load">load() (dnf.repo.Repo method)</a>
   </dt>
@@ -368,7 +466,29 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="api_conf.html#dnf.conf.Conf.persistdir">persistdir (dnf.conf.Conf attribute)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
   <dt><a href="api_conf.html#dnf.conf.Conf.prepend_installroot">prepend_installroot() (dnf.conf.Conf method)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_queries.html#dnf.query.Query">Query (class in dnf.query)</a>
+  </dt>
+
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_sack.html#dnf.sack.Sack.query">query() (dnf.sack.Sack method)</a>
   </dt>
 
   </dl></td>
@@ -377,6 +497,10 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.read">read() (dnf.conf.Conf method)</a>
+  </dt>
+
       
   <dt><a href="api_base.html#dnf.Base.read_comps">read_comps() (dnf.Base method)</a>
   </dt>
@@ -395,12 +519,20 @@
   <dt><a href="api_base.html#dnf.Base.resolve">resolve() (dnf.Base method)</a>
   </dt>
 
+      
+  <dt><a href="api_queries.html#dnf.query.Query.run">run() (dnf.query.Query method)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_base.html#dnf.Base.sack">sack (dnf.Base attribute)</a>
+  </dt>
+
       
   <dt><a href="api_base.html#dnf.Base.select_group">select_group() (dnf.Base method)</a>
   </dt>
@@ -409,6 +541,10 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_repos.html#dnf.repo.Repo.sslverify">sslverify (dnf.repo.Repo attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_queries.html#dnf.subject.Subject">Subject (class in dnf.subject)</a>
   </dt>
 
   </dl></td>
@@ -437,10 +573,14 @@
   <dt><a href="api_comps.html#dnf.comps.Category.ui_description">ui_description (dnf.comps.Category attribute)</a>
   </dt>
 
+      
+  <dt><a href="api_comps.html#dnf.comps.Category.ui_name">ui_name (dnf.comps.Category attribute)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="api_comps.html#dnf.comps.Category.ui_name">ui_name (dnf.comps.Category attribute)</a>
+  <dt><a href="api_queries.html#dnf.query.Query.upgrades">upgrades() (dnf.query.Query method)</a>
   </dt>
 
   </dl></td>
@@ -479,7 +619,10 @@
         <li class="right" style="margin-right: 10px">
           <a href="#" title="General Index"
              >index</a></li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

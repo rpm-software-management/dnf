@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Queries &mdash; DNF 0.4.7-1 documentation</title>
+    <title>Queries and Subjects &mdash; DNF 0.4.8-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.7-1',
+        VERSION:     '0.4.8-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
-    <link rel="next" title="Transaction" href="api_transaction.html" />
-    <link rel="prev" title="Repository Configuration" href="api_repos.html" /> 
+    <link rel="next" title="Selector" href="api_selector.html" />
+    <link rel="prev" title="Sack" href="api_sack.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="api_transaction.html" title="Transaction"
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_selector.html" title="Selector"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api_repos.html" title="Repository Configuration"
+          <a href="api_sack.html" title="Sack"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -53,13 +56,153 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="queries">
-<h1>Queries<a class="headerlink" href="#queries" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-dnf.query">
+<span id="queries-and-subjects"></span><h1>Queries and Subjects<a class="headerlink" href="#module-dnf.query" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="dnf.queries.Subject">
-<em class="property">class </em><tt class="descclassname">dnf.queries.</tt><tt class="descname">Subject</tt><a class="headerlink" href="#dnf.queries.Subject" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="dnf.query.Query">
+<em class="property">class </em><tt class="descclassname">dnf.query.</tt><tt class="descname">Query</tt><a class="headerlink" href="#dnf.query.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Facilitates lookup of packages in a <a class="reference internal" href="api_sack.html#dnf.sack.Sack" title="dnf.sack.Sack"><tt class="xref py py-class docutils literal"><span class="pre">Sack</span></tt></a> based on given criteria. Query actually does not consult the information in the <tt class="xref py py-class docutils literal"><span class="pre">Sack</span></tt> until it is evaluated. The evaluation happens either explicitly using <a class="reference internal" href="#dnf.query.Query.run" title="dnf.query.Query.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> or by iterating the query, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">q</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">sack</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">installed</span><span class="p">()</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;pepper&#39;</span><span class="p">)</span>
+<span class="n">packages</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="c"># i only gets evaluated here</span>
 
+<span class="n">a</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">available</span><span class="p">()</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;pepper&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">pkg</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span> <span class="c"># a only gets evaluated here</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pkg</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice that none of the filtering methods mutates the state of the <a class="reference internal" href="#dnf.query.Query" title="dnf.query.Query"><tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt></a> but produces a new object instead.</p>
+<dl class="method">
+<dt id="dnf.query.Query.available">
+<tt class="descname">available</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query limiting the original query to the not-installed packages, that is packages available from the repositories.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.downgrades">
+<tt class="descname">downgrades</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.downgrades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query that limits the result only to packages that can be downgrade candidates to other packages in the current set. Downgrade candidate has the same name, lower EVR and the architecture of the original and the downgrade candidate are suitable for a downgrade. Specifically, the filtering does not take any steps to establish that the downgrade candidate can actually be installed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.filter">
+<tt class="descname">filter</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#dnf.query.Query.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query limiting the orignal query to the key/value pairs from <cite>kwargs</cite>. Multiple <cite>kwargs</cite> can be passed, the filter then works by applying all of them together (logical AND).</p>
+<p>Allowed keys are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="15%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">key</th>
+<th class="head">value type</th>
+<th class="head">value meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>arch</td>
+<td>string</td>
+<td>match against packages&#8217; architecture</td>
+</tr>
+<tr class="row-odd"><td>downgrades</td>
+<td>boolean</td>
+<td>see <a class="reference internal" href="#dnf.query.Query.downgrades" title="dnf.query.Query.downgrades"><tt class="xref py py-meth docutils literal"><span class="pre">downgrades()</span></tt></a>. Defaults to <tt class="docutils literal"><span class="pre">False</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>empty</td>
+<td>boolean</td>
+<td><tt class="docutils literal"><span class="pre">True</span></tt> limits to empty result set.
+Defaults to <tt class="docutils literal"><span class="pre">False</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>epoch</td>
+<td>integer</td>
+<td>match against packages&#8217; epoch.</td>
+</tr>
+<tr class="row-even"><td>latest</td>
+<td>boolean</td>
+<td>see <a class="reference internal" href="#dnf.query.Query.latest" title="dnf.query.Query.latest"><tt class="xref py py-meth docutils literal"><span class="pre">latest()</span></tt></a>.  Defaults to <tt class="docutils literal"><span class="pre">False</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>name</td>
+<td>string</td>
+<td>match against packages&#8217; names</td>
+</tr>
+<tr class="row-even"><td>release</td>
+<td>string</td>
+<td>match against packages&#8217; releases</td>
+</tr>
+<tr class="row-odd"><td>reponame</td>
+<td>string</td>
+<td>match against packages repositories&#8217; names</td>
+</tr>
+<tr class="row-even"><td>version</td>
+<td>string</td>
+<td>match against packages&#8217; versions</td>
+</tr>
+<tr class="row-odd"><td>upgrades</td>
+<td>boolean</td>
+<td>see <a class="reference internal" href="#dnf.query.Query.upgrades" title="dnf.query.Query.upgrades"><tt class="xref py py-meth docutils literal"><span class="pre">upgrades()</span></tt></a>. Defaults to <tt class="docutils literal"><span class="pre">False</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.installed">
+<tt class="descname">installed</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.installed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query that limits the result to the installed packages only.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.latest">
+<tt class="descname">latest</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query that limits the result to packages with the highest version per package name and per architecture.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the query. Returns a list of matching <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">dnf.package.Package</span></tt></a> instances.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.query.Query.upgrades">
+<tt class="descname">upgrades</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.query.Query.upgrades" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new query that limits the result only to packages that can be upgrade candidates to at least one package in the current set. Upgrade candidate has the same name, higher EVR and the architectures of the original and the upgrade candidate package are suitable for an upgrade. Specifically, the filtering does not take any steps to establish that the upgrade candidate can actually be installed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dnf.subject"></span><dl class="class">
+<dt id="dnf.subject.Subject">
+<em class="property">class </em><tt class="descclassname">dnf.subject.</tt><tt class="descname">Subject</tt><a class="headerlink" href="#dnf.subject.Subject" title="Permalink to this definition">¶</a></dt>
+<dd><p>As <a class="reference internal" href="command_ref.html#specifying-packages-label"><em>explained on the DNF man page</em></a>, users of the CLI are able to select packages for an operation in different formats, leaving seemingly arbitrary parts out of the spec and even using globbing characters. This class implements a common approach to parsing such input and produce a <a class="reference internal" href="#dnf.query.Query" title="dnf.query.Query"><tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt></a> listing all packages matching the input or a <a class="reference internal" href="api_selector.html#dnf.selector.Selector" title="dnf.selector.Selector"><tt class="xref py py-class docutils literal"><span class="pre">Selector</span></tt></a> selecting a single package that best matches the input given a transaction operation.</p>
+<dl class="method">
+<dt id="dnf.subject.Subject.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>pkg_spec</em>, <em>ignore_case=False</em><big>)</big><a class="headerlink" href="#dnf.subject.Subject.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the <a class="reference internal" href="#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">Subject</span></tt></a> with <cite>pkg_spec</cite> input string. If <cite>ignore_case</cite> is <tt class="docutils literal"><span class="pre">True</span></tt> ignore the case of characters in <cite>pkg_spec</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.subject.Subject.get_best_query">
+<tt class="descname">get_best_query</tt><big>(</big><em>sack</em>, <em>with_provides=True</em>, <em>forms=None</em><big>)</big><a class="headerlink" href="#dnf.subject.Subject.get_best_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt> yielding packages matching the given input. The result of the returned query can be an empty set if no package matches. <cite>sack</cite> is the <a class="reference internal" href="api_sack.html#dnf.sack.Sack" title="dnf.sack.Sack"><tt class="xref py py-class docutils literal"><span class="pre">Sack</span></tt></a> that the returned query will search. <cite>with_provides</cite> indicates whether besides package names also packages&#8217; provides are searched for a match. <cite>forms</cite> is a list of pattern forms from <a class="reference external" href="http://akozumpl.github.io/hawkey/">hawkey</a>. Leaving the parameter to <tt class="docutils literal"><span class="pre">None</span></tt> results in using a reasonable default list of forms.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.subject.Subject.get_best_selector">
+<tt class="descname">get_best_selector</tt><big>(</big><em>sack</em>, <em>forms=None</em><big>)</big><a class="headerlink" href="#dnf.subject.Subject.get_best_selector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a <a class="reference internal" href="api_selector.html#dnf.selector.Selector" title="dnf.selector.Selector"><tt class="xref py py-class docutils literal"><span class="pre">Selector</span></tt></a> that will select a single best-matching package when used in a transaction operation. <cite>sack</cite> and <cite>forms</cite> have the same meaning as in <a class="reference internal" href="#dnf.subject.Subject.get_best_query" title="dnf.subject.Subject.get_best_query"><tt class="xref py py-meth docutils literal"><span class="pre">get_best_query()</span></tt></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-dnf.queries"></span><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last"><a class="reference internal" href="#dnf.query.Query" title="dnf.query.Query"><tt class="xref py py-class docutils literal"><span class="pre">Query</span></tt></a> and <a class="reference internal" href="#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">Subject</span></tt></a> used to belong in the <a class="reference internal" href="#module-dnf.queries" title="dnf.queries (deprecated)"><tt class="xref py py-mod docutils literal"><span class="pre">dnf.queries</span></tt></a> module. As of dnf-0.4.8 this module is deprecated and will be dropped as early as dnf-0.4.11 (also see <a class="reference internal" href="api.html#deprecating-label"><em>Deprecation Policy</em></a>).</p>
+</div>
 </div>
 
 
@@ -69,11 +212,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api_repos.html"
-                        title="previous chapter">Repository Configuration</a></p>
+  <p class="topless"><a href="api_sack.html"
+                        title="previous chapter">Sack</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api_transaction.html"
-                        title="next chapter">Transaction</a></p>
+  <p class="topless"><a href="api_selector.html"
+                        title="next chapter">Selector</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_queries.txt"
@@ -103,12 +246,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="api_transaction.html" title="Transaction"
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_selector.html" title="Selector"
              >next</a> |</li>
         <li class="right" >
-          <a href="api_repos.html" title="Repository Configuration"
+          <a href="api_sack.html" title="Sack"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

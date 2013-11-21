@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Transaction &mdash; DNF 0.4.7-1 documentation</title>
+    <title>Transaction &mdash; DNF 0.4.8-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.7-1',
+        VERSION:     '0.4.8-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Comps, or the Ditribution Compose Metadata" href="api_comps.html" />
-    <link rel="prev" title="Queries" href="api_queries.html" /> 
+    <link rel="prev" title="Package" href="api_package.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api_queries.html" title="Queries"
+          <a href="api_package.html" title="Package"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -58,7 +61,38 @@
 <dl class="class">
 <dt id="dnf.transaction.Transaction">
 <em class="property">class </em><tt class="descclassname">dnf.transaction.</tt><tt class="descname">Transaction</tt><a class="headerlink" href="#dnf.transaction.Transaction" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Instances of this class describe a resolved transaction set. The members of the transaction are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.</p>
+<dl class="method">
+<dt id="dnf.transaction.Transaction.add_downgrade">
+<tt class="descname">add_downgrade</tt><big>(</big><em>new</em>, <em>downgraded</em>, <em>obsoleted</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_downgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a downgrade operation to the transaction. <cite>new</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to downgrade to, <cite>downgraded</cite> is the installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> being downgraded, <cite>obsoleted</cite> is a list of installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Packages</span></tt></a> that are obsoleted by the <cite>downgrade</cite> (or <tt class="docutils literal"><span class="pre">None</span></tt> for no obsoletes).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.transaction.Transaction.add_erase">
+<tt class="descname">add_erase</tt><big>(</big><em>erased</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_erase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an erase operation to the transaction. <cite>erased</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to erase.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.transaction.Transaction.add_install">
+<tt class="descname">add_install</tt><big>(</big><em>new</em>, <em>obsoleted</em>, <em>reason='unknown'</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an install operation to the transaction. <cite>new</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to install, <cite>obsoleted</cite> is a list of installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Packages</span></tt></a> that are obsoleted by <cite>new</cite> (or <tt class="docutils literal"><span class="pre">None</span></tt> for no obsoletes). <cite>reason</cite>, if provided, must be either <tt class="docutils literal"><span class="pre">'dep'</span></tt> for a package installed as a dependnecy, <tt class="docutils literal"><span class="pre">'user'</span></tt> for a package installed per user&#8217;s explicit request or <tt class="docutils literal"><span class="pre">'unknown'</span></tt> for cases where the package&#8217;s origin can not be decided. This information is stored in the DNF package database and used for instance by the functionality that removes excess packages (see <a class="reference internal" href="conf_ref.html#clean-requirements-on-remove-label"><em>clean_requirements_on_remove</em></a>).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.transaction.Transaction.add_reinstall">
+<tt class="descname">add_reinstall</tt><big>(</big><em>new</em>, <em>reinstalled</em>, <em>obsoleted</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_reinstall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a reinstall operation to the transaction. <cite>new</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to reinstall over the installed <cite>reinstalled</cite>. <cite>obsoleted</cite> is a list of installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Packages</span></tt></a> that are obsoleted by <cite>new</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.transaction.Transaction.add_upgrade">
+<tt class="descname">add_upgrade</tt><big>(</big><em>upgrade</em>, <em>upgraded</em>, <em>obsoleted</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_upgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an upgrade operation to the transaction. <cite>upgrade</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to upgrade to, <cite>upgraded</cite> is the installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Package</span></tt></a> to be upgraded, <cite>obsoleted</cite> is a list of installed <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">Packages</span></tt></a> that are obsoleted by the <cite>upgrade</cite>.</p>
+</dd></dl>
+
+</dd></dl>
 
 </div>
 
@@ -69,8 +103,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api_queries.html"
-                        title="previous chapter">Queries</a></p>
+  <p class="topless"><a href="api_package.html"
+                        title="previous chapter">Package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="api_comps.html"
                         title="next chapter">Comps, or the Ditribution Compose Metadata</a></p>
@@ -103,12 +137,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
              >next</a> |</li>
         <li class="right" >
-          <a href="api_queries.html" title="Queries"
+          <a href="api_package.html" title="Package"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

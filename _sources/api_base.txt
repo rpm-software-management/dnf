@@ -18,13 +18,17 @@
 
     A :class:`dnf.repodict.RepoDict` instance, this member object contains all the repositories available.
 
+  .. attribute:: sack
+
+    The :class:`Sack<dnf.sack.Sack>` that this :class:`Base<dnf.Base>` object is using. It needs to be explicitly initialized by :meth:`fill_sack`.
+
   .. attribute:: transaction
 
     A resolved transaction object, a :class:`dnf.transaction.Transaction` instance, or ``None`` if no transaction has been prepared yet.
 
   .. method:: __init__()
 
-    Produce an instance with a reasonable default configuration. The constructor takes no arguments.
+    Init an instance with a reasonable default configuration. The constructor takes no arguments.
 
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 
@@ -42,7 +46,7 @@
 
   .. method:: install(pkg_spec)
 
-    Mark packages matching `pkg_spec` for installation. `pkg_spec` can be any package specification recognized by :class:`dnf.queries.Subject`. Raises :exc:`dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.
+    Mark packages matching `pkg_spec` for installation. `pkg_spec` can be any package specification recognized by :class:`dnf.subject.Subject`. Raises :exc:`dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.
 
   .. method:: read_comps()
 

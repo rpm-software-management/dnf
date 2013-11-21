@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.7-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.8-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.7-1',
+        VERSION:     '0.4.8-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="DNF API Reference" href="api.html" /> 
@@ -38,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -78,6 +81,12 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="dnf.Base.sack">
+<tt class="descname">sack</tt><a class="headerlink" href="#dnf.Base.sack" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <a class="reference internal" href="api_sack.html#dnf.sack.Sack" title="dnf.sack.Sack"><tt class="xref py py-class docutils literal"><span class="pre">Sack</span></tt></a> that this <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> object is using. It needs to be explicitly initialized by <a class="reference internal" href="#dnf.Base.fill_sack" title="dnf.Base.fill_sack"><tt class="xref py py-meth docutils literal"><span class="pre">fill_sack()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="dnf.Base.transaction">
 <tt class="descname">transaction</tt><a class="headerlink" href="#dnf.Base.transaction" title="Permalink to this definition">¶</a></dt>
 <dd><p>A resolved transaction object, a <a class="reference internal" href="api_transaction.html#dnf.transaction.Transaction" title="dnf.transaction.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">dnf.transaction.Transaction</span></tt></a> instance, or <tt class="docutils literal"><span class="pre">None</span></tt> if no transaction has been prepared yet.</p>
@@ -86,7 +95,7 @@
 <dl class="method">
 <dt id="dnf.Base.__init__">
 <tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Produce an instance with a reasonable default configuration. The constructor takes no arguments.</p>
+<dd><p>Init an instance with a reasonable default configuration. The constructor takes no arguments.</p>
 </dd></dl>
 
 <dl class="method">
@@ -111,7 +120,7 @@
 <dl class="method">
 <dt id="dnf.Base.install">
 <tt class="descname">install</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.install" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mark packages matching <cite>pkg_spec</cite> for installation. <cite>pkg_spec</cite> can be any package specification recognized by <a class="reference internal" href="api_queries.html#dnf.queries.Subject" title="dnf.queries.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.queries.Subject</span></tt></a>. Raises <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.PackageNotFoundError</span></tt></a> if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.</p>
+<dd><p>Mark packages matching <cite>pkg_spec</cite> for installation. <cite>pkg_spec</cite> can be any package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. Raises <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.PackageNotFoundError</span></tt></a> if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.</p>
 </dd></dl>
 
 <dl class="method">
@@ -178,12 +187,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              >next</a> |</li>
         <li class="right" >
           <a href="api.html" title="DNF API Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuration &mdash; DNF 0.4.7-1 documentation</title>
+    <title>Configuration &mdash; DNF 0.4.8-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.7-1',
+        VERSION:     '0.4.8-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.7-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Repository Configuration" href="api_repos.html" />
     <link rel="prev" title="Exceptions" href="api_exceptions.html" /> 
@@ -38,12 +38,15 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_repos.html" title="Repository Configuration"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -63,6 +66,18 @@
 <dt id="dnf.conf.Conf.best">
 <tt class="descname">best</tt><a class="headerlink" href="#dnf.conf.Conf.best" title="Permalink to this definition">¶</a></dt>
 <dd><p>Boolean option, <tt class="docutils literal"><span class="pre">True</span></tt> instructs the solver to either use a package with the highest available version or fail. On <tt class="docutils literal"><span class="pre">False</span></tt>, do not fail if the latest version can not be installed. Default is <tt class="docutils literal"><span class="pre">False</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.conf.Conf.cachedir">
+<tt class="descname">cachedir</tt><a class="headerlink" href="#dnf.conf.Conf.cachedir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to a directory used by various DNF subsystems for storing cache data. Has a reasonable root-writable default depending on the distribution. It is up to the client to set this to a location where files and directories can be created under the running user. The directory can be safely deleted after the <a class="reference internal" href="api_base.html#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a> object is destroyed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.conf.Conf.config_file_path">
+<tt class="descname">config_file_path</tt><a class="headerlink" href="#dnf.conf.Conf.config_file_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the default main configuration file. Default is <tt class="docutils literal"><span class="pre">&quot;/etc/dnf/dnf.conf&quot;</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -93,6 +108,12 @@
 <dt id="dnf.conf.Conf.multilib_policy">
 <tt class="descname">multilib_policy</tt><a class="headerlink" href="#dnf.conf.Conf.multilib_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Controls how multilib packages are treated during install operations. Can either be <tt class="docutils literal"><span class="pre">&quot;best&quot;</span></tt> (the default) for the depsolver to prefer packages which best match the system&#8217;s architecture, or <tt class="docutils literal"><span class="pre">&quot;all&quot;</span></tt> to install all available packages with compatible architectures.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.conf.Conf.persistdir">
+<tt class="descname">persistdir</tt><a class="headerlink" href="#dnf.conf.Conf.persistdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Directory where the data that DNF keeps track of between different runs is stored. Default is <tt class="docutils literal"><span class="pre">&quot;/var/lib/dnf&quot;</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -148,6 +169,12 @@
 <dd><p>Prefix config option named <cite>option</cite> with <a class="reference internal" href="#dnf.conf.Conf.installroot" title="dnf.conf.Conf.installroot"><tt class="xref py py-attr docutils literal"><span class="pre">installroot</span></tt></a>.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="dnf.conf.Conf.read">
+<tt class="descname">read</tt><big>(</big><em>filename=None</em><big>)</big><a class="headerlink" href="#dnf.conf.Conf.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read configuration options from the <tt class="docutils literal"><span class="pre">main</span></tt> section in <cite>filename</cite>. Option values not present there are left at their current values. If <cite>filename</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, <a class="reference internal" href="#dnf.conf.Conf.config_file_path" title="dnf.conf.Conf.config_file_path"><tt class="xref py py-attr docutils literal"><span class="pre">config_file_path</span></tt></a> is used. Conversely, the configuration path used to load the configuration file that was used is stored into <a class="reference internal" href="#dnf.conf.Conf.config_file_path" title="dnf.conf.Conf.config_file_path"><tt class="xref py py-attr docutils literal"><span class="pre">config_file_path</span></tt></a> before the function returns.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -193,12 +220,15 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="api_repos.html" title="Repository Configuration"
              >next</a> |</li>
         <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.7-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

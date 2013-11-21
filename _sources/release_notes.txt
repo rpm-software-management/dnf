@@ -372,3 +372,40 @@ Bugs fixed in 0.4.7:
 * :rhbug:`1019170`
 * :rhbug:`1024776`
 * :rhbug:`1025650`
+
+===================
+0.4.8 Release Notes
+===================
+
+There are mainly internal changes, new API functions and bugfixes in this release.
+
+Python 3 is fully supported now, the Fedora builds include the Py3 variant. The DNF program still runs under Python 2.7 but the extension authors can now choose what Python they prefer to use.
+
+This is the first version of DNF that deprecates some of its API. Clients using deprecated code will see a message emitted to stderr using the standard `Python warnings module <http://docs.python.org/3.3/library/warnings.html>`_. You can filter out :exc:`dnf.exceptions.DeprecationWarning` to suppress them.
+
+API additions in 0.4.8:
+
+* :attr:`dnf.Base.sack`
+* :attr:`dnf.conf.Conf.cachedir`
+* :attr:`dnf.conf.Conf.config_file_path`
+* :attr:`dnf.conf.Conf.persistdir`
+* :meth:`dnf.conf.Conf.read`
+* :class:`dnf.package.Package`
+* :class:`dnf.query.Query`
+* :class:`dnf.subject.Subject`
+* :meth:`dnf.repo.Repo.__init__`
+* :class:`dnf.sack.Sack`
+* :class:`dnf.selector.Selector`
+* :class:`dnf.transaction.Transaction`
+
+API deprecations in 0.4.8:
+
+* :mod:`dnf.queries` is deprecated now. If you need to create instances of :class:`.Subject`, import it from :mod:`dnf.subject`. To create :class:`.Query` instances it is recommended to use :meth:`sack.query() <dnf.sack.Sack.query>`.
+
+Bugs fixed in 0.4.8:
+
+* :rhbug:`1014563`
+* :rhbug:`1029948`
+* :rhbug:`1030998`
+* :rhbug:`1030297`
+* :rhbug:`1030980`
