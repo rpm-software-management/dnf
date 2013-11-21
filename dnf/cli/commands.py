@@ -1956,11 +1956,15 @@ class HistoryCommand(Command):
         basecmd, extcmds = self.base.basecmd, self.base.extcmds
         if isinstance(error, dnf.exceptions.TransactionCheckError):
             assert basecmd == 'history'
-            if extcmds and extcmds[0] == 'undo':
-                assert len(extcmds) == 2
+            if extcmds[0] == 'undo':
+                id_, = extcmds[1:]
                 return (_('Cannot undo transaction %s, doing so would result '
-                          'in an inconsistent package database.') %
-                        extcmds[1],)
+                          'in an inconsistent package database.') % id_,)
+            elif extcmds[0] == 'rollback':
+                id_, = extcmds[1:] if extcmds[1] != 'force' else extcmds[2:]
+                return (_('Cannot rollback transaction %s, doing so would '
+                          'result in an inconsistent package database.') % id_,)
+
         return Command.get_error_output(self, error)
 
     @staticmethod
