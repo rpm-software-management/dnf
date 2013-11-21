@@ -36,6 +36,7 @@ class Error(Exception):
         return '%s' % to_unicode(self.value)
 
 class DeprecationWarning(DeprecationWarning):
+    # :api
     pass
 
 class CompsError(Error):
