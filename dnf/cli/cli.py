@@ -362,7 +362,7 @@ class BaseCli(dnf.Base):
 
         oldcount = self._goal.req_length()
         if len(userlist) == 0: # simple case - do them all
-            self.update_all()
+            self.upgrade_all()
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
@@ -373,7 +373,7 @@ class BaseCli(dnf.Base):
                     continue
 
                 try:
-                    self.update(item)
+                    self.upgrade(item)
                 except dnf.exceptions.PackageNotFoundError:
                     self.logger.info(_('No match for argument: %s'), unicode(item))
                     self._checkMaybeYouMeant(item)

@@ -1731,15 +1731,15 @@ class Base(object):
                 return 1
         return 0
 
-    def update(self, pkg_spec):
+    def upgrade(self, pkg_spec):
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
         raise dnf.exceptions.PackageNotFoundError(
-            _("Problem in update: no package matched to update"))
+            _("Problem in upgrade: no package matched to upgrade"))
 
-    def update_all(self):
+    def upgrade_all(self):
         self._goal.upgrade_all()
         return 1
 
@@ -1970,7 +1970,7 @@ class Base(object):
                         done = True
                     continue
 
-                if self.update(pkgtup=pkg.pkgtup):
+                if self.upgrade(pkgtup=pkg.pkgtup):
                     done = True
                 else:
                     self.logger.critical(_('Failed to upgrade: %s'), pkg)
@@ -2014,11 +2014,11 @@ class Base(object):
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to update not installed"))
+                    _("Problem in undo: package to upgrade not installed"))
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to update not available"))
+                    _("Problem in undo: package to upgrade not available"))
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_upgrade(olds[0], news[0], None)
             for obsoleted_nevra in obsoleted_nevras:

@@ -96,7 +96,7 @@ class MockYumBaseTest(PycompTestCase):
 class BuildTransactionTest(support.TestCase):
     def test_resolve(self):
         base = support.MockBase("updates")
-        base.update("pepper")
+        base.upgrade("pepper")
         self.assertTrue(base.resolve())
         base.ds_callback.assert_has_calls(mock.call.start())
         base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
@@ -206,7 +206,7 @@ class CompsTest(support.TestCase):
 class Goal2TransactionTest(support.TestCase):
     def test_upgrade(self):
         base = support.MockBase("main", "updates")
-        base.update("hole")
+        base.upgrade("hole")
         goal = base._goal
         self.assertTrue(base.run_hawkey_goal(goal))
         ts = base._goal2transaction(goal)
