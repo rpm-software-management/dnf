@@ -35,17 +35,6 @@ class CommandsCliTest(support.TestCase):
         erase_cmd.configure()
         self.assertTrue(self.yumbase.goal_parameters.allow_uninstall)
 
-    def test_history_doCheck_undo(self):
-        """Test HistoryCommand.doCheck with the undo sub-command."""
-        self.yumbase.logger = mock.create_autospec(self.yumbase.logger)
-        cmd = dnf.cli.commands.HistoryCommand(self.cli)
-
-        with mock.patch('dnf.cli.commands.checkGPGKey') as checkGPGKey:
-            cmd.doCheck('history', ('undo',))
-
-        self.assertEqual(self.yumbase.logger.mock_calls, [])
-        self.assertEqual(checkGPGKey.mock_calls, [mock.call(self.yumbase, self.cli)])
-
     def test_history_get_error_output_rollback_transactioncheckerror(self):
         """Test get_error_output with the history rollback and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
