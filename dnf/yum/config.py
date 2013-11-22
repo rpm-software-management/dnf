@@ -696,7 +696,6 @@ class YumConf(BaseConfig):
     def __init__(self):
         super(YumConf, self).__init__()
         self.yumvar = {}
-        self.config_file_age = 0
 
     def _var_replace(self, option):
         path = getattr(self, option)
@@ -864,8 +863,7 @@ class YumConf(BaseConfig):
         """
         output = '[main]\n'
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ('cfg', 'yumvar', 'disable_excludes', 'config_file_age',
-                         'config_file_path')
+        excluded_vars = ('cfg', 'yumvar', 'disable_excludes', 'config_file_path')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -901,7 +899,6 @@ class YumConf(BaseConfig):
         # update to where we read the file from
         self.config_file_path = filename
         # not really a config value:
-        self.config_file_age = os.stat(filename)[8]
 
     @property
     def verbose(self):

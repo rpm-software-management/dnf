@@ -241,16 +241,8 @@ class Base(object):
             self._store_persistent_data()
         self.closeRpmDB()
 
-    def read_repos(self, repofn, repo_age=None):
-        """Read in repositories from a config .repo file.
-
-        :param repofn: a string specifying the path of the .repo file
-           to read
-        :param repo_age: the last time that the .repo file was
-           modified, in seconds since the epoch
-        """
-        if repo_age is None:
-            repo_age = os.stat(repofn)[8]
+    def read_repos(self, repofn):
+        """Read in repositories from a config .repo file."""
 
         confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.yumvar)
         parser = ConfigParser()
@@ -290,7 +282,6 @@ class Base(object):
                 self.logger.warning(e)
                 continue
             else:
-                thisrepo.repo_config_age = repo_age
                 thisrepo.repofile = repofn
 
             if thisrepo.id in self.repo_setopts:
@@ -308,18 +299,13 @@ class Base(object):
                 self.logger.warning(e)
 
     def read_all_repos(self):
-        """Read in repositories from the main yum conf file, and from
-        .repo files.  The location of the main yum conf file is given
-        by self.conf.config_file_path, and the location of the
-        directory of .repo files is given by self.conf.reposdir.
-        """
-        # Read .repo files from directories specified by the reposdir option
-        # (typically /etc/yum/repos.d)
-        repo_config_age = self.conf.config_file_age
+        """Read repositories from the main yum conf file and from .repo files. """
 
         # Get the repos from the main yum.conf file
-        self.read_repos(self.conf.config_file_path, repo_config_age)
+        self.read_repos(self.conf.config_file_path)
 
+        # Read .repo files from directories specified by the reposdir option
+        # (typically /etc/yum/repos.d)
         for reposdir in self.conf.reposdir:
             # this check makes sure that our dirs exist properly.
             # if they aren't in the installroot then don't prepend the installroot path
@@ -329,10 +315,7 @@ class Base(object):
 
             if os.path.isdir(reposdir):
                 for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
-                    thisrepo_age = os.stat(repofn)[8]
-                    if thisrepo_age < repo_config_age:
-                        thisrepo_age = repo_config_age
-                    self.read_repos(repofn, repo_age=thisrepo_age)
+                    self.read_repos(repofn)
 
     def readRepoConfig(self, parser, section):
         """Parse an INI file section for a repository.
