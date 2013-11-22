@@ -46,6 +46,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Used for substitution of ``$releasever`` in the repository configuration.
 
+  .. attribute:: reposdir
+
+    List of directories to search for repo configuration files. Has a reasonable default commonly used on the given distribution.
+
   .. attribute:: tsflags
 
     List of strings adding extra flags for the RPM transaction.

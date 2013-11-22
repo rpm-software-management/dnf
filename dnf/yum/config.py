@@ -752,7 +752,7 @@ class YumConf(BaseConfig):
 
     keepcache = BoolOption(True)
     logdir = Option('/var/log') # :api
-    reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d'])
+    reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d']) # :api
 
     debug_solver = BoolOption(False)
 

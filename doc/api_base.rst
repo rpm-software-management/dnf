@@ -48,6 +48,10 @@
 
     Mark packages matching `pkg_spec` for installation. `pkg_spec` can be any package specification recognized by :class:`dnf.subject.Subject`. Raises :exc:`dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.
 
+  .. method:: read_all_repos()
+
+    Read repository configuration from the main configuration file specified by :attr:`dnf.conf.Conf.config_file_path` and any ``.repo`` files under :attr:`dnf.conf.Conf.reposdir`. All the repositories found this way are added to :attr:`~.Base.repos`.
+
   .. method:: read_comps()
 
     Read comps data from all the enabled repositories and initialize the :attr:`comps` object.

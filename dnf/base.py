@@ -299,8 +299,8 @@ class Base(object):
                 self.logger.warning(e)
 
     def read_all_repos(self):
-        """Read repositories from the main yum conf file and from .repo files. """
-
+        """Read repositories from the main conf file and from .repo files."""
+        # :api
         # Get the repos from the main yum.conf file
         self.read_repos(self.conf.config_file_path)
 
