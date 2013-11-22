@@ -150,3 +150,12 @@ packages to install per-group and not via a global setting.
 Dropping this config option with blurry semantics simplifies the
 configuration. DNF behaves as if this was disabled. If the user wanted to
 upgrade everything to the latest version she'd simply use ``dnf upgrade``.
+
+========================================
+ ``dnf history rollback`` check dropped
+========================================
+
+DNF tolerates the use of other package managers. Then it is possible that not
+all changes to RPMDB are stored in the history of transactions. Therefore, DNF
+does not fail if such a situation is encountered and thus the ``force`` option
+is not needed anymore.

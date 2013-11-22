@@ -1956,11 +1956,15 @@ class HistoryCommand(Command):
         basecmd, extcmds = self.base.basecmd, self.base.extcmds
         if isinstance(error, dnf.exceptions.TransactionCheckError):
             assert basecmd == 'history'
-            if extcmds and extcmds[0] == 'undo':
-                assert len(extcmds) == 2
+            if extcmds[0] == 'undo':
+                id_, = extcmds[1:]
                 return (_('Cannot undo transaction %s, doing so would result '
-                          'in an inconsistent package database.') %
-                        extcmds[1],)
+                          'in an inconsistent package database.') % id_,)
+            elif extcmds[0] == 'rollback':
+                id_, = extcmds[1:] if extcmds[1] != 'force' else extcmds[2:]
+                return (_('Cannot rollback transaction %s, doing so would '
+                          'result in an inconsistent package database.') % id_,)
+
         return Command.get_error_output(self, error)
 
     @staticmethod
@@ -2002,7 +2006,7 @@ class HistoryCommand(Command):
                 break
             extcmds = [extcmds[0]] + extcmds[2:]
 
-        old = self.base.history_get_transaction(extcmds)
+        old = self.base.history_get_transaction(extcmds[1:])
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
@@ -2012,59 +2016,36 @@ class HistoryCommand(Command):
             return 2, ["Repeating transaction %u" % (old.tid,)]
 
     def _hcmd_undo(self, extcmds):
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history undo']
-        tm = time.ctime(old.beg_timestamp)
-        print("Undoing transaction %u, from %s" % (old.tid, tm))
-        self.output.historyInfoCmdPkgsAltered(old)
+        # Parse the transaction specification.
         try:
-            self.base.history_undo(old.tid)
-        except (dnf.exceptions.PackagesNotInstalledError,
-                dnf.exceptions.PackagesNotAvailableError) as err:
+            extcmd, = extcmds
+        except ValueError:
+            if not extcmds:
+                self.base.logger.critical(_('No transaction ID given'))
+            elif len(extcmds) > 1:
+                self.base.logger.critical(_('Found more than one transaction ID!'))
+            return 1, ['Failed history undo']
+
+        try:
+            return self.base.history_undo_transaction(extcmd)
+        except dnf.exceptions.Error as err:
             return 1, [str(err)]
-        else:
-            return 2, ["Undoing transaction %u" % (old.tid,)]
 
     def _hcmd_rollback(self, extcmds):
-        force = False
-        if len(extcmds) > 1 and extcmds[1] == 'force':
-            force = True
-            extcmds = extcmds[:]
-            extcmds.pop(0)
+        # Parse the transaction specification.
+        try:
+            extcmd, = extcmds
+        except ValueError:
+            if not extcmds:
+                self.base.logger.critical(_('No transaction ID given'))
+            elif len(extcmds) > 1:
+                self.base.logger.critical(_('Found more than one transaction ID!'))
+            return 1, ['Failed history rollback']
 
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history rollback, no transaction']
-        last = self.base.history.last()
-        if last is None:
-            return 1, ['Failed history rollback, no last?']
-        if old.tid == last.tid:
-            return 0, ['Rollback to current, nothing to do']
-
-        mobj = None
-        for tid in self.base.history.old(list(range(old.tid + 1, last.tid + 1))):
-            if not force and (tid.altered_lt_rpmdb or tid.altered_gt_rpmdb):
-                if tid.altered_lt_rpmdb:
-                    msg = "Transaction history is incomplete, before %u."
-                else:
-                    msg = "Transaction history is incomplete, after %u."
-                print(msg % tid.tid)
-                print(" You can use 'history rollback force', to try anyway.")
-                return 1, ['Failed history rollback, incomplete']
-
-            if mobj is None:
-                mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
-            else:
-                mobj.merge(tid)
-
-        tm = time.ctime(old.beg_timestamp)
-        print("Rollback to transaction %u, from %s" % (old.tid, tm))
-        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
-                                      ", ".join((str(x) for x in mobj.tid))))
-        self.output.historyInfoCmdPkgsAltered(mobj)
-        if self.base.history_undo(mobj):
-            return 2, ["Rollback to transaction %u" % (old.tid,)]
+        try:
+            return self.base.history_rollback_transaction(extcmd)
+        except dnf.exceptions.Error as err:
+            return 1, [str(err)]
 
     def _hcmd_new(self, extcmds):
         self.base.history._create_db_file()
@@ -2109,7 +2090,7 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary', 'undo')
+        cmds = ('list', 'info', 'summary', 'undo', 'rollback')
         if extcmds and extcmds[0] not in cmds:
             self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -2150,11 +2131,11 @@ class HistoryCommand(Command):
                       'package', 'package-list', 'packages', 'packages-list'):
             ret = self.output.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
-            ret = self._hcmd_undo(extcmds)
+            ret = self._hcmd_undo(extcmds[1:])
         elif vcmd in ('redo', 'repeat'):
             ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':
-            ret = self._hcmd_rollback(extcmds)
+            ret = self._hcmd_rollback(extcmds[1:])
         elif vcmd == 'new':
             ret = self._hcmd_new(extcmds)
         elif vcmd in ('stats', 'statistics'):

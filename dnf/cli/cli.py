@@ -993,13 +993,13 @@ class BaseCli(dnf.Base):
             return offset - 1
 
     def _history_get_transactions(self, extcmds):
-        if len(extcmds) < 2:
+        if not extcmds:
             self.logger.critical(_('No transaction ID given'))
             return None
 
         tids = []
         last = None
-        for extcmd in extcmds[1:]:
+        for extcmd in extcmds:
             try:
                 id_or_offset = self.transaction_id_or_offset(extcmd)
             except ValueError:
@@ -1030,6 +1030,72 @@ class BaseCli(dnf.Base):
         if len(old) > 1:
             self.logger.critical(_('Found more than one transaction ID!'))
         return old[0]
+
+    def history_rollback_transaction(self, extcmd):
+        """Rollback given transaction."""
+        old = self.history_get_transaction((extcmd,))
+        if old is None:
+            return 1, ['Failed history rollback, no transaction']
+        last = self.history.last()
+        if last is None:
+            return 1, ['Failed history rollback, no last?']
+        if old.tid == last.tid:
+            return 0, ['Rollback to current, nothing to do']
+
+        mobj = None
+        for tid in self.history.old(list(range(old.tid + 1, last.tid + 1))):
+            if tid.altered_lt_rpmdb:
+                self.logger.warning(_('Transaction history is incomplete, before %u.'), tid.tid)
+            elif tid.altered_gt_rpmdb:
+                self.logger.warning(_('Transaction history is incomplete, after %u.'), tid.tid)
+
+            if mobj is None:
+                mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
+            else:
+                mobj.merge(tid)
+
+        tm = time.ctime(old.beg_timestamp)
+        print("Rollback to transaction %u, from %s" % (old.tid, tm))
+        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
+                                      ", ".join((str(x) for x in mobj.tid))))
+        self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
+
+        history = dnf.history.open_history(self.history)  # :todo
+        operations = dnf.history.NEVRAOperations()
+        for id_ in range(old.tid + 1, last.tid + 1):
+            operations += history.transaction_nevra_ops(id_)
+
+        try:
+            self.history_undo_operations(operations)
+        except ValueError:
+            assert False
+        except (dnf.exceptions.PackagesNotInstalledError,
+                dnf.exceptions.PackagesNotAvailableError) as err:
+            return 1, [str(err)]
+        else:
+            return 2, ["Rollback to transaction %u" % (old.tid,)]
+
+    def history_undo_transaction(self, extcmd):
+        """Undo given transaction."""
+        old = self.history_get_transaction((extcmd,))
+        if old is None:
+            return 1, ['Failed history undo']
+
+        tm = time.ctime(old.beg_timestamp)
+        print("Undoing transaction %u, from %s" % (old.tid, tm))
+        self.output.historyInfoCmdPkgsAltered(old)  # :todo
+
+        history = dnf.history.open_history(self.history)  # :todo
+
+        try:
+            self.history_undo_operations(history.transaction_nevra_ops(old.tid))
+        except ValueError:
+            assert False
+        except (dnf.exceptions.PackagesNotInstalledError,
+                dnf.exceptions.PackagesNotAvailableError) as err:
+            return 1, [str(err)]
+        else:
+            return 2, ["Undoing transaction %u" % (old.tid,)]
 
 class Cli(object):
     def __init__(self, base):
