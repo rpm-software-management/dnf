@@ -305,7 +305,7 @@ class NEVRAOperations(Sized, Iterable, Container):
     def _set_primary_state(self, nevra, state, replaced_nevra=None):
         """Set the *nevra* in the *state* and the *replaced_nevra* as replaced."""
         self._nevra2primary_state[nevra] = state
-        for replacement_nevra, replaced_nevra_ in self._replaced_by.items():
+        for replacement_nevra, replaced_nevra_ in list(self._replaced_by.items()):
             if replaced_nevra_ == nevra:
                 del self._replaced_by[replacement_nevra]
         for obsoleted_nevras in self._obsoleted_by.values():

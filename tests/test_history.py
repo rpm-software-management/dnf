@@ -59,7 +59,7 @@ class History(PycompTestCase):
             self.history.pkg2pid(apkg)
             apkg2pid.assert_called_with(apkg, True)
 
-class HistoryWrapperTest(unittest.TestCase):
+class HistoryWrapperTest(support.TestCase):
     """Unit tests of dnf.history._HistoryWrapper."""
 
     def _create_wrapper(self, yum_history):
@@ -161,7 +161,7 @@ class HistoryWrapperTest(unittest.TestCase):
 
         self.assertItemsEqual(result_ops, expected_ops)
 
-class NEVRAOperationsTest(unittest.TestCase):
+class NEVRAOperationsTest(support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
 
     def test_add_erase_installed(self):
