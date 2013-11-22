@@ -24,6 +24,7 @@
 # data etc.
 
 from __future__ import absolute_import
+from dnf.yum.i18n import _
 import dbm
 import dnf.util
 import json
@@ -45,8 +46,14 @@ class Persistor(object):
     def _get_expired_from_json(self):
         json_path = os.path.join(self.cachedir, "expired_repos.json")
         f = open(json_path, 'r')
-        data = json.load(f)
+        content = f.read()
         f.close()
+        if content == "":
+            data = []
+            self.logger.warning(_("expired_repos.json is empty file"))
+            self._write_json_data(json_path, data)
+        else:
+            data = json.loads(content)
         return set(data)
 
     def _write_json_data(self, path, expired_repos):
