@@ -477,12 +477,11 @@ current LC_MESSAGES locale (if possible).
 Specifying Transactions
 =======================
 
-``<transaction-spec>`` has two possible interpretations. If it is an integer,
-it specifies a transaction ID. Otherwise, the parameter must be in form
-``last[-offset]``, which specifies the transaction relative to the most recent
-transaction. It means that ``last`` represents the ID of the most recent
-transaction and ``last-offset`` represents the ID of the most recent
-transaction minus an integer offset.
+``<transaction-spec>`` can be in one of several forms. If it is an integer, it
+specifies a transaction ID. Specifying ``last`` is the same as specifying the ID
+of the most recent transaction. The last form is ``last-<offset>``, where
+``<offset>`` is a positive integer. It specifies offset-th transaction preceding
+the most recent transaction.
 
 ========
 See Also
