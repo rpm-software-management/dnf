@@ -548,6 +548,12 @@ class Base(object):
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
+    def iter_userinstalled(self):
+        """Get iterator over the packages installed by the user."""
+        return (pkg for pkg in self.sack.query().installed()
+                if self.yumdb.get_package(pkg).get('reason') == 'user' and
+                   self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
+
     def _push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
         self.logger.info(msg)

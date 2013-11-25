@@ -73,6 +73,45 @@ class BaseTest(support.TestCase):
         self.assertEqual(base._ts, None)
         ts.close.assert_called_once_with()
 
+    def test_iter_userinstalled(self):
+        """Test iter_userinstalled with a package installed by the user."""
+        base = dnf.Base()
+        base._sack = support.mock_sack('main')
+        base._yumdb = support.MockYumDB()
+        pkg, = base.sack.query().installed().filter(name='pepper')
+        base.yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'main'}.get
+
+        iterator = base.iter_userinstalled()
+
+        self.assertEqual(next(iterator), pkg)
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_iter_userinstalled_badfromrepo(self):
+        """Test iter_userinstalled with a package installed from a bad repository."""
+        base = dnf.Base()
+        base._sack = support.mock_sack('main')
+        base._yumdb = support.MockYumDB()
+
+        pkg, = base.sack.query().installed().filter(name='pepper')
+        base.yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'anakonda'}.get
+
+        iterator = base.iter_userinstalled()
+
+        self.assertRaises(StopIteration, next, iterator)
+
+    def test_iter_userinstalled_badreason(self):
+        """Test iter_userinstalled with a package installed for a wrong reason."""
+        base = dnf.Base()
+        base._sack = support.mock_sack('main')
+        base._yumdb = support.MockYumDB()
+
+        pkg, = base.sack.query().installed().filter(name='pepper')
+        base.yumdb.get_package(pkg).get = {'reason': 'dep', 'from_repo': 'main'}.get
+
+        iterator = base.iter_userinstalled()
+
+        self.assertRaises(StopIteration, next, iterator)
+
 # test Base methods that need the sack
 class MockYumBaseTest(PycompTestCase):
     def setUp(self):
