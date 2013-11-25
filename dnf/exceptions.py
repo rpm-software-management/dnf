@@ -79,16 +79,22 @@ class MetadataError(Error):
 class MiscError(Error):
     pass
 
-class PackageNotFoundError(Error):
+class MarkingError(Error):
     # :api
     pass
 
-class PackagesNotInstalledError(Error):
+class PackageNotFoundError(MarkingError):
+    # :api
+    # :deprecated for API use in 0.4.9, eligible for dropping after 2014-02-25
+    # AND no sooner than in 0.4.12
+    pass
+
+class PackagesNotInstalledError(MarkingError):
     def __init__(self, value=None, packages=[]):
         Error.__init__(self, value)
         self.packages = packages
 
-class PackagesNotAvailableError(Error):
+class PackagesNotAvailableError(MarkingError):
     def __init__(self, value=None, packages=[]):
         Error.__init__(self, value)
         self.packages = packages

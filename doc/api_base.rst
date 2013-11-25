@@ -44,10 +44,6 @@
 
     Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded.
 
-  .. method:: install(pkg_spec)
-
-    Mark packages matching `pkg_spec` for installation. `pkg_spec` can be any package specification recognized by :class:`dnf.subject.Subject`. Raises :exc:`dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.
-
   .. method:: read_all_repos()
 
     Read repository configuration from the main configuration file specified by :attr:`dnf.conf.Conf.config_file_path` and any ``.repo`` files under :attr:`dnf.conf.Conf.reposdir`. All the repositories found this way are added to :attr:`~.Base.repos`.
@@ -65,3 +61,31 @@
   .. method:: select_group(group, pkg_types=None)
 
     Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding ``"mandatory"``, ``"default"`` or ``"optional"`` to it. If `pkg_types` is ``None``, it defaults to ``("mandatory", "default")``.
+
+  The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument they take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not neccessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
+
+  .. method:: downgrade(pkg_spec)
+
+    Mark packages matching `pkg_spec` for downgrade.
+
+  .. method:: install(pkg_spec)
+
+    Mark packages matching `pkg_spec` for installation.
+
+    .. warning::
+      This method was previously documented to raise :exc:`~dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. While this still may hold in future versions, :exc:`~dnf.exceptions.PackageNotFoundError` is currently being deprecated for public use.
+
+    .. warning::
+      This method was previously documented to return a number of packages marked for installation. Depending on this behavior is deprecated as of dnf-0.4.9 and the functionality will be dropped as early as dnf-0.4.12 (also see :ref:`deprecating-label`).
+
+  .. method:: remove(pkg_spec)
+
+    Mark packages matching `pkg_spec` for removal.
+
+  .. method:: upgrade(pkg_spec)
+
+    Mark packages matching `pkg_spec` for upgrade.
+
+  .. method:: upgrade_all
+
+    Mark all installed packages for an upgrade.

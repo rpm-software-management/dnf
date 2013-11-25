@@ -1713,6 +1713,8 @@ class Base(object):
                 msg_installed(already_inst[0])
             self._goal.install(select=sltr)
             return 1
+        # :deprecated return value for API use in 0.4.9, eligible for dropping
+        # after 2014-02-25 AND no sooner than in 0.4.12
         return 0
 
     def install_groupie(self, pkg_name, inst_set):
@@ -1732,6 +1734,7 @@ class Base(object):
         return 0
 
     def upgrade(self, pkg_spec):
+        # :api
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
         if sltr:
             self._goal.upgrade(select=sltr)
@@ -1740,6 +1743,7 @@ class Base(object):
             _("Problem in upgrade: no package matched to upgrade"))
 
     def upgrade_all(self):
+        # :api
         self._goal.upgrade_all()
         return 1
 
@@ -1758,12 +1762,7 @@ class Base(object):
         return 0
 
     def remove(self, pkg_spec):
-        """Mark the specified package for removal.
-
-        :return: a list of the transaction members that were added to
-           the transaction set by this method
-
-        """
+        """Mark the specified package for removal. #:api """
 
         matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
         installed = matches.installed().run()
@@ -1881,12 +1880,10 @@ class Base(object):
         return cnt
 
     def downgrade(self, pkg_spec):
-        """Mark a package to be downgraded.  This is equivalent to
-        first removing the currently installed package, and then
-        installing an older version.
+        """Mark a package to be downgraded. :api
 
-        :return: a list of the transaction members added to the
-           transaction set by this method
+        This is equivalent to first removing the currently installed package,
+        and then installing an older version.
 
         """
         subj = dnf.subject.Subject(pkg_spec)
