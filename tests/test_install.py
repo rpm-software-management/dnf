@@ -93,7 +93,7 @@ class MultilibBestMainRepo(support.ResultTestCase):
 
     def test_non_existent(self):
         """ Installing a nonexistent package is a void operation. """
-        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+        self.assertRaises(dnf.exceptions.MarkingError,
                           self.yumbase.install, "not-available")
         installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)

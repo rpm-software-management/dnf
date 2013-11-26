@@ -1403,7 +1403,7 @@ class Base(object):
         for pkg in (pkg for grp in groups for pkg in grp.packages):
             try:
                 self.remove(pkg.name)
-            except dnf.exceptions.PackagesNotInstalledError:
+            except dnf.exceptions.MarkingError:
                 continue
             cnt += 1
 
@@ -1706,7 +1706,7 @@ class Base(object):
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                raise dnf.exceptions.PackageNotFoundError(
+                raise dnf.exceptions.MarkingError(
                     _("Problem in install: no package matched to install"))
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
@@ -1739,7 +1739,7 @@ class Base(object):
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
-        raise dnf.exceptions.PackageNotFoundError(
+        raise dnf.exceptions.MarkingError(
             _("Problem in upgrade: no package matched to upgrade"))
 
     def upgrade_all(self):

@@ -326,7 +326,7 @@ class BaseCli(dnf.Base):
                          # no matter what we don't go looking at repos
             try:
                 self.install(arg)
-            except dnf.exceptions.PackageNotFoundError:
+            except dnf.exceptions.MarkingError:
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.output.term.MODE['bold'], arg,
                                  self.output.term.MODE['normal'])
@@ -374,7 +374,7 @@ class BaseCli(dnf.Base):
 
                 try:
                     self.upgrade(item)
-                except dnf.exceptions.PackageNotFoundError:
+                except dnf.exceptions.MarkingError:
                     self.logger.info(_('No match for argument: %s'), unicode(item))
                     self._checkMaybeYouMeant(item)
 
@@ -445,7 +445,7 @@ class BaseCli(dnf.Base):
         for arg in userlist:
             try:
                 current_cnt = self.remove(arg)
-            except dnf.exceptions.PackagesNotInstalledError:
+            except dnf.exceptions.MarkingError:
                 self.logger.info(_('No match for argument: %s'), unicode(arg))
                 self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
             else:
@@ -492,6 +492,8 @@ class BaseCli(dnf.Base):
             except dnf.exceptions.PackagesNotInstalledError as err:
                 for pkg in err.packages:
                     self.logger.info(_('No match for available package: %s'), pkg)
+            except dnf.exceptions.MarkingError:
+                assert False
         cnt = self._goal.req_length() - oldcount
         if cnt > 0:
             msg = P_('%d package to downgrade',
@@ -538,6 +540,8 @@ class BaseCli(dnf.Base):
                     msg = _('Installed package %s%s%s%s not available.')
                     self.logger.info(msg, self.output.term.MODE['bold'], ipkg,
                                      self.output.term.MODE['normal'], xmsg)
+            except dnf.exceptions.MarkingError:
+                assert False
             else:
                 done = True
 
@@ -1069,8 +1073,7 @@ class BaseCli(dnf.Base):
             self.history_undo_operations(operations)
         except ValueError:
             assert False
-        except (dnf.exceptions.PackagesNotInstalledError,
-                dnf.exceptions.PackagesNotAvailableError) as err:
+        except dnf.exceptions.MarkingError as err:
             return 1, [str(err)]
         else:
             return 2, ["Rollback to transaction %u" % (old.tid,)]
@@ -1091,8 +1094,7 @@ class BaseCli(dnf.Base):
             self.history_undo_operations(history.transaction_nevra_ops(old.tid))
         except ValueError:
             assert False
-        except (dnf.exceptions.PackagesNotInstalledError,
-                dnf.exceptions.PackagesNotAvailableError) as err:
+        except dnf.exceptions.MarkingError as err:
             return 1, [str(err)]
         else:
             return 2, ["Undoing transaction %u" % (old.tid,)]

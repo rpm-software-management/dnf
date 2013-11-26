@@ -39,7 +39,7 @@ class Update(support.ResultTestCase):
         base._sack = support.mock_sack('updates')
         base._goal = goal = mock.create_autospec(hawkey.Goal)
 
-        self.assertRaises(dnf.exceptions.PackageNotFoundError,
+        self.assertRaises(dnf.exceptions.MarkingError,
                           base.upgrade, 'non-existent')
         self.assertEqual(goal.mock_calls, [])
 
