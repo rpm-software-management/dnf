@@ -1707,7 +1707,7 @@ class Base(object):
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
                 raise dnf.exceptions.MarkingError(
-                    _("Problem in install: no package matched to install"))
+                    "Problem in install: no package matched to install")
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
@@ -1740,7 +1740,7 @@ class Base(object):
             self._goal.upgrade(select=sltr)
             return 1
         raise dnf.exceptions.MarkingError(
-            _("Problem in upgrade: no package matched to upgrade"))
+            "Problem in upgrade: no package matched to upgrade")
 
     def upgrade_all(self):
         # :api
@@ -1768,7 +1768,7 @@ class Base(object):
         installed = matches.installed().run()
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError(
-                _("Problem in remove: no package matched to remove"))
+                "Problem in remove: no package matched to remove")
 
         clean_deps = self.conf.clean_requirements_on_remove
         for pkg in installed:
@@ -1859,7 +1859,7 @@ class Base(object):
         available_nevra2pkg = query.per_nevra_dict(q.available())
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
-                _("Problem in reinstall: no package matched to remove"),
+                "Problem in reinstall: no package matched to remove",
                 available_nevra2pkg.values())
 
         cnt = 0
@@ -1873,7 +1873,7 @@ class Base(object):
             cnt += 1
 
         if cnt == 0:
-            msg = _("Problem in reinstall: no package %s matched to install")
+            msg = "Problem in reinstall: no package %s matched to install"
             msg %= ", ".join(str(pkg) for pkg in installed_pkgs)
             raise dnf.exceptions.PackagesNotAvailableError(msg, installed_pkgs)
 
@@ -1894,10 +1894,10 @@ class Base(object):
             available_pkgs = q.available()
             if available_pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in downgrade: no package matched to downgrade"),
+                    "Problem in downgrade: no package matched to downgrade",
                     available_pkgs)
             raise dnf.exceptions.PackageNotFoundError(
-                _("Problem in downgrade: no package matched to install"))
+                "Problem in downgrade: no package matched to install")
 
         q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
@@ -2011,11 +2011,11 @@ class Base(object):
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to upgrade not installed"))
+                    "Problem in undo: package to upgrade not installed")
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to upgrade not available"))
+                    "Problem in undo: package to upgrade not available")
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_upgrade(olds[0], news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
@@ -2026,7 +2026,7 @@ class Base(object):
             pkgs = self.sack.query().available().nevra(old_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to install not available"))
+                    "Problem in undo: package to install not available")
             assert len(pkgs) == 1
             self._transaction.add_install(pkgs[0], None)
 
@@ -2035,7 +2035,7 @@ class Base(object):
             pkgs = self.sack.query().installed().nevra(new_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to remove not installed"))
+                    "Problem in undo: package to remove not installed")
             assert len(pkgs) == 1
             self._transaction.add_erase(pkgs[0])
             for obsoleted_nevra in obsoleted_nevras:
@@ -2046,11 +2046,11 @@ class Base(object):
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to reinstall not installed"))
+                    "Problem in undo: package to reinstall not installed")
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to reinstall not available"))
+                    "Problem in undo: package to reinstall not available")
             obsoleteds = []
             for nevra in obsoleted_nevras:
                 obsoleteds_ = self.sack.query().installed().nevra(nevra)
@@ -2065,11 +2065,11 @@ class Base(object):
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    _("Problem in undo: package to downgrade not installed"))
+                    "Problem in undo: package to downgrade not installed")
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
-                    _("Problem in undo: package to downgrade not available"))
+                    "Problem in undo: package to downgrade not available")
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_downgrade(olds[0], news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
