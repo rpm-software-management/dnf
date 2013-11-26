@@ -161,8 +161,13 @@ class Package(hawkey.Package):
         """
         if self.from_cmdline:
             return self.location
-        return self.localpath or \
-            os.path.join(self.repo.pkgdir, os.path.basename(self.location))
+        if self.localpath:
+            return self.localpath
+
+        loc = self.location
+        if not self.repo.local:
+            loc = os.path.basename(loc)
+        return os.path.join(self.repo.pkgdir, loc)
 
     # yum compatibility method
     def returnIdSum(self):
