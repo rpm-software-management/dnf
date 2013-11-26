@@ -115,10 +115,7 @@ class OutputTest(PycompTestCase):
         input_fnc.side_effect = self._eof_error
         self.assertTrue(self.output.userconfirm())
 
-    def _to_unicode_mock(str):
-        return {'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'}.get(str, str)
-
-    @mock.patch('dnf.cli.output._', _to_unicode_mock)
+    @support.patch_translation({'dnf.cli.output._'}, translation={'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'})
     @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm_translated(self, input_fnc):
         input_fnc.return_value = 'ee'

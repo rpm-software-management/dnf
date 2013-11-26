@@ -85,13 +85,21 @@ def patch_std_streams():
 def patch_translation(gettexts=(), ngettexts=(), translation=None):
     """Return function wrapper patching the translating functions."""
     translation = translation or dnf.pycomp.NullTranslations()
+    try:
+        gettext = translation.ugettext
+        ngettext = translation.ungettext
+    except AttributeError:
+        gettext = lambda message: translation.get(message, message)
+        ngettext = (lambda msgid1, msgid2, n:
+                    translation.get((msgid1, int(n != 1)),
+                                    msgid1 if n == 1 else msgid2))
 
     def wrap(function):
         """Wrap the function patching the translating functions."""
         for target in gettexts:
-            function = mock.patch(target, translation.ugettext)(function)
+            function = mock.patch(target, gettext)(function)
         for target in ngettexts:
-            function = mock.patch(target, translation.ungettext)(function)
+            function = mock.patch(target, ngettext)(function)
         return function
 
     return wrap
