@@ -71,6 +71,7 @@ class CommandsCliTest(support.TestCase):
     def _do_makecache(cmd, fill_sack):
         return cmd.doCommand('makecache', ['timer'])
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
     def test_makecache_timer(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
@@ -120,6 +121,7 @@ class CommandsCliTest(support.TestCase):
                               'running on a battery.']),
                          self._do_makecache(cmd))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=None)
     def test_makecache_timer_battery2(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)

@@ -67,6 +67,8 @@ class OutputTest(PycompTestCase):
         self.base = support.MockBase('updates')
         self.output = dnf.cli.output.Output(self.base)
 
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output.P_', dnf.pycomp.NullTranslations().ungettext)
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_list_transaction(self, _term_width):
         sack = self.base.sack
@@ -80,6 +82,7 @@ class OutputTest(PycompTestCase):
         self.assertEqual(self.output.list_transaction(transaction),
                          LIST_TRANSACTION_OUTPUT)
 
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm(self, input_fnc):
         # with defaultyes==False
@@ -142,6 +145,7 @@ class OutputTest(PycompTestCase):
             self.assertFalse(self.output.userconfirm())
         self.assertEqual(input_fnc.called, 3)
 
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_infoOutput_with_none_description(self):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg.from_system = False
@@ -188,6 +192,7 @@ class GroupOutputTest(unittest.TestCase):
         self.base = base
         self.output = output
 
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_group_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
@@ -195,6 +200,7 @@ class GroupOutputTest(unittest.TestCase):
             self.output.displayPkgsInGroups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
 
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_group_verbose_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
