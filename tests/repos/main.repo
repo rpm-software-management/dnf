@@ -1,21 +1,21 @@
 =Ver: 2.0
 #
-=Pkg: pepper 20 0 x86_64
-=Req: librita >= 1-0
-=Pkg: pepper 20 0 src
-=Pkg: mrkite 2 0 x86_64
-=Sum: It's an invitation.
-=Req: trampoline
-=Pkg: mrkite-k-h 1 1 x86_64
-=Pkg: trampoline 2.1 1 noarch
-=Prv: henry(the_horse)
-=Prv: /all/be/there
+=Pkg: librita 1 1 x86_64
 =Pkg: lotus 3 16 i686
 =Prv: /usr/lib/liblotus.so.3
 =Prv: /usr/lib/liblotus.so.3.16
 =Pkg: lotus 3 16 x86_64
 =Prv: /usr/lib64/liblotus.so.3
 =Prv: /usr/lib64/liblotus.so.3.16
+=Pkg: pepper 20 0 src
+=Pkg: pepper 20 0 x86_64
+=Req: librita >= 1-0
+=Pkg: mrkite 2 0 x86_64
+=Sum: It's an invitation.
+=Req: trampoline
+=Pkg: mrkite-k-h 1 1 x86_64
 =Pkg: tour 4.6 1 noarch
 =Sum: Make a reservation.
-=Pkg: librita 1 1 x86_64
+=Pkg: trampoline 2.1 1 noarch
+=Prv: henry(the_horse)
+=Prv: /all/be/there

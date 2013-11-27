@@ -161,7 +161,7 @@ class VerifyTransactionTest(PycompTestCase):
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
-        new_pkg = self.yumbase.sack.query().available().filter(name="pepper")[0]
+        new_pkg = self.yumbase.sack.query().available().filter(name="pepper")[1]
         new_pkg.chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
         removed_pkg = self.yumbase.sack.query().available().filter(

@@ -30,7 +30,7 @@ class List(support.TestCase):
         ypl = yumbase.doPackageLists('upgrades')
         self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
-        self.assertEqual(pkg.name, "pepper")
+        self.assertEqual(pkg.name, "hole")
         ypl = yumbase.doPackageLists('upgrades', ["pepper"])
         self.assertEqual(len(ypl.updates), 1)
         ypl = yumbase.doPackageLists('upgrades', ["mrkite"])

@@ -39,7 +39,7 @@ from functools import reduce
 
 skip = unittest.skip
 
-RPMDB_CHECKSUM = 'b3fa9f5ed659fa881ac901606be5e8f99ca55cc3'
+RPMDB_CHECKSUM = '5ff5337cff3fcdcee31760ab6478c9a7c784c0b2'
 TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 9

@@ -82,8 +82,10 @@ class SusetagsTest(support.TestCase):
         yumbase = support.MockBase("main")
         yumbase.sack.susetags_for_repo(buf, "main")
         buf.seek(0)
-        pepper = itertools.dropwhile(lambda x: not x.startswith("=Pkg: pepper "),
-                                     buf.readlines())
+
+        def nonmatch(line):
+            return not line.startswith('=Pkg: pepper 20 0 x86_64')
+        pepper = itertools.dropwhile(nonmatch, buf.readlines())
         pepper = [dnf.util.first(pepper)] + list(itertools.takewhile(
                 lambda x: not x.startswith("=Pkg: "), pepper))
         self.assertItemsEqual(pepper,
