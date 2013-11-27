@@ -150,54 +150,6 @@ class FakeSack:
         """delete a pkgobject, do nothing, but make localpackages work with --skip-broken"""
         pass # This is fake, so do nothing
 
-class FakeRepository:
-    """Fake repository class for use in rpmsack package objects"""
-
-    def _set_cleanup_repoid(self, repoid):
-        """ Set the repoid, but because it can be random ... clean it up. """
-
-        #  We don't want repoids to contain random bytes that can be
-        # in the FS directories. It's also nice if they aren't "huge". So
-        # just chop to the rpm name.
-        pathbased = False
-        if '/' in repoid:
-            repoid = os.path.basename(repoid)
-            pathbased = True
-
-        if repoid.endswith(".rpm"):
-            repoid = repoid[:-4]
-            pathbased = True
-
-        bytes = [] # Just in case someone uses mv to be evil:
-        if pathbased:
-            bytes.append('/')
-
-        for byte in repoid:
-            if ord(byte) >= 128:
-                byte = '?'
-            bytes.append(byte)
-        self.id = "".join(bytes)
-
-    def __init__(self, repoid):
-        self._set_cleanup_repoid(repoid)
-        self.name = self.id
-        self.sack = FakeSack()
-
-    def __cmp__(self, other):
-        if self.id > other.id:
-            return 1
-        elif self.id < other.id:
-            return -1
-        else:
-            return 0
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __str__(self):
-        return self.id
-
-
 #  Goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
 #  Note that this is also used to history etc. ... so it's more a nevra+checksum
