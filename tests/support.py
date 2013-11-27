@@ -30,6 +30,7 @@ import dnf.package
 import dnf.repo
 import dnf.sack
 import dnf.yum.constants
+import gettext
 import hawkey
 import hawkey.test
 import itertools
@@ -73,13 +74,35 @@ def installed_but(sack, *args):
     q = sack.query().filter(reponame__eq=hawkey.SYSTEM_REPO_NAME)
     return reduce(lambda query, name: query.filter(name__neq=name), args, q)
 
-# patching the stdout
+# patching objects
 
 @contextlib.contextmanager
 def patch_std_streams():
     with mock.patch('sys.stdout', new_callable=io.StringIO) as stdout, \
             mock.patch('sys.stderr', new_callable=io.StringIO) as stderr:
         yield (stdout, stderr)
+
+def patch_translation(gettexts=(), ngettexts=(), translation=None):
+    """Return function wrapper patching the translating functions."""
+    translation = translation or dnf.pycomp.NullTranslations()
+    try:
+        gettext = translation.ugettext
+        ngettext = translation.ungettext
+    except AttributeError:
+        gettext = lambda message: translation.get(message, message)
+        ngettext = (lambda msgid1, msgid2, n:
+                    translation.get((msgid1, int(n != 1)),
+                                    msgid1 if n == 1 else msgid2))
+
+    def wrap(function):
+        """Wrap the function patching the translating functions."""
+        for target in gettexts:
+            function = mock.patch(target, gettext)(function)
+        for target in ngettexts:
+            function = mock.patch(target, ngettext)(function)
+        return function
+
+    return wrap
 
 # mock objects
 

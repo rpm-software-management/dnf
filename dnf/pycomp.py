@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from gettext import NullTranslations
 from sys import version_info
 from unittest import TestCase
 
@@ -25,6 +26,8 @@ if version_info.major >= 3:
     PY3 = True
     basestring = unicode = str
     long = int
+    NullTranslations.ugettext = NullTranslations.gettext
+    NullTranslations.ungettext = NullTranslations.ngettext
     xrange = range
     raw_input = input
     to_ord = lambda i: i

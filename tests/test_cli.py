@@ -41,6 +41,7 @@ VERSIONS_OUTPUT="""\
 """
 
 class VersionStringTest(PycompTestCase):
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_print_versions(self):
         base = support.MockBase()
         output = support.MockOutput()
@@ -66,6 +67,7 @@ class YumBaseCliTest(PycompTestCase):
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
         self._yumbase.upgrade = mock.Mock(wraps=self._yumbase.upgrade)
 
+    @support.patch_translation(ngettexts={'dnf.cli.cli.P_'})
     def test_installPkgs(self):
         result, resultmsgs = self._yumbase.installPkgs(('lotus',))
 
@@ -74,6 +76,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 2)
         self.assertEqual(resultmsgs, ['1 package to install'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_installPkgs_notfound(self):
         result, resultmsgs = self._yumbase.installPkgs(('non-existent',))
 
@@ -103,6 +106,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['No packages marked for upgrade'])
 
+    @support.patch_translation(ngettexts={'dnf.cli.cli.P_'})
     def test_erasePkgs(self):
         result, resultmsgs = self._yumbase.erasePkgs(('pepper',))
 
@@ -112,6 +116,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 2)
         self.assertEqual(resultmsgs, ['1 package marked for removal'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_erasePkgs_notfound(self):
         result, resultmsgs = self._yumbase.erasePkgs(('non-existent',))
 
@@ -123,6 +128,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['No Packages marked for removal'])
 
+    @support.patch_translation(ngettexts={'dnf.cli.cli.P_'})
     def test_downgradePkgs(self):
         result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
 
@@ -132,6 +138,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 2)
         self.assertEqual(resultmsgs, ['1 package to downgrade'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_downgradePkgs_notfound(self):
         result, resultmsgs = self._yumbase.downgradePkgs(('non-existent',))
 
@@ -143,6 +150,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_downgradePkgs_notinstalled(self):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
 
@@ -155,6 +163,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 0)
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
+    @support.patch_translation(ngettexts={'dnf.cli.cli.P_'})
     def test_reinstallPkgs(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
 
@@ -164,6 +173,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 2)
         self.assertEqual(resultmsgs, ['1 package to reinstall'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_reinstallPkgs_notinstalled(self):
         result, resultmsgs = self._yumbase.reinstallPkgs(('lotus',))
 
@@ -175,6 +185,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(result, 1)
         self.assertEqual(resultmsgs, ['Nothing to do'])
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_reinstallPkgs_notavailable(self):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})
 
@@ -319,6 +330,7 @@ class SearchTest(PycompTestCase):
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)
 
+    @support.patch_translation({'dnf.cli.cli._'})
     def test_search_caseness(self):
         (stdout, pkgs) = self.patched_search(['LOTUS'])
         self.assertEqual(stdout, 'N/S Matched: LOTUS\n')

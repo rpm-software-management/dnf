@@ -67,6 +67,7 @@ class OutputTest(PycompTestCase):
         self.base = support.MockBase('updates')
         self.output = dnf.cli.output.Output(self.base)
 
+    @support.patch_translation({'dnf.cli.output._'}, {'dnf.cli.output.P_'})
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_list_transaction(self, _term_width):
         sack = self.base.sack
@@ -80,6 +81,7 @@ class OutputTest(PycompTestCase):
         self.assertEqual(self.output.list_transaction(transaction),
                          LIST_TRANSACTION_OUTPUT)
 
+    @support.patch_translation({'dnf.cli.output._'})
     @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm(self, input_fnc):
         # with defaultyes==False
@@ -113,10 +115,7 @@ class OutputTest(PycompTestCase):
         input_fnc.side_effect = self._eof_error
         self.assertTrue(self.output.userconfirm())
 
-    def _to_unicode_mock(str):
-        return {'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'}.get(str, str)
-
-    @mock.patch('dnf.cli.output._', _to_unicode_mock)
+    @support.patch_translation({'dnf.cli.output._'}, translation={'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'})
     @mock.patch('dnf.i18n.ucd_input')
     def test_userconfirm_translated(self, input_fnc):
         input_fnc.return_value = 'ee'
@@ -142,6 +141,7 @@ class OutputTest(PycompTestCase):
             self.assertFalse(self.output.userconfirm())
         self.assertEqual(input_fnc.called, 3)
 
+    @support.patch_translation({'dnf.cli.output._'})
     def test_infoOutput_with_none_description(self):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg.from_system = False
@@ -188,6 +188,7 @@ class GroupOutputTest(unittest.TestCase):
         self.base = base
         self.output = output
 
+    @support.patch_translation({'dnf.cli.output._'})
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_group_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
@@ -195,6 +196,7 @@ class GroupOutputTest(unittest.TestCase):
             self.output.displayPkgsInGroups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
 
+    @support.patch_translation({'dnf.cli.output._'})
     @mock.patch('dnf.cli.output._term_width', return_value=80)
     def test_group_verbose_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
