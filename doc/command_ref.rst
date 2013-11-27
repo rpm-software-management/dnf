@@ -265,6 +265,11 @@ transactions and act according to this information (assuming the
     specified transaction. If it is not possible to undo any operation due to
     the current state of RPMDB, do not undo any operation.
 
+``dnf history userinstalled``
+    List names of all packages installed by a user. The output can be used as
+    the %packages section in a `kickstart <http://fedoraproject.org/wiki/
+    Anaconda/Kickstart>`_ file.
+
 ------------
 Info Command
 ------------

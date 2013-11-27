@@ -2082,6 +2082,16 @@ class HistoryCommand(Command):
             else:
                 print("FAILED.")
 
+    def _hcmd_userinstalled(self, extcmds):
+        """Execute history userinstalled command."""
+        if extcmds:
+            self.base.logger.critical(_('Unrecognized options "%s"!') %
+                                      ' '.join(extcmds))
+            return 1, ['Failed history userinstalled']
+
+        pkgs = tuple(self.base.iter_userinstalled())
+        return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
+
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run.  The exact conditions checked will vary depending on the
@@ -2090,7 +2100,7 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary', 'undo', 'rollback')
+        cmds = ('list', 'info', 'summary', 'undo', 'rollback', 'userinstalled')
         if extcmds and extcmds[0] not in cmds:
             self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -2144,6 +2154,8 @@ class HistoryCommand(Command):
             ret = self._hcmd_sync(extcmds)
         elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
             ret = self.output.historyPackageInfoCmd(extcmds)
+        elif vcmd == 'userinstalled':
+            ret = self._hcmd_userinstalled(extcmds[1:])
 
         if ret is None:
             return 0, []
