@@ -35,7 +35,7 @@ class BaseTest(TestCase):
     """Unit tests of dnf.Base."""
 
     def _create_item_matcher(self, op_type, installed=None, erased=None,
-                             obsoleted=[]):
+                             obsoleted=[], reason='unknown'):
         """Create a new instance of dnf.transaction.TransactionItem matcher."""
         attrs = {'op_type': op_type,
                  'installed': self._create_package_matcher(installed)
@@ -43,7 +43,8 @@ class BaseTest(TestCase):
                  'erased': self._create_package_matcher(erased)
                            if erased else erased,
                  'obsoleted': [self._create_package_matcher(nevra)
-                               for nevra in obsoleted]}
+                               for nevra in obsoleted],
+                 'reason': reason}
         return ObjectMatcher(TransactionItem, attrs)
 
     def _create_package_matcher(self, nevra_str):
@@ -76,7 +77,8 @@ class BaseTest(TestCase):
                              erased='pepper-20-0.x86_64'))
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
-                            INSTALL, installed='lotus-3-16.x86_64'))
+                            INSTALL, installed='lotus-3-16.x86_64',
+                            reason='history'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_downgrade_notavailable(self):
@@ -110,7 +112,8 @@ class BaseTest(TestCase):
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64'))
+                             INSTALL, installed='lotus-3-16.x86_64',
+                             reason='history'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_notavailable(self):
@@ -137,7 +140,8 @@ class BaseTest(TestCase):
                              ERASE, erased='pepper-20-0.x86_64'))
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64'))
+                             INSTALL, installed='lotus-3-16.x86_64',
+                             reason='history'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_install_notinstalled(self):
@@ -216,7 +220,8 @@ class BaseTest(TestCase):
                              erased='tour-5-0.noarch'))
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64'))
+                             INSTALL, installed='lotus-3-16.x86_64',
+                             reason='history'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update_notavailable(self):

@@ -2024,7 +2024,7 @@ class Base(object):
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError("no package matched")
             assert len(pkgs) == 1
-            self._transaction.add_install(pkgs[0], None)
+            self._transaction.add_install(pkgs[0], None, 'history')
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
