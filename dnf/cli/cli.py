@@ -398,7 +398,7 @@ class BaseCli(dnf.Base):
                      '%d packages marked for upgrade', cnt)
             return 2, [msg % cnt]
         else:
-            return 0, [_('No Packages marked for upgrade')]
+            return 0, [_('No packages marked for upgrade')]
 
     def distro_sync_userlist(self, userlist):
         """ Upgrade or downgrade packages to match the latest versions available
@@ -424,7 +424,7 @@ class BaseCli(dnf.Base):
         elif self._goal.req_has_distupgrade_all():
             return 2, [_('All packages marked for Distribution Synchronization')]
         else:
-            return 0, [_('No Packages marked for Distribution Synchronization')]
+            return 0, [_('No packages marked for Distribution Synchronization')]
 
     def erasePkgs(self, userlist):
         """Take user commands and populate a transaction wrapper with
@@ -456,7 +456,7 @@ class BaseCli(dnf.Base):
                      '%d packages marked for removal', cnt)
             return 2, [msg % cnt]
         else:
-            return 0, [_('No Packages marked for removal')]
+            return 0, [_('No packages marked for removal')]
 
     def downgradePkgs(self, userlist):
         """Attempt to take the user specified list of packages or

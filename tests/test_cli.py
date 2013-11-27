@@ -126,7 +126,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('non-existent', always_output=False, rpmdb_only=True)])
         self.assertEqual(result, 0)
-        self.assertEqual(resultmsgs, ['No Packages marked for removal'])
+        self.assertEqual(resultmsgs, ['No packages marked for removal'])
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_downgradePkgs(self):

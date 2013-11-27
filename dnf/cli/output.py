@@ -942,7 +942,7 @@ class Output(object):
                         pass
 
             if thingslisted == 0:
-                return 1, ['No Packages to list']
+                return 1, ['No packages to list']
             return 0, []
 
     def userconfirm(self):
