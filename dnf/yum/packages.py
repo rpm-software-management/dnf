@@ -136,20 +136,6 @@ def parsePackages(pkgs, usercommands, casematch=0,
         raise ValueError("Bad value for unique: %s" % unique)
     return exactmatch, matched, unmatched
 
-class FakeSack:
-    """ Fake PackageSack to use with FakeRepository"""
-    def __init__(self):
-        pass # This is fake, so do nothing
-
-    def have_fastReturnFileEntries(self):
-        """ Is calling pkg.returnFileEntries(primary_only=True) faster than
-            using searchFiles(). """
-        return True
-
-    def delPackage(self, obj):
-        """delete a pkgobject, do nothing, but make localpackages work with --skip-broken"""
-        pass # This is fake, so do nothing
-
 #  Goal for the below is to have a packageobject that can be used by generic
 # functions independent of the type of package - ie: installed or available
 #  Note that this is also used to history etc. ... so it's more a nevra+checksum
