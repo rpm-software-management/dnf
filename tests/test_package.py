@@ -60,11 +60,15 @@ class PackageTest(PycompTestCase):
     def test_pkgtup(self):
         self.assertEqual(self.pkg.pkgtup, ('pepper', 'x86_64', '0', '20', '0'))
 
+    @mock.patch("dnf.package.Package.location", 'f/foo.rpm')
     def test_localPkg(self):
+        self.pkg.repo.basecachedir = '/cachedir'
         self.pkg.repo.baseurl = ['file:///mnt/cd']
         self.assertTrue(self.pkg.repo.local)
-        self.pkg.__class__.location = 'f/foo.rpm'
         self.assertEquals(self.pkg.localPkg(), '/mnt/cd/f/foo.rpm')
+        self.pkg.repo.baseurl = ['http://remote']
+        self.assertFalse(self.pkg.repo.local)
+        self.assertEquals(self.pkg.localPkg(), '/cachedir/main/packages/foo.rpm')
 
     def test_verify(self):
         with mock.patch.object(self.pkg, 'localPkg',
