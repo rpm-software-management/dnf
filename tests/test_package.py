@@ -67,12 +67,13 @@ class PackageTest(PycompTestCase):
         self.assertEquals(self.pkg.localPkg(), '/mnt/cd/f/foo.rpm')
 
     def test_verify(self):
-        self.pkg.localpath = support.TOUR_44_PKG_PATH
-        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
-        self.pkg.size = TOUR_SIZE
-        self.assertTrue(self.pkg.verifyLocalPkg())
-        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
-        self.assertFalse(self.pkg.verifyLocalPkg())
+        with mock.patch.object(self.pkg, 'localPkg',
+                               return_value=support.TOUR_44_PKG_PATH):
+            self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
+            self.pkg.size = TOUR_SIZE
+            self.assertTrue(self.pkg.verifyLocalPkg())
+            self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
+            self.assertFalse(self.pkg.verifyLocalPkg())
 
     def test_return_id_sum(self):
         self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)

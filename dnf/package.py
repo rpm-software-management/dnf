@@ -36,7 +36,6 @@ class Package(hawkey.Package):
     def __init__(self, initobject, yumbase):
         super(Package, self).__init__(initobject)
         self.yumbase = yumbase
-        self.localpath = None
         self._chksum = None
         self._repo = None
         self._size = None
@@ -161,8 +160,6 @@ class Package(hawkey.Package):
         """
         if self.from_cmdline:
             return self.location
-        if self.localpath:
-            return self.localpath
 
         loc = self.location
         if not self.repo.local:
