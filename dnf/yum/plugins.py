@@ -631,7 +631,7 @@ class MainPluginConduit(PostRepoSetupPluginConduit):
 
         :param nevra: a tuple holding (name, epoch, version, release, arch)
             for a package
-        :return: a :class:`packages.PackageObject` instance (or subclass)
+        :return: a package object
         """
         return self._base.getPackageObject(nevra)
 
