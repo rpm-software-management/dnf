@@ -29,7 +29,6 @@ import dnf.exceptions
 import dnf.match_counter
 import dnf.subject
 import dnf.transaction
-import dnf.yum.constants
 import hawkey
 import os
 import rpm

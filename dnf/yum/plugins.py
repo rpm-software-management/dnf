@@ -21,7 +21,6 @@ import imp
 import atexit
 import gettext
 import logging
-from .constants import *
 from . import config
 from .config import ParsingError, ConfigParser
 import dnf.exceptions

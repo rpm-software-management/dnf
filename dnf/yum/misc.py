@@ -31,7 +31,6 @@ import struct
 import re
 import errno
 import dnf.exceptions
-from . import constants
 from . import pgpmsg
 import tempfile
 import glob

@@ -26,7 +26,6 @@ import fnmatch
 import stat
 import dnf.rpmUtils.miscutils
 import dnf.exceptions
-from .constants import *
 
 def comparePoEVR(po1, po2):
     """

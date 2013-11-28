@@ -29,7 +29,6 @@ import dnf.exceptions
 import dnf.package
 import dnf.repo
 import dnf.sack
-import dnf.yum.constants
 import hawkey
 import hawkey.test
 import itertools

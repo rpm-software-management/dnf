@@ -31,7 +31,6 @@ import fnmatch
 import re
 
 from .i18n import to_unicode, _
-from . import constants
 
 flags = {"GT": rpm.RPMSENSE_GREATER,
          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,

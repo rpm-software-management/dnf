@@ -23,7 +23,6 @@ import time
 import logging
 import types
 import sys
-from .constants import *
 from .i18n import _
 from . import misc
 from dnf.pycomp import basestring
