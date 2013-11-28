@@ -360,33 +360,6 @@ class Base(object):
 
         self.plugins = plugins.DummyYumPlugins()
 
-    def doPluginSetup(self, optparser=None, plugin_types=None, searchpath=None,
-            confpath=None,disabled_plugins=None,enabled_plugins=None):
-        """Initialise and enable yum plugins.
-        Note: _getConfig() will also initialise plugins if instructed
-        to. Only call this method directly if not calling _getConfig()
-        or calling doConfigSetup(init_plugins=False).
-
-        :param optparser: the :class:`OptionParser` instance to use
-           for this run
-        :param plugin_types: a sequence specifying the types of plugins to load.
-           This should be a sequence containing one or more of the
-           plugins.TYPE_*  constants. If None (the default), all plugins
-           will be loaded
-        :param searchpath: a list of directories to look in for plugins. A
-           default will be used if no value is specified
-        :param confpath: a list of directories to look in for plugin
-           configuration files. A default will be used if no value is
-           specified
-        :param disabled_plugins: a list of plugins to be disabled
-        :param enabled_plugins: a list plugins to be enabled
-        """
-        if isinstance(self.plugins, plugins.YumPlugins):
-            raise RuntimeError(_("plugins already initialised"))
-
-        self.plugins = plugins.YumPlugins(self, searchpath, optparser,
-                plugin_types, confpath, disabled_plugins, enabled_plugins)
-
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self.ts
@@ -1550,148 +1523,6 @@ class Base(object):
             del fo
             return 1
 
-    def returnPackagesByDep(self, depstring):
-        """Return a list of package objects that provide the given
-        dependencies.
-
-        :param depstring: a string specifying the dependency to return
-           the packages that fulfil
-        :return: a list of packages that fulfil the given dependency
-        """
-        if not depstring:
-            return []
-
-        # parse the string out
-        #  either it is 'dep (some operator) e:v-r'
-        #  or /file/dep
-        #  or packagename
-        if isinstance(depstring, tuple):
-            (depname, depflags, depver) = depstring
-        else:
-            depname = depstring
-            depflags = None
-            depver = None
-
-            if depstring[0] != '/':
-                # not a file dep - look at it for being versioned
-                dep_split = depstring.split()
-                if len(dep_split) == 3:
-                    depname, flagsymbol, depver = dep_split
-                    if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.Error(_('Invalid version flag from: %s') % str(depstring))
-                    depflags = SYMBOLFLAGS[flagsymbol]
-
-        return list(self.pkgSack.getProvides(depname, depflags, depver).keys())
-
-    def returnPackageByDep(self, depstring):
-        """Return the best, or first, package object that provides the
-        given dependencies.
-
-        :param depstring: a string specifying the dependency to return
-           the package that fulfils
-        :return: the best, or first, package that fulfils the given
-           dependency
-        :raises: a :class:`dnf.exceptions.Error` if no packages that
-           fulfil the given dependency can be found
-        """
-        # we get all sorts of randomness here
-        raise NotImplementedError("not implemented in hawkey") # :hawkey
-        errstring = depstring
-        if isinstance(depstring, basestring):
-            errstring = str(depstring)
-
-        try:
-            pkglist = self.returnPackagesByDep(depstring)
-        except dnf.exceptions.Error:
-            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
-
-        ps = ListPackageSack(pkglist)
-        result = self._bestPackageFromList(ps.returnNewestByNameArch())
-        if result is None:
-            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
-
-        return result
-
-    def returnInstalledPackagesByDep(self, depstring):
-        """Return a list of installed package objects that provide the
-        given dependencies.
-
-        :param depstring: a string specifying the dependency to return
-           the packages that fulfil
-        :return: a list of installed packages that fulfil the given
-           dependency
-        """
-        if not depstring:
-            return []
-
-        # parse the string out
-        #  either it is 'dep (some operator) e:v-r'
-        #  or /file/dep
-        #  or packagename
-        if isinstance(depstring, tuple):
-            (depname, depflags, depver) = depstring
-        else:
-            depname = depstring
-            depflags = None
-            depver = None
-
-            if depstring[0] != '/':
-                # not a file dep - look at it for being versioned
-                dep_split = depstring.split()
-                if len(dep_split) == 3:
-                    depname, flagsymbol, depver = dep_split
-                    if not flagsymbol in SYMBOLFLAGS:
-                        raise dnf.exceptions.Error(_('Invalid version flag from: %s') % str(depstring))
-                    depflags = SYMBOLFLAGS[flagsymbol]
-
-        return list(self.rpmdb.getProvides(depname, depflags, depver).keys())
-
-    def returnInstalledPackageByDep(self, depstring):
-        """Return the best, or first, installed package object that provides the
-        given dependencies.
-
-        :param depstring: a string specifying the dependency to return
-           the package that fulfils
-        :return: the best, or first, installed package that fulfils the given
-           dependency
-        :raises: a :class:`dnf.exceptions.Error` if no packages that
-           fulfil the given dependency can be found
-        """
-        # we get all sorts of randomness here
-        raise NotImplementedError("not implemented in hawkey") # :hawkey
-        errstring = depstring
-        if not isinstance(depstring, basestring):
-            errstring = str(depstring)
-
-        try:
-            pkglist = self.returnInstalledPackagesByDep(depstring)
-        except dnf.exceptions.Error:
-            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
-
-        ps = ListPackageSack(pkglist)
-        result = self._bestPackageFromList(ps.returnNewestByNameArch())
-        if result is None:
-            raise dnf.exceptions.Error(_('No Package found for %s') % errstring)
-
-        return result
-
-    def _bestPackageFromList(self, pkglist):
-        """take list of package objects and return the best package object.
-           If the list is empty, return None.
-
-           Note: this is not aware of multilib so make sure you're only
-           passing it packages of a single arch group."""
-
-
-        if len(pkglist) == 0:
-            return None
-
-        if len(pkglist) == 1:
-            return pkglist[0]
-
-        bestlist = self._compare_providers(pkglist, None)
-        return bestlist[0][0]
-
     def install(self, pkg_spec):
         """Mark package(s) specified by pkg_spec for installation. :api"""
 
@@ -2402,21 +2233,6 @@ class Base(object):
 
         return results
 
-    def allowedMultipleInstalls(self, po):
-        """Return whether the given package object can be installed
-        multiple times with different versions.  For example, this
-        would be true of kernels and kernel modules.
-
-        :param po: the package object that this function will
-           determine whether can be install multiple times
-        :return: a boolean specifying whether *po* can be installed
-           multiple times
-        """
-        iopkgs = set(self.conf.installonlypkgs)
-        if po.name in iopkgs:
-            return True
-        return False # :hawkey
-
     def _store_config_in_history(self):
         self.history.write_addon_data('config-main', self.conf.dump())
         myrepos = ''
@@ -2424,12 +2240,3 @@ class Base(object):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
-
-    def verify_plugins_cb(self, verify_package):
-        """Callback to call a plugin hook for pkg.verify().
-
-        :param verify_package: a conduit for the callback
-        :return: *verify_package*
-        """
-        self.plugins.run('verify_package', verify_package=verify_package)
-        return verify_package
