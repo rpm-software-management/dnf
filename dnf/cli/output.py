@@ -2415,8 +2415,7 @@ class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
         removed. This method is used during leaf-only group remove
         commands to indicate that the package will be kept.
 
-        :param po: the :class:`dnf.yum.packages.PackageObject` that will
-           not be removed
+        :param po: the package that will not be removed
         :param hits: unused
         """
         self.logger.info(

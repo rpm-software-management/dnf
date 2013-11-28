@@ -25,8 +25,8 @@ from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 from . import constants
 import dnf.exceptions
+import dnf.rpmUtils.miscutils
 from .constants import *
-from .packages import PackageObject
 from .i18n import to_unicode, to_utf8
 from .i18n import _
 import dnf.i18n
@@ -140,7 +140,7 @@ class _YumHistPackageYumDB(object):
             return default
         return res
 
-class YumHistoryPackage(PackageObject):
+class YumHistoryPackage(object):
 
     def __init__(self, name, arch, epoch, version, release, checksum=None,
                  history=None):
@@ -156,7 +156,6 @@ class YumHistoryPackage(PackageObject):
         else:
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 1)] # (type, checksum, id(0,1))
-        # Needed for equality comparisons in PackageObject
         self.repoid = "<history>"
 
         self._history = history
@@ -167,6 +166,42 @@ class YumHistoryPackage(PackageObject):
                              "size", "sourcerpm", "url", "vendor",
                              # ?
                              "committer", "committime"])
+
+    def __cmp__(self, other):
+        """ Compare packages, this is just for UI/consistency. """
+        ret = self.verCMP(other)
+        if ret == 0:
+            ret = cmp(self.arch, other.arch)
+        if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
+            ret = cmp(self.repoid, other.repoid)
+            # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
+            if ret and self.repoid == 'installed':
+                return 1
+            if ret and other.repoid == 'installed':
+                return -1
+        return ret
+
+    @staticmethod
+    def __comparePoEVR(po1, po2):
+        """
+        Compare two Package or PackageEVR objects.
+        """
+        (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
+        (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
+        return dnf.rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+
+    def __eq__(self, other):
+        """ Compare packages for yes/no equality, includes everything in the
+            UI package comparison. """
+        if not other:
+            return False
+        if not hasattr(other, 'pkgtup') or self.pkgtup != other.pkgtup:
+            return False
+        if hasattr(self, 'repoid') and hasattr(other, 'repoid'):
+            if self.repoid != other.repoid:
+                return False
+        return True
+
     def __getattr__(self, attr):
         """ Load rpmdb attributes from the history sqlite. """
         if attr.startswith('_'):
@@ -187,6 +222,43 @@ class YumHistoryPackage(PackageObject):
 
         return val
 
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __repr__(self):
+        return ("<%s : %s (%s)>" %
+                (self.__class__.__name__, str(self), hex(id(self))))
+
+    def __str__(self):
+        return self.ui_envra
+
+    @property
+    def envra(self):
+        return ('%s:%s-%s-%s.%s' %
+                (self.epoch, self.name, self.version, self.release, self.arch))
+
+    @property
+    def nevra(self):
+        return ('%s-%s:%s-%s.%s' %
+                (self.name, self.epoch, self.version, self.release, self.arch))
+
+    @property
+    def nvra(self):
+        return ('%s-%s-%s.%s' %
+                (self.name, self.version, self.release, self.arch))
+
+    def returnIdSum(self):
+        for (csumtype, csum, csumid) in self._checksums:
+            if csumid:
+                return (csumtype, csum)
+
+    @property
+    def ui_envra(self):
+        if self.epoch == '0':
+            return self.nvra
+        else:
+            return self.envra
+
     def _ui_from_repo(self):
         """ This reports the repo the package is from, we integrate YUMDB info.
             for RPM packages so a package from "fedora" that is installed has a
@@ -206,6 +278,22 @@ class YumHistoryPackage(PackageObject):
             return '@' + self.yumdb_info.from_repo + end
         return self.repoid
     ui_from_repo = property(fget=lambda self: self._ui_from_repo())
+
+    @property
+    def ui_nevra(self):
+        if self.epoch == '0':
+            return self.nvra
+        else:
+            return self.nevra
+
+    def verCMP(self, other):
+        """ Compare package to another one, only rpm-version ordering. """
+        if not other:
+            return 1
+        ret = cmp(self.name, other.name)
+        if ret == 0:
+            ret = self.__comparePoEVR(self, other)
+        return ret
 
 
 class YumHistoryPackageState(YumHistoryPackage):
