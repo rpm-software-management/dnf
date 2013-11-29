@@ -259,6 +259,7 @@ class ConfigureTest(PycompTestCase):
         self.base = support.MockBase("main")
         self.base._conf = dnf.conf.Conf()
         self.base.output = support.MockOutput()
+        self.base.plugins = mock.Mock()
         self.cli = dnf.cli.cli.Cli(self.base)
         self.cli.command = mock.Mock()
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")

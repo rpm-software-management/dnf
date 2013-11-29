@@ -35,6 +35,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.logging
 import dnf.match_counter
+import dnf.plugin
 import dnf.persistor
 import dnf.sack
 import dnf.util
@@ -1392,6 +1393,9 @@ class Cli(object):
         else:
             sleeptime = 0
 
+        self.base.plugins.load(self.base.conf.pluginpath)
+        self.base.plugins.run_init(self.base, self)
+
         # save our original args out
         self.base.args = args
         # save out as a nice command string
@@ -1410,6 +1414,8 @@ class Cli(object):
             self.write_out_metadata()
         if opts.debugsolver:
             self.base.conf.debug_solver = True
+
+        self.base.plugins.run_config()
         # run the sleep - if it's unchanged then it won't matter
         time.sleep(sleeptime)
 

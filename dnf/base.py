@@ -42,6 +42,7 @@ import dnf.lock
 import dnf.logging
 import dnf.output
 import dnf.persistor
+import dnf.plugin
 import dnf.repo
 import dnf.repodict
 import dnf.rpmUtils.arch
@@ -98,6 +99,7 @@ class Base(object):
         self.mediagrabber = None
         self.arch = dnf.rpmUtils.arch.Arch()
         self.goal_parameters = dnf.conf.GoalParameters()
+        self.plugins = dnf.plugin.Plugins()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
         self._conf.yumvar['basearch'] = self.arch.basearch
