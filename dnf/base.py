@@ -1928,7 +1928,8 @@ class Base(object):
         # Go get the GPG key from the given URL
         try:
             # If we have a repo, use the proxy etc. configuration for it.
-            rawkey = dnf.util.urlopen(keyurl, repo).read()
+            with dnf.util.urlopen(keyurl, repo) as fh:
+                rawkey = fh.read()
 
         except IOError as e:
             raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
