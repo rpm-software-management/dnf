@@ -43,7 +43,6 @@ def suppress_keyboard_interrupt_message():
 # do this ASAP to prevent tracebacks after ^C during imports
 suppress_keyboard_interrupt_message()
 
-from dnf.yum import plugins
 from dnf.yum.i18n import utf8_width, exception2msg, _
 from dnf.cli.utils import show_lock_owner
 
@@ -87,16 +86,6 @@ def _main(base, args):
             logger.critical(exception2msg(e))
         return 1
 
-    def exPluginExit(e):
-        '''Called when a plugin raises PluginYumExit.
-
-        Log the plugin's exit message if one was supplied.
-        '''
-        exitmsg = exception2msg(e)
-        if exitmsg:
-            logger.warn('%s', exitmsg)
-        return 1
-
     def exFatal(e):
         if e.value is not None:
             logger.critical(exception2msg(e.value))
@@ -111,8 +100,6 @@ def _main(base, args):
     try:
         cli.configure(args)
         cli.check()
-    except plugins.PluginYumExit as e:
-        return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.Error as e:
@@ -133,8 +120,6 @@ def _main(base, args):
 
     try:
         result, resultmsgs = cli.run()
-    except plugins.PluginYumExit as e:
-        return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.Error as e:
@@ -171,8 +156,6 @@ def _main(base, args):
 
         try:
             got_transaction = base.resolve()
-        except plugins.PluginYumExit as e:
-            return exPluginExit(e)
         except dnf.exceptions.Error as e:
             prefix = _('Error: %s')
             logger.critical(prefix, str(e))
@@ -190,8 +173,6 @@ def _main(base, args):
     # Run the transaction
     try:
         return_code, resultmsgs = base.do_transaction()
-    except plugins.PluginYumExit as e:
-        return exPluginExit(e)
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.TransactionCheckError as err:

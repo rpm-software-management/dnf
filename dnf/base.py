@@ -27,7 +27,6 @@ from dnf.yum import config
 from dnf.yum import history
 from dnf.yum import i18n
 from dnf.yum import misc
-from dnf.yum import plugins
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
 from dnf.yum.i18n import to_unicode, to_str, exception2msg
@@ -92,8 +91,6 @@ class Base(object):
                                # not in cli - set it up as empty so no one
                                # trips over it later
 
-        # Start with plugins disabled
-        self.disablePlugins()
         self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
                                rpm.RPMPROB_FILTER_REPLACEPKG,
                                rpm.RPMPROB_FILTER_REPLACEOLDFILES]
@@ -354,11 +351,6 @@ class Base(object):
             if self._sack is not None:
                 self._goal = hawkey.Goal(self._sack)
 
-    def disablePlugins(self):
-        """Disable yum plugins."""
-
-        self.plugins = plugins.DummyYumPlugins()
-
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self.ts
@@ -549,7 +541,6 @@ class Base(object):
 
     def resolve(self):
         """Build the transaction set."""
-        self.plugins.run('preresolve')
         exc = None
 
         ds_st = time.time()
@@ -574,8 +565,6 @@ class Base(object):
             if msg:
                 exc = dnf.exceptions.Error(msg)
 
-        self.plugins.run('postresolve', exception=exc,
-                         got_transaction=got_transaction)
         if exc is not None:
             raise exc
         return got_transaction
@@ -673,8 +662,6 @@ class Base(object):
         :raises: :class:`dnf.exceptions.YumRPMTransError` if there is a
            transaction cannot be completed
         """
-        self.plugins.run('pretrans')
-
         if self._record_history():
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
@@ -697,8 +684,6 @@ class Base(object):
                              [], [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
-
-            self.plugins.run('historybegin')
 
         # transaction has started - all bets are off on our saved ts file
         if self._ts_save_file is not None:
@@ -752,7 +737,6 @@ class Base(object):
         else:
             if self._record_history():
                 herrors = [to_unicode(to_str(x)) for x in errors]
-                self.plugins.run('historyend')
                 self.history.end(rpmdbv, 2, errors=herrors)
 
 
@@ -771,7 +755,6 @@ class Base(object):
                     self.logger.critical(_('Failed to remove transaction file %s') % fn)
 
 
-        self.plugins.run('posttrans')
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.verify_transaction(return_code, cb.verify_tsi_package)
@@ -812,7 +795,6 @@ class Base(object):
             return count
 
         vt_st = time.time()
-        self.plugins.run('preverifytrans')
         count = 0
         # the rpmdb has changed by now. hawkey doesn't support dropping a repo
         # yet we have to check what packages are in now: build a transient sack
@@ -897,10 +879,8 @@ class Base(object):
             yumdb_item = self.yumdb.get_package(po=rpo)
             yumdb_item.clean()
 
-        self.plugins.run('postverifytrans')
         if self._record_history():
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
-            self.plugins.run('historyend')
             self.history.end(rpmdbv, return_code)
         self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
 
@@ -934,8 +914,6 @@ class Base(object):
         """download list of package objects handed to you, output based on
            callback, raise dnf.exceptions.Error on problems"""
 
-        self.plugins.run('predownload', pkglist=pkglist)
-
         # select and sort packages to download
         remote_pkgs = list(filter(lambda po: not (po.from_cmdline or po.repo.local), pkglist))
         remote_pkgs.sort(key=cmp_to_key(mediasort))
@@ -955,7 +933,6 @@ class Base(object):
 
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
-        self.plugins.run('postdownload', pkglist=pkglist, errors=errors)
         return errors
 
     def sigCheckPkg(self, po):

@@ -24,7 +24,6 @@ from .cli import *
 from dnf.yum.i18n import utf8_width, exception2msg, _
 from optparse import OptionGroup
 
-import dnf.yum.plugins as plugins
 from dnf.cli.format import format_number
 
 try:

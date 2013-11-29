@@ -41,7 +41,6 @@ import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
 import dnf.yum.parser
-import dnf.yum.plugins
 import hawkey
 import logging
 import operator
@@ -689,8 +688,6 @@ class BaseCli(dnf.Base):
              dbcache = Eliminate the sqlite cache used for faster
                access to metadata
              rpmdb = Eliminate any cached datat from the local rpmdb
-             plugins = Tell any enabled plugins to eliminate their
-               cached data
              all = do all of the above
         :return: (exit_code, [ errors ])
 
@@ -711,7 +708,6 @@ class BaseCli(dnf.Base):
             xmlcode, xmlresults = self.cleanMetadata()
             dbcode, dbresults = self.clean_binary_cache()
             rpmcode, rpmresults = self.cleanRpmDB()
-            self.plugins.run('clean')
 
             code = pkgcode + xmlcode + dbcode + rpmcode
             results = (pkgresults + xmlresults + dbresults +
@@ -735,9 +731,6 @@ class BaseCli(dnf.Base):
         if 'rpmdb' in userlist:
             self.logger.debug(_('Cleaning up cached rpmdb data'))
             expccode, expcresults = self.cleanRpmDB()
-        if 'plugins' in userlist:
-            self.logger.debug(_('Cleaning up plugins'))
-            self.plugins.run('clean')
 
         code = pkgcode + xmlcode + dbcode + expccode
         results = pkgresults + xmlresults + dbresults + expcresults
@@ -1368,10 +1361,8 @@ class Cli(object):
             msg = "Setopt argument has no value: %s"
             self.logger.warning(msg % item)
 
-        # update usage in case plugins have added commands
         self.optparser.set_usage(self._make_usage())
 
-        self.base.plugins.run('args', args=args)
         # Now parse the command line for real and
         # apply some of the options to self.base.conf
         (opts, self.base.cmds) = self.optparser.setupYumConfig(args=args)
@@ -1633,9 +1624,6 @@ class YumOptionParser(OptionParser):
            cmds will be ["install", "foo"].
         """
         (opts, cmds) = self.parse_args(args=args)
-
-        # Let the plugins know what happened on the command line
-        self.base.plugins.setCmdLine(opts, cmds)
 
         try:
             # config file is parsed and moving us forward
