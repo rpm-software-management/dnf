@@ -48,6 +48,9 @@ See the reference for each command below.
 Options
 =======
 
+``--allowerasing``
+    Allow erasing of installed packages to resolve dependencies.
+
 ``--assumeno``
     answer no for all questions
 
