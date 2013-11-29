@@ -181,6 +181,7 @@ class Command(object):
     activate_sack = False
     aliases = []
     load_available_repos = True
+    writes_rpmdb = False
 
     def __init__(self, cli):
         self.done_command_once = False
@@ -274,6 +275,7 @@ class InstallCommand(Command):
 
     aliases = ('install',)
     activate_sack = True
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -328,6 +330,7 @@ class UpgradeCommand(Command):
     """
     aliases = ('upgrade', 'update')
     activate_sack = True
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -382,6 +385,7 @@ class UpgradeToCommand(Command):
 
     aliases = ('upgrade-to', 'update-to')
     activate_sack = True
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -408,6 +412,7 @@ class DistroSyncCommand(Command):
 
     aliases = ('distribution-synchronization', 'distro-sync')
     activate_sack = True
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -646,6 +651,7 @@ class EraseCommand(Command):
     activate_sack = True
     aliases = ('erase', 'remove')
     load_available_repos = False
+    writes_rpmdb = True
 
     def configure(self):
         self.base.goal_parameters.allow_uninstall = True
@@ -727,6 +733,7 @@ class GroupsCommand(Command):
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}
     aliases = ('group', 'groups') + tuple(direct_commands.keys())
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -1646,6 +1653,7 @@ class ReInstallCommand(Command):
 
     activate_sack = True
     aliases = ('reinstall',)
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -1713,6 +1721,7 @@ class DowngradeCommand(Command):
 
     activate_sack = True
     aliases = ('downgrade',)
+    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
