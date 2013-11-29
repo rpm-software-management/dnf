@@ -1644,6 +1644,9 @@ class YumOptionParser(OptionParser):
                 self.base.conf.best = opts.best
 
             # Handle remaining options
+            if opts.allowerasing:
+                self.base.goal_parameters.allow_uninstall = opts.allowerasing
+
             if opts.assumeyes:
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
@@ -1738,6 +1741,9 @@ class YumOptionParser(OptionParser):
                 help=_("show this help message and exit"))
         group.conflict_handler = "error"
 
+        group.add_option('--allowerasing', action='store_true',
+                         help=_('allow erasing of installed packages to '
+                                'resolve dependencies'))
         group.add_option("-b", "--best", action="store_true",
                          help=_("try the best available package versions in "
                                 "transactions."))
