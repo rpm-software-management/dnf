@@ -161,13 +161,13 @@ does not fail if such a situation is encountered and thus the ``force`` option
 is not needed anymore.
 
 ============================================
- Packages replacement without ``dnf shell``
+ Packages replacement without ``yum shell``
 ============================================
 
-``yum shell`` was required to perform erase&install in one transaction to
-replace a package (on which other packages may depend) with another package
-(which provides the same capabilities).
+Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the erase and the install in one transaction. The common way to setup such transaction in Yum is to use ``yum shell``.
 
-DNF with ``--allowerasing`` switch allows to do the same operation using
-``dnf --allowerasing install`` command. It detects any conflicting packages
-and suggests erasing them during the same transaction.
+There is no shell in DNF but the case above is still valid. We provide the ``--allowerasing`` switch for this purpose, e.g. say you want to replace ``A`` (providing ``P``)  with B (also providing ``P``, conflicting with ``A``) without deleting ``C`` (which requires ``P``) in the process. Use::
+
+  dnf --allowerasing install B
+
+
