@@ -159,3 +159,15 @@ DNF tolerates the use of other package managers. Then it is possible that not
 all changes to RPMDB are stored in the history of transactions. Therefore, DNF
 does not fail if such a situation is encountered and thus the ``force`` option
 is not needed anymore.
+
+============================================
+ Packages replacement without ``dnf shell``
+============================================
+
+``yum shell`` was required to perform erase&install in one transaction to
+replace a package (on which other packages may depend) with another package
+(which provides the same capabilities).
+
+DNF with ``--allowerasing`` switch allows to do the same operation using
+``dnf --allowerasing install`` command. It detects any conflicting packages
+and suggests erasing them during the same transaction.
