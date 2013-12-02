@@ -38,6 +38,8 @@ DYNAMIC_PACKAGE = 'dnf.plugin.dynamic'
 class Plugin(object):
     """The base class custom plugins must derive from."""
 
+    name = '<invalid>'
+
     def config(self):
         pass
 
@@ -70,6 +72,8 @@ class Plugins(object):
             plugin = p_cls(base, cli)
             self.plugins.append(plugin)
 
+    def unload(self):
+        del sys.modules[DYNAMIC_PACKAGE]
 
 def plugin_classes():
     return Plugin.__subclasses__()
