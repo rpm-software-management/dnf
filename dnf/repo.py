@@ -385,7 +385,7 @@ class Repo(dnf.yum.config.RepoConf):
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,
             progresscb=progresscb,
-            cbdata=os.path.basename(po.relativepath),
+            cbdata=os.path.basename(po.location),
             handle=self.get_handle(),
             endcb=endcb)
         target.po = po
