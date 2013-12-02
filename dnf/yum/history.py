@@ -23,37 +23,23 @@ import glob
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
-from . import constants
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
-from .constants import *
 from .i18n import to_unicode, to_utf8
 from .i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch
 
-# NOTE: That we don't list TS_FAILED, because pkgs shouldn't go into the
-#       transaction with that. And if they come out with that we don't want to
-#       match them to anything anyway.
-_stcode2sttxt = {TS_UPDATE : 'Update',
-                 TS_UPDATED : 'Updated',
-                 TS_ERASE: 'Erase',
-                 TS_INSTALL: 'Install',
-                 TS_OBSOLETED: 'Obsoleted',
-                 TS_OBSOLETING: 'Obsoleting'}
-
-_sttxt2stcode = {'Update' : TS_UPDATE,
-                 'Updated' : TS_UPDATED,
-                 'Erase' : TS_ERASE,
-                 'Install' : TS_INSTALL,
-                 'Dep-Install' : TS_INSTALL,
-                 'Reinstall' : TS_INSTALL, # Broken
-                 'Reinstalled' : TS_INSTALL,
-                 'Downgrade' : TS_INSTALL, # Broken
-                 'Downgraded' : TS_INSTALL, # Broken
-                 'Obsoleted' : TS_OBSOLETED,
-                 'Obsoleting' : TS_OBSOLETING}
+#  Cut over for when we should just give up and load everything.
+#  The main problem here is not so much SQLite dying (although that happens
+# at large values: http://sqlite.org/limits.html#max_variable_number) but that
+# but SQLite going really slow when it gets medium sized values (much slower
+# than just loading everything and filtering it in python).
+PATTERNS_MAX = 8
+#  We have another value here because name is indexed and sqlite is _much_
+# faster even at large numbers of patterns.
+PATTERNS_INDEXED_MAX = 128
 
 def _setupHistorySearchSQL(patterns=None, ignore_case=False):
     """Setup need_full and patterns for _yieldSQLDataList, also see if
@@ -512,9 +498,9 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
                                       history=pkg._history)
         npkg._checksums = pkg._checksums
         npkg.done = pkg.done
-        if _sttxt2stcode[npkg.state] in TS_INSTALL_STATES:
+        if npkg.state in dnf.history.INSTALLING_STATES:
             npkg.state_installed = True
-        if _sttxt2stcode[npkg.state] in TS_REMOVE_STATES:
+        if npkg.state in dnf.history.REMOVING_STATES:
             npkg.state_installed = False
         return npkg
     @staticmethod
@@ -887,23 +873,6 @@ class YumHistory(object):
             return self._ipkg2pid(po, create)
         return self._apkg2pid(po, create)
 
-    @staticmethod
-    def txmbr2state(txmbr):
-        state = None
-        if txmbr.output_state == TS_INSTALL:
-            if txmbr.reinstall:
-                state = 'Reinstall'
-            elif txmbr.downgrades:
-                state = 'Downgrade'
-        if txmbr.output_state == TS_ERASE:
-            if txmbr.downgraded_by:
-                state = 'Downgraded'
-        if state is None:
-            state = _stcode2sttxt.get(txmbr.output_state)
-            if state == 'Install' and txmbr.isDep:
-                state = 'Dep-Install'
-        return state
-
     def trans_with_pid(self, pid):
         cur = self._get_cursor()
         if cur is None:
@@ -1197,9 +1166,9 @@ class YumHistory(object):
                                          row[7], row[5], history=self)
             obj.done     = row[6] == 'TRUE'
             obj.state_installed = None
-            if _sttxt2stcode[obj.state] in TS_INSTALL_STATES:
+            if obj.state in dnf.history.INSTALLING_STATES:
                 obj.state_installed = True
-            if _sttxt2stcode[obj.state] in TS_REMOVE_STATES:
+            if obj.state in dnf.history.REMOVING_STATES:
                 obj.state_installed = False
             ret.append(obj)
         return ret
@@ -1286,7 +1255,7 @@ class YumHistory(object):
                              loginuid, NULL
                       FROM trans_beg"""
         params = None
-        if tids and len(tids) <= constants.PATTERNS_INDEXED_MAX:
+        if tids and len(tids) <= PATTERNS_INDEXED_MAX:
             params = tids = list(set(tids))
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
         #  This relies on the fact that the PRIMARY KEY in sqlite will always
@@ -1300,7 +1269,7 @@ class YumHistory(object):
         ret = []
         tid2obj = {}
         for row in cur:
-            if tids and len(tids) > constants.PATTERNS_INDEXED_MAX:
+            if tids and len(tids) > PATTERNS_INDEXED_MAX:
                 if row[0] not in tids:
                     continue
             obj = YumHistoryTransaction(self, row)
@@ -1313,7 +1282,7 @@ class YumHistory(object):
                          return_code
                   FROM trans_end"""
         params = list(tid2obj.keys())
-        if len(params) > constants.PATTERNS_INDEXED_MAX:
+        if len(params) > PATTERNS_INDEXED_MAX:
             executeSQL(cur, sql)
         else:
             sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(params))
@@ -1531,7 +1500,7 @@ class YumHistory(object):
         sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
         params = list(pkgtupids)
         tids = set()
-        if len(params) > constants.PATTERNS_INDEXED_MAX:
+        if len(params) > PATTERNS_INDEXED_MAX:
             executeSQL(cur, """SELECT tid FROM trans_data_pkgs""")
             for row in cur:
                 if row[0] in params:

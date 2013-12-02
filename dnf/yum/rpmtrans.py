@@ -29,6 +29,19 @@ from dnf.pycomp import basestring
 import tempfile
 import collections
 
+# transaction set states
+TS_UPDATE = 10
+TS_INSTALL = 20
+TS_ERASE = 40
+TS_OBSOLETED = 50
+TS_OBSOLETING = 60
+TS_AVAILABLE = 70
+TS_UPDATED = 90
+TS_FAILED = 100
+
+TS_INSTALL_STATES = [TS_INSTALL, TS_UPDATE, TS_OBSOLETING]
+TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
+
 class TransactionDisplay(object):
     # per-package events
     PKG_CLEANUP   = 1
