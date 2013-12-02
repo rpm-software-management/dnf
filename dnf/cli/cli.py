@@ -1393,7 +1393,8 @@ class Cli(object):
         else:
             sleeptime = 0
 
-        self.base.plugins.load(self.base.conf.pluginpath)
+        if self.base.conf.plugins:
+            self.base.plugins.load(self.base.conf.pluginpath)
         self.base.plugins.run_init(self.base, self)
 
         # save our original args out
@@ -1652,6 +1653,8 @@ class YumOptionParser(OptionParser):
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 self.base.conf.installroot = opts.installroot
+            if opts.noplugins:
+                self.base.conf.plugins = False
 
             if opts.showdupesfromrepos:
                 self.base.conf.showdupesfromrepos = True

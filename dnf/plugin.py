@@ -45,7 +45,7 @@ class Plugin(object):
 
 class Plugins(object):
     def __init__(self):
-        self.plugin_cls = None
+        self.plugin_cls = []
         self.plugins = []
 
     def _caller(method):
@@ -64,6 +64,9 @@ class Plugins(object):
         files = iter_py_files(paths)
         import_modules(package, files)
         self.plugin_cls = plugin_classes()[:]
+        if len(self.plugin_cls) > 0:
+            names = [plugin.name for plugin in self.plugin_cls]
+            logger.debug('Loaded plugins: %s', ', '.join(names))
 
     run_config = _caller('config')
 

@@ -684,9 +684,9 @@ class YumConf(BaseConfig):
     distroverpkg = Option('redhat-release')
     installroot = Option('/') # :api
     config_file_path = Option(dnf.const.CONF_FILENAME) # :api
-    plugins = BoolOption(False)
-    pluginpath = ListOption(['/usr/share/yum-plugins', '/usr/lib/yum-plugins'])
-    pluginconfpath = ListOption(['/etc/yum/pluginconf.d'])
+    plugins = BoolOption(True)
+    pluginpath = ListOption(['/usr/share/dnf/plugins'])
+    pluginconfpath = ListOption(['/etc/dnf/plugins'])
     gaftonmode = BoolOption(False)
     syslog_ident = Option()
     syslog_facility = Option('LOG_USER')
