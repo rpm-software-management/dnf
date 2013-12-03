@@ -36,11 +36,16 @@ logger = logging.getLogger('dnf')
 DYNAMIC_PACKAGE = 'dnf.plugin.dynamic'
 
 class Plugin(object):
-    """The base class custom plugins must derive from."""
+    """The base class custom plugins must derive from. #:api"""
 
     name = '<invalid>'
 
+    def __init__(self, base, cli):
+        # :api
+        pass
+
     def config(self):
+        # :api
         pass
 
 class Plugins(object):

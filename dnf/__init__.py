@@ -29,6 +29,9 @@ __version__ = dnf.const.VERSION
 import dnf.base
 Base = dnf.base.Base # :api
 
+import dnf.plugin
+Plugin = dnf.plugin.Plugin # :api
+
 # setup libraries
 try:
     import urlparse

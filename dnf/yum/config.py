@@ -685,7 +685,7 @@ class YumConf(BaseConfig):
     installroot = Option('/') # :api
     config_file_path = Option(dnf.const.CONF_FILENAME) # :api
     plugins = BoolOption(True)
-    pluginpath = ListOption(['/usr/share/dnf/plugins'])
+    pluginpath = ListOption(['/usr/share/dnf/plugins']) # :api
     pluginconfpath = ListOption(['/etc/dnf/plugins'])
     gaftonmode = BoolOption(False)
     syslog_ident = Option()

@@ -42,6 +42,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Directory where the data that DNF keeps track of between different runs is stored. Default is ``"/var/lib/dnf"``.
 
+  .. attribute:: pluginpath
+
+    List of directories where DNF searches for :doc:`plugins <api_plugins>`. Defaults to ``["/usr/share/dnf/plugins"]``.
+
   .. attribute:: releasever
 
     Used for substitution of ``$releasever`` in the repository configuration.

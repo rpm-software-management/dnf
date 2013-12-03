@@ -10,8 +10,8 @@
 
 The provided Python API to DNF is supposed to mainly allow writing the following two categories of programs:
 
-1. plugins to DNF which extend functionality of the system's DNF installation.
-2. extension applications that embed DNF to perform specific package management tasks.
+1. :doc:`plugins <api_plugins>` to DNF which extend functionality of the system's DNF installation.
+2. extension applications that embed DNF (by importing its Python modules) to perform specific package management tasks.
 
 .. NOTE::
 
@@ -57,6 +57,7 @@ API Documentation Contents
   api_package
   api_transaction
   api_comps
+  api_plugins
 
 Indices:
 
