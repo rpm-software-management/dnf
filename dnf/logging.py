@@ -27,6 +27,8 @@ import os
 import sys
 import warnings
 
+# :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
+
 SUPERCRITICAL = 100 # do not use this for logging
 CRITICAL      = logging.CRITICAL
 ERROR         = logging.ERROR

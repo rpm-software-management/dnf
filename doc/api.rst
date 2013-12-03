@@ -46,6 +46,7 @@ API Documentation Contents
 .. toctree::
   :maxdepth: 2
 
+  api_common
   api_base
   api_exceptions
   api_conf
