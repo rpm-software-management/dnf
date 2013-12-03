@@ -1063,12 +1063,20 @@ class BaseCli(dnf.Base):
         for id_ in range(old.tid + 1, last.tid + 1):
             operations += history.transaction_nevra_ops(id_)
 
+        hibeg = self.output.term.MODE['bold']
+        hiend = self.output.term.MODE['normal']
         try:
             self.history_undo_operations(operations)
-        except ValueError:
+        except dnf.exceptions.PackagesNotAvailableError as err:
+            self.logger.info(_('No package %s%s%s installed.'),
+                             hibeg, unicode(err.pkg_spec), hiend)
+            return 1, ['A transaction cannot be undone']
+        except dnf.exceptions.PackagesNotAvailableError as err:
+            self.logger.info(_('No package %s%s%s available.'),
+                             hibeg, unicode(err.pkg_spec), hiend)
+            return 1, ['A transaction cannot be undone']
+        except dnf.exceptions.MarkingError:
             assert False
-        except dnf.exceptions.MarkingError as err:
-            return 1, [str(err)]
         else:
             return 2, ["Rollback to transaction %u" % (old.tid,)]
 
@@ -1084,12 +1092,20 @@ class BaseCli(dnf.Base):
 
         history = dnf.history.open_history(self.history)  # :todo
 
+        hibeg = self.output.term.MODE['bold']
+        hiend = self.output.term.MODE['normal']
         try:
             self.history_undo_operations(history.transaction_nevra_ops(old.tid))
-        except ValueError:
+        except dnf.exceptions.PackagesNotAvailableError as err:
+            self.logger.info(_('No package %s%s%s installed.'),
+                             hibeg, unicode(err.pkg_spec), hiend)
+            return 1, ['An operation cannot be undone']
+        except dnf.exceptions.PackagesNotAvailableError as err:
+            self.logger.info(_('No package %s%s%s available.'),
+                             hibeg, unicode(err.pkg_spec), hiend)
+            return 1, ['An operation cannot be undone']
+        except dnf.exceptions.MarkingError:
             assert False
-        except dnf.exceptions.MarkingError as err:
-            return 1, [str(err)]
         else:
             return 2, ["Undoing transaction %u" % (old.tid,)]
 
