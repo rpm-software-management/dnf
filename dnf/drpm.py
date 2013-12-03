@@ -18,10 +18,13 @@
 # Red Hat, Inc.
 #
 from binascii import hexlify
+from dnf.yum.misc import unlink_f
+from dnf.yum.i18n import _
 from hawkey import chksum_name
 import os.path
 
 MAX_PERCENTAGE = 50
+APPLYDELTA = '/usr/bin/applydeltarpm'
 
 class DeltaPackage(object):
     def __init__(self, delta, po):
@@ -47,11 +50,22 @@ class DeltaInfo(object):
         '''A delta lookup and rebuild context
            query -- installed packages to use when looking up deltas
         '''
+        deltarpm = 0
+        if os.access(APPLYDELTA, os.X_OK):
+            try:
+                deltarpm = os.sysconf('SC_NPROCESSORS_ONLN')
+            except:
+                deltarpm = 4
+        self.deltarpm = deltarpm
         self.query = query
+
+        self.queue = []
+        self.jobs = {}
+        self.err = {}
 
     def delta(self, po):
         '''Turn a po to Delta RPM po, if possible'''
-        if not po.repo.deltarpm:
+        if not po.repo.deltarpm or not self.deltarpm:
             return po # deltas are disabled
         if os.path.exists(po.localPkg()):
             return po # already there
@@ -65,4 +79,42 @@ class DeltaInfo(object):
                 best_delta = delta
         if best_delta:
             po = DeltaPackage(best_delta, po)
+            po.donecb = lambda: self.enqueue(po)
         return po
+
+    def job_done(self, pid, code):
+        # handle a finished delta rebuild
+        po = self.jobs.pop(pid)
+        if code != 0:
+            unlink_f(po.rpm.localPkg())
+            self.err[po] = _('Delta RPM rebuild failed')
+        elif not po.rpm.verifyLocalPkg():
+            self.err[po] = _('Checksum of the delta-rebuilt RPM failed')
+        else:
+            os.unlink(po.localPkg())
+
+    def start_job(self, po):
+        # spawn a delta rebuild job
+        args = '-a', po.rpm.arch
+        args += po.localPkg(), po.rpm.localPkg()
+        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
+        self.jobs[pid] = po
+
+    def enqueue(self, po):
+        # process finished jobs, start new ones
+        while self.jobs:
+            pid, code = os.waitpid(-1, os.WNOHANG)
+            if not pid: break
+            self.job_done(pid, code)
+        self.queue.append(po)
+        while len(self.jobs) < self.deltarpm:
+            self.start_job(self.queue.pop(0))
+            if not self.queue: break
+
+    def wait(self):
+        '''Wait until all jobs have finished'''
+        while self.jobs:
+            pid, code = os.wait()
+            self.job_done(pid, code)
+            if self.queue:
+                self.start_job(self.queue.pop(0))

@@ -921,6 +921,11 @@ class Base(object):
         errors = dict((t.po, [t.err]) for t in targets
                       if t.err not in (None, 'Already downloaded'))
 
+        # finish delta rebuilds
+        presto.wait()
+        for po, err in presto.err.items():
+            errors[po] = [err]
+
         # librepo may fail without setting any .err attributes
         # make sure caller sees the error and does not proceed
         if not errors and librepo_err:
