@@ -1,4 +1,4 @@
-%global gitrev 7db68be
+%global gitrev ceb088e
 %global hawkey_version 0.4.5
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -122,6 +122,61 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Dec 3 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.9-1
+- doc: api: initiali version of the plugin interface. (Ales Kozumplik)
+- doc: api: logging. (Ales Kozumplik)
+- doc: api: Base.reset() (Ales Kozumplik)
+- remove: conf.keepcache option. (Ales Kozumplik)
+- plugins: loading from the CLI. (Ales Kozumplik)
+- plugins: test plugin loading (Ales Kozumplik)
+- plugins: basic plugins loading and running. (Ales Kozumplik)
+- cli: commands: state whether the command might try to modify rpmdb. (Ales Kozumplik)
+- remove: dnf.yum.plugins and all references. (Ales Kozumplik)
+- doc: update the --allowerasing comment. (Ales Kozumplik)
+- doc: Document packages replacement command. (Radek Holy)
+- Work around a bug in NamedTemporaryFile(). (RhBug:1036116) (Zdenek Pavlas)
+- remove: dnf.yum.constants (Radek Holy)
+- Add --allowerasing flag option (RhBug:963137) (Radek Holy)
+- remove: dnf.yum.packages.PackageObject (Radek Holy)
+- remove: dnf.yum.packages.FakeSack (Radek Holy)
+- remove: dnf.yum.packages.FakeRepository (Radek Holy)
+- reduce usage of dnf.yum.constants. (Ales Kozumplik)
+- remove: bunch of old, unused Base() methods. (Ales Kozumplik)
+- Set "history" reason to packages installed during undos. (Radek Holy)
+- test_localPkg: test also remote packages (Zdenek Pavlas)
+- remove: Package.localpath. (Ales Kozumplik)
+- po.localPkg(): return the right localpath. (RhBug:1034607) (Zdenek Pavlas)
+- cli: fix grammar of some sentences. (Ales Kozumplik)
+- tests: cosmetic: order packages in .repo files by name. (Ales Kozumplik)
+- Add "history userinstalled" command (RhBug:884615) (Radek Holy)
+- Support printing of package names. (Radek Holy)
+- Support iteration over packages installed by the user. (Radek Holy)
+- tests: Make tests independent of locale settings. (Radek Holy)
+- refactor: Do not give package-marking exceptions long messages. (Radek Holy)
+- remove: Do not give package-marking exceptions translated messages. (Radek Holy)
+- refactor: Raise/catch proper exceptions in/by package-marking methods. (Radek Holy)
+- doc:  clarify 'Specifying Transaction' a bit. (Ales Kozumplik)
+- doc: api: document marking packages for transactions in Base. (Ales Kozumplik)
+- rename: Base.update*() -> Base.upgrade*() (Ales Kozumplik)
+- fixed JSON decode error in persistor.py (RhBug:1032455) (Jan Silhan)
+- doc: api: Base.read_all_repos() (Ales Kozumplik)
+- remove: conf.config_file_age and repo.repo_config_age. (Ales Kozumplik)
+- history: fix tests in py3. (Ales Kozumplik)
+- tests: Remove unneeded test of HistoryCommand.doCheck. (Radek Holy)
+- doc: Use imperative mood in documentation of the undo command. (Radek Holy)
+- Enable the "history rollback" command (RhBug:991038) (Radek Holy)
+- remove: force from history rollback command. (Radek Holy)
+- Add history-rollback-specific transaction check error output. (Radek Holy)
+- Fix AttributeError raised when BaseCli.history_rollback_transaction called. (Radek Holy)
+- refactor: Move the content of HistoryCommand._hcmd_rollback to BaseCli.history_rollback_transaction. (Radek Holy)
+- refactor: Rename Base.history_undo to Base.history_undo_operations. (Radek Holy)
+- refactor: Move the content of HistoryCommand._hcmd_undo to BaseCli.history_undo_transaction. (Radek Holy)
+- refactor: Move obsoleted packages handling within Base.history_undo. (Radek Holy)
+- refactor: Rename functions in Base.history_undo. (Radek Holy)
+- Return history of a transaction in the new container. (Radek Holy)
+- Remove unneeded sack parameter from open_history. (Radek Holy)
+- Add container of operations on packages by their NEVRAs. (Radek Holy)
 
 * Thu Nov 21 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.8-1
 - doc: api: add DeprecationWarning. (Ales Kozumplik)
