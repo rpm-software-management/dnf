@@ -409,3 +409,40 @@ Bugs fixed in 0.4.8:
 * :rhbug:`1030998`
 * :rhbug:`1030297`
 * :rhbug:`1030980`
+
+===================
+0.4.9 Release Notes
+===================
+
+Several Yum features are revived in this release. ``dnf history rollback`` now works again. The ``history userinstalled`` has been added, it displays a list of ackages that the user manually selected for installation on an installed system and does not include those packages that got installed as dependencies.
+
+We're happy to announce that the API in 0.4.9 has been extended to finally support plugins. There is a limited set of plugin hooks now, we will carefully add new ones in the following releases. New marking operations have ben added to the API and also some configuration options.
+
+An alternative to ``yum shell`` is provided now for its most common use case: :ref:`replacing a non-leaf package with a conflicting package <allowerasing_instead_of_shell>` is achieved by using the ``--allowerasing`` switch now.
+
+API additions in 0.4.9:
+
+* :doc:`api_plugins`
+* :ref:`logging_label`
+* :meth:`.Base.read_all_repos`
+* :meth:`.Base.reset`
+* :meth:`.Base.downgrade`
+* :meth:`.Base.remove`
+* :meth:`.Base.upgrade`
+* :meth:`.Base.upgrade_all`
+* :attr:`.Conf.pluginpath`
+* :attr:`.Conf.reposdir`
+
+API deprecations in 0.4.9:
+
+* :exc:`.PackageNotFoundError` is deprecated for public use. Please catch :exc:`.MarkingError` instead.
+* It is deprecated to use :meth:`.Base.install` return value for anything. The method either returns or raises an exception.
+
+Bugs fixed in 0.4.9:
+
+* :rhbug:`884615`
+* :rhbug:`963137`
+* :rhbug:`991038`
+* :rhbug:`1032455`
+* :rhbug:`1034607`
+* :rhbug:`1036116`

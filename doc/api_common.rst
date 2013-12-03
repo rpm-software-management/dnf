@@ -2,6 +2,8 @@
  Common Provisions of the DNF API
 ==================================
 
+.. _logging_label:
+
 ---------
  Logging
 ---------

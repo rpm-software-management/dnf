@@ -298,5 +298,29 @@
     [
         1030980, 
         "dnf downgrade PACKAGE, misleading message about possible typo if PACKAGE is not installed"
+    ], 
+    [
+        884615, 
+        "RFE: Provide list of packages installed on top of the system"
+    ], 
+    [
+        963137, 
+        "[rfe] perform complex packaging operations as a CLI user"
+    ], 
+    [
+        991038, 
+        "lacks history rollback"
+    ], 
+    [
+        1032455, 
+        "[abrt] dnf-0.4.7-1.fc20: decoder.py:383:raw_decode:ValueError: No JSON object could be decoded"
+    ], 
+    [
+        1034607, 
+        "dnf does not work with media repo"
+    ], 
+    [
+        1036116, 
+        "dnf install failed with exception"
     ]
 ]
