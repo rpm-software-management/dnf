@@ -386,17 +386,15 @@ class Repo(dnf.yum.config.RepoConf):
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
             logger.warn(_("unsupported checksum type: %s") % ctype)
 
-        progresscb = endcb = None
-        if cb:
-            progresscb = cb.progress
-            def endcb(text, status, msg):
-                # using a local file with good checksum is not a failure
-                status = 'SKIPPED' if status == librepo.TRANSFER_ALREADYEXISTS else 'FAILED'
-                cb.end(text, po.size, msg, status)
+        def endcb(text, status, msg):
+            if cb and not (msg and msg.startswith('Not finished')):
+                cb.end(text, po.size, msg, 'SKIPPED' if status == librepo.TRANSFER_ALREADYEXISTS else 'FAILED')
+            if status != librepo.TRANSFER_ERROR and hasattr(po, 'donecb'):
+                po.donecb()
 
         target = librepo.PackageTarget(
             po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,
-            progresscb=progresscb,
+            progresscb=cb and cb.progress,
             cbdata=os.path.basename(po.location),
             handle=self.get_handle(),
             endcb=endcb,
