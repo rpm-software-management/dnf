@@ -52,6 +52,19 @@
 
     Read comps data from all the enabled repositories and initialize the :attr:`comps` object.
 
+  .. method:: reset(**kwargs)
+
+    Reset the state of different :class:`.Base` attributes. Selecting attributes to reset is controlled by passing the method keyword arguments set to ``True``. When called with no arguments the method has no effect.
+
+    =============== =================================================
+    argument passed effect
+    =============== =================================================
+    `goal=True`     drop all the current :ref:`packaging requests <package_marking-label>`
+    `repos=True`    drop the current repositries (see :attr:`.repos`). This won't
+                    affect the package data already loaded into the :attr:`.sack`.
+    `sack=True`     drop the current sack (see :attr:`.sack`)
+    =============== =================================================
+
   .. method:: resolve()
 
     Resolve the marked requirements and store the resulting :class:`dnf.transaction.Transaction` into :attr:`transaction`. Raise :exc:`dnf.exceptions.DepsolveError` on a depsolving error. Return ``True`` iff the resolved transaction is non-empty.
@@ -61,6 +74,8 @@
   .. method:: select_group(group, pkg_types=None)
 
     Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding ``"mandatory"``, ``"default"`` or ``"optional"`` to it. If `pkg_types` is ``None``, it defaults to ``("mandatory", "default")``.
+
+  .. _package_marking-label:
 
   The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument they take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not neccessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
 

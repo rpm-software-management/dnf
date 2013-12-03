@@ -343,7 +343,7 @@ class Base(object):
         return repo
 
     def reset(self, sack=False, repos=False, goal=False):
-        """Make the Base object forget about various things."""
+        """Make the Base object forget about various things. :api"""
         if sack:
             self._sack = None
         if repos:
