@@ -22,6 +22,7 @@ Supplies the Base class.
 from __future__ import absolute_import
 from __future__ import print_function
 from dnf import const, query, sack
+from dnf.drpm import DeltaInfo
 from dnf.pycomp import unicode, basestring
 from dnf.yum import config
 from dnf.yum import history
@@ -902,7 +903,8 @@ class Base(object):
            callback, raise dnf.exceptions.Error on problems"""
 
         # select and sort packages to download
-        remote_pkgs = list(filter(lambda po: not (po.from_cmdline or po.repo.local), pkglist))
+        presto = DeltaInfo(self.sack.query().installed())
+        remote_pkgs = [presto.delta(po) for po in pkglist if not (po.from_cmdline or po.repo.local)]
         remote_pkgs.sort(key=cmp_to_key(mediasort))
         remote_size = sum(po.size for po in remote_pkgs)
 
