@@ -234,3 +234,13 @@ DNF supports the 'throttle' and 'bandwidth' options familiar from Yum.
 Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.
+
+==============================
+ The usage of Delta RPM files
+==============================
+
+The boolean ``deltarpm`` option controls whether delta RPM files are used.
+When on, DNF downloads delta files smaller than 50% of the RPM file and
+rebuilds them using at most as many processes as the number of CPUs online.
+``deltarpm_percentage`` option is not supported, and user can't fine tune
+the number of delta rebuild processes used.

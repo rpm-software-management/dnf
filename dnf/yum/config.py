@@ -850,6 +850,7 @@ class YumConf(BaseConfig):
     sslverify = BoolOption(True)
     sslclientcert = Option()
     sslclientkey = Option()
+    deltarpm = BoolOption(False)
 
     history_record = BoolOption(True)
     history_record_packages = ListOption(['dnf', 'rpm'])
@@ -977,6 +978,7 @@ class RepoConf(BaseConfig):
     sslverify = Inherit(YumConf.sslverify) # :api
     sslclientcert = Inherit(YumConf.sslclientcert)
     sslclientkey = Inherit(YumConf.sslclientkey)
+    deltarpm = Inherit(YumConf.deltarpm)
 
     skip_if_unavailable = BoolOption(True)
 

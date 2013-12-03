@@ -133,7 +133,8 @@ class Base(object):
         else:
             self.logger.debug("not found deltainfo for: %s" % repo.name)
         repo.hawkey_repo = hrepo
-        self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True)
+        self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
+                                 load_presto=repo.deltarpm)
 
     def _setup_excludes(self):
         disabled = set(self.conf.disable_excludes)
