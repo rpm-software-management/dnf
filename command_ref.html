@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.8-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -94,6 +94,8 @@ speed and defining strict API and plugin interface.</p>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">--allowerasing</span></tt></dt>
+<dd>Allow erasing of installed packages to resolve dependencies.</dd>
 <dt><tt class="docutils literal"><span class="pre">--assumeno</span></tt></dt>
 <dd>answer no for all questions</dd>
 <dt><tt class="docutils literal"><span class="pre">--best</span></tt></dt>
@@ -264,10 +266,17 @@ table.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;transaction_id&gt;]</span></tt></dt>
 <dd>Describe the given transaction. When no ID is given describes what happened
 during the latest transaction.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
+<dd>Undo all transactions performed after the specified transaction. If it is
+not possible to undo any transaction due to the current state of RPMDB,
+do not undo any transaction.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">undo</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
-<dd>Performs the opposite operation to all operations performed in the
+<dd>Perform the opposite operation to all operations performed in the
 specified transaction. If it is not possible to undo any operation due to
-the current state of RPMDB, DNF does not undo any operation.</dd>
+the current state of RPMDB, do not undo any operation.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">userinstalled</span></tt></dt>
+<dd>List names of all packages installed by a user. The output can be used as
+the %packages section in a <a class="reference external" href="http://fedoraproject.org/wiki/Anaconda/Kickstart">kickstart</a> file.</dd>
 </dl>
 </div>
 <div class="section" id="info-command">
@@ -445,12 +454,11 @@ current LC_MESSAGES locale (if possible).</p>
 </div>
 <div class="section" id="specifying-transactions">
 <span id="specifying-transactions-label"></span><h2>Specifying Transactions<a class="headerlink" href="#specifying-transactions" title="Permalink to this headline">¶</a></h2>
-<p><tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt> has two possible interpretations. If it is an integer,
-it specifies a transaction ID. Otherwise, the parameter must be in form
-<tt class="docutils literal"><span class="pre">last[-offset]</span></tt>, which specifies the transaction relative to the most recent
-transaction. It means that <tt class="docutils literal"><span class="pre">last</span></tt> represents the ID of the most recent
-transaction and <tt class="docutils literal"><span class="pre">last-offset</span></tt> represents the ID of the most recent
-transaction minus an integer offset.</p>
+<p><tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt> can be in one of several forms. If it is an integer, it
+specifies a transaction ID. Specifying <tt class="docutils literal"><span class="pre">last</span></tt> is the same as specifying the ID
+of the most recent transaction. The last form is <tt class="docutils literal"><span class="pre">last-&lt;offset&gt;</span></tt>, where
+<tt class="docutils literal"><span class="pre">&lt;offset&gt;</span></tt> is a positive integer. It specifies offset-th transaction preceding
+the most recent transaction.</p>
 </div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
@@ -551,7 +559,7 @@ transaction minus an integer offset.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

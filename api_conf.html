@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Configuration &mdash; DNF 0.4.8-1 documentation</title>
+    <title>Configuration &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Repository Configuration" href="api_repos.html" />
     <link rel="prev" title="Exceptions" href="api_exceptions.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -117,9 +117,21 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="dnf.conf.Conf.pluginpath">
+<tt class="descname">pluginpath</tt><a class="headerlink" href="#dnf.conf.Conf.pluginpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of directories where DNF searches for <a class="reference internal" href="api_plugins.html"><em>plugins</em></a>. Defaults to <tt class="docutils literal"><span class="pre">[&quot;/usr/share/dnf/plugins&quot;]</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="dnf.conf.Conf.releasever">
 <tt class="descname">releasever</tt><a class="headerlink" href="#dnf.conf.Conf.releasever" title="Permalink to this definition">¶</a></dt>
 <dd><p>Used for substitution of <tt class="docutils literal"><span class="pre">$releasever</span></tt> in the repository configuration.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.conf.Conf.reposdir">
+<tt class="descname">reposdir</tt><a class="headerlink" href="#dnf.conf.Conf.reposdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of directories to search for repo configuration files. Has a reasonable default commonly used on the given distribution.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -228,7 +240,7 @@
         <li class="right" >
           <a href="api_exceptions.html" title="Exceptions"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

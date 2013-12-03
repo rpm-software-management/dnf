@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.8-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -74,6 +74,9 @@
 <li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id17">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
 <li><a class="reference internal" href="#group-package-types-dropped" id="id18"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id19"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#dnf-history-rollback-check-dropped" id="id20"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
+<li><a class="reference internal" href="#packages-replacement-without-yum-shell" id="id21">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
+<li><a class="reference internal" href="#keepcache-configuration-option-dropped" id="id22"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
 </ul>
 </li>
 </ul>
@@ -183,6 +186,25 @@ packages to install per-group and not via a global setting.</p>
 configuration. DNF behaves as if this was disabled. If the user wanted to
 upgrade everything to the latest version she&#8217;d simply use <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>.</p>
 </div>
+<div class="section" id="dnf-history-rollback-check-dropped">
+<h2><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a><a class="headerlink" href="#dnf-history-rollback-check-dropped" title="Permalink to this headline">¶</a></h2>
+<p>DNF tolerates the use of other package managers. Then it is possible that not
+all changes to RPMDB are stored in the history of transactions. Therefore, DNF
+does not fail if such a situation is encountered and thus the <tt class="docutils literal"><span class="pre">force</span></tt> option
+is not needed anymore.</p>
+</div>
+<div class="section" id="packages-replacement-without-yum-shell">
+<span id="allowerasing-instead-of-shell"></span><h2><a class="toc-backref" href="#id21">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a><a class="headerlink" href="#packages-replacement-without-yum-shell" title="Permalink to this headline">¶</a></h2>
+<p>Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the erase and the install in one transaction. The common way to setup such transaction in Yum is to use <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt>.</p>
+<p>There is no shell in DNF but the case above is still valid. We provide the <tt class="docutils literal"><span class="pre">--allowerasing</span></tt> switch for this purpose, e.g. say you want to replace <tt class="docutils literal"><span class="pre">A</span></tt> (providing <tt class="docutils literal"><span class="pre">P</span></tt>)  with B (also providing <tt class="docutils literal"><span class="pre">P</span></tt>, conflicting with <tt class="docutils literal"><span class="pre">A</span></tt>) without deleting <tt class="docutils literal"><span class="pre">C</span></tt> (which requires <tt class="docutils literal"><span class="pre">P</span></tt>) in the process. Use:</p>
+<div class="highlight-python"><pre>dnf --allowerasing install B</pre>
+</div>
+</div>
+<div class="section" id="keepcache-configuration-option-dropped">
+<h2><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a><a class="headerlink" href="#keepcache-configuration-option-dropped" title="Permalink to this headline">¶</a></h2>
+<p>The option was used to keep the downloaded .rpm of just installed pacakges in the cache. It has been disabled in Fedora and there has been no real use cases indicated. The option has been removed in DNF which deletes all downloaded packages after a transaction completes.</p>
+<p>Note that this option is something different than the &#8220;downloadonly&#8221; functionality in Yum.</p>
+</div>
 </div>
 
 
@@ -208,6 +230,9 @@ upgrade everything to the latest version she&#8217;d simply use <tt class="docut
 <li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
 <li><a class="reference internal" href="#group-package-types-dropped"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#upgrade-requirements-on-install-dropped"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#dnf-history-rollback-check-dropped"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
+<li><a class="reference internal" href="#packages-replacement-without-yum-shell">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
+<li><a class="reference internal" href="#keepcache-configuration-option-dropped"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
 </ul>
 </li>
 </ul>
@@ -255,7 +280,7 @@ upgrade everything to the latest version she&#8217;d simply use <tt class="docut
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

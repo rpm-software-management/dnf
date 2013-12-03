@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; DNF 0.4.8-1 documentation</title>
+    <title>Index &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -80,6 +80,10 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="api_plugins.html#dnf.Plugin.__init__">(dnf.Plugin method)</a>
+  </dt>
+
         
   <dt><a href="api_repos.html#dnf.repo.Repo.__init__">(dnf.repo.Repo method)</a>
   </dt>
@@ -163,18 +167,22 @@
   <dt><a href="api_comps.html#dnf.comps.Comps.categories_iter">categories_iter() (dnf.comps.Comps method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_comps.html#dnf.comps.Comps.category_by_pattern">category_by_pattern() (dnf.comps.Comps method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_base.html#dnf.Base.comps">comps (dnf.Base attribute)</a>
   </dt>
 
       
   <dt><a href="api_base.html#dnf.Base.conf">conf (dnf.Base attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_plugins.html#dnf.Plugin.config">config() (dnf.Plugin method)</a>
   </dt>
 
       
@@ -232,6 +240,10 @@
   </dt>
 
       
+  <dt><a href="api_exceptions.html#dnf.exceptions.MarkingError">dnf.exceptions.MarkingError</a>
+  </dt>
+
+      
   <dt><a href="api_exceptions.html#dnf.exceptions.PackageNotFoundError">dnf.exceptions.PackageNotFoundError</a>
   </dt>
 
@@ -243,6 +255,10 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_package.html#dnf.package.Package">dnf.package.Package (built-in class)</a>
+  </dt>
+
+      
+  <dt><a href="api_plugins.html#dnf.Plugin">dnf.Plugin (built-in class)</a>
   </dt>
 
       
@@ -279,6 +295,10 @@
 
       
   <dt><a href="api_base.html#dnf.Base.do_transaction">do_transaction() (dnf.Base method)</a>
+  </dt>
+
+      
+  <dt><a href="api_base.html#dnf.Base.downgrade">downgrade() (dnf.Base method)</a>
   </dt>
 
       
@@ -469,6 +489,10 @@
   <dt><a href="api_conf.html#dnf.conf.Conf.persistdir">persistdir (dnf.conf.Conf attribute)</a>
   </dt>
 
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.pluginpath">pluginpath (dnf.conf.Conf attribute)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -502,6 +526,10 @@
   </dt>
 
       
+  <dt><a href="api_base.html#dnf.Base.read_all_repos">read_all_repos() (dnf.Base method)</a>
+  </dt>
+
+      
   <dt><a href="api_base.html#dnf.Base.read_comps">read_comps() (dnf.Base method)</a>
   </dt>
 
@@ -509,10 +537,22 @@
   <dt><a href="api_conf.html#dnf.conf.Conf.releasever">releasever (dnf.conf.Conf attribute)</a>
   </dt>
 
+      
+  <dt><a href="api_base.html#dnf.Base.remove">remove() (dnf.Base method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_base.html#dnf.Base.repos">repos (dnf.Base attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.reposdir">reposdir (dnf.conf.Conf attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_base.html#dnf.Base.reset">reset() (dnf.Base method)</a>
   </dt>
 
       
@@ -577,8 +617,16 @@
   <dt><a href="api_comps.html#dnf.comps.Category.ui_name">ui_name (dnf.comps.Category attribute)</a>
   </dt>
 
+      
+  <dt><a href="api_base.html#dnf.Base.upgrade">upgrade() (dnf.Base method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_base.html#dnf.Base.upgrade_all">upgrade_all() (dnf.Base method)</a>
+  </dt>
+
       
   <dt><a href="api_queries.html#dnf.query.Query.upgrades">upgrades() (dnf.query.Query method)</a>
   </dt>
@@ -622,7 +670,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

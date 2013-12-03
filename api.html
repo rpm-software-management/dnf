@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF API Reference &mdash; DNF 0.4.8-1 documentation</title>
+    <title>DNF API Reference &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
-    <link rel="next" title="Base—The centerpiece of DNF" href="api_base.html" />
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
+    <link rel="next" title="Common Provisions of the DNF API" href="api_common.html" />
     <link rel="prev" title="Changes in DNF CLI compared to Yum" href="cli_vs_yum.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api_base.html" title="Base—The centerpiece of DNF"
+          <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -71,8 +71,8 @@
 <h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The provided Python API to DNF is supposed to mainly allow writing the following two categories of programs:</p>
 <ol class="arabic simple">
-<li>plugins to DNF which extend functionality of the system&#8217;s DNF installation.</li>
-<li>extension applications that embed DNF to perform specific package management tasks.</li>
+<li><a class="reference internal" href="api_plugins.html"><em>plugins</em></a> to DNF which extend functionality of the system&#8217;s DNF installation.</li>
+<li>extension applications that embed DNF (by importing its Python modules) to perform specific package management tasks.</li>
 </ol>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -99,6 +99,10 @@
 <p>API Documentation Contents</p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="api_common.html">Common Provisions of the DNF API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_common.html#logging">Logging</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api_base.html"><tt class="docutils literal"><span class="pre">Base</span></tt>&#8212;The centerpiece of DNF</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_exceptions.html">Exceptions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_conf.html">Configuration</a></li>
@@ -109,6 +113,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api_package.html">Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_transaction.html">Transaction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_comps.html">Comps, or the Ditribution Compose Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_plugins.html">Plugin Interface</a></li>
 </ul>
 </div>
 <p>Indices:</p>
@@ -140,8 +145,8 @@
   <p class="topless"><a href="cli_vs_yum.html"
                         title="previous chapter">Changes in DNF CLI compared to Yum</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="api_base.html"
-                        title="next chapter"><tt class="docutils literal"><span class="pre">Base</span></tt>&#8212;The centerpiece of DNF</a></p>
+  <p class="topless"><a href="api_common.html"
+                        title="next chapter">Common Provisions of the DNF API</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api.txt"
@@ -174,12 +179,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api_base.html" title="Base—The centerpiece of DNF"
+          <a href="api_common.html" title="Common Provisions of the DNF API"
              >next</a> |</li>
         <li class="right" >
           <a href="cli_vs_yum.html" title="Changes in DNF CLI compared to Yum"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

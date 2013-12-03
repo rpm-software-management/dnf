@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.8-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.9-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.8-1',
+        VERSION:     '0.4.9-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.8-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
-    <link rel="prev" title="DNF API Reference" href="api.html" /> 
+    <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,9 +44,9 @@
           <a href="api_exceptions.html" title="Exceptions"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api.html" title="DNF API Reference"
+          <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -118,15 +118,44 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="dnf.Base.install">
-<tt class="descname">install</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.install" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mark packages matching <cite>pkg_spec</cite> for installation. <cite>pkg_spec</cite> can be any package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. Raises <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.PackageNotFoundError</span></tt></a> if the spec could not be matched against a known package. Return the number of packages that the operation has marked for installation.</p>
+<dt id="dnf.Base.read_all_repos">
+<tt class="descname">read_all_repos</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.read_all_repos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read repository configuration from the main configuration file specified by <a class="reference internal" href="api_conf.html#dnf.conf.Conf.config_file_path" title="dnf.conf.Conf.config_file_path"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.config_file_path</span></tt></a> and any <tt class="docutils literal"><span class="pre">.repo</span></tt> files under <a class="reference internal" href="api_conf.html#dnf.conf.Conf.reposdir" title="dnf.conf.Conf.reposdir"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.reposdir</span></tt></a>. All the repositories found this way are added to <a class="reference internal" href="#dnf.Base.repos" title="dnf.Base.repos"><tt class="xref py py-attr docutils literal"><span class="pre">repos</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="dnf.Base.read_comps">
 <tt class="descname">read_comps</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.read_comps" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read comps data from all the enabled repositories and initialize the <a class="reference internal" href="#dnf.Base.comps" title="dnf.Base.comps"><tt class="xref py py-attr docutils literal"><span class="pre">comps</span></tt></a> object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.reset">
+<tt class="descname">reset</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#dnf.Base.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the state of different <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> attributes. Selecting attributes to reset is controlled by passing the method keyword arguments set to <tt class="docutils literal"><span class="pre">True</span></tt>. When called with no arguments the method has no effect.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">argument passed</th>
+<th class="head">effect</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>goal=True</cite></td>
+<td>drop all the current <a class="reference internal" href="#package-marking-label"><em>packaging requests</em></a></td>
+</tr>
+<tr class="row-odd"><td><cite>repos=True</cite></td>
+<td>drop the current repositries (see <a class="reference internal" href="#dnf.Base.repos" title="dnf.Base.repos"><tt class="xref py py-attr docutils literal"><span class="pre">repos</span></tt></a>). This won&#8217;t
+affect the package data already loaded into the <a class="reference internal" href="#dnf.Base.sack" title="dnf.Base.sack"><tt class="xref py py-attr docutils literal"><span class="pre">sack</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><cite>sack=True</cite></td>
+<td>drop the current sack (see <a class="reference internal" href="#dnf.Base.sack" title="dnf.Base.sack"><tt class="xref py py-attr docutils literal"><span class="pre">sack</span></tt></a>)</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -142,6 +171,45 @@
 <dd><p>Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> to it. If <cite>pkg_types</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, it defaults to <tt class="docutils literal"><span class="pre">(&quot;mandatory&quot;,</span> <span class="pre">&quot;default&quot;)</span></tt>.</p>
 </dd></dl>
 
+<p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument they take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not neccessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
+<dl class="method">
+<dt id="dnf.Base.downgrade">
+<tt class="descname">downgrade</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.downgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark packages matching <cite>pkg_spec</cite> for downgrade.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.install">
+<tt class="descname">install</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark packages matching <cite>pkg_spec</cite> for installation.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This method was previously documented to raise <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">PackageNotFoundError</span></tt></a> if the spec could not be matched against a known package. While this still may hold in future versions, <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">PackageNotFoundError</span></tt></a> is currently being deprecated for public use.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This method was previously documented to return a number of packages marked for installation. Depending on this behavior is deprecated as of dnf-0.4.9 and the functionality will be dropped as early as dnf-0.4.12 (also see <a class="reference internal" href="api.html#deprecating-label"><em>Deprecation Policy</em></a>).</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.remove">
+<tt class="descname">remove</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark packages matching <cite>pkg_spec</cite> for removal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.upgrade">
+<tt class="descname">upgrade</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.upgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark packages matching <cite>pkg_spec</cite> for upgrade.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.upgrade_all">
+<tt class="descname">upgrade_all</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.upgrade_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark all installed packages for an upgrade.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -153,8 +221,8 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="api.html"
-                        title="previous chapter">DNF API Reference</a></p>
+  <p class="topless"><a href="api_common.html"
+                        title="previous chapter">Common Provisions of the DNF API</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="api_exceptions.html"
                         title="next chapter">Exceptions</a></p>
@@ -193,9 +261,9 @@
           <a href="api_exceptions.html" title="Exceptions"
              >next</a> |</li>
         <li class="right" >
-          <a href="api.html" title="DNF API Reference"
+          <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.8-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

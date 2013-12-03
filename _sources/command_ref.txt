@@ -48,6 +48,9 @@ See the reference for each command below.
 Options
 =======
 
+``--allowerasing``
+    Allow erasing of installed packages to resolve dependencies.
+
 ``--assumeno``
     answer no for all questions
 
@@ -255,10 +258,20 @@ transactions and act according to this information (assuming the
     Describe the given transaction. When no ID is given describes what happened
     during the latest transaction.
 
+``dnf history rollback <transaction-spec>``
+    Undo all transactions performed after the specified transaction. If it is
+    not possible to undo any transaction due to the current state of RPMDB,
+    do not undo any transaction.
+
 ``dnf history undo <transaction-spec>``
-    Performs the opposite operation to all operations performed in the
+    Perform the opposite operation to all operations performed in the
     specified transaction. If it is not possible to undo any operation due to
-    the current state of RPMDB, DNF does not undo any operation.
+    the current state of RPMDB, do not undo any operation.
+
+``dnf history userinstalled``
+    List names of all packages installed by a user. The output can be used as
+    the %packages section in a `kickstart <http://fedoraproject.org/wiki/
+    Anaconda/Kickstart>`_ file.
 
 ------------
 Info Command
@@ -472,12 +485,11 @@ current LC_MESSAGES locale (if possible).
 Specifying Transactions
 =======================
 
-``<transaction-spec>`` has two possible interpretations. If it is an integer,
-it specifies a transaction ID. Otherwise, the parameter must be in form
-``last[-offset]``, which specifies the transaction relative to the most recent
-transaction. It means that ``last`` represents the ID of the most recent
-transaction and ``last-offset`` represents the ID of the most recent
-transaction minus an integer offset.
+``<transaction-spec>`` can be in one of several forms. If it is an integer, it
+specifies a transaction ID. Specifying ``last`` is the same as specifying the ID
+of the most recent transaction. The last form is ``last-<offset>``, where
+``<offset>`` is a positive integer. It specifies offset-th transaction preceding
+the most recent transaction.
 
 ========
 See Also
