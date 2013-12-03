@@ -81,7 +81,11 @@ class MiscError(Error):
 
 class MarkingError(Error):
     # :api
-    pass
+
+    def __init__(self, value=None, pkg_spec=None):
+        """Initialize the marking error instance."""
+        super(MarkingError, self).__init__(value)
+        self.pkg_spec = pkg_spec
 
 class PackageNotFoundError(MarkingError):
     # :api
@@ -90,13 +94,13 @@ class PackageNotFoundError(MarkingError):
     pass
 
 class PackagesNotInstalledError(MarkingError):
-    def __init__(self, value=None, packages=[]):
-        Error.__init__(self, value)
+    def __init__(self, value=None, pkg_spec=None, packages=[]):
+        super(PackagesNotInstalledError, self).__init__(value, pkg_spec)
         self.packages = packages
 
 class PackagesNotAvailableError(MarkingError):
-    def __init__(self, value=None, packages=[]):
-        Error.__init__(self, value)
+    def __init__(self, value=None, pkg_spec=None, packages=[]):
+        super(PackagesNotAvailableError, self).__init__(value, pkg_spec)
         self.packages = packages
 
 class TransactionCheckError(Error):

@@ -39,8 +39,9 @@ class Update(support.ResultTestCase):
         base._sack = support.mock_sack('updates')
         base._goal = goal = mock.create_autospec(hawkey.Goal)
 
-        self.assertRaises(dnf.exceptions.MarkingError,
-                          base.upgrade, 'non-existent')
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            base.upgrade('non-existent')
+        self.assertEqual(context.exception.pkg_spec, 'non-existent')
         self.assertEqual(goal.mock_calls, [])
 
     def test_update_not_installed(self):

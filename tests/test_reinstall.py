@@ -61,13 +61,17 @@ class ReinstallTest(PycompTestCase):
         self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
 
     def test_reinstall_notfound(self):
-        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
-                          self._base.reinstall, 'non-existent')
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
+            self._base.reinstall('non-existent')
+
+        self.assertEqual(context.exception.pkg_spec, 'non-existent')
         self.assertEqual(self._goal.mock_calls, [])
 
     def test_reinstall_notinstalled(self):
-        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
-                          self._base.reinstall, 'lotus')
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
+            self._base.reinstall('lotus')
+
+        self.assertEqual(context.exception.pkg_spec, 'lotus')
         self.assertEqual(self._goal.mock_calls, [])
 
     def test_reinstall_notavailable(self):
@@ -76,7 +80,8 @@ class ReinstallTest(PycompTestCase):
         with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as context:
             self._base.reinstall('hole')
 
-        self.assertEquals(context.exception.packages, pkgs)
+        self.assertEqual(context.exception.pkg_spec, 'hole')
+        self.assertEqual(context.exception.packages, pkgs)
         self.assertEqual(self._goal.mock_calls, [])
 
     def test_reinstall_notavailable_available(self):

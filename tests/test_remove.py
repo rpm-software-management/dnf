@@ -28,8 +28,9 @@ class Remove(support.ResultTestCase):
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """
-        self.assertRaises(dnf.exceptions.PackagesNotInstalledError,
-                          self.yumbase.remove, "mrkite")
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
+            self.yumbase.remove('mrkite')
+        self.assertEqual(context.exception.pkg_spec, 'mrkite')
         installed_pkgs = self.yumbase.sack.query().installed().run()
         self.assertResult(self.yumbase, installed_pkgs)
 

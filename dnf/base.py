@@ -1518,7 +1518,7 @@ class Base(object):
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
-                raise dnf.exceptions.MarkingError("no package matched")
+                raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
@@ -1550,7 +1550,7 @@ class Base(object):
         if sltr:
             self._goal.upgrade(select=sltr)
             return 1
-        raise dnf.exceptions.MarkingError("no package matched")
+        raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
 
     def upgrade_all(self):
         # :api
@@ -1577,7 +1577,7 @@ class Base(object):
         matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
         installed = matches.installed().run()
         if not installed:
-            raise dnf.exceptions.PackagesNotInstalledError("no package matched")
+            raise dnf.exceptions.PackagesNotInstalledError('no package matched', pkg_spec)
 
         clean_deps = self.conf.clean_requirements_on_remove
         for pkg in installed:
@@ -1668,7 +1668,7 @@ class Base(object):
         available_nevra2pkg = query.per_nevra_dict(q.available())
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
-                "no package matched", available_nevra2pkg.values())
+                'no package matched', pkg_spec, available_nevra2pkg.values())
 
         cnt = 0
         for installed_pkg in installed_pkgs:
@@ -1682,7 +1682,7 @@ class Base(object):
 
         if cnt == 0:
             raise dnf.exceptions.PackagesNotAvailableError(
-                "no package matched", installed_pkgs)
+                'no package matched', pkg_spec, installed_pkgs)
 
         return cnt
 
@@ -1701,8 +1701,8 @@ class Base(object):
             available_pkgs = q.available()
             if available_pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
-                    "no package matched", available_pkgs)
-            raise dnf.exceptions.PackageNotFoundError("no package matched")
+                    'no package matched', pkg_spec, available_pkgs)
+            raise dnf.exceptions.PackageNotFoundError('no package matched', pkg_spec)
 
         q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
@@ -1815,10 +1815,10 @@ class Base(object):
             """Handle a downgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError("no package matched")
+                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError("no package matched")
+                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_upgrade(olds[0], news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
@@ -1828,7 +1828,7 @@ class Base(object):
             """Handle an erased package."""
             pkgs = self.sack.query().available().nevra(old_nevra)
             if not pkgs:
-                raise dnf.exceptions.PackagesNotAvailableError("no package matched")
+                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
             assert len(pkgs) == 1
             self._transaction.add_install(pkgs[0], None, 'history')
 
@@ -1836,7 +1836,7 @@ class Base(object):
             """Handle an installed package."""
             pkgs = self.sack.query().installed().nevra(new_nevra)
             if not pkgs:
-                raise dnf.exceptions.PackagesNotInstalledError("no package matched")
+                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
             assert len(pkgs) == 1
             self._transaction.add_erase(pkgs[0])
             for obsoleted_nevra in obsoleted_nevras:
@@ -1846,10 +1846,10 @@ class Base(object):
             """Handle a reinstalled package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError("no package matched")
+                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError("no package matched")
+                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
             obsoleteds = []
             for nevra in obsoleted_nevras:
                 obsoleteds_ = self.sack.query().installed().nevra(nevra)
@@ -1863,10 +1863,10 @@ class Base(object):
             """Handle an upgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError("no package matched")
+                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError("no package matched")
+                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
             assert len(news) == 1 and len(olds) == 1
             self._transaction.add_downgrade(olds[0], news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
