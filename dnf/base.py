@@ -760,9 +760,6 @@ class Base(object):
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.verify_transaction(return_code, cb.verify_tsi_package)
-
-        if (not self.conf.keepcache and
-            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.clean_used_packages()
 
         return return_code

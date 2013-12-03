@@ -171,3 +171,10 @@ There is no shell in DNF but the case above is still valid. We provide the ``--a
   dnf --allowerasing install B
 
 
+============================================
+ ``keepcache`` configuration option dropped
+============================================
+
+The option was used to keep the downloaded .rpm of just installed pacakges in the cache. It has been disabled in Fedora and there has been no real use cases indicated. The option has been removed in DNF which deletes all downloaded packages after a transaction completes.
+
+Note that this option is something different than the "downloadonly" functionality in Yum.
