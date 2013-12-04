@@ -70,3 +70,16 @@ class DrpmTest(support.TestCase):
             self.assertEquals(self.download(), ['tour-5-1.noarch.rpm'])
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
             self.assertEquals(self.download(), ['drpms/tour-5-1.noarch.drpm'])
+
+    def test_failover(self):
+        # check drpm => rpm failover
+        self.pkg.repo.deltarpm = 1
+        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
+            # single failure => no error reported
+            self.assertEquals(
+                self.download(['ee']),
+                ['drpms/tour-5-1.noarch.drpm', 'tour-5-1.noarch.rpm'])
+            # drpm & rpm failure => return the rpm error
+            self.assertEquals(
+                self.download(['ee', 'taky ee'], {self.pkg: ['taky ee']}),
+                ['drpms/tour-5-1.noarch.drpm', 'tour-5-1.noarch.rpm'])
