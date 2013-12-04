@@ -25,7 +25,6 @@ from __future__ import print_function
 import dnf.persistor
 import dnf.util
 import os
-from dnf.cli import CliError
 from dnf.cli.format import format_number
 import dnf.logging
 from dnf.yum import misc
@@ -36,6 +35,7 @@ import fnmatch
 import time
 from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
 
+import dnf.cli
 import dnf.yum.config
 import hawkey
 
@@ -82,7 +82,7 @@ For more information contact your distribution or package provider.
 """)
                 base.logger.critical(msg)
                 base.logger.critical(_("Problem repository: %s"), repo)
-                raise CliError
+                raise dnf.cli.CliError
 
 def checkPackageArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one package for
@@ -97,7 +97,7 @@ def checkPackageArg(cli, basecmd, extcmds):
         cli.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
         _err_mini_usage(cli, basecmd)
-        raise CliError
+        raise dnf.cli.CliError
 
 def checkItemArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one item for
@@ -113,7 +113,7 @@ def checkItemArg(cli, basecmd, extcmds):
     if len(extcmds) == 0:
         cli.logger.critical(_('Error: Need an item to match'))
         _err_mini_usage(cli, basecmd)
-        raise CliError
+        raise dnf.cli.CliError
 
 def checkGroupArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
@@ -127,7 +127,7 @@ def checkGroupArg(cli, basecmd, extcmds):
     if len(extcmds) == 0:
         cli.logger.critical(_('Error: Need a group or list of groups'))
         _err_mini_usage(cli, basecmd)
-        raise CliError
+        raise dnf.cli.CliError
 
 def checkCleanArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains at least one argument, and that all
@@ -149,7 +149,7 @@ def checkCleanArg(cli, basecmd, extcmds):
         if cmd not in VALID_ARGS:
             cli.logger.critical(_('Error: invalid clean argument: %r') % cmd)
             _err_mini_usage(cli, basecmd)
-            raise CliError
+            raise dnf.cli.CliError
 
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
@@ -170,7 +170,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
             ' Run "yum repolist all" to see the repos you have.\n'
             ' You can enable repos with yum-config-manager --enable <repo>')
     base.logger.critical(msg)
-    raise CliError
+    raise dnf.cli.CliError
 
 class Command(object):
     """An abstract base class that defines the methods needed by the cli
@@ -442,7 +442,7 @@ class DistroSyncCommand(Command):
         checkEnabledRepo(self.base, extcmds)
         if extcmds:
             self.cli.logger.critical(_('distro-sync accepts no package specs.'))
-            raise CliError
+            raise dnf.cli.CliError
 
     def run(self, basecmd, extcmds):
         """Execute this command.
@@ -805,7 +805,7 @@ class GroupsCommand(Command):
         if cmd not in cmds:
             self.base.logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
-            raise CliError
+            raise dnf.cli.CliError
 
     def run(self, basecmd, extcmds):
         """Execute this command.
@@ -1577,10 +1577,10 @@ class HelpCommand(Command):
         """
         if len(extcmds) == 0:
             self.cli.print_usage()
-            raise CliError
+            raise dnf.cli.CliError
         elif len(extcmds) > 1 or extcmds[0] not in self.cli.cli_commands:
             self.cli.print_usage()
-            raise CliError
+            raise dnf.cli.CliError
 
     @staticmethod
     def _makeOutput(command):
@@ -2113,12 +2113,12 @@ class HistoryCommand(Command):
         if extcmds and extcmds[0] not in cmds:
             self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
-            raise CliError
+            raise dnf.cli.CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkGPGKey(self.base, self.cli)
         elif not os.access(self.base.history._db_file, os.R_OK):
             self.base.logger.critical(_("You don't have access to the history DB."))
-            raise CliError
+            raise dnf.cli.CliError
 
     def run(self, basecmd, extcmds):
         """Execute this command.

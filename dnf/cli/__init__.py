@@ -18,8 +18,9 @@
 # Red Hat, Inc.
 #
 
-import dnf.exceptions
+from . commands import Command
 
+import dnf.exceptions
 class CliError(dnf.exceptions.Error):
     """CLI Exception."""
 
