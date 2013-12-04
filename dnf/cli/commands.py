@@ -243,7 +243,7 @@ class Command(object):
         """
         pass
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute the command
 
         :param basecmd: the name of the command being executed
@@ -306,7 +306,7 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -360,7 +360,7 @@ class UpgradeCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -399,7 +399,7 @@ class UpgradeToCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         try:
             return self.base.upgrade_userlist_to(extcmds)
         except dnf.exceptions.Error as e:
@@ -444,7 +444,7 @@ class DistroSyncCommand(Command):
             self.cli.logger.critical(_('distro-sync accepts no package specs.'))
             raise CliError
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -512,7 +512,7 @@ class InfoCommand(Command):
         """
         return _("Display details about a package or group of packages")
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -683,7 +683,7 @@ class EraseCommand(Command):
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -807,7 +807,7 @@ class GroupsCommand(Command):
                                  ", ".join(cmds))
             raise CliError
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -903,7 +903,7 @@ class MakeCacheCommand(Command):
         """
         checkEnabledRepo(self.base)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -997,7 +997,7 @@ class CleanCommand(Command):
         checkCleanArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1055,7 +1055,7 @@ class ProvidesCommand(Command):
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1107,7 +1107,7 @@ class CheckUpdateCommand(Command):
         """
         checkEnabledRepo(self.base)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1193,7 +1193,7 @@ class SearchCommand(Command):
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1256,7 +1256,7 @@ class DepListCommand(Command):
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1299,7 +1299,7 @@ class RepoListCommand(Command):
         """
         return _('Display the configured software repositories')
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1618,7 +1618,7 @@ class HelpCommand(Command):
 
         return help_output
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1677,7 +1677,7 @@ class ReInstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1745,7 +1745,7 @@ class DowngradeCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -1804,7 +1804,7 @@ class VersionCommand(Command):
         """
         return _("Display a version for the machine and/or available repos.")
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -2120,7 +2120,7 @@ class HistoryCommand(Command):
             self.base.logger.critical(_("You don't have access to the history DB."))
             raise CliError
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command
@@ -2207,7 +2207,7 @@ class CheckRpmdbCommand(Command):
         """
         return _("Check for problems in the rpmdb")
 
-    def doCommand(self, basecmd, extcmds):
+    def run(self, basecmd, extcmds):
         """Execute this command.
 
         :param basecmd: the name of the command

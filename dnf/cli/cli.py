@@ -1484,7 +1484,7 @@ class Cli(object):
             lar = self.command.load_available_repos
             self.base.fill_sack(load_system_repo='auto',
                                 load_available_repos=lar)
-        return self.command.doCommand(self.base.basecmd, self.base.extcmds)
+        return self.command.run(self.base.basecmd, self.base.extcmds)
 
     def print_usage(self):
         return self.optparser.print_usage()

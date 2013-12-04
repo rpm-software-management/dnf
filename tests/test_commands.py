@@ -69,7 +69,7 @@ class CommandsCliTest(support.TestCase):
     @staticmethod
     @mock.patch('dnf.Base.fill_sack')
     def _do_makecache(cmd, fill_sack):
-        return cmd.doCommand('makecache', ['timer'])
+        return cmd.run('makecache', ['timer'])
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
