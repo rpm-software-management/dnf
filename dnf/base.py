@@ -904,32 +904,48 @@ class Base(object):
 
         # select and sort packages to download
         presto = DeltaInfo(self.sack.query().installed(), progress)
-        remote_pkgs = [presto.delta(po) for po in pkglist if not (po.from_cmdline or po.repo.local)]
+        remote_pkgs = [po for po in pkglist if not (po.from_cmdline or po.repo.local)]
         remote_pkgs.sort(key=cmp_to_key(mediasort))
-        remote_size = sum(po.size for po in remote_pkgs)
+
+        def download(packages):
+            # download packages
+            remote_size = sum(po.size for po in packages)
+            if progress:
+                progress.start(len(packages), remote_size)
+            targets = [po.repo.get_package_target(po, progress) for po in packages]
+            librepo_err = None
+            try:
+                librepo.download_packages(targets, failfast=True)
+            except librepo.LibrepoException as e:
+                librepo_err = e.args[1] or 'librepo error'
+            presto.wait()
+
+            # process downloading errors
+            errors = {}
+            fatal = librepo_err
+            for t in targets:
+                err = t.err
+                po = t.po
+                if not err or err == 'Already downloaded' or err.startswith('Not finished'):
+                    err = presto.err.get(po) # merge download & rebuild errors
+                try:
+                    po = po.rpm # drpm falls back to rpm
+                except AttributeError:
+                    if err: fatal = True # but rpm does not
+                if err:
+                    errors[po] = [err]
+
+            # librepo may fail without setting any .err attributes
+            if not errors and librepo_err:
+                errors[remote_pkgs[0]] = [librepo_err]
+            return remote_size, errors, fatal
 
         # run downloads
         beg_download = time.time()
-        if progress:
-            progress.start(len(remote_pkgs), remote_size)
-        targets = [po.repo.get_package_target(po, progress) for po in remote_pkgs]
-        librepo_err = None
-        try:
-            librepo.download_packages(targets, failfast=True)
-        except librepo.LibrepoException as e:
-            librepo_err = e.args[1] or 'librepo error'
-        errors = dict((t.po, [t.err]) for t in targets
-                      if t.err not in (None, 'Already downloaded'))
-
-        # finish delta rebuilds
-        presto.wait()
-        for po, err in presto.err.items():
-            errors[po] = [err]
-
-        # librepo may fail without setting any .err attributes
-        # make sure caller sees the error and does not proceed
-        if not errors and librepo_err:
-            errors[pkglist[0]] = [librepo_err]
+        remote_size, errors, fatal = download(list(map(presto.delta, remote_pkgs)))
+        if errors and not fatal:
+            self.logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
+            remote_size, errors, fatal = download(remote_pkgs)
 
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
