@@ -1725,12 +1725,6 @@ Transaction Summary
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
-        def str2int(x):
-            try:
-                return int(x)
-            except ValueError:
-                return None
-
         tids = set()
         mtids = set()
         pats = []
@@ -1744,10 +1738,17 @@ Transaction Summary
                 # Have a range ... do a "merged" transaction.
                 mtids.add(self._historyRangeRTIDs(old, tid))
                 continue
-            elif str2int(tid) is not None:
-                tids.add(str2int(tid))
+
+            try:
+                id_or_offset = self.base.transaction_id_or_offset(tid)
+            except ValueError:
+                # A package pattern.
+                pats.append(tid)
                 continue
-            pats.append(tid)
+
+            # A transaction ID or an offset from the last transaction ID.
+            tids.add(id_or_offset if id_or_offset >= 0 else
+                     old.tid + id_or_offset + 1)
         if pats:
             tids.update(self.history.search(pats))
         utids = tids.copy()

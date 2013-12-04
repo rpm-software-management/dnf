@@ -254,8 +254,11 @@ transactions and act according to this information (assuming the
     The default history action is listing all known transaction information in a
     table.
 
-``dnf history info [<transaction_id>]``
-    Describe the given transaction. When no ID is given describes what happened
+``dnf history info [<spec>...]``
+    Describe the given transactions. Each ``<spec>`` can be either a
+    ``<transaction-spec>``, which specifies a transaction directly, or a
+    ``<package-name-spec>``, which specifies a transaction by a package which
+    it manipulated. When no transaction is specified describe what happened
     during the latest transaction.
 
 ``dnf history rollback <transaction-spec>``
