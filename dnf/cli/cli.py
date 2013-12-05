@@ -1119,27 +1119,27 @@ class Cli(object):
         self.nogpgcheck = False
 
         # :hawkey -- commented out are not yet supported in dnf
-        self._register_command(dnf.cli.commands.InstallCommand)
-        self._register_command(dnf.cli.commands.UpgradeCommand)
-        self._register_command(dnf.cli.commands.UpgradeToCommand)
-        self._register_command(dnf.cli.commands.InfoCommand)
-        self._register_command(dnf.cli.commands.ListCommand)
-        self._register_command(dnf.cli.commands.EraseCommand)
-        self._register_command(dnf.cli.commands.GroupsCommand)
-        self._register_command(dnf.cli.commands.MakeCacheCommand)
-        self._register_command(dnf.cli.commands.CleanCommand)
-        self._register_command(dnf.cli.commands.ProvidesCommand)
-        self._register_command(dnf.cli.commands.CheckUpdateCommand)
-        self._register_command(dnf.cli.commands.SearchCommand)
-        # self._register_command(dnf.cli.commands.DepListCommand)
-        self._register_command(dnf.cli.commands.RepoListCommand)
-        self._register_command(dnf.cli.commands.HelpCommand)
-        self._register_command(dnf.cli.commands.ReInstallCommand)
-        self._register_command(dnf.cli.commands.DowngradeCommand)
-        # self._register_command(dnf.cli.commands.VersionCommand)
-        self._register_command(dnf.cli.commands.HistoryCommand)
-        # self._register_command(dnf.cli.commands.CheckRpmdbCommand)
-        self._register_command(dnf.cli.commands.DistroSyncCommand)
+        self.register_command(dnf.cli.commands.InstallCommand)
+        self.register_command(dnf.cli.commands.UpgradeCommand)
+        self.register_command(dnf.cli.commands.UpgradeToCommand)
+        self.register_command(dnf.cli.commands.InfoCommand)
+        self.register_command(dnf.cli.commands.ListCommand)
+        self.register_command(dnf.cli.commands.EraseCommand)
+        self.register_command(dnf.cli.commands.GroupsCommand)
+        self.register_command(dnf.cli.commands.MakeCacheCommand)
+        self.register_command(dnf.cli.commands.CleanCommand)
+        self.register_command(dnf.cli.commands.ProvidesCommand)
+        self.register_command(dnf.cli.commands.CheckUpdateCommand)
+        self.register_command(dnf.cli.commands.SearchCommand)
+        # self.register_command(dnf.cli.commands.DepListCommand)
+        self.register_command(dnf.cli.commands.RepoListCommand)
+        self.register_command(dnf.cli.commands.HelpCommand)
+        self.register_command(dnf.cli.commands.ReInstallCommand)
+        self.register_command(dnf.cli.commands.DowngradeCommand)
+        # self.register_command(dnf.cli.commands.VersionCommand)
+        self.register_command(dnf.cli.commands.HistoryCommand)
+        # self.register_command(dnf.cli.commands.CheckRpmdbCommand)
+        self.register_command(dnf.cli.commands.DistroSyncCommand)
 
     def _configure_cachedir(self):
         # perform the CLI-specific cachedir tricks
@@ -1227,18 +1227,6 @@ class Cli(object):
                 usage += "%s\n" % command.aliases[0]
 
         return usage
-
-    def _register_command(self, command_cls):
-        """ Register a :class:`dnf.cli.commands.Command` so that it can be
-            called by any of the names returned by its
-            :func:`dnf.cli.commands.Command.getNames` method.
-
-            :param command_cls: the :class:`dnf.cli.commands.Command` to register
-        """
-        for name in command_cls.aliases:
-            if name in self.cli_commands:
-                raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)
-            self.cli_commands[name] = command_cls
 
     def _parse_commands(self):
         """Read :attr:`self.cmds` and parse them out to make sure that
@@ -1467,6 +1455,18 @@ class Cli(object):
                                  yumvar.get('releasever', '$releasever')))
         self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         return conf
+
+    def register_command(self, command_cls):
+        """ Register a :class:`dnf.cli.commands.Command` so that it can be
+            called by any of the names returned by its
+            :func:`dnf.cli.commands.Command.getNames` method.
+
+            :param command_cls: the :class:`dnf.cli.commands.Command` to register
+        """
+        for name in command_cls.aliases:
+            if name in self.cli_commands:
+                raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)
+            self.cli_commands[name] = command_cls
 
     def run(self):
         """Call the base command, and pass it the extended commands or
