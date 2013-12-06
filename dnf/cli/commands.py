@@ -253,16 +253,6 @@ class Command(object):
         """
         pass
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before the
-        command can run
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return True
-
 class InstallCommand(Command):
     """A class containing methods needed by the cli to execute the
     install command.
@@ -554,19 +544,6 @@ class InfoCommand(Command):
     def run(self, extcmds):
         return self._run('info', extcmds)
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        if len(extcmds) and extcmds[0] == 'installed':
-            return False
-
-        return True
-
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
     list command.
@@ -629,27 +606,6 @@ class EraseCommand(Command):
 
     def run(self, extcmds):
         return self.base.erasePkgs(extcmds)
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
-    def needTsRemove(self, basecmd, extcmds):
-        """Return whether a transaction set for removal only must be
-        set up before this command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a remove-only transaction set is needed, False otherwise
-        """
-        return True
-
 
 class GroupsCommand(Command):
     """ Single sub-command interface for most groups interaction. """
@@ -764,34 +720,6 @@ class GroupsCommand(Command):
         if cmd == 'remove':
             return self.base.removeGroups(extcmds)
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        cmd, extcmds = self._grp_cmd(extcmds)
-
-        if cmd in ('list', 'info', 'remove', 'summary'):
-            return False
-        return True
-
-    def needTsRemove(self, basecmd, extcmds):
-        """Return whether a transaction set for removal only must be
-        set up before this command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a remove-only transaction set is needed, False otherwise
-        """
-        cmd, extcmds = self._grp_cmd(extcmds)
-
-        if cmd in ('remove',):
-            return True
-        return False
-
 class MakeCacheCommand(Command):
     """A class containing methods needed by the cli to execute the
     makecache command.
@@ -868,16 +796,6 @@ class MakeCacheCommand(Command):
         self.base.logger.info(_('Metadata Cache Created'))
         return True
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
 class CleanCommand(Command):
     """A class containing methods needed by the cli to execute the
     clean command.
@@ -914,16 +832,6 @@ class CleanCommand(Command):
 
     def run(self, extcmds):
         return self.base.cleanCli(extcmds)
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
 
 class ProvidesCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1075,16 +983,6 @@ class SearchCommand(Command):
     def run(self, extcmds):
         self.base.logger.debug(_("Searching Packages: "))
         return self.cli.search(extcmds)
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
 
 class DepListCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1369,17 +1267,6 @@ class RepoListCommand(Command):
         msg = 'repolist: ' +to_unicode(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
-
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
     help command.
@@ -1459,16 +1346,6 @@ class HelpCommand(Command):
             command = self.cli.cli_commands[extcmds[0]]
             self.base.logger.info(self._makeOutput(command))
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
 class ReInstallCommand(Command):
     """A class containing methods needed by the cli to execute the
     reinstall command.
@@ -1512,16 +1389,6 @@ class ReInstallCommand(Command):
         """
         return _("reinstall a package")
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
-
 class DowngradeCommand(Command):
     """A class containing methods needed by the cli to execute the
     downgrade command.
@@ -1564,16 +1431,6 @@ class DowngradeCommand(Command):
         :return: a one line summary of this command
         """
         return _("downgrade a package")
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
 
 class VersionCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1716,23 +1573,6 @@ class VersionCommand(Command):
             print(self.output.fmtColumns(list(zip(line, columns))))
 
         return 0, ['version']
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        vcmd = 'installed'
-        if extcmds:
-            vcmd = extcmds[0]
-        verbose = self.base.conf.verbose
-        if vcmd == 'groupinfo' and verbose:
-            return True
-        return vcmd in ('available', 'all', 'group-available', 'group-all')
-
 
 class HistoryCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1953,20 +1793,6 @@ class HistoryCommand(Command):
         elif code != 0:
             raise dnf.exceptions.Error(strs[0])
 
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        vcmd = 'list'
-        if extcmds:
-            vcmd = extcmds[0]
-        return vcmd in ('repeat', 'redo', 'undo', 'rollback')
-
-
 class CheckRpmdbCommand(Command):
     """A class containing methods needed by the cli to execute the
     check-rpmdb command.
@@ -2004,13 +1830,3 @@ class CheckRpmdbCommand(Command):
                                    header=lambda x: None):
             raise dnf.exceptions.Error(msg)
         self.base.logger.info(msg)
-
-    def needTs(self, basecmd, extcmds):
-        """Return whether a transaction set must be set up before this
-        command can run.
-
-        :param basecmd: the name of the command
-        :param extcmds: a list of arguments passed to *basecmd*
-        :return: True if a transaction set is needed, False otherwise
-        """
-        return False
