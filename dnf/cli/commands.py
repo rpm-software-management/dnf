@@ -245,10 +245,9 @@ class Command(object):
         """
         pass
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         """Execute the command
 
-        :param basecmd: the name of the command being executed
         :param extcmds: a list of arguments passed to *basecmd*
 
         """
@@ -303,7 +302,7 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.installPkgs(extcmds)
 
 class UpgradeCommand(Command):
@@ -343,7 +342,7 @@ class UpgradeCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.updatePkgs(extcmds)
 
 class UpgradeToCommand(Command):
@@ -368,7 +367,7 @@ class UpgradeToCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.upgrade_userlist_to(extcmds)
 
 class DistroSyncCommand(Command):
@@ -411,7 +410,7 @@ class DistroSyncCommand(Command):
             self.cli.logger.critical(_('distro-sync accepts no package specs.'))
             raise dnf.cli.CliError
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.distro_sync_userlist(extcmds)
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
@@ -464,7 +463,7 @@ class InfoCommand(Command):
         """
         return _("Display details about a package or group of packages")
 
-    def run(self, basecmd, extcmds):
+    def _run(self, basecmd, extcmds):
         try:
             highlight = self.output.term.MODE['bold']
             ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
@@ -552,6 +551,9 @@ class InfoCommand(Command):
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
+    def run(self, extcmds):
+        return self._run('info', extcmds)
+
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
         command can run.
@@ -581,6 +583,8 @@ class ListCommand(InfoCommand):
         """
         return _("List a package or groups of packages")
 
+    def run(self, extcmds):
+        return self._run('list', extcmds)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -623,7 +627,7 @@ class EraseCommand(Command):
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.erasePkgs(extcmds)
 
     def needTs(self, basecmd, extcmds):
@@ -686,7 +690,7 @@ class GroupsCommand(Command):
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
 
-    def _grp_cmd(self, basecmd, extcmds):
+    def _grp_cmd(self, extcmds):
         return extcmds[0], extcmds[1:]
 
     _CMD_ALIASES = {'update'     : 'upgrade',
@@ -716,7 +720,7 @@ class GroupsCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmd, extcmds = self._grp_cmd(basecmd, extcmds)
+        cmd, extcmds = self._grp_cmd(extcmds)
 
         checkEnabledRepo(self.base)
 
@@ -740,8 +744,8 @@ class GroupsCommand(Command):
     def resolve(self):
         return self._resolve
 
-    def run(self, basecmd, extcmds):
-        cmd, extcmds = self._grp_cmd(basecmd, extcmds)
+    def run(self, extcmds):
+        cmd, extcmds = self._grp_cmd(extcmds)
 
         self._grp_setup_doCommand()
 
@@ -768,7 +772,7 @@ class GroupsCommand(Command):
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a transaction set is needed, False otherwise
         """
-        cmd, extcmds = self._grp_cmd(basecmd, extcmds)
+        cmd, extcmds = self._grp_cmd(extcmds)
 
         if cmd in ('list', 'info', 'remove', 'summary'):
             return False
@@ -782,7 +786,7 @@ class GroupsCommand(Command):
         :param extcmds: a list of arguments passed to *basecmd*
         :return: True if a remove-only transaction set is needed, False otherwise
         """
-        cmd, extcmds = self._grp_cmd(basecmd, extcmds)
+        cmd, extcmds = self._grp_cmd(extcmds)
 
         if cmd in ('remove',):
             return True
@@ -820,7 +824,7 @@ class MakeCacheCommand(Command):
         """
         checkEnabledRepo(self.base)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         msg = _("Making cache files for all metadata files.")
         self.base.logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
@@ -908,7 +912,7 @@ class CleanCommand(Command):
         checkCleanArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.cleanCli(extcmds)
 
     def needTs(self, basecmd, extcmds):
@@ -954,7 +958,7 @@ class ProvidesCommand(Command):
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         self.base.logger.debug("Searching Packages: ")
         return self.base.provides(extcmds)
 
@@ -995,7 +999,7 @@ class CheckUpdateCommand(Command):
         """
         checkEnabledRepo(self.base)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         obscmds = ['obsoletes'] + extcmds
         self.base.extcmds.insert(0, 'updates')
 
@@ -1068,7 +1072,7 @@ class SearchCommand(Command):
         """
         checkItemArg(self.cli, basecmd, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         self.base.logger.debug(_("Searching Packages: "))
         return self.cli.search(extcmds)
 
@@ -1116,7 +1120,7 @@ class DepListCommand(Command):
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.deplist(extcmds)
 
 class RepoListCommand(Command):
@@ -1143,7 +1147,7 @@ class RepoListCommand(Command):
         """
         return _('Display the configured software repositories')
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         def _repo_size(repo):
             ret = 0
             for pkg in self.base.sack.query().filter(reponame__eq=repo.id):
@@ -1450,7 +1454,7 @@ class HelpCommand(Command):
 
         return help_output
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         if extcmds[0] in self.cli.cli_commands:
             command = self.cli.cli_commands[extcmds[0]]
             self.base.logger.info(self._makeOutput(command))
@@ -1497,7 +1501,7 @@ class ReInstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.reinstallPkgs(extcmds)
 
     @staticmethod
@@ -1550,7 +1554,7 @@ class DowngradeCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         return self.base.downgradePkgs(extcmds)
 
     @staticmethod
@@ -1594,7 +1598,7 @@ class VersionCommand(Command):
         """
         return _("Display a version for the machine and/or available repos.")
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
@@ -1907,7 +1911,7 @@ class HistoryCommand(Command):
     def resolve(self):
         return self._resolve
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
@@ -1986,7 +1990,7 @@ class CheckRpmdbCommand(Command):
         """
         return _("Check for problems in the rpmdb")
 
-    def run(self, basecmd, extcmds):
+    def run(self, extcmds):
         chkcmd = 'all'
         if extcmds:
             chkcmd = extcmds
@@ -1995,7 +1999,7 @@ class CheckRpmdbCommand(Command):
             print(to_unicode(x.__str__()))
 
         rc = 0
-        msg = '%s %s' % (basecmd, chkcmd)
+        msg = 'check %s' % chkcmd
         if self.base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
                                    header=lambda x: None):
             raise dnf.exceptions.Error(msg)

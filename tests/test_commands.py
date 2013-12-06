@@ -69,7 +69,7 @@ class CommandsCliTest(support.TestCase):
     @staticmethod
     @mock.patch('dnf.Base.fill_sack')
     def _do_makecache(cmd, fill_sack):
-        return cmd.run('makecache', ['timer'])
+        return cmd.run(['timer'])
 
     def assertLastInfo(self, cmd, msg):
         self.assertEqual(cmd.base.logger.info.mock_calls[-1],
