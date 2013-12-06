@@ -18,7 +18,7 @@
 # Red Hat, Inc.
 #
 
-from . commands import Command
+from . commands import Command # :api
 
 import dnf.exceptions
 class CliError(dnf.exceptions.Error):

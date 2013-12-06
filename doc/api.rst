@@ -58,6 +58,7 @@ API Documentation Contents
   api_transaction
   api_comps
   api_plugins
+  api_cli
 
 Indices:
 

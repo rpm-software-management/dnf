@@ -179,7 +179,7 @@ class Command(object):
     """
 
     activate_sack = False
-    aliases = []
+    aliases = [] # :api
     load_available_repos = True
     resolve = False
     success_retval = 0
