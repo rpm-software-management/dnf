@@ -1,0 +1,8 @@
+#! /bin/sh
+cd $(dirname $0)
+
+rm -rf >/dev/null *.rpm drpms/ repodata/
+ln -s ../rpm/*.rpm .
+mkdir drpms
+makedeltarpm tour-5-0.noarch.rpm tour-5-1.noarch.rpm drpms/tour-5-1.noarch.drpm
+createrepo --deltas --no-database .
