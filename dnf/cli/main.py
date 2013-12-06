@@ -177,6 +177,7 @@ def _main(base, args):
         if base._ts_save_file:
             logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
+        base.plugins.run_transaction()
         logger.info(_('Complete!'))
 
     return return_code

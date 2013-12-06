@@ -25,3 +25,7 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
   .. method:: config
 
     Plugin can override this. This hook is called immediately after the CLI/extension is finished configuring DNF.  The plugin can use this to tweak the global configuration or the repository configuration.
+
+  .. method:: transaction
+
+    Plugin can override this. This hook is called immediately after a successful transaction.

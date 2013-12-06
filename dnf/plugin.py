@@ -48,6 +48,10 @@ class Plugin(object):
         # :api
         pass
 
+    def transaction(self):
+        # :api
+        pass
+
 class Plugins(object):
     def __init__(self):
         self.plugin_cls = []
@@ -55,7 +59,7 @@ class Plugins(object):
 
     def _caller(method):
         def fn(self):
-            dnf.util.mapall(operator.methodcaller('config'), self.plugins)
+            dnf.util.mapall(operator.methodcaller(method), self.plugins)
         return fn
 
     def load(self, paths):
@@ -79,6 +83,8 @@ class Plugins(object):
         for p_cls in self.plugin_cls:
             plugin = p_cls(base, cli)
             self.plugins.append(plugin)
+
+    run_transaction = _caller('transaction')
 
     def unload(self):
         del sys.modules[DYNAMIC_PACKAGE]
