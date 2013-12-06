@@ -1032,7 +1032,7 @@ class BaseCli(dnf.Base):
         hiend = self.output.term.MODE['normal']
         try:
             self.history_undo_operations(operations)
-        except dnf.exceptions.PackagesNotAvailableError as err:
+        except dnf.exceptions.PackagesNotInstalledError as err:
             self.logger.info(_('No package %s%s%s installed.'),
                              hibeg, unicode(err.pkg_spec), hiend)
             return 1, ['A transaction cannot be undone']
@@ -1061,7 +1061,7 @@ class BaseCli(dnf.Base):
         hiend = self.output.term.MODE['normal']
         try:
             self.history_undo_operations(history.transaction_nevra_ops(old.tid))
-        except dnf.exceptions.PackagesNotAvailableError as err:
+        except dnf.exceptions.PackagesNotInstalledError as err:
             self.logger.info(_('No package %s%s%s installed.'),
                              hibeg, unicode(err.pkg_spec), hiend)
             return 1, ['An operation cannot be undone']
