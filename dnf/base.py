@@ -926,7 +926,7 @@ class Base(object):
         librepo_err = None
         try:
             librepo.download_packages(targets, failfast=True)
-        except librepo.LibrepoException, e:
+        except librepo.LibrepoException as e:
             librepo_err = e.args[1] or 'librepo error'
         errors = dict((t.po, [t.err]) for t in targets
                       if t.err not in (None, 'Already downloaded'))
