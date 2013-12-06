@@ -293,6 +293,9 @@ class InstallCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, extcmds):
+        if any(extcmd.startswith('@') for extcmd in extcmds):
+            self.base.read_comps()
+
         return self.base.installPkgs(extcmds)
 
 class UpgradeCommand(Command):
