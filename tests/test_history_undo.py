@@ -116,6 +116,23 @@ class BaseTest(TestCase):
                              reason='history'))
         self.assertRaises(StopIteration, next, transaction_it)
 
+    def test_history_undo_operations_erase_twoavailable(self):
+        """Test history_undo_operations with an erase available in two repos."""
+        base = Base()
+        base._sack = mock_sack('main', 'search')
+        operations = NEVRAOperations()
+        operations.add('Erase', 'lotus-3-16.x86_64')
+
+        with base:
+            base.history_undo_operations(operations)
+
+        transaction_it = iter(base.transaction)
+        self.assertEqual(next(transaction_it),
+                         self._create_item_matcher(
+                             INSTALL, installed='lotus-3-16.x86_64',
+                             reason='history'))
+        self.assertRaises(StopIteration, next, transaction_it)
+
     def test_history_undo_operations_erase_notavailable(self):
         """Test history_undo_operations with an unavailable erase."""
         operations = NEVRAOperations()

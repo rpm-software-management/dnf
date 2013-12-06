@@ -1825,8 +1825,8 @@ class Base(object):
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
-            assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_upgrade(olds[0], news[0], None)
+            assert len(news) == 1
+            self._transaction.add_upgrade(dnf.util.first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
@@ -1835,8 +1835,7 @@ class Base(object):
             pkgs = self.sack.query().available().nevra(old_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
-            assert len(pkgs) == 1
-            self._transaction.add_install(pkgs[0], None, 'history')
+            self._transaction.add_install(dnf.util.first(pkgs), None, 'history')
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
@@ -1862,8 +1861,8 @@ class Base(object):
                 if obsoleteds_:
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
-            assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_reinstall(olds[0], news[0], obsoleteds)
+            assert len(news) == 1
+            self._transaction.add_reinstall(dnf.util.first(olds), news[0], obsoleteds)
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle an upgraded package."""
@@ -1873,8 +1872,8 @@ class Base(object):
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
-            assert len(news) == 1 and len(olds) == 1
-            self._transaction.add_downgrade(olds[0], news[0], None)
+            assert len(news) == 1
+            self._transaction.add_downgrade(dnf.util.first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
