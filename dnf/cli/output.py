@@ -96,7 +96,7 @@ def _active_pkg(tsi):
     """
     return _ACTIVE_DCT[tsi.op_type](tsi)
 
-class YumTerm(object):
+class Term(object):
     """A class to provide some terminal "UI" helpers based on curses."""
 
     # From initial search for "terminfo and python" got:
@@ -171,10 +171,10 @@ class YumTerm(object):
         self.BG_COLOR = self.__ansi_forced_BG_COLOR
 
     def reinit(self, term_stream=None, color='auto'):
-        """Reinitializes the :class:`YumTerm`.
+        """Reinitializes the :class:`Term`.
 
         :param term_stream:  the terminal stream that the
-           :class:`YumTerm` should be initialized to use.  If
+           :class:`Term` should be initialized to use.  If
            *term_stream* is not given, :attr:`sys.stdout` is used.
         :param color: when to colorize output.  Valid values are
            'always', 'auto', and 'never'.  'always' will use ANSI codes
@@ -297,7 +297,7 @@ class YumTerm(object):
         *beg*, and postfix each occurrence with *end*, then return the
         modified string.  For example::
 
-           >>> yt = YumTerm()
+           >>> yt = Term()
            >>> yt.sub('spam and eggs', 'x', 'z', ['and'])
            'spam xandz eggs'
 
@@ -446,7 +446,7 @@ class Output(object):
         else:
             self.i18ndomains = ["redhat-dist"]
 
-        self.term = YumTerm()
+        self.term = Term()
         self.progress = None
 
     def _highlight(self, highlight):
