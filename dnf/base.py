@@ -923,12 +923,18 @@ class Base(object):
         if progress:
             progress.start(len(remote_pkgs), remote_size)
         targets = [po.repo.get_package_target(po, progress) for po in remote_pkgs]
+        librepo_err = None
         try:
             librepo.download_packages(targets, failfast=True)
-        except librepo.LibrepoException:
-            pass # .err of the failed target is set already
+        except librepo.LibrepoException, e:
+            librepo_err = e.args[1] or 'librepo error'
         errors = dict((t.po, [t.err]) for t in targets
                       if t.err not in (None, 'Already downloaded'))
+
+        # librepo may fail without setting any .err attributes
+        # make sure caller sees the error and does not proceed
+        if not errors and librepo_err:
+            errors[pkglist[0]] = [librepo_err]
 
         if callback_total is not None and not errors:
             callback_total(remote_pkgs, remote_size, beg_download)
