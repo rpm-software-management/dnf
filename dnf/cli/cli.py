@@ -1422,12 +1422,7 @@ class Cli(object):
         return conf
 
     def register_command(self, command_cls):
-        """ Register a :class:`dnf.cli.commands.Command` so that it can be
-            called by any of the names returned by its
-            :func:`dnf.cli.commands.Command.getNames` method.
-
-            :param command_cls: the :class:`dnf.cli.commands.Command` to register
-        """
+        """Register a Command. :api"""
         for name in command_cls.aliases:
             if name in self.cli_commands:
                 raise dnf.exceptions.ConfigError(_('Command "%s" already defined') % name)

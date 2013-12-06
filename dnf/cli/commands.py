@@ -246,7 +246,7 @@ class Command(object):
         pass
 
     def run(self, extcmds):
-        """Execute the command
+        """Execute the command #:api
 
         :param extcmds: a list of arguments passed to *basecmd*
 

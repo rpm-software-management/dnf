@@ -18,8 +18,6 @@
 # Red Hat, Inc.
 #
 
-from . commands import Command # :api
-
 import dnf.exceptions
 class CliError(dnf.exceptions.Error):
     """CLI Exception."""
@@ -27,3 +25,6 @@ class CliError(dnf.exceptions.Error):
     def __init__(self, args=''):
         dnf.exceptions.Error.__init__(self)
         self.args = args
+
+from . cli import Cli # :api
+from . commands import Command # :api

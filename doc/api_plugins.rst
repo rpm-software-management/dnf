@@ -20,7 +20,7 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
 
   .. method:: __init__(base, cli)
 
-    Plugin must override this. Called immediately after all the plugins are loaded. `base` is an instance of :class:`dnf.Base`.
+    Plugin must override this. Called immediately after all the plugins are loaded. `base` is an instance of :class:`dnf.Base`. `cli` is an instance of :class:`dnf.cli.Cli` but can also be ``None`` in case DNF is running without a CLI (e.g. from an extension).
 
   .. method:: config
 
