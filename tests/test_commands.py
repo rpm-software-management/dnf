@@ -71,19 +71,24 @@ class CommandsCliTest(support.TestCase):
     def _do_makecache(cmd, fill_sack):
         return cmd.run('makecache', ['timer'])
 
+    def assertLastInfo(self, cmd, msg):
+        self.assertEqual(cmd.base.logger.info.mock_calls[-1],
+                         mock.call(msg))
+
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
     def test_makecache_timer(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
+        cmd.base.logger = mock.create_autospec(cmd.base.logger)
 
         self.yumbase.conf.metadata_timer_sync = 0
-        self.assertEqual((0, [u'Metadata timer caching disabled.']),
-                         self._do_makecache(cmd))
+        self.assertFalse(self._do_makecache(cmd))
+        self.assertLastInfo(cmd, u'Metadata timer caching disabled.')
 
         self.yumbase.conf.metadata_timer_sync = 5 # resync after 5 seconds
         self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=3)
-        self.assertEqual((0, [u'Metadata cache refreshed recently.']),
-                         self._do_makecache(cmd))
+        self.assertFalse(self._do_makecache(cmd))
+        self.assertLastInfo(cmd, u'Metadata cache refreshed recently.')
 
         self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=10)
         self.yumbase._sack = 'nonempty'
@@ -93,41 +98,42 @@ class CommandsCliTest(support.TestCase):
         # regular case 1: metadata is already expired:
         r.metadata_expire_in = mock.Mock(return_value=(False, 0))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertEqual((0, [u'Metadata Cache Created']),
-                         self._do_makecache(cmd))
+        self.assertTrue(self._do_makecache(cmd))
+        self.assertLastInfo(cmd, u'Metadata Cache Created')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
         # regular case 2: metadata is cached and will expire later than
         # metadata_timer_sync:
         r.metadata_expire_in = mock.Mock(return_value=(True, 100))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertEqual((0, [u'Metadata Cache Created']),
-                         self._do_makecache(cmd))
+        self.assertTrue(self._do_makecache(cmd))
+        self.assertLastInfo(cmd, u'Metadata Cache Created')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
 
         # regular case 3: metadata is cached but will eqpire before
         # metadata_timer_sync:
         r.metadata_expire_in = mock.Mock(return_value=(True, 4))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertEqual((0, [u'Metadata Cache Created']),
-                         self._do_makecache(cmd))
+        self.assertTrue(self._do_makecache(cmd))
+        self.assertLastInfo(cmd, u'Metadata Cache Created')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
     @mock.patch('dnf.util.on_ac_power', return_value=False)
     def test_makecache_timer_battery(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
+        cmd.base.logger = mock.create_autospec(cmd.base.logger)
         self.yumbase.conf.metadata_timer_sync = 5
-        self.assertEqual((0, [u'Metadata timer caching disabled when '
-                              'running on a battery.']),
-                         self._do_makecache(cmd))
+
+        self.assertFalse(self._do_makecache(cmd))
+        msg = u'Metadata timer caching disabled when running on a battery.'
+        self.assertLastInfo(cmd, msg)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=None)
     def test_makecache_timer_battery2(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
         self.yumbase.conf.metadata_timer_sync = 5
-        self.assertEqual((0, [u'Metadata Cache Created']),
-                         self._do_makecache(cmd))
+        self.assertTrue(self._do_makecache(cmd))
 
 class CommandTest(support.TestCase):
     def test_canonical(self):

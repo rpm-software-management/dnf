@@ -332,14 +332,9 @@ class BaseCli(dnf.Base):
                                  self.output.term.MODE['normal'])
             else:
                 done = True
-        cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
-            msg = P_('%d package to install', '%d packages to install', cnt)
-            return 2, [msg % cnt]
 
         if not done:
-            return 1, [_('Nothing to do')]
-        return 0, [_('Nothing to do')]
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
     def updatePkgs(self, userlist):
         """Take user commands and populate transaction wrapper with
@@ -379,26 +374,16 @@ class BaseCli(dnf.Base):
                     self._checkMaybeYouMeant(item)
 
         cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
-            msg = P_('%d package marked for upgrade',
-                     '%d packages marked for upgrade', cnt)
-            return 2, [msg % cnt]
-        elif self._goal.req_has_upgrade_all():
-            return 2, [_('All packages marked for upgrade')]
-        else:
-            return 0, [_('No packages marked for upgrade')]
+        if cnt <= 0 and not self._goal.req_has_upgrade_all():
+            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
     def upgrade_userlist_to(self, userlist):
         oldcount = self._goal.req_length()
         for l in userlist:
             self.upgrade_to(l)
         cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
-            msg = P_('%d package marked for upgrade',
-                     '%d packages marked for upgrade', cnt)
-            return 2, [msg % cnt]
-        else:
-            return 0, [_('No packages marked for upgrade')]
+        if cnt <= 0:
+            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
     def distro_sync_userlist(self, userlist):
         """ Upgrade or downgrade packages to match the latest versions available
@@ -416,15 +401,9 @@ class BaseCli(dnf.Base):
         self.distro_sync()
 
         cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
-            msg = P_('%d package marked for Distribution Synchronization',
-                     '%d packages marked for Distribution Synchronization',
-                     cnt)
-            return 2, [msg % cnt]
-        elif self._goal.req_has_distupgrade_all():
-            return 2, [_('All packages marked for Distribution Synchronization')]
-        else:
-            return 0, [_('No packages marked for Distribution Synchronization')]
+        if cnt <= 0 and not self._goal.req_has_distupgrade_all():
+            msg = _('No packages marked for distribution synchronization.')
+            raise dnf.exceptions.Error(msg)
 
     def erasePkgs(self, userlist):
         """Take user commands and populate a transaction wrapper with
@@ -451,12 +430,8 @@ class BaseCli(dnf.Base):
             else:
                 cnt += current_cnt
 
-        if cnt > 0:
-            msg = P_('%d package marked for removal',
-                     '%d packages marked for removal', cnt)
-            return 2, [msg % cnt]
-        else:
-            return 0, [_('No packages marked for removal')]
+        if cnt <= 0:
+            raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
     def downgradePkgs(self, userlist):
         """Attempt to take the user specified list of packages or
@@ -495,11 +470,8 @@ class BaseCli(dnf.Base):
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
-        if cnt > 0:
-            msg = P_('%d package to downgrade',
-                     '%d packages to downgrade', cnt)
-            return 2, [msg % cnt]
-        return 0, [_('Nothing to do')]
+        if cnt <= 0:
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
     def reinstallPkgs(self, userlist):
         """Attempt to take the user specified list of packages or
@@ -552,8 +524,7 @@ class BaseCli(dnf.Base):
             return 2, [msg % cnt]
 
         if not done:
-            return 1, [_('Nothing to do')]
-        return 0, [_('Nothing to do')]
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
     def returnPkgLists(self, extcmds, installed_available=False):
         """Return a :class:`dnf.yum.misc.GenericHolder` object containing
@@ -642,8 +613,6 @@ class BaseCli(dnf.Base):
         results = self.findDeps(pkgs)
         self.output.depListOutput(results)
 
-        return 0, []
-
     def provides(self, args):
         """Print out a list of packages that provide the given file or
         feature.  This a cli wrapper to the provides methods in the
@@ -669,9 +638,8 @@ class BaseCli(dnf.Base):
             self.output.matchcallback_verbose(pkg, [], args)
         self.conf.showdupesfromrepos = old_sdup
 
-        if matches:
-            return 0, []
-        return 0, ['No Matches found']
+        if not matches:
+            raise dnf.exceptions.Error(_('No Matches found'))
 
     def cleanCli(self, userlist):
         """Remove data from the yum cache directory.  What data is
@@ -733,11 +701,12 @@ class BaseCli(dnf.Base):
             self.logger.debug(_('Cleaning up cached rpmdb data'))
             expccode, expcresults = self.cleanRpmDB()
 
-        code = pkgcode + xmlcode + dbcode + expccode
         results = pkgresults + xmlresults + dbresults + expcresults
         for msg in results:
             self.logger.info( msg)
-        return code, []
+        code = pkgcode + xmlcode + dbcode + expccode
+        if code:
+            raise dnf.exceptions.Error('Error cleaning up.')
 
     def returnGroupLists(self, userlist):
         """Print out a list of groups that match the given names or
@@ -918,13 +887,12 @@ class BaseCli(dnf.Base):
                 self.logger.error(msg)
                 continue
             groups.extend(matched)
+
         total_cnt = reduce(operator.add, map(self.select_group, groups), 0)
         if not total_cnt:
-            return 0, [_('No packages in any requested group available '\
-                             'to install or upgrade')]
-        else:
-            return 2, [P_('%d package to Install', '%d packages to Install',
-                          total_cnt) % total_cnt]
+            msg = _('No packages in any requested group available '\
+                    'to install or upgrade.')
+            raise dnf.exceptions.Error(msg)
 
     def removeGroups(self, grouplist):
         """Mark the packages in the given groups for removal.
@@ -947,11 +915,8 @@ class BaseCli(dnf.Base):
                 self.logger.critical(e)
                 continue
 
-        if cnt:
-            msg = P_('%d package to remove', '%d packages to remove', cnt)
-            return 2, [msg % cnt]
-        else:
-            return 0, [_('No packages to remove from groups')]
+        if not cnt:
+            raise dnf.exceptions.Error(_('No packages to remove from groups.'))
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
@@ -1549,8 +1514,7 @@ class Cli(object):
 
         if len(counter) == 0:
             self.logger.warning(_('Warning: No matches found for: %s'), arg)
-            return 0, [_('No Matches found')]
-        return 0, []
+            raise dnf.exception.Error(_('No Matches found'))
 
     def write_out_metadata(self):
         print(_("Writing out repository metadata for debugging."))

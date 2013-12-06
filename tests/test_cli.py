@@ -69,99 +69,91 @@ class YumBaseCliTest(PycompTestCase):
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_installPkgs(self):
-        result, resultmsgs = self._yumbase.installPkgs(('lotus',))
+        self._yumbase.installPkgs(('lotus',))
 
         self.assertEqual(self._yumbase.install.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package to install'])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_installPkgs_notfound(self):
-        result, resultmsgs = self._yumbase.installPkgs(('non-existent',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.installPkgs(('non-existent',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.install.mock_calls, [mock.call('non-existent')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
-        self.assertEqual(result, 1)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_updatePkgs(self):
-        result, resultmsgs = self._yumbase.updatePkgs(('pepper',))
+        self._yumbase.updatePkgs(('pepper',))
 
         self.assertEqual(self._yumbase.upgrade.mock_calls, [mock.call('pepper')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package marked for upgrade'])
 
     def test_updatePkgs_notfound(self):
-        result, resultmsgs = self._yumbase.updatePkgs(('non-existent',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.updatePkgs(('non-existent',))
+        self.assertEqual(str(ctx.exception), 'No packages marked for upgrade.')
 
         self.assertEqual(self._yumbase.upgrade.mock_calls, [mock.call('non-existent')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for argument: %s', 'non-existent')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('non-existent')])
-        self.assertEqual(result, 0)
-        self.assertEqual(resultmsgs, ['No packages marked for upgrade'])
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_erasePkgs(self):
-        result, resultmsgs = self._yumbase.erasePkgs(('pepper',))
+        self._yumbase.erasePkgs(('pepper',))
 
         self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('pepper')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package marked for removal'])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_erasePkgs_notfound(self):
-        result, resultmsgs = self._yumbase.erasePkgs(('non-existent',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.erasePkgs(('non-existent',))
+        self.assertEqual(str(ctx.exception), 'No packages marked for removal.')
 
         self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('non-existent')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for argument: %s', 'non-existent')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('non-existent', always_output=False, rpmdb_only=True)])
-        self.assertEqual(result, 0)
-        self.assertEqual(resultmsgs, ['No packages marked for removal'])
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_downgradePkgs(self):
-        result, resultmsgs = self._yumbase.downgradePkgs(('tour',))
+        self._yumbase.downgradePkgs(('tour',))
 
         self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('tour')])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
         self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package to downgrade'])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notfound(self):
-        result, resultmsgs = self._yumbase.downgradePkgs(('non-existent',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.downgradePkgs(('non-existent',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('non-existent')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
         self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
                          [mock.call('non-existent')])
-        self.assertEqual(result, 0)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notinstalled(self):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
 
-        result, resultmsgs = self._yumbase.downgradePkgs(('lotus',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.downgradePkgs(('lotus',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for available package: %s', pkg)] * 2)
         self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 0)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_reinstallPkgs(self):
@@ -175,28 +167,28 @@ class YumBaseCliTest(PycompTestCase):
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_reinstallPkgs_notinstalled(self):
-        result, resultmsgs = self._yumbase.reinstallPkgs(('lotus',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.reinstallPkgs(('lotus',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for argument: %s', 'lotus')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
                          [mock.call('lotus', always_output=False)])
-        self.assertEqual(result, 1)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_reinstallPkgs_notavailable(self):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})
 
-        result, resultmsgs = self._yumbase.reinstallPkgs(('hole',))
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.reinstallPkgs(('hole',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('hole')])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('Installed package %s%s%s%s not available.', '', pkg, '', '')])
         self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 1)
-        self.assertEqual(resultmsgs, ['Nothing to do'])
 
     def test_transaction_id_or_offset_bad(self):
         """Test transaction_id_or_offset with a bad input."""

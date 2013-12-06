@@ -181,6 +181,8 @@ class Command(object):
     activate_sack = False
     aliases = []
     load_available_repos = True
+    resolve = False
+    success_retval = 0
     writes_rpmdb = False
 
     def __init__(self, cli):
@@ -248,15 +250,9 @@ class Command(object):
 
         :param basecmd: the name of the command being executed
         :param extcmds: a list of arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
 
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
         """
-        return 0, [_('Nothing to do')]
+        pass
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before the
@@ -275,6 +271,7 @@ class InstallCommand(Command):
 
     aliases = ('install',)
     activate_sack = True
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -307,22 +304,7 @@ class InstallCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.installPkgs(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.installPkgs(extcmds)
 
 class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -330,6 +312,7 @@ class UpgradeCommand(Command):
     """
     aliases = ('upgrade', 'update')
     activate_sack = True
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -361,22 +344,7 @@ class UpgradeCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.updatePkgs(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.updatePkgs(extcmds)
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
@@ -385,6 +353,7 @@ class UpgradeToCommand(Command):
 
     aliases = ('upgrade-to', 'update-to')
     activate_sack = True
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -400,10 +369,7 @@ class UpgradeToCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, basecmd, extcmds):
-        try:
-            return self.base.upgrade_userlist_to(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.upgrade_userlist_to(extcmds)
 
 class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -412,6 +378,7 @@ class DistroSyncCommand(Command):
 
     aliases = ('distribution-synchronization', 'distro-sync')
     activate_sack = True
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -445,22 +412,7 @@ class DistroSyncCommand(Command):
             raise dnf.cli.CliError
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.distro_sync_userlist(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.distro_sync_userlist(extcmds)
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
@@ -513,18 +465,6 @@ class InfoCommand(Command):
         return _("Display details about a package or group of packages")
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         try:
             highlight = self.output.term.MODE['bold']
             ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
@@ -610,8 +550,7 @@ class InfoCommand(Command):
             # things like "yum list updates".
             if len(extcmds) and \
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
-                return 1, [_('No matching Packages to list')]
-            return 0, []
+                raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -651,6 +590,7 @@ class EraseCommand(Command):
     activate_sack = True
     aliases = ('erase', 'remove')
     load_available_repos = False
+    resolve = True
     writes_rpmdb = True
 
     def configure(self):
@@ -684,22 +624,7 @@ class EraseCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.erasePkgs(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.erasePkgs(extcmds)
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -750,6 +675,10 @@ class GroupsCommand(Command):
         :return: a one line summary of this command
         """
         return _("Display, or use, the groups information")
+
+    def __init__(self, cli):
+        super(GroupsCommand, self).__init__(cli)
+        self._resolve = False
 
     def _grp_setup_doCommand(self):
         try:
@@ -807,41 +736,29 @@ class GroupsCommand(Command):
                                  ", ".join(cmds))
             raise dnf.cli.CliError
 
+    @property
+    def resolve(self):
+        return self._resolve
+
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         cmd, extcmds = self._grp_cmd(basecmd, extcmds)
 
         self._grp_setup_doCommand()
+
         if cmd == 'summary':
             return self.base.returnGroupSummary(extcmds)
-
         if cmd == 'list':
             return self.base.returnGroupLists(extcmds)
+        if cmd == 'info':
+            return self.base.returnGroupInfo(extcmds)
 
-        try:
-            if cmd == 'info':
-                return self.base.returnGroupInfo(extcmds)
-            if cmd == 'install':
-                return self.base.install_grouplist(extcmds)
-            if cmd == 'upgrade':
-                return self.base.install_grouplist(extcmds)
-            if cmd == 'remove':
-                return self.base.removeGroups(extcmds)
-
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
-
+        self._resolve = True
+        if cmd == 'install':
+            return self.base.install_grouplist(extcmds)
+        if cmd == 'upgrade':
+            return self.base.install_grouplist(extcmds)
+        if cmd == 'remove':
+            return self.base.removeGroups(extcmds)
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -904,18 +821,6 @@ class MakeCacheCommand(Command):
         checkEnabledRepo(self.base)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         msg = _("Making cache files for all metadata files.")
         self.base.logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
@@ -923,13 +828,18 @@ class MakeCacheCommand(Command):
         persistor = self.base._persistor
         if timer:
             if dnf.util.on_ac_power() is False:
-                return 0, [_('Metadata timer caching disabled '
-                             'when running on a battery.')]
+                msg = _('Metadata timer caching disabled '
+                        'when running on a battery.')
+                self.base.logger.info(msg)
+                return False
             if period <= 0:
-                return 0, [_('Metadata timer caching disabled.')]
+                msg = _('Metadata timer caching disabled.')
+                self.base.logger.info(msg)
+                return False
             since_last_makecache = persistor.since_last_makecache()
             if since_last_makecache is not None and since_last_makecache < period:
-                return 0, [_('Metadata cache refreshed recently.')]
+                self.base.logger.info(_('Metadata cache refreshed recently.'))
+                return False
             self.base.repos.all.max_mirror_tries = 1
 
         for r in self.base.repos.iter_enabled():
@@ -951,7 +861,8 @@ class MakeCacheCommand(Command):
         if timer:
             persistor.reset_last_makecache()
         self.base.fill_sack() # performs the md sync
-        return 0, [_('Metadata Cache Created')]
+        self.base.logger.info(_('Metadata Cache Created'))
+        return True
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -998,18 +909,6 @@ class CleanCommand(Command):
         checkEnabledRepo(self.base)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         return self.base.cleanCli(extcmds)
 
     def needTs(self, basecmd, extcmds):
@@ -1056,23 +955,8 @@ class ProvidesCommand(Command):
         checkItemArg(self.cli, basecmd, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         self.base.logger.debug("Searching Packages: ")
-        try:
-            return self.base.provides(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.provides(extcmds)
 
 class CheckUpdateCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1098,6 +982,10 @@ class CheckUpdateCommand(Command):
         """
         return _("Check for available package upgrades")
 
+    def __init__(self, cli):
+        super(CheckUpdateCommand, self).__init__(cli)
+        self._success_retval = 0
+
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
@@ -1108,57 +996,44 @@ class CheckUpdateCommand(Command):
         checkEnabledRepo(self.base)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         obscmds = ['obsoletes'] + extcmds
         self.base.extcmds.insert(0, 'updates')
-        result = 0
-        try:
-            ypl = self.base.returnPkgLists(extcmds)
-            if self.base.conf.obsoletes or self.base.conf.verbose:
-                typl = self.base.returnPkgLists(obscmds)
-                ypl.obsoletes = typl.obsoletes
-                ypl.obsoletesTuples = typl.obsoletesTuples
 
-            columns = _list_cmd_calc_columns(self.output, ypl)
-            if len(ypl.updates) > 0:
-                local_pkgs = {}
-                highlight = self.output.term.MODE['bold']
-                if highlight:
-                    # Do the local/remote split we get in "yum updates"
-                    for po in sorted(ypl.updates):
-                        local = po.localPkg()
-                        if os.path.exists(local) and po.verifyLocalPkg():
-                            local_pkgs[(po.name, po.arch)] = po
+        ypl = self.base.returnPkgLists(extcmds)
+        if self.base.conf.obsoletes or self.base.conf.verbose:
+            typl = self.base.returnPkgLists(obscmds)
+            ypl.obsoletes = typl.obsoletes
+            ypl.obsoletesTuples = typl.obsoletesTuples
 
-                cul = self.base.conf.color_update_local
-                cur = self.base.conf.color_update_remote
-                self.output.listPkgs(ypl.updates, '', outputType='list',
-                              highlight_na=local_pkgs, columns=columns,
-                              highlight_modes={'=' : cul, 'not in' : cur})
-                result = 100
-            if len(ypl.obsoletes) > 0:
-                print(_('Obsoleting Packages'))
-                # The tuple is (newPkg, oldPkg) ... so sort by new
-                for obtup in sorted(ypl.obsoletesTuples,
-                                    key=operator.itemgetter(0)):
-                    self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                     columns=columns)
-                result = 100
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
-        else:
-            return result, []
+        columns = _list_cmd_calc_columns(self.output, ypl)
+        if len(ypl.updates) > 0:
+            local_pkgs = {}
+            highlight = self.output.term.MODE['bold']
+            if highlight:
+                # Do the local/remote split we get in "yum updates"
+                for po in sorted(ypl.updates):
+                    local = po.localPkg()
+                    if os.path.exists(local) and po.verifyLocalPkg():
+                        local_pkgs[(po.name, po.arch)] = po
+
+            cul = self.base.conf.color_update_local
+            cur = self.base.conf.color_update_remote
+            self.output.listPkgs(ypl.updates, '', outputType='list',
+                          highlight_na=local_pkgs, columns=columns,
+                          highlight_modes={'=' : cul, 'not in' : cur})
+            self._success_retval = 100
+        if len(ypl.obsoletes) > 0:
+            print(_('Obsoleting Packages'))
+            # The tuple is (newPkg, oldPkg) ... so sort by new
+            for obtup in sorted(ypl.obsoletesTuples,
+                                key=operator.itemgetter(0)):
+                self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                 columns=columns)
+            self._success_retval = 100
+
+    @property
+    def success_retval(self):
+        return self._success_retval
 
 class SearchCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1194,23 +1069,8 @@ class SearchCommand(Command):
         checkItemArg(self.cli, basecmd, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         self.base.logger.debug(_("Searching Packages: "))
-        try:
-            return self.cli.search(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.cli.search(extcmds)
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -1257,23 +1117,7 @@ class DepListCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.deplist(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
-
+        return self.base.deplist(extcmds)
 
 class RepoListCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1300,18 +1144,6 @@ class RepoListCommand(Command):
         return _('Display the configured software repositories')
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         def _repo_size(repo):
             ret = 0
             for pkg in self.base.sack.query().filter(reponame__eq=repo.id):
@@ -1530,8 +1362,8 @@ class RepoListCommand(Command):
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
-
-        return 0, ['repolist: ' +to_unicode(locale.format("%d", tot_num, True))]
+        msg = 'repolist: ' +to_unicode(locale.format("%d", tot_num, True))
+        self.base.logger.info(msg)
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -1619,22 +1451,9 @@ class HelpCommand(Command):
         return help_output
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         if extcmds[0] in self.cli.cli_commands:
             command = self.cli.cli_commands[extcmds[0]]
             self.base.logger.info(self._makeOutput(command))
-        return 0, []
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -1653,6 +1472,7 @@ class ReInstallCommand(Command):
 
     activate_sack = True
     aliases = ('reinstall',)
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -1678,23 +1498,7 @@ class ReInstallCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.reinstallPkgs(extcmds)
-
-        except dnf.exceptions.Error as e:
-            return 1, [to_unicode(e)]
+        return self.base.reinstallPkgs(extcmds)
 
     @staticmethod
     def get_summary():
@@ -1721,6 +1525,7 @@ class DowngradeCommand(Command):
 
     activate_sack = True
     aliases = ('downgrade',)
+    resolve = True
     writes_rpmdb = True
 
     @staticmethod
@@ -1746,22 +1551,7 @@ class DowngradeCommand(Command):
         checkEnabledRepo(self.base, extcmds)
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        try:
-            return self.base.downgradePkgs(extcmds)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
+        return self.base.downgradePkgs(extcmds)
 
     @staticmethod
     def get_summary():
@@ -1805,18 +1595,6 @@ class VersionCommand(Command):
         return _("Display a version for the machine and/or available repos.")
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         vcmd = 'installed'
         if extcmds:
             vcmd = extcmds[0]
@@ -1992,6 +1770,11 @@ class HistoryCommand(Command):
         """
         return _("Display, or use, the transaction history")
 
+
+    def __init__(self, cli):
+        super(HistoryCommand, self).__init__(cli)
+        self._resolve = False
+
     def _hcmd_redo(self, extcmds):
         kwargs = {'force_reinstall' : False,
                   'force_changed_removal' : False,
@@ -2120,19 +1903,11 @@ class HistoryCommand(Command):
             self.base.logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
 
+    @property
+    def resolve(self):
+        return self._resolve
+
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         vcmd = 'list'
         if extcmds:
             vcmd = extcmds[0]
@@ -2167,8 +1942,12 @@ class HistoryCommand(Command):
             ret = self._hcmd_userinstalled(extcmds[1:])
 
         if ret is None:
-            return 0, []
-        return ret
+            return
+        (code, strs) = ret
+        if code == 2:
+            self._resolve = True
+        elif code != 0:
+            raise dnf.exceptions.Error(strs[0])
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this
@@ -2208,18 +1987,6 @@ class CheckRpmdbCommand(Command):
         return _("Check for problems in the rpmdb")
 
     def run(self, basecmd, extcmds):
-        """Execute this command.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
         chkcmd = 'all'
         if extcmds:
             chkcmd = extcmds
@@ -2228,10 +1995,11 @@ class CheckRpmdbCommand(Command):
             print(to_unicode(x.__str__()))
 
         rc = 0
+        msg = '%s %s' % (basecmd, chkcmd)
         if self.base._rpmdb_warn_checks(out=_out, warn=False, chkcmd=chkcmd,
                                    header=lambda x: None):
-            rc = 1
-        return rc, ['%s %s' % (basecmd, chkcmd)]
+            raise dnf.exceptions.Error(msg)
+        self.base.logger.info(msg)
 
     def needTs(self, basecmd, extcmds):
         """Return whether a transaction set must be set up before this

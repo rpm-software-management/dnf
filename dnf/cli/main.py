@@ -88,7 +88,7 @@ def _main(base, args):
 
     def exFatal(e):
         if e.value is not None:
-            logger.critical(exception2msg(e.value))
+            logger.critical(_('Error: %s'), exception2msg(e.value))
         return 1
 
     # our core object for the cli
@@ -119,36 +119,16 @@ def _main(base, args):
         f.close()
 
     try:
-        result, resultmsgs = cli.run()
+        cli.run()
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.Error as e:
-        result = 1
-        resultmsgs = [exception2msg(e)]
+        return exFatal(e)
     except IOError as e:
         return exIOError(e)
 
-    # Act on the command/shell result
-    if result == 0:
-        # Normal exit
-        for msg in resultmsgs:
-            logger.info('%s', msg)
-        return 0
-    elif result == 1:
-        # Fatal error
-        for msg in resultmsgs:
-            logger.critical(_('Error: %s'), msg)
-        return 1
-    elif result == 2:
-        # Continue on
-        pass
-    elif result == 100:
-        return 100
-    else:
-        logger.critical(_('Unknown Error(s): Exit Code: %d:'), result)
-        for msg in resultmsgs:
-            logger.critical(msg)
-        return 3
+    if not cli.command.resolve:
+        return cli.command.success_retval
 
     # Depsolve stage (if needed)
     if base.transaction is None:
