@@ -24,6 +24,7 @@ import dnf.exceptions
 import librepo
 import os
 import tempfile
+import unittest
 try:
     import configparser
 except ImportError:
@@ -33,6 +34,18 @@ from dnf.pycomp import unicode
 
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
+
+class RepoIdInvalidTest(unittest.TestCase):
+
+    def test(self):
+        """Test repo_id_invalid with a good repo ID."""
+        index = dnf.repo.repo_id_invalid('R_e-p.o:i3d')
+        self.assertIsNone(index)
+
+    def test_invalid(self):
+        """Test repo_id_invalid with a repo ID with an invalid character."""
+        index = dnf.repo.repo_id_invalid('R_e-p.o/:i3d')
+        self.assertEqual(index, 7)
 
 class RepoTestMixin(object):
     """Test the logic of dnf.repo.Repo.

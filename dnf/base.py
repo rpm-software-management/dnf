@@ -63,7 +63,6 @@ import rpm
 import signal
 import time
 import types
-import string
 import librepo
 
 _ = i18n._
@@ -257,21 +256,10 @@ class Base(object):
                 continue
 
             # Check the repo.id against the valid chars
-            bad = None
-            for byte in section:
-                if byte in string.ascii_letters:
-                    continue
-                if byte in string.digits:
-                    continue
-                if byte in "-_.:":
-                    continue
-
-                bad = byte
-                break
-
-            if bad:
+            invalid = dnf.repo.repo_id_invalid(section)
+            if invalid is not None:
                 self.logger.warning("Bad id for repo: %s, byte = %s %d" %
-                                    (section, bad, section.find(bad)))
+                                    (section, section[invalid], invalid))
                 continue
 
             try:
