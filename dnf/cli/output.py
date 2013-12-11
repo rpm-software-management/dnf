@@ -1198,7 +1198,7 @@ class Output(object):
                     continue
 
                 try:
-                    size = int(pkg.installedsize)
+                    size = int(pkg.installsize)
                 except:
                     pass
                 insize += size
