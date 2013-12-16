@@ -324,6 +324,14 @@ class BaseCli(dnf.Base):
                 self.install_local(arg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
+            elif arg.startswith('@'):
+                try:
+                    self.install_grouplist((arg[1:],))
+                except dnf.exceptions.Error:
+                    pass
+                else:
+                    done = True
+                continue
             try:
                 self.install(arg)
             except dnf.exceptions.MarkingError:

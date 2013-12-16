@@ -57,12 +57,20 @@ class YumBaseCliTest(PycompTestCase):
         self._yumbase = dnf.cli.cli.BaseCli()
         self._yumbase._sack = support.mock_sack('main')
         self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
+
+        main_repo = support.MockRepo('main', None)
+        main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        main_repo.enable()
+        self._yumbase.repos.add(main_repo)
+        self._yumbase.read_comps()
+
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.output.term = support.MockTerminal()
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
         self._yumbase.install = mock.Mock(wraps=self._yumbase.install)
+        self._yumbase.install_grouplist = mock.Mock(wraps=self._yumbase.install_grouplist)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
         self._yumbase.upgrade = mock.Mock(wraps=self._yumbase.upgrade)
@@ -72,7 +80,31 @@ class YumBaseCliTest(PycompTestCase):
         self._yumbase.installPkgs(('lotus',))
 
         self.assertEqual(self._yumbase.install.mock_calls, [mock.call('lotus')])
+        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [])
         self.assertEqual(self._yumbase.logger.mock_calls, [])
+
+    @mock.patch('dnf.base._', dnf.pycomp.NullTranslations().ugettext)
+    def test_installPkgs_group(self):
+        """Test installPkgs with a group."""
+        self._yumbase.installPkgs(('@Solid Ground',))
+
+        self.assertEqual(self._yumbase.install.mock_calls, [])
+        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [mock.call(('Solid Ground',))])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.debug('Adding package pepper from group somerset'),
+                          mock.call.debug('Adding package trampoline from group somerset')])
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    def test_installPkgs_group_notfound(self):
+        """Test installPkgs with a non-existent group."""
+        with self.assertRaises(dnf.exceptions.Error) as ctx:
+            self._yumbase.installPkgs(('@non-existent',))
+        self.assertEqual(str(ctx.exception), 'Nothing to do.')
+
+        self.assertEqual(self._yumbase.install.mock_calls, [])
+        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [mock.call(('non-existent',))])
+        self.assertEqual(self._yumbase.logger.mock_calls,
+                         [mock.call.error('Warning: Group non-existent does not exist.')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_installPkgs_notfound(self):
@@ -81,6 +113,7 @@ class YumBaseCliTest(PycompTestCase):
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._yumbase.install.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [])
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
 

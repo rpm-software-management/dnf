@@ -284,8 +284,10 @@ Info Command
 Install Command
 ---------------
 
-``dnf [options] install <package-specs>...``
-    Installs the specified packages and their dependencies. After the
+``dnf [options] install <spec>...``
+    Installs the given packages and their dependencies. Each ``<spec>`` can be
+    either a ``<package-spec>``, which specifies a package directly, or a
+    ``@<group-spec>``, which specifies a group which contains it. After the
     transaction is finished all the specified packages are installed on the
     system.
 
