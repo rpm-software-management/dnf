@@ -30,6 +30,7 @@ from .i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch
+import functools
 
 #  Cut over for when we should just give up and load everything.
 #  The main problem here is not so much SQLite dying (although that happens
@@ -126,6 +127,7 @@ class _YumHistPackageYumDB(object):
             return default
         return res
 
+@functools.total_ordering
 class YumHistoryPackage(object):
 
     def __init__(self, name, arch, epoch, version, release, checksum=None,
@@ -153,19 +155,30 @@ class YumHistoryPackage(object):
                              # ?
                              "committer", "committime"])
 
-    def __cmp__(self, other):
-        """ Compare packages, this is just for UI/consistency. """
+    def __le__(self, other):
+        """Test whether the *self* is less than or equal to the *other*."""
         ret = self.verCMP(other)
-        if ret == 0:
-            ret = cmp(self.arch, other.arch)
-        if ret == 0 and hasattr(self, 'repoid') and hasattr(other, 'repoid'):
-            ret = cmp(self.repoid, other.repoid)
-            # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
-            if ret and self.repoid == 'installed':
-                return 1
-            if ret and other.repoid == 'installed':
-                return -1
-        return ret
+        if ret != 0:
+            return ret < 0  # less or grater
+
+        if self.arch != other.arch:
+            return self.arch < other.arch  # less or greater
+
+        try:
+            self_repoid, other_repoid = self.repoid, other.repoid
+        except AttributeError:
+            return True  # equal
+
+        if self_repoid == other_repoid:
+            return True  # equal
+
+        # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
+        if self_repoid == 'installed':
+            return False  # greater
+        if other_repoid == 'installed':
+            return True  # less
+
+        return self_repoid < other_repoid  # less or grater
 
     @staticmethod
     def __comparePoEVR(po1, po2):
@@ -276,10 +289,9 @@ class YumHistoryPackage(object):
         """ Compare package to another one, only rpm-version ordering. """
         if not other:
             return 1
-        ret = cmp(self.name, other.name)
-        if ret == 0:
-            ret = self.__comparePoEVR(self, other)
-        return ret
+        if self.name != other.name:
+            return -1 if self.name < other.name else +1
+        return self.__comparePoEVR(self, other)
 
 
 class YumHistoryPackageState(YumHistoryPackage):
