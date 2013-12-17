@@ -104,7 +104,7 @@ def _main(base, args):
         raise
     except dnf.exceptions.Error as e:
         return exFatal(e)
-    except IOError as e:
+    except (IOError, OSError) as e:
         return exIOError(e)
 
     # Try to open the current directory to see if we have
@@ -124,7 +124,7 @@ def _main(base, args):
         raise
     except dnf.exceptions.Error as e:
         return exFatal(e)
-    except IOError as e:
+    except (IOError, OSError) as e:
         return exIOError(e)
 
     if not cli.command.resolve:
