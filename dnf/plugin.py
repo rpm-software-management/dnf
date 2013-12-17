@@ -48,6 +48,10 @@ class Plugin(object):
         # :api
         pass
 
+    def sack(self):
+        # :api
+        pass
+
     def transaction(self):
         # :api
         pass
@@ -84,6 +88,7 @@ class Plugins(object):
             plugin = p_cls(base, cli)
             self.plugins.append(plugin)
 
+    run_sack = _caller('sack')
     run_transaction = _caller('transaction')
 
     def unload(self):
