@@ -14,6 +14,10 @@ Repository Configuration
 
     Return an iterator over all enabled repos from the dict.
 
+.. function:: dnf.repo.repo_id_invalid(repo_id)
+
+  Return index of an invalid character in the repo ID, the `repo_id`, if present. Return ``None`` if all characters are valid. This function is used to validate the section names in ``.repo`` files.
+
 .. class:: dnf.repo.Repo
 
   Repository object used for metadata download. To configure it properly one has to give it either :attr:`metalink`, :attr:`mirrorlist` or :attr:`baseurl` parameter.
