@@ -19,6 +19,7 @@
 #
 
 from __future__ import absolute_import
+from dnf.i18n import ucd
 import dnf.const
 import dnf.util
 import dnf.exceptions
@@ -122,7 +123,7 @@ class Metadata(object):
         try:
             return dnf.util.file_timestamp(self.repo_dct[what])
         except OSError as e:
-            raise dnf.exceptions.MetadataError(str(e))
+            raise dnf.exceptions.MetadataError(ucd(e))
 
     @property
     def filelists_fn(self):

@@ -121,8 +121,7 @@ class Base(object):
         except dnf.exceptions.RepoError as e:
             if repo.skip_if_unavailable is False:
                 raise
-            msg = _("%s, disabling.") % str(e)
-            self.logger.warning(msg)
+            self.logger.warning(_("%s, disabling."), e)
             repo.disable()
             return
         hrepo.repomd_fn = repo.repomd_fn
@@ -408,7 +407,7 @@ class Base(object):
                 self._comps.add_from_xml_filename(decompressed)
             except dnf.exceptions.CompsError as e:
                 msg = _('Failed to add groups file for repository: %s - %s')
-                self.logger.critical(msg % (repo.id, str(e)))
+                self.logger.critical(msg % (repo.id, e))
 
         if len(self._comps) == 0:
             msg = _('No Groups Available in any repository')
