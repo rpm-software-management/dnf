@@ -96,6 +96,9 @@ configuration.
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
 
+``proxy``
+    URL to the proxy server. Defaults to direct connection.
+
 ==========
  See Also
 ==========
