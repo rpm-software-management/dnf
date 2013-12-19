@@ -97,7 +97,7 @@ configuration.
     separated by a comma, from all operations.
 
 ``proxy``
-    URL to the proxy server. Defaults to direct connection.
+    URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
 ==========
  See Also
