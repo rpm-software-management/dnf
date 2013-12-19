@@ -187,3 +187,17 @@ Note that this option is something different than the "downloadonly" functionali
 In this case, DNF recognizes ``last`` as the ID of the last transaction (like
 other ``history`` subcommands), while Yum considers it a package name. It goes
 similarly for ``last-N``.
+
+========================================================
+ Dependency processing details are not shown in the CLI
+========================================================
+
+During its depsolving phase, Yum outputs lines similar to::
+
+  ---> Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
+  --> Processing Dependency: rubygem-net-ssh-multi >= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch
+
+DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependnecies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.
+
+See the the related `Fedora bug 1044999
+<https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.
