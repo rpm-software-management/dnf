@@ -100,7 +100,7 @@ Also see related Fedora bugzillas `982947
 The important system repos should never be down and we see the third party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
-DNF immediately stops on a repo error, confusing and bothering the user.
+Yum immediately stops on a repo error, confusing and bothering the user.
 
 See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
