@@ -46,9 +46,10 @@ class DeltaPackage(object):
         return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
 class DeltaInfo(object):
-    def __init__(self, query):
+    def __init__(self, query, progress):
         '''A delta lookup and rebuild context
            query -- installed packages to use when looking up deltas
+           progress -- progress obj to display finished delta rebuilds
         '''
         deltarpm = 0
         if os.access(APPLYDELTA, os.X_OK):
@@ -58,6 +59,7 @@ class DeltaInfo(object):
                 deltarpm = 4
         self.deltarpm = deltarpm
         self.query = query
+        self.progress = progress
 
         self.queue = []
         self.jobs = {}
@@ -92,6 +94,9 @@ class DeltaInfo(object):
             self.err[po] = _('Checksum of the delta-rebuilt RPM failed')
         else:
             os.unlink(po.localPkg())
+            if self.progress:
+                name = os.path.basename(po.rpm.localPkg())
+                self.progress.end(name, None, 'done', 'DRPM')
 
     def start_job(self, po):
         # spawn a delta rebuild job
