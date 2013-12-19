@@ -35,6 +35,7 @@ goal is to:
 """
 
 from __future__ import absolute_import
+from dnf.i18n import ucd
 import dnf.const
 import dnf.yum.config
 import os.path
@@ -66,7 +67,7 @@ class CliCache(object):
                 user_prefix = misc.getCacheDir()
                 self._cachedir = self._retdir(user_prefix)
             except (IOError, OSError) as e:
-                self.logger.critical(_('Could not set cachedir: %s') % str(e))
+                self.logger.critical(_('Could not set cachedir: %s'), ucd(e))
 
     def _retdir(self, dir):
         return os.path.join(dir, self.suffix)

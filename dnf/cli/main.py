@@ -137,8 +137,7 @@ def _main(base, args):
         try:
             got_transaction = base.resolve()
         except dnf.exceptions.Error as e:
-            prefix = _('Error: %s')
-            logger.critical(prefix, str(e))
+            logger.critical(_('Error: %s'), e)
             return 1
 
         logger.info(_('Dependencies resolved.'))
