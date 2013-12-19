@@ -903,7 +903,7 @@ class Base(object):
            callback, raise dnf.exceptions.Error on problems"""
 
         # select and sort packages to download
-        presto = DeltaInfo(self.sack.query().installed())
+        presto = DeltaInfo(self.sack.query().installed(), progress)
         remote_pkgs = [presto.delta(po) for po in pkglist if not (po.from_cmdline or po.repo.local)]
         remote_pkgs.sort(key=cmp_to_key(mediasort))
         remote_size = sum(po.size for po in remote_pkgs)
