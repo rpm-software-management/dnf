@@ -107,6 +107,9 @@ Options
 ``--rpmverbosity=<debug level name>``
     debugging output level for rpm
 
+``--setopt=<option>=<value>``
+    override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
+
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
