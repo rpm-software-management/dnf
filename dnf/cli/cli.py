@@ -26,7 +26,7 @@ from __future__ import absolute_import
 from dnf.cli import CliError
 from dnf.i18n import ucd
 from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
-from optparse import OptionParser,OptionGroup,SUPPRESS_HELP
+from argparse import Action, ArgumentParser, SUPPRESS
 
 import dnf
 import dnf.cli.commands
@@ -1228,7 +1228,6 @@ class Cli(object):
 
         (base, ext) = self.command.canonical(self.base.cmds)
         self.base.basecmd, self.base.extcmds = (base, ext)
-        ext_str = ' '.join(ext)
         self.logger.log(dnf.logging.SUBDEBUG, 'Base command: %s', base)
         self.logger.log(dnf.logging.SUBDEBUG, 'Extra commands: %s', ext)
 
@@ -1270,6 +1269,13 @@ class Cli(object):
 
         return bad_setopt_tm, bad_setopt_ne
 
+    def _get_first_config(self, opts):
+        config_args = ['noplugins', 'version', "quiet", "verbose", 'conffile',
+                       'debuglevel', 'errorlevel', 'installroot', 'releasever',
+                       'setopt']
+        in_dict = opts.__dict__
+        return {k: in_dict[k] for k in in_dict if k in config_args}
+
     def configure(self, args):
         """Parse command line arguments, and set up :attr:`self.base.conf` and
         :attr:`self.cmds`, as well as logger objects in base instance.
@@ -1279,7 +1285,7 @@ class Cli(object):
         self.optparser = YumOptionParser(base=self.base, usage=self._make_usage())
 
         # Parse only command line options that affect basic yum setup
-        opts = self.optparser.first_parse(args)
+        opts, cmds = self.optparser.parse_known_args(args)
 
         # Just print out the version if that's what the user wanted
         if opts.version:
@@ -1305,8 +1311,8 @@ class Cli(object):
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
 
-        # Read up configuration options and initialise plugins
-        overrides = self.optparser._non_nones2dict(opts)
+        # Read up configuration options and initialize plugins
+        overrides = self.optparser._non_nones2dict(self._get_first_config(opts))
         releasever = opts.releasever
         try:
             self.read_conf_file(opts.conffile, root, releasever, overrides)
@@ -1329,15 +1335,15 @@ class Cli(object):
         for item in bad_setopt_tm:
             msg = "Setopt argument has multiple values: %s"
             self.logger.warning(msg % item)
-        for item in  bad_setopt_ne:
+        for item in bad_setopt_ne:
             msg = "Setopt argument has no value: %s"
             self.logger.warning(msg % item)
 
-        self.optparser.set_usage(self._make_usage())
+        self.optparser.usage = self._make_usage()
 
-        # Now parse the command line for real and
         # apply some of the options to self.base.conf
-        (opts, self.base.cmds) = self.optparser.setupYumConfig(args=args)
+        self.optparser.setupYumConfig(opts)
+        self.base.cmds = cmds
 
         if opts.version:
             opts.quiet = True
@@ -1522,8 +1528,8 @@ class Cli(object):
             with open("%s.repo" % rid, 'w') as outfile:
                 self.base.sack.susetags_for_repo(outfile, rid)
 
-class YumOptionParser(OptionParser):
-    """Subclass that makes some minor tweaks to make OptionParser do things the
+class YumOptionParser(ArgumentParser):
+    """Subclass that makes some minor tweaks to make ArgumentParser do things the
     "yum way".
     """
 
@@ -1534,7 +1540,7 @@ class YumOptionParser(OptionParser):
             del kwargs['utils']
         else:
             self._utils = False
-        OptionParser.__init__(self, **kwargs)
+        ArgumentParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("dnf")
         self.base = base
         # self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
@@ -1552,30 +1558,6 @@ class YumOptionParser(OptionParser):
         self.logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
-    def first_parse(self, args):
-        """Parse only command line options that affect basic yum
-        setup.
-
-        :param args: a list of command line options to parse
-        :return: a dictionary containing the values of command line
-           options
-        """
-        try:
-            args = _filtercmdline(
-                        ('--noplugins','--version','-q', '-v', "--quiet", "--verbose"),
-                        ('-c', '--config', '-d', '--debuglevel',
-                         '-e', '--errorlevel',
-                         '--installroot',
-                         '--releasever',
-                         '--setopt'),
-                        args)
-        except ValueError as arg:
-            self.print_help()
-            print(_("\n\n%s: %s option requires an argument") % \
-                      ('Command line error', arg), file=sys.stderr)
-            sys.exit(1)
-        return self.parse_args(args=args)[0]
-
     @staticmethod
     def _splitArg(seq):
         """ Split all strings in seq, at "," and whitespace.
@@ -1586,25 +1568,18 @@ class YumOptionParser(OptionParser):
         return ret
 
     @staticmethod
-    def _non_nones2dict(opts):
-        in_dct =  opts.__dict__
+    def _non_nones2dict(in_dct):
         dct = {k: in_dct[k] for k in in_dct
                if in_dct[k] is not None
                if in_dct[k] != []}
         return dct
 
-    def setupYumConfig(self, args):
-        """Parse command line options.
+    def setupYumConfig(self, opts):
+        """Setup environment based on argparse options.
 
-        :param args: the command line arguments entered by the user
-        :return: (opts, cmds)  opts is a dictionary containing
-           the values of command line options.  cmds is a list of the
-           command line arguments that were not parsed as options.
-           For example, if args is ["install", "foo", "--verbose"],
-           cmds will be ["install", "foo"].
+        :param opts: parsed options from argparse
         """
 
-        (opts, cmds) = self.parse_args(args=args)
         try:
             # config file is parsed and moving us forward
             # set some things in it.
@@ -1618,7 +1593,7 @@ class YumOptionParser(OptionParser):
             if opts.assumeyes:
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
-                self.base.conf.assumeno  = 1
+                self.base.conf.assumeno = 1
 
             if opts.disableplugins:
                 opts.disableplugins = self._splitArg(opts.disableplugins)
@@ -1675,8 +1650,6 @@ class YumOptionParser(OptionParser):
             self.print_help()
             sys.exit(1)
 
-        return opts, cmds
-
     def _checkAbsInstallRoot(self, installroot):
         if not installroot:
             return
@@ -1687,161 +1660,102 @@ class YumOptionParser(OptionParser):
                              installroot)
         sys.exit(1)
 
-    def _help_callback(self, opt, value, parser, *args, **kwargs):
-        self.print_help()
-        self.exit()
-
-    def _repo_callback(self, option, opt_str, value, parser):
-        operation = 'disable' if opt_str == '--disablerepo' else 'enable'
-        l = getattr(parser.values, option.dest)
-        l.append((value, operation))
+    class _RepoCallback(Action):
+        def __call__(self, parser, namespace, values, opt_str):
+            operation = 'disable' if opt_str == '--disablerepo' else 'enable'
+            l = getattr(namespace, self.dest)
+            l.append((values, operation))
 
     def _addYumBasicOptions(self):
         if self._utils:
-            group = OptionGroup(self, "DNF Basic Options")
-            self.add_option_group(group)
+            group = self.add_argument_group("DNF Basic Options")
         else:
             group = self
 
-        # Note that we can't use the default action="help" because of the
-        # fact that print_help() unconditionally does .encode() ... which is
-        # bad on unicode input.
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
         group.conflict_handler = "resolve"
-        group.add_option("-h", "--help", action="callback",
-                        callback=self._help_callback,
-                help=_("show this help message and exit"))
         group.conflict_handler = "error"
 
-        group.add_option('--allowerasing', action='store_true',
-                         help=_('allow erasing of installed packages to '
-                                'resolve dependencies'))
-        group.add_option("-b", "--best", action="store_true",
-                         help=_("try the best available package versions in "
-                                "transactions."))
-        group.add_option("-C", "--cacheonly", dest="cacheonly",
-                action="store_true",
-                help=_("run entirely from system cache, don't update cache"))
-        group.add_option("-c", "--config", dest="conffile",
-                default=None,
-                help=_("config file location"), metavar='[config file]')
-        group.add_option("-R", "--randomwait", dest="sleeptime", type='int',
-                default=None,
-                help=_("maximum command wait time"), metavar='[minutes]')
-        group.add_option("-d", "--debuglevel", dest="debuglevel", default=None,
-                help=_("debugging output level"), type='int',
-                metavar='[debug level]')
-        group.add_option("--debugrepodata", dest="debugrepodata",
-                         action="store_true", default=None,
-                         help=_("dumps package metadata into files"))
-        group.add_option("--debugsolver",
-                         action="store_true", default=None,
-                         help=_("dumps detailed solving results into files"))
-        group.add_option("--showduplicates", dest="showdupesfromrepos",
-                        action="store_true",
-                help=_("show duplicates, in repos, in list/search commands"))
-        group.add_option("-e", "--errorlevel", dest="errorlevel", default=None,
-                help=_("error output level"), type='int',
-                metavar='[error level]')
-        group.add_option("", "--rpmverbosity", default=None,
-                help=_("debugging output level for rpm"),
-                metavar='[debug level name]')
-        group.add_option("-q", "--quiet", dest="quiet", action="store_true",
-                        help=_("quiet operation"))
-        group.add_option("-v", "--verbose", dest="verbose", action="store_true",
-                        help=_("verbose operation"))
-        group.add_option("-y", "--assumeyes", dest="assumeyes",
-                action="store_true", help=_("answer yes for all questions"))
-        group.add_option("--assumeno", dest="assumeno",
-                action="store_true", help=_("answer no for all questions"))
-        group.add_option("--version", action="store_true",
-                help=_("show DNF version and exit"))
-        group.add_option("--installroot", help=_("set install root"),
-                metavar='[path]')
-        group.add_option("--enablerepo", action='callback',
-                type='string', dest='repos_ed', default=[],
-                callback=self._repo_callback,
-                help=SUPPRESS_HELP,
-                metavar='[repo]')
-        group.add_option("--disablerepo", action='callback',
-                type='string', dest='repos_ed', default=[],
-                callback=self._repo_callback,
-                help=SUPPRESS_HELP,
-                metavar='[repo]')
-        group.add_option("-x", "--exclude", default=[], action="append",
-                         help=_("exclude packages by name or glob"),
-                         metavar='[package]')
-        group.add_option("", "--disableexcludes", default=[], action="append",
+        group.add_argument('--allowerasing', action='store_true', default=None,
+                           help=_('allow erasing of installed packages to '
+                                  'resolve dependencies'))
+        group.add_argument("-b", "--best", action="store_true", default=None,
+                           help=_("try the best available package versions in "
+                                  "transactions."))
+        group.add_argument("-C", "--cacheonly", dest="cacheonly",
+                           action="store_true", default=None,
+                           help=_("run entirely from system cache, "
+                                  "don't update cache"))
+        group.add_argument("-c", "--config", dest="conffile",
+                           default=None, metavar='[config file]',
+                           help=_("config file location"))
+        group.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
+                           default=None, metavar='[minutes]',
+                           help=_("maximum command wait time"))
+        group.add_argument("-d", "--debuglevel", dest="debuglevel",
+                           metavar='[debug level]', default=None,
+                           help=_("debugging output level"), type=int)
+        group.add_argument("--debugrepodata",
+                           action="store_true", default=None,
+                           help=_("dumps package metadata into files"))
+        group.add_argument("--debugsolver",
+                           action="store_true", default=None,
+                           help=_("dumps detailed solving results into files"))
+        group.add_argument("--showduplicates", dest="showdupesfromrepos",
+                           action="store_true", default=None,
+                           help=_("show duplicates, in repos, "
+                                  "in list/search commands"))
+        group.add_argument("-e", "--errorlevel", default=None, type=int,
+                           help=_("error output level"))
+        group.add_argument("--rpmverbosity", default=None,
+                           help=_("debugging output level for rpm"),
+                           metavar='[debug level name]')
+        group.add_argument("-q", "--quiet", dest="quiet", action="store_true",
+                           default=None, help=_("quiet operation"))
+        group.add_argument("-v", "--verbose", action="store_true",
+                           default=None, help=_("verbose operation"))
+        group.add_argument("-y", "--assumeyes", action="store_true",
+                           default=None, help=_("answer yes for all questions"))
+        group.add_argument("--assumeno", action="store_true",
+                           default=None, help=_("answer no for all questions"))
+        group.add_argument("--version", action="store_true", default=None,
+                           help=_("show Yum version and exit"))
+        group.add_argument("--installroot", help=_("set install root"),
+                           metavar='[path]')
+        group.add_argument("--enablerepo", action=self._RepoCallback,
+                           dest='repos_ed', default=[],
+                           metavar='[repo]')
+        group.add_argument("--disablerepo", action=self._RepoCallback,
+                           dest='repos_ed', default=[],
+                           metavar='[repo]')
+        group.add_argument("-x", "--exclude", default=[], action="append",
+                           help=_("exclude packages by name or glob"),
+                           metavar='[package]')
+        group.add_argument("--disableexcludes", default=[], action="append",
                 # help=_("disable exclude from main, for a repo or for everything"),
-                help=SUPPRESS_HELP,
+                help=SUPPRESS,
                         metavar='[repo]')
-        group.add_option("--obsoletes", action="store_true",
+        group.add_argument("--obsoletes", action="store_true", default=None,
                 # help=_("enable obsoletes processing during upgrades")
-                help=SUPPRESS_HELP)
-        group.add_option("--noplugins", action="store_true",
-                         help=_("disable all plugins"))
-        group.add_option("--nogpgcheck", action="store_true",
+                help=SUPPRESS)
+        group.add_argument("--noplugins", action="store_true", default=None,
+                           help=_("disable all plugins"))
+        group.add_argument("--nogpgcheck", action="store_true", default=None,
                 # help=_("disable gpg signature checking")
-                help=SUPPRESS_HELP)
-        group.add_option("", "--disableplugin", dest="disableplugins", default=[],
-                         action="append",
-                         help=_("disable plugins by name"),
-                         metavar='[plugin]')
-        group.add_option("", "--color", dest="color", default=None,
+                help=SUPPRESS)
+        group.add_argument("--disableplugin", dest="disableplugins", default=[],
+                           action="append",
+                           help=_("disable plugins by name"),
+                           metavar='[plugin]')
+        group.add_argument("--color", dest="color", default=None,
                 # help=_("control whether color is used")
-                help=SUPPRESS_HELP)
-        group.add_option("", "--releasever", dest="releasever", default=None,
-                         help=_("override the value of $releasever in config and "
-                                "repo files"))
-        group.add_option("", "--setopt", dest="setopts", default=[],
-                action="append",
-                help=_("set arbitrary config and repo options"))
+                help=SUPPRESS)
+        group.add_argument("--releasever", default=None,
+                           help=_("override the value of $releasever in config"
+                                  " and repo files"))
+        group.add_argument("--setopt", dest="setopts", default=[],
+                           action="append",
+                           help=_("set arbitrary config and repo options"))
 
-def _filtercmdline(novalopts, valopts, args):
-    '''Keep only specific options from the command line argument list
-
-    This function allows us to peek at specific command line options when using
-    the optparse module. This is useful when some options affect what other
-    options should be available.
-
-    @param novalopts: A sequence of options to keep that don't take an argument.
-    @param valopts: A sequence of options to keep that take a single argument.
-    @param args: The command line arguments to parse (as per sys.argv[:1]
-    @return: A list of strings containing the filtered version of args.
-
-    Will raise ValueError if there was a problem parsing the command line.
-    '''
-    out = []
-    args = list(args)       # Make a copy because this func is destructive
-
-    while len(args) > 0:
-        a = args.pop(0)
-        if '=' in a:
-            opt, _ = a.split('=', 1)
-            if opt in valopts:
-                out.append(a)
-
-        elif a == '--':
-            out.append(a)
-
-        elif a in novalopts:
-            out.append(a)
-
-        elif a in valopts:
-            if len(args) < 1:
-                raise ValueError(a)
-            next = args.pop(0)
-            if next[0] == '-':
-                raise ValueError(a)
-
-            out.extend([a, next])
-
-        else:
-            # Check for single letter options that take a value, where the
-            # value is right up against the option
-            for opt in valopts:
-                if len(opt) == 2 and a.startswith(opt):
-                    out.append(a)
-
-    return out
+        # self.add_argument("cmd")
