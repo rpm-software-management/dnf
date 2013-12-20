@@ -35,6 +35,7 @@ import logging
 import os
 import re
 import unittest
+import dnf.cli.cli
 from functools import reduce
 
 skip = unittest.skip
@@ -144,6 +145,15 @@ class MockOutput(object):
 
     def setup_progress_callbacks(self):
         return (None, None)
+
+class MockCli(dnf.cli.cli.Cli):
+
+    def __init__(self, base):
+        super(MockCli, self).__init__(base)
+        self.base.conf.plugins = False
+
+    def read_conf_file(self, *args, **kwargs):
+        return self.base.conf
 
 class MockPackage(object):
     def __init__(self, nevra, repo=None):

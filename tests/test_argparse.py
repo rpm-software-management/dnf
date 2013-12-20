@@ -21,8 +21,8 @@ try:
 except ImportError:
     from tests import mock
 from tests import support
+import argparse
 from dnf.cli.cli import YumOptionParser
-import optparse
 
 class OptionParserTest(support.TestCase):
     def setUp(self):
@@ -30,21 +30,16 @@ class OptionParserTest(support.TestCase):
         output = support.MockOutput()
         self.yumbase.output = output
 
-    def test_simple(self):
-        parser = YumOptionParser(self.yumbase)
-        self.assertFalse(self.yumbase.conf.assumeyes)
-        parser.setupYumConfig(args=['update', '-y'])
-        self.assertTrue(self.yumbase.conf.assumeyes)
-
     def test_nogpgcheck(self):
         parser = YumOptionParser(self.yumbase)
+        opts, cmds = parser.parse_known_args(['update', '--nogpgcheck'])
         del self.yumbase.repos
         # this doesn't try to access yumbase.repos:
-        parser.setupYumConfig(args=['update', '--nogpgcheck'])
+        parser.setupYumConfig(opts)
 
     def test_non_nones2dict(self):
         parser = YumOptionParser(self.yumbase)
-        (values, _) = parser.parse_args(args=['-y'])
-        self.assertIsInstance(values, optparse.Values)
-        dct = parser._non_nones2dict(values)
+        values = parser.parse_args(args=['-y'])
+        self.assertIsInstance(values, argparse.Namespace)
+        dct = parser._non_nones2dict(values.__dict__)
         self.assertTrue(dct['assumeyes'])

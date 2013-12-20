@@ -20,6 +20,7 @@ try:
     from unittest import mock
 except ImportError:
     from tests import mock
+from argparse import Namespace
 from tests import support
 from tests.support import PycompTestCase
 
@@ -28,7 +29,6 @@ import dnf.conf
 import dnf.repo
 import dnf.repodict
 import hawkey
-import optparse
 import os
 import unittest
 
@@ -252,18 +252,28 @@ class CliTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
         self.yumbase.output = support.MockOutput()
-        self.cli = dnf.cli.cli.Cli(self.yumbase)
+        self.cli = support.MockCli(self.yumbase)
 
     def test_knows_upgrade(self):
         upgrade = self.cli.cli_commands['upgrade']
         update = self.cli.cli_commands['update']
         self.assertIs(upgrade, update)
 
+    def test_simple(self):
+        self.assertFalse(self.yumbase.conf.assumeyes)
+        self.cli.configure(['update', '-y'])
+        self.assertTrue(self.yumbase.conf.assumeyes)
+
+    def test_opt_between_cmds(self):
+        self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
+        self.assertTrue(self.yumbase.conf.assumeyes)
+        self.assertEqual(self.yumbase.basecmd, "install")
+        self.assertEqual(self.yumbase.extcmds, ["pkg1", "pkg2"])
+
     def test_configure_repos(self):
-        opts = optparse.Values()
+        opts = Namespace()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
-        calls = mock.Mock()
         self.yumbase._repos = dnf.repodict.RepoDict()
         self.yumbase._repos.add(support.MockRepo('one', None))
         self.yumbase._repos.add(support.MockRepo('two', None))
@@ -280,7 +290,7 @@ class CliTest(PycompTestCase):
 
     def test_configure_repos_expired(self):
         """Ensure that --cacheonly beats the expired status."""
-        opts = optparse.Values()
+        opts = Namespace()
         opts.repos_ed = []
         opts.cacheonly = True
 
