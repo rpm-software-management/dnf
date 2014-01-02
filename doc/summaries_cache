@@ -322,5 +322,49 @@
     [
         1036116, 
         "dnf install failed with exception"
+    ], 
+    [
+        967264, 
+        "[plugins] Support post-transaction actions"
+    ], 
+    [
+        1018284, 
+        "[rfe] [api] refactor check for valid id into separate function"
+    ], 
+    [
+        1035164, 
+        "[abrt] dnf-0.4.7-1.fc20: miscutils.py:61:checkSig:OSError: [Errno 2] Adres\u00e1\u0159 nebo soubor neexistuje: '/var/cache/dnf/x86_64/20/updates-testing/packages/kernel-3.11.9-300.fc20.x86_64.rpm'"
+    ], 
+    [
+        1036147, 
+        "[locking] Traceback for dnf search if running under su - USER"
+    ], 
+    [
+        1036211, 
+        "Install groups using @ sign"
+    ], 
+    [
+        1038403, 
+        "[abrt] dnf-0.4.9-1.fc20: base.py:1832:handle_erase:AssertionError"
+    ], 
+    [
+        1038937, 
+        "[plugins] [api] Add hook for metadata download complete event"
+    ], 
+    [
+        1040255, 
+        "dnf show wrong Installed size when  install  packages"
+    ], 
+    [
+        1044502, 
+        "[abrt] dnf: base.py:125:_add_repo_to_sack:UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 113: ordinal not in range(128)"
+    ], 
+    [
+        1044981, 
+        "[doc] [rfe] support setopt"
+    ], 
+    [
+        1044999, 
+        "[doc] show dependencies during update"
     ]
 ]
