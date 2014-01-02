@@ -446,3 +446,42 @@ Bugs fixed in 0.4.9:
 * :rhbug:`1032455`
 * :rhbug:`1034607`
 * :rhbug:`1036116`
+
+====================
+0.4.10 Release Notes
+====================
+
+0.4.10 is a bugfix release that also adds some long-requested CLI features and extends the plugin support with two new plugin hooks. An important feature for plugin developers is going to be the possibility to register plugin's own CLI command, available from this version.
+
+``dnf history`` now recognizes ``last`` as a special argument, just like other history commands.
+
+``dnf install`` now accepts group specifications via the ``@`` character.
+
+Support for the ``--setopt`` option has been readded from Yum.
+
+API additions in 0.4.10:
+
+* :doc:`api_cli`
+* :attr:`.Plugin.name`
+* :meth:`.Plugin.__init__` now specifies the second parameter as an instance of `.cli.Cli`
+* :meth:`.Plugin.sack`
+* :meth:`.Plugin.transaction`
+* :func:`.repo.repo_id_invalid`
+
+API changes in 0.4.10:
+
+* Plugin authors must specify :attr:`.Plugin.name` when authoring a plugin.
+
+Bugs fixed in 0.4.10:
+
+* :rhbug:`967264`
+* :rhbug:`1018284`
+* :rhbug:`1035164`
+* :rhbug:`1036147`
+* :rhbug:`1036211`
+* :rhbug:`1038403`
+* :rhbug:`1038937`
+* :rhbug:`1040255`
+* :rhbug:`1044502`
+* :rhbug:`1044981`
+* :rhbug:`1044999`

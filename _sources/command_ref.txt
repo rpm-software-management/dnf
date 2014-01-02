@@ -107,6 +107,9 @@ Options
 ``--rpmverbosity=<debug level name>``
     debugging output level for rpm
 
+``--setopt=<option>=<value>``
+    override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
+
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
@@ -254,8 +257,11 @@ transactions and act according to this information (assuming the
     The default history action is listing all known transaction information in a
     table.
 
-``dnf history info [<transaction_id>]``
-    Describe the given transaction. When no ID is given describes what happened
+``dnf history info [<spec>...]``
+    Describe the given transactions. Each ``<spec>`` can be either a
+    ``<transaction-spec>``, which specifies a transaction directly, or a
+    ``<package-name-spec>``, which specifies a transaction by a package which
+    it manipulated. When no transaction is specified describe what happened
     during the latest transaction.
 
 ``dnf history rollback <transaction-spec>``
@@ -284,8 +290,10 @@ Info Command
 Install Command
 ---------------
 
-``dnf [options] install <package-specs>...``
-    Installs the specified packages and their dependencies. After the
+``dnf [options] install <spec>...``
+    Installs the given packages and their dependencies. Each ``<spec>`` can be
+    either a ``<package-spec>``, which specifies a package directly, or a
+    ``@<group-spec>``, which specifies a group which contains it. After the
     transaction is finished all the specified packages are installed on the
     system.
 

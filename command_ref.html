@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.9-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.10-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.9-1',
+        VERSION:     '0.4.10-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -141,6 +141,8 @@ affect cache paths, values in configuration files and mirrorlist URLs. Using
 system.</dd>
 <dt><tt class="docutils literal"><span class="pre">--rpmverbosity=&lt;debug</span> <span class="pre">level</span> <span class="pre">name&gt;</span></tt></dt>
 <dd>debugging output level for rpm</dd>
+<dt><tt class="docutils literal"><span class="pre">--setopt=&lt;option&gt;=&lt;value&gt;</span></tt></dt>
+<dd>override a config option from the config file. To override config options from repo files, use <tt class="docutils literal"><span class="pre">repoid.option</span></tt> for the <tt class="docutils literal"><span class="pre">&lt;option&gt;</span></tt>.</dd>
 <dt><tt class="docutils literal"><span class="pre">--showduplicates</span></tt></dt>
 <dd>show duplicates, in repos, in list/search commands</dd>
 <dt><tt class="docutils literal"><span class="pre">-v,</span> <span class="pre">--verbose</span></tt></dt>
@@ -263,8 +265,11 @@ transactions and act according to this information (assuming the
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">[list]</span></tt></dt>
 <dd>The default history action is listing all known transaction information in a
 table.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;transaction_id&gt;]</span></tt></dt>
-<dd>Describe the given transaction. When no ID is given describes what happened
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">[&lt;spec&gt;...]</span></tt></dt>
+<dd>Describe the given transactions. Each <tt class="docutils literal"><span class="pre">&lt;spec&gt;</span></tt> can be either a
+<tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt>, which specifies a transaction directly, or a
+<tt class="docutils literal"><span class="pre">&lt;package-name-spec&gt;</span></tt>, which specifies a transaction by a package which
+it manipulated. When no transaction is specified describe what happened
 during the latest transaction.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
 <dd>Undo all transactions performed after the specified transaction. If it is
@@ -289,8 +294,10 @@ the %packages section in a <a class="reference external" href="http://fedoraproj
 <div class="section" id="install-command">
 <h3>Install Command<a class="headerlink" href="#install-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">install</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
-<dd>Installs the specified packages and their dependencies. After the
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">install</span> <span class="pre">&lt;spec&gt;...</span></tt></dt>
+<dd>Installs the given packages and their dependencies. Each <tt class="docutils literal"><span class="pre">&lt;spec&gt;</span></tt> can be
+either a <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt>, which specifies a package directly, or a
+<tt class="docutils literal"><span class="pre">&#64;&lt;group-spec&gt;</span></tt>, which specifies a group which contains it. After the
 transaction is finished all the specified packages are installed on the
 system.</dd>
 </dl>
@@ -559,7 +566,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

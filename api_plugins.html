@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plugin Interface &mdash; DNF 0.4.9-1 documentation</title>
+    <title>Plugin Interface &mdash; DNF 0.4.10-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.9-1',
+        VERSION:     '0.4.10-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.9-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
-    <link rel="next" title="DNF User’s FAQ" href="user_faq.html" />
+    <link rel="next" title="Command Line Interface Hooks" href="api_cli.html" />
     <link rel="prev" title="Comps, or the Ditribution Compose Metadata" href="api_comps.html" /> 
   </head>
   <body>
@@ -41,12 +41,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="user_faq.html" title="DNF User’s FAQ"
+          <a href="api_cli.html" title="Command Line Interface Hooks"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -61,23 +61,42 @@
 <p>DNF plugin can be any Python class fullfilling the following criteria:</p>
 <ol class="arabic simple">
 <li>it derives from <a class="reference internal" href="#dnf.Plugin" title="dnf.Plugin"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Plugin</span></tt></a>,</li>
-<li>it is made available in a Python module stored in one of the <a class="reference internal" href="api_conf.html#dnf.conf.Conf.pluginpath" title="dnf.conf.Conf.pluginpath"><tt class="xref py py-attr docutils literal"><span class="pre">Conf.pluginpath</span></tt></a>.</li>
+<li>it is made available in a Python module stored in one of the <a class="reference internal" href="api_conf.html#dnf.conf.Conf.pluginpath" title="dnf.conf.Conf.pluginpath"><tt class="xref py py-attr docutils literal"><span class="pre">Conf.pluginpath</span></tt></a>,</li>
+<li>provides its own <a class="reference internal" href="#dnf.Plugin.name" title="dnf.Plugin.name"><tt class="xref py py-attr docutils literal"><span class="pre">name</span></tt></a> and <a class="reference internal" href="#dnf.Plugin.__init__" title="dnf.Plugin.__init__"><tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt></a>.</li>
 </ol>
 <p>When DNF CLI runs it loads the plugins found in the paths during the CLI&#8217;s initialization.</p>
 <dl class="class">
 <dt id="dnf.Plugin">
 <em class="property">class </em><tt class="descclassname">dnf.</tt><tt class="descname">Plugin</tt><a class="headerlink" href="#dnf.Plugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>The base class all DNF plugins must derive from.</p>
+<dl class="attribute">
+<dt id="dnf.Plugin.name">
+<tt class="descname">name</tt><a class="headerlink" href="#dnf.Plugin.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin must set this class variable to a string identifying the plugin. The string can only contain alphanumeric characters and underscores.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="dnf.Plugin.__init__">
 <tt class="descname">__init__</tt><big>(</big><em>base</em>, <em>cli</em><big>)</big><a class="headerlink" href="#dnf.Plugin.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plugin must override this. Called immediately after all the plugins are loaded. <cite>base</cite> is an instance of <a class="reference internal" href="api_base.html#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a>.</p>
+<dd><p>Plugin must override this. Called immediately after all the plugins are loaded. <cite>base</cite> is an instance of <a class="reference internal" href="api_base.html#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a>. <cite>cli</cite> is an instance of <a class="reference internal" href="api_cli.html#dnf.cli.Cli" title="dnf.cli.Cli"><tt class="xref py py-class docutils literal"><span class="pre">dnf.cli.Cli</span></tt></a> but can also be <tt class="docutils literal"><span class="pre">None</span></tt> in case DNF is running without a CLI (e.g. from an extension).</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="dnf.Plugin.config">
 <tt class="descname">config</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Plugin.config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plugin can override this. This hook is called immediately after the CLI/extension is finished configuring DNF.  The plugin can use this to tweak the global configuration or the repository configuration.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Plugin.sack">
+<tt class="descname">sack</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Plugin.sack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin can override this. This hook is called immediately after <a class="reference internal" href="api_base.html#dnf.Base.sack" title="dnf.Base.sack"><tt class="xref py py-attr docutils literal"><span class="pre">Base.sack</span></tt></a> is initialized with data from all the enabled repos.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Plugin.transaction">
+<tt class="descname">transaction</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Plugin.transaction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin can override this. This hook is called immediately after a successful transaction.</p>
 </dd></dl>
 
 </dd></dl>
@@ -94,8 +113,8 @@
   <p class="topless"><a href="api_comps.html"
                         title="previous chapter">Comps, or the Ditribution Compose Metadata</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="user_faq.html"
-                        title="next chapter">DNF User&#8217;s FAQ</a></p>
+  <p class="topless"><a href="api_cli.html"
+                        title="next chapter">Command Line Interface Hooks</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_plugins.txt"
@@ -128,12 +147,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="user_faq.html" title="DNF User’s FAQ"
+          <a href="api_cli.html" title="Command Line Interface Hooks"
              >next</a> |</li>
         <li class="right" >
           <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.9-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

@@ -100,7 +100,7 @@ Also see related Fedora bugzillas `982947
 The important system repos should never be down and we see the third party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
-DNF immediately stops on a repo error, confusing and bothering the user.
+Yum immediately stops on a repo error, confusing and bothering the user.
 
 See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
@@ -179,3 +179,25 @@ There is no shell in DNF but the case above is still valid. We provide the ``--a
 The option was used to keep the downloaded .rpm of just installed pacakges in the cache. It has been disabled in Fedora and there has been no real use cases indicated. The option has been removed in DNF which deletes all downloaded packages after a transaction completes.
 
 Note that this option is something different than the "downloadonly" functionality in Yum.
+
+===========================
+ ``dnf history info last``
+===========================
+
+In this case, DNF recognizes ``last`` as the ID of the last transaction (like
+other ``history`` subcommands), while Yum considers it a package name. It goes
+similarly for ``last-N``.
+
+========================================================
+ Dependency processing details are not shown in the CLI
+========================================================
+
+During its depsolving phase, Yum outputs lines similar to::
+
+  ---> Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
+  --> Processing Dependency: rubygem-net-ssh-multi >= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch
+
+DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependnecies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.
+
+See the the related `Fedora bug 1044999
+<https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.
