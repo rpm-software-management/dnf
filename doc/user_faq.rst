@@ -32,6 +32,6 @@ Yet the immediately following ``dnf upgrade`` does not offer them for upgrade::
     Dependencies resolved.
     Nothing to do.
 
-It might seem odd but in fact this can happen quite easily: what the first command does is only check whether there are some available packages with the same name as an installed package but with a higher version. Those are considered upgrade candidates by ``check-update``, but no actual dependency resolving takes place there. That only happens during ``dnf upgrade`` and if the resolving procedure then discovers that some of the packages do not have their dependencies ready yet, then they are not offered in the upgrade. To see the precise reason why was not possible to do the upgrade in this case, use::
+It might seem odd but in fact this can happen quite easily: what the first command does is only check whether there are some available packages with the same name as an installed package but with a higher version. Those are considered upgrade candidates by ``check-update``, but no actual dependency resolving takes place there. That only happens during ``dnf upgrade`` and if the resolving procedure then discovers that some of the packages do not have their dependencies ready yet, then they are not offered in the upgrade. To see the precise reason why it was not possible to do the upgrade in this case, use::
 
     $ dnf upgrade --best
