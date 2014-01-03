@@ -20,23 +20,25 @@ Configuration parser and default values for yum.
 """
 
 from __future__ import absolute_import
-import os
-import sys
-import rpm
-import copy
-import shlex
+
+from . import misc
+from .misc import read_in_items_from_dot_dir
 from .parser import ConfigPreProcessor, varReplace
+from dnf.pycomp import is_py3bytes, basestring
 from iniparse import INIConfig
 from iniparse.compat import NoSectionError, NoOptionError, ParsingError
 from iniparse.compat import RawConfigParser as ConfigParser
-import dnf.rpmUtils.transaction
-import dnf.exceptions
-import types
-from . import misc
-from .misc import read_in_items_from_dot_dir
-import dnf.util
+
+import copy
 import dnf.const
-from dnf.pycomp import is_py3bytes, basestring
+import dnf.exceptions
+import dnf.rpmUtils.transaction
+import dnf.util
+import os
+import rpm
+import shlex
+import sys
+import types
 
 try:
     import urlparse
