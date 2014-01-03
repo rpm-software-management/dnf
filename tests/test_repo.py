@@ -18,18 +18,16 @@
 from __future__ import absolute_import
 from tests import mock
 from tests import support
+
 import dnf.repo
 import dnf.util
 import dnf.exceptions
+import iniparse.compat
+import io
 import librepo
 import os
 import tempfile
 import unittest
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-import io
 from dnf.pycomp import unicode
 
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
@@ -121,7 +119,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_dump(self):
         dump = self.repo.dump()
         f = io.StringIO(unicode(dump))
-        parser = configparser.ConfigParser()
+        parser = iniparse.compat.ConfigParser()
         parser.readfp(f)
         self.assertIn('r', parser.sections())
         opts = parser.options('r')
