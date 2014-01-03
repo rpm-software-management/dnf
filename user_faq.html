@@ -61,6 +61,25 @@ the package&#8217;s maintainer.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade">
+<h2>Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt><a class="headerlink" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes one can see that a newer version of a package is available in the repos:</p>
+<div class="highlight-python"><pre>$ dnf check-update
+libocsync0.x86_64 0.91.4-2.1              devel_repo
+owncloud-client.x86_64 1.5.0-18.1         devel_repo</pre>
+</div>
+<p>Yet the immediately following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> does not offer them for upgrade:</p>
+<div class="highlight-python"><pre>$ dnf upgrade
+Resolving dependencies
+--&gt; Starting dependency resolution
+--&gt; Finished dependency resolution
+Dependencies resolved.
+Nothing to do.</pre>
+</div>
+<p>It might seem odd but in fact this can happen quite easily: what the first command does is only check whether there are some available packages with the same name as an installed package but with a higher version. Those are considered upgrade candidates by <tt class="docutils literal"><span class="pre">check-update</span></tt>, but no actual dependency resolving takes place there. That only happens during <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> and if the resolving procedure then discovers that some of the packages do not have their dependencies ready yet, then they are not offered in the upgrade. To see the precise reason why was not possible to do the upgrade in this case, use:</p>
+<div class="highlight-python"><pre>$ dnf upgrade --best</pre>
+</div>
+</div>
 </div>
 
 
@@ -73,6 +92,7 @@ the package&#8217;s maintainer.</p>
   <ul>
 <li><a class="reference internal" href="#">DNF User&#8217;s FAQ</a><ul>
 <li><a class="reference internal" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a></li>
+<li><a class="reference internal" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a></li>
 </ul>
 </li>
 </ul>
