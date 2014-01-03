@@ -43,3 +43,12 @@ class PluginTest(tests.support.TestCase):
         self.plugins.run_config()
         lucky = self.plugins.plugins[0]
         self.assertTrue(lucky._config)
+
+    def test_config(self):
+        base = tests.support.MockBase()
+        base.conf.pluginconfpath = PLUGINS
+        self.plugins.run_init(base, None)
+        lucky = self.plugins.plugins[0]
+        conf = lucky.read_config(base.conf)
+        self.assertTrue(conf.getboolean('main', 'enabled'))
+        self.assertEqual(conf.get('main', 'wanted'), '/to/be/haunted')
