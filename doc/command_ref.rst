@@ -203,6 +203,8 @@ Downgrade Command
 ``dnf [options] downgrade <package-specs>...``
     Downgrades the specified packages to the highest of all known lower versions.
 
+.. _erase_command-label:
+
 -------------
 Erase Command
 -------------
@@ -366,6 +368,13 @@ Reinstall Command
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
     download the same RPM).
+
+--------------
+Remove Command
+--------------
+
+``dnf [options] remove <package-specs>...``
+    Deprecated alias for the :ref:`\erase_command-label`.
 
 ----------------
 Repolist Command
