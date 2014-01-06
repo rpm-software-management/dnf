@@ -1706,7 +1706,7 @@ class YumOptionParser(OptionParser):
 
     def _addYumBasicOptions(self):
         if self._utils:
-            group = OptionGroup(self, "Yum Base Options")
+            group = OptionGroup(self, "DNF Basic Options")
             self.add_option_group(group)
         else:
             group = self
@@ -1764,7 +1764,7 @@ class YumOptionParser(OptionParser):
         group.add_option("--assumeno", dest="assumeno",
                 action="store_true", help=_("answer no for all questions"))
         group.add_option("--version", action="store_true",
-                help=_("show Yum version and exit"))
+                help=_("show DNF version and exit"))
         group.add_option("--installroot", help=_("set install root"),
                 metavar='[path]')
         group.add_option("--enablerepo", action='callback',
