@@ -130,7 +130,7 @@ popd
 
 %changelog
 
-* Thu Jan 2 2013 Aleš Kozumplík <ales@redhat.com> - 0.4.10-1
+* Thu Jan 2 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.10-1
 - packaging: own the plugin directories. (Ales Kozumplik)
 - doc: cli_vs_yum: no 'Processing dependency' lines. (RhBug:1044999) (Ales Kozumplik)
 - doc: using --setopt from CLI. (RhBug:1044981) (Ales Kozumplik)
