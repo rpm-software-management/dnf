@@ -1518,7 +1518,7 @@ class Cli(object):
 
         if len(counter) == 0:
             self.logger.warning(_('Warning: No matches found for: %s'), arg)
-            raise dnf.exception.Error(_('No Matches found'))
+            raise dnf.exceptions.Error(_('No Matches found'))
 
     def write_out_metadata(self):
         print(_("Writing out repository metadata for debugging."))
