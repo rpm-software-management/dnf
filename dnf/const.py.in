@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+import distutils.sysconfig
+
 CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
@@ -45,6 +47,8 @@ VERSION_PATCH=@DNF_PATCH@
 
 PREFIX=NAME.lower()
 PROGRAM_NAME=NAME.lower()
+PLUGINPATH = '%s/%s-plugins' % (distutils.sysconfig.get_python_lib(),
+                                PROGRAM_NAME)
 VERSION="%d.%d.%d" % (VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
 USER_AGENT = "dnf/%s" % VERSION
 
