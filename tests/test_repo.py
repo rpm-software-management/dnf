@@ -193,11 +193,13 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertIsNotNone(self.repo.metadata)
 
     def test_load(self):
-        self.assertIsNone(self.repo.metadata)
-        self.assertTrue(self.repo.load())
-        self.assertIsNotNone(self.repo.metadata)
+        repo = self.repo
+        self.assertIsNone(repo.metadata)
+        self.assertTrue(repo.load())
+        self.assertIsNotNone(repo.metadata)
         repomd = os.path.join(self.TMP_CACHEDIR, "r/repodata/repomd.xml")
         self.assertTrue(os.path.isfile(repomd))
+        self.assertTrue(repo.metadata.fresh)
 
     def test_load_badconf(self):
         self.repo.baseurl = []
@@ -219,6 +221,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.setUp() # get a new repo
         self.repo.md_only_cached = True
         self.assertFalse(self.repo.load())
+        self.assertFalse(self.repo.metadata.fresh)
 
         # try again with a quickly expiring cache
         del self.repo

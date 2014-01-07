@@ -95,6 +95,7 @@ class _Handle(librepo.Handle):
 class Metadata(object):
     def __init__(self, res, handle):
         self.expired = False
+        self.fresh = False # :api
         self.repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
         self._mirrors = handle.mirrors[:]
@@ -178,7 +179,7 @@ class Repo(dnf.yum.config.RepoConf):
         self._progress = None
         self.id = id_ # :api
         self.basecachedir = basecachedir
-        self.metadata = None
+        self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
         self.max_mirror_tries = 0 # try them all
@@ -455,6 +456,7 @@ class Repo(dnf.yum.config.RepoConf):
             # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
             self.metadata = self._handle_load(handle)
+            self.metadata.fresh = True
         except librepo.LibrepoException as e:
             self.metadata = None
             raise dnf.exceptions.RepoError(self._exc2msg(e))

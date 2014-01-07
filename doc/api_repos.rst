@@ -20,6 +20,14 @@ Repository Configuration
 
   Return index of the first invalid character in the `repo_id` or ``None`` if all characters are valid. This function is used to validate the section names in ``.repo`` files.
 
+.. class:: Metadata
+
+  Represents the metadata files.
+
+  .. attribute:: fresh
+
+    Boolean. ``True`` if the metadata was loaded from the origin, ``False`` if it was loaded from the cache.
+
 .. class:: Repo
 
   Repository object used for metadata download. To configure it properly one has to give it either :attr:`metalink`, :attr:`mirrorlist` or :attr:`baseurl` parameter.
@@ -31,6 +39,10 @@ Repository Configuration
   .. attribute:: id
 
     ID of this repo.
+
+  .. attribute:: metadata
+
+    If :meth:`~load` has been called and succeeded, this contains the relevant :class:`Metadata` instance.
 
   .. attribute:: metalink
 
