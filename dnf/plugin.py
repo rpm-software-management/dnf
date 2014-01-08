@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import collections
 import dnf.util
+import dnf.yum.i18n
 import glob
 import importlib
 import iniparse.compat
@@ -31,7 +32,10 @@ import logging
 import operator
 import os
 import sys
+import traceback
 import types
+
+_ = dnf.yum.i18n._
 
 logger = logging.getLogger('dnf')
 
@@ -135,9 +139,14 @@ def import_modules(package, py_files):
     for fn in py_files:
         path, module = os.path.split(fn)
         package.__path__.append(path)
-        (module, _) = os.path.splitext(module)
+        (module, ext) = os.path.splitext(module)
         name = '%s.%s' % (package.__name__, module)
-        module = importlib.import_module(name)
+        try:
+            module = importlib.import_module(name)
+        except Exception as e:
+            tb = traceback.format_exc()
+            logger.error(_('Failed loading plugin: %s'), module)
+            logger.debug(tb)
 
 def iter_py_files(paths):
     return (fn for p in paths for fn in glob.glob('%s/*.py' % p))
