@@ -366,5 +366,25 @@
     [
         1044999, 
         "[doc] show dependencies during update"
+    ], 
+    [
+        1048402, 
+        "[abrt] dnf: cli.py:1521:search:AttributeError: 'module' object has no attribute 'exception'"
+    ], 
+    [
+        1048572, 
+        "dnf resolve failure"
+    ], 
+    [
+        1048716, 
+        "man page does not mention sub command remove"
+    ], 
+    [
+        1048719, 
+        "Minor error in 'dnf --help', using the package name Yum instead of dnf"
+    ], 
+    [
+        1048988, 
+        "[plugins] [api] add a hook for MD refresh"
     ]
 ]
