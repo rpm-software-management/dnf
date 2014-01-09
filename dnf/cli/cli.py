@@ -1778,9 +1778,8 @@ class YumOptionParser(OptionParser):
                 help=SUPPRESS_HELP,
                 metavar='[repo]')
         group.add_option("-x", "--exclude", default=[], action="append",
-                # help=_("exclude package(s) by name or glob"),
-                help=SUPPRESS_HELP,
-                metavar='[package]')
+                         help=_("exclude packages by name or glob"),
+                         metavar='[package]')
         group.add_option("", "--disableexcludes", default=[], action="append",
                 # help=_("disable exclude from main, for a repo or for everything"),
                 help=SUPPRESS_HELP,
@@ -1789,26 +1788,23 @@ class YumOptionParser(OptionParser):
                 # help=_("enable obsoletes processing during upgrades")
                 help=SUPPRESS_HELP)
         group.add_option("--noplugins", action="store_true",
-                # help=_("disable Yum plugins")
-                help=SUPPRESS_HELP)
+                         help=_("disable all plugins"))
         group.add_option("--nogpgcheck", action="store_true",
                 # help=_("disable gpg signature checking")
                 help=SUPPRESS_HELP)
         group.add_option("", "--disableplugin", dest="disableplugins", default=[],
-                action="append",
-                # help=_("disable plugins by name"),
-                help=SUPPRESS_HELP,
-                metavar='[plugin]')
+                         action="append",
+                         help=_("disable plugins by name"),
+                         metavar='[plugin]')
         group.add_option("", "--color", dest="color", default=None,
                 # help=_("control whether color is used")
                 help=SUPPRESS_HELP)
         group.add_option("", "--releasever", dest="releasever", default=None,
-                # help=_("set value of $releasever in yum config and repo files")
-                help=SUPPRESS_HELP)
+                         help=_("override the value of $releasever in config and "
+                                "repo files"))
         group.add_option("", "--setopt", dest="setopts", default=[],
                 action="append",
-                # help=_("set arbitrary config and repo options")
-                help=SUPPRESS_HELP)
+                help=_("set arbitrary config and repo options"))
 
 def _filtercmdline(novalopts, valopts, args):
     '''Keep only specific options from the command line argument list
