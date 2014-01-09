@@ -1,4 +1,4 @@
-%global gitrev 44f5516
+%global gitrev 3baa9cb
 %global hawkey_version 0.4.7
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -129,6 +129,28 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Jan 9 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.11-1
+- In an afterthought, why encourage clients to behave abnormally. (Ales Kozumplik)
+- plugins: redo the plugin config loading, with doc. (Ales Kozumplik)
+- plugins: --disableplugin works again. (Ales Kozumplik)
+- cli: re-enable recognized options in --help. (Ales Kozumplik)
+- cli: drop --enableplugin. (Ales Kozumplik)
+- plugins: do not traceback on a broken plugin. (Ales Kozumplik)
+- api: determine if particular metadata got refreshed (RhBug:1048988) (Ales Kozumplik)
+- apichange: plugins: turns out the pluginpath has to depend on py2/py3. (Ales Kozumplik)
+- doc: specify types of config options in conf_ref.rst. (Ales Kozumplik)
+- packaging: bump the year. (Ales Kozumplik)
+- doc: 'dnf provides' does not do extra filename heuristics. (RhBug:1048572) (Ales Kozumplik)
+- doc: document 'remove' alias for 'erase'. (RhBug:1048716) (Ales Kozumplik)
+- cli: cosmetic: help text incorrectly mentioning Yum. (RhBug:1048719) (Ales Kozumplik)
+- fix: typo in CLI's search(). (RhBug:1048402) (Ales Kozumplik)
+- refactor: cosmetic: imports in dnf.yum.config (Ales Kozumplik)
+- doc: faq: 'dnf update' vs 'yum update'. (Ales Kozumplik)
+- plugins: add basic support for reading in plugin config. (Ales Kozumplik)
+- tests: use iniparse.compat instead of configparser. (Ales Kozumplik)
+- doc: typo in 1f180f8. (Ales Kozumplik)
+- doc: faq: explain a 'check-update' oddity. (Ales Kozumplik)
 
 * Thu Jan 2 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.10-1
 - packaging: own the plugin directories. (Ales Kozumplik)
