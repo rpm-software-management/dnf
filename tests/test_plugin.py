@@ -25,7 +25,7 @@ PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
 class PluginTest(tests.support.TestCase):
     def setUp(self):
         self.plugins = dnf.plugin.Plugins()
-        self.plugins.load([PLUGINS])
+        self.plugins.load([PLUGINS], ())
 
     def tearDown(self):
         self.plugins.unload()
@@ -52,3 +52,12 @@ class PluginTest(tests.support.TestCase):
         conf = lucky.read_config(base.conf)
         self.assertTrue(conf.getboolean('main', 'enabled'))
         self.assertEqual(conf.get('main', 'wanted'), '/to/be/haunted')
+
+class PluginSkipsTest(tests.support.TestCase):
+    def test_skip(self):
+        self.plugins = dnf.plugin.Plugins()
+        self.plugins.load([PLUGINS], ('luck*',))
+        self.assertLength(self.plugins.plugin_cls, 0)
+
+    def tearDown(self):
+        self.plugins.unload()

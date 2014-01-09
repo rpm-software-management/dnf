@@ -1371,7 +1371,7 @@ class Cli(object):
             sleeptime = 0
 
         if self.base.conf.plugins:
-            self.base.plugins.load(self.base.conf.pluginpath)
+            self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
         self.base.plugins.run_init(self.base, self)
 
         # save our original args out
@@ -1572,7 +1572,7 @@ class YumOptionParser(OptionParser):
                         ('-c', '--config', '-d', '--debuglevel',
                          '-e', '--errorlevel',
                          '--installroot',
-                         '--disableplugin', '--releasever',
+                         '--releasever',
                          '--setopt'),
                         args)
         except ValueError as arg:
@@ -1597,11 +1597,6 @@ class YumOptionParser(OptionParser):
         dct = {k: in_dct[k] for k in in_dct
                if in_dct[k] is not None
                if in_dct[k] != []}
-        for k in ['disableplugins']:
-            v = dct.get(k, None)
-            if v is None:
-                continue
-            dct[k] = YumOptionParser._splitArg(v)
         return dct
 
     def setupYumConfig(self, args):
@@ -1614,6 +1609,8 @@ class YumOptionParser(OptionParser):
            For example, if args is ["install", "foo", "--verbose"],
            cmds will be ["install", "foo"].
         """
+
+        # clear up lists pre-initialized from firstParse()
         (opts, cmds) = self.parse_args(args=args)
 
         try:
@@ -1630,6 +1627,9 @@ class YumOptionParser(OptionParser):
                 self.base.conf.assumeyes = 1
             if opts.assumeno:
                 self.base.conf.assumeno  = 1
+
+            if opts.disableplugins:
+                opts.disableplugins = self._splitArg(opts.disableplugins)
 
             if opts.obsoletes:
                 self.base.conf.obsoletes = 1

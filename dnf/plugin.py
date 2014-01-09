@@ -24,6 +24,7 @@ from __future__ import print_function
 import collections
 import dnf.util
 import dnf.yum.i18n
+import fnmatch
 import glob
 import importlib
 import iniparse.compat
@@ -104,7 +105,7 @@ class Plugins(object):
             dnf.util.mapall(operator.methodcaller(method), self.plugins)
         return fn
 
-    def load(self, paths):
+    def load(self, paths, skips):
         """Dynamically load relevant plugin modules."""
 
         if DYNAMIC_PACKAGE in sys.modules:
@@ -112,7 +113,7 @@ class Plugins(object):
         sys.modules[DYNAMIC_PACKAGE] = package = types.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
-        files = iter_py_files(paths)
+        files = iter_py_files(paths, skips)
         import_modules(package, files)
         self.plugin_cls = plugin_classes()[:]
         if len(self.plugin_cls) > 0:
@@ -148,6 +149,10 @@ def import_modules(package, py_files):
             logger.error(_('Failed loading plugin: %s'), module)
             logger.debug(tb)
 
-def iter_py_files(paths):
-    return (fn for p in paths for fn in glob.glob('%s/*.py' % p))
-
+def iter_py_files(paths, skips):
+    for p in paths:
+        for fn in glob.glob('%s/*.py' % p):
+            (name, _) = os.path.splitext(os.path.basename(fn))
+            if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
+                 continue
+            yield fn

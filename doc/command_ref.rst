@@ -76,6 +76,9 @@ Options
     * ``main``, disables excludes defined in the ``[main]`` section
     * ``repoid``, disables excludes defined for the given repo
 
+``--disableplugin=<plugin names>``
+    Disable the listed plugins specified by names or globs.
+
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
@@ -84,13 +87,16 @@ Options
     Exclude packages specified by a name or a glob from the operation.
 
 ``-h, --help``
-    Shows the help.
+    Show the help.
 
 ``--installroot=<path>``
     set install root
 
 ``--nogpgcheck``
     skip checking GPG signatures on packages
+
+``--noplugins``
+    Disable all plugins.
 
 ``-q, --quiet``
     quiet operation
@@ -121,6 +127,8 @@ Options
 
 ``-y, --assumeyes``
     answer yes for all questions
+
+List options are comma separated.
 
 ========
 Commands
