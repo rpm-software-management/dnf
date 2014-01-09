@@ -1572,7 +1572,7 @@ class YumOptionParser(OptionParser):
                         ('-c', '--config', '-d', '--debuglevel',
                          '-e', '--errorlevel',
                          '--installroot',
-                         '--disableplugin', '--enableplugin', '--releasever',
+                         '--disableplugin', '--releasever',
                          '--setopt'),
                         args)
         except ValueError as arg:
@@ -1597,7 +1597,7 @@ class YumOptionParser(OptionParser):
         dct = {k: in_dct[k] for k in in_dct
                if in_dct[k] is not None
                if in_dct[k] != []}
-        for k in ['enableplugins', 'disableplugins']:
+        for k in ['disableplugins']:
             v = dct.get(k, None)
             if v is None:
                 continue
@@ -1797,11 +1797,6 @@ class YumOptionParser(OptionParser):
         group.add_option("", "--disableplugin", dest="disableplugins", default=[],
                 action="append",
                 # help=_("disable plugins by name"),
-                help=SUPPRESS_HELP,
-                metavar='[plugin]')
-        group.add_option("", "--enableplugin", dest="enableplugins", default=[],
-                action="append",
-                # help=_("enable plugins by name"),
                 help=SUPPRESS_HELP,
                 metavar='[plugin]')
         group.add_option("", "--color", dest="color", default=None,

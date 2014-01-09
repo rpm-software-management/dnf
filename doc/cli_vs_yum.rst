@@ -219,3 +219,9 @@ or even::
   dnf provides '*/sandbox'
 
 to obtain similar results.
+
+=================================
+``--enableplugin`` not recognized
+=================================
+
+This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).

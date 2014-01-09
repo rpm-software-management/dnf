@@ -44,8 +44,8 @@ class OptionParserTest(support.TestCase):
 
     def test_non_nones2dict(self):
         parser = YumOptionParser(self.yumbase)
-        values = parser.parse_args(args=['-y', '--enableplugin=meter,maid'])[0]
+        values = parser.parse_args(args=['-y', '--disableplugin=meter,maid'])[0]
         self.assertIsInstance(values, optparse.Values)
         dct = parser._non_nones2dict(values)
         self.assertTrue(dct['assumeyes'])
-        self.assertItemsEqual(dct['enableplugins'], ['meter', 'maid'])
+        self.assertItemsEqual(dct['disableplugins'], ['meter', 'maid'])
