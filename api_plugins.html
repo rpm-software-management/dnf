@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plugin Interface &mdash; DNF 0.4.10-1 documentation</title>
+    <title>Plugin Interface &mdash; DNF 0.4.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.10-1',
+        VERSION:     '0.4.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="Command Line Interface Hooks" href="api_cli.html" />
+    <link rel="prev" title="Comps, or the Ditribution Compose Metadata" href="api_comps.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +40,14 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api_cli.html" title="Command Line Interface Hooks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -63,6 +73,12 @@
 <dt id="dnf.Plugin.name">
 <tt class="descname">name</tt><a class="headerlink" href="#dnf.Plugin.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plugin must set this class variable to a string identifying the plugin. The string can only contain alphanumeric characters and underscores.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="dnf.Plugin.read_config">
+<em class="property">static </em><tt class="descname">read_config</tt><big>(</big><em>conf</em>, <em>name</em><big>)</big><a class="headerlink" href="#dnf.Plugin.read_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read plugin&#8217;s configuration into a <a class="reference external" href="http://docs.python.org/3/library/configparser.html">ConfigParser</a> compatible instance. <cite>conf</cite> is a <a class="reference internal" href="api_conf.html#dnf.conf.Conf" title="dnf.conf.Conf"><tt class="xref py py-class docutils literal"><span class="pre">Conf</span></tt></a> instance used to look up the plugin configuration directory, <cite>name</cite> is the basename of the relevant conf file.</p>
 </dd></dl>
 
 <dl class="method">
@@ -99,6 +115,12 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_comps.html"
+                        title="previous chapter">Comps, or the Ditribution Compose Metadata</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_cli.html"
+                        title="next chapter">Command Line Interface Hooks</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_plugins.txt"
@@ -130,7 +152,14 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api_cli.html" title="Command Line Interface Hooks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.10-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.10-1',
+        VERSION:     '0.4.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
+    <link rel="next" title="DNF API Reference" href="api.html" />
+    <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +39,13 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="release_notes.html" title="DNF Release Notes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -71,6 +79,8 @@
 <li><a class="reference internal" href="#keepcache-configuration-option-dropped" id="id22"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-info-last" id="id23"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id24">Dependency processing details are not shown in the CLI</a></li>
+<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
+<li><a class="reference internal" href="#enableplugin-not-recognized" id="id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
 </ul>
 </li>
 </ul>
@@ -214,6 +224,23 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <p>DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependnecies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.</p>
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1044999">Fedora bug 1044999</a>.</p>
 </div>
+<div class="section" id="dnf-provides-complies-with-the-yum-documentation-of-the-command">
+<h2><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a><a class="headerlink" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" title="Permalink to this headline">¶</a></h2>
+<p>When one executes:</p>
+<div class="highlight-python"><pre>yum provides sandbox</pre>
+</div>
+<p>Yum applies extra heuristics to determine what the user meant by <tt class="docutils literal"><span class="pre">sandbox</span></tt>, for instance it sequentially prepends entries from the <tt class="docutils literal"><span class="pre">PATH</span></tt> environment variable to it to see if it matches a file provided by some package. This is an undocumented behaivor that DNF does not emulate. Just typically use:</p>
+<div class="highlight-python"><pre>dnf provides /usr/bin/sandbox</pre>
+</div>
+<p>or even:</p>
+<div class="highlight-python"><pre>dnf provides '*/sandbox'</pre>
+</div>
+<p>to obtain similar results.</p>
+</div>
+<div class="section" id="enableplugin-not-recognized">
+<h2><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
+<p>This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).</p>
+</div>
 </div>
 
 
@@ -244,10 +271,18 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <li><a class="reference internal" href="#keepcache-configuration-option-dropped"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-info-last"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli">Dependency processing details are not shown in the CLI</a></li>
+<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
+<li><a class="reference internal" href="#enableplugin-not-recognized"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
 </ul>
 </li>
 </ul>
 
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="release_notes.html"
+                        title="previous chapter">DNF Release Notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="next chapter">DNF API Reference</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/cli_vs_yum.txt"
@@ -279,7 +314,13 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api.html" title="DNF API Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="release_notes.html" title="DNF Release Notes"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

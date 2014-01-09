@@ -44,7 +44,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
   .. attribute:: pluginpath
 
-    List of directories where DNF searches for :doc:`plugins <api_plugins>`. Defaults to ``["/usr/share/dnf/plugins"]``.
+    List of directories where DNF searches for :doc:`plugins <api_plugins>`. The default contains a Python-version specific path.
 
   .. attribute:: releasever
 

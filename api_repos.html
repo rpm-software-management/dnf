@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Repository Configuration &mdash; DNF 0.4.10-1 documentation</title>
+    <title>Repository Configuration &mdash; DNF 0.4.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.10-1',
+        VERSION:     '0.4.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="Sack" href="api_sack.html" />
+    <link rel="prev" title="Configuration" href="api_conf.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +40,14 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api_sack.html" title="Sack"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_conf.html" title="Configuration"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,6 +83,18 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="dnf.repo.Metadata">
+<em class="property">class </em><tt class="descclassname">dnf.repo.</tt><tt class="descname">Metadata</tt><a class="headerlink" href="#dnf.repo.Metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents the metadata files.</p>
+<dl class="attribute">
+<dt id="dnf.repo.Metadata.fresh">
+<tt class="descname">fresh</tt><a class="headerlink" href="#dnf.repo.Metadata.fresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean. <tt class="docutils literal"><span class="pre">True</span></tt> if the metadata was loaded from the origin, <tt class="docutils literal"><span class="pre">False</span></tt> if it was loaded from the cache.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="dnf.repo.Repo">
 <em class="property">class </em><tt class="descclassname">dnf.repo.</tt><tt class="descname">Repo</tt><a class="headerlink" href="#dnf.repo.Repo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Repository object used for metadata download. To configure it properly one has to give it either <a class="reference internal" href="#dnf.repo.Repo.metalink" title="dnf.repo.Repo.metalink"><tt class="xref py py-attr docutils literal"><span class="pre">metalink</span></tt></a>, <a class="reference internal" href="#dnf.repo.Repo.mirrorlist" title="dnf.repo.Repo.mirrorlist"><tt class="xref py py-attr docutils literal"><span class="pre">mirrorlist</span></tt></a> or <a class="reference internal" href="#dnf.repo.Repo.baseurl" title="dnf.repo.Repo.baseurl"><tt class="xref py py-attr docutils literal"><span class="pre">baseurl</span></tt></a> parameter.</p>
@@ -86,6 +108,12 @@
 <dt id="dnf.repo.Repo.id">
 <tt class="descname">id</tt><a class="headerlink" href="#dnf.repo.Repo.id" title="Permalink to this definition">¶</a></dt>
 <dd><p>ID of this repo.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.repo.Repo.metadata">
+<tt class="descname">metadata</tt><a class="headerlink" href="#dnf.repo.Repo.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <a class="reference internal" href="#dnf.repo.Repo.load" title="dnf.repo.Repo.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> has been called and succeeded, this contains the relevant <a class="reference internal" href="#dnf.repo.Metadata" title="dnf.repo.Metadata"><tt class="xref py py-class docutils literal"><span class="pre">Metadata</span></tt></a> instance.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -146,6 +174,12 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_conf.html"
+                        title="previous chapter">Configuration</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_sack.html"
+                        title="next chapter">Sack</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_repos.txt"
@@ -177,7 +211,14 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="api_sack.html" title="Sack"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_conf.html" title="Configuration"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

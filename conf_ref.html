@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Configuration Reference &mdash; DNF 0.4.10-1 documentation</title>
+    <title>DNF Configuration Reference &mdash; DNF 0.4.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.10-1',
+        VERSION:     '0.4.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
     <link rel="next" title="DNF Release Notes" href="release_notes.html" />
     <link rel="prev" title="DNF Command Reference" href="command_ref.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -70,58 +70,79 @@ one main section. The repository sections define the configuration for each
 <h2>[main] Options<a class="headerlink" href="#main-options" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">best</span></tt></dt>
-<dd>When upgrading a package, always try to install its highest version
+<dd><p class="first">boolean</p>
+<p class="last">When upgrading a package, always try to install its highest version
 available, even only to find out some of its deps are not
 satisfiable. Enable this if you want to experience broken dependencies in
-the repositories firsthand. The default is off.</dd>
+the repositories firsthand. The default is off.</p>
+</dd>
 </dl>
 <dl class="docutils" id="clean-requirements-on-remove-label">
 <dt><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt></dt>
-<dd>Remove dependencies that are no longer used during <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span></tt>. A package
+<dd><p class="first">boolean</p>
+<p class="last">Remove dependencies that are no longer used during <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span></tt>. A package
 only qualifies for removal via <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> if it was
 installed through DNF but not on explicit user request, i.e. it was
-pulled in as a dependency. The default is on.</dd>
+pulled in as a dependency. The default is on.</p>
+</dd>
 <dt><tt class="docutils literal"><span class="pre">debuglevel</span></tt></dt>
-<dd>Debug messages output level, in the range 0 to 10. The higher the number the
-more debug output is put to stdout. Default is 2.</dd>
+<dd><p class="first">integer</p>
+<p class="last">Debug messages output level, in the range 0 to 10. The higher the number the
+more debug output is put to stdout. Default is 2.</p>
+</dd>
 <dt><tt class="docutils literal"><span class="pre">errorlevel</span></tt></dt>
-<dd>Error messages output level, in the range 0 to 10. The higher the number the
-more error output is put to stderr. Default is 2. This is deprecated in DNF.</dd>
+<dd><p class="first">integer</p>
+<p class="last">Error messages output level, in the range 0 to 10. The higher the number the
+more error output is put to stderr. Default is 2. This is deprecated in DNF.</p>
+</dd>
 <dt><tt class="docutils literal"><span class="pre">installonlypkgs</span></tt></dt>
-<dd>List of provide names of packages that should only ever be installed, never
-upgraded. Kernels in particular fall into this category.</dd>
+<dd><p class="first">list</p>
+<p class="last">List of provide names of packages that should only ever be installed, never
+upgraded. Kernels in particular fall into this category.</p>
+</dd>
 </dl>
 <dl class="docutils" id="installonly-limit-label">
 <dt><tt class="docutils literal"><span class="pre">installonly_limit</span></tt></dt>
-<dd>Number of installonly packages allowed to be installed
-concurrently. Defaults to 3.</dd>
+<dd><p class="first">integer</p>
+<p class="last">Number of installonly packages allowed to be installed
+concurrently. Defaults to 3.</p>
+</dd>
 </dl>
 <dl class="docutils" id="metadata-expire-label">
 <dt><tt class="docutils literal"><span class="pre">metadata_expire</span></tt></dt>
-<dd>The period after which the remote repository is checked for metadata update
-and in the positive case the local metadata cache is updated. The default is
-48 hours.</dd>
+<dd><p class="first">time in seconds</p>
+<p class="last">The period after which the remote repository is checked for metadata update
+and in the positive case the local metadata cache is updated. The default
+corresponds to 48 hours.</p>
+</dd>
 </dl>
 <dl class="docutils" id="metadata-timer-sync-label">
 <dt><tt class="docutils literal"><span class="pre">metadata_timer_sync</span></tt></dt>
-<dd>The minimal period between two consecutive <tt class="docutils literal"><span class="pre">makecache</span> <span class="pre">timer</span></tt> runs. The
+<dd><p class="first">time in seconds</p>
+<p class="last">The minimal period between two consecutive <tt class="docutils literal"><span class="pre">makecache</span> <span class="pre">timer</span></tt> runs. The
 command will stop immediately if it&#8217;s less than this time period since its
 last run. Does not affect simple <tt class="docutils literal"><span class="pre">makecache</span></tt> run. Use <tt class="docutils literal"><span class="pre">0</span></tt> to completely
-disable automatic metadata synchronizing. The default is 3 hours.</dd>
+disable automatic metadata synchronizing. The default corresponds to three
+hours.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="repo-options">
 <h2>Repo Options<a class="headerlink" href="#repo-options" title="Permalink to this headline">¶</a></h2>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt></dt>
-<dd>If enabled, DNF will continue running if this repository cannot be contacted
-for any reason. The default is True.</dd>
+<dd><p class="first">boolean</p>
+<p class="last">If enabled, DNF will continue running if this repository cannot be contacted
+for any reason. The default is True.</p>
+</dd>
 </dl>
 <dl class="docutils" id="repo-cost-label">
 <dt><tt class="docutils literal"><span class="pre">cost</span></tt></dt>
-<dd>The relative cost of accessing this repository, defaulting to 1000. If the
+<dd><p class="first">integer</p>
+<p class="last">The relative cost of accessing this repository, defaulting to 1000. If the
 same package can be downloaded from two or more repositories, the repository
-with the lowest cost is preferred.</dd>
+with the lowest cost is preferred.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="options-for-both-main-and-repo">
@@ -132,10 +153,14 @@ as the default value and concrete repositories can override it in their
 configuration.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">exclude</span></tt></dt>
-<dd>Exclude packages of this repository, specified by a name or a glob and
-separated by a comma, from all operations.</dd>
+<dd><p class="first">list</p>
+<p class="last">Exclude packages of this repository, specified by a name or a glob and
+separated by a comma, from all operations.</p>
+</dd>
 <dt><tt class="docutils literal"><span class="pre">proxy</span></tt></dt>
-<dd>URL of a proxy server to connect through. If none is specified then direct connection is used (the default).</dd>
+<dd><p class="first">string</p>
+<p class="last">URL of a proxy server to connect through. If none is specified then direct connection is used (the default).</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="see-also">
@@ -207,7 +232,7 @@ separated by a comma, from all operations.</dd>
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

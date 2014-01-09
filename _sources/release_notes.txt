@@ -485,3 +485,28 @@ Bugs fixed in 0.4.10:
 * :rhbug:`1044502`
 * :rhbug:`1044981`
 * :rhbug:`1044999`
+
+====================
+0.4.11 Release Notes
+====================
+
+This is mostly a bugfix release following quickly after 0.4.10, with many updates to documentation.
+
+API additions in 0.4.11:
+
+* :meth:`.Plugin.read_config`
+* :class:`.repo.Metadata`
+* :attr:`.repo.Repo.metadata`
+
+API changes in 0.4.11:
+
+* :attr:`.Conf.pluginpath` is no longer hard coded but depends on the major Python version.
+
+Bugs fixed in 0.4.11:
+
+* :rhbug:`1048402`
+* :rhbug:`1048572`
+* :rhbug:`1048716`
+* :rhbug:`1048719`
+* :rhbug:`1048988`
+

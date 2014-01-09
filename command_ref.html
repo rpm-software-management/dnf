@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.10-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.11-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.10-1',
+        VERSION:     '0.4.11-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.10-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -119,17 +119,21 @@ understandable to the user), default is 2. Deprecated, use <tt class="docutils l
 </ul>
 </div></blockquote>
 <dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">--disableplugin=&lt;plugin</span> <span class="pre">names&gt;</span></tt></dt>
+<dd>Disable the listed plugins specified by names or globs.</dd>
 <dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">&lt;error</span> <span class="pre">level&gt;,</span> <span class="pre">--errorlevel=&lt;error</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>Error output level. This is an integer value between 0 (no error output) and
 10 (shows all error messages), default is 2. Deprecated, use <tt class="docutils literal"><span class="pre">-v</span></tt> instead.</dd>
 <dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
 <dd>Exclude packages specified by a name or a glob from the operation.</dd>
 <dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
-<dd>Shows the help.</dd>
+<dd>Show the help.</dd>
 <dt><tt class="docutils literal"><span class="pre">--installroot=&lt;path&gt;</span></tt></dt>
 <dd>set install root</dd>
 <dt><tt class="docutils literal"><span class="pre">--nogpgcheck</span></tt></dt>
 <dd>skip checking GPG signatures on packages</dd>
+<dt><tt class="docutils literal"><span class="pre">--noplugins</span></tt></dt>
+<dd>Disable all plugins.</dd>
 <dt><tt class="docutils literal"><span class="pre">-q,</span> <span class="pre">--quiet</span></tt></dt>
 <dd>quiet operation</dd>
 <dt><tt class="docutils literal"><span class="pre">-R</span> <span class="pre">&lt;minutes&gt;,</span> <span class="pre">--randomwait=&lt;minutes&gt;</span></tt></dt>
@@ -152,6 +156,7 @@ system.</dd>
 <dt><tt class="docutils literal"><span class="pre">-y,</span> <span class="pre">--assumeyes</span></tt></dt>
 <dd>answer yes for all questions</dd>
 </dl>
+<p>List options are comma separated.</p>
 </div>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
@@ -219,7 +224,7 @@ the latest version available from any enabled repository.</dd>
 </dl>
 </div>
 <div class="section" id="erase-command">
-<h3>Erase Command<a class="headerlink" href="#erase-command" title="Permalink to this headline">¶</a></h3>
+<span id="erase-command-label"></span><h3>Erase Command<a class="headerlink" href="#erase-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">erase</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
 <dd>Removes the specified packages from the system along with any packages
@@ -360,6 +365,13 @@ provides this file.</dd>
 <dd>Installs the specified packages, fails if some of the packages are either
 not installed or not available (i.e. there is no repository where to
 download the same RPM).</dd>
+</dl>
+</div>
+<div class="section" id="remove-command">
+<h3>Remove Command<a class="headerlink" href="#remove-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">remove</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dd>Deprecated alias for the <a class="reference internal" href="#erase-command-label"><em>Erase Command</em></a>.</dd>
 </dl>
 </div>
 <div class="section" id="repolist-command">
@@ -505,6 +517,7 @@ the most recent transaction.</p>
 <li><a class="reference internal" href="#makecache-command">Makecache Command</a></li>
 <li><a class="reference internal" href="#provides-command">Provides Command</a></li>
 <li><a class="reference internal" href="#reinstall-command">Reinstall Command</a></li>
+<li><a class="reference internal" href="#remove-command">Remove Command</a></li>
 <li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
@@ -566,7 +579,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.10-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

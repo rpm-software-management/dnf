@@ -201,3 +201,27 @@ DNF does not output information like this. The technical reason is that depsolve
 
 See the the related `Fedora bug 1044999
 <https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.
+
+===================================================================
+``dnf provides`` complies with the Yum documentation of the command
+===================================================================
+
+When one executes::
+
+  yum provides sandbox
+
+Yum applies extra heuristics to determine what the user meant by ``sandbox``, for instance it sequentially prepends entries from the ``PATH`` environment variable to it to see if it matches a file provided by some package. This is an undocumented behaivor that DNF does not emulate. Just typically use::
+
+  dnf provides /usr/bin/sandbox
+
+or even::
+
+  dnf provides '*/sandbox'
+
+to obtain similar results.
+
+=================================
+``--enableplugin`` not recognized
+=================================
+
+This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).
