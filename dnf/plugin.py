@@ -42,36 +42,18 @@ logger = logging.getLogger('dnf')
 
 DYNAMIC_PACKAGE = 'dnf.plugin.dynamic'
 
-class Config(collections.Mapping):
-    def __init__(self, fn):
-        parser = iniparse.compat.ConfigParser()
-        parser.read(fn)
-        self.parser = parser
-        self.section = 'main'
-
-    def __getitem__(self, key):
-        self.parser.get(self.section, key)
-
-    def __iter__(self):
-        pass
-
-    def __len__(self):
-        pass
-
-    @property
-    def section(self):
-        return self._section
-
-    @section.setter
-    def section(self, val):
-        if not self.parser.hasSection(val):
-            raise KeyError('No such section: %s' % val)
-        self._section = val
-
 class Plugin(object):
     """The base class custom plugins must derive from. #:api"""
 
     name = '<invalid>'
+
+    @staticmethod
+    def read_config(conf, name):
+        # :api
+        fn = '%s/%s.conf' % (conf.pluginconfpath, name)
+        parser = iniparse.compat.ConfigParser()
+        parser.read(fn)
+        return parser
 
     def __init__(self, base, cli):
         # :api
@@ -80,12 +62,6 @@ class Plugin(object):
     def config(self):
         # :api
         pass
-
-    def read_config(self, conf):
-        fn = '%s/%s.conf' % (conf.pluginconfpath, self.name)
-        parser = iniparse.compat.ConfigParser()
-        parser.read(fn)
-        return parser
 
     def sack(self):
         # :api

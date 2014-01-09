@@ -49,7 +49,7 @@ class PluginTest(tests.support.TestCase):
         base.conf.pluginconfpath = PLUGINS
         self.plugins.run_init(base, None)
         lucky = self.plugins.plugins[0]
-        conf = lucky.read_config(base.conf)
+        conf = lucky.read_config(base.conf, 'lucky')
         self.assertTrue(conf.getboolean('main', 'enabled'))
         self.assertEqual(conf.get('main', 'wanted'), '/to/be/haunted')
 
