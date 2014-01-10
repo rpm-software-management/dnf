@@ -99,6 +99,7 @@ popd
 %{_bindir}/dnf
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
+%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
 %{_mandir}/man8/dnf.conf.8.gz
