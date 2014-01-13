@@ -99,7 +99,7 @@ class CommandsCliTest(support.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(False, 0))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(cmd, u'Metadata Cache Created')
+        self.assertLastInfo(cmd, u'Metadata cache created.')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
         # regular case 2: metadata is cached and will expire later than
@@ -107,7 +107,7 @@ class CommandsCliTest(support.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(True, 100))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(cmd, u'Metadata Cache Created')
+        self.assertLastInfo(cmd, u'Metadata cache created.')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
 
         # regular case 3: metadata is cached but will eqpire before
@@ -115,7 +115,7 @@ class CommandsCliTest(support.TestCase):
         r.metadata_expire_in = mock.Mock(return_value=(True, 4))
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(cmd, u'Metadata Cache Created')
+        self.assertLastInfo(cmd, u'Metadata cache created.')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
     @mock.patch('dnf.util.on_ac_power', return_value=False)
