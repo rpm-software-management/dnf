@@ -83,6 +83,11 @@ class YumConfTest(PycompTestCase):
         conf.prepend_installroot('persistdir')
         self.assertEqual(conf.persistdir, '/mnt/root/var/lib/dnf')
 
+    def test_ranges(self):
+        conf = YumConf()
+        with self.assertRaises(ValueError):
+            conf.debuglevel = 11
+
 class GoalParametersTest(PycompTestCase):
     def test_default(self):
         gp = GoalParameters()

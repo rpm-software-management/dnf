@@ -93,9 +93,15 @@ class Option(object):
             try:
                 value = self.parse(value)
             except ValueError as e:
-                # Add the field name onto the error
                 raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
                                                                  value, str(e)))
+        elif isinstance(value, int):
+            try:
+                value = self.parse_int(value)
+            except ValueError as e:
+                raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
+                                                                 value, str(e)))
+
         setattr(obj, self._attrname, value)
 
     def __delete__(self, obj):
@@ -129,6 +135,15 @@ class Option(object):
            Subclasses should override this
         """
         return s
+
+    def parse_int(self, n):
+        """Parse `n`, ensuring it is a suitable integer value.
+
+        Return parsed value or raise ValueError if it is not suitable.
+
+        """
+
+        return n
 
     def tostring(self, value):
         """Convert the :class:`Option`'s native value to a string value.  This
@@ -293,11 +308,14 @@ class IntOption(Option):
             val = int(s)
         except (ValueError, TypeError) as e:
             raise ValueError('invalid integer value')
-        if self._range_max is not None and val > self._range_max:
-            raise ValueError('out of range integer value')
-        if self._range_min is not None and val < self._range_min:
-            raise ValueError('out of range integer value')
-        return val
+        return self.parse_int(val)
+
+    def parse_int(self, n):
+        if self._range_max is not None and n > self._range_max:
+            raise ValueError('Out of range integer value.')
+        if self._range_min is not None and n < self._range_min:
+            raise ValueError('Out of range integer value.')
+        return n
 
 class PositiveIntOption(IntOption):
     """An option representing a positive integer value, where 0 can

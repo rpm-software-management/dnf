@@ -1282,7 +1282,7 @@ class Cli(object):
         self.optparser = YumOptionParser(base=self.base, usage=self._make_usage())
 
         # Parse only command line options that affect basic yum setup
-        opts = self.optparser.firstParse(args)
+        opts = self.optparser.first_parse(args)
 
         # Just print out the version if that's what the user wanted
         if opts.version:
@@ -1322,15 +1322,12 @@ class Cli(object):
                         self.logger.warning(msg % opt)
                     setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
 
-        except dnf.exceptions.ConfigError as e:
-            self.logger.critical(_('Config Error: %s'), e)
+        except (dnf.exceptions.ConfigError, ValueError) as e:
+            self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         except IOError as e:
             e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
-            self.logger.critical(_('Config Error: %s'), e)
-            sys.exit(1)
-        except ValueError as e:
-            self.logger.critical(_('Options Error: %s'), e)
+            self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         for item in bad_setopt_tm:
             msg = "Setopt argument has multiple values: %s"
@@ -1558,7 +1555,7 @@ class YumOptionParser(OptionParser):
         self.logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
-    def firstParse(self, args):
+    def first_parse(self, args):
         """Parse only command line options that affect basic yum
         setup.
 
@@ -1610,9 +1607,7 @@ class YumOptionParser(OptionParser):
            cmds will be ["install", "foo"].
         """
 
-        # clear up lists pre-initialized from firstParse()
         (opts, cmds) = self.parse_args(args=args)
-
         try:
             # config file is parsed and moving us forward
             # set some things in it.
