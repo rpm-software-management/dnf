@@ -250,6 +250,8 @@ class Repo(dnf.yum.config.RepoConf):
 
         # apply repo options
         h.proxy = self.proxy
+        h.maxspeed = self.throttle if type(self.throttle) is int \
+                     else int(self.bandwidth * self.throttle)
 
         return h
 
