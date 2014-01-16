@@ -119,6 +119,15 @@ configuration.
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
 
+``throttle, bandwidth``
+    The 'throttle' option limits the downloading speed. It might be an absolute
+    value (in bytes per second) or a percentage, relative to the value of the
+    'bandwidth' option. '0' means no throttling (the default).
+
+    The input to both options is a string containing a (possibly floating
+    point) number followed by an optional unit. Valid units are 'k', 'M', 'G'.
+    Case is ignored. The convention that 1k = 1024 bytes is used.
+
 ``proxy``
     string
 
