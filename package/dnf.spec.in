@@ -870,7 +870,7 @@ popd
 - Enable 'dnf distro-sync'.
 
 * Thu Nov 15 2012 Aleš Kozumplík <ales@redhat.com> - 0.2.16-1.git9f050eb
-- massive dead code removals accross the code base (3k LOC dropped)
+- massive dead code removals across the code base (3k LOC dropped)
 - fix match_counter.sorted() tracebacks if its empty. (RhBug:873875)
 - fix: callback error in some rpm transactions because of nonexistent Package.verEQ.
 - Plain 'dnf update' ignores packages with broken deps. (RhBug:872948)

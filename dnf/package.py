@@ -101,7 +101,7 @@ class Package(hawkey.Package):
     def pkgtup(self):
         return (self.name, self.arch, str(self.e), self.v, self.r)
 
-    @property # yum compatiblity attribute
+    @property # yum compatibility attribute
     def repo(self):
         if self._repo:
             return self._repo
@@ -111,7 +111,7 @@ class Package(hawkey.Package):
     def repo(self, val):
         self._repo = val
 
-    @property # yum compatiblity attribute
+    @property # yum compatibility attribute
     def relativepath(self):
         return self.location
 

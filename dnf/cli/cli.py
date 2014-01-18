@@ -936,7 +936,7 @@ class BaseCli(dnf.Base):
         # prompt if:
         #  package was added to fill a dependency
         #  package is being removed
-        #  package wasn't explictly given on the command line
+        #  package wasn't explicitly given on the command line
         for txmbr in self.tsInfo.getMembers():
             if txmbr.isDep or \
                    txmbr.name not in self.extcmds:

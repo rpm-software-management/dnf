@@ -1178,7 +1178,7 @@ class _patch(object):
 
         @wraps(func)
         def patched(*args, **keywargs):
-            # don't use a with here (backwards compatability with Python 2.4)
+            # don't use a with here (backwards compatibility with Python 2.4)
             extra_args = []
             entered_patchers = []
 
