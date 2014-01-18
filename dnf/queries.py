@@ -1,5 +1,5 @@
 # queries.py
-# Deprecated API compatiblity module
+# Deprecated API compatibility module
 #
 # Copyright (C) 2012-2013  Red Hat, Inc.
 #

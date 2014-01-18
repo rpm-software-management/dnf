@@ -2559,7 +2559,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             pnl = utf8_width(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
-        overhead +=  2+ wid1 +2 # Length of begining ("  " action " :")
+        overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
         overhead +=  1          # Space between pn and done
         overhead +=  2          # Ends for progress
         overhead +=  1          # Space for end
