@@ -517,7 +517,7 @@ class Base(object):
                 reason = yumdb_info.reason
             except AttributeError:
                 pass
-            if reason == 'user':
+            if reason != 'dep':
                 goal.userinstalled(pkg)
 
     def run_hawkey_goal(self, goal):

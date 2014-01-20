@@ -36,18 +36,24 @@ from tests.support import PycompTestCase
 
 class BaseTest(support.TestCase):
     def test_instance(self):
-        yumbase = dnf.Base()
+        base = dnf.Base()
 
     def test_push_userinstalled(self):
-        yumbase = support.MockBase()
+        base = support.MockBase()
         # setup:
-        yumbase.conf.clean_requirements_on_remove = True
-        pkg = yumbase.sack.query().installed().filter(name="pepper")[0]
+        base.conf.clean_requirements_on_remove = True
         goal = mock.Mock(spec=["userinstalled"])
-        yumbase.yumdb.get_package(pkg).reason = "user"
+        for pkg in base.sack.query().installed():
+            base.yumdb.get_package(pkg).reason = 'dep'
+        pkg1 = base.sack.query().installed().filter(name="pepper")[0]
+        base.yumdb.get_package(pkg1).reason = "user"
+        pkg2 = base.sack.query().installed().filter(name="hole")[0]
+        base.yumdb.get_package(pkg2).reason = "unknown"
+
         # test:
-        yumbase._push_userinstalled(goal)
-        goal.userinstalled.assert_called_with(pkg)
+        base._push_userinstalled(goal)
+        calls = [c[0][0].name for c in goal.userinstalled.call_args_list]
+        self.assertItemsEqual(calls, ('hole', 'pepper'))
 
     def test_reset(self):
         base = support.MockBase('main')
