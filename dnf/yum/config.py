@@ -778,6 +778,7 @@ class YumConf(BaseConfig):
     commands = ListOption()
     exclude = ListOption()
     failovermethod = Option('roundrobin')
+    fastestmirror = BoolOption(False)
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
     proxy_password = Option()
@@ -871,7 +872,6 @@ class YumConf(BaseConfig):
                                          'commands'),
                                      mapper={'cmds'          : 'commands',
                                              'default' :'single-user-commands'})
-    _reposlist = []
 
     def dump(self):
         """Return a string representing the values of all the
@@ -950,6 +950,7 @@ class RepoConf(BaseConfig):
     exclude = ListOption()
     includepkgs = ListOption()
 
+    fastestmirror = Inherit(YumConf.fastestmirror)
     proxy = Inherit(YumConf.proxy)
     proxy_username = Inherit(YumConf.proxy_username)
     proxy_password = Inherit(YumConf.proxy_password)
