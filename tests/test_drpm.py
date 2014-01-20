@@ -56,6 +56,9 @@ class DrpmTest(support.TestCase):
             if err:
                 # PackageTarget.err is not writable
                 targets[0] = Bunch(po=target.po, err=err)
+
+        self.assertFalse(self.pkg.from_cmdline)
+        self.assertFalse(self.pkg.repo.local)
         with mock.patch('librepo.download_packages', dlp):
             self.assertEqual(self.base.download_packages([self.pkg]), ret)
         return urls
