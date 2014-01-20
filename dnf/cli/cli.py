@@ -1143,15 +1143,15 @@ class Cli(object):
                 repo.gpgcheck = False
                 repo.repo_gpgcheck = False
 
-        if opts.cacheonly:
-            for repo in self.base.repos.values():
-                repo.basecachedir = self._system_cachedir
-                repo.md_only_cached = True
-
         for rid in self.base._persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
                 repo.md_expire_cache()
+
+        if opts.cacheonly:
+            for repo in self.base.repos.values():
+                repo.basecachedir = self._system_cachedir
+                repo.md_only_cached = True
 
         # setup the progress bars/callbacks
         (bar, self.base.ds_callback) = self.base.output.setup_progress_callbacks()

@@ -278,6 +278,20 @@ class CliTest(PycompTestCase):
         self.assertEqual(self.yumbase.repos["comb"].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
+    def test_configure_repos_expired(self):
+        """Ensure that --cacheonly beats the expired status."""
+        opts = optparse.Values()
+        opts.repos_ed = []
+        opts.cacheonly = True
+
+        pers = self.yumbase._persistor
+        pers.get_expired_repos = mock.Mock(return_value=('one',))
+        self.yumbase._repos = dnf.repodict.RepoDict()
+        self.yumbase._repos.add(support.MockRepo('one', None))
+        self.cli._configure_repos(opts)
+        self.assertEqual(self.yumbase.repos['one'].sync_strategy,
+                         dnf.repo.SYNC_ONLY_CACHE)
+
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
 class ConfigureTest(PycompTestCase):
     def setUp(self):
