@@ -33,7 +33,6 @@ import logging
 import operator
 import os
 import sys
-import traceback
 import types
 
 _ = dnf.yum.i18n._
@@ -121,9 +120,8 @@ def import_modules(package, py_files):
         try:
             module = importlib.import_module(name)
         except Exception as e:
-            tb = traceback.format_exc()
             logger.error(_('Failed loading plugin: %s'), module)
-            logger.debug(tb)
+            dnf.util.log_last_excpetion(logger)
 
 def iter_py_files(paths, skips):
     for p in paths:

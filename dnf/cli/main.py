@@ -49,6 +49,7 @@ from dnf.cli.utils import show_lock_owner
 import dnf.cli.cli
 import dnf.exceptions
 import dnf.i18n
+import dnf.util
 import errno
 import logging
 import os
@@ -80,6 +81,7 @@ def _main(base, args):
     dnf.i18n.setup_stdout()
 
     def exIOError(e):
+        dnf.util.log_last_excpetion(logger)
         if e.errno == 32:
             logger.critical(_('Exiting on Broken Pipe'))
         else:

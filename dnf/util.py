@@ -28,6 +28,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+import traceback
 import types
 from functools import reduce
 from itertools import takewhile
@@ -112,6 +113,10 @@ def lazyattr(attrname):
                 return val
         return cached_getter
     return get_decorated
+
+def log_last_excpetion(logger):
+    tb = traceback.format_exc()
+    logger.debug(tb)
 
 def mapall(fn, *seq):
     """Like functools.map(), but return a list instead of an iterator.
