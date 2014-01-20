@@ -250,6 +250,8 @@ class Repo(dnf.yum.config.RepoConf):
 
         # apply repo options
         h.proxy = self.proxy
+        h.maxspeed = self.throttle if type(self.throttle) is int \
+                     else int(self.bandwidth * self.throttle)
 
         return h
 
@@ -397,7 +399,8 @@ class Repo(dnf.yum.config.RepoConf):
             progresscb=progresscb,
             cbdata=os.path.basename(po.location),
             handle=self.get_handle(),
-            endcb=endcb)
+            endcb=endcb,
+            mirrorfailurecb=cb and (lambda text, err, url: cb.end(text, None, err, 'MIRROR')))
         target.po = po
         return target
 
