@@ -133,6 +133,12 @@ configuration.
 
     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
+``deltarpm``
+    When enabled, DNF will save bandwidth by downloading much smaller delta
+    RPM files, rebuilding them to RPM locally. However, this is quite CPU
+    and I/O intensive. Default is off.
+
+
 ==========
  See Also
 ==========

@@ -125,18 +125,19 @@ class MultiFileProgressMeter(object):
         """Display a message that file has finished downloading
 
         text -- the file id
-        size -- the file size
+        size -- the file size. None => not a file.
         err -- None if ok, error message otherwise
         status -- Download status (relevant when err != None)
         """
-        # update state
         start = now = time()
-        if text in self.state:
-            start, done = self.state.pop(text)
-            self.active.remove(text)
-            size -= done
-        self.done_files += 1
-        self.done_size += size
+        if size is not None:
+            # update state
+            if text in self.state:
+                start, done = self.state.pop(text)
+                self.active.remove(text)
+                size -= done
+            self.done_files += 1
+            self.done_size += size
 
         if err:
             # the error message, no trimming
