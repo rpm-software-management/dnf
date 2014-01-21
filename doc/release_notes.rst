@@ -510,3 +510,16 @@ Bugs fixed in 0.4.11:
 * :rhbug:`1048719`
 * :rhbug:`1048988`
 
+====================
+0.4.12 Release Notes
+====================
+
+This release disables fastestmirror by default as we received many complains about it. There are also several bugfixes, most importantly an issue has been fixed that caused packages installed by Anaconda be removed together with a depending package. It is now possible to use ``bandwidth`` as ``throttle`` config values too.
+
+Bugs fixed in 0.4.12:
+
+* :rhbug:`1045737`
+* :rhbug:`1048468`
+* :rhbug:`1048488`
+* :rhbug:`1049025`
+* :rhbug:`1051554`

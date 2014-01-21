@@ -386,5 +386,25 @@
     [
         1048988, 
         "[plugins] [api] add a hook for MD refresh"
+    ], 
+    [
+        1045737, 
+        "[RFE] 'throttle' option."
+    ], 
+    [
+        1048468, 
+        "dnf --cacheonly list installed tries to download repodata"
+    ], 
+    [
+        1048488, 
+        "AssertionError on invalid error log level"
+    ], 
+    [
+        1049025, 
+        "Incorrect dependency check on removal"
+    ], 
+    [
+        1051554, 
+        "disable fastestmirror by default (and make it configurable)"
     ]
 ]
