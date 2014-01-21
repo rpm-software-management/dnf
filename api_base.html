@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.11-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.12-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.11-1',
+        VERSION:     '0.4.12-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.12-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.12-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -171,7 +171,7 @@ affect the package data already loaded into the <a class="reference internal" hr
 <dd><p>Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> to it. If <cite>pkg_types</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, it defaults to <tt class="docutils literal"><span class="pre">(&quot;mandatory&quot;,</span> <span class="pre">&quot;default&quot;)</span></tt>.</p>
 </dd></dl>
 
-<p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument they take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not neccessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
+<p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument they take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
 <dl class="method">
 <dt id="dnf.Base.downgrade">
 <tt class="descname">downgrade</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.downgrade" title="Permalink to this definition">¶</a></dt>
@@ -263,7 +263,7 @@ affect the package data already loaded into the <a class="reference internal" hr
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.12-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

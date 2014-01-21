@@ -13,7 +13,7 @@ Fedora, ``dnf makecache`` is triggered via SystemD timers now and takes an
 optional ``background`` extra-argument to run in resource-considerate mode (no
 syncing when running on laptop battery, only actually performing the check at
 most once every three hours). Also, the IO and CPU priorities of the
-timer-triggered process are lowered now and shouldn't as noticably impact the
+timer-triggered process are lowered now and shouldn't as noticeably impact the
 system's performance.
 
 The administrator can also easily disable the automatic metadata updates by
@@ -85,7 +85,7 @@ This version has also improved reporting of obsoleted packages in the CLI (the
 Yum-style "replacing <package-nevra>" appears in the textual transaction
 overview).
 
-The follwoing bugfixes are included in 0.3.4:
+The following bugfixes are included in 0.3.4:
 
 * :rhbug:`887317`
 * :rhbug:`914919`
@@ -174,7 +174,7 @@ The only major change is that ``skip_if_unavailable`` is :ref:`enabled by
 default now <skip_if_unavailable_default>`.
 
 A minor release otherwise, mainly to get a new version of DNF out that uses a
-fresh librepo. The follwoing issues are now a thing of the past:
+fresh librepo. The following issues are now a thing of the past:
 
 * :rhbug:`977661`
 * :rhbug:`984483`
@@ -510,3 +510,16 @@ Bugs fixed in 0.4.11:
 * :rhbug:`1048719`
 * :rhbug:`1048988`
 
+====================
+0.4.12 Release Notes
+====================
+
+This release disables fastestmirror by default as we received many complains about it. There are also several bugfixes, most importantly an issue has been fixed that caused packages installed by Anaconda be removed together with a depending package. It is now possible to use ``bandwidth`` as ``throttle`` config values too.
+
+Bugs fixed in 0.4.12:
+
+* :rhbug:`1045737`
+* :rhbug:`1048468`
+* :rhbug:`1048488`
+* :rhbug:`1049025`
+* :rhbug:`1051554`

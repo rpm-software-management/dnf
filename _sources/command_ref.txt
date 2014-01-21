@@ -58,7 +58,7 @@ Options
     Try the best available package versions in transactions.
 
 ``-C, --cacheonly``
-    Run entirely from system cache, don't update cache
+    Run entirely from system cache, don't update the cache and use it even in case it is expired.
 
 ``-c <config file>, --config=<config file>``
     config file location

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.11-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.12-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.11-1',
+        VERSION:     '0.4.12-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.11-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.12-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.12-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -81,6 +81,7 @@
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id24">Dependency processing details are not shown in the CLI</a></li>
 <li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
 <li><a class="reference internal" href="#enableplugin-not-recognized" id="id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
+<li><a class="reference internal" href="#bandwidth-limiting" id="id27">Bandwidth limiting</a></li>
 </ul>
 </li>
 </ul>
@@ -241,6 +242,13 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <h2><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
 <p>This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).</p>
 </div>
+<div class="section" id="bandwidth-limiting">
+<h2><a class="toc-backref" href="#id27">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
+<p>DNF supports the &#8216;throttle&#8217; and &#8216;bandwidth&#8217; options familiar from Yum.
+Contrary to Yum, when multiple downloads run simultaneously the total
+downloading speed is throttled. This was not possible in Yum since
+downloaders ran in different processes.</p>
+</div>
 </div>
 
 
@@ -273,6 +281,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli">Dependency processing details are not shown in the CLI</a></li>
 <li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
 <li><a class="reference internal" href="#enableplugin-not-recognized"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
+<li><a class="reference internal" href="#bandwidth-limiting">Bandwidth limiting</a></li>
 </ul>
 </li>
 </ul>
@@ -320,7 +329,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.11-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.12-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -2,6 +2,9 @@
  DNF User's FAQ
 ################
 
+
+.. contents::
+
 =============================================================================================================
 What to do with packages that DNF refuses to remove because their ``%pre`` or ``%preun`` scripts are failing?
 =============================================================================================================
@@ -43,3 +46,30 @@ Why do I get different results with ``dnf update`` vs ``yum update``?
 We get this reported as a bug quite often, but it usually is not. One reason to see this is that DNF does not list update candidates as it explores them. More frequently however the reporter means actual difference in the proposed transaction. This is most often because the metadata the two packagers are working with were taken at a different time (DNF has a notoriously looser schedule on metadata updates to save time and bandwidth), and sometimes also because the depsolvers inside are designed to take a different course of action when encountering some specific update scenario.
 
 The bottom line is: unless a real update problem occurs (i.e. DNF refuses to update a package that Yum updates) with the same set of metadata, this is not an issue.
+
+==============================================================================
+Is it possible to force DNF to get the latest metadata on ``dnf upgrade``?
+==============================================================================
+
+Yes, clear the cache first::
+
+    $ dnf clean metadata
+    $ dnf upgrade
+
+An alternative is to shorten the default expiry time of repos, for that edit ``/etc/dnf/dnf.conf`` and set::
+
+    metadata_expire=0
+
+Of course, some repos might use a custom ``metadata_expire`` value, you'll currently have to change these manually too.
+
+If you're the kind of the user who always wants the freshest metadata possible, you'll probably want to :ref:`disable the automatic MD updates <disabling_makecache_service-label>`.
+
+.. _disabling_makecache_service-label:
+
+============================================================
+How do I disable automatic metadata synchronization service?
+============================================================
+
+Several ways to do that. The DNF way is to add the following to ``/etc/dnf/dnf.conf``::
+
+    metadata_timer_sync=0
