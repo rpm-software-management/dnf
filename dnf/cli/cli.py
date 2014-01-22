@@ -322,6 +322,7 @@ class BaseCli(dnf.Base):
         for arg in userlist:
             if arg.endswith('.rpm'):
                 self.install_local(arg)
+                done = True
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             elif arg.startswith('@'):
