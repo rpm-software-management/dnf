@@ -1,6 +1,7 @@
 from tests import support, mock
 from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
+import dnf.drpm
 import hawkey
 
 PACKAGE = 'tour-5-1.noarch'
@@ -66,6 +67,7 @@ class DrpmTest(support.TestCase):
     def test_drpm_download(self):
         # the testing drpm is about 150% of the target..
         self.pkg.repo.deltarpm = 1
+        dnf.drpm.APPLYDELTA = '/bin/true'
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 50):
             self.assertEquals(self.download(), ['tour-5-1.noarch.rpm'])
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
@@ -74,6 +76,7 @@ class DrpmTest(support.TestCase):
     def test_failover(self):
         # check drpm => rpm failover
         self.pkg.repo.deltarpm = 1
+        dnf.drpm.APPLYDELTA = '/bin/true'
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
             # single failure => no error reported
             self.assertEquals(
