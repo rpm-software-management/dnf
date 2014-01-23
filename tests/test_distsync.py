@@ -30,6 +30,4 @@ class DistroSync(support.ResultTestCase):
         packages = support.installed_but(self.sack, "pepper", "librita").run()
         q = self.sack.query().available().filter(name=["pepper", "librita"])
         packages.extend(q)
-        q = self.sack.query().installed().nevra("librita-1-1.i686")
-        packages.extend(q)
         self.assertResult(self.yumbase, packages)
