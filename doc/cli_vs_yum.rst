@@ -239,8 +239,4 @@ downloaders ran in different processes.
  The usage of Delta RPM files
 ==============================
 
-The boolean ``deltarpm`` option controls whether delta RPM files are used.
-When on, DNF downloads delta files smaller than 50% of the RPM file and
-rebuilds them using at most as many processes as the number of CPUs online.
-``deltarpm_percentage`` option is not supported, and user can't fine tune
-the number of delta rebuild processes used.
+The boolean ``deltarpm`` option controls whether delta RPM files are used. Compared to Yum, DNF does not support ``deltarpm_percentage`` and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.
