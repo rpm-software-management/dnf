@@ -125,7 +125,7 @@ class MultiFileProgressMeter(object):
         """Display a message that file has finished downloading
 
         text -- the file id
-        size -- the file size
+        size -- the file size. None => not a file.
         err -- None if ok, error message otherwise
         status -- Download status (relevant when err != None)
         """

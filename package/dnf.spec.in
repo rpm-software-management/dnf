@@ -36,6 +36,9 @@ Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
 
+# Weak requires
+Requires:	deltarpm
+
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 

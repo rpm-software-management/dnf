@@ -1,6 +1,7 @@
 from tests import support, mock
 from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
+import dnf.drpm
 import hawkey
 
 PACKAGE = 'tour-5-1.noarch'
@@ -61,5 +62,27 @@ class DrpmTest(support.TestCase):
         return urls
 
     def test_simple_download(self):
-        self.base.conf.deltarpm = 0
         self.assertEquals(self.download(), [PACKAGE +'.rpm'])
+
+    def test_drpm_download(self):
+        # the testing drpm is about 150% of the target..
+        self.pkg.repo.deltarpm = 1
+        dnf.drpm.APPLYDELTA = '/bin/true'
+        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 50):
+            self.assertEquals(self.download(), ['tour-5-1.noarch.rpm'])
+        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
+            self.assertEquals(self.download(), ['drpms/tour-5-1.noarch.drpm'])
+
+    def test_failover(self):
+        # check drpm => rpm failover
+        self.pkg.repo.deltarpm = 1
+        dnf.drpm.APPLYDELTA = '/bin/true'
+        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
+            # single failure => no error reported
+            self.assertEquals(
+                self.download(['ee']),
+                ['drpms/tour-5-1.noarch.drpm', 'tour-5-1.noarch.rpm'])
+            # drpm & rpm failure => return the rpm error
+            self.assertEquals(
+                self.download(['ee', 'taky ee'], {self.pkg: ['taky ee']}),
+                ['drpms/tour-5-1.noarch.drpm', 'tour-5-1.noarch.rpm'])
