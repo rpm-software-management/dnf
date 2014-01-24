@@ -26,6 +26,7 @@ BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  systemd
+Requires:	deltarpm
 Requires:	libreport-filesystem
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	python-iniparse
@@ -35,9 +36,6 @@ Requires:	rpm-python
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
-
-# Weak requires
-Requires:	deltarpm
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
