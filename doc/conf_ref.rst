@@ -65,6 +65,11 @@ one main section. The repository sections define the configuration for each
     Number of installonly packages allowed to be installed
     concurrently. Defaults to 3.
 
+``keep_cache``
+    boolean
+
+    Keep cached packages even after a successful operation. The default is off.
+
 .. _metadata_expire-label:
 
 ``metadata_expire``
