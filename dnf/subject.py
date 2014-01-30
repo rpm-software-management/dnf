@@ -116,8 +116,6 @@ class Subject(object):
 
         reldep = first(self.subj.reldep_possibilities_real(sack))
         if reldep:
-             # we can not handle full Reldeps
             dep = str(reldep)
-            assert(not (set(dep) & set("<=>")))
-            return dnf.selector.Selector(sack).set(provides=str(reldep))
+            return dnf.selector.Selector(sack).set(provides=dep)
         return None

@@ -127,6 +127,17 @@ class MultilibBestMainRepo(support.ResultTestCase):
         new_set = self.installed + trampoline.run()
         self.assertResult(self.yumbase, new_set)
 
+    def test_install_by_cmp_provides(self):
+        """Test the package to be installed can be specified by as provide with
+        "<=>".
+        """
+        self.yumbase.install('splendid > 2.0')
+        self.assertGreater(self.yumbase._goal.req_length(), 0)
+        trampoline = self.yumbase.sack.query().available().filter(
+            name="trampoline")
+        new_set = self.installed + trampoline.run()
+        self.assertResult(self.yumbase, new_set)
+
     def test_install_by_filename_glob(self):
         self.yumbase.install("/*/be/there")
         (installed, _) = self.installed_removed(self.yumbase)
