@@ -21,7 +21,6 @@ try:
     from unittest import mock
 except ImportError:
     from tests import mock
-import io
 import contextlib
 import dnf
 import dnf.comps
@@ -76,8 +75,8 @@ def installed_but(sack, *args):
 
 @contextlib.contextmanager
 def patch_std_streams():
-    with mock.patch('sys.stdout', new_callable=io.StringIO) as stdout, \
-            mock.patch('sys.stderr', new_callable=io.StringIO) as stderr:
+    with mock.patch('sys.stdout', new_callable=dnf.pycomp.StringIO) as stdout, \
+            mock.patch('sys.stderr', new_callable=dnf.pycomp.StringIO) as stderr:
         yield (stdout, stderr)
 
 # mock objects

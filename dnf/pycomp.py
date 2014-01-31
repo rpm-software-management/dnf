@@ -30,6 +30,7 @@ if version_info.major >= 3:
     NullTranslations.ungettext = NullTranslations.ngettext
     xrange = range
     raw_input = input
+    from io import StringIO
     to_ord = lambda i: i
     def is_py2str_py3bytes(o):
         return isinstance(o, bytes)
@@ -40,6 +41,7 @@ if version_info.major >= 3:
 else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     PY3 = False
+    from StringIO import StringIO
     to_ord = lambda i: ord(i)
     def is_py2str_py3bytes(o):
         return isinstance(o, str)
