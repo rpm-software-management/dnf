@@ -79,8 +79,13 @@ def setup_stdout():
         Returns True if stdout was of suitable encoding already and no chagnes
         were needed.
     """
-    if not _full_ucd_support(sys.stdout.encoding):
-        sys.stdout = UnicodeStream(sys.stdout, _guess_encoding())
+    stdout = sys.stdout
+    try:
+        encoding = stdout.encoding
+    except AttributeError:
+        encoding = None
+    if not _full_ucd_support(encoding):
+        sys.stdout = UnicodeStream(stdout, _guess_encoding())
         return False
     return True
 

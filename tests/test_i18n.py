@@ -44,6 +44,9 @@ class TestStdout(PycompTestCase):
     def test_setup_stdout(self):
         # No stdout output can be seen when sys.stdout is patched, debug msgs,
         # etc. included.
+        with mock.patch('sys.stdout', spec=('write',)):
+            retval = dnf.i18n.setup_stdout()
+            self.assertFalse(retval)
         with mock.patch('sys.stdout') as mock_stdout:
             mock_stdout.encoding = None
             retval = dnf.i18n.setup_stdout()
