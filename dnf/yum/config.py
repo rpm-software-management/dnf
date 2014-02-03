@@ -770,7 +770,7 @@ class YumConf(BaseConfig):
 
     cachedir = Option(dnf.const.SYSTEM_CACHEDIR) # :api
 
-    keepcache = BoolOption(True)
+    keepcache = BoolOption(False)
     logdir = Option('/var/log') # :api
     reposdir = ListOption(['/etc/yum/repos.d', '/etc/yum.repos.d']) # :api
 
