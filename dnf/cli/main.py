@@ -81,7 +81,7 @@ def _main(base, args):
     dnf.i18n.setup_stdout()
 
     def exIOError(e):
-        dnf.util.log_last_excpetion(logger)
+        logger.debug('', exc_info=True)
         if e.errno == 32:
             logger.critical(_('Exiting on Broken Pipe'))
         else:

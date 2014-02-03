@@ -114,10 +114,6 @@ def lazyattr(attrname):
         return cached_getter
     return get_decorated
 
-def log_last_excpetion(logger):
-    tb = traceback.format_exc()
-    logger.debug(tb)
-
 def mapall(fn, *seq):
     """Like functools.map(), but return a list instead of an iterator.
 

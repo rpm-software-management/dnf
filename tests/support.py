@@ -31,11 +31,19 @@ import dnf.sack
 import hawkey
 import hawkey.test
 import itertools
+import logging
 import os
+import re
 import unittest
 from functools import reduce
 
 skip = unittest.skip
+
+TRACEBACK_RE = re.compile(
+    '(Traceback \(most recent call last\):\n'
+    '(?:  File "[^"\n]+", line \d+, in \w+\n'
+    '(?:    .+\n)?)+'
+    '\S.*\n)')
 
 RPMDB_CHECKSUM = '5ff5337cff3fcdcee31760ab6478c9a7c784c0b2'
 TOTAL_RPMDB_COUNT = 5
@@ -78,6 +86,23 @@ def patch_std_streams():
     with mock.patch('sys.stdout', new_callable=dnf.pycomp.StringIO) as stdout, \
             mock.patch('sys.stderr', new_callable=dnf.pycomp.StringIO) as stderr:
         yield (stdout, stderr)
+
+@contextlib.contextmanager
+def wiretap_logs(logger_name, level, stream):
+    """Record *logger_name* logs of at least *level* into the *stream*."""
+    logger = logging.getLogger(logger_name)
+
+    orig_level = logger.level
+    logger.setLevel(level)
+
+    handler = logging.StreamHandler(stream)
+    logger.addHandler(handler)
+
+    try:
+        yield stream
+    finally:
+        logger.removeHandler(handler)
+        logger.setLevel(orig_level)
 
 # mock objects
 
@@ -335,6 +360,11 @@ class TestCase(PycompTestCase):
 
     def assertStartsWith(self, string, what):
         return self.assertTrue(string.startswith(what))
+
+    def assertTracebackIn(self, end, string):
+        """Test that a traceback ending with line *end* is in the *string*."""
+        traces = (match.group() for match in TRACEBACK_RE.finditer(string))
+        self.assertTrue(any(trace.endswith(end) for trace in traces))
 
 class ResultTestCase(TestCase):
     def _get_installed(self, base):
