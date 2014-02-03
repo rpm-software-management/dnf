@@ -171,11 +171,9 @@ system.</dd>
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
 <blockquote>
-<div>Non-interactively checks if updates of the specified packages are
-available. If no <tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given checks whether any updates at
-all are available for your system. DNF exit code will be 100 when there are
-updates available and a list of the updates will be printed, 0 if not and 1
-if an error occurs.</div></blockquote>
+<div><p>Non-interactively checks if updates of the specified packages are available. If no <tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.</p>
+<p>Please note that having a specific newer vesrsion available for an installed package (and reported by <tt class="docutils literal"><span class="pre">check-update</span></tt>) does not imply that subsequent <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> will install it. The difference is that <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> must also ensure the satisfiability of all dependencies and other restrictions.</p>
+</div></blockquote>
 </div>
 <div class="section" id="clean-command">
 <h3>Clean Command<a class="headerlink" href="#clean-command" title="Permalink to this headline">¶</a></h3>

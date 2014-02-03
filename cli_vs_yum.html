@@ -76,12 +76,12 @@
 <li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id19"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-rollback-check-dropped" id="id20"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
 <li><a class="reference internal" href="#packages-replacement-without-yum-shell" id="id21">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
-<li><a class="reference internal" href="#keepcache-configuration-option-dropped" id="id22"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
-<li><a class="reference internal" href="#dnf-history-info-last" id="id23"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
-<li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id24">Dependency processing details are not shown in the CLI</a></li>
-<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
-<li><a class="reference internal" href="#enableplugin-not-recognized" id="id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
-<li><a class="reference internal" href="#bandwidth-limiting" id="id27">Bandwidth limiting</a></li>
+<li><a class="reference internal" href="#dnf-history-info-last" id="id22"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
+<li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id23">Dependency processing details are not shown in the CLI</a></li>
+<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id24"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
+<li><a class="reference internal" href="#enableplugin-not-recognized" id="id25"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
+<li><a class="reference internal" href="#bandwidth-limiting" id="id26">Bandwidth limiting</a></li>
+<li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id27">The usage of Delta RPM files</a></li>
 </ul>
 </li>
 </ul>
@@ -205,19 +205,14 @@ is not needed anymore.</p>
 <div class="highlight-python"><pre>dnf --allowerasing install B</pre>
 </div>
 </div>
-<div class="section" id="keepcache-configuration-option-dropped">
-<h2><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a><a class="headerlink" href="#keepcache-configuration-option-dropped" title="Permalink to this headline">¶</a></h2>
-<p>The option was used to keep the downloaded .rpm of just installed pacakges in the cache. It has been disabled in Fedora and there has been no real use cases indicated. The option has been removed in DNF which deletes all downloaded packages after a transaction completes.</p>
-<p>Note that this option is something different than the &#8220;downloadonly&#8221; functionality in Yum.</p>
-</div>
 <div class="section" id="dnf-history-info-last">
-<h2><a class="toc-backref" href="#id23"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a><a class="headerlink" href="#dnf-history-info-last" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a><a class="headerlink" href="#dnf-history-info-last" title="Permalink to this headline">¶</a></h2>
 <p>In this case, DNF recognizes <tt class="docutils literal"><span class="pre">last</span></tt> as the ID of the last transaction (like
 other <tt class="docutils literal"><span class="pre">history</span></tt> subcommands), while Yum considers it a package name. It goes
 similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.</p>
 </div>
 <div class="section" id="dependency-processing-details-are-not-shown-in-the-cli">
-<h2><a class="toc-backref" href="#id24">Dependency processing details are not shown in the CLI</a><a class="headerlink" href="#dependency-processing-details-are-not-shown-in-the-cli" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id23">Dependency processing details are not shown in the CLI</a><a class="headerlink" href="#dependency-processing-details-are-not-shown-in-the-cli" title="Permalink to this headline">¶</a></h2>
 <p>During its depsolving phase, Yum outputs lines similar to:</p>
 <div class="highlight-python"><pre>---&gt; Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
 --&gt; Processing Dependency: rubygem-net-ssh-multi &gt;= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch</pre>
@@ -226,7 +221,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1044999">Fedora bug 1044999</a>.</p>
 </div>
 <div class="section" id="dnf-provides-complies-with-the-yum-documentation-of-the-command">
-<h2><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a><a class="headerlink" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id24"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a><a class="headerlink" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" title="Permalink to this headline">¶</a></h2>
 <p>When one executes:</p>
 <div class="highlight-python"><pre>yum provides sandbox</pre>
 </div>
@@ -239,15 +234,19 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <p>to obtain similar results.</p>
 </div>
 <div class="section" id="enableplugin-not-recognized">
-<h2><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
 <p>This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).</p>
 </div>
 <div class="section" id="bandwidth-limiting">
-<h2><a class="toc-backref" href="#id27">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id26">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
 <p>DNF supports the &#8216;throttle&#8217; and &#8216;bandwidth&#8217; options familiar from Yum.
 Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.</p>
+</div>
+<div class="section" id="the-usage-of-delta-rpm-files">
+<h2><a class="toc-backref" href="#id27">The usage of Delta RPM files</a><a class="headerlink" href="#the-usage-of-delta-rpm-files" title="Permalink to this headline">¶</a></h2>
+<p>The boolean <tt class="docutils literal"><span class="pre">deltarpm</span></tt> option controls whether delta RPM files are used. Compared to Yum, DNF does not support <tt class="docutils literal"><span class="pre">deltarpm_percentage</span></tt> and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.</p>
 </div>
 </div>
 
@@ -276,12 +275,12 @@ downloaders ran in different processes.</p>
 <li><a class="reference internal" href="#upgrade-requirements-on-install-dropped"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-rollback-check-dropped"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
 <li><a class="reference internal" href="#packages-replacement-without-yum-shell">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
-<li><a class="reference internal" href="#keepcache-configuration-option-dropped"><tt class="docutils literal"><span class="pre">keepcache</span></tt> configuration option dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-info-last"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli">Dependency processing details are not shown in the CLI</a></li>
 <li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
 <li><a class="reference internal" href="#enableplugin-not-recognized"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
 <li><a class="reference internal" href="#bandwidth-limiting">Bandwidth limiting</a></li>
+<li><a class="reference internal" href="#the-usage-of-delta-rpm-files">The usage of Delta RPM files</a></li>
 </ul>
 </li>
 </ul>
