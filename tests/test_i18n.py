@@ -61,12 +61,11 @@ class TestStdout(PycompTestCase):
             self.assertFalse(retval)
 
     def test_stream(self):
-        fileobj = mock.Mock()
-        fileobj.encoding = None
+        fileobj = dnf.pycomp.StringIO()
         stream = dnf.i18n.UnicodeStream(fileobj, "ISO-8859-2")
         stream.write(UC_TEXT)
-        output = fileobj.write.call_args[0][0]
-        self.assertEqual(output, b'\xa9\xed\xf8ka')
+        output = fileobj.getvalue()
+        self.assertEqual(output, u'\u0160\xed\u0159ka')
         self.assertEqual(len(output), len(UC_TEXT))
 
 class TestInput(PycompTestCase):

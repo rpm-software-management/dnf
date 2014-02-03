@@ -35,7 +35,7 @@ class UnicodeStream(object):
     def write(self, s):
         if isinstance(s, unicode):
             s = s.encode(self.encoding, 'replace')
-        self.stream.write(s)
+        self.stream.write(s.decode(self.encoding, 'replace'))
 
     def __getattr__(self, name):
         return getattr(self.stream, name)
