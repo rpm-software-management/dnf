@@ -18,7 +18,9 @@
 from __future__ import absolute_import
 
 import dnf.plugin
+import logging
 import tests.support
+import types
 
 PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
 
@@ -61,3 +63,20 @@ class PluginSkipsTest(tests.support.TestCase):
 
     def tearDown(self):
         self.plugins.unload()
+
+class PluginNonExistentTest(tests.support.TestCase):
+
+    """Tests with a non-existent plugin."""
+
+    def test_logs_traceback(self):
+        """Test whether the traceback is logged if a plugin cannot be imported."""
+        package = types.ModuleType('testpkg')
+        package.__path__ = []
+        stream = dnf.pycomp.StringIO()
+
+        with tests.support.wiretap_logs('dnf', logging.DEBUG, stream):
+            dnf.plugin.import_modules(package, ('nonexistent.py',))
+
+        end = ('ImportError: No module named \'testpkg\'\n' if dnf.pycomp.PY3
+               else 'ImportError: No module named testpkg.nonexistent\n')
+        self.assertTracebackIn(end, stream.getvalue())
