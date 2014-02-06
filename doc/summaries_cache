@@ -406,5 +406,25 @@
     [
         1051554, 
         "disable fastestmirror by default (and make it configurable)"
+    ], 
+    [
+        1030440, 
+        "[RFE] bash completion support"
+    ], 
+    [
+        1046244, 
+        "dnf doesn't keep the downloaded packages in the cache"
+    ], 
+    [
+        1055051, 
+        "things like ' dnf install \"kernel-devel-uname-r = 3.12.8-300.fc20.x86_64\" ' don't work"
+    ], 
+    [
+        1056400, 
+        "DNF not support url installation for a package"
+    ], 
+    [
+        1060522, 
+        "dnf says \"Nothing to do\" instead of \"Error: broken dependencies.\""
     ]
 ]

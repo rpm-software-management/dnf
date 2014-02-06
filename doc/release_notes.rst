@@ -523,3 +523,20 @@ Bugs fixed in 0.4.12:
 * :rhbug:`1048488`
 * :rhbug:`1049025`
 * :rhbug:`1051554`
+
+====================
+0.4.13 Release Notes
+====================
+
+0.4.13 finally ships support for `delta RPMS <https://gitorious.org/deltarpm>`_. Enabling this can save some bandwidth (and use some CPU time) when downloading packages for updates.
+
+Support for bash completion is also included in this version. It is recommended to use the ``generate_completion_cache`` plugin to have the completion work fast. This plugin will be also shipped with ``dnf-plugins-core-0.0.3``.
+
+The :ref:`keepcache <keepcache-label>` config option has been readded.
+
+Bugs fixed in 0.4.13:
+
+* :rhbug:`1030440`
+* :rhbug:`1046244`
+* :rhbug:`1055051`
+* :rhbug:`1056400`
