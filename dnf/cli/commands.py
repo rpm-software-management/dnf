@@ -456,10 +456,27 @@ class InfoCommand(Command):
         """
         return _("Display details about a package or group of packages")
 
-    def _run(self, basecmd, extcmds):
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        DEFAULT_PKGNARROW = 'all'
+        if len(extcmds) == 0:
+            return DEFAULT_PKGNARROW, extcmds
+
+        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
+                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
+        if extcmds[0] in pkgnarrows:
+            return extcmds[0], extcmds[1:]
+        elif extcmds[0] == 'updates':
+            return 'upgrades', extcmds[1:]
+        else:
+            return DEFAULT_PKGNARROW, extcmds
+
+    def print_packages(self, basecmd, pkgnarrow='all', patterns=()):
         try:
             highlight = self.output.term.MODE['bold']
-            ypl = self.base.returnPkgLists(extcmds, installed_available=highlight)
+            ypl = self.base.returnPkgLists(
+                pkgnarrow, patterns, installed_available=highlight)
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
         else:
@@ -537,15 +554,13 @@ class InfoCommand(Command):
                                     basecmd, columns=columns)
             rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
-            # extcmds is pop(0)'d if they pass a "special" param like "updates"
-            # in returnPkgLists(). This allows us to always return "ok" for
-            # things like "yum list updates".
-            if len(extcmds) and \
+            if len(patterns) and \
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def run(self, extcmds):
-        return self._run('info', extcmds)
+        pkgnarrow, patterns = self.parse_extcmds(extcmds)
+        return self.print_packages('info', pkgnarrow, patterns)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -564,7 +579,8 @@ class ListCommand(InfoCommand):
         return _("List a package or groups of packages")
 
     def run(self, extcmds):
-        return self._run('list', extcmds)
+        pkgnarrow, patterns = self.parse_extcmds(extcmds)
+        return self.print_packages('list', pkgnarrow, patterns)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -911,12 +927,9 @@ class CheckUpdateCommand(Command):
         checkEnabledRepo(self.base)
 
     def run(self, extcmds):
-        obscmds = ['obsoletes'] + extcmds
-        self.base.extcmds.insert(0, 'updates')
-
-        ypl = self.base.returnPkgLists(extcmds)
+        ypl = self.base.returnPkgLists('upgrades', extcmds)
         if self.base.conf.obsoletes or self.base.conf.verbose:
-            typl = self.base.returnPkgLists(obscmds)
+            typl = self.base.returnPkgLists('obsoletes', extcmds)
             ypl.obsoletes = typl.obsoletes
             ypl.obsoletesTuples = typl.obsoletesTuples
 
