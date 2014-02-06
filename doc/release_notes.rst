@@ -536,6 +536,7 @@ The :ref:`keepcache <keepcache-label>` config option has been readded.
 
 Bugs fixed in 0.4.13:
 
+* :rhbug:`909468`
 * :rhbug:`1030440`
 * :rhbug:`1046244`
 * :rhbug:`1055051`

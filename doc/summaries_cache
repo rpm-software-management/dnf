@@ -426,5 +426,9 @@
     [
         1060522, 
         "dnf says \"Nothing to do\" instead of \"Error: broken dependencies.\""
+    ], 
+    [
+        909468, 
+        "[rfe] delta rpm support"
     ]
 ]
