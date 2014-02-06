@@ -535,11 +535,13 @@ class BaseCli(dnf.Base):
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def returnPkgLists(self, extcmds, installed_available=False):
+    def returnPkgLists(self, pkgnarrow='all', patterns=None, installed_available=False):
         """Return a :class:`dnf.yum.misc.GenericHolder` object containing
         lists of package objects that match the given names or wildcards.
 
-        :param extcmds: a list of names or wildcards specifying
+        :param pkgnarrow: a string specifying which types of packages
+           lists to produce, such as updates, installed, available, etc.
+        :param patterns: a list of names or wildcards specifying
            packages to list
         :param installed_available: whether the available package list
            is present as .hidden_available when doing all, available,
@@ -555,27 +557,17 @@ class BaseCli(dnf.Base):
              obsoletes = tuples of packageObjects (obsoleting, installed)
              recent = list of packageObjects
         """
-        special = ['available', 'installed', 'all', 'extras', 'upgrades',
-                   'recent', 'obsoletes']
 
-        pkgnarrow = 'all'
         done_hidden_available = False
         done_hidden_installed = False
-        if len(extcmds) > 0:
-            if installed_available and extcmds[0] == 'installed':
-                done_hidden_available = True
-                extcmds.pop(0)
-            elif installed_available and extcmds[0] == 'available':
-                done_hidden_installed = True
-                extcmds.pop(0)
-            elif extcmds[0] == 'updates':
-                pkgnarrow = 'upgrades'
-                extcmds.pop(0)
-            elif extcmds[0] in special:
-                pkgnarrow = extcmds.pop(0)
+        if installed_available and pkgnarrow == 'installed':
+            done_hidden_available = True
+            pkgnarrow = 'all'
+        elif installed_available and pkgnarrow == 'available':
+            done_hidden_installed = True
+            pkgnarrow = 'all'
 
-        ypl = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=extcmds,
-                                  ignore_case=True)
+        ypl = self.doPackageLists(pkgnarrow, patterns, ignore_case=True)
         if self.conf.showdupesfromrepos:
             ypl.available += ypl.reinstall_available
 
