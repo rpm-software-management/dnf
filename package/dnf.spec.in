@@ -1,4 +1,4 @@
-%global gitrev a64f78a
+%global gitrev 1566248
 %global hawkey_version 0.4.9
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -131,6 +131,36 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Feb 6 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.13-2
+- remove: dnf.util.log_last_excpetion (Radek Holy)
+- Make UnicodeStream text-based. (Radek Holy)
+- Fix AttributeError raised by setup_stdout when stdout does not have attribute encoding. (Radek Holy)
+- Make stdout patching Python 2 compatible. (Radek Holy)
+- config: 'keepcache' off by in-code default. (Ales Kozumplik)
+- doc: man: better explain the difference between 'check-update' and 'upgrade'. (Ales Kozumplik)
+- doc: api: improve documentation of dnf.cli.Command.run(). (Ales Kozumplik)
+- Allow installing by fully specified provides. (RhBug:1055051) (Ales Kozumplik)
+- doc: api: dnf.cli.Command.aliases is a general sequence. (Ales Kozumplik)
+- update AUTHORS (Ales Kozumplik)
+- doc: document keep_cache option. (Kevin Kofler)
+- Revert "remove: conf.keepcache option." (RhBug:1046244) (Kevin Kofler)
+- add Elad to AUTHORS. (Ales Kozumplik)
+- Add bash completion. (RhBug:#1030440) (Elad Alfassa)
+- cosmetic: smooth out dnf.spec.in a bit. (Ales Kozumplik)
+- doc: update the deltarpm section in cli_vs_yum a bit. (Ales Kozumplik)
+- Installing a local pkg is okay. (RhBug#1056400) (Zdenek Pavlas)
+- test_drpm: override the /bin/applydeltarpm detection. (Zdeněk Pavlas)
+- drpm: fall back to rpm download on drpm errors (Zdenek Pavlas)
+- drpm: display delta rebuilds as they finish (Zdenek Pavlas)
+- drpm: spawn delta rebuild jobs, report failures (Zdenek Pavlas)
+- get_package_target(): support the "donecb" callback (Zdenek Pavlas)
+- drpm: download delta packages if possible (Zdenek Pavlas)
+- drpm: add config options + docs, load updateinfo.xml (Zdenek Pavlas)
+- tests: fix test for the new libsolv (also see hawkey commit 4c5aee1). (Ales Kozumplik)
+- report mirror failures. (Zdenek Pavlas)
+- progress display: end(size=None) should never fail (Zdenek Pavlas)
+- fix typo in the 0.4.12 release notes. (Ales Kozumplik)
 
 * Tue Jan 21 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.12-1
 - doc: groom the bandwidth, throttle option a bit. (Ales Kozumplik)
