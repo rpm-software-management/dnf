@@ -18,7 +18,7 @@
 import os
 import rpm
 
-_ppc64_native_is_best = False
+_ppc64_native_is_best = True
 
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
