@@ -926,6 +926,41 @@ class CheckUpdateCommand(Command):
         super(CheckUpdateCommand, self).__init__(cli)
         self._success_retval = 0
 
+    def check_updates(self, patterns=(), reponame=None, print_=True):
+        """Check updates matching given *patterns* in selected repository."""
+        ypl = self.base.returnPkgLists('upgrades', patterns, reponame=reponame)
+        if self.base.conf.obsoletes or self.base.conf.verbose:
+            typl = self.base.returnPkgLists('obsoletes', patterns, reponame=reponame)
+            ypl.obsoletes = typl.obsoletes
+            ypl.obsoletesTuples = typl.obsoletesTuples
+
+        if print_:
+            columns = _list_cmd_calc_columns(self.output, ypl)
+            if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = self.output.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        local = po.localPkg()
+                        if os.path.exists(local) and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = self.base.conf.color_update_local
+                cur = self.base.conf.color_update_remote
+                self.output.listPkgs(ypl.updates, '', outputType='list',
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
+            if len(ypl.obsoletes) > 0:
+                print(_('Obsoleting Packages'))
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
+
+        return ypl.updates or ypl.obsoletes
+
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
@@ -935,37 +970,15 @@ class CheckUpdateCommand(Command):
         """
         checkEnabledRepo(self.base)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
     def run(self, extcmds):
-        ypl = self.base.returnPkgLists('upgrades', extcmds)
-        if self.base.conf.obsoletes or self.base.conf.verbose:
-            typl = self.base.returnPkgLists('obsoletes', extcmds)
-            ypl.obsoletes = typl.obsoletes
-            ypl.obsoletesTuples = typl.obsoletesTuples
-
-        columns = _list_cmd_calc_columns(self.output, ypl)
-        if len(ypl.updates) > 0:
-            local_pkgs = {}
-            highlight = self.output.term.MODE['bold']
-            if highlight:
-                # Do the local/remote split we get in "yum updates"
-                for po in sorted(ypl.updates):
-                    local = po.localPkg()
-                    if os.path.exists(local) and po.verifyLocalPkg():
-                        local_pkgs[(po.name, po.arch)] = po
-
-            cul = self.base.conf.color_update_local
-            cur = self.base.conf.color_update_remote
-            self.output.listPkgs(ypl.updates, '', outputType='list',
-                          highlight_na=local_pkgs, columns=columns,
-                          highlight_modes={'=' : cul, 'not in' : cur})
-            self._success_retval = 100
-        if len(ypl.obsoletes) > 0:
-            print(_('Obsoleting Packages'))
-            # The tuple is (newPkg, oldPkg) ... so sort by new
-            for obtup in sorted(ypl.obsoletesTuples,
-                                key=operator.itemgetter(0)):
-                self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                 columns=columns)
+        patterns = self.parse_extcmds(extcmds)
+        found = self.check_updates(patterns, print_=True)
+        if found:
             self._success_retval = 100
 
     @property
