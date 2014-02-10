@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -535,7 +535,8 @@ class BaseCli(dnf.Base):
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def returnPkgLists(self, pkgnarrow='all', patterns=None, installed_available=False):
+    def returnPkgLists(self, pkgnarrow='all', patterns=None,
+                       installed_available=False, reponame=None):
         """Return a :class:`dnf.yum.misc.GenericHolder` object containing
         lists of package objects that match the given names or wildcards.
 
@@ -546,6 +547,7 @@ class BaseCli(dnf.Base):
         :param installed_available: whether the available package list
            is present as .hidden_available when doing all, available,
            or installed
+        :param reponame: limit packages list to the given repository
 
         :return: a :class:`dnf.yum.misc.GenericHolder` instance with the
            following lists defined::
@@ -567,7 +569,8 @@ class BaseCli(dnf.Base):
             done_hidden_installed = True
             pkgnarrow = 'all'
 
-        ypl = self.doPackageLists(pkgnarrow, patterns, ignore_case=True)
+        ypl = self.doPackageLists(
+            pkgnarrow, patterns, ignore_case=True, reponame=reponame)
         if self.conf.showdupesfromrepos:
             ypl.available += ypl.reinstall_available
 
@@ -1099,6 +1102,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.SearchCommand)
         # self.register_command(dnf.cli.commands.DepListCommand)
         self.register_command(dnf.cli.commands.RepoListCommand)
+        self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.ReInstallCommand)
         self.register_command(dnf.cli.commands.DowngradeCommand)

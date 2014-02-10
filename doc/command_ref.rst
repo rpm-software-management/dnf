@@ -36,6 +36,7 @@ Available commands are:
 * provides
 * reinstall
 * repolist
+* repository-packages
 * search
 * update
 * update-to
@@ -154,7 +155,7 @@ Check Update Command
 
     Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.
 
-    Please note that having a specific newer vesrsion available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` must also ensure the satisfiability of all dependencies and other restrictions.
+    Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` must also ensure the satisfiability of all dependencies and other restrictions.
 
 -------------
 Clean Command
@@ -390,6 +391,18 @@ Repolist Command
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
     detailed information when ``-v`` option is used.
+
+---------------------------
+Repository-Packages Command
+---------------------------
+
+The repository-packages command allows the user to run commands on top of all packages in given repository.
+
+``dnf repository-packages <repoid> info <arg>...``
+    Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+
+``dnf repository-packages <repoid> list <arg>...``
+    Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
 --------------
 Search Command

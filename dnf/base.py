@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1116,7 +1116,7 @@ class Base(object):
         return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
-                       ignore_case=False):
+                       ignore_case=False, reponame=None):
         """Return a :class:`misc.GenericHolder` containing
         lists of package objects.  The contents of the lists are
         specified in various ways by the arguments.
@@ -1130,6 +1130,7 @@ class Base(object):
            lists
         :param ignore_case: whether to ignore case when searching by
            package names
+        :param reponame: limit packages list to the given repository
         :return: a :class:`misc.GenericHolder` instance with the
            following lists defined::
 
@@ -1143,17 +1144,19 @@ class Base(object):
         if showdups is None:
             showdups = self.conf.showdupesfromrepos
         if patterns is None:
-            return self._list_pattern(pkgnarrow, patterns, showdups, ignore_case)
+            return self._list_pattern(
+                pkgnarrow, patterns, showdups, ignore_case, reponame)
 
         assert(not dnf.util.is_string_type(patterns))
-        list_fn = functools.partial(self._list_pattern, pkgnarrow,
-                                    showdups=showdups, ignore_case=ignore_case)
+        list_fn = functools.partial(
+            self._list_pattern, pkgnarrow, showdups=showdups,
+            ignore_case=ignore_case, reponame=reponame)
         if patterns is None or len(patterns) == 0:
             return list_fn(None)
         yghs = map(list_fn, patterns)
         return reduce(lambda a, b: a.merge_lists(b), yghs)
 
-    def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case):
+    def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case, reponame=None):
         ygh = misc.GenericHolder(iter=pkgnarrow)
 
         installed = []
@@ -1172,6 +1175,8 @@ class Base(object):
         if pattern is not None:
             subj = dnf.subject.Subject(pattern, ignore_case=ic)
             q = subj.get_best_query(self.sack, with_provides=False)
+        if reponame is not None:
+            q = q.filter(reponame=reponame)
 
         # list all packages - those installed and available:
         if pkgnarrow == 'all':

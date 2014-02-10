@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,9 +17,23 @@
 
 from __future__ import absolute_import
 from tests import support
+import itertools
 import unittest
 
 class List(support.TestCase):
+    def test_doPackageLists_reponame(self):
+        """Test whether packages are filtered by the reponame."""
+        reponame = 'main'
+        base = support.MockBase(reponame)
+        lists = base.doPackageLists(reponame=reponame)
+
+        pkgs = itertools.chain.from_iterable(lists.all_lists().values())
+        self.assertItemsEqual({pkg.reponame for pkg in pkgs}, {reponame})
+
+        assert len(set(pkg.reponame for pkg in base.sack.query())) > 1, \
+               ('the base must contain packages from multiple repos, '
+                'otherwise the test makes no sense')
+
     def test_list_installed(self):
         yumbase = support.MockBase()
         ypl = yumbase.doPackageLists('installed')

@@ -1,5 +1,5 @@
 # misc.py
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -374,11 +374,14 @@ class GenericHolder(object):
         else:
             raise KeyError(item)
 
+    def all_lists(self):
+        """Return a dictionary of all lists."""
+        return {key: list_ for key, list_ in vars(self).items()
+                if type(list_) is list}
+
     def merge_lists(self, other):
         """ Concatenate the list attributes from 'other' to ours. """
-        for (key, val) in vars(other).items():
-            if type(val) is not list:
-                continue
+        for (key, val) in other.all_lists().items():
             vars(self).setdefault(key, []).extend(val)
         return self
 

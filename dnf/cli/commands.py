@@ -1,5 +1,5 @@
 # Copyright 2006 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ from dnf.cli.format import format_number
 import dnf.logging
 from dnf.yum import misc
 import dnf.exceptions
+import functools
 import operator
 import locale
 import fnmatch
@@ -440,43 +441,11 @@ class InfoCommand(Command):
     aliases = ('info',)
     activate_sack = True
 
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display details about a package or group of packages")
-
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        DEFAULT_PKGNARROW = 'all'
-        if len(extcmds) == 0:
-            return DEFAULT_PKGNARROW, extcmds
-
-        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
-                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
-        if extcmds[0] in pkgnarrows:
-            return extcmds[0], extcmds[1:]
-        elif extcmds[0] == 'updates':
-            return 'upgrades', extcmds[1:]
-        else:
-            return DEFAULT_PKGNARROW, extcmds
-
-    def print_packages(self, basecmd, pkgnarrow='all', patterns=()):
+    def _print_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
         try:
             highlight = self.output.term.MODE['bold']
             ypl = self.base.returnPkgLists(
-                pkgnarrow, patterns, installed_available=highlight)
+                pkgnarrow, patterns, installed_available=highlight, reponame=reponame)
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
         else:
@@ -558,9 +527,45 @@ class InfoCommand(Command):
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
+    @staticmethod
+    def get_usage():
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
+        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
+
+    @staticmethod
+    def get_summary():
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
+        return _("Display details about a package or group of packages")
+
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        DEFAULT_PKGNARROW = 'all'
+        if len(extcmds) == 0:
+            return DEFAULT_PKGNARROW, extcmds
+
+        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
+                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
+        if extcmds[0] in pkgnarrows:
+            return extcmds[0], extcmds[1:]
+        elif extcmds[0] == 'updates':
+            return 'upgrades', extcmds[1:]
+        else:
+            return DEFAULT_PKGNARROW, extcmds
+
+    def print_packages(self, pkgnarrow='all', patterns=(), reponame=None):
+        """Print packages matching given *patterns* in selected repository."""
+        self._print_packages('info', pkgnarrow, patterns, reponame)
+
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages('info', pkgnarrow, patterns)
+        return self.print_packages(pkgnarrow, patterns)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -578,9 +583,13 @@ class ListCommand(InfoCommand):
         """
         return _("List a package or groups of packages")
 
+    def print_packages(self, pkgnarrow='all', patterns=(), reponame=None):
+        """Print packages matching given *patterns* in selected repository."""
+        self._print_packages('list', pkgnarrow, patterns, reponame)
+
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages('list', pkgnarrow, patterns)
+        return self.print_packages(pkgnarrow, patterns)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1282,6 +1291,88 @@ class RepoListCommand(Command):
                                         ui_enabled, ui_num)
         msg = 'repolist: ' +to_unicode(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
+
+class RepoPkgsCommand(Command):
+    """Implementation of the repository-packages command."""
+
+    INFO_SUBCMD_NAME = 'info'
+
+    LIST_SUBCMD_NAME = 'list'
+
+    SUBCMD_NAME2CLS = {INFO_SUBCMD_NAME: InfoCommand,
+                       LIST_SUBCMD_NAME: ListCommand}
+
+    activate_sack = functools.reduce(
+        operator.or_,
+        (class_.activate_sack for class_ in SUBCMD_NAME2CLS.values()),
+        Command.activate_sack)
+
+    aliases = ('repository-packages',
+               'repo-pkgs', 'repo-packages', 'repository-pkgs')
+
+    def __init__(self, cli):
+        """Initialize the command."""
+        super(RepoPkgsCommand, self).__init__(cli)
+        self._subcmd_name2obj = {
+            key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+
+    @staticmethod
+    def get_usage():
+        """Return a usage string for the command, including arguments."""
+        return _('REPO info|list [ARG...]')
+
+    @staticmethod
+    def get_summary():
+        """Return a one line summary of what the command does."""
+        return _('Run commands on top of all packages in given repository')
+
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments *extcmds*."""
+        # TODO: replace with ``repo, subcmd, *subargs = extcmds`` after
+        # switching to Python 3.
+        (repo, subcmd), subargs = extcmds[:2], extcmds[2:]
+        return repo, subcmd, subargs
+
+    def doCheck(self, basecmd, extcmds):
+        """Verify whether the command can run with given arguments."""
+        # Check basecmd.
+        if basecmd not in self.aliases:
+            raise ValueError('basecmd should be one of the command aliases')
+
+        # Check command arguments.
+        try:
+            _repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
+        except ValueError:
+            self.cli.logger.critical(
+                _('Error: Requires a repo ID and a sub-command'))
+            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            raise dnf.cli.CliError('a repo ID and a sub-command required')
+
+        # Check sub-command name.
+        try:
+            subcmd_obj = self._subcmd_name2obj[subcmd_name]
+        except KeyError:
+            subcmds = ', '.join(self._subcmd_name2obj.keys())
+            self.cli.logger.critical(
+                _('Error: Invalid %s sub-command, use: %s') %
+                (basecmd, subcmds))
+            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            raise dnf.cli.CliError('invalid sub-command')
+
+        # Check sub-command.
+        subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
+
+    def run(self, extcmds):
+        """Execute the command with respect to given arguments *extcmds*."""
+        self.doCheck(self.aliases[0], extcmds)
+
+        repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
+        subcmd_obj = self._subcmd_name2obj[subcmd_name]
+
+        if subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
+            pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
+            subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
