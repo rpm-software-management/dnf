@@ -1,5 +1,5 @@
 # Copyright 2006 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -440,39 +440,7 @@ class InfoCommand(Command):
     aliases = ('info',)
     activate_sack = True
 
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display details about a package or group of packages")
-
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        DEFAULT_PKGNARROW = 'all'
-        if len(extcmds) == 0:
-            return DEFAULT_PKGNARROW, extcmds
-
-        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
-                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
-        if extcmds[0] in pkgnarrows:
-            return extcmds[0], extcmds[1:]
-        elif extcmds[0] == 'updates':
-            return 'upgrades', extcmds[1:]
-        else:
-            return DEFAULT_PKGNARROW, extcmds
-
-    def print_packages(self, basecmd, pkgnarrow='all', patterns=()):
+    def _print_packages(self, basecmd, pkgnarrow='all', patterns=()):
         try:
             highlight = self.output.term.MODE['bold']
             ypl = self.base.returnPkgLists(
@@ -558,9 +526,45 @@ class InfoCommand(Command):
                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
+    @staticmethod
+    def get_usage():
+        """Return a usage string for this command.
+
+        :return: a usage string for this command
+        """
+        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
+
+    @staticmethod
+    def get_summary():
+        """Return a one line summary of this command.
+
+        :return: a one line summary of this command
+        """
+        return _("Display details about a package or group of packages")
+
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        DEFAULT_PKGNARROW = 'all'
+        if len(extcmds) == 0:
+            return DEFAULT_PKGNARROW, extcmds
+
+        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
+                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
+        if extcmds[0] in pkgnarrows:
+            return extcmds[0], extcmds[1:]
+        elif extcmds[0] == 'updates':
+            return 'upgrades', extcmds[1:]
+        else:
+            return DEFAULT_PKGNARROW, extcmds
+
+    def print_packages(self, pkgnarrow='all', patterns=()):
+        """Print selected type of packages matching given *patterns*."""
+        self._print_packages('info', pkgnarrow, patterns)
+
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages('info', pkgnarrow, patterns)
+        return self.print_packages(pkgnarrow, patterns)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -578,9 +582,13 @@ class ListCommand(InfoCommand):
         """
         return _("List a package or groups of packages")
 
+    def print_packages(self, pkgnarrow='all', patterns=()):
+        """Print selected type of packages matching given *patterns*."""
+        self._print_packages('list', pkgnarrow, patterns)
+
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages('list', pkgnarrow, patterns)
+        return self.print_packages(pkgnarrow, patterns)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
