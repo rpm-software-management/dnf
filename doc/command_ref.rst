@@ -398,6 +398,9 @@ Repository-Packages Command
 
 The repository-packages command allows the user to run commands on top of all packages in given repository.
 
+``dnf repository-packages <repoid> info <arg>...``
+    Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+
 ``dnf repository-packages <repoid> list <arg>...``
     Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 

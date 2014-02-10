@@ -1294,6 +1294,8 @@ class RepoListCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
+    INFO_SUBCMD_NAME = 'info'
+
     LIST_SUBCMD_NAME = 'list'
 
     activate_sack = True
@@ -1304,12 +1306,13 @@ class RepoPkgsCommand(Command):
     def __init__(self, cli):
         """Initialize the command."""
         super(RepoPkgsCommand, self).__init__(cli)
-        self._subcmd_name2obj = {self.LIST_SUBCMD_NAME: ListCommand(cli)}
+        self._subcmd_name2obj = {self.INFO_SUBCMD_NAME: InfoCommand(cli),
+                                 self.LIST_SUBCMD_NAME: ListCommand(cli)}
 
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO list [ARG...]')
+        return _('REPO info|list [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1360,7 +1363,7 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.LIST_SUBCMD_NAME:
+        if subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
             pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
 
