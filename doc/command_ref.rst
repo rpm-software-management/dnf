@@ -22,8 +22,8 @@ Available commands are:
 
 * check-update
 * clean
-* dist-sync
-* distribution-sync
+* distro-sync
+* distribution-synchronization
 * downgrade
 * erase
 * group
