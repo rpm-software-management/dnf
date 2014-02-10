@@ -29,6 +29,7 @@ from dnf.cli.format import format_number
 import dnf.logging
 from dnf.yum import misc
 import dnf.exceptions
+import functools
 import operator
 import locale
 import fnmatch
@@ -1298,7 +1299,13 @@ class RepoPkgsCommand(Command):
 
     LIST_SUBCMD_NAME = 'list'
 
-    activate_sack = True
+    SUBCMD_NAME2CLS = {INFO_SUBCMD_NAME: InfoCommand,
+                       LIST_SUBCMD_NAME: ListCommand}
+
+    activate_sack = functools.reduce(
+        operator.or_,
+        (class_.activate_sack for class_ in SUBCMD_NAME2CLS.values()),
+        Command.activate_sack)
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
@@ -1306,8 +1313,8 @@ class RepoPkgsCommand(Command):
     def __init__(self, cli):
         """Initialize the command."""
         super(RepoPkgsCommand, self).__init__(cli)
-        self._subcmd_name2obj = {self.INFO_SUBCMD_NAME: InfoCommand(cli),
-                                 self.LIST_SUBCMD_NAME: ListCommand(cli)}
+        self._subcmd_name2obj = {
+            key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
 
     @staticmethod
     def get_usage():
