@@ -1389,33 +1389,6 @@ class Base(object):
 
         return cnt
 
-    def groupUnremove(self, grpid):
-        """Unmark any packages in the given group from being removed.
-
-        :param grpid: the name of the group to unmark the packages of
-        """
-        thesegroups = self.comps.groups_by_pattern(grpid)
-        if not thesegroups:
-            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
-
-        for thisgroup in thesegroups:
-            thisgroup.toremove = False
-            pkgs = thisgroup.packages
-            for pkg in thisgroup.packages:
-                for txmbr in self.tsInfo:
-                    if txmbr.po.name == pkg and txmbr.po.state in TS_INSTALL_STATES:
-                        try:
-                            txmbr.groups.remove(grpid)
-                        except ValueError:
-                            self.logger.debug(
-                               _("package %s was not marked in group %s"), txmbr.po,
-                                grpid)
-                            continue
-
-                        # if there aren't any other groups mentioned then remove the pkg
-                        if len(txmbr.groups) == 0:
-                            self.tsInfo.remove(txmbr.po.pkgtup)
-
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
         """Mark all the packages in the given group to be installed. :api
 
