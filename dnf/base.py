@@ -1376,7 +1376,8 @@ class Base(object):
     def group_remove(self, grp_spec):
         groups = self.comps.groups_by_pattern(grp_spec)
         if not groups:
-            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
+            raise dnf.exceptions.CompsError(_("No Group named %s exists") %
+                                            to_unicode(grp_spec))
 
         cnt = 0
         for pkg in (pkg for grp in groups for pkg in grp.packages):
