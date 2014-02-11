@@ -293,11 +293,20 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def run(self, extcmds):
-        if any(extcmd.startswith('@') for extcmd in extcmds):
+    def install_patterns(self, patterns):
+        """Install packages and groups specified by *patterns*."""
+        if any(pattern.startswith('@') for pattern in patterns):
             self.base.read_comps()
+        self.base.installPkgs(patterns)
 
-        return self.base.installPkgs(extcmds)
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
+    def run(self, extcmds):
+        patterns = self.parse_extcmds(extcmds)
+        self.install_patterns(patterns)
 
 class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
