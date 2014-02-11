@@ -292,7 +292,7 @@ transactions and act according to this information (assuming the
 Info Command
 ------------
 
-``dnf [options] info <package-specs>...``
+``dnf [options] info [<package-spec>...]``
     Is used to list a description and summary information about available packages.
 
 ---------------
@@ -401,10 +401,10 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> check-update [<arg>...]``
     Run ``dnf check-update`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
-``dnf repository-packages <repoid> info <arg>...``
+``dnf [options] repository-packages <repoid> info [<arg>...]``
     Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
-``dnf repository-packages <repoid> list <arg>...``
+``dnf [options] repository-packages <repoid> list [<arg>...]``
     Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
 --------------
