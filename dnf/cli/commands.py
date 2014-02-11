@@ -926,6 +926,41 @@ class CheckUpdateCommand(Command):
         super(CheckUpdateCommand, self).__init__(cli)
         self._success_retval = 0
 
+    def check_updates(self, patterns=(), reponame=None, print_=True):
+        """Check updates matching given *patterns* in selected repository."""
+        ypl = self.base.returnPkgLists('upgrades', patterns, reponame=reponame)
+        if self.base.conf.obsoletes or self.base.conf.verbose:
+            typl = self.base.returnPkgLists('obsoletes', patterns, reponame=reponame)
+            ypl.obsoletes = typl.obsoletes
+            ypl.obsoletesTuples = typl.obsoletesTuples
+
+        if print_:
+            columns = _list_cmd_calc_columns(self.output, ypl)
+            if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = self.output.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        local = po.localPkg()
+                        if os.path.exists(local) and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = self.base.conf.color_update_local
+                cur = self.base.conf.color_update_remote
+                self.output.listPkgs(ypl.updates, '', outputType='list',
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
+            if len(ypl.obsoletes) > 0:
+                print(_('Obsoleting Packages'))
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
+
+        return ypl.updates or ypl.obsoletes
+
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
@@ -935,37 +970,15 @@ class CheckUpdateCommand(Command):
         """
         checkEnabledRepo(self.base)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
     def run(self, extcmds):
-        ypl = self.base.returnPkgLists('upgrades', extcmds)
-        if self.base.conf.obsoletes or self.base.conf.verbose:
-            typl = self.base.returnPkgLists('obsoletes', extcmds)
-            ypl.obsoletes = typl.obsoletes
-            ypl.obsoletesTuples = typl.obsoletesTuples
-
-        columns = _list_cmd_calc_columns(self.output, ypl)
-        if len(ypl.updates) > 0:
-            local_pkgs = {}
-            highlight = self.output.term.MODE['bold']
-            if highlight:
-                # Do the local/remote split we get in "yum updates"
-                for po in sorted(ypl.updates):
-                    local = po.localPkg()
-                    if os.path.exists(local) and po.verifyLocalPkg():
-                        local_pkgs[(po.name, po.arch)] = po
-
-            cul = self.base.conf.color_update_local
-            cur = self.base.conf.color_update_remote
-            self.output.listPkgs(ypl.updates, '', outputType='list',
-                          highlight_na=local_pkgs, columns=columns,
-                          highlight_modes={'=' : cul, 'not in' : cur})
-            self._success_retval = 100
-        if len(ypl.obsoletes) > 0:
-            print(_('Obsoleting Packages'))
-            # The tuple is (newPkg, oldPkg) ... so sort by new
-            for obtup in sorted(ypl.obsoletesTuples,
-                                key=operator.itemgetter(0)):
-                self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                 columns=columns)
+        patterns = self.parse_extcmds(extcmds)
+        found = self.check_updates(patterns, print_=True)
+        if found:
             self._success_retval = 100
 
     @property
@@ -1295,11 +1308,14 @@ class RepoListCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
+    CHECK_UPDATE_SUBCMD_NAME = 'check-update'
+
     INFO_SUBCMD_NAME = 'info'
 
     LIST_SUBCMD_NAME = 'list'
 
-    SUBCMD_NAME2CLS = {INFO_SUBCMD_NAME: InfoCommand,
+    SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
+                       INFO_SUBCMD_NAME: InfoCommand,
                        LIST_SUBCMD_NAME: ListCommand}
 
     activate_sack = functools.reduce(
@@ -1315,11 +1331,12 @@ class RepoPkgsCommand(Command):
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
             key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+        self._success_retval = super(RepoPkgsCommand, self).success_retval
 
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO info|list [ARG...]')
+        return _('REPO check-update|info|list [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1370,9 +1387,18 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
+        if subcmd_name == self.CHECK_UPDATE_SUBCMD_NAME:
+            patterns = subcmd_obj.parse_extcmds(subargs)
+            found = subcmd_obj.check_updates(patterns, repo, print_=True)
+            if found:
+                self._success_retval = 100
+        elif subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
             pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
+
+    @property
+    def success_retval(self):
+        return self._success_retval
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
