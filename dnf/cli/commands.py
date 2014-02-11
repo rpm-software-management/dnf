@@ -1308,11 +1308,14 @@ class RepoListCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
+    CHECK_UPDATE_SUBCMD_NAME = 'check-update'
+
     INFO_SUBCMD_NAME = 'info'
 
     LIST_SUBCMD_NAME = 'list'
 
-    SUBCMD_NAME2CLS = {INFO_SUBCMD_NAME: InfoCommand,
+    SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
+                       INFO_SUBCMD_NAME: InfoCommand,
                        LIST_SUBCMD_NAME: ListCommand}
 
     activate_sack = functools.reduce(
@@ -1328,11 +1331,12 @@ class RepoPkgsCommand(Command):
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
             key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+        self._success_retval = super(RepoPkgsCommand, self).success_retval
 
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO info|list [ARG...]')
+        return _('REPO check-update|info|list [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1383,9 +1387,18 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
+        if subcmd_name == self.CHECK_UPDATE_SUBCMD_NAME:
+            patterns = subcmd_obj.parse_extcmds(subargs)
+            found = subcmd_obj.check_updates(patterns, repo, print_=True)
+            if found:
+                self._success_retval = 100
+        elif subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
             pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
+
+    @property
+    def success_retval(self):
+        return self._success_retval
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
