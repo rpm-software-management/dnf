@@ -1,6 +1,6 @@
 # i18n.py
 #
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -33,9 +33,10 @@ class UnicodeStream(object):
         self.encoding = encoding
 
     def write(self, s):
-        if isinstance(s, unicode):
-            s = s.encode(self.encoding, 'replace')
-        self.stream.write(s.decode(self.encoding, 'replace'))
+        if not isinstance(s, str):
+            s = (s.decode(self.encoding, 'replace') if PY3 else
+                 s.encode(self.encoding, 'replace'))
+        self.stream.write(s)
 
     def __getattr__(self, name):
         return getattr(self.stream, name)
