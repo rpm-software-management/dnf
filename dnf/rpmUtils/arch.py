@@ -18,13 +18,18 @@
 import os
 import rpm
 
-_ppc64_native_is_best = False
+_ppc64_native_is_best = True
 
 # dict mapping arch -> ( multicompat, best personality, biarch personality )
 multilibArches = { "x86_64":  ( "athlon", "x86_64", "athlon" ),
+                   "amd64":  ( "athlon", "x86_64", "athlon" ),
+                   "ia32e":  ( "athlon", "x86_64", "athlon" ),
                    "sparc64v": ( "sparcv9v", "sparcv9v", "sparc64v" ),
                    "sparc64": ( "sparcv9", "sparcv9", "sparc64" ),
                    "ppc64":   ( "ppc", "ppc", "ppc64" ),
+                   "ppc64iseries":   ( "ppc", "ppc64", "ppc64" ),
+                   "ppc64p7":   ( "ppc", "ppc64", "ppc64" ),
+                   "ppc64pseries":   ( "ppc", "ppc64", "ppc64" ),
                    "s390x":   ( "s390", "s390x", "s390" ),
                    }
 if _ppc64_native_is_best:
@@ -45,6 +50,7 @@ arches = {
     "ia32e": "x86_64",
 
     # ppc
+    "ppc64p7": "ppc64",
     "ppc64pseries": "ppc64",
     "ppc64iseries": "ppc64",
     "ppc64": "ppc",
@@ -83,6 +89,9 @@ arches = {
     #arm hardware floating point
     "armv7hnl": "armv7hl",
     "armv7hl": "noarch",
+
+    # arm64
+    "arm64": "noarch",
 
     # super-h
     "sh4a": "sh4",
@@ -243,6 +252,8 @@ def getBaseArch(myarch):
         return "sparc"
     elif myarch.startswith("ppc64") and not _ppc64_native_is_best:
         return "ppc"
+    elif myarch.startswith("arm64"):
+        return "arm64"
     elif myarch.startswith("armv7h"):
         return "armhfp"
     elif myarch.startswith("arm"):
@@ -250,7 +261,11 @@ def getBaseArch(myarch):
 
     if isMultiLibArch(myarch):
         if myarch in multilibArches:
-            return myarch
+            best_personality = multilibArches[myarch][1]
+            if myarch == best_personality:
+                return myarch
+            else:
+                return getBaseArch(best_personality)
         else:
             return arches[myarch]
 
