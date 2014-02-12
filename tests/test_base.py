@@ -230,6 +230,18 @@ class CleanTest(PycompTestCase):
         fname = access.call_args_list[2][0][0]
         assert(fname.endswith('main-filenames.solvx'))
 
+    def test_clean_files_local(self):
+        """Do not delete files from a local repo."""
+        base = support.MockBase("main")
+        repo = base.repos['main']
+        repo.baseurl = ['file:///dnf-bad-test']
+        repo.basecachedir = '/tmp/dnf-bad-test'
+        with mock.patch.object(base, "_cleanFilelist") as cf_mock,\
+             mock.patch('os.path.exists', return_value=True) as exists_mock:
+            base._cleanFiles(['rpm'], 'pkgdir', 'package')
+        # local repo is not even checked for directory existence:
+        self.assertIsNone(exists_mock.call_args)
+
 class CompsTest(support.TestCase):
     # Also see test_comps.py
 
