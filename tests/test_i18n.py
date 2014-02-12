@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -65,7 +65,7 @@ class TestStdout(PycompTestCase):
         stream = dnf.i18n.UnicodeStream(fileobj, "ISO-8859-2")
         stream.write(UC_TEXT)
         output = fileobj.getvalue()
-        self.assertEqual(output, u'\u0160\xed\u0159ka')
+        self.assertEqual(output, u'\u0160\xed\u0159ka' if PY3 else b'\xa9\xed\xf8ka')
         self.assertEqual(len(output), len(UC_TEXT))
 
 class TestInput(PycompTestCase):
