@@ -430,5 +430,21 @@
     [
         909468, 
         "[rfe] delta rpm support"
+    ], 
+    [
+        1062390, 
+        "dnf.rpmUtils.arch.getBaseArch() doesn't return identical results to yum's rpmUtils.arch.getBaseArch()"
+    ], 
+    [
+        1062847, 
+        "dnf man page errors"
+    ], 
+    [
+        1063022, 
+        "[abrt] dnf: i18n.py:38:write:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 12: ordinal not in range(128)"
+    ], 
+    [
+        1064148, 
+        "DNF attempts to remove packages from local file-based repository"
     ]
 ]
