@@ -1499,8 +1499,8 @@ class Base(object):
             del fo
             return 1
 
-    def install(self, pkg_spec):
-        """Mark package(s) specified by pkg_spec for installation. :api"""
+    def install(self, pkg_spec, reponame=None):
+        """Mark package(s) specified by pkg_spec and reponame for installation. :api"""
 
         def msg_installed(pkg):
             name = unicode(pkg)
@@ -1510,6 +1510,8 @@ class Base(object):
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.filename_pattern:
             q = subj.get_best_query(self.sack)
+            if reponame is not None:
+                q = q.filter(reponame=reponame)
             already_inst, available = self._query_matches_installed(q)
             for i in already_inst:
                 msg_installed(i)
@@ -1520,6 +1522,8 @@ class Base(object):
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
                 raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
+            if reponame is not None:
+                sltr = sltr.set(reponame=reponame)
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])

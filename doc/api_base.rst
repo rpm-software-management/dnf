@@ -83,9 +83,9 @@
 
     Mark packages matching `pkg_spec` for downgrade.
 
-  .. method:: install(pkg_spec)
+  .. method:: install(pkg_spec, reponame=None)
 
-    Mark packages matching `pkg_spec` for installation.
+    Mark packages matching `pkg_spec` for installation. If `reponame` is not ``None``, only packages from the repository named `reponame` are taken into account.
 
     .. warning::
       This method was previously documented to raise :exc:`~dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. While this still may hold in future versions, :exc:`~dnf.exceptions.PackageNotFoundError` is currently being deprecated for public use.
