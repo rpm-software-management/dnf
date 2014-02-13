@@ -292,7 +292,7 @@ class BaseCli(dnf.Base):
                                             ", ".join(matches))
             self.logger.info(msg)
 
-    def installPkgs(self, userlist):
+    def installPkgs(self, userlist, reponame=None):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
         them to a newer version. If a complete version number is
@@ -301,6 +301,7 @@ class BaseCli(dnf.Base):
 
         :param userlist: a list of names or wildcards specifying
            packages to install
+        :param reponame: limit packages matching to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -320,12 +321,14 @@ class BaseCli(dnf.Base):
 
         done = False
         for arg in userlist:
-            if arg.endswith('.rpm'):
+            # Defining reponame for local packages does not make any sense.
+            if arg.endswith('.rpm') and reponame is None:
                 self.install_local(arg)
                 done = True
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
-            elif arg.startswith('@'):
+            # Limiting group installation to one repository is not supported.
+            elif arg.startswith('@') and reponame is None:
                 try:
                     self.install_grouplist((arg[1:],))
                 except dnf.exceptions.Error:
@@ -334,7 +337,7 @@ class BaseCli(dnf.Base):
                     done = True
                 continue
             try:
-                self.install(arg)
+                self.install(arg, reponame)
             except dnf.exceptions.MarkingError:
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.output.term.MODE['bold'], arg,
