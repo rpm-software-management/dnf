@@ -404,6 +404,9 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> info [<arg>...]``
     Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
+``dnf [options] repository-packages <repoid> install [<arg>...]``
+    Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid``. That implies that group and local file installation is not supported.
+
 ``dnf [options] repository-packages <repoid> list [<arg>...]``
     Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 

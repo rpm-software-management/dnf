@@ -293,11 +293,11 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def install_patterns(self, patterns):
-        """Install packages and groups specified by *patterns*."""
+    def install_patterns(self, patterns, reponame=None):
+        """Install packages and groups matching *patterns* in selected repository."""
         if any(pattern.startswith('@') for pattern in patterns):
             self.base.read_comps()
-        self.base.installPkgs(patterns)
+        self.base.installPkgs(patterns, reponame)
 
     @staticmethod
     def parse_extcmds(extcmds):
@@ -1321,10 +1321,13 @@ class RepoPkgsCommand(Command):
 
     INFO_SUBCMD_NAME = 'info'
 
+    INSTALL_SUBCMD_NAME = 'install'
+
     LIST_SUBCMD_NAME = 'list'
 
     SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
                        INFO_SUBCMD_NAME: InfoCommand,
+                       INSTALL_SUBCMD_NAME: InstallCommand,
                        LIST_SUBCMD_NAME: ListCommand}
 
     activate_sack = functools.reduce(
@@ -1340,12 +1343,14 @@ class RepoPkgsCommand(Command):
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
             key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+        self._resolve = super(RepoPkgsCommand, self).resolve
         self._success_retval = super(RepoPkgsCommand, self).success_retval
+        self._writes_rpmdb = super(RepoPkgsCommand, self).writes_rpmdb
 
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|list [ARG...]')
+        return _('REPO check-update|info|install|list [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1389,6 +1394,10 @@ class RepoPkgsCommand(Command):
         # Check sub-command.
         subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
 
+    @property
+    def resolve(self):
+        return self._resolve
+
     def run(self, extcmds):
         """Execute the command with respect to given arguments *extcmds*."""
         self.doCheck(self.aliases[0], extcmds)
@@ -1404,10 +1413,19 @@ class RepoPkgsCommand(Command):
         elif subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
             pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
+        elif subcmd_name == self.INSTALL_SUBCMD_NAME:
+            patterns = subcmd_obj.parse_extcmds(subargs)
+            subcmd_obj.install_patterns(patterns, reponame=repo)
+        self._resolve = subcmd_obj.resolve
+        self._writes_rpmdb = subcmd_obj.writes_rpmdb
 
     @property
     def success_retval(self):
         return self._success_retval
+
+    @property
+    def writes_rpmdb(self):
+        return self._writes_rpmdb
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the

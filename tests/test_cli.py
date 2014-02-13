@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -56,7 +56,7 @@ class YumBaseCliTest(PycompTestCase):
     def setUp(self):
         self._yumbase = dnf.cli.cli.BaseCli()
         self._yumbase._sack = support.mock_sack('main')
-        self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
+        self._yumbase._goal = self._goal = hawkey.Goal(self._yumbase.sack)
 
         main_repo = support.MockRepo('main', None)
         main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)
@@ -69,8 +69,6 @@ class YumBaseCliTest(PycompTestCase):
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
-        self._yumbase.install = mock.Mock(wraps=self._yumbase.install)
-        self._yumbase.install_grouplist = mock.Mock(wraps=self._yumbase.install_grouplist)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
         self._yumbase.upgrade = mock.Mock(wraps=self._yumbase.upgrade)
@@ -79,8 +77,10 @@ class YumBaseCliTest(PycompTestCase):
     def test_installPkgs(self):
         self._yumbase.installPkgs(('lotus',))
 
-        self.assertEqual(self._yumbase.install.mock_calls, [mock.call('lotus')])
-        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [])
+        self._goal.run()
+        self.assertItemsEqual(
+            self._goal.list_installs(),
+            dnf.subject.Subject('lotus.x86_64').get_best_query(self._yumbase.sack).run())
         self.assertEqual(self._yumbase.logger.mock_calls, [])
 
     @mock.patch('dnf.base._', dnf.pycomp.NullTranslations().ugettext)
@@ -88,8 +88,10 @@ class YumBaseCliTest(PycompTestCase):
         """Test installPkgs with a group."""
         self._yumbase.installPkgs(('@Solid Ground',))
 
-        self.assertEqual(self._yumbase.install.mock_calls, [])
-        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [mock.call(('Solid Ground',))])
+        self._goal.run()
+        self.assertItemsEqual(
+            self._goal.list_installs(),
+            dnf.subject.Subject('trampoline.noarch').get_best_query(self._yumbase.sack).run())
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.debug('Adding package pepper from group somerset'),
                           mock.call.debug('Adding package trampoline from group somerset')])
@@ -101,8 +103,8 @@ class YumBaseCliTest(PycompTestCase):
             self._yumbase.installPkgs(('@non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._yumbase.install.mock_calls, [])
-        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [mock.call(('non-existent',))])
+        self._goal.run()
+        self.assertItemsEqual(self._goal.list_installs(), ())
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.error('Warning: Group non-existent does not exist.')])
 
@@ -112,8 +114,8 @@ class YumBaseCliTest(PycompTestCase):
             self._yumbase.installPkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._yumbase.install.mock_calls, [mock.call('non-existent')])
-        self.assertEqual(self._yumbase.install_grouplist.mock_calls, [])
+        self._goal.run()
+        self.assertItemsEqual(self._goal.list_installs(), ())
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
 
