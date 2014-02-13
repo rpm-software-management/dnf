@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.13-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.14-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.13-1',
+        VERSION:     '0.4.14-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.13-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.14-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.13-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -69,8 +69,8 @@ speed and defining strict API and plugin interface.</p>
 <ul class="simple">
 <li>check-update</li>
 <li>clean</li>
-<li>dist-sync</li>
-<li>distribution-sync</li>
+<li>distro-sync</li>
+<li>distribution-synchronization</li>
 <li>downgrade</li>
 <li>erase</li>
 <li>group</li>
@@ -83,6 +83,7 @@ speed and defining strict API and plugin interface.</p>
 <li>provides</li>
 <li>reinstall</li>
 <li>repolist</li>
+<li>repository-packages</li>
 <li>search</li>
 <li>update</li>
 <li>update-to</li>
@@ -172,7 +173,7 @@ system.</dd>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
 <blockquote>
 <div><p>Non-interactively checks if updates of the specified packages are available. If no <tt class="docutils literal"><span class="pre">&lt;package-specs&gt;</span></tt> are given checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.</p>
-<p>Please note that having a specific newer vesrsion available for an installed package (and reported by <tt class="docutils literal"><span class="pre">check-update</span></tt>) does not imply that subsequent <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> will install it. The difference is that <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> must also ensure the satisfiability of all dependencies and other restrictions.</p>
+<p>Please note that having a specific newer version available for an installed package (and reported by <tt class="docutils literal"><span class="pre">check-update</span></tt>) does not imply that subsequent <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> will install it. The difference is that <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> must also ensure the satisfiability of all dependencies and other restrictions.</p>
 </div></blockquote>
 </div>
 <div class="section" id="clean-command">
@@ -290,7 +291,7 @@ the %packages section in a <a class="reference external" href="http://fedoraproj
 <div class="section" id="info-command">
 <h3>Info Command<a class="headerlink" href="#info-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">info</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">info</span> <span class="pre">[&lt;package-spec&gt;...]</span></tt></dt>
 <dd>Is used to list a description and summary information about available packages.</dd>
 </dl>
 </div>
@@ -379,6 +380,18 @@ download the same RPM).</dd>
 <dd>Depending on the exact command, lists enabled, disabled or all known
 repositories. Lists all enabled repositories by default. Provides more
 detailed information when <tt class="docutils literal"><span class="pre">-v</span></tt> option is used.</dd>
+</dl>
+</div>
+<div class="section" id="repository-packages-command">
+<h3>Repository-Packages Command<a class="headerlink" href="#repository-packages-command" title="Permalink to this headline">¶</a></h3>
+<p>The repository-packages command allows the user to run commands on top of all packages in given repository.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">check-update</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">info</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">info</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">list</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">list</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
 </dl>
 </div>
 <div class="section" id="search-command">
@@ -517,6 +530,7 @@ the most recent transaction.</p>
 <li><a class="reference internal" href="#reinstall-command">Reinstall Command</a></li>
 <li><a class="reference internal" href="#remove-command">Remove Command</a></li>
 <li><a class="reference internal" href="#repolist-command">Repolist Command</a></li>
+<li><a class="reference internal" href="#repository-packages-command">Repository-Packages Command</a></li>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
 <li><a class="reference internal" href="#upgrade-command">Upgrade Command</a></li>
@@ -577,7 +591,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.13-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

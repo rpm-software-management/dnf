@@ -541,3 +541,20 @@ Bugs fixed in 0.4.13:
 * :rhbug:`1046244`
 * :rhbug:`1055051`
 * :rhbug:`1056400`
+
+====================
+0.4.14 Release Notes
+====================
+
+This quickly follows 0.4.13 to address the issue of crashes when DNF output is piped into another program.
+
+API additions in 0.4.14:
+
+* :attr:`.Repo.pkgdir`
+
+Bugs fixed in 0.4.14:
+
+* :rhbug:`1062390`
+* :rhbug:`1062847`
+* :rhbug:`1063022`
+* :rhbug:`1064148`
