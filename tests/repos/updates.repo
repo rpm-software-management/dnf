@@ -7,3 +7,5 @@
 =Obs: tour
 =Pkg: pepper 20 1 x86_64
 =Req: librita >= 1-0
+=Pkg: lotus 3 17 x86_64
+=Pkg: lotus 3 17 i686
