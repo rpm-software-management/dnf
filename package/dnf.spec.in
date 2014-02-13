@@ -1,4 +1,4 @@
-%global gitrev 1566248
+%global gitrev 2c0cf93
 %global hawkey_version 0.4.9
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2%{?dist}
+Release:	1%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -131,6 +131,27 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Thu Feb 13 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.14-1
+- api: add Repo.pkgdir. (Ales Kozumplik)
+- Make UnicodeStream Python 2 compatible (RhBug:1063022) (Radek Holy)
+- Add missing yum arches to rpmUtils.arch; fix getBaseArch(). (Daniel Mach)
+- Add rpmUtils.arch tests. (Daniel Mach)
+- Set _ppc64_native_is_best = True in rpmUtils.arch. (RhBug:1062390) (Daniel Mach)
+- clean: do not clean out files from local repos. (RhBug:1064148) (Ales Kozumplik)
+- remove: groupUnremove(). (Ales Kozumplik)
+- Fix undefined variable in group_remove(). (Ales Kozumplik)
+- doc: Fix syntax of selected commands. (Radek Holy)
+- Add repository-packages check-update command. (Radek Holy)
+- refactor: dnf.cli.commands.CheckUpdateCommand (Radek Holy)
+- Base RepoPkgsCommand.activate_sack on its sub-commands. (Radek Holy)
+- Add repository-packages info command. (Radek Holy)
+- Add repository-packages list command. (Radek Holy)
+- refactor: InfoCommand interface (Radek Holy)
+- Support filtering by repository name in doPackageLists. (Radek Holy)
+- refactor: dnf.cli.cli.BaseCli.returnPkgLists (Radek Holy)
+- doc: distro-sync spelling on the man page. (RhBug:1062847) (Ales Kozumplik)
+- doc: update 0.4.13 release notes with the delta rpm rfe. (Ales Kozumplik)
 
 * Thu Feb 6 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.13-2
 - remove: dnf.util.log_last_excpetion (Radek Holy)
