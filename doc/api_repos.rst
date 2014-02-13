@@ -56,6 +56,10 @@ Repository Configuration
 
     A string with the repo's name.
 
+  .. attribute:: pkgdir
+
+    Directory where packages of a remote repo will be downloaded to. By default it is derived from `cachedir` in :meth:`.__init__` but can be overriden by assigning to this attribute.
+
   .. attribute:: sslverify
 
     Whether SSL certificate checking should be performed at all. Defaults to ``True``.

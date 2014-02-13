@@ -176,6 +176,7 @@ class Repo(dnf.yum.config.RepoConf):
     def __init__(self, id_, basecachedir):
         # :api
         super(Repo, self).__init__()
+        self._pkgdir = None
         self._progress = None
         self.id = id_ # :api
         self.basecachedir = basecachedir
@@ -526,9 +527,17 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def pkgdir(self):
+        # :api
         if self.local:
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
+        if self._pkgdir is not None:
+            return self._pkgdir
         return os.path.join(self.cachedir, 'packages')
+
+    @pkgdir.setter
+    def pkgdir(self, val):
+        # :api
+        self._pkgdir = val
 
     @property
     def primary_fn(self):
