@@ -71,9 +71,9 @@
 
     The exact operation of the solver depends on the :attr:`dnf.conf.Conf.best` setting.
 
-  .. method:: select_group(group, pkg_types=None)
+  .. method:: select_group(group, pkg_types=None, reponame=None)
 
-    Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding ``"mandatory"``, ``"default"`` or ``"optional"`` to it. If `pkg_types` is ``None``, it defaults to ``("mandatory", "default")``.
+    Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding ``"mandatory"``, ``"default"`` or ``"optional"`` to it. If `pkg_types` is ``None``, it defaults to ``("mandatory", "default")``. If `reponame` is not ``None``, only packages from the repository named `reponame` are taken into account.
 
   .. _package_marking-label:
 
