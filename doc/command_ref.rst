@@ -396,13 +396,16 @@ Repolist Command
 Repository-Packages Command
 ---------------------------
 
-The repository-packages command allows the user to run commands on top of all packages in given repository.
+The repository-packages command allows the user to run commands on top of all packages in given repository. However, any dependency resolution takes into account packages from all enabled repositories.
 
 ``dnf [options] repository-packages <repoid> check-update [<arg>...]``
     Run ``dnf check-update`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
 ``dnf [options] repository-packages <repoid> info [<arg>...]``
     Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+
+``dnf [options] repository-packages <repoid> install [<arg>...]``
+    Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid`` with the difference that no argument is required. In that case, all packages are installed.
 
 ``dnf [options] repository-packages <repoid> list [<arg>...]``
     Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
