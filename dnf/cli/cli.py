@@ -25,7 +25,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 from dnf.cli import CliError
 from dnf.i18n import ucd
-from dnf.yum.i18n import to_unicode, to_utf8, exception2msg, _, P_
+from dnf.yum.i18n import to_unicode, _, P_
 from argparse import Action, ArgumentParser, SUPPRESS
 
 import dnf
@@ -52,7 +52,6 @@ import re
 import signal
 import sys
 import time
-import rpm
 from functools import reduce
 from dnf.pycomp import unicode
 
