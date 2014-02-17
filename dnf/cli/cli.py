@@ -1281,7 +1281,7 @@ class Cli(object):
 
         :param args: a list of command line arguments
         """
-        self.optparser = YumOptionParser(base=self.base, usage=self._make_usage())
+        self.optparser = OptionParser(base=self.base, usage=self._make_usage())
 
         # Parse only command line options that affect basic yum setup
         opts, cmds = self.optparser.parse_known_args(args)
@@ -1527,7 +1527,7 @@ class Cli(object):
             with open("%s.repo" % rid, 'w') as outfile:
                 self.base.sack.susetags_for_repo(outfile, rid)
 
-class YumOptionParser(ArgumentParser):
+class OptionParser(ArgumentParser):
     """Subclass that makes some minor tweaks to make ArgumentParser do things the
     "yum way".
     """
