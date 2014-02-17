@@ -25,7 +25,7 @@
 __dnf_commandlist="
     clean
     check-update
-    distribution-synchronization
+    distro-sync
     downgrade
     remove
     erase
