@@ -1580,12 +1580,18 @@ class Base(object):
                 pass
         return 1
 
-    def upgrade_to(self, pkg_spec):
+    def upgrade_to(self, pkg_spec, reponame=None):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
         if sltr:
+            if reponame is not None:
+                sltr = sltr.set(reponame=reponame)
+
+            prev_count = self._goal.req_length()
             self._goal.upgrade_to(select=sltr)
-            return 1
+            if self._goal.req_length() - prev_count:
+                return 1
+
         return 0
 
     def distro_sync(self, pkg=None):
