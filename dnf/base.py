@@ -1569,9 +1569,15 @@ class Base(object):
 
         raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
 
-    def upgrade_all(self):
+    def upgrade_all(self, reponame=None):
         # :api
-        self._goal.upgrade_all()
+        if reponame is None:
+            self._goal.upgrade_all()
+        else:
+            try:
+                self.upgrade('*', reponame)
+            except dnf.exceptions.MarkingError:
+                pass
         return 1
 
     def upgrade_to(self, pkg_spec):
