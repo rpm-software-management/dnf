@@ -1555,12 +1555,18 @@ class Base(object):
                 return self._goal.req_length() - prev_count
         return 0
 
-    def upgrade(self, pkg_spec):
+    def upgrade(self, pkg_spec, reponame=None):
         # :api
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
         if sltr:
+            if reponame is not None:
+                sltr = sltr.set(reponame=reponame)
+
+            prev_count = self._goal.req_length()
             self._goal.upgrade(select=sltr)
-            return 1
+            if self._goal.req_length() - prev_count:
+                return 1
+
         raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
 
     def upgrade_all(self):
