@@ -1391,10 +1391,11 @@ class Base(object):
 
         return cnt
 
-    def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
+    def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES, reponame=None):
         """Mark all the packages in the given group to be installed. :api
 
         :param group: the group containing the packages to mark for installation
+        :param reponame: limit packages marking to the given repository
         :return: number of transaction members added to the transaction set
 
         """
@@ -1420,7 +1421,7 @@ class Base(object):
             if pkg.name in inst_set:
                 continue
             inst_set.add(pkg.name)
-            current_cnt = self.install_groupie(pkg.name, inst_set)
+            current_cnt = self.install_groupie(pkg.name, inst_set, reponame)
             cnt += current_cnt
 
         if cnt == 0:
