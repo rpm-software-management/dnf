@@ -292,7 +292,7 @@ class BaseCli(dnf.Base):
                                             ", ".join(matches))
             self.logger.info(msg)
 
-    def installPkgs(self, userlist):
+    def installPkgs(self, userlist, reponame=None):
         """Attempt to take the user specified list of packages or
         wildcards and install them, or if they are installed, update
         them to a newer version. If a complete version number is
@@ -301,6 +301,7 @@ class BaseCli(dnf.Base):
 
         :param userlist: a list of names or wildcards specifying
            packages to install
+        :param reponame: limit packages matching to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -321,20 +322,23 @@ class BaseCli(dnf.Base):
         done = False
         for arg in userlist:
             if arg.endswith('.rpm'):
+                if reponame is not None:
+                    raise ValueError('limiting file installation to a '
+                                     'repository is not supported')
                 self.install_local(arg)
                 done = True
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             elif arg.startswith('@'):
                 try:
-                    self.install_grouplist((arg[1:],))
+                    self.install_grouplist((arg[1:],), reponame)
                 except dnf.exceptions.Error:
                     pass
                 else:
                     done = True
                 continue
             try:
-                self.install(arg)
+                self.install(arg, reponame)
             except dnf.exceptions.MarkingError:
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.output.term.MODE['bold'], arg,
@@ -868,11 +872,12 @@ class BaseCli(dnf.Base):
 
         return 0, []
 
-    def install_grouplist(self, grouplist):
+    def install_grouplist(self, grouplist, reponame=None):
         """Mark the packages in the given groups for installation.
 
         :param grouplist: a list of names or wildcards specifying
            groups to be installed
+        :param reponame: limit packages marking to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -892,8 +897,8 @@ class BaseCli(dnf.Base):
                 continue
             groups.extend(matched)
 
-        total_cnt = reduce(operator.add, map(self.select_group, groups), 0)
-        if not total_cnt:
+        cnt = sum(self.select_group(grp, reponame=reponame) for grp in groups)
+        if not cnt:
             msg = _('No packages in any requested group available '\
                     'to install or upgrade.')
             raise dnf.exceptions.Error(msg)

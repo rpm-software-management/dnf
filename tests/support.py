@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -49,7 +49,7 @@ RPMDB_CHECKSUM = '5ff5337cff3fcdcee31760ab6478c9a7c784c0b2'
 TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 9
-UPDATES_NSOLVABLES = 4
+UPDATES_NSOLVABLES = 6
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
 TOTAL_GROUPS = 3
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
