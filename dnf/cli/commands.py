@@ -389,9 +389,9 @@ class UpgradeToCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         return self.upgrade_to_patterns(patterns)
 
-    def upgrade_to_patterns(self, patterns):
-        """Upgrade to packages specified by *patterns*."""
-        self.base.upgrade_userlist_to(patterns)
+    def upgrade_to_patterns(self, patterns, reponame=None):
+        """Upgrade to packages matching *patterns* in selected repository."""
+        self.base.upgrade_userlist_to(patterns, reponame)
 
 class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1347,11 +1347,14 @@ class RepoPkgsCommand(Command):
 
     UPGRADE_SUBCMD_NAME = 'upgrade'
 
+    UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
+
     SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
                        INFO_SUBCMD_NAME: InfoCommand,
                        INSTALL_SUBCMD_NAME: InstallCommand,
                        LIST_SUBCMD_NAME: ListCommand,
-                       UPGRADE_SUBCMD_NAME: UpgradeCommand}
+                       UPGRADE_SUBCMD_NAME: UpgradeCommand,
+                       UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
 
     activate_sack = functools.reduce(
         operator.or_,
@@ -1373,7 +1376,7 @@ class RepoPkgsCommand(Command):
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|install|list|upgrade [ARG...]')
+        return _('REPO check-update|info|install|list|upgrade|upgrade-to [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1454,6 +1457,9 @@ class RepoPkgsCommand(Command):
         elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.upgrade_patterns(patterns, reponame=repo)
+        elif subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
+            patterns = subcmd_obj.parse_extcmds(subargs)
+            subcmd_obj.upgrade_to_patterns(patterns, reponame=repo)
         self._resolve = subcmd_obj.resolve
         self._writes_rpmdb = subcmd_obj.writes_rpmdb
 
