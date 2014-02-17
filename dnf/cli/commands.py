@@ -345,8 +345,18 @@ class UpgradeCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
     def run(self, extcmds):
-        return self.base.updatePkgs(extcmds)
+        patterns = self.parse_extcmds(extcmds)
+        return self.upgrade_patterns(patterns)
+
+    def upgrade_patterns(self, patterns):
+        """Upgrade packages specified by *patterns*."""
+        self.base.updatePkgs(patterns)
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
