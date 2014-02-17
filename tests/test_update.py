@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -22,6 +22,7 @@ from tests import support
 import dnf
 import dnf.util
 import hawkey
+import itertools
 import tests.test_repo
 
 class Update(support.ResultTestCase):
@@ -77,6 +78,40 @@ class Update(support.ResultTestCase):
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
         self.assertItemsEqual(map(str, removed),
                               ['hole-1-1.x86_64', 'tour-5-0.noarch'])
+
+    def test_upgrade_reponame(self):
+        """Test whether only packages in selected repo are upgraded."""
+        base = support.MockBase('updates', 'broken_deps')
+        base.logger = mock.Mock()
+
+        base.upgrade('*e*', 'broken_deps')
+
+        installed, removed = self.installed_removed(base)
+        # Sack contains two upgrades with the same version. Because of that
+        # test whether the installed package is one of those packages.
+        self.assertLength(installed, 1)
+        self.assertIn(
+            dnf.util.first(installed),
+            base.sack.query().upgrades().filter(name='pepper'))
+        self.assertItemsEqual(
+            removed,
+            base.sack.query().installed().filter(name='pepper'))
+        assert dnf.subject.Subject('*e*').get_best_query(base.sack).upgrades().filter(name__neq='pepper', reponame__neq='broken_deps'), \
+               ('in another repo, there must be another update matching the '
+                'pattern, otherwise the test makes no sense')
+
+    def test_upgrade_reponame_not_in_repo(self):
+        """Test whether no packages are upgraded if bad repo is selected."""
+        base = support.MockBase('updates', 'broken_deps')
+
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            base.upgrade('hole', 'broken_deps')
+
+        self.assertEqual(context.exception.pkg_spec, 'hole')
+        self.assertResult(base, base.sack.query().installed())
+        assert dnf.subject.Subject('hole').get_best_query(base.sack).upgrades().filter(reponame__neq='broken_deps'), \
+               ('in another repo, there must be an update matching the '
+                'pattern, otherwise the test makes no sense')
 
 class SkipBroken(support.ResultTestCase):
     def setUp(self):
