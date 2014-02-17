@@ -380,8 +380,18 @@ class UpgradeToCommand(Command):
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
     def run(self, extcmds):
-        return self.base.upgrade_userlist_to(extcmds)
+        patterns = self.parse_extcmds(extcmds)
+        return self.upgrade_to_patterns(patterns)
+
+    def upgrade_to_patterns(self, patterns):
+        """Upgrade to packages specified by *patterns*."""
+        self.base.upgrade_userlist_to(patterns)
 
 class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
