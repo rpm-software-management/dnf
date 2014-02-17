@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -21,8 +21,13 @@ import operator
 import dnf.util
 
 class SelectGroupTest(support.ResultTestCase):
+
+    ENABLED_REPONAME = 'main'
+
+    DISABLED_REPONAME = 'broken_deps'
+
     def setUp(self):
-        self.base = support.MockBase("main")
+        self.base = support.MockBase(self.ENABLED_REPONAME)
         self.base.read_mock_comps(support.COMPS_PATH)
 
     def test_install(self):
@@ -32,6 +37,32 @@ class SelectGroupTest(support.ResultTestCase):
         inst, removed = self.installed_removed(self.base)
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)
+
+    def test_install_reponame_disabled(self):
+        """Test whether packages are not installed if selected repo is disabled."""
+        comps = self.base.comps
+        grp = dnf.util.first(comps.groups_by_pattern('Solid Ground'))
+
+        count = self.base.select_group(grp, reponame=self.DISABLED_REPONAME)
+
+        self.assertEqual(count, 0)
+        installed, removed = self.installed_removed(self.base)
+        self.assertItemsEqual(installed, ())
+        self.assertItemsEqual(removed, ())
+
+    def test_install_reponame_enabled(self):
+        """Test whether packages are installed if selected repo is enabled."""
+        comps = self.base.comps
+        grp = dnf.util.first(comps.groups_by_pattern('Solid Ground'))
+
+        count = self.base.select_group(grp, reponame=self.ENABLED_REPONAME)
+
+        self.assertEqual(count, 1)
+        installed, removed = self.installed_removed(self.base)
+        self.assertItemsEqual(
+            installed,
+            dnf.subject.Subject('trampoline').get_best_query(self.base.sack).filter(reponame=self.ENABLED_REPONAME))
+        self.assertItemsEqual(removed, ())
 
     def test_group_remove(self):
         self.assertEqual(self.base.group_remove('Solid Ground'), 1)

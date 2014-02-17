@@ -1391,10 +1391,11 @@ class Base(object):
 
         return cnt
 
-    def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
+    def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES, reponame=None):
         """Mark all the packages in the given group to be installed. :api
 
         :param group: the group containing the packages to mark for installation
+        :param reponame: limit packages marking to the given repository
         :return: number of transaction members added to the transaction set
 
         """
@@ -1420,7 +1421,7 @@ class Base(object):
             if pkg.name in inst_set:
                 continue
             inst_set.add(pkg.name)
-            current_cnt = self.install_groupie(pkg.name, inst_set)
+            current_cnt = self.install_groupie(pkg.name, inst_set, reponame)
             cnt += current_cnt
 
         if cnt == 0:
@@ -1499,8 +1500,8 @@ class Base(object):
             del fo
             return 1
 
-    def install(self, pkg_spec):
-        """Mark package(s) specified by pkg_spec for installation. :api"""
+    def install(self, pkg_spec, reponame=None):
+        """Mark package(s) specified by pkg_spec and reponame for installation. :api"""
 
         def msg_installed(pkg):
             name = unicode(pkg)
@@ -1510,6 +1511,8 @@ class Base(object):
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or subj.filename_pattern:
             q = subj.get_best_query(self.sack)
+            if reponame is not None:
+                q = q.filter(reponame=reponame)
             already_inst, available = self._query_matches_installed(q)
             for i in already_inst:
                 msg_installed(i)
@@ -1520,6 +1523,8 @@ class Base(object):
             sltr = subj.get_best_selector(self.sack)
             if not sltr:
                 raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
+            if reponame is not None:
+                sltr = sltr.set(reponame=reponame)
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
                 msg_installed(already_inst[0])
@@ -1529,20 +1534,25 @@ class Base(object):
         # after 2014-02-25 AND no sooner than in 0.4.12
         return 0
 
-    def install_groupie(self, pkg_name, inst_set):
+    def install_groupie(self, pkg_name, inst_set, reponame=None):
         """Installs a group member package by name. """
         forms = [hawkey.FORM_NAME]
         subj = dnf.subject.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
             q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
+            if reponame is not None:
+                q = q.filter(reponame=reponame)
             for pkg in q:
                 self._goal.install(pkg)
             return len(q)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack, forms=forms)
             if sltr:
+                if reponame is not None:
+                    sltr = sltr.set(reponame=reponame)
+                prev_count = self._goal.req_length()
                 self._goal.install(select=sltr)
-                return 1
+                return self._goal.req_length() - prev_count
         return 0
 
     def upgrade(self, pkg_spec):
