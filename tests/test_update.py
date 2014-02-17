@@ -62,6 +62,17 @@ class Update(support.ResultTestCase):
             list(sack.query().available().nevra("hole-2-1.x86_64"))
         self.assertResult(yumbase, expected)
 
+    def test_upgrade_all_reponame(self):
+        """Test whether only packages in selected repo are upgraded."""
+        base = support.MockBase('updates', 'third_party')
+        base.init_sack()
+
+        base.upgrade_all('third_party')
+
+        self.assertResult(base, itertools.chain(
+            base.sack.query().installed().filter(name__neq='hole'),
+            base.sack.query().upgrades().filter(reponame='third_party')))
+
     def test_update_local(self):
         yumbase = support.MockBase()
         sack = yumbase.sack
