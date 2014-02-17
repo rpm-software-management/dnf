@@ -354,9 +354,9 @@ class UpgradeCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         return self.upgrade_patterns(patterns)
 
-    def upgrade_patterns(self, patterns):
-        """Upgrade packages specified by *patterns*."""
-        self.base.updatePkgs(patterns)
+    def upgrade_patterns(self, patterns, reponame=None):
+        """Upgrade packages matching *patterns* in selected repository."""
+        self.base.updatePkgs(patterns, reponame)
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
@@ -1335,10 +1335,13 @@ class RepoPkgsCommand(Command):
 
     LIST_SUBCMD_NAME = 'list'
 
+    UPGRADE_SUBCMD_NAME = 'upgrade'
+
     SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
                        INFO_SUBCMD_NAME: InfoCommand,
                        INSTALL_SUBCMD_NAME: InstallCommand,
-                       LIST_SUBCMD_NAME: ListCommand}
+                       LIST_SUBCMD_NAME: ListCommand,
+                       UPGRADE_SUBCMD_NAME: UpgradeCommand}
 
     activate_sack = functools.reduce(
         operator.or_,
@@ -1360,7 +1363,7 @@ class RepoPkgsCommand(Command):
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|install|list [ARG...]')
+        return _('REPO check-update|info|install|list|upgrade [ARG...]')
 
     @staticmethod
     def get_summary():
@@ -1409,6 +1412,11 @@ class RepoPkgsCommand(Command):
                 self.cli.logger.critical(
                     _('Error: installation of RPM paths is not supported'))
                 raise dnf.cli.CliError('installation of RPM paths is not supported')
+        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
+            if any(arg.endswith('.rpm') for arg in subargs):
+                self.cli.logger.critical(
+                    _('Error: upgrade of RPM paths is not supported'))
+                raise dnf.cli.CliError('upgrade of RPM paths is not supported')
         subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
 
     @property
@@ -1433,6 +1441,9 @@ class RepoPkgsCommand(Command):
         elif subcmd_name == self.INSTALL_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.install_patterns(patterns, reponame=repo)
+        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
+            patterns = subcmd_obj.parse_extcmds(subargs)
+            subcmd_obj.upgrade_patterns(patterns, reponame=repo)
         self._resolve = subcmd_obj.resolve
         self._writes_rpmdb = subcmd_obj.writes_rpmdb
 
