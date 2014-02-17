@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,11 +18,11 @@
 from __future__ import absolute_import
 from tests import support
 import dnf.exceptions
-import hawkey
+import itertools
 
-class InstallMultilibAll(support.ResultTestCase):
+class InstallMultilib(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
+        self.yumbase = support.MockBase('main', 'third_party')
         self.yumbase.conf.multilib_policy = "all"
 
     def test_not_available(self):
@@ -54,14 +54,28 @@ class InstallMultilibAll(support.ResultTestCase):
 
     def test_install_nevra(self):
         self.yumbase.install("lotus-3-16.i686")
-        available = self.yumbase.sack.query().available()
-        lotus = available.filter(name="lotus", arch="i686")[0]
+        lotus, = dnf.subject.Subject('lotus-3-16.i686').get_best_query(self.yumbase.sack)
         new_set = self.yumbase.sack.query().installed() + [lotus]
         self.assertResult(self.yumbase, new_set)
 
     def test_install_local(self):
         cnt = self.yumbase.install_local(support.TOUR_50_PKG_PATH)
         self.assertEqual(cnt, 1)
+
+    def test_install_reponame(self):
+        """Test whether packages are filtered by the reponame."""
+        result = itertools.chain(
+            self.yumbase.sack.query().installed(),
+            dnf.subject.Subject('lotus-3-16.i686').get_best_query(self.yumbase.sack),
+            dnf.subject.Subject('lotus-3-16.x86_64').get_best_query(self.yumbase.sack))
+
+        self.yumbase.install('lotus', reponame='main')
+        self.assertResult(self.yumbase, result)
+
+        assert dnf.subject.Subject('lotus-3-17.i686').get_best_query(self.yumbase.sack), \
+               ('the base must contain packages a package in another repo '
+                'which matches the pattern but is preferred, otherwise the '
+                'test makes no sense')
 
     def test_install_src_fails(self):
         self.yumbase.install("pepper-20-0.src")
@@ -85,9 +99,9 @@ class MultilibAllMainRepo(support.ResultTestCase):
         new_set = self.installed + q.run()
         self.assertResult(self.yumbase, new_set)
 
-class MultilibBestMainRepo(support.ResultTestCase):
+class MultilibBest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
+        self.yumbase = support.MockBase('main', 'third_party')
         self.installed = self.yumbase.sack.query().installed().run()
         self.assertEqual(self.yumbase.conf.multilib_policy, "best")
 
@@ -113,8 +127,7 @@ class MultilibBestMainRepo(support.ResultTestCase):
         cnt = self.yumbase.install("lotus")
         self.assertEqual(cnt, 1)
 
-        new_package = hawkey.Query(self.yumbase.sack).\
-            filter(name="lotus", arch="x86_64", reponame="main")[0]
+        new_package, = dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.yumbase.sack)
         new_set = self.installed + [new_package]
         self.assertResult(self.yumbase, new_set)
 
@@ -157,3 +170,17 @@ class MultilibBestMainRepo(support.ResultTestCase):
                               ['mrkite-2-0.x86_64',
                                'mrkite-k-h-1-1.x86_64',
                                'trampoline-2.1-1.noarch'])
+
+    def test_install_reponame(self):
+        """Test whether packages are filtered by the reponame."""
+        result = itertools.chain(
+            self.yumbase.sack.query().installed(),
+            dnf.subject.Subject('lotus-3-16.x86_64').get_best_query(self.yumbase.sack))
+
+        self.yumbase.install('lotus', reponame='main')
+        self.assertResult(self.yumbase, result)
+
+        assert dnf.subject.Subject('lotus-3-17.i686').get_best_query(self.yumbase.sack), \
+               ('the base must contain packages a package in another repo '
+                'which matches the pattern but is preferred, otherwise the '
+                'test makes no sense')
