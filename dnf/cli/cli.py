@@ -348,13 +348,14 @@ class BaseCli(dnf.Base):
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def updatePkgs(self, userlist):
+    def updatePkgs(self, userlist, reponame=None):
         """Take user commands and populate transaction wrapper with
         packages to be updated.
 
         :param userlist: a list of names or wildcards specifying
            packages to update.  If *userlist* is an empty list, yum
            will perform a global update
+        :param reponame: limit packages matching to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -369,18 +370,21 @@ class BaseCli(dnf.Base):
 
         oldcount = self._goal.req_length()
         if len(userlist) == 0: # simple case - do them all
-            self.upgrade_all()
+            self.upgrade_all(reponame)
 
         else:
             # go through the userlist - look for items that are local rpms. If we find them
             # pass them off to installLocal() and then move on
             for item in userlist:
                 if item.endswith('.rpm'):
+                    if reponame is not None:
+                        raise ValueError('limiting file upgrading to a '
+                                         'repository is not supported')
                     self.update_local(item)
                     continue
 
                 try:
-                    self.upgrade(item)
+                    self.upgrade(item, reponame)
                 except dnf.exceptions.MarkingError:
                     self.logger.info(_('No match for argument: %s'), unicode(item))
                     self._checkMaybeYouMeant(item)
