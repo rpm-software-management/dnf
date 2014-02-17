@@ -72,15 +72,6 @@ one main section. The repository sections define the configuration for each
 
     Keep downloaded packages in the cache. The default is off.
 
-.. _metadata_expire-label:
-
-``metadata_expire``
-    time in seconds
-
-    The period after which the remote repository is checked for metadata update
-    and in the positive case the local metadata cache is updated. The default
-    corresponds to 48 hours.
-
 .. _metadata_timer_sync-label:
 
 ``metadata_timer_sync``
@@ -145,6 +136,13 @@ configuration.
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is off.
+
+.. _metadata_expire-label:
+
+``metadata_expire``
+    time in seconds
+
+    The period after which the remote repository is checked for metadata update and in the positive case the local metadata cache is updated. The default corresponds to 48 hours.
 
 ``proxy``
     string
