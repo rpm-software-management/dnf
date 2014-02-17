@@ -18,6 +18,10 @@
 
     Run the command. This method is invoked by the CLI when this command is executed. `args` is a list of additional arguments to the command, entered after the command's name on the command line. Should raise :exc:`dnf.exceptions.Error` with a proper message if the command fails. Otherwise should return ``None``. Custom commands typically override this method.
 
+  .. method:: is_root()
+
+    Checking under what user this plugin is running. Raise :exc:`dnf.exceptions.Error` with message about root privileges.
+
 .. class:: Cli
 
   Manages the CLI, including reading configuration, parsing the command line and running commands.

@@ -254,6 +254,14 @@ class Command(object):
         """
         pass
 
+    @staticmethod
+    def is_root():
+        """Raise error if have not root privileges.
+
+        :return: dnf.exceptions.Error if not under root"""
+        if not dnf.util.am_i_root():
+            raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
+
 class InstallCommand(Command):
     """A class containing methods needed by the cli to execute the
     install command.
