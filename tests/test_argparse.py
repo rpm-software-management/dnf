@@ -35,7 +35,7 @@ class OptionParserTest(support.TestCase):
         opts, cmds = parser.parse_known_args(['update', '--nogpgcheck'])
         del self.yumbase.repos
         # this doesn't try to access yumbase.repos:
-        parser.setupYumConfig(opts)
+        parser.configure_from_options(opts)
 
     def test_non_nones2dict(self):
         parser = OptionParser(self.yumbase)
