@@ -17,6 +17,8 @@
 
 from __future__ import absolute_import
 from tests import support
+import dnf
+import itertools
 
 class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):
@@ -27,3 +29,23 @@ class UpgradeTo(support.ResultTestCase):
         q = sack.query().available().nevra("pepper-20-1.x86_64")
         new_set.extend(q)
         self.assertResult(yumbase, new_set)
+
+    def test_upgrade_to_reponame(self):
+        """Test whether only packages in selected repo are used."""
+        base = support.MockBase('updates', 'third_party')
+        base.init_sack()
+
+        base.upgrade_to('hole-1-2.x86_64', 'updates')
+
+        self.assertResult(base, itertools.chain(
+            base.sack.query().installed().filter(name__neq='hole'),
+            dnf.subject.Subject('hole-1-2.x86_64').get_best_query(base.sack).filter(reponame='updates')))
+
+    def test_upgrade_to_reponame_not_in_repo(self):
+        """Test whether no packages are upgraded if bad repo is selected."""
+        base = support.MockBase('main', 'updates')
+        base.init_sack()
+
+        base.upgrade_to('hole-1-2.x86_64', 'main')
+
+        self.assertResult(base, base.sack.query().installed())
