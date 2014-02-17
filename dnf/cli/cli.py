@@ -393,10 +393,10 @@ class BaseCli(dnf.Base):
         if cnt <= 0 and not self._goal.req_has_upgrade_all():
             raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
-    def upgrade_userlist_to(self, userlist):
+    def upgrade_userlist_to(self, userlist, reponame=None):
         oldcount = self._goal.req_length()
         for l in userlist:
-            self.upgrade_to(l)
+            self.upgrade_to(l, reponame)
         cnt = self._goal.req_length() - oldcount
         if cnt <= 0:
             raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
