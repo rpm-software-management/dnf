@@ -39,6 +39,7 @@ from dnf.i18n import ucd
 import dnf.const
 import dnf.yum.config
 import os.path
+from dnf.yum.i18n import _
 from . import util
 from .yum import misc
 
