@@ -1341,7 +1341,7 @@ class Cli(object):
         self.optparser.usage = self._make_usage()
 
         # apply some of the options to self.base.conf
-        self.optparser.setupYumConfig(opts)
+        self.optparser.configure_from_options(opts)
         self.base.cmds = cmds
 
         if opts.version:
@@ -1573,7 +1573,7 @@ class OptionParser(ArgumentParser):
                if in_dct[k] != []}
         return dct
 
-    def setupYumConfig(self, opts):
+    def configure_from_options(self, opts):
         """Setup environment based on argparse options.
 
         :param opts: parsed options from argparse
