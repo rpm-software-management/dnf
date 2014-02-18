@@ -80,6 +80,13 @@ Options
 ``--disableplugin=<plugin names>``
     Disable the listed plugins specified by names or globs.
 
+``--disablerepo=<repoid>``
+    Disable specific repositories by id or globs.
+
+``--enablerepo=<repoid>``
+    Enable specific repositories by id or globs, this overrides the enabled=0
+    option in the specified repos configuration files.
+
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
