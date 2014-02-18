@@ -14,9 +14,7 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is an experimental replacement for `Yum`_, a package manager for RPM Linux
-distributions. It aims to maintain CLI compatibility with Yum while improving on
-speed and defining strict API and plugin interface.
+`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API and plugin interface.
 
 Available commands are:
 
