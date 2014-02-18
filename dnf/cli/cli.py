@@ -55,6 +55,32 @@ import time
 from functools import reduce
 from dnf.pycomp import unicode
 
+def _add_pkg_simple_list_lens(data, pkg, indent=''):
+    """ Get the length of each pkg's column. Add that to data.
+        This "knows" about simpleList and printVer. """
+    na = len(pkg.name) + 1 + len(pkg.arch) + len(indent)
+    ver = len(pkg.evr)
+    rid = len(pkg.reponame)
+    for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
+        data[d].setdefault(v, 0)
+        data[d][v] += 1
+
+def list_cmd_calc_columns(output, ypl):
+    """ Work out the dynamic size of the columns to pass to fmtColumns. """
+    data = {'na' : {}, 'ver' : {}, 'rid' : {}}
+    for lst in (ypl.installed, ypl.available, ypl.extras,
+                ypl.updates, ypl.recent):
+        for pkg in lst:
+            _add_pkg_simple_list_lens(data, pkg)
+    if len(ypl.obsoletes) > 0:
+        for (npkg, opkg) in ypl.obsoletesTuples:
+            _add_pkg_simple_list_lens(data, npkg)
+            _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
+
+    data = [data['na'], data['ver'], data['rid']]
+    columns = output.calcColumns(data, remainder_column=1)
+    return (-columns[0], -columns[1], -columns[2])
+
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
     error message and exit the program.
@@ -536,6 +562,93 @@ class BaseCli(dnf.Base):
 
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
+
+    def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
+        """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""
+        try:
+            highlight = self.output.term.MODE['bold']
+            ypl = self.returnPkgLists(
+                pkgnarrow, patterns, installed_available=highlight, reponame=reponame)
+        except dnf.exceptions.Error as e:
+            return 1, [str(e)]
+        else:
+            update_pkgs = {}
+            inst_pkgs = {}
+            local_pkgs = {}
+
+            columns = None
+            if basecmd == 'list':
+                # Dynamically size the columns
+                columns = list_cmd_calc_columns(self.output, ypl)
+
+            if highlight and ypl.installed:
+                #  If we have installed and available lists, then do the
+                # highlighting for the installed packages so you can see what's
+                # available to update, an extra, or newer than what we have.
+                for pkg in (ypl.hidden_available +
+                            ypl.reinstall_available +
+                            ypl.old_available):
+                    key = (pkg.name, pkg.arch)
+                    if key not in update_pkgs or pkg > update_pkgs[key]:
+                        update_pkgs[key] = pkg
+
+            if highlight and ypl.available:
+                #  If we have installed and available lists, then do the
+                # highlighting for the available packages so you can see what's
+                # available to install vs. update vs. old.
+                for pkg in ypl.hidden_installed:
+                    key = (pkg.name, pkg.arch)
+                    if key not in inst_pkgs or pkg > inst_pkgs[key]:
+                        inst_pkgs[key] = pkg
+
+            if highlight and ypl.updates:
+                # Do the local/remote split we get in "yum updates"
+                for po in sorted(ypl.updates):
+                    if po.reponame != hawkey.SYSTEM_REPO_NAME:
+                        local_pkgs[(po.name, po.arch)] = po
+
+            # Output the packages:
+            clio = self.conf.color_list_installed_older
+            clin = self.conf.color_list_installed_newer
+            clir = self.conf.color_list_installed_reinstall
+            clie = self.conf.color_list_installed_extra
+            rip = self.output.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+                                highlight_na=update_pkgs, columns=columns,
+                                highlight_modes={'>' : clio, '<' : clin,
+                                                 '=' : clir, 'not in' : clie})
+            clau = self.conf.color_list_available_upgrade
+            clad = self.conf.color_list_available_downgrade
+            clar = self.conf.color_list_available_reinstall
+            clai = self.conf.color_list_available_install
+            rap = self.output.listPkgs(ypl.available, _('Available Packages'), basecmd,
+                                highlight_na=inst_pkgs, columns=columns,
+                                highlight_modes={'<' : clau, '>' : clad,
+                                                 '=' : clar, 'not in' : clai})
+            rep = self.output.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+                                columns=columns)
+            cul = self.conf.color_update_local
+            cur = self.conf.color_update_remote
+            rup = self.output.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
+                                highlight_na=local_pkgs, columns=columns,
+                                highlight_modes={'=' : cul, 'not in' : cur})
+
+            # XXX put this into the ListCommand at some point
+            if len(ypl.obsoletes) > 0 and basecmd == 'list':
+            # if we've looked up obsolete lists and it's a list request
+                rop = [0, '']
+                print(_('Obsoleting Packages'))
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
+            else:
+                rop = self.output.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                                    basecmd, columns=columns)
+            rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
+                                 basecmd, columns=columns)
+            if len(patterns) and \
+               rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
+                raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def returnPkgLists(self, pkgnarrow='all', patterns=None,
                        installed_available=False, reponame=None):
