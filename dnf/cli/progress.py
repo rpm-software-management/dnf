@@ -121,7 +121,7 @@ class MultiFileProgressMeter(object):
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def end(self, text, size, err, status='FAILED'):
+    def end(self, text, size, err, status):
         """Display a message that file has finished downloading
 
         text -- the file id
@@ -174,4 +174,4 @@ class LibrepoCallbackAdaptor(MultiFileProgressMeter):
         MultiFileProgressMeter.progress(self, self.text, total, done)
 
     def end(self):
-        MultiFileProgressMeter.end(self, self.text, 0, None)
+        MultiFileProgressMeter.end(self, self.text, 0, None, None)

@@ -61,12 +61,12 @@ class ProgressTest(PycompTestCase):
             for i in range(11):
                 p.progress('foo', 10.0, float(i))
                 self.assertEquals(len(fo.out), i*2 + 1)
-                if i == 10: p.end('foo', 10, None)
+                if i == 10: p.end('foo', 10, None, None)
                 now += 0.5
 
                 p.progress('bar', 20.0, float(i*2))
                 self.assertEquals(len(fo.out), i*2 + 2 + (i == 10 and 2))
-                if i == 10: p.end('bar', 20, 'some error')
+                if i == 10: p.end('bar', 20, 'some error', 'FAILED')
                 now += 0.5
 
         # check "end" events
