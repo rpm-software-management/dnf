@@ -107,6 +107,66 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
+class _BaseStubMixin(object):
+    """A reusable class for creating `dnf.Base` stubs.
+
+    See also: hawkey/test/python/__init__.py.
+
+    Note that currently the used TestSack has always architecture set to
+    "x86_64". This is to get the same behavior when running unit tests on
+    different arches.
+
+    """
+    def __init__(self, *extra_repos):
+        super(_BaseStubMixin, self).__init__()
+        for r in extra_repos:
+            repo = MockRepo(r, None)
+            repo.enable()
+            self._repos.add(repo)
+
+        self._conf = FakeConf()
+        self._persistor = FakePersistor()
+        self._yumdb = MockYumDB()
+        self.ds_callback = mock.Mock()
+
+    @property
+    def sack(self):
+        if self._sack:
+            return self._sack
+        return self.init_sack()
+
+    def activate_persistor(self):
+        pass
+
+    def init_sack(self):
+        # Create the Sack, tell it how to build packages, passing in the Package
+        # class and a Base reference.
+        self._sack = TestSack(repo_dir(), self)
+        self._sack.load_system_repo()
+        for repo in self.repos.iter_enabled():
+            fn = "%s.repo" % repo.id
+            self._sack.load_test_repo(repo.id, fn)
+
+        self._sack.configure(self.conf.installonlypkgs)
+        self._goal = hawkey.Goal(self._sack)
+        return self._sack
+
+    def close(self):
+        pass
+
+    def mock_cli(self):
+        return mock.Mock('base', base=self)
+
+    def read_mock_comps(self, fn):
+        comps = dnf.comps.Comps()
+        comps.add_from_xml_filename(fn)
+        comps.compile(self.sack.query().installed())
+        self._comps = comps
+        return comps
+
+    def read_all_repos(self):
+        pass
+
 class HistoryStub(dnf.yum.history.YumHistory):
     """Stub of dnf.yum.history.YumHistory for easier testing."""
 
@@ -194,62 +254,8 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=yumbase,
                                make_cache_dir=True)
 
-class MockBase(dnf.Base):
-    """ See also: hawkey/test/python/__init__.py.
-
-        Note that currently the used TestSack has always architecture set to
-        "x86_64". This is to get the same behavior when running unit tests on
-        different arches.
-    """
-    def __init__(self, *extra_repos):
-        super(MockBase, self).__init__()
-        for r in extra_repos:
-            repo = MockRepo(r, None)
-            repo.enable()
-            self._repos.add(repo)
-
-        self._conf = FakeConf()
-        self._persistor = FakePersistor()
-        self._yumdb = MockYumDB()
-        self.ds_callback = mock.Mock()
-
-    @property
-    def sack(self):
-        if self._sack:
-            return self._sack
-        return self.init_sack()
-
-    def activate_persistor(self):
-        pass
-
-    def init_sack(self):
-        # Create the Sack, tell it how to build packages, passing in the Package
-        # class and a Base reference.
-        self._sack = TestSack(repo_dir(), self)
-        self._sack.load_system_repo()
-        for repo in self.repos.iter_enabled():
-            fn = "%s.repo" % repo.id
-            self._sack.load_test_repo(repo.id, fn)
-
-        self._sack.configure(self.conf.installonlypkgs)
-        self._goal = hawkey.Goal(self._sack)
-        return self._sack
-
-    def close(self):
-        pass
-
-    def mock_cli(self):
-        return mock.Mock('base', base=self)
-
-    def read_mock_comps(self, fn):
-        comps = dnf.comps.Comps()
-        comps.add_from_xml_filename(fn)
-        comps.compile(self.sack.query().installed())
-        self._comps = comps
-        return comps
-
-    def read_all_repos(self):
-        pass
+class MockBase(_BaseStubMixin, dnf.Base):
+    """A class mocking `dnf.Base`."""
 
 def mock_sack(*extra_repos):
     return MockBase(*extra_repos).sack
