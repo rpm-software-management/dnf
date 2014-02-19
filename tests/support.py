@@ -170,6 +170,11 @@ class _BaseStubMixin(object):
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
 
+    def __init__(self, *extra_repos):
+        """Initialize the base."""
+        super(BaseCliStub, self).__init__(*extra_repos)
+        self.output.term = MockTerminal()
+
 class HistoryStub(dnf.yum.history.YumHistory):
     """Stub of dnf.yum.history.YumHistory for easier testing."""
 

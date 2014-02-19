@@ -161,11 +161,143 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.InfoSubCommand`` class."""
 
+    AVAILABLE_TITLE = u'Available Packages\n'
+
+    HOLE_I686_INFO = (u'Name        : hole\n'
+                      u'Arch        : i686\n'
+                      u'Epoch       : 0\n'
+                      u'Version     : 2\n'
+                      u'Release     : 1\n'
+                      u'Size        : 0.0  \n'
+                      u'Repo        : updates\n'
+                      u'Summary     : \n'
+                      u'License     : None\n'
+                      u'Description : \n'
+                      u'\n')
+
+    HOLE_X86_64_INFO = (u'Name        : hole\n'
+                        u'Arch        : x86_64\n'
+                        u'Epoch       : 0\n'
+                        u'Version     : 2\n'
+                        u'Release     : 1\n'
+                        u'Size        : 0.0  \n'
+                        u'Repo        : updates\n'
+                        u'Summary     : \n'
+                        u'License     : None\n'
+                        u'Description : \n\n')
+
+    INSTALLED_TITLE = u'Installed Packages\n'
+
+    PEPPER_SYSTEM_INFO = (u'Name        : pepper\n'
+                          u'Arch        : x86_64\n'
+                          u'Epoch       : 0\n'
+                          u'Version     : 20\n'
+                          u'Release     : 0\n'
+                          u'Size        : 0.0  \n'
+                          u'Repo        : @System\n'
+                          u'From repo   : main\n'
+                          u'Summary     : \n'
+                          u'License     : None\n'
+                          u'Description : \n\n')
+
+    PEPPER_UPDATES_INFO = (u'Name        : pepper\n'
+                           u'Arch        : x86_64\n'
+                           u'Epoch       : 0\n'
+                           u'Version     : 20\n'
+                           u'Release     : 1\n'
+                           u'Size        : 0.0  \n'
+                           u'Repo        : updates\n'
+                           u'Summary     : \n'
+                           u'License     : None\n'
+                           u'Description : \n\n')
+
     def setUp(self):
         """Prepare the test fixture."""
         super(RepoPkgsInfoSubCommandTest, self).setUp()
-        cli = support.BaseCliStub('main').mock_cli()
-        self._cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(cli)
+        base = support.BaseCliStub('main', 'updates', 'third_party')
+        base.conf.recent = 7
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(base.mock_cli())
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_all(self):
+        """Test whether only packages related to the repository are listed."""
+        for pkg in self._cmd.base.sack.query().installed().filter(name='pepper'):
+            self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self._cmd.base.yumdb.get_package(pkg).from_repo = 'main'
+
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('main', ['all', '*p*'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            ''.join((
+                self.INSTALLED_TITLE,
+                self.PEPPER_SYSTEM_INFO,
+                self.AVAILABLE_TITLE,
+                u'Name        : pepper\n'
+                u'Arch        : src\n'
+                u'Epoch       : 0\n'
+                u'Version     : 20\n'
+                u'Release     : 0\n'
+                u'Size        : 0.0  \n'
+                u'Repo        : main\n'
+                u'Summary     : \n'
+                u'License     : None\n'
+                u'Description : \n'
+                u'\n',
+                u'Name        : trampoline\n'
+                u'Arch        : noarch\n'
+                u'Epoch       : 0\n'
+                u'Version     : 2.1\n'
+                u'Release     : 1\n'
+                u'Size        : 0.0  \n'
+                u'Repo        : main\n'
+                u'Summary     : \n'
+                u'License     : None\n'
+                u'Description : \n'
+                u'\n')))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_available(self):
+        """Test whether only packages in the repository are listed."""
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('updates', ['available'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            ''.join((
+                self.AVAILABLE_TITLE,
+                self.HOLE_I686_INFO,
+                self.HOLE_X86_64_INFO,
+                self.PEPPER_UPDATES_INFO)))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_extras(self):
+        """Test whether only extras installed from the repository are listed."""
+        for pkg in self._cmd.base.sack.query().installed().filter(name='tour'):
+            self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self._cmd.base.yumdb.get_package(pkg).from_repo = 'unknown'
+
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('unknown', ['extras'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            u'Extra Packages\n'
+            u'Name        : tour\n'
+            u'Arch        : noarch\n'
+            u'Epoch       : 0\n'
+            u'Version     : 5\n'
+            u'Release     : 0\n'
+            u'Size        : 0.0  \n'
+            u'Repo        : @System\n'
+            u'From repo   : unknown\n'
+            u'Summary     : \n'
+            u'License     : None\n'
+            u'Description : \n\n')
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
@@ -180,15 +312,59 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
         self.assertEqual(
             stdout.getvalue(),
-            u'Installed Packages\n'
-            u'Name        : pepper\n'
-            u'Arch        : x86_64\n'
-            u'Epoch       : 0\n'
-            u'Version     : 20\n'
-            u'Release     : 0\n'
-            u'Size        : 0.0  \n'
-            u'Repo        : @System\n'
-            u'From repo   : main\n'
-            u'Summary     : \n'
-            u'License     : None\n'
-            u'Description : \n\n')
+            ''.join((self.INSTALLED_TITLE, self.PEPPER_SYSTEM_INFO)))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_obsoletes(self):
+        """Test whether only obsoletes in the repository are listed."""
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('updates', ['obsoletes'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            ''.join((
+                u'Obsoleting Packages\n',
+                self.HOLE_I686_INFO,
+                self.HOLE_X86_64_INFO)))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_recent(self):
+        """Test whether only packages in the repository are listed."""
+        with mock.patch('time.time', return_value=0), \
+                support.patch_std_streams() as (stdout, _):
+            self._cmd.run('updates', ['recent'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            ''.join((
+                u'Recently Added Packages\n',
+                self.HOLE_I686_INFO,
+                self.HOLE_X86_64_INFO,
+                self.PEPPER_UPDATES_INFO)))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_upgrades(self):
+        """Test whether only upgrades in the repository are listed."""
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('updates', ['upgrades'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            ''.join((
+                u'Upgraded Packages\n'
+                u'Name        : hole\n'
+                u'Arch        : x86_64\n'
+                u'Epoch       : 0\n'
+                u'Version     : 1\n'
+                u'Release     : 2\n'
+                u'Size        : 0.0  \n'
+                u'Repo        : updates\n'
+                u'Summary     : \n'
+                u'License     : None\n'
+                u'Description : \n'
+                u'\n',
+                self.HOLE_X86_64_INFO,
+                self.PEPPER_UPDATES_INFO)))
