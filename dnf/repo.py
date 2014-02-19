@@ -21,8 +21,9 @@
 from __future__ import absolute_import
 from dnf.i18n import ucd
 import dnf.const
-import dnf.util
 import dnf.exceptions
+import dnf.callback
+import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
 import logging
@@ -56,6 +57,43 @@ def _mirrorlist_path(dirname):
 
 def _subst2tuples(subst_dct):
     return [(k, v) for (k, v) in subst_dct.items()]
+
+def pkg2payload(pkg, progress, *factories):
+    for fn in factories:
+        pload = fn(pkg, progress)
+        if pload is not None:
+            return pload
+    raise ValueError('no matching payload factory for %s' % pkg)
+
+def download_payloads(payloads, drpm):
+    # download packages
+    targets = [pload.librepo_target() for pload in payloads]
+    fatal = None
+    try:
+        librepo.download_packages(targets, failfast=True)
+    except librepo.LibrepoException as e:
+        fatal = e.args[1] or '<unspecified librepo error>'
+    drpm.wait()
+
+    # process downloading errors
+    errors = {}
+    for tgt in targets:
+        err = tgt.err
+        payload = tgt.cbdata
+        pkg = payload.pkg
+        if err is None:
+            continue
+        if err == 'Already downloaded' or err.startswith('Not finished'):
+            err = None
+        if err:
+            errors[pkg] = [err]
+
+    if errors:
+        return errors
+    if fatal:
+        return {'' : fatal}
+
+    return {}
 
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):
@@ -164,6 +202,90 @@ class Metadata(object):
     @property
     def timestamp(self):
         return self.file_timestamp('primary')
+
+class Payload(object):
+
+    def __init__(self, pkg, progress=None):
+        self.pkg = pkg
+        if progress is None:
+            progress = dnf.callback.NullProgress()
+        self.progress = progress
+
+    def __str__(self):
+        """Nice, human-readable representation."""
+        pass
+
+    def _end_cb(self, cbdata, lr_status, msg):
+        """End callback to librepo operation."""
+        status = dnf.callback.STATUS_FAILED
+        if msg is None:
+            status = dnf.callback.STATUS_OK
+        elif msg.startswith('Not finished'):
+            return
+        elif lr_status == librepo.TRANSFER_ALREADYEXISTS:
+            status = dnf.callback.STATUS_ALREADY_EXISTS
+
+        self.progress.end(self, status, msg)
+
+    def _mirrorfail_cb(self, cbdata, err, url):
+        self.progress.end(self, dnf.callback.STATUS_MIRROR, err)
+
+    def _progress_cb(self, cbdata, total, done):
+        self.progress.progress(self, done)
+
+    @property
+    def download_size(self):
+        """Total size of the download."""
+        pass
+
+    @property
+    def error(self):
+        """Error obtaining the Payload."""
+        pass
+
+    def librepo_target(self):
+        """Build respective librepo target."""
+        pass
+
+    def download_done(self):
+        """Trigger any actions to be done on the payload after downloading."""
+
+    def librepo_target(self):
+        pkg = self.pkg
+        pkgdir = pkg.repo.pkgdir
+        dnf.util.ensure_dir(pkgdir)
+
+        ctype, csum = pkg.returnIdSum()
+        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
+        if ctype_code == librepo.CHECKSUM_UNKNOWN:
+            logger.warn(_("unsupported checksum type: %s") % ctype)
+
+        target_dct = {
+            'handle' : pkg.repo.get_handle(),
+            'relative_url' : pkg.location,
+            'dest' : pkgdir,
+            'checksum_type' : ctype_code,
+            'checksum' : csum,
+            'expectedsize' : pkg.downloadsize,
+            'base_url' : pkg.baseurl,
+            'resume' : True,
+            'cbdata' : self,
+            'progresscb' : self._progress_cb,
+            'endcb' : self._end_cb,
+            'mirrorfailurecb' : self._mirrorfail_cb,
+        }
+
+        return librepo.PackageTarget(**target_dct)
+
+class RPMPayload(Payload):
+
+    def __str__(self):
+        return str(self.pkg)
+
+    @property
+    def download_size(self):
+        """Total size of the download."""
+        return self.pkg.downloadsize
 
 SYNC_TRY_CACHE  = 1
 SYNC_EXPIRED    = 2 # consider the current cache expired, no matter its real age

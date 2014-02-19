@@ -14,13 +14,21 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
-import sys
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 from time import time
 
-class MultiFileProgressMeter(object):
+import sys
+import dnf.callback
+
+class MultiFileProgressMeter(dnf.callback.Progress):
     """Multi-file download progress meter"""
+
+    STATUS_2_STR = {
+        dnf.callback.STATUS_FAILED : 'FAILED',
+        dnf.callback.STATUS_ALREADY_EXISTS : 'SKIPPED',
+        dnf.callback.STATUS_MIRROR : 'MIRROR'
+    }
 
     def __init__(self, fo=sys.stderr, update_period=0.3, tick_period=1.0, rate_average=5.0):
         """Creates a new progress meter instance
@@ -57,15 +65,15 @@ class MultiFileProgressMeter(object):
         self.last_size = 0
         self.rate = None
 
-    def progress(self, text, total, done):
+    def progress(self, payload, done):
         """Update the progress display
 
         text -- the file id
-        total -- file total size (mostly ignored)
         done -- how much of this file is already downloaded
         """
         now = time()
-        total = int(total)
+        text = str(payload)
+        total = payload.download_size
         done = int(done)
 
         # update done_size
@@ -121,29 +129,31 @@ class MultiFileProgressMeter(object):
         self.fo.write('%-*.*s%s' % (left, left, text, msg))
         self.fo.flush()
 
-    def end(self, text, size, err, status):
+    def end(self, payload, status, err_msg):
         """Display a message that file has finished downloading
 
         text -- the file id
         size -- the file size. None => not a file.
-        err -- None if ok, error message otherwise
-        status -- Download status (relevant when err != None)
+        status -- constant denoting the outcome
+        err_msg -- error message on error
         """
         start = now = time()
-        if size is not None:
-            # update state
-            if text in self.state:
-                start, done = self.state.pop(text)
-                self.active.remove(text)
-                size -= done
-            self.done_files += 1
-            self.done_size += size
+        text = str(payload)
+        size = payload.download_size
 
-        if err:
+        # update state
+        if text in self.state:
+            start, done = self.state.pop(text)
+            self.active.remove(text)
+            size -= done
+        self.done_files += 1
+        self.done_size += size
+
+        if status:
             # the error message, no trimming
-            msg = '[%s] %s: ' % (status, text)
+            msg = '[%s] %s: ' % (self.STATUS_2_STR[status], text)
             left = _term_width() - len(msg) - 1
-            msg = '%s%-*s\n' % (msg, left, err)
+            msg = '%s%-*s\n' % (msg, left, err_msg)
         else:
             if self.total_files > 1:
                 text = '(%d/%d): %s' % (self.done_files, self.total_files, text)

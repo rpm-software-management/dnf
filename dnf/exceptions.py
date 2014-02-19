@@ -73,6 +73,21 @@ class DepsolveError(Error):
     # :api
     pass
 
+class DownloadError(Error):
+    def __init__(self, errmap):
+        self.errmap = errmap
+
+    def __str__(self):
+        errmap = self.errmap
+        errstrings = []
+        for key in errmap:
+            for error in errmap[key]:
+                errstrings.append('  %s: %s' % (key, error))
+        return '\n'.join(errstrings)
+
+    def __unicode__(self):
+        return to_unicode(str(self))
+
 class MetadataError(Error):
     pass
 

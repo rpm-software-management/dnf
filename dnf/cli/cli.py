@@ -181,22 +181,19 @@ class BaseCli(dnf.Base):
 
         if downloadpkgs:
             self.logger.info(_('Downloading Packages:'))
-        problems = self.download_packages(downloadpkgs, self.output.progress,
-                                          self.output.download_callback_total_cb)
-
-        if len(problems) > 0:
-            errstring = ''
-            errstring += _('Error Downloading Packages:\n')
-            for key in problems:
-                errors = dnf.yum.misc.unique(problems[key])
-                for error in errors:
-                    errstring += '  %s: %s\n' % (key, error)
+        try:
+            total_cb = self.output.download_callback_total_cb
+            self.download_packages(downloadpkgs, self.output.progress, total_cb)
+        except dnf.exceptions.DownloadError as e:
+            errstring = _('Error downloading packages:\n %s' % e)
             raise dnf.exceptions.Error(errstring)
 
         # Check GPG signatures
         if self.gpgsigcheck(downloadpkgs) != 0:
             return -1, None
 
+        print('GOTTA GO NOW')
+        sys.exit(100)
         display = output.CliTransactionDisplay()
         return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
         if return_code == 0:

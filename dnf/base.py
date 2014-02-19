@@ -22,7 +22,6 @@ Supplies the Base class.
 from __future__ import absolute_import
 from __future__ import print_function
 from dnf import const, query, sack
-from dnf.drpm import DeltaInfo
 from dnf.pycomp import unicode, basestring
 from dnf.yum import config
 from dnf.yum import history
@@ -37,6 +36,7 @@ from functools import reduce, cmp_to_key
 import io
 import dnf.comps
 import dnf.conf
+import dnf.drpm
 import dnf.exceptions
 import dnf.history
 import dnf.lock
@@ -64,7 +64,6 @@ import rpm
 import signal
 import time
 import types
-import librepo
 
 _ = i18n._
 P_ = i18n.P_
@@ -906,53 +905,23 @@ class Base(object):
            callback, raise dnf.exceptions.Error on problems"""
 
         # select and sort packages to download
-        presto = DeltaInfo(self.sack.query().installed(), progress)
+        drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
         remote_pkgs = [po for po in pkglist if not (po.from_cmdline or po.repo.local)]
         remote_pkgs.sort(key=cmp_to_key(mediasort))
 
-        def download(packages):
-            # download packages
-            remote_size = sum(po.size for po in packages)
-            if progress:
-                progress.start(len(packages), remote_size)
-            targets = [po.repo.get_package_target(po, progress) for po in packages]
-            librepo_err = None
-            try:
-                librepo.download_packages(targets, failfast=True)
-            except librepo.LibrepoException as e:
-                librepo_err = e.args[1] or 'librepo error'
-            presto.wait()
+        payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
+                                         dnf.repo.RPMPayload)
+                    for pkg in remote_pkgs]
 
-            # process downloading errors
-            errors = {}
-            fatal = librepo_err
-            for t in targets:
-                err = t.err
-                po = t.po
-                if not err or err == 'Already downloaded' or err.startswith('Not finished'):
-                    err = presto.err.get(po) # merge download & rebuild errors
-                try:
-                    po = po.rpm # drpm falls back to rpm
-                except AttributeError:
-                    if err: fatal = True # but rpm does not
-                if err:
-                    errors[po] = [err]
-
-            # librepo may fail without setting any .err attributes
-            if not errors and librepo_err:
-                errors[remote_pkgs[0]] = [librepo_err]
-            return remote_size, errors, fatal
-
-        # run downloads
         beg_download = time.time()
-        remote_size, errors, fatal = download(list(map(presto.delta, remote_pkgs)))
-        if errors and not fatal:
-            self.logger.warn(_('Some delta RPMs failed to download or rebuild. Retrying..'))
-            remote_size, errors, fatal = download(remote_pkgs)
+        remote_size = sum(pload.download_size for pload in payloads)
+        progress.start(len(payloads), remote_size)
+        errors = dnf.repo.download_payloads(payloads, drpm)
+        if errors:
+            raise dnf.exceptions.DownloadError(errors)
 
-        if callback_total is not None and not errors:
+        if callback_total is not None:
             callback_total(remote_pkgs, remote_size, beg_download)
-        return errors
 
     def sigCheckPkg(self, po):
         """Verify the GPG signature of the given package object.

@@ -17,16 +17,19 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
+
 from binascii import hexlify
 from dnf.yum.misc import unlink_f
 from dnf.yum.i18n import _
 from hawkey import chksum_name
+
+import dnf.repo
 import os.path
 
 MAX_PERCENTAGE = 50
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
-class DeltaPackage(object):
+class DeltaPackage(dnf.repo.Payload):
     def __init__(self, delta, po):
         self.location = delta.location
         self.baseurl = delta.baseurl
@@ -44,6 +47,10 @@ class DeltaPackage(object):
 
     def localPkg(self):
         return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
+
+    def _end_cb9(text, lr_status, msg):
+        if status != librepo.TRANSFER_ERROR and hasattr(po, 'donecb'):
+            po.donecb()
 
 class DeltaInfo(object):
     def __init__(self, query, progress):
@@ -65,12 +72,14 @@ class DeltaInfo(object):
         self.jobs = {}
         self.err = {}
 
-    def delta(self, po):
+    def delta_factory(self, po, progress):
         '''Turn a po to Delta RPM po, if possible'''
         if not po.repo.deltarpm or not self.deltarpm:
-            return po # deltas are disabled
+            # drpm disabled
+            return None
         if os.path.exists(po.localPkg()):
-            return po # already there
+            # already there
+            return None
 
         best = po.size * MAX_PERCENTAGE / 100
         best_delta = None
