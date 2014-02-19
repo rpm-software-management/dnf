@@ -299,7 +299,7 @@ Info Command
 ------------
 
 ``dnf [options] info [<package-spec>...]``
-    Is used to list a description and summary information about available packages.
+    Is used to list description and summary information about available packages.
 
 ---------------
 Install Command
@@ -402,13 +402,33 @@ Repolist Command
 Repository-Packages Command
 ---------------------------
 
-The repository-packages command allows the user to run commands on top of all packages in given repository. However, any dependency resolution takes into account packages from all enabled repositories.
+The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. Specifications ``<package-name-spec>`` further limit the candidates to only those packages matching at least one of them.
+
+``info`` subcommand lists description and summary information about packages depending on the packages' relation to the repository.
 
 ``dnf [options] repository-packages <repoid> check-update [<arg>...]``
     Run ``dnf check-update`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
-``dnf [options] repository-packages <repoid> info [<arg>...]``
-    Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+``dnf [options] repository-packages <repoid> info [all] [<package-name-spec>...]``
+    List all related packages.
+
+``dnf [options] repository-packages <repoid> info installed [<package-name-spec>...]``
+    List packages installed from the repository.
+
+``dnf [options] repository-packages <repoid> info available [<package-name-spec>...]``
+    List packages available in the repository.
+
+``dnf [options] repository-packages <repoid> info extras [<package-name-specs>...]``
+    List packages installed from the repository that are not available in any repository.
+
+``dnf [options] repository-packages <repoid> info obsoletes [<package-name-spec>...]``
+    List packages in the repository that obsolete packages installed on the system.
+
+``dnf [options] repository-packages <repoid> info recent [<package-name-spec>...]``
+    List packages recently added into the repository.
+
+``dnf [options] repository-packages <repoid> info upgrades [<package-name-spec>...]``
+    List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<arg>...]``
     Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid`` with the difference that no argument is required. In that case, all packages are installed.
