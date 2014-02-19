@@ -1130,6 +1130,10 @@ class Base(object):
         return reduce(lambda a, b: a.merge_lists(b), yghs)
 
     def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case, reponame=None):
+        is_from_repo = lambda pkg: reponame is None or self.yumdb.get_package(pkg).get('from_repo') == reponame
+        pkgs_from_repo = lambda pkgs: (pkg for pkg in pkgs if is_from_repo(pkg))
+        query_for_repo = lambda query: query if reponame is None else query.filter(reponame=reponame)
+
         ygh = misc.GenericHolder(iter=pkgnarrow)
 
         installed = []
@@ -1148,8 +1152,6 @@ class Base(object):
         if pattern is not None:
             subj = dnf.subject.Subject(pattern, ignore_case=ic)
             q = subj.get_best_query(self.sack, with_provides=False)
-        if reponame is not None:
-            q = q.filter(reponame=reponame)
 
         # list all packages - those installed and available:
         if pkgnarrow == 'all':
@@ -1162,11 +1164,11 @@ class Base(object):
                 key = (po.name, po.arch)
                 if key not in ndinst or po > ndinst[key]:
                     ndinst[key] = po
-            installed = list(dinst.values())
+            installed = list(pkgs_from_repo(dinst.values()))
 
-            avail = q
+            avail = query_for_repo(q)
             if not showdups:
-                avail = q.latest()
+                avail = avail.latest()
             for pkg in avail:
                 if showdups:
                     if pkg.pkgtup in dinst:
@@ -1184,16 +1186,16 @@ class Base(object):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'upgrades':
-            updates = q.upgrades().run()
+            updates = query_for_repo(q).upgrades().run()
 
         # installed only
         elif pkgnarrow == 'installed':
-            installed = q.installed().run()
+            installed = list(pkgs_from_repo(q.installed()))
 
         # available in a repository
         elif pkgnarrow == 'available':
             if showdups:
-                avail = q.available()
+                avail = query_for_repo(q).available()
                 installed_dict = q.installed().na_dict()
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
@@ -1205,7 +1207,7 @@ class Base(object):
                         available.append(avail_pkg)
             else:
                 # we will only look at the latest versions of packages:
-                available_dict = q.available().latest().na_dict()
+                available_dict = query_for_repo(q).available().latest().na_dict()
                 installed_dict = q.installed().latest().na_dict()
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)][0]
@@ -1222,15 +1224,15 @@ class Base(object):
             # anything installed but not in a repo is an extra
             avail_dict = q.available().pkgtup_dict()
             inst_dict = q.installed().pkgtup_dict()
-            for pkgtup in inst_dict:
+            for pkgtup, pkgs in inst_dict.items():
                 if pkgtup not in avail_dict:
-                    extras.extend(inst_dict[pkgtup])
+                    extras.extend(pkg for pkg in pkgs if is_from_repo(pkg))
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
             inst = q.installed()
-            obsoletes = self.sack.query().filter(obsoletes=inst)
+            obsoletes = query_for_repo(self.sack.query()).filter(obsoletes=inst)
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
@@ -1246,7 +1248,7 @@ class Base(object):
             else:
                 avail = q.latest()
 
-            for po in avail:
+            for po in query_for_repo(avail):
                 if int(po.buildtime) > recentlimit:
                     recent.append(po)
 

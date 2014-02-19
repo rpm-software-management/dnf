@@ -156,3 +156,39 @@ class CommandTest(support.TestCase):
 
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
+
+class RepoPkgsInfoSubCommandTest(unittest.TestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.InfoSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsInfoSubCommandTest, self).setUp()
+        cli = support.BaseCliStub('main').mock_cli()
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(cli)
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    def test_info_installed(self):
+        """Test whether only packages installed from the repository are listed."""
+        for pkg in self._cmd.base.sack.query().installed().filter(name='pepper'):
+            self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self._cmd.base.yumdb.get_package(pkg).from_repo = 'main'
+
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('main', ['installed'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            u'Installed Packages\n'
+            u'Name        : pepper\n'
+            u'Arch        : x86_64\n'
+            u'Epoch       : 0\n'
+            u'Version     : 20\n'
+            u'Release     : 0\n'
+            u'Size        : 0.0  \n'
+            u'Repo        : @System\n'
+            u'From repo   : main\n'
+            u'Summary     : \n'
+            u'License     : None\n'
+            u'Description : \n\n')

@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -167,6 +167,9 @@ class _BaseStubMixin(object):
     def read_all_repos(self):
         pass
 
+class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
+    """A class mocking `dnf.cli.cli.BaseCli`."""
+
 class HistoryStub(dnf.yum.history.YumHistory):
     """Stub of dnf.yum.history.YumHistory for easier testing."""
 
@@ -271,6 +274,45 @@ class MockYumDB(mock.Mock):
     def assertLength(self, length):
         assert(len(self.db) == length)
 
+class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage):
+
+    """A class mocking `dnf.yum.rpmsack.RPMDBAdditionalDataPackage`."""
+
+    def __init__(self):
+        """Initialize the data."""
+        super(RPMDBAdditionalDataPackageStub, self).__init__(None, None, None)
+
+    def __iter__(self, show_hidden=False):
+        """Return a new iterator over the data."""
+        for item in self._read_cached_data:
+            yield item
+
+    def _attr2fn(self, attribute):
+        """Convert given *attribute* to a filename."""
+        raise NotImplementedError('the method is not supported')
+
+    def _delete(self, attribute):
+        """Delete the *attribute* value."""
+        try:
+            del self._read_cached_data[attribute]
+        except KeyError:
+            raise AttributeError("Cannot delete attribute %s on %s " % (attribute, self))
+
+    def _read(self, attribute):
+        """Read the *attribute* value."""
+        if attribute in self._read_cached_data:
+            return self._read_cached_data[attribute]
+        raise AttributeError("%s has no attribute %s" % (self, attribute))
+
+    def _write(self, attribute, value):
+        """Write the *attribute* value."""
+        self._auto_cache(attribute, value, None)
+
+    def clean(self):
+        """Purge out everything."""
+        for item in self.__iter__(show_hidden=True):
+            self._delete(item)
+
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
@@ -281,7 +323,15 @@ class FakeConf(object):
         self.color = 'never'
         self.color_update_installed = 'normal'
         self.color_update_remote = 'normal'
+        self.color_list_available_downgrade = 'dim'
         self.color_list_available_install = 'normal'
+        self.color_list_available_reinstall = 'bold'
+        self.color_list_available_upgrade = 'bold'
+        self.color_list_installed_extra = 'bold'
+        self.color_list_installed_newer = 'bold'
+        self.color_list_installed_older = 'bold'
+        self.color_list_installed_reinstall = 'normal'
+        self.color_update_local = 'bold'
         self.commands = []
         self.debug_solver = False
         self.debuglevel = 8
