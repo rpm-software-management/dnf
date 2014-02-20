@@ -192,8 +192,6 @@ class BaseCli(dnf.Base):
         if self.gpgsigcheck(downloadpkgs) != 0:
             return -1, None
 
-        print('GOTTA GO NOW')
-        sys.exit(100)
         display = output.CliTransactionDisplay()
         return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
         if return_code == 0:

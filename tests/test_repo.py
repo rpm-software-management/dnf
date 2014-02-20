@@ -153,24 +153,6 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.md_expire_cache()
         self.assertTrue(self.repo.load())
 
-    def test_get_package(self):
-        """For a local repo, get_package() just returns the current location."""
-        pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
-        path = self.repo.get_package(pkg)
-        self.assertFile(path)
-        self.assertStartsWith(path, REPOS)
-
-    # twist Repo to think it's remote:
-    @mock.patch('dnf.repo.Repo.local', False)
-    def test_get_package_remote(self):
-        pkg = support.MockPackage("tour-4-4.noarch", repo=self.repo)
-        path = self.repo.get_package(pkg)
-        self.assertFile(path)
-        self.assertStartsWith(path, self.TMP_CACHEDIR)
-
-        pkg = support.MockPackage("magical-4-4.noarch", repo=self.repo)
-        self.assertRaises(dnf.exceptions.RepoError, self.repo.get_package, pkg)
-
     def test_gpgcheck(self):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())

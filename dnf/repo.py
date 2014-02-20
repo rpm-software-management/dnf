@@ -502,46 +502,6 @@ class Repo(dnf.yum.config.RepoConf):
     def filelists_fn(self):
         return self.metadata.filelists_fn
 
-    def get_package_target(self, po, cb):
-        dnf.util.ensure_dir(self.pkgdir)
-        ctype, csum = po.returnIdSum()
-        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
-        if ctype_code == librepo.CHECKSUM_UNKNOWN:
-            logger.warn(_("unsupported checksum type: %s") % ctype)
-
-        def endcb(text, status, msg):
-            if cb and not (msg and msg.startswith('Not finished')):
-                cb.end(text, po.size, msg, 'SKIPPED' if status == librepo.TRANSFER_ALREADYEXISTS else 'FAILED')
-            if status != librepo.TRANSFER_ERROR and hasattr(po, 'donecb'):
-                po.donecb()
-
-        target = librepo.PackageTarget(
-            po.location, self.pkgdir, ctype_code, csum, po.size, po.baseurl, True,
-            progresscb=cb and cb.progress,
-            cbdata=os.path.basename(po.location),
-            handle=self.get_handle(),
-            endcb=endcb,
-            mirrorfailurecb=cb and (lambda text, err, url: cb.end(text, None, err, 'MIRROR')))
-        target.po = po
-        return target
-
-    def get_package(self, pkg, text=None):
-        if self.local:
-            return pkg.localPkg()
-        dnf.util.ensure_dir(self.pkgdir)
-        handle = self._handle_new_pkg_download()
-        if handle.progresscb:
-            text = text if text is not None else pkg.location
-            self._progress.begin(text)
-        try:
-            handle.download(pkg.location, base_url=pkg.baseurl)
-        except librepo.LibrepoException as e:
-            raise dnf.exceptions.RepoError(self._exc2msg(e))
-        finally:
-            if handle.progresscb:
-                self._progress.end()
-        return pkg.localPkg()
-
     def load(self):
         """Load the metadata for this repo. :api
 
