@@ -406,8 +406,8 @@ The repository-packages command allows the user to run commands on top of all pa
 
 ``info`` subcommand lists description and summary information about packages depending on the packages' relation to the repository. ``list`` subcommand just dumps lists of that packages.
 
-``dnf [options] repository-packages <repoid> check-update [<arg>...]``
-    Run ``dnf check-update`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+``dnf [options] repository-packages <repoid> check-update [<package-name-spec>...]``
+    Non-interactively checks if updates of the specified packages in the repository are available. DNF exit code will be 100 when there are updates available and a list of the updates will be printed.
 
 ``dnf [options] repository-packages <repoid> info [all] [<package-name-spec>...]``
     List all related packages.

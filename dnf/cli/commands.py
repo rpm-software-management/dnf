@@ -1216,6 +1216,37 @@ class RepoListCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
+    class CheckUpdateSubCommand(object):
+        """Implementation of the info sub-command."""
+
+        activate_sack = True
+
+        alias = 'check-update'
+
+        resolve = Command.resolve
+
+        writes_rpmdb = Command.writes_rpmdb
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+            self.success_retval = Command.success_retval
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            patterns = self.parse_arguments(cli_args)
+            found = CheckUpdateCommand(self.cli).check_updates(patterns, reponame, print_=True)
+            if found:
+                self.success_retval = 100
+
     class InfoSubCommand(object):
         """Implementation of the info sub-command."""
 
@@ -1224,6 +1255,8 @@ class RepoPkgsCommand(Command):
         alias = 'info'
 
         resolve = Command.resolve
+
+        success_retval = Command.success_retval
 
         writes_rpmdb = Command.writes_rpmdb
 
@@ -1259,6 +1292,8 @@ class RepoPkgsCommand(Command):
 
         resolve = Command.resolve
 
+        success_retval = Command.success_retval
+
         writes_rpmdb = Command.writes_rpmdb
 
         def __init__(self, cli):
@@ -1284,15 +1319,13 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('list', pkgnarrow, patterns, reponame)
 
-    CHECK_UPDATE_SUBCMD_NAME = 'check-update'
-
     INSTALL_SUBCMD_NAME = 'install'
 
     UPGRADE_SUBCMD_NAME = 'upgrade'
 
     UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
 
-    SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
+    SUBCMD_NAME2CLS = {CheckUpdateSubCommand.alias: CheckUpdateSubCommand,
                        InfoSubCommand.alias: InfoSubCommand,
                        INSTALL_SUBCMD_NAME: InstallCommand,
                        ListSubCommand.alias: ListSubCommand,
@@ -1363,7 +1396,7 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name in {self.InfoSubCommand.alias, self.ListSubCommand.alias}:
+        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.ListSubCommand.alias}:
             subcmd_obj.check(repo, subargs)
             return
         if subcmd_name == self.INSTALL_SUBCMD_NAME:
@@ -1389,12 +1422,7 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.CHECK_UPDATE_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            found = subcmd_obj.check_updates(patterns, repo, print_=True)
-            if found:
-                self._success_retval = 100
-        elif subcmd_name == self.INSTALL_SUBCMD_NAME:
+        if subcmd_name == self.INSTALL_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.install_patterns(patterns, reponame=repo)
         elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
@@ -1405,6 +1433,7 @@ class RepoPkgsCommand(Command):
             subcmd_obj.upgrade_to_patterns(patterns, reponame=repo)
         else:
             subcmd_obj.run(repo, subargs)
+            self._success_retval = subcmd_obj.success_retval
         self._resolve = subcmd_obj.resolve
         self._writes_rpmdb = subcmd_obj.writes_rpmdb
 

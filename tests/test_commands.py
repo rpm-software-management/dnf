@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -156,6 +156,40 @@ class CommandTest(support.TestCase):
 
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
+
+class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsCheckUpdateSubCommandTest, self).setUp()
+        cli = support.BaseCliStub('main', 'updates', 'third_party').mock_cli()
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(cli)
+
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test(self):
+        """Test whether only upgrades in the repository are listed."""
+        with support.patch_std_streams() as (stdout, _):
+            self._cmd.run('updates', [])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            u'\n'
+            u'hole.x86_64                               1-2                            updates\n'
+            u'hole.x86_64                               2-1                            updates\n'
+            u'pepper.x86_64                             20-1                           updates\n'
+            u'Obsoleting Packages\n'
+            u'hole.i686                                 2-1                            updates\n'
+            u'    tour.noarch                           5-0                            @System\n'
+            u'hole.x86_64                               2-1                            updates\n'
+            u'    tour.noarch                           5-0                            @System\n')
+        self.assertEqual(self._cmd.success_retval, 100)
+
+    def test_not_found(self):
+        """Test whether exit code differs if updates are not found."""
+        self._cmd.run('main', [])
+        self.assertNotEqual(self._cmd.success_retval, 100)
 
 class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
