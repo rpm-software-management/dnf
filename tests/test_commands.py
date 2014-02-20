@@ -23,6 +23,7 @@ except ImportError:
 from tests import support
 import dnf.cli.commands
 import dnf.repo
+import itertools
 import unittest
 
 class CommandsCliTest(support.TestCase):
@@ -402,3 +403,26 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'\n',
                 self.HOLE_X86_64_INFO,
                 self.PEPPER_UPDATES_INFO)))
+
+class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.InstallSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsInstallSubCommandTest, self).setUp()
+        base = support.BaseCliStub('main', 'third_party')
+        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.repos['third_party'].enablegroups = False
+        base.init_sack()
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.InstallSubCommand(base.mock_cli())
+
+    def test_all(self):
+        """Test whether all packages from the repository are installed."""
+        base = self._cmd.cli.base
+
+        self._cmd.run('third_party', [])
+
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed().filter(name__neq='hole'),
+              base.sack.query().available().filter(reponame='third_party', arch='x86_64')))

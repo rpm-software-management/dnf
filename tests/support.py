@@ -155,7 +155,7 @@ class _BaseStubMixin(object):
         pass
 
     def mock_cli(self):
-        return mock.Mock('base', base=self)
+        return mock.Mock('base', base=self, nogpgcheck=True)
 
     def read_mock_comps(self, fn):
         comps = dnf.comps.Comps()

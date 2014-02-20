@@ -292,12 +292,6 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def install_patterns(self, patterns, reponame=None):
-        """Install packages and groups matching *patterns* in selected repository."""
-        if any(pattern.startswith('@') for pattern in patterns):
-            self.base.read_comps()
-        self.base.installPkgs(patterns, reponame)
-
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
@@ -305,7 +299,9 @@ class InstallCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        self.install_patterns(patterns)
+        if any(pattern.startswith('@') for pattern in patterns):
+            self.base.read_comps()
+        self.base.installPkgs(patterns)
 
 class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1248,6 +1244,48 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('info', pkgnarrow, patterns, reponame)
 
+    class InstallSubCommand(object):
+        """Implementation of the install sub-command."""
+
+        activate_sack = True
+
+        alias = 'install'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+            patterns = self.parse_arguments(cli_args)
+            if any(pattern.endswith('.rpm') for pattern in patterns):
+                self.cli.logger.critical(
+                    _('Error: installation of RPM paths is not supported'))
+                raise dnf.cli.CliError('installation of RPM paths is not supported')
+            if any(pattern.startswith('@') for pattern in patterns):
+                self.cli.logger.critical(
+                    _('Error: installation of groups is not supported'))
+                raise dnf.cli.CliError('installation of groups is not supported')
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args or ['*']
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            patterns = self.parse_arguments(cli_args)
+            if any(pattern.startswith('@') for pattern in patterns):
+                self.cli.base.read_comps()
+            self.cli.base.installPkgs(patterns, reponame)
+
     class ListSubCommand(object):
         """Implementation of the list sub-command."""
 
@@ -1284,15 +1322,13 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('list', pkgnarrow, patterns, reponame)
 
-    INSTALL_SUBCMD_NAME = 'install'
-
     UPGRADE_SUBCMD_NAME = 'upgrade'
 
     UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
 
     SUBCMD_NAME2CLS = {CheckUpdateSubCommand.alias: CheckUpdateSubCommand,
                        InfoSubCommand.alias: InfoSubCommand,
-                       INSTALL_SUBCMD_NAME: InstallCommand,
+                       InstallSubCommand.alias: InstallSubCommand,
                        ListSubCommand.alias: ListSubCommand,
                        UPGRADE_SUBCMD_NAME: UpgradeCommand,
                        UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
@@ -1330,8 +1366,6 @@ class RepoPkgsCommand(Command):
         # TODO: replace with ``repo, subcmd, *subargs = extcmds`` after
         # switching to Python 3.
         (repo, subcmd), subargs = extcmds[:2], extcmds[2:]
-        if subcmd == cls.INSTALL_SUBCMD_NAME and not subargs:
-            subargs = ['*']
         return repo, subcmd, subargs
 
     def doCheck(self, basecmd, extcmds):
@@ -1361,18 +1395,9 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.ListSubCommand.alias}:
+        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.InstallSubCommand.alias, self.ListSubCommand.alias}:
             subcmd_obj.check(repo, subargs)
             return
-        if subcmd_name == self.INSTALL_SUBCMD_NAME:
-            if any(arg.endswith('.rpm') for arg in subargs):
-                self.cli.logger.critical(
-                    _('Error: installation of RPM paths is not supported'))
-                raise dnf.cli.CliError('installation of RPM paths is not supported')
-            if any(arg.startswith('@') for arg in subargs):
-                self.cli.logger.critical(
-                    _('Error: installation of groups is not supported'))
-                raise dnf.cli.CliError('installation of groups is not supported')
         elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
             if any(arg.endswith('.rpm') for arg in subargs):
                 self.cli.logger.critical(
@@ -1391,10 +1416,7 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.INSTALL_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.install_patterns(patterns, reponame=repo)
-        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
+        if subcmd_name == self.UPGRADE_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.upgrade_patterns(patterns, reponame=repo)
         elif subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
