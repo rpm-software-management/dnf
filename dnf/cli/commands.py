@@ -495,13 +495,9 @@ class ListCommand(InfoCommand):
         """
         return _("List a package or groups of packages")
 
-    def print_packages(self, pkgnarrow='all', patterns=(), reponame=None):
-        """Print packages matching given *patterns* in selected repository."""
-        self.base.output_packages('list', pkgnarrow, patterns, reponame)
-
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages(pkgnarrow, patterns)
+        return self.base.output_packages('list', pkgnarrow, patterns)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1254,11 +1250,43 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('info', pkgnarrow, patterns, reponame)
 
+    class ListSubCommand(object):
+        """Implementation of the list sub-command."""
+
+        activate_sack = True
+
+        alias = 'list'
+
+        resolve = Command.resolve
+
+        writes_rpmdb = Command.writes_rpmdb
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.base = cli.base
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            DEFAULT_PKGNARROW = 'all'
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                          'extras', 'obsoletes', 'recent', 'upgrades'}
+            if not cli_args or cli_args[0] not in pkgnarrows:
+                return DEFAULT_PKGNARROW, cli_args
+            else:
+                return cli_args[0], cli_args[1:]
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkgnarrow, patterns = self.parse_arguments(cli_args)
+            self.base.output_packages('list', pkgnarrow, patterns, reponame)
+
     CHECK_UPDATE_SUBCMD_NAME = 'check-update'
 
     INSTALL_SUBCMD_NAME = 'install'
-
-    LIST_SUBCMD_NAME = 'list'
 
     UPGRADE_SUBCMD_NAME = 'upgrade'
 
@@ -1267,7 +1295,7 @@ class RepoPkgsCommand(Command):
     SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
                        InfoSubCommand.alias: InfoSubCommand,
                        INSTALL_SUBCMD_NAME: InstallCommand,
-                       LIST_SUBCMD_NAME: ListCommand,
+                       ListSubCommand.alias: ListSubCommand,
                        UPGRADE_SUBCMD_NAME: UpgradeCommand,
                        UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
 
@@ -1335,7 +1363,7 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name == self.InfoSubCommand.alias:
+        if subcmd_name in {self.InfoSubCommand.alias, self.ListSubCommand.alias}:
             subcmd_obj.check(repo, subargs)
             return
         if subcmd_name == self.INSTALL_SUBCMD_NAME:
@@ -1366,9 +1394,6 @@ class RepoPkgsCommand(Command):
             found = subcmd_obj.check_updates(patterns, repo, print_=True)
             if found:
                 self._success_retval = 100
-        elif subcmd_name == self.LIST_SUBCMD_NAME:
-            pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
         elif subcmd_name == self.INSTALL_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.install_patterns(patterns, reponame=repo)
