@@ -1453,7 +1453,7 @@ Transaction Summary
         """
         progressbar = None
         if self.conf.debuglevel >= 2 and sys.stdout.isatty():
-            progressbar = dnf.cli.progress.LibrepoCallbackAdaptor(fo=sys.stdout)
+            progressbar = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
             self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
 
         # setup our depsolve progress callback

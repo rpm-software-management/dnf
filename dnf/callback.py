@@ -27,6 +27,9 @@ class Progress(object):
     def end(self, payload, err, msg):
         pass
 
+    def message(self, msg):
+        pass
+
     def progress(self, payload, done):
         pass
 

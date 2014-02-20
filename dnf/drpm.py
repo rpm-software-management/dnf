@@ -29,7 +29,7 @@ import os.path
 MAX_PERCENTAGE = 50
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
-class DeltaPackage(dnf.repo.Payload):
+class DeltaPackage(dnf.repo.PackagePayload):
     def __init__(self, delta, po):
         self.location = delta.location
         self.baseurl = delta.baseurl

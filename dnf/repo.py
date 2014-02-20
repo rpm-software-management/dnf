@@ -204,9 +204,7 @@ class Metadata(object):
         return self.file_timestamp('primary')
 
 class Payload(object):
-
-    def __init__(self, pkg, progress=None):
-        self.pkg = pkg
+    def __init__(self, progress=None):
         if progress is None:
             progress = dnf.callback.NullProgress()
         self.progress = progress
@@ -214,6 +212,16 @@ class Payload(object):
     def __str__(self):
         """Nice, human-readable representation."""
         pass
+
+    @property
+    def download_size(self):
+        """Total size of the download."""
+        pass
+
+class PackagePayload(Payload):
+    def __init__(self, pkg, progress=None):
+        super(PackagePayload, self).__init__(progress)
+        self.pkg = pkg
 
     def _end_cb(self, cbdata, lr_status, msg):
         """End callback to librepo operation."""
@@ -232,11 +240,6 @@ class Payload(object):
 
     def _progress_cb(self, cbdata, total, done):
         self.progress.progress(self, done)
-
-    @property
-    def download_size(self):
-        """Total size of the download."""
-        pass
 
     @property
     def error(self):
@@ -277,7 +280,7 @@ class Payload(object):
 
         return librepo.PackageTarget(**target_dct)
 
-class RPMPayload(Payload):
+class RPMPayload(PackagePayload):
 
     def __str__(self):
         return str(self.pkg)
@@ -286,6 +289,40 @@ class RPMPayload(Payload):
     def download_size(self):
         """Total size of the download."""
         return self.pkg.downloadsize
+
+class MDPayload(Payload):
+
+    def __str__(self):
+        return self._text
+
+    def _progress_cb(self, cbdata, total, done):
+        self._download_size = int(total)
+        self.progress.progress(self, int(done))
+
+    def _fastestmirror_cb(self, cbdata, stage, data):
+        if stage == librepo.FMSTAGE_DETECTION:
+            # pinging mirrors, this might take a while
+            msg = 'determining the fastest mirror (%d hosts).. ' % data
+            self.fm_running = True
+        elif stage == librepo.FMSTAGE_STATUS and self.fm_running:
+            # done.. report but ignore any errors
+            msg = 'error: %s\n' % data if data else 'done.\n'
+        else:
+            return
+        self.progress.message(msg)
+
+    @property
+    def download_size(self):
+        return self._download_size
+
+    def start(self, text):
+        self._text = text
+        self._download_size = 0
+        self.progress.start(1, 1)
+
+    def end(self):
+        self._download_size = 0
+        self.progress.end(self, None, None)
 
 SYNC_TRY_CACHE  = 1
 SYNC_EXPIRED    = 2 # consider the current cache expired, no matter its real age
@@ -299,7 +336,7 @@ class Repo(dnf.yum.config.RepoConf):
         # :api
         super(Repo, self).__init__()
         self._pkgdir = None
-        self._progress = None
+        self._md_pload = MDPayload(None)
         self.id = id_ # :api
         self.basecachedir = basecachedir
         self.metadata = None # :api
@@ -318,10 +355,10 @@ class Repo(dnf.yum.config.RepoConf):
 
     def _handle_load(self, handle):
         if handle.progresscb:
-            self._progress.begin(self.name)
+            self._md_pload.start(self.name)
         result = handle.perform()
         if handle.progresscb:
-            self._progress.end()
+            self._md_pload.end()
         return Metadata(result, handle)
 
     def _handle_new_local(self, destdir):
@@ -350,26 +387,10 @@ class Repo(dnf.yum.config.RepoConf):
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.exceptions.RepoError(msg)
 
-        # single-file download progress
-        if self._progress:
-            h.progresscb = self._progress.librepo_cb
-
-            fo = self._progress.fo
-            running = [False]
-            def callback(cbdata, stage, data):
-                if stage == librepo.FMSTAGE_DETECTION:
-                    # pinging mirrors, this might take a while
-                    msg = 'determining the fastest mirror (%d hosts).. ' % data
-                    running[0] = True
-                elif stage == librepo.FMSTAGE_STATUS and running[0]:
-                    # done.. report but ignore any errors
-                    msg = 'error: %s\n' % data if data else 'done.\n'
-                else:
-                    # ignore other stages
-                    return
-                fo.write(msg)
-                fo.flush()
-            h.fastestmirrorcb = callback
+        # setup download progress
+        h.progresscb = self._md_pload._progress_cb
+        self._md_pload.fm_running = False
+        h.fastestmirrorcb = self._md_pload._fastestmirror_cb
 
         # apply repo options
         h.proxy = self.proxy
@@ -630,7 +651,7 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.repomd_fn
 
     def set_progress_bar(self, progress):
-        self._progress = progress
+        self._md_pload.progress = progress
 
     def valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:

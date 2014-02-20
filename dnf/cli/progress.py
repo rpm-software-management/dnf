@@ -42,6 +42,10 @@ class MultiFileProgressMeter(dnf.callback.Progress):
         self.tick_period = tick_period
         self.rate_average = rate_average
 
+    def message(self, msg):
+        self.fo.write(msg)
+        self.fo.flush()
+
     def start(self, total_files, total_size):
         """Initialize the progress meter
 
@@ -172,16 +176,3 @@ class MultiFileProgressMeter(dnf.callback.Progress):
         # now there's a blank line. fill it if possible.
         if self.active:
             self._update(now)
-
-class LibrepoCallbackAdaptor(MultiFileProgressMeter):
-    """Use it as single-file progress, too
-    """
-    def begin(self, text):
-        self.text = text
-        MultiFileProgressMeter.start(self, 1, 1)
-
-    def librepo_cb(self, data, total, done):
-        MultiFileProgressMeter.progress(self, self.text, total, done)
-
-    def end(self):
-        MultiFileProgressMeter.end(self, self.text, 0, None, None)
