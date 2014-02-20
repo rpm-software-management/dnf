@@ -65,7 +65,7 @@ def _add_pkg_simple_list_lens(data, pkg, indent=''):
         data[d].setdefault(v, 0)
         data[d][v] += 1
 
-def list_cmd_calc_columns(output, ypl):
+def _list_cmd_calc_columns(output, ypl):
     """ Work out the dynamic size of the columns to pass to fmtColumns. """
     data = {'na' : {}, 'ver' : {}, 'rid' : {}}
     for lst in (ypl.installed, ypl.available, ypl.extras,
@@ -369,6 +369,41 @@ class BaseCli(dnf.Base):
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
+    def check_updates(self, patterns=(), reponame=None, print_=True):
+        """Check updates matching given *patterns* in selected repository."""
+        ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
+        if self.conf.obsoletes or self.conf.verbose:
+            typl = self.returnPkgLists('obsoletes', patterns, reponame=reponame)
+            ypl.obsoletes = typl.obsoletes
+            ypl.obsoletesTuples = typl.obsoletesTuples
+
+        if print_:
+            columns = _list_cmd_calc_columns(self.output, ypl)
+            if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = self.output.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        local = po.localPkg()
+                        if os.path.exists(local) and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
+
+                cul = self.conf.color_update_local
+                cur = self.conf.color_update_remote
+                self.output.listPkgs(ypl.updates, '', outputType='list',
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
+            if len(ypl.obsoletes) > 0:
+                print(_('Obsoleting Packages'))
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
+
+        return ypl.updates or ypl.obsoletes
+
     def updatePkgs(self, userlist, reponame=None):
         """Take user commands and populate transaction wrapper with
         packages to be updated.
@@ -579,7 +614,7 @@ class BaseCli(dnf.Base):
             columns = None
             if basecmd == 'list':
                 # Dynamically size the columns
-                columns = list_cmd_calc_columns(self.output, ypl)
+                columns = _list_cmd_calc_columns(self.output, ypl)
 
             if highlight and ypl.installed:
                 #  If we have installed and available lists, then do the

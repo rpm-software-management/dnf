@@ -834,41 +834,6 @@ class CheckUpdateCommand(Command):
         super(CheckUpdateCommand, self).__init__(cli)
         self._success_retval = 0
 
-    def check_updates(self, patterns=(), reponame=None, print_=True):
-        """Check updates matching given *patterns* in selected repository."""
-        ypl = self.base.returnPkgLists('upgrades', patterns, reponame=reponame)
-        if self.base.conf.obsoletes or self.base.conf.verbose:
-            typl = self.base.returnPkgLists('obsoletes', patterns, reponame=reponame)
-            ypl.obsoletes = typl.obsoletes
-            ypl.obsoletesTuples = typl.obsoletesTuples
-
-        if print_:
-            columns = dnf.cli.cli.list_cmd_calc_columns(self.output, ypl)
-            if len(ypl.updates) > 0:
-                local_pkgs = {}
-                highlight = self.output.term.MODE['bold']
-                if highlight:
-                    # Do the local/remote split we get in "yum updates"
-                    for po in sorted(ypl.updates):
-                        local = po.localPkg()
-                        if os.path.exists(local) and po.verifyLocalPkg():
-                            local_pkgs[(po.name, po.arch)] = po
-
-                cul = self.base.conf.color_update_local
-                cur = self.base.conf.color_update_remote
-                self.output.listPkgs(ypl.updates, '', outputType='list',
-                              highlight_na=local_pkgs, columns=columns,
-                              highlight_modes={'=' : cul, 'not in' : cur})
-            if len(ypl.obsoletes) > 0:
-                print(_('Obsoleting Packages'))
-                # The tuple is (newPkg, oldPkg) ... so sort by new
-                for obtup in sorted(ypl.obsoletesTuples,
-                                    key=operator.itemgetter(0)):
-                    self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                     columns=columns)
-
-        return ypl.updates or ypl.obsoletes
-
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
@@ -885,7 +850,7 @@ class CheckUpdateCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        found = self.check_updates(patterns, print_=True)
+        found = self.base.check_updates(patterns, print_=True)
         if found:
             self._success_retval = 100
 
@@ -1229,7 +1194,7 @@ class RepoPkgsCommand(Command):
 
         def __init__(self, cli):
             """Initialize the command."""
-            self.cli = cli
+            self.base = cli.base
             self.success_retval = Command.success_retval
 
         def check(self, reponame, cli_args):
@@ -1243,7 +1208,7 @@ class RepoPkgsCommand(Command):
             """Execute the command with respect to given arguments *cli_args*."""
             self.check(reponame, cli_args)
             patterns = self.parse_arguments(cli_args)
-            found = CheckUpdateCommand(self.cli).check_updates(patterns, reponame, print_=True)
+            found = self.base.check_updates(patterns, reponame, print_=True)
             if found:
                 self.success_retval = 100
 

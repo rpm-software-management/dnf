@@ -167,7 +167,7 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         cli = support.BaseCliStub('main', 'updates', 'third_party').mock_cli()
         self._cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(cli)
 
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test(self):
         """Test whether only upgrades in the repository are listed."""
         with support.patch_std_streams() as (stdout, _):
