@@ -14,31 +14,46 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
-import dnf.cli.progress
 from tests import mock
+
+import dnf.callback
+import dnf.cli.progress
+import tests.support
 import time
 import unittest
-from tests.support import PycompTestCase
 
 class MockStdout(object):
     def __init__(self): self.out = []
     def write(self, s): self.out.append(s)
     def flush(self): pass
 
-class ProgressTest(PycompTestCase):
+class FakePayload(object):
+    def __init__(self, string, size):
+        self.string = string
+        self.size = size
+
+    def __str__(self):
+        return self.string
+
+    @property
+    def download_size(self):
+        return self.size
+
+class ProgressTest(tests.support.TestCase):
     def test_single(self):
         now = 1379406823.9
         fo = MockStdout()
         with mock.patch('dnf.cli.progress._term_width', return_value=60), \
              mock.patch('dnf.cli.progress.time', lambda: now):
 
-            p = dnf.cli.progress.LibrepoCallbackAdaptor(fo)
-            p.begin('dummy-text')
+            p = dnf.cli.progress.MultiFileProgressMeter(fo)
+            pload = FakePayload('dummy-text', 5)
+            p.start(1, 1)
             for i in range(6):
                 now += 1.0
-                p.librepo_cb(None, 5, i)
+                p.progress(pload, i)
                 self.assertEquals(len(fo.out), i + 1) # always update
-            p.end()
+            p.end(pload, None, None)
 
         # this is straightforward..
         self.assertEquals(fo.out, [
@@ -58,15 +73,19 @@ class ProgressTest(PycompTestCase):
 
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
             p.start(2, 30)
+            pload1 = FakePayload('foo', 10.0)
+            pload2 = FakePayload('bar', 20.0)
             for i in range(11):
-                p.progress('foo', 10.0, float(i))
+                p.progress(pload1, float(i))
                 self.assertEquals(len(fo.out), i*2 + 1)
-                if i == 10: p.end('foo', 10, None, None)
+                if i == 10:
+                    p.end(pload1, None, None)
                 now += 0.5
 
-                p.progress('bar', 20.0, float(i*2))
+                p.progress(pload2, float(i*2))
                 self.assertEquals(len(fo.out), i*2 + 2 + (i == 10 and 2))
-                if i == 10: p.end('bar', 20, 'some error', 'FAILED')
+                if i == 10:
+                    p.end(pload2, dnf.callback.STATUS_FAILED, 'some error')
                 now += 0.5
 
         # check "end" events

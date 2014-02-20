@@ -77,7 +77,7 @@ class MultiFileProgressMeter(dnf.callback.Progress):
         """
         now = time()
         text = str(payload)
-        total = payload.download_size
+        total = int(payload.download_size)
         done = int(done)
 
         # update done_size
@@ -143,7 +143,7 @@ class MultiFileProgressMeter(dnf.callback.Progress):
         """
         start = now = time()
         text = str(payload)
-        size = payload.download_size
+        size = int(payload.download_size)
 
         # update state
         if text in self.state:

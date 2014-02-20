@@ -296,8 +296,8 @@ class MDPayload(Payload):
         return self._text
 
     def _progress_cb(self, cbdata, total, done):
-        self._download_size = int(total)
-        self.progress.progress(self, int(done))
+        self._download_size = total
+        self.progress.progress(self, done)
 
     def _fastestmirror_cb(self, cbdata, stage, data):
         if stage == librepo.FMSTAGE_DETECTION:

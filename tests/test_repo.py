@@ -221,9 +221,9 @@ class RepoTest(RepoTestMixin, support.TestCase):
         m = mock.Mock()
         self.repo.set_progress_bar(m)
         self.repo.load()
-        m.begin.assert_called_with("r for riot")
-        m.librepo_cb.assert_any_call(mock.ANY, mock.ANY, mock.ANY)
-        m.end.assert_called_with()
+        self.assertTrue(m.start.called)
+        self.assertTrue(m.progress.called)
+        self.assertTrue(m.end.called)
 
     @mock.patch('librepo.Handle.setopt')
     def test_repo_gpgcheck(self, setopt):
