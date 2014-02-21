@@ -39,7 +39,10 @@ class Subject(object):
             else:
                 query.filterm(*self._query_flags, name=nevra.name)
         if nevra.arch is not None:
-            query.filterm(arch=nevra.arch)
+            if is_glob_pattern(nevra.arch):
+                query.filterm(arch__glob=nevra.arch)
+            else:
+                query.filterm(arch=nevra.arch)
         if nevra.epoch is not None:
             query.filterm(epoch=nevra.epoch)
         if nevra.version is not None:
@@ -83,6 +86,12 @@ class Subject(object):
     @property
     def pattern(self):
         return self.subj.pattern
+
+    def is_arch_specified(self, sack):
+        nevra = first(self.subj.nevra_possibilities_real(sack, allow_globs=True))
+        if nevra and nevra.arch:
+            return is_glob_pattern(nevra.arch)
+        return False
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api

@@ -171,6 +171,13 @@ class MultilibBest(support.ResultTestCase):
                                'mrkite-k-h-1-1.x86_64',
                                'trampoline-2.1-1.noarch'])
 
+    def test_install_glob_arch(self):
+        self.yumbase.install("lotus.*6*")
+        installed, removed = self.installed_removed(self.yumbase)
+        self.assertItemsEqual(map(str, installed),
+                              ['lotus-3-17.i686',
+                               'lotus-3-17.x86_64'])
+
     def test_install_reponame(self):
         """Test whether packages are filtered by the reponame."""
         result = itertools.chain(
