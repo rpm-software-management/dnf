@@ -1509,7 +1509,8 @@ class Base(object):
             self.logger.warning(msg)
 
         subj = dnf.subject.Subject(pkg_spec)
-        if self.conf.multilib_policy == "all" or subj.filename_pattern:
+        if self.conf.multilib_policy == "all" or subj.filename_pattern or \
+           subj.is_arch_specified(self.sack):
             q = subj.get_best_query(self.sack)
             if reponame is not None:
                 q = q.filter(reponame=reponame)
