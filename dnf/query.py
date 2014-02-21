@@ -48,14 +48,14 @@ class Query(hawkey.Query):
         # :api
         return self.filter(downgrades=True)
 
-    def filter_autoglob(self, **kwargs):
+    def filter_autoglob(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
             if dnf.query.is_glob_pattern(value):
                 nargs[key + "__glob"] = value
             else:
                 nargs[key] = value
-        return self.filter(**nargs)
+        return self.filter(*args, **nargs)
 
     def installed(self):
         # :api

@@ -33,26 +33,21 @@ class Subject(object):
         self.icase = ignore_case
 
     def _nevra_to_filters(self, query, nevra):
-        if nevra.name is not None:
-            if is_glob_pattern(nevra.name):
-                query.filterm(*self._query_flags, name__glob=nevra.name)
-            else:
-                query.filterm(*self._query_flags, name=nevra.name)
-        if nevra.arch is not None:
-            if is_glob_pattern(nevra.arch):
-                query.filterm(arch__glob=nevra.arch)
-            else:
-                query.filterm(arch=nevra.arch)
-        if nevra.epoch is not None:
-            query.filterm(epoch=nevra.epoch)
-        if nevra.version is not None:
-            version = nevra.version
-            if is_glob_pattern(version):
-                query.filterm(version__glob=version)
-            else:
-                query.filterm(version=version)
-        if nevra.release is not None:
-            query.filterm(release=nevra.release)
+        nevra_attrs = [("name", True, True), ("epoch", False, False),
+                       ("version", True, False), ("release", False, False),
+                       ("arch", True, False)]
+
+        for (name, check_glob, add_flags) in nevra_attrs:
+            attr = getattr(nevra, name)
+            flags = []
+            if attr:
+                if add_flags:
+                    flags = self._query_flags
+                if check_glob:
+                    query = query.filter_autoglob(*flags, **{name: attr})
+                else:
+                    query.filterm(*flags, **{name: attr})
+
         return query
 
     @staticmethod
