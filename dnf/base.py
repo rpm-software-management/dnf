@@ -1450,7 +1450,8 @@ class Base(object):
             thisgroup.selected = False
 
             for pkgname in thisgroup.packages:
-                txmbrs = self.tsInfo.getMembersWithState(None,TS_INSTALL_STATES)
+                txmbrs = self.tsInfo.getMembersWithState(
+                    None, dnf.yum.rpmtrans.TS_INSTALL_STATES)
                 for txmbr in txmbrs:
                     if txmbr.po.name != pkgname:
                         continue
