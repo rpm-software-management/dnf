@@ -33,7 +33,7 @@ from dnf.yum.i18n import to_unicode, to_str, exception2msg
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce, cmp_to_key
 
-import io
+import dnf.callback
 import dnf.comps
 import dnf.conf
 import dnf.drpm
@@ -41,7 +41,6 @@ import dnf.exceptions
 import dnf.history
 import dnf.lock
 import dnf.logging
-import dnf.output
 import dnf.persistor
 import dnf.plugin
 import dnf.repo
@@ -57,6 +56,7 @@ import errno
 import functools
 import glob
 import hawkey
+import io
 import logging
 import os
 import operator
@@ -83,7 +83,7 @@ class Base(object):
         self._tags = None
         self._ts_save_file = None
         self._tempfiles = []
-        self.ds_callback = dnf.output.DepsolveCallback()
+        self.ds_callback = dnf.callback.Depsolve()
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()

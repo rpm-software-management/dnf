@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+import dnf.yum.rpmtrans
+
 STATUS_OK = None
 STATUS_FAILED = 1
 STATUS_ALREADY_EXISTS = 2
@@ -39,3 +41,16 @@ class Progress(object):
 
 class NullProgress(Progress):
     pass
+
+class Depsolve(object):
+    def start(self):
+        pass
+
+    def pkg_added(self, pkg, mode):
+        pass
+
+    def end(self):
+        pass
+
+# alias for RPM transaction callback that logs things to a file
+LoggingTransactionDisplay = dnf.yum.rpmtrans.LoggingTransactionDisplay

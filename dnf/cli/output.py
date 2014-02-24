@@ -29,9 +29,9 @@ import pwd
 import re
 import rpm
 
+import dnf.callback
 import dnf.cli.progress
 import dnf.conf
-import dnf.output
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8, to_unicode, _, P_
 import dnf.yum.misc
@@ -2318,7 +2318,7 @@ Transaction Summary
 
                 num += 1
 
-class DepSolveProgressCallBack(dnf.output.DepsolveCallback):
+class DepSolveProgressCallBack(dnf.callback.Depsolve):
     """A class to provide text output callback functions for Dependency Solver callback."""
 
     def __init__(self):
