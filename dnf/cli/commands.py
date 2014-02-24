@@ -1298,27 +1298,41 @@ class RepoPkgsCommand(Command):
         def check(self, reponame, cli_args):
             """Verify whether the command can run with given arguments."""
             checkGPGKey(self.cli.base, self.cli)
-            patterns = self.parse_arguments(cli_args)
-            if any(pattern.endswith('.rpm') for pattern in patterns):
-                self.cli.logger.critical(
-                    _('Error: installation of RPM paths is not supported'))
-                raise dnf.cli.CliError('installation of RPM paths is not supported')
-            if any(pattern.startswith('@') for pattern in patterns):
-                self.cli.logger.critical(
-                    _('Error: installation of groups is not supported'))
-                raise dnf.cli.CliError('installation of groups is not supported')
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
-            return cli_args or ['*']
+            return cli_args
 
         def run(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
             self.check(reponame, cli_args)
-            patterns = self.parse_arguments(cli_args)
-            if any(pattern.startswith('@') for pattern in patterns):
-                self.cli.base.read_comps()
-            self.cli.base.installPkgs(patterns, reponame)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Install all packages.
+                try:
+                    self.cli.base.install('*', reponame)
+                except dnf.exceptions.MarkingError:
+                    self.cli.base.logger.info(_('No package available.'))
+                else:
+                    done = True
+            else:
+                # Install packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.cli.base.install(pkg_spec, reponame)
+                    except dnf.exceptions.MarkingError:
+                        msg = _('No package %s%s%s available.')
+                        self.cli.base.logger.info(
+                            msg, self.cli.base.output.term.MODE['bold'],
+                            pkg_spec, self.cli.base.output.term.MODE['normal'])
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
 
     class ListSubCommand(object):
         """Implementation of the list sub-command."""
