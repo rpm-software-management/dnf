@@ -24,6 +24,7 @@ from tests import support
 import dnf.cli.commands
 import dnf.repo
 import itertools
+import logging
 import unittest
 
 class CommandsCliTest(support.TestCase):
@@ -61,11 +62,6 @@ class CommandsCliTest(support.TestCase):
             lines,
             ('Cannot undo transaction 1, doing so would result in an '
              'inconsistent package database.',))
-
-    def test_install_configure(self):
-        erase_cmd = dnf.cli.commands.InstallCommand(self.cli)
-        erase_cmd.configure()
-        self.assertFalse(self.yumbase.goal_parameters.allow_uninstall)
 
     @staticmethod
     @mock.patch('dnf.Base.fill_sack')
@@ -157,6 +153,64 @@ class CommandTest(support.TestCase):
 
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
+
+class InstallCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.InstallCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(InstallCommandTest, self).setUp()
+        base = support.BaseCliStub('main')
+        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.init_sack()
+        self._cmd = dnf.cli.commands.InstallCommand(base.mock_cli())
+
+    def test_configure(self):
+        self._cmd.configure()
+        self.assertFalse(self._cmd.base.goal_parameters.allow_uninstall)
+
+    def test_run_group(self):
+        """Test whether a group is installed."""
+        self._cmd.run(['@Solid Ground'])
+
+        base = self._cmd.cli.base
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed(),
+              dnf.subject.Subject('trampoline').get_best_query(base.sack)))
+
+    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    def test_run_group_notfound(self):
+        """Test whether it fails if the group cannot be found."""
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['@non-existent'])
+
+        self.assertEqual(stdout.getvalue(), 'Warning: Group non-existent does not exist.\n')
+        self.assertResult(self._cmd.cli.base,
+                          self._cmd.cli.base.sack.query().installed())
+
+    def test_run_package(self):
+        """Test whether a package is installed."""
+        self._cmd.run(['lotus'])
+
+        base = self._cmd.cli.base
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed(),
+              dnf.subject.Subject('lotus.x86_64').get_best_query(base.sack)))
+
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test_run_package_notfound(self):
+        """Test whether it fails if the package cannot be found."""
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['non-existent'])
+
+        self.assertEqual(stdout.getvalue(), 'No package non-existent available.\n')
+        self.assertResult(self._cmd.cli.base,
+                          self._cmd.cli.base.sack.query().installed())
 
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 

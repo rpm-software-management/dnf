@@ -312,66 +312,6 @@ class BaseCli(dnf.Base):
                                             ", ".join(matches))
             self.logger.info(msg)
 
-    def installPkgs(self, userlist, reponame=None):
-        """Attempt to take the user specified list of packages or
-        wildcards and install them, or if they are installed, update
-        them to a newer version. If a complete version number is
-        specified, attempt to upgrade (or downgrade if they have been
-        removed) them to the specified version.
-
-        :param userlist: a list of names or wildcards specifying
-           packages to install
-        :param reponame: limit packages matching to the given repository
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # get the list of available packages
-        # iterate over the user's list
-        # add packages to Transaction holding class if they match.
-        # if we've added any packages to the transaction then return 2 and a string
-        # if we've hit a snag, return 1 and the failure explanation
-        # if we've got nothing to do, return 0 and a 'nothing available to install' string
-
-        oldcount = self._goal.req_length()
-
-        done = False
-        for arg in userlist:
-            if arg.endswith('.rpm'):
-                if reponame is not None:
-                    raise ValueError('limiting file installation to a '
-                                     'repository is not supported')
-                self.install_local(arg)
-                done = True
-                continue # it was something on disk and it ended in rpm
-                         # no matter what we don't go looking at repos
-            elif arg.startswith('@'):
-                if reponame is not None:
-                    raise ValueError('limiting group installation to a '
-                                     'repository is not supported')
-                try:
-                    self.install_grouplist((arg[1:],))
-                except dnf.exceptions.Error:
-                    pass
-                else:
-                    done = True
-                continue
-            try:
-                self.install(arg, reponame)
-            except dnf.exceptions.MarkingError:
-                msg = _('No package %s%s%s available.')
-                self.logger.info(msg, self.output.term.MODE['bold'], arg,
-                                 self.output.term.MODE['normal'])
-            else:
-                done = True
-
-        if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
-
     def check_updates(self, patterns=(), reponame=None, print_=True):
         """Check updates matching given *patterns* in selected repository."""
         ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
