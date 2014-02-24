@@ -905,6 +905,9 @@ class Base(object):
            callback, raise dnf.exceptions.Error on problems"""
 
         # select and sort packages to download
+        if progress is None:
+            progress = dnf.callback.NullProgress()
+
         drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
         remote_pkgs = [po for po in pkglist if not (po.from_cmdline or po.repo.local)]
         remote_pkgs.sort(key=cmp_to_key(mediasort))

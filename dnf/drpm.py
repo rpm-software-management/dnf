@@ -18,39 +18,59 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from binascii import hexlify
 from dnf.yum.misc import unlink_f
 from dnf.yum.i18n import _
-from hawkey import chksum_name
 
+import dnf.callback
 import dnf.repo
-import os.path
+import hawkey
+import librepo
+import os
 
 MAX_PERCENTAGE = 50
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
-class DeltaPackage(dnf.repo.PackagePayload):
-    def __init__(self, delta, po):
-        self.location = delta.location
-        self.baseurl = delta.baseurl
-        self.size = delta.downloadsize
-        self.chksum = delta.chksum
-        self.rpm = po
-        self.repo = po.repo
+class DeltaPayload(dnf.repo.PackagePayload):
+    def __init__(self, delta_info, delta, pkg, progress):
+        super(DeltaPayload, self).__init__(pkg, progress)
+        self.delta_info = delta_info
+        self.delta = delta
 
-    def getDiscNum(self):
-        return -2 # deltas first
+    def __str__(self):
+        return os.path.basename(self.delta.location)
 
-    def returnIdSum(self):
-        ctype, csum = self.chksum
-        return chksum_name(ctype), hexlify(csum).decode()
+    def _target_params(self):
+        delta = self.delta
+        ctype, csum = delta.chksum
+        ctype = hawkey.chksum_name(ctype)
+        chksum = hexlify(csum).decode()
+
+        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
+        if ctype_code == librepo.CHECKSUM_UNKNOWN:
+            logger.warn(_("unsupported checksum type: %s") % ctype)
+
+        return {
+            'relative_url' : delta.location,
+            'checksum_type' : ctype_code,
+            'checksum' : chksum,
+            'expectedsize' : delta.downloadsize,
+            'base_url' : delta.baseurl,
+        }
+
+    @property
+    def download_size(self):
+        return self.delta.downloadsize
 
     def localPkg(self):
-        return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
+        location = self.delta.location
+        return os.path.join(self.pkg.repo.pkgdir, os.path.basename(location))
 
-    def _end_cb9(text, lr_status, msg):
-        if status != librepo.TRANSFER_ERROR and hasattr(po, 'donecb'):
-            po.donecb()
+    def _end_cb(self, cbdata, lr_status, msg):
+        super(DeltaPayload, self)._end_cb(cbdata, lr_status, msg)
+        if lr_status != librepo.TRANSFER_ERROR:
+            self.delta_info.enqueue(self)
 
 class DeltaInfo(object):
     def __init__(self, query, progress):
@@ -89,41 +109,39 @@ class DeltaInfo(object):
                 best = delta.downloadsize
                 best_delta = delta
         if best_delta:
-            po = DeltaPackage(best_delta, po)
-            po.donecb = lambda: self.enqueue(po)
-        return po
+           return DeltaPayload(self, best_delta, po, progress)
+        return None
 
     def job_done(self, pid, code):
         # handle a finished delta rebuild
-        po = self.jobs.pop(pid)
+        pload = self.jobs.pop(pid)
         if code != 0:
-            unlink_f(po.rpm.localPkg())
-            self.err[po] = _('Delta RPM rebuild failed')
-        elif not po.rpm.verifyLocalPkg():
-            self.err[po] = _('Checksum of the delta-rebuilt RPM failed')
+            unlink_f(pload.pkg.localPkg())
+            self.err[pload] = _('Delta RPM rebuild failed')
+        elif not pload.pkg.verifyLocalPkg():
+            self.err[pload] = _('Checksum of the delta-rebuilt RPM failed')
         else:
-            os.unlink(po.localPkg())
-            if self.progress:
-                name = os.path.basename(po.rpm.localPkg())
-                self.progress.end(name, None, 'done', 'DRPM')
+            os.unlink(pload.localPkg())
+            self.progress.end(pload, dnf.callback.STATUS_DRPM, 'done')
 
-    def start_job(self, po):
+    def start_job(self, pload):
         # spawn a delta rebuild job
-        args = '-a', po.rpm.arch
-        args += po.localPkg(), po.rpm.localPkg()
+        args = '-a', pload.pkg.arch
+        args += pload.localPkg(), pload.pkg.localPkg()
         pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
-        self.jobs[pid] = po
+        self.jobs[pid] = pload
 
-    def enqueue(self, po):
+    def enqueue(self, pload):
         # process finished jobs, start new ones
         while self.jobs:
             pid, code = os.waitpid(-1, os.WNOHANG)
             if not pid: break
             self.job_done(pid, code)
-        self.queue.append(po)
+        self.queue.append(pload)
         while len(self.jobs) < self.deltarpm:
             self.start_job(self.queue.pop(0))
-            if not self.queue: break
+            if not self.queue:
+                break
 
     def wait(self):
         '''Wait until all jobs have finished'''

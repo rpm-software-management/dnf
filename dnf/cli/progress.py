@@ -27,7 +27,8 @@ class MultiFileProgressMeter(dnf.callback.Progress):
     STATUS_2_STR = {
         dnf.callback.STATUS_FAILED : 'FAILED',
         dnf.callback.STATUS_ALREADY_EXISTS : 'SKIPPED',
-        dnf.callback.STATUS_MIRROR : 'MIRROR'
+        dnf.callback.STATUS_MIRROR : 'MIRROR',
+        dnf.callback.STATUS_DRPM : 'DRPM',
     }
 
     def __init__(self, fo=sys.stderr, update_period=0.3, tick_period=1.0, rate_average=5.0):
@@ -150,8 +151,9 @@ class MultiFileProgressMeter(dnf.callback.Progress):
             start, done = self.state.pop(text)
             self.active.remove(text)
             size -= done
-        self.done_files += 1
-        self.done_size += size
+        if status != dnf.callback.STATUS_DRPM:
+            self.done_files += 1
+            self.done_size += size
 
         if status:
             # the error message, no trimming

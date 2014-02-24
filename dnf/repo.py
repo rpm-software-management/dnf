@@ -204,9 +204,7 @@ class Metadata(object):
         return self.file_timestamp('primary')
 
 class Payload(object):
-    def __init__(self, progress=None):
-        if progress is None:
-            progress = dnf.callback.NullProgress()
+    def __init__(self, progress):
         self.progress = progress
 
     def __str__(self):
@@ -219,7 +217,7 @@ class Payload(object):
         pass
 
 class PackagePayload(Payload):
-    def __init__(self, pkg, progress=None):
+    def __init__(self, pkg, progress):
         super(PackagePayload, self).__init__(progress)
         self.pkg = pkg
 
@@ -258,32 +256,38 @@ class PackagePayload(Payload):
         pkgdir = pkg.repo.pkgdir
         dnf.util.ensure_dir(pkgdir)
 
-        ctype, csum = pkg.returnIdSum()
-        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
-        if ctype_code == librepo.CHECKSUM_UNKNOWN:
-            logger.warn(_("unsupported checksum type: %s") % ctype)
-
         target_dct = {
             'handle' : pkg.repo.get_handle(),
-            'relative_url' : pkg.location,
             'dest' : pkgdir,
-            'checksum_type' : ctype_code,
-            'checksum' : csum,
-            'expectedsize' : pkg.downloadsize,
-            'base_url' : pkg.baseurl,
             'resume' : True,
             'cbdata' : self,
             'progresscb' : self._progress_cb,
             'endcb' : self._end_cb,
             'mirrorfailurecb' : self._mirrorfail_cb,
         }
+        target_dct.update(self._target_params())
 
         return librepo.PackageTarget(**target_dct)
 
 class RPMPayload(PackagePayload):
 
     def __str__(self):
-        return str(self.pkg)
+        return os.path.basename(self.pkg.location)
+
+    def _target_params(self):
+        pkg = self.pkg
+        ctype, csum = pkg.returnIdSum()
+        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
+        if ctype_code == librepo.CHECKSUM_UNKNOWN:
+            logger.warn(_("unsupported checksum type: %s") % ctype)
+
+        return {
+            'relative_url' : pkg.location,
+            'checksum_type' : ctype_code,
+            'checksum' : csum,
+            'expectedsize' : pkg.downloadsize,
+            'base_url' : pkg.baseurl,
+        }
 
     @property
     def download_size(self):
@@ -336,7 +340,7 @@ class Repo(dnf.yum.config.RepoConf):
         # :api
         super(Repo, self).__init__()
         self._pkgdir = None
-        self._md_pload = MDPayload(None)
+        self._md_pload = MDPayload(dnf.callback.NullProgress())
         self.id = id_ # :api
         self.basecachedir = basecachedir
         self.metadata = None # :api

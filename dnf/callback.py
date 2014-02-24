@@ -22,9 +22,10 @@ STATUS_OK = None
 STATUS_FAILED = 1
 STATUS_ALREADY_EXISTS = 2
 STATUS_MIRROR = 3
+STATUS_DRPM = 4
 
 class Progress(object):
-    def end(self, payload, err, msg):
+    def end(self, payload, status, msg):
         pass
 
     def message(self, msg):
