@@ -1,4 +1,4 @@
-%global gitrev 2c0cf93
+%global gitrev a0828fa
 %global hawkey_version 0.4.11
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -131,6 +131,49 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Feb 24 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.15-1
+- refactor: Payload makes more sense to live in dnf.callback. (Ales Kozumplik)
+- api: document dnf.callback.DownloadProgress and friends. (Ales Kozumplik)
+- rename: callback.Progress -> callback.DownloadProgress. (Ales Kozumplik)
+- doc: faq: simple installing rawhide packages. (Ales Kozumplik)
+- remove: dnf.output. (Ales Kozumplik)
+- refactored _nevra_to_filters function (Jan Silhan)
+- fixed path to imported constant (Jan Silhan)
+- added glob arch pattern support (RhBug:1048788) (Jan Silhan)
+- fup-drpm refactoring (Ales Kozumplik)
+- Turn DRPM into playing by the same Payload rules as RPM. (Ales Kozumplik)
+- tests: fix the unit tests after Progress/Payload refactoring. (Ales Kozumplik)
+- refactor: downloads of metadata use the Payload system too. (Ales Kozumplik)
+- remove: repo.get_package(), get_package_target(). (Ales Kozumplik)
+- refactor: how download progress are handled. (Ales Kozumplik)
+- refactor: MultiFileProgressMeter.end()'s status shouldn't default to FAILED. (Ales Kozumplik)
+- doc: improve documentation on --cacheonly. (RhBug:1066743) (Ales Kozumplik)
+- doc: groom README and man page a bit. (Ales Kozumplik)
+- doc: groom --enablerepo description a bit. (Ales Kozumplik)
+- doc: man: document --enablerepo and --disablerepo cli options (Ahmad Samir)
+- Add repository-packages upgrade-to command. (Radek Holy)
+- refactor: dnf.cli.commands.UpgradeToCommand (Radek Holy)
+- Support filtering by repository name in Base.upgrade_to. (Radek Holy)
+- Add repository-packages upgrade command. (Radek Holy)
+- refactor: dnf.cli.commands.UpgradeCommand (Radek Holy)
+- Support filtering by repository name in updatePkgs. (Radek Holy)
+- Support filtering by repository name in Base.upgrade_all. (Radek Holy)
+- Support filtering by repository name in Base.upgrade. (Radek Holy)
+- Add repository-packages install command. (Radek Holy)
+- Support filtering by repository name in installPkgs. (Radek Holy)
+- Support filtering by repository name in Base.select_group. (Radek Holy)
+- Support filtering by repository name in install_groupie. (Radek Holy)
+- Support filtering by repository name in Base.install. (Radek Holy)
+- refactor: dnf.cli.commands.InstallCommand (Radek Holy)
+- renamed setupYumConfig to configure_from_options (Jan Silhan)
+- renamed YumOptionParser to OptionParser (Jan Silhan)
+- removed unused imports in cli.py (Jan Silhan)
+- refactored cli: using ArgParse instead of OptionParser (Jan Silhan)
+- bash completion: "distro-sync" is the preferred spelling. (RhBug:1065959) (Ales Kozumplik)
+- doc: add provides to queries (RhBug:1065879) (Igor Gnatenko)
+- doc: metadata_expire is both [main] and per-repo option. (RhBug:1065728) (Ales Kozumplik)
+- installonly: kernel-devel should not be installonly. (Ales Kozumplik)
 
 * Thu Feb 13 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.14-1
 - api: add Repo.pkgdir. (Ales Kozumplik)
