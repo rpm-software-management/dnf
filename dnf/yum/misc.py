@@ -1059,15 +1059,19 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
 
     return out
 
-def repo_gen_decompress(filename, generated_name, cached=False):
-    """ This is a wrapper around decompress, where we work out a cached
-        generated name, and use check_timestamps. filename _must_ be from
-        a repo. and generated_name is the type of the file. """
+def calculate_repo_gen_dest(filename, generated_name):
     dest = os.path.dirname(filename)
     dest += '/gen'
     if not os.path.exists(dest):
         os.makedirs(dest, mode=0o755)
-    dest += '/' + generated_name
+    return dest + '/' + generated_name
+
+def repo_gen_decompress(filename, generated_name, cached=False):
+    """ This is a wrapper around decompress, where we work out a cached
+        generated name, and use check_timestamps. filename _must_ be from
+        a repo. and generated_name is the type of the file. """
+    
+    dest = calculate_repo_gen_dest(filename, generated_name)
     return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
 
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):

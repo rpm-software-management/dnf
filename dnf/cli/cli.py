@@ -1601,6 +1601,7 @@ class OptionParser(ArgumentParser):
                 self.base.conf.installroot = opts.installroot
             if opts.noplugins:
                 self.base.conf.plugins = False
+            self.base.cacheonly = opts.cacheonly
 
             if opts.showdupesfromrepos:
                 self.base.conf.showdupesfromrepos = True
