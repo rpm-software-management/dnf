@@ -1414,11 +1414,6 @@ class RepoPkgsCommand(Command):
         def check(self, reponame, cli_args):
             """Verify whether the command can run with given arguments."""
             checkGPGKey(self.cli.base, self.cli)
-            pkg_specs = self.parse_arguments(cli_args)
-            if any(spec.endswith('.rpm') for spec in pkg_specs):
-                self.cli.logger.critical(
-                    _('Error: upgrade of RPM paths is not supported'))
-                raise dnf.cli.CliError('upgrade of RPM paths is not supported')
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -1428,7 +1423,27 @@ class RepoPkgsCommand(Command):
             """Execute the command with respect to given arguments *cli_args*."""
             self.check(reponame, cli_args)
             pkg_specs = self.parse_arguments(cli_args)
-            self.cli.base.updatePkgs(pkg_specs, reponame)
+
+            done = False
+
+            if not pkg_specs:
+                # Update all packages.
+                self.cli.base.upgrade_all(reponame)
+                done = True
+            else:
+                # Update packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.cli.base.upgrade(pkg_spec, reponame)
+                    except dnf.exceptions.MarkingError:
+                        self.cli.base.logger.info(
+                            _('No match for argument: %s'),
+                            dnf.pycomp.unicode(pkg_spec))
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
     UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
 
