@@ -347,51 +347,6 @@ class BaseCli(dnf.Base):
 
         return ypl.updates or ypl.obsoletes
 
-    def updatePkgs(self, userlist, reponame=None):
-        """Take user commands and populate transaction wrapper with
-        packages to be updated.
-
-        :param userlist: a list of names or wildcards specifying
-           packages to update.  If *userlist* is an empty list, yum
-           will perform a global update
-        :param reponame: limit packages matching to the given repository
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # if there is no userlist, then do global update below
-        # this is probably 90% of the calls
-        # if there is a userlist then it's for updating pkgs, not obsoleting
-
-        oldcount = self._goal.req_length()
-        if len(userlist) == 0: # simple case - do them all
-            self.upgrade_all(reponame)
-
-        else:
-            # go through the userlist - look for items that are local rpms. If we find them
-            # pass them off to installLocal() and then move on
-            for item in userlist:
-                if item.endswith('.rpm'):
-                    if reponame is not None:
-                        raise ValueError('limiting file upgrading to a '
-                                         'repository is not supported')
-                    self.update_local(item)
-                    continue
-
-                try:
-                    self.upgrade(item, reponame)
-                except dnf.exceptions.MarkingError:
-                    self.logger.info(_('No match for argument: %s'), unicode(item))
-                    self._checkMaybeYouMeant(item)
-
-        cnt = self._goal.req_length() - oldcount
-        if cnt <= 0 and not self._goal.req_has_upgrade_all():
-            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
-
     def upgrade_userlist_to(self, userlist, reponame=None):
         oldcount = self._goal.req_length()
         for l in userlist:

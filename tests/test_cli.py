@@ -29,7 +29,6 @@ import dnf.conf
 import dnf.repo
 import dnf.repodict
 import hawkey
-import itertools
 import os
 import unittest
 
@@ -72,26 +71,6 @@ class YumBaseCliTest(support.ResultTestCase):
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
-
-    def test_updatePkgs(self):
-        self._yumbase.updatePkgs(('pepper',))
-
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertResult(self._yumbase, itertools.chain(
-            self._yumbase.sack.query().installed().filter(name__neq='pepper'),
-            self._yumbase.sack.query().upgrades().filter(name='pepper')))
-
-    def test_updatePkgs_notfound(self):
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.updatePkgs(('non-existent',))
-        self.assertEqual(str(ctx.exception), 'No packages marked for upgrade.')
-
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No match for argument: %s', 'non-existent')])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
-                         [mock.call('non-existent')])
-        self.assertResult(self._yumbase, self._yumbase.sack.query().installed())
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_erasePkgs(self):

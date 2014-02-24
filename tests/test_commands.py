@@ -501,3 +501,34 @@ class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
         self.assertResult(base, itertools.chain(
               base.sack.query().installed().filter(name__neq='hole'),
               base.sack.query().upgrades().filter(reponame='third_party', arch='x86_64')))
+
+class UpgradeCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.UpgradeCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(UpgradeCommandTest, self).setUp()
+        base = support.BaseCliStub('updates')
+        base.init_sack()
+        self._cmd = dnf.cli.commands.UpgradeCommand(base.mock_cli())
+
+    def test_run(self):
+        """Test whether a package is updated."""
+        self._cmd.run(['pepper'])
+
+        base = self._cmd.cli.base
+        self.assertResult(base, itertools.chain(
+            base.sack.query().installed().filter(name__neq='pepper'),
+            base.sack.query().upgrades().filter(name='pepper')))
+
+    def test_updatePkgs_notfound(self):
+        """Test whether it fails if the package cannot be found."""
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['non-existent'])
+
+        self.assertEqual(stdout.getvalue(), 'No match for argument: non-existent\n')
+        self.assertResult(self._cmd.cli.base,
+                          self._cmd.cli.base.sack.query().installed())
