@@ -440,11 +440,7 @@ class UpgradeToCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        return self.upgrade_to_patterns(patterns)
-
-    def upgrade_to_patterns(self, patterns, reponame=None):
-        """Upgrade to packages matching *patterns* in selected repository."""
-        self.base.upgrade_userlist_to(patterns, reponame)
+        return self.base.upgrade_userlist_to(patterns)
 
 class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1445,18 +1441,50 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
-    UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
+    class UpgradeToSubCommand(object):
+        """Implementation of the upgrade-to sub-command."""
 
-    SUBCMD_NAME2CLS = {CheckUpdateSubCommand.alias: CheckUpdateSubCommand,
-                       InfoSubCommand.alias: InfoSubCommand,
-                       InstallSubCommand.alias: InstallSubCommand,
-                       ListSubCommand.alias: ListSubCommand,
-                       UpgradeSubCommand.alias: UpgradeSubCommand,
-                       UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
+        activate_sack = True
+
+        alias = 'upgrade-to'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+            try:
+                self.parse_arguments(cli_args)
+            except ValueError:
+                self.cli.logger.critical(
+                    _('Error: Requires at least one package specification'))
+                raise dnf.cli.CliError('a package specification required')
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            if not cli_args:
+                raise ValueError('at least one argument must be given')
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+            self.cli.base.upgrade_userlist_to(pkg_specs, reponame)
+
+    SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
+               ListSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
 
     activate_sack = functools.reduce(
-        operator.or_,
-        (class_.activate_sack for class_ in SUBCMD_NAME2CLS.values()),
+        operator.or_, (subcmd.activate_sack for subcmd in SUBCMDS),
         Command.activate_sack)
 
     aliases = ('repository-packages',
@@ -1466,7 +1494,7 @@ class RepoPkgsCommand(Command):
         """Initialize the command."""
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
-            key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+            subcmd.alias: subcmd(cli) for subcmd in self.SUBCMDS}
         self._resolve = super(RepoPkgsCommand, self).resolve
         self._success_retval = super(RepoPkgsCommand, self).success_retval
         self._writes_rpmdb = super(RepoPkgsCommand, self).writes_rpmdb
@@ -1516,10 +1544,11 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.InstallSubCommand.alias, self.ListSubCommand.alias, self.UpgradeSubCommand.alias}:
+        try:
             subcmd_obj.check(repo, subargs)
-            return
-        subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
+        except dnf.cli.CliError:
+            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            raise
 
     @property
     def resolve(self):
@@ -1527,17 +1556,14 @@ class RepoPkgsCommand(Command):
 
     def run(self, extcmds):
         """Execute the command with respect to given arguments *extcmds*."""
-        self.doCheck(self.aliases[0], extcmds)
+        self.doCheck(self.base.basecmd, extcmds)
 
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
-        subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.upgrade_to_patterns(patterns, reponame=repo)
-        else:
-            subcmd_obj.run(repo, subargs)
-            self._success_retval = subcmd_obj.success_retval
+        subcmd_obj = self._subcmd_name2obj[subcmd_name]
+        subcmd_obj.run(repo, subargs)
+
+        self._success_retval = subcmd_obj.success_retval
         self._resolve = subcmd_obj.resolve
         self._writes_rpmdb = subcmd_obj.writes_rpmdb
 

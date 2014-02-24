@@ -155,7 +155,12 @@ class _BaseStubMixin(object):
         pass
 
     def mock_cli(self):
-        return mock.Mock('base', base=self, nogpgcheck=True)
+        stream = dnf.pycomp.StringIO()
+        logger = logging.getLogger('test')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(logging.StreamHandler(stream))
+        return mock.Mock('base', base=self, log_stream=stream, logger=logger,
+                         nogpgcheck=True)
 
     def read_mock_comps(self, fn):
         comps = dnf.comps.Comps()
