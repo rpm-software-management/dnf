@@ -96,6 +96,7 @@ class Base(object):
                                rpm.RPMPROB_FILTER_REPLACEOLDFILES]
 
         self.mediagrabber = None
+        self.cacheonly = False
         self.arch = dnf.rpmUtils.arch.Arch()
         self.goal_parameters = dnf.conf.GoalParameters()
         self.plugins = dnf.plugin.Plugins()
@@ -402,7 +403,14 @@ class Base(object):
 
             self.logger.log(dnf.logging.SUBDEBUG,
                             'Adding group file from repository: %s', repo.id)
-            decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
+            if self.cacheonly:
+                decompressed = misc.calculate_repo_gen_dest(comps_fn,
+                                                            'groups.xml')
+                if not os.path.exists(decompressed):
+                    # root privileges are needed for comps decompression
+                    continue
+            else:
+                decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
 
             try:
                 self._comps.add_from_xml_filename(decompressed)
