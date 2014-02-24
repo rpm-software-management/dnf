@@ -14,9 +14,7 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is an experimental replacement for `Yum`_, a package manager for RPM Linux
-distributions. It aims to maintain CLI compatibility with Yum while improving on
-speed and defining strict API and plugin interface.
+`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API and plugin interface.
 
 Available commands are:
 
@@ -61,6 +59,8 @@ Options
 ``-C, --cacheonly``
     Run entirely from system cache, don't update the cache and use it even in case it is expired.
 
+    DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache. This switch allows a regular user read-only access to the system cache which usually is more fresh then the user's and thus he does not have to wait for metadata sync.
+
 ``-c <config file>, --config=<config file>``
     config file location
 
@@ -80,9 +80,15 @@ Options
 ``--disableplugin=<plugin names>``
     Disable the listed plugins specified by names or globs.
 
+``--disablerepo=<repoid>``
+    Disable specific repositories by an id or a glob.
+
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
+
+``--enablerepo=<repoid>``
+    Enable specific repositories by an id or a glob.
 
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by a name or a glob from the operation.
@@ -129,7 +135,7 @@ Options
 ``-y, --assumeyes``
     answer yes for all questions
 
-List options are comma separated.
+List options are comma separated. Command-line options override respective settings from configuration files.
 
 ========
 Commands
@@ -396,7 +402,7 @@ Repolist Command
 Repository-Packages Command
 ---------------------------
 
-The repository-packages command allows the user to run commands on top of all packages in given repository.
+The repository-packages command allows the user to run commands on top of all packages in given repository. However, any dependency resolution takes into account packages from all enabled repositories.
 
 ``dnf [options] repository-packages <repoid> check-update [<arg>...]``
     Run ``dnf check-update`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
@@ -404,8 +410,17 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> info [<arg>...]``
     Run ``dnf info`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
+``dnf [options] repository-packages <repoid> install [<arg>...]``
+    Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid`` with the difference that no argument is required. In that case, all packages are installed.
+
 ``dnf [options] repository-packages <repoid> list [<arg>...]``
     Run ``dnf list`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+
+``dnf [options] repository-packages <repoid> upgrade [<arg>...]``
+    Run ``dnf upgrade`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+
+``dnf [options] repository-packages <repoid> upgrade-to <arg>...``
+    Run ``dnf upgrade-to`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
 
 --------------
 Search Command

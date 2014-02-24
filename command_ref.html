@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.14-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.15-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.14-1',
+        VERSION:     '0.4.15-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.14-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.15-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,9 +62,7 @@
 </div>
 <div class="section" id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is an experimental replacement for <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM Linux
-distributions. It aims to maintain CLI compatibility with Yum while improving on
-speed and defining strict API and plugin interface.</p>
+<p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is the next upcoming major version of <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API and plugin interface.</p>
 <p>Available commands are:</p>
 <ul class="simple">
 <li>check-update</li>
@@ -102,7 +100,9 @@ speed and defining strict API and plugin interface.</p>
 <dt><tt class="docutils literal"><span class="pre">--best</span></tt></dt>
 <dd>Try the best available package versions in transactions.</dd>
 <dt><tt class="docutils literal"><span class="pre">-C,</span> <span class="pre">--cacheonly</span></tt></dt>
-<dd>Run entirely from system cache, don&#8217;t update the cache and use it even in case it is expired.</dd>
+<dd><p class="first">Run entirely from system cache, don&#8217;t update the cache and use it even in case it is expired.</p>
+<p class="last">DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache. This switch allows a regular user read-only access to the system cache which usually is more fresh then the user&#8217;s and thus he does not have to wait for metadata sync.</p>
+</dd>
 <dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">&lt;config</span> <span class="pre">file&gt;,</span> <span class="pre">--config=&lt;config</span> <span class="pre">file&gt;</span></tt></dt>
 <dd>config file location</dd>
 <dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">&lt;debug</span> <span class="pre">level&gt;,</span> <span class="pre">--debuglevel=&lt;debug</span> <span class="pre">level&gt;</span></tt></dt>
@@ -122,9 +122,13 @@ understandable to the user), default is 2. Deprecated, use <tt class="docutils l
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">--disableplugin=&lt;plugin</span> <span class="pre">names&gt;</span></tt></dt>
 <dd>Disable the listed plugins specified by names or globs.</dd>
+<dt><tt class="docutils literal"><span class="pre">--disablerepo=&lt;repoid&gt;</span></tt></dt>
+<dd>Disable specific repositories by an id or a glob.</dd>
 <dt><tt class="docutils literal"><span class="pre">-e</span> <span class="pre">&lt;error</span> <span class="pre">level&gt;,</span> <span class="pre">--errorlevel=&lt;error</span> <span class="pre">level&gt;</span></tt></dt>
 <dd>Error output level. This is an integer value between 0 (no error output) and
 10 (shows all error messages), default is 2. Deprecated, use <tt class="docutils literal"><span class="pre">-v</span></tt> instead.</dd>
+<dt><tt class="docutils literal"><span class="pre">--enablerepo=&lt;repoid&gt;</span></tt></dt>
+<dd>Enable specific repositories by an id or a glob.</dd>
 <dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
 <dd>Exclude packages specified by a name or a glob from the operation.</dd>
 <dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
@@ -157,7 +161,7 @@ system.</dd>
 <dt><tt class="docutils literal"><span class="pre">-y,</span> <span class="pre">--assumeyes</span></tt></dt>
 <dd>answer yes for all questions</dd>
 </dl>
-<p>List options are comma separated.</p>
+<p>List options are comma separated. Command-line options override respective settings from configuration files.</p>
 </div>
 <div class="section" id="commands">
 <h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
@@ -384,14 +388,20 @@ detailed information when <tt class="docutils literal"><span class="pre">-v</spa
 </div>
 <div class="section" id="repository-packages-command">
 <h3>Repository-Packages Command<a class="headerlink" href="#repository-packages-command" title="Permalink to this headline">¶</a></h3>
-<p>The repository-packages command allows the user to run commands on top of all packages in given repository.</p>
+<p>The repository-packages command allows the user to run commands on top of all packages in given repository. However, any dependency resolution takes into account packages from all enabled repositories.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">check-update</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
 <dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">info</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
 <dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">info</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">install</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">install</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt> with the difference that no argument is required. In that case, all packages are installed.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">list</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
 <dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">list</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">upgrade</span> <span class="pre">[&lt;arg&gt;...]</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">upgrade-to</span> <span class="pre">&lt;arg&gt;...</span></tt></dt>
+<dd>Run <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade-to</span></tt> command with arguments <tt class="docutils literal"><span class="pre">arg</span></tt> on top of all packages in repository named <tt class="docutils literal"><span class="pre">repoid</span></tt>.</dd>
 </dl>
 </div>
 <div class="section" id="search-command">
@@ -591,7 +601,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

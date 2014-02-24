@@ -48,6 +48,7 @@
     reponame     string     match against packages repositories' names
     version      string     match against packages' versions
     upgrades     boolean    see :meth:`upgrades`. Defaults to ``False``.
+    provides     string     match against packages' provides
     ==========   ========== ===============================================
 
   .. method:: installed

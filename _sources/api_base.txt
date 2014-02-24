@@ -40,9 +40,9 @@
 
     Perform the resolved transaction. Use the optional `display` object to report the progress.
 
-  .. method:: download_packages(pkglist)
+  .. method:: download_packages(pkglist, progress=None)
 
-    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded.
+    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. Raises :exc:`.DownloadError` if some packages failed to download.
 
   .. method:: read_all_repos()
 

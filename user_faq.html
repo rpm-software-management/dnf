@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF User’s FAQ &mdash; DNF 0.4.14-1 documentation</title>
+    <title>DNF User’s FAQ &mdash; DNF 0.4.15-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.14-1',
+        VERSION:     '0.4.15-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.14-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.15-1 documentation" href="index.html" />
     <link rel="prev" title="Command Line Interface Hooks" href="api_cli.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="api_cli.html" title="Command Line Interface Hooks"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,17 +56,26 @@
 <p class="topic-title first">Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#dnf-user-s-faq" id="id1">DNF User&#8217;s FAQ</a><ul>
-<li><a class="reference internal" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing" id="id2">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a></li>
-<li><a class="reference internal" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade" id="id3">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a></li>
-<li><a class="reference internal" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update" id="id4">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a></li>
-<li><a class="reference internal" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade" id="id5">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a></li>
-<li><a class="reference internal" href="#how-do-i-disable-automatic-metadata-synchronization-service" id="id6">How do I disable automatic metadata synchronization service?</a></li>
+<li><a class="reference internal" href="#general-questions" id="id2">General Questions</a><ul>
+<li><a class="reference internal" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing" id="id3">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a></li>
+<li><a class="reference internal" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade" id="id4">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a></li>
+<li><a class="reference internal" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update" id="id5">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade" id="id6">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a></li>
+<li><a class="reference internal" href="#how-do-i-disable-automatic-metadata-synchronization-service" id="id7">How do I disable automatic metadata synchronization service?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-dnf-in-fedora" id="id8">Using DNF in Fedora</a><ul>
+<li><a class="reference internal" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" id="id9">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
+<div class="section" id="general-questions">
+<h2><a class="toc-backref" href="#id2">General Questions</a><a class="headerlink" href="#general-questions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing">
-<h2><a class="toc-backref" href="#id2">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a><a class="headerlink" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id3">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a><a class="headerlink" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing" title="Permalink to this headline">¶</a></h3>
 <p>If this happens, it is a packaging error and consider reporting the failure to
 the package&#8217;s maintainer.</p>
 <p>You can usually remove such package with <tt class="docutils literal"><span class="pre">rpm</span></tt>:</p>
@@ -75,7 +84,7 @@ the package&#8217;s maintainer.</p>
 </div>
 </div>
 <div class="section" id="why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade">
-<h2><a class="toc-backref" href="#id3">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a><a class="headerlink" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id4">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a><a class="headerlink" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade" title="Permalink to this headline">¶</a></h3>
 <p>Sometimes one can see that a newer version of a package is available in the repos:</p>
 <div class="highlight-python"><pre>$ dnf check-update
 libocsync0.x86_64 0.91.4-2.1              devel_repo
@@ -94,12 +103,12 @@ Nothing to do.</pre>
 </div>
 </div>
 <div class="section" id="why-do-i-get-different-results-with-dnf-update-vs-yum-update">
-<h2><a class="toc-backref" href="#id4">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a><a class="headerlink" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id5">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a><a class="headerlink" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update" title="Permalink to this headline">¶</a></h3>
 <p>We get this reported as a bug quite often, but it usually is not. One reason to see this is that DNF does not list update candidates as it explores them. More frequently however the reporter means actual difference in the proposed transaction. This is most often because the metadata the two packagers are working with were taken at a different time (DNF has a notoriously looser schedule on metadata updates to save time and bandwidth), and sometimes also because the depsolvers inside are designed to take a different course of action when encountering some specific update scenario.</p>
 <p>The bottom line is: unless a real update problem occurs (i.e. DNF refuses to update a package that Yum updates) with the same set of metadata, this is not an issue.</p>
 </div>
 <div class="section" id="is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade">
-<h2><a class="toc-backref" href="#id5">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a><a class="headerlink" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id6">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a><a class="headerlink" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade" title="Permalink to this headline">¶</a></h3>
 <p>Yes, clear the cache first:</p>
 <div class="highlight-python"><pre>$ dnf clean metadata
 $ dnf upgrade</pre>
@@ -112,10 +121,23 @@ $ dnf upgrade</pre>
 <p>If you&#8217;re the kind of the user who always wants the freshest metadata possible, you&#8217;ll probably want to <a class="reference internal" href="#disabling-makecache-service-label"><em>disable the automatic MD updates</em></a>.</p>
 </div>
 <div class="section" id="how-do-i-disable-automatic-metadata-synchronization-service">
-<span id="disabling-makecache-service-label"></span><h2><a class="toc-backref" href="#id6">How do I disable automatic metadata synchronization service?</a><a class="headerlink" href="#how-do-i-disable-automatic-metadata-synchronization-service" title="Permalink to this headline">¶</a></h2>
+<span id="disabling-makecache-service-label"></span><h3><a class="toc-backref" href="#id7">How do I disable automatic metadata synchronization service?</a><a class="headerlink" href="#how-do-i-disable-automatic-metadata-synchronization-service" title="Permalink to this headline">¶</a></h3>
 <p>Several ways to do that. The DNF way is to add the following to <tt class="docutils literal"><span class="pre">/etc/dnf/dnf.conf</span></tt>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">metadata_timer_sync</span><span class="o">=</span><span class="mi">0</span>
 </pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-dnf-in-fedora">
+<h2><a class="toc-backref" href="#id8">Using DNF in Fedora</a><a class="headerlink" href="#using-dnf-in-fedora" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes">
+<h3><a class="toc-backref" href="#id9">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a><a class="headerlink" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" title="Permalink to this headline">¶</a></h3>
+<p>Yes, in two steps: first install the necessary <tt class="docutils literal"><span class="pre">.repo</span></tt> files:</p>
+<div class="highlight-python"><pre>dnf install fedora-release-rawhide</pre>
+</div>
+<p>Then, when you want to include the pacakges from the rawhide repo, execute a DNF command with Rawhide enabled:</p>
+<div class="highlight-python"><pre>dnf install --enablerepo=rawhide upgrade rpm</pre>
+</div>
 </div>
 </div>
 </div>
@@ -129,11 +151,18 @@ $ dnf upgrade</pre>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">DNF User&#8217;s FAQ</a><ul>
+<li><a class="reference internal" href="#general-questions">General Questions</a><ul>
 <li><a class="reference internal" href="#what-to-do-with-packages-that-dnf-refuses-to-remove-because-their-pre-or-preun-scripts-are-failing">What to do with packages that DNF refuses to remove because their <tt class="docutils literal"><span class="pre">%pre</span></tt> or <tt class="docutils literal"><span class="pre">%preun</span></tt> scripts are failing?</a></li>
 <li><a class="reference internal" href="#why-are-dnf-check-update-packages-not-marked-for-upgrade-in-the-following-dnf-upgrade">Why are <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">check-update</span></tt> packages not marked for upgrade in the following <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt></a></li>
 <li><a class="reference internal" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a></li>
 <li><a class="reference internal" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a></li>
 <li><a class="reference internal" href="#how-do-i-disable-automatic-metadata-synchronization-service">How do I disable automatic metadata synchronization service?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-dnf-in-fedora">Using DNF in Fedora</a><ul>
+<li><a class="reference internal" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -175,7 +204,7 @@ $ dnf upgrade</pre>
         <li class="right" >
           <a href="api_cli.html" title="Command Line Interface Hooks"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.14-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
