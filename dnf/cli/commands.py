@@ -377,11 +377,39 @@ class UpgradeCommand(Command):
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
-        return extcmds
+        pkg_specs, filenames = [], []
+        for argument in extcmds:
+            if argument.endswith('.rpm'):
+                filenames.append(argument)
+            else:
+                pkg_specs.append(argument)
+        return pkg_specs, filenames
 
     def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        self.base.updatePkgs(patterns)
+        pkg_specs, filenames = self.parse_extcmds(extcmds)
+
+        if not pkg_specs and not filenames:
+            # Update all packages.
+            self.base.upgrade_all()
+            done = True
+        else:
+            # Update files.
+            results = map(self.base.update_local, filenames)
+            done = functools.reduce(operator.or_, results, False)
+
+            # Update packages.
+            for pkg_spec in pkg_specs:
+                try:
+                    self.base.upgrade(pkg_spec)
+                except dnf.exceptions.MarkingError:
+                    self.base.logger.info(_('No match for argument: %s'),
+                                          dnf.pycomp.unicode(pkg_spec))
+                    self.base._checkMaybeYouMeant(pkg_spec)
+                else:
+                    done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
