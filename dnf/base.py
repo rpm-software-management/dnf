@@ -398,6 +398,8 @@ class Base(object):
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
                 continue
+            if not repo.metadata:
+                continue
             comps_fn = repo.metadata.comps_fn
             if comps_fn is None:
                 continue
@@ -420,8 +422,7 @@ class Base(object):
                 self.logger.critical(msg % (repo.id, e))
 
         if len(self._comps) == 0:
-            msg = _('No Groups Available in any repository')
-            raise dnf.exceptions.CompsError(msg)
+            return None
 
         self._comps.compile(self.sack.query().installed())
         self.logger.debug('group time: %0.3f' % (time.time() - group_st))

@@ -314,7 +314,9 @@ class InstallCommand(Command):
 
         # Install groups.
         if grp_specs:
-            self.base.read_comps()
+            if not self.base.read_comps():
+                msg = _('No Groups Available in any repository')
+                raise dnf.exceptions.CompsError(msg)
             try:
                 self.base.install_grouplist(grp_specs)
             except dnf.exceptions.Error:
@@ -628,9 +630,11 @@ class GroupsCommand(Command):
 
     def _grp_setup_doCommand(self):
         try:
-            self.base.read_comps()
+            comps = self.base.read_comps()
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
+        if not comps:
+            return 1, [_('No Groups Available in any repository')]
 
     def _grp_cmd(self, extcmds):
         return extcmds[0], extcmds[1:]
