@@ -2,10 +2,12 @@
  DNF User's FAQ
 ################
 
-
 .. contents::
 
-=============================================================================================================
+=================
+General Questions
+=================
+
 What to do with packages that DNF refuses to remove because their ``%pre`` or ``%preun`` scripts are failing?
 =============================================================================================================
 
@@ -16,9 +18,8 @@ You can usually remove such package with ``rpm``::
 
     rpm -e <package-version> --noscripts
 
-=====================================================================================================
 Why are ``dnf check-update`` packages not marked for upgrade in the following ``dnf upgrade``
-=====================================================================================================
+=============================================================================================
 
 Sometimes one can see that a newer version of a package is available in the repos::
 
@@ -39,7 +40,6 @@ It might seem odd but in fact this can happen quite easily: what the first comma
 
     $ dnf upgrade --best
 
-=====================================================================
 Why do I get different results with ``dnf update`` vs ``yum update``?
 =====================================================================
 
@@ -47,7 +47,6 @@ We get this reported as a bug quite often, but it usually is not. One reason to 
 
 The bottom line is: unless a real update problem occurs (i.e. DNF refuses to update a package that Yum updates) with the same set of metadata, this is not an issue.
 
-==============================================================================
 Is it possible to force DNF to get the latest metadata on ``dnf upgrade``?
 ==============================================================================
 
@@ -66,10 +65,24 @@ If you're the kind of the user who always wants the freshest metadata possible, 
 
 .. _disabling_makecache_service-label:
 
-============================================================
 How do I disable automatic metadata synchronization service?
 ============================================================
 
 Several ways to do that. The DNF way is to add the following to ``/etc/dnf/dnf.conf``::
 
     metadata_timer_sync=0
+
+===================
+Using DNF in Fedora
+===================
+
+For my stable Fedora release, can I install the rawhide packages for testing purposes?
+======================================================================================
+
+Yes, in two steps: first install the necessary ``.repo`` files::
+
+    dnf install fedora-release-rawhide
+
+Then, when you want to include the pacakges from the rawhide repo, execute a DNF command with Rawhide enabled::
+
+    dnf install --enablerepo=rawhide upgrade rpm
