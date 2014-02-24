@@ -340,7 +340,7 @@ class Repo(dnf.yum.config.RepoConf):
         # :api
         super(Repo, self).__init__()
         self._pkgdir = None
-        self._md_pload = MDPayload(dnf.callback.NullProgress())
+        self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.id = id_ # :api
         self.basecachedir = basecachedir
         self.metadata = None # :api

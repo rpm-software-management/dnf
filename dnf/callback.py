@@ -26,7 +26,7 @@ STATUS_ALREADY_EXISTS = 2
 STATUS_MIRROR = 3
 STATUS_DRPM = 4
 
-class Progress(object):
+class DownloadProgress(object):
     def end(self, payload, status, msg):
         pass
 
@@ -39,7 +39,7 @@ class Progress(object):
     def start(self, total_files, total_size):
         pass
 
-class NullProgress(Progress):
+class NullDownloadProgress(DownloadProgress):
     pass
 
 class Depsolve(object):

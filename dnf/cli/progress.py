@@ -21,7 +21,7 @@ from time import time
 import sys
 import dnf.callback
 
-class MultiFileProgressMeter(dnf.callback.Progress):
+class MultiFileProgressMeter(dnf.callback.DownloadProgress):
     """Multi-file download progress meter"""
 
     STATUS_2_STR = {
