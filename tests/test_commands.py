@@ -480,3 +480,24 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
         self.assertResult(base, itertools.chain(
               base.sack.query().installed().filter(name__neq='hole'),
               base.sack.query().available().filter(reponame='third_party', arch='x86_64')))
+
+class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsUpgradeSubCommandTest, self).setUp()
+        base = support.BaseCliStub('updates', 'third_party')
+        base.init_sack()
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand(base.mock_cli())
+
+    def test_all(self):
+        """Test whether all packages from the repository are installed."""
+        base = self._cmd.cli.base
+
+        self._cmd.run('third_party', [])
+
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed().filter(name__neq='hole'),
+              base.sack.query().upgrades().filter(reponame='third_party', arch='x86_64')))

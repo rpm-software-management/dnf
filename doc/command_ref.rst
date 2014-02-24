@@ -454,8 +454,8 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> list upgrades [<package-name-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
-``dnf [options] repository-packages <repoid> upgrade [<arg>...]``
-    Run ``dnf upgrade`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.
+``dnf [options] repository-packages <repoid> upgrade [<package-name-spec>...]``
+    Update all packages to the highest resolvable version available in the repository.
 
 ``dnf [options] repository-packages <repoid> upgrade-to <arg>...``
     Run ``dnf upgrade-to`` command with arguments ``arg`` on top of all packages in repository named ``repoid``.

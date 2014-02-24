@@ -381,11 +381,7 @@ class UpgradeCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        return self.upgrade_patterns(patterns)
-
-    def upgrade_patterns(self, patterns, reponame=None):
-        """Upgrade packages matching *patterns* in selected repository."""
-        self.base.updatePkgs(patterns, reponame)
+        self.base.updatePkgs(patterns)
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
@@ -1370,7 +1366,41 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('list', pkgnarrow, patterns, reponame)
 
-    UPGRADE_SUBCMD_NAME = 'upgrade'
+    class UpgradeSubCommand(object):
+        """Implementation of the upgrade sub-command."""
+
+        activate_sack = True
+
+        alias = 'upgrade'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+            pkg_specs = self.parse_arguments(cli_args)
+            if any(spec.endswith('.rpm') for spec in pkg_specs):
+                self.cli.logger.critical(
+                    _('Error: upgrade of RPM paths is not supported'))
+                raise dnf.cli.CliError('upgrade of RPM paths is not supported')
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+            self.cli.base.updatePkgs(pkg_specs, reponame)
 
     UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
 
@@ -1378,7 +1408,7 @@ class RepoPkgsCommand(Command):
                        InfoSubCommand.alias: InfoSubCommand,
                        InstallSubCommand.alias: InstallSubCommand,
                        ListSubCommand.alias: ListSubCommand,
-                       UPGRADE_SUBCMD_NAME: UpgradeCommand,
+                       UpgradeSubCommand.alias: UpgradeSubCommand,
                        UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
 
     activate_sack = functools.reduce(
@@ -1443,14 +1473,9 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.InstallSubCommand.alias, self.ListSubCommand.alias}:
+        if subcmd_name in {self.CheckUpdateSubCommand.alias, self.InfoSubCommand.alias, self.InstallSubCommand.alias, self.ListSubCommand.alias, self.UpgradeSubCommand.alias}:
             subcmd_obj.check(repo, subargs)
             return
-        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
-            if any(arg.endswith('.rpm') for arg in subargs):
-                self.cli.logger.critical(
-                    _('Error: upgrade of RPM paths is not supported'))
-                raise dnf.cli.CliError('upgrade of RPM paths is not supported')
         subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
 
     @property
@@ -1464,10 +1489,7 @@ class RepoPkgsCommand(Command):
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.UPGRADE_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.upgrade_patterns(patterns, reponame=repo)
-        elif subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
+        if subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
             patterns = subcmd_obj.parse_extcmds(subargs)
             subcmd_obj.upgrade_to_patterns(patterns, reponame=repo)
         else:
