@@ -295,13 +295,47 @@ class InstallCommand(Command):
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
-        return extcmds
+        pkg_specs, grp_specs, filenames = [], [], []
+        for argument in extcmds:
+            if argument.endswith('.rpm'):
+                filenames.append(argument)
+            elif argument.startswith('@'):
+                grp_specs.append(argument[1:])
+            else:
+                pkg_specs.append(argument)
+        return pkg_specs, grp_specs, filenames
 
     def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        if any(pattern.startswith('@') for pattern in patterns):
+        pkg_specs, grp_specs, filenames = self.parse_extcmds(extcmds)
+
+        # Install files.
+        results = map(self.base.install_local, filenames)
+        done = functools.reduce(operator.or_, results, False)
+
+        # Install groups.
+        if grp_specs:
             self.base.read_comps()
-        self.base.installPkgs(patterns)
+            try:
+                self.base.install_grouplist(grp_specs)
+            except dnf.exceptions.Error:
+                pass
+            else:
+                done = True
+
+        # Install packages.
+        for pkg_spec in pkg_specs:
+            try:
+                self.base.install(pkg_spec)
+            except dnf.exceptions.MarkingError:
+                msg = _('No package %s%s%s available.')
+                self.base.logger.info(
+                    msg, self.base.output.term.MODE['bold'], pkg_spec,
+                    self.base.output.term.MODE['normal'])
+            else:
+                done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
 class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
