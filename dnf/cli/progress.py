@@ -151,7 +151,7 @@ class MultiFileProgressMeter(dnf.callback.Progress):
             start, done = self.state.pop(text)
             self.active.remove(text)
             size -= done
-        if status != dnf.callback.STATUS_DRPM:
+        if status not in (dnf.callback.STATUS_DRPM, dnf.callback.STATUS_MIRROR):
             self.done_files += 1
             self.done_size += size
 
