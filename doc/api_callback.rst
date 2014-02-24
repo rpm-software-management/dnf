@@ -4,7 +4,7 @@
 
 .. module:: dnf.callback
 
-.. class:: Paylaod
+.. class:: Payload
 
   Represents one item (file) from the download batch.
 

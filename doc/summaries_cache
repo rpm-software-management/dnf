@@ -446,5 +446,25 @@
     [
         1064148, 
         "DNF attempts to remove packages from local file-based repository"
+    ], 
+    [
+        1048788, 
+        "[abrt] dnf: __init__.py:183:install:ArchException: Used arch is unknown."
+    ], 
+    [
+        1065728, 
+        "[doc] Metadata expire configurable per repository"
+    ], 
+    [
+        1065879, 
+        "[API] provides is missing in queries documentation"
+    ], 
+    [
+        1065959, 
+        "bash-completion should use \"distro-sync\" as the preferred completion for dnf"
+    ], 
+    [
+        1066743, 
+        "[doc] `dnf clean` should function or warn when run as normal user"
     ]
 ]

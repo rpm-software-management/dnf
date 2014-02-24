@@ -558,3 +558,25 @@ Bugs fixed in 0.4.14:
 * :rhbug:`1062847`
 * :rhbug:`1063022`
 * :rhbug:`1064148`
+
+====================
+0.4.15 Release Notes
+====================
+
+Massive refactoring of the downloads handling to provide better API for reporting download progress and fixed bugs are the main things brought in 0.4.15.
+
+API additions in 0.4.15:
+
+* :exc:`dnf.exceptions.DownloadError`
+* :meth:`dnf.Base.download_packages` now takes the optional `progress` parameter and can raise :exc:`.DownloadError`.
+* :class:`dnf.callback.Payload`
+* :class:`dnf.callback.DownloadProgress`
+* :meth:`dnf.query.Query.filter` now also recognizes ``provides`` as a filter name.
+
+Bugs fixed in 0.4.15:
+
+* :rhbug:`1048788`
+* :rhbug:`1065728`
+* :rhbug:`1065879`
+* :rhbug:`1065959`
+* :rhbug:`1066743`
