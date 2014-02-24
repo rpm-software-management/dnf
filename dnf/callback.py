@@ -26,6 +26,21 @@ STATUS_ALREADY_EXISTS = 2 # :api
 STATUS_MIRROR = 3  # :api
 STATUS_DRPM = 4    # :api
 
+class Payload(object):
+    # :api
+
+    def __init__(self, progress):
+        self.progress = progress
+
+    def __str__(self):
+        """Nice, human-readable representation. :api"""
+        pass
+
+    @property
+    def download_size(self):
+        """Total size of the download. :api"""
+        pass
+
 class DownloadProgress(object):
     # :api
 

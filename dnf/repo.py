@@ -203,20 +203,7 @@ class Metadata(object):
     def timestamp(self):
         return self.file_timestamp('primary')
 
-class Payload(object):
-    def __init__(self, progress):
-        self.progress = progress
-
-    def __str__(self):
-        """Nice, human-readable representation."""
-        pass
-
-    @property
-    def download_size(self):
-        """Total size of the download."""
-        pass
-
-class PackagePayload(Payload):
+class PackagePayload(dnf.callback.Payload):
     def __init__(self, pkg, progress):
         super(PackagePayload, self).__init__(progress)
         self.pkg = pkg
@@ -294,7 +281,7 @@ class RPMPayload(PackagePayload):
         """Total size of the download."""
         return self.pkg.downloadsize
 
-class MDPayload(Payload):
+class MDPayload(dnf.callback.Payload):
 
     def __str__(self):
         return self._text
