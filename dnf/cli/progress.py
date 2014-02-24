@@ -48,14 +48,6 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.fo.flush()
 
     def start(self, total_files, total_size):
-        """Initialize the progress meter
-
-        This must be called first to initialize the progress object.
-        We should know the number of files and total size in advance.
-
-        total_files -- the number of files to download
-        total_size -- the total size of all files
-        """
         self.total_files = total_files
         self.total_size = total_size
 
@@ -71,11 +63,6 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.rate = None
 
     def progress(self, payload, done):
-        """Update the progress display
-
-        text -- the file id
-        done -- how much of this file is already downloaded
-        """
         now = time()
         text = str(payload)
         total = int(payload.download_size)
@@ -135,13 +122,6 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.fo.flush()
 
     def end(self, payload, status, err_msg):
-        """Display a message that file has finished downloading
-
-        text -- the file id
-        size -- the file size. None => not a file.
-        status -- constant denoting the outcome
-        err_msg -- error message on error
-        """
         start = now = time()
         text = str(payload)
         size = int(payload.download_size)

@@ -10,6 +10,8 @@
 
 .. exception:: dnf.exceptions.DepsolveError
 
+.. exception:: dnf.exceptions.DownloadError
+
 .. exception:: dnf.exceptions.MarkingError
 
 .. exception:: dnf.exceptions.PackageNotFoundError

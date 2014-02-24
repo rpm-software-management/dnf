@@ -74,6 +74,7 @@ class DepsolveError(Error):
     pass
 
 class DownloadError(Error):
+    # :api
     def __init__(self, errmap):
         self.errmap = errmap
 

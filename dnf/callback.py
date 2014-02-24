@@ -20,23 +20,45 @@
 
 import dnf.yum.rpmtrans
 
-STATUS_OK = None
-STATUS_FAILED = 1
-STATUS_ALREADY_EXISTS = 2
-STATUS_MIRROR = 3
-STATUS_DRPM = 4
+STATUS_OK = None # :api
+STATUS_FAILED = 1 # :api
+STATUS_ALREADY_EXISTS = 2 # :api
+STATUS_MIRROR = 3  # :api
+STATUS_DRPM = 4    # :api
 
 class DownloadProgress(object):
+    # :api
+
     def end(self, payload, status, msg):
+        """Communicate the information that `payload` has finished downloading.
+
+        :api, `status` is a constant denoting the type of outcome, `err_msg` is an
+        error message in case the outcome was an error.
+
+        """
         pass
 
     def message(self, msg):
         pass
 
     def progress(self, payload, done):
+        """Update the progress display. :api
+
+        `payload` is the payload this call reports progress for, `done` is how
+        many bytes of this payload are already downloaded.
+
+        """
+
         pass
 
     def start(self, total_files, total_size):
+        """Start new progress metering. :api
+
+        `total_files` the number of files that will be downloaded,
+        `total_size` total size of all files.
+
+        """
+
         pass
 
 class NullDownloadProgress(DownloadProgress):

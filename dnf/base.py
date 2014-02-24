@@ -877,13 +877,12 @@ class Base(object):
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api
 
-        :param pkglist: a list of package objects specifying the
-           packages to download
-        :param callback_total: a callback to output messages about the
-           download operation
-        :return: a dictionary containing errors from the downloading process
+        `pkglist` is a list of packages to download, `progress` is an optional
+         DownloadProgress instance, `callback_total` an optional callback to
+         output messages about the download operation.
 
         """
+
         def mediasort(apo, bpo):
             # FIXME: we should probably also use the mediaid; else we
             # could conceivably ping-pong between different disc1's
