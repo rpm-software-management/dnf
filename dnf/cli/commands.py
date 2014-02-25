@@ -1369,6 +1369,10 @@ class RepoPkgsCommand(Command):
                 self.cli.logger.critical(
                     _('Error: installation of RPM paths is not supported'))
                 raise dnf.cli.CliError('installation of RPM paths is not supported')
+            if any(arg.startswith('@') for arg in subargs):
+                self.cli.logger.critical(
+                    _('Error: installation of groups is not supported'))
+                raise dnf.cli.CliError('installation of groups is not supported')
         elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
             if any(arg.endswith('.rpm') for arg in subargs):
                 self.cli.logger.critical(

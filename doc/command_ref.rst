@@ -431,7 +431,7 @@ The repository-packages command allows the user to run commands on top of all pa
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<arg>...]``
-    Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid`` with the difference that no argument is required. In that case, all packages are installed.
+    Run ``dnf install`` command with arguments ``arg`` on top of all packages in repository named ``repoid`` with the difference that no argument is required and groups installation is not supported. In that case, all packages are installed.
 
 ``dnf [options] repository-packages <repoid> list [all] [<package-name-spec>...]``
     List all related packages.
