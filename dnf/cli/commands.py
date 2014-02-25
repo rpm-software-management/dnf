@@ -1686,8 +1686,49 @@ class ReInstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        pkg_specs, filenames = [], []
+        for argument in extcmds:
+            if argument.endswith('.rpm'):
+                filenames.append(argument)
+            else:
+                pkg_specs.append(argument)
+        return pkg_specs, filenames
+
     def run(self, extcmds):
-        return self.base.reinstallPkgs(extcmds)
+        pkg_specs, filenames = self.parse_extcmds(extcmds)
+
+        # Reinstall files.
+        results = map(self.base.reinstall_local, filenames)
+        done = functools.reduce(operator.or_, results, False)
+
+        # Reinstall packages.
+        for pkg_spec in pkg_specs:
+            try:
+                self.base.reinstall(pkg_spec)
+            except dnf.exceptions.PackagesNotInstalledError:
+                self.base.logger.info(_('No match for argument: %s'),
+                                      dnf.pycomp.unicode(pkg_spec))
+                self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
+            except dnf.exceptions.PackagesNotAvailableError as err:
+                for pkg in err.packages:
+                    xmsg = ''
+                    yumdb_info = self.base.yumdb.get_package(pkg)
+                    if 'from_repo' in yumdb_info:
+                        xmsg = _(' (from %s)') % yumdb_info.from_repo
+                    msg = _('Installed package %s%s%s%s not available.')
+                    self.base.logger.info(
+                        msg, self.base.output.term.MODE['bold'], pkg,
+                        self.base.output.term.MODE['normal'], xmsg)
+            except dnf.exceptions.MarkingError:
+                assert False, 'Only the above marking errors are expected.'
+            else:
+                done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
     @staticmethod
     def get_summary():

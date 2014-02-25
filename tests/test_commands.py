@@ -212,6 +212,54 @@ class InstallCommandTest(support.ResultTestCase):
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 
+class ReInstallCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.ReInstallCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(ReInstallCommandTest, self).setUp()
+        base = support.BaseCliStub('main')
+        base.init_sack()
+        self._cmd = dnf.cli.commands.ReInstallCommand(base.mock_cli())
+
+    def test_run(self):
+        """Test whether the package is installed."""
+        self._cmd.run(['pepper'])
+
+        base = self._cmd.cli.base
+        self.assertResult(base, itertools.chain(
+            base.sack.query().installed().filter(name__neq='pepper'),
+            dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack).available()))
+
+    def test_run_notinstalled(self):
+        """Test whether it fails if the package is not installed."""
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['lotus'])
+
+        self.assertEqual(stdout.getvalue(), 'No match for argument: lotus\n')
+        self.assertResult(self._cmd.cli.base,
+                          self._cmd.cli.base.sack.query().installed())
+
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test_run_notavailable(self):
+        """Test whether it fails if the package is not available."""
+        base = self._cmd.cli.base
+        for pkg in dnf.subject.Subject('hole').get_best_query(base.sack).installed():
+            self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self._cmd.base.yumdb.get_package(pkg).from_repo = 'unknown'
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['hole'])
+
+        self.assertEqual(
+            stdout.getvalue(),
+            'Installed package hole-1-1.x86_64 (from unknown) not available.\n')
+        self.assertResult(base, base.sack.query().installed())
+
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""

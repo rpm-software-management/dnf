@@ -443,59 +443,6 @@ class BaseCli(dnf.Base):
         if cnt <= 0:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def reinstallPkgs(self, userlist):
-        """Attempt to take the user specified list of packages or
-        wildcards and reinstall them.
-
-        :param userlist: a list of names or wildcards specifying
-           packages to reinstall
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-
-        oldcount = self._goal.req_length()
-
-        done = False
-        for arg in userlist:
-            if arg.endswith('.rpm'):
-                self.reinstall_local(arg)
-                continue # it was something on disk and it ended in rpm
-                         # no matter what we don't go looking at repos
-
-            try:
-                self.reinstall(arg)
-            except dnf.exceptions.PackagesNotInstalledError:
-                self.logger.info(_('No match for argument: %s'), unicode(arg))
-                self._checkMaybeYouMeant(arg, always_output=False)
-            except dnf.exceptions.PackagesNotAvailableError as e:
-                for ipkg in e.packages:
-                    xmsg = ''
-                    yumdb_info = self.yumdb.get_package(ipkg)
-                    if 'from_repo' in yumdb_info:
-                        xmsg = yumdb_info.from_repo
-                        xmsg = _(' (from %s)') % xmsg
-                    msg = _('Installed package %s%s%s%s not available.')
-                    self.logger.info(msg, self.output.term.MODE['bold'], ipkg,
-                                     self.output.term.MODE['normal'], xmsg)
-            except dnf.exceptions.MarkingError:
-                assert False
-            else:
-                done = True
-
-        cnt = self._goal.req_length() - oldcount
-        if cnt:
-            msg = P_('%d package to reinstall',
-                     '%d packages to reinstall', cnt)
-            return 2, [msg % cnt]
-
-        if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
-
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
         """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""
         try:

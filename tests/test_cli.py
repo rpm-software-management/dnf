@@ -69,7 +69,6 @@ class YumBaseCliTest(support.ResultTestCase):
         self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
-        self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
@@ -124,41 +123,6 @@ class YumBaseCliTest(support.ResultTestCase):
         self.assertEqual(self._yumbase.logger.mock_calls,
                          [mock.call.info('No match for available package: %s', pkg)] * 2)
         self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
-
-    @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
-    def test_reinstallPkgs(self):
-        result, resultmsgs = self._yumbase.reinstallPkgs(('pepper',))
-
-        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('pepper')])
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertEqual(result, 2)
-        self.assertEqual(resultmsgs, ['1 package to reinstall'])
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_reinstallPkgs_notinstalled(self):
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.reinstallPkgs(('lotus',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
-
-        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('lotus')])
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No match for argument: %s', 'lotus')])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
-                         [mock.call('lotus', always_output=False)])
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_reinstallPkgs_notavailable(self):
-        pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'hole'})
-
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.reinstallPkgs(('hole',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
-
-        self.assertEqual(self._yumbase.reinstall.mock_calls, [mock.call('hole')])
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('Installed package %s%s%s%s not available.', '', pkg, '', '')])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
 
     def test_transaction_id_or_offset_bad(self):
         """Test transaction_id_or_offset with a bad input."""
