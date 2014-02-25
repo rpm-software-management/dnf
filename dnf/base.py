@@ -1508,25 +1508,20 @@ class Base(object):
         # after 2014-02-25 AND no sooner than in 0.4.12
         return 0
 
-    def install_groupie(self, pkg_name, inst_set, reponame=None):
+    def install_groupie(self, pkg_name, inst_set):
         """Installs a group member package by name. """
         forms = [hawkey.FORM_NAME]
         subj = dnf.subject.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
             q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
-            if reponame is not None:
-                q = q.filter(reponame=reponame)
             for pkg in q:
                 self._goal.install(pkg)
             return len(q)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack, forms=forms)
             if sltr:
-                if reponame is not None:
-                    sltr = sltr.set(reponame=reponame)
-                prev_count = self._goal.req_length()
                 self._goal.install(select=sltr)
-                return self._goal.req_length() - prev_count
+                return 1
         return 0
 
     def upgrade(self, pkg_spec, reponame=None):
