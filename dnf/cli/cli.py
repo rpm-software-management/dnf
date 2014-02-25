@@ -350,8 +350,11 @@ class BaseCli(dnf.Base):
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             elif arg.startswith('@'):
+                if reponame is not None:
+                    raise ValueError('limiting group installation to a '
+                                     'repository is not supported')
                 try:
-                    self.install_grouplist((arg[1:],), reponame)
+                    self.install_grouplist((arg[1:],))
                 except dnf.exceptions.Error:
                     pass
                 else:
@@ -1018,12 +1021,11 @@ class BaseCli(dnf.Base):
 
         return 0, []
 
-    def install_grouplist(self, grouplist, reponame=None):
+    def install_grouplist(self, grouplist):
         """Mark the packages in the given groups for installation.
 
         :param grouplist: a list of names or wildcards specifying
            groups to be installed
-        :param reponame: limit packages marking to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -1043,8 +1045,8 @@ class BaseCli(dnf.Base):
                 continue
             groups.extend(matched)
 
-        cnt = sum(self.select_group(grp, reponame=reponame) for grp in groups)
-        if not cnt:
+        total_cnt = sum(self.select_group(grp) for grp in groups)
+        if not total_cnt:
             msg = _('No packages in any requested group available '\
                     'to install or upgrade.')
             raise dnf.exceptions.Error(msg)
