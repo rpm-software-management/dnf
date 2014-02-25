@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -107,6 +107,79 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
+class _BaseStubMixin(object):
+    """A reusable class for creating `dnf.Base` stubs.
+
+    See also: hawkey/test/python/__init__.py.
+
+    Note that currently the used TestSack has always architecture set to
+    "x86_64". This is to get the same behavior when running unit tests on
+    different arches.
+
+    """
+    def __init__(self, *extra_repos):
+        super(_BaseStubMixin, self).__init__()
+        for r in extra_repos:
+            repo = MockRepo(r, None)
+            repo.enable()
+            self._repos.add(repo)
+
+        self._conf = FakeConf()
+        self._persistor = FakePersistor()
+        self._yumdb = MockYumDB()
+        self.ds_callback = mock.Mock()
+
+    @property
+    def sack(self):
+        if self._sack:
+            return self._sack
+        return self.init_sack()
+
+    def activate_persistor(self):
+        pass
+
+    def init_sack(self):
+        # Create the Sack, tell it how to build packages, passing in the Package
+        # class and a Base reference.
+        self._sack = TestSack(repo_dir(), self)
+        self._sack.load_system_repo()
+        for repo in self.repos.iter_enabled():
+            fn = "%s.repo" % repo.id
+            self._sack.load_test_repo(repo.id, fn)
+
+        self._sack.configure(self.conf.installonlypkgs)
+        self._goal = hawkey.Goal(self._sack)
+        return self._sack
+
+    def close(self):
+        pass
+
+    def mock_cli(self):
+        stream = dnf.pycomp.StringIO()
+        logger = logging.getLogger('test')
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(logging.StreamHandler(stream))
+        return mock.Mock('base', base=self, log_stream=stream, logger=logger,
+                         nogpgcheck=True)
+
+    def read_mock_comps(self, fn):
+        comps = dnf.comps.Comps()
+        comps.add_from_xml_filename(fn)
+        comps.compile(self.sack.query().installed())
+        self._comps = comps
+        return comps
+
+    def read_all_repos(self):
+        pass
+
+class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
+    """A class mocking `dnf.cli.cli.BaseCli`."""
+
+    def __init__(self, *extra_repos):
+        """Initialize the base."""
+        super(BaseCliStub, self).__init__(*extra_repos)
+        self.output.term = MockTerminal()
+
 class HistoryStub(dnf.yum.history.YumHistory):
     """Stub of dnf.yum.history.YumHistory for easier testing."""
 
@@ -194,62 +267,8 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=yumbase,
                                make_cache_dir=True)
 
-class MockBase(dnf.Base):
-    """ See also: hawkey/test/python/__init__.py.
-
-        Note that currently the used TestSack has always architecture set to
-        "x86_64". This is to get the same behavior when running unit tests on
-        different arches.
-    """
-    def __init__(self, *extra_repos):
-        super(MockBase, self).__init__()
-        for r in extra_repos:
-            repo = MockRepo(r, None)
-            repo.enable()
-            self._repos.add(repo)
-
-        self._conf = FakeConf()
-        self._persistor = FakePersistor()
-        self._yumdb = MockYumDB()
-        self.ds_callback = mock.Mock()
-
-    @property
-    def sack(self):
-        if self._sack:
-            return self._sack
-        return self.init_sack()
-
-    def activate_persistor(self):
-        pass
-
-    def init_sack(self):
-        # Create the Sack, tell it how to build packages, passing in the Package
-        # class and a Base reference.
-        self._sack = TestSack(repo_dir(), self)
-        self._sack.load_system_repo()
-        for repo in self.repos.iter_enabled():
-            fn = "%s.repo" % repo.id
-            self._sack.load_test_repo(repo.id, fn)
-
-        self._sack.configure(self.conf.installonlypkgs)
-        self._goal = hawkey.Goal(self._sack)
-        return self._sack
-
-    def close(self):
-        pass
-
-    def mock_cli(self):
-        return mock.Mock('base', base=self)
-
-    def read_mock_comps(self, fn):
-        comps = dnf.comps.Comps()
-        comps.add_from_xml_filename(fn)
-        comps.compile(self.sack.query().installed())
-        self._comps = comps
-        return comps
-
-    def read_all_repos(self):
-        pass
+class MockBase(_BaseStubMixin, dnf.Base):
+    """A class mocking `dnf.Base`."""
 
 def mock_sack(*extra_repos):
     return MockBase(*extra_repos).sack
@@ -265,6 +284,45 @@ class MockYumDB(mock.Mock):
     def assertLength(self, length):
         assert(len(self.db) == length)
 
+class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage):
+
+    """A class mocking `dnf.yum.rpmsack.RPMDBAdditionalDataPackage`."""
+
+    def __init__(self):
+        """Initialize the data."""
+        super(RPMDBAdditionalDataPackageStub, self).__init__(None, None, None)
+
+    def __iter__(self, show_hidden=False):
+        """Return a new iterator over the data."""
+        for item in self._read_cached_data:
+            yield item
+
+    def _attr2fn(self, attribute):
+        """Convert given *attribute* to a filename."""
+        raise NotImplementedError('the method is not supported')
+
+    def _delete(self, attribute):
+        """Delete the *attribute* value."""
+        try:
+            del self._read_cached_data[attribute]
+        except KeyError:
+            raise AttributeError("Cannot delete attribute %s on %s " % (attribute, self))
+
+    def _read(self, attribute):
+        """Read the *attribute* value."""
+        if attribute in self._read_cached_data:
+            return self._read_cached_data[attribute]
+        raise AttributeError("%s has no attribute %s" % (self, attribute))
+
+    def _write(self, attribute, value):
+        """Write the *attribute* value."""
+        self._auto_cache(attribute, value, None)
+
+    def clean(self):
+        """Purge out everything."""
+        for item in self.__iter__(show_hidden=True):
+            self._delete(item)
+
 # mock object taken from testbase.py in yum/test:
 class FakeConf(object):
     def __init__(self):
@@ -275,7 +333,15 @@ class FakeConf(object):
         self.color = 'never'
         self.color_update_installed = 'normal'
         self.color_update_remote = 'normal'
+        self.color_list_available_downgrade = 'dim'
         self.color_list_available_install = 'normal'
+        self.color_list_available_reinstall = 'bold'
+        self.color_list_available_upgrade = 'bold'
+        self.color_list_installed_extra = 'bold'
+        self.color_list_installed_newer = 'bold'
+        self.color_list_installed_older = 'bold'
+        self.color_list_installed_reinstall = 'normal'
+        self.color_update_local = 'bold'
         self.commands = []
         self.debug_solver = False
         self.debuglevel = 8

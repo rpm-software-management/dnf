@@ -29,7 +29,6 @@ import dnf.conf
 import dnf.repo
 import dnf.repodict
 import hawkey
-import itertools
 import os
 import unittest
 
@@ -72,72 +71,6 @@ class YumBaseCliTest(support.ResultTestCase):
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
         self._yumbase.reinstall = mock.Mock(wraps=self._yumbase.reinstall)
         self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
-
-    @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
-    def test_installPkgs(self):
-        self._yumbase.installPkgs(('lotus',))
-
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        installed, _ = self.installed_removed(self._yumbase)
-        self.assertItemsEqual(
-            installed,
-            dnf.subject.Subject('lotus.x86_64').get_best_query(self._yumbase.sack))
-
-    @mock.patch('dnf.base._', dnf.pycomp.NullTranslations().ugettext)
-    def test_installPkgs_group(self):
-        """Test installPkgs with a group."""
-        self._yumbase.installPkgs(('@Solid Ground',))
-
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.debug('Adding package pepper from group somerset'),
-                          mock.call.debug('Adding package trampoline from group somerset')])
-        installed, _ = self.installed_removed(self._yumbase)
-        self.assertItemsEqual(
-            installed,
-            dnf.subject.Subject('trampoline.noarch').get_best_query(self._yumbase.sack))
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_installPkgs_group_notfound(self):
-        """Test installPkgs with a non-existent group."""
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.installPkgs(('@non-existent',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
-
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.error('Warning: Group non-existent does not exist.')])
-        installed, _ = self.installed_removed(self._yumbase)
-        self.assertItemsEqual(installed, ())
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_installPkgs_notfound(self):
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.installPkgs(('non-existent',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
-
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
-        installed, _ = self.installed_removed(self._yumbase)
-        self.assertItemsEqual(installed, ())
-
-    def test_updatePkgs(self):
-        self._yumbase.updatePkgs(('pepper',))
-
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-        self.assertResult(self._yumbase, itertools.chain(
-            self._yumbase.sack.query().installed().filter(name__neq='pepper'),
-            self._yumbase.sack.query().upgrades().filter(name='pepper')))
-
-    def test_updatePkgs_notfound(self):
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.updatePkgs(('non-existent',))
-        self.assertEqual(str(ctx.exception), 'No packages marked for upgrade.')
-
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No match for argument: %s', 'non-existent')])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
-                         [mock.call('non-existent')])
-        self.assertResult(self._yumbase, self._yumbase.sack.query().installed())
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_erasePkgs(self):

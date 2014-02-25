@@ -39,6 +39,17 @@ class List(support.TestCase):
         ypl = yumbase.doPackageLists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
+    def test_list_installed_reponame(self):
+        """Test whether only packages installed from the repository are listed."""
+        base = support.MockBase()
+        expected = base.sack.query().installed().filter(name={'pepper', 'librita'})
+        for pkg in expected:
+            base.yumdb.db[str(pkg)] = {'from_repo': 'main'}
+
+        lists = base.doPackageLists('installed', reponame='main')
+
+        self.assertItemsEqual(lists.installed, expected)
+
     def test_list_updates(self):
         yumbase = support.MockBase("updates", "main")
         ypl = yumbase.doPackageLists('upgrades')

@@ -55,6 +55,32 @@ import time
 from functools import reduce
 from dnf.pycomp import unicode
 
+def _add_pkg_simple_list_lens(data, pkg, indent=''):
+    """ Get the length of each pkg's column. Add that to data.
+        This "knows" about simpleList and printVer. """
+    na = len(pkg.name) + 1 + len(pkg.arch) + len(indent)
+    ver = len(pkg.evr)
+    rid = len(pkg.reponame)
+    for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
+        data[d].setdefault(v, 0)
+        data[d][v] += 1
+
+def _list_cmd_calc_columns(output, ypl):
+    """ Work out the dynamic size of the columns to pass to fmtColumns. """
+    data = {'na' : {}, 'ver' : {}, 'rid' : {}}
+    for lst in (ypl.installed, ypl.available, ypl.extras,
+                ypl.updates, ypl.recent):
+        for pkg in lst:
+            _add_pkg_simple_list_lens(data, pkg)
+    if len(ypl.obsoletes) > 0:
+        for (npkg, opkg) in ypl.obsoletesTuples:
+            _add_pkg_simple_list_lens(data, npkg)
+            _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
+
+    data = [data['na'], data['ver'], data['rid']]
+    columns = output.calcColumns(data, remainder_column=1)
+    return (-columns[0], -columns[1], -columns[2])
+
 def sigquit(signum, frame):
     """SIGQUIT handler for the yum cli.  This function will print an
     error message and exit the program.
@@ -286,107 +312,40 @@ class BaseCli(dnf.Base):
                                             ", ".join(matches))
             self.logger.info(msg)
 
-    def installPkgs(self, userlist, reponame=None):
-        """Attempt to take the user specified list of packages or
-        wildcards and install them, or if they are installed, update
-        them to a newer version. If a complete version number is
-        specified, attempt to upgrade (or downgrade if they have been
-        removed) them to the specified version.
+    def check_updates(self, patterns=(), reponame=None, print_=True):
+        """Check updates matching given *patterns* in selected repository."""
+        ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
+        if self.conf.obsoletes or self.conf.verbose:
+            typl = self.returnPkgLists('obsoletes', patterns, reponame=reponame)
+            ypl.obsoletes = typl.obsoletes
+            ypl.obsoletesTuples = typl.obsoletesTuples
 
-        :param userlist: a list of names or wildcards specifying
-           packages to install
-        :param reponame: limit packages matching to the given repository
-        :return: (exit_code, [ errors ])
+        if print_:
+            columns = _list_cmd_calc_columns(self.output, ypl)
+            if len(ypl.updates) > 0:
+                local_pkgs = {}
+                highlight = self.output.term.MODE['bold']
+                if highlight:
+                    # Do the local/remote split we get in "yum updates"
+                    for po in sorted(ypl.updates):
+                        local = po.localPkg()
+                        if os.path.exists(local) and po.verifyLocalPkg():
+                            local_pkgs[(po.name, po.arch)] = po
 
-        exit_code is::
+                cul = self.conf.color_update_local
+                cur = self.conf.color_update_remote
+                self.output.listPkgs(ypl.updates, '', outputType='list',
+                              highlight_na=local_pkgs, columns=columns,
+                              highlight_modes={'=' : cul, 'not in' : cur})
+            if len(ypl.obsoletes) > 0:
+                print(_('Obsoleting Packages'))
+                # The tuple is (newPkg, oldPkg) ... so sort by new
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
 
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # get the list of available packages
-        # iterate over the user's list
-        # add packages to Transaction holding class if they match.
-        # if we've added any packages to the transaction then return 2 and a string
-        # if we've hit a snag, return 1 and the failure explanation
-        # if we've got nothing to do, return 0 and a 'nothing available to install' string
-
-        oldcount = self._goal.req_length()
-
-        done = False
-        for arg in userlist:
-            if arg.endswith('.rpm'):
-                if reponame is not None:
-                    raise ValueError('limiting file installation to a '
-                                     'repository is not supported')
-                self.install_local(arg)
-                done = True
-                continue # it was something on disk and it ended in rpm
-                         # no matter what we don't go looking at repos
-            elif arg.startswith('@'):
-                try:
-                    self.install_grouplist((arg[1:],), reponame)
-                except dnf.exceptions.Error:
-                    pass
-                else:
-                    done = True
-                continue
-            try:
-                self.install(arg, reponame)
-            except dnf.exceptions.MarkingError:
-                msg = _('No package %s%s%s available.')
-                self.logger.info(msg, self.output.term.MODE['bold'], arg,
-                                 self.output.term.MODE['normal'])
-            else:
-                done = True
-
-        if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
-
-    def updatePkgs(self, userlist, reponame=None):
-        """Take user commands and populate transaction wrapper with
-        packages to be updated.
-
-        :param userlist: a list of names or wildcards specifying
-           packages to update.  If *userlist* is an empty list, yum
-           will perform a global update
-        :param reponame: limit packages matching to the given repository
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # if there is no userlist, then do global update below
-        # this is probably 90% of the calls
-        # if there is a userlist then it's for updating pkgs, not obsoleting
-
-        oldcount = self._goal.req_length()
-        if len(userlist) == 0: # simple case - do them all
-            self.upgrade_all(reponame)
-
-        else:
-            # go through the userlist - look for items that are local rpms. If we find them
-            # pass them off to installLocal() and then move on
-            for item in userlist:
-                if item.endswith('.rpm'):
-                    if reponame is not None:
-                        raise ValueError('limiting file upgrading to a '
-                                         'repository is not supported')
-                    self.update_local(item)
-                    continue
-
-                try:
-                    self.upgrade(item, reponame)
-                except dnf.exceptions.MarkingError:
-                    self.logger.info(_('No match for argument: %s'), unicode(item))
-                    self._checkMaybeYouMeant(item)
-
-        cnt = self._goal.req_length() - oldcount
-        if cnt <= 0 and not self._goal.req_has_upgrade_all():
-            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+        return ypl.updates or ypl.obsoletes
 
     def upgrade_userlist_to(self, userlist, reponame=None):
         oldcount = self._goal.req_length()
@@ -536,6 +495,93 @@ class BaseCli(dnf.Base):
 
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
+
+    def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
+        """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""
+        try:
+            highlight = self.output.term.MODE['bold']
+            ypl = self.returnPkgLists(
+                pkgnarrow, patterns, installed_available=highlight, reponame=reponame)
+        except dnf.exceptions.Error as e:
+            return 1, [str(e)]
+        else:
+            update_pkgs = {}
+            inst_pkgs = {}
+            local_pkgs = {}
+
+            columns = None
+            if basecmd == 'list':
+                # Dynamically size the columns
+                columns = _list_cmd_calc_columns(self.output, ypl)
+
+            if highlight and ypl.installed:
+                #  If we have installed and available lists, then do the
+                # highlighting for the installed packages so you can see what's
+                # available to update, an extra, or newer than what we have.
+                for pkg in (ypl.hidden_available +
+                            ypl.reinstall_available +
+                            ypl.old_available):
+                    key = (pkg.name, pkg.arch)
+                    if key not in update_pkgs or pkg > update_pkgs[key]:
+                        update_pkgs[key] = pkg
+
+            if highlight and ypl.available:
+                #  If we have installed and available lists, then do the
+                # highlighting for the available packages so you can see what's
+                # available to install vs. update vs. old.
+                for pkg in ypl.hidden_installed:
+                    key = (pkg.name, pkg.arch)
+                    if key not in inst_pkgs or pkg > inst_pkgs[key]:
+                        inst_pkgs[key] = pkg
+
+            if highlight and ypl.updates:
+                # Do the local/remote split we get in "yum updates"
+                for po in sorted(ypl.updates):
+                    if po.reponame != hawkey.SYSTEM_REPO_NAME:
+                        local_pkgs[(po.name, po.arch)] = po
+
+            # Output the packages:
+            clio = self.conf.color_list_installed_older
+            clin = self.conf.color_list_installed_newer
+            clir = self.conf.color_list_installed_reinstall
+            clie = self.conf.color_list_installed_extra
+            rip = self.output.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
+                                highlight_na=update_pkgs, columns=columns,
+                                highlight_modes={'>' : clio, '<' : clin,
+                                                 '=' : clir, 'not in' : clie})
+            clau = self.conf.color_list_available_upgrade
+            clad = self.conf.color_list_available_downgrade
+            clar = self.conf.color_list_available_reinstall
+            clai = self.conf.color_list_available_install
+            rap = self.output.listPkgs(ypl.available, _('Available Packages'), basecmd,
+                                highlight_na=inst_pkgs, columns=columns,
+                                highlight_modes={'<' : clau, '>' : clad,
+                                                 '=' : clar, 'not in' : clai})
+            rep = self.output.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
+                                columns=columns)
+            cul = self.conf.color_update_local
+            cur = self.conf.color_update_remote
+            rup = self.output.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
+                                highlight_na=local_pkgs, columns=columns,
+                                highlight_modes={'=' : cul, 'not in' : cur})
+
+            # XXX put this into the ListCommand at some point
+            if len(ypl.obsoletes) > 0 and basecmd == 'list':
+            # if we've looked up obsolete lists and it's a list request
+                rop = [0, '']
+                print(_('Obsoleting Packages'))
+                for obtup in sorted(ypl.obsoletesTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.updatesObsoletesList(obtup, 'obsoletes',
+                                                     columns=columns)
+            else:
+                rop = self.output.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
+                                    basecmd, columns=columns)
+            rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
+                                 basecmd, columns=columns)
+            if len(patterns) and \
+               rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
+                raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def returnPkgLists(self, pkgnarrow='all', patterns=None,
                        installed_available=False, reponame=None):
@@ -870,12 +916,11 @@ class BaseCli(dnf.Base):
 
         return 0, []
 
-    def install_grouplist(self, grouplist, reponame=None):
+    def install_grouplist(self, grouplist):
         """Mark the packages in the given groups for installation.
 
         :param grouplist: a list of names or wildcards specifying
            groups to be installed
-        :param reponame: limit packages marking to the given repository
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -895,8 +940,8 @@ class BaseCli(dnf.Base):
                 continue
             groups.extend(matched)
 
-        cnt = sum(self.select_group(grp, reponame=reponame) for grp in groups)
-        if not cnt:
+        total_cnt = sum(self.select_group(grp) for grp in groups)
+        if not total_cnt:
             msg = _('No packages in any requested group available '\
                     'to install or upgrade.')
             raise dnf.exceptions.Error(msg)

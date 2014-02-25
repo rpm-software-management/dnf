@@ -38,7 +38,6 @@ from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
 
 import dnf.cli
 import dnf.yum.config
-import hawkey
 
 _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'
@@ -293,20 +292,50 @@ class InstallCommand(Command):
         checkPackageArg(self.cli, basecmd, extcmds)
         checkEnabledRepo(self.base, extcmds)
 
-    def install_patterns(self, patterns, reponame=None):
-        """Install packages and groups matching *patterns* in selected repository."""
-        if any(pattern.startswith('@') for pattern in patterns):
-            self.base.read_comps()
-        self.base.installPkgs(patterns, reponame)
-
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
-        return extcmds
+        pkg_specs, grp_specs, filenames = [], [], []
+        for argument in extcmds:
+            if argument.endswith('.rpm'):
+                filenames.append(argument)
+            elif argument.startswith('@'):
+                grp_specs.append(argument[1:])
+            else:
+                pkg_specs.append(argument)
+        return pkg_specs, grp_specs, filenames
 
     def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        self.install_patterns(patterns)
+        pkg_specs, grp_specs, filenames = self.parse_extcmds(extcmds)
+
+        # Install files.
+        results = map(self.base.install_local, filenames)
+        done = functools.reduce(operator.or_, results, False)
+
+        # Install groups.
+        if grp_specs:
+            self.base.read_comps()
+            try:
+                self.base.install_grouplist(grp_specs)
+            except dnf.exceptions.Error:
+                pass
+            else:
+                done = True
+
+        # Install packages.
+        for pkg_spec in pkg_specs:
+            try:
+                self.base.install(pkg_spec)
+            except dnf.exceptions.MarkingError:
+                msg = _('No package %s%s%s available.')
+                self.base.logger.info(
+                    msg, self.base.output.term.MODE['bold'], pkg_spec,
+                    self.base.output.term.MODE['normal'])
+            else:
+                done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('Nothing to do.'))
 
 class UpgradeCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -348,15 +377,39 @@ class UpgradeCommand(Command):
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
-        return extcmds
+        pkg_specs, filenames = [], []
+        for argument in extcmds:
+            if argument.endswith('.rpm'):
+                filenames.append(argument)
+            else:
+                pkg_specs.append(argument)
+        return pkg_specs, filenames
 
     def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        return self.upgrade_patterns(patterns)
+        pkg_specs, filenames = self.parse_extcmds(extcmds)
 
-    def upgrade_patterns(self, patterns, reponame=None):
-        """Upgrade packages matching *patterns* in selected repository."""
-        self.base.updatePkgs(patterns, reponame)
+        if not pkg_specs and not filenames:
+            # Update all packages.
+            self.base.upgrade_all()
+            done = True
+        else:
+            # Update files.
+            results = map(self.base.update_local, filenames)
+            done = functools.reduce(operator.or_, results, False)
+
+            # Update packages.
+            for pkg_spec in pkg_specs:
+                try:
+                    self.base.upgrade(pkg_spec)
+                except dnf.exceptions.MarkingError:
+                    self.base.logger.info(_('No match for argument: %s'),
+                                          dnf.pycomp.unicode(pkg_spec))
+                    self.base._checkMaybeYouMeant(pkg_spec)
+                else:
+                    done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
 class UpgradeToCommand(Command):
     """ A class containing methods needed by the cli to execute the upgrade-to
@@ -387,11 +440,7 @@ class UpgradeToCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        return self.upgrade_to_patterns(patterns)
-
-    def upgrade_to_patterns(self, patterns, reponame=None):
-        """Upgrade to packages matching *patterns* in selected repository."""
-        self.base.upgrade_userlist_to(patterns, reponame)
+        return self.base.upgrade_userlist_to(patterns)
 
 class DistroSyncCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -436,32 +485,6 @@ class DistroSyncCommand(Command):
     def run(self, extcmds):
         return self.base.distro_sync_userlist(extcmds)
 
-def _add_pkg_simple_list_lens(data, pkg, indent=''):
-    """ Get the length of each pkg's column. Add that to data.
-        This "knows" about simpleList and printVer. """
-    na  = len(pkg.name) + 1 + len(pkg.arch) + len(indent)
-    ver = len(pkg.evr)
-    rid = len(pkg.reponame)
-    for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
-        data[d].setdefault(v, 0)
-        data[d][v] += 1
-
-def _list_cmd_calc_columns(output, ypl):
-    """ Work out the dynamic size of the columns to pass to fmtColumns. """
-    data = {'na' : {}, 'ver' : {}, 'rid' : {}}
-    for lst in (ypl.installed, ypl.available, ypl.extras,
-                ypl.updates, ypl.recent):
-        for pkg in lst:
-            _add_pkg_simple_list_lens(data, pkg)
-    if len(ypl.obsoletes) > 0:
-        for (npkg, opkg) in ypl.obsoletesTuples:
-            _add_pkg_simple_list_lens(data, npkg)
-            _add_pkg_simple_list_lens(data, opkg, indent=" " * 4)
-
-    data = [data['na'], data['ver'], data['rid']]
-    columns = output.calcColumns(data, remainder_column=1)
-    return (-columns[0], -columns[1], -columns[2])
-
 class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.
@@ -469,92 +492,6 @@ class InfoCommand(Command):
 
     aliases = ('info',)
     activate_sack = True
-
-    def _print_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
-        try:
-            highlight = self.output.term.MODE['bold']
-            ypl = self.base.returnPkgLists(
-                pkgnarrow, patterns, installed_available=highlight, reponame=reponame)
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
-        else:
-            update_pkgs = {}
-            inst_pkgs   = {}
-            local_pkgs  = {}
-
-            columns = None
-            if basecmd == 'list':
-                # Dynamically size the columns
-                columns = _list_cmd_calc_columns(self.output, ypl)
-
-            if highlight and ypl.installed:
-                #  If we have installed and available lists, then do the
-                # highlighting for the installed packages so you can see what's
-                # available to update, an extra, or newer than what we have.
-                for pkg in (ypl.hidden_available +
-                            ypl.reinstall_available +
-                            ypl.old_available):
-                    key = (pkg.name, pkg.arch)
-                    if key not in update_pkgs or pkg > update_pkgs[key]:
-                        update_pkgs[key] = pkg
-
-            if highlight and ypl.available:
-                #  If we have installed and available lists, then do the
-                # highlighting for the available packages so you can see what's
-                # available to install vs. update vs. old.
-                for pkg in ypl.hidden_installed:
-                    key = (pkg.name, pkg.arch)
-                    if key not in inst_pkgs or pkg > inst_pkgs[key]:
-                        inst_pkgs[key] = pkg
-
-            if highlight and ypl.updates:
-                # Do the local/remote split we get in "yum updates"
-                for po in sorted(ypl.updates):
-                    if po.reponame != hawkey.SYSTEM_REPO_NAME:
-                        local_pkgs[(po.name, po.arch)] = po
-
-            # Output the packages:
-            clio = self.base.conf.color_list_installed_older
-            clin = self.base.conf.color_list_installed_newer
-            clir = self.base.conf.color_list_installed_reinstall
-            clie = self.base.conf.color_list_installed_extra
-            rip = self.output.listPkgs(ypl.installed, _('Installed Packages'), basecmd,
-                                highlight_na=update_pkgs, columns=columns,
-                                highlight_modes={'>' : clio, '<' : clin,
-                                                 '=' : clir, 'not in' : clie})
-            clau = self.base.conf.color_list_available_upgrade
-            clad = self.base.conf.color_list_available_downgrade
-            clar = self.base.conf.color_list_available_reinstall
-            clai = self.base.conf.color_list_available_install
-            rap = self.output.listPkgs(ypl.available, _('Available Packages'), basecmd,
-                                highlight_na=inst_pkgs, columns=columns,
-                                highlight_modes={'<' : clau, '>' : clad,
-                                                 '=' : clar, 'not in' : clai})
-            rep = self.output.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
-                                columns=columns)
-            cul = self.base.conf.color_update_local
-            cur = self.base.conf.color_update_remote
-            rup = self.output.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
-                                highlight_na=local_pkgs, columns=columns,
-                                highlight_modes={'=' : cul, 'not in' : cur})
-
-            # XXX put this into the ListCommand at some point
-            if len(ypl.obsoletes) > 0 and basecmd == 'list':
-            # if we've looked up obsolete lists and it's a list request
-                rop = [0, '']
-                print(_('Obsoleting Packages'))
-                for obtup in sorted(ypl.obsoletesTuples,
-                                    key=operator.itemgetter(0)):
-                    self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                     columns=columns)
-            else:
-                rop = self.output.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
-                                    basecmd, columns=columns)
-            rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
-                                 basecmd, columns=columns)
-            if len(patterns) and \
-               rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
-                raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     @staticmethod
     def get_usage():
@@ -588,13 +525,9 @@ class InfoCommand(Command):
         else:
             return DEFAULT_PKGNARROW, extcmds
 
-    def print_packages(self, pkgnarrow='all', patterns=(), reponame=None):
-        """Print packages matching given *patterns* in selected repository."""
-        self._print_packages('info', pkgnarrow, patterns, reponame)
-
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages(pkgnarrow, patterns)
+        return self.base.output_packages('info', pkgnarrow, patterns)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -612,13 +545,9 @@ class ListCommand(InfoCommand):
         """
         return _("List a package or groups of packages")
 
-    def print_packages(self, pkgnarrow='all', patterns=(), reponame=None):
-        """Print packages matching given *patterns* in selected repository."""
-        self._print_packages('list', pkgnarrow, patterns, reponame)
-
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
-        return self.print_packages(pkgnarrow, patterns)
+        return self.base.output_packages('list', pkgnarrow, patterns)
 
 class EraseCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -955,41 +884,6 @@ class CheckUpdateCommand(Command):
         super(CheckUpdateCommand, self).__init__(cli)
         self._success_retval = 0
 
-    def check_updates(self, patterns=(), reponame=None, print_=True):
-        """Check updates matching given *patterns* in selected repository."""
-        ypl = self.base.returnPkgLists('upgrades', patterns, reponame=reponame)
-        if self.base.conf.obsoletes or self.base.conf.verbose:
-            typl = self.base.returnPkgLists('obsoletes', patterns, reponame=reponame)
-            ypl.obsoletes = typl.obsoletes
-            ypl.obsoletesTuples = typl.obsoletesTuples
-
-        if print_:
-            columns = _list_cmd_calc_columns(self.output, ypl)
-            if len(ypl.updates) > 0:
-                local_pkgs = {}
-                highlight = self.output.term.MODE['bold']
-                if highlight:
-                    # Do the local/remote split we get in "yum updates"
-                    for po in sorted(ypl.updates):
-                        local = po.localPkg()
-                        if os.path.exists(local) and po.verifyLocalPkg():
-                            local_pkgs[(po.name, po.arch)] = po
-
-                cul = self.base.conf.color_update_local
-                cur = self.base.conf.color_update_remote
-                self.output.listPkgs(ypl.updates, '', outputType='list',
-                              highlight_na=local_pkgs, columns=columns,
-                              highlight_modes={'=' : cul, 'not in' : cur})
-            if len(ypl.obsoletes) > 0:
-                print(_('Obsoleting Packages'))
-                # The tuple is (newPkg, oldPkg) ... so sort by new
-                for obtup in sorted(ypl.obsoletesTuples,
-                                    key=operator.itemgetter(0)):
-                    self.output.updatesObsoletesList(obtup, 'obsoletes',
-                                                     columns=columns)
-
-        return ypl.updates or ypl.obsoletes
-
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
         run; namely that there is at least one enabled repository.
@@ -1006,7 +900,7 @@ class CheckUpdateCommand(Command):
 
     def run(self, extcmds):
         patterns = self.parse_extcmds(extcmds)
-        found = self.check_updates(patterns, print_=True)
+        found = self.base.check_updates(patterns, print_=True)
         if found:
             self._success_retval = 100
 
@@ -1337,28 +1231,260 @@ class RepoListCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
-    CHECK_UPDATE_SUBCMD_NAME = 'check-update'
+    class CheckUpdateSubCommand(object):
+        """Implementation of the info sub-command."""
 
-    INFO_SUBCMD_NAME = 'info'
+        activate_sack = True
 
-    INSTALL_SUBCMD_NAME = 'install'
+        alias = 'check-update'
 
-    LIST_SUBCMD_NAME = 'list'
+        resolve = Command.resolve
 
-    UPGRADE_SUBCMD_NAME = 'upgrade'
+        writes_rpmdb = Command.writes_rpmdb
 
-    UPGRADE_TO_SUBCMD_NAME = 'upgrade-to'
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.base = cli.base
+            self.success_retval = Command.success_retval
 
-    SUBCMD_NAME2CLS = {CHECK_UPDATE_SUBCMD_NAME: CheckUpdateCommand,
-                       INFO_SUBCMD_NAME: InfoCommand,
-                       INSTALL_SUBCMD_NAME: InstallCommand,
-                       LIST_SUBCMD_NAME: ListCommand,
-                       UPGRADE_SUBCMD_NAME: UpgradeCommand,
-                       UPGRADE_TO_SUBCMD_NAME: UpgradeToCommand}
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            patterns = self.parse_arguments(cli_args)
+            found = self.base.check_updates(patterns, reponame, print_=True)
+            if found:
+                self.success_retval = 100
+
+    class InfoSubCommand(object):
+        """Implementation of the info sub-command."""
+
+        activate_sack = True
+
+        alias = 'info'
+
+        resolve = Command.resolve
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = Command.writes_rpmdb
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.base = cli.base
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            DEFAULT_PKGNARROW = 'all'
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                          'extras', 'obsoletes', 'recent', 'upgrades'}
+            if not cli_args or cli_args[0] not in pkgnarrows:
+                return DEFAULT_PKGNARROW, cli_args
+            else:
+                return cli_args[0], cli_args[1:]
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkgnarrow, patterns = self.parse_arguments(cli_args)
+            self.base.output_packages('info', pkgnarrow, patterns, reponame)
+
+    class InstallSubCommand(object):
+        """Implementation of the install sub-command."""
+
+        activate_sack = True
+
+        alias = 'install'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Install all packages.
+                try:
+                    self.cli.base.install('*', reponame)
+                except dnf.exceptions.MarkingError:
+                    self.cli.base.logger.info(_('No package available.'))
+                else:
+                    done = True
+            else:
+                # Install packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.cli.base.install(pkg_spec, reponame)
+                    except dnf.exceptions.MarkingError:
+                        msg = _('No package %s%s%s available.')
+                        self.cli.base.logger.info(
+                            msg, self.cli.base.output.term.MODE['bold'],
+                            pkg_spec, self.cli.base.output.term.MODE['normal'])
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+
+    class ListSubCommand(object):
+        """Implementation of the list sub-command."""
+
+        activate_sack = True
+
+        alias = 'list'
+
+        resolve = Command.resolve
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = Command.writes_rpmdb
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.base = cli.base
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            DEFAULT_PKGNARROW = 'all'
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                          'extras', 'obsoletes', 'recent', 'upgrades'}
+            if not cli_args or cli_args[0] not in pkgnarrows:
+                return DEFAULT_PKGNARROW, cli_args
+            else:
+                return cli_args[0], cli_args[1:]
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkgnarrow, patterns = self.parse_arguments(cli_args)
+            self.base.output_packages('list', pkgnarrow, patterns, reponame)
+
+    class UpgradeSubCommand(object):
+        """Implementation of the upgrade sub-command."""
+
+        activate_sack = True
+
+        alias = 'upgrade'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Update all packages.
+                self.cli.base.upgrade_all(reponame)
+                done = True
+            else:
+                # Update packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.cli.base.upgrade(pkg_spec, reponame)
+                    except dnf.exceptions.MarkingError:
+                        self.cli.base.logger.info(
+                            _('No match for argument: %s'),
+                            dnf.pycomp.unicode(pkg_spec))
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+
+    class UpgradeToSubCommand(object):
+        """Implementation of the upgrade-to sub-command."""
+
+        activate_sack = True
+
+        alias = 'upgrade-to'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+            try:
+                self.parse_arguments(cli_args)
+            except ValueError:
+                self.cli.logger.critical(
+                    _('Error: Requires at least one package specification'))
+                raise dnf.cli.CliError('a package specification required')
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            if not cli_args:
+                raise ValueError('at least one argument must be given')
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+            self.cli.base.upgrade_userlist_to(pkg_specs, reponame)
+
+    SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
+               ListSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
 
     activate_sack = functools.reduce(
-        operator.or_,
-        (class_.activate_sack for class_ in SUBCMD_NAME2CLS.values()),
+        operator.or_, (subcmd.activate_sack for subcmd in SUBCMDS),
         Command.activate_sack)
 
     aliases = ('repository-packages',
@@ -1368,7 +1494,7 @@ class RepoPkgsCommand(Command):
         """Initialize the command."""
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
-            key: class_(cli) for key, class_ in self.SUBCMD_NAME2CLS.items()}
+            subcmd.alias: subcmd(cli) for subcmd in self.SUBCMDS}
         self._resolve = super(RepoPkgsCommand, self).resolve
         self._success_retval = super(RepoPkgsCommand, self).success_retval
         self._writes_rpmdb = super(RepoPkgsCommand, self).writes_rpmdb
@@ -1389,8 +1515,6 @@ class RepoPkgsCommand(Command):
         # TODO: replace with ``repo, subcmd, *subargs = extcmds`` after
         # switching to Python 3.
         (repo, subcmd), subargs = extcmds[:2], extcmds[2:]
-        if subcmd == cls.INSTALL_SUBCMD_NAME and not subargs:
-            subargs = ['*']
         return repo, subcmd, subargs
 
     def doCheck(self, basecmd, extcmds):
@@ -1401,7 +1525,7 @@ class RepoPkgsCommand(Command):
 
         # Check command arguments.
         try:
-            _repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
+            repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
         except ValueError:
             self.cli.logger.critical(
                 _('Error: Requires a repo ID and a sub-command'))
@@ -1420,17 +1544,11 @@ class RepoPkgsCommand(Command):
             raise dnf.cli.CliError('invalid sub-command')
 
         # Check sub-command.
-        if subcmd_name == self.INSTALL_SUBCMD_NAME:
-            if any(arg.endswith('.rpm') for arg in subargs):
-                self.cli.logger.critical(
-                    _('Error: installation of RPM paths is not supported'))
-                raise dnf.cli.CliError('installation of RPM paths is not supported')
-        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
-            if any(arg.endswith('.rpm') for arg in subargs):
-                self.cli.logger.critical(
-                    _('Error: upgrade of RPM paths is not supported'))
-                raise dnf.cli.CliError('upgrade of RPM paths is not supported')
-        subcmd_obj.doCheck(subcmd_obj.aliases[0], subargs)
+        try:
+            subcmd_obj.check(repo, subargs)
+        except dnf.cli.CliError:
+            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            raise
 
     @property
     def resolve(self):
@@ -1438,28 +1556,14 @@ class RepoPkgsCommand(Command):
 
     def run(self, extcmds):
         """Execute the command with respect to given arguments *extcmds*."""
-        self.doCheck(self.aliases[0], extcmds)
+        self.doCheck(self.base.basecmd, extcmds)
 
         repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
-        subcmd_obj = self._subcmd_name2obj[subcmd_name]
 
-        if subcmd_name == self.CHECK_UPDATE_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            found = subcmd_obj.check_updates(patterns, repo, print_=True)
-            if found:
-                self._success_retval = 100
-        elif subcmd_name in {self.INFO_SUBCMD_NAME, self.LIST_SUBCMD_NAME}:
-            pkgnarrow, patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.print_packages(pkgnarrow, patterns, reponame=repo)
-        elif subcmd_name == self.INSTALL_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.install_patterns(patterns, reponame=repo)
-        elif subcmd_name == self.UPGRADE_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.upgrade_patterns(patterns, reponame=repo)
-        elif subcmd_name == self.UPGRADE_TO_SUBCMD_NAME:
-            patterns = subcmd_obj.parse_extcmds(subargs)
-            subcmd_obj.upgrade_to_patterns(patterns, reponame=repo)
+        subcmd_obj = self._subcmd_name2obj[subcmd_name]
+        subcmd_obj.run(repo, subargs)
+
+        self._success_retval = subcmd_obj.success_retval
         self._resolve = subcmd_obj.resolve
         self._writes_rpmdb = subcmd_obj.writes_rpmdb
 
