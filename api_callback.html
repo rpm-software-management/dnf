@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Progress Reporting with Callbacks &mdash; DNF 0.4.15-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.4.15-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.4.15-1 documentation" href="index.html" />
+    <link rel="up" title="DNF API Reference" href="api.html" />
+    <link rel="next" title="Command Line Interface Hooks" href="api_cli.html" />
+    <link rel="prev" title="Plugin Interface" href="api_plugins.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_cli.html" title="Command Line Interface Hooks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api_plugins.html" title="Plugin Interface"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-dnf.callback">
+<span id="progress-reporting-with-callbacks"></span><h1>Progress Reporting with Callbacks<a class="headerlink" href="#module-dnf.callback" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dnf.callback.Payload">
+<em class="property">class </em><tt class="descclassname">dnf.callback.</tt><tt class="descname">Payload</tt><a class="headerlink" href="#dnf.callback.Payload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents one item (file) from the download batch.</p>
+<dl class="method">
+<dt id="dnf.callback.Payload.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.callback.Payload.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provide concise, human-readable representation of this Payload.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.callback.Payload.download_size">
+<tt class="descname">download_size</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.callback.Payload.download_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Total size of this Payload when transferred (e.g. over network).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="dnf.callback.DownloadProgress">
+<em class="property">class </em><tt class="descclassname">dnf.callback.</tt><tt class="descname">DownloadProgress</tt><a class="headerlink" href="#dnf.callback.DownloadProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class providing callbacks to receive information about an ongoing download.</p>
+<dl class="method">
+<dt id="dnf.callback.DownloadProgress.end">
+<tt class="descname">end</tt><big>(</big><em>payload</em>, <em>status</em>, <em>msg</em><big>)</big><a class="headerlink" href="#dnf.callback.DownloadProgress.end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report finished download of a <cite>payload</cite>, <a class="reference internal" href="#dnf.callback.Payload" title="dnf.callback.Payload"><tt class="xref py py-class docutils literal"><span class="pre">Payload</span></tt></a> instance. <cite>status</cite> is a constant with the following meaning:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><cite>status</cite> value</th>
+<th class="head">meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>STATUS_OK</td>
+<td>Download finished successfully.</td>
+</tr>
+<tr class="row-odd"><td>STATUS_DRPM</td>
+<td>DRPM rebuilt successfully.</td>
+</tr>
+<tr class="row-even"><td>STATUS_ALREADY_EXISTS</td>
+<td>Download skipped because the local file already exists.</td>
+</tr>
+<tr class="row-odd"><td>STATUS_MIRROR</td>
+<td>Download failed on the current mirror, will try to use
+next mirror in the list.</td>
+</tr>
+<tr class="row-even"><td>STATUS_FAILED</td>
+<td>Download failed because of another error.</td>
+</tr>
+</tbody>
+</table>
+<p><cite>msg</cite> is a an optional string error message further explaining the <cite>status</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.callback.DownloadProgress.progress">
+<tt class="descname">progress</tt><big>(</big><em>payload</em>, <em>done</em><big>)</big><a class="headerlink" href="#dnf.callback.DownloadProgress.progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report ongoing progress on the given <cite>payload</cite>. <cite>done</cite> is the number of bytes already downloaded from <cite>payload</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.callback.DownloadProgress.start">
+<tt class="descname">start</tt><big>(</big><em>total_files</em>, <em>total_size</em><big>)</big><a class="headerlink" href="#dnf.callback.DownloadProgress.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Report start of a download batch. <cite>total_files</cite> is the total number of payloads in the batch. <cite>total_size</cite> is the total number of bytes to be downloaded.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api_plugins.html"
+                        title="previous chapter">Plugin Interface</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="api_cli.html"
+                        title="next chapter">Command Line Interface Hooks</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/api_callback.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="api_cli.html" title="Command Line Interface Hooks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api_plugins.html" title="Plugin Interface"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.4.15-1 documentation</a> &raquo;</li>
+          <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2013, Red Hat.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
