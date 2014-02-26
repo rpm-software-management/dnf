@@ -466,5 +466,9 @@
     [
         1066743, 
         "[doc] `dnf clean` should function or warn when run as normal user"
+    ], 
+    [
+        1069996, 
+        "[abrt] dnf: repo.py:312:start:AttributeError: 'NoneType' object has no attribute 'start'"
     ]
 ]
