@@ -1,4 +1,4 @@
-%global gitrev a0828fa
+%global gitrev 2f8923e
 %global hawkey_version 0.4.11
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -131,6 +131,30 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Wed Feb 26 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.16-1
+- fix: ensure MDPayload always has a valid progress attribute. (RhBug:1069996) (Ales Kozumplik)
+- refactor: Move repo-pkgs upgrade-to to a standalone class instead of reusing the UpgradeToCommand. (Radek Holy)
+- remove: BaseCli.updatePkgs (Radek Holy)
+- refactor: Remove the reference to updatePkgs from UpgradeSubCommand. (Radek Holy)
+- refactor: Remove the reference to updatePkgs from UpgradeCommand. (Radek Holy)
+- refactor: Move repo-pkgs upgrade to a standalone class instead of reusing the UpgradeCommand. (Radek Holy)
+- remove: BaseCli.installPkgs (Radek Holy)
+- refactor: Remove the reference to installPkgs from InstallSubCommand. (Radek Holy)
+- refactor: Remove the reference to installPkgs from InstallCommand. (Radek Holy)
+- refactor: Move repo-pkgs install to a standalone class instead of reusing the InstallCommand. (Radek Holy)
+- Revert "Support filtering by repository name in install_groupie." (Radek Holy)
+- Revert "Support filtering by repository name in Base.select_group." (Radek Holy)
+- Drop group filtering by repository name from installPkgs. (Radek Holy)
+- Drop "repo-pkgs install @Group" support. (Radek Holy)
+- refactor: Move CheckUpdateCommand.check_updates to BaseCli. (Radek Holy)
+- refactor: Move repo-pkgs check-update to a standalone class instead of reusing the CheckUpdateCommand. (Radek Holy)
+- refactor: Move repo-pkgs list to a standalone class instead of reusing the ListCommand. (Radek Holy)
+- tests: Add tests of repo-pkgs info against the documentation. (Radek Holy)
+- Fix "repo-pkgs info installed" behavior with respect to the documentation. (Radek Holy)
+- refactor: Move MockBase methods to BaseStubMixin. (Radek Holy)
+- refactor: Move repo-pkgs info to a standalone class instead of reusing the InfoCommand. (Radek Holy)
+- refactor: Move InfoCommand._print_packages to BaseCli.output_packages. (Radek Holy)
 
 * Mon Feb 24 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.15-1
 - refactor: Payload makes more sense to live in dnf.callback. (Ales Kozumplik)
