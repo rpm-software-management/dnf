@@ -1390,6 +1390,79 @@ class RepoPkgsCommand(Command):
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('list', pkgnarrow, patterns, reponame)
 
+    class MoveToSubCommand(object):
+        """Implementation of the move-to sub-command."""
+
+        activate_sack = True
+
+        alias = 'move-to'
+
+        resolve = True
+
+        success_retval = Command.success_retval
+
+        writes_rpmdb = True
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.cli = cli
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            checkGPGKey(self.cli.base, self.cli)
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Reinstall all packages.
+                try:
+                    self.cli.base.reinstall('*', new_reponame=reponame)
+                except dnf.exceptions.PackagesNotInstalledError:
+                    self.cli.base.logger.info(_('No package installed.'))
+                except dnf.exceptions.PackagesNotAvailableError:
+                    self.cli.base.logger.info(_('No package available.'))
+                except dnf.exceptions.MarkingError:
+                    assert False, 'Only the above marking errors are expected.'
+                else:
+                    done = True
+            else:
+                # Reinstall packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.cli.base.reinstall(pkg_spec, new_reponame=reponame)
+                    except dnf.exceptions.PackagesNotInstalledError:
+                        msg = _('No match for argument: %s')
+                        self.cli.base.logger.info(
+                            msg, dnf.pycomp.unicode(pkg_spec))
+                        self.cli.base._checkMaybeYouMeant(
+                            pkg_spec, always_output=False)
+                    except dnf.exceptions.PackagesNotAvailableError as err:
+                        for pkg in err.packages:
+                            xmsg = ''
+                            yumdb_info = self.cli.base.yumdb.get_package(pkg)
+                            if 'from_repo' in yumdb_info:
+                                xmsg = _(' (from %s)') % yumdb_info.from_repo
+                            msg = _('Installed package %s%s%s%s not available.')
+                            self.cli.base.logger.info(
+                                msg, self.cli.base.output.term.MODE['bold'], pkg,
+                                self.cli.base.output.term.MODE['normal'], xmsg)
+                    except dnf.exceptions.MarkingError:
+                        assert False, 'Only the above marking errors are expected.'
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+
     class ReinstallOldSubCommand(object):
         """Implementation of the reinstall-old sub-command."""
 
@@ -1555,8 +1628,8 @@ class RepoPkgsCommand(Command):
             self.cli.base.upgrade_userlist_to(pkg_specs, reponame)
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
-               ListSubCommand, ReinstallOldSubCommand, UpgradeSubCommand,
-               UpgradeToSubCommand}
+               ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
+               UpgradeSubCommand, UpgradeToSubCommand}
 
     activate_sack = functools.reduce(
         operator.or_, (subcmd.activate_sack for subcmd in SUBCMDS),
@@ -1577,8 +1650,8 @@ class RepoPkgsCommand(Command):
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|install|list|reinstall-old|upgrade|'
-                 'upgrade-to [ARG...]')
+        return _('REPO check-update|info|install|list|move-to|reinstall-old|'
+                 'upgrade|upgrade-to [ARG...]')
 
     @staticmethod
     def get_summary():

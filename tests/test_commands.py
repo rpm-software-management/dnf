@@ -545,6 +545,27 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
               base.sack.query().available().filter(reponame='third_party',
                                                    arch='x86_64')))
 
+class RepoPkgsMoveToSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.MoveToSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsMoveToSubCommandTest, self).setUp()
+        base = support.BaseCliStub('distro', 'main')
+        base.init_sack()
+        self.cmd = dnf.cli.commands.RepoPkgsCommand.MoveToSubCommand(
+                       base.mock_cli())
+
+    def test_all(self):
+        """Test whether only packages in the repository are installed."""
+        self.cmd.run('distro', [])
+
+        base = self.cmd.cli.base
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed().filter(name__neq='tour'),
+              dnf.subject.Subject('tour-5-0').get_best_query(base.sack).available()))
+
 class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand`` class."""
