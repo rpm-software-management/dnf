@@ -1672,11 +1672,19 @@ class Base(object):
         self._goal.install(po)
         return 1
 
-    def reinstall(self, pkg_spec):
+    def reinstall(self, pkg_spec, new_reponame=None, old_reponame=None):
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
-        installed_pkgs = q.installed().run()
-        available_nevra2pkg = query.per_nevra_dict(q.available())
+        installed_pkgs = [
+            pkg for pkg in q.installed()
+            if old_reponame is None or
+               self.yumdb.get_package(pkg).get('from_repo') == old_reponame]
+
+        available_q = q.available()
+        if new_reponame is not None:
+            available_q = available_q.filter(reponame=new_reponame)
+        available_nevra2pkg = query.per_nevra_dict(available_q)
+
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
                 'no package matched', pkg_spec, available_nevra2pkg.values())

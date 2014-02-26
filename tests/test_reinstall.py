@@ -38,6 +38,22 @@ class Reinstall(support.ResultTestCase):
         cnt = self.base.reinstall_local(support.TOUR_50_PKG_PATH)
         self.assertEqual(cnt, 1)
 
+    def test_reinstall_new_reponame_available(self):
+        """Test whether it installs packages only from the repository."""
+        reinstalled_count = self.base.reinstall('librita', new_reponame='main')
+
+        self.assertEqual(reinstalled_count, 1)
+        self.assertResult(self.base, itertools.chain(
+            self.sack.query().installed().filter(name__neq='librita'),
+            dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
+            dnf.subject.Subject('librita').get_best_query(self.sack).available()))
+
+    def test_reinstall_new_reponame_notavailable(self):
+        """Test whether it installs packages only from the repository."""
+        self.assertRaises(
+            dnf.exceptions.PackagesNotAvailableError,
+            self.base.reinstall, 'librita', new_reponame='non-main')
+
     def test_reinstall_notfound(self):
         """Test whether it fails if the package does not exist."""
         with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as ctx:
@@ -74,3 +90,23 @@ class Reinstall(support.ResultTestCase):
             self.sack.query().installed().filter(name__neq='librita'),
             dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
             dnf.subject.Subject('librita').get_best_query(self.sack).available()))
+
+    def test_reinstall_old_reponame_installed(self):
+        """Test whether it reinstalls packages only from the repository."""
+        for pkg in self.sack.query().installed().filter(name='librita'):
+            self.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.base.yumdb.get_package(pkg).from_repo = 'main'
+
+        reinstalled_count = self.base.reinstall('librita', old_reponame='main')
+
+        self.assertEqual(reinstalled_count, 1)
+        self.assertResult(self.base, itertools.chain(
+            self.sack.query().installed().filter(name__neq='librita'),
+            dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
+            dnf.subject.Subject('librita').get_best_query(self.sack).available()))
+
+    def test_reinstall_old_reponame_notinstalled(self):
+        """Test whether it reinstalls packages only from the repository."""
+        self.assertRaises(
+            dnf.exceptions.PackagesNotInstalledError,
+            self.base.reinstall, 'librita', old_reponame='non-main')
