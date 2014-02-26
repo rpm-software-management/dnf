@@ -580,3 +580,13 @@ Bugs fixed in 0.4.15:
 * :rhbug:`1065879`
 * :rhbug:`1065959`
 * :rhbug:`1066743`
+
+====================
+0.4.16 Release Notes
+====================
+
+The refactorings from 0.4.15 are introducing breakage causing the background ``dnf makecache`` runs traceback. This release fixes that.
+
+Bugs fixed in 0.4.16:
+
+* :rhbug:`1069996`
