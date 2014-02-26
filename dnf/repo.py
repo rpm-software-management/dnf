@@ -306,6 +306,16 @@ class MDPayload(dnf.callback.Payload):
     def download_size(self):
         return self._download_size
 
+    @property
+    def progress(self):
+        return self._progress
+
+    @progress.setter
+    def progress(self, progress):
+        if progress is None:
+            progress = dnf.callback.NullDownloadProgress()
+        self._progress = progress
+
     def start(self, text):
         self._text = text
         self._download_size = 0

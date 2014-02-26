@@ -321,3 +321,11 @@ class LocalRepoTest(support.TestCase):
         exc = librepo.LibrepoException(10, 'Error HTTP/FTP status code: 404', 404)
         new_remote_m().perform = mock.Mock(side_effect=exc)
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+
+class MDPayloadTest(unittest.TestCase):
+
+    def test_null_progress(self):
+        """MDPayload always has some progress attribute."""
+        pload = dnf.repo.MDPayload(None)
+        pload.start('roll up')
+        self.assertIsNotNone(pload.progress)
