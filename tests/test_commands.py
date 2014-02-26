@@ -545,6 +545,33 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
               base.sack.query().available().filter(reponame='third_party',
                                                    arch='x86_64')))
 
+class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsReinstallOldSubCommandTest, self).setUp()
+        base = support.BaseCliStub('main')
+        base.init_sack()
+        self.cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand(
+                       base.mock_cli())
+
+    def test_all(self):
+        """Test whether all packages from the repository are reinstalled."""
+        base = self.cmd.cli.base
+        for pkg in base.sack.query().installed():
+            reponame = 'main' if pkg.name != 'pepper' else 'non-main'
+            base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            base.yumdb.get_package(pkg).from_repo = reponame
+
+        self.cmd.run('main', [])
+
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed().filter(name__neq='librita'),
+              dnf.subject.Subject('librita.i686').get_best_query(base.sack).installed(),
+              dnf.subject.Subject('librita').get_best_query(base.sack).available()))
+
 class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand`` class."""
