@@ -306,7 +306,8 @@ class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage)
         try:
             del self._read_cached_data[attribute]
         except KeyError:
-            raise AttributeError("Cannot delete attribute %s on %s " % (attribute, self))
+            raise AttributeError("Cannot delete attribute %s on %s " %
+                                 (attribute, self))
 
     def _read(self, attribute):
         """Read the *attribute* value."""

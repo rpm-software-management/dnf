@@ -1131,9 +1131,21 @@ class Base(object):
         return reduce(lambda a, b: a.merge_lists(b), yghs)
 
     def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case, reponame=None):
-        is_from_repo = lambda pkg: reponame is None or self.yumdb.get_package(pkg).get('from_repo') == reponame
-        pkgs_from_repo = lambda pkgs: (pkg for pkg in pkgs if is_from_repo(pkg))
-        query_for_repo = lambda query: query if reponame is None else query.filter(reponame=reponame)
+        def is_from_repo(package):
+            """Test whether given package originates from the repository."""
+            if reponame is None:
+                return True
+            return self.yumdb.get_package(package).get('from_repo') == reponame
+
+        def pkgs_from_repo(packages):
+            """Filter out the packages which do not originate from the repo."""
+            return (package for package in packages if is_from_repo(package))
+
+        def query_for_repo(query):
+            """Filter out the packages which do not originate from the repo."""
+            if reponame is None:
+                return query
+            return query.filter(reponame=reponame)
 
         ygh = misc.GenericHolder(iter=pkgnarrow)
 

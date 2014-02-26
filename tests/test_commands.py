@@ -185,9 +185,11 @@ class InstallCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['@non-existent'])
+            self.assertRaises(dnf.exceptions.Error,
+                              self._cmd.run, ['@non-existent'])
 
-        self.assertEqual(stdout.getvalue(), 'Warning: Group non-existent does not exist.\n')
+        self.assertEqual(stdout.getvalue(),
+                         'Warning: Group non-existent does not exist.\n')
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 
@@ -206,9 +208,11 @@ class InstallCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['non-existent'])
+            self.assertRaises(dnf.exceptions.Error,
+                              self._cmd.run, ['non-existent'])
 
-        self.assertEqual(stdout.getvalue(), 'No package non-existent available.\n')
+        self.assertEqual(stdout.getvalue(),
+                         'No package non-existent available.\n')
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 
@@ -230,7 +234,8 @@ class ReInstallCommandTest(support.ResultTestCase):
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
             base.sack.query().installed().filter(name__neq='pepper'),
-            dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack).available()))
+            dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack)
+            .available()))
 
     def test_run_notinstalled(self):
         """Test whether it fails if the package is not installed."""
@@ -247,7 +252,8 @@ class ReInstallCommandTest(support.ResultTestCase):
     def test_run_notavailable(self):
         """Test whether it fails if the package is not available."""
         base = self._cmd.cli.base
-        for pkg in dnf.subject.Subject('hole').get_best_query(base.sack).installed():
+        holes_query = dnf.subject.Subject('hole').get_best_query(base.sack)
+        for pkg in holes_query.installed():
             self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self._cmd.base.yumdb.get_package(pkg).from_repo = 'unknown'
         stdout = dnf.pycomp.StringIO()
@@ -279,14 +285,21 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         self.assertEqual(
             stdout.getvalue(),
             u'\n'
-            u'hole.x86_64                               1-2                            updates\n'
-            u'hole.x86_64                               2-1                            updates\n'
-            u'pepper.x86_64                             20-1                           updates\n'
+            u'hole.x86_64                               1-2'
+            u'                            updates\n'
+            u'hole.x86_64                               2-1'
+            u'                            updates\n'
+            u'pepper.x86_64                             20-1'
+            u'                           updates\n'
             u'Obsoleting Packages\n'
-            u'hole.i686                                 2-1                            updates\n'
-            u'    tour.noarch                           5-0                            @System\n'
-            u'hole.x86_64                               2-1                            updates\n'
-            u'    tour.noarch                           5-0                            @System\n')
+            u'hole.i686                                 2-1'
+            u'                            updates\n'
+            u'    tour.noarch                           5-0'
+            u'                            @System\n'
+            u'hole.x86_64                               2-1'
+            u'                            updates\n'
+            u'    tour.noarch                           5-0'
+            u'                            @System\n')
         self.assertEqual(self._cmd.success_retval, 100)
 
     def test_not_found(self):
@@ -353,7 +366,8 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
         super(RepoPkgsInfoSubCommandTest, self).setUp()
         base = support.BaseCliStub('main', 'updates', 'third_party')
         base.conf.recent = 7
-        self._cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(
+                        base.mock_cli())
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
@@ -517,7 +531,8 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
         base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         base.repos['third_party'].enablegroups = False
         base.init_sack()
-        self._cmd = dnf.cli.commands.RepoPkgsCommand.InstallSubCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.InstallSubCommand(
+                        base.mock_cli())
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
@@ -527,7 +542,8 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
 
         self.assertResult(base, itertools.chain(
               base.sack.query().installed().filter(name__neq='hole'),
-              base.sack.query().available().filter(reponame='third_party', arch='x86_64')))
+              base.sack.query().available().filter(reponame='third_party',
+                                                   arch='x86_64')))
 
 class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
@@ -538,7 +554,8 @@ class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
         super(RepoPkgsUpgradeSubCommandTest, self).setUp()
         base = support.BaseCliStub('updates', 'third_party')
         base.init_sack()
-        self._cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand(
+                        base.mock_cli())
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
@@ -548,7 +565,8 @@ class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
         self.assertResult(base, itertools.chain(
               base.sack.query().installed().filter(name__neq='hole'),
-              base.sack.query().upgrades().filter(reponame='third_party', arch='x86_64')))
+              base.sack.query().upgrades().filter(reponame='third_party',
+                                                  arch='x86_64')))
 
 class RepoPkgsUpgradeToSubCommandTest(support.ResultTestCase):
 
@@ -559,7 +577,8 @@ class RepoPkgsUpgradeToSubCommandTest(support.ResultTestCase):
         super(RepoPkgsUpgradeToSubCommandTest, self).setUp()
         base = support.BaseCliStub('updates', 'third_party')
         base.init_sack()
-        self._cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeToSubCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeToSubCommand(
+                        base.mock_cli())
 
     def test_all(self):
         """Test whether the package from the repository is installed."""
@@ -568,7 +587,8 @@ class RepoPkgsUpgradeToSubCommandTest(support.ResultTestCase):
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
               base.sack.query().installed().filter(name__neq='hole'),
-              dnf.subject.Subject('hole-1-2.x86_64').get_best_query(base.sack).filter(reponame='updates')))
+              dnf.subject.Subject('hole-1-2.x86_64').get_best_query(base.sack)
+              .filter(reponame='updates')))
 
 class UpgradeCommandTest(support.ResultTestCase):
 
@@ -595,8 +615,10 @@ class UpgradeCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['non-existent'])
+            self.assertRaises(dnf.exceptions.Error,
+                              self._cmd.run, ['non-existent'])
 
-        self.assertEqual(stdout.getvalue(), 'No match for argument: non-existent\n')
+        self.assertEqual(stdout.getvalue(),
+                         'No match for argument: non-existent\n')
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())

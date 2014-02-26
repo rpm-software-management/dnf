@@ -42,7 +42,8 @@ class List(support.TestCase):
     def test_list_installed_reponame(self):
         """Test whether only packages installed from the repository are listed."""
         base = support.MockBase()
-        expected = base.sack.query().installed().filter(name={'pepper', 'librita'})
+        expected = base.sack.query().installed().filter(name={'pepper',
+                                                              'librita'})
         for pkg in expected:
             base.yumdb.db[str(pkg)] = {'from_repo': 'main'}
 
