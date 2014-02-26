@@ -431,6 +431,11 @@ class Repo(dnf.yum.config.RepoConf):
         elif handle.mirrorlist:
             shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
 
+    def _reset_metadata_expired(self):
+        self.metadata.expired = self.metadata.age >= self.metadata_expire
+        if self.metadata_expire == -1:
+            self.metadata.expired = False
+
     def _try_cache(self):
         """Tries to load metadata from the local cache.
 
@@ -449,7 +454,8 @@ class Repo(dnf.yum.config.RepoConf):
             # we shouldn't exit earlier as reviving needs self.metadata
             self.metadata.expired = True
             return False
-        self.metadata.expired = self.metadata.age >= self.metadata_expire
+
+        self._reset_metadata_expired()
         return True
 
     def _try_revive(self):
@@ -586,12 +592,14 @@ class Repo(dnf.yum.config.RepoConf):
 
         Returns a tuple, boolean whether there even is cached metadata and the
         number of seconds it will expire in. Negative number means the metadata
-        has expired already.
+        has expired already, None that it never expires.
 
         """
         if not self.metadata:
             self._try_cache()
         if self.metadata:
+            if self.metadata_expire == -1:
+                return True, None
             expiration = self.metadata_expire - self.metadata.age
             if self.metadata.expired:
                 expiration = min(0, expiration)

@@ -188,11 +188,15 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
     def test_metadata_expire_in(self):
-        self.assertEqual(self.repo.metadata_expire_in(), (False, 0))
-        self.repo.load()
-        (has, time) = self.repo.metadata_expire_in()
+        repo = self.repo
+        self.assertEqual(repo.metadata_expire_in(), (False, 0))
+        repo.load()
+        (has, time) = repo.metadata_expire_in()
         self.assertTrue(has)
         self.assertGreater(time, 0)
+
+        repo.metadata_expire = 'never'
+        self.assertEqual(repo.metadata_expire_in(), (True, None))
 
     def test_md_only_cached(self):
         self.repo.md_only_cached = True
@@ -235,6 +239,16 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.repo_gpgcheck = True
         handle = self.repo._handle_new_remote("/bag")
         setopt.assert_any_call(librepo.LRO_GPGCHECK, True)
+
+    def test_reset_metadata_expired(self):
+        repo = self.repo
+        repo.load()
+        repo.metadata_expire = 0
+        repo._reset_metadata_expired()
+        self.assertTrue(repo.metadata.expired)
+        repo.metadata_expire = 'never'
+        repo._reset_metadata_expired()
+        self.assertFalse(repo.metadata.expired)
 
     def test_valid(self):
         self.assertIsNone(self.repo.valid())

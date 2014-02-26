@@ -62,7 +62,7 @@ class MainTestCase(tests.support.TestCase):
             self.run_main(['--verbose'])
 
         self.assertTracebackIn('%s\n' % error, out.getvalue())
-    
+
     @classmethod
     def run_main(cls, options=(), command=('repolist',)):
         """Run the given *command* with the given *options*."""
