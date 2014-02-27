@@ -375,34 +375,6 @@ class BaseCli(dnf.Base):
             msg = _('No packages marked for distribution synchronization.')
             raise dnf.exceptions.Error(msg)
 
-    def erasePkgs(self, userlist):
-        """Take user commands and populate a transaction wrapper with
-        packages to be erased.
-
-        :param userlist: a list of names or wildcards specifying
-           packages to erase
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-
-        cnt = 0
-        for arg in userlist:
-            try:
-                current_cnt = self.remove(arg)
-            except dnf.exceptions.MarkingError:
-                self.logger.info(_('No match for argument: %s'), unicode(arg))
-                self._checkMaybeYouMeant(arg, always_output=False, rpmdb_only=True)
-            else:
-                cnt += current_cnt
-
-        if cnt <= 0:
-            raise dnf.exceptions.Error(_('No packages marked for removal.'))
-
     def downgradePkgs(self, userlist):
         """Attempt to take the user specified list of packages or
         wildcards and downgrade them. If a complete version number if
