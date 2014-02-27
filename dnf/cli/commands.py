@@ -592,8 +592,29 @@ class EraseCommand(Command):
         """
         checkPackageArg(self.cli, basecmd, extcmds)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        return extcmds
+
     def run(self, extcmds):
-        return self.base.erasePkgs(extcmds)
+        pkg_specs = self.parse_extcmds(extcmds)
+
+        done = False
+
+        for pkg_spec in pkg_specs:
+            try:
+                self.base.remove(pkg_spec)
+            except dnf.exceptions.MarkingError:
+                self.base.logger.info(_('No match for argument: %s'),
+                                      dnf.pycomp.unicode(pkg_spec))
+                self.base._checkMaybeYouMeant(pkg_spec, always_output=False,
+                                              rpmdb_only=True)
+            else:
+                done = True
+
+        if not done:
+            raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
 class GroupsCommand(Command):
     """ Single sub-command interface for most groups interaction. """

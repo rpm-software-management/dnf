@@ -66,30 +66,8 @@ class YumBaseCliTest(support.ResultTestCase):
 
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.output.term = support.MockTerminal()
-        self._yumbase._checkMaybeYouMeant = mock.create_autospec(self._yumbase._checkMaybeYouMeant)
         self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
         self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
-        self._yumbase.remove = mock.Mock(wraps=self._yumbase.remove)
-
-    @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
-    def test_erasePkgs(self):
-        self._yumbase.erasePkgs(('pepper',))
-
-        self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('pepper')])
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls, [])
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_erasePkgs_notfound(self):
-        with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.erasePkgs(('non-existent',))
-        self.assertEqual(str(ctx.exception), 'No packages marked for removal.')
-
-        self.assertEqual(self._yumbase.remove.mock_calls, [mock.call('non-existent')])
-        self.assertEqual(self._yumbase.logger.mock_calls,
-                         [mock.call.info('No match for argument: %s', 'non-existent')])
-        self.assertEqual(self._yumbase._checkMaybeYouMeant.mock_calls,
-                         [mock.call('non-existent', always_output=False, rpmdb_only=True)])
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_downgradePkgs(self):

@@ -154,6 +154,36 @@ class CommandTest(support.TestCase):
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
 
+class EraseCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.EraseCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(EraseCommandTest, self).setUp()
+        base = support.BaseCliStub()
+        base.init_sack()
+        self.cmd = dnf.cli.commands.EraseCommand(base.mock_cli())
+
+    def test_run(self):
+        """Test whether the package is installed."""
+        self.cmd.run(['pepper'])
+
+        self.assertResult(
+            self.cmd.base,
+            self.cmd.base.sack.query().installed().filter(name__neq='pepper'))
+
+    def test_run_notfound(self):
+        """Test whether it fails if the package cannot be found."""
+        stdout = dnf.pycomp.StringIO()
+
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, self.cmd.run, ['non-existent'])
+
+        self.assertEqual(stdout.getvalue(),
+                         'No match for argument: non-existent\n')
+        self.assertResult(self.cmd.base, self.cmd.base.sack.query().installed())
+
 class InstallCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.InstallCommand`` class."""
