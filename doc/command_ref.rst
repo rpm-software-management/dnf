@@ -457,6 +457,9 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> move-to [<package-name-spec>...]``
     Reinstall all those packages that are available in the repository.
 
+``dnf [options] repository-packages <repoid> reinstall [<package-name-spec>...]``
+    Run ``reinstall-old`` subcommand. If it fails, run ``move-to`` subcommand.
+
 ``dnf [options] repository-packages <repoid> reinstall-old [<package-name-spec>...]``
     Reinstall all those packages that were installed from the repository and simultaneously are available in the repository.
 

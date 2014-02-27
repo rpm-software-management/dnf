@@ -1541,6 +1541,51 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
+    class ReinstallSubCommand(object):
+        """Implementation of the reinstall sub-command."""
+
+        alias = 'reinstall'
+
+        success_retval = Command.success_retval
+
+        def __init__(self, cli):
+            """Initialize the command."""
+            self.wrapped_commands = (RepoPkgsCommand.ReinstallOldSubCommand(cli),
+                                     RepoPkgsCommand.MoveToSubCommand(cli))
+
+            cmds_vals = (cmd.activate_sack for cmd in self.wrapped_commands)
+            self.activate_sack = functools.reduce(
+                operator.or_, cmds_vals, Command.activate_sack)
+
+            cmds_vals = (cmd.resolve for cmd in self.wrapped_commands)
+            self.resolve = functools.reduce(
+                operator.or_, cmds_vals, Command.resolve)
+
+            cmds_vals = (cmd.writes_rpmdb for cmd in self.wrapped_commands)
+            self.writes_rpmdb = functools.reduce(
+                operator.or_, cmds_vals, Command.writes_rpmdb)
+
+        def check(self, reponame, cli_args):
+            """Verify whether the command can run with given arguments."""
+            for command in self.wrapped_commands:
+                command.check(reponame, cli_args)
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            self.check(reponame, cli_args)
+            for command in self.wrapped_commands:
+                try:
+                    command.run(reponame, cli_args)
+                except dnf.exceptions.Error:
+                    continue
+                else:
+                    break
+                finally:
+                    self.resolve = command.resolve
+                    self.writes_rpmdb = command.writes_rpmdb
+            else:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+
     class UpgradeSubCommand(object):
         """Implementation of the upgrade sub-command."""
 
@@ -1633,11 +1678,7 @@ class RepoPkgsCommand(Command):
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
-               UpgradeSubCommand, UpgradeToSubCommand}
-
-    activate_sack = functools.reduce(
-        operator.or_, (subcmd.activate_sack for subcmd in SUBCMDS),
-        Command.activate_sack)
+               ReinstallSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
@@ -1647,15 +1688,23 @@ class RepoPkgsCommand(Command):
         super(RepoPkgsCommand, self).__init__(cli)
         self._subcmd_name2obj = {
             subcmd.alias: subcmd(cli) for subcmd in self.SUBCMDS}
+
+        sub_vals = (cmd.activate_sack for cmd in self._subcmd_name2obj.values())
+        self._activate_sack = functools.reduce(
+            operator.or_, sub_vals, super(RepoPkgsCommand, self).activate_sack)
         self._resolve = super(RepoPkgsCommand, self).resolve
         self._success_retval = super(RepoPkgsCommand, self).success_retval
         self._writes_rpmdb = super(RepoPkgsCommand, self).writes_rpmdb
 
+    @property
+    def activate_sack(self):
+        return self._activate_sack
+
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|install|list|move-to|reinstall-old|'
-                 'upgrade|upgrade-to [ARG...]')
+        return _('REPO check-update|info|install|list|move-to|reinstall|'
+                 'reinstall-old|upgrade|upgrade-to [ARG...]')
 
     @staticmethod
     def get_summary():
