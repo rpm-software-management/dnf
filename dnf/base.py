@@ -1591,11 +1591,14 @@ class Base(object):
             return 1
         return 0
 
-    def remove(self, pkg_spec):
+    def remove(self, pkg_spec, reponame=None):
         """Mark the specified package for removal. #:api """
 
         matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
-        installed = matches.installed().run()
+        installed = [
+            pkg for pkg in matches.installed()
+            if reponame is None or
+                     self.yumdb.get_package(pkg).get('from_repo') == reponame]
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError('no package matched', pkg_spec)
 
