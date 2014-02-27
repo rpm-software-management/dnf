@@ -593,6 +593,58 @@ class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
               dnf.subject.Subject('librita.i686').get_best_query(base.sack).installed(),
               dnf.subject.Subject('librita').get_best_query(base.sack).available()))
 
+class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsReinstallSubCommandTest, self).setUp()
+        base = support.BaseCliStub('main')
+        self.cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand(
+                       base.mock_cli())
+
+        self.mock = mock.Mock()
+        old_run_patcher = mock.patch(
+            'dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand.run',
+            self.mock.reinstall_old_run)
+        move_run_patcher = mock.patch(
+            'dnf.cli.commands.RepoPkgsCommand.MoveToSubCommand.run',
+            self.mock.move_to_run)
+
+        old_run_patcher.start()
+        self.addCleanup(old_run_patcher.stop)
+        move_run_patcher.start()
+        self.addCleanup(move_run_patcher.stop)
+
+    def test_all_fails(self):
+        """Test whether it fails if everything fails."""
+        self.mock.reinstall_old_run.side_effect = dnf.exceptions.Error('test')
+        self.mock.move_to_run.side_effect = dnf.exceptions.Error('test')
+
+        self.assertRaises(dnf.exceptions.Error, self.cmd.run, 'main', [])
+
+        self.assertEqual(self.mock.mock_calls,
+                         [mock.call.reinstall_old_run('main', []),
+                          mock.call.move_to_run('main', [])])
+
+    def test_all_moveto(self):
+        """Test whether reinstall-old is called first and move-to next."""
+        self.mock.reinstall_old_run.side_effect = dnf.exceptions.Error('test')
+
+        self.cmd.run('main', [])
+
+        self.assertEqual(self.mock.mock_calls,
+                         [mock.call.reinstall_old_run('main', []),
+                          mock.call.move_to_run('main', [])])
+
+    def test_all_reinstallold(self):
+        """Test whether only reinstall-old is called."""
+        self.cmd.run('main', [])
+
+        self.assertEqual(self.mock.mock_calls,
+                         [mock.call.reinstall_old_run('main', [])])
+
 class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand`` class."""
