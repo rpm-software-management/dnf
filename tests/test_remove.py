@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from tests import support
 import dnf.cli.commands
 import hawkey
+import itertools
 
 class Remove(support.ResultTestCase):
     def setUp(self):
@@ -58,3 +59,16 @@ class Remove(support.ResultTestCase):
         """ Test that weird input combinations with globs work. """
         ret = self.yumbase.remove("*.i686")
         self.assertEqual(ret, 1)
+
+    def test_reponame(self):
+        """Test whether only packages from the repository are uninstalled."""
+        pkg_subj = dnf.subject.Subject('librita.x86_64')
+        for pkg in pkg_subj.get_best_query(self.yumbase.sack).installed():
+            self.yumbase.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.yumbase.yumdb.get_package(pkg).from_repo = 'main'
+
+        self.yumbase.remove('librita', 'main')
+        self.assertResult(self.yumbase, itertools.chain(
+              self.yumbase.sack.query().installed().filter(name__neq='librita'),
+              dnf.subject.Subject('librita.i686').get_best_query(self.yumbase.sack)
+              .installed()))
