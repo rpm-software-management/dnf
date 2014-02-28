@@ -110,3 +110,11 @@ class Reinstall(support.ResultTestCase):
         self.assertRaises(
             dnf.exceptions.PackagesNotInstalledError,
             self.base.reinstall, 'librita', old_reponame='non-main')
+
+    def test_reinstall_remove_notavailable(self):
+        """Test whether it removes the package which is not available."""
+        self.base.reinstall('hole', remove_na=True)
+
+        self.assertResult(
+            self.base,
+            self.sack.query().installed().filter(name__neq='hole'))
