@@ -1544,6 +1544,10 @@ class RepoPkgsCommand(Command):
             self.activate_sack = functools.reduce(
                 operator.or_, cmds_vals, Command.activate_sack)
 
+            cmds_vals = (cmd.load_available_repos for cmd in self.wrapped_commands)
+            self.load_available_repos = functools.reduce(
+                operator.or_, cmds_vals, Command.load_available_repos)
+
             cmds_vals = (cmd.writes_rpmdb for cmd in self.wrapped_commands)
             self.writes_rpmdb = functools.reduce(
                 operator.or_, cmds_vals, Command.writes_rpmdb)
@@ -1553,6 +1557,12 @@ class RepoPkgsCommand(Command):
             super(RepoPkgsCommand.ReinstallSubCommand, self).check(cli_args)
             for command in self.wrapped_commands:
                 command.check(cli_args)
+
+        def configure(self):
+            """Do any command-specific Base configuration."""
+            super(RepoPkgsCommand.ReinstallSubCommand, self).configure()
+            for command in self.wrapped_commands:
+                command.configure()
 
         def run(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
@@ -1569,6 +1579,61 @@ class RepoPkgsCommand(Command):
                     self.resolve = command.resolve
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
+
+    class RemoveSubCommand(SubCommand):
+        """Implementation of the remove sub-command."""
+
+        activate_sack = True
+
+        aliases = ('remove',)
+
+        load_available_repos = False
+
+        resolve = True
+
+        writes_rpmdb = True
+
+        def configure(self):
+            """Do any command-specific Base configuration."""
+            super(RepoPkgsCommand.RemoveSubCommand, self).configure()
+            self.base.goal_parameters.allow_uninstall = True
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            super(RepoPkgsCommand.RemoveSubCommand, self).run(cli_args)
+            self.check(cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Remove all packages.
+                try:
+                    self.base.remove('*', reponame)
+                except dnf.exceptions.MarkingError:
+                    msg = _('No package installed from the repository.')
+                    self.base.logger.info(msg)
+                else:
+                    done = True
+            else:
+                # Remove packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.base.remove(pkg_spec, reponame)
+                    except dnf.exceptions.MarkingError:
+                        self.base.logger.info(_('No match for argument: %s'),
+                                              dnf.pycomp.unicode(pkg_spec))
+                        self.base._checkMaybeYouMeant(
+                            pkg_spec, always_output=False, rpmdb_only=True)
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
     class UpgradeSubCommand(SubCommand):
         """Implementation of the upgrade sub-command."""
@@ -1653,7 +1718,8 @@ class RepoPkgsCommand(Command):
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
-               ReinstallSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
+               ReinstallSubCommand, RemoveSubCommand, UpgradeSubCommand,
+               UpgradeToSubCommand}
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
@@ -1669,28 +1735,42 @@ class RepoPkgsCommand(Command):
         self.activate_sack = functools.reduce(
             operator.or_, sub_vals, super(RepoPkgsCommand, self).activate_sack)
 
+        sub_vals = (cmd.load_available_repos for cmd in self._subcmd_name2obj.values())
+        self.load_available_repos = functools.reduce(
+            operator.or_, sub_vals, super(RepoPkgsCommand, self).load_available_repos)
+
         sub_vals = (cmd.writes_rpmdb for cmd in self._subcmd_name2obj.values())
         self.writes_rpmdb = functools.reduce(
             operator.or_, sub_vals, super(RepoPkgsCommand, self).writes_rpmdb)
+
+    def configure(self):
+        """Do any command-specific Base configuration."""
+        _, subcmd, _ = self.parse_extcmds(self.base.extcmds)
+        subcmd.configure()
 
     @staticmethod
     def get_usage():
         """Return a usage string for the command, including arguments."""
         return _('REPO check-update|info|install|list|move-to|reinstall|'
-                 'reinstall-old|upgrade|upgrade-to [ARG...]')
+                 'reinstall-old|remove|upgrade|upgrade-to [ARG...]')
 
     @staticmethod
     def get_summary():
         """Return a one line summary of what the command does."""
         return _('Run commands on top of all packages in given repository')
 
-    @classmethod
-    def parse_extcmds(cls, extcmds):
+    def parse_extcmds(self, extcmds):
         """Parse command arguments *extcmds*."""
-        # TODO: replace with ``repo, subcmd, *subargs = extcmds`` after
+        # TODO: replace with ``repo, subcmd_name, *subargs = extcmds`` after
         # switching to Python 3.
-        (repo, subcmd), subargs = extcmds[:2], extcmds[2:]
-        return repo, subcmd, subargs
+        (repo, subcmd_name), subargs = extcmds[:2], extcmds[2:]
+
+        try:
+            subcmd_obj = self._subcmd_name2obj[subcmd_name]
+        except KeyError:
+            raise ValueError('invalid sub-command')
+
+        return repo, subcmd_obj, subargs
 
     def doCheck(self, basecmd, extcmds):
         """Verify whether the command can run with given arguments."""
@@ -1700,27 +1780,16 @@ class RepoPkgsCommand(Command):
 
         # Check command arguments.
         try:
-            _repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
+            _repo, subcmd, subargs = self.parse_extcmds(extcmds)
         except ValueError:
             self.cli.logger.critical(
-                _('Error: Requires a repo ID and a sub-command'))
+                _('Error: Requires a repo ID and a valid sub-command'))
             dnf.cli.commands._err_mini_usage(self.cli, basecmd)
-            raise dnf.cli.CliError('a repo ID and a sub-command required')
-
-        # Check sub-command name.
-        try:
-            subcmd_obj = self._subcmd_name2obj[subcmd_name]
-        except KeyError:
-            subcmds = ', '.join(self._subcmd_name2obj.keys())
-            self.cli.logger.critical(
-                _('Error: Invalid %s sub-command, use: %s') %
-                (basecmd, subcmds))
-            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
-            raise dnf.cli.CliError('invalid sub-command')
+            raise dnf.cli.CliError('a repo ID and a valid sub-command required')
 
         # Check sub-command.
         try:
-            subcmd_obj.check(subargs)
+            subcmd.check(subargs)
         except dnf.cli.CliError:
             dnf.cli.commands._err_mini_usage(self.cli, basecmd)
             raise
@@ -1729,13 +1798,12 @@ class RepoPkgsCommand(Command):
         """Execute the command with respect to given arguments *extcmds*."""
         self.doCheck(self.base.basecmd, extcmds)
 
-        repo, subcmd_name, subargs = self.parse_extcmds(extcmds)
+        repo, subcmd, subargs = self.parse_extcmds(extcmds)
 
-        subcmd_obj = self._subcmd_name2obj[subcmd_name]
-        subcmd_obj.run(repo, subargs)
+        subcmd.run(repo, subargs)
 
-        self.success_retval = subcmd_obj.success_retval
-        self.resolve = subcmd_obj.resolve
+        self.success_retval = subcmd.success_retval
+        self.resolve = subcmd.resolve
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
