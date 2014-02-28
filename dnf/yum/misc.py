@@ -718,7 +718,7 @@ def _decompress_chunked(source, dest, ztype):
         s_fn = gzip.GzipFile(source, 'r')
 
 
-    destination = open(dest, 'w')
+    destination = open(dest, 'wb')
 
     while True:
         try:
@@ -1070,7 +1070,7 @@ def repo_gen_decompress(filename, generated_name, cached=False):
     """ This is a wrapper around decompress, where we work out a cached
         generated name, and use check_timestamps. filename _must_ be from
         a repo. and generated_name is the type of the file. """
-    
+
     dest = calculate_repo_gen_dest(filename, generated_name)
     return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
 
