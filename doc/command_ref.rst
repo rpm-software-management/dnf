@@ -466,11 +466,15 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> remove [<package-name-spec>...]``
     Remove all packages installed from the repository along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
+``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-name-spec>...]``
+    Select all packages installed from the repository. Reinstall those of them that are available in another repositories and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
+
 ``dnf [options] repository-packages <repoid> upgrade [<package-name-spec>...]``
     Update all packages to the highest resolvable version available in the repository.
 
 ``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
     Update packages to the specified versions that are available in the repository.
+
 
 --------------
 Search Command

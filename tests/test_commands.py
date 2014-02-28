@@ -674,6 +674,51 @@ class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
         self.assertEqual(self.mock.mock_calls,
                          [mock.call.reinstall_old_run('main', [])])
 
+class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsRemoveOrReinstallSubCommandTest, self).setUp()
+        base = support.BaseCliStub('distro')
+        base.init_sack()
+        self.cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
+                       base.mock_cli())
+
+    def test_all_not_installed(self):
+        """Test whether it fails if no package is installed from the repository."""
+        self.assertRaises(dnf.exceptions.Error, self.cmd.run, 'non-distro', [])
+
+        self.assertResult(self.cmd.base, self.cmd.base.sack.query().installed())
+
+    def test_all_reinstall(self):
+        """Test whether all packages from the repository are reinstalled."""
+        for pkg in self.cmd.base.sack.query().installed():
+            reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
+            self.cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cmd.base.yumdb.get_package(pkg).from_repo = reponame
+
+        self.cmd.run('non-distro', [])
+
+        self.assertResult(self.cmd.base, itertools.chain(
+              self.cmd.base.sack.query().installed().filter(name__neq='tour'),
+              dnf.subject.Subject('tour').get_best_query(self.cmd.base.sack)
+              .available()))
+
+    def test_all_remove(self):
+        """Test whether all packages from the repository are removed."""
+        for pkg in self.cmd.base.sack.query().installed():
+            reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
+            self.cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cmd.base.yumdb.get_package(pkg).from_repo = reponame
+
+        self.cmd.run('non-distro', [])
+
+        self.assertResult(
+            self.cmd.base,
+            self.cmd.base.sack.query().installed().filter(name__neq='hole'))
+
 class RepoPkgsRemoveSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand`` class."""

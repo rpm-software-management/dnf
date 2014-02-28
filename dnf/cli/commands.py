@@ -1580,6 +1580,66 @@ class RepoPkgsCommand(Command):
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
+    class RemoveOrReinstallSubCommand(SubCommand):
+        """Implementation of the remove-or-reinstall sub-command."""
+
+        activate_sack = True
+
+        aliases = ('remove-or-reinstall',)
+
+        resolve = True
+
+        writes_rpmdb = True
+
+        def check(self, cli_args):
+            """Verify whether the command can run with given arguments."""
+            super(RepoPkgsCommand.RemoveOrReinstallSubCommand, self).check(cli_args)
+            checkGPGKey(self.base, self.cli)
+
+        def parse_arguments(self, cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            super(RepoPkgsCommand.RemoveOrReinstallSubCommand, self).run(cli_args)
+            self.check(cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Reinstall all packages.
+                try:
+                    self.base.reinstall(
+                        '*', old_reponame=reponame, new_reponame_neq=reponame,
+                        remove_na=True)
+                except dnf.exceptions.PackagesNotInstalledError:
+                    msg = _('No package installed from the repository.')
+                    self.base.logger.info(msg)
+                except dnf.exceptions.MarkingError:
+                    assert False, 'Only the above marking error is expected.'
+                else:
+                    done = True
+            else:
+                # Reinstall packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self.base.reinstall(
+                            pkg_spec, old_reponame=reponame,
+                            new_reponame_neq=reponame, remove_na=True)
+                    except dnf.exceptions.PackagesNotInstalledError:
+                        msg = _('No match for argument: %s')
+                        self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
+                        self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
+                    except dnf.exceptions.MarkingError:
+                        assert False, 'Only the above marking error is expected.'
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+
     class RemoveSubCommand(SubCommand):
         """Implementation of the remove sub-command."""
 
@@ -1718,8 +1778,8 @@ class RepoPkgsCommand(Command):
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
-               ReinstallSubCommand, RemoveSubCommand, UpgradeSubCommand,
-               UpgradeToSubCommand}
+               ReinstallSubCommand, RemoveOrReinstallSubCommand,
+               RemoveSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
@@ -1752,7 +1812,8 @@ class RepoPkgsCommand(Command):
     def get_usage():
         """Return a usage string for the command, including arguments."""
         return _('REPO check-update|info|install|list|move-to|reinstall|'
-                 'reinstall-old|remove|upgrade|upgrade-to [ARG...]')
+                 'reinstall-old|remove|remove-or-reinstall|upgrade|'
+                 'upgrade-to [ARG...]')
 
     @staticmethod
     def get_summary():
