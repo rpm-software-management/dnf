@@ -1684,7 +1684,8 @@ class Base(object):
         self._goal.install(po)
         return 1
 
-    def reinstall(self, pkg_spec, new_reponame=None, old_reponame=None):
+    def reinstall(self, pkg_spec, old_reponame=None, new_reponame=None,
+                  remove_na=False):
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed_pkgs = [
@@ -1702,13 +1703,16 @@ class Base(object):
                 'no package matched', pkg_spec, available_nevra2pkg.values())
 
         cnt = 0
+        clean_deps = self.conf.clean_requirements_on_remove
         for installed_pkg in installed_pkgs:
             try:
                 available_pkg = available_nevra2pkg[str(installed_pkg)]
             except KeyError:
-                continue
-
-            self._goal.install(available_pkg)
+                if not remove_na:
+                    continue
+                self._goal.erase(installed_pkg, clean_deps=clean_deps)
+            else:
+                self._goal.install(available_pkg)
             cnt += 1
 
         if cnt == 0:
