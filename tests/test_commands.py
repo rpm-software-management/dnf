@@ -674,6 +674,31 @@ class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
         self.assertEqual(self.mock.mock_calls,
                          [mock.call.reinstall_old_run('main', [])])
 
+class RepoPkgsRemoveSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsRemoveSubCommandTest, self).setUp()
+        base = support.BaseCliStub('main')
+        base.init_sack()
+        self.cmd = dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand(
+                       base.mock_cli())
+
+    def test_all(self):
+        """Test whether only packages from the repository are removed."""
+        for pkg in self.cmd.base.sack.query().installed():
+            reponame = 'main' if pkg.name == 'pepper' else 'non-main'
+            self.cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cmd.base.yumdb.get_package(pkg).from_repo = reponame
+
+        self.cmd.run('main', [])
+
+        self.assertResult(
+            self.cmd.base,
+            self.cmd.base.sack.query().installed().filter(name__neq='pepper'))
+
 class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand`` class."""

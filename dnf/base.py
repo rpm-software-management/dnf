@@ -1598,7 +1598,7 @@ class Base(object):
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
-                     self.yumdb.get_package(pkg).get('from_repo') == reponame]
+               self.yumdb.get_package(pkg).get('from_repo') == reponame]
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError('no package matched', pkg_spec)
 
