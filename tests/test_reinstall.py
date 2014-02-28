@@ -54,6 +54,22 @@ class Reinstall(support.ResultTestCase):
             dnf.exceptions.PackagesNotAvailableError,
             self.base.reinstall, 'librita', new_reponame='non-main')
 
+    def test_reinstall_new_reponame_neq_available(self):
+        """Test whether it installs only packages not from the repository."""
+        reinstalled_count = self.base.reinstall('librita', new_reponame_neq='non-main')
+
+        self.assertEqual(reinstalled_count, 1)
+        self.assertResult(self.base, itertools.chain(
+            self.sack.query().installed().filter(name__neq='librita'),
+            dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
+            dnf.subject.Subject('librita').get_best_query(self.sack).available()))
+
+    def test_reinstall_new_reponame_neq_notavailable(self):
+        """Test whether it installs only packages not from the repository."""
+        self.assertRaises(
+            dnf.exceptions.PackagesNotAvailableError,
+            self.base.reinstall, 'librita', new_reponame_neq='main')
+
     def test_reinstall_notfound(self):
         """Test whether it fails if the package does not exist."""
         with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as ctx:
