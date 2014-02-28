@@ -1685,7 +1685,7 @@ class Base(object):
         return 1
 
     def reinstall(self, pkg_spec, old_reponame=None, new_reponame=None,
-                  remove_na=False):
+                  new_reponame_neq=None, remove_na=False):
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed_pkgs = [
@@ -1696,6 +1696,8 @@ class Base(object):
         available_q = q.available()
         if new_reponame is not None:
             available_q = available_q.filter(reponame=new_reponame)
+        if new_reponame_neq is not None:
+            available_q = available_q.filter(reponame__neq=new_reponame_neq)
         available_nevra2pkg = query.per_nevra_dict(available_q)
 
         if not installed_pkgs:
