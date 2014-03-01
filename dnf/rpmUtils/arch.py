@@ -90,8 +90,8 @@ arches = {
     "armv7hnl": "armv7hl",
     "armv7hl": "noarch",
 
-    # arm64
-    "arm64": "noarch",
+    # aarch64
+    "aarch64": "noarch",
 
     # super-h
     "sh4a": "sh4",
@@ -252,8 +252,8 @@ def getBaseArch(myarch):
         return "sparc"
     elif myarch.startswith("ppc64") and not _ppc64_native_is_best:
         return "ppc"
-    elif myarch.startswith("arm64"):
-        return "arm64"
+    elif myarch.startswith("aarch64"):
+        return "aarch64"
     elif myarch.startswith("armv7h"):
         return "armhfp"
     elif myarch.startswith("arm"):
