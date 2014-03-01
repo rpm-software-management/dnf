@@ -49,6 +49,9 @@ arches = {
     "amd64": "x86_64",
     "ia32e": "x86_64",
 
+    #ppc64le
+    "ppc64le": "noarch",
+
     # ppc
     "ppc64p7": "ppc64",
     "ppc64pseries": "ppc64",
@@ -250,6 +253,8 @@ def getBaseArch(myarch):
 
     if myarch.startswith("sparc64"):
         return "sparc"
+    elif myarch.startswith("ppc64le"):
+        return "ppc64le"
     elif myarch.startswith("ppc64") and not _ppc64_native_is_best:
         return "ppc"
     elif myarch.startswith("aarch64"):
