@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from tests import mock
 from tests import support
 
+import dnf.callback
 import dnf.repo
 import dnf.util
 import dnf.exceptions
@@ -32,6 +33,8 @@ from dnf.pycomp import unicode
 
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
+TOUR_CHKSUM = """\
+ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
 
 class RepoIdInvalidTest(unittest.TestCase):
 
@@ -335,6 +338,34 @@ class LocalRepoTest(support.TestCase):
         exc = librepo.LibrepoException(10, 'Error HTTP/FTP status code: 404', 404)
         new_remote_m().perform = mock.Mock(side_effect=exc)
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+
+class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
+
+    def test_empty_transaction(self):
+        self.assertEqual(dnf.repo.download_payloads([], mock.Mock()), {})
+
+    def test_fatal_error(self):
+        def raiser(targets, failfast):
+            raise librepo.LibrepoException(10, 'hit', 'before')
+
+        with mock.patch('librepo.download_packages', side_effect=raiser):
+            errors = dnf.repo.download_payloads([], mock.Mock())
+        self.assertEqual(errors, {'' : ['hit']})
+
+    # twist Repo to think it's remote:
+    @mock.patch('dnf.repo.Repo.local', False)
+    def test_remote_download(self):
+        progress = dnf.callback.NullDownloadProgress()
+        repo = self.build_repo('r', 'r for riot')
+        pkg = support.MockPackage("tour-4-4.noarch", repo=repo)
+        pkg.downloadsize = 2317
+        pkg.chksum = ('sha256', TOUR_CHKSUM)
+
+        pload = dnf.repo.RPMPayload(pkg, progress)
+        errors = dnf.repo.download_payloads([pload], mock.Mock())
+        self.assertLength(errors, 0)
+        path = os.path.join(self.TMP_CACHEDIR, 'r/packages/tour-4-4.noarch.rpm')
+        self.assertFile(path)
 
 class MDPayloadTest(unittest.TestCase):
 

@@ -230,9 +230,11 @@ class MockCli(dnf.cli.cli.Cli):
 
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
+        self.baseurl = None
+        self.chksum = (None, None)
+        self.downloadsize = None
         self.header = None
         self.location = '%s.rpm' % nevra
-        self.baseurl = None
         self.repo = repo
         self.reponame = None if repo is None else repo.id
         self.str = nevra
@@ -247,6 +249,9 @@ class MockPackage(object):
 
     def localPkg(self):
         return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
+
+    def returnIdSum(self):
+        return self.chksum
 
 class MockRepo(dnf.repo.Repo):
     def valid(self):

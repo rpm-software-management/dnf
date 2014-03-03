@@ -91,7 +91,7 @@ def download_payloads(payloads, drpm):
     if errors:
         return errors
     if fatal:
-        return {'' : fatal}
+        return {'' : [fatal]}
 
     return {}
 
@@ -229,10 +229,6 @@ class PackagePayload(dnf.callback.Payload):
     @property
     def error(self):
         """Error obtaining the Payload."""
-        pass
-
-    def librepo_target(self):
-        """Build respective librepo target."""
         pass
 
     def download_done(self):
