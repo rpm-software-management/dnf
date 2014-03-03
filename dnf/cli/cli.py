@@ -211,7 +211,7 @@ class BaseCli(dnf.Base):
             total_cb = self.output.download_callback_total_cb
             self.download_packages(downloadpkgs, self.output.progress, total_cb)
         except dnf.exceptions.DownloadError as e:
-            errstring = _('Error downloading packages:\n %s' % e)
+            errstring = _('Error downloading packages:\n %s') % e
             raise dnf.exceptions.Error(errstring)
 
         # Check GPG signatures
