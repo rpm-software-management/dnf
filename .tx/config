@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[dnf.master]
+file_filter = po/<lang>.po
+host = https://www.transifex.com/projects/p/dnf/resource/master/
+source_file = po/dnf.pot
+source_lang = en
