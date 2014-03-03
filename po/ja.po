@@ -5,6 +5,7 @@
 # Translators:
 # Hajime Taira <htaira@redhat.com>, 2011
 # Tadashi Jokagi <elf@elf.no-ip.org>, 2011
+# Takayuki Ogawa <takayuki988@star.odn.ne.jp>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: dnf\n"
@@ -1359,7 +1360,7 @@ msgstr "メタデータキャッシュを生成する"
 
 #: ../dnf/cli/commands.py:742
 msgid "Making cache files for all metadata files."
-msgstr "すべて飲めたデータファイルのキャッシュを作成します。"
+msgstr "すべてのメタデータファイルのキャッシュを作成します。"
 
 #: ../dnf/cli/commands.py:749
 msgid "Metadata timer caching disabled when running on a battery."
