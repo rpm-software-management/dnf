@@ -20,6 +20,11 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+
+from .pycomp import PY3, basestring
+from functools import reduce
+from itertools import takewhile
+
 import dnf.const
 import hawkey
 import librepo
@@ -30,9 +35,7 @@ import tempfile
 import time
 import traceback
 import types
-from functools import reduce
-from itertools import takewhile
-from .pycomp import PY3, basestring
+
 """DNF Utilities.
 
 Generally these are not a part of the public DNF API.
@@ -113,6 +116,15 @@ def lazyattr(attrname):
                 return val
         return cached_getter
     return get_decorated
+
+def log_method_call(log_call):
+    def wrapper(fn):
+        def new_func(*args, **kwargs):
+            name = '%s.%s' % (args[0].__class__.__name__, fn.__name__)
+            log_call('Call: %s: %s, %s', name, args[1:], kwargs)
+            return fn(*args, **kwargs)
+        return new_func
+    return wrapper
 
 def mapall(fn, *seq):
     """Like functools.map(), but return a list instead of an iterator.

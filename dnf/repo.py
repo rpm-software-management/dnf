@@ -20,12 +20,15 @@
 
 from __future__ import absolute_import
 from dnf.i18n import ucd
+
+import dnf.callback
 import dnf.const
 import dnf.exceptions
-import dnf.callback
+import dnf.logging
 import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
+import functools
 import logging
 import librepo
 import operator
@@ -208,6 +211,7 @@ class PackagePayload(dnf.callback.Payload):
         super(PackagePayload, self).__init__(progress)
         self.pkg = pkg
 
+    @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
     def _end_cb(self, cbdata, lr_status, msg):
         """End callback to librepo operation."""
         status = dnf.callback.STATUS_FAILED
@@ -220,6 +224,7 @@ class PackagePayload(dnf.callback.Payload):
 
         self.progress.end(self, status, msg)
 
+    @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
     def _mirrorfail_cb(self, cbdata, err, url):
         self.progress.end(self, dnf.callback.STATUS_MIRROR, err)
 
