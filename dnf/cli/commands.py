@@ -480,9 +480,6 @@ class DistroSyncCommand(Command):
         """
         checkGPGKey(self.base, self.cli)
         checkEnabledRepo(self.base, extcmds)
-        if extcmds:
-            self.cli.logger.critical(_('distro-sync accepts no package specs.'))
-            raise dnf.cli.CliError
 
     def run(self, extcmds):
         return self.base.distro_sync_userlist(extcmds)

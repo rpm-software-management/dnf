@@ -1,5 +1,5 @@
 %global gitrev cfa9c14
-%global hawkey_version 0.4.11
+%global hawkey_version 0.4.12
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
 

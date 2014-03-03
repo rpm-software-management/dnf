@@ -1585,11 +1585,16 @@ class Base(object):
 
         return 0
 
-    def distro_sync(self, pkg=None):
-        if pkg is None:
+    def distro_sync(self, pkg_spec=None):
+        if pkg_spec is None:
             self._goal.distupgrade_all()
-            return 1
-        return 0
+        else:
+            sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
+            if not sltr:
+                self.logger.info(_('No package %s installed.'), pkg_spec)
+                return 0
+            self._goal.distupgrade(select=sltr)
+        return 1
 
     def remove(self, pkg_spec, reponame=None):
         """Mark the specified package for removal. #:api """

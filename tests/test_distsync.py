@@ -18,6 +18,11 @@
 from __future__ import absolute_import
 from tests import support
 import rpm
+import hawkey
+try:
+    from unittest import mock
+except ImportError:
+    from tests import mock
 
 class DistroSyncAll(support.ResultTestCase):
     def setUp(self):
@@ -31,3 +36,34 @@ class DistroSyncAll(support.ResultTestCase):
         q = self.sack.query().available().filter(name=["pepper", "librita"])
         packages.extend(q)
         self.assertResult(self.yumbase, packages)
+
+
+class DistroSync(support.ResultTestCase):
+    def setUp(self):
+        self._yumbase = support.BaseCliStub()
+        self._yumbase._sack = support.mock_sack('main', 'updates')
+        self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
+        self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
+
+    def test_distro_sync(self):
+        installed = self._get_installed(self._yumbase)
+        original_pkg = list(filter(lambda p: p.name == "hole", installed))
+        self._yumbase.distro_sync_userlist(('bla', 'hole'))
+        obsolete_pkg = list(filter(lambda p: p.name == "tour", installed))
+
+        # check from log package name that is not installed
+        self.assertEqual(self._yumbase.logger.mock_calls[1][1][1], 'bla')
+
+        installed2 = self._get_installed(self._yumbase)
+        updated_pkg = list(filter(lambda p: p.name == "hole", installed2))
+        self.assertLength(updated_pkg, 1)
+        self.assertLength(original_pkg, 1)
+        self.assertLength(updated_pkg, 1)
+
+        # holy pkg upgraded from version 1 to 2 and obsoletes tour
+        self.assertEqual(original_pkg[0].version, "1")
+        self.assertEqual(updated_pkg[0].version, "2")
+        installed.remove(original_pkg[0])
+        installed.remove(obsolete_pkg[0])
+        installed2.remove(updated_pkg[0])
+        self.assertEqual(installed, installed2)

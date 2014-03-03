@@ -369,8 +369,11 @@ class BaseCli(dnf.Base):
                 2 = we've got work yet to do, onto the next stage
         """
         oldcount = self._goal.req_length()
-        assert(len(userlist) == 0)
-        self.distro_sync()
+        if len(userlist) == 0:
+            self.distro_sync()
+        else:
+            for pkg_spec in userlist:
+                self.distro_sync(pkg_spec)
 
         cnt = self._goal.req_length() - oldcount
         if cnt <= 0 and not self._goal.req_has_distupgrade_all():
