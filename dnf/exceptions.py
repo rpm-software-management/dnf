@@ -83,7 +83,8 @@ class DownloadError(Error):
         errstrings = []
         for key in errmap:
             for error in errmap[key]:
-                errstrings.append('  %s: %s' % (key, error))
+                msg = '%s: %s' % (key, error) if key else '%s' % error
+                errstrings.append(msg)
         return '\n'.join(errstrings)
 
     def __unicode__(self):
