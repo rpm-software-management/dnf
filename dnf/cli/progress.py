@@ -127,11 +127,12 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         size = int(payload.download_size)
 
         # update state
-        if text in self.state:
+        if status in (dnf.callback.STATUS_MIRROR, dnf.callback.STATUS_DRPM):
+            pass
+        elif text in self.state:
             start, done = self.state.pop(text)
             self.active.remove(text)
             size -= done
-        if status not in (dnf.callback.STATUS_DRPM, dnf.callback.STATUS_MIRROR):
             self.done_files += 1
             self.done_size += size
 

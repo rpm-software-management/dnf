@@ -14,18 +14,24 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
+from __future__ import absolute_import
 from tests import mock
 
 import dnf.callback
 import dnf.cli.progress
+import dnf.pycomp
 import tests.support
 import time
-import unittest
 
 class MockStdout(object):
     def __init__(self): self.out = []
     def write(self, s): self.out.append(s)
     def flush(self): pass
+
+def visible_lines(io):
+    lines = io.getvalue().splitlines(True)
+    last = len(lines) - 1
+    return [l[:-1] for (i, l) in enumerate(lines) if l.endswith('\n') or i == last]
 
 class FakePayload(object):
     def __init__(self, string, size):
@@ -64,6 +70,22 @@ class ProgressTest(tests.support.TestCase):
             'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
             'dummy-text100% [==========] 1.0  B/s |   5  B     00:00 ETA\r',
             'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
+
+    def test_mirror(self):
+        fo = dnf.pycomp.StringIO()
+        p = dnf.cli.progress.MultiFileProgressMeter(fo, update_period=-1)
+        p.start(1, 5)
+        pload = FakePayload('foo', 5.0)
+        now = 1379406823.9
+
+        with mock.patch('dnf.cli.progress._term_width', return_value=60), \
+             mock.patch('dnf.cli.progress.time', lambda: now):
+            p.progress(pload, 3)
+            p.end(pload, dnf.callback.STATUS_MIRROR, 'Timeout.')
+            p.progress(pload, 4)
+        self.assertEqual(visible_lines(fo), [
+            '[MIRROR] foo: Timeout.                                     ',
+            'foo        80% [========  ] ---  B/s |   4  B     --:-- ETA'])
 
     def test_multi(self):
         now = 1379406823.9
