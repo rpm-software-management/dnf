@@ -23,15 +23,15 @@ import dnf.pycomp
 import tests.support
 import time
 
-class MockStdout(object):
-    def __init__(self): self.out = []
-    def write(self, s): self.out.append(s)
-    def flush(self): pass
+class MockStdout(dnf.pycomp.StringIO):
+    def visible_lines(self):
+        lines = self.lines()
+        last = len(lines) - 1
+        return [l[:-1] for (i, l) in enumerate(lines)
+                if l.endswith('\n') or i == last]
 
-def visible_lines(io):
-    lines = io.getvalue().splitlines(True)
-    last = len(lines) - 1
-    return [l[:-1] for (i, l) in enumerate(lines) if l.endswith('\n') or i == last]
+    def lines(self):
+        return self.getvalue().splitlines(True)
 
 class FakePayload(object):
     def __init__(self, string, size):
@@ -58,11 +58,9 @@ class ProgressTest(tests.support.TestCase):
             for i in range(6):
                 now += 1.0
                 p.progress(pload, i)
-                self.assertEquals(len(fo.out), i + 1) # always update
             p.end(pload, None, None)
 
-        # this is straightforward..
-        self.assertEquals(fo.out, [
+        self.assertEquals(fo.lines(), [
             'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
             'dummy-text 20% [==        ] 1.0  B/s |   1  B     00:04 ETA\r',
             'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
@@ -72,7 +70,7 @@ class ProgressTest(tests.support.TestCase):
             'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
 
     def test_mirror(self):
-        fo = dnf.pycomp.StringIO()
+        fo = MockStdout()
         p = dnf.cli.progress.MultiFileProgressMeter(fo, update_period=-1)
         p.start(1, 5)
         pload = FakePayload('foo', 5.0)
@@ -83,9 +81,23 @@ class ProgressTest(tests.support.TestCase):
             p.progress(pload, 3)
             p.end(pload, dnf.callback.STATUS_MIRROR, 'Timeout.')
             p.progress(pload, 4)
-        self.assertEqual(visible_lines(fo), [
+        self.assertEqual(fo.visible_lines(), [
             '[MIRROR] foo: Timeout.                                     ',
             'foo        80% [========  ] ---  B/s |   4  B     --:-- ETA'])
+
+    _REFERENCE_TAB = [
+        ['(1-2/2): f  0% [          ] ---  B/s |   0  B     --:-- ETA'],
+        ['(1-2/2): b 10% [=         ] 2.2  B/s |   3  B     00:12 ETA'],
+        ['(1-2/2): f 20% [==        ] 2.4  B/s |   6  B     00:10 ETA'],
+        ['(1-2/2): b 30% [===       ] 2.5  B/s |   9  B     00:08 ETA'],
+        ['(1-2/2): f 40% [====      ] 2.6  B/s |  12  B     00:06 ETA'],
+        ['(1-2/2): b 50% [=====     ] 2.7  B/s |  15  B     00:05 ETA'],
+        ['(1-2/2): f 60% [======    ] 2.8  B/s |  18  B     00:04 ETA'],
+        ['(1-2/2): b 70% [=======   ] 2.8  B/s |  21  B     00:03 ETA'],
+        ['(1-2/2): f 80% [========  ] 2.9  B/s |  24  B     00:02 ETA'],
+        ['(1-2/2): b 90% [========= ] 2.9  B/s |  27  B     00:01 ETA'],
+        ['(1/2): foo                  1.0  B/s |  10  B     00:10    ',
+         '(2/2): bar100% [==========] 2.9  B/s |  30  B     00:00 ETA']]
 
     def test_multi(self):
         now = 1379406823.9
@@ -99,20 +111,18 @@ class ProgressTest(tests.support.TestCase):
             pload2 = FakePayload('bar', 20.0)
             for i in range(11):
                 p.progress(pload1, float(i))
-                self.assertEquals(len(fo.out), i*2 + 1)
                 if i == 10:
                     p.end(pload1, None, None)
                 now += 0.5
 
                 p.progress(pload2, float(i*2))
-                self.assertEquals(len(fo.out), i*2 + 2 + (i == 10 and 2))
+                self.assertEquals(self._REFERENCE_TAB[i], fo.visible_lines())
                 if i == 10:
                     p.end(pload2, dnf.callback.STATUS_FAILED, 'some error')
                 now += 0.5
 
         # check "end" events
-        self.assertEquals([o for o in fo.out if o.endswith('\n')], [
-'(1/2): foo                  1.0  B/s |  10  B     00:10    \n',
-'[FAILED] bar: some error                                   \n'])
-        # verify we estimated a sane rate (should be around 3 B/s)
+        self.assertEqual(fo.visible_lines(), [
+            '(1/2): foo                  1.0  B/s |  10  B     00:10    ',
+            '[FAILED] bar: some error                                   '])
         self.assertTrue(2.0 < p.rate < 4.0)
