@@ -79,3 +79,7 @@ Repository Configuration
   .. method:: load()
 
     Load the metadata of this repository. Will try to use local cache if possible and initiate and finish download if not. Returns ``True`` if fresh metadata has been downloaded and ``False`` if cache was used. Raises :exc:`dnf.exceptions.RepoError` if the repo metadata could not be obtained.
+
+  .. method:: set_progress_bar(progress)
+
+    Set the download progress reporting object for this repo during :meth:`load`. `progress` must be an instance of :class:`dnf.callback.DownloadProgress`.

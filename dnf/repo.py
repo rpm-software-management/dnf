@@ -661,6 +661,7 @@ class Repo(dnf.yum.config.RepoConf):
         return self.metadata.repomd_fn
 
     def set_progress_bar(self, progress):
+        # :api
         self._md_pload.progress = progress
 
     def valid(self):
