@@ -10,6 +10,21 @@ Repository Configuration
 
     Add `repo` to the repodict.
 
+  .. method:: all()
+
+    Return a list of all contained repositories.
+
+    See the note at :meth:`get_matching` for special semantics of the returned object.
+
+  .. method:: get_matching(key)
+
+    Return a list of repositories which ID matches (possibly globbed) `key` or an empty list if no matching repository is found.
+
+    The returned list acts as a `composite <http://en.wikipedia.org/wiki/Composite_pattern>`_, transparently forwarding all method calls on itself to the contained repositories. The following thus disables all matching repos::
+
+      repos = base.repos.get_matching('*-debuginfo')
+      repos.disable()
+
   .. method:: iter_enabled()
 
     Return an iterator over all enabled repos from the dict.

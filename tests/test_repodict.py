@@ -56,25 +56,25 @@ class TestRepoDict(PycompTestCase):
 
     def test_any_enabled(self):
         self.assertTrue(self.repos.any_enabled())
-        self.repos.get_multiple("*").disable()
+        self.repos.get_matching("*").disable()
         self.assertFalse(self.repos.any_enabled())
 
     def test_enabled(self):
         self.assertSequenceEqual(self.repos.enabled(),
                                  list(self.repos.iter_enabled()))
 
-    def test_getmultiple(self):
+    def test_get_matching(self):
         self.assertEqual(self.repos['x'], self.x)
-        self.assertItemsEqual(self.repos.get_multiple('*'), self.full_set)
-        self.assertItemsEqual(self.repos.get_multiple('y'), {self.y})
-        self.assertItemsEqual(self.repos.get_multiple('x*'), {self.x, self.xx})
+        self.assertItemsEqual(self.repos.get_matching('*'), self.full_set)
+        self.assertItemsEqual(self.repos.get_matching('y'), {self.y})
+        self.assertItemsEqual(self.repos.get_matching('x*'), {self.x, self.xx})
 
-        self.assertRaises(RepoError, self.repos.get_multiple, 'nope')
+        self.assertItemsEqual(self.repos.get_matching('nope'), [])
 
     def test_iter_enabled(self):
         self.assertItemsEqual(self.repos.iter_enabled(), self.full_set)
-        self.repos.get_multiple("x*").disable()
+        self.repos.get_matching('x*').disable()
         self.assertItemsEqual(self.repos.iter_enabled(), {self.y, self.z})
 
     def test_all(self):
-        self.assertItemsEqual(self.repos.all, self.full_set)
+        self.assertItemsEqual(self.repos.all(), self.full_set)

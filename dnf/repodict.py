@@ -52,8 +52,8 @@ class RepoDict(dict):
             raise ConfigError(msg)
         self[id_] = repo
 
-    @property
     def all(self):
+        # :api
         return MultiCallList(self.values())
 
     def any_enabled(self):
@@ -62,13 +62,14 @@ class RepoDict(dict):
     def enabled(self):
         return [r for r in self.values() if r.enabled]
 
-    def get_multiple(self, key):
+    def get_matching(self, key):
+        # :api
         if dnf.util.is_glob_pattern(key):
             l = [self[k] for k in self if fnmatch.fnmatch(k, key)]
             return MultiCallList(l)
         repo = self.get(key, None)
         if repo is None:
-            raise RepoError("Repository not found: '%s'" % key)
+            return MultiCallList([])
         return MultiCallList([repo])
 
     def iter_enabled(self):

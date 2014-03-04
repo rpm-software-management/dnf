@@ -1092,7 +1092,10 @@ class Cli(object):
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
-                repolist = self.base.repos.get_multiple(repo)
+                repolist = self.base.repos.get_matching(repo)
+                if not repolist:
+                    msg = _("Unknown repo: '%s'")
+                    raise dnf.exceptions.RepoError(msg % repo)
                 if operation == "enable":
                     repolist.enable()
                 else:
@@ -1119,9 +1122,9 @@ class Cli(object):
 
         # setup the progress bars/callbacks
         (bar, self.base.ds_callback) = self.base.output.setup_progress_callbacks()
-        self.base.repos.all.set_progress_bar(bar)
+        self.base.repos.all().set_progress_bar(bar)
         confirm_func = self.base.output._cli_confirm_gpg_key_import
-        self.base.repos.all.confirm_func = confirm_func
+        self.base.repos.all().confirm_func = confirm_func
 
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
