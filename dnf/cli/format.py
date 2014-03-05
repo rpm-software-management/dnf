@@ -99,3 +99,5 @@ def format_time(seconds, use_hours=0):
         else:
             return '%02i:%02i' % (minutes, seconds)
 
+def indent_block(s):
+    return '\n'.join('  ' + s for s in s.splitlines())

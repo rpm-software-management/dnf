@@ -14,17 +14,20 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
+from __future__ import absolute_import
 from dnf.cli.format import format_time, format_number
-import unittest
-from tests.support import PycompTestCase
 
-class FormatTest(PycompTestCase):
+import dnf.cli.format
+import tests.support
+
+class FormatTest(tests.support.TestCase):
     def test_format_time(self):
         self.assertEquals(format_time(None), '--:--')
         self.assertEquals(format_time(-1), '--:--')
         self.assertEquals(format_time(12*60+34), '12:34')
         self.assertEquals(format_time(12*3600+34*60+56), '754:56')
         self.assertEquals(format_time(12*3600+34*60+56, use_hours=True), '12:34:56')
+
     def test_format_number(self):
         self.assertEquals(format_number(None), '0.0  ')
         self.assertEquals(format_number(-1), '-1  ')
@@ -36,3 +39,7 @@ class FormatTest(PycompTestCase):
         self.assertEquals(format_number(1e6, SI=1), '1.0 M')
         self.assertEquals(format_number(1e9, SI=1), '1.0 G')
 
+    def test_indent_block(self):
+        s = 'big\nbrown\nbag'
+        out = dnf.cli.format.indent_block(s)
+        self.assertEqual(out, '  big\n  brown\n  bag')

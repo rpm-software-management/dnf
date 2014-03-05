@@ -33,6 +33,7 @@ import dnf.cli.commands
 import dnf.conf
 import dnf.const
 import dnf.exceptions
+import dnf.cli.format
 import dnf.logging
 import dnf.match_counter
 import dnf.plugin
@@ -211,7 +212,8 @@ class BaseCli(dnf.Base):
             total_cb = self.output.download_callback_total_cb
             self.download_packages(downloadpkgs, self.output.progress, total_cb)
         except dnf.exceptions.DownloadError as e:
-            errstring = _('Error downloading packages:\n %s') % e
+            specific = dnf.cli.format.indent_block(str(e))
+            errstring = _('Error downloading packages:\n%s') % specific
             raise dnf.exceptions.Error(errstring)
 
         # Check GPG signatures
