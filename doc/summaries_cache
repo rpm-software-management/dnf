@@ -470,5 +470,45 @@
     [
         1069996, 
         "[abrt] dnf: repo.py:312:start:AttributeError: 'NoneType' object has no attribute 'start'"
+    ], 
+    [
+        1059704, 
+        "[api] dnf.base.Base.read_comps() fails when there's no comps"
+    ], 
+    [
+        1058224, 
+        "the system cache should be world readable by default"
+    ], 
+    [
+        1069538, 
+        "DNF doesn't support \"never\" or \"-1\" for metadata_expire option unlike yum"
+    ], 
+    [
+        1070598, 
+        "problems downloading large files (and counting past 100%)"
+    ], 
+    [
+        1070710, 
+        "dnf.Base.read_comps() fails in Python3, works ok in Python2"
+    ], 
+    [
+        1071323, 
+        "[api] [rfe]: dnf.repo & dnf.repodict API extention"
+    ], 
+    [
+        1071455, 
+        "[i18n] Wrong characters in Japanese translatated message"
+    ], 
+    [
+        1071501, 
+        "Back trace (OSError No such file or directory) During update With DRPM Enabled"
+    ], 
+    [
+        1071518, 
+        "curl error"
+    ], 
+    [
+        1071677, 
+        "[doc] faq suggests it's a good idea to install rawhide packages on stable releases"
     ]
 ]

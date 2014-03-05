@@ -590,3 +590,28 @@ The refactorings from 0.4.15 are introducing breakage causing the background ``d
 Bugs fixed in 0.4.16:
 
 * :rhbug:`1069996`
+
+====================
+0.4.17 Release Notes
+====================
+
+This release fixes many bugs in the downloads/DRPM CLI area. A bug got fixed preventing a regular user from running read-only operations using ``--cacheonly``. Another fix ensures that ``metadata_expire=never`` setting is respected. Lastly, the release provides three requested API calls in the repo management area.
+
+API additions in 0.4.17:
+
+* :meth:`dnf.repodict.RepoDict.all`
+* :meth:`dnf.repodict.RepoDict.get_matching`
+* :meth:`dnf.repo.Repo.set_progress_bar`
+
+Bugs fixed in 0.4.17:
+
+* :rhbug:`1059704`
+* :rhbug:`1058224`
+* :rhbug:`1069538`
+* :rhbug:`1070598`
+* :rhbug:`1070710`
+* :rhbug:`1071323`
+* :rhbug:`1071455`
+* :rhbug:`1071501`
+* :rhbug:`1071518`
+* :rhbug:`1071677`
