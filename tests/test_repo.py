@@ -20,6 +20,7 @@ from tests import mock
 from tests import support
 
 import dnf.callback
+import dnf.drpm
 import dnf.repo
 import dnf.util
 import dnf.exceptions
@@ -341,15 +342,23 @@ class LocalRepoTest(support.TestCase):
 
 class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
+    def test_drpm_error(self):
+        drpm = dnf.drpm.DeltaInfo(None, None)
+        drpm.err = {'step' : ['right']}
+        self.assertEqual(dnf.repo.download_payloads([], drpm),
+                         {'step' : ['right']})
+
     def test_empty_transaction(self):
-        self.assertEqual(dnf.repo.download_payloads([], mock.Mock()), {})
+        drpm = dnf.drpm.DeltaInfo(None, None)
+        self.assertEqual(dnf.repo.download_payloads([], drpm), {})
 
     def test_fatal_error(self):
         def raiser(targets, failfast):
             raise librepo.LibrepoException(10, 'hit', 'before')
 
+        drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('librepo.download_packages', side_effect=raiser):
-            errors = dnf.repo.download_payloads([], mock.Mock())
+            errors = dnf.repo.download_payloads([], drpm)
         self.assertEqual(errors, {'' : ['hit']})
 
     # twist Repo to think it's remote:
@@ -362,7 +371,8 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         pkg.chksum = ('sha256', TOUR_CHKSUM)
 
         pload = dnf.repo.RPMPayload(pkg, progress)
-        errors = dnf.repo.download_payloads([pload], mock.Mock())
+        drpm = dnf.drpm.DeltaInfo(None, None)
+        errors = dnf.repo.download_payloads([pload], drpm)
         self.assertLength(errors, 0)
         path = os.path.join(self.TMP_CACHEDIR, 'r/packages/tour-4-4.noarch.rpm')
         self.assertFile(path)

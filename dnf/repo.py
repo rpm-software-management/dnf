@@ -79,7 +79,7 @@ def download_payloads(payloads, drpm):
     drpm.wait()
 
     # process downloading errors
-    errors = {}
+    errors = drpm.err.copy()
     for tgt in targets:
         err = tgt.err
         payload = tgt.cbdata

@@ -27,10 +27,13 @@ import dnf.callback
 import dnf.repo
 import hawkey
 import librepo
+import logging
 import os
 
 MAX_PERCENTAGE = 50
 APPLYDELTA = '/usr/bin/applydeltarpm'
+
+logger = logging.getLogger("dnf")
 
 class DeltaPayload(dnf.repo.PackagePayload):
     def __init__(self, delta_info, delta, pkg, progress):
@@ -114,28 +117,34 @@ class DeltaInfo(object):
 
     def job_done(self, pid, code):
         # handle a finished delta rebuild
+        logger.debug('drpm: %d: return code: %d, %d', pid, code >> 8, code & 0xff)
+
         pload = self.jobs.pop(pid)
+        pkg = pload.pkg
         if code != 0:
             unlink_f(pload.pkg.localPkg())
-            self.err[pload] = _('Delta RPM rebuild failed')
+            self.err[pkg] = [_('Delta RPM rebuild failed')]
         elif not pload.pkg.verifyLocalPkg():
-            self.err[pload] = _('Checksum of the delta-rebuilt RPM failed')
+            self.err[pkg] = [_('Checksum of the delta-rebuilt RPM failed')]
         else:
             os.unlink(pload.localPkg())
             self.progress.end(pload, dnf.callback.STATUS_DRPM, 'done')
 
     def start_job(self, pload):
         # spawn a delta rebuild job
-        args = '-a', pload.pkg.arch
-        args += pload.localPkg(), pload.pkg.localPkg()
-        pid = os.spawnl(os.P_NOWAIT, APPLYDELTA, APPLYDELTA, *args)
+        spawn_args = [APPLYDELTA, APPLYDELTA,
+                      '-a', pload.pkg.arch,
+                      pload.localPkg(), pload.pkg.localPkg()]
+        pid = os.spawnl(os.P_NOWAIT, *spawn_args)
+        logger.debug('drpm: spawned %d: %s', pid, ' '.join(spawn_args[1:]))
         self.jobs[pid] = pload
 
     def enqueue(self, pload):
         # process finished jobs, start new ones
         while self.jobs:
             pid, code = os.waitpid(-1, os.WNOHANG)
-            if not pid: break
+            if not pid:
+                break
             self.job_done(pid, code)
         self.queue.append(pload)
         while len(self.jobs) < self.deltarpm:
