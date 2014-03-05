@@ -198,9 +198,9 @@ Performs cleanup of temporary files for the currently enabled repositories.
 Distro-sync command
 -------------------
 
-``dnf distro-sync``
-    As necessary upgrades, downgrades or keeps all installed packages to match
-    the latest version available from any enabled repository.
+``dnf distro-sync [<package-spec>...]``
+    As necessary upgrades, downgrades or keeps selected installed packages to match
+    the latest version available from any enabled repository. If no package is given, all installed packages are considered.
 
 ------------------------------------
 Distribution-synchronization command
