@@ -86,3 +86,7 @@ Yes, in two steps: first install the necessary ``.repo`` files::
 Then, when you want to include the pacakges from the rawhide repo, execute a DNF command with Rawhide enabled::
 
     dnf install --enablerepo=rawhide upgrade rpm
+
+.. note::
+
+    Installing rawhide packages onto a stable Fedora release system is generally discouraged as it leads to less tested combinations of installed packages. Please consider this step carefully.

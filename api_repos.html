@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Repository Configuration &mdash; DNF 0.4.16-1 documentation</title>
+    <title>Repository Configuration &mdash; DNF 0.4.17-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.16-1',
+        VERSION:     '0.4.17-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.16-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.17-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Sack" href="api_sack.html" />
     <link rel="prev" title="Configuration" href="api_conf.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_conf.html" title="Configuration"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.16-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -66,6 +66,24 @@
 <dt id="dnf.repodict.RepoDict.add">
 <tt class="descname">add</tt><big>(</big><em>repo</em><big>)</big><a class="headerlink" href="#dnf.repodict.RepoDict.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add <cite>repo</cite> to the repodict.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repodict.RepoDict.all">
+<tt class="descname">all</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.repodict.RepoDict.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all contained repositories.</p>
+<p>See the note at <a class="reference internal" href="#dnf.repodict.RepoDict.get_matching" title="dnf.repodict.RepoDict.get_matching"><tt class="xref py py-meth docutils literal"><span class="pre">get_matching()</span></tt></a> for special semantics of the returned object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.repodict.RepoDict.get_matching">
+<tt class="descname">get_matching</tt><big>(</big><em>key</em><big>)</big><a class="headerlink" href="#dnf.repodict.RepoDict.get_matching" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of repositories which ID matches (possibly globbed) <cite>key</cite> or an empty list if no matching repository is found.</p>
+<p>The returned list acts as a <a class="reference external" href="http://en.wikipedia.org/wiki/Composite_pattern">composite</a>, transparently forwarding all method calls on itself to the contained repositories. The following thus disables all matching repos:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">repos</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">get_matching</span><span class="p">(</span><span class="s">&#39;*-debuginfo&#39;</span><span class="p">)</span>
+<span class="n">repos</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -170,6 +188,12 @@
 <dd><p>Load the metadata of this repository. Will try to use local cache if possible and initiate and finish download if not. Returns <tt class="docutils literal"><span class="pre">True</span></tt> if fresh metadata has been downloaded and <tt class="docutils literal"><span class="pre">False</span></tt> if cache was used. Raises <a class="reference internal" href="api_exceptions.html#dnf.exceptions.RepoError" title="dnf.exceptions.RepoError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.RepoError</span></tt></a> if the repo metadata could not be obtained.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="dnf.repo.Repo.set_progress_bar">
+<tt class="descname">set_progress_bar</tt><big>(</big><em>progress</em><big>)</big><a class="headerlink" href="#dnf.repo.Repo.set_progress_bar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the download progress reporting object for this repo during <a class="reference internal" href="#dnf.repo.Repo.load" title="dnf.repo.Repo.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a>. <cite>progress</cite> must be an instance of <a class="reference internal" href="api_callback.html#dnf.callback.DownloadProgress" title="dnf.callback.DownloadProgress"><tt class="xref py py-class docutils literal"><span class="pre">dnf.callback.DownloadProgress</span></tt></a>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -223,7 +247,7 @@
         <li class="right" >
           <a href="api_conf.html" title="Configuration"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.16-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
