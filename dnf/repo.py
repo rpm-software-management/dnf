@@ -20,6 +20,7 @@
 
 from __future__ import absolute_import
 from dnf.i18n import ucd
+from dnf.yum.i18n import _
 
 import dnf.callback
 import dnf.const
@@ -352,7 +353,8 @@ class Repo(dnf.yum.config.RepoConf):
 
     def _exc2msg(self, librepo_exception):
         exc_msg = librepo_exception.args[1]
-        msg = "Problem with repo '%s': %s" % (self.id, exc_msg)
+        msg = _("Failed to synchronize cache for repo '%s': %s") % \
+              (self.id, exc_msg)
         return msg
 
     def _handle_load(self, handle):
