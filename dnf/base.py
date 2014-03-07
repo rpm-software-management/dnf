@@ -893,34 +893,13 @@ class Base(object):
 
         """
 
-        def mediasort(apo, bpo):
-            # FIXME: we should probably also use the mediaid; else we
-            # could conceivably ping-pong between different disc1's
-            a = apo.getDiscNum()
-            b = bpo.getDiscNum()
-            if a is None and b is None:
-                return cmp(apo, bpo)
-            if a is None:
-                return -1
-            if b is None:
-                return 1
-            if a < b:
-                return -1
-            elif a > b:
-                return 1
-            return 0
-
-        """download list of package objects handed to you, output based on
-           callback, raise dnf.exceptions.Error on problems"""
-
         # select and sort packages to download
         if progress is None:
             progress = dnf.callback.NullDownloadProgress()
 
         drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
-        remote_pkgs = [po for po in pkglist if not (po.from_cmdline or po.repo.local)]
-        remote_pkgs.sort(key=cmp_to_key(mediasort))
-
+        remote_pkgs = [po for po in pkglist
+                       if not (po.from_cmdline or po.repo.local)]
         payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
                                          dnf.repo.RPMPayload)
                     for pkg in remote_pkgs]
