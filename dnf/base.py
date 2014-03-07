@@ -22,14 +22,14 @@ Supplies the Base class.
 from __future__ import absolute_import
 from __future__ import print_function
 from dnf import const, query, sack
-from dnf.pycomp import unicode, basestring
+from dnf.pycomp import unicode
 from dnf.yum import config
 from dnf.yum import history
 from dnf.yum import i18n
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
-from dnf.yum.i18n import to_unicode, to_str, exception2msg
+from dnf.yum.i18n import to_unicode, to_str, _, P_
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce, cmp_to_key
 
@@ -52,7 +52,6 @@ import dnf.subject
 import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
-import errno
 import functools
 import glob
 import hawkey
@@ -63,10 +62,7 @@ import operator
 import rpm
 import signal
 import time
-import types
 
-_ = i18n._
-P_ = i18n.P_
 
 class Base(object):
     def __init__(self):
