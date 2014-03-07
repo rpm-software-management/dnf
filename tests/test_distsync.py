@@ -19,12 +19,12 @@ from __future__ import absolute_import
 from tests import support
 import rpm
 
-class DistroSync(support.ResultTestCase):
+class DistroSyncAll(support.ResultTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("distro")
         self.sack = self.yumbase.sack
 
-    def test_distro_sync(self):
+    def test_distro_sync_all(self):
         self.yumbase.distro_sync()
         self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.yumbase.rpm_probfilter)
         packages = support.installed_but(self.sack, "pepper", "librita").run()
