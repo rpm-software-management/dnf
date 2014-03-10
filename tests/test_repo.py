@@ -16,8 +16,9 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
+from dnf.pycomp import unicode
 from tests import support
+from tests.support import mock
 
 import dnf.callback
 import dnf.drpm
@@ -30,7 +31,6 @@ import librepo
 import os
 import tempfile
 import unittest
-from dnf.pycomp import unicode
 
 REPOS = "%s/tests/repos" % support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS

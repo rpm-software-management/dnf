@@ -16,16 +16,15 @@
 #
 
 from __future__ import absolute_import
+from functools import reduce
 from sys import version_info as python_version
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
+
 import contextlib
 import dnf
 import dnf.comps
 import dnf.exceptions
 import dnf.package
+import dnf.pycomp
 import dnf.repo
 import dnf.sack
 import hawkey
@@ -36,7 +35,11 @@ import os
 import re
 import unittest
 import dnf.cli.cli
-from functools import reduce
+
+if dnf.pycomp.PY3:
+    from unittest import mock
+else:
+    from tests import mock
 
 skip = unittest.skip
 

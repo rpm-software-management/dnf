@@ -24,6 +24,7 @@ just a sanity check.
 
 from __future__ import absolute_import
 from dnf.exceptions import ProcessLockError, ThreadLockError
+from tests.support import mock
 
 import dnf.lock
 import dnf.util
@@ -32,10 +33,6 @@ try:
     import queue
 except ImportError:
     import Queue as queue
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 import tests.support
 import threading
 

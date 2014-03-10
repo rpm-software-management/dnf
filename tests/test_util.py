@@ -16,14 +16,11 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 from tests import support
+from tests.support import mock
+
 import dnf.util
 import unittest
-from dnf.pycomp import xrange
 
 class Slow(object):
     def __init__(self, val):
@@ -87,9 +84,9 @@ class Util(unittest.TestCase):
         self.assertEqual(dnf.util.first(generator()), None)
 
     def test_group_by_filter(self):
-        self.assertEqual(dnf.util.group_by_filter(lambda x: x % 2, xrange(5)),
+        self.assertEqual(dnf.util.group_by_filter(lambda x: x % 2, range(5)),
                          ([1, 3], [0, 2, 4]))
-        self.assertEqual(dnf.util.group_by_filter(lambda x: x, xrange(5)),
+        self.assertEqual(dnf.util.group_by_filter(lambda x: x, range(5)),
                          ([1, 2, 3, 4], [0]))
 
     def test_insert_if(self):

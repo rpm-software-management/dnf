@@ -16,16 +16,14 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 from tests import support
+from tests.support import PycompTestCase
+from tests.support import mock
+
 import dnf.history
 import dnf.yum.history
 import hawkey
 import unittest
-from tests.support import PycompTestCase
 
 class TestedHistory(dnf.yum.history.YumHistory):
     @mock.patch("os.path.exists", return_value=True)

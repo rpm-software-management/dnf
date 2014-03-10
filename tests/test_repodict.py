@@ -18,14 +18,12 @@
 from dnf.exceptions import RepoError
 from dnf.repo import Repo
 from tests import support
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
+from tests.support import PycompTestCase
+from tests.support import mock
+
 import dnf.repodict
 import operator
 import unittest
-from tests.support import PycompTestCase
 
 class TestMultiCall(PycompTestCase):
     def test_multi_call(self):

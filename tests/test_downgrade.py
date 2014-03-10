@@ -16,8 +16,8 @@
 #
 
 from __future__ import absolute_import
-from tests import mock
 from tests import support
+from tests.support import mock
 
 import dnf
 import hawkey

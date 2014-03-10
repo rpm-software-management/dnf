@@ -17,16 +17,12 @@
 
 """Tests of the CLI entry point."""
 
+from tests.support import mock
 
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 import dnf.cli.main
 import os
 import tempfile
 import tests.support
-
 
 class MainTestCase(tests.support.TestCase):
 

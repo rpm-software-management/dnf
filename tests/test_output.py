@@ -16,15 +16,12 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 from tests import support
+from tests.support import mock
+
 import dnf.cli.output
 import dnf.transaction
 import unittest
-from tests.support import PycompTestCase
 
 INFOOUTPUT_OUTPUT="""\
 Name        : tour
@@ -54,7 +51,7 @@ Transaction Summary
 Upgrade  1 Package
 """
 
-class OutputTest(PycompTestCase):
+class OutputTest(support.TestCase):
     @staticmethod
     def _keyboard_interrupt(*ignored):
         raise KeyboardInterrupt

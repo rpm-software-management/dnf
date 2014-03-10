@@ -17,10 +17,9 @@
 
 from __future__ import absolute_import
 from tests import support
+
 import unittest
-
 import dnf.rpmUtils.arch
-
 
 class Arch(support.TestCase):
 

@@ -15,14 +15,12 @@
 # Red Hat, Inc.
 #
 
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
-import unittest
 from dnf.yum.config import Option, BaseConfig, YumConf
 from dnf.conf import CliCache, GoalParameters
 from tests.support import PycompTestCase
+from tests.support import mock
+
+import unittest
 
 class OptionTest(unittest.TestCase):
     class Cfg(BaseConfig):

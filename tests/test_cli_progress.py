@@ -15,7 +15,7 @@
 # Red Hat, Inc.
 
 from __future__ import absolute_import
-from tests import mock
+from tests.support import mock
 
 import dnf.callback
 import dnf.cli.progress

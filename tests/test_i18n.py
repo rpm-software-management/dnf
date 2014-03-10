@@ -18,17 +18,15 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
+from dnf.pycomp import PY3
+from tests.support import PycompTestCase
+from tests.support import mock
+
 import locale
 import unittest
 import dnf.i18n
 import os
 import sys
-from dnf.pycomp import PY3
-from tests.support import PycompTestCase
 
 UC_TEXT          = u'Šířka' # means 'Width' in Czech
 UC_TEXT_OSERROR  = u'Soubor již existuje' # 'File already exists'

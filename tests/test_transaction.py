@@ -16,13 +16,10 @@
 #
 
 from __future__ import absolute_import
+from tests.support import mock
 
 import dnf.repo
 import dnf.transaction
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):

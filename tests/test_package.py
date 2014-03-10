@@ -16,11 +16,9 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 from tests import support
+from tests.support import mock
+
 import dnf.package
 import hawkey
 import os.path

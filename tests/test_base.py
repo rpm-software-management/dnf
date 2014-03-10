@@ -17,11 +17,10 @@
 
 from __future__ import absolute_import
 from sys import version_info
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
 from tests import support
+from tests.support import mock
+from tests.support import PycompTestCase
+
 import binascii
 import dnf
 import dnf.const
@@ -32,7 +31,6 @@ import dnf.transaction
 import hawkey
 import os
 import rpm
-from tests.support import PycompTestCase
 
 class BaseTest(support.TestCase):
     def test_instance(self):

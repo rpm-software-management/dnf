@@ -17,12 +17,10 @@
 
 from __future__ import absolute_import
 from tests import support
-import rpm
+from tests.support import mock
+
 import hawkey
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
+import rpm
 
 class DistroSyncAll(support.ResultTestCase):
     def setUp(self):

@@ -16,13 +16,11 @@
 #
 
 from __future__ import absolute_import
-try:
-    from unittest import mock
-except ImportError:
-    from tests import mock
-from tests import support
-import argparse
 from dnf.cli.cli import OptionParser
+from tests import support
+from tests.support import mock
+
+import argparse
 
 class OptionParserTest(support.TestCase):
     def setUp(self):
