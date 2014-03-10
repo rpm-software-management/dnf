@@ -343,14 +343,20 @@ class LocalRepoTest(support.TestCase):
 class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
     def test_drpm_error(self):
+        def wait(self):
+            self.err['step'] = ['right']
+
         drpm = dnf.drpm.DeltaInfo(None, None)
-        drpm.err = {'step' : ['right']}
-        self.assertEqual(dnf.repo.download_payloads([], drpm),
-                         {'step' : ['right']})
+        with mock.patch('dnf.drpm.DeltaInfo.wait', wait):
+            errs = dnf.repo.download_payloads([], drpm)
+        self.assertEqual(errs.recoverable, {'step' : ['right']})
+        self.assertEmpty(errs.irrecoverable)
 
     def test_empty_transaction(self):
         drpm = dnf.drpm.DeltaInfo(None, None)
-        self.assertEqual(dnf.repo.download_payloads([], drpm), {})
+        errs = dnf.repo.download_payloads([], drpm)
+        self.assertEmpty(errs.recoverable)
+        self.assertEmpty(errs.irrecoverable)
 
     def test_fatal_error(self):
         def raiser(targets, failfast):
@@ -358,8 +364,9 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('librepo.download_packages', side_effect=raiser):
-            errors = dnf.repo.download_payloads([], drpm)
-        self.assertEqual(errors, {'' : ['hit']})
+            errs = dnf.repo.download_payloads([], drpm)
+        self.assertEqual(errs.irrecoverable, {'' : ['hit']})
+        self.assertEmpty(errs.recoverable)
 
     # twist Repo to think it's remote:
     @mock.patch('dnf.repo.Repo.local', False)
@@ -372,8 +379,9 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
         pload = dnf.repo.RPMPayload(pkg, progress)
         drpm = dnf.drpm.DeltaInfo(None, None)
-        errors = dnf.repo.download_payloads([pload], drpm)
-        self.assertLength(errors, 0)
+        errs = dnf.repo.download_payloads([pload], drpm)
+        self.assertEmpty(errs.recoverable)
+        self.assertEmpty(errs.irrecoverable)
         path = os.path.join(self.TMP_CACHEDIR, 'r/packages/tour-4-4.noarch.rpm')
         self.assertFile(path)
 

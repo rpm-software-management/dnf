@@ -69,35 +69,52 @@ def pkg2payload(pkg, progress, *factories):
             return pload
     raise ValueError('no matching payload factory for %s' % pkg)
 
+class _DownloadErrors(object):
+    def __init__(self):
+        self.fatal = None
+        self._irrecoverable = {}
+        self._recoverable = {}
+
+    @property
+    def irrecoverable(self):
+        if self._irrecoverable:
+            return self._irrecoverable
+        if self.fatal:
+            return {'': [self.fatal]}
+        return {}
+
+    @property
+    def recoverable(self):
+        return self._recoverable
+
+    @recoverable.setter
+    def recoverable(self, new_dct):
+        self._recoverable = new_dct
+
 def download_payloads(payloads, drpm):
     # download packages
+    drpm.err.clear()
     targets = [pload.librepo_target() for pload in payloads]
-    fatal = None
+    errs = _DownloadErrors()
     try:
         librepo.download_packages(targets, failfast=True)
     except librepo.LibrepoException as e:
-        fatal = e.args[1] or '<unspecified librepo error>'
+        errs.fatal = e.args[1] or '<unspecified librepo error>'
     drpm.wait()
 
     # process downloading errors
-    errors = drpm.err.copy()
+    errs.recoverable = drpm.err.copy()
     for tgt in targets:
         err = tgt.err
-        payload = tgt.cbdata
-        pkg = payload.pkg
         if err is None:
             continue
         if err == 'Already downloaded' or err.startswith('Not finished'):
-            err = None
-        if err:
-            errors[pkg] = [err]
+            continue
+        payload = tgt.cbdata
+        pkg = payload.pkg
+        errs.irrecoverable[pkg] = [err]
 
-    if errors:
-        return errors
-    if fatal:
-        return {'' : [fatal]}
-
-    return {}
+    return errs
 
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):

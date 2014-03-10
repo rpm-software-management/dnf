@@ -78,14 +78,17 @@ class DownloadError(Error):
     def __init__(self, errmap):
         self.errmap = errmap
 
-    def __str__(self):
-        errmap = self.errmap
+    @staticmethod
+    def errmap2str(errmap):
         errstrings = []
         for key in errmap:
             for error in errmap[key]:
                 msg = '%s: %s' % (key, error) if key else '%s' % error
                 errstrings.append(msg)
         return '\n'.join(errstrings)
+
+    def __str__(self):
+        return self.errmap2str(self.errmap)
 
     def __unicode__(self):
         return to_unicode(str(self))

@@ -433,6 +433,9 @@ else:
             super().assertCountEqual(item1, item2)
 
 class TestCase(PycompTestCase):
+    def assertEmpty(self, collection):
+        return self.assertEqual(len(collection), 0)
+
     def assertFile(self, path):
         """Assert the given path is a file."""
         return self.assertTrue(os.path.isfile(path))

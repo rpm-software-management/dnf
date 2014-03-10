@@ -908,8 +908,26 @@ class Base(object):
         remote_size = sum(pload.download_size for pload in payloads)
         progress.start(len(payloads), remote_size)
         errors = dnf.repo.download_payloads(payloads, drpm)
-        if errors:
+        if errors.irrecoverable:
             raise dnf.exceptions.DownloadError(errors)
+
+        if errors.recoverable:
+            msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
+            self.logger.info(msg)
+
+            remaining_pkgs = [pkg for pkg in errors.recoverable]
+            payloads = [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
+                        for pkg in remaining_pkgs]
+            remaining_size = sum(pload.download_size for pload in payloads)
+            progress.start(len(payloads), remaining_size)
+
+            errors = dnf.repo.download_payloads(payloads, drpm)
+            assert(not errors.recoverable)
+            if errors.irrecoverable:
+                raise dnf.exceptions.DownloadErrors(errors)
+
+            remote_pkgs.extend(remaining_pkgs)
+            remote_size += remaining_size
 
         if callback_total is not None:
             callback_total(remote_pkgs, remote_size, beg_download)
