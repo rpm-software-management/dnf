@@ -126,6 +126,10 @@ class _Handle(librepo.Handle):
         self.useragent = dnf.const.USER_AGENT
         self.yumdlist = ["primary", "filelists", "prestodelta", "group_gz"]
 
+    def __str__(self):
+        return '_Handle: metalnk: %s, mlist: %s, urls %s.' % \
+            (self.metalinkurl, self.mirrorlisturl, self.urls)
+
     @classmethod
     def new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
         h = cls(gpgcheck, max_mirror_tries)
@@ -579,8 +583,9 @@ class Repo(dnf.yum.config.RepoConf):
                 return True
 
             with dnf.util.tmpdir() as tmpdir:
-                logger.debug('repo: downloading from remote: %s' % self.id)
                 handle = self._handle_new_remote(tmpdir)
+                msg = 'repo: downloading from remote: %s, %s'
+                logger.log(dnf.logging.SUBDEBUG, msg % (self.id, handle))
                 self._handle_load(handle)
                 # override old md with the new ones:
                 self._replace_metadata(handle)
