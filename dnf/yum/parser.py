@@ -26,7 +26,6 @@ import os.path
 import dnf.exceptions
 import dnf.util
 
-
 _KEYCRE = re.compile(r"\$(\w+)")
 
 def varReplace(raw, vars):
@@ -216,10 +215,11 @@ class ConfigPreProcessor(object):
             self._incstack.append( fo )
             self._alreadyincluded.append(includetuple)
         else:
-            raise dnf.exceptions.ConfigError('Error accessing file for config %s' % (absurl))
+            fn = dnf.util.strip_prefix(absurl, 'file://')
+            msg = "Can not read configuration: %s" % fn if fn else absurl
+            raise dnf.exceptions.ConfigError(msg)
 
         return fo
-
 
     def _popfile( self ):
         """

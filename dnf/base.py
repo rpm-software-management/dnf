@@ -292,18 +292,10 @@ class Base(object):
         # Get the repos from the main yum.conf file
         self.read_repos(self.conf.config_file_path)
 
-        # Read .repo files from directories specified by the reposdir option
-        # (typically /etc/yum/repos.d)
+        # Read .repo files from directories specified by conf.reposdir
         for reposdir in self.conf.reposdir:
-            # this check makes sure that our dirs exist properly.
-            # if they aren't in the installroot then don't prepend the installroot path
-            # if we don't do this then anaconda likes to not  work.
-            if os.path.exists(self.conf.installroot+'/'+reposdir):
-                reposdir = self.conf.installroot + '/' + reposdir
-
-            if os.path.isdir(reposdir):
-                for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
-                    self.read_repos(repofn)
+            for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
+                self.read_repos(repofn)
 
     def readRepoConfig(self, parser, section):
         """Parse an INI file section for a repository.
