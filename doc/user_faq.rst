@@ -8,6 +8,11 @@
 General Questions
 =================
 
+What does DNF stand for?
+========================
+
+Dandified `Yum <http://yum.baseurl.org/>`_.
+
 What to do with packages that DNF refuses to remove because their ``%pre`` or ``%preun`` scripts are failing?
 =============================================================================================================
 
