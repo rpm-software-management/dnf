@@ -293,9 +293,13 @@ class Base(object):
         self.read_repos(self.conf.config_file_path)
 
         # Read .repo files from directories specified by conf.reposdir
-        for reposdir in self.conf.reposdir:
-            for repofn in sorted(glob.glob('%s/*.repo' % reposdir)):
+        for repofn in (repofn for reposdir in self.conf.reposdir
+                       for repofn in sorted(glob.glob('%s/*.repo' % reposdir))):
+            try:
                 self.read_repos(repofn)
+            except dnf.exceptions.ConfigError as e:
+                self.logger.warning(_("Warning: failed loading '%s', skipping."),
+                                    repofn)
 
     def readRepoConfig(self, parser, section):
         """Parse an INI file section for a repository.
