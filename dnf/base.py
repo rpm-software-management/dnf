@@ -1331,7 +1331,8 @@ class Base(object):
             envs = self.comps.environments
         else:
             envs = self.comps.environments_by_pattern(",".join(patterns))
-        return sorted(envs)
+
+        return sorted(envs, key=operator.attrgetter('ui_name'))
 
     def _group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available
@@ -1361,7 +1362,8 @@ class Base(object):
             if not uservisible or grp.uservisible:
                 tgt_list.append(grp)
 
-        return sorted(installed), sorted(available)
+        sort_fn = operator.attrgetter('ui_name')
+        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     def group_remove(self, grp_spec):
         groups = self.comps.groups_by_pattern(grp_spec)
