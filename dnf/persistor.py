@@ -19,7 +19,7 @@
 #
 
 # The current implementation is storing to files in persistdir. Do not depend on
-# specific files existing, instead use the Persistor's API. The underlying
+# specific files existing, instead use the persistor API. The underlying
 # implementation can change, e.g. for one general file with a serialized dict of
 # data etc.
 
@@ -31,7 +31,13 @@ import json
 import logging
 import os
 
-class Persistor(object):
+class RepoPersistor(object):
+    """Persistent data kept for repositories.
+
+    Is arch/releasever specific and stores to cachedir.
+
+    """
+
     def __init__(self, cachedir):
         self.cachedir = cachedir
         self.logger = logging.getLogger("dnf")

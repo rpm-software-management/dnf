@@ -197,7 +197,7 @@ class Base(object):
         return self._transaction
 
     def activate_persistor(self):
-        self._persistor = dnf.persistor.Persistor(self.conf.cachedir)
+        self._persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""
