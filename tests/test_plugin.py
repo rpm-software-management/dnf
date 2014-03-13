@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 
+import dnf.logging
 import dnf.plugin
 import logging
 import tests.support
@@ -74,7 +75,7 @@ class PluginNonExistentTest(tests.support.TestCase):
         package.__path__ = []
         stream = dnf.pycomp.StringIO()
 
-        with tests.support.wiretap_logs('dnf', logging.DEBUG, stream):
+        with tests.support.wiretap_logs('dnf', dnf.logging.SUBDEBUG, stream):
             dnf.plugin.import_modules(package, ('nonexistent.py',))
 
         end = ('ImportError: No module named \'testpkg\'\n' if dnf.pycomp.PY3

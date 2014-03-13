@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import collections
+import dnf.logging
 import dnf.util
 import dnf.yum.i18n
 import fnmatch
@@ -121,7 +122,7 @@ def import_modules(package, py_files):
             module = importlib.import_module(name)
         except Exception as e:
             logger.error(_('Failed loading plugin: %s'), module)
-            logger.debug('', exc_info=True)
+            logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
 def iter_py_files(paths, skips):
     for p in paths:
