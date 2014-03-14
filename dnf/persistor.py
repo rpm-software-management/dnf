@@ -25,11 +25,35 @@
 
 from __future__ import absolute_import
 from dnf.yum.i18n import _
+
 import dbm
 import dnf.util
+import errno
 import json
 import logging
 import os
+
+logger = logging.getLogger("dnf")
+
+class GroupPersistor(object):
+    def __init__(self, persistdir):
+        self.db = os.path.join(persistdir, 'groups.json')
+        self.groups = {}
+        self._load()
+
+    def _load(self):
+        self.groups = {}
+        try:
+            with open(self.db) as db:
+                content = db.read()
+                self.groups = json.loads(content)
+        except IOError as e:
+            if e.errno != errno.ENOENT:
+                raise
+
+    def save(self):
+        with open(self.db, 'w') as db:
+            json.dump(self.groups, db)
 
 class RepoPersistor(object):
     """Persistent data kept for repositories.

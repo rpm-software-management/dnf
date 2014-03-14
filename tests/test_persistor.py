@@ -23,9 +23,29 @@ import tests.support
 
 IDS = set(['one', 'two', 'three'])
 
+class GroupPersistorTest(tests.support.TestCase):
+    def setUp(self):
+        self.persistdir = tempfile.mkdtemp(prefix="dnf-groupprst-test")
+        self.prst = dnf.persistor.GroupPersistor(self.persistdir)
+
+    def tearDown(self):
+        dnf.util.rm_rf(self.persistdir)
+
+    def test_empty(self):
+        """Persistor on a fresh database is empty."""
+        self.assertEmpty(self.prst.groups)
+
+    def test_saving(self):
+        prst = self.prst
+        prst.groups['base'] = ['pepper', 'tour']
+        prst.save()
+
+        prst = dnf.persistor.GroupPersistor(self.persistdir)
+        self.assertEqual(prst.groups, {'base': ['pepper', 'tour']})
+
 class RepoPersistorTest(tests.support.TestCase):
     def setUp(self):
-        self.persistdir = tempfile.mkdtemp(prefix="dnf-repotest-")
+        self.persistdir = tempfile.mkdtemp(prefix="dnf-repoprst-test-")
         self.prst = dnf.persistor.RepoPersistor(self.persistdir)
 
     def tearDown(self):
