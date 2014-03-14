@@ -689,6 +689,23 @@ class GroupsCommand(Command):
         self.base.logger.info(_('Marked removed: %s') %
                               ','.join([g.ui_name for g in groups]))
 
+    def _patterns2groups(self, patterns):
+        comps = self.base.comps
+        for pat in patterns:
+            grps = comps.groups_by_pattern(pat)
+            if not grps:
+                msg = _("No Group named %s exists") % to_unicode(grp_spec)
+                raise dnf.exceptions.CliError(msg)
+            for grp in grps:
+                yield grp
+
+    def _remove(self, patterns):
+        cnt = 0
+        for grp in self._patterns2groups(patterns):
+            cnt += self.base.group_remove(grp)
+        if not cnt:
+            raise dnf.cli.CliError(_('No packages to remove from groups.'))
+
     @classmethod
     def canonical(cls, command_list):
         first = command_list[0]
@@ -758,7 +775,7 @@ class GroupsCommand(Command):
         if cmd == 'upgrade':
             return self.base.install_grouplist(extcmds)
         if cmd == 'remove':
-            return self.base.removeGroups(extcmds)
+            return self._remove(extcmds)
 
 class MakeCacheCommand(Command):
     """A class containing methods needed by the cli to execute the

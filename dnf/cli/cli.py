@@ -870,30 +870,6 @@ class BaseCli(dnf.Base):
                     'to install or upgrade.')
             raise dnf.exceptions.Error(msg)
 
-    def removeGroups(self, grouplist):
-        """Mark the packages in the given groups for removal.
-
-        :param grouplist: a list of names or wildcards specifying
-           groups to be removed
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        cnt = 0
-        for group_string in grouplist:
-            try:
-                cnt += self.group_remove(group_string)
-            except dnf.exceptions.CompsError as e:
-                self.logger.critical(e)
-                continue
-
-        if not cnt:
-            raise dnf.exceptions.Error(_('No packages to remove from groups.'))
-
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
         if self.conf.assumeyes and not self.conf.assumeno:

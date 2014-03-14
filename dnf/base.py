@@ -1372,20 +1372,15 @@ class Base(object):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
-    def group_remove(self, grp_spec):
-        groups = self.comps.groups_by_pattern(grp_spec)
-        if not groups:
-            raise dnf.exceptions.CompsError(_("No Group named %s exists") %
-                                            to_unicode(grp_spec))
-
+    def group_remove(self, grp):
         cnt = 0
-        for pkg in (pkg for grp in groups for pkg in grp.packages):
+        for pkg in grp.installed_packages:
             try:
-                self.remove(pkg.name)
+                self.remove(pkg)
             except dnf.exceptions.MarkingError:
                 continue
             cnt += 1
-
+        grp.unmark()
         return cnt
 
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):

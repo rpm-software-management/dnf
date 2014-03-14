@@ -34,10 +34,14 @@ class SelectGroupTest(support.ResultTestCase):
         self.assertLength(removed, 0)
 
     def test_group_remove(self):
-        self.assertEqual(self.base.group_remove('Solid Ground'), 1)
+        grp = self.base.comps.group_by_pattern('Base')
+        self.assertIn(grp.id, self.base.comps._installed_groups)
+
+        self.assertEqual(self.base.group_remove(grp), 1)
         inst, removed = self.installed_removed(self.base)
         self.assertLength(inst, 0)
         self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))
+        self.assertNotIn(grp.id, self.base.comps._installed_groups)
 
     def test_environment_list(self):
         l = self.base._environment_list(['sugar*'])

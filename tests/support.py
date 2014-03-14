@@ -110,7 +110,7 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
-INSTALLED_GROUPS = {'base': []}
+INSTALLED_GROUPS = {'base': ['pepper']}
 
 class _BaseStubMixin(object):
     """A reusable class for creating `dnf.Base` stubs.
@@ -171,7 +171,7 @@ class _BaseStubMixin(object):
                          nogpgcheck=True)
 
     def read_mock_comps(self, fn):
-        comps = dnf.comps.Comps(INSTALLED_GROUPS)
+        comps = dnf.comps.Comps(INSTALLED_GROUPS.copy())
         comps.add_from_xml_filename(fn)
         self._comps = comps
         return comps

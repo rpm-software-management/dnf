@@ -144,6 +144,10 @@ class Group(Forwarder):
     def installed(self):
         return self.id in self._installed_groups
 
+    @property
+    def installed_packages(self):
+        return self._installed_groups.get(self.id, [])
+
     def unmark(self):
         self._installed_groups.pop(self.id, None)
 

@@ -36,7 +36,7 @@ class LangsTest(support.TestCase):
 
 class CompsTest(support.TestCase):
     def setUp(self):
-        comps = dnf.comps.Comps(support.INSTALLED_GROUPS)
+        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy())
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
