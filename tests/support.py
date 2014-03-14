@@ -110,6 +110,8 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
+INSTALLED_GROUPS = {'base': []}
+
 class _BaseStubMixin(object):
     """A reusable class for creating `dnf.Base` stubs.
 
@@ -137,6 +139,9 @@ class _BaseStubMixin(object):
         if self._sack:
             return self._sack
         return self.init_sack()
+
+    def _activate_group_persistor(self):
+        return GroupPersistorStub(self.conf.persistdir)
 
     def activate_persistor(self):
         pass
@@ -166,9 +171,8 @@ class _BaseStubMixin(object):
                          nogpgcheck=True)
 
     def read_mock_comps(self, fn):
-        comps = dnf.comps.Comps()
+        comps = dnf.comps.Comps(INSTALLED_GROUPS)
         comps.add_from_xml_filename(fn)
-        comps.compile(self.sack.query().installed())
         self._comps = comps
         return comps
 
@@ -381,6 +385,10 @@ class FakePersistor(object):
 
     def since_last_makecache(self):
         return None
+
+class GroupPersistorStub(object):
+    def __init__(self, persistdir):
+        self.groups = {}
 
 # object matchers for asserts
 

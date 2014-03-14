@@ -74,6 +74,7 @@ class Base(object):
         self._closed = False
         self._conf = config.YumConf()
         self._goal = None
+        self._group_persistor = None
         self._persistor = None
         self._sack = None
         self._transaction = None
@@ -161,8 +162,13 @@ class Base(object):
             except dnf.exceptions.MetadataError:
                 return False
 
-        expired = [r.id for r in self.repos.iter_enabled() if check_expired(r)]
-        self._persistor.set_expired_repos(expired)
+        if self._persistor:
+            expired = [r.id for r in self.repos.iter_enabled()
+                       if check_expired(r)]
+            self._persistor.set_expired_repos(expired)
+
+        if self._group_persistor:
+            self._group_persistor.save()
 
     @property
     def comps(self):
@@ -236,8 +242,7 @@ class Base(object):
         # Do not trigger the lazy creation:
         if self._history is not None:
             self.history.close()
-        if self._persistor:
-            self._store_persistent_data()
+        self._store_persistent_data()
         self.closeRpmDB()
 
     def read_repos(self, repofn):
@@ -385,12 +390,17 @@ class Base(object):
         del self._ts
         self._ts = None
 
+    def _activate_group_persistor(self):
+        self._group_persistor = dnf.persistor.GroupPersistor(self.conf.persistdir)
+        return self._group_persistor
+
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
         group_st = time.time()
-        self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
-        self._comps = dnf.comps.Comps()
+        persistor = self._activate_group_persistor()
+        self._comps = dnf.comps.Comps(persistor.groups)
 
+        self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
                 continue
@@ -417,10 +427,7 @@ class Base(object):
                 msg = _('Failed to add groups file for repository: %s - %s')
                 self.logger.critical(msg % (repo.id, e))
 
-        if len(self._comps) == 0:
-            return None
 
-        self._comps.compile(self.sack.query().installed())
         self.logger.debug('group time: %0.3f' % (time.time() - group_st))
         return self._comps
 

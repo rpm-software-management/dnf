@@ -36,7 +36,7 @@ class LangsTest(support.TestCase):
 
 class CompsTest(support.TestCase):
     def setUp(self):
-        comps = dnf.comps.Comps()
+        comps = dnf.comps.Comps(support.INSTALLED_GROUPS)
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
@@ -49,14 +49,13 @@ class CompsTest(support.TestCase):
         group = dnf.util.first(comps.groups_by_pattern('Base'))
         self.assertIsInstance(group, dnf.comps.Group)
 
-    def test_compile(self):
+    def test_installed(self):
         yumbase = support.MockBase("main")
         sack = yumbase.sack
 
         comps = self.comps
         groups = comps.groups
         self.assertLength(groups, support.TOTAL_GROUPS)
-        comps.compile(sack.query().installed())
         # ensure even groups obtained before compile() have the property set:
         self.assertTrue(groups[0].installed)
         self.assertFalse(groups[1].installed)

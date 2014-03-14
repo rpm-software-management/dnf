@@ -24,6 +24,7 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 import dnf.persistor
 import dnf.util
+import itertools
 import os
 from dnf.cli.format import format_number
 import dnf.logging
@@ -661,6 +662,33 @@ class GroupsCommand(Command):
                     'erase'      : 'remove',
                     'mark-erase' : 'mark-remove'}
 
+    def _mark_install(self, patterns):
+        comps = self.base.comps
+        groups = [g for pat in patterns for g in comps.groups_by_pattern(pat)
+                  if not g.installed]
+        installed = set(pkg.name for pkg in self.base.sack.query().installed())
+        if not groups:
+            msg = _('No matching uninstalled groups found.')
+            raise dnf.exceptions.Error(msg)
+        for g in groups:
+            names = set(g.name for g in itertools.chain(g.mandatory_packages,
+                                                        g.optional_packages))
+            g.mark(names & installed)
+        self.base.logger.info(_('Marked installed: %s') %
+                              ','.join([g.ui_name for g in groups]))
+
+    def _mark_remove(self, patterns):
+        comps = self.base.comps
+        groups = [g for pat in patterns for g in comps.groups_by_pattern(pat)
+                  if g.installed]
+        if not groups:
+            msg = _('No matching installed groups found.')
+            raise dnf.exceptions.Error(msg)
+        for g in groups:
+            g.unmark()
+        self.base.logger.info(_('Marked removed: %s') %
+                              ','.join([g.ui_name for g in groups]))
+
     @classmethod
     def canonical(cls, command_list):
         first = command_list[0]
@@ -719,6 +747,10 @@ class GroupsCommand(Command):
             return self.base.returnGroupLists(extcmds)
         if cmd == 'info':
             return self.base.returnGroupInfo(extcmds)
+        if cmd == 'mark-install':
+            return self._mark_install(extcmds)
+        if cmd == 'mark-remove':
+            return self._mark_remove(extcmds)
 
         self._resolve = True
         if cmd == 'install':

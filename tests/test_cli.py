@@ -59,7 +59,6 @@ class YumBaseCliTest(support.ResultTestCase):
         main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         main_repo.enable()
         self._yumbase.repos.add(main_repo)
-        self._yumbase.read_comps()
 
         self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
         self._yumbase.output.term = support.MockTerminal()

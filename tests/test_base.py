@@ -255,7 +255,7 @@ class CompsTest(support.TestCase):
     def test_read_comps_disabled(self):
         yumbase = support.MockBase("main")
         yumbase.repos['main'].enablegroups = False
-        self.assertEqual(yumbase.read_comps(), None)
+        self.assertEmpty(yumbase.read_comps())
 
 class Goal2TransactionTest(support.TestCase):
     def test_upgrade(self):

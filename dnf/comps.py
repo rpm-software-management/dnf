@@ -137,9 +137,15 @@ class Group(Forwarder):
     def default_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_DEFAULT)
 
+    def mark(self, packages):
+        self._installed_groups[self.id] = list(packages)
+
     @property
     def installed(self):
         return self.id in self._installed_groups
+
+    def unmark(self):
+        self._installed_groups.pop(self.id, None)
 
     @property
     def mandatory_packages(self):
@@ -163,10 +169,12 @@ class Environment(Forwarder):
 
 class Comps(object):
     # :api
-    def __init__(self):
+
+    def __init__(self, installed_groups):
         self._i = libcomps.Comps()
-        self._installed_groups = set()
+        self._installed_groups = installed_groups
         self._langs = _Langs()
+        self.persistor = None
 
     def __len__(self):
         return _internal_comps_length(self._i)
@@ -205,30 +213,6 @@ class Comps(object):
     def categories_iter(self):
         # :api
         return (self._build_category(c) for c in self._i.categories)
-
-    def compile(self, installed_pkgs):
-        """ compile the groups into installed/available groups """
-
-        self._installed_groups.clear()
-        # convert the tuple list to a simple dict of pkgnames
-        inst_names = set([pkg.name for pkg in installed_pkgs])
-        for group in self.groups_iter():
-            # if there are mandatory packages in the group, then make sure
-            # they're all installed.  if any are missing, then the group
-            # isn't installed.
-            mandatory_packages = group.mandatory_packages
-            if len(mandatory_packages):
-                for pkg in mandatory_packages:
-                    if pkg.name not in inst_names:
-                        break
-                else:
-                    self._installed_groups.add(group.id)
-            else:
-                for pkg in itertools.chain(group.optional_packages,
-                                           group.default_packages):
-                    if pkg.name in inst_names:
-                        self._installed_groups.add(group.id)
-                        break
 
     @property
     def environments(self):
