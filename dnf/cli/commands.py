@@ -22,6 +22,7 @@ Classes for subcommands of the yum command line interface.
 """
 
 from __future__ import print_function
+import dnf.i18n
 import dnf.persistor
 import dnf.util
 import itertools
@@ -315,15 +316,21 @@ class InstallCommand(Command):
 
         # Install groups.
         if grp_specs:
-            if not self.base.read_comps():
-                msg = _('No Groups Available in any repository')
-                raise dnf.exceptions.CompsError(msg)
-            try:
-                self.base.install_grouplist(grp_specs)
-            except dnf.exceptions.Error:
-                pass
-            else:
-                done = True
+            self.base.read_comps()
+        cnt = 0
+        for spec in grp_specs:
+            group = self.base.comps.group_by_pattern(spec)
+            if group is None:
+                msg = _("Warning: Group '%s' does not exist.")
+                self.base.logger.error(msg, dnf.i18n.ucd(spec))
+                continue
+            cnt += self.base.group_install(group)
+        if grp_specs and not cnt:
+            msg = _('No packages in any requested group available '\
+                    'to install or upgrade.')
+            raise dnf.exceptions.Error(msg)
+        elif cnt:
+            done = True
 
         # Install packages.
         for pkg_spec in pkg_specs:
@@ -662,6 +669,15 @@ class GroupsCommand(Command):
                     'erase'      : 'remove',
                     'mark-erase' : 'mark-remove'}
 
+    def _install(self, patterns):
+        cnt = 0
+        grps = self._patterns2groups(patterns)
+        for grp in grps:
+            cnt += self.base.group_install(grp)
+        if not cnt:
+            msg = _('No packages in any requested groups available to install.')
+            raise dnf.cli.CliError(msg)
+
     def _mark_install(self, patterns):
         comps = self.base.comps
         groups = [g for pat in patterns for g in comps.groups_by_pattern(pat)
@@ -694,8 +710,8 @@ class GroupsCommand(Command):
         for pat in patterns:
             grps = comps.groups_by_pattern(pat)
             if not grps:
-                msg = _("No Group named %s exists") % to_unicode(grp_spec)
-                raise dnf.exceptions.CliError(msg)
+                msg = _("No Group named '%s' exists.") % to_unicode(pat)
+                raise dnf.cli.CliError(msg)
             for grp in grps:
                 yield grp
 
@@ -771,9 +787,9 @@ class GroupsCommand(Command):
 
         self._resolve = True
         if cmd == 'install':
-            return self.base.install_grouplist(extcmds)
+            return self._install(extcmds)
         if cmd == 'upgrade':
-            return self.base.install_grouplist(extcmds)
+            return self._install(extcmds)
         if cmd == 'remove':
             return self._remove(extcmds)
 

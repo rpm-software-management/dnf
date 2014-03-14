@@ -840,36 +840,6 @@ class BaseCli(dnf.Base):
 
         return 0, []
 
-    def install_grouplist(self, grouplist):
-        """Mark the packages in the given groups for installation.
-
-        :param grouplist: a list of names or wildcards specifying
-           groups to be installed
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        pkgs_used = []
-
-        groups = []
-        for group_string in grouplist:
-            matched = self.comps.groups_by_pattern(group_string)
-            if len(matched) == 0:
-                msg = _('Warning: Group %s does not exist.') % ucd(group_string)
-                self.logger.error(msg)
-                continue
-            groups.extend(matched)
-
-        total_cnt = sum(self.select_group(grp) for grp in groups)
-        if not total_cnt:
-            msg = _('No packages in any requested group available '\
-                    'to install or upgrade.')
-            raise dnf.exceptions.Error(msg)
-
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
         if self.conf.assumeyes and not self.conf.assumeno:

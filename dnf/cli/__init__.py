@@ -22,9 +22,7 @@ import dnf.exceptions
 class CliError(dnf.exceptions.Error):
     """CLI Exception."""
 
-    def __init__(self, args=''):
-        dnf.exceptions.Error.__init__(self)
-        self.args = args
+    pass
 
 from . cli import Cli # :api
 from . commands import Command # :api

@@ -217,7 +217,7 @@ class InstallCommandTest(support.ResultTestCase):
                               self._cmd.run, ['@non-existent'])
 
         self.assertEqual(stdout.getvalue(),
-                         'Warning: Group non-existent does not exist.\n')
+                         "Warning: Group 'non-existent' does not exist.\n")
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 

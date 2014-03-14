@@ -1372,6 +1372,40 @@ class Base(object):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
+    def group_install(self, grp, pkg_types=const.GROUP_PACKAGE_TYPES):
+        if grp.installed:
+            msg = _("Warning: Group '%s' is already installed.")
+            self.logger.warning(msg, grp.ui_name)
+            return 0
+
+        pkgs = set()
+        if 'mandatory' in pkg_types:
+            pkgs.update(pkg.name for pkg in grp.mandatory_packages)
+        if 'default' in pkg_types:
+            pkgs.update(pkg.name for pkg in grp.default_packages)
+        if 'optional' in pkg_types:
+            pkgs.update(pkg.name for pkg in grp.optional_packages)
+
+        inst_set = set([pkg.name for pkg in self.sack.query().installed()])
+        # do not install and mark already present packages
+        pkgs -= inst_set
+        new_set = set()
+
+        cnt = 0
+        self.logger.debug("Adding packages from group '%s': %s", grp.id, pkgs)
+        for pkg in pkgs:
+            try:
+                cnt += self.install(pkg)
+                new_set.add(pkg)
+            except dnf.exceptions.MarkingError:
+                pass
+
+        grp.mark(new_set)
+        if cnt == 0:
+            msg = _("Warning: Did not install any packages from group '%s'")
+            self.logger.warning(msg, grp.ui_name)
+        return cnt
+
     def group_remove(self, grp):
         cnt = 0
         for pkg in grp.installed_packages:

@@ -33,6 +33,19 @@ class SelectGroupTest(support.ResultTestCase):
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)
 
+    def test_group_install(self):
+        comps = self.base.comps
+        installed_groups = self.base.comps._installed_groups
+        grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
+        self.assertNotIn(grp.id, installed_groups)
+
+        self.assertEqual(self.base.group_install(grp), 1)
+        inst, removed = self.installed_removed(self.base)
+        self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
+        self.assertLength(removed, 0)
+        # does not contain the already installed 'pepper':
+        self.assertEqual(installed_groups[grp.id], ['trampoline'])
+
     def test_group_remove(self):
         grp = self.base.comps.group_by_pattern('Base')
         self.assertIn(grp.id, self.base.comps._installed_groups)
