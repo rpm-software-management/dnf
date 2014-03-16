@@ -139,7 +139,9 @@ the related `Fedora bug 948788
 =================================
 
 Done to simplify the configuration. User will typically want to decide what
-packages to install per-group and not via a global setting.
+packages to install per-group and not via a global setting::
+
+    dnf group install with-optional Editors
 
 .. _upgrade_requirements_on_install_dropped:
 

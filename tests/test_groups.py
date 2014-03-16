@@ -20,7 +20,7 @@ from tests import support
 import operator
 import dnf.util
 
-class SelectGroupTest(support.ResultTestCase):
+class GroupTest(support.ResultTestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.base.read_mock_comps(support.COMPS_PATH)
@@ -39,7 +39,7 @@ class SelectGroupTest(support.ResultTestCase):
         grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
         self.assertNotIn(grp.id, installed_groups)
 
-        self.assertEqual(self.base.group_install(grp), 1)
+        self.assertEqual(self.base.group_install(grp, ('mandatory',)), 1)
         inst, removed = self.installed_removed(self.base)
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)

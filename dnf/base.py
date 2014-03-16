@@ -1372,7 +1372,7 @@ class Base(object):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
-    def group_install(self, grp, pkg_types=const.GROUP_PACKAGE_TYPES):
+    def group_install(self, grp, pkg_types):
         if grp.installed:
             msg = _("Warning: Group '%s' is already installed.")
             self.logger.warning(msg, grp.ui_name)

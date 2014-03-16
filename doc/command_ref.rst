@@ -241,8 +241,8 @@ Group Command
     Display package lists of a group. Shows which packages are installed or
     available from a repo when ``-v`` is used.
 
-``dnf [options] group install <group-spec>``
-    Install packages in the specified group that are not currently installed.
+``dnf [options] group install [with-optional] <group-spec>``
+    Install packages in the specified group that are not currently installed. Also include optional packages if ``with-install`` is specified.
 
 ``dnf [options] group list [<group-spec>]``
     List all matching groups, either among installed or available groups. If

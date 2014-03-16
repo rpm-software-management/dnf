@@ -22,6 +22,7 @@ Classes for subcommands of the yum command line interface.
 """
 
 from __future__ import print_function
+import dnf.const
 import dnf.i18n
 import dnf.persistor
 import dnf.util
@@ -324,7 +325,7 @@ class InstallCommand(Command):
                 msg = _("Warning: Group '%s' does not exist.")
                 self.base.logger.error(msg, dnf.i18n.ucd(spec))
                 continue
-            cnt += self.base.group_install(group)
+            cnt += self.base.group_install(group, dnf.const.GROUP_PACKAGE_TYPES)
         if grp_specs and not cnt:
             msg = _('No packages in any requested group available '\
                     'to install or upgrade.')
@@ -669,11 +670,18 @@ class GroupsCommand(Command):
                     'erase'      : 'remove',
                     'mark-erase' : 'mark-remove'}
 
-    def _install(self, patterns):
+    def _split_extcmds(self, extcmds):
+        if extcmds[0] == 'with-optional':
+            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            return types, extcmds[1:]
+        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+
+    def _install(self, extcmds):
         cnt = 0
+        types, patterns = self._split_extcmds(extcmds)
         grps = self._patterns2groups(patterns)
         for grp in grps:
-            cnt += self.base.group_install(grp)
+            cnt += self.base.group_install(grp, types)
         if not cnt:
             msg = _('No packages in any requested groups available to install.')
             raise dnf.cli.CliError(msg)
