@@ -27,6 +27,7 @@
     <packagelist>
       <packagereq type="mandatory">pepper</packagereq>
       <packagereq type="mandatory">trampoline</packagereq>
+      <packagereq type="optional">lotus</packagereq>
     </packagelist>
   </group>
   <group>

@@ -46,6 +46,14 @@ class GroupTest(support.ResultTestCase):
         # does not contain the already installed 'pepper':
         self.assertEqual(installed_groups[grp.id], ['trampoline'])
 
+    def test_group_install_exclude(self):
+        comps = self.base.comps
+        installed_groups = self.base.comps._installed_groups
+        grp = dnf.util.first(comps.groups_by_pattern('somerset'))
+
+        cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
+        self.assertEqual(cnt, 0)
+
     def test_group_remove(self):
         grp = self.base.comps.group_by_pattern('Base')
         self.assertIn(grp.id, self.base.comps._installed_groups)

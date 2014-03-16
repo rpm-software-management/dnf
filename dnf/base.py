@@ -1372,19 +1372,23 @@ class Base(object):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
-    def group_install(self, grp, pkg_types):
+    def group_install(self, grp, pkg_types, exclude=None):
+        # :api
         if grp.installed:
             msg = _("Warning: Group '%s' is already installed.")
             self.logger.warning(msg, grp.ui_name)
             return 0
 
         pkgs = set()
+        exclude = set([]) if exclude is None else set(exclude)
         if 'mandatory' in pkg_types:
             pkgs.update(pkg.name for pkg in grp.mandatory_packages)
         if 'default' in pkg_types:
-            pkgs.update(pkg.name for pkg in grp.default_packages)
+            pkgs.update(pkg.name for pkg in grp.default_packages
+                        if pkg.name not in exclude)
         if 'optional' in pkg_types:
-            pkgs.update(pkg.name for pkg in grp.optional_packages)
+            pkgs.update(pkg.name for pkg in grp.optional_packages
+                        if pkg.name not in exclude)
 
         inst_set = set([pkg.name for pkg in self.sack.query().installed()])
         # do not install and mark already present packages
@@ -1407,6 +1411,7 @@ class Base(object):
         return cnt
 
     def group_remove(self, grp):
+        # :api
         cnt = 0
         for pkg in grp.installed_packages:
             try:
