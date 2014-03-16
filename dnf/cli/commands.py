@@ -667,14 +667,9 @@ class GroupsCommand(Command):
         return extcmds[0], extcmds[1:]
 
     _CMD_ALIASES = {'update'     : 'upgrade',
-                    'erase'      : 'remove',
-                    'mark-erase' : 'mark-remove'}
+                    'erase'      : 'remove'}
 
-    def _split_extcmds(self, extcmds):
-        if extcmds[0] == 'with-optional':
-            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
-            return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+    _MARK_CMDS = ('install', 'remove')
 
     def _install(self, extcmds):
         cnt = 0
@@ -713,6 +708,11 @@ class GroupsCommand(Command):
         self.base.logger.info(_('Marked removed: %s') %
                               ','.join([g.ui_name for g in groups]))
 
+    def _mark_subcmd(self, extcmds):
+        if extcmds[0] in self._MARK_CMDS:
+            return extcmds[0], extcmds[1:]
+        return 'install', extcmds
+
     def _patterns2groups(self, patterns):
         comps = self.base.comps
         for pat in patterns:
@@ -729,6 +729,12 @@ class GroupsCommand(Command):
             cnt += self.base.group_remove(grp)
         if not cnt:
             raise dnf.cli.CliError(_('No packages to remove from groups.'))
+
+    def _split_extcmds(self, extcmds):
+        if extcmds[0] == 'with-optional':
+            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            return types, extcmds[1:]
+        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
 
     @classmethod
     def canonical(cls, command_list):
@@ -757,17 +763,13 @@ class GroupsCommand(Command):
 
         checkEnabledRepo(self.base)
 
-        if cmd in ('install', 'remove',
-                   'mark-install', 'mark-remove',
-                   'mark-members', 'info', 'mark-members-sync'):
+        if cmd in ('install', 'remove', 'mark', 'info'):
             checkGroupArg(self.cli, cmd, extcmds)
 
         if cmd in ('install', 'upgrade'):
             checkGPGKey(self.base, self.cli)
 
-        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary',
-                'mark-install', 'mark-remove',
-                'mark-members', 'mark-members-sync')
+        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
         if cmd not in cmds:
             self.base.logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -788,10 +790,13 @@ class GroupsCommand(Command):
             return self.base.returnGroupLists(extcmds)
         if cmd == 'info':
             return self.base.returnGroupInfo(extcmds)
-        if cmd == 'mark-install':
-            return self._mark_install(extcmds)
-        if cmd == 'mark-remove':
-            return self._mark_remove(extcmds)
+        if cmd == 'mark':
+            (subcmd, extcmds) = self._mark_subcmd(extcmds)
+            if subcmd == 'remove':
+                return self._mark_remove(extcmds)
+            else:
+                assert subcmd == 'install'
+                return self._mark_install(extcmds)
 
         self._resolve = True
         if cmd == 'install':
