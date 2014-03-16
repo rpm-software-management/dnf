@@ -232,6 +232,8 @@ Erase Command
 Group Command
 -------------
 
+Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipualte the comprising packages with simple commands.
+
 ``dnf [options] group [summary] <group-spec>``
     Display overview of how many groups are installed and available. With a
     spec, limit the output to the matching groups. ``summary`` is the default
@@ -241,16 +243,23 @@ Group Command
     Display package lists of a group. Shows which packages are installed or
     available from a repo when ``-v`` is used.
 
-``dnf [options] group install [with-optional] <group-spec>``
-    Install packages in the specified group that are not currently installed. Also include optional packages if ``with-install`` is specified.
+``dnf [options] group install [with-optional] <group-spec>...``
+    Mark the specified group installed and install packages it contains. Also include optional packages of the group if ``with-optional`` is specified.
 
-``dnf [options] group list [<group-spec>]``
+``dnf [options] group list <group-spec>...``
     List all matching groups, either among installed or available groups. If
     nothing is specified list all known groups.
 
-``dnf [options] group remove [<group-spec>]``
-    Removes all packages (default, mandatory and conditional) in the group from
-    the system.
+``dnf [options] group remove <group-spec>...``
+    Mark the group removed and remove those packages in the group from the system which are neither comprising another installed group and were not installed explicitly by the user.
+
+Groups can be also be marked installed or removed without physically manipualting any packages:
+
+``dnf [options] group mark install <group-spec>...``
+    Mark the specified group installed. No packages will be installed by this command but the group is then considered installed.
+
+``dnf [options] group mark remove <group-spec>...``
+    Mark the specified group removed. No packages will be removed by this command.
 
 ------------
 Help Command
