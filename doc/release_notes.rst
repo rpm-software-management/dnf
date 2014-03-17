@@ -615,3 +615,35 @@ Bugs fixed in 0.4.17:
 * :rhbug:`1071501`
 * :rhbug:`1071518`
 * :rhbug:`1071677`
+
+====================
+0.4.18 Release Notes
+====================
+
+Support for ``dnf distro-sync <spec>`` finally arrives in this version.
+
+DNF has moved to handling groups as objects,  tagged installed/uninstalled independently from the actual installed packages. This has been in Yum as the ``group_command=objects`` setting and the default in recent Fedora releases. There are API extensions related to this change as well as two new CLI commands: ``group mark install`` and ``group mark remove``.
+
+API items deprecated in 0.4.8 and 0.4.9 have been dropped in 0.4.18, in accordance with our :ref:`deprecating-label`.
+
+API changes in 0.4.18:
+
+* :mod:`dnf.queries` has been dropped as announced in `0.4.8 Release Notes`_
+* :exc:`dnf.exceptions.PackageNotFoundError` has been dropped from API as announced in `0.4.9 Release Notes`_
+* :meth:`dnf.Base.install` no longer has to return the number of marked packages as announced in `0.4.9 Release Notes`_
+
+API deprecations in 0.4.18:
+
+* :meth:`dnf.Base.select_group` is deprecated now. Please use :meth:`~.Base.group_install` instead.
+
+API additions in 0.4.18:
+
+* :meth:`dnf.Base.group_install`
+* :meth:`dnf.Base.group_remove`
+
+Bugs fixed in 0.4.18:
+
+* :rhbug:`963710`
+* :rhbug:`1067136`
+* :rhbug:`1071212`
+* :rhbug:`1071501`

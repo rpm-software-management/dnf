@@ -510,5 +510,17 @@
     [
         1071677, 
         "[doc] faq suggests it's a good idea to install rawhide packages on stable releases"
+    ], 
+    [
+        963710, 
+        "RFE: allow package specs for distro-sync"
+    ], 
+    [
+        1067136, 
+        "[comps] no way to install optional packages from a group"
+    ], 
+    [
+        1071212, 
+        "dnf doesn't skip unreadable repository files"
     ]
 ]
