@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.17-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.4.18-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.17-1',
+        VERSION:     '0.4.18-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.17-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.18-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -207,9 +207,9 @@ automatically deleted after they are downloaded.</dd>
 <div class="section" id="distro-sync-command">
 <span id="distro-sync-command-label"></span><h3>Distro-sync command<a class="headerlink" href="#distro-sync-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">distro-sync</span></tt></dt>
-<dd>As necessary upgrades, downgrades or keeps all installed packages to match
-the latest version available from any enabled repository.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">distro-sync</span> <span class="pre">[&lt;package-spec&gt;...]</span></tt></dt>
+<dd>As necessary upgrades, downgrades or keeps selected installed packages to match
+the latest version available from any enabled repository. If no package is given, all installed packages are considered.</dd>
 </dl>
 </div>
 <div class="section" id="distribution-synchronization-command">
@@ -238,6 +238,7 @@ needed.</dd>
 </div>
 <div class="section" id="group-command">
 <h3>Group Command<a class="headerlink" href="#group-command" title="Permalink to this headline">¶</a></h3>
+<p>Groups are virtual collections of packages. DNF keeps track of groups that the user selected (&#8220;marked&#8221;) installed and can manipualte the comprising packages with simple commands.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">[summary]</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
 <dd>Display overview of how many groups are installed and available. With a
@@ -246,14 +247,20 @@ groups subcommand.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">info</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
 <dd>Display package lists of a group. Shows which packages are installed or
 available from a repo when <tt class="docutils literal"><span class="pre">-v</span></tt> is used.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">install</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
-<dd>Install packages in the specified group that are not currently installed.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">list</span> <span class="pre">[&lt;group-spec&gt;]</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">install</span> <span class="pre">[with-optional]</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
+<dd>Mark the specified group installed and install packages it contains. Also include optional packages of the group if <tt class="docutils literal"><span class="pre">with-optional</span></tt> is specified.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">list</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
 <dd>List all matching groups, either among installed or available groups. If
 nothing is specified list all known groups.</dd>
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">remove</span> <span class="pre">[&lt;group-spec&gt;]</span></tt></dt>
-<dd>Removes all packages (default, mandatory and conditional) in the group from
-the system.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">remove</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
+<dd>Mark the group removed and remove those packages in the group from the system which are neither comprising another installed group and were not installed explicitly by the user.</dd>
+</dl>
+<p>Groups can be also be marked installed or removed without physically manipualting any packages:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">mark</span> <span class="pre">install</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
+<dd>Mark the specified group installed. No packages will be installed by this command but the group is then considered installed.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">mark</span> <span class="pre">remove</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
+<dd>Mark the specified group removed. No packages will be removed by this command.</dd>
 </dl>
 </div>
 <div class="section" id="help-command">
@@ -636,7 +643,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

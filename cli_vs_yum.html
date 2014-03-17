@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.17-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.18-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.17-1',
+        VERSION:     '0.4.18-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.17-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.18-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -183,7 +183,9 @@ the related <a class="reference external" href="https://bugzilla.redhat.com/show
 <div class="section" id="group-package-types-dropped">
 <span id="id3"></span><h2><a class="toc-backref" href="#id18"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
 <p>Done to simplify the configuration. User will typically want to decide what
-packages to install per-group and not via a global setting.</p>
+packages to install per-group and not via a global setting:</p>
+<div class="highlight-python"><pre>dnf group install with-optional Editors</pre>
+</div>
 </div>
 <div class="section" id="upgrade-requirements-on-install-dropped">
 <span id="id4"></span><h2><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
@@ -328,7 +330,7 @@ downloaders ran in different processes.</p>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

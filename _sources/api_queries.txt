@@ -84,9 +84,3 @@
   .. method:: get_best_selector(sack, forms=None)
 
     Return a :class:`~dnf.selector.Selector` that will select a single best-matching package when used in a transaction operation. `sack` and `forms` have the same meaning as in :meth:`get_best_query`.
-
-.. module:: dnf.queries
-  :deprecated:
-
-.. warning::
-   :class:`~dnf.query.Query` and :class:`~dnf.subject.Subject` used to belong in the :mod:`dnf.queries` module. As of dnf-0.4.8 this module is deprecated and will be dropped as early as dnf-0.4.11 (also see :ref:`deprecating-label`).

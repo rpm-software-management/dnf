@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.17-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.18-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.17-1',
+        VERSION:     '0.4.18-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.17-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.4.18-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -118,6 +118,18 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="dnf.Base.group_install">
+<tt class="descname">group_install</tt><big>(</big><em>group</em>, <em>pkg_types</em>, <em>pkg_types</em>, <em>exclude=None</em><big>)</big><a class="headerlink" href="#dnf.Base.group_install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance) installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> in it. If <cite>exclude</cite> is given, it has to be an iterable of package names: <a class="reference internal" href="#dnf.Base.group_install" title="dnf.Base.group_install"><tt class="xref py py-meth docutils literal"><span class="pre">group_install()</span></tt></a> will then not mark the respective packages for installation whenever possible (but e.g. packages tagged <em>mandatory</em> will be marked for intallation no matter the value of <cite>exlcude</cite>)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.group_remove">
+<tt class="descname">group_remove</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#dnf.Base.group_remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance) not installed. All the packages marked as belonging to this group will be marked for removal. Return the number of packages marked for removal in this call.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="dnf.Base.read_all_repos">
 <tt class="descname">read_all_repos</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.read_all_repos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read repository configuration from the main configuration file specified by <a class="reference internal" href="api_conf.html#dnf.conf.Conf.config_file_path" title="dnf.conf.Conf.config_file_path"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.config_file_path</span></tt></a> and any <tt class="docutils literal"><span class="pre">.repo</span></tt> files under <a class="reference internal" href="api_conf.html#dnf.conf.Conf.reposdir" title="dnf.conf.Conf.reposdir"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.reposdir</span></tt></a>. All the repositories found this way are added to <a class="reference internal" href="#dnf.Base.repos" title="dnf.Base.repos"><tt class="xref py py-attr docutils literal"><span class="pre">repos</span></tt></a>.</p>
@@ -169,6 +181,10 @@ affect the package data already loaded into the <a class="reference internal" hr
 <dt id="dnf.Base.select_group">
 <tt class="descname">select_group</tt><big>(</big><em>group</em>, <em>pkg_types=None</em><big>)</big><a class="headerlink" href="#dnf.Base.select_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by adding <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> to it. If <cite>pkg_types</cite> is <tt class="docutils literal"><span class="pre">None</span></tt>, it defaults to <tt class="docutils literal"><span class="pre">(&quot;mandatory&quot;,</span> <span class="pre">&quot;default&quot;)</span></tt>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">As of dnf-0.4.18 this method is deprecated and will be dropped as early as dnf-0.4.21 (also see <a class="reference internal" href="api.html#deprecating-label"><em>Deprecation Policy</em></a>). Use <a class="reference internal" href="#dnf.Base.group_install" title="dnf.Base.group_install"><tt class="xref py py-meth docutils literal"><span class="pre">group_install()</span></tt></a>.</p>
+</div>
 </dd></dl>
 
 <p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument they take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
@@ -182,14 +198,6 @@ affect the package data already loaded into the <a class="reference internal" hr
 <dt id="dnf.Base.install">
 <tt class="descname">install</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.install" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark packages matching <cite>pkg_spec</cite> for installation.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This method was previously documented to raise <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">PackageNotFoundError</span></tt></a> if the spec could not be matched against a known package. While this still may hold in future versions, <a class="reference internal" href="api_exceptions.html#dnf.exceptions.PackageNotFoundError" title="dnf.exceptions.PackageNotFoundError"><tt class="xref py py-exc docutils literal"><span class="pre">PackageNotFoundError</span></tt></a> is currently being deprecated for public use.</p>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This method was previously documented to return a number of packages marked for installation. Depending on this behavior is deprecated as of dnf-0.4.9 and the functionality will be dropped as early as dnf-0.4.12 (also see <a class="reference internal" href="api.html#deprecating-label"><em>Deprecation Policy</em></a>).</p>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -263,7 +271,7 @@ affect the package data already loaded into the <a class="reference internal" hr
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.17-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.4.18-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
