@@ -1863,7 +1863,7 @@ Transaction Summary
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
                                         pkg_max_len, hpkg, ui_repo))
 
-        if type(old.tid) == type([]):
+        if isinstance(old.tid, list):
             print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
         else:
             print(_("Transaction ID :"), old.tid)
@@ -1902,12 +1902,12 @@ Transaction Summary
                 print(_("End rpmdb      :"), old.end_rpmdbversion, "**")
             else:
                 print(_("End rpmdb      :"), old.end_rpmdbversion)
-        if type(name) == type([]):
+        if isinstance(name, list):
             for name in name:
                 print(_("User           :"), name)
         else:
             print(_("User           :"), name)
-        if type(old.return_code) == type([]):
+        if isinstance(old.return_code, list):
             codes = old.return_code
             if codes[0] is None:
                 print(_("Return-Code    :"), "**", _("Aborted"), "**")
@@ -1922,13 +1922,13 @@ Transaction Summary
             print(_("Return-Code    :"), _("Success"))
 
         if old.cmdline is not None:
-            if type(old.cmdline) == type([]):
+            if isinstance(old.cmdline, list):
                 for cmdline in old.cmdline:
                     print(_("Command Line   :"), cmdline)
             else:
                 print(_("Command Line   :"), old.cmdline)
 
-        if type(old.tid) != type([]):
+        if not isinstance(old.tid):
             addon_info = self.history.return_addon_data(old.tid)
 
             # for the ones we create by default - don't display them as there

@@ -485,7 +485,7 @@ try:
     using ugettext to make sure translated strings are in Unicode.
     '''
     import gettext
-    t = gettext.translation('yum', fallback=True)
+    t = gettext.translation('dnf', fallback=True)
     _ = t.ugettext
     P_ = t.ungettext
 except:

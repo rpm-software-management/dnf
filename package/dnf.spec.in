@@ -98,6 +98,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
+/usr/share/locale/*/LC_MESSAGES/dnf.mo
 %config(noreplace) %{confdir}/dnf.conf
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
@@ -112,6 +113,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
+/usr/share/locale/*/LC_MESSAGES/dnf.mo
 %config(noreplace) %{confdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz

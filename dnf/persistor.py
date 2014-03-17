@@ -80,7 +80,7 @@ class RepoPersistor(object):
         f.close()
         if content == "":
             data = []
-            self.logger.warning(_("expired_repos.json is empty file"))
+            self.logger.warning(_("%s is empty file"), "expired_repos.json")
             self._write_json_data(json_path, data)
         else:
             data = json.loads(content)

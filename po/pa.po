@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dnf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 13:04+0100\n"
-"PO-Revision-Date: 2014-03-03 11:22+0000\n"
+"POT-Creation-Date: 2014-03-17 15:04+0100\n"
+"PO-Revision-Date: 2014-03-17 14:04+0000\n"
 "Last-Translator: jsilhan <jsilhan@redhat.com>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.com/projects/p/dnf/language/pa/)\n"
 "MIME-Version: 1.0\n"
@@ -19,20 +19,26 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../dnf/persistor.py:53
-msgid "expired_repos.json is empty file"
+#, python-format
+msgid "%s is empty file"
 msgstr ""
 
-#: ../dnf/drpm.py:52 ../dnf/repo.py:269
+#: ../dnf/drpm.py:55 ../dnf/repo.py:271
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr ""
 
-#: ../dnf/drpm.py:120
+#: ../dnf/drpm.py:126
 msgid "Delta RPM rebuild failed"
 msgstr ""
 
-#: ../dnf/drpm.py:122
+#: ../dnf/drpm.py:128
 msgid "Checksum of the delta-rebuilt RPM failed"
+msgstr ""
+
+#: ../dnf/repo.py:356
+#, python-format
+msgid "Failed to synchronize cache for repo '%s': %s"
 msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:107
@@ -117,395 +123,382 @@ msgstr "    ਸ਼ੁਰੂ ਹੋਇਆ: %s - %s ਪਹਿਲਾਂ"
 msgid "    State  : %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:113
+#: ../dnf/cli/cli.py:114
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "   ਇੰਸਟਾਲ ਕੀਤਾ:%s-%s %s ਉੱਤੇ "
 
-#: ../dnf/cli/cli.py:115
+#: ../dnf/cli/cli.py:116
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr " ਬਿਲਡ   : %s %s ਉੱਤੇ "
 
-#: ../dnf/cli/cli.py:149
+#: ../dnf/cli/cli.py:150
 msgid "Disk Requirements:\n"
 msgstr "ਡਿਸਕ ਲੋੜਾਂ:\n"
 
-#: ../dnf/cli/cli.py:156
+#: ../dnf/cli/cli.py:157
 msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr "ਗਲਤੀ ਸੰਖੇਪ\n------------\n"
 
-#: ../dnf/cli/cli.py:170
+#: ../dnf/cli/cli.py:171
 msgid "Trying to run the transaction but nothing to do. Exiting."
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਉਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕੀਤੀ, ਪਰ ਕੁਝ ਵੀ ਕਰਨ ਲਈ ਨਹੀਂ ਹੈ। ਬੰਦ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ।"
 
-#: ../dnf/cli/cli.py:204
+#: ../dnf/cli/cli.py:205
 msgid "Exiting on user Command"
 msgstr "ਯੂਜ਼ਰ ਕਮਾਂਡ ਮੌਜੂਦ ਹੈ"
 
-#: ../dnf/cli/cli.py:209
+#: ../dnf/cli/cli.py:210
 msgid "Downloading Packages:"
 msgstr "ਪੈਕੇਜ ਡਾਊਨਲੋਡ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ:"
 
-#: ../dnf/cli/cli.py:214
+#: ../dnf/cli/cli.py:216
 #, python-format
 msgid ""
 "Error downloading packages:\n"
-" %s"
+"%s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:247
+#: ../dnf/cli/cli.py:249
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
 
-#: ../dnf/cli/cli.py:267 ../dnf/cli/cli.py:311
+#: ../dnf/cli/cli.py:269 ../dnf/cli/cli.py:313
 msgid "  * Maybe you meant: "
 msgstr "  * ਸ਼ਾਇਦ ਤੁਸੀਂ ਚਾਹੁੰਦੇ ਹੋ: "
 
-#: ../dnf/cli/cli.py:294 ../dnf/cli/cli.py:302
+#: ../dnf/cli/cli.py:296 ../dnf/cli/cli.py:304
 #, python-format
 msgid "Package(s) %s%s%s available, but not installed."
 msgstr "ਪੈਕੇਜ %s%s%s ਉਪਲੱਬਧ ਹਨ, ਪਰ ਇੰਸਟਾਲ ਨਹੀਂ।"
 
-#: ../dnf/cli/cli.py:308 ../dnf/cli/cli.py:433 ../dnf/cli/cli.py:1092
-#: ../dnf/cli/cli.py:1121 ../dnf/cli/commands.py:330
-#: ../dnf/cli/commands.py:1347
+#: ../dnf/cli/cli.py:310 ../dnf/cli/cli.py:407 ../dnf/cli/cli.py:1013
+#: ../dnf/cli/cli.py:1042 ../dnf/cli/commands.py:332
+#: ../dnf/cli/commands.py:1363
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "ਕੋਈ %s%s%s ਪੈਕੇਜ ਉਪਲੱਬਧ ਨਹੀਂ ਹੈ।"
 
-#: ../dnf/cli/cli.py:341 ../dnf/cli/cli.py:572 ../dnf/cli/cli.py:578
+#: ../dnf/cli/cli.py:343 ../dnf/cli/cli.py:493 ../dnf/cli/cli.py:499
 msgid "Obsoleting Packages"
 msgstr "ਬਰਤਰਫ਼ ਕੀਤੇ ਜਾ ਰਹੇ ਪੈਕੇਜ"
 
-#: ../dnf/cli/cli.py:356 ../dnf/cli/commands.py:412
-#: ../dnf/cli/commands.py:1442
+#: ../dnf/cli/cli.py:358 ../dnf/cli/commands.py:414
+#: ../dnf/cli/commands.py:1742
 msgid "No packages marked for upgrade."
 msgstr ""
 
-#: ../dnf/cli/cli.py:375
+#: ../dnf/cli/cli.py:377
 msgid "No packages marked for distribution synchronization."
 msgstr ""
 
-#: ../dnf/cli/cli.py:398 ../dnf/cli/cli.py:473 ../dnf/cli/commands.py:405
-#: ../dnf/cli/commands.py:1436
-#, python-format
-msgid "No match for argument: %s"
-msgstr ""
-
-#: ../dnf/cli/cli.py:404
-msgid "No packages marked for removal."
-msgstr ""
-
-#: ../dnf/cli/cli.py:439
+#: ../dnf/cli/cli.py:413
 #, python-format
 msgid "No match for available package: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:444 ../dnf/cli/cli.py:497 ../dnf/cli/main.py:151
-#: ../dnf/cli/commands.py:338 ../dnf/cli/commands.py:1355
+#: ../dnf/cli/cli.py:418 ../dnf/cli/main.py:151 ../dnf/cli/commands.py:340
+#: ../dnf/cli/commands.py:1371 ../dnf/cli/commands.py:1462
+#: ../dnf/cli/commands.py:1530 ../dnf/cli/commands.py:1581
+#: ../dnf/cli/commands.py:1641 ../dnf/cli/commands.py:2022
 msgid "Nothing to do."
 msgstr ""
 
-#: ../dnf/cli/cli.py:481
-#, python-format
-msgid " (from %s)"
-msgstr " (%s ਵਲੋਂ)"
-
-#: ../dnf/cli/cli.py:482
-#, python-format
-msgid "Installed package %s%s%s%s not available."
-msgstr "ਇੰਸਟਾਲ ਹੋਏ ਪੈਕੇਜ %s%s%s%s ਉਪਲੱਬਧ ਨਹੀਂ।"
-
-#: ../dnf/cli/cli.py:548
+#: ../dnf/cli/cli.py:469
 msgid "Installed Packages"
 msgstr "ਇੰਸਟਾਲ ਹੋਏ ਪੈਕੇਜ"
 
-#: ../dnf/cli/cli.py:556
+#: ../dnf/cli/cli.py:477
 msgid "Available Packages"
 msgstr "ਉਪਲੱਬਧ ਪੈਕੇਜ"
 
-#: ../dnf/cli/cli.py:560
+#: ../dnf/cli/cli.py:481
 msgid "Extra Packages"
 msgstr "ਵਾਧੂ ਪੈਕੇਜ"
 
-#: ../dnf/cli/cli.py:564
+#: ../dnf/cli/cli.py:485
 msgid "Upgraded Packages"
 msgstr ""
 
-#: ../dnf/cli/cli.py:580
+#: ../dnf/cli/cli.py:501
 msgid "Recently Added Packages"
 msgstr "ਤਾਜ਼ਾ ਸ਼ਾਮਲ ਕੀਤੇ ਪੈਕੇਜ"
 
-#: ../dnf/cli/cli.py:584
+#: ../dnf/cli/cli.py:505
 msgid "No matching Packages to list"
 msgstr "ਲਿਸਟ ਲਈ ਕੋਈ ਮਿਲਦਾ ਪੈਕੇਜ ਨਹੀਂ"
 
-#: ../dnf/cli/cli.py:694 ../dnf/cli/cli.py:1569
+#: ../dnf/cli/cli.py:615 ../dnf/cli/cli.py:1493
 msgid "No Matches found"
 msgstr "ਕੋਈ ਮਿਲਦਾ ਨਹੀਂ"
 
-#: ../dnf/cli/cli.py:723
+#: ../dnf/cli/cli.py:644
 msgid "Cleaning repos: "
 msgstr "ਰੈਪੋ ਸਾਫ਼ ਕੀਤੀਆਂ ਜਾਂਦੀਆਂ ਹਨ: "
 
-#: ../dnf/cli/cli.py:727
+#: ../dnf/cli/cli.py:648
 msgid "Cleaning up Everything"
 msgstr "ਹਰ ਚੀਜ਼ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
-#: ../dnf/cli/cli.py:741
+#: ../dnf/cli/cli.py:662
 msgid "Cleaning up Packages"
 msgstr "ਪੈਕੇਜ ਸਾਫ਼ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ"
 
-#: ../dnf/cli/cli.py:744
+#: ../dnf/cli/cli.py:665
 msgid "Cleaning up xml metadata"
 msgstr "xml  ਮੇਟਾਡਾਟਾ ਸਾਫ਼ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
-#: ../dnf/cli/cli.py:747
+#: ../dnf/cli/cli.py:668
 msgid "Cleaning up database cache"
 msgstr "ਡਾਟਾਬੇਸ ਕੈਸ਼ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
-#: ../dnf/cli/cli.py:750
+#: ../dnf/cli/cli.py:671
 msgid "Cleaning up expire-cache metadata"
 msgstr "ਐਕਸਪਾਇਰ-ਕੈਸ਼ ਮੇਟਾਡਾਟਾ ਸਾਫ਼ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
-#: ../dnf/cli/cli.py:753
+#: ../dnf/cli/cli.py:674
 msgid "Cleaning up cached rpmdb data"
 msgstr "ਕੈਸ਼ ਕੀਤਾ rpmdb ਡਾਟਾ ਸਾਫ਼ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
-#: ../dnf/cli/cli.py:790
+#: ../dnf/cli/cli.py:711
 #, python-format
 msgid "Warning: No groups match: %s"
 msgstr "ਸਾਵਧਾਨ: ਕੋਈ ਮਿਲਦਾ ਗਰੁੱਪ ਨਹੀਂ: %s"
 
-#: ../dnf/cli/cli.py:805
+#: ../dnf/cli/cli.py:726
 msgid "Available environment groups:"
 msgstr ""
 
-#: ../dnf/cli/cli.py:815
+#: ../dnf/cli/cli.py:736
 msgid "Installed groups:"
 msgstr ""
 
-#: ../dnf/cli/cli.py:821
+#: ../dnf/cli/cli.py:742
 msgid "Installed language groups:"
 msgstr ""
 
-#: ../dnf/cli/cli.py:827
+#: ../dnf/cli/cli.py:748
 msgid "Available groups:"
 msgstr ""
 
-#: ../dnf/cli/cli.py:833
+#: ../dnf/cli/cli.py:754
 msgid "Available language groups:"
 msgstr ""
 
-#: ../dnf/cli/cli.py:872
+#: ../dnf/cli/cli.py:793
 msgid "Installed Groups:"
 msgstr "ਇੰਸਟਾਲ ਹੋਏ ਗਰੁੱਪ:"
 
-#: ../dnf/cli/cli.py:878
+#: ../dnf/cli/cli.py:799
 msgid "Installed Language Groups:"
 msgstr "ਇੰਸਟਾਲ ਹੋਏ ਭਾਸ਼ਾ ਗਰੁੱਪ:"
 
-#: ../dnf/cli/cli.py:884
+#: ../dnf/cli/cli.py:805
 msgid "Available Groups:"
 msgstr "ਉਪਲੱਬਧ ਗਰੁੱਪ:"
 
-#: ../dnf/cli/cli.py:890
+#: ../dnf/cli/cli.py:811
 msgid "Available Language Groups:"
 msgstr "ਉਪਲੱਬਧ ਭਾਸ਼ਾ ਗਰੁੱਪ:"
 
-#: ../dnf/cli/cli.py:915 ../dnf/cli/cli.py:938
+#: ../dnf/cli/cli.py:836 ../dnf/cli/cli.py:859
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "ਚੇਤਾਵਨੀ: ਗਰੁੱਪ %s ਮੌਜੂਦ ਨਹੀਂ ਹੈ।"
 
-#: ../dnf/cli/cli.py:945
+#: ../dnf/cli/cli.py:866
 msgid "No packages in any requested group available to install or upgrade."
 msgstr ""
 
-#: ../dnf/cli/cli.py:971
+#: ../dnf/cli/cli.py:892
 msgid "No packages to remove from groups."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1012 ../dnf/cli/commands.py:1968
-#: ../dnf/cli/commands.py:1984
+#: ../dnf/cli/cli.py:933 ../dnf/cli/commands.py:2300
+#: ../dnf/cli/commands.py:2316
 msgid "No transaction ID given"
 msgstr "ਕੋਈ ਟਰਾਂਸੈਕਸ਼ਨ ID ਦਿੱਤਾ"
 
-#: ../dnf/cli/cli.py:1021 ../dnf/cli/cli.py:1029 ../dnf/cli/output.py:2132
+#: ../dnf/cli/cli.py:942 ../dnf/cli/cli.py:950 ../dnf/cli/output.py:2132
 msgid "Bad transaction ID given"
 msgstr "ਖ਼ਰਾਬ ਟਰਾਂਸੈਕਸ਼ਨ ID ਦਿੱਤਾ"
 
-#: ../dnf/cli/cli.py:1037
+#: ../dnf/cli/cli.py:958
 msgid "Not found given transaction ID"
 msgstr "ਦਿੱਤਾ ਟਰਾਂਸੈਕਸ਼ਨ ID ਨਹੀਂ ਲੱਭਿਆ"
 
-#: ../dnf/cli/cli.py:1046 ../dnf/cli/commands.py:1970
-#: ../dnf/cli/commands.py:1986
+#: ../dnf/cli/cli.py:967 ../dnf/cli/commands.py:2302
+#: ../dnf/cli/commands.py:2318
 msgid "Found more than one transaction ID!"
 msgstr "ਇੱਕ ਤੋਂ ਵੱਧ ਟਰਾਂਸੈਕਸ਼ਨ ID ਲੱਭਿਆ!"
 
-#: ../dnf/cli/cli.py:1063
+#: ../dnf/cli/cli.py:984
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1065
+#: ../dnf/cli/cli.py:986
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1088 ../dnf/cli/cli.py:1117
+#: ../dnf/cli/cli.py:1009 ../dnf/cli/cli.py:1038
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1265
+#: ../dnf/cli/cli.py:1099
+#, python-format
+msgid "Unknown repo: '%s'"
+msgstr ""
+
+#: ../dnf/cli/cli.py:1189
 msgid "You need to give some command"
 msgstr "ਤੁਹਾਨੂੰ ਕੁਝ ਕਮਾਂਡ ਦੇਣ ਦੀ ਲੋੜ ਹੈ"
 
-#: ../dnf/cli/cli.py:1272
+#: ../dnf/cli/cli.py:1196
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "ਇੰਝ ਦੀ ਕੋਈ ਕਮਾਂਡ ਨਹੀਂ ਹੈ: %s। %s --help ਵਰਤੋਂ ਜੀ"
 
-#: ../dnf/cli/cli.py:1377 ../dnf/cli/cli.py:1381
+#: ../dnf/cli/cli.py:1301 ../dnf/cli/cli.py:1305
 #, python-format
 msgid "Config error: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1484
+#: ../dnf/cli/cli.py:1408
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "ਕਮਾਂਡ \"%s\" ਪਹਿਲਾਂ ਦੀ ਦਿੱਤੀ ਹੈ"
 
-#: ../dnf/cli/cli.py:1547
+#: ../dnf/cli/cli.py:1471
 #, python-format
 msgid "N/S Matched: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1550
+#: ../dnf/cli/cli.py:1474
 #, python-format
 msgid "Matched: %s"
 msgstr "ਮਿਲਦੇ: %s"
 
-#: ../dnf/cli/cli.py:1568
+#: ../dnf/cli/cli.py:1492
 #, python-format
 msgid "Warning: No matches found for: %s"
 msgstr "ਚੇਤਾਵਨੀ: %s :ਲਈ ਕੋਈ ਮੇਲ ਨਹੀਂ ਲੱਭਿਆ"
 
-#: ../dnf/cli/cli.py:1572
+#: ../dnf/cli/cli.py:1496
 msgid "Writing out repository metadata for debugging."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1606
+#: ../dnf/cli/cli.py:1530
 #, python-format
 msgid "Command line error: %s"
 msgstr "ਕਮਾਂਡ ਲਾਈਨ ਗਲਤੀ: %s"
 
-#: ../dnf/cli/cli.py:1663
+#: ../dnf/cli/cli.py:1588
 msgid "--color takes one of: auto, always, never"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1697
+#: ../dnf/cli/cli.py:1622
 #, python-format
 msgid "Options Error: %s"
 msgstr "ਚੋਣ ਗਲਤੀ: %s"
 
-#: ../dnf/cli/cli.py:1707
+#: ../dnf/cli/cli.py:1632
 #, python-format
 msgid "--installroot must be an absolute path: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1729
+#: ../dnf/cli/cli.py:1654
 msgid "allow erasing of installed packages to resolve dependencies"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1732
+#: ../dnf/cli/cli.py:1657
 msgid "try the best available package versions in transactions."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1736
+#: ../dnf/cli/cli.py:1661
 msgid "run entirely from system cache, don't update cache"
 msgstr "ਪੂਰੀ ਤਰ੍ਹਾਂ ਸਿਸਟਮ ਕੈਸ਼ ਤੋਂ ਚਲਾਓ, ਕੈਸ਼ ਅੱਪਡੇਟ ਨਾ ਕਰੋ"
 
-#: ../dnf/cli/cli.py:1740
+#: ../dnf/cli/cli.py:1665
 msgid "config file location"
 msgstr "ਸੰਰਚਨਾ ਫਾਇਲ ਟਿਕਾਣਾ"
 
-#: ../dnf/cli/cli.py:1743
+#: ../dnf/cli/cli.py:1668
 msgid "maximum command wait time"
 msgstr "ਵੱਧੋ-ਵੱਧ ਕਮਾਂਡ ਉਡੀਕ ਸਮਾਂ"
 
-#: ../dnf/cli/cli.py:1746
+#: ../dnf/cli/cli.py:1671
 msgid "debugging output level"
 msgstr "ਡੀਬੱਗ ਆਉਟਪੁੱਟ ਲੈਵਲ"
 
-#: ../dnf/cli/cli.py:1749
+#: ../dnf/cli/cli.py:1674
 msgid "dumps package metadata into files"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1752
+#: ../dnf/cli/cli.py:1677
 msgid "dumps detailed solving results into files"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1755
+#: ../dnf/cli/cli.py:1680
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "ਡੁਪਲੀਕੇਟ ਵੇਖੋ, ਰਿਪੋ ਵਿੱਚ, ਲਿਸਟ/ਖੋਜ ਕਮਾਂਡ ਵਿੱਚ"
 
-#: ../dnf/cli/cli.py:1758
+#: ../dnf/cli/cli.py:1683
 msgid "error output level"
 msgstr "ਗਲਤੀ ਆਉਟਪੁੱਟ ਲੈਵਲ"
 
-#: ../dnf/cli/cli.py:1760
+#: ../dnf/cli/cli.py:1685
 msgid "debugging output level for rpm"
 msgstr "rpm ਲਈ ਡੀਬੱਗ ਆਉਟਪੁੱਟ ਲੈਵਲ"
 
-#: ../dnf/cli/cli.py:1763
+#: ../dnf/cli/cli.py:1688
 msgid "quiet operation"
 msgstr "ਚੁੱਪ-ਚਾਪ ਕਾਰਵਾਈ"
 
-#: ../dnf/cli/cli.py:1765
+#: ../dnf/cli/cli.py:1690
 msgid "verbose operation"
 msgstr "ਜਾਣਕਾਰੀ ਸਮੇਤ ਕਾਰਵਾਈ"
 
-#: ../dnf/cli/cli.py:1767
+#: ../dnf/cli/cli.py:1692
 msgid "answer yes for all questions"
 msgstr "ਸਭ ਸਵਾਲਾਂ ਦੇ ਜਵਾਬ ਹਾਂ"
 
-#: ../dnf/cli/cli.py:1769
+#: ../dnf/cli/cli.py:1694
 msgid "answer no for all questions"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1771
+#: ../dnf/cli/cli.py:1696
 msgid "show Yum version and exit"
 msgstr "ਯੱਮ ਵਰਜਨ ਵੇਖਾਓ ਅਤੇ ਬੰਦ ਕਰੋ"
 
-#: ../dnf/cli/cli.py:1772
+#: ../dnf/cli/cli.py:1697
 msgid "set install root"
 msgstr "install root ਸੈੱਟ ਕਰੋ"
 
-#: ../dnf/cli/cli.py:1781
+#: ../dnf/cli/cli.py:1706
 msgid "exclude packages by name or glob"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1791
+#: ../dnf/cli/cli.py:1716
 msgid "disable all plugins"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1797
+#: ../dnf/cli/cli.py:1722
 msgid "disable plugins by name"
 msgstr "ਨਾਂ ਨਾਲ ਪਲੱਗਇਨ ਬੰਦ ਕਰੋ"
 
-#: ../dnf/cli/cli.py:1803
+#: ../dnf/cli/cli.py:1728
 msgid "override the value of $releasever in config and repo files"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1807
+#: ../dnf/cli/cli.py:1732
 msgid "set arbitrary config and repo options"
 msgstr ""
 
@@ -1310,590 +1303,621 @@ msgstr "ਪੈਕੇਜ..."
 msgid "Install a package or packages on your system"
 msgstr "ਆਪਣੇ ਸਿਸਟਮ ਉੱਤੇ ਪੈਕੇਜ ਇੰਸਟਾਲ ਕਰੋ"
 
-#: ../dnf/cli/commands.py:355 ../dnf/cli/commands.py:426
-#: ../dnf/cli/commands.py:461
+#: ../dnf/cli/commands.py:318 ../dnf/cli/commands.py:658
+msgid "No Groups Available in any repository"
+msgstr "ਕਿਸੇ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਕੋਈ ਗਰੁੱਪ ਉਪਲੱਬਧ ਨਹੀਂ"
+
+#: ../dnf/cli/commands.py:357 ../dnf/cli/commands.py:428
+#: ../dnf/cli/commands.py:463
 msgid "[PACKAGE...]"
 msgstr "[ਪੈਕੇਜ...]"
 
-#: ../dnf/cli/commands.py:363
+#: ../dnf/cli/commands.py:365
 msgid "Upgrade a package or packages on your system"
 msgstr ""
 
-#: ../dnf/cli/commands.py:430
+#: ../dnf/cli/commands.py:407 ../dnf/cli/commands.py:609
+#: ../dnf/cli/commands.py:1443 ../dnf/cli/commands.py:1511
+#: ../dnf/cli/commands.py:1632 ../dnf/cli/commands.py:1688
+#: ../dnf/cli/commands.py:1736 ../dnf/cli/commands.py:2003
+#, python-format
+msgid "No match for argument: %s"
+msgstr ""
+
+#: ../dnf/cli/commands.py:432
 msgid "Upgrade a package on your system to the specified version"
 msgstr ""
 
-#: ../dnf/cli/commands.py:469
+#: ../dnf/cli/commands.py:471
 msgid "Synchronize installed packages to the latest available versions"
 msgstr "ਸਭ ਇੰਸਟਾਲ ਕੀਤੇ ਪੈਕੇਜਾਂ ਨੂੰ ਸਭ ਤੋਂ ਨਵੇਂ ਉਪਲੱਬਧ ਵਰਜਨਾਂ ਨਾਲ ਸਿੰਕਰੋਨਾਈਜ਼ ਕਰੋ"
 
-#: ../dnf/cli/commands.py:482
+#: ../dnf/cli/commands.py:484
 msgid "distro-sync accepts no package specs."
 msgstr ""
 
-#: ../dnf/cli/commands.py:510
+#: ../dnf/cli/commands.py:512
 msgid "Display details about a package or group of packages"
 msgstr "ਪੈਕੇਜ ਜਾਂ ਪੈਕੇਜਾਂ ਦੇ ਗਰੁੱਪ ਬਾਰੇ ਵੇਰਵੇ ਸਮੇਤ ਜਾਣਕਾਰੀ ਵੇਖੋ"
 
-#: ../dnf/cli/commands.py:546
+#: ../dnf/cli/commands.py:548
 msgid "List a package or groups of packages"
 msgstr "ਪੈਕੇਜ ਜਾਂ ਪੈਕੇਜਾਂ ਦੇ ਗਰੁੱਪ ਦੀ ਲਿਸਟ"
 
-#: ../dnf/cli/commands.py:580
+#: ../dnf/cli/commands.py:582
 msgid "Remove a package or packages from your system"
 msgstr "ਆਪਣੇ ਸਿਸਟਮ ਤੋਂ ਪੈਕੇਜ ਹਟਾਓ"
 
-#: ../dnf/cli/commands.py:623
+#: ../dnf/cli/commands.py:617 ../dnf/cli/commands.py:1696
+msgid "No packages marked for removal."
+msgstr ""
+
+#: ../dnf/cli/commands.py:646
 msgid "Display, or use, the groups information"
 msgstr ""
 
-#: ../dnf/cli/commands.py:681
+#: ../dnf/cli/commands.py:706
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
 msgstr ""
 
-#: ../dnf/cli/commands.py:730
+#: ../dnf/cli/commands.py:755
 msgid "Generate the metadata cache"
 msgstr "ਮੇਟਾਡਾਟਾ ਕੈਸ਼ ਤਿਆਰ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ"
 
-#: ../dnf/cli/commands.py:742
+#: ../dnf/cli/commands.py:767
 msgid "Making cache files for all metadata files."
 msgstr "ਸਭ ਮੇਟਾਡਾਟਾ ਫਾਇਲਾਂ ਲਈ ਕੈਸ਼ ਫਾਇਲਾਂ ਬਣਾਈਆਂ ਜਾ ਰਹੀਆਂ ਹਨ।"
 
-#: ../dnf/cli/commands.py:749
+#: ../dnf/cli/commands.py:774
 msgid "Metadata timer caching disabled when running on a battery."
 msgstr ""
 
-#: ../dnf/cli/commands.py:754
+#: ../dnf/cli/commands.py:779
 msgid "Metadata timer caching disabled."
 msgstr ""
 
-#: ../dnf/cli/commands.py:759
+#: ../dnf/cli/commands.py:784
 msgid "Metadata cache refreshed recently."
 msgstr ""
 
-#: ../dnf/cli/commands.py:782
+#: ../dnf/cli/commands.py:807
 msgid "Metadata cache created."
 msgstr ""
 
-#: ../dnf/cli/commands.py:806
+#: ../dnf/cli/commands.py:831
 msgid "Remove cached data"
 msgstr "ਕੈਸ਼ ਡਾਟਾ ਹਟਾਓ"
 
-#: ../dnf/cli/commands.py:844
+#: ../dnf/cli/commands.py:869
 msgid "Find what package provides the given value"
 msgstr "ਲੱਭੋ ਕਿ ਕਿਹੜਾ ਪੈਕੇਜ ਦਿੱਤਾ ਮੁੱਲ ਦਿੰਦਾ ਹੈ"
 
-#: ../dnf/cli/commands.py:881
+#: ../dnf/cli/commands.py:906
 msgid "Check for available package upgrades"
 msgstr ""
 
-#: ../dnf/cli/commands.py:933
+#: ../dnf/cli/commands.py:958
 msgid "Search package details for the given string"
 msgstr "ਦਿੱਤੀ ਲਾਈਨ ਲਈ ਪੈਕੇਜ ਵੇਰਵਾ ਲੱਭੋ"
 
-#: ../dnf/cli/commands.py:945
+#: ../dnf/cli/commands.py:970
 msgid "Searching Packages: "
 msgstr "ਪੈਕੇਜਾਂ ਲਈ ਖੋਜ ਜਾਰੀ: "
 
-#: ../dnf/cli/commands.py:970
+#: ../dnf/cli/commands.py:995
 msgid "List a package's dependencies"
 msgstr "ਪੈਕੇਜਾਂ ਦੀ ਨਿਰਭਰਤਾ ਦੀ ਲਿਸਟ"
 
-#: ../dnf/cli/commands.py:1007
+#: ../dnf/cli/commands.py:1032
 msgid "Display the configured software repositories"
 msgstr "ਸੰਰਚਿਤ ਸਾਫਟਵੇਅਰ ਰਿਪੋਜ਼ਟਰੀਆਂ ਵੇਖੋ"
 
-#: ../dnf/cli/commands.py:1065 ../dnf/cli/commands.py:1066
+#: ../dnf/cli/commands.py:1090 ../dnf/cli/commands.py:1091
 msgid "enabled"
 msgstr "ਚਾਲੂ"
 
-#: ../dnf/cli/commands.py:1084 ../dnf/cli/commands.py:1085
+#: ../dnf/cli/commands.py:1109 ../dnf/cli/commands.py:1110
 msgid "disabled"
 msgstr "ਬੰਦ"
 
-#: ../dnf/cli/commands.py:1100
+#: ../dnf/cli/commands.py:1125
 msgid "Repo-id      : "
 msgstr "ਰਿਪੋ-id      : "
 
-#: ../dnf/cli/commands.py:1101
+#: ../dnf/cli/commands.py:1126
 msgid "Repo-name    : "
 msgstr "ਰਿਪੋ-ਨਾਂ    : "
 
-#: ../dnf/cli/commands.py:1104
+#: ../dnf/cli/commands.py:1129
 msgid "Repo-status  : "
 msgstr "ਰਿਪੋ-ਹਾਲਤ : "
 
-#: ../dnf/cli/commands.py:1107
+#: ../dnf/cli/commands.py:1132
 msgid "Repo-revision: "
 msgstr "ਰਿਪੋ-ਰੀਵਿਜ਼ਨ: "
 
-#: ../dnf/cli/commands.py:1111
+#: ../dnf/cli/commands.py:1136
 msgid "Repo-tags    : "
 msgstr "ਰਿਪੋ-ਟੈਗ    : "
 
-#: ../dnf/cli/commands.py:1116
+#: ../dnf/cli/commands.py:1141
 msgid "Repo-distro-tags: "
 msgstr "Repo-distro-tags: "
 
-#: ../dnf/cli/commands.py:1121
+#: ../dnf/cli/commands.py:1146
 msgid "Repo-updated : "
 msgstr "ਰਿਪੋ-ਅੱਪਡੇਟ : "
 
-#: ../dnf/cli/commands.py:1123
+#: ../dnf/cli/commands.py:1148
 msgid "Repo-pkgs    : "
 msgstr "ਰਿਪੋ-ਪੈਕੇਜ    : "
 
-#: ../dnf/cli/commands.py:1124
+#: ../dnf/cli/commands.py:1149
 msgid "Repo-size    : "
 msgstr "ਰਿਪੋ-ਸਾਈਜ਼     : "
 
-#: ../dnf/cli/commands.py:1127
+#: ../dnf/cli/commands.py:1152
 msgid "Repo-metalink: "
 msgstr "ਰਿਪੋ-metalink: "
 
-#: ../dnf/cli/commands.py:1131
+#: ../dnf/cli/commands.py:1156
 msgid "  Updated    : "
 msgstr "  ਅੱਪਡੇਟ   : "
 
-#: ../dnf/cli/commands.py:1134
+#: ../dnf/cli/commands.py:1159
 msgid "Repo-mirrors : "
 msgstr "ਰਿਪੋ-mirrors : "
 
-#: ../dnf/cli/commands.py:1138 ../dnf/cli/commands.py:1142
+#: ../dnf/cli/commands.py:1163 ../dnf/cli/commands.py:1167
 msgid "Repo-baseurl : "
 msgstr "ਰਿਪੋ-baseurl : "
 
-#: ../dnf/cli/commands.py:1146
+#: ../dnf/cli/commands.py:1171
 #, python-format
 msgid "Never (last: %s)"
 msgstr "ਕਦੇ ਨਹੀਂ (ਆਖਰੀ: %s)"
 
-#: ../dnf/cli/commands.py:1148
+#: ../dnf/cli/commands.py:1173
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "ਮੌਕਾ (ਪਿਛਲਾ: %s)"
 
-#: ../dnf/cli/commands.py:1151
+#: ../dnf/cli/commands.py:1176
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s ਸਕਿੰਟ (ਆਖਰੀ: %s)"
 
-#: ../dnf/cli/commands.py:1153
+#: ../dnf/cli/commands.py:1178
 msgid "Repo-expire  : "
 msgstr "ਰਿਪੋ-expire  : "
 
-#: ../dnf/cli/commands.py:1156
+#: ../dnf/cli/commands.py:1181
 msgid "Repo-exclude : "
 msgstr "Repo-ਨਾ-ਸ਼ਾਮਲ : "
 
-#: ../dnf/cli/commands.py:1160
+#: ../dnf/cli/commands.py:1185
 msgid "Repo-include : "
 msgstr "Repo-ਸ਼ਾਮਲ : "
 
-#: ../dnf/cli/commands.py:1164
+#: ../dnf/cli/commands.py:1189
 msgid "Repo-excluded: "
 msgstr "ਵੱਖ ਰੱਖੀ ਗਈ ਰਿਪੋ: "
 
-#: ../dnf/cli/commands.py:1168
+#: ../dnf/cli/commands.py:1193
 msgid "Repo-filename: "
 msgstr "ਰਿਪੋ-ਫਾਇਲਨਾਂ:"
 
-#: ../dnf/cli/commands.py:1177 ../dnf/cli/commands.py:1206
+#: ../dnf/cli/commands.py:1202 ../dnf/cli/commands.py:1231
 msgid "repo id"
 msgstr "repo id"
 
-#: ../dnf/cli/commands.py:1194 ../dnf/cli/commands.py:1195
-#: ../dnf/cli/commands.py:1213
+#: ../dnf/cli/commands.py:1219 ../dnf/cli/commands.py:1220
+#: ../dnf/cli/commands.py:1238
 msgid "status"
 msgstr "ਹਾਲਤ"
 
-#: ../dnf/cli/commands.py:1207
+#: ../dnf/cli/commands.py:1232
 msgid "repo name"
 msgstr "ਰਿਪੋ ਨਾਂ"
 
-#: ../dnf/cli/commands.py:1338
+#: ../dnf/cli/commands.py:1354 ../dnf/cli/commands.py:1432
+#: ../dnf/cli/commands.py:1500
 msgid "No package available."
 msgstr ""
 
-#: ../dnf/cli/commands.py:1468
+#: ../dnf/cli/commands.py:1430
+msgid "No package installed."
+msgstr ""
+
+#: ../dnf/cli/commands.py:1451 ../dnf/cli/commands.py:1519
+#: ../dnf/cli/commands.py:2011
+#, python-format
+msgid " (from %s)"
+msgstr " (%s ਵਲੋਂ)"
+
+#: ../dnf/cli/commands.py:1452 ../dnf/cli/commands.py:1520
+#: ../dnf/cli/commands.py:2012
+#, python-format
+msgid "Installed package %s%s%s%s not available."
+msgstr "ਇੰਸਟਾਲ ਹੋਏ ਪੈਕੇਜ %s%s%s%s ਉਪਲੱਬਧ ਨਹੀਂ।"
+
+#: ../dnf/cli/commands.py:1497 ../dnf/cli/commands.py:1618
+#: ../dnf/cli/commands.py:1678
+msgid "No package installed from the repository."
+msgstr ""
+
+#: ../dnf/cli/commands.py:1763
 msgid "Error: Requires at least one package specification"
 msgstr ""
 
-#: ../dnf/cli/commands.py:1505
-msgid "REPO check-update|info|install|list|upgrade|upgrade-to [ARG...]"
+#: ../dnf/cli/commands.py:1814
+msgid ""
+"REPO check-update|info|install|list|move-to|reinstall|reinstall-old|remove"
+"|remove-or-reinstall|upgrade|upgrade-to [ARG...]"
 msgstr ""
 
-#: ../dnf/cli/commands.py:1510
+#: ../dnf/cli/commands.py:1821
 msgid "Run commands on top of all packages in given repository"
 msgstr ""
 
-#: ../dnf/cli/commands.py:1531
-msgid "Error: Requires a repo ID and a sub-command"
+#: ../dnf/cli/commands.py:1847
+msgid "Error: Requires a repo ID and a valid sub-command"
 msgstr ""
 
-#: ../dnf/cli/commands.py:1541
-#, python-format
-msgid "Error: Invalid %s sub-command, use: %s"
-msgstr ""
-
-#: ../dnf/cli/commands.py:1599
+#: ../dnf/cli/commands.py:1890
 msgid "Display a helpful usage message"
 msgstr ""
 
-#: ../dnf/cli/commands.py:1640
+#: ../dnf/cli/commands.py:1931
 #, python-format
 msgid "No help available for %s"
 msgstr "%s ਲਈ ਕੋਈ ਮੱਦਦ ਉਪਲੱਬਧ ਨਹੀਂ"
 
-#: ../dnf/cli/commands.py:1645
+#: ../dnf/cli/commands.py:1936
 msgid ""
 "\n"
 "\n"
 "aliases: "
 msgstr "\n\nਏਲੀਆਸ: "
 
-#: ../dnf/cli/commands.py:1647
+#: ../dnf/cli/commands.py:1938
 msgid ""
 "\n"
 "\n"
 "alias: "
 msgstr "\n\nਏਲੀਆਸ: "
 
-#: ../dnf/cli/commands.py:1698
+#: ../dnf/cli/commands.py:2030
 msgid "reinstall a package"
 msgstr "ਪੈਕੇਜ ਮੁੜ-ਇੰਸਟਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
-#: ../dnf/cli/commands.py:1741
+#: ../dnf/cli/commands.py:2073
 msgid "downgrade a package"
 msgstr "ਪੈਕੇਜ ਡਾਊਨਗਰੇਡ ਕਰੋ"
 
-#: ../dnf/cli/commands.py:1764
+#: ../dnf/cli/commands.py:2096
 msgid "Display a version for the machine and/or available repos."
 msgstr "ਮਸ਼ੀਨ ਤੇ / ਜਾਂ ਉਪਲੱਬਧ ਰਿਪੋ ਲਈ ਵਰਜਨ ਵੇਖੋ।"
 
-#: ../dnf/cli/commands.py:1803
+#: ../dnf/cli/commands.py:2135
 msgid " Yum version groups:"
 msgstr " ਯੱਮ ਵਰਜਨ ਗਰੁੱਪ:"
 
-#: ../dnf/cli/commands.py:1813
+#: ../dnf/cli/commands.py:2145
 msgid " Group   :"
 msgstr " ਗਰੁੱਪ   :"
 
-#: ../dnf/cli/commands.py:1814
+#: ../dnf/cli/commands.py:2146
 msgid " Packages:"
 msgstr " ਪੈਕੇਜ:"
 
-#: ../dnf/cli/commands.py:1838
+#: ../dnf/cli/commands.py:2170
 msgid "Installed:"
 msgstr "ਇੰਸਟਾਲ ਹੋਏ:"
 
-#: ../dnf/cli/commands.py:1846
+#: ../dnf/cli/commands.py:2178
 msgid "Group-Installed:"
 msgstr "ਗਰੁੱਪ-ਇੰਸਟਾਲ ਹੋਏ:"
 
-#: ../dnf/cli/commands.py:1855
+#: ../dnf/cli/commands.py:2187
 msgid "Available:"
 msgstr "ਉਪਲੱਬਧ:"
 
-#: ../dnf/cli/commands.py:1864
+#: ../dnf/cli/commands.py:2196
 msgid "Group-Available:"
 msgstr "ਉਪਲੱਬਧ-ਗਰੁੱਪ:"
 
-#: ../dnf/cli/commands.py:1900
+#: ../dnf/cli/commands.py:2232
 #, python-format
 msgid ""
 "Cannot undo transaction %s, doing so would result in an inconsistent package"
 " database."
 msgstr ""
 
-#: ../dnf/cli/commands.py:1904
+#: ../dnf/cli/commands.py:2236
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
 
-#: ../dnf/cli/commands.py:1923
+#: ../dnf/cli/commands.py:2255
 msgid "Display, or use, the transaction history"
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਅਤੀਤ ਵੇਖੋ ਜਾਂ ਵਰਤੋਂ"
 
-#: ../dnf/cli/commands.py:2004
+#: ../dnf/cli/commands.py:2336
 msgid "Transactions:"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2005
+#: ../dnf/cli/commands.py:2337
 msgid "Begin time  :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2006
+#: ../dnf/cli/commands.py:2338
 msgid "End time    :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2007
+#: ../dnf/cli/commands.py:2339
 msgid "Counts      :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2008
+#: ../dnf/cli/commands.py:2340
 msgid "  NEVRAC :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2009
+#: ../dnf/cli/commands.py:2341
 msgid "  NEVRA  :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2010
+#: ../dnf/cli/commands.py:2342
 msgid "  NA     :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2011
+#: ../dnf/cli/commands.py:2343
 msgid "  NEVR   :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2012
+#: ../dnf/cli/commands.py:2344
 msgid "  rpm DB :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2013
+#: ../dnf/cli/commands.py:2345
 msgid "  yum DB :"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2032
+#: ../dnf/cli/commands.py:2364
 #, python-format
 msgid "Unrecognized options \"%s\"!"
 msgstr ""
 
-#: ../dnf/cli/commands.py:2049
+#: ../dnf/cli/commands.py:2381
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr ""
 
-#: ../dnf/cli/commands.py:2055
+#: ../dnf/cli/commands.py:2387
 msgid "You don't have access to the history DB."
 msgstr ""
 
-#: ../dnf/cli/commands.py:2125
+#: ../dnf/cli/commands.py:2457
 msgid "Check for problems in the rpmdb"
 msgstr "rpmdb ਵਿੱਚ ਸਮੱਸਿਆ ਲਈ ਚੈੱਕ ਕਰੋ"
 
-#: ../dnf/base.py:124
+#: ../dnf/base.py:121
 #, python-format
 msgid "%s, disabling."
 msgstr ""
 
-#: ../dnf/base.py:318
+#: ../dnf/base.py:316
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr ""
 
-#: ../dnf/base.py:324
+#: ../dnf/base.py:322
 #, python-format
 msgid "Repository %r is missing name in configuration, using id"
 msgstr "ਰਿਪੋਜ਼ਟਰੀ %r ਦਾ ਸੰਰਚਨਾ ਵਿੱਚ ਨਾਂ ਮੌਜੂਦ ਨਹੀਂ ਹੈ, id ਵਰਤੋਂ ਨਾਲ"
 
-#: ../dnf/base.py:370
+#: ../dnf/base.py:368
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr ""
 
-#: ../dnf/base.py:410
+#: ../dnf/base.py:417
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "%s - %s: ਰਿਪੋਜ਼ਟਰੀ ਲਈ ਗਰੁੱਪ ਫਾਇਲ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਫੇਲ੍ਹ"
 
-#: ../dnf/base.py:414
-msgid "No Groups Available in any repository"
-msgstr "ਕਿਸੇ ਰਿਪੋਜ਼ਟਰੀ ਵਿੱਚ ਕੋਈ ਗਰੁੱਪ ਉਪਲੱਬਧ ਨਹੀਂ"
-
-#: ../dnf/base.py:512
+#: ../dnf/base.py:518
 msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
-#: ../dnf/base.py:570
+#: ../dnf/base.py:576
 msgid "Running transaction check"
 msgstr ""
 
-#: ../dnf/base.py:579
+#: ../dnf/base.py:585
 msgid "ERROR You need to upgrade rpm to handle:"
 msgstr ""
 
-#: ../dnf/base.py:581
+#: ../dnf/base.py:587
 msgid "ERROR with transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:587
+#: ../dnf/base.py:593
 msgid "RPM needs to be upgraded"
 msgstr ""
 
-#: ../dnf/base.py:591
+#: ../dnf/base.py:597
 msgid "Transaction check succeeded."
 msgstr ""
 
-#: ../dnf/base.py:596
+#: ../dnf/base.py:602
 msgid "Running transaction test"
 msgstr ""
 
-#: ../dnf/base.py:608
+#: ../dnf/base.py:614
 msgid "Transaction check error:\n"
 msgstr ""
 
-#: ../dnf/base.py:615
+#: ../dnf/base.py:621
 msgid "Transaction test succeeded."
 msgstr ""
 
-#: ../dnf/base.py:632
+#: ../dnf/base.py:638
 msgid "Running transaction"
 msgstr ""
 
-#: ../dnf/base.py:720
+#: ../dnf/base.py:726
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 
-#: ../dnf/base.py:724
+#: ../dnf/base.py:730
 msgid "Transaction couldn't start (no root?)"
 msgstr ""
 
-#: ../dnf/base.py:725 ../dnf/base.py:736
+#: ../dnf/base.py:731 ../dnf/base.py:742
 msgid "Could not run transaction."
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਚਲਾਈ ਨਹੀਂ ਜਾ ਸਕੀ।"
 
-#: ../dnf/base.py:733
+#: ../dnf/base.py:739
 msgid "Transaction couldn't start:"
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ:"
 
-#: ../dnf/base.py:745
+#: ../dnf/base.py:751
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "ਟਰਾਂਸੈਕਸ਼ਨ ਫਾਇਲ %s ਹਟਾਉਣ ਲਈ ਫੇਲ੍ਹ ਹੈ"
 
-#: ../dnf/base.py:804
+#: ../dnf/base.py:810
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s ਇੰਸਟਾਲ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ, ਪਰ ਇਹ ਨਹੀਂ ਹੈ!"
 
-#: ../dnf/base.py:864
+#: ../dnf/base.py:870
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s ਹਟਾਇਆ ਗਿਆ ਹੋਣਾ ਚਾਹੀਦਾ ਸੀ, ਪਰ ਨਹੀਂ ਗਿਆ!"
 
-#: ../dnf/base.py:962
+#: ../dnf/base.py:968
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s ਲਈ ਪਬਲਿਕ ਕੁੰਜੀ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ"
 
-#: ../dnf/base.py:966
+#: ../dnf/base.py:972
 #, python-format
 msgid "Problem opening package %s"
 msgstr "ਪੈਕੇਜ %s ਖੋਲ੍ਹਣ ਦੌਰਾਨ ਸਮੱਸਿਆ"
 
-#: ../dnf/base.py:974
+#: ../dnf/base.py:980
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s ਲਈ ਪਬਲਿਕ ਕੁੰਜੀ ਭਰੋਸੇਯੋਗ ਨਹੀਂ"
 
-#: ../dnf/base.py:978
+#: ../dnf/base.py:984
 #, python-format
 msgid "Package %s is not signed"
 msgstr "ਪੈਕੇਜ %s  ਸਾਈਨ ਨਹੀਂ ਕੀਤਾ"
 
-#: ../dnf/base.py:1012
+#: ../dnf/base.py:1018
 #, python-format
 msgid "Cannot remove %s"
 msgstr "%s ਹਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਦਾ"
 
-#: ../dnf/base.py:1016
+#: ../dnf/base.py:1022
 #, python-format
 msgid "%s removed"
 msgstr "%s ਹਟਾਇਆ"
 
-#: ../dnf/base.py:1053
+#: ../dnf/base.py:1059
 msgid "The enabled repos were expired"
 msgstr ""
 
-#: ../dnf/base.py:1082
+#: ../dnf/base.py:1088
 #, python-format
 msgid "Cannot remove %s file %s"
 msgstr "%s ਫਾਇਲ %s ਹਟਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ"
 
-#: ../dnf/base.py:1086
+#: ../dnf/base.py:1092
 #, python-format
 msgid "%s file %s removed"
 msgstr "%s ਫਾਇਲ %s ਹਟਾਈ"
 
-#: ../dnf/base.py:1308
+#: ../dnf/base.py:1326
 msgid "No group data available for configured repositories."
 msgstr ""
 
-#: ../dnf/base.py:1354 ../dnf/base.py:1415 ../dnf/base.py:1419
+#: ../dnf/base.py:1372 ../dnf/base.py:1433 ../dnf/base.py:1437
 #, python-format
 msgid "No Group named %s exists"
 msgstr "%s ਨਾਂ ਦਾ ਕੋਈ ਗਰੁੱਪ ਮੌਜੂਦ ਨਹੀਂ"
 
-#: ../dnf/base.py:1389
+#: ../dnf/base.py:1407
 #, python-format
 msgid "Adding package %s from group %s"
 msgstr "ਪੈਕੇਜ %s ਗਰੁੱਪ %s ਵਿੱਚੋਂ ਸ਼ਾਮਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
-#: ../dnf/base.py:1400
+#: ../dnf/base.py:1418
 #, python-format
 msgid "Warning: Group %s does not have any packages."
 msgstr "ਸਾਵਧਾਨ: %s ਗਰੁੱਪ ਵਿੱਚ ਕੋਈ ਵੀ ਪੈਕੇਜ ਨਹੀਂ ਹੈ।"
 
-#: ../dnf/base.py:1436
+#: ../dnf/base.py:1454
 #, python-format
 msgid "package %s was not marked in group %s"
 msgstr "ਪੈਕੇਜ %s ਗਰੁੱਪ %s ਵਿੱਚ ਨਿਸ਼ਾਨਬੱਧ ਨਹੀਂ ਹੈ"
 
-#: ../dnf/base.py:1481
+#: ../dnf/base.py:1499
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr ""
 
-#: ../dnf/base.py:1594
+#: ../dnf/base.py:1615
 #, python-format
 msgid "Cannot open: %s. Skipping."
 msgstr "ਖੋਲ੍ਹਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ: %s। ਛੱਡਿਆ ਜਾ ਰਿਹਾ ਹ।"
 
-#: ../dnf/base.py:1759
+#: ../dnf/base.py:1794
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "ਡਾਊਨਗਰੇਡ ਕਰਨ ਲਈ ਫੇਲ੍ਹ: %s"
 
-#: ../dnf/base.py:1776
+#: ../dnf/base.py:1811
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr ""
 
-#: ../dnf/base.py:1898
+#: ../dnf/base.py:1933
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "%s ਤੋਂ ਕੁੰਜੀ ਲਈ ਜਾ ਰਹੀ ਹੈ"
 
-#: ../dnf/base.py:1908
+#: ../dnf/base.py:1943
 msgid "GPG key retrieval failed: "
 msgstr "GPG ਕੁੰਜੀ ਲੈਣ ਲਈ ਫੇਲ੍ਹ: "
 
-#: ../dnf/base.py:1928
+#: ../dnf/base.py:1963
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr ""
 
-#: ../dnf/base.py:1930
+#: ../dnf/base.py:1965
 msgid "GPG key signature verified against CA Key(s)"
 msgstr ""
 
-#: ../dnf/base.py:1938
+#: ../dnf/base.py:1973
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "%s ਤੋਂ ਗਲਤ GPG ਕੁੰਜੀ: %s"
 
-#: ../dnf/base.py:1947
+#: ../dnf/base.py:1982
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr ""
 
-#: ../dnf/base.py:1964
+#: ../dnf/base.py:1999
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1903,7 +1927,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:1973
+#: ../dnf/base.py:2008
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1912,7 +1936,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:2001
+#: ../dnf/base.py:2036
 #, python-format
 msgid ""
 "\n"
@@ -1922,44 +1946,44 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:2015
+#: ../dnf/base.py:2050
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG ਕੁੰਜੀ %s (0x%s) ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ"
 
-#: ../dnf/base.py:2052
+#: ../dnf/base.py:2087
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "ਕੁੰਜੀ ਇੰਪੋਰਟ ਕਰਨ ਲਈ ਫੇਲ੍ਹ (ਕੋਡ %d)"
 
-#: ../dnf/base.py:2054 ../dnf/base.py:2155
+#: ../dnf/base.py:2089 ../dnf/base.py:2190
 msgid "Key imported successfully"
 msgstr "ਕੁੰਜੀ ਠੀਕ ਤਰ੍ਹਾਂ ਇੰਪੋਰਟ ਕੀਤੀ ਗਈ"
 
-#: ../dnf/base.py:2058
+#: ../dnf/base.py:2093
 msgid "Didn't install any keys"
 msgstr "ਕੋਈ ਵੀ ਕੁੰਜੀ ਇੰਸਟਾਲ ਨਹੀਂ ਕੀਤੀ"
 
-#: ../dnf/base.py:2061
+#: ../dnf/base.py:2096
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 
-#: ../dnf/base.py:2071
+#: ../dnf/base.py:2106
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 
-#: ../dnf/base.py:2093
+#: ../dnf/base.py:2128
 msgid "No"
 msgstr ""
 
-#: ../dnf/base.py:2095
+#: ../dnf/base.py:2130
 msgid "Yes"
 msgstr ""
 
-#: ../dnf/base.py:2096
+#: ../dnf/base.py:2131
 #, python-format
 msgid ""
 "\n"
@@ -1970,22 +1994,22 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:2109
+#: ../dnf/base.py:2144
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "GPG ਕੁੰਜੀ %s (0x%s) ਨੂੰ ਪਹਿਲਾਂ ਹੀ ਇੰਪੋਰਟ ਕੀਤਾ ਗਿਆ ਹੈ"
 
-#: ../dnf/base.py:2153
+#: ../dnf/base.py:2188
 #, python-format
 msgid "Key %s import failed"
 msgstr ""
 
-#: ../dnf/base.py:2170
+#: ../dnf/base.py:2205
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "%s ਰੈਪੋ ਲਈ ਕੋਈ ਵੀ ਕੁੰਜੀਆਂ ਇੰਸਟਾਲ ਨਹੀਂ ਹਨ"
 
-#: ../dnf/base.py:2175
+#: ../dnf/base.py:2210
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
