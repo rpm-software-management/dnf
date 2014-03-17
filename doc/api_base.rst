@@ -98,12 +98,6 @@
 
     Mark packages matching `pkg_spec` for installation.
 
-    .. warning::
-      This method was previously documented to raise :exc:`~dnf.exceptions.PackageNotFoundError` if the spec could not be matched against a known package. While this still may hold in future versions, :exc:`~dnf.exceptions.PackageNotFoundError` is currently being deprecated for public use.
-
-    .. warning::
-      This method was previously documented to return a number of packages marked for installation. Depending on this behavior is deprecated as of dnf-0.4.9 and the functionality will be dropped as early as dnf-0.4.12 (also see :ref:`deprecating-label`).
-
   .. method:: remove(pkg_spec)
 
     Mark packages matching `pkg_spec` for removal.

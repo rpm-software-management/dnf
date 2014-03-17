@@ -108,9 +108,6 @@ class MarkingError(Error):
         self.pkg_spec = pkg_spec
 
 class PackageNotFoundError(MarkingError):
-    # :api
-    # :deprecated for API use in 0.4.9, eligible for dropping after 2014-02-25
-    # AND no sooner than in 0.4.12
     pass
 
 class PackagesNotInstalledError(MarkingError):

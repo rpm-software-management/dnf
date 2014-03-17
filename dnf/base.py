@@ -1567,8 +1567,6 @@ class Base(object):
                 msg_installed(already_inst[0])
             self._goal.install(select=sltr)
             return 1
-        # :deprecated return value for API use in 0.4.9, eligible for dropping
-        # after 2014-02-25 AND no sooner than in 0.4.12
         return 0
 
     def install_groupie(self, pkg_name, inst_set):
