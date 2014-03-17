@@ -20,6 +20,8 @@ from tests.support import mock
 
 import dnf.repo
 import dnf.transaction
+import hawkey
+import rpm
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):
@@ -143,3 +145,34 @@ class PopulateTSTest(tests.support.TestCase):
         rpm_ts = ts.populate_rpm_ts(mock.Mock())
         rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[0], 'i'))
         rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[1], 'u'))
+
+class RPMProbFilters(tests.support.TestCase):
+
+    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    def test_filters_install(self, mock_ts):
+        self.yumbase = tests.support.BaseCliStub()
+        self.yumbase._sack = tests.support.mock_sack('main', 'search')
+        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
+        self.yumbase.install("lotus")
+        self.yumbase.ts
+        self.yumbase.ts.setProbFilter.assert_called_with(0)
+
+    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    def test_filters_downgrade(self, ts):
+        self.yumbase = tests.support.BaseCliStub()
+        self.yumbase._sack = tests.support.mock_sack('main', 'old_versions')
+        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
+        self.yumbase.downgrade("tour")
+        self.yumbase.ts
+        self.yumbase.ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
+
+    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    def test_filters_reinstall(self, ts):
+        self.yumbase = tests.support.BaseCliStub()
+        self.yumbase._sack = tests.support.mock_sack('main')
+        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
+        self.yumbase.reinstall("librita")
+        self.yumbase.ts
+        expected = rpm.RPMPROB_FILTER_REPLACEPKG | \
+            rpm.RPMPROB_FILTER_REPLACEOLDFILES
+        self.yumbase.ts.setProbFilter.assert_called_with(expected)
