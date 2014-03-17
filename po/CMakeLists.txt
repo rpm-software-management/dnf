@@ -1,7 +1,10 @@
 # pushing/pulling translations to transifex
+
+SET(SRC_PO ${CMAKE_SOURCE_DIR}/po)
+
 ADD_CUSTOM_TARGET (gettext-export
-                   find ${CMAKE_SOURCE_DIR}/../dnf -iname "*.py" |
-                   xargs xgettext --from-code=UTF-8 --output=dnf.pot &&
+                   cd ${SRC_PO} && find ../dnf -iname "*.py" |
+                   xargs xgettext --from-code=UTF-8 --output=${SRC_PO}/dnf.pot &&
                    tx push -s
                    COMMENT "Pushing translation source file to transifex")
 ADD_CUSTOM_TARGET (gettext-update
