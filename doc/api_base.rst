@@ -44,7 +44,7 @@
 
     Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. Raises :exc:`.DownloadError` if some packages failed to download.
 
-  .. method:: group_install(group, pkg_types, pkg_types, exclude=None)
+  .. method:: group_install(group, pkg_types, exclude=None)
 
     Mark `group` (a :class:`dnf.comps.Group` instance) installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package names: :meth:`.group_install` will then not mark the respective packages for installation whenever possible (but e.g. packages tagged *mandatory* will be marked for intallation no matter the value of `exlcude`)
 
