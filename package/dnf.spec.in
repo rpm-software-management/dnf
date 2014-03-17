@@ -1,4 +1,4 @@
-%global gitrev cfa9c14
+%global gitrev b81a7e5
 %global hawkey_version 0.4.12
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -131,6 +131,35 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Mar 17 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.18-1
+- api: drop items deprecated since 0.4.9 or earlier. (Ales Kozumplik)
+- api: deprecate Base.select_group() (Ales Kozumplik)
+- doc: document the group marking operations. (Ales Kozumplik)
+- api: add Base.group_install() with exclude capability. (Ales Kozumplik)
+- groups: recognize 'mark install' instead of 'mark-install'. (Ales Kozumplik)
+- Allow installing optional packages from a group. (RhBug:1067136) (Ales Kozumplik)
+- groups: add installing groups the object marking style. (Ales Kozumplik)
+- groups: add Base.group_remove(). (Ales Kozumplik)
+- groups: add support for marking/unmarking groups. (Ales Kozumplik)
+- groups: add dnf.persistor.GroupPersistor(), to store the installed groups. (Ales Kozumplik)
+- logging: log plugin import tracebacks on the subdebug level. (Ales Kozumplik)
+- rename: dnf.persistor.Persistor -> RepoPersistor. (Ales Kozumplik)
+- doc: update README and FAQ with the unabbreviated name. (Ales Kozumplik)
+- groups: fix grouplist crashes with new libcomps. (Ales Kozumplik)
+- Do not terminate for unreadable repository config. (RhBug:1071212) (Ales Kozumplik)
+- cli: get rid of ridiculous slashes and the file:// scheme on config read fails. (Ales Kozumplik)
+- repo: log more than nothing about a remote repo MD download. (Ales Kozumplik)
+- drpm: fallback to .rpm download on drpm rebuild error. (RhBug:1071501) (Ales Kozumplik)
+- remove: Base.download_packages()' inner function mediasort(). (Ales Kozumplik)
+- tests: tidy up the imports, in particular import mock from support. (Ales Kozumplik)
+- changed documentation of distro-sync command (Jan Silhan)
+- added distro-sync explicit packages support (RhBug:963710) (Jan Silhan)
+- renamed testcase to distro_sync_all (Jan Silhan)
+- Minor spelling (Arjun Temurnikar)
+- i18n: translate repo sync error message. (Ales Kozumplik)
+- add support for ppc64le (Dennis Gilmore)
+- there is no arch called arm64 it is aarch64 (Dennis Gilmore)
 
 * Wed Mar 5 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.17-1
 - doc: in the faq, warn users who might install rawhide packages on stable. (RhBug:1071677) (Ales Kozumplik)
