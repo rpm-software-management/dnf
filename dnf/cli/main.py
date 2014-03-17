@@ -167,16 +167,12 @@ def _main(base, args):
     if resultmsgs:
         for msg in resultmsgs:
             logger.critical("%s", msg)
-        if base._ts_save_file:
-            logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     elif return_code < 0:
         return_code = 1 # Means the pre-transaction checks failed...
         #  This includes:
         # . No packages.
         # . Hitting N at the prompt.
         # . GPG check failures.
-        if base._ts_save_file:
-            logger.info(_("Your transaction was saved, rerun it with:\n yum load-transaction %s") % base._ts_save_file)
     else:
         base.plugins.run_transaction()
         logger.info(_('Complete!'))

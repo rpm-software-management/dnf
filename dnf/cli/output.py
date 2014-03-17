@@ -1933,7 +1933,7 @@ Transaction Summary
             addon_info = self.history.return_addon_data(old.tid)
 
             # for the ones we create by default - don't display them as there
-            default_addons = set(['config-main', 'config-repos', 'saved_tx'])
+            default_addons = set(['config-main', 'config-repos'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
                 print(_("Additional non-default information stored: %d") % \

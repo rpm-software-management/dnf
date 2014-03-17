@@ -78,7 +78,6 @@ class Base(object):
         self._comps = None
         self._history = None
         self._tags = None
-        self._ts_save_file = None
         self._tempfiles = []
         self.ds_callback = dnf.callback.Depsolve()
         self.logger = logging.getLogger("dnf")
@@ -683,19 +682,6 @@ class Base(object):
                              [], [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
-
-        # transaction has started - all bets are off on our saved ts file
-        if self._ts_save_file is not None:
-            # write the saved transaction data to the addon location in history
-            # so we can pull it back later if we need to
-            savetx_msg = open(self._ts_save_file, 'r').read()
-            self.history.write_addon_data('saved_tx', savetx_msg)
-
-            try:
-                os.unlink(self._ts_save_file)
-            except (IOError, OSError) as e:
-                pass
-        self._ts_save_file = None
 
         if self.conf.reset_nice:
             onice = os.nice(0)
