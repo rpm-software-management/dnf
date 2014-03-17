@@ -17,8 +17,10 @@
 
 from __future__ import absolute_import
 from tests import support
-import operator
+
 import dnf.util
+import operator
+import warnings
 
 class GroupTest(support.ResultTestCase):
     def setUp(self):
@@ -28,7 +30,9 @@ class GroupTest(support.ResultTestCase):
     def test_install(self):
         comps = self.base.comps
         grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
-        self.assertEqual(self.base.select_group(grp), 1)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.assertEqual(self.base.select_group(grp), 1)
         inst, removed = self.installed_removed(self.base)
         self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)

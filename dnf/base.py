@@ -1430,6 +1430,11 @@ class Base(object):
 
         """
 
+        # :deprecated in 0.4.18, eligible for dropping after 2014-06-20 AND no
+        # sooner than in 0.4.21
+        msg = "dnf.Base.select_group() is deprecated. Use group_install()."
+        dnf.logging.depr(msg)
+
         txmbrs = []
         if group.selected:
             return 0
