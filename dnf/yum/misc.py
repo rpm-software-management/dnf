@@ -21,7 +21,6 @@ Assorted utility functions for yum.
 """
 
 from __future__ import print_function, absolute_import
-import types
 import os
 import os.path
 from io import StringIO
@@ -35,7 +34,6 @@ from . import pgpmsg
 import tempfile
 import glob
 import pwd
-import fnmatch
 import bz2
 import gzip
 import shutil
@@ -62,30 +60,6 @@ from . import i18n
 import dnf.const
 from dnf.pycomp import is_py2str_py3bytes, basestring, unicode, long
 
-_share_data_store   = {}
-_share_data_store_u = {}
-def share_data(value):
-    """ Take a value and use the same value from the store,
-        if the value isn't in the store this one becomes the shared version. """
-    #  We don't want to change the types of strings, between str <=> unicode
-    # and hash('a') == hash(u'a') ... so use different stores.
-    #  In theory eventaully we'll have all of one type, but don't hold breath.
-    store = _share_data_store
-    if isinstance(value, unicode):
-        store = _share_data_store_u
-    # hahahah, of course the above means that:
-    #   hash(('a', 'b')) == hash((u'a', u'b'))
-    # ...which we have in deptuples, so just screw sharing those atm.
-    if isinstance(value, tuple):
-        return value
-    return store.setdefault(value, value)
-
-def unshare_data():
-    global _share_data_store
-    global _share_data_store_u
-    _share_data_store   = {}
-    _share_data_store_u = {}
-
 _re_compiled_glob_match = None
 def re_glob(s):
     """ Tests if a string is a shell wildcard. """
@@ -95,34 +69,6 @@ def re_glob(s):
     if _re_compiled_glob_match is None:
         _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
     return _re_compiled_glob_match(s)
-
-_re_compiled_filename_match = None
-def re_filename(s):
-    """ Tests if a string could be a filename. We still get negated character
-        classes wrong (are they supported), and ranges in character classes. """
-    global _re_compiled_filename_match
-    if _re_compiled_filename_match is None:
-        _re_compiled_filename_match = re.compile('[/*?]|\[[^]]*/[^]]*\]').match
-    return _re_compiled_filename_match(s)
-
-def re_primary_filename(filename):
-    """ Tests if a filename string, can be matched against just primary.
-        Note that this can produce false negatives (but not false
-        positives). Note that this is a superset of re_primary_dirname(). """
-    if re_primary_dirname(filename):
-        return True
-    if filename == '/usr/lib/sendmail':
-        return True
-    return False
-
-def re_primary_dirname(dirname):
-    """ Tests if a dirname string, can be matched against just primary. Note
-        that this is a subset of re_primary_filename(). """
-    if 'bin/' in dirname:
-        return True
-    if dirname.startswith('/etc/'):
-        return True
-    return False
 
 _re_compiled_full_match = None
 def re_full_search_needed(s):
@@ -285,21 +231,6 @@ class Checksums(object):
         if checksum == 'sha':
             checksum = 'sha1'
         return self.digests()[checksum]
-
-
-class AutoFileChecksums(object):
-    """ Generate checksum(s), on given file/fileobject. Pretending to be a file
-        object (overrrides read). """
-
-    def __init__(self, fo, checksums, ignore_missing=False, ignore_none=False):
-        self._fo       = fo
-        self.checksums = Checksums(checksums, ignore_missing, ignore_none)
-
-    def __getattr__(self, attr):
-        return getattr(self._fo, attr)
-
-    def read(self, size=-1):
-        return self.checksums.read(self._fo, size)
 
 def get_default_chksum_type():
     return _default_checksums[0]
@@ -651,18 +582,6 @@ def sortPkgObj(pkg1 ,pkg2):
     else:
         return -1
 
-def newestInList(pkgs):
-    """ Return the newest in the list of packages. """
-    ret = [ pkgs.pop() ]
-    newest = ret[0]
-    for pkg in pkgs:
-        if pkg.verGT(newest):
-            ret = [ pkg ]
-            newest = pkg
-        elif pkg.verEQ(newest):
-            ret.append(pkg)
-    return ret
-
 def version_tuple_to_string(evrTuple):
     """
     Convert a tuple representing a package version to a string.
@@ -691,18 +610,6 @@ def prco_tuple_to_string(prcoTuple):
         return name
 
     return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
-
-def refineSearchPattern(arg):
-    """Takes a search string from the cli for Search or Provides
-       and cleans it up so it doesn't make us vomit"""
-
-    if re.search('[*{}?+]|\[.+\]', arg):
-        restring = fnmatch.translate(arg)
-    else:
-        restring = re.escape(arg)
-
-    return restring
-
 
 def _decompress_chunked(source, dest, ztype):
 
@@ -741,98 +648,6 @@ def bunzipFile(source,dest):
     """ Extract the bzipped contents of source to dest. """
     _decompress_chunked(source, dest, ztype='bz2')
 
-def get_running_kernel_pkgtup(ts):
-    """This takes the output of uname and figures out the pkgtup of the running
-       kernel (name, arch, epoch, version, release)."""
-    ver = os.uname()[2]
-
-    # we glob for the file that MIGHT have this kernel
-    # and then look up the file in our rpmdb.
-    fns = sorted(glob.glob('/boot/vmlinuz*%s*' % ver))
-    for fn in fns:
-        mi = ts.dbMatch('basenames', fn)
-        for h in mi:
-            e = h['epoch']
-            if h['epoch'] is None:
-                e = '0'
-            return (h['name'], h['arch'], e, h['version'], h['release'])
-
-    return (None, None, None, None, None)
-
-def get_running_kernel_version_release(ts):
-    """This takes the output of uname and figures out the (version, release)
-    tuple for the running kernel."""
-    pkgtup = get_running_kernel_pkgtup(ts)
-    if pkgtup[0] is not None:
-        return (pkgtup[3], pkgtup[4])
-    return (None, None)
-
-def find_unfinished_transactions(yumlibpath):
-    """returns a list of the timestamps from the filenames of the unfinished
-       transactions remaining in the yumlibpath specified.
-    """
-    timestamps = []
-    tsallg = '%s/%s' % (yumlibpath, 'transaction-all*')
-    tsdoneg = '%s/%s' % (yumlibpath, 'transaction-done*')
-    tsalls = glob.glob(tsallg)
-    tsdones = glob.glob(tsdoneg)
-
-    for fn in tsalls:
-        if fn.endswith('disabled'):
-            continue
-        trans = os.path.basename(fn)
-        timestamp = trans.replace('transaction-all.','')
-        timestamps.append(timestamp)
-
-    timestamps.sort()
-    return timestamps
-
-def find_ts_remaining(timestamp, yumlibpath):
-    """this function takes the timestamp of the transaction to look at and
-       the path to the yum lib dir.
-       returns a list of tuples(action, pkgspec) for the unfinished transaction
-       elements. Returns an empty list if none.
-
-    """
-
-    to_complete_items = []
-    tsallpath = '%s/%s.%s' % (yumlibpath, 'transaction-all', timestamp)
-    tsdonepath = '%s/%s.%s' % (yumlibpath,'transaction-done', timestamp)
-    tsdone_items = []
-
-    if not os.path.exists(tsallpath):
-        # something is wrong, here, probably need to raise _something_
-        return to_complete_items
-
-
-    if os.path.exists(tsdonepath):
-        tsdone_fo = open(tsdonepath, 'r')
-        tsdone_items = tsdone_fo.readlines()
-        tsdone_fo.close()
-
-    tsall_fo = open(tsallpath, 'r')
-    tsall_items = tsall_fo.readlines()
-    tsall_fo.close()
-
-    for item in tsdone_items:
-        # this probably shouldn't happen but it's worth catching anyway
-        if item not in tsall_items:
-            continue
-        tsall_items.remove(item)
-
-    for item in tsall_items:
-        item = item.replace('\n', '')
-        if item == '':
-            continue
-        try:
-            (action, pkgspec) = item.split()
-        except ValueError as e:
-            msg = "Transaction journal  file %s is corrupt." % (tsallpath)
-            raise dnf.exceptions.MiscError(msg)
-        to_complete_items.append((action, pkgspec))
-
-    return to_complete_items
-
 def seq_max_split(seq, max_entries):
     """ Given a seq, split into a list of lists of length max_entries each. """
     ret = []
@@ -846,69 +661,6 @@ def seq_max_split(seq, max_entries):
         num -= max_entries
     ret.append(seq[beg:])
     return ret
-
-def _ugly_utf8_string_hack(item):
-    """hands back a unicoded string"""
-    # this is backward compat for handling non-utf8 filenames
-    # and content inside packages. :(
-    # content that xml can cope with but isn't really kosher
-
-    # if we're anything obvious - do them first
-    if item is None:
-        return ''
-    elif isinstance(item, unicode):
-        return item
-
-    # this handles any bogon formats we see
-    du = False
-    try:
-        x = item.decode('ascii')
-        du = True
-    except UnicodeError:
-        encodings = ['utf-8', 'iso-8859-1', 'iso-8859-15', 'iso-8859-2']
-        for enc in encodings:
-            try:
-                x = item.decode(enc)
-            except UnicodeError:
-                pass
-
-            else:
-                if x.encode(enc) == item:
-                    if enc != 'utf-8':
-                        print('\n%s encoding on %s\n' % (enc, item))
-                    return x.encode('utf-8')
-
-
-    # Kill bytes (or libxml will die) not in the small byte portion of:
-    #  http://www.w3.org/TR/REC-xml/#NT-Char
-    # we allow high bytes, if it passed the utf8 check above. Eg.
-    # good chars = #x9 | #xA | #xD | [#x20-...]
-    newitem = ''
-    bad_small_bytes = list(range(0, 8)) + [11, 12] + list(range(14, 32))
-    for char in item:
-        if ord(char) in bad_small_bytes:
-            pass # Just ignore these bytes...
-        elif not du and ord(char) > 127:
-            newitem = newitem + '?' # byte by byte equiv of escape
-        else:
-            newitem = newitem + char
-    return newitem
-
-__cached_saxutils = None
-def to_xml(item, attrib=False):
-    global __cached_saxutils
-    if __cached_saxutils is None:
-        import xml.sax.saxutils
-        __cached_saxutils = xml.sax.saxutils
-
-    item = _ugly_utf8_string_hack(item)
-    item = i18n.to_utf8(item)
-    item = item.rstrip()
-    if attrib:
-        item = __cached_saxutils.escape(item, entities={'"':"&quot;"})
-    else:
-        item = __cached_saxutils.escape(item)
-    return item
 
 def unlink_f(filename):
     """ Call os.unlink, but don't die if the file isn't there. This is the main
@@ -980,41 +732,6 @@ def return_running_pids():
             continue
         pids.append(os.path.basename(fn))
     return pids
-
-def get_open_files(pid):
-    """returns files open from this pid"""
-    files = []
-    maps_f = '/proc/%s/maps' % pid
-    try:
-        maps = open(maps_f, 'r')
-    except (IOError, OSError) as e:
-        return files
-
-    for line in maps:
-        if line.find('fd:') == -1:
-            continue
-        line = line.replace('\n', '')
-        slash = line.find('/')
-        filename = line[slash:]
-        filename = filename.replace('(deleted)', '') #only mildly retarded
-        filename = filename.strip()
-        if filename not in files:
-            files.append(filename)
-
-    cli_f = '/proc/%s/cmdline' % pid
-    try:
-        cli = open(cli_f, 'r')
-    except (IOError, OSError) as e:
-        return files
-
-    cmdline = cli.read()
-    if cmdline.find('\00') != -1:
-        cmds = cmdline.split('\00')
-        for i in cmds:
-            if i.startswith('/'):
-                files.append(i)
-
-    return files
 
 def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
@@ -1096,26 +813,3 @@ def read_in_items_from_dot_dir(thisglob, line_as_list=True):
                 continue
             results.append(line)
     return results
-
-__cached_cElementTree = None
-def _cElementTree_import():
-    """ Importing xElementTree all the time, when we often don't need it, is a
-        huge timesink. This makes python -c 'import yum' suck. So we hide it
-        behind this function. And have accessors. """
-    global __cached_cElementTree
-    if __cached_cElementTree is None:
-        try:
-            from xml.etree import cElementTree
-        except ImportError:
-            import cElementTree
-        __cached_cElementTree = cElementTree
-
-def cElementTree_iterparse(filename):
-    """ Lazily load/run: cElementTree.iterparse """
-    _cElementTree_import()
-    return __cached_cElementTree.iterparse(filename)
-
-def cElementTree_xmlparse(filename):
-    """ Lazily load/run: cElementTree.parse """
-    _cElementTree_import()
-    return __cached_cElementTree.parse(filename)
