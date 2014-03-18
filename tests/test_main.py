@@ -17,49 +17,24 @@
 
 """Tests of the CLI entry point."""
 
-from tests.support import mock
-
 import dnf.cli.main
-import os
-import tempfile
+import dnf.logging
+import dnf.pycomp
 import tests.support
 
-class MainTestCase(tests.support.TestCase):
+class MainTest(tests.support.TestCase):
+    """Tests the ``dnf.cli.main`` module."""
 
-    """Tests of ``dnf.cli.main.main`` function."""
-
-    @staticmethod
-    def create_config():
-        """Create a configuration file and return its path."""
-        with tempfile.NamedTemporaryFile('wb', delete=False) as file_:
-            file_.write(b'[main]\nplugins=0\n')
-        return file_.name
-
-    @classmethod
-    def setUpClass(cls):
-        """Prepare the test fixture."""
-        super(MainTestCase, cls).setUpClass()
-        cls.config_path = cls.create_config()
-        cls.options = ['--config=%s' % cls.config_path]
-
-    @classmethod
-    def tearDownClass(cls):
-        """Tear down the test fixture."""
-        super(MainTestCase, cls).tearDownClass()
-        os.remove(cls.config_path)
-
-    def test_logs_traceback(self):
+    def test_ex_IOError_logs_traceback(self):
         """Test whether the traceback is logged if an error is raised."""
-        error = OSError('test_prints_traceback')
 
-        check_patcher = mock.patch.object(dnf.cli.cli.Cli, 'check',
-                                          autospec=True, side_effect=error)
-        with check_patcher, tests.support.patch_std_streams() as (out, _err):
-            self.run_main(['--verbose'])
+        lvl = dnf.logging.SUBDEBUG
+        out = dnf.pycomp.StringIO()
 
-        self.assertTracebackIn('%s\n' % error, out.getvalue())
-
-    @classmethod
-    def run_main(cls, options=(), command=('repolist',)):
-        """Run the given *command* with the given *options*."""
-        dnf.cli.main.main(list(options) + cls.options + list(command))
+        with tests.support.wiretap_logs('dnf', lvl, out):
+            try:
+                raise OSError('test_ex_IOError_logs_traceback')
+            except OSError as e:
+                dnf.cli.main.ex_IOError(e)
+        self.assertTracebackIn('OSError: test_ex_IOError_logs_traceback\n',
+                               out.getvalue())
