@@ -26,6 +26,7 @@ BuildRequires:  python-nose
 BuildRequires:  python-sphinx
 BuildRequires:  rpm-python
 BuildRequires:  systemd
+BuildRequires:  gettext
 Requires:	deltarpm
 Requires:	libreport-filesystem
 Requires:	python-hawkey >= %{hawkey_version}
