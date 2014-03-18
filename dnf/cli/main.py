@@ -69,21 +69,22 @@ def ex_Error(e):
         logger.critical(_('Error: %s'), exception2msg(e.value))
     return 1
 
-
 def main(args):
-    with dnf.cli.cli.BaseCli() as base:
-        try:
+    try:
+        with dnf.cli.cli.BaseCli() as base:
             return _main(base, args)
-        except dnf.exceptions.ProcessLockError as e:
-            logger.critical(e.value)
-            show_lock_owner(e.pid, logger)
-            return 1
-        except dnf.exceptions.LockError as e:
-            logger.critical(e.value)
-            return 1
-        except KeyboardInterrupt as e:
-            print(_("Terminated."), file=sys.stderr)
-            return 1
+    except dnf.exceptions.ProcessLockError as e:
+        logger.critical(e.value)
+        show_lock_owner(e.pid, logger)
+        return 1
+    except dnf.exceptions.LockError as e:
+        logger.critical(e.value)
+        return 1
+    except IOError as e:
+        return ex_IOError(e)
+    except KeyboardInterrupt as e:
+        print(_("Terminated."), file=sys.stderr)
+        return 1
     return 0
 
 def _main(base, args):
