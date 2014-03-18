@@ -16,12 +16,23 @@
 #
 
 from __future__ import absolute_import
+
+import binascii
 import dnf.persistor
 import os
 import tempfile
 import tests.support
 
 IDS = set(['one', 'two', 'three'])
+
+class GroupsTest(tests.support.TestCase):
+    def test_clone(self):
+        g = dnf.persistor.Groups({})
+        g['base'] = ['pepper', 'tour']
+        g_c = g.clone()
+        self.assertEqual(g, g_c)
+        g_c['base'].append('magical')
+        self.assertNotEqual(g, g_c)
 
 class GroupPersistorTest(tests.support.TestCase):
     def setUp(self):
@@ -38,10 +49,11 @@ class GroupPersistorTest(tests.support.TestCase):
     def test_saving(self):
         prst = self.prst
         prst.groups['base'] = ['pepper', 'tour']
-        prst.save()
+        self.assertTrue(prst.save())
 
         prst = dnf.persistor.GroupPersistor(self.persistdir)
         self.assertEqual(prst.groups, {'base': ['pepper', 'tour']})
+        self.assertFalse(prst.save())
 
 class RepoPersistorTest(tests.support.TestCase):
     def setUp(self):

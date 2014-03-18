@@ -26,34 +26,70 @@
 from __future__ import absolute_import
 from dnf.yum.i18n import _
 
+import collections
 import dbm
 import dnf.util
 import errno
+import hashlib
 import json
 import logging
 import os
 
 logger = logging.getLogger("dnf")
 
+class Groups(collections.MutableMapping):
+    def __init__(self, dct):
+        self.dct = dct
+
+    def __delitem__(self, key):
+        del self.dct[key]
+
+    def __getitem__(self, key):
+        return self.dct[key]
+
+    def __iter__(self):
+        return iter(self.dct)
+
+    def __len__(self):
+        return len(self.dct)
+
+    def __setitem__(self, key, val):
+        self.dct[key] = val
+
+    @classmethod
+    def from_dict(cls, dct):
+        groups = cls(dct)
+        return groups
+
+    def clone(self):
+        cln = Groups({})
+        for g in self:
+            cln[g] = self[g][:]
+        return cln
+
 class GroupPersistor(object):
     def __init__(self, persistdir):
         self.db = os.path.join(persistdir, 'groups.json')
-        self.groups = {}
+        self.groups = None
         self._load()
+        self._original = self.groups.clone()
 
     def _load(self):
-        self.groups = {}
+        self.groups = Groups({})
         try:
             with open(self.db) as db:
                 content = db.read()
-                self.groups = json.loads(content)
+                self.groups = Groups.from_dict(json.loads(content))
         except IOError as e:
             if e.errno != errno.ENOENT:
                 raise
 
     def save(self):
+        if self.groups == self._original:
+            return False
         with open(self.db, 'w') as db:
-            json.dump(self.groups, db)
+            json.dump(self.groups.dct, db)
+        return True
 
 class RepoPersistor(object):
     """Persistent data kept for repositories.
