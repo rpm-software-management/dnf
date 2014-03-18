@@ -49,6 +49,7 @@ from dnf.cli.utils import show_lock_owner
 import dnf.cli.cli
 import dnf.exceptions
 import dnf.i18n
+import dnf.logging
 import dnf.util
 import errno
 import logging
@@ -59,7 +60,7 @@ import time
 logger = logging.getLogger("dnf")
 
 def ex_IOError(e):
-    logger.debug('', exc_info=True)
+    logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
     logger.critical(exception2msg(e))
     return 1
 
