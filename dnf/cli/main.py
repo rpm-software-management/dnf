@@ -58,6 +58,17 @@ import time
 
 logger = logging.getLogger("dnf")
 
+def ex_IOError(e):
+    logger.debug('', exc_info=True)
+    logger.critical(exception2msg(e))
+    return 1
+
+def ex_Error(e):
+    if e.value is not None:
+        logger.critical(_('Error: %s'), exception2msg(e.value))
+    return 1
+
+
 def main(args):
     with dnf.cli.cli.BaseCli() as base:
         try:
@@ -80,19 +91,6 @@ def _main(base, args):
     dnf.i18n.setup_locale()
     dnf.i18n.setup_stdout()
 
-    def exIOError(e):
-        logger.debug('', exc_info=True)
-        if e.errno == 32:
-            logger.critical(_('Exiting on Broken Pipe'))
-        else:
-            logger.critical(exception2msg(e))
-        return 1
-
-    def exFatal(e):
-        if e.value is not None:
-            logger.critical(_('Error: %s'), exception2msg(e.value))
-        return 1
-
     # our core object for the cli
     base.logging.presetup()
     cli = dnf.cli.cli.Cli(base)
@@ -105,9 +103,9 @@ def _main(base, args):
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.Error as e:
-        return exFatal(e)
+        return ex_Error(e)
     except (IOError, OSError) as e:
-        return exIOError(e)
+        return ex_IOError(e)
 
     # Try to open the current directory to see if we have
     # read and execute access. If not, chdir to /
@@ -125,9 +123,9 @@ def _main(base, args):
     except dnf.exceptions.LockError:
         raise
     except dnf.exceptions.Error as e:
-        return exFatal(e)
+        return ex_Error(e)
     except (IOError, OSError) as e:
-        return exIOError(e)
+        return ex_IOError(e)
 
     if not cli.command.resolve:
         return cli.command.success_retval
@@ -159,9 +157,9 @@ def _main(base, args):
     except dnf.exceptions.TransactionCheckError as err:
         return_code, resultmsgs = 1, cli.command.get_error_output(err)
     except dnf.exceptions.Error as e:
-        return exFatal(e)
+        return ex_Error(e)
     except IOError as e:
-        return exIOError(e)
+        return ex_IOError(e)
 
     # rpm ts.check() failed.
     if resultmsgs:
