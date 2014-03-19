@@ -35,6 +35,7 @@ class CommandsCliTest(support.TestCase):
         erase_cmd.configure()
         self.assertTrue(self.yumbase.goal_parameters.allow_uninstall)
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
         """Test get_error_output with the history rollback and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
@@ -48,6 +49,7 @@ class CommandsCliTest(support.TestCase):
             ('Cannot rollback transaction 1, doing so would result in an '
              'inconsistent package database.',))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_undo_transactioncheckerror(self):
         """Test get_error_output with the history undo and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
@@ -113,6 +115,7 @@ class CommandsCliTest(support.TestCase):
         self.assertLastInfo(cmd, u'Metadata cache created.')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=False)
     def test_makecache_timer_battery(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
@@ -171,6 +174,7 @@ class EraseCommandTest(support.ResultTestCase):
             self.cmd.base,
             self.cmd.base.sack.query().installed().filter(name__neq='pepper'))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_run_notfound(self):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
@@ -265,6 +269,7 @@ class ReInstallCommandTest(support.ResultTestCase):
             dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack)
             .available()))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_run_notinstalled(self):
         """Test whether it fails if the package is not installed."""
         stdout = dnf.pycomp.StringIO()
@@ -803,6 +808,7 @@ class UpgradeCommandTest(support.ResultTestCase):
             self.cmd.base.sack.query().installed().filter(name__neq='pepper'),
             self.cmd.base.sack.query().upgrades().filter(name='pepper')))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_updatePkgs_notfound(self):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
