@@ -83,7 +83,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %find_lang %{name}
 pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
-%find_lang %{name}
 popd
 
 %global py2pluginpath %{python_sitelib}/dnf-plugins
@@ -97,7 +96,7 @@ pushd py3
 make ARGS="-V" test
 popd
 
-%files
+%files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
@@ -111,7 +110,7 @@ popd
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
-%files -n python3-dnf
+%files -n python3-dnf -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
