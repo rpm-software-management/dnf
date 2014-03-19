@@ -1,7 +1,7 @@
 # comps.py
 # Interface to libcomps.
 #
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -45,24 +45,16 @@ def _by_pattern(pattern, case_sensitive, sqn):
     """Return items from sqn matching either exactly or glob-wise."""
 
     pattern = dnf.i18n.ucd(pattern)
-    ret = set()
+    exact = {g for g in sqn if g.name == pattern or g.id == pattern}
+    if exact:
+        return exact
 
-    for item in pattern.split(','):
-        item = item.strip()
-        exact = [g for g in sqn if g.name == item or g.id == item]
-        if exact:
-            ret.update(exact)
-            continue
+    if case_sensitive:
+        match = re.compile(fnmatch.translate(pattern)).match
+    else:
+        match = re.compile(fnmatch.translate(pattern), flags=re.I).match
 
-        if case_sensitive:
-            match = re.compile(fnmatch.translate(item)).match
-        else:
-            match = re.compile(fnmatch.translate(item), flags=re.I).match
-
-        matching = [g for g in sqn if match(g.name) or match(g.id)]
-        ret.update(matching)
-
-    return ret
+    return {g for g in sqn if match(g.name) or match(g.id)}
 
 class _Langs(object):
 

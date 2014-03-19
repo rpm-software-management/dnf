@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -44,7 +44,7 @@ class CompsTest(support.TestCase):
         comps = self.comps
         self.assertLength(comps.groups_by_pattern('Base'), 1)
         self.assertLength(comps.groups_by_pattern('*'), support.TOTAL_GROUPS)
-        self.assertLength(comps.groups_by_pattern('Base, Solid*'), 2)
+        self.assertLength(comps.groups_by_pattern('Solid*'), 1)
 
         group = dnf.util.first(comps.groups_by_pattern('Base'))
         self.assertIsInstance(group, dnf.comps.Group)
