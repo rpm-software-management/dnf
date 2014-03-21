@@ -30,6 +30,7 @@ from argparse import Action, ArgumentParser, SUPPRESS
 
 import dnf
 import dnf.cli.commands
+import dnf.cli.commands.group
 import dnf.conf
 import dnf.const
 import dnf.exceptions
@@ -1012,7 +1013,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
         self.register_command(dnf.cli.commands.EraseCommand)
-        self.register_command(dnf.cli.commands.GroupsCommand)
+        self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.MakeCacheCommand)
         self.register_command(dnf.cli.commands.CleanCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)

@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+
 import dnf.exceptions
 class CliError(dnf.exceptions.Error):
     """CLI Exception."""

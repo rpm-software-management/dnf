@@ -20,6 +20,7 @@ from tests import support
 from tests.support import mock
 
 import dnf.cli.commands
+import dnf.cli.commands.group
 import dnf.repo
 import itertools
 import logging
@@ -141,7 +142,7 @@ class CommandTest(support.TestCase):
         self.assertEqual(ext, ['cracker', 'filling'])
 
     def test_group_canonical(self):
-        cmd = dnf.cli.commands.GroupsCommand(None)
+        cmd = dnf.cli.commands.group.GroupCommand(None)
         (basecmd, extcmds) = cmd.canonical(['grouplist', 'crack'])
         self.assertEqual(basecmd, 'groups')
         self.assertEqual(extcmds, ['list', 'crack'])
