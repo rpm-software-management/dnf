@@ -908,7 +908,7 @@ class Base(object):
         progress.start(len(payloads), remote_size)
         errors = dnf.repo.download_payloads(payloads, drpm)
         if errors.irrecoverable:
-            raise dnf.exceptions.DownloadError(errors)
+            raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
         if errors.recoverable:
             msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
@@ -923,7 +923,7 @@ class Base(object):
             errors = dnf.repo.download_payloads(payloads, drpm)
             assert(not errors.recoverable)
             if errors.irrecoverable:
-                raise dnf.exceptions.DownloadErrors(errors)
+                raise dnf.exceptions.DownloadErrors(errors.irrecoverable)
 
             remote_pkgs.extend(remaining_pkgs)
             remote_size += remaining_size
