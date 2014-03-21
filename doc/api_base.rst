@@ -98,6 +98,10 @@
 
     Mark packages matching `pkg_spec` for installation.
 
+  .. method:: install_local(path)
+
+    Mark a local .rpm file with the filename `path` for installation.
+
   .. method:: remove(pkg_spec)
 
     Mark packages matching `pkg_spec` for removal.
