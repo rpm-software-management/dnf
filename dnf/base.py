@@ -1683,17 +1683,11 @@ class Base(object):
 
     def install_local(self, path):
         """Mark a package on the local filesystem (i.e. not from a
-        repository) for installation.
+        repository) for installation. :api
 
-        :param pkg: a string specifying the path to an rpm file in the
+        :param path: a string specifying the path to an rpm file in the
            local filesystem to be marked for installation
-        :param po: a :class:`packages.YumLocalPackage`
-        :param updateonly: if True, the given package will only be
-           marked for installation if it is an upgrade for a package
-           that is already installed.  If False, this restriction is
-           not enforced
-        :return: a list of the transaction members added to the
-           transaction set by this method
+        :return: 1 = ok, 0 = failed
         """
         po = self._local_common(path)
         if not po:
