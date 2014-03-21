@@ -90,21 +90,21 @@
 
   The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument they take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
 
-  .. method:: downgrade(pkg_spec)
+  .. method:: downgrade(pkg_spec, reponame)
 
-    Mark packages matching `pkg_spec` for downgrade.
+    Mark packages matching `pkg_spec` for downgrade. `reponame` is an optional parameter to limit the downgrade to a specific repository
 
-  .. method:: install(pkg_spec)
+  .. method:: install(pkg_spec, reponame)
 
-    Mark packages matching `pkg_spec` for installation.
+    Mark packages matching `pkg_spec` for installation. `reponame` is an optional parameter to limit the install to a specific repository
 
   .. method:: remove(pkg_spec)
 
     Mark packages matching `pkg_spec` for removal.
 
-  .. method:: upgrade(pkg_spec)
+  .. method:: upgrade(pkg_spec, reponame)
 
-    Mark packages matching `pkg_spec` for upgrade.
+    Mark packages matching `pkg_spec` for upgrade. `reponame` is an optional parameter to limit the upgrade to a specific repository
 
   .. method:: upgrade_all
 
