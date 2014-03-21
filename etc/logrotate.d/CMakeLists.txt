@@ -1,0 +1,1 @@
+INSTALL (FILES "dnf" DESTINATION ${SYSCONFDIR}/logrotate.d)
