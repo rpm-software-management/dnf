@@ -45,7 +45,8 @@ class CacheTest(PycompTestCase):
          self.assertEqual(cache.cachedir, '/var/lib/spinning/i286/20')
 
      @mock.patch('dnf.yum.misc.getCacheDir', return_value="/notmp/dnf-walr-yeAH")
-     def test_noroot(self, fn_getcachedir):
+     @mock.patch('dnf.util.am_i_root', return_value=False)
+     def test_noroot(self, fn_root, fn_getcachedir):
          cache = CliCache('/var/lib/spinning', 'i286/20')
          self.assertEqual(fn_getcachedir.call_count, 0)
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
