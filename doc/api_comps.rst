@@ -80,4 +80,34 @@
 
 .. class:: dnf.comps.Group
 
-    Has the same set of attributes as :class:`dnf.comps.Category`.
+  .. attribute:: id
+
+    Unique identifier of the category.
+
+  .. attribute:: name
+
+    Name of the category.
+
+  .. attribute:: ui_name
+
+    The name of the group translated to the language given by the current locale.
+
+  .. attribute:: ui_description
+
+    The description of the group translated to the language given by the current locale.
+
+  .. attribute:: mandatory_packages
+
+    List of all mandatory packages in the group as :class:`libcomps.Package`
+
+  .. attribute:: default_packages
+
+    List of all default packages in the group as :class:`libcomps.Package`
+
+  .. attribute:: optional_packages
+
+    List of all optional packages in the group as :class:`libcomps.Package`
+    
+  .. note:: :class:`libcomps.Package` is not vell documented, the object has a name attribute containing the package name
+  
+  
