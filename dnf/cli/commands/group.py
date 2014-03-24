@@ -23,6 +23,7 @@ from .. import commands
 from dnf.yum.i18n import to_unicode, _
 
 import dnf.cli
+import itertools
 
 def _ensure_grp_arg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
@@ -98,13 +99,8 @@ class GroupCommand(commands.Command):
             raise dnf.cli.CliError(msg)
 
     def _mark_install(self, patterns):
-        comps = self.base.comps
-        groups = [g for pat in patterns for g in comps.groups_by_pattern(pat)
-                  if not g.installed]
+        groups = list(self._patterns2groups(patterns, lambda g: not g.installed))
         installed = set(pkg.name for pkg in self.base.sack.query().installed())
-        if not groups:
-            msg = _('No matching uninstalled groups found.')
-            raise dnf.exceptions.Error(msg)
         for g in groups:
             names = set(g.name for g in itertools.chain(g.mandatory_packages,
                                                         g.optional_packages))
@@ -113,12 +109,7 @@ class GroupCommand(commands.Command):
                               ','.join([g.ui_name for g in groups]))
 
     def _mark_remove(self, patterns):
-        comps = self.base.comps
-        groups = [g for pat in patterns for g in comps.groups_by_pattern(pat)
-                  if g.installed]
-        if not groups:
-            msg = _('No matching installed groups found.')
-            raise dnf.exceptions.Error(msg)
+        groups = list(self._patterns2groups(patterns, lambda g: g.installed))
         for g in groups:
             g.unmark()
         self.base.logger.info(_('Marked removed: %s') %
@@ -129,22 +120,27 @@ class GroupCommand(commands.Command):
             return extcmds[0], extcmds[1:]
         return 'install', extcmds
 
-    def _patterns2groups(self, patterns):
+    def _patterns2groups(self, patterns, fltr=lambda grp: True):
         comps = self.base.comps
         for pat in patterns:
             grps = comps.groups_by_pattern(pat)
-            if not grps:
-                msg = _("No Group named '%s' exists.") % to_unicode(pat)
-                raise dnf.cli.CliError(msg)
+            cnt = 0
             for grp in grps:
+                if not fltr(grp):
+                    continue
                 yield grp
+                cnt += 1
+            if not cnt:
+                msg = _("No relevant match for group specification '%s'.")
+                msg = msg % to_unicode(pat)
+                raise dnf.cli.CliError(msg)
 
     def _remove(self, patterns):
         cnt = 0
         for grp in self._patterns2groups(patterns):
             cnt += self.base.group_remove(grp)
         if not cnt:
-            raise dnf.cli.CliError(_('No packages to remove from groups.'))
+            raise dnf.cli.CliError(_('No packages to remove from given groups.'))
 
     def _split_extcmds(self, extcmds):
         if extcmds[0] == 'with-optional':
