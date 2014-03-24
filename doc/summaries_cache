@@ -522,5 +522,17 @@
     [
         1071212, 
         "dnf doesn't skip unreadable repository files"
+    ], 
+    [
+        1077173, 
+        "IOError: [Errno 13] Permission denied: '/var/lib/dnf/groups.json'"
+    ], 
+    [
+        1078832, 
+        "TypeError: '_DownloadErrors' object is not iterable"
+    ], 
+    [
+        1079621, 
+        "Incorrect package count when some packages already downloaded"
     ]
 ]

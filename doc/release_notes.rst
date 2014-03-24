@@ -647,3 +647,17 @@ Bugs fixed in 0.4.18:
 * :rhbug:`1067136`
 * :rhbug:`1071212`
 * :rhbug:`1071501`
+
+====================
+0.4.19 Release Notes
+====================
+
+Arriving one week after 0.4.18, the 0.4.19 mainly provides a fix to a traceback in group operations under non-root users.
+
+DNF starts to ship separate translation files (.mo) starting with this release.
+
+Bugs fixed in 0.4.19:
+
+* :rhbug:`1077173`
+* :rhbug:`1078832`
+* :rhbug:`1079621`
