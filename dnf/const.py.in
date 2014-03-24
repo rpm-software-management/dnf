@@ -24,7 +24,6 @@ CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
 INSTALLONLYPKGS=['kernel',
-                 'kernel-source',
                  'installonlypkg(kernel)',
                  'installonlypkg(kernel-module)',
                  'installonlypkg(vm)']
