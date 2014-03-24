@@ -18,6 +18,7 @@
 """Handle actual output from the cli."""
 
 from __future__ import print_function
+from __future__ import unicode_literals
 import itertools
 import operator
 import sys
@@ -257,25 +258,27 @@ class Term(object):
             mode = cap_name
             if cap_name in self.__cap_names:
                 cap_name = self.__cap_names[cap_name]
-            self.MODE[mode] = self._tigetstr(cap_name) or ''
+            self.MODE[mode] = self._tigetstr(cap_name) or b''
 
         # Colors
-        set_fg = self._tigetstr('setf')
+        set_fg = self._tigetstr('setf').encode()
         if set_fg:
             for (color, val) in self.__colors.items():
-                self.FG_COLOR[color] = curses.tparm(set_fg, val) or ''
-        set_fg_ansi = self._tigetstr('setaf')
+                self.FG_COLOR[color] = curses.tparm(set_fg, val).decode() or ''
+        set_fg_ansi = self._tigetstr('setaf').encode()
         if set_fg_ansi:
             for (color, val) in self.__ansi_colors.items():
-                self.FG_COLOR[color] = curses.tparm(set_fg_ansi, val) or ''
-        set_bg = self._tigetstr('setb')
+                fg_color = curses.tparm(set_fg_ansi, val).decode() or ''
+                self.FG_COLOR[color] = fg_color
+        set_bg = self._tigetstr('setb').encode()
         if set_bg:
             for (color, val) in self.__colors.items():
-                self.BG_COLOR[color] = curses.tparm(set_bg, val) or ''
-        set_bg_ansi = self._tigetstr('setab')
+                self.BG_COLOR[color] = curses.tparm(set_bg, val).decode() or ''
+        set_bg_ansi = self._tigetstr('setab').encode()
         if set_bg_ansi:
             for (color, val) in self.__ansi_colors.items():
-                self.BG_COLOR[color] = curses.tparm(set_bg_ansi, val) or ''
+                bg_color = curses.tparm(set_bg_ansi, val).decode() or ''
+                self.BG_COLOR[color] = bg_color
 
     def __init__(self, term_stream=None, color='auto'):
         self.reinit(term_stream, color)
@@ -286,9 +289,7 @@ class Term(object):
         # these, so strip them out.
         cap = self._ctigetstr(cap_name) or ''
         if is_py3bytes(cap):
-            cap = str(cap, encoding=locale.getpreferredencoding())
-            re.sub(r'\$<\d+>[/*]?', '', cap)
-            return bytes(cap, locale.getpreferredencoding())
+            cap = cap.decode()
         return re.sub(r'\$<\d+>[/*]?', '', cap)
 
     def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
