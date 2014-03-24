@@ -126,3 +126,15 @@ class ProgressTest(tests.support.TestCase):
             '(1/2): foo                  1.0  B/s |  10  B     00:10    ',
             '[FAILED] bar: some error                                   '])
         self.assertTrue(2.0 < p.rate < 4.0)
+
+    @mock.patch('dnf.cli.progress._term_width', return_value=40)
+    def test_skip(self, mock_term_width):
+        fo = MockStdout()
+        p = dnf.cli.progress.MultiFileProgressMeter(fo)
+        p.start(2, 30)
+        pload1 = FakePayload('club', 20.0)
+        p.end(pload1, dnf.callback.STATUS_ALREADY_EXISTS, 'already got')
+        self.assertEqual(p.done_files, 1)
+        self.assertEqual(p.done_size, pload1.size)
+        self.assertEqual(fo.getvalue(),
+                         '[SKIPPED] club: already got            \n')

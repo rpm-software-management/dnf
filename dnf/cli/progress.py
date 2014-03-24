@@ -135,6 +135,9 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
             size -= done
             self.done_files += 1
             self.done_size += size
+        elif status == dnf.callback.STATUS_ALREADY_EXISTS:
+            self.done_files += 1
+            self.done_size += size
 
         if status:
             # the error message, no trimming
