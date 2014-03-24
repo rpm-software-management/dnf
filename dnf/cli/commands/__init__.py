@@ -22,25 +22,22 @@ Classes for subcommands of the yum command line interface.
 """
 
 from __future__ import print_function
-import dnf.const
-import dnf.i18n
-import dnf.persistor
-import dnf.util
-import itertools
-import os
 from dnf.cli.format import format_number
-import dnf.logging
-from dnf.yum import misc
-import dnf.exceptions
-import functools
-import operator
-import locale
-import fnmatch
-import time
 from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
 
 import dnf.cli
+import dnf.const
+import dnf.exceptions
+import dnf.i18n
+import dnf.logging
+import dnf.util
 import dnf.yum.config
+import fnmatch
+import functools
+import locale
+import operator
+import os
+import time
 
 _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'
