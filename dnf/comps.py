@@ -127,6 +127,7 @@ class Group(Forwarder):
 
     @property
     def default_packages(self):
+        # :api
         return self._packages_of_type(libcomps.PACKAGE_TYPE_DEFAULT)
 
     def mark(self, packages):
@@ -145,10 +146,12 @@ class Group(Forwarder):
 
     @property
     def mandatory_packages(self):
+        # :api
         return self._packages_of_type(libcomps.PACKAGE_TYPE_MANDATORY)
 
     @property
     def optional_packages(self):
+        # :api
         return self._packages_of_type(libcomps.PACKAGE_TYPE_OPTIONAL)
 
     @property
