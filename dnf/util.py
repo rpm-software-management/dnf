@@ -23,10 +23,11 @@ from __future__ import absolute_import
 
 from .pycomp import PY3, basestring
 from functools import reduce
-from itertools import takewhile
 
 import dnf.const
+import dnf.pycomp
 import hawkey
+import itertools
 import librepo
 import os
 import shutil
@@ -148,6 +149,15 @@ def on_ac_power():
     except OSError:
         return None
 
+def partition(pred, iterable):
+    """Use a predicate to partition entries into false entries and true entries.
+
+    Credit: Python library itertools' documentation.
+
+    """
+    t1, t2 = itertools.tee(iterable)
+    return dnf.pycomp.filterfalse(pred, t1), filter(pred, t2)
+
 def reason_name(reason):
     if reason == hawkey.REASON_DEP:
         return "dep"
@@ -171,7 +181,7 @@ def split_by(iterable, condition):
     separator = object()  # A unique object.
     # Create a function returning tuple of objects before the separator.
     def next_subsequence(it):
-        return tuple(takewhile(lambda e: e != separator, it))
+        return tuple(itertools.takewhile(lambda e: e != separator, it))
 
     # Mark each place where the condition is met by the separator.
     marked = insert_if(separator, iterable, condition)

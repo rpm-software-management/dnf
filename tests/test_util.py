@@ -43,7 +43,7 @@ class Slow(object):
         self.computed += 1
         return self._val * self._val
 
-class Util(unittest.TestCase):
+class Util(support.TestCase):
     def test_am_i_root(self):
         with mock.patch('os.geteuid', return_value=1001):
             self.assertFalse(dnf.util.am_i_root())
@@ -151,6 +151,12 @@ class Util(unittest.TestCase):
         out = dnf.util.mapall(lambda n: 2 * n, l)
         self.assertIsInstance(out, list)
         self.assertEqual(out, [2, 4, 6])
+
+    def test_partition(self):
+        l = list(range(6))
+        smaller, larger = dnf.util.partition(lambda i: i > 4, l)
+        self.assertItemsEqual(smaller, (0, 1, 2, 3, 4))
+        self.assertItemsEqual(larger, (5,))
 
     def test_split_by(self):
         """Test split_by with sometimes fulfilled condition."""

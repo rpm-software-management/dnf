@@ -22,9 +22,12 @@ from gettext import NullTranslations
 from sys import version_info
 from unittest import TestCase
 
+import itertools
+
 if version_info.major >= 3:
     PY3 = True
     basestring = unicode = str
+    filterfalse = itertools.filterfalse
     long = int
     NullTranslations.ugettext = NullTranslations.gettext
     NullTranslations.ungettext = NullTranslations.ngettext
@@ -42,6 +45,7 @@ else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     PY3 = False
     from StringIO import StringIO
+    filterfalse = itertools.ifilterfalse
     to_ord = lambda i: ord(i)
     def is_py2str_py3bytes(o):
         return isinstance(o, str)
