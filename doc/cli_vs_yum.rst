@@ -224,7 +224,7 @@ This switch has been dropped. It is not documented for Yum and of a questionable
 Bandwidth limiting
 ==================
 
-DNF supports the 'throttle' and 'bandwidth' options familiar from Yum.
+DNF supports the ``throttle`` and ``bandwidth`` options familiar from Yum.
 Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.
