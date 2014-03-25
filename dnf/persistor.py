@@ -139,7 +139,6 @@ class RepoPersistor(object):
 
     def __init__(self, cachedir):
         self.cachedir = cachedir
-        self.logger = logging.getLogger("dnf")
 
     def _check_json_db(self):
         json_path = os.path.join(self.cachedir, "expired_repos.json")
@@ -155,7 +154,7 @@ class RepoPersistor(object):
         f.close()
         if content == "":
             data = []
-            self.logger.warning(_("%s is empty file"), "expired_repos.json")
+            logger.warning(_("%s is empty file"), "expired_repos.json")
             self._write_json_data(json_path, data)
         else:
             data = json.loads(content)
@@ -179,7 +178,7 @@ class RepoPersistor(object):
             dnf.util.touch(self._last_makecache_path)
             return True
         except IOError:
-            self.logger.info("Failed storing last makecache time.")
+            logger.info("Failed storing last makecache time.")
             return False
 
     def set_expired_repos(self, expired_iterable):
@@ -191,5 +190,5 @@ class RepoPersistor(object):
         try:
             return int(dnf.util.file_age(self._last_makecache_path))
         except OSError:
-            self.logger.info("Failed determining last makecache time.")
+            logger.info("Failed determining last makecache time.")
             return None
