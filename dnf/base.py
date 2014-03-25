@@ -1491,49 +1491,6 @@ class Base(object):
             self.logger.warning(msg % group.id)
         return cnt
 
-    def deselectGroup(self, grpid, force=False):
-        """Unmark the packages in the given group from being
-        installed.
-
-        :param grpid: the name of the group containing the packages to
-           unmark from installation
-        :param force: if True, force remove all the packages in the
-           given group from the transaction
-        """
-
-        if not self.comps.has_group(grpid):
-            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
-
-        thesegroups = self.comps.groups_by_pattern(grpid)
-        if not thesegroups:
-            raise dnf.exceptions.CompsError(_("No Group named %s exists") % to_unicode(grpid))
-
-        for thisgroup in thesegroups:
-            thisgroup.selected = False
-
-            for pkgname in thisgroup.packages:
-                txmbrs = self.tsInfo.getMembersWithState(
-                    None, dnf.yum.rpmtrans.TS_INSTALL_STATES)
-                for txmbr in txmbrs:
-                    if txmbr.po.name != pkgname:
-                        continue
-
-                    if not force:
-                        try:
-                            txmbr.groups.remove(grpid)
-                        except ValueError:
-                            self.logger.debug(
-                               _("package %s was not marked in group %s"), txmbr.po,
-                                grpid)
-                            continue
-
-                    # If the pkg isn't part of any group, or the group is
-                    # being forced out ... then remove the pkg
-                    if force or len(txmbr.groups) == 0:
-                        self.tsInfo.remove(txmbr.po.pkgtup)
-                        for pkg in self.tsInfo.conditionals.get(txmbr.name, []):
-                            self.tsInfo.remove(pkg.pkgtup)
-
     def gpgKeyCheck(self):
         """Checks for the presence of GPG keys in the rpmdb.
 
