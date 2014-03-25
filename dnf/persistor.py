@@ -37,7 +37,13 @@ import os
 
 logger = logging.getLogger("dnf")
 
-class Groups(collections.MutableMapping):
+class ClonableDict(collections.MutableMapping):
+    """A dict with list values that can be cloned.
+
+    This wraps around an ordinary dict (which only gives a shallow copy).
+
+    """
+
     def __init__(self, dct):
         self.dct = dct
 
@@ -57,12 +63,13 @@ class Groups(collections.MutableMapping):
         self.dct[key] = val
 
     @classmethod
-    def from_dict(cls, dct):
+    def wrap_dict(cls, dct):
         groups = cls(dct)
         return groups
 
     def clone(self):
-        cln = Groups({})
+        cls = self.__class__
+        cln = cls({})
         for g in self:
             cln[g] = self[g][:]
         return cln
@@ -75,11 +82,11 @@ class GroupPersistor(object):
         self._original = self.groups.clone()
 
     def _load(self):
-        self.groups = Groups({})
+        self.groups = ClonableDict({})
         try:
             with open(self.db) as db:
                 content = db.read()
-                self.groups = Groups.from_dict(json.loads(content))
+                self.groups = ClonableDict.wrap_dict(json.loads(content))
         except IOError as e:
             if e.errno != errno.ENOENT:
                 raise

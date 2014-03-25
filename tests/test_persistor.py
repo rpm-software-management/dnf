@@ -25,9 +25,9 @@ import tests.support
 
 IDS = set(['one', 'two', 'three'])
 
-class GroupsTest(tests.support.TestCase):
+class ClonableDictTest(tests.support.TestCase):
     def test_clone(self):
-        g = dnf.persistor.Groups({})
+        g = dnf.persistor.ClonableDict({})
         g['base'] = ['pepper', 'tour']
         g_c = g.clone()
         self.assertEqual(g, g_c)
