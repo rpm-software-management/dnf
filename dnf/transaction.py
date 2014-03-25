@@ -206,7 +206,7 @@ class Transaction(object):
         """
         src_installs = [pkg for pkg in self.install_set if pkg.arch == 'src']
         if len(src_installs):
-            return _("DNF will not install a source rpm package (%s).") % \
+            return _("Will not install a source rpm package (%s).") % \
                 src_installs[0]
         return None
 
