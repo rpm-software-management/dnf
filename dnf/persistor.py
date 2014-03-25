@@ -37,6 +37,17 @@ import os
 
 logger = logging.getLogger("dnf")
 
+def _clone_dct(dct):
+    cln = {}
+    for (k, v) in dct.items():
+        if isinstance(v, list):
+            cln[k] = v[:]
+        elif isinstance(v, dict):
+            cln[k] = _clone_dct(v)
+        else:
+            cln[k] = v
+    return cln
+
 class ClonableDict(collections.MutableMapping):
     """A dict with list values that can be cloned.
 
@@ -69,33 +80,54 @@ class ClonableDict(collections.MutableMapping):
 
     def clone(self):
         cls = self.__class__
-        cln = cls({})
-        for g in self:
-            cln[g] = self[g][:]
-        return cln
+        return cls.wrap_dict(_clone_dct(self.dct))
 
 class GroupPersistor(object):
     def __init__(self, persistdir):
-        self.db = os.path.join(persistdir, 'groups.json')
-        self.groups = None
+        self._dbfile = os.path.join(persistdir, 'groups.json')
+        self.db = None
+        self._original = None
         self._load()
-        self._original = self.groups.clone()
+        self._ensure_sanity()
+
+    @staticmethod
+    def _empty_db():
+        return ClonableDict({
+            'ENVIRONMENTS' : {},
+            'GROUPS' : {}
+        })
+
+    def _ensure_sanity(self):
+        """Make sure the input db is valid."""
+        if 'GROUPS' in self.db and 'ENVIRONMENTS' in self.db:
+            return
+        logger.warning(_('Invalid groups database, clearing.'))
+        self.db = self._empty_db()
 
     def _load(self):
-        self.groups = ClonableDict({})
+        self.db = self._empty_db()
         try:
-            with open(self.db) as db:
+            with open(self._dbfile) as db:
                 content = db.read()
-                self.groups = ClonableDict.wrap_dict(json.loads(content))
+                self.db = ClonableDict.wrap_dict(json.loads(content))
+                self._original = self.db.clone()
         except IOError as e:
             if e.errno != errno.ENOENT:
                 raise
 
+    @property
+    def environments(self):
+        return self.db['ENVIRONMENTS']
+
+    @property
+    def groups(self):
+        return self.db['GROUPS']
+
     def save(self):
-        if self.groups == self._original:
+        if self.db == self._original:
             return False
-        with open(self.db, 'w') as db:
-            json.dump(self.groups.dct, db)
+        with open(self._dbfile, 'w') as db:
+            json.dump(self.db.dct, db)
         return True
 
 class RepoPersistor(object):

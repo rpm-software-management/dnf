@@ -53,6 +53,7 @@ class GroupPersistorTest(tests.support.TestCase):
 
         prst = dnf.persistor.GroupPersistor(self.persistdir)
         self.assertEqual(prst.groups, {'base': ['pepper', 'tour']})
+        self.assertEqual(prst.environments, {})
         self.assertFalse(prst.save())
 
 class RepoPersistorTest(tests.support.TestCase):
