@@ -27,6 +27,19 @@ class GroupTest(support.ResultTestCase):
         self.base = support.MockBase("main")
         self.base.read_mock_comps(support.COMPS_PATH)
 
+    def test_environment_list(self):
+        env_inst, env_avail = self.base._environment_list(['sugar*'])
+        self.assertLength(env_inst, 1)
+        self.assertLength(env_avail, 0)
+        self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
+
+    def test_environment_remove(self):
+        comps = self.base.comps
+        env = comps.environment_by_pattern("sugar-desktop-environment")
+        self.assertEqual(self.base.environment_remove(env), 1)
+        self.assertEmpty(comps._installed_groups)
+        self.assertEmpty(comps._installed_environments)
+
     def test_install(self):
         comps = self.base.comps
         grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
@@ -40,7 +53,7 @@ class GroupTest(support.ResultTestCase):
     def test_group_install(self):
         comps = self.base.comps
         installed_groups = self.base.comps._installed_groups
-        grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
+        grp = comps.group_by_pattern("Solid Ground")
         self.assertNotIn(grp.id, installed_groups)
 
         self.assertEqual(self.base.group_install(grp, ('mandatory',)), 1)
@@ -68,7 +81,20 @@ class GroupTest(support.ResultTestCase):
         self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))
         self.assertNotIn(grp.id, self.base.comps._installed_groups)
 
-    def test_environment_list(self):
-        l = self.base._environment_list(['sugar*'])
-        self.assertLength(l, 1)
-        self.assertEqual(l[0].name, 'Sugar Desktop Environment')
+class EnvironmentInstallTest(support.ResultTestCase):
+    def setUp(self):
+        """Set up a test where sugar is considered not installed."""
+        self.base = support.MockBase("main")
+        self.base.read_mock_comps(support.COMPS_PATH)
+        comps = self.base.comps
+        comps._installed_environments.pop('sugar-desktop-environment')
+
+    def test_environment_install(self):
+        comps = self.base.comps
+        original_groups = set(comps._installed_groups.keys())
+        env = comps.environment_by_pattern("sugar-desktop-environment")
+        self.base.environment_install(env, ('mandatory',))
+        new_groups = set(comps._installed_groups.keys()) - original_groups
+        self.assertIn('somerset', new_groups)
+        self.assertIn('Peppers', new_groups)
+        self.assertIn('sugar-desktop-environment', comps._installed_environments)

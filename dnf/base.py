@@ -394,7 +394,7 @@ class Base(object):
         """Create the groups object to access the comps metadata. :api"""
         group_st = time.time()
         persistor = self._activate_group_persistor()
-        self._comps = dnf.comps.Comps(persistor.groups)
+        self._comps = dnf.comps.Comps(persistor.groups, persistor.environments)
 
         self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
         for repo in self.repos.iter_enabled():
@@ -1335,7 +1335,38 @@ class Base(object):
         else:
             envs = self.comps.environments_by_pattern(",".join(patterns))
 
-        return sorted(envs, key=operator.attrgetter('ui_name'))
+        installed_fn = operator.attrgetter('installed')
+        available, installed = dnf.util.partition(installed_fn, envs)
+
+        sort_fn = operator.attrgetter('ui_name')
+        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
+
+    def environment_install(self, env, types, exclude=None):
+        if env.installed:
+            msg = _("Warning: Environment '%s' is already installed.")
+            self.logger.warning(msg, env.ui_name)
+            return 0
+
+        groups = []
+        for grp in env.groups_iter():
+            new = self.group_install(grp, types, exclude)
+            if not new:
+                continue
+            groups.append(grp.id)
+
+        env.mark(groups)
+        cnt = len(groups)
+        if not cnt:
+            msg = _("Warning: Did not install any groups from environment '%s'")
+            self.logger.warning(msg, env.ui_name)
+        return cnt
+
+    def environment_remove(self, env):
+        cnt = 0
+        for grp in env.installed_groups:
+            cnt += self.group_remove(grp)
+        env.unmark()
+        return cnt
 
     def _group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available

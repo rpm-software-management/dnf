@@ -708,10 +708,10 @@ class BaseCli(dnf.Base):
         if not userlist:
             userlist = None # Match everything...
 
-        envs = self._environment_list(userlist)
+        env_inst, env_avail = self._environment_list(userlist)
         installed, available = self._group_lists(uservisible, userlist)
 
-        if not envs and not installed and not available:
+        if not any([env_inst ,env_avail, installed, available]):
             self.logger.error(_('Warning: No groups match: %s'),
                               ", ".join(userlist))
             return 0, []
@@ -726,13 +726,17 @@ class BaseCli(dnf.Base):
                 msg += ' [%s]' % group.lang_only
             self.logger.info('%s', msg)
 
-        if len(envs):
-            self.logger.info(_('Available environment groups:'))
-        for e in envs:
-            msg = '   %s' % e.ui_name
-            if self.conf.verbose:
-                msg += ' (%s)' % e.id
-            self.logger.info(msg)
+        def _out_env(sect, envs):
+            if envs:
+                self.logger.info(sect)
+            for e in envs:
+                    msg = '   %s' % e.ui_name
+                    if self.conf.verbose:
+                        msg += ' (%s)' % e.id
+                    self.logger.info(msg)
+
+        _out_env(_('Available environment groups:'), env_avail)
+        _out_env(_('Installed environment groups:'), env_inst)
 
         done = False
         for group in installed:

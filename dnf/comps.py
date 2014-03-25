@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 from dnf.exceptions import CompsError
+from functools import reduce
 
 import dnf.i18n
 import dnf.util
@@ -30,7 +31,6 @@ import libcomps
 import locale
 import operator
 import re
-from functools import reduce
 
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
@@ -161,14 +161,46 @@ class Category(Forwarder):
 
 class Environment(Forwarder):
     # :api
-    pass
+
+    def __init__(self, iobj, langs, installed_environments, group_factory):
+        super(Environment, self).__init__(iobj, langs)
+        self._installed_environments = installed_environments
+        self._group_factory = group_factory
+
+    def groups_iter(self):
+        for grp_id in self.group_ids:
+            grp = self._group_factory(grp_id.name)
+            if grp is None:
+                msg = "no group '%s' from environment '%s'"
+                raise ValueError(msg % (grp_id.name, self.id))
+            yield grp
+
+    @property
+    def installed(self):
+        return self.id in self._installed_environments
+
+    @property
+    def installed_groups(self):
+        for grp_id in self._installed_environments.get(self.id, []):
+            grp = self._group_factory(grp_id)
+            if grp is None:
+                msg = "no group '%s' from environment '%s'"
+                raise ValueError(msg % (grp_id.name, self.id))
+            yield grp
+
+    def mark(self, groups):
+        self._installed_environments[self.id] = list(groups)
+
+    def unmark(self):
+        self._installed_environments.pop(self.id, None)
 
 class Comps(object):
     # :api
 
-    def __init__(self, installed_groups):
+    def __init__(self, installed_groups, installed_environments):
         self._i = libcomps.Comps()
         self._installed_groups = installed_groups
+        self._installed_environments = installed_environments
         self._langs = _Langs()
         self.persistor = None
 
@@ -179,7 +211,8 @@ class Comps(object):
         return Category(icategory, self._langs)
 
     def _build_environment(self, ienvironment):
-        return Environment(ienvironment, self._langs)
+        return Environment(ienvironment, self._langs,
+                           self._installed_environments, self.group_by_id)
 
     def _build_group(self, igroup):
         return Group(igroup, self._langs, self._installed_groups)
@@ -232,6 +265,9 @@ class Comps(object):
     def groups(self):
         # :api
         return list(self.groups_iter())
+
+    def group_by_id(self, id_):
+        return dnf.util.first(g for g in self.groups_iter() if g.id == id_)
 
     def group_by_pattern(self, pattern, case_sensitive=False):
         # :api

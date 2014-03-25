@@ -62,7 +62,7 @@
     <display_order>25</display_order>
     <grouplist>
       <groupid default="true">somerset</groupid>
-      <groupid>base-system</groupid>
+      <groupid>Peppers</groupid>
     </grouplist>
     <optionlist>
       <groupid>base</groupid>

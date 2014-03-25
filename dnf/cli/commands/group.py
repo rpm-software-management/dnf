@@ -91,8 +91,9 @@ class GroupCommand(commands.Command):
     def _install(self, extcmds):
         cnt = 0
         types, patterns = self._split_extcmds(extcmds)
-        grps = self._patterns2groups(patterns)
-        for grp in grps:
+        for env in self._patterns2environments(patterns):
+            cnt += self.base.environment_install(env, types)
+        for grp in self._patterns2groups(patterns):
             cnt += self.base.group_install(grp, types)
         if not cnt:
             msg = _('No packages in any requested groups available to install.')
@@ -120,10 +121,10 @@ class GroupCommand(commands.Command):
             return extcmds[0], extcmds[1:]
         return 'install', extcmds
 
-    def _patterns2groups(self, patterns, fltr=lambda grp: True):
-        comps = self.base.comps
+    @staticmethod
+    def _patterns2(fn, patterns, fltr):
         for pat in patterns:
-            grps = comps.groups_by_pattern(pat)
+            grps = fn(pat)
             cnt = 0
             for grp in grps:
                 if not fltr(grp):
@@ -131,12 +132,22 @@ class GroupCommand(commands.Command):
                 yield grp
                 cnt += 1
             if not cnt:
-                msg = _("No relevant match for group specification '%s'.")
+                msg = _("No relevant match for the specified '%s'.")
                 msg = msg % to_unicode(pat)
                 raise dnf.cli.CliError(msg)
 
+    def _patterns2environments(self, patterns, fltr=lambda grp: True):
+        fn = self.base.comps.environments_by_pattern
+        return self._patterns2(fn, patterns, fltr)
+
+    def _patterns2groups(self, patterns, fltr=lambda grp: True):
+        fn = self.base.comps.groups_by_pattern
+        return self._patterns2(fn, patterns, fltr)
+
     def _remove(self, patterns):
         cnt = 0
+        for env in self._patterns2environments(patterns):
+            cnt += self.base.environment_remove(env)
         for grp in self._patterns2groups(patterns):
             cnt += self.base.group_remove(grp)
         if not cnt:

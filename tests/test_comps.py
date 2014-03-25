@@ -36,7 +36,8 @@ class LangsTest(support.TestCase):
 
 class CompsTest(support.TestCase):
     def setUp(self):
-        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy())
+        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy(),
+                                support.INSTALLED_ENVIRONMENTS.copy())
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
@@ -60,17 +61,24 @@ class CompsTest(support.TestCase):
         self.assertTrue(groups[0].installed)
         self.assertFalse(groups[1].installed)
 
+        envs = comps.environments
+        self.assertTrue(envs[0].installed)
+
     def test_environments(self):
         env = self.comps.environments[0]
         self.assertEqual(env.name_by_lang['cs'], u'Prostředí Sugar')
         self.assertEqual(env.desc_by_lang['de'],
+
                          u'Eine Software-Spielwiese zum Lernen des Lernens.')
         self.assertItemsEqual((id_.name for id_ in env.group_ids),
-                              ('somerset', 'base-system'))
+                              ('somerset', 'Peppers'))
         self.assertItemsEqual((id_.default for id_ in env.group_ids),
                               (True, False))
         self.assertItemsEqual((id_.name for id_ in env.option_ids),
                               ('base',))
+
+        self.assertTrue(all(isinstance(grp, dnf.comps.Group)
+                            for grp in env.groups_iter()))
 
     def test_groups(self):
         g = self.comps.group_by_pattern('base')
