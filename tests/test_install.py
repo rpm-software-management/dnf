@@ -80,7 +80,7 @@ class InstallMultilib(support.ResultTestCase):
     @support.mock.patch('dnf.transaction._', dnf.pycomp.NullTranslations().ugettext)
     def test_install_src_fails(self):
         self.yumbase.install("pepper-20-0.src")
-        re = 'will not install a source rpm'
+        re = 'Will not install a source rpm'
         self.assertRaisesRegexp(dnf.exceptions.Error, re,
                                 self.yumbase.resolve)
 
