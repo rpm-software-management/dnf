@@ -120,6 +120,19 @@ class TestLogging(support.TestCase):
                         map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c'])
 
+    def test_term_mode(self):
+        self.base = support.MockBase()
+        self.output = dnf.cli.output.Output(self.base)
+        bold = self.output.term.MODE['bold']
+        normal = self.output.term.MODE['normal']
+
+        logger = logging.getLogger("dnf")
+        with support.patch_std_streams() as (stdout, stderr):
+            self.logging.setup(logging.INFO, logging.ERROR, self.logdir)
+            msg = u'N/A %s%s%s'
+            logger.info(msg, bold, u"bla", normal)
+        self.assertEqual(u"N/A \x1b[1mbla\x1b(B\x1b[m\n", stdout.getvalue())
+
     def test_rpm_logging(self):
         # log everything to the console:
         self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,

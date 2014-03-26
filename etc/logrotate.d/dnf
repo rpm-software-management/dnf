@@ -1,0 +1,7 @@
+/var/log/dnf.log {
+    missingok
+    notifempty
+    size 30k
+    yearly
+    create 0600 root root
+}

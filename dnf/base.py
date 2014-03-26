@@ -78,7 +78,6 @@ class Base(object):
         self._comps = None
         self._history = None
         self._tags = None
-        self._ts_save_file = None
         self._tempfiles = []
         self.ds_callback = dnf.callback.Depsolve()
         self.logger = logging.getLogger("dnf")
@@ -88,10 +87,7 @@ class Base(object):
                                # not in cli - set it up as empty so no one
                                # trips over it later
 
-        self.rpm_probfilter = [rpm.RPMPROB_FILTER_OLDPACKAGE,
-                               rpm.RPMPROB_FILTER_REPLACEPKG,
-                               rpm.RPMPROB_FILTER_REPLACEOLDFILES]
-
+        self.rpm_probfilter = set([])
         self.mediagrabber = None
         self.cacheonly = False
         self.arch = dnf.rpmUtils.arch.Arch()
@@ -683,19 +679,6 @@ class Base(object):
                              [], [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
-
-        # transaction has started - all bets are off on our saved ts file
-        if self._ts_save_file is not None:
-            # write the saved transaction data to the addon location in history
-            # so we can pull it back later if we need to
-            savetx_msg = open(self._ts_save_file, 'r').read()
-            self.history.write_addon_data('saved_tx', savetx_msg)
-
-            try:
-                os.unlink(self._ts_save_file)
-            except (IOError, OSError) as e:
-                pass
-        self._ts_save_file = None
 
         if self.conf.reset_nice:
             onice = os.nice(0)
@@ -1609,6 +1592,7 @@ class Base(object):
         return 0
 
     def distro_sync(self, pkg_spec=None):
+        self._add_downgrade_rpm_probfilters()
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
@@ -1616,6 +1600,7 @@ class Base(object):
             if not sltr:
                 self.logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
+            self._add_downgrade_rpm_probfilters()
             self._goal.distupgrade(select=sltr)
         return 1
 
@@ -1714,6 +1699,7 @@ class Base(object):
 
     def reinstall(self, pkg_spec, old_reponame=None, new_reponame=None,
                   new_reponame_neq=None, remove_na=False):
+        self._add_reinstall_rpm_probfilters()
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed_pkgs = [
@@ -1775,6 +1761,7 @@ class Base(object):
         if avail_pkg is None:
             return 0
 
+        self._add_downgrade_rpm_probfilters()
         self._goal.install(avail_pkg)
         return 1
 
@@ -1886,6 +1873,7 @@ class Base(object):
                 raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
             assert len(news) == 1
             self._transaction.add_upgrade(dnf.util.first(olds), news[0], None)
+            self._add_downgrade_rpm_probfilters()
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
@@ -1921,6 +1909,7 @@ class Base(object):
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
             assert len(news) == 1
+            self._add_reinstall_rpm_probfilters()
             self._transaction.add_reinstall(dnf.util.first(olds), news[0], obsoleteds)
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
@@ -2280,3 +2269,10 @@ class Base(object):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
+
+    def _add_reinstall_rpm_probfilters(self):
+        self.rpm_probfilter |= set([rpm.RPMPROB_FILTER_REPLACEPKG,
+                                    rpm.RPMPROB_FILTER_REPLACEOLDFILES])
+
+    def _add_downgrade_rpm_probfilters(self):
+        self.rpm_probfilter.add(rpm.RPMPROB_FILTER_OLDPACKAGE)
