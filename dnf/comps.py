@@ -32,6 +32,12 @@ import locale
 import operator
 import re
 
+
+CONDITIONAL = 1 # :api ...
+DEFAULT     = 2
+MANDATORY   = 3
+OPTIONAL    = 4
+
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
     return reduce(operator.__add__, map(len, collections))
@@ -113,9 +119,10 @@ class Forwarder(object):
 
 class Group(Forwarder):
     # :api
-    def __init__(self, iobj, langs, installed_groups):
+    def __init__(self, iobj, langs, installed_groups, pkg_factory):
         super(Group, self).__init__(iobj, langs)
         self._installed_groups = installed_groups
+        self._pkg_factory = pkg_factory
         self.selected = False
 
     def _packages_of_type(self, type_):
@@ -136,9 +143,14 @@ class Group(Forwarder):
     def installed(self):
         return self.id in self._installed_groups
 
-    @property
     def installed_packages(self):
-        return self._installed_groups.get(self.id, [])
+        names = self._installed_groups.get(self.id, [])
+        pkgs = (pkg for pkg in self.packages if pkg.name in names)
+        return map(self._pkg_factory, pkgs)
+
+    def packages_iter(self):
+        # :api
+        return map(self._pkg_factory, self.packages)
 
     def unmark(self):
         self._installed_groups.pop(self.id, None)
@@ -194,6 +206,29 @@ class Environment(Forwarder):
     def unmark(self):
         self._installed_environments.pop(self.id, None)
 
+class Package(Forwarder):
+    """Represents comps package data. :api"""
+
+    _OPT_MAP = {
+        libcomps.PACKAGE_TYPE_CONDITIONAL : CONDITIONAL,
+        libcomps.PACKAGE_TYPE_DEFAULT     : DEFAULT,
+        libcomps.PACKAGE_TYPE_MANDATORY   : MANDATORY,
+        libcomps.PACKAGE_TYPE_OPTIONAL    : OPTIONAL,
+    }
+
+    def __init__(self, ipkg):
+        self._i = ipkg
+
+    @property
+    def name(self):
+        # :api
+        return self._i.name
+
+    @property
+    def option_type(self):
+        # :api
+        return self._OPT_MAP[self.type]
+
 class Comps(object):
     # :api
 
@@ -215,7 +250,11 @@ class Comps(object):
                            self._installed_environments, self.group_by_id)
 
     def _build_group(self, igroup):
-        return Group(igroup, self._langs, self._installed_groups)
+        return Group(igroup, self._langs, self._installed_groups,
+                     self._build_package)
+
+    def _build_package(self, ipkg):
+        return Package(ipkg)
 
     def add_from_xml_filename(self, fn):
         comps = libcomps.Comps()

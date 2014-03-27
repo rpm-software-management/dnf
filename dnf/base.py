@@ -1423,9 +1423,9 @@ class Base(object):
     def group_remove(self, grp):
         # :api
         cnt = 0
-        for pkg in grp.installed_packages:
+        for pkg in grp.installed_packages():
             try:
-                self.remove(pkg)
+                self.remove(pkg.name)
             except dnf.exceptions.MarkingError:
                 continue
             cnt += 1

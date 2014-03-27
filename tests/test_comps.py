@@ -25,6 +25,7 @@ from tests.support import mock
 import dnf.comps
 import dnf.util
 import libcomps
+import operator
 
 TRANSLATION=u"""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
 
@@ -86,6 +87,11 @@ class CompsTest(support.TestCase):
         g = self.comps.group_by_pattern('somerset')
         self.assertFalse(g.visible)
 
+    def test_group_packages(self):
+        g = self.comps.group_by_pattern('base')
+        self.assertItemsEqual(map(operator.attrgetter('name'), g.packages_iter()),
+                              ('tour', 'pepper'))
+
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter()],
@@ -121,6 +127,13 @@ class CompsTest(support.TestCase):
         comps = self.comps
         env = dnf.util.first(comps.environments_by_pattern('sugar-*'))
         self.assertEqual(env.ui_description, u'Software pro výuku o vyučování.')
+
+class PackageTest(support.TestCase):
+    def test_instance(self):
+        lc_pkg = libcomps.Package('weather', libcomps.PACKAGE_TYPE_OPTIONAL)
+        pkg = dnf.comps.Package(lc_pkg)
+        self.assertEqual(pkg.name, 'weather')
+        self.assertEqual(pkg.option_type, dnf.comps.OPTIONAL)
 
 class LibcompsTest(support.TestCase):
 
