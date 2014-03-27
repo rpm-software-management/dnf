@@ -1,4 +1,4 @@
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -122,7 +122,9 @@ class TestLogging(support.TestCase):
 
     def test_term_mode(self):
         self.base = support.MockBase()
-        self.output = dnf.cli.output.Output(self.base)
+        tigetstr = lambda name: '<cap_%(name)s>' % locals()
+        with mock.patch('curses.tigetstr', autospec=True, side_effect=tigetstr):
+            self.output = dnf.cli.output.Output(self.base)
         bold = self.output.term.MODE['bold']
         normal = self.output.term.MODE['normal']
 
@@ -131,7 +133,7 @@ class TestLogging(support.TestCase):
             self.logging.setup(logging.INFO, logging.ERROR, self.logdir)
             msg = u'N/A %s%s%s'
             logger.info(msg, bold, u"bla", normal)
-        self.assertEqual(u"N/A \x1b[1mbla\x1b(B\x1b[m\n", stdout.getvalue())
+        self.assertEqual(u"N/A <cap_bold>bla<cap_sgr0>\n", stdout.getvalue())
 
     def test_rpm_logging(self):
         # log everything to the console:
