@@ -32,7 +32,6 @@ import locale
 import operator
 import re
 
-
 CONDITIONAL = 1 # :api ...
 DEFAULT     = 2
 MANDATORY   = 3
@@ -117,6 +116,45 @@ class Forwarder(object):
     def ui_name(self):
         return self._ui_text(self.name, self.name_by_lang)
 
+class Category(Forwarder):
+    # :api
+    pass
+
+class Environment(Forwarder):
+    # :api
+
+    def __init__(self, iobj, langs, installed_environments, group_factory):
+        super(Environment, self).__init__(iobj, langs)
+        self._installed_environments = installed_environments
+        self._group_factory = group_factory
+
+    def groups_iter(self):
+        for grp_id in self.group_ids:
+            grp = self._group_factory(grp_id.name)
+            if grp is None:
+                msg = "no group '%s' from environment '%s'"
+                raise ValueError(msg % (grp_id.name, self.id))
+            yield grp
+
+    @property
+    def installed(self):
+        return self.id in self._installed_environments
+
+    @property
+    def installed_groups(self):
+        for grp_id in self._installed_environments.get(self.id, []):
+            grp = self._group_factory(grp_id)
+            if grp is None:
+                msg = "no group '%s' from environment '%s'"
+                raise ValueError(msg % (grp_id.name, self.id))
+            yield grp
+
+    def mark(self, groups):
+        self._installed_environments[self.id] = list(groups)
+
+    def unmark(self):
+        self._installed_environments.pop(self.id, None)
+
 class Group(Forwarder):
     # :api
     def __init__(self, iobj, langs, installed_groups, pkg_factory):
@@ -166,45 +204,6 @@ class Group(Forwarder):
     @property
     def visible(self):
         return self._i.uservisible
-
-class Category(Forwarder):
-    # :api
-    pass
-
-class Environment(Forwarder):
-    # :api
-
-    def __init__(self, iobj, langs, installed_environments, group_factory):
-        super(Environment, self).__init__(iobj, langs)
-        self._installed_environments = installed_environments
-        self._group_factory = group_factory
-
-    def groups_iter(self):
-        for grp_id in self.group_ids:
-            grp = self._group_factory(grp_id.name)
-            if grp is None:
-                msg = "no group '%s' from environment '%s'"
-                raise ValueError(msg % (grp_id.name, self.id))
-            yield grp
-
-    @property
-    def installed(self):
-        return self.id in self._installed_environments
-
-    @property
-    def installed_groups(self):
-        for grp_id in self._installed_environments.get(self.id, []):
-            grp = self._group_factory(grp_id)
-            if grp is None:
-                msg = "no group '%s' from environment '%s'"
-                raise ValueError(msg % (grp_id.name, self.id))
-            yield grp
-
-    def mark(self, groups):
-        self._installed_environments[self.id] = list(groups)
-
-    def unmark(self):
-        self._installed_environments.pop(self.id, None)
 
 class Package(Forwarder):
     """Represents comps package data. :api"""
