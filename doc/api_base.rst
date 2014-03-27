@@ -6,6 +6,8 @@
 
   Instances of :class:`dnf.Base` are the central point of functionality supplied by DNF. An application will typically create a single instance of this class which it will keep for the runtime needed to accomplish its packaging tasks. Plugins are managed by DNF and get a reference to :class:`dnf.Base` object when they run.
 
+  :class:`.Base` instances are stateful objects holding references to various data sources and data sinks. To properly finalize and close off any handles the object may hold, client code should either call :meth:`.Base.close` when it has finished opertions with the instance, or use the instance as a context manager. After the object has left the context, or its :meth:`.Base.close` has been called explicitly, it must not be used.
+
   .. attribute:: comps
 
     Is ``None`` by default. Explicit load via :meth:`read_comps`  initializes this attribute to a :class:`dnf.comps.Comps` instance.
@@ -29,6 +31,10 @@
   .. method:: __init__()
 
     Init an instance with a reasonable default configuration. The constructor takes no arguments.
+
+  .. method:: close()
+
+    Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.
 
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 

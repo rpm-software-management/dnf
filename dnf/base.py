@@ -226,7 +226,11 @@ class Base(object):
         return rpmsack.AdditionalPkgDB(db_path)
 
     def close(self):
-        """Close the history and repo objects."""
+        """Close all potential handles. :api
+
+        Typically the handles are to data sources and sinks.
+
+        """
 
         if self._closed:
             return
