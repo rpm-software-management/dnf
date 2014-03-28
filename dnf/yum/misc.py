@@ -242,20 +242,20 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
        CHUNK=65536 by default"""
 
     # chunking brazenly lifted from Ryan Tomayko
-    try:
-        if not isinstance(file, basestring):
-            fo = file # assume it's a file-like-object
-        else:
-            fo = open(file, 'rb', CHUNK)
 
+    if isinstance(file, basestring):
+        try:
+            with open(file, 'rb', CHUNK) as fo:
+                return checksum(sumtype, fo, CHUNK, datasize)
+        except (IOError, OSError) as e:
+            raise MiscError('Error opening file for checksum: %s' % file)
+
+    try:
+        # assumes file is a file-like-object
         data = Checksums([sumtype])
-        while data.read(fo, CHUNK):
+        while data.read(file, CHUNK):
             if datasize is not None and data.length > datasize:
                 break
-
-        if is_py2str_py3bytes(file):
-            fo.close()
-            del fo
 
         # This screws up the length, but that shouldn't matter. We only care
         # if this checksum == what we expect.
@@ -264,7 +264,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
 
         return data.hexdigest(sumtype)
     except (IOError, OSError) as e:
-        raise MiscError('Error opening file for checksum: %s' % file)
+        raise MiscError('Error reading file for checksum: %s' % file)
 
 def getFileList(path, ext, filelist):
     """Return all files in path matching ext, store them in filelist,
