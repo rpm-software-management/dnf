@@ -21,6 +21,8 @@ from tests.support import mock
 
 import dnf.cli.commands
 import dnf.cli.commands.group
+import dnf.cli.commands.upgrade
+import dnf.cli.commands.install
 import dnf.repo
 import itertools
 import logging
@@ -136,7 +138,7 @@ class CommandsCliTest(support.TestCase):
 
 class CommandTest(support.TestCase):
     def test_canonical(self):
-        cmd = dnf.cli.commands.UpgradeCommand(None)
+        cmd = dnf.cli.commands.upgrade.UpgradeCommand(None)
         (base, ext) = cmd.canonical(['update', 'cracker', 'filling'])
         self.assertEqual(base, 'upgrade')
         self.assertEqual(ext, ['cracker', 'filling'])
@@ -189,7 +191,7 @@ class EraseCommandTest(support.ResultTestCase):
 
 class InstallCommandTest(support.ResultTestCase):
 
-    """Tests of ``dnf.cli.commands.InstallCommand`` class."""
+    """Tests of ``dnf.cli.commands.install.InstallCommand`` class."""
 
     def setUp(self):
         """Prepare the test fixture."""
@@ -197,7 +199,7 @@ class InstallCommandTest(support.ResultTestCase):
         base = support.BaseCliStub('main')
         base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         base.init_sack()
-        self._cmd = dnf.cli.commands.InstallCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
 
     def test_configure(self):
         self._cmd.configure()
@@ -792,14 +794,14 @@ class RepoPkgsUpgradeToSubCommandTest(support.ResultTestCase):
 
 class UpgradeCommandTest(support.ResultTestCase):
 
-    """Tests of ``dnf.cli.commands.UpgradeCommand`` class."""
+    """Tests of ``dnf.cli.commands.upgrade.UpgradeCommand`` class."""
 
     def setUp(self):
         """Prepare the test fixture."""
         super(UpgradeCommandTest, self).setUp()
         base = support.BaseCliStub('updates')
         base.init_sack()
-        self.cmd = dnf.cli.commands.UpgradeCommand(base.mock_cli())
+        self.cmd = dnf.cli.commands.upgrade.UpgradeCommand(base.mock_cli())
 
     def test_run(self):
         """Test whether a package is updated."""

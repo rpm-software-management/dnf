@@ -30,7 +30,10 @@ from argparse import Action, ArgumentParser, SUPPRESS
 
 import dnf
 import dnf.cli.commands
+import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
+import dnf.cli.commands.install
+import dnf.cli.commands.upgrade
 import dnf.conf
 import dnf.const
 import dnf.exceptions
@@ -1011,8 +1014,8 @@ class Cli(object):
         self.nogpgcheck = False
 
         # :hawkey -- commented out are not yet supported in dnf
-        self.register_command(dnf.cli.commands.InstallCommand)
-        self.register_command(dnf.cli.commands.UpgradeCommand)
+        self.register_command(dnf.cli.commands.install.InstallCommand)
+        self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
@@ -1028,7 +1031,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.ReInstallCommand)
-        self.register_command(dnf.cli.commands.DowngradeCommand)
+        self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         # self.register_command(dnf.cli.commands.VersionCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
         # self.register_command(dnf.cli.commands.CheckRpmdbCommand)
