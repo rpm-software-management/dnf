@@ -73,14 +73,14 @@ class Update(support.ResultTestCase):
             base.sack.query().installed().filter(name__neq='hole'),
             base.sack.query().upgrades().filter(reponame='third_party')))
 
-    def test_update_local(self):
-        yumbase = support.MockBase()
-        sack = yumbase.sack
-        cnt = yumbase.update_local(support.TOUR_51_PKG_PATH)
+    def test_upgrade_to_package(self):
+        base = support.MockBase()
+        pkg = base.add_remote_rpm(support.TOUR_51_PKG_PATH)
+        cnt = base.package_upgrade(pkg)
         self.assertEqual(cnt, 1)
-        new_pkg = sack.query().available().filter(name="tour")[0]
-        new_set = support.installed_but(yumbase.sack, "tour") + [new_pkg]
-        self.assertResult(yumbase, new_set)
+        new_pkg = base.sack.query().available().filter(name="tour")[0]
+        new_set = support.installed_but(base.sack, "tour") + [new_pkg]
+        self.assertResult(base, new_set)
 
     def test_update_arches(self):
         yumbase = support.MockBase("main", "updates")

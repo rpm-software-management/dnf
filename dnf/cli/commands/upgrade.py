@@ -83,7 +83,8 @@ class UpgradeCommand(commands.Command):
             done = True
         else:
             # Update files.
-            results = map(self.base.update_local, filenames)
+            local_pkgs = map(self.base.add_remote_rpm, filenames)
+            results = map(self.base.package_upgrade, local_pkgs)
             done = functools.reduce(operator.or_, results, False)
 
             # Update packages.

@@ -82,7 +82,8 @@ class InstallCommand(commands.Command):
         pkg_specs, grp_specs, filenames = self.parse_extcmds(extcmds)
 
         # Install files.
-        results = map(self.base.install_local, filenames)
+        local_pkgs = map(self.base.add_remote_rpm, filenames)
+        results = map(self.base.package_install, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
 
         # Install groups.

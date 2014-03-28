@@ -1700,7 +1700,8 @@ class ReInstallCommand(Command):
         pkg_specs, filenames = self.parse_extcmds(extcmds)
 
         # Reinstall files.
-        results = map(self.base.reinstall_local, filenames)
+        local_pkgs = map(self.base.add_remote_rpm, filenames)
+        results = map(self.base.package_install, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
 
         # Reinstall packages.

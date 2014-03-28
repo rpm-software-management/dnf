@@ -404,7 +404,8 @@ class BaseCli(dnf.Base):
 
         for arg in userlist:
             if arg.endswith('.rpm'):
-                self.downgrade_local(arg)
+                pkg = self.add_remote_rpm(arg)
+                self.package_downgrade(pkg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
 

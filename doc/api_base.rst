@@ -32,6 +32,10 @@
 
     Init an instance with a reasonable default configuration. The constructor takes no arguments.
 
+  .. method:: add_remote_rpm(path)
+
+    Add RPM file at `path` to the :attr:`sack` and return the respective :class:`dnf.package.Package` instance. Does the download to a temporary file if `path` is a remote URL. Raises :exc:`IOError` if there are problems obtaining or reading the file.
+
   .. method:: close()
 
     Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.
@@ -94,7 +98,7 @@
 
   .. _package_marking-label:
 
-  The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument they take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
+  The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument some of them take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
 
   .. method:: downgrade(pkg_spec)
 
@@ -103,6 +107,18 @@
   .. method:: install(pkg_spec)
 
     Mark packages matching `pkg_spec` for installation.
+
+  .. method:: package_downgrade(pkg)
+
+    If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for downgrade to `pkg`.
+
+  .. method:: package_install(pkg)
+
+    Mark `pkg` (a :class:`dnf.package.Package` instance) for installation.
+
+  .. method:: package_upgrade(pkg)
+
+    If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for upgrade to `pkg`.
 
   .. method:: remove(pkg_spec)
 

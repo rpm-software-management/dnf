@@ -63,7 +63,6 @@ import rpm
 import signal
 import time
 
-
 class Base(object):
     def __init__(self):
         # :api
@@ -918,6 +917,15 @@ class Base(object):
         if callback_total is not None:
             callback_total(remote_pkgs, remote_size, beg_download)
 
+    def add_remote_rpm(self, path):
+        # :api
+        self.sack.create_cmdline_repo()
+        if not os.path.exists(path) and '://' in path:
+            # download remote rpm to a tempfile
+            path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
+            self._tempfiles.append(path)
+        return self.sack.add_cmdline_package(path)
+
     def sigCheckPkg(self, po):
         """Verify the GPG signature of the given package object.
 
@@ -1556,6 +1564,33 @@ class Base(object):
                 return 1
         return 0
 
+    def package_downgrade(self, pkg):
+        # :api
+        if pkg.from_system:
+            msg = 'downgrade_package() for an installed package.'
+            raise NotImplementedError(msg)
+
+        installed = sorted(self.sack.query().installed().filter(name=pkg.name))
+        if len(installed) > 0 and installed[0] > pkg:
+            self._goal.install(pkg)
+            self._goal.erase(installed[0])
+            return 2
+        return 0
+
+    def package_install(self, pkg):
+        # :api
+        self._goal.install(pkg)
+        return 1
+
+    def package_upgrade(self, pkg):
+        # :api
+        if pkg.from_system:
+            msg = 'upgrade_package() for an installed package.'
+            raise NotImplementedError(msg)
+
+        self._goal.upgrade_to(pkg)
+        return 1
+
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
@@ -1623,83 +1658,6 @@ class Base(object):
         for pkg in installed:
             self._goal.erase(pkg, clean_deps=clean_deps)
         return len(installed)
-
-    def _local_common(self, path):
-        self.sack.create_cmdline_repo()
-        try:
-            if not os.path.exists(path) and '://' in path:
-                # download remote rpm to a tempfile
-                path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
-                self._tempfiles.append(path)
-            po = self.sack.add_cmdline_package(path)
-        except IOError:
-            self.logger.critical(_('Cannot open: %s. Skipping.'), path)
-            return None
-        return po
-
-    def downgrade_local(self, path):
-        """Mark a package on the local filesystem (i.e. not from a
-        repository) to be downgraded.
-
-        :param pkg: a string specifying the path to an rpm file in the
-           local filesystem to be marked to be downgraded
-        :param po: a :class:`packages.YumLocalPackage`
-        :return: a list of the transaction members added to the
-           transaction set by this method
-        """
-        po = self._local_common(path)
-        if not po:
-            return 0
-
-        installed = sorted(self.sack.query().installed().filter(name=po.name))
-        if len(installed) > 0 and installed[0] > po:
-            self._goal.install(po)
-            self._goal.erase(installed[0])
-            return 2
-        return 0
-
-    def install_local(self, path):
-        """Mark a package on the local filesystem (i.e. not from a
-        repository) for installation.
-
-        :param pkg: a string specifying the path to an rpm file in the
-           local filesystem to be marked for installation
-        :param po: a :class:`packages.YumLocalPackage`
-        :param updateonly: if True, the given package will only be
-           marked for installation if it is an upgrade for a package
-           that is already installed.  If False, this restriction is
-           not enforced
-        :return: a list of the transaction members added to the
-           transaction set by this method
-        """
-        po = self._local_common(path)
-        if not po:
-            return 0
-        self._goal.install(po)
-        return 1
-
-    def update_local(self, path):
-        po = self._local_common(path)
-        if not po:
-            return 0
-        self._goal.upgrade_to(po)
-        return 1
-
-    def reinstall_local(self, path):
-        """Mark a package on the local filesystem (i.e. not from a
-        repository) for reinstallation.
-
-        :param pkg: a string specifying the path to an rpm file in the
-           local filesystem to be marked for reinstallation
-        :param po: a :class:`packages.YumLocalPackage`
-        :return: a list of the transaction members added to the
-           transaction set by this method
-        """
-        po = self._local_common(path)
-        if not po:
-            return 0
-        self._goal.install(po)
-        return 1
 
     def reinstall(self, pkg_spec, old_reponame=None, new_reponame=None,
                   new_reponame_neq=None, remove_na=False):

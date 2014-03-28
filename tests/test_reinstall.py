@@ -34,10 +34,6 @@ class Reinstall(support.ResultTestCase):
         new_set += list(available_query.nevra("pepper-20-0.x86_64"))
         self.assertResult(self.base, new_set)
 
-    def test_reinstall_local(self):
-        cnt = self.base.reinstall_local(support.TOUR_50_PKG_PATH)
-        self.assertEqual(cnt, 1)
-
     def test_reinstall_new_reponame_available(self):
         """Test whether it installs packages only from the repository."""
         reinstalled_count = self.base.reinstall('librita', new_reponame='main')

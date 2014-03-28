@@ -23,11 +23,12 @@ import dnf
 import hawkey
 
 class DowngradeTest(support.ResultTestCase):
-    def test_downgrade_local(self):
+    def test_package_downgrade(self):
         yumbase = support.MockBase()
         sack = yumbase.sack
 
-        cnt = yumbase.downgrade_local(support.TOUR_44_PKG_PATH)
+        pkg = yumbase.add_remote_rpm(support.TOUR_44_PKG_PATH)
+        cnt = yumbase.package_downgrade(pkg)
         self.assertGreater(cnt, 0)
         (installed, removed) = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ("tour-4-4.noarch", ))

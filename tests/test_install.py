@@ -58,10 +58,6 @@ class InstallMultilib(support.ResultTestCase):
         new_set = self.yumbase.sack.query().installed() + [lotus]
         self.assertResult(self.yumbase, new_set)
 
-    def test_install_local(self):
-        cnt = self.yumbase.install_local(support.TOUR_50_PKG_PATH)
-        self.assertEqual(cnt, 1)
-
     def test_install_reponame(self):
         """Test whether packages are filtered by the reponame."""
         result = itertools.chain(

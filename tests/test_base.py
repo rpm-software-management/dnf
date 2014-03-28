@@ -26,6 +26,7 @@ import dnf
 import dnf.const
 import dnf.exceptions
 import dnf.match_counter
+import dnf.package
 import dnf.subject
 import dnf.transaction
 import hawkey
@@ -119,6 +120,11 @@ class BaseTest(support.TestCase):
 class MockYumBaseTest(PycompTestCase):
     def setUp(self):
         self.yumbase = support.MockBase("main")
+
+    def test_add_remote_rpm(self):
+        pkg = self.yumbase.add_remote_rpm(support.TOUR_50_PKG_PATH)
+        self.assertIsInstance(pkg, dnf.package.Package)
+        self.assertEqual(pkg.name, 'tour')
 
     def test_search_counted(self):
         counter = dnf.match_counter.MatchCounter()
