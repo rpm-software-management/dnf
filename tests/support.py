@@ -273,12 +273,12 @@ class MockTerminal(object):
         self.reinit = mock.Mock()
 
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
-    def __init__(self, repo_dir, yumbase):
+    def __init__(self, repo_dir, base):
         hawkey.test.TestSackMixin.__init__(self, repo_dir)
         dnf.sack.Sack.__init__(self,
                                arch=hawkey.test.FIXED_ARCH,
                                pkgcls=dnf.package.Package,
-                               pkginitval=yumbase,
+                               pkginitval=base,
                                make_cache_dir=True)
 
 class MockBase(_BaseStubMixin, dnf.Base):

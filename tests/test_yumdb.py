@@ -25,11 +25,11 @@ import unittest
 @mock.patch('os.path.exists', return_value=True)
 class TestAdditionalPkgDB(unittest.TestCase):
     def test_instantiate(self, mock_exists):
-        yumbase = support.MockBase()
-        path = yumbase.conf.persistdir + '/yumdb'
+        base = support.MockBase()
+        path = base.conf.persistdir + '/yumdb'
         pkgdb = dnf.yum.rpmsack.AdditionalPkgDB(path)
-        pkg = yumbase.sack.query().installed().filter(name="pepper")[0]
+        pkg = base.sack.query().installed().filter(name="pepper")[0]
         directory = pkgdb._get_dir_name(pkg.pkgtup, pkg.pkgid)
         self.assertEqual("%s/yumdb/p/<nopkgid>-pepper-20-0-x86_64" %
-                         yumbase.conf.persistdir,
+                         base.conf.persistdir,
                          directory)

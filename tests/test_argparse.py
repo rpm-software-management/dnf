@@ -24,19 +24,19 @@ import argparse
 
 class OptionParserTest(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockBase()
+        self.base = support.MockBase()
         output = support.MockOutput()
-        self.yumbase.output = output
+        self.base.output = output
 
     def test_nogpgcheck(self):
-        parser = OptionParser(self.yumbase)
+        parser = OptionParser(self.base)
         opts, cmds = parser.parse_known_args(['update', '--nogpgcheck'])
-        del self.yumbase.repos
-        # this doesn't try to access yumbase.repos:
+        del self.base.repos
+        # this doesn't try to access base.repos:
         parser.configure_from_options(opts)
 
     def test_non_nones2dict(self):
-        parser = OptionParser(self.yumbase)
+        parser = OptionParser(self.base)
         values = parser.parse_args(args=['-y'])
         self.assertIsInstance(values, argparse.Namespace)
         dct = parser._non_nones2dict(values.__dict__)

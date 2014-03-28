@@ -116,19 +116,20 @@ class BaseTest(support.TestCase):
 
         self.assertRaises(StopIteration, next, iterator)
 
-# test Base methods that need the sack
-class MockYumBaseTest(PycompTestCase):
+class MockBaseTest(PycompTestCase):
+    """Test the Base methods that need a Sack."""
+
     def setUp(self):
-        self.yumbase = support.MockBase("main")
+        self.base = support.MockBase("main")
 
     def test_add_remote_rpm(self):
-        pkg = self.yumbase.add_remote_rpm(support.TOUR_50_PKG_PATH)
+        pkg = self.base.add_remote_rpm(support.TOUR_50_PKG_PATH)
         self.assertIsInstance(pkg, dnf.package.Package)
         self.assertEqual(pkg.name, 'tour')
 
     def test_search_counted(self):
         counter = dnf.match_counter.MatchCounter()
-        self.yumbase.search_counted(counter, 'summary', 'ation')
+        self.base.search_counted(counter, 'summary', 'ation')
         self.assertEqual(len(counter), 2)
         haystacks = set()
         for pkg in counter:
@@ -138,7 +139,7 @@ class MockYumBaseTest(PycompTestCase):
 
     def test_search_counted_glob(self):
         counter = dnf.match_counter.MatchCounter()
-        self.yumbase.search_counted(counter, 'summary', '*invit*')
+        self.base.search_counted(counter, 'summary', '*invit*')
         self.assertEqual(len(counter), 1)
 
 class BuildTransactionTest(support.TestCase):
@@ -154,7 +155,7 @@ class BuildTransactionTest(support.TestCase):
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():
-    return (lambda yumbase: support.TestSack(support.repo_dir(), yumbase))
+    return (lambda base: support.TestSack(support.repo_dir(), base))
 
 @property
 def ret_pkgid(self):
@@ -162,69 +163,69 @@ def ret_pkgid(self):
 
 class VerifyTransactionTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
-        self.yumbase._transaction = dnf.transaction.Transaction()
+        self.base = support.MockBase("main")
+        self.base._transaction = dnf.transaction.Transaction()
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
     @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
-        new_pkg = self.yumbase.sack.query().available().filter(name="pepper")[1]
+        new_pkg = self.base.sack.query().available().filter(name="pepper")[1]
         new_pkg.chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
-        removed_pkg = self.yumbase.sack.query().available().filter(
+        removed_pkg = self.base.sack.query().available().filter(
             name="mrkite")[0]
 
-        self.yumbase.transaction.add_install(new_pkg, [])
-        self.yumbase.transaction.add_erase(removed_pkg)
-        self.yumbase.verify_transaction(0)
+        self.base.transaction.add_install(new_pkg, [])
+        self.base.transaction.add_erase(removed_pkg)
+        self.base.verify_transaction(0)
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
-        yumdb_info = self.yumbase.yumdb.get_package(new_pkg)
+        yumdb_info = self.base.yumdb.get_package(new_pkg)
         self.assertEqual(yumdb_info.from_repo, 'main')
         self.assertEqual(yumdb_info.reason, 'unknown')
         self.assertEqual(yumdb_info.releasever, 'Fedora69')
         self.assertEqual(yumdb_info.checksum_type, 'md5')
         self.assertEqual(yumdb_info.checksum_data, HASH)
-        self.yumbase.yumdb.assertLength(2)
+        self.base.yumdb.assertLength(2)
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
+        self.base = support.MockBase("main")
 
     def test_reason(self):
-        self.yumbase.install("mrkite")
-        self.yumbase.resolve()
-        new_pkgs = self.yumbase._transaction.get_items(dnf.transaction.INSTALL)
+        self.base.install("mrkite")
+        self.base.resolve()
+        new_pkgs = self.base._transaction.get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
         self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 
 class InstalledMatchingTest(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
-        self.sack = self.yumbase.sack
+        self.base = support.MockBase("main")
+        self.sack = self.base.sack
 
     def test_query_matching(self):
         subj = dnf.subject.Subject("pepper")
         query = subj.get_best_query(self.sack)
-        inst, avail = self.yumbase._query_matches_installed(query)
+        inst, avail = self.base._query_matches_installed(query)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
         self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
 
     def test_selector_matching(self):
         subj = dnf.subject.Subject("pepper")
         sltr = subj.get_best_selector(self.sack)
-        inst = self.yumbase._sltr_matches_installed(sltr)
+        inst = self.base._sltr_matches_installed(sltr)
         self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
 
 class CleanTest(PycompTestCase):
     def test_clean_binary_cache(self):
-        yumbase = support.MockBase("main")
+        base = support.MockBase("main")
         with mock.patch('os.access', return_value=True) as access,\
-                mock.patch.object(yumbase, "_cleanFilelist") as _:
-            yumbase.clean_binary_cache()
+                mock.patch.object(base, "_cleanFilelist") as _:
+            base.clean_binary_cache()
         self.assertEqual(len(access.call_args_list), 3)
         fname = access.call_args_list[0][0][0]
         assert(fname.startswith(dnf.const.TMPDIR))
@@ -252,16 +253,16 @@ class CompsTest(support.TestCase):
     # prevent creating the gen/ directory:
     @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
-        yumbase = support.MockBase("main")
-        yumbase.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
-        yumbase.read_comps()
-        groups = yumbase.comps.groups
+        base = support.MockBase("main")
+        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.read_comps()
+        groups = base.comps.groups
         self.assertLength(groups, support.TOTAL_GROUPS)
 
     def test_read_comps_disabled(self):
-        yumbase = support.MockBase("main")
-        yumbase.repos['main'].enablegroups = False
-        self.assertEmpty(yumbase.read_comps())
+        base = support.MockBase("main")
+        base.repos['main'].enablegroups = False
+        self.assertEmpty(base.read_comps())
 
 class Goal2TransactionTest(support.TestCase):
     def test_upgrade(self):

@@ -22,13 +22,13 @@ import itertools
 
 class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):
-        yumbase = support.MockBase("main", "updates")
-        sack = yumbase.sack
-        yumbase.upgrade_to("pepper-20-1.x86_64")
+        base = support.MockBase("main", "updates")
+        sack = base.sack
+        base.upgrade_to("pepper-20-1.x86_64")
         new_set = support.installed_but(sack, "pepper").run()
         q = sack.query().available().nevra("pepper-20-1.x86_64")
         new_set.extend(q)
-        self.assertResult(yumbase, new_set)
+        self.assertResult(base, new_set)
 
     def test_upgrade_to_reponame(self):
         """Test whether only packages in selected repo are used."""

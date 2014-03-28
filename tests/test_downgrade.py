@@ -27,27 +27,27 @@ class DowngradeTest(support.ResultTestCase):
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_package_downgrade(self, ts):
-        yumbase = support.MockBase()
+        base = support.MockBase()
 
-        pkg = yumbase.add_remote_rpm(support.TOUR_44_PKG_PATH)
-        cnt = yumbase.package_downgrade(pkg)
-        yumbase.ts.setProbFilter.assert_called_with(
+        pkg = base.add_remote_rpm(support.TOUR_44_PKG_PATH)
+        cnt = base.package_downgrade(pkg)
+        base.ts.setProbFilter.assert_called_with(
             rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertGreater(cnt, 0)
-        (installed, removed) = self.installed_removed(yumbase)
+        (installed, removed) = self.installed_removed(base)
         self.assertItemsEqual(map(str, installed), ("tour-4-4.noarch", ))
         self.assertItemsEqual(map(str, removed), ("tour-5-0.noarch", ))
 
     def test_downgrade(self):
-        yumbase = support.MockBase("main")
-        sack = yumbase.sack
-        cnt = yumbase.downgrade("tour")
+        base = support.MockBase("main")
+        sack = base.sack
+        cnt = base.downgrade("tour")
         self.assertGreater(cnt, 0)
 
         new_pkg = sack.query().available().filter(name="tour")[0]
         self.assertEqual(new_pkg.evr, "4.6-1")
         new_set = support.installed_but(sack, "tour") + [new_pkg]
-        self.assertResult(yumbase, new_set)
+        self.assertResult(base, new_set)
 
     def test_downgrade2(self):
         b = support.MockBase("old_versions")

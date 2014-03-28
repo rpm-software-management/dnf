@@ -23,52 +23,52 @@ import itertools
 
 class Remove(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase()
-        erase_cmd = dnf.cli.commands.EraseCommand(self.yumbase.mock_cli())
+        self.base = support.MockBase()
+        erase_cmd = dnf.cli.commands.EraseCommand(self.base.mock_cli())
         erase_cmd.configure()
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """
         with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as context:
-            self.yumbase.remove('mrkite')
+            self.base.remove('mrkite')
         self.assertEqual(context.exception.pkg_spec, 'mrkite')
-        installed_pkgs = self.yumbase.sack.query().installed().run()
-        self.assertResult(self.yumbase, installed_pkgs)
+        installed_pkgs = self.base.sack.query().installed().run()
+        self.assertResult(self.base, installed_pkgs)
 
     def test_remove(self):
         """ Simple remove. """
-        ret = self.yumbase.remove("pepper")
-        self.assertResult(self.yumbase,
-                          support.installed_but(self.yumbase.sack, "pepper"))
+        ret = self.base.remove("pepper")
+        self.assertResult(self.base,
+                          support.installed_but(self.base.sack, "pepper"))
 
     def test_remove_depended(self):
         """ Remove a lib that some other package depends on. """
-        ret = self.yumbase.remove("librita")
+        ret = self.base.remove("librita")
         # we should end up with nothing in this case:
-        new_set = support.installed_but(self.yumbase.sack, "librita", "pepper")
-        self.assertResult(self.yumbase, new_set)
+        new_set = support.installed_but(self.base.sack, "librita", "pepper")
+        self.assertResult(self.base, new_set)
 
     def test_remove_nevra(self):
-        ret = self.yumbase.remove("pepper-20-0.x86_64")
-        pepper = self.yumbase.sack.query().installed().filter(name="pepper")
-        (installed, removed) = self.installed_removed(self.yumbase)
+        ret = self.base.remove("pepper-20-0.x86_64")
+        pepper = self.base.sack.query().installed().filter(name="pepper")
+        (installed, removed) = self.installed_removed(self.base)
         self.assertLength(installed, 0)
         self.assertItemsEqual(removed, pepper.run())
 
     def test_remove_glob(self):
         """ Test that weird input combinations with globs work. """
-        ret = self.yumbase.remove("*.i686")
+        ret = self.base.remove("*.i686")
         self.assertEqual(ret, 1)
 
     def test_reponame(self):
         """Test whether only packages from the repository are uninstalled."""
         pkg_subj = dnf.subject.Subject('librita.x86_64')
-        for pkg in pkg_subj.get_best_query(self.yumbase.sack).installed():
-            self.yumbase.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.yumbase.yumdb.get_package(pkg).from_repo = 'main'
+        for pkg in pkg_subj.get_best_query(self.base.sack).installed():
+            self.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.base.yumdb.get_package(pkg).from_repo = 'main'
 
-        self.yumbase.remove('librita', 'main')
-        self.assertResult(self.yumbase, itertools.chain(
-              self.yumbase.sack.query().installed().filter(name__neq='librita'),
-              dnf.subject.Subject('librita.i686').get_best_query(self.yumbase.sack)
+        self.base.remove('librita', 'main')
+        self.assertResult(self.base, itertools.chain(
+              self.base.sack.query().installed().filter(name__neq='librita'),
+              dnf.subject.Subject('librita.i686').get_best_query(self.base.sack)
               .installed()))

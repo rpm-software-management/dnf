@@ -103,7 +103,7 @@ def build_sack(base):
                 cachedir=cachedir,
                 rootdir=base.conf.installroot)
 
-def rpmdb_sack(yumbase):
-    sack = build_sack(yumbase)
+def rpmdb_sack(base):
+    sack = build_sack(base)
     sack.load_system_repo()
     return sack

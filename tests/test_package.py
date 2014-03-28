@@ -34,8 +34,8 @@ TOUR_SIZE = 2317
 
 class PackageTest(PycompTestCase):
     def setUp(self):
-        yumbase = support.MockBase("main")
-        self.sack = yumbase.sack
+        base = support.MockBase("main")
+        self.sack = base.sack
         self.pkg = self.sack.query().available().filter(name="pepper")[1]
 
     def test_from_cmdline(self):

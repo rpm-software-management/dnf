@@ -29,7 +29,7 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
     *basecmd* to act on.
 
-    :param base: a :class:`dnf.yum.Yumbase` object.
+    :param base: a :class:`dnf.Base` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`

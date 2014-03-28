@@ -30,20 +30,20 @@ import unittest
 
 class CommandsCliTest(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockBase()
-        self.cli = self.yumbase.mock_cli()
+        self.base = support.MockBase()
+        self.cli = self.base.mock_cli()
 
     def test_erase_configure(self):
         erase_cmd = dnf.cli.commands.EraseCommand(self.cli)
         erase_cmd.configure()
-        self.assertTrue(self.yumbase.goal_parameters.allow_uninstall)
+        self.assertTrue(self.base.goal_parameters.allow_uninstall)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
         """Test get_error_output with the history rollback and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
-        self.yumbase.basecmd = 'history'
-        self.yumbase.extcmds = ('rollback', '1')
+        self.base.basecmd = 'history'
+        self.base.extcmds = ('rollback', '1')
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
 
@@ -56,8 +56,8 @@ class CommandsCliTest(support.TestCase):
     def test_history_get_error_output_undo_transactioncheckerror(self):
         """Test get_error_output with the history undo and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
-        self.yumbase.basecmd = 'history'
-        self.yumbase.extcmds = ('undo', '1')
+        self.base.basecmd = 'history'
+        self.base.extcmds = ('undo', '1')
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
 
@@ -81,19 +81,19 @@ class CommandsCliTest(support.TestCase):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
         cmd.base.logger = mock.create_autospec(cmd.base.logger)
 
-        self.yumbase.conf.metadata_timer_sync = 0
+        self.base.conf.metadata_timer_sync = 0
         self.assertFalse(self._do_makecache(cmd))
         self.assertLastInfo(cmd, u'Metadata timer caching disabled.')
 
-        self.yumbase.conf.metadata_timer_sync = 5 # resync after 5 seconds
-        self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=3)
+        self.base.conf.metadata_timer_sync = 5 # resync after 5 seconds
+        self.base._persistor.since_last_makecache = mock.Mock(return_value=3)
         self.assertFalse(self._do_makecache(cmd))
         self.assertLastInfo(cmd, u'Metadata cache refreshed recently.')
 
-        self.yumbase._persistor.since_last_makecache = mock.Mock(return_value=10)
-        self.yumbase._sack = 'nonempty'
+        self.base._persistor.since_last_makecache = mock.Mock(return_value=10)
+        self.base._sack = 'nonempty'
         r = support.MockRepo("glimpse", None)
-        self.yumbase.repos.add(r)
+        self.base.repos.add(r)
 
         # regular case 1: metadata is already expired:
         r.metadata_expire_in = mock.Mock(return_value=(False, 0))
@@ -123,7 +123,7 @@ class CommandsCliTest(support.TestCase):
     def test_makecache_timer_battery(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
         cmd.base.logger = mock.create_autospec(cmd.base.logger)
-        self.yumbase.conf.metadata_timer_sync = 5
+        self.base.conf.metadata_timer_sync = 5
 
         self.assertFalse(self._do_makecache(cmd))
         msg = u'Metadata timer caching disabled when running on a battery.'
@@ -133,7 +133,7 @@ class CommandsCliTest(support.TestCase):
     @mock.patch('dnf.util.on_ac_power', return_value=None)
     def test_makecache_timer_battery2(self, _on_ac_power):
         cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
-        self.yumbase.conf.metadata_timer_sync = 5
+        self.base.conf.metadata_timer_sync = 5
         self.assertTrue(self._do_makecache(cmd))
 
 class CommandTest(support.TestCase):

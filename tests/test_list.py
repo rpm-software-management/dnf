@@ -35,8 +35,8 @@ class List(support.TestCase):
                 'otherwise the test makes no sense')
 
     def test_list_installed(self):
-        yumbase = support.MockBase()
-        ypl = yumbase.doPackageLists('installed')
+        base = support.MockBase()
+        ypl = base.doPackageLists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
     def test_list_installed_reponame(self):
@@ -52,45 +52,45 @@ class List(support.TestCase):
         self.assertItemsEqual(lists.installed, expected)
 
     def test_list_updates(self):
-        yumbase = support.MockBase("updates", "main")
-        ypl = yumbase.doPackageLists('upgrades')
+        base = support.MockBase("updates", "main")
+        ypl = base.doPackageLists('upgrades')
         self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "hole")
-        ypl = yumbase.doPackageLists('upgrades', ["pepper"])
+        ypl = base.doPackageLists('upgrades', ["pepper"])
         self.assertEqual(len(ypl.updates), 1)
-        ypl = yumbase.doPackageLists('upgrades', ["mrkite"])
+        ypl = base.doPackageLists('upgrades', ["mrkite"])
         self.assertEqual(len(ypl.updates), 0)
 
-        ypl = yumbase.doPackageLists('upgrades', ["hole"])
+        ypl = base.doPackageLists('upgrades', ["hole"])
         self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
-        yumbase = support.MockBase('updates', "main")
-        ypl = yumbase.doPackageLists('upgrades', ['pepper', 'hole'])
+        base = support.MockBase('updates', "main")
+        ypl = base.doPackageLists('upgrades', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 3)
 
 class TestListAllRepos(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main", "updates")
-        self.yumbase.conf.multilib_policy = "all"
+        self.base = support.MockBase("main", "updates")
+        self.base.conf.multilib_policy = "all"
 
     def test_list_pattern(self):
-        ypl = self.yumbase.doPackageLists('all', ['hole'])
+        ypl = self.base.doPackageLists('all', ['hole'])
         self.assertLength(ypl.installed, 1)
         self.assertLength(ypl.available, 2)
 
     def test_list_pattern_arch(self):
-        ypl = self.yumbase.doPackageLists('all', ['hole.x86_64'])
+        ypl = self.base.doPackageLists('all', ['hole.x86_64'])
         self.assertLength(ypl.installed, 1)
         self.assertLength(ypl.available, 1)
 
     def test_list_available(self):
-        ypl = self.yumbase.doPackageLists('available', ['hole'], showdups=False)
+        ypl = self.base.doPackageLists('available', ['hole'], showdups=False)
         self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64'))
 
-        ypl = self.yumbase.doPackageLists('available', ['hole'], showdups=True)
+        ypl = self.base.doPackageLists('available', ['hole'], showdups=True)
         self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64',
                                                         'hole-1-2.x86_64'))

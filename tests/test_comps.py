@@ -52,8 +52,8 @@ class CompsTest(support.TestCase):
         self.assertIsInstance(group, dnf.comps.Group)
 
     def test_installed(self):
-        yumbase = support.MockBase("main")
-        sack = yumbase.sack
+        base = support.MockBase("main")
+        sack = base.sack
 
         comps = self.comps
         groups = comps.groups

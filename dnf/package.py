@@ -33,9 +33,9 @@ logger = logging.getLogger("dnf")
 
 class Package(hawkey.Package):
     """ Represents a package. """
-    def __init__(self, initobject, yumbase):
+    def __init__(self, initobject, base):
         super(Package, self).__init__(initobject)
-        self.yumbase = yumbase
+        self.base = base
         self._chksum = None
         self._repo = None
         self._size = None
@@ -105,7 +105,7 @@ class Package(hawkey.Package):
     def repo(self):
         if self._repo:
             return self._repo
-        return self.yumbase.repos[self.reponame]
+        return self.base.repos[self.reponame]
 
     @repo.setter
     def repo(self, val):

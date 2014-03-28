@@ -1163,7 +1163,7 @@ class Cli(object):
 
     def _parse_setopts(self, setopts):
         """parse the setopts list handed to us and saves the results as
-           repo_setopts and main_setopts in the yumbase object"""
+           repo_setopts and main_setopts in the base object"""
 
         repoopts = {}
         mainopts = dnf.yum.misc.GenericHolder()

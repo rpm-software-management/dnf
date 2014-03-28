@@ -150,29 +150,29 @@ class RPMProbFilters(tests.support.TestCase):
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_filters_install(self, mock_ts):
-        self.yumbase = tests.support.BaseCliStub()
-        self.yumbase._sack = tests.support.mock_sack('main', 'search')
-        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
-        self.yumbase.install("lotus")
-        self.yumbase.ts
-        self.yumbase.ts.setProbFilter.assert_called_with(0)
+        self.base = tests.support.BaseCliStub()
+        self.base._sack = tests.support.mock_sack('main', 'search')
+        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base.install("lotus")
+        self.base.ts
+        self.base.ts.setProbFilter.assert_called_with(0)
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_filters_downgrade(self, ts):
-        self.yumbase = tests.support.BaseCliStub()
-        self.yumbase._sack = tests.support.mock_sack('main', 'old_versions')
-        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
-        self.yumbase.downgrade("tour")
-        self.yumbase.ts
-        self.yumbase.ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
+        self.base = tests.support.BaseCliStub()
+        self.base._sack = tests.support.mock_sack('main', 'old_versions')
+        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base.downgrade("tour")
+        self.base.ts
+        self.base.ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_filters_reinstall(self, ts):
-        self.yumbase = tests.support.BaseCliStub()
-        self.yumbase._sack = tests.support.mock_sack('main')
-        self.yumbase._goal = hawkey.Goal(self.yumbase.sack)
-        self.yumbase.reinstall("librita")
-        self.yumbase.ts
+        self.base = tests.support.BaseCliStub()
+        self.base._sack = tests.support.mock_sack('main')
+        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base.reinstall("librita")
+        self.base.ts
         expected = rpm.RPMPROB_FILTER_REPLACEPKG | \
             rpm.RPMPROB_FILTER_REPLACEOLDFILES
-        self.yumbase.ts.setProbFilter.assert_called_with(expected)
+        self.base.ts.setProbFilter.assert_called_with(expected)

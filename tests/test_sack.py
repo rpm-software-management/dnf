@@ -30,55 +30,55 @@ import unittest
 
 class SackTest(support.TestCase):
     def test_rpmdb_version(self):
-        yumbase = support.MockBase()
-        sack = yumbase.sack
+        base = support.MockBase()
+        sack = base.sack
         yumdb = mock.MagicMock()
-        version = yumbase.sack.rpmdb_version(yumdb)
+        version = base.sack.rpmdb_version(yumdb)
         self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 
     def test_setup_excludes(self):
-        yumbase = support.MockBase()
-        yumbase.conf.exclude=['pepper']
-        yumbase._setup_excludes()
-        peppers = yumbase.sack.query().filter(name='pepper').run()
+        base = support.MockBase()
+        base.conf.exclude=['pepper']
+        base._setup_excludes()
+        peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        yumbase = support.MockBase()
-        yumbase.conf.disable_excludes = ['all']
-        yumbase.conf.exclude=['pepper']
-        yumbase._setup_excludes()
-        peppers = yumbase.sack.query().filter(name='pepper').run()
+        base = support.MockBase()
+        base.conf.disable_excludes = ['all']
+        base.conf.exclude=['pepper']
+        base._setup_excludes()
+        peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
-        yumbase = support.MockBase('main')
-        yumbase.repos['main'].exclude=['pepp*']
-        yumbase._setup_excludes()
-        peppers = yumbase.sack.query().filter(name='pepper', reponame='main')
+        base = support.MockBase('main')
+        base.repos['main'].exclude=['pepp*']
+        base._setup_excludes()
+        peppers = base.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
 
     def test_add_repo_to_sack(self):
         def raiser():
             raise dnf.exceptions.RepoError()
 
-        yumbase = support.MockBase()
+        base = support.MockBase()
         r = support.MockRepo('bag', None)
         r.enable()
-        yumbase._repos.add(r)
+        base._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)
         r.skip_if_unavailable = False
         self.assertRaises(dnf.exceptions.RepoError,
-                          yumbase._add_repo_to_sack, "bag")
+                          base._add_repo_to_sack, "bag")
         self.assertTrue(r.enabled)
         r.skip_if_unavailable = True
-        yumbase._add_repo_to_sack("bag")
+        base._add_repo_to_sack("bag")
         self.assertFalse(r.enabled)
 
 class SusetagsTest(support.TestCase):
     def susetags_test(self):
         buf = io.StringIO()
-        yumbase = support.MockBase("main")
-        yumbase.sack.susetags_for_repo(buf, "main")
+        base = support.MockBase("main")
+        base.sack.susetags_for_repo(buf, "main")
         buf.seek(0)
 
         def nonmatch(line):

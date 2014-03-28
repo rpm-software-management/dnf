@@ -28,12 +28,12 @@ import tests.test_repo
 class Update(support.ResultTestCase):
     def test_update(self):
         """ Simple update. """
-        yumbase = support.MockBase("updates")
-        ret = yumbase.upgrade("pepper")
-        new_versions = yumbase.sack.query().upgrades().filter(name="pepper")
-        other_installed = yumbase.sack.query().installed().filter(name__neq="pepper")
+        base = support.MockBase("updates")
+        ret = base.upgrade("pepper")
+        new_versions = base.sack.query().upgrades().filter(name="pepper")
+        other_installed = base.sack.query().installed().filter(name__neq="pepper")
         expected = other_installed.run() + new_versions.run()
-        self.assertResult(yumbase, expected)
+        self.assertResult(base, expected)
 
     def test_update_not_found(self):
         base = dnf.Base()
@@ -47,20 +47,20 @@ class Update(support.ResultTestCase):
 
     def test_update_not_installed(self):
         """ Updating an uninstalled package is a void operation. """
-        yumbase = support.MockBase("main")
+        base = support.MockBase("main")
         # no "mrkite" installed:
-        yumbase.upgrade("mrkite")
-        self.assertResult(yumbase, yumbase.sack.query().installed().run())
+        base.upgrade("mrkite")
+        self.assertResult(base, base.sack.query().installed().run())
 
     def test_update_all(self):
         """ Update all you can. """
-        yumbase = support.MockBase("main", "updates")
-        sack = yumbase.sack
-        yumbase.upgrade_all()
+        base = support.MockBase("main", "updates")
+        sack = base.sack
+        base.upgrade_all()
         expected = support.installed_but(sack, "pepper", "hole", "tour") + \
             list(sack.query().available().nevra("pepper-20-1.x86_64")) + \
             list(sack.query().available().nevra("hole-2-1.x86_64"))
-        self.assertResult(yumbase, expected)
+        self.assertResult(base, expected)
 
     def test_upgrade_all_reponame(self):
         """Test whether only packages in selected repo are upgraded."""
@@ -83,9 +83,9 @@ class Update(support.ResultTestCase):
         self.assertResult(base, new_set)
 
     def test_update_arches(self):
-        yumbase = support.MockBase("main", "updates")
-        yumbase.upgrade("hole")
-        installed, removed = self.installed_removed(yumbase)
+        base = support.MockBase("main", "updates")
+        base.upgrade("hole")
+        installed, removed = self.installed_removed(base)
         self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
         self.assertItemsEqual(map(str, removed),
                               ['hole-1-1.x86_64', 'tour-5-0.noarch'])
@@ -126,17 +126,17 @@ class Update(support.ResultTestCase):
 
 class SkipBroken(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("broken_deps")
-        self.sack = self.yumbase.sack
+        self.base = support.MockBase("broken_deps")
+        self.sack = self.base.sack
 
     def test_upgrade_all(self):
         """ upgrade() without parameters upgrade everything it can that has its
             deps in trim. Broken packages are silently skipped.
         """
-        self.yumbase.upgrade_all()
+        self.base.upgrade_all()
         new_set = support.installed_but(self.sack, "pepper").run()
         new_set.extend(self.sack.query().available().nevra("pepper-20-1.x86_64"))
-        self.assertResult(self.yumbase, new_set)
+        self.assertResult(self.base, new_set)
 
 class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):
     def test_cost(self):

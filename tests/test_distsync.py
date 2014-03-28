@@ -24,35 +24,35 @@ import rpm
 
 class DistroSyncAll(support.ResultTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("distro")
-        self.sack = self.yumbase.sack
+        self.base = support.MockBase("distro")
+        self.sack = self.base.sack
 
     def test_distro_sync_all(self):
-        self.yumbase.distro_sync()
-        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.yumbase.rpm_probfilter)
+        self.base.distro_sync()
+        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.base.rpm_probfilter)
         packages = support.installed_but(self.sack, "pepper", "librita").run()
         q = self.sack.query().available().filter(name=["pepper", "librita"])
         packages.extend(q)
-        self.assertResult(self.yumbase, packages)
+        self.assertResult(self.base, packages)
 
 
 class DistroSync(support.ResultTestCase):
     def setUp(self):
-        self._yumbase = support.BaseCliStub()
-        self._yumbase._sack = support.mock_sack('main', 'updates')
-        self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
-        self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
+        self._base = support.BaseCliStub()
+        self._base._sack = support.mock_sack('main', 'updates')
+        self._base._goal = hawkey.Goal(self._base.sack)
+        self._base.logger = mock.create_autospec(self._base.logger)
 
     def test_distro_sync(self):
-        installed = self._get_installed(self._yumbase)
+        installed = self._get_installed(self._base)
         original_pkg = list(filter(lambda p: p.name == "hole", installed))
-        self._yumbase.distro_sync_userlist(('bla', 'hole'))
+        self._base.distro_sync_userlist(('bla', 'hole'))
         obsolete_pkg = list(filter(lambda p: p.name == "tour", installed))
 
         # check from log package name that is not installed
-        self.assertEqual(self._yumbase.logger.mock_calls[1][1][1], 'bla')
+        self.assertEqual(self._base.logger.mock_calls[1][1][1], 'bla')
 
-        installed2 = self._get_installed(self._yumbase)
+        installed2 = self._get_installed(self._base)
         updated_pkg = list(filter(lambda p: p.name == "hole", installed2))
         self.assertLength(updated_pkg, 1)
         self.assertLength(original_pkg, 1)

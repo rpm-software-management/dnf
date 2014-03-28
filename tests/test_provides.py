@@ -20,12 +20,12 @@ from tests import support
 
 class ProvidesTest(support.TestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
+        self.base = support.MockBase("main")
 
     def test_file(self):
-        self.assertLength(self.yumbase.provides("*ais*smile"), 1)
-        self.assertLength(self.yumbase.provides("/raised/smile"), 1)
+        self.assertLength(self.base.provides("*ais*smile"), 1)
+        self.assertLength(self.base.provides("/raised/smile"), 1)
 
     def test_name(self):
-        self.assertLength(self.yumbase.provides("henry(the_horse)"), 1)
-        self.assertLength(self.yumbase.provides("lotus"), 2)
+        self.assertLength(self.base.provides("henry(the_horse)"), 1)
+        self.assertLength(self.base.provides("lotus"), 2)

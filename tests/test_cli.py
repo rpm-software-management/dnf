@@ -49,40 +49,40 @@ class VersionStringTest(PycompTestCase):
                            if mc[0] == 'write'])
         self.assertEqual(written, VERSIONS_OUTPUT)
 
-class YumBaseCliTest(support.ResultTestCase):
+class BaseCliTest(support.ResultTestCase):
     def setUp(self):
-        self._yumbase = dnf.cli.cli.BaseCli()
-        self._yumbase._sack = support.mock_sack('main', 'updates')
-        self._yumbase._goal = hawkey.Goal(self._yumbase.sack)
+        self._base = dnf.cli.cli.BaseCli()
+        self._base._sack = support.mock_sack('main', 'updates')
+        self._base._goal = hawkey.Goal(self._base.sack)
 
         main_repo = support.MockRepo('main', None)
         main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         main_repo.enable()
-        self._yumbase.repos.add(main_repo)
+        self._base.repos.add(main_repo)
 
-        self._yumbase.logger = mock.create_autospec(self._yumbase.logger)
-        self._yumbase.output.term = support.MockTerminal()
-        self._yumbase._maybeYouMeant = mock.create_autospec(self._yumbase._maybeYouMeant)
-        self._yumbase.downgrade = mock.Mock(wraps=self._yumbase.downgrade)
+        self._base.logger = mock.create_autospec(self._base.logger)
+        self._base.output.term = support.MockTerminal()
+        self._base._maybeYouMeant = mock.create_autospec(self._base._maybeYouMeant)
+        self._base.downgrade = mock.Mock(wraps=self._base.downgrade)
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_downgradePkgs(self):
-        self._yumbase.downgradePkgs(('tour',))
+        self._base.downgradePkgs(('tour',))
 
-        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('tour')])
-        self.assertEqual(self._yumbase.logger.mock_calls, [])
-        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
+        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('tour')])
+        self.assertEqual(self._base.logger.mock_calls, [])
+        self.assertEqual(self._base._maybeYouMeant.mock_calls, [])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notfound(self):
         with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.downgradePkgs(('non-existent',))
+            self._base.downgradePkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('non-existent')])
-        self.assertEqual(self._yumbase.logger.mock_calls,
+        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._base.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
-        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls,
+        self.assertEqual(self._base._maybeYouMeant.mock_calls,
                          [mock.call('non-existent')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
@@ -90,13 +90,13 @@ class YumBaseCliTest(support.ResultTestCase):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
 
         with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._yumbase.downgradePkgs(('lotus',))
+            self._base.downgradePkgs(('lotus',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._yumbase.downgrade.mock_calls, [mock.call('lotus')])
-        self.assertEqual(self._yumbase.logger.mock_calls,
+        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('lotus')])
+        self.assertEqual(self._base.logger.mock_calls,
                          [mock.call.info('No match for available package: %s', pkg)] * 2)
-        self.assertEqual(self._yumbase._maybeYouMeant.mock_calls, [])
+        self.assertEqual(self._base._maybeYouMeant.mock_calls, [])
 
     def test_transaction_id_or_offset_bad(self):
         """Test transaction_id_or_offset with a bad input."""
@@ -125,9 +125,9 @@ class YumBaseCliTest(support.ResultTestCase):
 
 class CliTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
-        self.yumbase.output = support.MockOutput()
-        self.cli = support.MockCli(self.yumbase)
+        self.base = support.MockBase("main")
+        self.base.output = support.MockOutput()
+        self.cli = support.MockCli(self.base)
 
     def test_knows_upgrade(self):
         upgrade = self.cli.cli_commands['upgrade']
@@ -135,32 +135,32 @@ class CliTest(PycompTestCase):
         self.assertIs(upgrade, update)
 
     def test_simple(self):
-        self.assertFalse(self.yumbase.conf.assumeyes)
+        self.assertFalse(self.base.conf.assumeyes)
         self.cli.configure(['update', '-y'])
-        self.assertTrue(self.yumbase.conf.assumeyes)
+        self.assertTrue(self.base.conf.assumeyes)
 
     def test_opt_between_cmds(self):
         self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
-        self.assertTrue(self.yumbase.conf.assumeyes)
-        self.assertEqual(self.yumbase.basecmd, "install")
-        self.assertEqual(self.yumbase.extcmds, ["pkg1", "pkg2"])
+        self.assertTrue(self.base.conf.assumeyes)
+        self.assertEqual(self.base.basecmd, "install")
+        self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
 
     def test_configure_repos(self):
         opts = Namespace()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
-        self.yumbase._repos = dnf.repodict.RepoDict()
-        self.yumbase._repos.add(support.MockRepo('one', None))
-        self.yumbase._repos.add(support.MockRepo('two', None))
-        self.yumbase._repos.add(support.MockRepo('comb', None))
+        self.base._repos = dnf.repodict.RepoDict()
+        self.base._repos.add(support.MockRepo('one', None))
+        self.base._repos.add(support.MockRepo('two', None))
+        self.base._repos.add(support.MockRepo('comb', None))
         self.cli.nogpgcheck = True
         self.cli._configure_repos(opts)
-        self.assertFalse(self.yumbase.repos['one'].enabled)
-        self.assertFalse(self.yumbase.repos['two'].enabled)
-        self.assertTrue(self.yumbase.repos['comb'].enabled)
-        self.assertFalse(self.yumbase.repos["comb"].gpgcheck)
-        self.assertFalse(self.yumbase.repos["comb"].repo_gpgcheck)
-        self.assertEqual(self.yumbase.repos["comb"].sync_strategy,
+        self.assertFalse(self.base.repos['one'].enabled)
+        self.assertFalse(self.base.repos['two'].enabled)
+        self.assertTrue(self.base.repos['comb'].enabled)
+        self.assertFalse(self.base.repos["comb"].gpgcheck)
+        self.assertFalse(self.base.repos["comb"].repo_gpgcheck)
+        self.assertEqual(self.base.repos["comb"].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
     def test_configure_repos_expired(self):
@@ -169,12 +169,12 @@ class CliTest(PycompTestCase):
         opts.repos_ed = []
         opts.cacheonly = True
 
-        pers = self.yumbase._persistor
+        pers = self.base._persistor
         pers.get_expired_repos = mock.Mock(return_value=('one',))
-        self.yumbase._repos = dnf.repodict.RepoDict()
-        self.yumbase._repos.add(support.MockRepo('one', None))
+        self.base._repos = dnf.repodict.RepoDict()
+        self.base._repos.add(support.MockRepo('one', None))
         self.cli._configure_repos(opts)
-        self.assertEqual(self.yumbase.repos['one'].sync_strategy,
+        self.assertEqual(self.base.repos['one'].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
@@ -236,16 +236,16 @@ class ConfigureTest(PycompTestCase):
 
 class SearchTest(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("search")
-        self.cli = dnf.cli.cli.Cli(self.yumbase)
+        self.base = support.MockBase("search")
+        self.cli = dnf.cli.cli.Cli(self.base)
 
-        self.yumbase.output = mock.MagicMock()
-        self.yumbase.output.fmtSection = lambda str: str
+        self.base.output = mock.MagicMock()
+        self.base.output.fmtSection = lambda str: str
 
     def patched_search(self, *args, **kwargs):
         with support.patch_std_streams() as (stdout, stderr):
             self.cli.search(*args, **kwargs)
-            call_args = self.yumbase.output.matchcallback.call_args_list
+            call_args = self.base.output.matchcallback.call_args_list
             pkgs = [c[0][0] for c in call_args]
             return (stdout.getvalue(), pkgs)
 

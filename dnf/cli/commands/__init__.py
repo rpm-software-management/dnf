@@ -58,7 +58,7 @@ def checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
 
-    :param base: a :class:`dnf.yum.Yumbase` object.
+    :param base: a :class:`dnf.Base` object.
     :raises: :class:`cli.CliError`
     """
     if cli.nogpgcheck:
@@ -88,7 +88,7 @@ def checkPackageArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one package for
     *basecmd* to act on.
 
-    :param base: a :class:`dnf.yum.Yumbase` object.
+    :param base: a :class:`dnf.Base` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -105,7 +105,7 @@ def checkItemArg(cli, basecmd, extcmds):
     arguments that are not the name of a package, such as a file name
     passed to provides.
 
-    :param base: a :class:`dnf.yum.Yumbase` object.
+    :param base: a :class:`dnf.Base` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -119,7 +119,7 @@ def checkCleanArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains at least one argument, and that all
     arguments in *extcmds* are valid options for clean.
 
-    :param base: a :class:`dnf.yum.Yumbase` object
+    :param base: a :class:`dnf.Base` object
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`
@@ -140,7 +140,7 @@ def checkCleanArg(cli, basecmd, extcmds):
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
-    :param base: a :class:`dnf.yum.Yumbase` object.
+    :param base: a :class:`dnf.Base` object.
     :param basecmd: the name of the command being checked for
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`:

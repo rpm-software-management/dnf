@@ -36,8 +36,8 @@ class TestedHistory(dnf.yum.history.YumHistory):
 
 class History(PycompTestCase):
     def setUp(self):
-        self.yumbase = support.MockBase("main")
-        self.sack = self.yumbase.sack
+        self.base = support.MockBase("main")
+        self.sack = self.base.sack
         self.history = TestedHistory()
 
     def pkgtup2pid_test(self):
