@@ -1052,7 +1052,7 @@ def _getsysver(installroot, distroverpkg):
         raise dnf.exceptions.Error("Error: " + str(e))
     # we're going to take the first one - if there is more than one of these
     # then the user needs a beating
-    if idx.count() == 0:
+    if len(idx) == 0:
         releasever = '$releasever'
     else:
         try:
