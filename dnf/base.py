@@ -1572,6 +1572,7 @@ class Base(object):
 
         installed = sorted(self.sack.query().installed().filter(name=pkg.name))
         if len(installed) > 0 and installed[0] > pkg:
+            self._add_downgrade_rpm_probfilters()
             self._goal.install(pkg)
             self._goal.erase(installed[0])
             return 2
