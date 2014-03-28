@@ -330,7 +330,7 @@ class Term(object):
         if not escape:
             escape = re.escape
 
-        render = lambda match: beg.decode() + match.group() + end.decode()
+        render = lambda match: beg + match.group() + end
         for needle in needles:
             pat = escape(needle)
             if ignore_case:
