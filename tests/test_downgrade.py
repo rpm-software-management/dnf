@@ -21,14 +21,18 @@ from tests.support import mock
 
 import dnf
 import hawkey
+import rpm
 
 class DowngradeTest(support.ResultTestCase):
-    def test_package_downgrade(self):
+
+    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    def test_package_downgrade(self, ts):
         yumbase = support.MockBase()
-        sack = yumbase.sack
 
         pkg = yumbase.add_remote_rpm(support.TOUR_44_PKG_PATH)
         cnt = yumbase.package_downgrade(pkg)
+        yumbase.ts.setProbFilter.assert_called_with(
+            rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertGreater(cnt, 0)
         (installed, removed) = self.installed_removed(yumbase)
         self.assertItemsEqual(map(str, installed), ("tour-4-4.noarch", ))
