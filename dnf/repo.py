@@ -135,7 +135,7 @@ class _Handle(librepo.Handle):
         h = cls(gpgcheck, max_mirror_tries)
         h.varsub = _subst2tuples(subst_dct)
         h.destdir = cachedir
-        h.urls = cachedir
+        h.urls = [cachedir]
         h.local = True
         if os.access(h.metalink_path, os.R_OK):
             h.mirrorlist = h.metalink_path
