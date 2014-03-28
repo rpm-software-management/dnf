@@ -1934,7 +1934,7 @@ class Base(object):
         if getSig and repo and repo.gpgcakey:
             self.getCAKeyForRepo(repo, callback=repo.confirm_func)
             try:
-                sigfile = dnf.util.urlopen(url + '.asc', repo)
+                sigfile = dnf.util.urlopen(keyurl + '.asc', repo)
 
             except IOError as e:
                 sigfile = None
@@ -1944,7 +1944,9 @@ class Base(object):
                                     io.StringIO(rawkey), repo.gpgcadir):
                     #if we decide we want to check, even though the sig failed
                     # here is where we would do that
-                    raise dnf.exceptions.Error(_('GPG key signature on key %s does not match CA Key for repo: %s') % (url, repo.id))
+                    raise dnf.exceptions.Error(
+                        _('GPG key signature on key %s does not match '
+                          'CA Key for repo: %s') % (keyurl, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
                     self.logger.info(msg)
@@ -1955,7 +1957,7 @@ class Base(object):
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError as e:
             raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
-                                      (url, to_unicode(str(e))))
+                                      (keyurl, to_unicode(str(e))))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
