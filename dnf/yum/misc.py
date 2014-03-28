@@ -688,13 +688,10 @@ def _getloginuid():
     #  We might normally call audit.audit_getloginuid(), except that requires
     # importing all of the audit module. And it doesn't work anyway: BZ 518721
     try:
-        fo = open("/proc/self/loginuid")
-    except IOError:
-        return None
-    data = fo.read()
-    try:
-        return int(data)
-    except ValueError:
+        with open("/proc/self/loginuid") as fo:
+            data = fo.read()
+            return int(data)
+    except (IOError, ValueError):
         return None
 
 _cached_getloginuid = None
@@ -799,17 +796,18 @@ def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """
     results = []
     for fname in glob.glob(thisglob):
-        for line in open(fname):
-            if re.match('\s*(#|$)', line):
-                continue
-            line = line.rstrip() # no more trailing \n's
-            line = line.lstrip() # be nice
-            if not line:
-                continue
-            if line_as_list:
-                line = line.replace('\n', ' ')
-                line = line.replace(',', ' ')
-                results.extend(line.split())
-                continue
-            results.append(line)
+        with open(fname) as f:
+            for line in f:
+                if re.match('\s*(#|$)', line):
+                    continue
+                line = line.rstrip() # no more trailing \n's
+                line = line.lstrip() # be nice
+                if not line:
+                    continue
+                if line_as_list:
+                    line = line.replace('\n', ' ')
+                    line = line.replace(',', ' ')
+                    results.extend(line.split())
+                    continue
+                results.append(line)
     return results

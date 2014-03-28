@@ -109,8 +109,8 @@ def _try_read_cpuinfo():
     """ Try to read /proc/cpuinfo ... if we can't ignore errors (ie. proc not
         mounted). """
     try:
-        lines = open("/proc/cpuinfo", "r").readlines()
-        return lines
+        with open("/proc/cpuinfo", "r") as f:
+            return f.readlines()
     except:
         return []
 

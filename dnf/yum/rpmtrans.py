@@ -151,6 +151,7 @@ class RPMTransaction(object):
         self.filelog = False
 
         self._setupOutputLogging(base.conf.rpmverbosity)
+        self._ts_done = None
 
     # Error checking? -- these should probably be where else
     def _fdSetNonblock(self, fd):
@@ -252,9 +253,9 @@ class RPMTransaction(object):
         """ Open the transaction done file, must be started outside the
             chroot. """
 
-        if self.test: return False
-
-        if hasattr(self, '_ts_done'):
+        if self.test:
+            return False
+        if self._ts_done is not None:
             return True
 
         self.ts_done_fn = '%s/transaction-done.%s' % (self.base.conf.persistdir,
@@ -423,7 +424,8 @@ class RPMTransaction(object):
         pass
 
     def _transStop(self, bytes, total, h):
-        pass
+        if self._ts_done is not None:
+            self._ts_done.close()
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
