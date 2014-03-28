@@ -237,7 +237,8 @@ class InstallCommandTest(support.ResultTestCase):
               base.sack.query().installed(),
               dnf.subject.Subject('lotus.x86_64').get_best_query(base.sack)))
 
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.commands.install._',
+                dnf.pycomp.NullTranslations().ugettext)
     def test_run_package_notfound(self):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
@@ -811,7 +812,8 @@ class UpgradeCommandTest(support.ResultTestCase):
             self.cmd.base.sack.query().installed().filter(name__neq='pepper'),
             self.cmd.base.sack.query().upgrades().filter(name='pepper')))
 
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.commands.upgrade._',
+                dnf.pycomp.NullTranslations().ugettext)
     def test_updatePkgs_notfound(self):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
