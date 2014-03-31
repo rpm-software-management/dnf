@@ -21,7 +21,6 @@ from tests.support import mock
 
 import dnf.const
 import dnf.logging
-import io
 import logging
 import collections
 import operator
@@ -120,46 +119,6 @@ class TestLogging(support.TestCase):
             msgs =  map(operator.attrgetter("message"),
                         map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c'])
-
-    def test_term_mode_tty(self):
-        """Test whether all modes are properly set if the stream is a tty.
-
-        It also ensures that all the values are unicode strings.
-
-        """
-        tty = mock.create_autospec(io.IOBase)
-        tty.isatty.return_value = True
-
-        tigetstr = lambda name: '<cap_%(name)s>' % locals()
-        with mock.patch('curses.tigetstr', autospec=True, side_effect=tigetstr):
-            term = dnf.cli.output.Term(tty)
-
-        self.assertEqual(term.MODE,
-                         {u'blink': tigetstr(u'blink'),
-                          u'bold': tigetstr(u'bold'),
-                          u'dim': tigetstr(u'dim'),
-                          u'normal': tigetstr(u'sgr0'),
-                          u'reverse': tigetstr(u'rev'),
-                          u'underline': tigetstr(u'smul')})
-
-    def test_term_mode_nontty(self):
-        """Test whether all modes are properly set if the stream is not a tty.
-
-        It also ensures that all the values are unicode strings.
-
-        """
-        nontty = mock.create_autospec(io.IOBase)
-        nontty.isatty.return_value = False
-
-        term = dnf.cli.output.Term(nontty)
-
-        self.assertEqual(term.MODE,
-                         {u'blink': u'',
-                          u'bold': u'',
-                          u'dim': u'',
-                          u'normal': u'',
-                          u'reverse': u'',
-                          u'underline': u''})
 
     def test_rpm_logging(self):
         # log everything to the console:

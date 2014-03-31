@@ -258,7 +258,7 @@ class Term(object):
             mode = cap_name
             if cap_name in self.__cap_names:
                 cap_name = self.__cap_names[cap_name]
-            self.MODE[mode] = self._tigetstr(cap_name) or b''
+            self.MODE[mode] = self._tigetstr(cap_name)
 
         # Colors
         set_fg = self._tigetstr('setf').encode()
