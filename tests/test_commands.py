@@ -21,8 +21,9 @@ from tests.support import mock
 
 import dnf.cli.commands
 import dnf.cli.commands.group
-import dnf.cli.commands.upgrade
 import dnf.cli.commands.install
+import dnf.cli.commands.reinstall
+import dnf.cli.commands.upgrade
 import dnf.repo
 import itertools
 import logging
@@ -252,16 +253,16 @@ class InstallCommandTest(support.ResultTestCase):
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 
-class ReInstallCommandTest(support.ResultTestCase):
+class ReinstallCommandTest(support.ResultTestCase):
 
-    """Tests of ``dnf.cli.commands.ReInstallCommand`` class."""
+    """Tests of ``dnf.cli.commands.ReinstallCommand`` class."""
 
     def setUp(self):
         """Prepare the test fixture."""
-        super(ReInstallCommandTest, self).setUp()
+        super(ReinstallCommandTest, self).setUp()
         base = support.BaseCliStub('main')
         base.init_sack()
-        self._cmd = dnf.cli.commands.ReInstallCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.reinstall.ReinstallCommand(base.mock_cli())
 
     def test_run(self):
         """Test whether the package is installed."""
@@ -273,7 +274,8 @@ class ReInstallCommandTest(support.ResultTestCase):
             dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack)
             .available()))
 
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.commands.reinstall._',
+                dnf.pycomp.NullTranslations().ugettext)
     def test_run_notinstalled(self):
         """Test whether it fails if the package is not installed."""
         stdout = dnf.pycomp.StringIO()
@@ -285,7 +287,8 @@ class ReInstallCommandTest(support.ResultTestCase):
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.commands.reinstall._',
+                dnf.pycomp.NullTranslations().ugettext)
     def test_run_notavailable(self):
         """Test whether it fails if the package is not available."""
         base = self._cmd.cli.base

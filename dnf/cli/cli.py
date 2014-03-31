@@ -33,6 +33,7 @@ import dnf.cli.commands
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
 import dnf.cli.commands.install
+import dnf.cli.commands.reinstall
 import dnf.cli.commands.upgrade
 import dnf.conf
 import dnf.const
@@ -1031,7 +1032,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.RepoListCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
-        self.register_command(dnf.cli.commands.ReInstallCommand)
+        self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         # self.register_command(dnf.cli.commands.VersionCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
