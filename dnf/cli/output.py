@@ -442,11 +442,6 @@ class Output(object):
     def __init__(self, base):
         self.base = base
         self.logger = logging.getLogger("dnf")
-        if hasattr(rpm, "expandMacro"):
-            self.i18ndomains = rpm.expandMacro("%_i18ndomains").split(":")
-        else:
-            self.i18ndomains = ["redhat-dist"]
-
         self.term = Term()
         self.progress = None
 
@@ -775,20 +770,6 @@ class Output(object):
 
         return "%s %s %s" % (beg, name, end)
 
-    def _enc(self, s):
-        """Get the translated version from specspo and ensure that
-        it's actually encoded in UTF-8."""
-        if s is None:
-            s = ''
-        s = to_utf8(s)
-        if len(s) > 0:
-            for d in self.i18ndomains:
-                t = gettext.dgettext(d, s)
-                if t != s:
-                    s = t
-                    break
-        return to_unicode(s)
-
     def infoOutput(self, pkg, highlight=False):
         """Print information about the given package.
 
@@ -830,11 +811,13 @@ class Output(object):
                     except ValueError: # In case int() fails
                         uid = None
                 print(_("Changed by  : %s") % self._pwd_ui_username(uid))
-        print(self.fmtKeyValFill(_("Summary     : "), self._enc(pkg.summary)))
+        print(self.fmtKeyValFill(_("Summary     : "),
+              to_unicode(pkg.summary or "")))
         if pkg.url:
             print(_("URL         : %s") % to_unicode(pkg.url))
         print(self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license)))
-        print(self.fmtKeyValFill(_("Description : "),self._enc(pkg.description)))
+        print(self.fmtKeyValFill(_("Description : "),
+              to_unicode(pkg.description or "")))
         print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -1041,7 +1024,7 @@ class Output(object):
         if verbose:
             print(_(' Group-Id: %s') % to_unicode(group.id))
         if group.ui_description:
-            print(_(' Description: %s') % to_unicode(group.ui_description))
+            print(_(' Description: %s') % to_unicode(group.ui_description) or "")
         if group.lang_only:
             print(_(' Language: %s') % group.lang_only)
 
@@ -1111,7 +1094,7 @@ class Output(object):
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, self._enc(po.summary))
+        msg = self.fmtKeyValFill(msg, to_unicode(po.summary) or "")
         if matchfor:
             if highlight is None:
                 highlight = self.conf.color_search_match
@@ -1137,7 +1120,7 @@ class Output(object):
             if False: pass
             elif to_utf8(po.description) == item:
                 key = _("Description : ")
-                item = self._enc(item)
+                item = to_unicode(item)
             elif to_utf8(po.url) == item:
                 key = _("URL         : %s")
                 can_overflow = False
@@ -1146,7 +1129,7 @@ class Output(object):
                 can_overflow = False
             elif item.startswith("/"):
                 key = _("Filename    : %s")
-                item = self._enc(item)
+                item = to_unicode(item) or ""
                 can_overflow = False
             else:
                 key = _("Other       : ")
