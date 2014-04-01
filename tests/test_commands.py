@@ -215,7 +215,8 @@ class InstallCommandTest(support.ResultTestCase):
               base.sack.query().installed(),
               dnf.subject.Subject('trampoline').get_best_query(base.sack)))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.commands.install._',
+                dnf.pycomp.NullTranslations().ugettext)
     def test_run_group_notfound(self):
         """Test whether it fails if the group cannot be found."""
         stdout = dnf.pycomp.StringIO()
