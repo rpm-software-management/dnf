@@ -26,8 +26,8 @@ from __future__ import absolute_import
 from dnf.cli import CliError
 from dnf.i18n import ucd
 from dnf.yum.i18n import to_unicode, _, P_
-from argparse import Action, ArgumentParser, SUPPRESS
 
+import argparse
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.downgrade
@@ -1457,24 +1457,15 @@ class Cli(object):
             with open("%s.repo" % rid, 'w') as outfile:
                 self.base.sack.susetags_for_repo(outfile, rid)
 
-class OptionParser(ArgumentParser):
+class OptionParser(argparse.ArgumentParser):
     """Subclass that makes some minor tweaks to make ArgumentParser do things the
     "yum way".
     """
 
     def __init__(self, base, **kwargs):
-        # check if this is called with a utils=True/False parameter
-        if 'utils' in kwargs:
-            self._utils = kwargs['utils']
-            del kwargs['utils']
-        else:
-            self._utils = False
-        ArgumentParser.__init__(self, **kwargs)
+        argparse.ArgumentParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("dnf")
         self.base = base
-        # self.plugin_option_group = OptionGroup(self, _("Plugin Options"))
-        # self.add_option_group(self.plugin_option_group)
-
         self._addYumBasicOptions()
 
     def error(self, msg):
@@ -1590,102 +1581,91 @@ class OptionParser(ArgumentParser):
                              installroot)
         sys.exit(1)
 
-    class _RepoCallback(Action):
+    class _RepoCallback(argparse.Action):
         def __call__(self, parser, namespace, values, opt_str):
             operation = 'disable' if opt_str == '--disablerepo' else 'enable'
             l = getattr(namespace, self.dest)
             l.append((values, operation))
 
     def _addYumBasicOptions(self):
-        if self._utils:
-            group = self.add_argument_group("DNF Basic Options")
-        else:
-            group = self
-
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        group.conflict_handler = "resolve"
-        group.conflict_handler = "error"
+        self.conflict_handler = "resolve"
+        self.conflict_handler = "error"
 
-        group.add_argument('--allowerasing', action='store_true', default=None,
+        self.add_argument('--allowerasing', action='store_true', default=None,
                            help=_('allow erasing of installed packages to '
                                   'resolve dependencies'))
-        group.add_argument("-b", "--best", action="store_true", default=None,
+        self.add_argument("-b", "--best", action="store_true", default=None,
                            help=_("try the best available package versions in "
                                   "transactions."))
-        group.add_argument("-C", "--cacheonly", dest="cacheonly",
+        self.add_argument("-C", "--cacheonly", dest="cacheonly",
                            action="store_true", default=None,
                            help=_("run entirely from system cache, "
                                   "don't update cache"))
-        group.add_argument("-c", "--config", dest="conffile",
+        self.add_argument("-c", "--config", dest="conffile",
                            default=None, metavar='[config file]',
                            help=_("config file location"))
-        group.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
+        self.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
                            default=None, metavar='[minutes]',
                            help=_("maximum command wait time"))
-        group.add_argument("-d", "--debuglevel", dest="debuglevel",
+        self.add_argument("-d", "--debuglevel", dest="debuglevel",
                            metavar='[debug level]', default=None,
                            help=_("debugging output level"), type=int)
-        group.add_argument("--debugrepodata",
+        self.add_argument("--debugrepodata",
                            action="store_true", default=None,
                            help=_("dumps package metadata into files"))
-        group.add_argument("--debugsolver",
+        self.add_argument("--debugsolver",
                            action="store_true", default=None,
                            help=_("dumps detailed solving results into files"))
-        group.add_argument("--showduplicates", dest="showdupesfromrepos",
+        self.add_argument("--showduplicates", dest="showdupesfromrepos",
                            action="store_true", default=None,
                            help=_("show duplicates, in repos, "
                                   "in list/search commands"))
-        group.add_argument("-e", "--errorlevel", default=None, type=int,
+        self.add_argument("-e", "--errorlevel", default=None, type=int,
                            help=_("error output level"))
-        group.add_argument("--rpmverbosity", default=None,
+        self.add_argument("--rpmverbosity", default=None,
                            help=_("debugging output level for rpm"),
                            metavar='[debug level name]')
-        group.add_argument("-q", "--quiet", dest="quiet", action="store_true",
+        self.add_argument("-q", "--quiet", dest="quiet", action="store_true",
                            default=None, help=_("quiet operation"))
-        group.add_argument("-v", "--verbose", action="store_true",
+        self.add_argument("-v", "--verbose", action="store_true",
                            default=None, help=_("verbose operation"))
-        group.add_argument("-y", "--assumeyes", action="store_true",
+        self.add_argument("-y", "--assumeyes", action="store_true",
                            default=None, help=_("answer yes for all questions"))
-        group.add_argument("--assumeno", action="store_true",
+        self.add_argument("--assumeno", action="store_true",
                            default=None, help=_("answer no for all questions"))
-        group.add_argument("--version", action="store_true", default=None,
+        self.add_argument("--version", action="store_true", default=None,
                            help=_("show Yum version and exit"))
-        group.add_argument("--installroot", help=_("set install root"),
+        self.add_argument("--installroot", help=_("set install root"),
                            metavar='[path]')
-        group.add_argument("--enablerepo", action=self._RepoCallback,
+        self.add_argument("--enablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        group.add_argument("--disablerepo", action=self._RepoCallback,
+        self.add_argument("--disablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        group.add_argument("-x", "--exclude", default=[], action="append",
+        self.add_argument("-x", "--exclude", default=[], action="append",
                            help=_("exclude packages by name or glob"),
                            metavar='[package]')
-        group.add_argument("--disableexcludes", default=[], action="append",
-                # help=_("disable exclude from main, for a repo or for everything"),
-                help=SUPPRESS,
-                        metavar='[repo]')
-        group.add_argument("--obsoletes", action="store_true", default=None,
-                # help=_("enable obsoletes processing during upgrades")
-                help=SUPPRESS)
-        group.add_argument("--noplugins", action="store_true", default=None,
+        self.add_argument("--disableexcludes", default=[], action="append",
+                          help=_("disable excludes"),
+                          metavar='[repo]')
+        self.add_argument("--obsoletes", action="store_true", default=None,
+                          help=_("enable obsoletes processing during upgrades"))
+        self.add_argument("--noplugins", action="store_true", default=None,
                            help=_("disable all plugins"))
-        group.add_argument("--nogpgcheck", action="store_true", default=None,
-                # help=_("disable gpg signature checking")
-                help=SUPPRESS)
-        group.add_argument("--disableplugin", dest="disableplugins", default=[],
+        self.add_argument("--nogpgcheck", action="store_true", default=None,
+                          help=_("disable gpg signature checking"))
+        self.add_argument("--disableplugin", dest="disableplugins", default=[],
                            action="append",
                            help=_("disable plugins by name"),
                            metavar='[plugin]')
-        group.add_argument("--color", dest="color", default=None,
-                # help=_("control whether color is used")
-                help=SUPPRESS)
-        group.add_argument("--releasever", default=None,
+        self.add_argument("--color", dest="color", default=None,
+                          help=_("control whether color is used"))
+        self.add_argument("--releasever", default=None,
                            help=_("override the value of $releasever in config"
                                   " and repo files"))
-        group.add_argument("--setopt", dest="setopts", default=[],
+        self.add_argument("--setopt", dest="setopts", default=[],
                            action="append",
                            help=_("set arbitrary config and repo options"))
-
-        # self.add_argument("cmd")
