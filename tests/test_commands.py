@@ -36,7 +36,7 @@ class CommandsCliTest(support.TestCase):
 
     def test_erase_configure(self):
         erase_cmd = dnf.cli.commands.EraseCommand(self.cli)
-        erase_cmd.configure()
+        erase_cmd.configure([])
         self.assertTrue(self.base.goal_parameters.allow_uninstall)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
@@ -203,7 +203,7 @@ class InstallCommandTest(support.ResultTestCase):
         self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
 
     def test_configure(self):
-        self._cmd.configure()
+        self._cmd.configure([])
         self.assertFalse(self._cmd.base.goal_parameters.allow_uninstall)
 
     def test_run_group(self):

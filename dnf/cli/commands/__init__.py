@@ -195,7 +195,7 @@ class Command(object):
         extra = command_list[1:]
         return (base, extra)
 
-    def configure(self):
+    def configure(self, args):
         """ Do any command-specific Base configuration. """
         pass
 
@@ -385,7 +385,7 @@ class EraseCommand(Command):
     resolve = True
     writes_rpmdb = True
 
-    def configure(self):
+    def configure(self, args):
         self.base.goal_parameters.allow_uninstall = True
 
     @staticmethod
@@ -1229,7 +1229,7 @@ class RepoPkgsCommand(Command):
             for command in self.wrapped_commands:
                 command.check(cli_args)
 
-        def configure(self):
+        def configure(self, args):
             """Do any command-specific Base configuration."""
             super(RepoPkgsCommand.ReinstallSubCommand, self).configure()
             for command in self.wrapped_commands:
@@ -1324,7 +1324,7 @@ class RepoPkgsCommand(Command):
 
         writes_rpmdb = True
 
-        def configure(self):
+        def configure(self, args):
             """Do any command-specific Base configuration."""
             super(RepoPkgsCommand.RemoveSubCommand, self).configure()
             self.base.goal_parameters.allow_uninstall = True
@@ -1474,7 +1474,7 @@ class RepoPkgsCommand(Command):
         self.writes_rpmdb = functools.reduce(
             operator.or_, sub_vals, super(RepoPkgsCommand, self).writes_rpmdb)
 
-    def configure(self):
+    def configure(self, args):
         """Do any command-specific Base configuration."""
         _, subcmd, _ = self.parse_extcmds(self.base.extcmds)
         subcmd.configure()

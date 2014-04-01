@@ -207,6 +207,7 @@ class ConfigureTest(PycompTestCase):
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_explicit(self, read_conf_file):
         self.cli.base.basecmd = 'update'
+        self.cli.base.extcmds = []
 
         self.cli.configure(['--installroot', '/roots/dnf', 'update'])
         read_conf_file.assert_called_with('/etc/dnf/dnf.conf', '/roots/dnf', None,
@@ -218,6 +219,7 @@ class ConfigureTest(PycompTestCase):
     def test_installroot_with_etc(self, read_conf_file):
         """Test that conffile is detected in a new installroot."""
         self.cli.base.basecmd = 'update'
+        self.cli.base.extcmds = []
 
         tlv = support.dnf_toplevel()
         self.cli.configure(['--installroot', tlv, 'update'])

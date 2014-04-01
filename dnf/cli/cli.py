@@ -1313,7 +1313,7 @@ class Cli(object):
                                   # + args make sure they match/make sense
         except CliError:
             sys.exit(1)
-        self.command.configure()
+        self.command.configure(self.base.extcmds)
 
         if opts.debugrepodata:
             self.write_out_metadata()
