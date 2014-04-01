@@ -1015,7 +1015,6 @@ class Cli(object):
         self.cli_commands = {}
         self.nogpgcheck = False
 
-        # :hawkey -- commented out are not yet supported in dnf
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.UpgradeToCommand)
@@ -1028,15 +1027,12 @@ class Cli(object):
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
         self.register_command(dnf.cli.commands.SearchCommand)
-        # self.register_command(dnf.cli.commands.DepListCommand)
         self.register_command(dnf.cli.commands.RepoListCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
-        # self.register_command(dnf.cli.commands.VersionCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
-        # self.register_command(dnf.cli.commands.CheckRpmdbCommand)
         self.register_command(dnf.cli.commands.DistroSyncCommand)
 
     def _configure_cachedir(self):
