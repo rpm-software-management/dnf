@@ -43,7 +43,7 @@ class DemandSheet(object):
     # :api...
     available_repos = _BoolDefault(False)
     resolving = _BoolDefault(False)
-    rpmdb_write_access = _BoolDefault(False)
+    root_user = _BoolDefault(False)
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
     uninstalling_allowed = _BoolDefault(False)

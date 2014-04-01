@@ -211,7 +211,7 @@ class Command(object):
         if self.uninstalling_allowed:
             demands.uninstalling_allowed = True
         if self.writes_rpmdb:
-            demands.rpmdb_write_access = True
+            demands.root_user = True
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""

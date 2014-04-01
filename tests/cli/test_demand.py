@@ -34,7 +34,7 @@ class DemandTest(tests.support.TestCase):
         demands = dnf.cli.demand.DemandSheet()
         self.assertFalse(demands.resolving)
         self.assertFalse(demands.sack_activation)
-        self.assertFalse(demands.rpmdb_write_access)
+        self.assertFalse(demands.root_user)
         self.assertEqual(demands.success_exit_status, 0)
 
     def test_independence(self):

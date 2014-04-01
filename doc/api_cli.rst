@@ -14,6 +14,10 @@
 
       If ``True`` at a place where the CLI would otherwise successfully exit, resolve the transaction for any outstanding packaging requests before exiting. Defaults to ``False``.
 
+    .. attribute:: root_user
+
+      ``True`` informs the CLI that the command can only succeed if the process's effective user id is ``0``, i.e. root. Defaults to ``False``.
+
     .. attribute:: sack_activation
 
       If ``True``, demand that the CLI sets up the :class:`~.Sack` before the command's :meth:`~.Command.run` method is executed. Defaults to ``False``.
@@ -59,4 +63,3 @@
   .. method:: register_command(command_cls):
 
     Register new command. `command_cls` is a subclass of :class:`.Command`.
-
