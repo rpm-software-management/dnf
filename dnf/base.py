@@ -76,7 +76,6 @@ class Base(object):
         self._ts = None
         self._comps = None
         self._history = None
-        self._tags = None
         self._tempfiles = []
         self.ds_callback = dnf.callback.Depsolve()
         self.logger = logging.getLogger("dnf")
@@ -87,8 +86,6 @@ class Base(object):
                                # trips over it later
 
         self.rpm_probfilter = set([])
-        self.mediagrabber = None
-        self.cacheonly = False
         self.arch = dnf.rpmUtils.arch.Arch()
         self.goal_parameters = dnf.conf.GoalParameters()
         self.plugins = dnf.plugin.Plugins()
@@ -407,7 +404,7 @@ class Base(object):
 
             self.logger.log(dnf.logging.SUBDEBUG,
                             'Adding group file from repository: %s', repo.id)
-            if self.cacheonly:
+            if repo.md_only_cached:
                 decompressed = misc.calculate_repo_gen_dest(comps_fn,
                                                             'groups.xml')
                 if not os.path.exists(decompressed):
