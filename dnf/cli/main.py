@@ -129,13 +129,14 @@ def _main(base, args):
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
-    if not cli.command.resolve:
-        return cli.command.success_retval
+    if not cli.demands.resolving:
+        return cli.demands.success_exit_status
 
     # Depsolve stage (if needed)
     if base.transaction is None:
         logger.info(_('Resolving dependencies'))
-
+        if cli.demands.uninstalling_allowed:
+            base.goal_parameters.allow_uninstall = True
         try:
             got_transaction = base.resolve()
         except dnf.exceptions.Error as e:

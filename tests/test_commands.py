@@ -37,7 +37,7 @@ class CommandsCliTest(support.TestCase):
     def test_erase_configure(self):
         erase_cmd = dnf.cli.commands.EraseCommand(self.cli)
         erase_cmd.configure([])
-        self.assertTrue(self.base.goal_parameters.allow_uninstall)
+        self.assertTrue(self.cli.demands.uninstalling_allowed)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):

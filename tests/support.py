@@ -21,6 +21,8 @@ from sys import version_info as python_version
 
 import contextlib
 import dnf
+import dnf.cli.cli
+import dnf.cli.demand
 import dnf.comps
 import dnf.exceptions
 import dnf.package
@@ -34,7 +36,6 @@ import logging
 import os
 import re
 import unittest
-import dnf.cli.cli
 
 if dnf.pycomp.PY3:
     from unittest import mock
@@ -169,7 +170,7 @@ class _BaseStubMixin(object):
         logger.setLevel(logging.DEBUG)
         logger.addHandler(logging.StreamHandler(stream))
         return mock.Mock('base', base=self, log_stream=stream, logger=logger,
-                         nogpgcheck=True)
+                         nogpgcheck=True, demands=dnf.cli.demand.DemandSheet())
 
     def read_mock_comps(self, fn):
         comps = dnf.comps.Comps(INSTALLED_GROUPS.copy(),

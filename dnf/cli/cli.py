@@ -35,6 +35,7 @@ import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.upgrade
+import dnf.cli.demand
 import dnf.conf
 import dnf.const
 import dnf.exceptions
@@ -1009,6 +1010,7 @@ class BaseCli(dnf.Base):
 class Cli(object):
     def __init__(self, base):
         self._system_cachedir = None
+        self.demands = dnf.cli.demand.DemandSheet()
         self.logger = logging.getLogger("dnf")
         self.command = None
         self.base = base
@@ -1375,8 +1377,8 @@ class Cli(object):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        if self.command.activate_sack:
-            lar = self.command.load_available_repos
+        if self.demands.sack_activation:
+            lar = self.demands.available_repos
             self.base.fill_sack(load_system_repo='auto',
                                 load_available_repos=lar)
             self.base.plugins.run_sack()

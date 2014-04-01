@@ -169,6 +169,7 @@ class Command(object):
     load_available_repos = True
     resolve = False
     success_retval = 0
+    uninstalling_allowed = False
     writes_rpmdb = False
 
     def __init__(self, cli):
@@ -196,8 +197,21 @@ class Command(object):
         return (base, extra)
 
     def configure(self, args):
-        """ Do any command-specific Base configuration. """
-        pass
+        """Do any command-specific configuration."""
+
+        # built-in commands use class/instance attributes to state their demands:
+        demands = self.cli.demands
+        if self.activate_sack:
+            demands.sack_activation = True
+        if self.load_available_repos:
+            demands.available_repos = True
+        if self.resolve:
+            demands.resolving = True
+        demands.success_exit_status = self.success_retval
+        if self.uninstalling_allowed:
+            demands.uninstalling_allowed = True
+        if self.writes_rpmdb:
+            demands.rpmdb_write_access = True
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
@@ -383,10 +397,8 @@ class EraseCommand(Command):
     aliases = ('erase', 'remove')
     load_available_repos = False
     resolve = True
+    uninstalling_allowed = True
     writes_rpmdb = True
-
-    def configure(self, args):
-        self.base.goal_parameters.allow_uninstall = True
 
     @staticmethod
     def get_usage():
@@ -1231,9 +1243,9 @@ class RepoPkgsCommand(Command):
 
         def configure(self, args):
             """Do any command-specific Base configuration."""
-            super(RepoPkgsCommand.ReinstallSubCommand, self).configure()
+            super(RepoPkgsCommand.ReinstallSubCommand, self).configure(args)
             for command in self.wrapped_commands:
-                command.configure()
+                command.configure(args)
 
         def run(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
@@ -1322,12 +1334,9 @@ class RepoPkgsCommand(Command):
 
         resolve = True
 
-        writes_rpmdb = True
+        uninstalling_allowed = True
 
-        def configure(self, args):
-            """Do any command-specific Base configuration."""
-            super(RepoPkgsCommand.RemoveSubCommand, self).configure()
-            self.base.goal_parameters.allow_uninstall = True
+        writes_rpmdb = True
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -1477,7 +1486,7 @@ class RepoPkgsCommand(Command):
     def configure(self, args):
         """Do any command-specific Base configuration."""
         _, subcmd, _ = self.parse_extcmds(self.base.extcmds)
-        subcmd.configure()
+        subcmd.configure(args)
 
     @staticmethod
     def get_usage():

@@ -24,8 +24,7 @@ import itertools
 class Remove(support.ResultTestCase):
     def setUp(self):
         self.base = support.MockBase()
-        erase_cmd = dnf.cli.commands.EraseCommand(self.base.mock_cli())
-        erase_cmd.configure([])
+        self.base.goal_parameters.allow_uninstall = True
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """
