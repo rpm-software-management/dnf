@@ -1499,7 +1499,7 @@ class Base(object):
         myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
         myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
-        keys = idx.count()
+        keys = len(idx)
         del idx
         del myts
 
