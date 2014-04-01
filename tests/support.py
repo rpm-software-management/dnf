@@ -229,15 +229,6 @@ class MockOutput(object):
     def setup_progress_callbacks(self):
         return (None, None)
 
-class MockCli(dnf.cli.cli.Cli):
-
-    def __init__(self, base):
-        super(MockCli, self).__init__(base)
-        self.base.conf.plugins = False
-
-    def read_conf_file(self, *args, **kwargs):
-        return self.base.conf
-
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
         self.baseurl = None
@@ -372,6 +363,7 @@ class FakeConf(object):
         self.multilib_policy = 'best'
         self.obsoletes = True
         self.persistdir = '/should-not-exist-bad-test/persist'
+        self.plugins = False
         self.protected_multilib = False
         self.protected_packages = []
         self.showdupesfromrepos = False

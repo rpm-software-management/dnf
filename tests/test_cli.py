@@ -123,29 +123,30 @@ class BaseCliTest(support.ResultTestCase):
         id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('1')
         self.assertEqual(id_or_offset, 1)
 
+@mock.patch('dnf.cli.cli.Cli.read_conf_file')
 class CliTest(PycompTestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.base.output = support.MockOutput()
-        self.cli = support.MockCli(self.base)
+        self.cli = dnf.cli.cli.Cli(self.base)
 
-    def test_knows_upgrade(self):
+    def test_knows_upgrade(self, read_conf_file):
         upgrade = self.cli.cli_commands['upgrade']
         update = self.cli.cli_commands['update']
         self.assertIs(upgrade, update)
 
-    def test_simple(self):
+    def test_simple(self, read_conf_file):
         self.assertFalse(self.base.conf.assumeyes)
         self.cli.configure(['update', '-y'])
         self.assertTrue(self.base.conf.assumeyes)
 
-    def test_opt_between_cmds(self):
+    def test_opt_between_cmds(self,read_conf_file):
         self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
         self.assertTrue(self.base.conf.assumeyes)
         self.assertEqual(self.base.basecmd, "install")
         self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
 
-    def test_configure_repos(self):
+    def test_configure_repos(self, read_conf_file):
         opts = Namespace()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
@@ -163,7 +164,7 @@ class CliTest(PycompTestCase):
         self.assertEqual(self.base.repos["comb"].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
-    def test_configure_repos_expired(self):
+    def test_configure_repos_expired(self, read_conf_file):
         """Ensure that --cacheonly beats the expired status."""
         opts = Namespace()
         opts.repos_ed = []
