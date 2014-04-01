@@ -197,7 +197,7 @@ class Command(object):
         return (base, extra)
 
     def configure(self, args):
-        """Do any command-specific configuration."""
+        """Do any command-specific configuration. #:api"""
 
         # built-in commands use class/instance attributes to state their demands:
         demands = self.cli.demands

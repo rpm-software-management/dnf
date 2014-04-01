@@ -38,8 +38,9 @@ class _BoolDefault(object):
         objdict[self._storing_name] = val
 
 class DemandSheet(object):
-    """Collection of demands that different CLI parts have on other parts."""
+    """Collection of demands that different CLI parts have on other parts. :api"""
 
+    # :api...
     available_repos = _BoolDefault(False)
     resolving = _BoolDefault(False)
     rpmdb_write_access = _BoolDefault(False)

@@ -1010,7 +1010,7 @@ class BaseCli(dnf.Base):
 class Cli(object):
     def __init__(self, base):
         self._system_cachedir = None
-        self.demands = dnf.cli.demand.DemandSheet()
+        self.demands = dnf.cli.demand.DemandSheet() #:cli
         self.logger = logging.getLogger("dnf")
         self.command = None
         self.base = base
