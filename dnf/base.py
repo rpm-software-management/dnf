@@ -1064,8 +1064,6 @@ class Base(object):
         filelist = []
         for ext in exts:
             for repo in self.repos.iter_enabled():
-                if repo.local:
-                    continue
                 path = getattr(repo, pathattr)
                 if os.path.exists(path) and os.path.isdir(path):
                     filelist = misc.getFileList(path, ext, filelist)
