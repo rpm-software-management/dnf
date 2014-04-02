@@ -99,6 +99,9 @@ Options
 ``--installroot=<path>``
     set install root
 
+``--refresh``
+    set metadata as expired before running the command
+
 ``--nogpgcheck``
     skip checking GPG signatures on packages
 

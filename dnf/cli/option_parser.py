@@ -99,6 +99,8 @@ class OptionParser(argparse.ArgumentParser):
             if opts.showdupesfromrepos:
                 conf.showdupesfromrepos = True
 
+            demands.refresh_metadata = opts.refresh_metadata
+
             if opts.color not in (None, 'auto', 'always', 'never',
                                   'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
                 raise ValueError(_("--color takes one of: auto, always, never"))
@@ -238,6 +240,8 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--setopt", dest="setopts", default=[],
                            action="append",
                            help=_("set arbitrary config and repo options"))
+        self.add_argument("--refresh", dest="refresh_metadata",
+                          action="store_true")
         # we add our own help option, so we can control that help is not shown
         # automatic when we do the .parse_known_args(args)
         # but first after plugins are loaded.

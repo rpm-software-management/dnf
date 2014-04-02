@@ -1369,6 +1369,8 @@ class Cli(object):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
+        if self.demands.refresh_metadata:
+            self.base.cleanCli('expire-cache')
         if self.demands.sack_activation:
             lar = self.demands.available_repos
             self.base.fill_sack(load_system_repo='auto',
