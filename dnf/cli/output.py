@@ -1928,7 +1928,7 @@ Transaction Summary
             else:
                 print(_("Command Line   :"), old.cmdline)
 
-        if not isinstance(old.tid):
+        if not isinstance(old.tid, list):
             addon_info = self.history.return_addon_data(old.tid)
 
             # for the ones we create by default - don't display them as there
