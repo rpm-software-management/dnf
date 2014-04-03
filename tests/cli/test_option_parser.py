@@ -21,22 +21,28 @@ from tests import support
 from tests.support import mock
 
 import argparse
+import dnf.util
 
 class OptionParserTest(support.TestCase):
-    def setUp(self):
-        self.base = support.MockBase()
-        output = support.MockOutput()
-        self.base.output = output
-
-    def test_nogpgcheck(self):
-        parser = OptionParser(self.base)
+    def test_parse(self):
+        parser = OptionParser()
         opts, cmds = parser.parse_known_args(['update', '--nogpgcheck'])
-        del self.base.repos
-        # this doesn't try to access base.repos:
-        parser.configure_from_options(opts)
+        self.assertEqual(cmds, ['update'])
+        self.assertTrue(opts.nogpgcheck)
+        self.assertIsNone(opts.color)
+
+    def test_configure_from_options(self):
+        parser = OptionParser()
+        opts, _ = parser.parse_known_args(['update', '-y', '--allowerasing'])
+        conf = dnf.util.Bunch()
+        conf.color = 'auto'
+        demands = dnf.util.Bunch()
+        parser.configure_from_options(opts, conf, demands, None)
+        self.assertTrue(demands.uninstalling_allowed)
+        self.assertTrue(conf.assumeyes)
 
     def test_non_nones2dict(self):
-        parser = OptionParser(self.base)
+        parser = OptionParser()
         values = parser.parse_args(args=['-y'])
         self.assertIsInstance(values, argparse.Namespace)
         dct = parser._non_nones2dict(values.__dict__)

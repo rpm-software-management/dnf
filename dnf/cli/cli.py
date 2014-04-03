@@ -1212,10 +1212,7 @@ class Cli(object):
         :param args: a list of command line arguments
         """
         usage = self._make_usage()
-        self.optparser = dnf.cli.option_parser.OptionParser(self.base,
-                                                            usage=usage)
-
-        # Parse only command line options that affect basic yum setup
+        self.optparser = dnf.cli.option_parser.OptionParser(usage=usage)
         opts, cmds = self.optparser.parse_known_args(args)
 
         # Just print out the version if that's what the user wanted
@@ -1270,10 +1267,8 @@ class Cli(object):
             msg = "Setopt argument has no value: %s"
             self.logger.warning(msg % item)
 
-        self.optparser.usage = self._make_usage()
-
-        # apply some of the options to self.base.conf
-        self.optparser.configure_from_options(opts)
+        self.optparser.configure_from_options(opts, self.base.conf, self.demands,
+                                              self.base.output)
         self.base.cmds = cmds
 
         if opts.version:

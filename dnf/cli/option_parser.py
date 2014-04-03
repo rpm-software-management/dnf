@@ -29,10 +29,9 @@ class OptionParser(argparse.ArgumentParser):
     "yum way".
     """
 
-    def __init__(self, base, **kwargs):
+    def __init__(self, **kwargs):
         argparse.ArgumentParser.__init__(self, **kwargs)
         self.logger = logging.getLogger("dnf")
-        self.base = base
         self._addYumBasicOptions()
 
     def error(self, msg):
@@ -61,48 +60,45 @@ class OptionParser(argparse.ArgumentParser):
                if in_dct[k] != []}
         return dct
 
-    def configure_from_options(self, opts):
-        """Setup environment based on argparse options.
-
-        :param opts: parsed options from argparse
-        """
+    def configure_from_options(self, opts, conf, demands, output):
+        """Configure parts of CLI from the opts. """
 
         try:
             # config file is parsed and moving us forward
             # set some things in it.
             if opts.best:
-                self.base.conf.best = opts.best
+                conf.best = opts.best
 
             # Handle remaining options
             if opts.allowerasing:
-                self.base.goal_parameters.allow_uninstall = opts.allowerasing
+                demands.uninstalling_allowed = opts.allowerasing
 
             if opts.assumeyes:
-                self.base.conf.assumeyes = 1
+                conf.assumeyes = 1
             if opts.assumeno:
-                self.base.conf.assumeno = 1
+                conf.assumeno = 1
 
             if opts.disableplugins:
                 opts.disableplugins = self._splitArg(opts.disableplugins)
 
             if opts.obsoletes:
-                self.base.conf.obsoletes = 1
+                conf.obsoletes = 1
 
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
-                self.base.conf.installroot = opts.installroot
+                conf.installroot = opts.installroot
             if opts.noplugins:
-                self.base.conf.plugins = False
+                conf.plugins = False
 
             if opts.showdupesfromrepos:
-                self.base.conf.showdupesfromrepos = True
+                conf.showdupesfromrepos = True
 
             if opts.color not in (None, 'auto', 'always', 'never',
                                   'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
                 raise ValueError(_("--color takes one of: auto, always, never"))
             elif opts.color is None:
-                if self.base.conf.color != 'auto':
-                    self.base.output.term.reinit(color=self.base.conf.color)
+                if conf.color != 'auto':
+                    output.term.reinit(color=conf.color)
             else:
                 _remap = {'tty' : 'auto', 'if-tty' : 'auto',
                           '1' : 'always', 'true' : 'always',
@@ -111,26 +107,26 @@ class OptionParser(argparse.ArgumentParser):
                           'no' : 'never', 'off' : 'never'}
                 opts.color = _remap.get(opts.color, opts.color)
                 if opts.color != 'auto':
-                    self.base.output.term.reinit(color=opts.color)
+                    output.term.reinit(color=opts.color)
 
             if opts.disableexcludes:
                 disable_excludes = self._splitArg(opts.disableexcludes)
             else:
                 disable_excludes = []
-            self.base.conf.disable_excludes = disable_excludes
+            conf.disable_excludes = disable_excludes
 
             for exclude in self._splitArg(opts.exclude):
                 try:
-                    excludelist = self.base.conf.exclude
+                    excludelist = conf.exclude
                     excludelist.append(exclude)
-                    self.base.conf.exclude = excludelist
+                    conf.exclude = excludelist
                 except dnf.exceptions.ConfigError as e:
                     self.logger.critical(e)
                     self.print_help()
                     sys.exit(1)
 
             if opts.rpmverbosity is not None:
-                self.base.conf.rpmverbosity = opts.rpmverbosity
+                conf.rpmverbosity = opts.rpmverbosity
 
         except ValueError as e:
             self.logger.critical(_('Options Error: %s'), e)
