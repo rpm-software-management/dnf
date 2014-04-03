@@ -24,6 +24,8 @@ import argparse
 import logging
 import sys
 
+logger = logging.getLogger("dnf")
+
 class OptionParser(argparse.ArgumentParser):
     """Subclass that makes some minor tweaks to make ArgumentParser do things the
     "yum way".
@@ -31,7 +33,6 @@ class OptionParser(argparse.ArgumentParser):
 
     def __init__(self, **kwargs):
         argparse.ArgumentParser.__init__(self, **kwargs)
-        self.logger = logging.getLogger("dnf")
         self._addYumBasicOptions()
 
     def error(self, msg):
@@ -41,7 +42,7 @@ class OptionParser(argparse.ArgumentParser):
         :param msg: the error message to output
         """
         self.print_usage()
-        self.logger.critical(_("Command line error: %s"), msg)
+        logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
     @staticmethod
@@ -121,7 +122,7 @@ class OptionParser(argparse.ArgumentParser):
                     excludelist.append(exclude)
                     conf.exclude = excludelist
                 except dnf.exceptions.ConfigError as e:
-                    self.logger.critical(e)
+                    logger.critical(e)
                     self.print_help()
                     sys.exit(1)
 
@@ -129,17 +130,18 @@ class OptionParser(argparse.ArgumentParser):
                 conf.rpmverbosity = opts.rpmverbosity
 
         except ValueError as e:
-            self.logger.critical(_('Options Error: %s'), e)
+            logger.critical(_('Options Error: %s'), e)
             self.print_help()
             sys.exit(1)
 
-    def _checkAbsInstallRoot(self, installroot):
+    @staticmethod
+    def _checkAbsInstallRoot(installroot):
         if not installroot:
             return
         if installroot[0] == '/':
             return
         # We have a relative installroot ... haha
-        self.logger.critical(_('--installroot must be an absolute path: %s'),
+        logger.critical(_('--installroot must be an absolute path: %s'),
                              installroot)
         sys.exit(1)
 
