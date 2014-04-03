@@ -83,11 +83,13 @@
     `sack=True`     drop the current sack (see :attr:`.sack`)
     =============== =================================================
 
-  .. method:: resolve()
+  .. method:: resolve(allow_erasing=True)
 
     Resolve the marked requirements and store the resulting :class:`dnf.transaction.Transaction` into :attr:`transaction`. Raise :exc:`dnf.exceptions.DepsolveError` on a depsolving error. Return ``True`` iff the resolved transaction is non-empty.
 
-    The exact operation of the solver depends on the :attr:`dnf.conf.Conf.best` setting.
+    Enabling `allow_erasing` lets to solver remove other packages while looking to fulfill the current packaging requests. For instance, this is used to allow the solver remove dependants of a package being removed.
+
+    The exact operation of the solver further depends on the :attr:`dnf.conf.Conf.best` setting.
 
   .. method:: select_group(group, pkg_types=None)
 

@@ -37,7 +37,7 @@ class CommandsCliTest(support.TestCase):
     def test_erase_configure(self):
         erase_cmd = dnf.cli.commands.EraseCommand(self.cli)
         erase_cmd.configure([])
-        self.assertTrue(self.cli.demands.uninstalling_allowed)
+        self.assertTrue(self.cli.demands.allow_erasing)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
@@ -203,8 +203,10 @@ class InstallCommandTest(support.ResultTestCase):
         self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
 
     def test_configure(self):
+        cli = self._cmd.cli
         self._cmd.configure([])
-        self.assertFalse(self._cmd.base.goal_parameters.allow_uninstall)
+        self.assertFalse(cli.demands.allow_erasing)
+        self.assertTrue(cli.demands.sack_activation)
 
     def test_run_group(self):
         """Test whether a group is installed."""

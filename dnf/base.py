@@ -87,7 +87,6 @@ class Base(object):
 
         self.rpm_probfilter = set([])
         self.arch = dnf.rpmUtils.arch.Arch()
-        self.goal_parameters = dnf.conf.GoalParameters()
         self.plugins = dnf.plugin.Plugins()
 
         self._conf.yumvar['arch'] = self.arch.canonarch
@@ -526,16 +525,14 @@ class Base(object):
             if reason != 'dep':
                 goal.userinstalled(pkg)
 
-    def run_hawkey_goal(self, goal):
-        allow_uninstall = self.goal_parameters.allow_uninstall
-        ret = goal.run(allow_uninstall=allow_uninstall,
-                       force_best=self.conf.best)
+    def run_hawkey_goal(self, goal, allow_erasing):
+        ret = goal.run(allow_uninstall=allow_erasing, force_best=self.conf.best)
         if self.conf.debug_solver:
             goal.write_debugdata()
         return ret
 
-    def resolve(self):
-        """Build the transaction set."""
+    def resolve(self, allow_erasing=False):
+        """Build the transaction set. :api"""
         exc = None
 
         ds_st = time.time()
@@ -543,7 +540,7 @@ class Base(object):
         goal = self._goal
         if goal.req_has_erase():
             self._push_userinstalled(goal)
-        if not self.run_hawkey_goal(goal):
+        if not self.run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
             exc = dnf.exceptions.DepsolveError('. '.join(goal.problems))

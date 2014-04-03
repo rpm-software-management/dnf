@@ -24,7 +24,7 @@ import itertools
 class Remove(support.ResultTestCase):
     def setUp(self):
         self.base = support.MockBase()
-        self.base.goal_parameters.allow_uninstall = True
+        self.allow_erasing = True
 
     def test_not_installed(self):
         """ Removing a not-installed package is a void operation. """

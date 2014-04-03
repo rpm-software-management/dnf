@@ -269,7 +269,7 @@ class Goal2TransactionTest(support.TestCase):
         base = support.MockBase("main", "updates")
         base.upgrade("hole")
         goal = base._goal
-        self.assertTrue(base.run_hawkey_goal(goal))
+        self.assertTrue(base.run_hawkey_goal(goal, allow_erasing=False))
         ts = base._goal2transaction(goal)
         self.assertLength(ts._tsis, 1)
         tsi = ts._tsis[0]

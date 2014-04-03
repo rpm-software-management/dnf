@@ -41,9 +41,9 @@ class DemandSheet(object):
     """Collection of demands that different CLI parts have on other parts. :api"""
 
     # :api...
+    allow_erasing = _BoolDefault(False)
     available_repos = _BoolDefault(False)
     resolving = _BoolDefault(False)
     root_user = _BoolDefault(False)
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
-    uninstalling_allowed = _BoolDefault(False)

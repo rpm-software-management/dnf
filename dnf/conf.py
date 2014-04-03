@@ -82,7 +82,3 @@ class CliCache(object):
     def system_cachedir(self):
         self._make_ready()
         return self._system_cachedir
-
-class GoalParameters(object):
-    def __init__(self):
-        self.allow_uninstall = False

@@ -15,8 +15,8 @@
 # Red Hat, Inc.
 #
 
+from dnf.conf import CliCache
 from dnf.yum.config import Option, BaseConfig, YumConf
-from dnf.conf import CliCache, GoalParameters
 from tests.support import PycompTestCase
 from tests.support import mock
 
@@ -86,8 +86,3 @@ class YumConfTest(PycompTestCase):
         conf = YumConf()
         with self.assertRaises(ValueError):
             conf.debuglevel = 11
-
-class GoalParametersTest(PycompTestCase):
-    def test_default(self):
-        gp = GoalParameters()
-        self.assertFalse(gp.allow_uninstall)

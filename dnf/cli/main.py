@@ -135,10 +135,8 @@ def _main(base, args):
     # Depsolve stage (if needed)
     if base.transaction is None:
         logger.info(_('Resolving dependencies'))
-        if cli.demands.uninstalling_allowed:
-            base.goal_parameters.allow_uninstall = True
         try:
-            got_transaction = base.resolve()
+            got_transaction = base.resolve(cli.demands.allow_erasing)
         except dnf.exceptions.Error as e:
             logger.critical(_('Error: %s'), e)
             return 1

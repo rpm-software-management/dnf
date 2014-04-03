@@ -169,7 +169,7 @@ class Command(object):
     load_available_repos = True
     resolve = False
     success_retval = 0
-    uninstalling_allowed = False
+    allow_erasing = False
     writes_rpmdb = False
 
     def __init__(self, cli):
@@ -203,13 +203,13 @@ class Command(object):
         demands = self.cli.demands
         if self.activate_sack:
             demands.sack_activation = True
+        if self.allow_erasing:
+            demands.allow_erasing = True
         if self.load_available_repos:
             demands.available_repos = True
         if self.resolve:
             demands.resolving = True
         demands.success_exit_status = self.success_retval
-        if self.uninstalling_allowed:
-            demands.uninstalling_allowed = True
         if self.writes_rpmdb:
             demands.root_user = True
 
@@ -397,7 +397,7 @@ class EraseCommand(Command):
     aliases = ('erase', 'remove')
     load_available_repos = False
     resolve = True
-    uninstalling_allowed = True
+    allow_erasing = True
     writes_rpmdb = True
 
     @staticmethod
@@ -1334,7 +1334,7 @@ class RepoPkgsCommand(Command):
 
         resolve = True
 
-        uninstalling_allowed = True
+        allow_erasing = True
 
         writes_rpmdb = True
 

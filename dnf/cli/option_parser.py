@@ -72,7 +72,7 @@ class OptionParser(argparse.ArgumentParser):
 
             # Handle remaining options
             if opts.allowerasing:
-                demands.uninstalling_allowed = opts.allowerasing
+                demands.allow_erasing = opts.allowerasing
 
             if opts.assumeyes:
                 conf.assumeyes = 1

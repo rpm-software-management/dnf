@@ -6,6 +6,10 @@
 
   Instances are used to track requests of commands and plugins about how CLI should set up/handle other parts of CLI processing that are not under the command's/plugin's direct control. The boolean attributes of the sheet can not be reset once enabled, doing so raises an :exc:`AttributeError`.
 
+    .. attribute:: allow_erasing
+
+      If ``True``, the dependnecy solver is allowed to look for solutions that include removing other packages while looking to fulfill the current packaging requests. Defaults to ``False``. Also see :meth:`dnf.Base.resolve`.
+
     .. attribute:: available_repos
 
       If ``True`` during sack creation (:attr:`.sack_activation`), download and load into the sack the available repositories. Defaults to ``False``.
@@ -27,10 +31,6 @@
     .. attribute:: success_exit_status
 
       The return status of the DNF command on success. Defaults to ``0``.
-
-    .. attribute:: uninstalling_allowed
-
-      If ``True``, the dependnecy solver is allowed to look for solutions that include removing other packages while looking to fulfill the current packaging requests. Defaults to ``False``.
 
 .. module:: dnf.cli
 

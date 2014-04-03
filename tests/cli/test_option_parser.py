@@ -38,7 +38,7 @@ class OptionParserTest(support.TestCase):
         conf.color = 'auto'
         demands = dnf.util.Bunch()
         parser.configure_from_options(opts, conf, demands, None)
-        self.assertTrue(demands.uninstalling_allowed)
+        self.assertTrue(demands.allow_erasing)
         self.assertTrue(conf.assumeyes)
 
     def test_non_nones2dict(self):

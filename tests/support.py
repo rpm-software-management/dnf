@@ -459,9 +459,12 @@ class TestCase(PycompTestCase):
         self.assertTrue(any(trace.endswith(end) for trace in traces))
 
 class ResultTestCase(TestCase):
+
+    allow_erasing = False
+
     def _get_installed(self, base):
         try:
-            base.resolve()
+            base.resolve(self.allow_erasing)
         except dnf.exceptions.DepsolveError:
             self.fail()
 
@@ -483,7 +486,7 @@ class ResultTestCase(TestCase):
 
     def installed_removed(self, base):
         try:
-            base.resolve()
+            base.resolve(self.allow_erasing)
         except dnf.exceptions.DepsolveError:
             self.fail()
 
