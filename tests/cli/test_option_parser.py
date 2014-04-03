@@ -16,7 +16,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.cli.cli import OptionParser
+from dnf.cli.option_parser import OptionParser
 from tests import support
 from tests.support import mock
 
