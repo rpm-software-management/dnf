@@ -13,6 +13,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf.pycomp import is_py2str_py3bytes, unicode, basestring, to_ord
 
 def dummyP_wrapper(str1, str2, n):
@@ -436,16 +437,6 @@ def to_str(obj):
     if not isinstance(obj, basestring):
         obj = str(obj)
     return obj
-
-def str_eq(a, b):
-    """ convert between unicode and not and compare them, w/o warning or being annoying"""
-    if isinstance(a, unicode) == isinstance(b, unicode):
-        if a == b: # stupid python...
-            return True
-    elif to_utf8(a) == to_utf8(b):
-        return True
-
-    return False
 
 try:
     '''
