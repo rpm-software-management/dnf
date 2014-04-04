@@ -1108,24 +1108,38 @@ class Cli(object):
             conffile = dnf.const.CONF_FILENAME
         return installroot, conffile
 
-    def _make_usage(self):
+    def _get_command_aliases(self):
+        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()
+                                    if not (hasattr(x, 'hidden') and x.hidden)])
+        commands.sort(key=lambda x: x.aliases[0])
+        return commands
+
+    def _make_usage(self, base_cmds=[]):
         """
         Format an attractive usage string for yum, listing subcommand
         names and summary usages.
         """
         name = dnf.const.PROGRAM_NAME
         usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
-        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()
-                                    if not (hasattr(x, 'hidden') and x.hidden)])
-        commands.sort(key=lambda x: x.aliases[0])
+        usage_plugins = '\n\nList of Plugin Commands:\n\n'
+        commands = self._get_command_aliases()
         for command in commands:
-            try:
-                summary = command.get_summary()
-                usage += "%-14s %s\n" % (command.aliases[0], summary)
-            except (AttributeError, NotImplementedError):
-                usage += "%s\n" % command.aliases[0]
-
-        return usage
+            if not base_cmds or command in base_cmds:
+                try:
+                    summary = command.get_summary()
+                    usage += "%-20s %s\n" % (command.aliases[0], summary)
+                except (AttributeError, NotImplementedError):
+                    usage += "%s\n" % command.aliases[0]
+            else: # This is a plugin cmd
+                try:
+                    summary = command.get_summary()
+                    usage_plugins += "%-20s %s\n" % (command.aliases[0], summary)
+                except (AttributeError, NotImplementedError):
+                    usage_plugins += "%s\n" % command.aliases[0]
+        if base_cmds: # base + plugins
+            return usage+usage_plugins
+        else: # base only
+            return usage
 
     def _parse_commands(self):
         """Read :attr:`self.cmds` and parse them out to make sure that
@@ -1296,9 +1310,16 @@ class Cli(object):
         else:
             sleeptime = 0
 
+        # store command aliases before plugins are loaded
+        registered_commands = self._get_command_aliases()
+
+        # load plugins
         if self.base.conf.plugins:
             self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
         self.base.plugins.run_init(self.base, self)
+
+        # add the plugins cmds to the usage info
+        self.optparser.usage = self._make_usage(registered_commands)
 
         # save our original args out
         self.base.args = args
