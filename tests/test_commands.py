@@ -318,6 +318,7 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         super(RepoPkgsCheckUpdateSubCommandTest, self).setUp()
         cli = support.BaseCliStub('main', 'updates', 'third_party').mock_cli()
         self._cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(cli)
+        self.cli = cli
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test(self):
@@ -343,12 +344,12 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
             u'                            updates\n'
             u'    tour.noarch                           5-0'
             u'                            @System\n')
-        self.assertEqual(self._cmd.success_retval, 100)
+        self.assertEqual(self.cli.demands.success_exit_status, 100)
 
     def test_not_found(self):
         """Test whether exit code differs if updates are not found."""
         self._cmd.run('main', [])
-        self.assertNotEqual(self._cmd.success_retval, 100)
+        self.assertNotEqual(self.cli.demands.success_exit_status, 100)
 
 class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 

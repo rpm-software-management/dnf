@@ -168,7 +168,6 @@ class Command(object):
     aliases = [] # :api
     load_available_repos = True
     resolve = False
-    success_retval = 0
     allow_erasing = False
     writes_rpmdb = False
 
@@ -209,7 +208,6 @@ class Command(object):
             demands.available_repos = True
         if self.resolve:
             demands.resolving = True
-        demands.success_exit_status = self.success_retval
         if self.writes_rpmdb:
             demands.root_user = True
 
@@ -627,7 +625,6 @@ class CheckUpdateCommand(Command):
 
     def __init__(self, cli):
         super(CheckUpdateCommand, self).__init__(cli)
-        self._success_retval = 0
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -647,11 +644,7 @@ class CheckUpdateCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         found = self.base.check_updates(patterns, print_=True)
         if found:
-            self._success_retval = 100
-
-    @property
-    def success_retval(self):
-        return self._success_retval
+            self.cli.demands.success_exit_status = 100
 
 class SearchCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -975,7 +968,7 @@ class RepoPkgsCommand(Command):
             patterns = self.parse_arguments(cli_args)
             found = self.base.check_updates(patterns, reponame, print_=True)
             if found:
-                self.success_retval = 100
+                self.cli.demands.success_exit_status = 100
 
     class InfoSubCommand(SubCommand):
         """Implementation of the info sub-command."""
@@ -1544,7 +1537,6 @@ class RepoPkgsCommand(Command):
 
         subcmd.run(repo, subargs)
 
-        self.success_retval = subcmd.success_retval
         self.resolve = subcmd.resolve
 
 class HelpCommand(Command):
