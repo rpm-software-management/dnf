@@ -284,13 +284,6 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
 
     return msg
 
-def utf8_valid(msg):
-    """ Return True/False is the text is valid utf8. """
-    for (ucs, bytes) in __utf8_iter_ucs(msg):
-        if ucs is None:
-            return False
-    return True
-
 def _utf8_width_le(width, *args):
     """ Minor speed hack, we often want to know "does X fit in Y". It takes
         "a while" to work out a utf8_width() (see above), and we know that a
