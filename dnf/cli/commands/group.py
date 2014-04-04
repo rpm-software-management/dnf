@@ -70,7 +70,6 @@ class GroupCommand(commands.Command):
 
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)
-        self._resolve = False
 
     def _grp_setup_doCommand(self):
         try:
@@ -198,10 +197,6 @@ class GroupCommand(commands.Command):
                                  ", ".join(cmds))
             raise dnf.cli.CliError
 
-    @property
-    def resolve(self):
-        return self._resolve
-
     def run(self, extcmds):
         cmd, extcmds = self._grp_cmd(extcmds)
 
@@ -221,7 +216,7 @@ class GroupCommand(commands.Command):
                 assert subcmd == 'install'
                 return self._mark_install(extcmds)
 
-        self._resolve = True
+        self.cli.demands.resolve = True
         if cmd == 'install':
             return self._install(extcmds)
         if cmd == 'upgrade':

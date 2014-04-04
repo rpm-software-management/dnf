@@ -1259,7 +1259,8 @@ class RepoPkgsCommand(Command):
                 else:
                     break
                 finally:
-                    self.resolve = command.resolve
+                    if command.resolve:
+                        self.cli.demands.resolving = True
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
@@ -1668,7 +1669,6 @@ class HistoryCommand(Command):
 
     def __init__(self, cli):
         super(HistoryCommand, self).__init__(cli)
-        self._resolve = False
 
     def _hcmd_redo(self, extcmds):
         kwargs = {'force_reinstall' : False,
@@ -1798,10 +1798,6 @@ class HistoryCommand(Command):
             self.base.logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
 
-    @property
-    def resolve(self):
-        return self._resolve
-
     def run(self, extcmds):
         vcmd = 'list'
         if extcmds:
@@ -1840,6 +1836,6 @@ class HistoryCommand(Command):
             return
         (code, strs) = ret
         if code == 2:
-            self._resolve = True
+            self.cli.demands.resolving = True
         elif code != 0:
             raise dnf.exceptions.Error(strs[0])
