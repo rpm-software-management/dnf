@@ -231,7 +231,7 @@ Erase Command
 Group Command
 -------------
 
-Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipualte the comprising packages with simple commands.
+Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipulate the comprising packages with simple commands.
 
 ``dnf [options] group [summary] <group-spec>``
     Display overview of how many groups are installed and available. With a
