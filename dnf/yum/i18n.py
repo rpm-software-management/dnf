@@ -15,12 +15,6 @@
 from __future__ import print_function
 from dnf.pycomp import is_py2str_py3bytes, unicode, basestring, to_ord
 
-def dummy_wrapper(str):
-    '''
-    Dummy Translation wrapper, just returning the same string.
-    '''
-    return to_unicode(str)
-
 def dummyP_wrapper(str1, str2, n):
     '''
     Dummy Plural Translation wrapper, just returning the singular or plural
@@ -493,5 +487,5 @@ except:
     Something went wrong so we make a dummy _() wrapper there is just
     returning the same text
     '''
-    _ = dummy_wrapper
+    _ = lambda x: x
     P_ = dummyP_wrapper
