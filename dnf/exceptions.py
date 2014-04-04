@@ -17,6 +17,7 @@
 Core DNF Errors.
 """
 
+from __future__ import unicode_literals
 from dnf.yum.i18n import to_unicode
 
 class Error(Exception):

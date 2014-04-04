@@ -21,6 +21,7 @@ Supplies the Base class.
 
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf import const, query, sack
 from dnf.pycomp import unicode
 from dnf.yum import config
@@ -32,7 +33,7 @@ from dnf.yum.config import ParsingError, ConfigParser
 from dnf.yum.i18n import to_unicode, to_str
 from dnf.i18n import _, P_
 from dnf.yum.parser import ConfigPreProcessor
-from functools import reduce, cmp_to_key
+from functools import reduce
 
 import dnf.callback
 import dnf.comps

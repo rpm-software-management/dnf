@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
+
 class _BoolDefault(object):
     def __init__(self, default):
         self.default = default

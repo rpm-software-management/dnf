@@ -16,10 +16,9 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
-import binascii
 import dnf.persistor
-import os
 import tempfile
 import tests.support
 

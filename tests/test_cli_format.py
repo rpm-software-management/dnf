@@ -15,6 +15,7 @@
 # Red Hat, Inc.
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf.cli.format import format_time, format_number
 
 import dnf.cli.format

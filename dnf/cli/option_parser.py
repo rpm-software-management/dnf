@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 from dnf.i18n import _
 
 import argparse

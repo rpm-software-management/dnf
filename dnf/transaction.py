@@ -19,10 +19,10 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf.i18n import _
 import logging
 import operator
-import os
 from functools import reduce
 
 DOWNGRADE = 1

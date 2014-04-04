@@ -19,6 +19,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from .. import commands
 from dnf.yum.i18n import to_unicode
 from dnf.i18n import _

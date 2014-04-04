@@ -18,6 +18,8 @@ These are from Wichert Akkerman <wichert@deephackmode.org>'s python-dhm
 http://www.wiggy.net/code/python-dhm
 """
 
+from __future__ import unicode_literals
+
 try:
     import sqlite3 as sqlite
 except ImportError:

@@ -16,7 +16,7 @@
 #
 
 from __future__ import absolute_import
-from sys import version_info
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 from tests.support import PycompTestCase

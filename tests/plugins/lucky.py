@@ -15,6 +15,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 import dnf.plugin
 
 class LuckyPlugin(dnf.plugin.Plugin):

@@ -20,12 +20,15 @@
 
 from gettext import NullTranslations
 from sys import version_info
-from unittest import TestCase
 
 import itertools
+import types
+import locale
 
 if version_info.major >= 3:
     PY3 = True
+
+    # functions renamed in py3
     basestring = unicode = str
     filterfalse = itertools.filterfalse
     long = int
@@ -35,20 +38,34 @@ if version_info.major >= 3:
     raw_input = input
     from io import StringIO
     to_ord = lambda i: i
+
+    # string helpers
     def is_py2str_py3bytes(o):
         return isinstance(o, bytes)
-
     def is_py3bytes(o):
         return isinstance(o, bytes)
 
+    # functions that don't take unicode arguments in py2
+    ModuleType = lambda m: types.ModuleType(m)
+    def setlocale(category, loc=None):
+        locale.setlocale(category, loc)
+
 else:
-    from __builtin__ import unicode, basestring, long, xrange, raw_input
     PY3 = False
+
+    # functions renamed in py3
+    from __builtin__ import unicode, basestring, long, xrange, raw_input
     from StringIO import StringIO
     filterfalse = itertools.ifilterfalse
     to_ord = lambda i: ord(i)
+
+    # string helpers
     def is_py2str_py3bytes(o):
         return isinstance(o, str)
-
     def is_py3bytes(o):
         return False
+
+    # functions that don't take unicode arguments in py2
+    ModuleType = lambda m: types.ModuleType(m.encode())
+    def setlocale(category, loc=None):
+        locale.setlocale(category, loc.encode())

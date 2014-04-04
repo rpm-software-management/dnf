@@ -15,13 +15,13 @@
 # Parts Copyright 2007 Red Hat, Inc
 
 from __future__ import print_function, absolute_import
+from __future__ import unicode_literals
 import dnf.transaction
 import rpm
 import os
 import fcntl
 import time
 import logging
-import types
 import sys
 from dnf.i18n import _
 from . import misc

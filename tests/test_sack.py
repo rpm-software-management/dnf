@@ -16,6 +16,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
@@ -23,10 +24,7 @@ import io
 import dnf.repo
 import dnf.sack
 import dnf.exceptions
-import hawkey
-import hawkey.test
 import itertools
-import unittest
 
 class SackTest(support.TestCase):
     def test_rpmdb_version(self):

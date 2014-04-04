@@ -35,6 +35,7 @@ goal is to:
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf.i18n import ucd, _
 import dnf.const
 import dnf.yum.config

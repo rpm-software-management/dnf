@@ -21,6 +21,7 @@
 """Tests of the history undo command."""
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf import Base
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
 from dnf.history import NEVRAOperations

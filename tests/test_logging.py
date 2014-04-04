@@ -16,6 +16,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
@@ -26,7 +27,6 @@ import collections
 import operator
 import os
 import tempfile
-import unittest
 
 LogfileEntry = collections.namedtuple('LogfileEntry', ('date', 'time', 'message'))
 

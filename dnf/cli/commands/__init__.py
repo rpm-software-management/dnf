@@ -22,6 +22,7 @@ Classes for subcommands of the yum command line interface.
 """
 
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf.cli.format import format_number
 from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode
 from dnf.i18n import _

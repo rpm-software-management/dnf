@@ -23,6 +23,7 @@ just a sanity check.
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf.exceptions import ProcessLockError, ThreadLockError
 from tests.support import mock
 

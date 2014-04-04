@@ -15,6 +15,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 from dnf.conf import CliCache
 from dnf.yum.config import Option, BaseConfig, YumConf
 from tests.support import PycompTestCase

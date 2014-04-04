@@ -18,13 +18,15 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
 import functools
 import hawkey
 import dnf.exceptions
 import dnf.selector
 import dnf.util
 
-from .pycomp import basestring
+from dnf.pycomp import basestring
 
 def is_nevra(pattern):
     try:

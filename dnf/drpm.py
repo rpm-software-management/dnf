@@ -19,6 +19,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from binascii import hexlify
 from dnf.yum.misc import unlink_f
 from dnf.i18n import _
