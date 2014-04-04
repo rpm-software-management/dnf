@@ -26,7 +26,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import CliError
 from dnf.i18n import ucd, _, P_
-from dnf.yum.i18n import to_unicode
 
 import dnf
 import dnf.cli.commands
@@ -276,7 +275,7 @@ class BaseCli(dnf.Base):
         if matches:
             msg = self.output.fmtKeyValFill(_('  * Maybe you meant: '),
                                             ", ".join(matches))
-            self.logger.info(to_unicode(msg))
+            self.logger.info(unicode(msg))
 
     def _checkMaybeYouMeant(self, arg, always_output=True, rpmdb_only=False):
         """ If the update/remove argument doesn't match with case, or due
@@ -1239,7 +1238,7 @@ class Cli(object):
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         except IOError as e:
-            e = '%s: %s' % (to_unicode(e.args[1]), repr(e.filename))
+            e = '%s: %s' % (unicode(e.args[1]), repr(e.filename))
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         for item in bad_setopt_tm:

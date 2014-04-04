@@ -235,7 +235,7 @@ def utf8_width_chop(msg, chop=None):
         msg_bytes += bytes
 
     if passed_unicode:
-        msg = to_unicode(msg)
+        msg = unicode(msg)
 
     return ret, msg
 
@@ -270,7 +270,7 @@ def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
             msg = ''.join([extra, prefix, msg, suffix])
 
     if isinstance(passed_msg, unicode):
-        return to_unicode(msg)
+        return unicode(msg)
 
     return msg
 
@@ -389,7 +389,7 @@ def utf8_text_wrap(text, width=70, initial_indent='', subsequent_indent=''):
         ret.append(indent.rstrip(' '))
 
     if passed_unicode:
-        return list(map(to_unicode, ret))
+        return list(map(unicode, ret))
     return list(map(to_utf8, ret))
 
 def utf8_text_fill(text, *args, **kwargs):
@@ -397,15 +397,6 @@ def utf8_text_fill(text, *args, **kwargs):
         doesn't screw up lists/blocks/etc. """
     return '\n'.join(utf8_text_wrap(text, *args, **kwargs))
 # ----------------------------- END utf8 -----------------------------
-
-def to_unicode(obj, encoding='utf-8', errors='replace'):
-    """ Convert string to unicode.
-
-        Consider using the more general dnf.i18n.ucd().
-    """
-    if is_py2str_py3bytes(obj):
-        obj = unicode(obj, encoding, errors)
-    return obj
 
 def to_utf8(obj, errors='replace'):
     '''convert 'unicode' to an encoded utf-8 byte string '''

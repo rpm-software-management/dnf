@@ -31,9 +31,9 @@ import dnf.callback
 import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
-from dnf.yum.i18n import to_str, to_utf8, to_unicode
+from dnf.yum.i18n import to_str, to_utf8
 from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
-from dnf.i18n import _, P_
+from dnf.i18n import _, P_, ucd
 import dnf.yum.misc
 
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
@@ -50,7 +50,7 @@ from dnf.cli.term import _term_width
 import locale
 
 import hawkey
-from dnf.pycomp import xrange, basestring, is_py3bytes, long
+from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 
 try:
     assert max(2, 4) == 4
@@ -720,7 +720,7 @@ class Output(object):
 
     def simple_name_list(self, pkg):
         """Print a package as a line containing its name."""
-        print(to_unicode(pkg.name))
+        print(unicode(pkg.name))
 
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
@@ -773,19 +773,19 @@ class Output(object):
         """
         (hibeg, hiend) = self._highlight(highlight)
         yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
-        print(_("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend))
-        print(_("Arch        : %s") % to_unicode(pkg.arch))
+        print(_("Name        : %s%s%s") % (hibeg, pkg.name, hiend))
+        print(_("Arch        : %s") % pkg.arch)
         if pkg.e != "0":
-            print(_("Epoch       : %s") % to_unicode(pkg.e))
-        print(_("Version     : %s") % to_unicode(pkg.v))
-        print(_("Release     : %s") % to_unicode(pkg.r))
+            print(_("Epoch       : %s") % pkg.e)
+        print(_("Version     : %s") % pkg.v)
+        print(_("Release     : %s") % pkg.r)
         print(_("Size        : %s") % format_number(float(pkg.size)))
-        print(_("Repo        : %s") % to_unicode(pkg.repoid))
+        print(_("Repo        : %s") % pkg.repoid)
         if 'from_repo' in yumdb_info:
-            print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
+            print(_("From repo   : %s") % yumdb_info.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
-            # print(_("Committer   : %s") % to_unicode(pkg.committer))
+            # print(_("Committer   : %s") % unicode(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
             print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
@@ -806,12 +806,12 @@ class Output(object):
                         uid = None
                 print(_("Changed by  : %s") % self._pwd_ui_username(uid))
         print(self.fmtKeyValFill(_("Summary     : "),
-              to_unicode(pkg.summary or "")))
+              unicode(pkg.summary or "")))
         if pkg.url:
-            print(_("URL         : %s") % to_unicode(pkg.url))
-        print(self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license)))
+            print(_("URL         : %s") % unicode(pkg.url))
+        print(self.fmtKeyValFill(_("License     : "), unicode(pkg.license)))
         print(self.fmtKeyValFill(_("Description : "),
-              to_unicode(pkg.description or "")))
+              unicode(pkg.description or "")))
         print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -928,8 +928,8 @@ class Output(object):
         :return: True if the user selects yes, and False if the user
            selects no
         """
-        yui = (to_unicode(_('y')), to_unicode(_('yes')))
-        nui = (to_unicode(_('n')), to_unicode(_('no')))
+        yui = (unicode(_('y')), unicode(_('yes')))
+        nui = (unicode(_('n')), unicode(_('no')))
         aui = yui + nui
         while True:
             msg = _('Is this ok [y/N]: ')
@@ -942,7 +942,7 @@ class Output(object):
                 pass
             except KeyboardInterrupt:
                 choice = nui[0]
-            choice = to_unicode(choice).lower()
+            choice = ucd(choice).lower()
             if len(choice) == 0:
                 choice = yui[0] if self.conf.defaultyes else nui[0]
             if choice in aui:
@@ -1016,9 +1016,9 @@ class Output(object):
 
         verbose = self.conf.verbose
         if verbose:
-            print(_(' Group-Id: %s') % to_unicode(group.id))
+            print(_(' Group-Id: %s') % unicode(group.id))
         if group.ui_description:
-            print(_(' Description: %s') % to_unicode(group.ui_description) or "")
+            print(_(' Description: %s') % unicode(group.ui_description) or "")
         if group.lang_only:
             print(_(' Language: %s') % group.lang_only)
 
@@ -1088,7 +1088,7 @@ class Output(object):
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, to_unicode(po.summary) or "")
+        msg = self.fmtKeyValFill(msg, unicode(po.summary) or "")
         if matchfor:
             if highlight is None:
                 highlight = self.conf.color_search_match
@@ -1114,7 +1114,7 @@ class Output(object):
             if False: pass
             elif to_utf8(po.description) == item:
                 key = _("Description : ")
-                item = to_unicode(item)
+                item = unicode(item)
             elif to_utf8(po.url) == item:
                 key = _("URL         : %s")
                 can_overflow = False
@@ -1123,7 +1123,7 @@ class Output(object):
                 can_overflow = False
             elif item.startswith("/"):
                 key = _("Filename    : %s")
-                item = to_unicode(item) or ""
+                item = unicode(item) or ""
                 can_overflow = False
             else:
                 key = _("Other       : ")
@@ -1132,7 +1132,7 @@ class Output(object):
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print(self.fmtKeyValFill(key, to_unicode(item)))
+                print(self.fmtKeyValFill(key, unicode(item)))
             else:
                 print(key % item)
         print()
@@ -1491,7 +1491,7 @@ Transaction Summary
         return count, "".join(list(actions))
 
     def _pwd_ui_username(self, uid, limit=None):
-        if type(uid) == type([]):
+        if isinstance(uid, list):
             return [self._pwd_ui_username(u, limit) for u in uid]
 
         # loginuid is set to      -1 (0xFFFF_FFFF) on init, in newer kernels.
@@ -1501,7 +1501,7 @@ Transaction Summary
             name = _("System") + " " + loginid
             if limit is not None and len(name) > limit:
                 name = loginid
-            return to_unicode(name)
+            return unicode(name)
 
         def _safe_split_0(text, *args):
             """ Split gives us a [0] for everything _but_ '', this function
@@ -1519,9 +1519,9 @@ Transaction Summary
                 name = "%s ... <%s>" % (_safe_split_0(fullname), user.pw_name)
                 if len(name) > limit:
                     name = "<%s>" % user.pw_name
-            return to_unicode(name)
+            return unicode(name)
         except KeyError:
-            return to_unicode(str(uid))
+            return unicode(uid)
 
     @staticmethod
     def _historyRangeRTIDs(old, tid):
@@ -2447,7 +2447,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
 
     def __init__(self):
         super(CliTransactionDisplay, self).__init__()
-        self.lastmsg = to_unicode("")
+        self.lastmsg = ""
         self.lastpackage = None # name of last package we looked at
         self.output = True
 
@@ -2507,7 +2507,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             msg = fmt % (utf8_width_fill(process, wid1, wid1),
                          utf8_width_fill(pkgname, wid2, wid2))
             if msg != self.lastmsg:
-                sys.stdout.write(to_unicode(msg))
+                sys.stdout.write(msg)
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
@@ -2519,7 +2519,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param msgs: the messages coming from the script
         """
         if msgs:
-            sys.stdout.write(to_unicode(msgs))
+            sys.stdout.write(unicode(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True,

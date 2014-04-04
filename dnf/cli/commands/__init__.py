@@ -24,7 +24,8 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number
-from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode
+from dnf.pycomp import unicode
+from dnf.yum.i18n import utf8_width, utf8_width_fill
 from dnf.i18n import _
 
 import dnf.cli
@@ -544,7 +545,7 @@ class RepoListCommand(Command):
             return False
 
         def _num2ui_num(num):
-            return to_unicode(locale.format("%d", num, True))
+            return unicode(locale.format("%d", num, True))
 
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
@@ -689,7 +690,7 @@ class RepoListCommand(Command):
                                                repo.repofile)]
 
                 self.base.logger.log(dnf.logging.DEBUG, "%s\n",
-                                        "\n".join(map(to_unicode, out)))
+                                        "\n".join(map(unicode, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
@@ -745,7 +746,7 @@ class RepoListCommand(Command):
                                         utf8_width_fill(rid, id_len),
                                         utf8_width_fill(rname, nm_len, nm_len),
                                         ui_enabled, ui_num)
-        msg = 'repolist: ' +to_unicode(locale.format("%d", tot_num, True))
+        msg = 'repolist: %s' % unicode(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
 
 class RepoPkgsCommand(Command):
