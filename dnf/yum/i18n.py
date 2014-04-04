@@ -16,16 +16,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.pycomp import is_py2str_py3bytes, unicode, basestring, to_ord
 
-def dummyP_wrapper(str1, str2, n):
-    '''
-    Dummy Plural Translation wrapper, just returning the singular or plural
-    string.
-    '''
-    if n == 1:
-        return str1
-    else:
-        return str2
-
 # This is ported from ustr_utf8_* which I got from:
 #     http://www.cl.cam.ac.uk/~mgk25/ucs/wcwidth.c
 #  I've tried to leave it close to the original C (same names etc.) so that
@@ -430,21 +420,3 @@ def to_str(obj):
     if not isinstance(obj, basestring):
         obj = str(obj)
     return obj
-
-try:
-    '''
-    Setup the yum translation domain and make _() and P_() translation wrappers
-    available.
-    using ugettext to make sure translated strings are in Unicode.
-    '''
-    import gettext
-    t = gettext.translation('dnf', fallback=True)
-    _ = t.ugettext
-    P_ = t.ungettext
-except:
-    '''
-    Something went wrong so we make a dummy _() wrapper there is just
-    returning the same text
-    '''
-    _ = lambda x: x
-    P_ = dummyP_wrapper

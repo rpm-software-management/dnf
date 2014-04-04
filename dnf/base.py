@@ -29,7 +29,8 @@ from dnf.yum import i18n
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
-from dnf.yum.i18n import to_unicode, to_str, _, P_
+from dnf.yum.i18n import to_unicode, to_str
+from dnf.i18n import _, P_
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce, cmp_to_key
 

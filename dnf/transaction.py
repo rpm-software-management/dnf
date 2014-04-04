@@ -19,7 +19,7 @@
 #
 
 from __future__ import absolute_import
-from dnf.yum.i18n import _
+from dnf.i18n import _
 import logging
 import operator
 import os

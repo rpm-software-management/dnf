@@ -18,7 +18,7 @@
 # Red Hat, Inc.
 #
 
-from dnf.yum.i18n import _
+from dnf.i18n import _
 
 import argparse
 import dnf.yum.misc

@@ -18,6 +18,8 @@
 #
 
 from __future__ import print_function
+from __future__ import unicode_literals
+import gettext
 import locale
 import os
 import sys
@@ -125,3 +127,9 @@ def ucd(obj):
             except UnicodeError:
                 pass
         return unicode(str(obj), _guess_encoding())
+
+
+# setup translation
+t = gettext.translation('dnf', fallback=True)
+_ = t.ugettext
+P_ = t.ungettext

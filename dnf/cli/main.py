@@ -45,7 +45,7 @@ def suppress_keyboard_interrupt_message():
 # do this ASAP to prevent tracebacks after ^C during imports
 suppress_keyboard_interrupt_message()
 
-from dnf.yum.i18n import _
+from dnf.i18n import _
 from dnf.cli.utils import show_lock_owner
 
 import dnf.cli.cli

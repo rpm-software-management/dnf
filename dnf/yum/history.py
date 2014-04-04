@@ -26,7 +26,7 @@ from . import misc as misc
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
 from .i18n import to_unicode, to_utf8
-from .i18n import _
+from dnf.i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch

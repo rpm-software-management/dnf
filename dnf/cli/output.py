@@ -24,19 +24,17 @@ import operator
 import sys
 import time
 import logging
-import types
-import gettext
 import pwd
 import re
-import rpm
 
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
-from dnf.yum.i18n import to_str, to_utf8, to_unicode, _, P_
+from dnf.yum.i18n import to_str, to_utf8, to_unicode
+from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
+from dnf.i18n import _, P_
 import dnf.yum.misc
-from dnf.rpmUtils.miscutils import checkSignals
 
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import dnf.yum.packages
@@ -46,7 +44,6 @@ import dnf.yum.history
 import dnf.transaction
 import dnf.util
 
-from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 

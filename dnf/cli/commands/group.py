@@ -20,7 +20,8 @@
 
 from __future__ import absolute_import
 from .. import commands
-from dnf.yum.i18n import to_unicode, _
+from dnf.yum.i18n import to_unicode
+from dnf.i18n import _
 
 import dnf.cli
 import dnf.util

@@ -21,7 +21,8 @@ import time
 
 import dnf.yum
 from .cli import *
-from dnf.yum.i18n import utf8_width, _
+from dnf.yum.i18n import utf8_width
+from dnf.i18n import _
 from optparse import OptionGroup
 
 from dnf.cli.format import format_number

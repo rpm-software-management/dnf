@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from .. import commands
-from dnf.yum.i18n import _
+from dnf.i18n import _
 
 class DowngradeCommand(commands.Command):
     """A class containing methods needed by the cli to execute the

@@ -21,10 +21,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+from dnf.i18n import _
 import collections
 import dnf.logging
 import dnf.util
-import dnf.yum.i18n
 import fnmatch
 import glob
 import importlib
@@ -35,8 +35,6 @@ import operator
 import os
 import sys
 import types
-
-_ = dnf.yum.i18n._
 
 logger = logging.getLogger('dnf')
 

@@ -35,11 +35,10 @@ goal is to:
 """
 
 from __future__ import absolute_import
-from dnf.i18n import ucd
+from dnf.i18n import ucd, _
 import dnf.const
 import dnf.yum.config
 import os.path
-from dnf.yum.i18n import _
 from . import util
 from .yum import misc
 
