@@ -93,9 +93,6 @@ class Base(object):
         self._conf.yumvar['basearch'] = self.arch.basearch
         self._conf.yumvar_update_from_env()
 
-    def __del__(self):
-        self.close()
-
     def __enter__(self):
         return self
 
@@ -229,6 +226,7 @@ class Base(object):
 
         if self._closed:
             return
+        self.logger.debug('Cleaning up.')
         self._closed = True
         # Do not trigger the lazy creation:
         if self._history is not None:
