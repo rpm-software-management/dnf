@@ -26,13 +26,13 @@ import time
 import logging
 import pwd
 import re
+import textwrap
 
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8
-from dnf.yum.i18n import utf8_text_fill
 from dnf.i18n import _, P_, ucd, fill_exact_width
 import dnf.yum.misc
 
@@ -623,7 +623,7 @@ class Output(object):
         if len(col_data) == 3:
             (val, width, highlight) = col_data
             (hibeg, hiend) = self._highlight(highlight)
-        return (val, width, hibeg, hiend)
+        return (unicode(val), width, hibeg, hiend)
 
     def fmtColumns(self, columns, msg=u'', end=u''):
         """Return a row of data formatted into a string for output.
@@ -668,7 +668,6 @@ class Output(object):
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        assert(isinstance(val, unicode))
         val = ("%s%*s%s") % (hibeg, width, val, hiend)
         msg += u"%%s%s" % end
         data.append(val)
@@ -734,13 +733,12 @@ class Output(object):
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
-        ret = utf8_text_fill(val, width=cols,
-                             initial_indent=key, subsequent_indent=nxt)
+        ret = textwrap.fill(val, width=cols, initial_indent=key,
+                            subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols // 3):
             # If it's big, redo it again with a smaller subsequent off
-            ret = utf8_text_fill(val, width=cols,
-                                 initial_indent=key,
-                                 subsequent_indent='     ...: ')
+            ret = textwrap.fill(val, width=cols, initial_indent=key,
+                                subsequent_indent='     ...: ')
         return ret
 
     def fmtSection(self, name, fill='='):
