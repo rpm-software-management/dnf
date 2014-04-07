@@ -1115,8 +1115,7 @@ class Cli(object):
         """
         name = dnf.const.PROGRAM_NAME
         usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
-        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()
-                                    if not (hasattr(x, 'hidden') and x.hidden)])
+        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()])
         commands.sort(key=lambda x: x.aliases[0])
         for command in commands:
             try:

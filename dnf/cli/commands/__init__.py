@@ -172,8 +172,6 @@ class Command(object):
     writes_rpmdb = False
 
     def __init__(self, cli):
-        self.done_command_once = False
-        self.hidden = False
         self.cli = cli # :api
 
     @property
