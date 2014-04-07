@@ -132,7 +132,7 @@ class BaseCli(dnf.Base):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
         dnf.Base.__init__(self)
-        self.output = output.Output(self)
+        self.output = output.Output(self, self.conf)
         self.logger = logging.getLogger("dnf")
 
     def errorSummary(self, errstring):

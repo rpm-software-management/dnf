@@ -439,7 +439,8 @@ class Output(object):
 
     GRP_PACKAGE_INDENT = ' ' * 3
 
-    def __init__(self, base):
+    def __init__(self, base, conf):
+        self.conf = conf
         self.base = base
         self.logger = logging.getLogger("dnf")
         self.term = Term()
@@ -488,10 +489,6 @@ class Output(object):
                 break
             ret += tup[1]
         return ret
-
-    @property
-    def conf(self):
-        return self.base.conf
 
     @property
     def history(self):

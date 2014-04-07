@@ -63,7 +63,7 @@ class OutputTest(support.TestCase):
 
     def setUp(self):
         self.base = support.MockBase('updates')
-        self.output = dnf.cli.output.Output(self.base)
+        self.output = dnf.cli.output.Output(self.base, self.base.conf)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output.P_', dnf.pycomp.NullTranslations().ungettext)
@@ -185,7 +185,7 @@ class GroupOutputTest(unittest.TestCase):
     def setUp(self):
         base = support.MockBase('main')
         base.read_mock_comps(support.COMPS_PATH)
-        output = dnf.cli.output.Output(base)
+        output = dnf.cli.output.Output(base, base.conf)
 
         self.base = base
         self.output = output
