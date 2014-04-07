@@ -32,7 +32,7 @@ import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8
-from dnf.yum.i18n import utf8_width, utf8_text_fill
+from dnf.yum.i18n import utf8_text_fill
 from dnf.i18n import _, P_, ucd, fill_exact_width
 import dnf.yum.misc
 
@@ -549,7 +549,7 @@ class Output(object):
             columns = [1] * (cols - 1)
             columns.append(0)
 
-        total_width -= (sum(columns) + (cols - 1) + utf8_width(indent))
+        total_width -= (sum(columns) + (cols - 1) + len(indent))
         if not columns[-1]:
             total_width += 1
         while total_width > 0:
@@ -625,7 +625,7 @@ class Output(object):
             (hibeg, hiend) = self._highlight(highlight)
         return (val, width, hibeg, hiend)
 
-    def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
+    def fmtColumns(self, columns, msg=u'', end=u''):
         """Return a row of data formatted into a string for output.
         Items can overflow their columns.
 
@@ -651,7 +651,7 @@ class Output(object):
                 continue
 
             (align, width) = self._fmt_column_align_width(width)
-            val_width = text_width(val)
+            val_width = len(val)
             if val_width <= width:
                 #  Don't use utf8_width_fill() because it sucks performance
                 # wise for 1,000s of rows. Also allows us to use len(), when
@@ -693,7 +693,7 @@ class Output(object):
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         columns = list(zip((na, pkg.evr, pkg.reponame), columns, hi_cols))
-        print(self.fmtColumns(columns, text_width=len))
+        print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
@@ -716,7 +716,7 @@ class Output(object):
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = list(zip((envra, rid), columns, hi_cols))
-        print(self.fmtColumns(columns, text_width=len))
+        print(self.fmtColumns(columns))
 
     def simple_name_list(self, pkg):
         """Print a package as a line containing its name."""
@@ -731,7 +731,7 @@ class Output(object):
         :return: the key value pair formatted in two columns for output
         """
         val = to_str(val)
-        keylen = utf8_width(key)
+        keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
         ret = utf8_text_fill(val, width=cols,
@@ -755,7 +755,7 @@ class Output(object):
         """
         name = to_str(name)
         cols = self.term.columns - 2
-        name_len = utf8_width(name)
+        name_len = len(name)
         if name_len >= (cols - 4):
             beg = end = fill * 2
         else:
@@ -984,7 +984,7 @@ class Output(object):
             pkg = name_dict.get(pkg_name)
             if pkg is None:
                 continue
-            nevra_l = utf8_width(str(pkg)) + utf8_width(self.GRP_PACKAGE_INDENT)
+            nevra_l = len(unicode(pkg)) + len(self.GRP_PACKAGE_INDENT)
             repo_l = len(pkg.reponame)
             nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
             repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
@@ -1321,12 +1321,12 @@ Transaction Summary
                 continue
 
             msg_pkgs = P_('Package', 'Packages', count)
-            len_msg_action   = utf8_width(action)
-            len_msg_count    = utf8_width(str(count))
-            len_msg_pkgs     = utf8_width(msg_pkgs)
+            len_msg_action = len(action)
+            len_msg_count = len(str(count))
+            len_msg_pkgs = len(msg_pkgs)
 
             if depcount:
-                len_msg_depcount = utf8_width(str(depcount))
+                len_msg_depcount = len(str(depcount))
             else:
                 len_msg_depcount = 0
 
@@ -2491,7 +2491,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
             for val in self.action.values():
-                wid_val = utf8_width(val)
+                wid_val = len(val)
                 if wid1 < wid_val:
                     wid1 = wid_val
             self._max_action_wid_cache = wid1
@@ -2534,7 +2534,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if pkgname is None:
             pnl = 22
         else:
-            pnl = utf8_width(pkgname)
+            pnl = len(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
         overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
@@ -2573,7 +2573,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
     def verify_tsi_package(self, pkg, count, total):
         percent = 100
         process = _('Verifying')
-        wid1    = max(utf8_width(process), self._max_action_width())
+        wid1 = max(len(process), self._max_action_width())
         self._out_event(100, 100, count, total, percent, process, str(pkg), wid1)
 
 def progressbar(current, total, name=None):
@@ -2622,8 +2622,8 @@ def progressbar(current, total, name=None):
         if width < 0:
             width = 0
         nwid = width // 2
-        if nwid > utf8_width(name):
-            nwid = utf8_width(name)
+        if nwid > len(name):
+            nwid = len(name)
         width -= nwid
         hashbar = mark * int(width * percent)
         output = '\r%s: [%-*s]%s' % (fill_exact_width(name, nwid), width,

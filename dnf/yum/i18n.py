@@ -199,15 +199,8 @@ def __utf8_iter_ucs(msg):
             yield (None, 1)
             return
 
-def utf8_width(msg):
-    """ Get the textual width of a utf8 string. """
-    ret = 0
-    for (ucs, bytes) in __utf8_iter_ucs(msg):
-        if ucs is None:
-            ret += bytes # Ugly ... should not feed bad utf8
-        else:
-            ret += __utf8_ucp_width(ucs)
-    return ret
+utf8_width = len
+
 
 def utf8_width_chop(msg, chop=None):
     """ Return the textual width of a utf8 string, chopping it to a specified

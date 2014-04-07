@@ -25,7 +25,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number
 from dnf.pycomp import unicode
-from dnf.yum.i18n import utf8_width
 from dnf.i18n import _, fill_exact_width
 
 import dnf.cli
@@ -584,7 +583,7 @@ class RepoListCommand(Command):
                     continue
                 if force_show or verbose:
                     ui_enabled = ehibeg + _('enabled') + hiend
-                    ui_endis_wid = utf8_width(_('enabled'))
+                    ui_endis_wid = len(_('enabled'))
                     if not verbose:
                         ui_enabled += ": "
                         ui_endis_wid += 2
@@ -603,7 +602,7 @@ class RepoListCommand(Command):
                 elif arg == 'enabled' and not force_show:
                     continue
                 ui_enabled = dhibeg + _('disabled') + hiend
-                ui_endis_wid = utf8_width(_('disabled'))
+                ui_endis_wid = len(_('disabled'))
 
             if not verbose:
                 rid = repo.id
@@ -695,16 +694,16 @@ class RepoListCommand(Command):
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
             # then chop the middle (name)...
-            id_len = utf8_width(_('repo id'))
+            id_len = len(_('repo id'))
             nm_len = 0
             st_len = 0
             ui_len = 0
 
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
-                if id_len < utf8_width(rid):
-                    id_len = utf8_width(rid)
-                if nm_len < utf8_width(rname):
-                    nm_len = utf8_width(rname)
+                if id_len < len(rid):
+                    id_len = len(rid)
+                if nm_len < len(rname):
+                    nm_len = len(rname)
                 if st_len < (ui_endis_wid + len(ui_num)):
                     st_len = (ui_endis_wid + len(ui_num))
                 # Need this as well as above for: utf8_width_fill()
@@ -712,8 +711,8 @@ class RepoListCommand(Command):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
                 left = self.output.term.columns - (id_len + 1)
-            elif utf8_width(_('status')) > st_len:
-                left = self.output.term.columns - (id_len + utf8_width(_('status')) +2)
+            elif len(_('status')) > st_len:
+                left = self.output.term.columns - (id_len + len(_('status')) +2)
             else:
                 left = self.output.term.columns - (id_len + st_len + 2)
 
