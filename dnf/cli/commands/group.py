@@ -42,7 +42,6 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
 
-    activate_sack = True
     direct_commands = {'grouplist'    : 'list',
                        'groupinstall' : 'install',
                        'groupupdate'  : 'install',
@@ -50,7 +49,6 @@ class GroupCommand(commands.Command):
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}
     aliases = ('group', 'groups') + tuple(direct_commands.keys())
-    writes_rpmdb = True
 
     @staticmethod
     def get_usage():
@@ -172,6 +170,14 @@ class GroupCommand(commands.Command):
 
         rest.insert(0, cmd)
         return ('groups', rest)
+
+    def configure(self, extcmds):
+        cmd = extcmds[0]
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.sack_activation = True
+        if cmd in ('install', 'mark', 'remove', 'upgrade'):
+            demands.root_user = True
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
