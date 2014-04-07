@@ -174,10 +174,11 @@ class Command(object):
     def __init__(self, cli):
         self.done_command_once = False
         self.hidden = False
-        self.cli = cli
+        self.cli = cli # :api
 
     @property
     def base(self):
+        # :api
         return self.cli.base
 
     @property

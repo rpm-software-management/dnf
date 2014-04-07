@@ -44,6 +44,14 @@
 
     Sequence of strings naming the command from the command line. Must be a class variable. The list has to contain at least one string, the first string in the list is considered the canonical name. A command name can be contain only letters and dashes providing the name doesn't start with a dash.
 
+  .. attribute:: base
+
+    The :class:`dnf.Base` instance to use with this command.
+
+  .. attribute:: cli
+
+    The :class:`dnf.cli.Cli` instance to use with this command.
+
   .. method:: configure(args)
 
     Perform any configuration on the command itself and on the CLI. `args` is a list of additional arguments to the command. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>` it has on the way the :class:`.Sack` will be initialized. Default no-op implementation is provided.
