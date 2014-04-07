@@ -1,4 +1,4 @@
-%global gitrev b89c961
+%global gitrev ac73cac
 %global hawkey_version 0.4.12
 %global librepo_version 1.4.0
 %global libcomps_version 0.1.4
@@ -133,6 +133,9 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Apr 7 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.20-1
+- fix: TypeError in dnf history info <id> (RHBug: #1082230) (Tim Lauridsen)
 
 * Mon Mar 24 2014 Aleš Kozumplík <ales@redhat.com> - 0.4.19-1
 - downloads: bump number of downloaded files on a skip. (RhBug:1079621) (Ales Kozumplik)
