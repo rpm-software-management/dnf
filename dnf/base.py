@@ -30,7 +30,6 @@ from dnf.yum import i18n
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
-from dnf.yum.i18n import to_str
 from dnf.i18n import _, P_
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce
@@ -715,7 +714,7 @@ class Base(object):
                                               errors=[])
         else:
             if self._record_history():
-                herrors = [unicode(to_str(x)) for x in errors]
+                herrors = [unicode(x) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
 
 
@@ -2217,7 +2216,7 @@ class Base(object):
             #  Newer rpm (4.8.0+) has problem objects, older have just strings.
             #  Should probably move to using the new objects, when we can. For
             # now just be compatible.
-            results.append(to_str(prob))
+            results.append(unicode(prob))
 
         return results
 

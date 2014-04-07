@@ -22,11 +22,3 @@ def to_utf8(obj, errors='replace'):
     if isinstance(obj, unicode):
         obj = obj.encode('utf-8', errors)
     return obj
-
-def to_str(obj):
-    """ Convert something to a string, if it isn't one. """
-    # NOTE: unicode counts as a string just fine. We just want objects to call
-    # their __str__ methods.
-    if not isinstance(obj, basestring):
-        obj = str(obj)
-    return obj

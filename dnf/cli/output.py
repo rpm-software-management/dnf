@@ -32,7 +32,7 @@ import dnf.callback
 import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
-from dnf.yum.i18n import to_str, to_utf8
+from dnf.yum.i18n import to_utf8
 from dnf.i18n import _, P_, ucd, fill_exact_width
 import dnf.yum.misc
 
@@ -729,7 +729,7 @@ class Output(object):
         :param val: the value associated with *key*
         :return: the key value pair formatted in two columns for output
         """
-        val = to_str(val)
+        val = unicode(val)
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
@@ -751,7 +751,7 @@ class Output(object):
           to fill an entire line.  *fill* must be a single character.
         :return: a string formatted to be a section header
         """
-        name = to_str(name)
+        name = unicode(name)
         cols = self.term.columns - 2
         name_len = len(name)
         if name_len >= (cols - 4):
