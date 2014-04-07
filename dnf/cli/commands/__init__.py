@@ -25,8 +25,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number
 from dnf.pycomp import unicode
-from dnf.yum.i18n import utf8_width, utf8_width_fill
-from dnf.i18n import _
+from dnf.yum.i18n import utf8_width
+from dnf.i18n import _, fill_exact_width
 
 import dnf.cli
 import dnf.const
@@ -724,8 +724,8 @@ class RepoListCommand(Command):
                 id_len += left // 2
                 nm_len += left - (left // 2)
 
-            txt_rid  = utf8_width_fill(_('repo id'), id_len)
-            txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
+            txt_rid = "%-*s" % (id_len, _('repo id'))
+            txt_rnam = fill_exact_width(_('repo name'), nm_len)
             if arg == 'disabled': # Don't output a status column.
                 self.base.logger.info("%s %s",
                                         txt_rid, txt_rnam)
@@ -735,17 +735,16 @@ class RepoListCommand(Command):
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
                     self.base.logger.info("%s %s",
-                                            utf8_width_fill(rid, id_len),
-                                            utf8_width_fill(rname, nm_len,
-                                                            nm_len))
+                                          "%-*s" % (id_len, rid),
+                                          fill_exact_width(rname, nm_len))
                     continue
 
                 if ui_num:
-                    ui_num = utf8_width_fill(ui_num, ui_len, left=False)
+                    ui_num = "%*s" % (ui_len, ui_num)
                 self.base.logger.info("%s %s %s%s",
-                                        utf8_width_fill(rid, id_len),
-                                        utf8_width_fill(rname, nm_len, nm_len),
-                                        ui_enabled, ui_num)
+                                      "%-*s" % (id_len, rid),
+                                      fill_exact_width(rname, nm_len),
+                                      ui_enabled, ui_num)
         msg = 'repolist: %s' % unicode(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
 

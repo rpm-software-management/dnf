@@ -32,8 +32,8 @@ import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.i18n import to_str, to_utf8
-from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
-from dnf.i18n import _, P_, ucd
+from dnf.yum.i18n import utf8_width, utf8_text_fill
+from dnf.i18n import _, P_, ucd, fill_exact_width
 import dnf.yum.misc
 
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
@@ -668,8 +668,8 @@ class Output(object):
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        val = utf8_width_fill(val, width, left=(align == u'-'),
-                              prefix=hibeg, suffix=hiend)
+        assert(isinstance(val, unicode))
+        val = ("%s%*s%s") % (hibeg, width, val, hiend)
         msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
@@ -1340,21 +1340,21 @@ Transaction Summary
             if depcount:
                 msg_deppkgs = P_('Dependent package', 'Dependent packages',
                                  depcount)
+                action_msg = "%-*s" % (max_msg_action, action)
                 if count:
                     msg = '%s  %*d %s (+%*d %s)\n'
-                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                    out.append(msg % (action_msg,
                                       max_msg_count, count,
-                                      utf8_width_fill(msg_pkgs, max_msg_pkgs),
+                                      "%-*s" % (max_msg_pkgs, msg_pkgs),
                                       max_msg_depcount, depcount, msg_deppkgs))
                 else:
-                    msg = '%s  %*s %s ( %*d %s)\n'
-                    out.append(msg % (utf8_width_fill(action, max_msg_action),
-                                      max_msg_count, '',
-                                      utf8_width_fill('', max_msg_pkgs),
+                    msg = '%s  %s  ( %*d %s)\n'
+                    out.append(msg % (action_msg,
+                                      (max_msg_count + max_msg_pkgs) * ' ',
                                       max_msg_depcount, depcount, msg_deppkgs))
             elif count:
                 msg = '%s  %*d %s\n'
-                out.append(msg % (utf8_width_fill(action, max_msg_action),
+                out.append(msg % ("%-*s" % (max_msg_action, action),
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
@@ -1457,7 +1457,7 @@ Transaction Summary
             format_number(remote_size // dl_time),
             format_number(remote_size),
             format_time(dl_time))
-        msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
+        msg = "%-*s" % (width - len(msg), _("Total")) + msg
         self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
@@ -1652,11 +1652,11 @@ Transaction Summary
             name = _("Command line")
         else:
             name = _("Login user")
-        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(name, 24, 24),
-                     utf8_width_fill(_("Date and time"), 16, 16),
-                     utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Altered"), 7, 7)))
+        print(fmt % (fill_exact_width(_("ID"), 6),
+                     fill_exact_width(name, 24),
+                     fill_exact_width(_("Date and time"), 6),
+                     fill_exact_width(_("Action(s)"), 6),
+                     fill_exact_width(_("Altered"), 6)))
         print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
@@ -1672,8 +1672,8 @@ Transaction Summary
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
-            name   = utf8_width_fill(name,   24, 24)
-            uiacts = utf8_width_fill(uiacts, 14, 14)
+            name = fill_exact_width(name, 24)
+            uiacts = fill_exact_width(uiacts, 14)
             rmark = lmark = ' '
             if old.return_code is None:
                 rmark = lmark = '*'
@@ -1834,7 +1834,7 @@ Transaction Summary
                 (hibeg, hiend) = self._highlight('bold')
             else:
                 (hibeg, hiend) = self._highlight('normal')
-            state = utf8_width_fill(state, _pkg_states['maxlen'])
+            state = "%-*s" % (_pkg_states['maxlen'], state)
             ui_repo = ''
             if show_repo:
                 ui_repo = self._hpkg2from_repo(hpkg)
@@ -2008,7 +2008,7 @@ Transaction Summary
             cn = hpkg.ui_nevra
 
             uistate = all_uistates.get(hpkg.state, hpkg.state)
-            uistate = utf8_width_fill(uistate, maxlen)
+            uistate = "%-*s" % (maxlen, uistate)
             # Should probably use columns here...
             if False: pass
             elif (last is not None and
@@ -2039,10 +2039,10 @@ Transaction Summary
             return 1, ['Failed history info']
 
         fmt = "%s | %s | %s | %s"
-        print(fmt % (utf8_width_fill(_("Login user"), 26, 26),
-                     utf8_width_fill(_("Time"), 19, 19),
-                     utf8_width_fill(_("Action(s)"), 16, 16),
-                     utf8_width_fill(_("Altered"), 8, 8)))
+        print(fmt % (fill_exact_width(_("Login user"), 26),
+                     fill_exact_width(_("Time"), 19),
+                     fill_exact_width(_("Action(s)"), 16),
+                     fill_exact_width(_("Altered"), 8)))
         print("-" * 79)
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
@@ -2089,9 +2089,9 @@ Transaction Summary
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print(fmt % (utf8_width_fill(name, 26, 26),
-                             utf8_width_fill(uperiod, 19, 19),
-                             utf8_width_fill(uiacts, 16, 16), count))
+                print(fmt % (fill_exact_width(name, 26),
+                             fill_exact_width(uperiod, 19),
+                             fill_exact_width(uiacts, 16), count))
 
     def historyAddonInfoCmd(self, extcmds):
         """Print addon information about transaction in history.
@@ -2160,9 +2160,9 @@ Transaction Summary
 
         fmt = "%s | %s | %s"
         # REALLY Needs to use columns!
-        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Package"), 53, 53)))
+        print(fmt % (fill_exact_width(_("ID"), 6),
+                     fill_exact_width(_("Action(s)"), 14),
+                     fill_exact_width(_("Package"), 53)))
         print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
@@ -2196,7 +2196,7 @@ Transaction Summary
                         continue
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
-                uistate = utf8_width_fill(uistate, 14)
+                uistate = "%-*s" % (14, uistate)
 
                 #  To chop the name off we need nevra strings, str(pkg) gives
                 # envra so we have to do it by hand ... *sigh*.
@@ -2504,8 +2504,8 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
-            msg = fmt % (utf8_width_fill(process, wid1, wid1),
-                         utf8_width_fill(pkgname, wid2, wid2))
+            msg = fmt % ("%-*.*s" % (wid1, wid1, process),
+                         "%-*.*s" % (wid2, wid2, pkgname))
             if msg != self.lastmsg:
                 sys.stdout.write(msg)
                 sys.stdout.flush()
@@ -2616,7 +2616,7 @@ def progressbar(current, total, name=None):
         hashbar = mark * int(width * percent)
         output = '\r[%-*s]%s' % (width, hashbar, end)
     elif current == total: # Don't chop name on 100%
-        output = '\r%s%s' % (utf8_width_fill(name, width, width), end)
+        output = '\r%s%s' % (fill_exact_width(name, width), end)
     else:
         width -= 4
         if width < 0:
@@ -2626,7 +2626,7 @@ def progressbar(current, total, name=None):
             nwid = utf8_width(name)
         width -= nwid
         hashbar = mark * int(width * percent)
-        output = '\r%s: [%-*s]%s' % (utf8_width_fill(name, nwid, nwid), width,
+        output = '\r%s: [%-*s]%s' % (fill_exact_width(name, nwid), width,
                                      hashbar, end)
 
     if current <= total:

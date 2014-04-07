@@ -129,6 +129,10 @@ def ucd(obj):
         return unicode(str(obj), _guess_encoding())
 
 
+def fill_exact_width(msg, width):
+    return "%-*.*s" % (width, width, msg)
+
+
 # setup translation
 t = gettext.translation('dnf', fallback=True)
 _ = t.ugettext

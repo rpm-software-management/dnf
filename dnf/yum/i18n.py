@@ -239,40 +239,6 @@ def utf8_width_chop(msg, chop=None):
 
     return ret, msg
 
-def utf8_width_fill(msg, fill, chop=None, left=True, prefix='', suffix=''):
-    """ Expand a utf8 msg to a specified "width" or chop to same.
-        Expansion can be left or right. This is what you want to use instead of
-        %*.*s, as it does the "right" thing with regard to utf-8 sequences.
-        prefix and suffix should be used for "invisible" bytes, like
-        highlighting.
-
-        Examples:
-
-        ``"%-*.*s" % (10, 20, msg)`` becomes ``"%s" % (utf8_width_fill(msg, 10, 20))``.
-
-        ``"%20.10s" % (msg)`` becomes ``"%s" % (utf8_width_fill(msg, 20, 10,
-        left=False))``.
-
-        ``"%s%.10s%s" % (prefix, msg, suffix)`` becomes ``"%s" %
-        (utf8_width_fill(msg, 0, 10, prefix=prefix, suffix=suffix))``.
-        """
-    passed_msg = msg
-    width, msg = utf8_width_chop(msg, chop)
-
-    if width >= fill:
-        if prefix or suffix:
-            msg = ''.join([prefix, msg, suffix])
-    else:
-        extra = " " * (fill - width)
-        if left:
-            msg = ''.join([prefix, msg, suffix, extra])
-        else:
-            msg = ''.join([extra, prefix, msg, suffix])
-
-    if isinstance(passed_msg, unicode):
-        return unicode(msg)
-
-    return msg
 
 def _utf8_width_le(width, *args):
     """ Minor speed hack, we often want to know "does X fit in Y". It takes
