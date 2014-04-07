@@ -32,7 +32,6 @@ import dnf.callback
 import dnf.cli.progress
 import dnf.conf
 from dnf.yum.misc import prco_tuple_to_string
-from dnf.yum.i18n import to_utf8
 from dnf.i18n import _, P_, ucd, fill_exact_width
 import dnf.yum.misc
 
@@ -668,7 +667,7 @@ class Output(object):
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        val = ("%s%*s%s") % (hibeg, width, val, hiend)
+        val = ("%s%" + align + "*s%s") % (hibeg, width, val, hiend)
         msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
@@ -711,7 +710,7 @@ class Output(object):
         """
         if columns is None:
             columns = (-63, -16) # Old default
-        envra = '%s%s' % (indent, str(pkg))
+        envra = '%s%s' % (indent, unicode(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = list(zip((envra, rid), columns, hi_cols))
@@ -729,10 +728,13 @@ class Output(object):
         :param val: the value associated with *key*
         :return: the key value pair formatted in two columns for output
         """
-        val = unicode(val)
         keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
+        if not val:
+            # textwrap.fill in case of empty val returns empty string
+            return key
+        val = unicode(val)
         ret = textwrap.fill(val, width=cols, initial_indent=key,
                             subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols // 3):
@@ -803,13 +805,12 @@ class Output(object):
                     except ValueError: # In case int() fails
                         uid = None
                 print(_("Changed by  : %s") % self._pwd_ui_username(uid))
-        print(self.fmtKeyValFill(_("Summary     : "),
-              unicode(pkg.summary or "")))
+        print(self.fmtKeyValFill(_("Summary     : "), pkg.summary or ""))
         if pkg.url:
             print(_("URL         : %s") % unicode(pkg.url))
-        print(self.fmtKeyValFill(_("License     : "), unicode(pkg.license)))
+        print(self.fmtKeyValFill(_("License     : "), pkg.license))
         print(self.fmtKeyValFill(_("Description : "),
-              unicode(pkg.description or "")))
+              pkg.description or ""))
         print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -983,7 +984,7 @@ class Output(object):
             if pkg is None:
                 continue
             nevra_l = len(unicode(pkg)) + len(self.GRP_PACKAGE_INDENT)
-            repo_l = len(pkg.reponame)
+            repo_l = len(unicode(pkg.reponame))
             nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
             repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
         return (nevra_lengths, repo_lengths)
@@ -1101,8 +1102,7 @@ class Output(object):
         print(_("Repo        : %s") % po.ui_from_repo)
         done = False
         for item in dnf.yum.misc.unique(values):
-            item = to_utf8(item)
-            if to_utf8(po.name) == item or to_utf8(po.summary) == item:
+            if po.name == item or po.summary == item:
                 continue # Skip double name/summary printing
 
             if not done:
@@ -1110,13 +1110,13 @@ class Output(object):
                 done = True
             can_overflow = True
             if False: pass
-            elif to_utf8(po.description) == item:
+            elif po.description == item:
                 key = _("Description : ")
                 item = unicode(item)
-            elif to_utf8(po.url) == item:
+            elif po.url == item:
                 key = _("URL         : %s")
                 can_overflow = False
-            elif to_utf8(po.license) == item:
+            elif po.license == item:
                 key = _("License     : %s")
                 can_overflow = False
             elif item.startswith("/"):
@@ -2502,6 +2502,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
+            pkgname = unicode(pkgname)
             msg = fmt % ("%-*.*s" % (wid1, wid1, process),
                          "%-*.*s" % (wid2, wid2, pkgname))
             if msg != self.lastmsg:

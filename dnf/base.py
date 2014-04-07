@@ -26,7 +26,6 @@ from dnf import const, query, sack
 from dnf.pycomp import unicode
 from dnf.yum import config
 from dnf.yum import history
-from dnf.yum import i18n
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser

@@ -57,7 +57,7 @@ _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
 
 from dnf.exceptions import MiscError
-from . import i18n
+import dnf.i18n
 import dnf.const
 from dnf.pycomp import is_py2str_py3bytes, basestring, unicode, long
 

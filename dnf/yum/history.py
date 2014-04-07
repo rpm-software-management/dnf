@@ -27,7 +27,6 @@ from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
-from .i18n import to_utf8
 from dnf.i18n import _
 import dnf.i18n
 
@@ -1125,7 +1124,7 @@ class YumHistory(object):
             # open file in append
             fo = open(data_fn, 'wb+')
             # write data
-            fo.write(to_utf8(data))
+            fo.write(data.encode())
             # flush data
             fo.flush()
             fo.close()
