@@ -34,6 +34,7 @@ import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.upgrade
+import dnf.cli.commands.distrosync
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
@@ -1035,7 +1036,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
-        self.register_command(dnf.cli.commands.DistroSyncCommand)
+        self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
 
     def _configure_cachedir(self):
         # perform the CLI-specific cachedir tricks
