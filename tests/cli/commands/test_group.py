@@ -14,3 +14,25 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
+
+from __future__ import absolute_import
+from tests import support
+
+import dnf.cli.commands.group as group
+
+class GroupCommandTest(support.TestCase):
+
+    def test_canonical(self):
+        cmd = group.GroupCommand(None)
+        (basecmd, extcmds) = cmd.canonical(['grouplist', 'crack'])
+        self.assertEqual(basecmd, 'groups')
+        self.assertEqual(extcmds, ['list', 'crack'])
+
+        (_, extcmds) = cmd.canonical(['groups'])
+        self.assertEqual(extcmds, ['summary'])
+
+        (_, extcmds) = cmd.canonical(['group', 'info', 'crack'])
+        self.assertEqual(extcmds, ['info', 'crack'])
+
+        (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
+        self.assertEqual(extcmds, ['upgrade', 'crack'])
