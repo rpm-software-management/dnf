@@ -41,6 +41,12 @@ class GroupCommandTest(support.TestCase):
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
 
+    def test_split_extcmds(self):
+        split = group.GroupCommand._split_extcmds(['with-optional', 'crack'])
+        self.assertEqual(split, (('mandatory', 'default', 'optional'), ['crack']))
+        split = group.GroupCommand._split_extcmds(['crack'])
+        self.assertEqual(split, (('mandatory', 'default'), ['crack']))
+
 class CompsQueryTest(support.TestCase):
 
     def setUp(self):

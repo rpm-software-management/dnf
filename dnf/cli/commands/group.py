@@ -118,6 +118,13 @@ class GroupCommand(commands.Command):
         if not comps:
             return 1, [_('No Groups Available in any repository')]
 
+    @staticmethod
+    def _split_extcmds(extcmds):
+        if extcmds[0] == 'with-optional':
+            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            return types, extcmds[1:]
+        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+
     def _grp_cmd(self, extcmds):
         return extcmds[0], extcmds[1:]
 
@@ -178,12 +185,6 @@ class GroupCommand(commands.Command):
             cnt += self.base.group_remove(grp)
         if not cnt:
             raise dnf.cli.CliError(_('No packages to remove from given groups.'))
-
-    def _split_extcmds(self, extcmds):
-        if extcmds[0] == 'with-optional':
-            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
-            return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
 
     @classmethod
     def canonical(cls, command_list):
