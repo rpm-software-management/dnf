@@ -23,6 +23,7 @@ from .. import commands
 from dnf.yum.i18n import to_unicode, _
 
 import dnf.cli
+import dnf.util
 import itertools
 
 def _ensure_grp_arg(cli, basecmd, extcmds):
@@ -38,6 +39,46 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
         cli.logger.critical(_('Error: Need a group or list of groups'))
         commands._err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
+
+class CompsQuery(object):
+
+    AVAILABLE = 1
+    INSTALLED = 2
+
+    ENVIRONMENTS = 1
+    GROUPS = 2
+
+    def __init__(self, comps, kinds, status):
+        self.comps = comps
+        self.kinds = kinds
+        self.status = status
+
+    def _get(self, fn, pat):
+        lst = []
+        for it in fn(pat):
+            if self.status & self.INSTALLED and it.installed:
+                lst.append(it)
+            if self.status & self.AVAILABLE and not it.installed:
+                lst.append(it)
+        return lst
+
+    def get(self, *patterns):
+        res = dnf.util.Bunch()
+        res.environments = []
+        res.groups = []
+        for pat in patterns:
+            envs = grps = None
+            if self.kinds & self.ENVIRONMENTS:
+                envs = self._get(self.comps.environments_by_pattern, pat)
+                res.environments.extend(envs)
+            if self.kinds & self.GROUPS:
+                grps = self._get(self.comps.groups_by_pattern, pat)
+                res.groups.extend(grps)
+            if not envs and not grps:
+                msg = _("No relevant match for the specified '%s'.")
+                msg = msg % to_unicode(pat)
+                raise dnf.cli.CliError(msg)
+        return res
 
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
@@ -88,27 +129,33 @@ class GroupCommand(commands.Command):
     def _install(self, extcmds):
         cnt = 0
         types, patterns = self._split_extcmds(extcmds)
-        for env in self._patterns2environments(patterns):
+        q = CompsQuery(self.base.comps,
+                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.AVAILABLE)
+        res = q.get(*patterns)
+        for env in res.environments:
             cnt += self.base.environment_install(env, types)
-        for grp in self._patterns2groups(patterns):
+        for grp in res.groups:
             cnt += self.base.group_install(grp, types)
         if not cnt:
             msg = _('No packages in any requested groups available to install.')
             raise dnf.cli.CliError(msg)
 
     def _mark_install(self, patterns):
-        groups = list(self._patterns2groups(patterns, lambda g: not g.installed))
+        q = CompsQuery(self.base.comps, CompsQuery.GROUPS, CompsQuery.AVAILABLE)
+        res = q.get(*patterns)
         installed = set(pkg.name for pkg in self.base.sack.query().installed())
-        for g in groups:
+        for g in res.groups:
             names = set(g.name for g in itertools.chain(g.mandatory_packages,
                                                         g.optional_packages))
             g.mark(names & installed)
         self.base.logger.info(_('Marked installed: %s') %
-                              ','.join([g.ui_name for g in groups]))
+                              ','.join([g.ui_name for g in res.groups]))
 
     def _mark_remove(self, patterns):
-        groups = list(self._patterns2groups(patterns, lambda g: g.installed))
-        for g in groups:
+        q = CompsQuery(self.base.comps, CompsQuery.GROUPS, CompsQuery.INSTALLED)
+        res = q.get(*patterns)
+        for g in res.groups:
             g.unmark()
         self.base.logger.info(_('Marked removed: %s') %
                               ','.join([g.ui_name for g in groups]))
@@ -118,34 +165,16 @@ class GroupCommand(commands.Command):
             return extcmds[0], extcmds[1:]
         return 'install', extcmds
 
-    @staticmethod
-    def _patterns2(fn, patterns, fltr):
-        for pat in patterns:
-            grps = fn(pat)
-            cnt = 0
-            for grp in grps:
-                if not fltr(grp):
-                    continue
-                yield grp
-                cnt += 1
-            if not cnt:
-                msg = _("No relevant match for the specified '%s'.")
-                msg = msg % to_unicode(pat)
-                raise dnf.cli.CliError(msg)
-
-    def _patterns2environments(self, patterns, fltr=lambda grp: True):
-        fn = self.base.comps.environments_by_pattern
-        return self._patterns2(fn, patterns, fltr)
-
-    def _patterns2groups(self, patterns, fltr=lambda grp: True):
-        fn = self.base.comps.groups_by_pattern
-        return self._patterns2(fn, patterns, fltr)
-
     def _remove(self, patterns):
         cnt = 0
-        for env in self._patterns2environments(patterns):
+        q = CompsQuery(self.base.comps,
+                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.INSTALLED)
+        res = q.get(*patterns)
+
+        for env in res.environments:
             cnt += self.base.environment_remove(env)
-        for grp in self._patterns2groups(patterns):
+        for grp in res.groups:
             cnt += self.base.group_remove(grp)
         if not cnt:
             raise dnf.cli.CliError(_('No packages to remove from given groups.'))
@@ -222,7 +251,7 @@ class GroupCommand(commands.Command):
                 assert subcmd == 'install'
                 return self._mark_install(extcmds)
 
-        self.cli.demands.resolve = True
+        self.cli.demands.resolving = True
         if cmd == 'install':
             return self._install(extcmds)
         if cmd == 'upgrade':

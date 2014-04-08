@@ -19,6 +19,10 @@ from __future__ import absolute_import
 from tests import support
 
 import dnf.cli.commands.group as group
+import dnf.comps
+
+def names(items):
+    return (it.name for it in items)
 
 class GroupCommandTest(support.TestCase):
 
@@ -36,3 +40,34 @@ class GroupCommandTest(support.TestCase):
 
         (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
         self.assertEqual(extcmds, ['upgrade', 'crack'])
+
+class CompsQueryTest(support.TestCase):
+
+    def setUp(self):
+        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy(),
+                                support.INSTALLED_ENVIRONMENTS.copy())
+        comps.add_from_xml_filename(support.COMPS_PATH)
+        self.comps = comps
+
+    def test_all(self):
+        status_all = group.CompsQuery.AVAILABLE | group.CompsQuery.INSTALLED
+        kinds_all = group.CompsQuery.ENVIRONMENTS | group.CompsQuery.GROUPS
+        q = group.CompsQuery(self.comps, kinds_all, status_all)
+
+        res = q.get('sugar*', '*er*')
+        self.assertItemsEqual(names(res.environments),
+                              ('Sugar Desktop Environment',))
+        self.assertItemsEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
+
+    def test_err(self):
+        q = group.CompsQuery(self.comps, group.CompsQuery.ENVIRONMENTS,
+                             group.CompsQuery.AVAILABLE)
+        with self.assertRaises(dnf.cli.CliError):
+            q.get('*er*')
+
+    def test_installed(self):
+        q = group.CompsQuery(self.comps, group.CompsQuery.GROUPS,
+                             group.CompsQuery.INSTALLED)
+        res =  q.get("Base")
+        self.assertEmpty(res.environments)
+        self.assertItemsEqual(names(res.groups), ('Base',))
