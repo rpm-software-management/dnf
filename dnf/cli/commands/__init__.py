@@ -281,45 +281,6 @@ class UpgradeToCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         return self.base.upgrade_userlist_to(patterns)
 
-class DistroSyncCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    distro-synch command.
-    """
-
-    aliases = ('distribution-synchronization', 'distro-sync')
-    activate_sack = True
-    resolve = True
-    writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return _("[PACKAGE...]")
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Synchronize installed packages to the latest available versions")
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-        These include that the program is being run by the root user,
-        and that there are enabled repositories with gpg keys.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkGPGKey(self.base, self.cli)
-        checkEnabledRepo(self.base, extcmds)
-
-    def run(self, extcmds):
-        return self.base.distro_sync_userlist(extcmds)
 
 class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
