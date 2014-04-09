@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import dnf.comps
 import dnf.persistor
 import tempfile
 import tests.support
@@ -33,10 +34,10 @@ class ClonableDictTest(tests.support.TestCase):
         g_c['base'].append('magical')
         self.assertNotEqual(g, g_c)
 
-class GroupPersistorTest(tests.support.TestCase):
+class OriginalGroupPersistorTest(tests.support.TestCase):
     def setUp(self):
         self.persistdir = tempfile.mkdtemp(prefix="dnf-groupprst-test")
-        self.prst = dnf.persistor.GroupPersistor(self.persistdir)
+        self.prst = dnf.persistor.OriginalGroupPersistor(self.persistdir)
 
     def tearDown(self):
         dnf.util.rm_rf(self.persistdir)
@@ -50,10 +51,39 @@ class GroupPersistorTest(tests.support.TestCase):
         prst.groups['base'] = ['pepper', 'tour']
         self.assertTrue(prst.save())
 
-        prst = dnf.persistor.GroupPersistor(self.persistdir)
+        prst = dnf.persistor.OriginalGroupPersistor(self.persistdir)
         self.assertEqual(prst.groups, {'base': ['pepper', 'tour']})
         self.assertEqual(prst.environments, {})
         self.assertFalse(prst.save())
+
+
+class GroupPersistorTest(tests.support.TestCase):
+    def setUp(self):
+        self.persistdir = tempfile.mkdtemp(prefix="dnf-groupprst-test.0.0.5")
+        self.prst = dnf.persistor.GroupPersistor(self.persistdir)
+
+    def tearDown(self):
+        dnf.util.rm_rf(self.persistdir)
+
+    def test_default(self):
+        """Default items are empty."""
+        grp = self.prst.group('pepper')
+        self.assertEmpty(grp.full_list)
+        self.assertEquals(grp.pkg_types, 0)
+
+    def test_saving(self):
+        prst = self.prst
+        grp = prst.group('pepper')
+        grp.full_list.extend(['pepper', 'tour'])
+        grp.pkg_types = dnf.comps.DEFAULT | dnf.comps.OPTIONAL
+
+        self.assertTrue(prst.save())
+
+        prst = dnf.persistor.GroupPersistor(self.persistdir)
+        grp = prst.group('pepper')
+        self.assertEqual(grp.full_list, ['pepper', 'tour'])
+        self.assertEqual(grp.pkg_types, dnf.comps.DEFAULT | dnf.comps.OPTIONAL)
+
 
 class RepoPersistorTest(tests.support.TestCase):
     def setUp(self):

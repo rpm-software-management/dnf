@@ -83,7 +83,7 @@ class ClonableDict(collections.MutableMapping):
         cls = self.__class__
         return cls.wrap_dict(_clone_dct(self.dct))
 
-class GroupPersistor(object):
+class OriginalGroupPersistor(object):
     def __init__(self, persistdir):
         self._dbfile = os.path.join(persistdir, 'groups.json')
         self.db = None
@@ -130,6 +130,116 @@ class GroupPersistor(object):
         with open(self._dbfile, 'w') as db:
             json.dump(self.db.dct, db)
         return True
+
+
+class _PersistMember(object):
+    DEFAULTS = ClonableDict({
+        'full_list' : [],
+        'grp_types' : 0,
+        'pkg_exclude' : [],
+        'pkg_types' : 0,
+    })
+
+    @staticmethod
+    def default():
+        return _PersistMember.DEFAULTS.clone().dct
+
+    def __init__(self, param_dct):
+        self.param_dct = param_dct
+
+    @property
+    def pkg_exclude(self):
+        return self.param_dct['pkg_exclude']
+
+    @property
+    def full_list(self):
+        return self.param_dct['full_list']
+
+    @property
+    def installed(self):
+        return self.grp_types | self.pkg_types != 0
+
+    @property
+    def grp_types(self):
+        return self.param_dct['grp_types']
+
+    @grp_types.setter
+    def grp_types(self, val):
+        self.param_dct['grp_types'] = val
+
+    @property
+    def pkg_types(self):
+        return self.param_dct['pkg_types']
+
+    @pkg_types.setter
+    def pkg_types(self, val):
+        self.param_dct['pkg_types'] = val
+
+
+class GroupPersistor(object):
+
+    @staticmethod
+    def _empty_db():
+        return ClonableDict({
+            'ENVIRONMENTS' : {},
+            'GROUPS' : {}
+        })
+
+    def __init__(self, persistdir):
+        self._dbfile = os.path.join(persistdir, 'groups.0.5.0.json')
+        self.db = None
+        self._original = None
+        self._load()
+        self._ensure_sanity()
+
+    def _access(self, subdict, id_):
+        subdict = self.db[subdict]
+        dct = subdict.get(id_)
+        if dct is None:
+            dct = _PersistMember.default()
+            subdict[id_] = dct
+
+        return _PersistMember(dct)
+
+    def _ensure_sanity(self):
+        """Make sure the input db is valid."""
+        if 'GROUPS' in self.db and 'ENVIRONMENTS' in self.db:
+            return
+        logger.warning(_('Invalid groups database, clearing.'))
+        self.db = self._empty_db()
+
+    def _load(self):
+        self.db = self._empty_db()
+        try:
+            with open(self._dbfile) as db:
+                content = db.read()
+                self.db = ClonableDict.wrap_dict(json.loads(content))
+                self._original = self.db.clone()
+        except IOError as e:
+            if e.errno != errno.ENOENT:
+                raise
+
+    def environment(self, id_):
+        return self._access('ENVIRONMENTS', id_)
+
+    @property
+    def environments(self):
+        return self.db['ENVIRONMENTS']
+
+    def group(self, id_):
+        return self._access('GROUPS', id_)
+
+    @property
+    def groups(self):
+        return self.db['GROUPS']
+
+    def save(self):
+        if self.db == self._original:
+            return False
+        with open(self._dbfile, 'w') as db:
+            json.dump(self.db.dct, db)
+        return True
+
 
 class RepoPersistor(object):
     """Persistent data kept for repositories.

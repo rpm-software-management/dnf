@@ -32,10 +32,11 @@ import locale
 import operator
 import re
 
-CONDITIONAL = 1 # :api ...
+# :api :abi
+CONDITIONAL = 1
 DEFAULT     = 2
-MANDATORY   = 3
-OPTIONAL    = 4
+MANDATORY   = 4
+OPTIONAL    = 8
 
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
