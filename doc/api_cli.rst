@@ -52,6 +52,12 @@
 
     The :class:`dnf.cli.Cli` instance to use with this command.
 
+  .. attribute:: summary
+    One line summary for the command used in ``dnf --help`` 
+
+  .. attribute:: usage
+    Usage string for the command used in ``dnf help <command>``
+
   .. method:: configure(args)
 
     Perform any configuration on the command itself and on the CLI. `args` is a list of additional arguments to the command. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>` it has on the way the :class:`.Sack` will be initialized. Default no-op implementation is provided.

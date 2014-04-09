@@ -90,22 +90,8 @@ class GroupCommand(commands.Command):
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}
     aliases = ('group', 'groups') + tuple(direct_commands.keys())
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[list|info|summary|install|upgrade|remove|mark] [GROUP]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display, or use, the groups information")
+    summary = _("Display, or use, the groups information")
+    usage = "[list|info|summary|install|upgrade|remove|mark] [%s]" % _('GROUP')
 
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)

@@ -31,23 +31,9 @@ class DistroSyncCommand(commands.Command):
     aliases = ('distro-sync', 'distribution-synchronization')
     activate_sack = True
     resolve = True
+    summary = _("Synchronize installed packages to the latest available versions")
+    usage = '[%s...]' % _('PACKAGE')
     writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return _("[PACKAGE...]")
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Synchronize installed packages to the latest available versions")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
