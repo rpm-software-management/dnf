@@ -244,8 +244,6 @@ class OptionParser(argparse.ArgumentParser):
     def _add_cmd_usage(self, cmd, group):
         """ store usage info about a single dnf command."""
         summary = cmd.summary
-        if summary == "":  # fallback to old method
-            summary = cmd.get_summary()
         name = cmd.aliases[0]
         if not name in self._cmd_usage:
             self._cmd_usage[name] = (group, summary)

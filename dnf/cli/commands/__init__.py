@@ -159,10 +159,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
     raise dnf.cli.CliError
 
 class Command(object):
-    """An abstract base class that defines the methods needed by the cli
-    to execute a specific command.  Subclasses must override at least
-    :func:`get_usage` and :func:`get_summary`.
-    """
+    """Abstract base class for CLI commands."""
 
     activate_sack = False
     aliases = [] # :api
@@ -218,22 +215,6 @@ class Command(object):
             return (_RPM_VERIFY, _RPM_REBUILDDB,
                     _REPORT_TMPLT % self.base.conf.bugtracker_url)
         raise NotImplementedError('error not supported yet: %s' % error)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for the command, including arguments. :deprecated 0.5.0
-
-        :return: a usage string for the command
-        """
-        return ""
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of what the command does. :deprecated 0.5.0
-
-        :return: a one line summary of what the command does
-        """
-        return ""
 
     def doCheck(self, basecmd, extcmds):
         """Verify that various conditions are met so that the command
@@ -1396,11 +1377,7 @@ class HelpCommand(Command):
         canonical_name = command.aliases[0]
 
         usage = command.usage
-        if usage == "":  # fallback to old deprecated method
-            usage = command.get_usage()
         summary = command.summary
-        if summary == "":  # fallback to old deprecated method
-            summary = command.get_summary()
 
         # XXX need detailed help here, too
         help_output = ""
