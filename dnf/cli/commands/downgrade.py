@@ -30,15 +30,9 @@ class DowngradeCommand(commands.Command):
     activate_sack = True
     aliases = ('downgrade',)
     resolve = True
+    summary = _("downgrade a package")
+    usage = "%s..."  % _('PACKAGE')
     writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "PACKAGE..."
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -56,11 +50,3 @@ class DowngradeCommand(commands.Command):
 
     def run(self, extcmds):
         return self.base.downgradePkgs(extcmds)
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("downgrade a package")

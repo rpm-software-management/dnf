@@ -34,15 +34,9 @@ class ReinstallCommand(commands.Command):
     activate_sack = True
     aliases = ('reinstall',)
     resolve = True
+    summary = _("reinstall a package")
+    usage = "%s..." % _('PACKAGE')
     writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "PACKAGE..."
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -103,11 +97,3 @@ class ReinstallCommand(commands.Command):
 
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("reinstall a package")

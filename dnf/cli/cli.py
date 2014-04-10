@@ -1109,24 +1109,6 @@ class Cli(object):
             conffile = dnf.const.CONF_FILENAME
         return installroot, conffile
 
-    def _make_usage(self):
-        """
-        Format an attractive usage string for yum, listing subcommand
-        names and summary usages.
-        """
-        name = dnf.const.PROGRAM_NAME
-        usage = '%s [options] COMMAND\n\nList of Commands:\n\n' % name
-        commands = dnf.yum.misc.unique([x for x in self.cli_commands.values()])
-        commands.sort(key=lambda x: x.aliases[0])
-        for command in commands:
-            try:
-                summary = command.get_summary()
-                usage += "%-14s %s\n" % (command.aliases[0], summary)
-            except (AttributeError, NotImplementedError):
-                usage += "%s\n" % command.aliases[0]
-
-        return usage
-
     def _parse_commands(self):
         """Read :attr:`self.cmds` and parse them out to make sure that
         the requested base command and argument makes any sense at
@@ -1211,8 +1193,7 @@ class Cli(object):
 
         :param args: a list of command line arguments
         """
-        usage = self._make_usage()
-        self.optparser = dnf.cli.option_parser.OptionParser(usage=usage)
+        self.optparser = dnf.cli.option_parser.OptionParser()
         opts, cmds = self.optparser.parse_known_args(args)
 
         # Just print out the version if that's what the user wanted
@@ -1296,9 +1277,23 @@ class Cli(object):
         else:
             sleeptime = 0
 
+        # store the main commands & summaries, before plugins are loaded
+        self.optparser.add_commands(self.cli_commands, 'main')
         if self.base.conf.plugins:
             self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
         self.base.plugins.run_init(self.base, self)
+        # store the plugin commands & summaries
+        self.optparser.add_commands(self.cli_commands,'plugin')
+
+        # build the usage info and put it into the optparser.
+        self.optparser.usage = self.optparser.get_usage()
+
+        # show help if the user requests it
+        # this is done here, because we first have the full
+        # usage info after the plugins are loaded.
+        if opts.help:
+            self.optparser.print_help()
+            sys.exit(0)
 
         # save our original args out
         self.base.args = args

@@ -22,6 +22,7 @@ from tests.support import mock
 
 import argparse
 import dnf.util
+import os
 
 class OptionParserTest(support.TestCase):
     def test_parse(self):
@@ -47,3 +48,48 @@ class OptionParserTest(support.TestCase):
         self.assertIsInstance(values, argparse.Namespace)
         dct = parser._non_nones2dict(values.__dict__)
         self.assertTrue(dct['assumeyes'])
+
+class MyTestCommand(dnf.cli.commands.Command):
+
+    aliases = ["test-cmd"]
+    summary = 'summary'
+    usage = 'usage'
+
+    def __init__(self, cli):
+        dnf.cli.commands.Command.__init__(self, cli)
+
+
+@mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
+class UsageTest(support.TestCase):
+
+    def setUp(self):
+        self.base = support.MockBase("main")
+        self.base._conf = dnf.conf.Conf()
+        self.base.output = support.MockOutput()
+        self.base.plugins = mock.Mock()
+        self.cli = dnf.cli.cli.Cli(self.base)
+        self.cli.command = mock.Mock()
+        self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
+
+    def test_OptParserAddCommand(self):
+        self.cli.configure(['info','foobar'])
+        cmd = MyTestCommand(self.cli)
+        self.cli.register_command(cmd)
+        self.cli.optparser.add_commands(self.cli.cli_commands,"plugin")
+        name = 'test-cmd'
+        self.assertTrue(name in self.cli.optparser._cmd_usage)
+        group, summary = self.cli.optparser._cmd_usage[name]
+        self.assertEqual(group,'plugin')
+        self.assertEqual(summary,'summary')
+
+    def test_OptParserGetUsage(self):
+        self.cli.configure(['info','foobar'])
+        cmd = MyTestCommand(self.cli)
+        self.cli.register_command(cmd)
+        self.cli.optparser.add_commands(self.cli.cli_commands,"plugin")
+        usage = self.cli.optparser.get_usage().split('\n')
+        self.assertEqual(usage[-2],'test-cmd                  summary')
+
+    def test_OptParserHelp(self):
+        with self.assertRaises(SystemExit):
+            self.cli.configure(['--help'])

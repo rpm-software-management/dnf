@@ -21,6 +21,7 @@
 from dnf.yum.i18n import _
 
 import argparse
+import dnf.yum.misc
 import logging
 import sys
 
@@ -32,7 +33,9 @@ class OptionParser(argparse.ArgumentParser):
     """
 
     def __init__(self, **kwargs):
-        argparse.ArgumentParser.__init__(self, **kwargs)
+        argparse.ArgumentParser.__init__(self, add_help=False, **kwargs)
+        self._cmd_usage = {} # names, summary for dnf commands, to build usage
+        self._cmd_groups = set() # cmd groups added (main, plugin)
         self._addYumBasicOptions()
 
     def error(self, msg):
@@ -233,3 +236,43 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--setopt", dest="setopts", default=[],
                            action="append",
                            help=_("set arbitrary config and repo options"))
+        # we add our own help option, so we can control that help is not shown
+        # automatic when we do the .parse_known_args(args)
+        # but first after plugins are loaded.
+        self.add_argument('-h', '--help', action="store_true", help="show help")
+
+    def _add_cmd_usage(self, cmd, group):
+        """ store usage info about a single dnf command."""
+        summary = cmd.summary
+        if summary == "":  # fallback to old method
+            summary = cmd.get_summary()
+        name = cmd.aliases[0]
+        if not name in self._cmd_usage:
+            self._cmd_usage[name] = (group, summary)
+            self._cmd_groups.add(group)
+
+    def add_commands(self, cli_cmds, group):
+        """ store name & summary for dnf commands
+
+        The stored information is used build usage information
+        grouped by build-in & plugin commands.
+        """
+        commands = dnf.yum.misc.unique([x for x in cli_cmds.values()])
+        for cmd in commands:
+            self._add_cmd_usage(cmd, group)
+
+    def get_usage(self):
+        """ get the usage infomation to show the user. """
+        desc = {'main': _('List of Main Commands'),
+                'plugin': _('List of Plugin Commands')}
+        name = dnf.const.PROGRAM_NAME
+        usage = '%s [options] COMMAND\n' % name
+        for grp in ['main', 'plugin']:
+            if not grp in self._cmd_groups:  # dont add plugin usage, if we dont have plugins
+                continue
+            usage += "\n%s\n\n" % desc[grp]
+            for name in sorted(self._cmd_usage.keys()):
+                group, summary = self._cmd_usage[name]
+                if group == grp:
+                    usage += "%-25s %s\n" % (name, summary)
+        return usage

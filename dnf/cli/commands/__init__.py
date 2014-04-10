@@ -166,9 +166,11 @@ class Command(object):
 
     activate_sack = False
     aliases = [] # :api
+    allow_erasing = False
     load_available_repos = True
     resolve = False
-    allow_erasing = False
+    summary = ""  # :api
+    usage = ""  # :api
     writes_rpmdb = False
 
     def __init__(self, cli):
@@ -219,19 +221,19 @@ class Command(object):
 
     @staticmethod
     def get_usage():
-        """Return a usage string for the command, including arguments.
+        """Return a usage string for the command, including arguments. :deprecated 0.5.0
 
         :return: a usage string for the command
         """
-        raise NotImplementedError
+        return ""
 
     @staticmethod
     def get_summary():
-        """Return a one line summary of what the command does.
+        """Return a one line summary of what the command does. :deprecated 0.5.0
 
         :return: a one line summary of what the command does
         """
-        raise NotImplementedError
+        return ""
 
     def doCheck(self, basecmd, extcmds):
         """Verify that various conditions are met so that the command
@@ -258,15 +260,9 @@ class UpgradeToCommand(Command):
     aliases = ('upgrade-to', 'update-to')
     activate_sack = True
     resolve = True
+    summary = _("Upgrade a package on your system to the specified version")
+    usage = "[%s...]" % _('PACKAGE')
     writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        return _("[PACKAGE...]")
-
-    @staticmethod
-    def get_summary():
-        return _("Upgrade a package on your system to the specified version")
 
     def doCheck(self, basecmd, extcmds):
         checkGPGKey(self.base, self.cli)
@@ -281,7 +277,6 @@ class UpgradeToCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         return self.base.upgrade_userlist_to(patterns)
 
-
 class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.
@@ -289,22 +284,8 @@ class InfoCommand(Command):
 
     aliases = ('info',)
     activate_sack = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[PACKAGE|all|available|installed|updates|extras|obsoletes|recent]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display details about a package or group of packages")
+    summary = _("Display details about a package or group of packages")
+    usage = "[%s|all|available|installed|updates|extras|obsoletes|recent]" % _('PACKAGE')
 
     @staticmethod
     def parse_extcmds(extcmds):
@@ -333,14 +314,7 @@ class ListCommand(InfoCommand):
 
     aliases = ('list',)
     activate_sack = True
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("List a package or groups of packages")
+    summary = _("List a package or groups of packages")
 
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
@@ -356,23 +330,9 @@ class EraseCommand(Command):
     load_available_repos = False
     resolve = True
     allow_erasing = True
+    summary = _("Remove a package or packages from your system")
+    usage = "%s..." % _('PACKAGE')
     writes_rpmdb = True
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "PACKAGE..."
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Remove a package or packages from your system")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -415,22 +375,8 @@ class MakeCacheCommand(Command):
     """
 
     aliases = ('makecache',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return ""
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Generate the metadata cache")
+    summary = _("Generate the metadata cache")
+    usage = ""
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -491,22 +437,8 @@ class CleanCommand(Command):
     """
 
     aliases = ('clean',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[packages|metadata|dbcache|plugins|expire-cache|all]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Remove cached data")
+    summary = _("Remove cached data")
+    usage = "[packages|metadata|dbcache|plugins|expire-cache|all]"
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
@@ -529,22 +461,8 @@ class ProvidesCommand(Command):
 
     activate_sack = True
     aliases = ('provides', 'whatprovides')
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "SOME_STRING"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Find what package provides the given value")
+    summary = _("Find what package provides the given value")
+    usage = _("SOME_STRING")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -566,22 +484,8 @@ class CheckUpdateCommand(Command):
 
     activate_sack = True
     aliases = ('check-update',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[PACKAGE...]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Check for available package upgrades")
+    summary = _("Check for available package upgrades")
+    usage = "[%s...]" % _('PACKAGE')
 
     def __init__(self, cli):
         super(CheckUpdateCommand, self).__init__(cli)
@@ -613,22 +517,8 @@ class SearchCommand(Command):
 
     activate_sack = True
     aliases = ('search',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "SOME_STRING"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Search package details for the given string")
+    summary = _("Search package details for the given string")
+    usage = _("SOME_STRING")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -650,22 +540,8 @@ class RepoListCommand(Command):
 
     activate_sack = True
     aliases = ('repolist',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return '[all|enabled|disabled]'
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _('Display the configured software repositories')
+    summary = _('Display the configured software repositories')
+    usage = '[all|enabled|disabled]'
 
     def run(self, extcmds):
         def _repo_size(repo):
@@ -1417,6 +1293,10 @@ class RepoPkgsCommand(Command):
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
+    summary = _('Run commands on top of all packages in given repository')
+    usage = '%s check-update|info|install|list|move-to|reinstall|' \
+                 'reinstall-old|remove|remove-or-reinstall|upgrade|' \
+                 'upgrade-to [%s...]' % (_('REPO'), _('ARG'))
 
     def __init__(self, cli):
         """Initialize the command."""
@@ -1441,18 +1321,6 @@ class RepoPkgsCommand(Command):
         """Do any command-specific Base configuration."""
         _, subcmd, _ = self.parse_extcmds(self.base.extcmds)
         subcmd.configure(args)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for the command, including arguments."""
-        return _('REPO check-update|info|install|list|move-to|reinstall|'
-                 'reinstall-old|remove|remove-or-reinstall|upgrade|'
-                 'upgrade-to [ARG...]')
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of what the command does."""
-        return _('Run commands on top of all packages in given repository')
 
     def parse_extcmds(self, extcmds):
         """Parse command arguments *extcmds*."""
@@ -1505,22 +1373,8 @@ class HelpCommand(Command):
     """
 
     aliases = ('help',)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "COMMAND"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display a helpful usage message")
+    summary = _("Display a helpful usage message")
+    usage = _("COMMAND")
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -1541,17 +1395,12 @@ class HelpCommand(Command):
     def _makeOutput(command):
         canonical_name = command.aliases[0]
 
-        # Check for the methods in case we have plugins that don't
-        # implement these.
-        # XXX Remove this once usage/summary are common enough
-        try:
+        usage = command.usage
+        if usage == "":  # fallback to old deprecated method
             usage = command.get_usage()
-        except (AttributeError, NotImplementedError):
-            usage = None
-        try:
+        summary = command.summary
+        if summary == "":  # fallback to old deprecated method
             summary = command.get_summary()
-        except (AttributeError, NotImplementedError):
-            summary = None
 
         # XXX need detailed help here, too
         help_output = ""
@@ -1585,6 +1434,8 @@ class HistoryCommand(Command):
 
     activate_sack = True
     aliases = ('history',)
+    summary = _("Display, or use, the transaction history")
+    usage = "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
@@ -1601,23 +1452,6 @@ class HistoryCommand(Command):
                           'result in an inconsistent package database.') % id_,)
 
         return Command.get_error_output(self, error)
-
-    @staticmethod
-    def get_usage():
-        """Return a usage string for this command.
-
-        :return: a usage string for this command
-        """
-        return "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
-
-    @staticmethod
-    def get_summary():
-        """Return a one line summary of this command.
-
-        :return: a one line summary of this command
-        """
-        return _("Display, or use, the transaction history")
-
 
     def __init__(self, cli):
         super(HistoryCommand, self).__init__(cli)
