@@ -52,16 +52,12 @@ class OptionParserTest(support.TestCase):
 class MyTestCommand(dnf.cli.commands.Command):
 
     aliases = ["test-cmd"]
+    summary = 'summary'
+    usage = 'usage'
+
     def __init__(self, cli):
         dnf.cli.commands.Command.__init__(self, cli)
 
-    @staticmethod
-    def get_usage():
-        return 'usage'
-
-    @staticmethod
-    def get_summary():
-        return 'summary'
 
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
 class UsageTest(support.TestCase):
