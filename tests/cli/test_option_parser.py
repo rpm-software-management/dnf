@@ -60,38 +60,85 @@ class MyTestCommand(dnf.cli.commands.Command):
         dnf.cli.commands.Command.__init__(self, cli)
 
 
-@mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
-class UsageTest(support.TestCase):
+class MyTestCommand2(dnf.cli.commands.Command):
+
+    aliases = ["test-cmd2"]
+    summary = 'summary2'
+    usage = 'usage2'
+
+    def __init__(self, cli):
+        dnf.cli.commands.Command.__init__(self, cli)
+
+
+class OptionParserAddCmd(support.TestCase):
 
     def setUp(self):
-        self.base = support.MockBase("main")
-        self.base._conf = dnf.conf.Conf()
-        self.base.output = support.MockOutput()
-        self.base.plugins = mock.Mock()
-        self.cli = dnf.cli.cli.Cli(self.base)
-        self.cli.command = mock.Mock()
+        self.cli_commands = {}
+        self.parser = OptionParser()
+        self.cli = mock.Mock()
 
-    @mock.patch('dnf.cli.cli.Cli.read_conf_file')
-    def test_OptParserAddCommand(self, read_conf_file):
-        self.cli.configure(['info', 'foobar'])
+    def _register_command(self, command_cls):
+        """ helper for simulate dnf.cli.cli.Cli.register_Command()"""
+        for name in command_cls.aliases:
+            self.cli_commands[name] = command_cls
+
+    def test_add_commands(self):
         cmd = MyTestCommand(self.cli)
-        self.cli.register_command(cmd)
-        self.cli.optparser.add_commands(self.cli.cli_commands, "plugin")
-        name = 'test-cmd'
-        self.assertTrue(name in self.cli.optparser._cmd_usage)
-        group, summary = self.cli.optparser._cmd_usage[name]
-        self.assertEqual(group, 'plugin')
-        self.assertEqual(summary, 'summary')
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "main")
+        name = cmd.aliases[0]
+        self.assertTrue(name in self.parser._cmd_usage)
+        group, summary = self.parser._cmd_usage[name]
+        self.assertEqual(group, 'main')
+        self.assertEqual(summary, cmd.summary)
+        self.assertEqual(self.parser._cmd_groups, set(['main']))
 
-    @mock.patch('dnf.cli.cli.Cli.read_conf_file')
-    def test_OptParserGetUsage(self, read_conf_file):
-        self.cli.configure(['info', 'foobar'])
+    def test_add_commands_only_once(self):
         cmd = MyTestCommand(self.cli)
-        self.cli.register_command(cmd)
-        self.cli.optparser.add_commands(self.cli.cli_commands, "plugin")
-        usage = self.cli.optparser.get_usage().split('\n')
-        self.assertEqual(usage[-2], 'test-cmd                  summary')
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "main")
+        cmd = MyTestCommand(self.cli)
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "plugin")
+        self.assertEqual(len(self.parser._cmd_usage.keys()), 1)
+        self.assertEqual(self.parser._cmd_groups, set(['main']))
 
-    def test_OptParserHelp(self):
-        with self.assertRaises(SystemExit):
-            self.cli.configure(['--help'])
+    def test_cmd_groups(self):
+        cmd = MyTestCommand(self.cli)
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "main")
+        cmd = MyTestCommand2(self.cli)
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "plugin")
+        self.assertEqual(len(self.parser._cmd_groups), 2)
+        self.assertEqual(self.parser._cmd_groups, set(['main', 'plugin']))
+
+    def test_help_option_set(self):
+        opts, cmds = self.parser.parse_known_args(['-h'])
+        self.assertTrue(opts.help)
+
+    def test_help_option_notset(self):
+        opts, cmds = self.parser.parse_known_args(['foo', 'bar'])
+        self.assertFalse(opts.help)
+
+    def test_get_usage(self):
+        output = [
+            u'dnf [options] COMMAND',
+            u'',
+            u'List of Main Commands',
+            u'',
+            u'test-cmd                  summary',
+            u'',
+            u'List of Plugin Commands',
+            u'',
+            u'test-cmd2                 summary2',
+            u'']
+        cmd = MyTestCommand(self.cli)
+        self._register_command(cmd)
+        self.parser.add_commands(self.cli_commands, "main")
+        cmd2 = MyTestCommand2(self.cli)
+        self._register_command(cmd2)
+        self.parser.add_commands(self.cli_commands, "plugin")
+        self.assertEqual(len(self.parser._cmd_usage.keys()), 2)
+        usage = self.parser.get_usage().split('\n')
+        self.assertEqual(usage, output)
