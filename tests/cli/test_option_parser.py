@@ -70,7 +70,7 @@ class MyTestCommand2(dnf.cli.commands.Command):
         dnf.cli.commands.Command.__init__(self, cli)
 
 
-class OptionParserAddCmd(support.TestCase):
+class OptionParserAddCmdTest(support.TestCase):
 
     def setUp(self):
         self.cli_commands = {}
