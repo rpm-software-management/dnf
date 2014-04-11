@@ -75,6 +75,7 @@ class OptionParserAddCmd(support.TestCase):
     def setUp(self):
         self.cli_commands = {}
         self.parser = OptionParser()
+        self.parser._ = dnf.pycomp.NullTranslations().ugettext
         self.cli = mock.Mock()
 
     def _register_command(self, command_cls):
