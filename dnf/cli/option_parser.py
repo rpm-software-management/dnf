@@ -25,6 +25,7 @@ import argparse
 import dnf.yum.misc
 import logging
 import sys
+import dnf.exceptions
 
 logger = logging.getLogger("dnf")
 
