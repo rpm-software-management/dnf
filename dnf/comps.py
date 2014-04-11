@@ -21,6 +21,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.exceptions import CompsError
+from dnf.yum.i18n import _
 from functools import reduce
 
 import dnf.i18n
@@ -320,3 +321,170 @@ class Comps(object):
     def groups_iter(self):
         # :api
         return (self._build_group(g) for g in self._i.groups)
+
+
+class TransactionBunch(object):
+    def __init__(self):
+        self.install = set()
+        self.remove = set()
+        self.upgrade = set()
+
+    def __iadd__(self, other):
+        self.install.update(other.install)
+        self.upgrade.update(other.upgrade)
+        self.remove = (self.remove | other.remove) - self.install - self.upgrade
+        return self
+
+
+class Solver(object):
+    def __init__(self, persistor):
+        self.persistor = persistor
+
+    @staticmethod
+    def _full_group_set(env):
+        return {grp.id for grp in env.groups_iter()}
+
+    @staticmethod
+    def _full_package_set(grp):
+        return {pkg.name for pkg in grp.mandatory_packages +
+                grp.default_packages + grp.optional_packages}
+
+    @staticmethod
+    def _pkgs_of_type(group, pkg_types):
+        pkgs = set()
+        if pkg_types & MANDATORY:
+            pkgs.update(pkg.name for pkg in group.mandatory_packages)
+        if pkg_types & DEFAULT:
+            pkgs.update(pkg.name for pkg in group.default_packages
+                        if pkg.name not in exclude)
+        if pkg_types & OPTIONAL:
+            pkgs.update(pkg.name for pkg in group.optional_packages
+                        if pkg.name not in exclude)
+        return pkgs
+
+    def _removable_pkg(self, pkg_name):
+        prst = self.persistor
+        count = 0
+        for id_ in prst.groups:
+            p_grp = prst.group(id_)
+            count += sum(1 for pkg in p_grp.full_list if pkg == pkg_name)
+        return count < 2
+
+    def _removable_grp(self, grp_name):
+        prst = self.persistor
+        count = 0
+        for id_ in prst.environments:
+            p_env = prst.environment(id_)
+            count += sum(1 for grp in p_env.full_list if grp == grp_name)
+        return count < 2
+
+    def environment_install(self, env, pkg_types, exclude):
+        p_env = self.persistor.environment(env.id)
+        if p_env.installed:
+            raise CompsError(_("Environment '%s' is already installed.") %
+                             env.ui_name)
+
+        p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
+        exclude = set() if exclude is None else set(exclude)
+        p_env.pkg_exclude.extend(exclude)
+        p_env.pkg_types = pkg_types
+        p_env.full_list.extend(self._full_group_set(env))
+
+        trans = TransactionBunch()
+        for grp in env.groups_iter():
+            trans += self.group_install(grp, pkg_types, exclude)
+        return trans
+
+    def environment_remove(self, env):
+        p_env = self.persistor.environment(env.id)
+        if not p_env.installed:
+            raise CompsError(_("Environment '%s' is not installed.") %
+                             env.ui_name)
+
+        trans = TransactionBunch()
+        group_names = set(p_env.full_list)
+
+        for grp in env.groups_iter():
+            if grp.id not in group_names:
+                continue
+            if not self._removable_grp(grp.id):
+                continue
+            trans += self.group_remove(grp)
+
+        del p_env.full_list[:]
+        del p_env.pkg_exclude[:]
+        p_env.grp_types = 0
+        p_env.pkg_types = 0
+        return trans
+
+    def environment_upgrade(self, env):
+        p_env = self.persistor.environment(env.id)
+        if not p_env.installed:
+            raise CompsError(_("Environment '%s' is not installed.") %
+                             env.ui_name)
+
+        old_set = set(p_env.full_list)
+        new_set = self._full_group_set(env)
+        pkg_types = p_env.pkg_types
+        exclude = p_env.pkg_exclude
+
+        trans = TransactionBunch()
+        for grp in env.groups_iter():
+            if grp.id in old_set:
+                # upgrade
+                try:
+                    trans += self.group_upgrade(grp)
+                except dnf.exceptions.CompsError:
+                    # might no longer be installed
+                    pass
+            else:
+                # install
+                trans += self.group_install(grp, pkg_types, exclude)
+        return trans
+
+    def group_install(self, group, pkg_types, exclude):
+        p_grp = self.persistor.group(group.id)
+        if p_grp.installed:
+            raise CompsError(_("Group '%s' is already installed.") %
+                             group.ui_name)
+
+        exclude = set() if exclude is None else set(exclude)
+        p_grp.pkg_exclude.extend(exclude)
+        p_grp.pkg_types = pkg_types
+        p_grp.full_list.extend(self._full_package_set(group))
+
+        trans = TransactionBunch()
+        trans.install = self._pkgs_of_type(group, pkg_types) - exclude
+        return trans
+
+    def group_remove(self, group):
+        p_grp = self.persistor.group(group.id)
+        if not p_grp.installed:
+            raise CompsError(_("Group '%s' not installed.") %
+                             group.ui_name)
+
+        trans = TransactionBunch()
+        exclude = p_grp.pkg_exclude
+        trans.remove = {pkg for pkg in p_grp.full_list
+                        if pkg not in exclude and self._removable_pkg(pkg)}
+        p_grp.pkg_types = 0
+        del p_grp.full_list[:]
+        del p_grp.pkg_exclude[:]
+        return trans
+
+    def group_upgrade(self, group):
+        p_grp = self.persistor.group(group.id)
+        if not p_grp.installed:
+            raise CompsError(_("Group '%s' not installed.") %
+                             group.ui_name)
+
+        old_set = set(p_grp.full_list)
+        new_set = self._pkgs_of_type(group, p_grp.pkg_types)
+        del p_grp.full_list[:]
+        p_grp.full_list.extend(self._full_package_set(group))
+
+        trans = TransactionBunch()
+        trans.install = new_set - old_set
+        trans.remove = old_set - new_set
+        trans.upgrade = old_set - trans.remove
+        return trans
