@@ -21,6 +21,8 @@ from tests import support
 from tests.support import mock
 
 import argparse
+import dnf.cli.commands
+import dnf.pycomp
 import dnf.util
 
 
