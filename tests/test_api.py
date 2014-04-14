@@ -16,9 +16,9 @@
 #
 
 from __future__ import unicode_literals
-import dnf
 from dnf.pycomp import unicode
 from tests.support import PycompTestCase
+import dnf
 
 class APITest(PycompTestCase):
     def test_base(self):

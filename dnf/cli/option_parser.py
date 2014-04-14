@@ -22,10 +22,10 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import argparse
+import dnf.exceptions
 import dnf.yum.misc
 import logging
 import sys
-import dnf.exceptions
 
 logger = logging.getLogger("dnf")
 

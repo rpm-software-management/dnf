@@ -18,6 +18,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.i18n import _
 from dnf.pycomp import unicode
 import time
 import os, os.path
@@ -27,7 +28,6 @@ from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
-from dnf.i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch

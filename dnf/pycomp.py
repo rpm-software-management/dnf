@@ -22,8 +22,8 @@ from gettext import NullTranslations
 from sys import version_info
 
 import itertools
-import types
 import locale
+import types
 
 if version_info.major >= 3:
     PY3 = True

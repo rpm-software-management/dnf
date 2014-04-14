@@ -23,19 +23,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from dnf.i18n import _
-import collections
 import dnf.logging
+import dnf.pycomp
 import dnf.util
 import fnmatch
 import glob
 import importlib
 import iniparse.compat
-import itertools
 import logging
 import operator
 import os
 import sys
-import dnf.pycomp
 
 logger = logging.getLogger('dnf')
 

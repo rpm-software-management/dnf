@@ -16,6 +16,8 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
+from dnf.i18n import _
+from dnf.pycomp import basestring
 import dnf.transaction
 import rpm
 import os
@@ -23,9 +25,7 @@ import fcntl
 import time
 import logging
 import sys
-from dnf.i18n import _
 from . import misc
-from dnf.pycomp import basestring
 import tempfile
 import collections
 

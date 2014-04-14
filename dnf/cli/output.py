@@ -31,8 +31,8 @@ import textwrap
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
-from dnf.yum.misc import prco_tuple_to_string
 from dnf.i18n import _, P_, ucd, fill_exact_width
+from dnf.yum.misc import prco_tuple_to_string
 import dnf.yum.misc
 
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
@@ -45,11 +45,10 @@ import dnf.util
 
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
+from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 
 import locale
-
 import hawkey
-from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 
 try:
     assert max(2, 4) == 4

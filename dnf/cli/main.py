@@ -45,8 +45,8 @@ def suppress_keyboard_interrupt_message():
 # do this ASAP to prevent tracebacks after ^C during imports
 suppress_keyboard_interrupt_message()
 
-from dnf.i18n import _
 from dnf.cli.utils import show_lock_owner
+from dnf.i18n import _
 
 import dnf.cli.cli
 import dnf.exceptions
@@ -57,7 +57,6 @@ import errno
 import logging
 import os
 import os.path
-import time
 
 logger = logging.getLogger("dnf")
 

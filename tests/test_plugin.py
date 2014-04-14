@@ -20,9 +20,8 @@ from __future__ import unicode_literals
 
 import dnf.logging
 import dnf.plugin
-import logging
-import tests.support
 import dnf.pycomp
+import tests.support
 
 PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
 

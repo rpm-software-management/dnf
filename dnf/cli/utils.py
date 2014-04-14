@@ -16,11 +16,11 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.i18n import _
 import os
 import time
 
 from .cli import *
-from dnf.i18n import _
 
 from dnf.cli.format import format_number
 

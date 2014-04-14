@@ -24,8 +24,8 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number
-from dnf.pycomp import unicode
 from dnf.i18n import _, fill_exact_width
+from dnf.pycomp import unicode
 
 import dnf.cli
 import dnf.const

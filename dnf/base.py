@@ -23,13 +23,13 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf import const, query, sack
+from dnf.i18n import _, P_
 from dnf.pycomp import unicode
 from dnf.yum import config
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
-from dnf.i18n import _, P_
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce
 

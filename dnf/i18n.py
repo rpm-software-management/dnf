@@ -19,11 +19,11 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.pycomp import PY3, is_py3bytes, unicode, setlocale
 import gettext
 import locale
 import os
 import sys
-from dnf.pycomp import PY3, is_py3bytes, unicode, setlocale
 
 """
 Centralize i18n stuff here. Must be unittested.
