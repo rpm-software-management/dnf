@@ -39,6 +39,8 @@ DEFAULT     = 2
 MANDATORY   = 4
 OPTIONAL    = 8
 
+ALL_TYPES = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
+
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
     return reduce(operator.__add__, map(len, collections))
@@ -125,9 +127,8 @@ class Category(Forwarder):
 class Environment(Forwarder):
     # :api
 
-    def __init__(self, iobj, langs, installed_environments, group_factory):
+    def __init__(self, iobj, langs, group_factory):
         super(Environment, self).__init__(iobj, langs)
-        self._installed_environments = installed_environments
         self._group_factory = group_factory
 
     def groups_iter(self):
@@ -138,30 +139,10 @@ class Environment(Forwarder):
                 raise ValueError(msg % (grp_id.name, self.id))
             yield grp
 
-    @property
-    def installed(self):
-        return self.id in self._installed_environments
-
-    @property
-    def installed_groups(self):
-        for grp_id in self._installed_environments.get(self.id, []):
-            grp = self._group_factory(grp_id)
-            if grp is None:
-                msg = "no group '%s' from environment '%s'"
-                raise ValueError(msg % (grp_id.name, self.id))
-            yield grp
-
-    def mark(self, groups):
-        self._installed_environments[self.id] = list(groups)
-
-    def unmark(self):
-        self._installed_environments.pop(self.id, None)
-
 class Group(Forwarder):
     # :api
-    def __init__(self, iobj, langs, installed_groups, pkg_factory):
+    def __init__(self, iobj, langs, pkg_factory):
         super(Group, self).__init__(iobj, langs)
-        self._installed_groups = installed_groups
         self._pkg_factory = pkg_factory
         self.selected = False
 
@@ -176,24 +157,9 @@ class Group(Forwarder):
     def default_packages(self):
         return self._packages_of_type(libcomps.PACKAGE_TYPE_DEFAULT)
 
-    def mark(self, packages):
-        self._installed_groups[self.id] = list(packages)
-
-    @property
-    def installed(self):
-        return self.id in self._installed_groups
-
-    def installed_packages(self):
-        names = self._installed_groups.get(self.id, [])
-        pkgs = (pkg for pkg in self.packages if pkg.name in names)
-        return map(self._pkg_factory, pkgs)
-
     def packages_iter(self):
         # :api
         return map(self._pkg_factory, self.packages)
-
-    def unmark(self):
-        self._installed_groups.pop(self.id, None)
 
     @property
     def mandatory_packages(self):
@@ -233,12 +199,9 @@ class Package(Forwarder):
 class Comps(object):
     # :api
 
-    def __init__(self, installed_groups, installed_environments):
+    def __init__(self):
         self._i = libcomps.Comps()
-        self._installed_groups = installed_groups
-        self._installed_environments = installed_environments
         self._langs = _Langs()
-        self.persistor = None
 
     def __len__(self):
         return _internal_comps_length(self._i)
@@ -247,12 +210,10 @@ class Comps(object):
         return Category(icategory, self._langs)
 
     def _build_environment(self, ienvironment):
-        return Environment(ienvironment, self._langs,
-                           self._installed_environments, self.group_by_id)
+        return Environment(ienvironment, self._langs, self.group_by_id)
 
     def _build_group(self, igroup):
-        return Group(igroup, self._langs, self._installed_groups,
-                     self._build_package)
+        return Group(igroup, self._langs, self._build_package)
 
     def _build_package(self, ipkg):
         return Package(ipkg)
@@ -350,7 +311,7 @@ class Solver(object):
                 grp.default_packages + grp.optional_packages}
 
     @staticmethod
-    def _pkgs_of_type(group, pkg_types):
+    def _pkgs_of_type(group, pkg_types, exclude):
         pkgs = set()
         if pkg_types & MANDATORY:
             pkgs.update(pkg.name for pkg in group.mandatory_packages)
@@ -392,7 +353,10 @@ class Solver(object):
 
         trans = TransactionBunch()
         for grp in env.groups_iter():
-            trans += self.group_install(grp, pkg_types, exclude)
+            try:
+                trans += self.group_install(grp, pkg_types, exclude)
+            except dnf.exceptions.CompsError:
+                pass
         return trans
 
     def environment_remove(self, env):
@@ -454,7 +418,7 @@ class Solver(object):
         p_grp.full_list.extend(self._full_package_set(group))
 
         trans = TransactionBunch()
-        trans.install = self._pkgs_of_type(group, pkg_types) - exclude
+        trans.install = self._pkgs_of_type(group, pkg_types, exclude)
         return trans
 
     def group_remove(self, group):
@@ -477,9 +441,9 @@ class Solver(object):
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %
                              group.ui_name)
-
+        exclude = set(p_grp.pkg_exclude)
         old_set = set(p_grp.full_list)
-        new_set = self._pkgs_of_type(group, p_grp.pkg_types)
+        new_set = self._pkgs_of_type(group, p_grp.pkg_types, exclude)
         del p_grp.full_list[:]
         p_grp.full_list.extend(self._full_package_set(group))
 

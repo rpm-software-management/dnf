@@ -50,15 +50,12 @@ class GroupCommandTest(support.TestCase):
 class CompsQueryTest(support.TestCase):
 
     def setUp(self):
-        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy(),
-                                support.INSTALLED_ENVIRONMENTS.copy())
-        comps.add_from_xml_filename(support.COMPS_PATH)
-        self.comps = comps
+        (self.comps, self.prst) = support.mock_comps()
 
     def test_all(self):
         status_all = group.CompsQuery.AVAILABLE | group.CompsQuery.INSTALLED
         kinds_all = group.CompsQuery.ENVIRONMENTS | group.CompsQuery.GROUPS
-        q = group.CompsQuery(self.comps, kinds_all, status_all)
+        q = group.CompsQuery(self.comps, self.prst, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
         self.assertItemsEqual(names(res.environments),
@@ -66,14 +63,14 @@ class CompsQueryTest(support.TestCase):
         self.assertItemsEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
 
     def test_err(self):
-        q = group.CompsQuery(self.comps, group.CompsQuery.ENVIRONMENTS,
+        q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.ENVIRONMENTS,
                              group.CompsQuery.AVAILABLE)
         with self.assertRaises(dnf.cli.CliError):
             q.get('*er*')
 
     def test_installed(self):
-        q = group.CompsQuery(self.comps, group.CompsQuery.GROUPS,
+        q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.GROUPS,
                              group.CompsQuery.INSTALLED)
-        res =  q.get("Base")
+        res =  q.get('somerset')
         self.assertEmpty(res.environments)
-        self.assertItemsEqual(names(res.groups), ('Base',))
+        self.assertItemsEqual(names(res.groups), ('Solid Ground',))

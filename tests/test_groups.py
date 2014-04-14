@@ -19,13 +19,44 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 
+import dnf.comps
 import dnf.util
 import warnings
 
-class GroupTest(support.ResultTestCase):
+
+class EmptyPersistorTest(support.ResultTestCase):
+    """Test group operations with empty persistor."""
+
+    def setUp(self):
+        self.base = support.MockBase('main')
+        self.base.read_mock_comps_empty_prst()
+        self.base.init_sack()
+
+    def test_group_install_exclude(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
+        self.assertEqual(cnt, 0)
+
+    def test_add_comps_trans(self):
+        trans = dnf.comps.TransactionBunch()
+        trans.install.add('trampoline')
+        self.assertGreater(self.base._add_comps_trans(trans), 0)
+        (installed, removed) = self.installed_removed(self.base)
+        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+        self.assertEmpty(removed)
+
+        trans = dnf.comps.TransactionBunch()
+        trans.install.add('waltz')
+        self.assertEqual(self.base._add_comps_trans(trans), 0)
+
+class PresetPersistorTest(support.ResultTestCase):
+    """Test group operations with some data in the persistor."""
+
     def setUp(self):
         self.base = support.MockBase("main")
         self.base.read_mock_comps(support.COMPS_PATH)
+        self.base.init_sack()
 
     def test_environment_list(self):
         env_inst, env_avail = self.base._environment_list(['sugar*'])
@@ -36,9 +67,14 @@ class GroupTest(support.ResultTestCase):
     def test_environment_remove(self):
         comps = self.base.comps
         env = comps.environment_by_pattern("sugar-desktop-environment")
-        self.assertEqual(self.base.environment_remove(env), 1)
-        self.assertEmpty(comps._installed_groups)
-        self.assertEmpty(comps._installed_environments)
+        self.assertGreater(self.base.environment_remove(env), 0)
+        prst = self.base.group_persistor
+        p_env = prst.environment(env.id)
+        self.assertFalse(p_env.installed)
+        peppers = prst.group('Peppers')
+        somerset = prst.group('somerset')
+        self.assertFalse(peppers.installed)
+        self.assertFalse(somerset.installed)
 
     def test_install(self):
         comps = self.base.comps
@@ -51,50 +87,56 @@ class GroupTest(support.ResultTestCase):
         self.assertLength(removed, 0)
 
     def test_group_install(self):
-        comps = self.base.comps
-        installed_groups = self.base.comps._installed_groups
-        grp = comps.group_by_pattern("Solid Ground")
-        self.assertNotIn(grp.id, installed_groups)
+        prst = self.base.group_persistor
+        grp = self.base.comps.group_by_pattern('Base')
+        p_grp = prst.group('base')
+        self.assertFalse(p_grp.installed)
 
-        self.assertEqual(self.base.group_install(grp, ('mandatory',)), 1)
+        self.assertEqual(self.base.group_install(grp, ('mandatory',)), 2)
         inst, removed = self.installed_removed(self.base)
-        self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
-        self.assertLength(removed, 0)
-        # does not contain the already installed 'pepper':
-        self.assertEqual(installed_groups[grp.id], ['trampoline'])
-
-    def test_group_install_exclude(self):
-        comps = self.base.comps
-        installed_groups = self.base.comps._installed_groups
-        grp = dnf.util.first(comps.groups_by_pattern('somerset'))
-
-        cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
-        self.assertEqual(cnt, 0)
+        self.assertEmpty(inst)
+        self.assertEmpty(removed)
+        self.assertTrue(p_grp.installed)
 
     def test_group_remove(self):
-        grp = self.base.comps.group_by_pattern('Base')
-        self.assertIn(grp.id, self.base.comps._installed_groups)
+        prst = self.base.group_persistor
+        grp = self.base.comps.group_by_pattern('somerset')
+        p_grp = prst.group('somerset')
 
-        self.assertEqual(self.base.group_remove(grp), 1)
+        self.assertGreater(self.base.group_remove(grp), 0)
         inst, removed = self.installed_removed(self.base)
-        self.assertLength(inst, 0)
+        self.assertEmpty(inst)
         self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))
-        self.assertNotIn(grp.id, self.base.comps._installed_groups)
+        self.assertFalse(p_grp.installed)
+
 
 class EnvironmentInstallTest(support.ResultTestCase):
     def setUp(self):
         """Set up a test where sugar is considered not installed."""
         self.base = support.MockBase("main")
+        self.base.init_sack()
         self.base.read_mock_comps(support.COMPS_PATH)
-        comps = self.base.comps
-        comps._installed_environments.pop('sugar-desktop-environment')
+        self.prst = self.base.group_persistor
+        p_env = self.prst.environment('sugar-desktop-environment')
+        p_env.pkg_types = 0
+        p_env.grp_types = 0
+        del p_env.full_list[:]
+        p_grp = self.prst.group('somerset')
+        p_grp.pkg_types = 0
+        del p_grp.full_list[:]
 
     def test_environment_install(self):
         comps = self.base.comps
-        original_groups = set(comps._installed_groups.keys())
         env = comps.environment_by_pattern("sugar-desktop-environment")
         self.base.environment_install(env, ('mandatory',))
-        new_groups = set(comps._installed_groups.keys()) - original_groups
-        self.assertIn('somerset', new_groups)
-        self.assertIn('Peppers', new_groups)
-        self.assertIn('sugar-desktop-environment', comps._installed_environments)
+        installed, _ = self.installed_removed(self.base)
+        self.assertItemsEqual(map(operator.attrgetter('name'), installed),
+                              ('trampoline',))
+
+        p_env = self.prst.environment('sugar-desktop-environment')
+        self.assertItemsEqual(p_env.full_list, ('somerset', 'Peppers'))
+        self.assertTrue(p_env.installed)
+
+        peppers = self.prst.group('Peppers')
+        somerset = self.prst.group('somerset')
+        self.assertTrue(all((peppers.installed, somerset.installed)))

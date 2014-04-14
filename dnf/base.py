@@ -69,7 +69,6 @@ class Base(object):
         self._closed = False
         self._conf = config.YumConf()
         self._goal = None
-        self._group_persistor = None
         self._persistor = None
         self._sack = None
         self._transaction = None
@@ -78,6 +77,7 @@ class Base(object):
         self._history = None
         self._tempfiles = []
         self.ds_callback = dnf.callback.Depsolve()
+        self.group_persistor = None
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
@@ -150,9 +150,6 @@ class Base(object):
             expired = [r.id for r in self.repos.iter_enabled()
                        if check_expired(r)]
             self._persistor.set_expired_repos(expired)
-
-        if self._group_persistor:
-            self._group_persistor.save()
 
     @property
     def comps(self):
@@ -386,8 +383,8 @@ class Base(object):
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
         group_st = time.time()
-        persistor = self._activate_group_persistor()
-        self._comps = dnf.comps.Comps(persistor.groups, persistor.environments)
+        self.group_persistor = self._activate_group_persistor()
+        self._comps = dnf.comps.Comps()
 
         self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
         for repo in self.repos.iter_enabled():
@@ -1309,51 +1306,74 @@ class Base(object):
             counter.add(pkg, attr, needle)
         return counter
 
+    def _add_comps_trans(self, trans):
+        cnt = 0
+        attr_fn = ((trans.install, self._goal.install),
+                   (trans.upgrade, self._goal.upgrade),
+                   (trans.remove, self._goal.erase))
+
+        for (attr, fn) in attr_fn:
+            for it in attr:
+                if not self.sack.query().filter(name=it):
+                    # a comps item that doesn't refer to anything real
+                    continue
+                sltr = dnf.selector.Selector(self.sack)
+                sltr.set(name=it)
+                fn(select=sltr)
+                cnt += 1
+
+        return cnt
+
     def _assert_comps(self):
         msg = _('No group data available for configured repositories.')
         if not len(self.comps):
             raise dnf.exceptions.CompsError(msg)
 
-    def _environment_list(self, patterns):
-        self._assert_comps()
+    def _build_comps_solver(self):
+        return dnf.comps.Solver(self.group_persistor)
 
+    def _environment_list(self, patterns):
+        def installed_pred(env):
+            return self.group_persistor.environment(env.id).installed
+
+        self._assert_comps()
         if patterns is None:
             envs = self.comps.environments
         else:
             envs = self.comps.environments_by_pattern(",".join(patterns))
 
-        installed_fn = operator.attrgetter('installed')
-        available, installed = dnf.util.partition(installed_fn, envs)
+        available, installed = dnf.util.partition(installed_pred, envs)
 
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     def environment_install(self, env, types, exclude=None):
-        if env.installed:
+        p_env = self.group_persistor.environment(env.id)
+        if p_env.installed:
             msg = _("Warning: Environment '%s' is already installed.")
             self.logger.warning(msg, env.ui_name)
             return 0
 
-        groups = []
-        for grp in env.groups_iter():
-            new = self.group_install(grp, types, exclude)
-            if not new:
-                continue
-            groups.append(grp.id)
+        solver = self._build_comps_solver()
+        types = self._translate_comps_pkg_types(types)
+        trans = solver.environment_install(env, types, exclude or set())
 
-        env.mark(groups)
-        cnt = len(groups)
+        cnt = self._add_comps_trans(trans)
         if not cnt:
             msg = _("Warning: Did not install any groups from environment '%s'")
             self.logger.warning(msg, env.ui_name)
         return cnt
 
     def environment_remove(self, env):
-        cnt = 0
-        for grp in env.installed_groups:
-            cnt += self.group_remove(grp)
-        env.unmark()
-        return cnt
+        p_env = self.group_persistor.environment(env.id)
+        if not p_env.installed:
+            msg = _("Warning: Environment '%s' is not installed.")
+            self.logger.warning(msg, env.ui_name)
+            return 0
+
+        solver = self._build_comps_solver()
+        trans = solver.environment_remove(env)
+        return self._add_comps_trans(trans)
 
     def _group_lists(self, uservisible, patterns):
         """Return two lists of groups: installed groups and available
@@ -1367,6 +1387,9 @@ class Base(object):
         :param ignore_case: whether to ignore case when determining
            whether group names match the strings in *patterns*
         """
+
+        def installed_pred(group):
+            return self.group_persistor.group(group.id).installed
         installed = []
         available = []
 
@@ -1378,7 +1401,7 @@ class Base(object):
             grps = self.comps.groups_by_pattern(",".join(patterns))
         for grp in grps:
             tgt_list = available
-            if grp.installed:
+            if installed_pred(grp):
                 tgt_list = installed
             if not uservisible or grp.uservisible:
                 tgt_list.append(grp)
@@ -1386,39 +1409,34 @@ class Base(object):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
+    _COMPS_TRANSLATION = {
+        'default'   : dnf.comps.DEFAULT,
+        'mandatory' : dnf.comps.MANDATORY,
+        'optional'  : dnf.comps.OPTIONAL
+    }
+
+    @staticmethod
+    def _translate_comps_pkg_types(pkg_types):
+        ret = 0
+        for (name, enum) in Base._COMPS_TRANSLATION.items():
+            if name in pkg_types:
+                ret |= enum
+        return ret
+
     def group_install(self, grp, pkg_types, exclude=None):
         # :api
-        if grp.installed:
-            msg = _("Warning: Group '%s' is already installed.")
-            self.logger.warning(msg, grp.ui_name)
+
+        solver = self._build_comps_solver()
+        pkg_types = self._translate_comps_pkg_types(pkg_types)
+        try:
+            trans = solver.group_install(grp, pkg_types, exclude)
+        except dnf.exceptions.CompsError as e:
+            self.logger.warning("Warning: %s", str(e))
             return 0
 
-        pkgs = set()
-        exclude = set([]) if exclude is None else set(exclude)
-        if 'mandatory' in pkg_types:
-            pkgs.update(pkg.name for pkg in grp.mandatory_packages)
-        if 'default' in pkg_types:
-            pkgs.update(pkg.name for pkg in grp.default_packages
-                        if pkg.name not in exclude)
-        if 'optional' in pkg_types:
-            pkgs.update(pkg.name for pkg in grp.optional_packages
-                        if pkg.name not in exclude)
-
-        inst_set = set([pkg.name for pkg in self.sack.query().installed()])
-        # do not install and mark already present packages
-        pkgs -= inst_set
-        new_set = set()
-
-        cnt = 0
-        self.logger.debug("Adding packages from group '%s': %s", grp.id, pkgs)
-        for pkg in pkgs:
-            try:
-                cnt += self.install(pkg)
-                new_set.add(pkg)
-            except dnf.exceptions.MarkingError:
-                pass
-
-        grp.mark(new_set)
+        self.logger.debug("Adding packages from group '%s': %s",
+                          grp.id, trans.install)
+        cnt = self._add_comps_trans(trans)
         if cnt == 0:
             msg = _("Warning: Did not install any packages from group '%s'")
             self.logger.warning(msg, grp.ui_name)
@@ -1426,15 +1444,13 @@ class Base(object):
 
     def group_remove(self, grp):
         # :api
-        cnt = 0
-        for pkg in grp.installed_packages():
-            try:
-                self.remove(pkg.name)
-            except dnf.exceptions.MarkingError:
-                continue
-            cnt += 1
-        grp.unmark()
-        return cnt
+        solver = self._build_comps_solver()
+        try:
+            trans = solver.group_remove(grp)
+        except dnf.exceptions.CompsError as e:
+            self.logger.warning("Warning: %s", str(e))
+            return 0
+        return self._add_comps_trans(trans)
 
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
         """Mark all the packages in the given group to be installed. :api

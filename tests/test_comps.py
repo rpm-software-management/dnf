@@ -40,8 +40,7 @@ class LangsTest(support.TestCase):
 
 class CompsTest(support.TestCase):
     def setUp(self):
-        comps = dnf.comps.Comps(support.INSTALLED_GROUPS.copy(),
-                                support.INSTALLED_ENVIRONMENTS.copy())
+        comps = dnf.comps.Comps()
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
@@ -53,20 +52,6 @@ class CompsTest(support.TestCase):
 
         group = dnf.util.first(comps.groups_by_pattern('Base'))
         self.assertIsInstance(group, dnf.comps.Group)
-
-    def test_installed(self):
-        base = support.MockBase("main")
-        sack = base.sack
-
-        comps = self.comps
-        groups = comps.groups
-        self.assertLength(groups, support.TOTAL_GROUPS)
-        # ensure even groups obtained before compile() have the property set:
-        self.assertTrue(groups[0].installed)
-        self.assertFalse(groups[1].installed)
-
-        envs = comps.environments
-        self.assertTrue(envs[0].installed)
 
     def test_environments(self):
         env = self.comps.environments[0]
@@ -138,11 +123,6 @@ class PackageTest(support.TestCase):
         self.assertEqual(pkg.name, 'weather')
         self.assertEqual(pkg.option_type, dnf.comps.OPTIONAL)
 
-class MockPersistor(dnf.persistor.GroupPersistor):
-    """Empty persistor that doesn't need any I/O."""
-    def __init__(self):
-        self.db = self._empty_db()
-
 class TestTransactionBunch(support.TestCase):
 
     def test_adding(self):
@@ -165,7 +145,7 @@ class SolverTestMixin(object):
         comps = dnf.comps.Comps()
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
-        self.persistor = MockPersistor()
+        self.persistor = support.MockGroupPersistor()
         self.solver = dnf.comps.Solver(self.persistor)
 
 
@@ -216,19 +196,16 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
 
 class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
-    ALL_TYPES = dnf.comps.CONDITIONAL | dnf.comps.DEFAULT | \
-                dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
     def _install(self, env):
-        self.comps.environment_by_pattern('sugar-desktop-environment')
         return self.solver.environment_install(env, dnf.comps.MANDATORY,
                                                ('lotus',))
 
     def test_install(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
-
-        self.assertItemsEqual(trans.install, ('pepper', 'trampoline', 'hole'))
+        self.assertItemsEqual(trans.install, ('pepper', 'trampoline', 'hole',
+                                              'lotus'))
         sugar = self.persistor.environment('sugar-desktop-environment')
         self.assertItemsEqual(sugar.full_list, ('Peppers', 'somerset'))
         somerset = self.persistor.group('somerset')
@@ -252,8 +229,8 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         """Upgrade environment, the one group it knows is no longer installed."""
         p_env = self.persistor.environment('sugar-desktop-environment')
         p_env.full_list.extend(['somerset'])
-        p_env.grp_types = self.ALL_TYPES
-        p_env.pkg_types = self.ALL_TYPES
+        p_env.grp_types = dnf.comps.ALL_TYPES
+        p_env.pkg_types = dnf.comps.ALL_TYPES
 
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self.solver.environment_upgrade(env)

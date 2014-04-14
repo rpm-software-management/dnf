@@ -50,17 +50,19 @@ class CompsQuery(object):
     ENVIRONMENTS = 1
     GROUPS = 2
 
-    def __init__(self, comps, kinds, status):
+    def __init__(self, comps, prst, kinds, status):
         self.comps = comps
+        self.prst = prst
         self.kinds = kinds
         self.status = status
 
-    def _get(self, fn, pat):
+    def _get(self, items, persistence_fn):
         lst = []
-        for it in fn(pat):
-            if self.status & self.INSTALLED and it.installed:
+        for it in items:
+            installed = persistence_fn(it.id).installed
+            if self.status & self.INSTALLED and installed:
                 lst.append(it)
-            if self.status & self.AVAILABLE and not it.installed:
+            if self.status & self.AVAILABLE and not installed:
                 lst.append(it)
         return lst
 
@@ -71,10 +73,12 @@ class CompsQuery(object):
         for pat in patterns:
             envs = grps = None
             if self.kinds & self.ENVIRONMENTS:
-                envs = self._get(self.comps.environments_by_pattern, pat)
+                envs = self._get(self.comps.environments_by_pattern(pat),
+                                 self.prst.environment)
                 res.environments.extend(envs)
             if self.kinds & self.GROUPS:
-                grps = self._get(self.comps.groups_by_pattern, pat)
+                grps = self._get(self.comps.groups_by_pattern(pat),
+                                 self.prst.group)
                 res.groups.extend(grps)
             if not envs and not grps:
                 msg = _("No relevant match for the specified '%s'.")
@@ -124,7 +128,7 @@ class GroupCommand(commands.Command):
     def _install(self, extcmds):
         cnt = 0
         types, patterns = self._split_extcmds(extcmds)
-        q = CompsQuery(self.base.comps,
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE)
         res = q.get(*patterns)
@@ -137,23 +141,39 @@ class GroupCommand(commands.Command):
             raise dnf.cli.CliError(msg)
 
     def _mark_install(self, patterns):
-        q = CompsQuery(self.base.comps, CompsQuery.GROUPS, CompsQuery.AVAILABLE)
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
+                       CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
+                       CompsQuery.AVAILABLE)
+        solver = dnf.comps.Solver(self.base.group_persistor)
         res = q.get(*patterns)
-        installed = set(pkg.name for pkg in self.base.sack.query().installed())
-        for g in res.groups:
-            names = set(g.name for g in itertools.chain(g.mandatory_packages,
-                                                        g.optional_packages))
-            g.mark(names & installed)
-        self.base.logger.info(_('Marked installed: %s') %
-                              ','.join([g.ui_name for g in res.groups]))
+        types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
+        for env in res.environments:
+            solver.environment_install(env, types, None)
+        if res.environments:
+            self.base.logger.info(_('Environments marked installed: %s') %
+                                  ','.join([g.ui_name for g in res.environments]))
+        for grp in res.groups:
+            solver.group_install(grp, types, None)
+        if res.groups:
+            self.base.logger.info(_('Groups marked installed: %s') %
+                                  ','.join([g.ui_name for g in res.groups]))
 
     def _mark_remove(self, patterns):
-        q = CompsQuery(self.base.comps, CompsQuery.GROUPS, CompsQuery.INSTALLED)
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
+                       CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
+                       CompsQuery.AVAILABLE)
+        solver = dnf.comps.Solver(self.base.group_persistor)
         res = q.get(*patterns)
-        for g in res.groups:
-            g.unmark()
-        self.base.logger.info(_('Marked removed: %s') %
-                              ','.join([g.ui_name for g in groups]))
+        for env in res.environments:
+            solver.environment_remove(env)
+        if res.environments:
+            self.base.logger.info(_('Environments marked removed: %s') %
+                                  ','.join([g.ui_name for g in res.environments]))
+        for grp in res.groups:
+            solver.group_remove(grp)
+        if res.groups:
+            self.base.logger.info(_('Groups marked removed: %s') %
+                                  ','.join([g.ui_name for g in res.groups]))
 
     def _mark_subcmd(self, extcmds):
         if extcmds[0] in self._MARK_CMDS:
@@ -162,7 +182,7 @@ class GroupCommand(commands.Command):
 
     def _remove(self, patterns):
         cnt = 0
-        q = CompsQuery(self.base.comps,
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         res = q.get(*patterns)

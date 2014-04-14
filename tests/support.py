@@ -27,6 +27,7 @@ import dnf.cli.demand
 import dnf.comps
 import dnf.exceptions
 import dnf.package
+import dnf.persistor
 import dnf.pycomp
 import dnf.repo
 import dnf.sack
@@ -112,8 +113,23 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
-INSTALLED_GROUPS = {'base': ['pepper']}
-INSTALLED_ENVIRONMENTS = {'sugar-desktop-environment' : ['base']}
+def mock_comps():
+    comps = dnf.comps.Comps()
+    comps.add_from_xml_filename(COMPS_PATH)
+
+    persistor = MockGroupPersistor()
+    p_env = persistor.environment('sugar-desktop-environment')
+    p_env.grp_types = dnf.comps.ALL_TYPES
+    p_env.pkg_types = dnf.comps.ALL_TYPES
+    p_env.full_list.extend(('Peppers', 'somerset'))
+    p_pep = persistor.group('Peppers')
+    p_pep.pkg_types = dnf.comps.MANDATORY
+    p_pep.full_list.extend(('hole', 'lotus'))
+    p_som = persistor.group('somerset')
+    p_som.pkg_types = dnf.comps.MANDATORY
+    p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
+
+    return comps, persistor
 
 class _BaseStubMixin(object):
     """A reusable class for creating `dnf.Base` stubs.
@@ -144,7 +160,7 @@ class _BaseStubMixin(object):
         return self.init_sack()
 
     def _activate_group_persistor(self):
-        return GroupPersistorStub(self.conf.persistdir)
+        return MockGroupPersistor()
 
     def activate_persistor(self):
         pass
@@ -174,10 +190,14 @@ class _BaseStubMixin(object):
                          nogpgcheck=True, demands=dnf.cli.demand.DemandSheet())
 
     def read_mock_comps(self, fn):
-        comps = dnf.comps.Comps(INSTALLED_GROUPS.copy(),
-                                INSTALLED_ENVIRONMENTS.copy())
-        comps.add_from_xml_filename(fn)
+        self._comps, self.group_persistor = mock_comps()
+        return self._comps
+
+    def read_mock_comps_empty_prst(self):
+        comps = dnf.comps.Comps()
+        comps.add_from_xml_filename(COMPS_PATH)
         self._comps = comps
+        self.group_persistor = MockGroupPersistor()
         return comps
 
     def read_all_repos(self):
@@ -382,10 +402,10 @@ class FakePersistor(object):
     def since_last_makecache(self):
         return None
 
-class GroupPersistorStub(object):
-    def __init__(self, persistdir):
-        self.groups = {}
-        self.environments = {}
+class MockGroupPersistor(dnf.persistor.GroupPersistor):
+    """Empty persistor that doesn't need any I/O."""
+    def __init__(self):
+        self.db = self._empty_db()
 
 # object matchers for asserts
 
