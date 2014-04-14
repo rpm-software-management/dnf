@@ -250,3 +250,14 @@ DNF will terminate early with an error if a command is executed requesting an in
   Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).
 
 Yum will only issue warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
+
+
+=================================================
+ Provides not recognized as ``remove`` arguments
+=================================================
+
+Suppose there's no package named ``syslog`` installed. In Yum, the following will result in a package providing ``syslog`` (typically ``systemd`` on modern Linux systems) erased::
+
+    yum remove syslog
+
+In DNF, provides are not searched for the erase operation, as such behavior can be confusing to some users.

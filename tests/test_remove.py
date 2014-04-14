@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from tests import support
 import dnf.cli.commands
+import dnf.exceptions
 import hawkey
 import itertools
 
@@ -55,9 +56,14 @@ class Remove(support.ResultTestCase):
         self.assertItemsEqual(removed, pepper.run())
 
     def test_remove_glob(self):
-        """ Test that weird input combinations with globs work. """
+        """Test that weird input combinations with globs work."""
         ret = self.base.remove("*.i686")
         self.assertEqual(ret, 1)
+
+    def test_remove_provides(self):
+        """Remove does not search provides."""
+        self.assertRaises(dnf.exceptions.MarkingError,
+                          self.base.remove, 'parking', with_provides=False)
 
     def test_reponame(self):
         """Test whether only packages from the repository are uninstalled."""
