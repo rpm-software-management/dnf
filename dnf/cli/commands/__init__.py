@@ -338,7 +338,7 @@ class EraseCommand(Command):
 
         for pkg_spec in pkg_specs:
             try:
-                self.base.remove(pkg_spec, with_provides=False)
+                self.base.remove(pkg_spec)
             except dnf.exceptions.MarkingError:
                 self.base.logger.info(_('No match for argument: %s'),
                                       dnf.pycomp.unicode(pkg_spec))
