@@ -59,6 +59,10 @@ class Remove(support.ResultTestCase):
         ret = self.base.remove("*.i686")
         self.assertEqual(ret, 1)
 
+    def test_remove_provides(self):
+        """Remove uses provides too."""
+        self.assertEqual(1, self.base.remove('parking'))
+
     def test_reponame(self):
         """Test whether only packages from the repository are uninstalled."""
         pkg_subj = dnf.subject.Subject('librita.x86_64')
