@@ -20,23 +20,20 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import unicode_literals
 
-import collections
+from dnf.i18n import _
 import dnf.logging
+import dnf.pycomp
 import dnf.util
-import dnf.yum.i18n
 import fnmatch
 import glob
 import importlib
 import iniparse.compat
-import itertools
 import logging
 import operator
 import os
 import sys
-import types
-
-_ = dnf.yum.i18n._
 
 logger = logging.getLogger('dnf')
 
@@ -86,7 +83,7 @@ class Plugins(object):
 
         if DYNAMIC_PACKAGE in sys.modules:
             raise RuntimeError("load_plugins() called twice")
-        sys.modules[DYNAMIC_PACKAGE] = package = types.ModuleType(DYNAMIC_PACKAGE)
+        sys.modules[DYNAMIC_PACKAGE] = package = dnf.pycomp.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
         files = iter_py_files(paths, skips)

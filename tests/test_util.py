@@ -16,11 +16,11 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
 import dnf.util
-import unittest
 
 class Slow(object):
     def __init__(self, val):

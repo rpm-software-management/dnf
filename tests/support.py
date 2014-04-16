@@ -16,6 +16,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from functools import reduce
 from sys import version_info as python_version
 

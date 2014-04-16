@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 import dnf.yum.rpmtrans
 
 STATUS_OK = None # :api

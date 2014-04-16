@@ -16,14 +16,13 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import PycompTestCase
 from tests.support import mock
 
 import dnf.history
 import dnf.yum.history
-import hawkey
-import unittest
 
 class TestedHistory(dnf.yum.history.YumHistory):
     @mock.patch("os.path.exists", return_value=True)

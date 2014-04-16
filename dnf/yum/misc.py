@@ -21,6 +21,9 @@ Assorted utility functions for yum.
 """
 
 from __future__ import print_function, absolute_import
+from __future__ import unicode_literals
+from dnf.exceptions import MiscError
+from dnf.pycomp import basestring, unicode, long
 import os
 import os.path
 from io import StringIO
@@ -55,10 +58,8 @@ import hashlib
 _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
 
-from dnf.exceptions import MiscError
-from . import i18n
+import dnf.i18n
 import dnf.const
-from dnf.pycomp import is_py2str_py3bytes, basestring, unicode, long
 
 _re_compiled_glob_match = None
 def re_glob(s):

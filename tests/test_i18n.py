@@ -18,14 +18,13 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from dnf.pycomp import PY3
 from tests.support import PycompTestCase
 from tests.support import mock
 
-import locale
 import unittest
 import dnf.i18n
-import os
 import sys
 
 UC_TEXT          = u'Šířka' # means 'Width' in Czech
@@ -90,7 +89,7 @@ class TestInput(PycompTestCase):
         s = dnf.i18n.ucd_input(UC_TEXT)
         self.assertEqual(s, UC_TEXT.encode('iso-8859-2'))
 
-        self.assertRaises(TypeError, dnf.i18n.ucd_input, "string")
+        self.assertRaises(TypeError, dnf.i18n.ucd_input, b"string")
 
 class TestConversion(PycompTestCase):
     @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
@@ -103,11 +102,6 @@ class TestConversion(PycompTestCase):
         # test a sample OSError, typically constructed with an error code and a
         # utf-8 encoded string:
         obj = OSError(17, 'Soubor již existuje')
-        if not PY3:
-            # in Python 3 string already in unicode
-            # direct decode fails:
-            self.assertRaises(UnicodeDecodeError, unicode, s)
-            self.assertRaises(UnicodeDecodeError, unicode, obj)
         expected = u"[Errno 17] %s" % UC_TEXT_OSERROR
         self.assertEqual(dnf.i18n.ucd(obj), expected)
         # ucd() should return unicode unmodified

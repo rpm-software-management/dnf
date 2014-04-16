@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
 from functools import reduce
@@ -34,8 +35,6 @@ import shutil
 import subprocess
 import tempfile
 import time
-import traceback
-import types
 
 """DNF Utilities.
 

@@ -13,24 +13,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 import rpm
-import types
 import glob
 import os
 import os.path
 
-from dnf.rpmUtils import miscutils
-from dnf.rpmUtils import arch
-from dnf.rpmUtils.transaction import initReadOnlyTransaction
 from . import misc
-import dnf.exceptions
-from .packages import parsePackages
 
 # For returnPackages(patterns=)
-import fnmatch
-import re
-
-from .i18n import to_unicode, _
 
 flags = {"GT": rpm.RPMSENSE_GREATER,
          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,

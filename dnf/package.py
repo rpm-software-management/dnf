@@ -21,6 +21,7 @@
 """ Contains the dnf.Package class. """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import binascii
 import dnf.rpmUtils.miscutils

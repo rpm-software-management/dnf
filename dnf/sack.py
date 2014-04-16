@@ -19,6 +19,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 import dnf.util
 import dnf.yum.misc
 import hawkey

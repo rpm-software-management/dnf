@@ -14,6 +14,7 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
+from __future__ import unicode_literals
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 from time import time

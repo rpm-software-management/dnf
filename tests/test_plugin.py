@@ -16,12 +16,12 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import dnf.logging
 import dnf.plugin
-import logging
+import dnf.pycomp
 import tests.support
-import types
 
 PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
 
@@ -71,7 +71,7 @@ class PluginNonExistentTest(tests.support.TestCase):
 
     def test_logs_traceback(self):
         """Test whether the traceback is logged if a plugin cannot be imported."""
-        package = types.ModuleType('testpkg')
+        package = dnf.pycomp.ModuleType('testpkg')
         package.__path__ = []
         stream = dnf.pycomp.StringIO()
 

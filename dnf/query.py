@@ -18,16 +18,15 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
 import functools
 import hawkey
-import itertools
-import types
 import dnf.exceptions
 import dnf.selector
-from dnf.util import is_glob_pattern
+import dnf.util
 
-from dnf.yum.i18n import _
-from .pycomp import basestring
+from dnf.pycomp import basestring
 
 def is_nevra(pattern):
     try:
@@ -51,7 +50,7 @@ class Query(hawkey.Query):
     def filter_autoglob(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
-            if dnf.query.is_glob_pattern(value):
+            if dnf.util.is_glob_pattern(value):
                 nargs[key + "__glob"] = value
             else:
                 nargs[key] = value

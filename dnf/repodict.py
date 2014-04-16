@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 import fnmatch
 import dnf.util
 from dnf.exceptions import ConfigError, RepoError

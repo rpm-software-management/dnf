@@ -17,6 +17,9 @@
 # James Antill <james@fedoraproject.org>
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
+from dnf.i18n import _
+from dnf.pycomp import unicode
 import time
 import os, os.path
 import glob
@@ -25,8 +28,6 @@ from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
-from .i18n import to_unicode, to_utf8
-from .i18n import _
 import dnf.i18n
 
 from dnf.rpmUtils.arch import getBaseArch
@@ -849,9 +850,8 @@ class YumHistory(object):
         if not create:
             return None
 
+        pkgtup = map(unicode, pkgtup)
         (n,a,e,v,r) = pkgtup
-        (n,a,e,v,r) = (to_unicode(n),to_unicode(a),
-                       to_unicode(e),to_unicode(v),to_unicode(r))
         if checksum is not None:
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
@@ -939,8 +939,7 @@ class YumHistory(object):
         if cur is None or not self._update_db_file_2():
             return None
         # str(problem) doesn't work if problem contains unicode(),
-        # unicode(problem) doesn't work in python 2.4.x ... *sigh*.
-        uproblem = to_unicode(problem.__str__())
+        uproblem = unicode(problem)
         res = executeSQL(cur,
                          """INSERT INTO trans_rpmdb_problems
                          (tid, problem, msg)
@@ -983,7 +982,7 @@ class YumHistory(object):
         res = executeSQL(cur,
                          """INSERT INTO trans_cmdline
                          (tid, cmdline)
-                         VALUES (?, ?)""", (self._tid, to_unicode(cmdline)))
+                         VALUES (?, ?)""", (self._tid, unicode(cmdline)))
         return cur.lastrowid
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
@@ -1025,7 +1024,7 @@ class YumHistory(object):
         if cur is None:
             return
         for error in errors:
-            error = to_unicode(error)
+            error = unicode(error)
             executeSQL(cur,
                        """INSERT INTO trans_error
                           (tid, msg) VALUES (?, ?)""", (self._tid, error))
@@ -1039,7 +1038,7 @@ class YumHistory(object):
         if cur is None:
             return # Should never happen, due to above
         for error in msg.splitlines():
-            error = to_unicode(error)
+            error = unicode(error)
             executeSQL(cur,
                        """INSERT INTO trans_script_stdout
                           (tid, line) VALUES (?, ?)""", (self._tid, error))
@@ -1125,7 +1124,7 @@ class YumHistory(object):
             # open file in append
             fo = open(data_fn, 'wb+')
             # write data
-            fo.write(to_utf8(data))
+            fo.write(data.encode())
             # flush data
             fo.flush()
             fo.close()
@@ -1367,7 +1366,7 @@ class YumHistory(object):
 
         sql = """INSERT INTO pkg_%(db)sdb (pkgtupid, %(db)sdb_key, %(db)sdb_val)
                         VALUES (?, ?, ?)""" % {'db' : db}
-        executeSQL(cur, sql, (pid, attr, to_unicode(val)))
+        executeSQL(cur, sql, (pid, attr, unicode(val)))
 
         return cur.lastrowid
 

@@ -24,19 +24,16 @@ import operator
 import sys
 import time
 import logging
-import types
-import gettext
 import pwd
 import re
-import rpm
+import textwrap
 
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
+from dnf.i18n import _, P_, ucd, fill_exact_width
 from dnf.yum.misc import prco_tuple_to_string
-from dnf.yum.i18n import to_str, to_utf8, to_unicode, _, P_
 import dnf.yum.misc
-from dnf.rpmUtils.miscutils import checkSignals
 
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import dnf.yum.packages
@@ -46,14 +43,12 @@ import dnf.yum.history
 import dnf.transaction
 import dnf.util
 
-from dnf.yum.i18n import utf8_width, utf8_width_fill, utf8_text_fill
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
+from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 
 import locale
-
 import hawkey
-from dnf.pycomp import xrange, basestring, is_py3bytes, long
 
 try:
     assert max(2, 4) == 4
@@ -552,7 +547,7 @@ class Output(object):
             columns = [1] * (cols - 1)
             columns.append(0)
 
-        total_width -= (sum(columns) + (cols - 1) + utf8_width(indent))
+        total_width -= (sum(columns) + (cols - 1) + len(indent))
         if not columns[-1]:
             total_width += 1
         while total_width > 0:
@@ -626,9 +621,9 @@ class Output(object):
         if len(col_data) == 3:
             (val, width, highlight) = col_data
             (hibeg, hiend) = self._highlight(highlight)
-        return (val, width, hibeg, hiend)
+        return (unicode(val), width, hibeg, hiend)
 
-    def fmtColumns(self, columns, msg=u'', end=u'', text_width=utf8_width):
+    def fmtColumns(self, columns, msg=u'', end=u''):
         """Return a row of data formatted into a string for output.
         Items can overflow their columns.
 
@@ -654,7 +649,7 @@ class Output(object):
                 continue
 
             (align, width) = self._fmt_column_align_width(width)
-            val_width = text_width(val)
+            val_width = len(val)
             if val_width <= width:
                 #  Don't use utf8_width_fill() because it sucks performance
                 # wise for 1,000s of rows. Also allows us to use len(), when
@@ -671,8 +666,7 @@ class Output(object):
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
         (align, width) = self._fmt_column_align_width(width)
-        val = utf8_width_fill(val, width, left=(align == u'-'),
-                              prefix=hibeg, suffix=hiend)
+        val = ("%s%" + align + "*s%s") % (hibeg, width, val, hiend)
         msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
@@ -696,7 +690,7 @@ class Output(object):
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
         columns = list(zip((na, pkg.evr, pkg.reponame), columns, hi_cols))
-        print(self.fmtColumns(columns, text_width=len))
+        print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
                         indent='', highlight=False, columns=None):
@@ -715,15 +709,15 @@ class Output(object):
         """
         if columns is None:
             columns = (-63, -16) # Old default
-        envra = '%s%s' % (indent, str(pkg))
+        envra = '%s%s' % (indent, unicode(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = list(zip((envra, rid), columns, hi_cols))
-        print(self.fmtColumns(columns, text_width=len))
+        print(self.fmtColumns(columns))
 
     def simple_name_list(self, pkg):
         """Print a package as a line containing its name."""
-        print(to_unicode(pkg.name))
+        print(unicode(pkg.name))
 
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
@@ -733,17 +727,19 @@ class Output(object):
         :param val: the value associated with *key*
         :return: the key value pair formatted in two columns for output
         """
-        val = to_str(val)
-        keylen = utf8_width(key)
+        keylen = len(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
-        ret = utf8_text_fill(val, width=cols,
-                             initial_indent=key, subsequent_indent=nxt)
+        if not val:
+            # textwrap.fill in case of empty val returns empty string
+            return key
+        val = unicode(val)
+        ret = textwrap.fill(val, width=cols, initial_indent=key,
+                            subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols // 3):
             # If it's big, redo it again with a smaller subsequent off
-            ret = utf8_text_fill(val, width=cols,
-                                 initial_indent=key,
-                                 subsequent_indent='     ...: ')
+            ret = textwrap.fill(val, width=cols, initial_indent=key,
+                                subsequent_indent='     ...: ')
         return ret
 
     def fmtSection(self, name, fill='='):
@@ -756,9 +752,9 @@ class Output(object):
           to fill an entire line.  *fill* must be a single character.
         :return: a string formatted to be a section header
         """
-        name = to_str(name)
+        name = unicode(name)
         cols = self.term.columns - 2
-        name_len = utf8_width(name)
+        name_len = len(name)
         if name_len >= (cols - 4):
             beg = end = fill * 2
         else:
@@ -776,19 +772,19 @@ class Output(object):
         """
         (hibeg, hiend) = self._highlight(highlight)
         yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
-        print(_("Name        : %s%s%s") % (hibeg, to_unicode(pkg.name), hiend))
-        print(_("Arch        : %s") % to_unicode(pkg.arch))
+        print(_("Name        : %s%s%s") % (hibeg, pkg.name, hiend))
+        print(_("Arch        : %s") % pkg.arch)
         if pkg.e != "0":
-            print(_("Epoch       : %s") % to_unicode(pkg.e))
-        print(_("Version     : %s") % to_unicode(pkg.v))
-        print(_("Release     : %s") % to_unicode(pkg.r))
+            print(_("Epoch       : %s") % pkg.e)
+        print(_("Version     : %s") % pkg.v)
+        print(_("Release     : %s") % pkg.r)
         print(_("Size        : %s") % format_number(float(pkg.size)))
-        print(_("Repo        : %s") % to_unicode(pkg.repoid))
+        print(_("Repo        : %s") % pkg.repoid)
         if 'from_repo' in yumdb_info:
-            print(_("From repo   : %s") % to_unicode(yumdb_info.from_repo))
+            print(_("From repo   : %s") % yumdb_info.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
-            # print(_("Committer   : %s") % to_unicode(pkg.committer))
+            # print(_("Committer   : %s") % unicode(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
             print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
@@ -808,13 +804,12 @@ class Output(object):
                     except ValueError: # In case int() fails
                         uid = None
                 print(_("Changed by  : %s") % self._pwd_ui_username(uid))
-        print(self.fmtKeyValFill(_("Summary     : "),
-              to_unicode(pkg.summary or "")))
+        print(self.fmtKeyValFill(_("Summary     : "), pkg.summary or ""))
         if pkg.url:
-            print(_("URL         : %s") % to_unicode(pkg.url))
-        print(self.fmtKeyValFill(_("License     : "), to_unicode(pkg.license)))
+            print(_("URL         : %s") % unicode(pkg.url))
+        print(self.fmtKeyValFill(_("License     : "), pkg.license))
         print(self.fmtKeyValFill(_("Description : "),
-              to_unicode(pkg.description or "")))
+              pkg.description or ""))
         print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -931,8 +926,8 @@ class Output(object):
         :return: True if the user selects yes, and False if the user
            selects no
         """
-        yui = (to_unicode(_('y')), to_unicode(_('yes')))
-        nui = (to_unicode(_('n')), to_unicode(_('no')))
+        yui = (unicode(_('y')), unicode(_('yes')))
+        nui = (unicode(_('n')), unicode(_('no')))
         aui = yui + nui
         while True:
             msg = _('Is this ok [y/N]: ')
@@ -945,7 +940,7 @@ class Output(object):
                 pass
             except KeyboardInterrupt:
                 choice = nui[0]
-            choice = to_unicode(choice).lower()
+            choice = ucd(choice).lower()
             if len(choice) == 0:
                 choice = yui[0] if self.conf.defaultyes else nui[0]
             if choice in aui:
@@ -987,8 +982,8 @@ class Output(object):
             pkg = name_dict.get(pkg_name)
             if pkg is None:
                 continue
-            nevra_l = utf8_width(str(pkg)) + utf8_width(self.GRP_PACKAGE_INDENT)
-            repo_l = len(pkg.reponame)
+            nevra_l = len(unicode(pkg)) + len(self.GRP_PACKAGE_INDENT)
+            repo_l = len(unicode(pkg.reponame))
             nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
             repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
         return (nevra_lengths, repo_lengths)
@@ -1019,9 +1014,9 @@ class Output(object):
 
         verbose = self.conf.verbose
         if verbose:
-            print(_(' Group-Id: %s') % to_unicode(group.id))
+            print(_(' Group-Id: %s') % unicode(group.id))
         if group.ui_description:
-            print(_(' Description: %s') % to_unicode(group.ui_description) or "")
+            print(_(' Description: %s') % unicode(group.ui_description) or "")
         if group.lang_only:
             print(_(' Language: %s') % group.lang_only)
 
@@ -1091,7 +1086,7 @@ class Output(object):
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, to_unicode(po.summary) or "")
+        msg = self.fmtKeyValFill(msg, unicode(po.summary) or "")
         if matchfor:
             if highlight is None:
                 highlight = self.conf.color_search_match
@@ -1106,8 +1101,7 @@ class Output(object):
         print(_("Repo        : %s") % po.ui_from_repo)
         done = False
         for item in dnf.yum.misc.unique(values):
-            item = to_utf8(item)
-            if to_utf8(po.name) == item or to_utf8(po.summary) == item:
+            if po.name == item or po.summary == item:
                 continue # Skip double name/summary printing
 
             if not done:
@@ -1115,18 +1109,18 @@ class Output(object):
                 done = True
             can_overflow = True
             if False: pass
-            elif to_utf8(po.description) == item:
+            elif po.description == item:
                 key = _("Description : ")
-                item = to_unicode(item)
-            elif to_utf8(po.url) == item:
+                item = unicode(item)
+            elif po.url == item:
                 key = _("URL         : %s")
                 can_overflow = False
-            elif to_utf8(po.license) == item:
+            elif po.license == item:
                 key = _("License     : %s")
                 can_overflow = False
             elif item.startswith("/"):
                 key = _("Filename    : %s")
-                item = to_unicode(item) or ""
+                item = unicode(item) or ""
                 can_overflow = False
             else:
                 key = _("Other       : ")
@@ -1135,7 +1129,7 @@ class Output(object):
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print(self.fmtKeyValFill(key, to_unicode(item)))
+                print(self.fmtKeyValFill(key, unicode(item)))
             else:
                 print(key % item)
         print()
@@ -1324,12 +1318,12 @@ Transaction Summary
                 continue
 
             msg_pkgs = P_('Package', 'Packages', count)
-            len_msg_action   = utf8_width(action)
-            len_msg_count    = utf8_width(str(count))
-            len_msg_pkgs     = utf8_width(msg_pkgs)
+            len_msg_action = len(action)
+            len_msg_count = len(str(count))
+            len_msg_pkgs = len(msg_pkgs)
 
             if depcount:
-                len_msg_depcount = utf8_width(str(depcount))
+                len_msg_depcount = len(str(depcount))
             else:
                 len_msg_depcount = 0
 
@@ -1343,21 +1337,21 @@ Transaction Summary
             if depcount:
                 msg_deppkgs = P_('Dependent package', 'Dependent packages',
                                  depcount)
+                action_msg = "%-*s" % (max_msg_action, action)
                 if count:
                     msg = '%s  %*d %s (+%*d %s)\n'
-                    out.append(msg % (utf8_width_fill(action, max_msg_action),
+                    out.append(msg % (action_msg,
                                       max_msg_count, count,
-                                      utf8_width_fill(msg_pkgs, max_msg_pkgs),
+                                      "%-*s" % (max_msg_pkgs, msg_pkgs),
                                       max_msg_depcount, depcount, msg_deppkgs))
                 else:
-                    msg = '%s  %*s %s ( %*d %s)\n'
-                    out.append(msg % (utf8_width_fill(action, max_msg_action),
-                                      max_msg_count, '',
-                                      utf8_width_fill('', max_msg_pkgs),
+                    msg = '%s  %s  ( %*d %s)\n'
+                    out.append(msg % (action_msg,
+                                      (max_msg_count + max_msg_pkgs) * ' ',
                                       max_msg_depcount, depcount, msg_deppkgs))
             elif count:
                 msg = '%s  %*d %s\n'
-                out.append(msg % (utf8_width_fill(action, max_msg_action),
+                out.append(msg % ("%-*s" % (max_msg_action, action),
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
@@ -1460,7 +1454,7 @@ Transaction Summary
             format_number(remote_size // dl_time),
             format_number(remote_size),
             format_time(dl_time))
-        msg = utf8_width_fill(_("Total"), width - len(msg)) + msg
+        msg = "%-*s" % (width - len(msg), _("Total")) + msg
         self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
@@ -1494,7 +1488,7 @@ Transaction Summary
         return count, "".join(list(actions))
 
     def _pwd_ui_username(self, uid, limit=None):
-        if type(uid) == type([]):
+        if isinstance(uid, list):
             return [self._pwd_ui_username(u, limit) for u in uid]
 
         # loginuid is set to      -1 (0xFFFF_FFFF) on init, in newer kernels.
@@ -1504,7 +1498,7 @@ Transaction Summary
             name = _("System") + " " + loginid
             if limit is not None and len(name) > limit:
                 name = loginid
-            return to_unicode(name)
+            return unicode(name)
 
         def _safe_split_0(text, *args):
             """ Split gives us a [0] for everything _but_ '', this function
@@ -1522,9 +1516,9 @@ Transaction Summary
                 name = "%s ... <%s>" % (_safe_split_0(fullname), user.pw_name)
                 if len(name) > limit:
                     name = "<%s>" % user.pw_name
-            return to_unicode(name)
+            return unicode(name)
         except KeyError:
-            return to_unicode(str(uid))
+            return unicode(uid)
 
     @staticmethod
     def _historyRangeRTIDs(old, tid):
@@ -1655,11 +1649,11 @@ Transaction Summary
             name = _("Command line")
         else:
             name = _("Login user")
-        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(name, 24, 24),
-                     utf8_width_fill(_("Date and time"), 16, 16),
-                     utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Altered"), 7, 7)))
+        print(fmt % (fill_exact_width(_("ID"), 6),
+                     fill_exact_width(name, 24),
+                     fill_exact_width(_("Date and time"), 6),
+                     fill_exact_width(_("Action(s)"), 6),
+                     fill_exact_width(_("Altered"), 6)))
         print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
@@ -1675,8 +1669,8 @@ Transaction Summary
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
-            name   = utf8_width_fill(name,   24, 24)
-            uiacts = utf8_width_fill(uiacts, 14, 14)
+            name = fill_exact_width(name, 24)
+            uiacts = fill_exact_width(uiacts, 14)
             rmark = lmark = ' '
             if old.return_code is None:
                 rmark = lmark = '*'
@@ -1837,7 +1831,7 @@ Transaction Summary
                 (hibeg, hiend) = self._highlight('bold')
             else:
                 (hibeg, hiend) = self._highlight('normal')
-            state = utf8_width_fill(state, _pkg_states['maxlen'])
+            state = "%-*s" % (_pkg_states['maxlen'], state)
             ui_repo = ''
             if show_repo:
                 ui_repo = self._hpkg2from_repo(hpkg)
@@ -2011,7 +2005,7 @@ Transaction Summary
             cn = hpkg.ui_nevra
 
             uistate = all_uistates.get(hpkg.state, hpkg.state)
-            uistate = utf8_width_fill(uistate, maxlen)
+            uistate = "%-*s" % (maxlen, uistate)
             # Should probably use columns here...
             if False: pass
             elif (last is not None and
@@ -2042,10 +2036,10 @@ Transaction Summary
             return 1, ['Failed history info']
 
         fmt = "%s | %s | %s | %s"
-        print(fmt % (utf8_width_fill(_("Login user"), 26, 26),
-                     utf8_width_fill(_("Time"), 19, 19),
-                     utf8_width_fill(_("Action(s)"), 16, 16),
-                     utf8_width_fill(_("Altered"), 8, 8)))
+        print(fmt % (fill_exact_width(_("Login user"), 26),
+                     fill_exact_width(_("Time"), 19),
+                     fill_exact_width(_("Action(s)"), 16),
+                     fill_exact_width(_("Altered"), 8)))
         print("-" * 79)
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
@@ -2092,9 +2086,9 @@ Transaction Summary
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print(fmt % (utf8_width_fill(name, 26, 26),
-                             utf8_width_fill(uperiod, 19, 19),
-                             utf8_width_fill(uiacts, 16, 16), count))
+                print(fmt % (fill_exact_width(name, 26),
+                             fill_exact_width(uperiod, 19),
+                             fill_exact_width(uiacts, 16), count))
 
     def historyAddonInfoCmd(self, extcmds):
         """Print addon information about transaction in history.
@@ -2163,9 +2157,9 @@ Transaction Summary
 
         fmt = "%s | %s | %s"
         # REALLY Needs to use columns!
-        print(fmt % (utf8_width_fill(_("ID"), 6, 6),
-                     utf8_width_fill(_("Action(s)"), 14, 14),
-                     utf8_width_fill(_("Package"), 53, 53)))
+        print(fmt % (fill_exact_width(_("ID"), 6),
+                     fill_exact_width(_("Action(s)"), 14),
+                     fill_exact_width(_("Package"), 53)))
         print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
@@ -2199,7 +2193,7 @@ Transaction Summary
                         continue
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
-                uistate = utf8_width_fill(uistate, 14)
+                uistate = "%-*s" % (14, uistate)
 
                 #  To chop the name off we need nevra strings, str(pkg) gives
                 # envra so we have to do it by hand ... *sigh*.
@@ -2450,7 +2444,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
 
     def __init__(self):
         super(CliTransactionDisplay, self).__init__()
-        self.lastmsg = to_unicode("")
+        self.lastmsg = ""
         self.lastpackage = None # name of last package we looked at
         self.output = True
 
@@ -2494,7 +2488,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
             for val in self.action.values():
-                wid_val = utf8_width(val)
+                wid_val = len(val)
                 if wid1 < wid_val:
                     wid1 = wid_val
             self._max_action_wid_cache = wid1
@@ -2507,10 +2501,11 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
-            msg = fmt % (utf8_width_fill(process, wid1, wid1),
-                         utf8_width_fill(pkgname, wid2, wid2))
+            pkgname = unicode(pkgname)
+            msg = fmt % ("%-*.*s" % (wid1, wid1, process),
+                         "%-*.*s" % (wid2, wid2, pkgname))
             if msg != self.lastmsg:
-                sys.stdout.write(to_unicode(msg))
+                sys.stdout.write(msg)
                 sys.stdout.flush()
                 self.lastmsg = msg
             if te_current == te_total:
@@ -2522,7 +2517,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param msgs: the messages coming from the script
         """
         if msgs:
-            sys.stdout.write(to_unicode(msgs))
+            sys.stdout.write(unicode(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True,
@@ -2537,7 +2532,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if pkgname is None:
             pnl = 22
         else:
-            pnl = utf8_width(pkgname)
+            pnl = len(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
         overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
@@ -2576,7 +2571,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
     def verify_tsi_package(self, pkg, count, total):
         percent = 100
         process = _('Verifying')
-        wid1    = max(utf8_width(process), self._max_action_width())
+        wid1 = max(len(process), self._max_action_width())
         self._out_event(100, 100, count, total, percent, process, str(pkg), wid1)
 
 def progressbar(current, total, name=None):
@@ -2619,17 +2614,17 @@ def progressbar(current, total, name=None):
         hashbar = mark * int(width * percent)
         output = '\r[%-*s]%s' % (width, hashbar, end)
     elif current == total: # Don't chop name on 100%
-        output = '\r%s%s' % (utf8_width_fill(name, width, width), end)
+        output = '\r%s%s' % (fill_exact_width(name, width), end)
     else:
         width -= 4
         if width < 0:
             width = 0
         nwid = width // 2
-        if nwid > utf8_width(name):
-            nwid = utf8_width(name)
+        if nwid > len(name):
+            nwid = len(name)
         width -= nwid
         hashbar = mark * int(width * percent)
-        output = '\r%s: [%-*s]%s' % (utf8_width_fill(name, nwid, nwid), width,
+        output = '\r%s: [%-*s]%s' % (fill_exact_width(name, nwid), width,
                                      hashbar, end)
 
     if current <= total:

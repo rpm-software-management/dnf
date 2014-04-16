@@ -16,11 +16,11 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
 import dnf.match_counter
-import unittest
 
 class MatchCounterTest(support.TestCase):
     def test_canonize_string_set(self):

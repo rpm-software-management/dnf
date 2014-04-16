@@ -106,6 +106,7 @@ _dnf ()
             --quiet
             --assumeno
             --assumeyes
+            --refresh
             "
             ;;
         -*) __dnfcomp "

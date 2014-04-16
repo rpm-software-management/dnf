@@ -15,9 +15,10 @@
 # Red Hat, Inc.
 #
 
-import unittest
-import dnf
+from __future__ import unicode_literals
+from dnf.pycomp import unicode
 from tests.support import PycompTestCase
+import dnf
 
 class APITest(PycompTestCase):
     def test_base(self):
@@ -25,7 +26,7 @@ class APITest(PycompTestCase):
 
     def test_conf(self):
         base = dnf.Base()
-        self.assertIsInstance(base.conf.installroot, str)
+        self.assertIsInstance(base.conf.installroot, unicode)
         # reasonable default
         self.assertEqual(base.conf.installroot, '/')
         # assignable

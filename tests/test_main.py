@@ -17,6 +17,7 @@
 
 """Tests of the CLI entry point."""
 
+from __future__ import unicode_literals
 import dnf.cli.main
 import dnf.logging
 import dnf.pycomp

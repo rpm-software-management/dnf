@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 import dnf.const
 from dnf.exceptions import ProcessLockError, ThreadLockError
 import dnf.util

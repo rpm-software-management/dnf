@@ -14,8 +14,9 @@
 # Copyright 2003 Duke University
 
 from __future__ import print_function, absolute_import
+from __future__ import unicode_literals
+import dnf.pycomp
 import rpm
-import types
 import gzip
 import os
 import sys
@@ -91,7 +92,7 @@ def getSigInfo(hdr):
     """checks signature from an hdr hand back signature information and/or
        an error code"""
 
-    locale.setlocale(locale.LC_ALL, 'C')
+    dnf.pycomp.setlocale(locale.LC_ALL, 'C')
     string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
     siginfo = hdr.sprintf(string)
     if siginfo != '(none)':

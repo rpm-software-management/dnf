@@ -20,6 +20,7 @@ Configuration parser and default values for yum.
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from . import misc
 from .misc import read_in_items_from_dot_dir

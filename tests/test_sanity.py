@@ -16,10 +16,10 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 import os.path
 import sys
-import unittest
 from tests.support import PycompTestCase
 
 class Sanity(PycompTestCase):

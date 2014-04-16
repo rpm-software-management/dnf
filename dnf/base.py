@@ -21,17 +21,17 @@ Supplies the Base class.
 
 from __future__ import absolute_import
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf import const, query, sack
+from dnf.i18n import _, P_
 from dnf.pycomp import unicode
 from dnf.yum import config
 from dnf.yum import history
-from dnf.yum import i18n
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from dnf.yum.config import ParsingError, ConfigParser
-from dnf.yum.i18n import to_unicode, to_str, _, P_
 from dnf.yum.parser import ConfigPreProcessor
-from functools import reduce, cmp_to_key
+from functools import reduce
 
 import dnf.callback
 import dnf.comps
@@ -315,7 +315,7 @@ class Base(object):
             repo.name = section
             self.logger.error(_('Repository %r is missing name in configuration, '
                     'using id') % section)
-        repo.name = to_unicode(repo.name)
+        repo.name = unicode(repo.name)
 
         repo.yumvar.update(self.conf.yumvar)
         repo.cfg = parser
@@ -607,7 +607,7 @@ class Base(object):
         if len(tserrors) > 0:
             errstring = _('Transaction check error:\n')
             for descr in tserrors:
-                errstring += '  %s\n' % to_unicode(descr)
+                errstring += '  %s\n' % unicode(descr)
 
             raise dnf.exceptions.Error(errstring + '\n' + \
                  self.errorSummary(errstring))
@@ -713,7 +713,7 @@ class Base(object):
                                               errors=[])
         else:
             if self._record_history():
-                herrors = [to_unicode(to_str(x)) for x in errors]
+                herrors = [unicode(x) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
 
 
@@ -1916,8 +1916,8 @@ class Base(object):
                 rawkey = fh.read()
 
         except IOError as e:
-            raise dnf.exceptions.Error(_('GPG key retrieval failed: ') +
-                                      to_unicode(str(e)))
+            raise dnf.exceptions.Error(_('GPG key retrieval failed: ') %
+                                       unicode(e))
 
         # check for a .asc file accompanying it - that's our gpg sig on the key
         # suck it down and do the check
@@ -1949,7 +1949,7 @@ class Base(object):
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
         except ValueError as e:
             raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
-                                      (keyurl, to_unicode(str(e))))
+                                      (keyurl, unicode(e)))
         keys = []
         for keyinfo in keys_info:
             thiskey = {}
@@ -1979,7 +1979,7 @@ class Base(object):
                          ' Fingerprint: %s\n'
                          ' Package    : %s (%s)\n'
                          ' From       : %s') %
-                       (keytype, info['hexkeyid'], to_unicode(info['userid']),
+                       (keytype, info['hexkeyid'], unicode(info['userid']),
                         misc.gpgkey_fingerprint_ascii(info),
                         pkg, pkg.reponame, fname))
         if msg is None:
@@ -1987,7 +1987,7 @@ class Base(object):
                      ' Userid     : "%s"\n'
                      ' Fingerprint: %s\n'
                      ' From       : %s') %
-                   (keytype, info['hexkeyid'], to_unicode(info['userid']),
+                   (keytype, info['hexkeyid'], unicode(info['userid']),
                     misc.gpgkey_fingerprint_ascii(info),
                     keyurl.replace("file://","")))
         self.logger.critical("%s", msg)
@@ -2083,7 +2083,7 @@ class Base(object):
         if result != 0:
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             self.logger.info(msg)
-            errmsg = to_unicode(errmsg)
+            errmsg = unicode(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
 
     def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
@@ -2215,7 +2215,7 @@ class Base(object):
             #  Newer rpm (4.8.0+) has problem objects, older have just strings.
             #  Should probably move to using the new objects, when we can. For
             # now just be compatible.
-            results.append(to_str(prob))
+            results.append(unicode(prob))
 
         return results
 

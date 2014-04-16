@@ -16,9 +16,9 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 
-import unittest
 import dnf.rpmUtils.arch
 
 class Arch(support.TestCase):

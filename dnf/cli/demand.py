@@ -18,6 +18,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
+
 class _BoolDefault(object):
     def __init__(self, default):
         self.default = default
@@ -47,3 +49,5 @@ class DemandSheet(object):
     root_user = _BoolDefault(False)
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
+
+    refresh_metadata = _BoolDefault(False)

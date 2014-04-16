@@ -16,6 +16,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
@@ -350,7 +351,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                       u'Size        : 0.0  \n'
                       u'Repo        : updates\n'
                       u'Summary     : \n'
-                      u'License     : None\n'
+                      u'License     : \n'
                       u'Description : \n'
                       u'\n')
 
@@ -362,7 +363,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                         u'Size        : 0.0  \n'
                         u'Repo        : updates\n'
                         u'Summary     : \n'
-                        u'License     : None\n'
+                        u'License     : \n'
                         u'Description : \n\n')
 
     INSTALLED_TITLE = u'Installed Packages\n'
@@ -376,7 +377,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                           u'Repo        : @System\n'
                           u'From repo   : main\n'
                           u'Summary     : \n'
-                          u'License     : None\n'
+                          u'License     : \n'
                           u'Description : \n\n')
 
     PEPPER_UPDATES_INFO = (u'Name        : pepper\n'
@@ -387,7 +388,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                            u'Size        : 0.0  \n'
                            u'Repo        : updates\n'
                            u'Summary     : \n'
-                           u'License     : None\n'
+                           u'License     : \n'
                            u'Description : \n\n')
 
     def setUp(self):
@@ -423,7 +424,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'Size        : 0.0  \n'
                 u'Repo        : main\n'
                 u'Summary     : \n'
-                u'License     : None\n'
+                u'License     : \n'
                 u'Description : \n'
                 u'\n',
                 u'Name        : trampoline\n'
@@ -434,7 +435,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'Size        : 0.0  \n'
                 u'Repo        : main\n'
                 u'Summary     : \n'
-                u'License     : None\n'
+                u'License     : \n'
                 u'Description : \n'
                 u'\n')))
 
@@ -476,7 +477,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             u'Repo        : @System\n'
             u'From repo   : unknown\n'
             u'Summary     : \n'
-            u'License     : None\n'
+            u'License     : \n'
             u'Description : \n\n')
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
@@ -543,7 +544,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'Size        : 0.0  \n'
                 u'Repo        : updates\n'
                 u'Summary     : \n'
-                u'License     : None\n'
+                u'License     : \n'
                 u'Description : \n'
                 u'\n',
                 self.HOLE_X86_64_INFO,

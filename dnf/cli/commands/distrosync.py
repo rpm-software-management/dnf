@@ -19,8 +19,8 @@
 #
 
 from __future__ import absolute_import
-from .. import commands
-from dnf.yum.i18n import _
+from dnf.cli import commands
+from dnf.i18n import _
 
 
 class DistroSyncCommand(commands.Command):

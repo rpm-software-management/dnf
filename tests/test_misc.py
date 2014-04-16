@@ -15,8 +15,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 import dnf.yum.misc
-import unittest
 from tests.support import PycompTestCase
 
 class TestGenericHolder(PycompTestCase):

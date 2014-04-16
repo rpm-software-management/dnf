@@ -21,6 +21,8 @@ Entrance point for the yum command line interface.
 
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import unicode_literals
+from dnf.pycomp import unicode
 
 import sys
 def suppress_keyboard_interrupt_message():
@@ -43,8 +45,8 @@ def suppress_keyboard_interrupt_message():
 # do this ASAP to prevent tracebacks after ^C during imports
 suppress_keyboard_interrupt_message()
 
-from dnf.yum.i18n import utf8_width, exception2msg, _
 from dnf.cli.utils import show_lock_owner
+from dnf.i18n import _
 
 import dnf.cli.cli
 import dnf.exceptions
@@ -55,18 +57,17 @@ import errno
 import logging
 import os
 import os.path
-import time
 
 logger = logging.getLogger("dnf")
 
 def ex_IOError(e):
     logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
-    logger.critical(exception2msg(e))
+    logger.critical(unicode(e))
     return 1
 
 def ex_Error(e):
     if e.value is not None:
-        logger.critical(_('Error: %s'), exception2msg(e.value))
+        logger.critical(_('Error: %s'), unicode(e))
     return 1
 
 def main(args):

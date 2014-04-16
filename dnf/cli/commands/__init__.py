@@ -22,8 +22,10 @@ Classes for subcommands of the yum command line interface.
 """
 
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf.cli.format import format_number
-from dnf.yum.i18n import utf8_width, utf8_width_fill, to_unicode, _
+from dnf.i18n import _, fill_exact_width
+from dnf.pycomp import unicode
 
 import dnf.cli
 import dnf.const
@@ -542,7 +544,7 @@ class RepoListCommand(Command):
             return False
 
         def _num2ui_num(num):
-            return to_unicode(locale.format("%d", num, True))
+            return unicode(locale.format("%d", num, True))
 
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
@@ -581,7 +583,7 @@ class RepoListCommand(Command):
                     continue
                 if force_show or verbose:
                     ui_enabled = ehibeg + _('enabled') + hiend
-                    ui_endis_wid = utf8_width(_('enabled'))
+                    ui_endis_wid = len(_('enabled'))
                     if not verbose:
                         ui_enabled += ": "
                         ui_endis_wid += 2
@@ -600,7 +602,7 @@ class RepoListCommand(Command):
                 elif arg == 'enabled' and not force_show:
                     continue
                 ui_enabled = dhibeg + _('disabled') + hiend
-                ui_endis_wid = utf8_width(_('disabled'))
+                ui_endis_wid = len(_('disabled'))
 
             if not verbose:
                 rid = repo.id
@@ -687,21 +689,21 @@ class RepoListCommand(Command):
                                                repo.repofile)]
 
                 self.base.logger.log(dnf.logging.DEBUG, "%s\n",
-                                        "\n".join(map(to_unicode, out)))
+                                        "\n".join(map(unicode, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
             # then chop the middle (name)...
-            id_len = utf8_width(_('repo id'))
+            id_len = len(_('repo id'))
             nm_len = 0
             st_len = 0
             ui_len = 0
 
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
-                if id_len < utf8_width(rid):
-                    id_len = utf8_width(rid)
-                if nm_len < utf8_width(rname):
-                    nm_len = utf8_width(rname)
+                if id_len < len(rid):
+                    id_len = len(rid)
+                if nm_len < len(rname):
+                    nm_len = len(rname)
                 if st_len < (ui_endis_wid + len(ui_num)):
                     st_len = (ui_endis_wid + len(ui_num))
                 # Need this as well as above for: utf8_width_fill()
@@ -709,8 +711,8 @@ class RepoListCommand(Command):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
                 left = self.output.term.columns - (id_len + 1)
-            elif utf8_width(_('status')) > st_len:
-                left = self.output.term.columns - (id_len + utf8_width(_('status')) +2)
+            elif len(_('status')) > st_len:
+                left = self.output.term.columns - (id_len + len(_('status')) +2)
             else:
                 left = self.output.term.columns - (id_len + st_len + 2)
 
@@ -721,8 +723,8 @@ class RepoListCommand(Command):
                 id_len += left // 2
                 nm_len += left - (left // 2)
 
-            txt_rid  = utf8_width_fill(_('repo id'), id_len)
-            txt_rnam = utf8_width_fill(_('repo name'), nm_len, nm_len)
+            txt_rid = "%-*s" % (id_len, _('repo id'))
+            txt_rnam = fill_exact_width(_('repo name'), nm_len)
             if arg == 'disabled': # Don't output a status column.
                 self.base.logger.info("%s %s",
                                         txt_rid, txt_rnam)
@@ -732,18 +734,17 @@ class RepoListCommand(Command):
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
                     self.base.logger.info("%s %s",
-                                            utf8_width_fill(rid, id_len),
-                                            utf8_width_fill(rname, nm_len,
-                                                            nm_len))
+                                          "%-*s" % (id_len, rid),
+                                          fill_exact_width(rname, nm_len))
                     continue
 
                 if ui_num:
-                    ui_num = utf8_width_fill(ui_num, ui_len, left=False)
+                    ui_num = "%*s" % (ui_len, ui_num)
                 self.base.logger.info("%s %s %s%s",
-                                        utf8_width_fill(rid, id_len),
-                                        utf8_width_fill(rname, nm_len, nm_len),
-                                        ui_enabled, ui_num)
-        msg = 'repolist: ' +to_unicode(locale.format("%d", tot_num, True))
+                                      "%-*s" % (id_len, rid),
+                                      fill_exact_width(rname, nm_len),
+                                      ui_enabled, ui_num)
+        msg = 'repolist: %s' % unicode(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
 
 class RepoPkgsCommand(Command):

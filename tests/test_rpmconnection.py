@@ -15,9 +15,9 @@
 # Red Hat, Inc.
 #
 
+from __future__ import unicode_literals
 from dnf.rpmUtils.connection import RpmConnection
 import inspect
-import unittest
 from tests.support import PycompTestCase
 
 class TestConnection(PycompTestCase):

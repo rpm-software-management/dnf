@@ -15,15 +15,13 @@
 # Red Hat, Inc.
 #
 
-from dnf.exceptions import RepoError
-from dnf.repo import Repo
+from __future__ import unicode_literals
 from tests import support
 from tests.support import PycompTestCase
 from tests.support import mock
 
 import dnf.repodict
 import operator
-import unittest
 
 class TestMultiCall(PycompTestCase):
     def test_multi_call(self):

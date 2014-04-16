@@ -17,7 +17,8 @@
 Core DNF Errors.
 """
 
-from dnf.yum.i18n import to_unicode
+from __future__ import unicode_literals
+from dnf.pycomp import unicode
 
 class Error(Exception):
     """Base Error. All other Errors thrown by DNF should inherit from this.
@@ -27,13 +28,13 @@ class Error(Exception):
     """
     def __init__(self, value=None):
         Exception.__init__(self)
-        self.value = value
+        self.value = unicode(value)
 
     def __str__(self):
         return "%s" %(self.value,)
 
     def __unicode__(self):
-        return '%s' % to_unicode(self.value)
+        return '%s' % self.value
 
 class DeprecationWarning(DeprecationWarning):
     # :api
@@ -91,7 +92,7 @@ class DownloadError(Error):
         return self.errmap2str(self.errmap)
 
     def __unicode__(self):
-        return to_unicode(str(self))
+        return unicode(str(self))
 
 class MetadataError(Error):
     pass

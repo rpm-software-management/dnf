@@ -19,8 +19,8 @@
 #
 
 from __future__ import absolute_import
-from dnf.i18n import ucd
-from dnf.yum.i18n import _
+from __future__ import unicode_literals
+from dnf.i18n import ucd, _
 
 import dnf.callback
 import dnf.const

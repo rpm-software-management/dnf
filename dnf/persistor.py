@@ -24,7 +24,8 @@
 # data etc.
 
 from __future__ import absolute_import
-from dnf.yum.i18n import _
+from __future__ import unicode_literals
+from dnf.i18n import _
 
 import collections
 import dbm

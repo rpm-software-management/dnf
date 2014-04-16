@@ -16,13 +16,11 @@
 #
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
-import dnf.package
 import hawkey
-import os.path
-import unittest
 import binascii
 from tests.support import PycompTestCase
 from dnf.pycomp import long

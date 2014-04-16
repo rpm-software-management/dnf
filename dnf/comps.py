@@ -19,6 +19,7 @@
 #
 
 from __future__ import print_function
+from __future__ import unicode_literals
 from dnf.exceptions import CompsError
 from functools import reduce
 
@@ -26,7 +27,6 @@ import dnf.i18n
 import dnf.util
 import fnmatch
 import gettext
-import itertools
 import libcomps
 import locale
 import operator
