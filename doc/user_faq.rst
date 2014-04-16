@@ -77,6 +77,13 @@ Several ways to do that. The DNF way is to add the following to ``/etc/dnf/dnf.c
 
     metadata_timer_sync=0
 
+Shouldn't DNF exit soon from certain commands if it is not run under root?
+==========================================================================
+
+No, there can be systems and scenarios that allow other users than root to successfully perform ``dnf intall`` and similar and it would be impractical to stop these from functioning by the UID check. Alternatively, the practice of checking filesystem permissions instead of the effective UID could lead to false positives since there is plenty of time between DNF startup and the possible transaction start when permissions can be changed by a different process.
+
+If the time loss incurred by repeated runs of DNF is unacceptable for you, consider using the `noroot plugin <https://github.com/akozumpl/dnf-plugins-core/blob/master/plugins/noroot.py>`_.
+
 ===================
 Using DNF in Fedora
 ===================
@@ -88,7 +95,7 @@ Yes, in two steps: first install the necessary ``.repo`` files::
 
     dnf install fedora-release-rawhide
 
-Then, when you want to include the pacakges from the rawhide repo, execute a DNF command with Rawhide enabled::
+Then, when you want to include the packages from the rawhide repo, execute a DNF command with Rawhide enabled::
 
     dnf install --enablerepo=rawhide upgrade rpm
 
