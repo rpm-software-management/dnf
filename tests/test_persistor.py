@@ -71,6 +71,17 @@ class GroupPersistorTest(tests.support.TestCase):
         self.assertEmpty(grp.full_list)
         self.assertEquals(grp.pkg_types, 0)
 
+    def test_prune_db(self):
+        prst = self.prst
+        grp = prst.group('pepper')
+        prst._prune_db()
+        self.assertEmpty(prst.db['GROUPS'])
+
+        grp = prst.group('pepper')
+        grp.pkg_types = dnf.comps.MANDATORY
+        prst._prune_db()
+        self.assertLength(prst.db['GROUPS'], 1)
+
     def test_saving(self):
         prst = self.prst
         grp = prst.group('pepper')

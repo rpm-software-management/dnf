@@ -135,14 +135,13 @@ def _main(base, args):
         if ret:
             return ret
 
+    base.success_finish()
     return cli.demands.success_exit_status
 
 
 def resolving(cli, base):
-    if not cli.demands.resolving:
-        return cli.demands.success_exit_status
+    """Perform the depsolve, download and RPM transaction stage."""
 
-    # Depsolve stage (if needed)
     if base.transaction is None:
         logger.info(_('Resolving dependencies'))
         try:

@@ -219,6 +219,15 @@ class GroupPersistor(object):
             if e.errno != errno.ENOENT:
                 raise
 
+    def _prune_db(self):
+        for members_dct in (self.db['ENVIRONMENTS'], self.db['GROUPS']):
+            del_list = []
+            for (id_, memb) in members_dct.items():
+                if not _PersistMember(memb).installed:
+                    del_list.append(id_)
+            for id_ in del_list:
+                del members_dct[id_]
+
     def environment(self, id_):
         return self._access('ENVIRONMENTS', id_)
 
@@ -234,8 +243,10 @@ class GroupPersistor(object):
         return self.db['GROUPS']
 
     def save(self):
+        self._prune_db()
         if self.db == self._original:
             return False
+        logger.debug('group persistor: saving.')
         with open(self._dbfile, 'w') as db:
             json.dump(self.db.dct, db)
         return True

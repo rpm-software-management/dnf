@@ -330,6 +330,10 @@ class Base(object):
             if self._sack is not None:
                 self._goal = hawkey.Goal(self._sack)
 
+    def success_finish(self):
+        if self.group_persistor:
+            self.group_persistor.save()
+
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self.ts
