@@ -130,6 +130,15 @@ def _main(base, args):
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
+    if cli.demands.resolving:
+        ret = resolving(cli, base)
+        if ret:
+            return ret
+
+    return cli.demands.success_exit_status
+
+
+def resolving(cli, base):
     if not cli.demands.resolving:
         return cli.demands.success_exit_status
 
