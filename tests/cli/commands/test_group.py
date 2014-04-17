@@ -24,7 +24,7 @@ import dnf.comps
 def names(items):
     return (it.name for it in items)
 
-class GroupCommandTest(support.TestCase):
+class GroupCommandStaticTest(support.TestCase):
 
     def test_canonical(self):
         cmd = group.GroupCommand(None)
@@ -46,6 +46,21 @@ class GroupCommandTest(support.TestCase):
         self.assertEqual(split, (('mandatory', 'default', 'optional'), ['crack']))
         split = group.GroupCommand._split_extcmds(['crack'])
         self.assertEqual(split, (('mandatory', 'default'), ['crack']))
+
+
+class GroupCommandTest(support.TestCase):
+    def setUp(self):
+        base = support.MockBase("main")
+        base.read_mock_comps(support.COMPS_PATH)
+        base.init_sack()
+        self.cmd = group.GroupCommand(base.mock_cli())
+
+    def test_environment_list(self):
+        env_inst, env_avail = self.cmd._environment_lists(['sugar*'])
+        self.assertLength(env_inst, 1)
+        self.assertLength(env_avail, 0)
+        self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
+
 
 class CompsQueryTest(support.TestCase):
 

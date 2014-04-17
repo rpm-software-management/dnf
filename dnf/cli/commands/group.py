@@ -25,8 +25,13 @@ from dnf.i18n import _
 from dnf.pycomp import unicode
 
 import dnf.cli
+import dnf.exceptions
 import dnf.util
 import itertools
+import logging
+import operator
+
+logger = logging.getLogger("dnf")
 
 def _ensure_grp_arg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
@@ -41,6 +46,7 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
         cli.logger.critical(_('Error: Need a group or list of groups'))
         commands._err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
+
 
 class CompsQuery(object):
 
@@ -86,6 +92,7 @@ class CompsQuery(object):
                 raise dnf.cli.CliError(msg)
         return res
 
+
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
 
@@ -99,8 +106,76 @@ class GroupCommand(commands.Command):
     summary = _("Display, or use, the groups information")
     usage = "[list|info|summary|install|upgrade|remove|mark] [%s]" % _('GROUP')
 
+    _CMD_ALIASES = {'update'     : 'upgrade',
+                    'erase'      : 'remove'}
+    _MARK_CMDS = ('install', 'remove')
+
+    @classmethod
+    def canonical(cls, command_list):
+        first = command_list[0]
+        rest = command_list[1:]
+
+        cmd = cls.direct_commands.get(first)
+        if cmd is None:
+            cmd = 'summary'
+            if rest:
+                cmd = rest.pop(0)
+        cmd = cls._CMD_ALIASES.get(cmd, cmd)
+
+        rest.insert(0, cmd)
+        return ('groups', rest)
+
+    @staticmethod
+    def _split_extcmds(extcmds):
+        if extcmds[0] == 'with-optional':
+            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            return types, extcmds[1:]
+        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)
+
+    def _assert_comps(self):
+        msg = _('No group data available for configured repositories.')
+        if not len(self.base.comps):
+            raise dnf.exceptions.CompsError(msg)
+
+    def _environment_lists(self, patterns):
+        def installed_pred(env):
+            return self.base.group_persistor.environment(env.id).installed
+
+        self._assert_comps()
+        if patterns is None:
+            envs = self.base.comps.environments
+        else:
+            envs = self.base.comps.environments_by_pattern(",".join(patterns))
+
+        available, installed = dnf.util.partition(installed_pred, envs)
+
+        sort_fn = operator.attrgetter('ui_name')
+        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
+
+    def _group_lists(self, uservisible, patterns):
+        def installed_pred(group):
+            return self.base.group_persistor.group(group.id).installed
+        installed = []
+        available = []
+
+        self._assert_comps()
+
+        if patterns is None:
+            grps = self.base.comps.groups
+        else:
+            grps = self.base.comps.groups_by_pattern(",".join(patterns))
+        for grp in grps:
+            tgt_list = available
+            if installed_pred(grp):
+                tgt_list = installed
+            if not uservisible or grp.uservisible:
+                tgt_list.append(grp)
+
+        sort_fn = operator.attrgetter('ui_name')
+        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     def _grp_setup_doCommand(self):
         try:
@@ -110,20 +185,20 @@ class GroupCommand(commands.Command):
         if not comps:
             return 1, [_('No Groups Available in any repository')]
 
-    @staticmethod
-    def _split_extcmds(extcmds):
-        if extcmds[0] == 'with-optional':
-            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
-            return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
-
     def _grp_cmd(self, extcmds):
         return extcmds[0], extcmds[1:]
 
-    _CMD_ALIASES = {'update'     : 'upgrade',
-                    'erase'      : 'remove'}
+    def _info(self, userlist):
+        for strng in userlist:
+            group_matched = False
+            for group in self.base.comps.groups_by_pattern(strng):
+                self.output.displayPkgsInGroups(group)
+                group_matched = True
 
-    _MARK_CMDS = ('install', 'remove')
+            if not group_matched:
+                logger.error(_('Warning: Group %s does not exist.'), strng)
+
+        return 0, []
 
     def _install(self, extcmds):
         cnt = 0
@@ -140,16 +215,71 @@ class GroupCommand(commands.Command):
             msg = _('No packages in any requested groups available to install.')
             raise dnf.cli.CliError(msg)
 
-    def _upgrade(self, patterns):
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
-                       CompsQuery.GROUPS, CompsQuery.INSTALLED)
-        res = q.get(*patterns)
-        cnt = 0
-        for grp in res.groups:
-            cnt += self.base.group_upgrade(grp)
-        if not cnt:
-            msg = _('No packages marked for upgrade.')
-            raise dnf.cli.CliError(msg)
+    def _list(self, userlist):
+        uservisible=1
+
+        if len(userlist) > 0:
+            if userlist[0] == 'hidden':
+                uservisible=0
+                userlist.pop(0)
+        if not userlist:
+            userlist = None # Match everything...
+
+        env_inst, env_avail = self._environment_lists(userlist)
+        installed, available = self._group_lists(uservisible, userlist)
+
+        if not any([env_inst ,env_avail, installed, available]):
+            logger.error(_('Warning: No groups match: %s'),
+                              ", ".join(userlist))
+            return 0, []
+
+        def _out_grp(sect, group):
+            if not done:
+                logger.info(sect)
+            msg = '   %s' % group.ui_name
+            if self.base.conf.verbose:
+                msg += ' (%s)' % group.id
+            if group.lang_only:
+                msg += ' [%s]' % group.lang_only
+            logger.info('%s', msg)
+
+        def _out_env(sect, envs):
+            if envs:
+                logger.info(sect)
+            for e in envs:
+                    msg = '   %s' % e.ui_name
+                    if self.base.conf.verbose:
+                        msg += ' (%s)' % e.id
+                    logger.info(msg)
+
+        _out_env(_('Available environment groups:'), env_avail)
+        _out_env(_('Installed environment groups:'), env_inst)
+
+        done = False
+        for group in installed:
+            if group.lang_only: continue
+            _out_grp(_('Installed groups:'), group)
+            done = True
+
+        done = False
+        for group in installed:
+            if not group.lang_only: continue
+            _out_grp(_('Installed language groups:'), group)
+            done = True
+
+        done = False
+        for group in available:
+            if group.lang_only: continue
+            _out_grp(_('Available groups:'), group)
+            done = True
+
+        done = False
+        for group in available:
+            if not group.lang_only: continue
+            _out_grp(_('Available language groups:'), group)
+            done = True
+
+        return 0, []
 
     def _mark_install(self, patterns):
         q = CompsQuery(self.base.comps, self.base.group_persistor,
@@ -161,12 +291,12 @@ class GroupCommand(commands.Command):
         for env in res.environments:
             solver.environment_install(env, types, None)
         if res.environments:
-            self.base.logger.info(_('Environments marked installed: %s') %
+            logger.info(_('Environments marked installed: %s') %
                                   ','.join([g.ui_name for g in res.environments]))
         for grp in res.groups:
             solver.group_install(grp, types, None)
         if res.groups:
-            self.base.logger.info(_('Groups marked installed: %s') %
+            logger.info(_('Groups marked installed: %s') %
                                   ','.join([g.ui_name for g in res.groups]))
 
     def _mark_remove(self, patterns):
@@ -178,12 +308,12 @@ class GroupCommand(commands.Command):
         for env in res.environments:
             solver.environment_remove(env)
         if res.environments:
-            self.base.logger.info(_('Environments marked removed: %s') %
+            logger.info(_('Environments marked removed: %s') %
                                   ','.join([g.ui_name for g in res.environments]))
         for grp in res.groups:
             solver.group_remove(grp)
         if res.groups:
-            self.base.logger.info(_('Groups marked removed: %s') %
+            logger.info(_('Groups marked removed: %s') %
                                   ','.join([g.ui_name for g in res.groups]))
 
     def _mark_subcmd(self, extcmds):
@@ -205,20 +335,57 @@ class GroupCommand(commands.Command):
         if not cnt:
             raise dnf.cli.CliError(_('No packages to remove from given groups.'))
 
-    @classmethod
-    def canonical(cls, command_list):
-        first = command_list[0]
-        rest = command_list[1:]
+    def _summary(self, userlist):
+        uservisible=1
+        if len(userlist) > 0:
+            if userlist[0] == 'hidden':
+                uservisible=0
+                userlist.pop(0)
+        if not userlist:
+            userlist = None # Match everything...
 
-        cmd = cls.direct_commands.get(first)
-        if cmd is None:
-            cmd = 'summary'
-            if rest:
-                cmd = rest.pop(0)
-        cmd = cls._CMD_ALIASES.get(cmd, cmd)
+        installed, available = self._group_lists(uservisible, userlist)
 
-        rest.insert(0, cmd)
-        return ('groups', rest)
+        def _out_grp(sect, num):
+            if not num:
+                return
+            logger.info('%s %u', sect,num)
+        done = 0
+        for group in installed:
+            if group.lang_only: continue
+            done += 1
+        _out_grp(_('Installed Groups:'), done)
+
+        done = 0
+        for group in installed:
+            if not group.lang_only: continue
+            done += 1
+        _out_grp(_('Installed Language Groups:'), done)
+
+        done = False
+        for group in available:
+            if group.lang_only: continue
+            done += 1
+        _out_grp(_('Available Groups:'), done)
+
+        done = False
+        for group in available:
+            if not group.lang_only: continue
+            done += 1
+        _out_grp(_('Available Language Groups:'), done)
+
+        return 0, []
+
+    def _upgrade(self, patterns):
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
+                       CompsQuery.GROUPS, CompsQuery.INSTALLED)
+        res = q.get(*patterns)
+        cnt = 0
+        for grp in res.groups:
+            cnt += self.base.group_upgrade(grp)
+        if not cnt:
+            msg = _('No packages marked for upgrade.')
+            raise dnf.cli.CliError(msg)
 
     def configure(self, extcmds):
         cmd = extcmds[0]
@@ -248,7 +415,7 @@ class GroupCommand(commands.Command):
 
         cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
         if cmd not in cmds:
-            self.base.logger.critical(_('Invalid groups sub-command, use: %s.'),
+            logger.critical(_('Invalid groups sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise dnf.cli.CliError
 
@@ -258,11 +425,11 @@ class GroupCommand(commands.Command):
         self._grp_setup_doCommand()
 
         if cmd == 'summary':
-            return self.base.returnGroupSummary(extcmds)
+            return self._summary(extcmds)
         if cmd == 'list':
-            return self.base.returnGroupLists(extcmds)
+            return self._list(extcmds)
         if cmd == 'info':
-            return self.base.returnGroupInfo(extcmds)
+            return self._info(extcmds)
         if cmd == 'mark':
             (subcmd, extcmds) = self._mark_subcmd(extcmds)
             if subcmd == 'remove':

@@ -24,7 +24,6 @@ import dnf.util
 import operator
 import warnings
 
-
 class EmptyPersistorTest(support.ResultTestCase):
     """Test group operations with empty persistor."""
 
@@ -51,6 +50,7 @@ class EmptyPersistorTest(support.ResultTestCase):
         trans.install.add('waltz')
         self.assertEqual(self.base._add_comps_trans(trans), 0)
 
+
 class PresetPersistorTest(support.ResultTestCase):
     """Test group operations with some data in the persistor."""
 
@@ -58,12 +58,6 @@ class PresetPersistorTest(support.ResultTestCase):
         self.base = support.MockBase("main")
         self.base.read_mock_comps(support.COMPS_PATH)
         self.base.init_sack()
-
-    def test_environment_list(self):
-        env_inst, env_avail = self.base._environment_list(['sugar*'])
-        self.assertLength(env_inst, 1)
-        self.assertLength(env_avail, 0)
-        self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
 
     def test_environment_remove(self):
         comps = self.base.comps

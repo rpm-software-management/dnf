@@ -1328,28 +1328,8 @@ class Base(object):
 
         return cnt
 
-    def _assert_comps(self):
-        msg = _('No group data available for configured repositories.')
-        if not len(self.comps):
-            raise dnf.exceptions.CompsError(msg)
-
     def _build_comps_solver(self):
         return dnf.comps.Solver(self.group_persistor)
-
-    def _environment_list(self, patterns):
-        def installed_pred(env):
-            return self.group_persistor.environment(env.id).installed
-
-        self._assert_comps()
-        if patterns is None:
-            envs = self.comps.environments
-        else:
-            envs = self.comps.environments_by_pattern(",".join(patterns))
-
-        available, installed = dnf.util.partition(installed_pred, envs)
-
-        sort_fn = operator.attrgetter('ui_name')
-        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     def environment_install(self, env, types, exclude=None):
         p_env = self.group_persistor.environment(env.id)
@@ -1378,40 +1358,6 @@ class Base(object):
         solver = self._build_comps_solver()
         trans = solver.environment_remove(env)
         return self._add_comps_trans(trans)
-
-    def _group_lists(self, uservisible, patterns):
-        """Return two lists of groups: installed groups and available
-        groups.
-
-        :param uservisible: If True, only groups marked as uservisible
-           will be returned. Otherwise, all groups will be returned
-        :param patterns: a list of stings.  If given, only groups
-           with names that match the patterns will be included in the
-           lists.  If not given, all groups will be included
-        :param ignore_case: whether to ignore case when determining
-           whether group names match the strings in *patterns*
-        """
-
-        def installed_pred(group):
-            return self.group_persistor.group(group.id).installed
-        installed = []
-        available = []
-
-        self._assert_comps()
-
-        if patterns is None:
-            grps = self.comps.groups
-        else:
-            grps = self.comps.groups_by_pattern(",".join(patterns))
-        for grp in grps:
-            tgt_list = available
-            if installed_pred(grp):
-                tgt_list = installed
-            if not uservisible or grp.uservisible:
-                tgt_list.append(grp)
-
-        sort_fn = operator.attrgetter('ui_name')
-        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     _COMPS_TRANSLATION = {
         'default'   : dnf.comps.DEFAULT,
