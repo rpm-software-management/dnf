@@ -116,6 +116,11 @@ class BaseTest(support.TestCase):
 
         self.assertRaises(StopIteration, next, iterator)
 
+    def test_translate_comps_pkg_types(self):
+        base = dnf.Base()
+        num = base._translate_comps_pkg_types(('mandatory', 'optional'))
+        self.assertEqual(num, 12)
+
 class MockBaseTest(PycompTestCase):
     """Test the Base methods that need a Sack."""
 
