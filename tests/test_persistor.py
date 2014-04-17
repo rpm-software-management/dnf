@@ -35,28 +35,6 @@ class ClonableDictTest(tests.support.TestCase):
         g_c['base'].append('magical')
         self.assertNotEqual(g, g_c)
 
-class OriginalGroupPersistorTest(tests.support.TestCase):
-    def setUp(self):
-        self.persistdir = tempfile.mkdtemp(prefix="dnf-groupprst-test")
-        self.prst = dnf.persistor.OriginalGroupPersistor(self.persistdir)
-
-    def tearDown(self):
-        dnf.util.rm_rf(self.persistdir)
-
-    def test_empty(self):
-        """Persistor on a fresh database is empty."""
-        self.assertEmpty(self.prst.groups)
-
-    def test_saving(self):
-        prst = self.prst
-        prst.groups['base'] = ['pepper', 'tour']
-        self.assertTrue(prst.save())
-
-        prst = dnf.persistor.OriginalGroupPersistor(self.persistdir)
-        self.assertEqual(prst.groups, {'base': ['pepper', 'tour']})
-        self.assertEqual(prst.environments, {})
-        self.assertFalse(prst.save())
-
 
 class GroupPersistorTest(tests.support.TestCase):
     def setUp(self):
