@@ -140,6 +140,17 @@ class GroupCommand(commands.Command):
             msg = _('No packages in any requested groups available to install.')
             raise dnf.cli.CliError(msg)
 
+    def _upgrade(self, patterns):
+        q = CompsQuery(self.base.comps, self.base.group_persistor,
+                       CompsQuery.GROUPS, CompsQuery.INSTALLED)
+        res = q.get(*patterns)
+        cnt = 0
+        for grp in res.groups:
+            cnt += self.base.group_upgrade(grp)
+        if not cnt:
+            msg = _('No packages marked for upgrade.')
+            raise dnf.cli.CliError(msg)
+
     def _mark_install(self, patterns):
         q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
@@ -161,7 +172,7 @@ class GroupCommand(commands.Command):
     def _mark_remove(self, patterns):
         q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
-                       CompsQuery.AVAILABLE)
+                       CompsQuery.INSTALLED)
         solver = dnf.comps.Solver(self.base.group_persistor)
         res = q.get(*patterns)
         for env in res.environments:
@@ -264,6 +275,6 @@ class GroupCommand(commands.Command):
         if cmd == 'install':
             return self._install(extcmds)
         if cmd == 'upgrade':
-            return self._install(extcmds)
+            return self._upgrade(extcmds)
         if cmd == 'remove':
             return self._remove(extcmds)

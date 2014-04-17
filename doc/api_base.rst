@@ -62,6 +62,10 @@
 
     Mark `group` (a :class:`dnf.comps.Group` instance) not installed. All the packages marked as belonging to this group will be marked for removal. Return the number of packages marked for removal in this call.
 
+  .. method:: group_upgrade(group)
+
+    Upgrade `group` (a :class:`dnf.comps.Group` instance). If there has been packages added to the group's comps information since installing on the system, they will be marked for installation. Similarly, removed packages get marked for removal. The remaining packages in the group are marked for an upgrade. The operation respects the package types from the original installation of the group.
+
   .. method:: read_all_repos()
 
     Read repository configuration from the main configuration file specified by :attr:`dnf.conf.Conf.config_file_path` and any ``.repo`` files under :attr:`dnf.conf.Conf.reposdir`. All the repositories found this way are added to :attr:`~.Base.repos`.

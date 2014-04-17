@@ -1456,6 +1456,16 @@ class Base(object):
             return 0
         return self._add_comps_trans(trans)
 
+    def group_upgrade(self, grp):
+        # :api
+        solver = self._build_comps_solver()
+        try:
+            trans = solver.group_upgrade(grp)
+        except dnf.exceptions.CompsError as e:
+            self.logger.warning("Warning: %s", str(e))
+            return 0
+        return self._add_comps_trans(trans)
+
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
         """Mark all the packages in the given group to be installed. :api
 
