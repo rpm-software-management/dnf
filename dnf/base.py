@@ -1332,29 +1332,12 @@ class Base(object):
         return dnf.comps.Solver(self.group_persistor)
 
     def environment_install(self, env, types, exclude=None):
-        p_env = self.group_persistor.environment(env.id)
-        if p_env.installed:
-            msg = _("Warning: Environment '%s' is already installed.")
-            self.logger.warning(msg, env.ui_name)
-            return 0
-
         solver = self._build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = solver.environment_install(env, types, exclude or set())
-
-        cnt = self._add_comps_trans(trans)
-        if not cnt:
-            msg = _("Warning: Did not install any groups from environment '%s'")
-            self.logger.warning(msg, env.ui_name)
-        return cnt
+        return self._add_comps_trans(trans)
 
     def environment_remove(self, env):
-        p_env = self.group_persistor.environment(env.id)
-        if not p_env.installed:
-            msg = _("Warning: Environment '%s' is not installed.")
-            self.logger.warning(msg, env.ui_name)
-            return 0
-
         solver = self._build_comps_solver()
         trans = solver.environment_remove(env)
         return self._add_comps_trans(trans)
@@ -1378,38 +1361,21 @@ class Base(object):
 
         solver = self._build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
-        try:
-            trans = solver.group_install(grp, pkg_types, exclude)
-        except dnf.exceptions.CompsError as e:
-            self.logger.warning("Warning: %s", str(e))
-            return 0
-
+        trans = solver.group_install(grp, pkg_types, exclude)
         self.logger.debug("Adding packages from group '%s': %s",
                           grp.id, trans.install)
-        cnt = self._add_comps_trans(trans)
-        if cnt == 0:
-            msg = _("Warning: Did not install any packages from group '%s'")
-            self.logger.warning(msg, grp.ui_name)
-        return cnt
+        return self._add_comps_trans(trans)
 
     def group_remove(self, grp):
         # :api
         solver = self._build_comps_solver()
-        try:
-            trans = solver.group_remove(grp)
-        except dnf.exceptions.CompsError as e:
-            self.logger.warning("Warning: %s", str(e))
-            return 0
+        trans = solver.group_remove(grp)
         return self._add_comps_trans(trans)
 
     def group_upgrade(self, grp):
         # :api
         solver = self._build_comps_solver()
-        try:
-            trans = solver.group_upgrade(grp)
-        except dnf.exceptions.CompsError as e:
-            self.logger.warning("Warning: %s", str(e))
-            return 0
+        trans = solver.group_upgrade(grp)
         return self._add_comps_trans(trans)
 
     def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
