@@ -80,7 +80,6 @@ class ReinstallCommand(commands.Command):
             except dnf.exceptions.PackagesNotInstalledError:
                 self.base.logger.info(_('No match for argument: %s'),
                                       dnf.pycomp.unicode(pkg_spec))
-                self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
             except dnf.exceptions.PackagesNotAvailableError as err:
                 for pkg in err.packages:
                     xmsg = ''

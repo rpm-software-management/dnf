@@ -81,7 +81,6 @@ class UpgradeCommand(commands.Command):
                 except dnf.exceptions.MarkingError:
                     self.base.logger.info(_('No match for argument: %s'),
                                           dnf.pycomp.unicode(pkg_spec))
-                    self.base._checkMaybeYouMeant(pkg_spec)
                 else:
                     done = True
 

@@ -63,7 +63,6 @@ class BaseCliTest(support.ResultTestCase):
 
         self._base.logger = mock.create_autospec(self._base.logger)
         self._base.output.term = support.MockTerminal()
-        self._base._maybeYouMeant = mock.create_autospec(self._base._maybeYouMeant)
         self._base.downgrade = mock.Mock(wraps=self._base.downgrade)
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
@@ -72,7 +71,6 @@ class BaseCliTest(support.ResultTestCase):
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('tour')])
         self.assertEqual(self._base.logger.mock_calls, [])
-        self.assertEqual(self._base._maybeYouMeant.mock_calls, [])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notfound(self):
@@ -83,8 +81,6 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('non-existent')])
         self.assertEqual(self._base.logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
-        self.assertEqual(self._base._maybeYouMeant.mock_calls,
-                         [mock.call('non-existent')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notinstalled(self):
@@ -97,7 +93,6 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('lotus')])
         self.assertEqual(self._base.logger.mock_calls,
                          [mock.call.info('No match for available package: %s', pkg)] * 2)
-        self.assertEqual(self._base._maybeYouMeant.mock_calls, [])
 
     def test_transaction_id_or_offset_bad(self):
         """Test transaction_id_or_offset with a bad input."""

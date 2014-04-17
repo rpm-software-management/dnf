@@ -267,60 +267,6 @@ class BaseCli(dnf.Base):
 
         return 0
 
-    def _maybeYouMeant(self, arg):
-        """ If install argument doesn't match with case, tell the user. """
-        matches = self.doPackageLists(patterns=[arg], ignore_case=True)
-        matches = matches.installed + matches.available
-        matches = set(map(lambda x: x.name, matches))
-        if matches:
-            msg = self.output.fmtKeyValFill(_('  * Maybe you meant: '),
-                                            ", ".join(matches))
-            self.logger.info(unicode(msg))
-
-    def _checkMaybeYouMeant(self, arg, always_output=True, rpmdb_only=False):
-        """ If the update/remove argument doesn't match with case, or due
-            to not being installed, tell the user. """
-        # always_output is a wart due to update/remove not producing the
-        # same output.
-        # if it is a grouppattern then none of this is going to make any sense
-        # skip it.
-        return False # :hawkey
-        if not arg or arg[0] == '@':
-            return
-
-        pkgnarrow='all'
-        if rpmdb_only:
-            pkgnarrow='installed'
-
-        matches = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=[arg], ignore_case=False)
-        if (matches.installed or (not matches.available and
-                                  self.returnInstalledPackagesByDep(arg))):
-            return # Found a match so ignore
-        hibeg = self.term.MODE['bold']
-        hiend = self.term.MODE['normal']
-        if matches.available:
-            self.logger.info(
-                _('Package(s) %s%s%s available, but not installed.'),
-                                    hibeg, arg, hiend)
-            return
-
-        # No package name, so do the maybeYouMeant thing here too
-        matches = self.doPackageLists(pkgnarrow=pkgnarrow, patterns=[arg], ignore_case=True)
-        if not matches.installed and matches.available:
-            self.logger.info(
-                _('Package(s) %s%s%s available, but not installed.'),
-                                    hibeg, arg, hiend)
-            return
-        matches = set(map(lambda x: x.name, matches.installed))
-        if always_output or matches:
-            self.logger.info(
-                                    _('No package %s%s%s available.'),
-                                    hibeg, arg, hiend)
-        if matches:
-            msg = self.output.fmtKeyValFill(_('  * Maybe you meant: '),
-                                            ", ".join(matches))
-            self.logger.info(msg)
-
     def check_updates(self, patterns=(), reponame=None, print_=True):
         """Check updates matching given *patterns* in selected repository."""
         ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
@@ -418,7 +364,6 @@ class BaseCli(dnf.Base):
                 msg = _('No package %s%s%s available.')
                 self.logger.info(msg, self.output.term.MODE['bold'], arg,
                                  self.output.term.MODE['normal'])
-                self._maybeYouMeant(arg)
             except dnf.exceptions.PackagesNotInstalledError as err:
                 for pkg in err.packages:
                     self.logger.info(_('No match for available package: %s'), pkg)

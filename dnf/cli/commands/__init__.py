@@ -344,8 +344,6 @@ class EraseCommand(Command):
             except dnf.exceptions.MarkingError:
                 self.base.logger.info(_('No match for argument: %s'),
                                       dnf.pycomp.unicode(pkg_spec))
-                self.base._checkMaybeYouMeant(pkg_spec, always_output=False,
-                                              rpmdb_only=True)
             else:
                 done = True
 
@@ -936,7 +934,6 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
-                        self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -1004,7 +1001,6 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
-                        self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -1126,7 +1122,6 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
-                        self.base._checkMaybeYouMeant(pkg_spec, always_output=False)
                     except dnf.exceptions.MarkingError:
                         assert False, 'Only the above marking error is expected.'
                     else:
@@ -1179,8 +1174,6 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.MarkingError:
                         self.base.logger.info(_('No match for argument: %s'),
                                               dnf.pycomp.unicode(pkg_spec))
-                        self.base._checkMaybeYouMeant(
-                            pkg_spec, always_output=False, rpmdb_only=True)
                     else:
                         done = True
 
