@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 
 import dnf.comps
 import dnf.persistor
+import dnf.pycomp
 import tempfile
 import tests.support
 
@@ -94,6 +95,10 @@ class GroupPersistorTest(tests.support.TestCase):
         grp = prst.group('pepper')
         self.assertEqual(grp.full_list, ['pepper', 'tour'])
         self.assertEqual(grp.pkg_types, dnf.comps.DEFAULT | dnf.comps.OPTIONAL)
+
+    def test_version(self):
+        version = self.prst.db['meta']['version']
+        self.assertIsInstance(version, dnf.pycomp.unicode)
 
 
 class RepoPersistorTest(tests.support.TestCase):

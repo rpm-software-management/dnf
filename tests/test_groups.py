@@ -21,6 +21,7 @@ from tests import support
 
 import dnf.comps
 import dnf.util
+import operator
 import warnings
 
 

@@ -182,11 +182,12 @@ class GroupPersistor(object):
     def _empty_db():
         return ClonableDict({
             'ENVIRONMENTS' : {},
-            'GROUPS' : {}
+            'GROUPS' : {},
+            'meta' : {'version' : '0.5.0'}
         })
 
     def __init__(self, persistdir):
-        self._dbfile = os.path.join(persistdir, 'groups.0.5.0.json')
+        self._dbfile = os.path.join(persistdir, 'groups.json')
         self.db = None
         self._original = None
         self._load()
@@ -215,9 +216,20 @@ class GroupPersistor(object):
                 content = db.read()
                 self.db = ClonableDict.wrap_dict(json.loads(content))
                 self._original = self.db.clone()
+                self._migrate()
         except IOError as e:
             if e.errno != errno.ENOENT:
                 raise
+
+    def _migrate(self):
+        try:
+            version = self.db['meta']['version']
+        except KeyError:
+            msg = _('Unsupported installed groups database found, resetting.')
+            logger.warning(msg)
+            self.db = self._empty_db()
+            version = self.db['meta']['version']
+        logger.debug('group persistor md version: %s', version)
 
     def _prune_db(self):
         for members_dct in (self.db['ENVIRONMENTS'], self.db['GROUPS']):

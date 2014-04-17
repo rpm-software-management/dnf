@@ -21,7 +21,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.exceptions import CompsError
-from dnf.yum.i18n import _
+from dnf.i18n import _
 from functools import reduce
 
 import dnf.i18n
@@ -33,7 +33,7 @@ import locale
 import operator
 import re
 
-# :api :abi
+# :api :binformat
 CONDITIONAL = 1
 DEFAULT     = 2
 MANDATORY   = 4
