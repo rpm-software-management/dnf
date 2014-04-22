@@ -52,7 +52,13 @@ TRACEBACK_RE = re.compile(
     '(?:  File "[^"\n]+", line \d+, in \w+\n'
     '(?:    .+\n)?)+'
     '\S.*\n)')
-
+REASONS = {
+    'hole'      : 'group',
+    'pepper'    : 'group',
+    'right'     : 'dep',
+    'tour'      : 'group',
+    'trampoline': 'group',
+}
 RPMDB_CHECKSUM = '5ff5337cff3fcdcee31760ab6478c9a7c784c0b2'
 TOTAL_RPMDB_COUNT = 5
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
@@ -163,6 +169,9 @@ class _BaseStubMixin(object):
 
     def _activate_group_persistor(self):
         return MockGroupPersistor()
+
+    def _build_comps_solver(self):
+        return dnf.comps.Solver(self.group_persistor, REASONS.get)
 
     def activate_persistor(self):
         pass

@@ -1330,7 +1330,13 @@ class Base(object):
         return cnt
 
     def _build_comps_solver(self):
-        return dnf.comps.Solver(self.group_persistor)
+        def reason_fn(pkgname):
+            q = self.sack.query().installed().filter(name=pkgname)
+            if not q:
+                return None
+            return self.yumdb.get_package(q[0]).reason
+
+        return dnf.comps.Solver(self.group_persistor, reason_fn)
 
     def environment_install(self, env, types, exclude=None):
         solver = self._build_comps_solver()

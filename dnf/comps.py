@@ -298,8 +298,9 @@ class TransactionBunch(object):
 
 
 class Solver(object):
-    def __init__(self, persistor):
+    def __init__(self, persistor, reason_fn):
         self.persistor = persistor
+        self._reason_fn = reason_fn
 
     @staticmethod
     def _full_group_set(env):
@@ -326,6 +327,8 @@ class Solver(object):
     def _removable_pkg(self, pkg_name):
         prst = self.persistor
         count = 0
+        if self._reason_fn(pkg_name) != 'group':
+            return False
         for id_ in prst.groups:
             p_grp = prst.group(id_)
             count += sum(1 for pkg in p_grp.full_list if pkg == pkg_name)

@@ -146,7 +146,7 @@ class SolverTestMixin(object):
         comps.add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
         self.persistor = support.MockGroupPersistor()
-        self.solver = dnf.comps.Solver(self.persistor)
+        self.solver = dnf.comps.Solver(self.persistor, support.REASONS.get)
 
 
 class SolverGroupTest(SolverTestMixin, support.TestCase):
@@ -166,6 +166,9 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         p_grp1.full_list.extend(('pepper', 'tour', 'right'))
         p_grp2.full_list.append('tour')
         self.assertTrue(self.solver._removable_pkg('pepper'))
+        # right's reason is "dep"
+        self.assertFalse(self.solver._removable_pkg('right'))
+        # tour appears in more than one group
         self.assertFalse(self.solver._removable_pkg('tour'))
 
     def test_remove(self):
