@@ -80,10 +80,6 @@ class TransactionWrapper(object):
         self.tsflags.append(flags)
         self.ts.setVSFlags(self.tsflags[-1])
 
-    def popVSFlags(self):
-        del self.tsflags[-1]
-        self.ts.setVSFlags(self.tsflags[-1])
-
     def addTsFlag(self, flag):
         curflags = self.ts.setFlags(0)
         self.ts.setFlags(curflags | flag)
@@ -99,10 +95,6 @@ class TransactionWrapper(object):
 
     def setScriptFd(self, fd):
         self.ts.scriptFd = fd.fileno()
-
-#    def addProblemFilter(self, filt):
-#        curfilter = self.ts.setProbFilter(0)
-#        self.ts.setProbFilter(cutfilter | filt)
 
     def test(self, cb, conf={}):
         """tests the ts we've setup, takes a callback function and a conf dict
