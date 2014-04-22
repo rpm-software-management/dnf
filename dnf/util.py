@@ -27,7 +27,6 @@ from functools import reduce
 
 import dnf.const
 import dnf.pycomp
-import hawkey
 import itertools
 import librepo
 import os
@@ -156,13 +155,6 @@ def partition(pred, iterable):
     """
     t1, t2 = itertools.tee(iterable)
     return dnf.pycomp.filterfalse(pred, t1), filter(pred, t2)
-
-def reason_name(reason):
-    if reason == hawkey.REASON_DEP:
-        return "dep"
-    if reason == hawkey.REASON_USER:
-        return "user"
-    raise ValueError("Unknown reason %d" % reason)
 
 def rm_rf(path):
     try:

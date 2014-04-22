@@ -456,8 +456,7 @@ class Base(object):
         for pkg in goal.list_installs():
             self.ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
-            reason = dnf.util.reason_name(goal.get_reason(pkg))
-            ts.add_install(pkg, obs, reason)
+            ts.add_install(pkg, obs, goal.get_reason(pkg))
             cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
         for pkg in goal.list_upgrades():

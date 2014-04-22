@@ -1,6 +1,3 @@
-# goal.py
-# Customized hawkey.Goal
-#
 # Copyright (C) 2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
@@ -20,20 +17,31 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import hawkey
+import dnf.goal
+import dnf.selector
+import tests.support
 
 
-class Goal(hawkey.Goal):
-    def __init__(self, sack):
-        super(Goal, self).__init__(sack)
-        self.group_members = set()
+class GoalTest(tests.support.TestCase):
+    def setUp(self):
+        base = tests.support.MockBase('main')
+        self.sack = base.sack
 
-    def get_reason(self, pkg):
-        code = super(Goal, self).get_reason(pkg)
-        if code == hawkey.REASON_DEP:
-            return 'dep'
-        if code == hawkey.REASON_USER:
-            if pkg.name in self.group_members:
-                return 'group'
-            return 'user'
-        raise ValueError('Unknown reason: %d' % reason)
+    def test_get_reason(self):
+        sltr = dnf.selector.Selector(self.sack)
+        sltr.set(name='mrkite')
+        grp_sltr = dnf.selector.Selector(self.sack)
+        grp_sltr.set(name='lotus')
+
+        goal = dnf.goal.Goal(self.sack)
+        goal.install(select=sltr)
+        goal.install(select=grp_sltr)
+        goal.group_members.add('lotus')
+        goal.run()
+        installs = goal.list_installs()
+        mrkite = [pkg for pkg in installs if pkg.name == 'mrkite'][0]
+        lotus = [pkg for pkg in installs if pkg.name == 'lotus'][0]
+        trampoline = [pkg for pkg in installs if pkg.name == 'trampoline'][0]
+        self.assertEqual(goal.get_reason(lotus), 'group')
+        self.assertEqual(goal.get_reason(mrkite), 'user')
+        self.assertEqual(goal.get_reason(trampoline), 'dep')
