@@ -1326,6 +1326,7 @@ class Base(object):
                 fn(select=sltr)
                 cnt += 1
 
+        self._goal.group_members.update(trans.install)
         return cnt
 
     def _build_comps_solver(self):

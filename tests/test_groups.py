@@ -42,6 +42,7 @@ class EmptyPersistorTest(support.ResultTestCase):
         trans = dnf.comps.TransactionBunch()
         trans.install.add('trampoline')
         self.assertGreater(self.base._add_comps_trans(trans), 0)
+        self.assertIn('trampoline', self.base._goal.group_members)
         (installed, removed) = self.installed_removed(self.base)
         self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
         self.assertEmpty(removed)
