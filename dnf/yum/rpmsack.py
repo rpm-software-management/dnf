@@ -14,15 +14,14 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import rpm
+from . import misc
+import dnf.pycomp
 import glob
 import os
-import os.path
+import rpm
 
-from . import misc
 
 # For returnPackages(patterns=)
-
 flags = {"GT": rpm.RPMSENSE_GREATER,
          "GE": rpm.RPMSENSE_EQUAL | rpm.RPMSENSE_GREATER,
          "LT": rpm.RPMSENSE_LESS,
@@ -96,7 +95,11 @@ class AdditionalPkgDB(object):
             return self._packages[pkgid]
         (n, a, e, v,r) = pkgtup
         n = _sanitize(n)
-        str_pkgid = pkgid if pkgid else "<nopkgid>"
+        str_pkgid = pkgid
+        if pkgid is None:
+            str_pkgid = '<nopkgid>'
+        elif dnf.pycomp.is_py2str_py3bytes(pkgid):
+            str_pkgid = pkgid.decode()
         thisdir = '%s/%s/%s-%s-%s-%s-%s' % (self.conf.db_path,
                                             n[0], str_pkgid, n, v, r, a)
         self._packages[pkgid] = thisdir
