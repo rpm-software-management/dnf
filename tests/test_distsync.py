@@ -20,7 +20,7 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
-import hawkey
+import dnf.goal
 import rpm
 
 class DistroSyncAll(support.ResultTestCase):
@@ -41,7 +41,7 @@ class DistroSync(support.ResultTestCase):
     def setUp(self):
         self._base = support.BaseCliStub()
         self._base._sack = support.mock_sack('main', 'updates')
-        self._base._goal = hawkey.Goal(self._base.sack)
+        self._base._goal = dnf.goal.Goal(self._base.sack)
         self._base.logger = mock.create_autospec(self._base.logger)
 
     def test_distro_sync(self):

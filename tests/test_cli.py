@@ -24,9 +24,9 @@ from tests.support import mock
 
 import dnf.cli.cli
 import dnf.conf
+import dnf.goal
 import dnf.repo
 import dnf.repodict
-import hawkey
 import os
 import unittest
 
@@ -54,7 +54,7 @@ class BaseCliTest(support.ResultTestCase):
     def setUp(self):
         self._base = dnf.cli.cli.BaseCli()
         self._base._sack = support.mock_sack('main', 'updates')
-        self._base._goal = hawkey.Goal(self._base.sack)
+        self._base._goal = dnf.goal.Goal(self._base.sack)
 
         main_repo = support.MockRepo('main', None)
         main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)

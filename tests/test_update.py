@@ -21,8 +21,8 @@ from tests import support
 from tests.support import mock
 
 import dnf
+import dnf.goal
 import dnf.util
-import hawkey
 import itertools
 import tests.test_repo
 
@@ -39,7 +39,7 @@ class Update(support.ResultTestCase):
     def test_update_not_found(self):
         base = dnf.Base()
         base._sack = support.mock_sack('updates')
-        base._goal = goal = mock.create_autospec(hawkey.Goal)
+        base._goal = goal = mock.create_autospec(dnf.goal.Goal)
 
         with self.assertRaises(dnf.exceptions.MarkingError) as context:
             base.upgrade('non-existent')

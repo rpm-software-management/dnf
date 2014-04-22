@@ -21,7 +21,7 @@ from tests import support
 from tests.support import mock
 
 import dnf
-import hawkey
+import dnf.goal
 import rpm
 
 class DowngradeTest(support.ResultTestCase):
@@ -62,7 +62,7 @@ class DowngradeTest2(support.TestCase):
     def setUp(self):
         self._base = dnf.Base()
         self._base._sack = support.mock_sack('main')
-        self._base._goal = self._goal = mock.create_autospec(hawkey.Goal)
+        self._base._goal = self._goal = mock.create_autospec(dnf.goal.Goal)
 
     def test_downgrade_pkgnevra(self):
         """ Downgrade should handle full NEVRAs. """

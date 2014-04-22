@@ -19,9 +19,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests.support import mock
 
+import dnf.goal
 import dnf.repo
 import dnf.transaction
-import hawkey
 import rpm
 import tests.support
 
@@ -153,7 +153,7 @@ class RPMProbFilters(tests.support.TestCase):
     def test_filters_install(self, mock_ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'search')
-        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.install("lotus")
         self.base.ts
         self.base.ts.setProbFilter.assert_called_with(0)
@@ -162,7 +162,7 @@ class RPMProbFilters(tests.support.TestCase):
     def test_filters_downgrade(self, ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'old_versions')
-        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.downgrade("tour")
         self.base.ts
         self.base.ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
@@ -171,7 +171,7 @@ class RPMProbFilters(tests.support.TestCase):
     def test_filters_reinstall(self, ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main')
-        self.base._goal = hawkey.Goal(self.base.sack)
+        self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.reinstall("librita")
         self.base.ts
         expected = rpm.RPMPROB_FILTER_REPLACEPKG | \

@@ -26,6 +26,7 @@ import dnf.cli.cli
 import dnf.cli.demand
 import dnf.comps
 import dnf.exceptions
+import dnf.goal
 import dnf.package
 import dnf.persistor
 import dnf.pycomp
@@ -176,7 +177,7 @@ class _BaseStubMixin(object):
             self._sack.load_test_repo(repo.id, fn)
 
         self._sack.configure(self.conf.installonlypkgs)
-        self._goal = hawkey.Goal(self._sack)
+        self._goal = dnf.goal.Goal(self._sack)
         return self._sack
 
     def close(self):

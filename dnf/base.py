@@ -38,6 +38,7 @@ import dnf.comps
 import dnf.conf
 import dnf.drpm
 import dnf.exceptions
+import dnf.goal
 import dnf.history
 import dnf.lock
 import dnf.logging
@@ -205,7 +206,7 @@ class Base(object):
         self.logger.debug('hawkey sack setup time: %0.3f' %
                                   (time.time() - start))
         self._setup_excludes()
-        self._goal = hawkey.Goal(self._sack)
+        self._goal = dnf.goal.Goal(self._sack)
         return self._sack
 
     @property
@@ -328,7 +329,7 @@ class Base(object):
         if goal:
             self._goal = None
             if self._sack is not None:
-                self._goal = hawkey.Goal(self._sack)
+                self._goal = dnf.goal.Goal(self._sack)
 
     def success_finish(self):
         if self.group_persistor:
