@@ -51,7 +51,7 @@ class GroupCommandStaticTest(support.TestCase):
 class GroupCommandTest(support.TestCase):
     def setUp(self):
         base = support.MockBase("main")
-        base.read_mock_comps(support.COMPS_PATH)
+        base.read_mock_comps()
         base.init_sack()
         self.cmd = group.GroupCommand(base.mock_cli())
 
@@ -65,7 +65,7 @@ class GroupCommandTest(support.TestCase):
 class CompsQueryTest(support.TestCase):
 
     def setUp(self):
-        (self.comps, self.prst) = support.mock_comps()
+        (self.comps, self.prst) = support.mock_comps(True)
 
     def test_all(self):
         status_all = group.CompsQuery.AVAILABLE | group.CompsQuery.INSTALLED

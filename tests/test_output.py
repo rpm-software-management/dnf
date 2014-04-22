@@ -185,7 +185,7 @@ Group: Pepper's
 class GroupOutputTest(unittest.TestCase):
     def setUp(self):
         base = support.MockBase('main')
-        base.read_mock_comps(support.COMPS_PATH)
+        base.read_mock_comps()
         output = dnf.cli.output.Output(base, base.conf)
 
         self.base = base

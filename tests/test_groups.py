@@ -29,7 +29,7 @@ class EmptyPersistorTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase('main')
-        self.base.read_mock_comps_empty_prst()
+        self.base.read_mock_comps(False)
         self.base.init_sack()
 
     def test_group_install_exclude(self):
@@ -56,7 +56,7 @@ class PresetPersistorTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase("main")
-        self.base.read_mock_comps(support.COMPS_PATH)
+        self.base.read_mock_comps()
         self.base.init_sack()
 
     def test_environment_remove(self):
@@ -110,7 +110,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
         """Set up a test where sugar is considered not installed."""
         self.base = support.MockBase("main")
         self.base.init_sack()
-        self.base.read_mock_comps(support.COMPS_PATH)
+        self.base.read_mock_comps()
         self.prst = self.base.group_persistor
         p_env = self.prst.environment('sugar-desktop-environment')
         p_env.pkg_types = 0

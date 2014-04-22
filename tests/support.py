@@ -113,21 +113,22 @@ def wiretap_logs(logger_name, level, stream):
 
 # mock objects
 
-def mock_comps():
+def mock_comps(seed_persistor):
     comps = dnf.comps.Comps()
     comps.add_from_xml_filename(COMPS_PATH)
 
     persistor = MockGroupPersistor()
-    p_env = persistor.environment('sugar-desktop-environment')
-    p_env.grp_types = dnf.comps.ALL_TYPES
-    p_env.pkg_types = dnf.comps.ALL_TYPES
-    p_env.full_list.extend(('Peppers', 'somerset'))
-    p_pep = persistor.group('Peppers')
-    p_pep.pkg_types = dnf.comps.MANDATORY
-    p_pep.full_list.extend(('hole', 'lotus'))
-    p_som = persistor.group('somerset')
-    p_som.pkg_types = dnf.comps.MANDATORY
-    p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
+    if seed_persistor:
+        p_env = persistor.environment('sugar-desktop-environment')
+        p_env.grp_types = dnf.comps.ALL_TYPES
+        p_env.pkg_types = dnf.comps.ALL_TYPES
+        p_env.full_list.extend(('Peppers', 'somerset'))
+        p_pep = persistor.group('Peppers')
+        p_pep.pkg_types = dnf.comps.MANDATORY
+        p_pep.full_list.extend(('hole', 'lotus'))
+        p_som = persistor.group('somerset')
+        p_som.pkg_types = dnf.comps.MANDATORY
+        p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
 
     return comps, persistor
 
@@ -189,19 +190,13 @@ class _BaseStubMixin(object):
         return mock.Mock('base', base=self, log_stream=stream, logger=logger,
                          nogpgcheck=True, demands=dnf.cli.demand.DemandSheet())
 
-    def read_mock_comps(self, fn):
-        self._comps, self.group_persistor = mock_comps()
+    def read_mock_comps(self, seed_persistor=True):
+        self._comps, self.group_persistor = mock_comps(seed_persistor)
         return self._comps
-
-    def read_mock_comps_empty_prst(self):
-        comps = dnf.comps.Comps()
-        comps.add_from_xml_filename(COMPS_PATH)
-        self._comps = comps
-        self.group_persistor = MockGroupPersistor()
-        return comps
 
     def read_all_repos(self):
         pass
+
 
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
