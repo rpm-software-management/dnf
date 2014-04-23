@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.4.20-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.5.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.20-1',
+        VERSION:     '0.5.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.20-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.0-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -62,6 +62,7 @@
 <dt id="dnf.Base">
 <em class="property">class </em><tt class="descclassname">dnf.</tt><tt class="descname">Base</tt><a class="headerlink" href="#dnf.Base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instances of <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a> are the central point of functionality supplied by DNF. An application will typically create a single instance of this class which it will keep for the runtime needed to accomplish its packaging tasks. Plugins are managed by DNF and get a reference to <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">dnf.Base</span></tt></a> object when they run.</p>
+<p><a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> instances are stateful objects holding references to various data sources and data sinks. To properly finalize and close off any handles the object may hold, client code should either call <a class="reference internal" href="#dnf.Base.close" title="dnf.Base.close"><tt class="xref py py-meth docutils literal"><span class="pre">Base.close()</span></tt></a> when it has finished opertions with the instance, or use the instance as a context manager. After the object has left the context, or its <a class="reference internal" href="#dnf.Base.close" title="dnf.Base.close"><tt class="xref py py-meth docutils literal"><span class="pre">Base.close()</span></tt></a> has been called explicitly, it must not be used.</p>
 <dl class="attribute">
 <dt id="dnf.Base.comps">
 <tt class="descname">comps</tt><a class="headerlink" href="#dnf.Base.comps" title="Permalink to this definition">¶</a></dt>
@@ -99,6 +100,18 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="dnf.Base.add_remote_rpm">
+<tt class="descname">add_remote_rpm</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#dnf.Base.add_remote_rpm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add RPM file at <cite>path</cite> to the <a class="reference internal" href="#dnf.Base.sack" title="dnf.Base.sack"><tt class="xref py py-attr docutils literal"><span class="pre">sack</span></tt></a> and return the respective <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">dnf.package.Package</span></tt></a> instance. Does the download to a temporary file if <cite>path</cite> is a remote URL. Raises <tt class="xref py py-exc docutils literal"><span class="pre">IOError</span></tt> if there are problems obtaining or reading the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the <tt class="docutils literal"><span class="pre">with</span></tt> statement.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="dnf.Base.fill_sack">
 <tt class="descname">fill_sack</tt><big>(</big><span class="optional">[</span><em>load_system_repo=True</em>, <em>load_available_repos=True</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#dnf.Base.fill_sack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup the package sack. If <cite>load_system_repo</cite> is <tt class="docutils literal"><span class="pre">True</span></tt>, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If <cite>load_available_repos</cite> is <tt class="docutils literal"><span class="pre">True</span></tt>, load information about packages from the available repositories into the sack.</p>
@@ -127,6 +140,12 @@
 <dt id="dnf.Base.group_remove">
 <tt class="descname">group_remove</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#dnf.Base.group_remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance) not installed. All the packages marked as belonging to this group will be marked for removal. Return the number of packages marked for removal in this call.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.group_upgrade">
+<tt class="descname">group_upgrade</tt><big>(</big><em>group</em><big>)</big><a class="headerlink" href="#dnf.Base.group_upgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upgrade <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance). If there has been packages added to the group&#8217;s comps information since installing on the system, they will be marked for installation. Similarly, removed packages get marked for removal. The remaining packages in the group are marked for an upgrade. The operation respects the package types from the original installation of the group.</p>
 </dd></dl>
 
 <dl class="method">
@@ -172,9 +191,10 @@ affect the package data already loaded into the <a class="reference internal" hr
 
 <dl class="method">
 <dt id="dnf.Base.resolve">
-<tt class="descname">resolve</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Base.resolve" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">resolve</tt><big>(</big><em>allow_erasing=True</em><big>)</big><a class="headerlink" href="#dnf.Base.resolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resolve the marked requirements and store the resulting <a class="reference internal" href="api_transaction.html#dnf.transaction.Transaction" title="dnf.transaction.Transaction"><tt class="xref py py-class docutils literal"><span class="pre">dnf.transaction.Transaction</span></tt></a> into <a class="reference internal" href="#dnf.Base.transaction" title="dnf.Base.transaction"><tt class="xref py py-attr docutils literal"><span class="pre">transaction</span></tt></a>. Raise <a class="reference internal" href="api_exceptions.html#dnf.exceptions.DepsolveError" title="dnf.exceptions.DepsolveError"><tt class="xref py py-exc docutils literal"><span class="pre">dnf.exceptions.DepsolveError</span></tt></a> on a depsolving error. Return <tt class="docutils literal"><span class="pre">True</span></tt> iff the resolved transaction is non-empty.</p>
-<p>The exact operation of the solver depends on the <a class="reference internal" href="api_conf.html#dnf.conf.Conf.best" title="dnf.conf.Conf.best"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.best</span></tt></a> setting.</p>
+<p>Enabling <cite>allow_erasing</cite> lets to solver remove other packages while looking to fulfill the current packaging requests. For instance, this is used to allow the solver remove dependants of a package being removed.</p>
+<p>The exact operation of the solver further depends on the <a class="reference internal" href="api_conf.html#dnf.conf.Conf.best" title="dnf.conf.Conf.best"><tt class="xref py py-attr docutils literal"><span class="pre">dnf.conf.Conf.best</span></tt></a> setting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -187,7 +207,7 @@ affect the package data already loaded into the <a class="reference internal" hr
 </div>
 </dd></dl>
 
-<p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument they take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
+<p id="package-marking-label">The <a class="reference internal" href="#dnf.Base" title="dnf.Base"><tt class="xref py py-class docutils literal"><span class="pre">Base</span></tt></a> class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The <cite>pkg_spec</cite> argument some of them take must be a package specification recognized by <a class="reference internal" href="api_queries.html#dnf.subject.Subject" title="dnf.subject.Subject"><tt class="xref py py-class docutils literal"><span class="pre">dnf.subject.Subject</span></tt></a>. If these methods fail to find suitable packages for the operation they raise a <a class="reference internal" href="api_exceptions.html#dnf.exceptions.MarkingError" title="dnf.exceptions.MarkingError"><tt class="xref py py-exc docutils literal"><span class="pre">MarkingError</span></tt></a>. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).</p>
 <dl class="method">
 <dt id="dnf.Base.downgrade">
 <tt class="descname">downgrade</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.downgrade" title="Permalink to this definition">¶</a></dt>
@@ -198,6 +218,24 @@ affect the package data already loaded into the <a class="reference internal" hr
 <dt id="dnf.Base.install">
 <tt class="descname">install</tt><big>(</big><em>pkg_spec</em><big>)</big><a class="headerlink" href="#dnf.Base.install" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mark packages matching <cite>pkg_spec</cite> for installation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.package_downgrade">
+<tt class="descname">package_downgrade</tt><big>(</big><em>pkg</em><big>)</big><a class="headerlink" href="#dnf.Base.package_downgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <cite>pkg</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">dnf.package.Package</span></tt></a> in an available repository, mark the matching installed package for downgrade to <cite>pkg</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.package_install">
+<tt class="descname">package_install</tt><big>(</big><em>pkg</em><big>)</big><a class="headerlink" href="#dnf.Base.package_install" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark <cite>pkg</cite> (a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">dnf.package.Package</span></tt></a> instance) for installation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.Base.package_upgrade">
+<tt class="descname">package_upgrade</tt><big>(</big><em>pkg</em><big>)</big><a class="headerlink" href="#dnf.Base.package_upgrade" title="Permalink to this definition">¶</a></dt>
+<dd><p>If <cite>pkg</cite> is a <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">dnf.package.Package</span></tt></a> in an available repository, mark the matching installed package for upgrade to <cite>pkg</cite>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -271,7 +309,7 @@ affect the package data already loaded into the <a class="reference internal" hr
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

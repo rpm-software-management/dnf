@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.4.20-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.5.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.20-1',
+        VERSION:     '0.5.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.20-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.0-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -82,6 +82,7 @@
 <li><a class="reference internal" href="#enableplugin-not-recognized" id="id25"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
 <li><a class="reference internal" href="#bandwidth-limiting" id="id26">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id27">The usage of Delta RPM files</a></li>
+<li><a class="reference internal" href="#handling-srpm-files" id="id28">Handling .srpm files</a></li>
 </ul>
 </li>
 </ul>
@@ -241,7 +242,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 </div>
 <div class="section" id="bandwidth-limiting">
 <h2><a class="toc-backref" href="#id26">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
-<p>DNF supports the &#8216;throttle&#8217; and &#8216;bandwidth&#8217; options familiar from Yum.
+<p>DNF supports the <tt class="docutils literal"><span class="pre">throttle</span></tt> and <tt class="docutils literal"><span class="pre">bandwidth</span></tt> options familiar from Yum.
 Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.</p>
@@ -249,6 +250,19 @@ downloaders ran in different processes.</p>
 <div class="section" id="the-usage-of-delta-rpm-files">
 <h2><a class="toc-backref" href="#id27">The usage of Delta RPM files</a><a class="headerlink" href="#the-usage-of-delta-rpm-files" title="Permalink to this headline">¶</a></h2>
 <p>The boolean <tt class="docutils literal"><span class="pre">deltarpm</span></tt> option controls whether delta RPM files are used. Compared to Yum, DNF does not support <tt class="docutils literal"><span class="pre">deltarpm_percentage</span></tt> and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.</p>
+</div>
+<div class="section" id="handling-srpm-files">
+<h2><a class="toc-backref" href="#id28">Handling .srpm files</a><a class="headerlink" href="#handling-srpm-files" title="Permalink to this headline">¶</a></h2>
+<p>DNF will terminate early with an error if a command is executed requesting an installing operation on a local <tt class="docutils literal"><span class="pre">.srpm</span></tt> file:</p>
+<div class="highlight-python"><pre>$ dnf install fdn-0.4.17-1.fc20.src.rpm tour-4-6.noarch.rpm
+Resolving dependencies
+--&gt; Starting dependency resolution
+---&gt; Package fdn.src 0.4.17-1.fc20 will be installed
+---&gt; Package tour.noarch 4-6 will be installed
+--&gt; Finished dependency resolution
+Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
+</div>
+<p>Yum will only issue warning in this case and continue installing the &#8220;tour&#8221; package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.</p>
 </div>
 </div>
 
@@ -283,6 +297,7 @@ downloaders ran in different processes.</p>
 <li><a class="reference internal" href="#enableplugin-not-recognized"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
 <li><a class="reference internal" href="#bandwidth-limiting">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files">The usage of Delta RPM files</a></li>
+<li><a class="reference internal" href="#handling-srpm-files">Handling .srpm files</a></li>
 </ul>
 </li>
 </ul>
@@ -330,7 +345,7 @@ downloaders ran in different processes.</p>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

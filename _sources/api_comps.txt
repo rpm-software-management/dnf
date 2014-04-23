@@ -2,7 +2,9 @@
  Comps, or the Ditribution Compose Metadata
 =============================================
 
-.. class:: dnf.comps.Comps
+.. module:: dnf.comps
+
+.. class:: Comps
 
   An object of this class can merges comps information from arbitrary repositories. It typically is instantiated from :class:`dnf.Base` and covers all the available repositories.
 
@@ -56,7 +58,23 @@
 
     Return iterator over all contained :class:`dnf.comps.Group` objects.
 
-.. class:: dnf.comps.Category
+.. class:: Package
+
+  Represents comps package data.
+
+  .. NOTE::
+
+    Should not be confused with :class:`dnf.package.Package` which represents a pacakge contained in a :class:`~.Sack`. There is no guarantee whether the comps package has a corresponding real sack package, i.e. there can be no package of given name in the sack, one such package, or more than one. For this reason two separate types are introduced.
+
+  .. attribute:: name
+
+    Name of the package.
+
+  .. attribute:: option_type
+
+    The type of inclusion of this particular package in its group. Must be one of the :data:`inclusion types <dnf.comps.CONDITIONAL>`.
+
+.. class:: Category
 
   .. attribute:: id
 
@@ -74,10 +92,24 @@
 
     The description of the category translated to the language given by the current locale.
 
-.. class:: dnf.comps.Environment
+.. class:: Environment
 
-    Has the same set of attributes as :class:`dnf.comps.Category`.
+  Has the same set of attributes as :class:`dnf.comps.Category`.
 
-.. class:: dnf.comps.Group
+.. class:: Group
 
-    Has the same set of attributes as :class:`dnf.comps.Category`.
+  Has the same set of attributes as :class:`dnf.comps.Category`.
+
+  .. method:: packages_iter()
+
+    Return iterator over all :class:`packages <.Package>` belonging in this group.
+
+Following types of inclusions of objects in their parent objects are defined:
+
+.. data:: CONDITIONAL
+
+.. data:: DEFAULT
+
+.. data:: MANDATORY
+
+.. data:: OPTIONAL

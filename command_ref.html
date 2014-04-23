@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.4.20-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.5.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.20-1',
+        VERSION:     '0.5.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.20-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.0-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -98,7 +98,7 @@
 <dt><tt class="docutils literal"><span class="pre">--assumeno</span></tt></dt>
 <dd>answer no for all questions</dd>
 <dt><tt class="docutils literal"><span class="pre">--best</span></tt></dt>
-<dd>Try the best available package versions in transactions.</dd>
+<dd>Try the best available package versions in transactions. Specifically during <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages and possibly fail giving a reason why the latest version can not be installed.</dd>
 <dt><tt class="docutils literal"><span class="pre">-C,</span> <span class="pre">--cacheonly</span></tt></dt>
 <dd><p class="first">Run entirely from system cache, don&#8217;t update the cache and use it even in case it is expired.</p>
 <p class="last">DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache. This switch allows a regular user read-only access to the system cache which usually is more fresh then the user&#8217;s and thus he does not have to wait for metadata sync.</p>
@@ -135,6 +135,8 @@ understandable to the user), default is 2. Deprecated, use <tt class="docutils l
 <dd>Show the help.</dd>
 <dt><tt class="docutils literal"><span class="pre">--installroot=&lt;path&gt;</span></tt></dt>
 <dd>set install root</dd>
+<dt><tt class="docutils literal"><span class="pre">--refresh</span></tt></dt>
+<dd>set metadata as expired before running the command</dd>
 <dt><tt class="docutils literal"><span class="pre">--nogpgcheck</span></tt></dt>
 <dd>skip checking GPG signatures on packages</dd>
 <dt><tt class="docutils literal"><span class="pre">--noplugins</span></tt></dt>
@@ -196,8 +198,7 @@ next time it is used.</dd>
 the remote availability of packages. Using this option will make DNF
 download all the metadata the next time it is run.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">packages</span></tt></dt>
-<dd>Removes any cached packages from the system.  Note that packages are not
-automatically deleted after they are downloaded.</dd>
+<dd>Removes any cached packages from the system.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">plugins</span></tt></dt>
 <dd>Tells all enabled plugins to eliminate their cached data.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">clean</span> <span class="pre">all</span></tt></dt>
@@ -229,16 +230,13 @@ the latest version available from any enabled repository. If no package is given
 <div class="section" id="erase-command">
 <span id="erase-command-label"></span><h3>Erase Command<a class="headerlink" href="#erase-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">erase</span> <span class="pre">&lt;package-specs&gt;...</span></tt></dt>
-<dd>Removes the specified packages from the system along with any packages
-depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt>
-is enabled (the default) also removes any dependencies that are no longer
-needed.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">erase</span> <span class="pre">&lt;package-spec&gt;...</span></tt></dt>
+<dd>Removes the specified packages from the system along with any packages depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> is enabled (the default) also removes any dependencies that are no longer needed.</dd>
 </dl>
 </div>
 <div class="section" id="group-command">
 <h3>Group Command<a class="headerlink" href="#group-command" title="Permalink to this headline">¶</a></h3>
-<p>Groups are virtual collections of packages. DNF keeps track of groups that the user selected (&#8220;marked&#8221;) installed and can manipualte the comprising packages with simple commands.</p>
+<p>Groups are virtual collections of packages. DNF keeps track of groups that the user selected (&#8220;marked&#8221;) installed and can manipulate the comprising packages with simple commands.</p>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">[summary]</span> <span class="pre">&lt;group-spec&gt;</span></tt></dt>
 <dd>Display overview of how many groups are installed and available. With a
@@ -254,6 +252,8 @@ available from a repo when <tt class="docutils literal"><span class="pre">-v</sp
 nothing is specified list all known groups.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">remove</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
 <dd>Mark the group removed and remove those packages in the group from the system which are neither comprising another installed group and were not installed explicitly by the user.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">group</span> <span class="pre">upgrade</span> <span class="pre">&lt;group-spec&gt;...</span></tt></dt>
+<dd>Upgrades the packages from the group and upgrades the group itself. The latter comprises of installing pacakges that were added to the group by the distribution and removing packages that got removed from the group as far as they were not installed explicitly by the user.</dd>
 </dl>
 <p>Groups can be also be marked installed or removed without physically manipualting any packages:</p>
 <dl class="docutils">
@@ -643,7 +643,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

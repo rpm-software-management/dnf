@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF User’s FAQ &mdash; DNF 0.4.20-1 documentation</title>
+    <title>DNF User’s FAQ &mdash; DNF 0.5.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4.20-1',
+        VERSION:     '0.5.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.4.20-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.0-1 documentation" href="index.html" />
     <link rel="prev" title="Command Line Interface Hooks" href="api_cli.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="api_cli.html" title="Command Line Interface Hooks"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -63,10 +63,11 @@
 <li><a class="reference internal" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update" id="id7">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a></li>
 <li><a class="reference internal" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade" id="id8">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a></li>
 <li><a class="reference internal" href="#how-do-i-disable-automatic-metadata-synchronization-service" id="id9">How do I disable automatic metadata synchronization service?</a></li>
+<li><a class="reference internal" href="#shouldn-t-dnf-exit-soon-from-certain-commands-if-it-is-not-run-under-root" id="id10">Shouldn&#8217;t DNF exit soon from certain commands if it is not run under root?</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#using-dnf-in-fedora" id="id10">Using DNF in Fedora</a><ul>
-<li><a class="reference internal" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" id="id11">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a></li>
+<li><a class="reference internal" href="#using-dnf-in-fedora" id="id11">Using DNF in Fedora</a><ul>
+<li><a class="reference internal" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" id="id12">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a></li>
 </ul>
 </li>
 </ul>
@@ -132,15 +133,20 @@ $ dnf upgrade</pre>
 </pre></div>
 </div>
 </div>
+<div class="section" id="shouldn-t-dnf-exit-soon-from-certain-commands-if-it-is-not-run-under-root">
+<h3><a class="toc-backref" href="#id10">Shouldn&#8217;t DNF exit soon from certain commands if it is not run under root?</a><a class="headerlink" href="#shouldn-t-dnf-exit-soon-from-certain-commands-if-it-is-not-run-under-root" title="Permalink to this headline">¶</a></h3>
+<p>No, there can be systems and scenarios that allow other users than root to successfully perform <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">intall</span></tt> and similar and it would be impractical to stop these from functioning by the UID check. Alternatively, the practice of checking filesystem permissions instead of the effective UID could lead to false positives since there is plenty of time between DNF startup and the possible transaction start when permissions can be changed by a different process.</p>
+<p>If the time loss incurred by repeated runs of DNF is unacceptable for you, consider using the <a class="reference external" href="https://github.com/akozumpl/dnf-plugins-core/blob/master/plugins/noroot.py">noroot plugin</a>.</p>
+</div>
 </div>
 <div class="section" id="using-dnf-in-fedora">
-<h2><a class="toc-backref" href="#id10">Using DNF in Fedora</a><a class="headerlink" href="#using-dnf-in-fedora" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Using DNF in Fedora</a><a class="headerlink" href="#using-dnf-in-fedora" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes">
-<h3><a class="toc-backref" href="#id11">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a><a class="headerlink" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">For my stable Fedora release, can I install the rawhide packages for testing purposes?</a><a class="headerlink" href="#for-my-stable-fedora-release-can-i-install-the-rawhide-packages-for-testing-purposes" title="Permalink to this headline">¶</a></h3>
 <p>Yes, in two steps: first install the necessary <tt class="docutils literal"><span class="pre">.repo</span></tt> files:</p>
 <div class="highlight-python"><pre>dnf install fedora-release-rawhide</pre>
 </div>
-<p>Then, when you want to include the pacakges from the rawhide repo, execute a DNF command with Rawhide enabled:</p>
+<p>Then, when you want to include the packages from the rawhide repo, execute a DNF command with Rawhide enabled:</p>
 <div class="highlight-python"><pre>dnf install --enablerepo=rawhide upgrade rpm</pre>
 </div>
 <div class="admonition note">
@@ -167,6 +173,7 @@ $ dnf upgrade</pre>
 <li><a class="reference internal" href="#why-do-i-get-different-results-with-dnf-update-vs-yum-update">Why do I get different results with <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">update</span></tt> vs <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">update</span></tt>?</a></li>
 <li><a class="reference internal" href="#is-it-possible-to-force-dnf-to-get-the-latest-metadata-on-dnf-upgrade">Is it possible to force DNF to get the latest metadata on <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>?</a></li>
 <li><a class="reference internal" href="#how-do-i-disable-automatic-metadata-synchronization-service">How do I disable automatic metadata synchronization service?</a></li>
+<li><a class="reference internal" href="#shouldn-t-dnf-exit-soon-from-certain-commands-if-it-is-not-run-under-root">Shouldn&#8217;t DNF exit soon from certain commands if it is not run under root?</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#using-dnf-in-fedora">Using DNF in Fedora</a><ul>
@@ -214,7 +221,7 @@ $ dnf upgrade</pre>
         <li class="right" >
           <a href="api_cli.html" title="Command Line Interface Hooks"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.4.20-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

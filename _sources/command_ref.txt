@@ -54,7 +54,7 @@ Options
     answer no for all questions
 
 ``--best``
-    Try the best available package versions in transactions.
+    Try the best available package versions in transactions. Specifically during ``dnf upgrade``, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages and possibly fail giving a reason why the latest version can not be installed.
 
 ``-C, --cacheonly``
     Run entirely from system cache, don't update the cache and use it even in case it is expired.
@@ -98,6 +98,9 @@ Options
 
 ``--installroot=<path>``
     set install root
+
+``--refresh``
+    set metadata as expired before running the command
 
 ``--nogpgcheck``
     skip checking GPG signatures on packages
@@ -183,8 +186,7 @@ Performs cleanup of temporary files for the currently enabled repositories.
     download all the metadata the next time it is run.
 
 ``dnf clean packages``
-    Removes any cached packages from the system.  Note that packages are not
-    automatically deleted after they are downloaded.
+    Removes any cached packages from the system.
 
 ``dnf clean plugins``
     Tells all enabled plugins to eliminate their cached data.
@@ -222,17 +224,14 @@ Downgrade Command
 Erase Command
 -------------
 
-``dnf [options] erase <package-specs>...``
-    Removes the specified packages from the system along with any packages
-    depending on the packages being removed. If ``clean_requirements_on_remove``
-    is enabled (the default) also removes any dependencies that are no longer
-    needed.
+``dnf [options] erase <package-spec>...``
+     Removes the specified packages from the system along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 -------------
 Group Command
 -------------
 
-Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipualte the comprising packages with simple commands.
+Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipulate the comprising packages with simple commands.
 
 ``dnf [options] group [summary] <group-spec>``
     Display overview of how many groups are installed and available. With a
@@ -252,6 +251,9 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
 
 ``dnf [options] group remove <group-spec>...``
     Mark the group removed and remove those packages in the group from the system which are neither comprising another installed group and were not installed explicitly by the user.
+
+``dnf [options] group upgrade <group-spec>...``
+    Upgrades the packages from the group and upgrades the group itself. The latter comprises of installing pacakges that were added to the group by the distribution and removing packages that got removed from the group as far as they were not installed explicitly by the user.
 
 Groups can be also be marked installed or removed without physically manipualting any packages:
 
