@@ -53,9 +53,11 @@
     The :class:`dnf.cli.Cli` instance to use with this command.
 
   .. attribute:: summary
+
     One line summary for the command as displayed by the CLI help.
 
   .. attribute:: usage
+
     Usage string for the command used as displayed by the CLI help.
 
   .. method:: configure(args)
