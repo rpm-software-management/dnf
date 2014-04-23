@@ -661,3 +661,63 @@ Bugs fixed in 0.4.19:
 * :rhbug:`1077173`
 * :rhbug:`1078832`
 * :rhbug:`1079621`
+
+===================
+0.5.0 Release Notes
+===================
+
+The biggest improvement in 0.5.0 is complete support for groups `and environments <https://bugzilla.redhat.com/show_bug.cgi?id=1063666>`_, including internal database of installed groups independent of the actual packages (concept known as groups-as-objects from Yum). Upgrading groups is supported now with ``group upgrade`` too.
+
+To force refreshing of metadata before an operation (even if the data is not expired yet), `the refresh option has been added <https://bugzilla.redhat.com/show_bug.cgi?id=1064226>`_.
+
+Internally, the CLI went through several changes to allow for better API accessibility like `granular requesting of root permissions <https://bugzilla.redhat.com/show_bug.cgi?id=1062889>`_.
+
+API has got many more extensions, focusing on better manipulation with comps and packages. There are new entries in :doc:`cli_vs_yum` and :doc:`user_faq` too.
+
+Several resource leaks (file descriptors, noncollectable Python objects) were found and fixed.
+
+API changes in 0.5.0:
+
+* it is now recommended that either :meth:`dnf.Base.close` is used, or that :class:`dnf.Base` instances are treated as a context manager.
+
+API extensions in 0.5.0:
+
+* :meth:`dnf.Base.add_remote_rpm`
+* :meth:`dnf.Base.close`
+* :meth:`dnf.Base.group_upgrade`
+* :meth:`dnf.Base.resolve` optionally accepts `allow_erasing` arguments now.
+* :meth:`dnf.Base.package_downgrade`
+* :meth:`dnf.Base.package_install`
+* :meth:`dnf.Base.package_upgrade`
+* :class:`dnf.cli.demand.DemandSheet`
+* :attr:`dnf.cli.Command.base`
+* :attr:`dnf.cli.Command.cli`
+* :attr:`dnf.cli.Command.summary`
+* :attr:`dnf.cli.Command.usage`
+* :meth:`dnf.cli.Command.configure`
+* :attr:`dnf.cli.Cli.demands`
+* :class:`dnf.comps.Package`
+* :meth:`dnf.comps.Group.packages_iter`
+* :data:`dnf.comps.MANDATORY` etc.
+
+Bugs fixed in 0.5.0:
+
+* :rhbug:`1029022`
+* :rhbug:`1051869`
+* :rhbug:`1061780`
+* :rhbug:`1062884`
+* :rhbug:`1062889`
+* :rhbug:`1063666`
+* :rhbug:`1064211`
+* :rhbug:`1064226`
+* :rhbug:`1073859`
+* :rhbug:`1076884`
+* :rhbug:`1079519`
+* :rhbug:`1079932`
+* :rhbug:`1080331`
+* :rhbug:`1080489`
+* :rhbug:`1082230`
+* :rhbug:`1083767`
+* :rhbug:`1084139`
+* :rhbug:`1084553`
+* :rhbug:`1088166`

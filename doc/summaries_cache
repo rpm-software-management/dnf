@@ -534,5 +534,81 @@
     [
         1079621, 
         "Incorrect package count when some packages already downloaded"
+    ], 
+    [
+        1029022, 
+        "RFE: API for reverse group operations"
+    ], 
+    [
+        1051869, 
+        "[abrt] dnf: comps.py:62:_by_pattern:TypeError: expected string or buffer"
+    ], 
+    [
+        1061780, 
+        "Dnf allows installing conflicting packages"
+    ], 
+    [
+        1062884, 
+        "[api] Allow dnf plugin to set exit code"
+    ], 
+    [
+        1062889, 
+        "[RFE] [api] add class attribute to dnf.cli.Command which will say it is root-only plugin"
+    ], 
+    [
+        1063666, 
+        "[comps] [environments] dnf group remove \"GNOME Desktop\""
+    ], 
+    [
+        1064211, 
+        "Dnf should provide logrotate script"
+    ], 
+    [
+        1064226, 
+        "[rfe] cmdline option forcing cache refresh"
+    ], 
+    [
+        1073859, 
+        "[api][rfe] access to dnf.Base.goal_parameters.allow_uninstall"
+    ], 
+    [
+        1076884, 
+        "[py3] highlight characters broken under py3"
+    ], 
+    [
+        1079519, 
+        "[api][rfe] install .rpm files with dnf API"
+    ], 
+    [
+        1079932, 
+        "[api][rfe] public api for getting all packages in a group"
+    ], 
+    [
+        1080331, 
+        "dnf group list fail to run with noroot plugin"
+    ], 
+    [
+        1080489, 
+        "[RFE] dnf exits with an error when at least one srpm is present on the command line"
+    ], 
+    [
+        1082230, 
+        "TypeError in dnf history info <id>"
+    ], 
+    [
+        1083767, 
+        "dnf documents cached packages in a way which does not agree with reality"
+    ], 
+    [
+        1084139, 
+        "dnf manpage \"manipualte\" typos"
+    ], 
+    [
+        1084553, 
+        "[doc] dnf docs describe '--best' option in undecipherabke manner"
+    ], 
+    [
+        1088166, 
+        "[doc] DNF doesn't say you need root rights to run dnf update"
     ]
 ]
