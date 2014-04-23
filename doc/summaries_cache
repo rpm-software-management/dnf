@@ -610,5 +610,9 @@
     [
         1088166, 
         "[doc] DNF doesn't say you need root rights to run dnf update"
+    ], 
+    [
+        1083432, 
+        "group is marked as installed, even if install of the packages failed"
     ]
 ]
