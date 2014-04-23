@@ -23,8 +23,9 @@ sources.
 From the DNF git checkout directory::
 
     mkdir build;
-    cd build;
+    pushd build;
     cmake .. && make;
+    popd;
 
 Then to run DNF::
 
