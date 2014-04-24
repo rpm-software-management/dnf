@@ -6,4 +6,5 @@ Type=oneshot
 Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
+Environment="ABRT_IGNORE_PYTHON=1"
 ExecStart=/usr/bin/dnf -v makecache timer
