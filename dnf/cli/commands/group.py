@@ -27,7 +27,6 @@ from dnf.pycomp import unicode
 import dnf.cli
 import dnf.exceptions
 import dnf.util
-import itertools
 import logging
 import operator
 
