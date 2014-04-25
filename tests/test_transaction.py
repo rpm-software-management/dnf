@@ -174,6 +174,5 @@ class RPMProbFilters(tests.support.TestCase):
         self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.reinstall("librita")
         self.base.ts
-        expected = rpm.RPMPROB_FILTER_REPLACEPKG | \
-            rpm.RPMPROB_FILTER_REPLACEOLDFILES
+        expected = rpm.RPMPROB_FILTER_REPLACEPKG
         self.base.ts.setProbFilter.assert_called_with(expected)

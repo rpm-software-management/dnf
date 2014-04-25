@@ -2187,8 +2187,7 @@ class Base(object):
         self.history.write_addon_data('config-repos', myrepos)
 
     def _add_reinstall_rpm_probfilters(self):
-        self.rpm_probfilter |= set([rpm.RPMPROB_FILTER_REPLACEPKG,
-                                    rpm.RPMPROB_FILTER_REPLACEOLDFILES])
+        self.rpm_probfilter.add(rpm.RPMPROB_FILTER_REPLACEPKG)
 
     def _add_downgrade_rpm_probfilters(self):
         self.rpm_probfilter.add(rpm.RPMPROB_FILTER_OLDPACKAGE)
