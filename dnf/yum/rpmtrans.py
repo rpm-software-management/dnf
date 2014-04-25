@@ -153,15 +153,6 @@ class RPMTransaction(object):
         self._setupOutputLogging(base.conf.rpmverbosity)
         self._ts_done = None
 
-    # Error checking? -- these should probably be where else
-    def _fdSetNonblock(self, fd):
-        """ Set the Non-blocking flag for a filedescriptor. """
-        flag = os.O_NONBLOCK
-        current_flags = fcntl.fcntl(fd, fcntl.F_GETFL)
-        if current_flags & flag:
-            return
-        fcntl.fcntl(fd, fcntl.F_SETFL, current_flags | flag)
-
     def _fdSetCloseOnExec(self, fd):
         """ Set the close on exec. flag for a filedescriptor. """
         flag = fcntl.FD_CLOEXEC

@@ -2150,13 +2150,6 @@ class Base(object):
         """
         self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True, callback=callback)
 
-    def _askForGPGKeyImport(self, po, userid, hexkeyid):
-        '''
-        Ask for GPGKeyImport
-        This need to be overloaded in a subclass to make GPG Key import work
-        '''
-        return False
-
     def _run_rpm_check(self):
         results = []
         self.ts.check()

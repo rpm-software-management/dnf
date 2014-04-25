@@ -1370,11 +1370,6 @@ class YumHistory(object):
 
         return cur.lastrowid
 
-    def _save_rpmdb_key(self, pkg, attr, val):
-        return self._save_anydb_key(pkg, "rpm", attr, val)
-    def _save_yumdb_key(self, pkg, attr, val):
-        return self._save_anydb_key(pkg, "yum", attr, val)
-
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes
             there is no data currently. """

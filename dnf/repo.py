@@ -258,9 +258,6 @@ class PackagePayload(dnf.callback.Payload):
         """Error obtaining the Payload."""
         pass
 
-    def download_done(self):
-        """Trigger any actions to be done on the payload after downloading."""
-
     def librepo_target(self):
         pkg = self.pkg
         pkgdir = pkg.repo.pkgdir
