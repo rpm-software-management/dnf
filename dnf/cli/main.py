@@ -25,6 +25,8 @@ from __future__ import unicode_literals
 from dnf.pycomp import unicode
 
 import sys
+
+
 def suppress_keyboard_interrupt_message():
     """Prevent unsightly KeyboardInterrupt tracebacks.
 
@@ -41,6 +43,7 @@ def suppress_keyboard_interrupt_message():
             pass
 
     sys.excepthook = new_hook
+
 
 # do this ASAP to prevent tracebacks after ^C during imports
 suppress_keyboard_interrupt_message()
@@ -60,15 +63,18 @@ import os.path
 
 logger = logging.getLogger("dnf")
 
+
 def ex_IOError(e):
     logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
     logger.critical(unicode(e))
     return 1
 
+
 def ex_Error(e):
     if e.value is not None:
         logger.critical(_('Error: %s'), unicode(e))
     return 1
+
 
 def main(args):
     try:
@@ -87,6 +93,7 @@ def main(args):
         print(_("Terminated."), file=sys.stderr)
         return 1
     return 0
+
 
 def _main(base, args):
     """Run the yum program from a command line interface."""
@@ -187,44 +194,6 @@ def resolving(cli, base):
 
     return return_code
 
-def hotshot(func, *args, **kwargs):
-    """Profile the given function using the hotshot profiler.
-
-    :param func: the function to profile
-    :return: the return code given by the hotshot profiler
-    """
-    import hotshot.stats
-    fn = os.path.expanduser("~/yum.prof")
-    prof = hotshot.Profile(fn)
-    rc = prof.runcall(func, *args, **kwargs)
-    prof.close()
-    print_stats(hotshot.stats.load(fn))
-    return rc
-
-def cprof(func, *args, **kwargs):
-    """Profile the given function using the cprof profiler.
-
-    :param func: the function to profile
-    :return: the return code given by the cprof profiler
-    """
-    import cProfile, pstats
-    fn = os.path.expanduser("~/yum.prof")
-    prof = cProfile.Profile()
-    rc = prof.runcall(func, *args, **kwargs)
-    prof.dump_stats(fn)
-    print_stats(pstats.Stats(fn))
-    return rc
-
-def print_stats(stats):
-    """Print out information from a :class:`Stats` object.
-
-    :param stats: the :class:`Stats` object to print information from
-    """
-    stats.strip_dirs()
-    stats.sort_stats('time', 'calls')
-    stats.print_stats(20)
-    stats.sort_stats('cumulative')
-    stats.print_stats(40)
 
 def user_main(args, exit_code=False):
     """Call one of the multiple main() functions based on environment variables.
@@ -235,18 +204,12 @@ def user_main(args, exit_code=False):
        Otherwise, it will return its exit code.
     :return: the exit code from dnf.yum execution
     """
-    errcode = None
-    if 'YUM_PROF' in os.environ:
-        if os.environ['YUM_PROF'] == 'cprof':
-            errcode = cprof(main, args)
-        if os.environ['YUM_PROF'] == 'hotshot':
-            errcode = hotshot(main, args)
 
-    if errcode is None:
-        errcode = main(args)
+    errcode = main(args)
     if exit_code:
         sys.exit(errcode)
     return errcode
+
 
 if __name__ == "__main__":
     user_main(sys.argv[1:], exit_code=True)
