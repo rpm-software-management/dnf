@@ -11,8 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
-import dnf.const
+import os
+import re
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -49,7 +49,23 @@ copyright = u'2012-2013, Red Hat'
 # built documents.
 #
 # The short X.Y version.
-version = dnf.const.VERSION
+
+def version_readout():
+    def submatch(sub, in_str):
+        pat = re.compile('SET\(DNF_%s "(\d+)"\)' % sub)
+        return pat.match(in_str).group(1)
+
+    dirname = os.path.dirname(__file__)
+    fn = os.path.join(dirname, '../VERSION.cmake')
+    with open(fn) as f:
+        lines = f.readlines()
+
+    major = submatch('MAJOR', lines[0])
+    minor = submatch('MINOR', lines[1])
+    patch = submatch('PATCH', lines[2])
+    return (major, minor, patch)
+
+version = '%s.%s.%s' % version_readout()
 # The full version, including alpha/beta/rc tags.
 release = '%s-1' % version
 
