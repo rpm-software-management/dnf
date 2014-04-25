@@ -20,7 +20,10 @@
 
 from docutils import nodes
 
-import bugzilla
+try:
+    import bugzilla
+except ImportError:
+    bugzilla = None
 import json
 import os
 
@@ -38,6 +41,8 @@ class Summary(object):
         return summary
 
     def _from_bugzilla(self, bug_id):
+        if bugzilla is None:
+            return ''
         rhbz = bugzilla.RHBugzilla(url="https://bugzilla.redhat.com/xmlrpc.cgi")
         query = rhbz.build_query(bug_id=bug_id)
         bug = rhbz.query(query)[0]
@@ -53,6 +58,8 @@ class Summary(object):
             return None
 
     def _store_in_cache(self, bug_id, summary):
+        if bugzilla is None:
+            return
         try:
             with open(self.cache_fn, 'r') as json_file:
                 cache = json.load(json_file)

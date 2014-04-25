@@ -13,11 +13,15 @@
 
 import os
 import re
+import sys
+
+_dirname = os.path.dirname(__file__)
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+
+sys.path.insert(0, _dirname)
 
 # -- General configuration -----------------------------------------------------
 
@@ -26,7 +30,8 @@ import re
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['doc.rhbug']
+
+extensions = ['rhbug']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -55,8 +60,7 @@ def version_readout():
         pat = re.compile('SET\(DNF_%s "(\d+)"\)' % sub)
         return pat.match(in_str).group(1)
 
-    dirname = os.path.dirname(__file__)
-    fn = os.path.join(dirname, '../VERSION.cmake')
+    fn = os.path.join(_dirname, '../VERSION.cmake')
     with open(fn) as f:
         lines = f.readlines()
 
