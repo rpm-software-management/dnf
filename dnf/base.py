@@ -1338,7 +1338,10 @@ class Base(object):
             q = self.sack.query().installed().filter(name=pkgname)
             if not q:
                 return None
-            return self.yumdb.get_package(q[0]).reason
+            try:
+                return self.yumdb.get_package(q[0]).reason
+            except AttributeError:
+                return 'unknown'
 
         return dnf.comps.Solver(self.group_persistor, reason_fn)
 
