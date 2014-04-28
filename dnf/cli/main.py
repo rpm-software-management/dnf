@@ -149,7 +149,6 @@ def resolving(cli, base):
     """Perform the depsolve, download and RPM transaction stage."""
 
     if base.transaction is None:
-        logger.info(_('Resolving dependencies'))
         try:
             got_transaction = base.resolve(cli.demands.allow_erasing)
         except dnf.exceptions.Error as e:

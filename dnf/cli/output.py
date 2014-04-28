@@ -2332,110 +2332,19 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
                      'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
-        self.logger.info(
-            _('---> Package %s.%s %s will be %s'), n, a, evr,
-            modeterm)
+        self.logger.debug(_('---> Package %s.%s %s will be %s'), n, a, evr,
+                          modeterm)
 
     def start(self):
         """Perform setup at the beginning of the dependency solving
         process.
         """
-        self.logger.info(
-                                _('--> Starting dependency resolution'))
+        self.logger.debug(_('--> Starting dependency resolution'))
         self.loops += 1
-
-    def tscheck(self):
-        """Output a message stating that a transaction check is beginning."""
-        self.logger.info(_('--> Running transaction check'))
-
-    def restartLoop(self):
-        """Output a message stating that dependency resolution is restarting."""
-        self.loops += 1
-        self.logger.info(
-            _('--> Restarting Dependency Resolution with new changes.'))
-        self.logger.debug('---> Loop Number: %d', self.loops)
 
     def end(self):
         """Output a message stating that dependency resolution has finished."""
-        self.logger.info(
-            _('--> Finished dependency resolution'))
-
-    def procReq(self, name, formatted_req):
-        """Output a message stating that the package *formatted_req*
-        is being processed as a dependency for the package *name*.
-
-        :param name: the name of the package that *formatted_req* is a
-           dependency of
-        :param formatted_req: a string representing the package that
-           is being processed as a dependency of *name*
-        """
-        self.logger.info(
-            _('--> Processing Dependency: %s for package: %s'), formatted_req,
-            name)
-
-    def procReqPo(self, po, formatted_req):
-        """Output a message stating that the package *formatted_req*
-        is being processed as a dependency for the package *po*.
-
-        :param po: the package object that *formatted_req* is a
-           dependency of
-        :param formatted_req: a string representing the package that
-           is being processed as a dependency of *po*
-        """
-        self.logger.info(
-            _('--> Processing Dependency: %s for package: %s'), formatted_req,
-            po)
-
-    def groupRemoveReq(self, po, hits):
-        """Output a message stating that the given package will not be
-        removed. This method is used during leaf-only group remove
-        commands to indicate that the package will be kept.
-
-        :param po: the package that will not be removed
-        :param hits: unused
-        """
-        self.logger.info(
-            _('---> Keeping package: %s'), po)
-
-    def unresolved(self, msg):
-        """Output a message stating that there is an unresolved dependency.
-
-        :param msg: string giving information about the unresolved dependency.
-        """
-        self.logger.info(_('--> Unresolved Dependency: %s'),
-            msg)
-
-    def procConflict(self, name, confname):
-        """Print a message stating that two packages in the
-        transaction conflict.
-
-        :param name: the name of the first package involved in the
-           conflict
-        :param confname: the name of the second package involved in
-           the conflict
-        """
-        self.logger.info(
-            _('--> Processing Conflict: %s conflicts %s'),
-                                name, confname)
-
-    def procConflictPo(self, po, confname):
-        """Print a message stating that two packages in the
-        transaction conflict.
-
-        :param name: the first package object involved in the
-           conflict
-        :param confname: the second package object involved in
-           the conflict
-        """
-        self.logger.info(
-            _('--> Processing Conflict: %s conflicts %s'),
-                                po, confname)
-
-    def transactionPopulation(self):
-        """Output a message stating that the transaction set is being populated."""
-
-        self.logger.info(_('--> Populating transaction set '
-            'with selected packages. Please wait.'))
+        self.logger.debug(_('--> Finished dependency resolution'))
 
 class CliTransactionDisplay(LoggingTransactionDisplay):
     """A Yum specific callback class for RPM operations."""
