@@ -210,9 +210,6 @@ class GroupCommand(commands.Command):
             cnt += self.base.environment_install(env, types)
         for grp in res.groups:
             cnt += self.base.group_install(grp, types)
-        if not cnt:
-            msg = _('No packages in any requested groups available to install.')
-            raise dnf.cli.CliError(msg)
 
     def _list(self, userlist):
         uservisible=1
@@ -335,8 +332,6 @@ class GroupCommand(commands.Command):
             cnt += self.base.environment_remove(env)
         for grp in res.groups:
             cnt += self.base.group_remove(grp)
-        if not cnt:
-            raise dnf.cli.CliError(_('No packages to remove from given groups.'))
 
     def _summary(self, userlist):
         uservisible=1
