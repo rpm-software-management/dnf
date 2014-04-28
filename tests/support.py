@@ -170,7 +170,7 @@ class _BaseStubMixin(object):
     def _activate_group_persistor(self):
         return MockGroupPersistor()
 
-    def _build_comps_solver(self):
+    def build_comps_solver(self):
         return dnf.comps.Solver(self.group_persistor, REASONS.get)
 
     def activate_persistor(self):

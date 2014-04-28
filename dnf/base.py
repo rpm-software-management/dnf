@@ -1333,7 +1333,7 @@ class Base(object):
         self._goal.group_members.update(trans.install)
         return cnt
 
-    def _build_comps_solver(self):
+    def build_comps_solver(self):
         def reason_fn(pkgname):
             q = self.sack.query().installed().filter(name=pkgname)
             if not q:
@@ -1343,13 +1343,13 @@ class Base(object):
         return dnf.comps.Solver(self.group_persistor, reason_fn)
 
     def environment_install(self, env, types, exclude=None):
-        solver = self._build_comps_solver()
+        solver = self.build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = solver.environment_install(env, types, exclude or set())
         return self._add_comps_trans(trans)
 
     def environment_remove(self, env):
-        solver = self._build_comps_solver()
+        solver = self.build_comps_solver()
         trans = solver.environment_remove(env)
         return self._add_comps_trans(trans)
 
@@ -1369,8 +1369,7 @@ class Base(object):
 
     def group_install(self, grp, pkg_types, exclude=None):
         # :api
-
-        solver = self._build_comps_solver()
+        solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = solver.group_install(grp, pkg_types, exclude)
         self.logger.debug("Adding packages from group '%s': %s",
@@ -1379,13 +1378,13 @@ class Base(object):
 
     def group_remove(self, grp):
         # :api
-        solver = self._build_comps_solver()
+        solver = self.build_comps_solver()
         trans = solver.group_remove(grp)
         return self._add_comps_trans(trans)
 
     def group_upgrade(self, grp):
         # :api
-        solver = self._build_comps_solver()
+        solver = self.build_comps_solver()
         trans = solver.group_upgrade(grp)
         return self._add_comps_trans(trans)
 

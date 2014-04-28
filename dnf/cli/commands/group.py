@@ -285,7 +285,7 @@ class GroupCommand(commands.Command):
         q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE)
-        solver = dnf.comps.Solver(persistor)
+        solver = self.base.build_comps_solver()
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
         for env in res.environments:
@@ -305,7 +305,7 @@ class GroupCommand(commands.Command):
         q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
-        solver = dnf.comps.Solver(persistor)
+        solver = self.base.build_comps_solver()
         res = q.get(*patterns)
         for env in res.environments:
             solver.environment_remove(env)
