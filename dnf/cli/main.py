@@ -142,7 +142,6 @@ def _main(base, args):
         if ret:
             return ret
 
-    base.success_finish()
     return cli.demands.success_exit_status
 
 
@@ -163,7 +162,10 @@ def resolving(cli, base):
 
     # Act on the depsolve result
     if not got_transaction:
-        print(_('Nothing to do.'))
+        logger.info(_('Nothing to do.'))
+        persistor = base.group_persistor
+        if persistor:
+            persistor.commit()
         return 0
 
     # Run the transaction

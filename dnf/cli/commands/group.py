@@ -281,10 +281,11 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
+        persistor = self.base.group_persistor
+        q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE)
-        solver = dnf.comps.Solver(self.base.group_persistor)
+        solver = dnf.comps.Solver(persistor)
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
         for env in res.environments:
@@ -297,12 +298,14 @@ class GroupCommand(commands.Command):
         if res.groups:
             logger.info(_('Groups marked installed: %s') %
                                   ','.join([g.ui_name for g in res.groups]))
+        persistor.commit()
 
     def _mark_remove(self, patterns):
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
+        persistor =self.base.group_persistor
+        q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
-        solver = dnf.comps.Solver(self.base.group_persistor)
+        solver = dnf.comps.Solver(persistor)
         res = q.get(*patterns)
         for env in res.environments:
             solver.environment_remove(env)
@@ -314,6 +317,7 @@ class GroupCommand(commands.Command):
         if res.groups:
             logger.info(_('Groups marked removed: %s') %
                                   ','.join([g.ui_name for g in res.groups]))
+        persistor.commit()
 
     def _mark_subcmd(self, extcmds):
         if extcmds[0] in self._MARK_CMDS:

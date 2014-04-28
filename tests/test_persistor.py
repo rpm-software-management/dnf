@@ -66,7 +66,7 @@ class GroupPersistorTest(tests.support.TestCase):
         grp = prst.group('pepper')
         grp.full_list.extend(['pepper', 'tour'])
         grp.pkg_types = dnf.comps.DEFAULT | dnf.comps.OPTIONAL
-
+        prst.commit()
         self.assertTrue(prst.save())
 
         prst = dnf.persistor.GroupPersistor(self.persistdir)

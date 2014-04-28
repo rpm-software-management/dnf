@@ -139,6 +139,7 @@ class GroupPersistor(object):
         })
 
     def __init__(self, persistdir):
+        self._commit = False
         self._dbfile = os.path.join(persistdir, 'groups.json')
         self.db = None
         self._original = None
@@ -192,6 +193,9 @@ class GroupPersistor(object):
             for id_ in del_list:
                 del members_dct[id_]
 
+    def commit(self):
+        self._commit = True
+
     def environment(self, id_):
         return self._access('ENVIRONMENTS', id_)
 
@@ -207,12 +211,15 @@ class GroupPersistor(object):
         return self.db['GROUPS']
 
     def save(self):
+        if not self._commit:
+            return False
         self._prune_db()
         if self.db == self._original:
             return False
         logger.debug('group persistor: saving.')
         with open(self._dbfile, 'w') as db:
             json.dump(self.db.dct, db)
+        self._commit = False
         return True
 
 

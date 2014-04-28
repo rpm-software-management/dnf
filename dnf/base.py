@@ -152,6 +152,9 @@ class Base(object):
                        if check_expired(r)]
             self._persistor.set_expired_repos(expired)
 
+        if self.group_persistor:
+            self.group_persistor.save()
+
     @property
     def comps(self):
         # :api
@@ -331,10 +334,6 @@ class Base(object):
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
 
-    def success_finish(self):
-        if self.group_persistor:
-            self.group_persistor.save()
-
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self.ts
@@ -382,8 +381,7 @@ class Base(object):
         self._ts = None
 
     def _activate_group_persistor(self):
-        self._group_persistor = dnf.persistor.GroupPersistor(self.conf.persistdir)
-        return self._group_persistor
+        return dnf.persistor.GroupPersistor(self.conf.persistdir)
 
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
@@ -632,6 +630,8 @@ class Base(object):
 
         self.logger.info(_('Running transaction'))
         return_code = self.runTransaction(cb=cb)
+        if return_code == 0 and self.group_persistor:
+            self.group_persistor.commit()
 
         self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
         # put back the sigquit handler
