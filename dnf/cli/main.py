@@ -163,9 +163,6 @@ def resolving(cli, base):
     # Act on the depsolve result
     if not got_transaction:
         logger.info(_('Nothing to do.'))
-        persistor = base.group_persistor
-        if persistor:
-            persistor.commit()
         return 0
 
     # Run the transaction

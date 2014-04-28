@@ -556,6 +556,10 @@ class Base(object):
 
         if exc is not None:
             raise exc
+        if not got_transaction:
+            persistor = self.group_persistor
+            if persistor:
+                persistor.commit()
         return got_transaction
 
     def do_transaction(self, display=None):
