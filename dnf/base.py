@@ -138,6 +138,11 @@ class Base(object):
                 pkgs = self.sack.query().filter(reponame=r.id).\
                     filter_autoglob(name=excl)
                 self.sack.add_excludes(pkgs)
+            for incl in r.includepkgs:
+                pkgs = self.sack.query().filter(reponame=r.id).\
+                    filter_autoglob(name=incl)
+                self.sack.add_includepkgs(pkgs)
+	    self.sack.eval_includepkgs(self)
 
     def _store_persistent_data(self):
         def check_expired(repo):

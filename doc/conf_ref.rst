@@ -96,6 +96,13 @@ one main section. The repository sections define the configuration for each
     same package can be downloaded from two or more repositories, the repository
     with the lowest cost is preferred.
 
+``includepkgs``
+    list
+
+    Inverse of exclude for repositories. Dnf include only package in the repo,
+    that match this list. If there is exclude tag both of them are used.
+
+
 ``skip_if_unavailable``
     boolean
 
