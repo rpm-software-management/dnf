@@ -26,12 +26,12 @@ import glob
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
+import dnf.arch
 import dnf.exceptions
 import dnf.rpmUtils.miscutils
 import dnf.i18n
-
-from dnf.rpmUtils.arch import getBaseArch
 import functools
+
 
 #  Cut over for when we should just give up and load everything.
 #  The main problem here is not so much SQLite dying (although that happens
@@ -491,9 +491,9 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         """ Take a pkg and return the key for it's state lookup. """
         if state is None:
             state = pkg.state
-        #  Arch is needed so multilib. works, dito. getBaseArch() -- (so .i586
+        #  Arch is needed so multilib. works, dito. basearch() -- (so .i586
         # => .i686 moves are seen)
-        return (pkg.name, getBaseArch(pkg.arch), state)
+        return (pkg.name, dnf.arch.basearch(pkg.arch), state)
 
     @staticmethod
     def _list2dict(pkgs):

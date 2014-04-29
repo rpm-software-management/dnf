@@ -33,6 +33,7 @@ from dnf.yum.config import ParsingError, ConfigParser
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce
 
+import dnf.arch
 import dnf.callback
 import dnf.comps
 import dnf.conf
@@ -46,7 +47,6 @@ import dnf.persistor
 import dnf.plugin
 import dnf.repo
 import dnf.repodict
-import dnf.rpmUtils.arch
 import dnf.rpmUtils.connection
 import dnf.rpmUtils.transaction
 import dnf.subject
@@ -87,11 +87,11 @@ class Base(object):
                                # trips over it later
 
         self.rpm_probfilter = set([])
-        self.arch = dnf.rpmUtils.arch.Arch()
         self.plugins = dnf.plugin.Plugins()
 
-        self._conf.yumvar['arch'] = self.arch.canonarch
-        self._conf.yumvar['basearch'] = self.arch.basearch
+        arch = hawkey.detect_arch()
+        self._conf.yumvar['arch'] = arch
+        self._conf.yumvar['basearch'] = dnf.arch.basearch(arch)
         self._conf.yumvar_update_from_env()
 
     def __enter__(self):
