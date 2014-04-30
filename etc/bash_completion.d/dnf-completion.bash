@@ -80,7 +80,7 @@ _dnf ()
             COMPREPLY=($(compgen -W "`egrep ^$cur /var/cache/dnf/available.cache`" -- "$cur"))
             return
         else
-            COMPREPLY=($(compgen -W "`sudo dnf list --cacheonly 2>/dev/null | cut -d' ' -f1 | egrep ^$cur`" -- "$cur"))
+            COMPREPLY=($(compgen -W "`dnf list --cacheonly 2>/dev/null | cut -d' ' -f1 | egrep ^$cur`" -- "$cur"))
             return
         fi
     fi
