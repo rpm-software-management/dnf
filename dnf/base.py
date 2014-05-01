@@ -20,6 +20,7 @@ Supplies the Base class.
 """
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf import const, query, sack
@@ -893,6 +894,8 @@ class Base(object):
         if errors.irrecoverable:
             raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
+        saving = dnf.repo.update_saving((0, 0), payloads, errors.recoverable)
+
         if errors.recoverable:
             msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
             self.logger.info(msg)
@@ -906,13 +909,21 @@ class Base(object):
             errors = dnf.repo.download_payloads(payloads, drpm)
             assert(not errors.recoverable)
             if errors.irrecoverable:
-                raise dnf.exceptions.DownloadErrors(errors.irrecoverable)
+                raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
             remote_pkgs.extend(remaining_pkgs)
             remote_size += remaining_size
+            saving = dnf.repo.update_saving(saving, payloads, {})
 
         if callback_total is not None:
             callback_total(remote_pkgs, remote_size, beg_download)
+
+        (real, full) = saving
+        if real != full:
+            msg = _("Delta RPMs reduced %.1f MB of updates to %.1f MB "
+                    "(%d.1%% saved)")
+            percent = 100 - real / full * 100
+            self.logger.info(msg, full / 1024**2, real / 1024**2, percent)
 
     def add_remote_rpm(self, path):
         # :api

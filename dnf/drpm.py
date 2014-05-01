@@ -36,6 +36,7 @@ APPLYDELTA = '/usr/bin/applydeltarpm'
 
 logger = logging.getLogger("dnf")
 
+
 class DeltaPayload(dnf.repo.PackagePayload):
     def __init__(self, delta_info, delta, pkg, progress):
         super(DeltaPayload, self).__init__(pkg, progress)
@@ -44,6 +45,11 @@ class DeltaPayload(dnf.repo.PackagePayload):
 
     def __str__(self):
         return os.path.basename(self.delta.location)
+
+    def _end_cb(self, cbdata, lr_status, msg):
+        super(DeltaPayload, self)._end_cb(cbdata, lr_status, msg)
+        if lr_status != librepo.TRANSFER_ERROR:
+            self.delta_info.enqueue(self)
 
     def _target_params(self):
         delta = self.delta
@@ -67,14 +73,14 @@ class DeltaPayload(dnf.repo.PackagePayload):
     def download_size(self):
         return self.delta.downloadsize
 
+    @property
+    def full_size(self):
+        return self.pkg.downloadsize
+
     def localPkg(self):
         location = self.delta.location
         return os.path.join(self.pkg.repo.pkgdir, os.path.basename(location))
 
-    def _end_cb(self, cbdata, lr_status, msg):
-        super(DeltaPayload, self)._end_cb(cbdata, lr_status, msg)
-        if lr_status != librepo.TRANSFER_ERROR:
-            self.delta_info.enqueue(self)
 
 class DeltaInfo(object):
     def __init__(self, query, progress):

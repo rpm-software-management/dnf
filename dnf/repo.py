@@ -1,7 +1,7 @@
 # repo.py
 # DNF Repository objects.
 #
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -115,6 +115,17 @@ def download_payloads(payloads, drpm):
         errs.irrecoverable[pkg] = [err]
 
     return errs
+
+def update_saving(saving, payloads, errs):
+    real, full = saving
+    for pload in payloads:
+        pkg = pload.pkg
+        if pkg in errs:
+            real += pload.download_size
+            continue
+        real += pload.download_size
+        full += pload.full_size
+    return real, full
 
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):
@@ -258,6 +269,10 @@ class PackagePayload(dnf.callback.Payload):
         """Error obtaining the Payload."""
         pass
 
+    @property
+    def full_size(self):
+        return self.download_size
+
     def librepo_target(self):
         pkg = self.pkg
         pkgdir = pkg.repo.pkgdir
@@ -275,6 +290,7 @@ class PackagePayload(dnf.callback.Payload):
         target_dct.update(self._target_params())
 
         return librepo.PackageTarget(**target_dct)
+
 
 class RPMPayload(PackagePayload):
 
@@ -300,6 +316,7 @@ class RPMPayload(PackagePayload):
     def download_size(self):
         """Total size of the download."""
         return self.pkg.downloadsize
+
 
 class MDPayload(dnf.callback.Payload):
 

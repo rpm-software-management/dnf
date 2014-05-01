@@ -386,10 +386,37 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         path = os.path.join(self.TMP_CACHEDIR, 'r/packages/tour-4-4.noarch.rpm')
         self.assertFile(path)
 
-class MDPayloadTest(unittest.TestCase):
 
+class MDPayloadTest(unittest.TestCase):
     def test_null_progress(self):
         """MDPayload always has some progress attribute."""
         pload = dnf.repo.MDPayload(None)
         pload.start('roll up')
         self.assertIsNotNone(pload.progress)
+
+
+class SavingTest(unittest.TestCase):
+    def test_update_saving(self):
+        progress = dnf.callback.NullDownloadProgress()
+
+        pkg = support.MockPackage("tour-4-4.noarch")
+        pkg.downloadsize = 5
+        pload1 = dnf.repo.RPMPayload(pkg, progress)
+        pkg = support.MockPackage("magical-4-4.noarch")
+        pkg.downloadsize = 8
+        pload2 = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
+                                       progress)
+        saving = (5, 10)
+        saving = dnf.repo.update_saving(saving, (pload1, pload2), {})
+        self.assertEqual(saving, (15, 23))
+
+    def test_update_saving_with_err(self):
+        progress = dnf.callback.NullDownloadProgress()
+
+        pkg = support.MockPackage("magical-4-4.noarch")
+        pkg.downloadsize = 8
+        pload = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
+                                      progress)
+        saving = (5, 10)
+        saving = dnf.repo.update_saving(saving, (pload,), {pkg:'failed'})
+        self.assertEqual(saving, (10, 10))
