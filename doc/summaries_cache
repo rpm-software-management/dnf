@@ -614,5 +614,17 @@
     [
         1083432, 
         "group is marked as installed, even if install of the packages failed"
+    ], 
+    [
+        1065882, 
+        "[delta] delta rpm download size statistics"
+    ], 
+    [
+        1081753, 
+        "do not emit uncaught exceptions from automatic makecache runs"
+    ], 
+    [
+        1089864, 
+        "[api] group persistor is not saved when using group_* API"
     ]
 ]
