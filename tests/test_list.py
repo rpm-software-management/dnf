@@ -86,6 +86,10 @@ class TestListAllRepos(support.TestCase):
         self.assertLength(ypl.installed, 1)
         self.assertLength(ypl.available, 1)
 
+    def test_list_pattern_nevra(self):
+        ypl = self.base.doPackageLists('all', ['*u*6*'])
+        self.assertLength(ypl.available, 3)
+
     def test_list_available(self):
         ypl = self.base.doPackageLists('available', ['hole'], showdups=False)
         self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',

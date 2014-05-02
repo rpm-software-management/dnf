@@ -91,7 +91,7 @@ Options
     Enable specific repositories by an id or a glob.
 
 ``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by a name or a glob from the operation.
+    Exclude packages specified by ``<package-spec>`` from the operation.
 
 ``-h, --help``
     Show the help.

@@ -130,7 +130,8 @@ class Base(object):
             return
         if 'main' not in disabled:
             for excl in self.conf.exclude:
-                pkgs = self.sack.query().filter_autoglob(name=excl)
+                subj = dnf.subject.Subject(excl)
+                pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
         for r in self.repos.iter_enabled():
             if r.id in disabled:
@@ -1168,11 +1169,10 @@ class Base(object):
         extras = []
 
         # do the initial pre-selection
-        ic = ignore_case
         q = self.sack.query()
         if pattern is not None:
-            subj = dnf.subject.Subject(pattern, ignore_case=ic)
-            q = subj.get_best_query(self.sack, with_provides=False)
+            subj = dnf.subject.Subject(pattern, ignore_case=ignore_case)
+            q = subj.get_greedy_query(self.sack)
 
         # list all packages - those installed and available:
         if pkgnarrow == 'all':
@@ -2187,8 +2187,7 @@ class Base(object):
         self.history.write_addon_data('config-repos', myrepos)
 
     def _add_reinstall_rpm_probfilters(self):
-        self.rpm_probfilter |= set([rpm.RPMPROB_FILTER_REPLACEPKG,
-                                    rpm.RPMPROB_FILTER_REPLACEOLDFILES])
+        self.rpm_probfilter.add(rpm.RPMPROB_FILTER_REPLACEPKG)
 
     def _add_downgrade_rpm_probfilters(self):
         self.rpm_probfilter.add(rpm.RPMPROB_FILTER_OLDPACKAGE)

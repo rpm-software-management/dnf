@@ -89,6 +89,23 @@ class Subject(object):
             return is_glob_pattern(nevra.arch)
         return False
 
+    def get_greedy_query(self, sack):
+        pkgs = set()
+        for nevra in self.subj.nevra_possibilities_real(sack, allow_globs=True,
+                                                        icase=self.icase):
+            q = self._nevra_to_filters(sack.query(), nevra)
+            pkgs |= set(q.run())
+
+        for rd in self.subj.reldep_possibilities_real(sack, icase=self.icase):
+            q = sack.query().filter(provides=rd)
+            pkgs |= set(q.run())
+
+        q = sack.query().filter(*self._query_flags,
+                                nevra__glob=self.subj.pattern)
+        pkgs |= set(q.run())
+
+        return sack.query().filter(pkg=pkgs)
+
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
         pat = self.subj.pattern
