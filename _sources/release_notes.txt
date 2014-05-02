@@ -722,3 +722,15 @@ Bugs fixed in 0.5.0:
 * :rhbug:`1084139`
 * :rhbug:`1084553`
 * :rhbug:`1088166`
+
+===================
+0.5.1 Release Notes
+===================
+
+Bugfix release with several internal cleanups. One outstanding change for CLI users is that DNF is a lot less verbose now during the dependency resolving phase.
+
+Bugs fixed in 0.5.1:
+
+* :rhbug:`1065882`
+* :rhbug:`1081753`
+* :rhbug:`1089864`
