@@ -50,7 +50,7 @@ class BaseTest(support.TestCase):
         base.yumdb.get_package(pkg2).reason = "unknown"
 
         # test:
-        base._push_userinstalled(goal)
+        base.push_userinstalled(goal)
         calls = [c[0][0].name for c in goal.userinstalled.call_args_list]
         self.assertItemsEqual(calls, ('hole', 'pepper'))
 
