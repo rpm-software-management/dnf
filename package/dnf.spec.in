@@ -1,5 +1,5 @@
-%global gitrev 895cb6e
-%global hawkey_version 0.4.13
+%global gitrev c44cc44
+%global hawkey_version 0.4.14
 %global librepo_version 1.7.0
 %global libcomps_version 0.1.6
 
@@ -137,6 +137,24 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Fri May 2 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.1-1
+- drpm: output stats (RhBug:1065882) (Ales Kozumplik)
+- refactor: architectures. (Ales Kozumplik)
+- cli: be lot less verbose about dep processing. (Ales Kozumplik)
+- groups: do not error out if group install/remove produces no RPM transaction. (Ales Kozumplik)
+- fix: do not traceback on comps remove operations if proper pkg reasons can not be found. (Ales Kozumplik)
+- fix: tracebacks in 'group remove ...' (Ales Kozumplik)
+- groups: move all the logic of persistor saving from main.py to Base. (Ales Kozumplik)
+- groups: auto-saving the groups persistor. (RhBug:1089864) (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- remove: profiling code from cli.main. (Ales Kozumplik)
+- remove: removal of dead code (Miroslav Suchý)
+- doc: changes to rhbug.py to work on readthedocs.org. (Ales Kozumplik)
+- doc: build the documentation without any dependencies (on DNF or anything else). (Ales Kozumplik)
+- doc: make clear where one should expect bin/dnf (Miroslav Suchý)
+- abrt: disable abrt for 'dnf makecache timer' run from systemd.service. (RhBug:1081753) (Ales Kozumplik)
+- remove: stray itertools import from group.py. (Ales Kozumplik)
 
 * Wed Apr 23 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.0-1
 - doc: fix formatting in api_cli.rst. (Ales Kozumplik)
