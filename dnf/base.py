@@ -130,7 +130,8 @@ class Base(object):
             return
         if 'main' not in disabled:
             for excl in self.conf.exclude:
-                pkgs = self.sack.query().filter_autoglob(name=excl)
+                subj = dnf.subject.Subject(excl)
+                pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
         for r in self.repos.iter_enabled():
             if r.id in disabled:
