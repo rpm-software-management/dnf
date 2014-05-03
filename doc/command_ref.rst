@@ -18,7 +18,7 @@ Description
 
 Available commands are:
 
-* autoremove
+* autoerase
 * check-update
 * clean
 * distro-sync
@@ -155,10 +155,10 @@ For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
 
 -------------------
-Auto Remove Command
+Auto Erase Command
 -------------------
 
-``dnf [options] autoremove``
+``dnf [options] autoerase``
 
     Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 

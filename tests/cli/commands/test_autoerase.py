@@ -1,7 +1,4 @@
-# autoremove.py
-# Autoremove CLI command.
-#
-# Copyright (C) 2014  Red Hat, Inc.
+# Copyright (C) 2014 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -19,32 +16,25 @@
 #
 
 from __future__ import absolute_import
-from __future__ import unicode_literals
-from .. import commands
+from tests import support
 
-import hawkey
+import dnf.cli.commands.autoerase as autoerase
 
 
-class AutoremoveCommand(commands.Command):
+class AutoEraseCommandTest(support.ResultTestCase):
 
-    aliases = ('autoremove',)
+    def test_run(self):
+        base = support.MockBase()
+        q = base.sack.query()
+        pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
+        yumdb = base.yumdb
+        for pkg in pkgs:
+            yumdb.get_package(pkg).reason = 'dep'
 
-    def configure(self, _):
-        demands = self.cli.demands
-        demands.available_repos = True
-        demands.resolving = True
-        demands.root_user = True
-        demands.sack_activation = True
-
-    def run(self, extcmds):
-        base = self.base
-        sack = base.sack
-        goal = hawkey.Goal(sack)
-
-        base.push_userinstalled(goal)
-
-        solved = goal.run()
-        assert solved
-
-        for pkg in goal.list_unneeded():
-            base.package_remove(pkg)
+        cli = base.mock_cli()
+        cmd = autoerase.AutoeraseCommand(cli)
+        cmd.run([])
+        inst, rem = self.installed_removed(base)
+        self.assertEmpty(inst)
+        removed = ('librita-1-1.i686', 'librita-1-1.x86_64', 'pepper-20-0.x86_64')
+        self.assertItemsEqual((map(str, rem)), removed)
