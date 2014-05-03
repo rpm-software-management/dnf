@@ -513,7 +513,7 @@ class Base(object):
 
     def push_userinstalled(self, goal):
         msg =  _('--> Finding unneeded leftover dependencies')
-        self.logger.info(msg)
+        self.logger.debug(msg)
         for pkg in self.sack.query().installed().run():
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
@@ -1539,6 +1539,10 @@ class Base(object):
     def package_install(self, pkg):
         # :api
         self._goal.install(pkg)
+        return 1
+
+    def package_remove(self, pkg):
+        self._goal.erase(pkg)
         return 1
 
     def package_upgrade(self, pkg):

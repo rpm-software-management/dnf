@@ -18,6 +18,7 @@ Description
 
 Available commands are:
 
+* autoremove
 * check-update
 * clean
 * distro-sync
@@ -155,6 +156,14 @@ For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
+
+-------------------
+Auto Remove Command
+-------------------
+
+``dnf [options] autoremove``
+
+    Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
 --------------------
 Check Update Command

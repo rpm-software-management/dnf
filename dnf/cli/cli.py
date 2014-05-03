@@ -29,6 +29,7 @@ from dnf.i18n import ucd, _, P_
 
 import dnf
 import dnf.cli.commands
+import dnf.cli.commands.autoremove
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
 import dnf.cli.commands.install
@@ -803,6 +804,7 @@ class Cli(object):
         self.cli_commands = {}
         self.nogpgcheck = False
 
+        self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.UpgradeToCommand)

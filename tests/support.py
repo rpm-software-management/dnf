@@ -197,7 +197,7 @@ class _BaseStubMixin(object):
         logger = logging.getLogger('test')
         logger.setLevel(logging.DEBUG)
         logger.addHandler(logging.StreamHandler(stream))
-        return mock.Mock('base', base=self, log_stream=stream, logger=logger,
+        return mock.Mock(base=self, log_stream=stream, logger=logger,
                          nogpgcheck=True, demands=dnf.cli.demand.DemandSheet())
 
     def read_mock_comps(self, seed_persistor=True):
