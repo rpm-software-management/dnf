@@ -22,7 +22,6 @@ Available commands are:
 * check-update
 * clean
 * distro-sync
-* distribution-synchronization
 * downgrade
 * erase
 * group
@@ -37,8 +36,6 @@ Available commands are:
 * repolist
 * repository-packages
 * search
-* update
-* update-to
 * upgrade
 * upgrade-to
 
