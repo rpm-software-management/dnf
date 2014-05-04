@@ -47,7 +47,7 @@ _RPM_REBUILDDB = _("To fix inconsistent RPMDB, try running: '%s'.") % \
     'rpm --rebuilddb'
 _REPORT_TMPLT = _("If the above doesn't help please report this error at '%s'.")
 
-def _err_mini_usage(cli, basecmd):
+def err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
         cli.print_usage()
         return
@@ -98,7 +98,7 @@ def checkPackageArg(cli, basecmd, extcmds):
     if len(extcmds) == 0:
         cli.logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
-        _err_mini_usage(cli, basecmd)
+        err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 
 def checkItemArg(cli, basecmd, extcmds):
@@ -114,7 +114,7 @@ def checkItemArg(cli, basecmd, extcmds):
     """
     if len(extcmds) == 0:
         cli.logger.critical(_('Error: Need an item to match'))
-        _err_mini_usage(cli, basecmd)
+        err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 
 def checkCleanArg(cli, basecmd, extcmds):
@@ -136,7 +136,7 @@ def checkCleanArg(cli, basecmd, extcmds):
     for cmd in extcmds:
         if cmd not in VALID_ARGS:
             cli.logger.critical(_('Error: invalid clean argument: %r') % cmd)
-            _err_mini_usage(cli, basecmd)
+            err_mini_usage(cli, basecmd)
             raise dnf.cli.CliError
 
 def checkEnabledRepo(base, possible_local_files=[]):
@@ -1322,14 +1322,14 @@ class RepoPkgsCommand(Command):
         except ValueError:
             self.cli.logger.critical(
                 _('Error: Requires a repo ID and a valid sub-command'))
-            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            dnf.cli.commands.err_mini_usage(self.cli, basecmd)
             raise dnf.cli.CliError('a repo ID and a valid sub-command required')
 
         # Check sub-command.
         try:
             subcmd.check(subargs)
         except dnf.cli.CliError:
-            dnf.cli.commands._err_mini_usage(self.cli, basecmd)
+            dnf.cli.commands.err_mini_usage(self.cli, basecmd)
             raise
 
     def run(self, extcmds):
