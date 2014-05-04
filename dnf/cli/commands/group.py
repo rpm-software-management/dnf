@@ -109,6 +109,18 @@ class GroupCommand(commands.Command):
                     'erase'      : 'remove'}
     _MARK_CMDS = ('install', 'remove')
 
+
+    @staticmethod
+    def _grp_cmd(extcmds):
+        return extcmds[0], extcmds[1:]
+
+    @staticmethod
+    def _split_extcmds(extcmds):
+        if extcmds[0] == 'with-optional':
+            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            return types, extcmds[1:]
+        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+
     @classmethod
     def canonical(cls, command_list):
         first = command_list[0]
@@ -123,13 +135,6 @@ class GroupCommand(commands.Command):
 
         rest.insert(0, cmd)
         return ('groups', rest)
-
-    @staticmethod
-    def _split_extcmds(extcmds):
-        if extcmds[0] == 'with-optional':
-            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
-            return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
 
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)
@@ -176,16 +181,13 @@ class GroupCommand(commands.Command):
         sort_fn = operator.attrgetter('ui_name')
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
-    def _grp_setup_doCommand(self):
+    def _grp_setup(self):
         try:
             comps = self.base.read_comps()
         except dnf.exceptions.Error as e:
             return 1, [str(e)]
         if not comps:
             return 1, [_('No Groups Available in any repository')]
-
-    def _grp_cmd(self, extcmds):
-        return extcmds[0], extcmds[1:]
 
     def _info(self, userlist):
         for strng in userlist:
@@ -200,23 +202,22 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _install(self, extcmds):
-        cnt = 0
         types, patterns = self._split_extcmds(extcmds)
         q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE)
         res = q.get(*patterns)
         for env in res.environments:
-            cnt += self.base.environment_install(env, types)
+            self.base.environment_install(env, types)
         for grp in res.groups:
-            cnt += self.base.group_install(grp, types)
+            self.base.group_install(grp, types)
 
     def _list(self, userlist):
-        uservisible=1
+        uservisible = 1
 
         if len(userlist) > 0:
             if userlist[0] == 'hidden':
-                uservisible=0
+                uservisible = 0
                 userlist.pop(0)
         if not userlist:
             userlist = None # Match everything...
@@ -224,7 +225,7 @@ class GroupCommand(commands.Command):
         env_inst, env_avail = self._environment_lists(userlist)
         installed, available = self._group_lists(uservisible, userlist)
 
-        if not any([env_inst ,env_avail, installed, available]):
+        if not any([env_inst, env_avail, installed, available]):
             logger.error(_('Warning: No groups match: %s'),
                               ", ".join(userlist))
             return 0, []
@@ -243,35 +244,39 @@ class GroupCommand(commands.Command):
             if envs:
                 logger.info(sect)
             for e in envs:
-                    msg = '   %s' % e.ui_name
-                    if self.base.conf.verbose:
-                        msg += ' (%s)' % e.id
-                    logger.info(msg)
+                msg = '   %s' % e.ui_name
+                if self.base.conf.verbose:
+                    msg += ' (%s)' % e.id
+                logger.info(msg)
 
         _out_env(_('Available environment groups:'), env_avail)
         _out_env(_('Installed environment groups:'), env_inst)
 
         done = False
         for group in installed:
-            if group.lang_only: continue
+            if group.lang_only:
+                continue
             _out_grp(_('Installed groups:'), group)
             done = True
 
         done = False
         for group in installed:
-            if not group.lang_only: continue
+            if not group.lang_only:
+                continue
             _out_grp(_('Installed language groups:'), group)
             done = True
 
         done = False
         for group in available:
-            if group.lang_only: continue
+            if group.lang_only:
+                continue
             _out_grp(_('Available groups:'), group)
             done = True
 
         done = False
         for group in available:
-            if not group.lang_only: continue
+            if not group.lang_only:
+                continue
             _out_grp(_('Available language groups:'), group)
             done = True
 
@@ -288,17 +293,17 @@ class GroupCommand(commands.Command):
         for env in res.environments:
             solver.environment_install(env, types, None)
         if res.environments:
-            logger.info(_('Environments marked installed: %s') %
-                                  ','.join([g.ui_name for g in res.environments]))
+            logger.info(_('Environments marked installed: %s'),
+                        ','.join([g.ui_name for g in res.environments]))
         for grp in res.groups:
             solver.group_install(grp, types, None)
         if res.groups:
-            logger.info(_('Groups marked installed: %s') %
-                                  ','.join([g.ui_name for g in res.groups]))
+            logger.info(_('Groups marked installed: %s'),
+                        ','.join([g.ui_name for g in res.groups]))
         persistor.commit()
 
     def _mark_remove(self, patterns):
-        persistor =self.base.group_persistor
+        persistor = self.base.group_persistor
         q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
@@ -307,13 +312,13 @@ class GroupCommand(commands.Command):
         for env in res.environments:
             solver.environment_remove(env)
         if res.environments:
-            logger.info(_('Environments marked removed: %s') %
-                                  ','.join([g.ui_name for g in res.environments]))
+            logger.info(_('Environments marked removed: %s'),
+                        ','.join([g.ui_name for g in res.environments]))
         for grp in res.groups:
             solver.group_remove(grp)
         if res.groups:
-            logger.info(_('Groups marked removed: %s') %
-                                  ','.join([g.ui_name for g in res.groups]))
+            logger.info(_('Groups marked removed: %s'),
+                        ','.join([g.ui_name for g in res.groups]))
         persistor.commit()
 
     def _mark_subcmd(self, extcmds):
@@ -322,22 +327,21 @@ class GroupCommand(commands.Command):
         return 'install', extcmds
 
     def _remove(self, patterns):
-        cnt = 0
         q = CompsQuery(self.base.comps, self.base.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         res = q.get(*patterns)
 
         for env in res.environments:
-            cnt += self.base.environment_remove(env)
+            self.base.environment_remove(env)
         for grp in res.groups:
-            cnt += self.base.group_remove(grp)
+            self.base.group_remove(grp)
 
     def _summary(self, userlist):
-        uservisible=1
+        uservisible = 1
         if len(userlist) > 0:
             if userlist[0] == 'hidden':
-                uservisible=0
+                uservisible = 0
                 userlist.pop(0)
         if not userlist:
             userlist = None # Match everything...
@@ -347,28 +351,32 @@ class GroupCommand(commands.Command):
         def _out_grp(sect, num):
             if not num:
                 return
-            logger.info('%s %u', sect,num)
+            logger.info('%s %u', sect, num)
         done = 0
         for group in installed:
-            if group.lang_only: continue
+            if group.lang_only:
+                continue
             done += 1
         _out_grp(_('Installed Groups:'), done)
 
         done = 0
         for group in installed:
-            if not group.lang_only: continue
+            if not group.lang_only:
+                continue
             done += 1
         _out_grp(_('Installed Language Groups:'), done)
 
         done = False
         for group in available:
-            if group.lang_only: continue
+            if group.lang_only:
+                continue
             done += 1
         _out_grp(_('Available Groups:'), done)
 
         done = False
         for group in available:
-            if not group.lang_only: continue
+            if not group.lang_only:
+                continue
             done += 1
         _out_grp(_('Available Language Groups:'), done)
 
@@ -420,7 +428,7 @@ class GroupCommand(commands.Command):
     def run(self, extcmds):
         cmd, extcmds = self._grp_cmd(extcmds)
 
-        self._grp_setup_doCommand()
+        self._grp_setup()
 
         if cmd == 'summary':
             return self._summary(extcmds)
