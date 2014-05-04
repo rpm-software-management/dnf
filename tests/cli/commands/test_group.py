@@ -86,6 +86,6 @@ class CompsQueryTest(support.TestCase):
     def test_installed(self):
         q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.GROUPS,
                              group.CompsQuery.INSTALLED)
-        res =  q.get('somerset')
+        res = q.get('somerset')
         self.assertEmpty(res.environments)
         self.assertItemsEqual(names(res.groups), ('Solid Ground',))
