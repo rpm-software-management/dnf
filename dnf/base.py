@@ -527,7 +527,7 @@ class Base(object):
     def run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(allow_uninstall=allow_erasing, force_best=self.conf.best)
         if self.conf.debug_solver:
-            goal.write_debugdata()
+            goal.write_debugdata('./debugdata')
         return ret
 
     def resolve(self, allow_erasing=False):

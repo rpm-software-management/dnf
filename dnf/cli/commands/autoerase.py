@@ -44,6 +44,8 @@ class AutoeraseCommand(commands.Command):
         base.push_userinstalled(goal)
 
         solved = goal.run()
+        if base.conf.debug_solver:
+            goal.write_debugdata('./debugdata-autoerase')
         assert solved
 
         for pkg in goal.list_unneeded():
