@@ -1,0 +1,5 @@
+^E1101:[ a-z0-9,._:]*Instance of 'Goal' has no 'list_unneeded' member$
+^E1101:[ a-z0-9,._:]*Instance of 'Goal' has no 'write_debugdata' member$
+^W0622:[ a-z0-9,._:]*Redefining built-in 'unicode'$
+^C0103:[ a-z0-9,._:]*Invalid constant name "logger"$
+^W0212: tests[ a-z0-9,._:]*Access to a protected member .*$

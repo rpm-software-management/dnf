@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+
+THIS_DIR=$(readlink -f $(dirname $0))
+FALSE_POSITIVES=$THIS_DIR/pylint_false_positives
+DISABLED=""
+
+function disable()
+{
+    DISABLED="$DISABLED $1"
+}
+
+disable "-d C0111" # docstrings
+disable "-d R0904" # too many public methods
+disable "-d R0911" # too many return statements
+disable "-d R0912" # too many branches
+disable "-d R0903" # too few public methods
+disable "-d W0141" # used builtin 'map' function
+disable "-d W0142" # used star magic
+
+TEMPLATE=--msg-template='{msg_id}: {module}:{line:3d},{column}: {msg}'
+VAR_NAMES=--variable-rgx='[a-z_][a-z0-9_]*$'
+MISC=--max-line-length=82
+
+pylint --rcfile=/dev/null --reports=n $DISABLED "$VAR_NAMES" $MISC $* \
+    "$TEMPLATE" \
+    | egrep -v -f $FALSE_POSITIVES
