@@ -274,7 +274,8 @@ class Base(object):
                     if not hasattr(thisrepo, opt):
                         msg = "Repo %s did not have a %s attr. before setopt"
                         self.logger.warning(msg % (thisrepo.id, opt))
-                    setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id], opt))
+                    setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id],
+                                                   opt))
 
             # Got our list of repo objects, add them to the repos
             # collection
@@ -294,7 +295,7 @@ class Base(object):
                        for repofn in sorted(glob.glob('%s/*.repo' % reposdir))):
             try:
                 self.read_repos(repofn)
-            except dnf.exceptions.ConfigError as e:
+            except dnf.exceptions.ConfigError:
                 self.logger.warning(_("Warning: failed loading '%s', skipping."),
                                     repofn)
 
@@ -310,7 +311,7 @@ class Base(object):
         try:
             repo.populate(parser, section, self.conf)
         except ValueError as e:
-            msg = _('Repository %r: Error parsing config: %s' % (section,e))
+            msg = _('Repository %r: Error parsing config: %s' % (section, e))
             raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
@@ -349,7 +350,7 @@ class Base(object):
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS,
                         'nocrypto' : rpm.RPMTRANS_FLAG_NOFILEDIGEST}
     _TS_VSFLAGS_TO_RPM = {'nocrypto' : rpm._RPMVSF_NOSIGNATURES |
-                          rpm._RPMVSF_NODIGESTS }
+                          rpm._RPMVSF_NODIGESTS}
 
     @property
     def ts(self):
@@ -434,7 +435,7 @@ class Base(object):
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
-                       fset=lambda self, value: setattr(self, "_history",value),
+                       fset=lambda self, value: setattr(self, "_history", value),
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
@@ -512,7 +513,7 @@ class Base(object):
                    self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
     def push_userinstalled(self, goal):
-        msg =  _('--> Finding unneeded leftover dependencies')
+        msg = _('--> Finding unneeded leftover dependencies')
         self.logger.debug(msg)
         for pkg in self.sack.query().installed().run():
             yumdb_info = self.yumdb.get_package(pkg)
@@ -600,7 +601,7 @@ class Base(object):
         tt_st = time.time()
         self.logger.info(_('Running transaction test'))
         if not self.conf.diskspacecheck:
-            self.rpm_probfilter.append(rpm.RPMPROB_FILTER_DISKSPACE)
+            self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
         self.ts.order() # order the transaction
         self.ts.clean() # release memory not needed beyond this point
@@ -663,7 +664,7 @@ class Base(object):
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
-            rpmdbv  = self.sack.rpmdb_version(self.yumdb)
+            rpmdbv = self.sack.rpmdb_version(self.yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -711,13 +712,14 @@ class Base(object):
             # particular element failed and if not, decide that is the
             # case.
             if len([el for el in self.ts if el.Failed()]) > 0:
-                errstring = _('Warning: scriptlet or other non-fatal errors occurred during transaction.')
+                errstring = _('Warning: scriptlet or other non-fatal errors '
+                              'occurred during transaction.')
                 self.logger.debug(errstring)
                 return_code = 1
             else:
                 self.logger.critical(_("Transaction couldn't start (no root?)"))
-                raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
-                                              errors=[])
+                msg = _('Could not run transaction.')
+                raise dnf.exceptions.YumRPMTransError(msg=msg, errors=[])
         else:
             if self._record_history():
                 herrors = [unicode(x) for x in errors]
@@ -727,8 +729,8 @@ class Base(object):
             self.logger.critical(_("Transaction couldn't start:"))
             for e in errors:
                 self.logger.critical(e[0]) # should this be 'to_unicoded'?
-            raise dnf.exceptions.YumRPMTransError(msg=_("Could not run transaction."),
-                                          errors=errors)
+            msg = _("Could not run transaction.")
+            raise dnf.exceptions.YumRPMTransError(msg=msg, errors=errors)
 
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):
@@ -736,8 +738,8 @@ class Base(object):
                 try:
                     misc.unlink_f(fn)
                 except (IOError, OSError) as e:
-                    self.logger.critical(_('Failed to remove transaction file %s') % fn)
-
+                    msg = _('Failed to remove transaction file %s')
+                    self.logger.critical(msg, fn)
 
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
@@ -820,14 +822,14 @@ class Base(object):
                     st = os.stat(rpo.localPkg())
                     lp_ctime = str(int(st.st_ctime))
                     lp_mtime = str(int(st.st_mtime))
-                    yumdb_info.from_repo_revision  = lp_ctime
+                    yumdb_info.from_repo_revision = lp_ctime
                     yumdb_info.from_repo_timestamp = lp_mtime
                 except Exception:
                     pass
             elif hasattr(rpo.repo, 'repoXML'):
                 md = rpo.repo.repoXML
                 if md and md.revision is not None:
-                    yumdb_info.from_repo_revision  = str(md.revision)
+                    yumdb_info.from_repo_revision = str(md.revision)
                 if md:
                     yumdb_info.from_repo_timestamp = str(md.timestamp)
 
@@ -908,7 +910,7 @@ class Base(object):
             progress.start(len(payloads), remaining_size)
 
             errors = dnf.repo.download_payloads(payloads, drpm)
-            assert(not errors.recoverable)
+            assert not errors.recoverable
             if errors.irrecoverable:
                 raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
@@ -988,7 +990,7 @@ class Base(object):
                 msg = _('Package %s is not signed') % localfn
 
         else:
-            result =0
+            result = 0
             msg = ''
 
         return result, msg
@@ -1018,7 +1020,7 @@ class Base(object):
                 continue
             try:
                 misc.unlink_f(fn)
-            except OSError as e:
+            except OSError:
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
@@ -1088,14 +1090,16 @@ class Base(object):
         for item in filelist:
             try:
                 misc.unlink_f(item)
-            except OSError as e:
-                self.logger.critical(_('Cannot remove %s file %s'), filetype, item)
+            except OSError:
+                self.logger.critical(_('Cannot remove %s file %s'),
+                                     filetype, item)
                 continue
             else:
                 self.logger.log(dnf.logging.SUBDEBUG,
                     _('%s file %s removed'), filetype, item)
-                removed+=1
-        msg = P_('%d %s file removed', '%d %s files removed', removed) % (removed, filetype)
+                removed += 1
+        msg = P_('%d %s file removed', '%d %s files removed', removed)
+        msg %= (removed, filetype)
         return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
@@ -1130,7 +1134,7 @@ class Base(object):
             return self._list_pattern(
                 pkgnarrow, patterns, showdups, ignore_case, reponame)
 
-        assert(not dnf.util.is_string_type(patterns))
+        assert not dnf.util.is_string_type(patterns)
         list_fn = functools.partial(
             self._list_pattern, pkgnarrow, showdups=showdups,
             ignore_case=ignore_case, reponame=reponame)
@@ -1139,7 +1143,8 @@ class Base(object):
         yghs = map(list_fn, patterns)
         return reduce(lambda a, b: a.merge_lists(b), yghs)
 
-    def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case, reponame=None):
+    def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case,
+                      reponame=None):
         def is_from_repo(package):
             """Test whether given package originates from the repository."""
             if reponame is None:
@@ -1221,7 +1226,8 @@ class Base(object):
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
-                    same_ver = [pkg for pkg in installed_pkgs if pkg.evr == avail_pkg.evr]
+                    same_ver = [pkg for pkg in installed_pkgs
+                                if pkg.evr == avail_pkg.evr]
                     if len(same_ver) > 0:
                         reinstall_available.append(avail_pkg)
                     else:
@@ -1303,7 +1309,7 @@ class Base(object):
                                       # double bracket thing
 
             for req in reqs:
-                (r,f,v) = req
+                (r, f, v) = req
                 if r.startswith('rpmlib('):
                     continue
 
@@ -1415,7 +1421,6 @@ class Base(object):
         msg = "dnf.Base.select_group() is deprecated. Use group_install()."
         dnf.logging.depr(msg)
 
-        txmbrs = []
         if group.selected:
             return 0
         group.selected = True
@@ -1454,7 +1459,8 @@ class Base(object):
         if os.path.exists(gpgkeyschecked):
             return 1
 
-        myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=self.conf.installroot)
+        installroot = self.conf.installroot
+        myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
         myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
         keys = len(idx)
@@ -1474,7 +1480,8 @@ class Base(object):
             return 1
 
     def install(self, pkg_spec, reponame=None):
-        """Mark package(s) specified by pkg_spec and reponame for installation. :api"""
+        """Mark package(s) given by pkg_spec and reponame for installation.:api
+        """
 
         def msg_installed(pkg):
             name = unicode(pkg)
@@ -1581,7 +1588,8 @@ class Base(object):
 
     def upgrade_to(self, pkg_spec, reponame=None):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
-        sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack, forms=forms)
+        sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack,
+                                                               forms=forms)
         if sltr:
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
@@ -1615,7 +1623,8 @@ class Base(object):
             if reponame is None or
                self.yumdb.get_package(pkg).get('from_repo') == reponame]
         if not installed:
-            raise dnf.exceptions.PackagesNotInstalledError('no package matched', pkg_spec)
+            raise dnf.exceptions.PackagesNotInstalledError('no package matched',
+                                                           pkg_spec)
 
         clean_deps = self.conf.clean_requirements_on_remove
         for pkg in installed:
@@ -1678,9 +1687,11 @@ class Base(object):
             if available_pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', pkg_spec, available_pkgs)
-            raise dnf.exceptions.PackageNotFoundError('no package matched', pkg_spec)
+            raise dnf.exceptions.PackageNotFoundError('no package matched',
+                                                      pkg_spec)
 
-        q = self.sack.query().filter(name=installed_pkg.name, arch=installed_pkg.arch)
+        arch = installed_pkg.arch
+        q = self.sack.query().filter(name=installed_pkg.name, arch=arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
         avail_pkg = dnf.util.first(sorted(avail, reverse=True))
         if avail_pkg is None:
@@ -1792,10 +1803,12 @@ class Base(object):
             """Handle a downgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    'no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    'no package matched', old_nevra)
             assert len(news) == 1
             self._transaction.add_upgrade(dnf.util.first(olds), news[0], None)
             self._add_downgrade_rpm_probfilters()
@@ -1806,14 +1819,16 @@ class Base(object):
             """Handle an erased package."""
             pkgs = self.sack.query().available().nevra(old_nevra)
             if not pkgs:
-                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    'no package matched', old_nevra)
             self._transaction.add_install(dnf.util.first(pkgs), None, 'history')
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
             pkgs = self.sack.query().installed().nevra(new_nevra)
             if not pkgs:
-                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    'no package matched', new_nevra)
             assert len(pkgs) == 1
             self._transaction.add_erase(pkgs[0])
             for obsoleted_nevra in obsoleted_nevras:
@@ -1823,10 +1838,12 @@ class Base(object):
             """Handle a reinstalled package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    'no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    'no package matched', old_nevra)
             obsoleteds = []
             for nevra in obsoleted_nevras:
                 obsoleteds_ = self.sack.query().installed().nevra(nevra)
@@ -1835,16 +1852,19 @@ class Base(object):
                     obsoleteds.append(obsoleteds_[0])
             assert len(news) == 1
             self._add_reinstall_rpm_probfilters()
-            self._transaction.add_reinstall(dnf.util.first(olds), news[0], obsoleteds)
+            self._transaction.add_reinstall(dnf.util.first(olds), news[0],
+                                            obsoleteds)
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle an upgraded package."""
             news = self.sack.query().installed().nevra(new_nevra)
             if not news:
-                raise dnf.exceptions.PackagesNotInstalledError('no package matched', new_nevra)
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    'no package matched', new_nevra)
             olds = self.sack.query().available().nevra(old_nevra)
             if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError('no package matched', old_nevra)
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    'no package matched', old_nevra)
             assert len(news) == 1
             self._transaction.add_downgrade(dnf.util.first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
@@ -1874,7 +1894,6 @@ class Base(object):
         @param keyurl: url to the key to retrieve
         Returns a list of dicts with all the keyinfo
         """
-        key_installed = False
 
         msg = _('Retrieving key from %s') % keyurl
         self.logger.info(msg)
@@ -1926,9 +1945,8 @@ class Base(object):
             for info in ('keyid', 'timestamp', 'userid',
                          'fingerprint', 'raw_key'):
                 if info not in keyinfo:
-                    raise dnf.exceptions.Error(
-                        _('GPG key parsing failed: key does not have value %s') + info
-                    )
+                    msg = _('GPG key parsing failed: key does not have value %s')
+                    raise dnf.exceptions.Error(msg % info)
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
             thiskey['valid_sig'] = valid_sig
@@ -1959,10 +1977,10 @@ class Base(object):
                      ' From       : %s') %
                    (keytype, info['hexkeyid'], unicode(info['userid']),
                     misc.gpgkey_fingerprint_ascii(info),
-                    keyurl.replace("file://","")))
+                    keyurl.replace("file://", "")))
         self.logger.critical("%s", msg)
 
-    def getKeyForPackage(self, po, askcb = None, fullaskcb = None):
+    def getKeyForPackage(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
         callback to prompt whether the key should be imported.
 
@@ -1995,8 +2013,8 @@ class Base(object):
                 ts = self.rpmconn.readonly_ts
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
-                    self.logger.info(_('GPG key at %s (0x%s) is already installed') % (
-                        keyurl, info['hexkeyid']))
+                    msg = _('GPG key at %s (0x%s) is already installed')
+                    self.logger.info(msg, keyurl, info['hexkeyid'])
                     continue
 
                 if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
@@ -2010,11 +2028,10 @@ class Base(object):
                     elif self.conf.assumeyes:
                         rc = True
 
-                    # grab the .sig/.asc for the keyurl, if it exists
-                    # if it does check the signature on the key
-                    # if it is signed by one of our ca-keys for this repo or the global one
-                    # then rc = True
-                    # else ask as normal.
+                    # grab the .sig/.asc for the keyurl, if it exists if it
+                    # does check the signature on the key if it is signed by
+                    # one of our ca-keys for this repo or the global one then
+                    # rc = True else ask as normal.
 
                     elif fullaskcb:
                         rc = fullaskcb({"po": po, "userid": info['userid'],
@@ -2056,7 +2073,8 @@ class Base(object):
             errmsg = unicode(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
 
-    def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False, callback=None):
+    def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False,
+                          callback=None):
         """
         Retrieve a key for a repository If needed, prompt for if the key should
         be imported using callback
@@ -2088,9 +2106,10 @@ class Base(object):
             keys = self._retrievePublicKey(keyurl, repo, getSig=not is_cakey)
             for info in keys:
                 # Check if key is already installed
-                if hex(int(info['keyid']))[2:-1].upper() in misc.return_keyids_from_pubring(destdir):
-                    self.logger.info(_('GPG key at %s (0x%s) is already imported') % (
-                        keyurl, info['hexkeyid']))
+                keyids = misc.return_keyids_from_pubring(destdir)
+                if hex(int(info['keyid']))[2:-1].upper() in keyids:
+                    msg = _('GPG key at %s (0x%s) is already imported')
+                    self.logger.info(msg, keyurl, info['hexkeyid'])
                     key_installed = True
                     continue
                 # Try installing/updating GPG key
@@ -2098,7 +2117,7 @@ class Base(object):
                     # know where the 'imported_cakeys' file is
                     ikf = self.conf._repos_persistdir + '/imported_cakeys'
                     keytype = 'CA'
-                    cakeys  = []
+                    cakeys = []
                     try:
                         cakeys_d = open(ikf, 'r').read()
                         cakeys = cakeys_d.split('\n')
@@ -2121,9 +2140,10 @@ class Base(object):
 
                     elif callback:
                         rc = callback({"repo": repo, "userid": info['userid'],
-                                        "hexkeyid": info['hexkeyid'], "keyurl": keyurl,
-                                        "fingerprint": info['fingerprint'],
-                                        "timestamp": info['timestamp']})
+                                       "hexkeyid": info['hexkeyid'],
+                                       "keyurl": keyurl,
+                                       "fingerprint": info['fingerprint'],
+                                       "timestamp": info['timestamp']})
 
 
                     if not rc:
@@ -2131,7 +2151,9 @@ class Base(object):
                         continue
 
                 # Import the key
-                result = misc.import_key_to_pubring(info['raw_key'], info['hexkeyid'], gpgdir=destdir)
+                result = misc.import_key_to_pubring(info['raw_key'],
+                                                    info['hexkeyid'],
+                                                    gpgdir=destdir)
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
                     raise dnf.exceptions.Error(_prov_key_data(msg))
@@ -2146,7 +2168,7 @@ class Base(object):
                             ikfo.flush()
                             ikfo.close()
                         except (IOError, OSError):
-                            # maybe a warning - but in general this is not-critical, just annoying to the user
+                            # not-critical
                             pass
 
         if not key_installed and user_cb_fail:
@@ -2169,7 +2191,8 @@ class Base(object):
         :param callback: callback function to use for asking for
            verification of key information
         """
-        self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True, callback=callback)
+        self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True,
+                               callback=callback)
 
     def _run_rpm_check(self):
         results = []

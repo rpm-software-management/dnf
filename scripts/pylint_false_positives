@@ -1,5 +1,8 @@
-^E1101:[ a-z0-9,._:]*Instance of 'Goal' has no 'list_unneeded' member$
-^E1101:[ a-z0-9,._:]*Instance of 'Goal' has no 'write_debugdata' member$
+^E110[0-9]:[ a-z0-9,._:]*Instance of 'Goal' has no '[_a-z]+' member.*$
+^E110[0-9]:[ a-z0-9,._:]*Instance of 'Sack' has no '[_a-z]+' member.*$
+^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NODIGESTS of a client class$
+^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NOSIGNATURES of a client class$
 ^W0622:[ a-z0-9,._:]*Redefining built-in 'unicode'$
+^W0622:[ a-z0-9,._:]*Redefining built-in 'reduce'$
 ^C0103:[ a-z0-9,._:]*Invalid constant name "logger"$
 ^W0212: tests[ a-z0-9,._:]*Access to a protected member .*$
