@@ -432,9 +432,10 @@ class Repo(dnf.yum.config.RepoConf):
         h.fastestmirrorcb = self._md_pload._fastestmirror_cb
 
         # apply repo options
-        h.proxy = self.proxy
         h.maxspeed = self.throttle if type(self.throttle) is int \
                      else int(self.bandwidth * self.throttle)
+        h.proxy = self.proxy
+        h.sslverifypeer = h.sslverifyhost = self.sslverify
 
         return h
 
