@@ -1,6 +1,6 @@
 %global gitrev c44cc44
 %global hawkey_version 0.4.15
-%global librepo_version 1.7.0
+%global librepo_version 1.7.3
 %global libcomps_version 0.1.6
 
 %global confdir %{_sysconfdir}/dnf

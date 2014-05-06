@@ -149,6 +149,11 @@ configuration.
 
     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
+``sslverify``
+    boolean
+
+    When enabled, remote SSL connections are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is True.
+
 .. _throttle-label:
 
 ``throttle``
