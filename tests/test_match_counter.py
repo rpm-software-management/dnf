@@ -22,6 +22,19 @@ from tests.support import mock
 
 import dnf.match_counter
 
+class PackageStub(support.MockPackage):
+    @classmethod
+    def several(cls, count):
+        for _ in range(count):
+            yield cls()
+
+    def __init__(self, nevra='nevra-1-1.noarch', summary='summary'):
+        super(PackageStub, self).__init__(nevra)
+        self.summary = summary
+        self.url = ''
+        self.description = ''
+
+
 class MatchCounterTest(support.TestCase):
     def test_canonize_string_set(self):
         a = ['f', 'p']
@@ -43,50 +56,62 @@ class MatchCounterTest(support.TestCase):
         self.assertItemsEqual(counter.matched_haystacks(pkg), [url, summary])
 
     @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
-    def test_sorted(self, unused_eval):
+    def test_sorted(self, _):
         counter = dnf.match_counter.MatchCounter()
         self.assertEqual(counter.sorted(), [])
 
         counter = dnf.match_counter.MatchCounter()
-        counter.add(1, 'name', '')
-        counter.add(2, 'description', '')
-        self.assertEqual(counter.sorted(), [2, 1])
+        pkg1, pkg2, pkg3 = PackageStub().several(3)
+        counter.add(pkg1, 'name', '')
+        counter.add(pkg2, 'summary', '')
+        self.assertEqual(counter.sorted(), [pkg2, pkg1])
 
-        counter.add(3, 'url', '')
-        self.assertEqual(counter.sorted(), [3, 2, 1])
-
-        counter.add(3, 'description', '')
-        self.assertEqual(counter.sorted(), [2, 3, 1])
-        self.assertEqual(counter.sorted(reverse=True), [1, 3,2])
+        counter.add(pkg3, 'url', '')
+        self.assertEqual(counter.sorted(), [pkg3, pkg2, pkg1])
+        self.assertEqual(counter.sorted(reverse=True), [pkg1, pkg2, pkg3])
 
     @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
-    def test_sorted_with_needles(self, unused_eval):
+    def test_sorted_with_needles(self, _):
         # the same needles should be listed together:
         counter = dnf.match_counter.MatchCounter()
-        counter.add(1, 'summary', 'grin')
-        counter.add(2, 'summary', 'foolish')
-        counter.add(3, 'summary', 'grin')
-        counter.add(4, 'summary', 'grin')
+        pkg1, pkg2, pkg3, pkg4 = PackageStub().several(4)
+        counter.add(pkg1, 'summary', 'grin')
+        counter.add(pkg2, 'summary', 'foolish')
+        counter.add(pkg3, 'summary', 'grin')
+        counter.add(pkg4, 'summary', 'grin')
 
         srt = counter.sorted()
-        self.assertIn(srt.index(2), [0, 3])
+        self.assertIn(srt.index(pkg2), (0, 3))
 
         # more unique needles is more than less unique needles:
         counter = dnf.match_counter.MatchCounter()
-        counter.add(1, 'summary', 'a')
-        counter.add(1, 'summary', 'b')
-        counter.add(2, 'summary', 'b')
-        counter.add(2, 'summary', 'b')
+        counter.add(pkg1, 'summary', 'a')
+        counter.add(pkg1, 'summary', 'b')
+        counter.add(pkg2, 'summary', 'b')
+        counter.add(pkg2, 'summary', 'b')
 
-        self.assertEqual(counter.sorted(), [2, 1])
+        self.assertSequenceEqual(counter.sorted(), (pkg2, pkg1))
 
     @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
-    def test_sorted_limit(self, unused_eval):
+    def test_sorted_limit(self, _):
         counter = dnf.match_counter.MatchCounter()
-        counter.add(1, 'name', '')
-        counter.add(2, 'url', '')
-        counter.add(3, 'description', '')
-        self.assertSequenceEqual(counter.sorted(limit_to=[1,2]), [2,1])
+        pkg1, pkg2, pkg3 = PackageStub().several(3)
+        counter.add(pkg1, 'name', '')
+        counter.add(pkg2, 'url', '')
+        counter.add(pkg3, 'description', '')
+        self.assertSequenceEqual(counter.sorted(limit_to=[pkg1, pkg2]),
+                                 (pkg2, pkg1))
+
+    @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
+    def test_sorted_exact_match(self, _):
+        """Exactly matching the name beats name and summary non-exact match."""
+        counter = dnf.match_counter.MatchCounter()
+        pkg1 = PackageStub('wednesday-1-1.noarch', 'morning')
+        pkg2 = PackageStub('wednesdaymorning-1-1.noarch', "5 o'clock")
+        counter.add(pkg1, 'name', 'wednesday')
+        counter.add(pkg2, 'name', 'wednesday')
+        counter.add(pkg2, 'summary', 'clock')
+        self.assertSequenceEqual(counter.sorted(), (pkg2, pkg1))
 
     def test_total(self):
         counter = dnf.match_counter.MatchCounter()

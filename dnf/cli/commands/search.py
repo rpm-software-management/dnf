@@ -29,6 +29,7 @@ import dnf.match_counter
 import dnf.util
 import hawkey
 
+
 class SearchCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
     search command.
@@ -79,7 +80,6 @@ class SearchCommand(commands.Command):
         if len(counter) == 0:
             self.base.logger.warning(_('Warning: No matches found for: %s'), arg)
             raise dnf.exceptions.Error(_('No Matches found'))
-
 
     def _search_counted(self, counter, attr, needle):
         fdict = {'%s__substr' % attr : needle}

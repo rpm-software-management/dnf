@@ -30,11 +30,13 @@ WEIGHTS = {
     'url'		: 1,
     }
 
+
 def _canonize_string_set(sset, length):
     """ Ordered sset with empty strings prepended. """
     current = len(sset)
     l = [''] * (length - current) + sorted(sset)
     return l
+
 
 class MatchCounter(dict):
     """Map packages to which of their attributes matched in a search against
@@ -45,10 +47,16 @@ class MatchCounter(dict):
     """
 
     @staticmethod
-    def _eval_weights(matches):
+    def _eval_weights(pkg, matches):
         # how much is each match worth and return their sum:
-        weights = map(lambda m: WEIGHTS[m[0]], matches)
-        return sum(weights)
+        def weight(match):
+            key = match[0]
+            needle = match[1]
+            haystack = getattr(pkg, key)
+            coef = 2 if haystack == needle else 1
+            return coef * WEIGHTS[key]
+
+        return sum(map(weight, matches))
 
     @staticmethod
     def _eval_distance(pkg, matches):
@@ -72,7 +80,7 @@ class MatchCounter(dict):
         """
         max_length = self._max_needles()
         def get_key(pkg):
-            return (self._eval_weights(self[pkg]),
+            return (self._eval_weights(pkg, self[pkg]),
                     _canonize_string_set(self.matched_needles(pkg), max_length),
                     -self._eval_distance(pkg, self[pkg]))
         return get_key
@@ -80,7 +88,7 @@ class MatchCounter(dict):
     def _max_needles(self):
         """Return the max count of needles of all packages."""
         if self:
-            return max(map(lambda pkg: len(self.matched_needles(pkg)), self))
+            return max(len(self.matched_needles(pkg)) for pkg in self)
         return 0
 
     def add(self, pkg, key, needle):
@@ -91,17 +99,17 @@ class MatchCounter(dict):
             print('%s\t%s' % (pkg, self[pkg]))
 
     def matched_haystacks(self, pkg):
-        return set(map(lambda m: getattr(pkg, m[0]) , self[pkg]))
+        return set(getattr(pkg, m[0]) for m in self[pkg])
 
     def matched_keys(self, pkg):
-        return set(map(lambda m: m[0], self[pkg]))
+        return set(m[0] for m in self[pkg])
 
     def matched_needles(self, pkg):
-        return set(map(lambda m: m[1], self[pkg]))
+        return set(m[1] for m in self[pkg])
 
     def sorted(self, reverse=False, limit_to=None):
         keys = limit_to if limit_to else self.keys()
         return sorted(keys, key=self._key_func(), reverse=reverse)
 
     def total(self):
-        return reduce(lambda total, pkg: total + len(self[pkg]) ,self, 0)
+        return reduce(lambda total, pkg: total + len(self[pkg]), self, 0)
