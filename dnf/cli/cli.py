@@ -34,6 +34,7 @@ import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
+import dnf.cli.commands.search
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.distrosync
 import dnf.cli.demand
@@ -816,7 +817,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.CleanCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
-        self.register_command(dnf.cli.commands.SearchCommand)
+        self.register_command(dnf.cli.commands.search.SearchCommand)
         self.register_command(dnf.cli.commands.RepoListCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)

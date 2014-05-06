@@ -491,29 +491,6 @@ class CheckUpdateCommand(Command):
         if found:
             self.cli.demands.success_exit_status = 100
 
-class SearchCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    search command.
-    """
-
-    activate_sack = True
-    aliases = ('search',)
-    summary = _("Search package details for the given string")
-    usage = _("SOME_STRING")
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that this command is called with appropriate arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkItemArg(self.cli, basecmd, extcmds)
-
-    def run(self, extcmds):
-        self.base.logger.debug(_("Searching Packages: "))
-        return self.cli.search(extcmds)
-
 class RepoListCommand(Command):
     """A class containing methods needed by the cli to execute the
     repolist command.
