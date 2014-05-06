@@ -25,7 +25,6 @@ import binascii
 import dnf
 import dnf.const
 import dnf.exceptions
-import dnf.match_counter
 import dnf.package
 import dnf.subject
 import dnf.transaction
@@ -131,21 +130,6 @@ class MockBaseTest(PycompTestCase):
         pkg = self.base.add_remote_rpm(support.TOUR_50_PKG_PATH)
         self.assertIsInstance(pkg, dnf.package.Package)
         self.assertEqual(pkg.name, 'tour')
-
-    def test_search_counted(self):
-        counter = dnf.match_counter.MatchCounter()
-        self.base.search_counted(counter, 'summary', 'ation')
-        self.assertEqual(len(counter), 2)
-        haystacks = set()
-        for pkg in counter:
-            haystacks.update(counter.matched_haystacks(pkg))
-        self.assertItemsEqual(haystacks, ["It's an invitation.",
-                                          "Make a reservation."])
-
-    def test_search_counted_glob(self):
-        counter = dnf.match_counter.MatchCounter()
-        self.base.search_counted(counter, 'summary', '*invit*')
-        self.assertEqual(len(counter), 1)
 
 class BuildTransactionTest(support.TestCase):
     def test_resolve(self):

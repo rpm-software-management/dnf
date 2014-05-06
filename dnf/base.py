@@ -1322,15 +1322,6 @@ class Base(object):
 
         return results
 
-    def search_counted(self, counter, attr, needle):
-        fdict = {'%s__substr' % attr : needle}
-        if dnf.util.is_glob_pattern(needle):
-            fdict = {'%s__glob' % attr : needle}
-        q = self.sack.query().filter(hawkey.ICASE, **fdict)
-        for pkg in q.run():
-            counter.add(pkg, attr, needle)
-        return counter
-
     def _add_comps_trans(self, trans):
         cnt = 0
         attr_fn = ((trans.install, self._goal.install),

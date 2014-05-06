@@ -232,32 +232,3 @@ class ConfigureTest(PycompTestCase):
         conf = os.path.join(support.dnf_toplevel(), "tests/etc/installroot.conf")
         self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
         self.assertEqual(self.base.conf.installroot, '/roots/dnf')
-
-class SearchTest(PycompTestCase):
-    def setUp(self):
-        self.base = support.MockBase("search")
-        self.cli = dnf.cli.cli.Cli(self.base)
-
-        self.base.output = mock.MagicMock()
-        self.base.output.fmtSection = lambda str: str
-
-    def patched_search(self, *args, **kwargs):
-        with support.patch_std_streams() as (stdout, stderr):
-            self.cli.search(*args, **kwargs)
-            call_args = self.base.output.matchcallback.call_args_list
-            pkgs = [c[0][0] for c in call_args]
-            return (stdout.getvalue(), pkgs)
-
-    def test_search(self):
-        (stdout, pkgs) = self.patched_search(['lotus'])
-        pkg_names = list(map(str, pkgs))
-        self.assertIn('lotus-3-16.i686', pkg_names)
-        self.assertIn('lotus-3-16.x86_64', pkg_names)
-
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_search_caseness(self):
-        (stdout, pkgs) = self.patched_search(['LOTUS'])
-        self.assertEqual(stdout, 'N/S Matched: LOTUS\n')
-        pkg_names = map(str, pkgs)
-        self.assertIn('lotus-3-16.i686', pkg_names)
-        self.assertIn('lotus-3-16.x86_64', pkg_names)

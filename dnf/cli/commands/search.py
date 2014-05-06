@@ -19,10 +19,15 @@
 #
 
 from __future__ import absolute_import
+from __future__ import print_function
 from __future__ import unicode_literals
 from .. import commands
-from dnf.i18n import _
+from dnf.i18n import ucd, _
 
+import dnf.i18n
+import dnf.match_counter
+import dnf.util
+import hawkey
 
 class SearchCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
@@ -32,6 +37,58 @@ class SearchCommand(commands.Command):
     aliases = ('search',)
     summary = _('Search package details for the given string')
     usage = _('QUERY_STRING')
+
+    def _search(self, args):
+        """Search for simple text tags in a package object."""
+
+        def _print_match_section(text, keys):
+            # Print them in the order they were passed
+            used_keys = [arg for arg in args if arg in keys]
+            formatted = self.base.output.fmtSection(text % ", ".join(used_keys))
+            print(ucd(formatted))
+
+        # prepare the input
+        search_all = False
+        if len(args) > 1 and args[0] == 'all':
+            args.pop(0)
+            search_all = True
+
+        counter = dnf.match_counter.MatchCounter()
+        for arg in args:
+            self._search_counted(counter, 'name', arg)
+            self._search_counted(counter, 'summary', arg)
+
+        section_text = _('N/S Matched: %s')
+        if search_all or counter.total() == 0:
+            section_text = _('Matched: %s')
+            for arg in args:
+                self._search_counted(counter, 'description', arg)
+                self._search_counted(counter, 'url', arg)
+
+        matched_needles = None
+        limit = None
+        if not self.base.conf.showdupesfromrepos:
+            limit = self.base.sack.query().filter(pkg=counter.keys()).latest()
+        for pkg in counter.sorted(reverse=True, limit_to=limit):
+            if matched_needles != counter.matched_needles(pkg):
+                matched_needles = counter.matched_needles(pkg)
+                _print_match_section(section_text, matched_needles)
+            self.base.output.matchcallback(pkg, counter.matched_haystacks(pkg),
+                                           args)
+
+        if len(counter) == 0:
+            self.base.logger.warning(_('Warning: No matches found for: %s'), arg)
+            raise dnf.exceptions.Error(_('No Matches found'))
+
+
+    def _search_counted(self, counter, attr, needle):
+        fdict = {'%s__substr' % attr : needle}
+        if dnf.util.is_glob_pattern(needle):
+            fdict = {'%s__glob' % attr : needle}
+        q = self.base.sack.query().filter(hawkey.ICASE, **fdict)
+        for pkg in q.run():
+            counter.add(pkg, attr, needle)
+        return counter
 
     def configure(self, _):
         demands = self.cli.demands
@@ -43,4 +100,4 @@ class SearchCommand(commands.Command):
 
     def run(self, extcmds):
         self.base.logger.debug(_('Searching Packages: '))
-        return self.cli.search(extcmds)
+        return self._search(extcmds)
