@@ -21,8 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
-from dnf.i18n import _
-from dnf.pycomp import unicode
+from dnf.i18n import _, ucd
 
 import dnf.cli
 import dnf.exceptions
@@ -87,7 +86,7 @@ class CompsQuery(object):
                 res.groups.extend(grps)
             if not envs and not grps:
                 msg = _("No relevant match for the specified '%s'.")
-                msg = msg % unicode(pat)
+                msg = msg % ucd(pat)
                 raise dnf.cli.CliError(msg)
         return res
 

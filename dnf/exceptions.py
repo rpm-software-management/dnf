@@ -18,7 +18,7 @@ Core DNF Errors.
 """
 
 from __future__ import unicode_literals
-from dnf.pycomp import unicode
+from dnf.i18n import ucd
 
 class Error(Exception):
     """Base Error. All other Errors thrown by DNF should inherit from this.
@@ -28,7 +28,7 @@ class Error(Exception):
     """
     def __init__(self, value=None):
         Exception.__init__(self)
-        self.value = unicode(value)
+        self.value = ucd(value)
 
     def __str__(self):
         return "%s" %(self.value,)
@@ -92,7 +92,7 @@ class DownloadError(Error):
         return self.errmap2str(self.errmap)
 
     def __unicode__(self):
-        return unicode(str(self))
+        return ucd(self)
 
 class MetadataError(Error):
     pass

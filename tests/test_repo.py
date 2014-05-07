@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.pycomp import unicode
+from dnf.i18n import ucd
 from tests import support
 from tests.support import mock
 
@@ -123,7 +123,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_dump(self):
         dump = self.repo.dump()
-        f = io.StringIO(unicode(dump))
+        f = io.StringIO(ucd(dump))
         parser = iniparse.compat.ConfigParser()
         parser.readfp(f)
         self.assertIn('r', parser.sections())

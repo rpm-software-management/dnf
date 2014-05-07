@@ -22,7 +22,7 @@ Entrance point for the yum command line interface.
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.pycomp import unicode
+from dnf.i18n import ucd
 
 import sys
 
@@ -66,13 +66,13 @@ logger = logging.getLogger("dnf")
 
 def ex_IOError(e):
     logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
-    logger.critical(unicode(e))
+    logger.critical(ucd(e))
     return 1
 
 
 def ex_Error(e):
     if e.value is not None:
-        logger.critical(_('Error: %s'), unicode(e))
+        logger.critical(_('Error: %s'), ucd(e))
     return 1
 
 

@@ -61,8 +61,7 @@ import re
 import signal
 import sys
 import time
-from functools import reduce
-from dnf.pycomp import unicode
+
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
@@ -754,11 +753,11 @@ class BaseCli(dnf.Base):
             self.history_undo_operations(operations)
         except dnf.exceptions.PackagesNotInstalledError as err:
             self.logger.info(_('No package %s%s%s installed.'),
-                             hibeg, unicode(err.pkg_spec), hiend)
+                             hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
             self.logger.info(_('No package %s%s%s available.'),
-                             hibeg, unicode(err.pkg_spec), hiend)
+                             hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.MarkingError:
             assert False
@@ -783,11 +782,11 @@ class BaseCli(dnf.Base):
             self.history_undo_operations(history.transaction_nevra_ops(old.tid))
         except dnf.exceptions.PackagesNotInstalledError as err:
             self.logger.info(_('No package %s%s%s installed.'),
-                             hibeg, unicode(err.pkg_spec), hiend)
+                             hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
             self.logger.info(_('No package %s%s%s available.'),
-                             hibeg, unicode(err.pkg_spec), hiend)
+                             hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.MarkingError:
             assert False
@@ -1025,7 +1024,7 @@ class Cli(object):
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         except IOError as e:
-            e = '%s: %s' % (unicode(e.args[1]), repr(e.filename))
+            e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
             self.logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         for item in bad_setopt_tm:
