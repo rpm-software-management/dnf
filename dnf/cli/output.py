@@ -45,7 +45,7 @@ import dnf.util
 
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
-from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
+from dnf.pycomp import xrange, basestring, is_py3bytes, long
 
 import locale
 import hawkey
@@ -621,7 +621,7 @@ class Output(object):
         if len(col_data) == 3:
             (val, width, highlight) = col_data
             (hibeg, hiend) = self._highlight(highlight)
-        return (unicode(val), width, hibeg, hiend)
+        return (ucd(val), width, hibeg, hiend)
 
     def fmtColumns(self, columns, msg=u'', end=u''):
         """Return a row of data formatted into a string for output.
@@ -709,7 +709,7 @@ class Output(object):
         """
         if columns is None:
             columns = (-63, -16) # Old default
-        envra = '%s%s' % (indent, unicode(pkg))
+        envra = '%s%s' % (indent, ucd(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
         columns = list(zip((envra, rid), columns, hi_cols))
@@ -717,7 +717,7 @@ class Output(object):
 
     def simple_name_list(self, pkg):
         """Print a package as a line containing its name."""
-        print(unicode(pkg.name))
+        print(ucd(pkg.name))
 
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
@@ -733,7 +733,7 @@ class Output(object):
         if not val:
             # textwrap.fill in case of empty val returns empty string
             return key
-        val = unicode(val)
+        val = ucd(val)
         ret = textwrap.fill(val, width=cols, initial_indent=key,
                             subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols // 3):
@@ -752,7 +752,7 @@ class Output(object):
           to fill an entire line.  *fill* must be a single character.
         :return: a string formatted to be a section header
         """
-        name = unicode(name)
+        name = ucd(name)
         cols = self.term.columns - 2
         name_len = len(name)
         if name_len >= (cols - 4):
@@ -784,7 +784,7 @@ class Output(object):
             print(_("From repo   : %s") % yumdb_info.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
-            # print(_("Committer   : %s") % unicode(pkg.committer))
+            # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
             print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
@@ -806,7 +806,7 @@ class Output(object):
                 print(_("Changed by  : %s") % self._pwd_ui_username(uid))
         print(self.fmtKeyValFill(_("Summary     : "), pkg.summary or ""))
         if pkg.url:
-            print(_("URL         : %s") % unicode(pkg.url))
+            print(_("URL         : %s") % ucd(pkg.url))
         print(self.fmtKeyValFill(_("License     : "), pkg.license))
         print(self.fmtKeyValFill(_("Description : "),
               pkg.description or ""))
@@ -926,8 +926,8 @@ class Output(object):
         :return: True if the user selects yes, and False if the user
            selects no
         """
-        yui = (unicode(_('y')), unicode(_('yes')))
-        nui = (unicode(_('n')), unicode(_('no')))
+        yui = (ucd(_('y')), ucd(_('yes')))
+        nui = (ucd(_('n')), ucd(_('no')))
         aui = yui + nui
         while True:
             msg = _('Is this ok [y/N]: ')
@@ -982,8 +982,8 @@ class Output(object):
             pkg = name_dict.get(pkg_name)
             if pkg is None:
                 continue
-            nevra_l = len(unicode(pkg)) + len(self.GRP_PACKAGE_INDENT)
-            repo_l = len(unicode(pkg.reponame))
+            nevra_l = len(ucd(pkg)) + len(self.GRP_PACKAGE_INDENT)
+            repo_l = len(ucd(pkg.reponame))
             nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
             repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
         return (nevra_lengths, repo_lengths)
@@ -1014,9 +1014,9 @@ class Output(object):
 
         verbose = self.conf.verbose
         if verbose:
-            print(_(' Group-Id: %s') % unicode(group.id))
+            print(_(' Group-Id: %s') % ucd(group.id))
         if group.ui_description:
-            print(_(' Description: %s') % unicode(group.ui_description) or "")
+            print(_(' Description: %s') % ucd(group.ui_description) or "")
         if group.lang_only:
             print(_(' Language: %s') % group.lang_only)
 
@@ -1086,7 +1086,7 @@ class Output(object):
             msg = '%s : ' % po
         else:
             msg = '%s.%s : ' % (po.name, po.arch)
-        msg = self.fmtKeyValFill(msg, unicode(po.summary) or "")
+        msg = self.fmtKeyValFill(msg, po.summary or "")
         if matchfor:
             if highlight is None:
                 highlight = self.conf.color_search_match
@@ -1111,7 +1111,7 @@ class Output(object):
             if False: pass
             elif po.description == item:
                 key = _("Description : ")
-                item = unicode(item)
+                item = ucd(item)
             elif po.url == item:
                 key = _("URL         : %s")
                 can_overflow = False
@@ -1120,7 +1120,7 @@ class Output(object):
                 can_overflow = False
             elif item.startswith("/"):
                 key = _("Filename    : %s")
-                item = unicode(item) or ""
+                item = ucd(item) or ""
                 can_overflow = False
             else:
                 key = _("Other       : ")
@@ -1129,7 +1129,7 @@ class Output(object):
                 item = self._sub_highlight(item, highlight, matchfor,
                                            ignore_case=True)
             if can_overflow:
-                print(self.fmtKeyValFill(key, unicode(item)))
+                print(self.fmtKeyValFill(key, ucd(item)))
             else:
                 print(key % item)
         print()
@@ -1498,7 +1498,7 @@ Transaction Summary
             name = _("System") + " " + loginid
             if limit is not None and len(name) > limit:
                 name = loginid
-            return unicode(name)
+            return ucd(name)
 
         def _safe_split_0(text, *args):
             """ Split gives us a [0] for everything _but_ '', this function
@@ -1516,9 +1516,9 @@ Transaction Summary
                 name = "%s ... <%s>" % (_safe_split_0(fullname), user.pw_name)
                 if len(name) > limit:
                     name = "<%s>" % user.pw_name
-            return unicode(name)
+            return ucd(name)
         except KeyError:
-            return unicode(uid)
+            return ucd(uid)
 
     @staticmethod
     def _historyRangeRTIDs(old, tid):
@@ -2410,7 +2410,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
-            pkgname = unicode(pkgname)
+            pkgname = ucd(pkgname)
             msg = fmt % ("%-*.*s" % (wid1, wid1, process),
                          "%-*.*s" % (wid2, wid2, pkgname))
             if msg != self.lastmsg:
@@ -2426,7 +2426,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param msgs: the messages coming from the script
         """
         if msgs:
-            sys.stdout.write(unicode(msgs))
+            sys.stdout.write(ucd(msgs))
             sys.stdout.flush()
 
     def _makefmt(self, percent, ts_current, ts_total, progress = True,

@@ -24,8 +24,7 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number
-from dnf.i18n import _, fill_exact_width
-from dnf.pycomp import unicode
+from dnf.i18n import _, ucd, fill_exact_width
 
 import dnf.cli
 import dnf.const
@@ -343,7 +342,7 @@ class EraseCommand(Command):
                 self.base.remove(pkg_spec)
             except dnf.exceptions.MarkingError:
                 self.base.logger.info(_('No match for argument: %s'),
-                                      dnf.pycomp.unicode(pkg_spec))
+                                      ucd(pkg_spec))
             else:
                 done = True
 
@@ -519,7 +518,7 @@ class RepoListCommand(Command):
             return False
 
         def _num2ui_num(num):
-            return unicode(locale.format("%d", num, True))
+            return ucd(locale.format("%d", num, True))
 
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
@@ -664,7 +663,7 @@ class RepoListCommand(Command):
                                                repo.repofile)]
 
                 self.base.logger.log(dnf.logging.DEBUG, "%s\n",
-                                        "\n".join(map(unicode, out)))
+                                        "\n".join(map(ucd, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
@@ -719,7 +718,7 @@ class RepoListCommand(Command):
                                       "%-*s" % (id_len, rid),
                                       fill_exact_width(rname, nm_len),
                                       ui_enabled, ui_num)
-        msg = 'repolist: %s' % unicode(locale.format("%d", tot_num, True))
+        msg = 'repolist: %s' % ucd(locale.format("%d", tot_num, True))
         self.base.logger.info(msg)
 
 class RepoPkgsCommand(Command):
@@ -910,7 +909,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, new_reponame=reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
+                        self.base.logger.info(msg, ucd(pkg_spec))
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -977,7 +976,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, reponame, reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
+                        self.base.logger.info(msg, ucd(pkg_spec))
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -1092,7 +1091,7 @@ class RepoPkgsCommand(Command):
                             new_reponame_neq=reponame, remove_na=True)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, dnf.pycomp.unicode(pkg_spec))
+                        self.base.logger.info(msg, ucd(pkg_spec))
                     except dnf.exceptions.MarkingError:
                         assert False, 'Only the above marking error is expected.'
                     else:
@@ -1144,7 +1143,7 @@ class RepoPkgsCommand(Command):
                         self.base.remove(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
                         self.base.logger.info(_('No match for argument: %s'),
-                                              dnf.pycomp.unicode(pkg_spec))
+                                              ucd(pkg_spec))
                     else:
                         done = True
 
@@ -1190,7 +1189,7 @@ class RepoPkgsCommand(Command):
                         self.base.upgrade(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
                         self.base.logger.info(_('No match for argument: %s'),
-                                              dnf.pycomp.unicode(pkg_spec))
+                                              ucd(pkg_spec))
                     else:
                         done = True
 

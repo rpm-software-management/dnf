@@ -21,7 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 
 import dnf.exceptions
 import functools
@@ -80,7 +80,7 @@ class UpgradeCommand(commands.Command):
                     self.base.upgrade(pkg_spec)
                 except dnf.exceptions.MarkingError:
                     self.base.logger.info(_('No match for argument: %s'),
-                                          dnf.pycomp.unicode(pkg_spec))
+                                          ucd(pkg_spec))
                 else:
                     done = True
 
