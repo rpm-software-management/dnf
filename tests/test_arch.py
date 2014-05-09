@@ -26,8 +26,9 @@ class ArchTest(tests.support.TestCase):
 
     def test_basearch(self):
         fn = dnf.arch.basearch
-        self.assertEqual(fn('i686'), 'i386')
         self.assertEqual(fn('armv7hl'), 'armhfp')
+        self.assertEqual(fn('i686'), 'i386')
+        self.assertEqual(fn('noarch'), 'noarch')
         self.assertEqual(fn('ppc64iseries'), 'ppc64')
         self.assertEqual(fn('sparc64v'), 'sparc')
         self.assertEqual(fn('x86_64'), 'x86_64')

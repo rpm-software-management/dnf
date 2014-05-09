@@ -25,14 +25,14 @@ def _invert(dct):
     return {v: k for k in dct for v in dct[k]}
 
 _BASEARCH_MAP = _invert({
+    'aarch64' : ('aarch64',),
     'alpha'   : ('alpha', 'alphaev4', 'alphaev45', 'alphaev5', 'alphaev56',
                  'alphaev6', 'alphaev67', 'alphaev68', 'alphaev7', 'alphapca56'),
-    'x86_64'  : ('x86_64', 'amd64', 'ia32e'),
-    'aarch64' : ('aarch64',),
     'arm'     : ('armv5tejl', 'armv5tel', 'armv6l', 'armv7l'),
     'armhfp'  : ('armv7hl', 'armv7hnl'),
     'i386'    : ('i386', 'athlon', 'geode', 'i386', 'i486', 'i586', 'i686'),
     'ia64'    : ('ia64',),
+    'noarch'  : ('noarch',),
     'ppc'     : ('ppc',),
     'ppc64'   : ('ppc64', 'ppc64iseries', 'ppc64p7', 'ppc64pseries'),
     'ppc64le' : ('ppc64le',),
@@ -40,7 +40,9 @@ _BASEARCH_MAP = _invert({
     's390x'   : ('s390x',),
     'sh3'     : ('sh3',),
     'sh4'     : ('sh4', 'sh4a'),
-    'sparc'   : ('sparc', 'sparc64', 'sparc64v', 'sparcv8', 'sparcv9', 'sparcv9v')
+    'sparc'   : ('sparc', 'sparc64', 'sparc64v', 'sparcv8', 'sparcv9',
+                 'sparcv9v'),
+    'x86_64'  : ('x86_64', 'amd64', 'ia32e'),
 })
 
 def basearch(arch):
