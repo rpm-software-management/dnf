@@ -21,7 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
-from dnf.i18n import _, ucd
+from dnf.i18n import _
 
 import dnf.exceptions
 import functools
@@ -79,7 +79,7 @@ class ReinstallCommand(commands.Command):
                 self.base.reinstall(pkg_spec)
             except dnf.exceptions.PackagesNotInstalledError:
                 self.base.logger.info(_('No match for argument: %s'),
-                                      ucd(pkg_spec))
+                                      pkg_spec)
             except dnf.exceptions.PackagesNotAvailableError as err:
                 for pkg in err.packages:
                     xmsg = ''
