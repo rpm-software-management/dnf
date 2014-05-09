@@ -342,7 +342,7 @@ class EraseCommand(Command):
                 self.base.remove(pkg_spec)
             except dnf.exceptions.MarkingError:
                 self.base.logger.info(_('No match for argument: %s'),
-                                      ucd(pkg_spec))
+                                      pkg_spec)
             else:
                 done = True
 
@@ -909,7 +909,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, new_reponame=reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, ucd(pkg_spec))
+                        self.base.logger.info(msg, pkg_spec)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -976,7 +976,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, reponame, reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, ucd(pkg_spec))
+                        self.base.logger.info(msg, pkg_spec)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -1091,7 +1091,7 @@ class RepoPkgsCommand(Command):
                             new_reponame_neq=reponame, remove_na=True)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, ucd(pkg_spec))
+                        self.base.logger.info(msg, pkg_spec)
                     except dnf.exceptions.MarkingError:
                         assert False, 'Only the above marking error is expected.'
                     else:
@@ -1143,7 +1143,7 @@ class RepoPkgsCommand(Command):
                         self.base.remove(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
                         self.base.logger.info(_('No match for argument: %s'),
-                                              ucd(pkg_spec))
+                                              pkg_spec)
                     else:
                         done = True
 
@@ -1189,7 +1189,7 @@ class RepoPkgsCommand(Command):
                         self.base.upgrade(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
                         self.base.logger.info(_('No match for argument: %s'),
-                                              ucd(pkg_spec))
+                                              pkg_spec)
                     else:
                         done = True
 
