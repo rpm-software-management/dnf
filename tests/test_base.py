@@ -67,7 +67,7 @@ class BaseTest(support.TestCase):
         # check the setup is correct
         ts.setFlags.call_args.assert_called_with(0)
         flags = ts.setProbFilter.call_args[0][0]
-        self.assertFalse(flags & rpm.RPMPROB_FILTER_OLDPACKAGE)
+        self.assertTrue(flags & rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertFalse(flags & rpm.RPMPROB_FILTER_REPLACEPKG)
         # check file conflicts are reported:
         self.assertFalse(flags & rpm.RPMPROB_FILTER_REPLACENEWFILES)

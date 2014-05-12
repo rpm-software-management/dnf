@@ -87,7 +87,7 @@ class Base(object):
                                # not in cli - set it up as empty so no one
                                # trips over it later
 
-        self.rpm_probfilter = set([])
+        self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
 
         arch = hawkey.detect_arch()
@@ -1528,7 +1528,6 @@ class Base(object):
 
         installed = sorted(self.sack.query().installed().filter(name=pkg.name))
         if len(installed) > 0 and installed[0] > pkg:
-            self._add_downgrade_rpm_probfilters()
             self._goal.install(pkg)
             self._goal.erase(installed[0])
             return 2
@@ -1593,7 +1592,6 @@ class Base(object):
         return 0
 
     def distro_sync(self, pkg_spec=None):
-        self._add_downgrade_rpm_probfilters()
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
@@ -1601,7 +1599,6 @@ class Base(object):
             if not sltr:
                 self.logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
-            self._add_downgrade_rpm_probfilters()
             self._goal.distupgrade(select=sltr)
         return 1
 
@@ -1688,7 +1685,6 @@ class Base(object):
         if avail_pkg is None:
             return 0
 
-        self._add_downgrade_rpm_probfilters()
         self._goal.install(avail_pkg)
         return 1
 
@@ -1802,7 +1798,6 @@ class Base(object):
                     'no package matched', old_nevra)
             assert len(news) == 1
             self._transaction.add_upgrade(dnf.util.first(olds), news[0], None)
-            self._add_downgrade_rpm_probfilters()
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
@@ -2206,6 +2201,3 @@ class Base(object):
 
     def _add_reinstall_rpm_probfilters(self):
         self.rpm_probfilter.add(rpm.RPMPROB_FILTER_REPLACEPKG)
-
-    def _add_downgrade_rpm_probfilters(self):
-        self.rpm_probfilter.add(rpm.RPMPROB_FILTER_OLDPACKAGE)

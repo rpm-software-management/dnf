@@ -155,8 +155,8 @@ class RPMProbFilters(tests.support.TestCase):
         self.base._sack = tests.support.mock_sack('main', 'search')
         self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.install("lotus")
-        self.base.ts
-        self.base.ts.setProbFilter.assert_called_with(0)
+        ts = self.base.ts
+        ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_filters_downgrade(self, ts):
@@ -164,8 +164,8 @@ class RPMProbFilters(tests.support.TestCase):
         self.base._sack = tests.support.mock_sack('main', 'old_versions')
         self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.downgrade("tour")
-        self.base.ts
-        self.base.ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
+        ts = self.base.ts
+        ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
     def test_filters_reinstall(self, ts):
@@ -173,6 +173,6 @@ class RPMProbFilters(tests.support.TestCase):
         self.base._sack = tests.support.mock_sack('main')
         self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.reinstall("librita")
-        self.base.ts
-        expected = rpm.RPMPROB_FILTER_REPLACEPKG
+        expected = rpm.RPMPROB_FILTER_REPLACEPKG |\
+                   rpm.rpm.RPMPROB_FILTER_OLDPACKAGE
         self.base.ts.setProbFilter.assert_called_with(expected)
