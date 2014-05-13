@@ -250,3 +250,12 @@ DNF will terminate early with an error if a command is executed requesting an in
   Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).
 
 Yum will only issue warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
+
+=============================================================
+ Promoting package to install to a package that obsoletes it
+=============================================================
+
+DNF will not magically replace a request for installing package ``X`` to installing package ``Y`` if ``Y`` obsoletes ``X``. Yum does this if its ``obsoletes`` config option is enabled but the behavior is not properly documented and can be harmful.
+
+See the the related `Fedora bug 1096506
+<https://bugzilla.redhat.com/show_bug.cgi?id=1096506>`_ and `guidelines for renaming and obsoleting packages in Fedora <http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages>`_.
