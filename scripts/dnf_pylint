@@ -1,5 +1,18 @@
 #!/usr/bin/bash
 
+TEMP=`getopt -o s -n dnf_pylint -- "$@"`
+
+[[ $? -eq 0 ]] || exit 1;
+eval set -- "$TEMP"
+
+TEMPLATE=--msg-template='{msg_id}: {module}:{line:3d},{column}: {msg}'
+while true ; do
+    case "$1" in
+	-s) TEMPLATE=--msg-template='{msg_id}: {module}: {msg}'; shift ;;
+	--) shift ; break ;;
+    esac
+done
+
 THIS_DIR=$(readlink -f $(dirname $0))
 FALSE_POSITIVES=$THIS_DIR/pylint_false_positives
 DISABLED=""
@@ -17,7 +30,6 @@ disable "-d R0903" # too few public methods
 disable "-d W0141" # used builtin 'map' function
 disable "-d W0142" # used star magic
 
-TEMPLATE=--msg-template='{msg_id}: {module}:{line:3d},{column}: {msg}'
 VAR_NAMES=--variable-rgx='[a-z_][a-z0-9_]*$'
 MISC=--max-line-length=82
 
