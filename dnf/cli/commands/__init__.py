@@ -1025,12 +1025,6 @@ class RepoPkgsCommand(Command):
             for command in self.wrapped_commands:
                 command.check(cli_args)
 
-        def configure(self, args):
-            """Do any command-specific Base configuration."""
-            super(RepoPkgsCommand.ReinstallSubCommand, self).configure(args)
-            for command in self.wrapped_commands:
-                command.configure(args)
-
         def run(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
             super(RepoPkgsCommand.ReinstallSubCommand, self).run(cli_args)
@@ -1268,11 +1262,6 @@ class RepoPkgsCommand(Command):
         sub_vals = (cmd.writes_rpmdb for cmd in self._subcmd_name2obj.values())
         self.writes_rpmdb = functools.reduce(
             operator.or_, sub_vals, super(RepoPkgsCommand, self).writes_rpmdb)
-
-    def configure(self, args):
-        """Do any command-specific Base configuration."""
-        _, subcmd, _ = self.parse_extcmds(self.base.extcmds)
-        subcmd.configure(args)
 
     def parse_extcmds(self, extcmds):
         """Parse command arguments *extcmds*."""

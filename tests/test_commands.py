@@ -295,6 +295,20 @@ class ReinstallCommandTest(support.ResultTestCase):
             'Installed package hole-1-1.x86_64 (from unknown) not available.\n')
         self.assertResult(base, base.sack.query().installed())
 
+class RepoPkgsCommandTest(unittest.TestCase):
+
+    """Tests of ``dnf.cli.commands.RepoPkgsCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsCommandTest, self).setUp()
+        cli = support.BaseCliStub().mock_cli()
+        self.cmd = dnf.cli.commands.RepoPkgsCommand(cli)
+
+    def test_configure_badargs(self):
+        """Test whether the method does not fail even in case of wrong args."""
+        self.cmd.configure([])
+
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""
