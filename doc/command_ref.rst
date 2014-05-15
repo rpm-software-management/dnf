@@ -63,9 +63,10 @@ Options
     config file location
 
 ``-d <debug level>, --debuglevel=<debug level>``
-    Debugging output level. This is an integer value between 0 (no additional
-    information strings) and 10 (shows all debugging information, even that not
-    understandable to the user), default is 2. Deprecated, use ``-v`` instead.
+    Debugging output level. This is an integer value between 0 (no additional information strings) and 10 (shows all debugging information, even that not understandable to the user), default is 2. Deprecated, use ``-v`` instead.
+
+``--debugsolver``
+    Dump data aiding in dependency solver debugging into ``./debugdata``.
 
 ``--disableexcludes=[all|main|<repoid>]``
 
