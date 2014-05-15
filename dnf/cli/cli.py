@@ -1096,8 +1096,6 @@ class Cli(object):
             sys.exit(1)
         self.command.configure(self.base.extcmds)
 
-        if opts.debugrepodata:
-            self.write_out_metadata()
         if opts.debugsolver:
             self.base.conf.debug_solver = True
 
@@ -1167,11 +1165,3 @@ class Cli(object):
 
     def print_usage(self):
         return self.optparser.print_usage()
-
-    def write_out_metadata(self):
-        print(_("Writing out repository metadata for debugging."))
-        rids = [r.id for r in self.base.repos.enabled()]
-        rids.append(hawkey.SYSTEM_REPO_NAME)
-        for rid in rids:
-            with open("%s.repo" % rid, 'w') as outfile:
-                self.base.sack.susetags_for_repo(outfile, rid)

@@ -20,11 +20,9 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
-import io
+import dnf.exceptions
 import dnf.repo
 import dnf.sack
-import dnf.exceptions
-import itertools
 
 class SackTest(support.TestCase):
     def test_rpmdb_version(self):
@@ -71,20 +69,3 @@ class SackTest(support.TestCase):
         r.skip_if_unavailable = True
         base._add_repo_to_sack("bag")
         self.assertFalse(r.enabled)
-
-class SusetagsTest(support.TestCase):
-    def susetags_test(self):
-        buf = io.StringIO()
-        base = support.MockBase("main")
-        base.sack.susetags_for_repo(buf, "main")
-        buf.seek(0)
-
-        def nonmatch(line):
-            return not line.startswith('=Pkg: pepper 20 0 x86_64')
-        pepper = itertools.dropwhile(nonmatch, buf.readlines())
-        pepper = [dnf.util.first(pepper)] + list(itertools.takewhile(
-                lambda x: not x.startswith("=Pkg: "), pepper))
-        self.assertItemsEqual(pepper,
-                              ['=Pkg: pepper 20 0 x86_64\n',
-                               '=Prv: pepper = 20-0\n',
-                               '=Req: librita >= 1-0\n'])

@@ -183,9 +183,6 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("-d", "--debuglevel", dest="debuglevel",
                            metavar='[debug level]', default=None,
                            help=_("debugging output level"), type=int)
-        self.add_argument("--debugrepodata",
-                           action="store_true", default=None,
-                           help=_("dumps package metadata into files"))
         self.add_argument("--debugsolver",
                            action="store_true", default=None,
                            help=_("dumps detailed solving results into files"))
