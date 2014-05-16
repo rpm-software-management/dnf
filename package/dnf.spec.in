@@ -89,6 +89,8 @@ popd
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
+touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 
 %check
 make ARGS="-V" test
