@@ -52,7 +52,7 @@ class ProcessLock(object):
         return os.path.join(user_run_dir, fn)
 
     def _try_lock(self):
-        pid = str(os.getpid()).encode()
+        pid = str(os.getpid()).encode('utf-8')
         try:
             fd = os.open(self._target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
             os.write(fd, pid)

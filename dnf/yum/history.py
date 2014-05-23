@@ -1124,7 +1124,7 @@ class YumHistory(object):
             # open file in append
             fo = open(data_fn, 'wb+')
             # write data
-            fo.write(data.encode())
+            fo.write(data.encode('utf-8'))
             # flush data
             fo.flush()
             fo.close()

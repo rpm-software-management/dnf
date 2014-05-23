@@ -256,20 +256,20 @@ class Term(object):
             self.MODE[mode] = self._tigetstr(cap_name)
 
         # Colors
-        set_fg = self._tigetstr('setf').encode()
+        set_fg = self._tigetstr('setf').encode('utf-8')
         if set_fg:
             for (color, val) in self.__colors.items():
                 self.FG_COLOR[color] = curses.tparm(set_fg, val).decode() or ''
-        set_fg_ansi = self._tigetstr('setaf').encode()
+        set_fg_ansi = self._tigetstr('setaf').encode('utf-8')
         if set_fg_ansi:
             for (color, val) in self.__ansi_colors.items():
                 fg_color = curses.tparm(set_fg_ansi, val).decode() or ''
                 self.FG_COLOR[color] = fg_color
-        set_bg = self._tigetstr('setb').encode()
+        set_bg = self._tigetstr('setb').encode('utf-8')
         if set_bg:
             for (color, val) in self.__colors.items():
                 self.BG_COLOR[color] = curses.tparm(set_bg, val).decode() or ''
-        set_bg_ansi = self._tigetstr('setab').encode()
+        set_bg_ansi = self._tigetstr('setab').encode('utf-8')
         if set_bg_ansi:
             for (color, val) in self.__ansi_colors.items():
                 bg_color = curses.tparm(set_bg_ansi, val).decode() or ''
