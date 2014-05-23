@@ -195,7 +195,7 @@ class Checksums(object):
     def update(self, data):
         self._len += len(data)
         for sumalgo in self._sumalgos:
-            data = data.encode() if isinstance(data, unicode) else data
+            data = data.encode('utf-8') if isinstance(data, unicode) else data
             sumalgo.update(data)
 
     def read(self, fo, size=2**16):
@@ -344,7 +344,7 @@ def procgpgkey(rawkey):
             block.write(line+'\n')
 
     # Decode and return
-    return base64.decodestring(block.getvalue().encode())
+    return base64.decodestring(block.getvalue().encode('utf-8'))
 
 def gpgkey_fingerprint_ascii(info, chop=4):
     ''' Given a key_info data from getgpgkeyinfo(), return an ascii

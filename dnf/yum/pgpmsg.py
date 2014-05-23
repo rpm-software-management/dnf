@@ -1234,12 +1234,13 @@ a PGP "certificate" includes a public key, user id(s), and signature.
         # are we at the checksum line?
         if l and l[0] == '=' :
             # get the checksum number
-            csum = base64.decodestring(l[1:5].encode())
+            csum = base64.decodestring(l[1:5].encode('utf-8'))
             i = 0
             csum, i = get_whole_number(csum, i, 3)
 
             # convert the base64 cert data to binary data
-            cert_msg = base64.decodestring(block_buf.getvalue().encode())
+            cert_msg = base64.decodestring(
+                block_buf.getvalue().encode('utf-8'))
             block_buf.close()
 
             # check the checksum

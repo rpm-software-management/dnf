@@ -66,6 +66,6 @@ else:
         return False
 
     # functions that don't take unicode arguments in py2
-    ModuleType = lambda m: types.ModuleType(m.encode())
+    ModuleType = lambda m: types.ModuleType(m.encode('utf-8'))
     def setlocale(category, loc=None):
-        locale.setlocale(category, loc.encode())
+        locale.setlocale(category, loc.encode('utf-8'))
