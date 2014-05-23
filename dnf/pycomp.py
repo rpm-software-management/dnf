@@ -49,6 +49,8 @@ if version_info.major >= 3:
     ModuleType = lambda m: types.ModuleType(m)
     def setlocale(category, loc=None):
         locale.setlocale(category, loc)
+    def write_to_file(f, content):
+        f.write(content)
 
 else:
     PY3 = False
@@ -69,3 +71,5 @@ else:
     ModuleType = lambda m: types.ModuleType(m.encode('utf-8'))
     def setlocale(category, loc=None):
         locale.setlocale(category, loc.encode('utf-8'))
+    def write_to_file(f, content):
+        f.write(content.encode('utf-8'))
