@@ -229,7 +229,7 @@ class RPMDBAdditionalDataPackage(object):
 
         fo = _open_no_umask(fn + '.tmp', 'w')
         try:
-            fo.write(value)
+            dnf.pycomp.write_to_file(fo, value)
         except (OSError, IOError) as e:
             raise AttributeError("Cannot set attribute %s on %s" % (attr, self))
 
