@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-08 10:49+0200\n"
+"POT-Creation-Date: 2014-05-23 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,7 +72,7 @@ msgstr ""
 msgid "Cleanup"
 msgstr ""
 
-#: ../dnf/yum/rpmtrans.py:108 ../dnf/cli/output.py:1257
+#: ../dnf/yum/rpmtrans.py:108 ../dnf/cli/output.py:1258
 msgid "Downgrading"
 msgstr ""
 
@@ -80,19 +80,19 @@ msgstr ""
 msgid "Erasing"
 msgstr ""
 
-#: ../dnf/yum/rpmtrans.py:110 ../dnf/cli/output.py:1253
+#: ../dnf/yum/rpmtrans.py:110 ../dnf/cli/output.py:1254
 msgid "Installing"
 msgstr ""
 
-#: ../dnf/yum/rpmtrans.py:111 ../dnf/cli/output.py:1960
+#: ../dnf/yum/rpmtrans.py:111 ../dnf/cli/output.py:1961
 msgid "Obsoleting"
 msgstr ""
 
-#: ../dnf/yum/rpmtrans.py:112 ../dnf/cli/output.py:1255
+#: ../dnf/yum/rpmtrans.py:112 ../dnf/cli/output.py:1256
 msgid "Reinstalling"
 msgstr ""
 
-#: ../dnf/yum/rpmtrans.py:113 ../dnf/cli/output.py:1254
+#: ../dnf/yum/rpmtrans.py:113 ../dnf/cli/output.py:1255
 msgid "Upgrading"
 msgstr ""
 
@@ -150,90 +150,86 @@ msgid "debugging output level"
 msgstr ""
 
 #: ../dnf/cli/option_parser.py:188
-msgid "dumps package metadata into files"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:191
 msgid "dumps detailed solving results into files"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:194
+#: ../dnf/cli/option_parser.py:191
 msgid "show duplicates, in repos, in list/search commands"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:197
+#: ../dnf/cli/option_parser.py:194
 msgid "error output level"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:199
+#: ../dnf/cli/option_parser.py:196
 msgid "debugging output level for rpm"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:202
+#: ../dnf/cli/option_parser.py:199
 msgid "quiet operation"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:204
+#: ../dnf/cli/option_parser.py:201
 msgid "verbose operation"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:206
+#: ../dnf/cli/option_parser.py:203
 msgid "answer yes for all questions"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:208
+#: ../dnf/cli/option_parser.py:205
 msgid "answer no for all questions"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:210
+#: ../dnf/cli/option_parser.py:207
 msgid "show Yum version and exit"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:211
+#: ../dnf/cli/option_parser.py:208
 msgid "set install root"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:220
+#: ../dnf/cli/option_parser.py:217
 msgid "exclude packages by name or glob"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:223
+#: ../dnf/cli/option_parser.py:220
 msgid "disable excludes"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:226
+#: ../dnf/cli/option_parser.py:223
 msgid "enable obsoletes processing during upgrades"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:228
+#: ../dnf/cli/option_parser.py:225
 msgid "disable all plugins"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:230
+#: ../dnf/cli/option_parser.py:227
 msgid "disable gpg signature checking"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:233
+#: ../dnf/cli/option_parser.py:230
 msgid "disable plugins by name"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:236
+#: ../dnf/cli/option_parser.py:233
 msgid "control whether color is used"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:238
+#: ../dnf/cli/option_parser.py:235
 msgid "override the value of $releasever in config and repo files"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:242
+#: ../dnf/cli/option_parser.py:239
 msgid "set arbitrary config and repo options"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:270
+#: ../dnf/cli/option_parser.py:267
 msgid "List of Main Commands"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:271
+#: ../dnf/cli/option_parser.py:268
 msgid "List of Plugin Commands"
 msgstr ""
 
@@ -331,7 +327,7 @@ msgid "Obsoleting Packages"
 msgstr ""
 
 #: ../dnf/cli/cli.py:312 ../dnf/cli/commands/group.py:393
-#: ../dnf/cli/commands/upgrade.py:88 ../dnf/cli/commands/__init__.py:1204
+#: ../dnf/cli/commands/upgrade.py:88 ../dnf/cli/commands/__init__.py:1198
 msgid "No packages marked for upgrade."
 msgstr ""
 
@@ -353,8 +349,8 @@ msgstr ""
 #: ../dnf/cli/cli.py:375 ../dnf/cli/main.py:164
 #: ../dnf/cli/commands/install.py:107 ../dnf/cli/commands/reinstall.py:99
 #: ../dnf/cli/commands/__init__.py:840 ../dnf/cli/commands/__init__.py:930
-#: ../dnf/cli/commands/__init__.py:997 ../dnf/cli/commands/__init__.py:1049
-#: ../dnf/cli/commands/__init__.py:1108
+#: ../dnf/cli/commands/__init__.py:997 ../dnf/cli/commands/__init__.py:1043
+#: ../dnf/cli/commands/__init__.py:1102
 msgid "Nothing to do."
 msgstr ""
 
@@ -414,12 +410,12 @@ msgstr ""
 msgid "Cleaning up cached rpmdb data"
 msgstr ""
 
-#: ../dnf/cli/cli.py:680 ../dnf/cli/commands/__init__.py:1445
-#: ../dnf/cli/commands/__init__.py:1461
+#: ../dnf/cli/cli.py:680 ../dnf/cli/commands/__init__.py:1434
+#: ../dnf/cli/commands/__init__.py:1450
 msgid "No transaction ID given"
 msgstr ""
 
-#: ../dnf/cli/cli.py:689 ../dnf/cli/cli.py:697 ../dnf/cli/output.py:2106
+#: ../dnf/cli/cli.py:689 ../dnf/cli/cli.py:697 ../dnf/cli/output.py:2107
 msgid "Bad transaction ID given"
 msgstr ""
 
@@ -427,8 +423,8 @@ msgstr ""
 msgid "Not found given transaction ID"
 msgstr ""
 
-#: ../dnf/cli/cli.py:714 ../dnf/cli/commands/__init__.py:1447
-#: ../dnf/cli/commands/__init__.py:1463
+#: ../dnf/cli/cli.py:714 ../dnf/cli/commands/__init__.py:1436
+#: ../dnf/cli/commands/__init__.py:1452
 msgid "Found more than one transaction ID!"
 msgstr ""
 
@@ -466,13 +462,9 @@ msgstr ""
 msgid "Config error: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1144
+#: ../dnf/cli/cli.py:1142
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr ""
-
-#: ../dnf/cli/cli.py:1172
-msgid "Writing out repository metadata for debugging."
 msgstr ""
 
 #: ../dnf/cli/main.py:75 ../dnf/cli/main.py:155
@@ -496,234 +488,234 @@ msgstr ""
 msgid "Complete!"
 msgstr ""
 
-#: ../dnf/cli/output.py:774
+#: ../dnf/cli/output.py:775
 #, python-format
 msgid "Name        : %s%s%s"
 msgstr ""
 
-#: ../dnf/cli/output.py:775
+#: ../dnf/cli/output.py:776
 #, python-format
 msgid "Arch        : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:777
+#: ../dnf/cli/output.py:778
 #, python-format
 msgid "Epoch       : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:778
+#: ../dnf/cli/output.py:779
 #, python-format
 msgid "Version     : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:779
+#: ../dnf/cli/output.py:780
 #, python-format
 msgid "Release     : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:780
+#: ../dnf/cli/output.py:781
 #, python-format
 msgid "Size        : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:781 ../dnf/cli/output.py:1100
+#: ../dnf/cli/output.py:782 ../dnf/cli/output.py:1101
 #, python-format
 msgid "Repo        : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:783
+#: ../dnf/cli/output.py:784
 #, python-format
 msgid "From repo   : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:788
+#: ../dnf/cli/output.py:789
 #, python-format
 msgid "Buildtime   : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:790
+#: ../dnf/cli/output.py:791
 #, python-format
 msgid "Install time: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:798
+#: ../dnf/cli/output.py:799
 #, python-format
 msgid "Installed by: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:805
+#: ../dnf/cli/output.py:806
 #, python-format
 msgid "Changed by  : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:806
+#: ../dnf/cli/output.py:807
 msgid "Summary     : "
 msgstr ""
 
-#: ../dnf/cli/output.py:808 ../dnf/cli/output.py:1115
+#: ../dnf/cli/output.py:809 ../dnf/cli/output.py:1116
 #, python-format
 msgid "URL         : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:809
+#: ../dnf/cli/output.py:810
 msgid "License     : "
 msgstr ""
 
-#: ../dnf/cli/output.py:810 ../dnf/cli/output.py:1112
+#: ../dnf/cli/output.py:811 ../dnf/cli/output.py:1113
 msgid "Description : "
 msgstr ""
 
-#: ../dnf/cli/output.py:928
+#: ../dnf/cli/output.py:929
 msgid "y"
 msgstr ""
 
-#: ../dnf/cli/output.py:928
+#: ../dnf/cli/output.py:929
 msgid "yes"
 msgstr ""
 
-#: ../dnf/cli/output.py:929
+#: ../dnf/cli/output.py:930
 msgid "n"
 msgstr ""
 
-#: ../dnf/cli/output.py:929
+#: ../dnf/cli/output.py:930
 msgid "no"
 msgstr ""
 
-#: ../dnf/cli/output.py:932
+#: ../dnf/cli/output.py:933
 msgid "Is this ok [y/N]: "
 msgstr ""
 
-#: ../dnf/cli/output.py:935
+#: ../dnf/cli/output.py:936
 msgid "Is this ok [Y/n]: "
 msgstr ""
 
-#: ../dnf/cli/output.py:1012
+#: ../dnf/cli/output.py:1013
 #, python-format
 msgid ""
 "\n"
 "Group: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1016
+#: ../dnf/cli/output.py:1017
 #, python-format
 msgid " Group-Id: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1018
+#: ../dnf/cli/output.py:1019
 #, python-format
 msgid " Description: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1020
+#: ../dnf/cli/output.py:1021
 #, python-format
 msgid " Language: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1023
+#: ../dnf/cli/output.py:1024
 msgid " Mandatory Packages:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1024
+#: ../dnf/cli/output.py:1025
 msgid " Default Packages:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1025
+#: ../dnf/cli/output.py:1026
 msgid " Optional Packages:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1026
+#: ../dnf/cli/output.py:1027
 msgid " Conditional Packages:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1052
+#: ../dnf/cli/output.py:1053
 #, python-format
 msgid "package: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1054
+#: ../dnf/cli/output.py:1055
 msgid "  No dependencies for this package"
 msgstr ""
 
-#: ../dnf/cli/output.py:1059
+#: ../dnf/cli/output.py:1060
 #, python-format
 msgid "  dependency: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1061
+#: ../dnf/cli/output.py:1062
 msgid "   Unsatisfied dependency"
 msgstr ""
 
-#: ../dnf/cli/output.py:1107
+#: ../dnf/cli/output.py:1108
 msgid "Matched from:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1118
+#: ../dnf/cli/output.py:1119
 #, python-format
 msgid "License     : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1121
+#: ../dnf/cli/output.py:1122
 #, python-format
 msgid "Filename    : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1125
+#: ../dnf/cli/output.py:1126
 msgid "Other       : "
 msgstr ""
 
-#: ../dnf/cli/output.py:1181
+#: ../dnf/cli/output.py:1182
 msgid "There was an error calculating total download size"
 msgstr ""
 
-#: ../dnf/cli/output.py:1186
+#: ../dnf/cli/output.py:1187
 #, python-format
 msgid "Total size: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1189
+#: ../dnf/cli/output.py:1190
 #, python-format
 msgid "Total download size: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1193 ../dnf/cli/output.py:1216
+#: ../dnf/cli/output.py:1194 ../dnf/cli/output.py:1217
 #, python-format
 msgid "Installed size: %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:1212
+#: ../dnf/cli/output.py:1213
 msgid "There was an error calculating installed size"
 msgstr ""
 
-#: ../dnf/cli/output.py:1256
+#: ../dnf/cli/output.py:1257
 msgid "Removing"
 msgstr ""
 
-#: ../dnf/cli/output.py:1280 ../dnf/cli/output.py:2161
+#: ../dnf/cli/output.py:1281 ../dnf/cli/output.py:2162
 msgid "Package"
 msgstr ""
 
-#: ../dnf/cli/output.py:1280
+#: ../dnf/cli/output.py:1281
 msgid "Arch"
 msgstr ""
 
-#: ../dnf/cli/output.py:1281
+#: ../dnf/cli/output.py:1282
 msgid "Version"
 msgstr ""
 
-#: ../dnf/cli/output.py:1281
+#: ../dnf/cli/output.py:1282
 msgid "Repository"
 msgstr ""
 
-#: ../dnf/cli/output.py:1282
+#: ../dnf/cli/output.py:1283
 msgid "Size"
 msgstr ""
 
-#: ../dnf/cli/output.py:1294
+#: ../dnf/cli/output.py:1295
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr ""
 
-#: ../dnf/cli/output.py:1302
+#: ../dnf/cli/output.py:1303
 #, python-format
 msgid ""
 "\n"
@@ -731,422 +723,422 @@ msgid ""
 "%s\n"
 msgstr ""
 
-#: ../dnf/cli/output.py:1307 ../dnf/cli/output.py:1956
-#: ../dnf/cli/output.py:1957
+#: ../dnf/cli/output.py:1308 ../dnf/cli/output.py:1957
+#: ../dnf/cli/output.py:1958
 msgid "Install"
 msgstr ""
 
-#: ../dnf/cli/output.py:1308 ../dnf/cli/output.py:1965
+#: ../dnf/cli/output.py:1309 ../dnf/cli/output.py:1966
 msgid "Upgrade"
 msgstr ""
 
-#: ../dnf/cli/output.py:1309
+#: ../dnf/cli/output.py:1310
 msgid "Remove"
 msgstr ""
 
-#: ../dnf/cli/output.py:1310 ../dnf/cli/output.py:1963
+#: ../dnf/cli/output.py:1311 ../dnf/cli/output.py:1964
 msgid "Downgrade"
 msgstr ""
 
-#: ../dnf/cli/output.py:1396
+#: ../dnf/cli/output.py:1397
 msgid "Reinstalled"
 msgstr ""
 
-#: ../dnf/cli/output.py:1397
+#: ../dnf/cli/output.py:1398
 msgid "Removed"
 msgstr ""
 
-#: ../dnf/cli/output.py:1398 ../dnf/cli/output.py:1801
-#: ../dnf/cli/output.py:1803
+#: ../dnf/cli/output.py:1399 ../dnf/cli/output.py:1802
+#: ../dnf/cli/output.py:1804
 msgid "Installed"
 msgstr ""
 
-#: ../dnf/cli/output.py:1399 ../dnf/cli/output.py:1802
-#: ../dnf/cli/output.py:1966
+#: ../dnf/cli/output.py:1400 ../dnf/cli/output.py:1803
+#: ../dnf/cli/output.py:1967
 msgid "Upgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:1400 ../dnf/cli/output.py:1802
-#: ../dnf/cli/output.py:1964
+#: ../dnf/cli/output.py:1401 ../dnf/cli/output.py:1803
+#: ../dnf/cli/output.py:1965
 msgid "Downgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:1456
+#: ../dnf/cli/output.py:1457
 msgid "Total"
 msgstr ""
 
-#: ../dnf/cli/output.py:1477
+#: ../dnf/cli/output.py:1478
 msgid "I"
 msgstr ""
 
-#: ../dnf/cli/output.py:1478
+#: ../dnf/cli/output.py:1479
 msgid "O"
 msgstr ""
 
-#: ../dnf/cli/output.py:1479
+#: ../dnf/cli/output.py:1480
 msgid "E"
 msgstr ""
 
-#: ../dnf/cli/output.py:1480
+#: ../dnf/cli/output.py:1481
 msgid "R"
 msgstr ""
 
-#: ../dnf/cli/output.py:1481
+#: ../dnf/cli/output.py:1482
 msgid "D"
 msgstr ""
 
-#: ../dnf/cli/output.py:1482
+#: ../dnf/cli/output.py:1483
 msgid "U"
 msgstr ""
 
-#: ../dnf/cli/output.py:1496
+#: ../dnf/cli/output.py:1497
 msgid "<unset>"
 msgstr ""
 
-#: ../dnf/cli/output.py:1497
+#: ../dnf/cli/output.py:1498
 msgid "System"
 msgstr ""
 
-#: ../dnf/cli/output.py:1566
+#: ../dnf/cli/output.py:1567
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
 msgstr ""
 
-#: ../dnf/cli/output.py:1576 ../dnf/cli/output.py:1707
+#: ../dnf/cli/output.py:1577 ../dnf/cli/output.py:1708
 msgid "No transactions"
 msgstr ""
 
-#: ../dnf/cli/output.py:1601 ../dnf/cli/output.py:2150
-#: ../dnf/cli/output.py:2229
+#: ../dnf/cli/output.py:1602 ../dnf/cli/output.py:2151
+#: ../dnf/cli/output.py:2230
 msgid "Bad transaction IDs, or package(s), given"
 msgstr ""
 
-#: ../dnf/cli/output.py:1648
+#: ../dnf/cli/output.py:1649
 msgid "Command line"
 msgstr ""
 
-#: ../dnf/cli/output.py:1650 ../dnf/cli/output.py:2038
+#: ../dnf/cli/output.py:1651 ../dnf/cli/output.py:2039
 msgid "Login user"
 msgstr ""
 
-#: ../dnf/cli/output.py:1651 ../dnf/cli/output.py:2159
+#: ../dnf/cli/output.py:1652 ../dnf/cli/output.py:2160
 msgid "ID"
 msgstr ""
 
-#: ../dnf/cli/output.py:1653
+#: ../dnf/cli/output.py:1654
 msgid "Date and time"
 msgstr ""
 
-#: ../dnf/cli/output.py:1654 ../dnf/cli/output.py:2040
-#: ../dnf/cli/output.py:2160
+#: ../dnf/cli/output.py:1655 ../dnf/cli/output.py:2041
+#: ../dnf/cli/output.py:2161
 msgid "Action(s)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1655 ../dnf/cli/output.py:2041
+#: ../dnf/cli/output.py:1656 ../dnf/cli/output.py:2042
 msgid "Altered"
 msgstr ""
 
-#: ../dnf/cli/output.py:1740 ../dnf/cli/output.py:2114
+#: ../dnf/cli/output.py:1741 ../dnf/cli/output.py:2115
 msgid "No transaction ID, or package, given"
 msgstr ""
 
-#: ../dnf/cli/output.py:1801
+#: ../dnf/cli/output.py:1802
 msgid "Erased"
 msgstr ""
 
-#: ../dnf/cli/output.py:1803
+#: ../dnf/cli/output.py:1804
 msgid "Not installed"
 msgstr ""
 
-#: ../dnf/cli/output.py:1804
+#: ../dnf/cli/output.py:1805
 msgid "Older"
 msgstr ""
 
-#: ../dnf/cli/output.py:1804
+#: ../dnf/cli/output.py:1805
 msgid "Newer"
 msgstr ""
 
-#: ../dnf/cli/output.py:1841 ../dnf/cli/output.py:1843
-#: ../dnf/cli/output.py:2250
+#: ../dnf/cli/output.py:1842 ../dnf/cli/output.py:1844
+#: ../dnf/cli/output.py:2251
 msgid "Transaction ID :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1845 ../dnf/cli/output.py:2252
+#: ../dnf/cli/output.py:1846 ../dnf/cli/output.py:2253
 msgid "Begin time     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1848 ../dnf/cli/output.py:1850
+#: ../dnf/cli/output.py:1849 ../dnf/cli/output.py:1851
 msgid "Begin rpmdb    :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1866
+#: ../dnf/cli/output.py:1867
 #, python-format
 msgid "(%u seconds)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1868
+#: ../dnf/cli/output.py:1869
 #, python-format
 msgid "(%u minutes)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1870
+#: ../dnf/cli/output.py:1871
 #, python-format
 msgid "(%u hours)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1872
+#: ../dnf/cli/output.py:1873
 #, python-format
 msgid "(%u days)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1873
+#: ../dnf/cli/output.py:1874
 msgid "End time       :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1876 ../dnf/cli/output.py:1878
+#: ../dnf/cli/output.py:1877 ../dnf/cli/output.py:1879
 msgid "End rpmdb      :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1881 ../dnf/cli/output.py:1883
+#: ../dnf/cli/output.py:1882 ../dnf/cli/output.py:1884
 msgid "User           :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1887 ../dnf/cli/output.py:1890
-#: ../dnf/cli/output.py:1892 ../dnf/cli/output.py:1894
-#: ../dnf/cli/output.py:1896
+#: ../dnf/cli/output.py:1888 ../dnf/cli/output.py:1891
+#: ../dnf/cli/output.py:1893 ../dnf/cli/output.py:1895
+#: ../dnf/cli/output.py:1897
 msgid "Return-Code    :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1887 ../dnf/cli/output.py:1892
+#: ../dnf/cli/output.py:1888 ../dnf/cli/output.py:1893
 msgid "Aborted"
 msgstr ""
 
-#: ../dnf/cli/output.py:1890
+#: ../dnf/cli/output.py:1891
 msgid "Failures:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1894
+#: ../dnf/cli/output.py:1895
 msgid "Failure:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1896
+#: ../dnf/cli/output.py:1897
 msgid "Success"
 msgstr ""
 
-#: ../dnf/cli/output.py:1901 ../dnf/cli/output.py:1903
-#: ../dnf/cli/output.py:2281
+#: ../dnf/cli/output.py:1902 ../dnf/cli/output.py:1904
+#: ../dnf/cli/output.py:2282
 msgid "Command Line   :"
 msgstr ""
 
-#: ../dnf/cli/output.py:1912
+#: ../dnf/cli/output.py:1913
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr ""
 
-#: ../dnf/cli/output.py:1917
+#: ../dnf/cli/output.py:1918
 msgid "Transaction performed with:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1921
+#: ../dnf/cli/output.py:1922
 msgid "Packages Altered:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1925
+#: ../dnf/cli/output.py:1926
 msgid "Packages Skipped:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1933
+#: ../dnf/cli/output.py:1934
 msgid "Rpmdb Problems:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1944
+#: ../dnf/cli/output.py:1945
 msgid "Scriptlet output:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1950
+#: ../dnf/cli/output.py:1951
 msgid "Errors:"
 msgstr ""
 
-#: ../dnf/cli/output.py:1958
+#: ../dnf/cli/output.py:1959
 msgid "Dep-Install"
 msgstr ""
 
-#: ../dnf/cli/output.py:1959
+#: ../dnf/cli/output.py:1960
 msgid "Obsoleted"
 msgstr ""
 
-#: ../dnf/cli/output.py:1961
+#: ../dnf/cli/output.py:1962
 msgid "Erase"
 msgstr ""
 
-#: ../dnf/cli/output.py:1962
+#: ../dnf/cli/output.py:1963
 msgid "Reinstall"
 msgstr ""
 
-#: ../dnf/cli/output.py:2039
+#: ../dnf/cli/output.py:2040
 msgid "Time"
 msgstr ""
 
-#: ../dnf/cli/output.py:2065
+#: ../dnf/cli/output.py:2066
 msgid "Last day"
 msgstr ""
 
-#: ../dnf/cli/output.py:2066
+#: ../dnf/cli/output.py:2067
 msgid "Last week"
 msgstr ""
 
-#: ../dnf/cli/output.py:2067
+#: ../dnf/cli/output.py:2068
 msgid "Last 2 weeks"
 msgstr ""
 
-#: ../dnf/cli/output.py:2068
+#: ../dnf/cli/output.py:2069
 msgid "Last 3 months"
 msgstr ""
 
-#: ../dnf/cli/output.py:2069
+#: ../dnf/cli/output.py:2070
 msgid "Last 6 months"
 msgstr ""
 
-#: ../dnf/cli/output.py:2070
+#: ../dnf/cli/output.py:2071
 msgid "Last year"
 msgstr ""
 
-#: ../dnf/cli/output.py:2071
+#: ../dnf/cli/output.py:2072
 msgid "Over a year ago"
 msgstr ""
 
-#: ../dnf/cli/output.py:2118
+#: ../dnf/cli/output.py:2119
 #, python-format
 msgid "No Transaction %s found"
 msgstr ""
 
-#: ../dnf/cli/output.py:2124
+#: ../dnf/cli/output.py:2125
 msgid "Transaction ID:"
 msgstr ""
 
-#: ../dnf/cli/output.py:2125
+#: ../dnf/cli/output.py:2126
 msgid "Available additional history information:"
 msgstr ""
 
-#: ../dnf/cli/output.py:2138
+#: ../dnf/cli/output.py:2139
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr ""
 
-#: ../dnf/cli/output.py:2253
+#: ../dnf/cli/output.py:2254
 msgid "Package        :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2254
+#: ../dnf/cli/output.py:2255
 msgid "State          :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2257
+#: ../dnf/cli/output.py:2258
 msgid "Size           :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2259
+#: ../dnf/cli/output.py:2260
 msgid "Build host     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2262
+#: ../dnf/cli/output.py:2263
 msgid "Build time     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2264
+#: ../dnf/cli/output.py:2265
 msgid "Packager       :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2266
+#: ../dnf/cli/output.py:2267
 msgid "Vendor         :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2268
+#: ../dnf/cli/output.py:2269
 msgid "License        :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2270
+#: ../dnf/cli/output.py:2271
 msgid "URL            :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2272
+#: ../dnf/cli/output.py:2273
 msgid "Source RPM     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2275
+#: ../dnf/cli/output.py:2276
 msgid "Commit Time    :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2277
+#: ../dnf/cli/output.py:2278
 msgid "Committer      :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2279
+#: ../dnf/cli/output.py:2280
 msgid "Reason         :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2283
+#: ../dnf/cli/output.py:2284
 msgid "From repo      :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2287
+#: ../dnf/cli/output.py:2288
 msgid "Installed by   :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2291
+#: ../dnf/cli/output.py:2292
 msgid "Changed by     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2323
+#: ../dnf/cli/output.py:2324
 msgid "installed"
 msgstr ""
 
-#: ../dnf/cli/output.py:2324
+#: ../dnf/cli/output.py:2325
 msgid "an upgrade"
 msgstr ""
 
-#: ../dnf/cli/output.py:2325
+#: ../dnf/cli/output.py:2326
 msgid "erased"
 msgstr ""
 
-#: ../dnf/cli/output.py:2326
+#: ../dnf/cli/output.py:2327
 msgid "reinstalled"
 msgstr ""
 
-#: ../dnf/cli/output.py:2327
+#: ../dnf/cli/output.py:2328
 msgid "a downgrade"
 msgstr ""
 
-#: ../dnf/cli/output.py:2328
+#: ../dnf/cli/output.py:2329
 msgid "obsoleting"
 msgstr ""
 
-#: ../dnf/cli/output.py:2329
+#: ../dnf/cli/output.py:2330
 msgid "upgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:2330
+#: ../dnf/cli/output.py:2331
 msgid "obsoleted"
 msgstr ""
 
-#: ../dnf/cli/output.py:2331
+#: ../dnf/cli/output.py:2332
 msgid "downgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:2334
+#: ../dnf/cli/output.py:2335
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:2341
+#: ../dnf/cli/output.py:2342
 msgid "--> Starting dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2346
+#: ../dnf/cli/output.py:2347
 msgid "--> Finished dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2481
+#: ../dnf/cli/output.py:2482
 msgid "Verifying"
 msgstr ""
 
@@ -1177,8 +1169,8 @@ msgstr ""
 
 #: ../dnf/cli/commands/reinstall.py:81 ../dnf/cli/commands/upgrade.py:82
 #: ../dnf/cli/commands/__init__.py:345 ../dnf/cli/commands/__init__.py:912
-#: ../dnf/cli/commands/__init__.py:979 ../dnf/cli/commands/__init__.py:1100
-#: ../dnf/cli/commands/__init__.py:1152 ../dnf/cli/commands/__init__.py:1198
+#: ../dnf/cli/commands/__init__.py:979 ../dnf/cli/commands/__init__.py:1094
+#: ../dnf/cli/commands/__init__.py:1146 ../dnf/cli/commands/__init__.py:1192
 #, python-format
 msgid "No match for argument: %s"
 msgstr ""
@@ -1418,7 +1410,7 @@ msgstr ""
 msgid "Remove a package or packages from your system"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:351 ../dnf/cli/commands/__init__.py:1158
+#: ../dnf/cli/commands/__init__.py:351 ../dnf/cli/commands/__init__.py:1152
 msgid "No packages marked for removal."
 msgstr ""
 
@@ -1583,127 +1575,127 @@ msgstr ""
 msgid "No package installed."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:965 ../dnf/cli/commands/__init__.py:1086
-#: ../dnf/cli/commands/__init__.py:1142
+#: ../dnf/cli/commands/__init__.py:965 ../dnf/cli/commands/__init__.py:1080
+#: ../dnf/cli/commands/__init__.py:1136
 msgid "No package installed from the repository."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1225
+#: ../dnf/cli/commands/__init__.py:1219
 msgid "Error: Requires at least one package specification"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1248
+#: ../dnf/cli/commands/__init__.py:1242
 msgid "Run commands on top of all packages in given repository"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1251
+#: ../dnf/cli/commands/__init__.py:1245
 msgid "REPO"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1251
+#: ../dnf/cli/commands/__init__.py:1245
 msgid "ARG"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1301
+#: ../dnf/cli/commands/__init__.py:1290
 msgid "Error: Requires a repo ID and a valid sub-command"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1328
+#: ../dnf/cli/commands/__init__.py:1317
 msgid "Display a helpful usage message"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1329
+#: ../dnf/cli/commands/__init__.py:1318
 msgid "COMMAND"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1361
+#: ../dnf/cli/commands/__init__.py:1350
 #, python-format
 msgid "No help available for %s"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1366
+#: ../dnf/cli/commands/__init__.py:1355
 msgid ""
 "\n"
 "\n"
 "aliases: "
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1368
+#: ../dnf/cli/commands/__init__.py:1357
 msgid ""
 "\n"
 "\n"
 "alias: "
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1385
+#: ../dnf/cli/commands/__init__.py:1374
 msgid "Display, or use, the transaction history"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1395
+#: ../dnf/cli/commands/__init__.py:1384
 #, python-format
 msgid ""
 "Cannot undo transaction %s, doing so would result in an inconsistent package "
 "database."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1399
+#: ../dnf/cli/commands/__init__.py:1388
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1481
+#: ../dnf/cli/commands/__init__.py:1470
 msgid "Transactions:"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1482
+#: ../dnf/cli/commands/__init__.py:1471
 msgid "Begin time  :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1483
+#: ../dnf/cli/commands/__init__.py:1472
 msgid "End time    :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1484
+#: ../dnf/cli/commands/__init__.py:1473
 msgid "Counts      :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1485
+#: ../dnf/cli/commands/__init__.py:1474
 msgid "  NEVRAC :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1486
+#: ../dnf/cli/commands/__init__.py:1475
 msgid "  NEVRA  :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1487
+#: ../dnf/cli/commands/__init__.py:1476
 msgid "  NA     :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1488
+#: ../dnf/cli/commands/__init__.py:1477
 msgid "  NEVR   :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1489
+#: ../dnf/cli/commands/__init__.py:1478
 msgid "  rpm DB :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1490
+#: ../dnf/cli/commands/__init__.py:1479
 msgid "  yum DB :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1509
+#: ../dnf/cli/commands/__init__.py:1498
 #, python-format
 msgid "Unrecognized options \"%s\"!"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1526
+#: ../dnf/cli/commands/__init__.py:1515
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1532
+#: ../dnf/cli/commands/__init__.py:1521
 msgid "You don't have access to the history DB."
 msgstr ""
 
@@ -1873,50 +1865,50 @@ msgstr ""
 msgid "Package %s is already installed, skipping."
 msgstr ""
 
-#: ../dnf/base.py:1602
+#: ../dnf/base.py:1600
 #, python-format
 msgid "No package %s installed."
 msgstr ""
 
-#: ../dnf/base.py:1740
+#: ../dnf/base.py:1736
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr ""
 
-#: ../dnf/base.py:1757
+#: ../dnf/base.py:1753
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr ""
 
-#: ../dnf/base.py:1889
+#: ../dnf/base.py:1884
 #, python-format
 msgid "Retrieving key from %s"
 msgstr ""
 
-#: ../dnf/base.py:1899
+#: ../dnf/base.py:1894
 msgid "GPG key retrieval failed: "
 msgstr ""
 
-#: ../dnf/base.py:1920
+#: ../dnf/base.py:1915
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr ""
 
-#: ../dnf/base.py:1923
+#: ../dnf/base.py:1918
 msgid "GPG key signature verified against CA Key(s)"
 msgstr ""
 
-#: ../dnf/base.py:1931
+#: ../dnf/base.py:1926
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr ""
 
-#: ../dnf/base.py:1939
+#: ../dnf/base.py:1934
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr ""
 
-#: ../dnf/base.py:1956
+#: ../dnf/base.py:1951
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1926,7 +1918,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:1965
+#: ../dnf/base.py:1960
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1935,7 +1927,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:1993
+#: ../dnf/base.py:1988
 #, python-format
 msgid ""
 "\n"
@@ -1945,25 +1937,25 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:2007
+#: ../dnf/base.py:2002
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr ""
 
-#: ../dnf/base.py:2043
+#: ../dnf/base.py:2038
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr ""
 
-#: ../dnf/base.py:2045 ../dnf/base.py:2151
+#: ../dnf/base.py:2040 ../dnf/base.py:2146
 msgid "Key imported successfully"
 msgstr ""
 
-#: ../dnf/base.py:2049
+#: ../dnf/base.py:2044
 msgid "Didn't install any keys"
 msgstr ""
 
-#: ../dnf/base.py:2052
+#: ../dnf/base.py:2047
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -1971,19 +1963,19 @@ msgid ""
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 
-#: ../dnf/base.py:2062
+#: ../dnf/base.py:2057
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 
-#: ../dnf/base.py:2085
+#: ../dnf/base.py:2080
 msgid "No"
 msgstr ""
 
-#: ../dnf/base.py:2087
+#: ../dnf/base.py:2082
 msgid "Yes"
 msgstr ""
 
-#: ../dnf/base.py:2088
+#: ../dnf/base.py:2083
 #, python-format
 msgid ""
 "\n"
@@ -1994,22 +1986,22 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:2102
+#: ../dnf/base.py:2097
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr ""
 
-#: ../dnf/base.py:2149
+#: ../dnf/base.py:2144
 #, python-format
 msgid "Key %s import failed"
 msgstr ""
 
-#: ../dnf/base.py:2166
+#: ../dnf/base.py:2161
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr ""
 
-#: ../dnf/base.py:2171
+#: ../dnf/base.py:2166
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "

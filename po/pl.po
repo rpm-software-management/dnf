@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: dnf\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-05-08 10:49+0200\n"
-"PO-Revision-Date: 2014-05-08 08:49+0000\n"
-"Last-Translator: jsilhan <jsilhan@redhat.com>\n"
+"PO-Revision-Date: 2014-05-08 13:52+0000\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,16 +20,16 @@ msgstr ""
 
 #: ../dnf/persistor.py:162
 msgid "Invalid groups database, clearing."
-msgstr ""
+msgstr "Nieprawidłowa baza danych grup, czyszczenie."
 
 #: ../dnf/persistor.py:181
 msgid "Unsupported installed groups database found, resetting."
-msgstr ""
+msgstr "Odnaleziono nieobsługiwaną bazę danych zainstalowanych grup, przywracanie."
 
 #: ../dnf/persistor.py:250
 #, python-format
 msgid "%s is empty file"
-msgstr ""
+msgstr "%s jest pustym plikiem"
 
 #: ../dnf/drpm.py:62 ../dnf/repo.py:305
 #, python-format
@@ -47,27 +47,27 @@ msgstr "Suma kontrolna pakietu RPM przebudowanego z delty się nie powiodła"
 #: ../dnf/comps.py:348
 #, python-format
 msgid "Environment '%s' is already installed."
-msgstr ""
+msgstr "Środowisko \"%s\" jest już zainstalowane."
 
 #: ../dnf/comps.py:368 ../dnf/comps.py:390
 #, python-format
 msgid "Environment '%s' is not installed."
-msgstr ""
+msgstr "Środowisko \"%s\" nie jest zainstalowane."
 
 #: ../dnf/comps.py:415
 #, python-format
 msgid "Group '%s' is already installed."
-msgstr ""
+msgstr "Grupa \"%s\" jest już zainstalowana."
 
 #: ../dnf/comps.py:430 ../dnf/comps.py:445
 #, python-format
 msgid "Group '%s' not installed."
-msgstr ""
+msgstr "Grupa \"%s\" nie jest zainstalowana."
 
 #: ../dnf/repo.py:391
 #, python-format
 msgid "Failed to synchronize cache for repo '%s': %s"
-msgstr ""
+msgstr "Synchronizacja pamięci podręcznej dla repozytorium \"%s\" się nie powiodła: %s"
 
 #: ../dnf/yum/rpmtrans.py:107
 msgid "Cleanup"
@@ -200,11 +200,11 @@ msgstr "wyklucza pakiety po nazwie lub wyrażeniu regularnym"
 
 #: ../dnf/cli/option_parser.py:223
 msgid "disable excludes"
-msgstr ""
+msgstr "wyłącza wykluczenia"
 
 #: ../dnf/cli/option_parser.py:226
 msgid "enable obsoletes processing during upgrades"
-msgstr ""
+msgstr "włącza przetwarzanie zastępowania podczas aktualizacji"
 
 #: ../dnf/cli/option_parser.py:228
 msgid "disable all plugins"
@@ -212,7 +212,7 @@ msgstr "wyłącza wszystkie wtyczki"
 
 #: ../dnf/cli/option_parser.py:230
 msgid "disable gpg signature checking"
-msgstr ""
+msgstr "wyłącza sprawdzanie podpisów GPG"
 
 #: ../dnf/cli/option_parser.py:233
 msgid "disable plugins by name"
@@ -220,7 +220,7 @@ msgstr "wyłącza wtyczki po nazwie"
 
 #: ../dnf/cli/option_parser.py:236
 msgid "control whether color is used"
-msgstr ""
+msgstr "kontroluje, czy używać kolorów"
 
 #: ../dnf/cli/option_parser.py:238
 msgid "override the value of $releasever in config and repo files"
@@ -232,11 +232,11 @@ msgstr "ustawia bezwzględne opcje konfiguracji i repozytoriów"
 
 #: ../dnf/cli/option_parser.py:270
 msgid "List of Main Commands"
-msgstr ""
+msgstr "Lista głównych poleceń"
 
 #: ../dnf/cli/option_parser.py:271
 msgid "List of Plugin Commands"
-msgstr ""
+msgstr "Lista poleceń wtyczek"
 
 #: ../dnf/cli/utils.py:108
 msgid "Running"
@@ -319,7 +319,7 @@ msgstr "Pobieranie pakietów:"
 msgid ""
 "Error downloading packages:\n"
 "%s"
-msgstr ""
+msgstr "Błąd podczas pobierania pakietów:\n%s"
 
 #: ../dnf/cli/cli.py:257
 msgid ""
@@ -451,7 +451,7 @@ msgstr "Nie ma zainstalowanego pakietu %s%s%s."
 #: ../dnf/cli/cli.py:844
 #, python-format
 msgid "Unknown repo: '%s'"
-msgstr ""
+msgstr "Nieznane repozytorium: \"%s\""
 
 #: ../dnf/cli/cli.py:915
 msgid "You need to give some command"
@@ -1161,12 +1161,12 @@ msgstr "Instaluje pakiet lub pakiety w systemie"
 #: ../dnf/cli/commands/__init__.py:271 ../dnf/cli/commands/__init__.py:317
 #: ../dnf/cli/commands/__init__.py:469
 msgid "PACKAGE"
-msgstr ""
+msgstr "PAKIET"
 
 #: ../dnf/cli/commands/install.py:83
 #, python-format
 msgid "Warning: Group '%s' does not exist."
-msgstr ""
+msgstr "Ostrzeżenie: grupa \"%s\" nie istnieje."
 
 #: ../dnf/cli/commands/install.py:88
 msgid "No packages in any requested group available to install or upgrade."
@@ -1203,7 +1203,7 @@ msgstr "Błąd: wymagana jest grupa lub lista grup"
 #: ../dnf/cli/commands/group.py:89
 #, python-format
 msgid "No relevant match for the specified '%s'."
-msgstr ""
+msgstr "Nie odnaleziono pasujących wyników dla podanego \"%s\"."
 
 #: ../dnf/cli/commands/group.py:105
 msgid "Display, or use, the groups information"
@@ -1211,7 +1211,7 @@ msgstr "Wyświetla lub używa informacji o grupach"
 
 #: ../dnf/cli/commands/group.py:106
 msgid "GROUP"
-msgstr ""
+msgstr "GRUPA"
 
 #: ../dnf/cli/commands/group.py:143
 msgid "No group data available for configured repositories."
@@ -1237,7 +1237,7 @@ msgstr "Dostępne grupy środowisk:"
 
 #: ../dnf/cli/commands/group.py:253
 msgid "Installed environment groups:"
-msgstr ""
+msgstr "Zainstalowane grupy środowisk:"
 
 #: ../dnf/cli/commands/group.py:259
 msgid "Installed groups:"
@@ -1258,22 +1258,22 @@ msgstr "Dostępne grupy języków:"
 #: ../dnf/cli/commands/group.py:296
 #, python-format
 msgid "Environments marked installed: %s"
-msgstr ""
+msgstr "Środowiska oznaczone jako zainstalowane: %s"
 
 #: ../dnf/cli/commands/group.py:301
 #, python-format
 msgid "Groups marked installed: %s"
-msgstr ""
+msgstr "Grupy oznaczone jako zainstalowane: %s"
 
 #: ../dnf/cli/commands/group.py:315
 #, python-format
 msgid "Environments marked removed: %s"
-msgstr ""
+msgstr "Środowiska oznaczone jako usunięte: %s"
 
 #: ../dnf/cli/commands/group.py:320
 #, python-format
 msgid "Groups marked removed: %s"
-msgstr ""
+msgstr "Grupy oznaczone jako usunięte: %s"
 
 #: ../dnf/cli/commands/group.py:360
 msgid "Installed Groups:"
@@ -1314,7 +1314,7 @@ msgstr "Wyszukuje szczegóły pakietów dla podanego ciągu"
 
 #: ../dnf/cli/commands/search.py:40
 msgid "QUERY_STRING"
-msgstr ""
+msgstr "CIĄG_ZAPYTANIA"
 
 #: ../dnf/cli/commands/search.py:62
 #, python-format
@@ -1456,7 +1456,7 @@ msgstr "Wyszukuje pakiet dostarczający podaną wartość"
 
 #: ../dnf/cli/commands/__init__.py:446
 msgid "SOME_STRING"
-msgstr ""
+msgstr "JAKIŚ_CIĄG"
 
 #: ../dnf/cli/commands/__init__.py:468
 msgid "Check for available package upgrades"
@@ -1581,12 +1581,12 @@ msgstr "Brak dostępnych pakietów."
 
 #: ../dnf/cli/commands/__init__.py:899
 msgid "No package installed."
-msgstr ""
+msgstr "Nie zainstalowano żadnego pakietu."
 
 #: ../dnf/cli/commands/__init__.py:965 ../dnf/cli/commands/__init__.py:1086
 #: ../dnf/cli/commands/__init__.py:1142
 msgid "No package installed from the repository."
-msgstr ""
+msgstr "Nie zainstalowano żadnego pakietu z repozytorium."
 
 #: ../dnf/cli/commands/__init__.py:1225
 msgid "Error: Requires at least one package specification"
@@ -1598,15 +1598,15 @@ msgstr "Wykonuje polecenia na wszystkich pakietach w podanym repozytorium"
 
 #: ../dnf/cli/commands/__init__.py:1251
 msgid "REPO"
-msgstr ""
+msgstr "REPOZYTORIUM"
 
 #: ../dnf/cli/commands/__init__.py:1251
 msgid "ARG"
-msgstr ""
+msgstr "PARAMETR"
 
 #: ../dnf/cli/commands/__init__.py:1301
 msgid "Error: Requires a repo ID and a valid sub-command"
-msgstr ""
+msgstr "Błąd: wymaga identyfikatora repozytorium i prawidłowego podpolecenia"
 
 #: ../dnf/cli/commands/__init__.py:1328
 msgid "Display a helpful usage message"
@@ -1614,7 +1614,7 @@ msgstr "Wyświetla pomocny komunikat o używaniu"
 
 #: ../dnf/cli/commands/__init__.py:1329
 msgid "COMMAND"
-msgstr ""
+msgstr "POLECENIE"
 
 #: ../dnf/cli/commands/__init__.py:1361
 #, python-format
@@ -1715,7 +1715,7 @@ msgstr "%s, wyłączanie."
 #: ../dnf/base.py:299
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
-msgstr ""
+msgstr "Ostrzeżenie: wczytanie \"%s\" się nie powiodło, pomijanie."
 
 #: ../dnf/base.py:314
 #, python-format
@@ -1812,7 +1812,7 @@ msgstr "%s miało zostać usunięte, ale nie zostało."
 #: ../dnf/base.py:926
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr ""
+msgstr "Użycie DeltaRPM spowodowało zmniejszenie %.1f MB aktualizacji do %.1f MB (oszczędzono %d.1%%)"
 
 #: ../dnf/base.py:974
 #, python-format
@@ -1876,7 +1876,7 @@ msgstr "Pakiet %s jest już zainstalowany, pomijanie."
 #: ../dnf/base.py:1602
 #, python-format
 msgid "No package %s installed."
-msgstr ""
+msgstr "Nie zainstalowano pakietu %s."
 
 #: ../dnf/base.py:1740
 #, python-format
@@ -2023,7 +2023,7 @@ msgstr "Nie można ustawić katalogu pamięci podręcznej: %s "
 #: ../dnf/transaction.py:209
 #, python-format
 msgid "Will not install a source rpm package (%s)."
-msgstr ""
+msgstr "Źródłowy pakiet RPM (%s) nie zostanie zainstalowany."
 
 #: ../dnf/plugin.py:121
 #, python-format
