@@ -96,7 +96,7 @@ def main(args):
 
 
 def _main(base, args):
-    """Run the yum program from a command line interface."""
+    """Run the dnf program from a command line interface."""
 
     dnf.i18n.setup_locale()
     dnf.i18n.setup_stdout()
