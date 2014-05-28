@@ -228,7 +228,7 @@ class Base(object):
 
         if self._closed:
             return
-        self.logger.debug('Cleaning up.')
+        self.logger.log(dnf.logging.SUBDEBUG, 'Cleaning up.')
         self._closed = True
         # Do not trigger the lazy creation:
         if self._history is not None:
