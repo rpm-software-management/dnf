@@ -1,3 +1,20 @@
+..
+  Copyright (C) 2014  Red Hat, Inc.
+
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions of
+  the GNU General Public License v.2, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY expressed or implied, including the implied warranties of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public License for more details.  You should have received a copy of the
+  GNU General Public License along with this program; if not, write to the
+  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301, USA.  Any Red Hat trademarks that are incorporated in the
+  source code or documentation are not subject to the GNU General Public
+  License and may only be used or replicated with the express permission of
+  Red Hat, Inc.
+
 .. _command_ref-label:
 
 #######################
@@ -18,10 +35,10 @@ Description
 
 Available commands are:
 
+* autoerase
 * check-update
 * clean
 * distro-sync
-* distribution-synchronization
 * downgrade
 * erase
 * group
@@ -36,8 +53,6 @@ Available commands are:
 * repolist
 * repository-packages
 * search
-* update
-* update-to
 * upgrade
 * upgrade-to
 
@@ -65,9 +80,10 @@ Options
     config file location
 
 ``-d <debug level>, --debuglevel=<debug level>``
-    Debugging output level. This is an integer value between 0 (no additional
-    information strings) and 10 (shows all debugging information, even that not
-    understandable to the user), default is 2. Deprecated, use ``-v`` instead.
+    Debugging output level. This is an integer value between 0 (no additional information strings) and 10 (shows all debugging information, even that not understandable to the user), default is 2. Deprecated, use ``-v`` instead.
+
+``--debugsolver``
+    Dump data aiding in dependency solver debugging into ``./debugdata``.
 
 ``--disableexcludes=[all|main|<repoid>]``
 
@@ -91,7 +107,7 @@ Options
     Enable specific repositories by an id or a glob.
 
 ``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by a name or a glob from the operation.
+    Exclude packages specified by ``<package-spec>`` from the operation.
 
 ``-h, --help``
     Show the help.
@@ -155,6 +171,14 @@ For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
+
+-------------------
+Auto Erase Command
+-------------------
+
+``dnf [options] autoerase``
+
+    Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
 --------------------
 Check Update Command

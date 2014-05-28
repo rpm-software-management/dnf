@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.5.1-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.5.2-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1-1',
+        VERSION:     '0.5.2-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.1-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.1-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -65,10 +65,10 @@
 <p><a class="reference external" href="https://github.com/akozumpl/dnf/">DNF</a> is the next upcoming major version of <a class="reference external" href="http://yum.baseurl.org/">Yum</a>, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API and plugin interface.</p>
 <p>Available commands are:</p>
 <ul class="simple">
+<li>autoerase</li>
 <li>check-update</li>
 <li>clean</li>
 <li>distro-sync</li>
-<li>distribution-synchronization</li>
 <li>downgrade</li>
 <li>erase</li>
 <li>group</li>
@@ -83,8 +83,6 @@
 <li>repolist</li>
 <li>repository-packages</li>
 <li>search</li>
-<li>update</li>
-<li>update-to</li>
 <li>upgrade</li>
 <li>upgrade-to</li>
 </ul>
@@ -106,9 +104,9 @@
 <dt><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">&lt;config</span> <span class="pre">file&gt;,</span> <span class="pre">--config=&lt;config</span> <span class="pre">file&gt;</span></tt></dt>
 <dd>config file location</dd>
 <dt><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">&lt;debug</span> <span class="pre">level&gt;,</span> <span class="pre">--debuglevel=&lt;debug</span> <span class="pre">level&gt;</span></tt></dt>
-<dd>Debugging output level. This is an integer value between 0 (no additional
-information strings) and 10 (shows all debugging information, even that not
-understandable to the user), default is 2. Deprecated, use <tt class="docutils literal"><span class="pre">-v</span></tt> instead.</dd>
+<dd>Debugging output level. This is an integer value between 0 (no additional information strings) and 10 (shows all debugging information, even that not understandable to the user), default is 2. Deprecated, use <tt class="docutils literal"><span class="pre">-v</span></tt> instead.</dd>
+<dt><tt class="docutils literal"><span class="pre">--debugsolver</span></tt></dt>
+<dd>Dump data aiding in dependency solver debugging into <tt class="docutils literal"><span class="pre">./debugdata</span></tt>.</dd>
 </dl>
 <p><tt class="docutils literal"><span class="pre">--disableexcludes=[all|main|&lt;repoid&gt;]</span></tt></p>
 <blockquote>
@@ -130,7 +128,7 @@ understandable to the user), default is 2. Deprecated, use <tt class="docutils l
 <dt><tt class="docutils literal"><span class="pre">--enablerepo=&lt;repoid&gt;</span></tt></dt>
 <dd>Enable specific repositories by an id or a glob.</dd>
 <dt><tt class="docutils literal"><span class="pre">-x</span> <span class="pre">&lt;package-spec&gt;,</span> <span class="pre">--exclude=&lt;package-spec&gt;</span></tt></dt>
-<dd>Exclude packages specified by a name or a glob from the operation.</dd>
+<dd>Exclude packages specified by <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt> from the operation.</dd>
 <dt><tt class="docutils literal"><span class="pre">-h,</span> <span class="pre">--help</span></tt></dt>
 <dd>Show the help.</dd>
 <dt><tt class="docutils literal"><span class="pre">--installroot=&lt;path&gt;</span></tt></dt>
@@ -174,6 +172,12 @@ system.</dd>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;provide-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-provides-label"><em>Specifying Provides</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;group-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-groups-label"><em>Specifying Groups</em></a>.</p>
 <p>For an explanation of <tt class="docutils literal"><span class="pre">&lt;transaction-spec&gt;</span></tt> see <a class="reference internal" href="#specifying-transactions-label"><em>Specifying Transactions</em></a>.</p>
+<div class="section" id="auto-erase-command">
+<h3>Auto Erase Command<a class="headerlink" href="#auto-erase-command" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">autoerase</span></tt></p>
+<blockquote>
+<div>Removes all &#8220;leaf&#8221; packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.</div></blockquote>
+</div>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">check-update</span> <span class="pre">[&lt;package-specs&gt;...]</span></tt></p>
@@ -565,6 +569,7 @@ the most recent transaction.</p>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#options">Options</a></li>
 <li><a class="reference internal" href="#commands">Commands</a><ul>
+<li><a class="reference internal" href="#auto-erase-command">Auto Erase Command</a></li>
 <li><a class="reference internal" href="#check-update-command">Check Update Command</a></li>
 <li><a class="reference internal" href="#clean-command">Clean Command</a></li>
 <li><a class="reference internal" href="#distro-sync-command">Distro-sync command</a></li>
@@ -643,11 +648,11 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.1-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012-2013, Red Hat.
+        &copy; Copyright 2012-2014, Red Hat, Licensed under GPLv2+.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

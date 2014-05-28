@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.5.1-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.5.2-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1-1',
+        VERSION:     '0.5.2-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.1-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.1-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -83,6 +83,7 @@
 <li><a class="reference internal" href="#bandwidth-limiting" id="id26">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id27">The usage of Delta RPM files</a></li>
 <li><a class="reference internal" href="#handling-srpm-files" id="id28">Handling .srpm files</a></li>
+<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" id="id29">Promoting package to install to a package that obsoletes it</a></li>
 </ul>
 </li>
 </ul>
@@ -264,6 +265,11 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 </div>
 <p>Yum will only issue warning in this case and continue installing the &#8220;tour&#8221; package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.</p>
 </div>
+<div class="section" id="promoting-package-to-install-to-a-package-that-obsoletes-it">
+<h2><a class="toc-backref" href="#id29">Promoting package to install to a package that obsoletes it</a><a class="headerlink" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" title="Permalink to this headline">¶</a></h2>
+<p>DNF will not magically replace a request for installing package <tt class="docutils literal"><span class="pre">X</span></tt> to installing package <tt class="docutils literal"><span class="pre">Y</span></tt> if <tt class="docutils literal"><span class="pre">Y</span></tt> obsoletes <tt class="docutils literal"><span class="pre">X</span></tt>. Yum does this if its <tt class="docutils literal"><span class="pre">obsoletes</span></tt> config option is enabled but the behavior is not properly documented and can be harmful.</p>
+<p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1096506">Fedora bug 1096506</a> and <a class="reference external" href="http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages">guidelines for renaming and obsoleting packages in Fedora</a>.</p>
+</div>
 </div>
 
 
@@ -298,6 +304,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 <li><a class="reference internal" href="#bandwidth-limiting">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files">The usage of Delta RPM files</a></li>
 <li><a class="reference internal" href="#handling-srpm-files">Handling .srpm files</a></li>
+<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it">Promoting package to install to a package that obsoletes it</a></li>
 </ul>
 </li>
 </ul>
@@ -345,11 +352,11 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.1-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012-2013, Red Hat.
+        &copy; Copyright 2012-2014, Red Hat, Licensed under GPLv2+.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
