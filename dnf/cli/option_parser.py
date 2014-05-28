@@ -258,8 +258,7 @@ class OptionParser(argparse.ArgumentParser):
         The stored information is used build usage information
         grouped by build-in & plugin commands.
         """
-        commands = dnf.yum.misc.unique([x for x in cli_cmds.values()])
-        for cmd in commands:
+        for cmd in set(cli_cmds.values()):
             self._add_cmd_usage(cmd, group)
 
     def get_usage(self):

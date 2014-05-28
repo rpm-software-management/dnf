@@ -58,8 +58,7 @@ def buildPkgRefDict(pkgs, casematch=True):
 
     return pkgdict
 
-def parsePackages(pkgs, usercommands, casematch=0,
-                  unique='repo-epoch-name-version-release-arch'):
+def parsePackages(pkgs, usercommands, casematch=0):
     """matches up the user request versus a pkg list:
        for installs/updates available pkgs should be the 'others list'
        for removes it should be the installed list of pkgs
@@ -67,14 +66,14 @@ def parsePackages(pkgs, usercommands, casematch=0,
        exactly. Defaults to not matching."""
 
     pkgdict = buildPkgRefDict(pkgs, bool(casematch))
-    exactmatch = []
-    matched = []
-    unmatched = []
+    exactmatch = set([])
+    matched = set([])
+    unmatched = set([])
     for command in usercommands:
         if not casematch:
             command = command.lower()
         if command in pkgdict:
-            exactmatch.extend(pkgdict[command])
+            exactmatch |= pkgdict[command]
             del pkgdict[command]
         else:
             # anything we couldn't find a match for
@@ -88,29 +87,14 @@ def parsePackages(pkgs, usercommands, casematch=0,
                 foundit = 0
                 for item in trylist:
                     if regex.match(item):
-                        matched.extend(pkgdict[item])
+                        matched |= pkgdict[item]
                         del pkgdict[item]
                         foundit = 1
 
                 if not foundit:
-                    unmatched.append(command)
+                    unmatched.add(command)
 
             else:
-                unmatched.append(command)
+                unmatched.add(command)
 
-    unmatched = misc.unique(unmatched)
-    if unique == 'repo-epoch-name-version-release-arch': # pkg.__hash__
-        matched    = misc.unique(matched)
-        exactmatch = misc.unique(exactmatch)
-    elif unique == 'repo-pkgkey': # So we get all pkg entries from a repo
-        def pkgunique(pkgs):
-            u = {}
-            for pkg in pkgs:
-                mark = "%s%s" % (pkg.repo.id, pkg.pkgKey)
-                u[mark] = pkg
-            return list(u.values())
-        matched    = pkgunique(matched)
-        exactmatch = pkgunique(exactmatch)
-    else:
-        raise ValueError("Bad value for unique: %s" % unique)
     return exactmatch, matched, unmatched

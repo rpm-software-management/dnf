@@ -1100,7 +1100,7 @@ class Output(object):
 
         print(_("Repo        : %s") % po.ui_from_repo)
         done = False
-        for item in dnf.yum.misc.unique(values):
+        for item in set(values):
             if po.name == item or po.summary == item:
                 continue # Skip double name/summary printing
 
