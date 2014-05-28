@@ -718,8 +718,8 @@ class RepoListCommand(Command):
                                       "%-*s" % (id_len, rid),
                                       fill_exact_width(rname, nm_len),
                                       ui_enabled, ui_num)
-        msg = 'repolist: %s' % ucd(locale.format("%d", tot_num, True))
-        self.base.logger.info(msg)
+        msg = 'Total packages: %s' % ucd(locale.format("%d", tot_num, True))
+        self.base.logger.debug(msg)
 
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
