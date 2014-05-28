@@ -166,6 +166,8 @@ configuration.
 
     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
+.. _sslverify-label:
+
 ``sslverify``
     boolean
 

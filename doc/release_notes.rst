@@ -751,3 +751,29 @@ Bugs fixed in 0.5.1:
 * :rhbug:`1065882`
 * :rhbug:`1081753`
 * :rhbug:`1089864`
+
+===================
+0.5.2 Release Notes
+===================
+
+This release brings `autoremove command <https://bugzilla.redhat.com/show_bug.cgi?id=963345>`_ that removes any package that was originally installed as a dependency (e.g. had not been specified as an explicit argument to the install command) and is no longer needed.
+
+Enforced verification of SSL connections can now be disabled with the :ref:`sslverify setting <sslverify-label>`.
+
+We have been plagued with many crashes related to Unicode and encodings since the 0.5.0 release. These have been cleared out now.
+
+There's more: improvement in startup time, `extended globbing semantics for input arguments <https://bugzilla.redhat.com/show_bug.cgi?id=1083679>`_ and `better search relevance sorting <https://bugzilla.redhat.com/show_bug.cgi?id=1093888>`_.
+
+Bugs fixed in 0.5.2
+
+* :rhbug:`963345`
+* :rhbug:`1073457`
+* :rhbug:`1076045`
+* :rhbug:`1083679`
+* :rhbug:`1092006`
+* :rhbug:`1092777`
+* :rhbug:`1093888`
+* :rhbug:`1094594`
+* :rhbug:`1095580`
+* :rhbug:`1095861`
+* :rhbug:`1096506`

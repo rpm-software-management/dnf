@@ -626,5 +626,49 @@
     [
         1089864, 
         "[api] group persistor is not saved when using group_* API"
+    ], 
+    [
+        963345, 
+        "[rfe] autoremove"
+    ], 
+    [
+        1073457, 
+        "Auto-completion issue with sudo dnf install"
+    ], 
+    [
+        1076045, 
+        "[rfe] ssl support"
+    ], 
+    [
+        1083679, 
+        "dnf globbing does not really work"
+    ], 
+    [
+        1092006, 
+        "[abrt] dnf: __init__.py:1704:parse_extcmds:ValueError: need more than 0 values to unpack"
+    ], 
+    [
+        1092777, 
+        "[abrt] dnf: __init__.py:403:run:UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 0: ordinal not in range(128)"
+    ], 
+    [
+        1093888, 
+        "[search] put exact matches first"
+    ], 
+    [
+        1094594, 
+        "dnf history rollback tracebacks"
+    ], 
+    [
+        1095580, 
+        "[kernel] kernel-models-extra cannot be installed because a newer one is already installed"
+    ], 
+    [
+        1095861, 
+        "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 21: ordinal not in range(128)"
+    ], 
+    [
+        1096506, 
+        "[doc] promoting 'install a' to 'install b' when b obsoletes a"
     ]
 ]
