@@ -1,4 +1,4 @@
-%global gitrev c44cc44
+%global gitrev 272eb06
 %global hawkey_version 0.4.16
 %global librepo_version 1.7.3
 %global libcomps_version 0.1.6
@@ -139,6 +139,48 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Wed May 28 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.2-1
+- doc: packaging: add license block to each .rst. (Ales Kozumplik)
+- cosmetic: replaced yum with dnf in comment (Jan Silhan)
+- takes non-ascii cmd line input (RhBug:1092777) (Jan Silhan)
+- replaced 'unicode' conversion functions with 'ucd' (RhBug:1095861) (Jan Silhan)
+- using write_to_file py2/py3 compatibility write function (Jan Silhan)
+- encoding: all encode methods are using utf-8 coding instead of default ascii (Jan Silhan)
+- fixed rpmbuild warning of missing file (Jan Silhan)
+- transifex update (Jan Silhan)
+- fixed typos in comments (Jan Silhan)
+- Drop --debugrepodata and susetags generation with it. (Ales Kozumplik)
+- doc: document --debugsolver. (Ales Kozumplik)
+- fix: 'dnf repo-pkgs' failures (RhBug:1092006) (Radek Holy)
+- lint: make dnf_pylint take '-s' that suppresses line/column numbers. (Ales Kozumplik)
+- doc: cli_vs_yum: we do not promote installs to the obsoleting package. (RhBug:1096506) (Ales Kozumplik)
+- dealing with installonlies, we always need RPMPROB_FILTER_OLDPACKAGE (RhBug:1095580) (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- arch: recognize noarch as noarch's basearch. (RhBug:1094594) (Ales Kozumplik)
+- pylint: clean up dnf.repo. (Ales Kozumplik)
+- sslverify: documentation and bumped librepo require. (Ales Kozumplik)
+- repos: support sslverify setting. (RhBug:1076045) (Ales Kozumplik)
+- search: exact matches should propagate higher. (RhBug:1093888) (Ales Kozumplik)
+- refactor: concentrate specific search functionality in commands.search. (Ales Kozumplik)
+- refactor: SearchCommand in its own file. (Ales Kozumplik)
+- pylint: fix around one hundred pylint issues in dnf.base. (Ales Kozumplik)
+- pylint: add simple pylint script (Ales Kozumplik)
+- autoerase: write out the debugdata used to calculate redundant packages. (Ales Kozumplik)
+- cosmetic: fix pylint comment in test_group.py. (Ales Kozumplik)
+- refactor: err_mini_usage() is public. (Ales Kozumplik)
+- refactor: fix several pylint errors in dnf.cli.commands.group. (Ales Kozumplik)
+- fix: 'dnf remove' is deprecated so autoremove should be autoerase. (Ales Kozumplik)
+- doc: command_ref: remove the deprecated aliases from the initial list. (Ales Kozumplik)
+- Add autoremove command. (RhBug:963345) (Ales Kozumplik)
+- refactor: Base.push_userinstalled() is public. (Ales Kozumplik)
+- Remove sudo from dnf-completion.bash RhBug:1073457 (Elad Alfassa)
+- exclude switch takes <package-spec> as a parameter (Jan Silhan)
+- using nevra glob query during list command (RhBug:1083679) (Jan Silhan)
+- removed rpm.RPMPROB_FILTER_REPLACEOLDFILES filter flag (Jan Silhan)
+- test: changed tests according to new distro-sync behavior (Jan Silhan)
+- packaging: cosmetic: copyright years in bin/dnf. (Ales Kozumplik)
+- bin/dnf: run the python interpreter with -OO. (Ales Kozumplik)
 
 * Fri May 2 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.1-1
 - drpm: output stats (RhBug:1065882) (Ales Kozumplik)
