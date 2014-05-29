@@ -136,9 +136,9 @@ class BuildTransactionTest(support.TestCase):
         base = support.MockBase("updates")
         base.upgrade("pepper")
         self.assertTrue(base.resolve())
-        base.ds_callback.assert_has_calls(mock.call.start())
-        base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'ud'))
-        base.ds_callback.assert_has_calls(mock.call.pkg_added(mock.ANY, 'u'))
+        base.ds_callback.assert_has_calls([mock.call.start(),
+                                           mock.call.pkg_added(mock.ANY, 'ud'),
+                                           mock.call.pkg_added(mock.ANY, 'u')])
         self.assertLength(base.transaction, 1)
 
 # verify transaction test helpers

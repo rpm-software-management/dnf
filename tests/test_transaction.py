@@ -144,8 +144,8 @@ class PopulateTSTest(tests.support.TestCase):
         ts.add_install(inst, [])
         ts.add_upgrade(upg, old, [])
         rpm_ts = ts.populate_rpm_ts(mock.Mock())
-        rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[0], 'i'))
-        rpm_ts.assert_has_calls(mock.call.addInstall(None, ts._tsis[1], 'u'))
+        rpm_ts.assert_has_calls([mock.call.addInstall(None, ts._tsis[0], 'i'),
+                                 mock.call.addInstall(None, ts._tsis[1], 'u')])
 
 class RPMProbFilters(tests.support.TestCase):
 
