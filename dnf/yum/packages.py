@@ -66,9 +66,9 @@ def parsePackages(pkgs, usercommands, casematch=0):
        exactly. Defaults to not matching."""
 
     pkgdict = buildPkgRefDict(pkgs, bool(casematch))
-    exactmatch = set([])
-    matched = set([])
-    unmatched = set([])
+    exactmatch = set()
+    matched = set()
+    unmatched = set()
     for command in usercommands:
         if not casematch:
             command = command.lower()
