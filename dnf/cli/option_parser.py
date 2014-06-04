@@ -69,38 +69,28 @@ class OptionParser(argparse.ArgumentParser):
     def configure_from_options(self, opts, conf, demands, output):
         """Configure parts of CLI from the opts. """
 
+        options_to_move = ('best', 'assumeyes', 'assumeno', 'obsoletes',
+                           'showdupesfromrepos', 'plugins', 'ip_resolve',
+                           'rpmverbosity')
+
+        # transfer user specified options to conf
+        for option_name in options_to_move:
+            opt = getattr(opts, option_name)
+            if opt is not None:
+                setattr(conf, option_name, opt)
+
+        if opts.allowerasing:
+            demands.allow_erasing = opts.allowerasing
+
         try:
             # config file is parsed and moving us forward
             # set some things in it.
-            if opts.best:
-                conf.best = opts.best
-
-            # Handle remaining options
-            if opts.allowerasing:
-                demands.allow_erasing = opts.allowerasing
-
-            if opts.assumeyes:
-                conf.assumeyes = 1
-            if opts.assumeno:
-                conf.assumeno = 1
-
             if opts.disableplugins:
                 opts.disableplugins = self._splitArg(opts.disableplugins)
-
-            if opts.obsoletes:
-                conf.obsoletes = 1
 
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
-            if opts.noplugins:
-                conf.plugins = False
-
-            if opts.showdupesfromrepos:
-                conf.showdupesfromrepos = True
-
-            if opts.ip_resolve:
-                conf.ip_resolve = opts.ip_resolve
 
             demands.refresh_metadata = opts.refresh_metadata
 
@@ -135,9 +125,6 @@ class OptionParser(argparse.ArgumentParser):
                     logger.critical(e)
                     self.print_help()
                     sys.exit(1)
-
-            if opts.rpmverbosity is not None:
-                conf.rpmverbosity = opts.rpmverbosity
 
         except ValueError as e:
             logger.critical(_('Options Error: %s'), e)
@@ -224,8 +211,8 @@ class OptionParser(argparse.ArgumentParser):
                           metavar='[repo]')
         self.add_argument("--obsoletes", action="store_true", default=None,
                           help=_("enable obsoletes processing during upgrades"))
-        self.add_argument("--noplugins", action="store_true", default=None,
-                           help=_("disable all plugins"))
+        self.add_argument("--noplugins", action="store_false", default=None,
+                          dest='plugins', help=_("disable all plugins"))
         self.add_argument("--nogpgcheck", action="store_true", default=None,
                           help=_("disable gpg signature checking"))
         self.add_argument("--disableplugin", dest="disableplugins", default=[],
