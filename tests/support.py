@@ -386,6 +386,7 @@ class FakeConf(object):
         self.installonly_limit = 0
         self.installonlypkgs = ['kernel']
         self.installroot = '/'
+        self.ip_resolve = None
         self.multilib_policy = 'best'
         self.obsoletes = True
         self.persistdir = '/should-not-exist-bad-test/persist'
