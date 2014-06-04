@@ -381,7 +381,6 @@ class FakeConf(object):
         self.defaultyes = False
         self.disable_excludes = []
         self.exclude = []
-        self.groupremove_leaf_only = False
         self.history_record = False
         self.installonly_limit = 0
         self.installonlypkgs = ['kernel']
@@ -390,7 +389,6 @@ class FakeConf(object):
         self.obsoletes = True
         self.persistdir = '/should-not-exist-bad-test/persist'
         self.plugins = False
-        self.protected_multilib = False
         self.protected_packages = []
         self.showdupesfromrepos = False
         self.tsflags = []

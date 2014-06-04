@@ -708,10 +708,6 @@ class YumConf(BaseConfig):
     plugins = BoolOption(True)
     pluginpath = ListOption([dnf.const.PLUGINPATH]) # :api
     pluginconfpath = ListOption(['/etc/dnf/plugins'])
-    gaftonmode = BoolOption(False)
-    syslog_ident = Option()
-    syslog_facility = Option('LOG_USER')
-    syslog_device = Option('/dev/log')
     persistdir = Option(dnf.const.PERSISTDIR) # :api
 
     def __init__(self):
@@ -765,7 +761,6 @@ class YumConf(BaseConfig):
                 continue
             self.yumvar[fsvar] = val
 
-    retries = PositiveIntOption(10, names_of_0=["<forever>"])
     recent = IntOption(7, range_min=0)
     reset_nice = BoolOption(True)
 
@@ -779,7 +774,6 @@ class YumConf(BaseConfig):
 
     commands = ListOption()
     exclude = ListOption()
-    failovermethod = Option('roundrobin')
     fastestmirror = BoolOption(False)
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
     proxy_username = Option()
@@ -799,8 +793,6 @@ class YumConf(BaseConfig):
     defaultyes = BoolOption(False)
     alwaysprompt = BoolOption(True)
     diskspacecheck = BoolOption(True)
-    keepalive = BoolOption(True)
-    # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = BoolOption(False)
     repo_gpgcheck = BoolOption(False)
     localpkg_gpgcheck = BoolOption(False)
@@ -808,10 +800,6 @@ class YumConf(BaseConfig):
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)
     enablegroups = BoolOption(True)
-    enable_group_conditionals = BoolOption(True)
-    groupremove_leaf_only = BoolOption(False)
-
-    timeout = FloatOption(30.0) # FIXME: Should use variation of SecondsOption
 
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
@@ -819,7 +807,6 @@ class YumConf(BaseConfig):
             allowed = ('ipv4', 'ipv6', 'whatever'),
             mapper  = {'4': 'ipv4', '6': 'ipv6'})
 
-    http_caching = SelectionOption('all', ('none', 'packages', 'all'))
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
     disable_excludes = ListOption()
@@ -837,16 +824,13 @@ class YumConf(BaseConfig):
     color_list_installed_newer = Option('bold,yellow')
     color_list_installed_reinstall = Option('normal')
     color_list_installed_extra = Option('bold,red')
-
     color_list_available_upgrade = Option('bold,blue')
     color_list_available_downgrade = Option('dim,cyan')
     color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
-
     color_update_installed = Option('normal')
     color_update_local     = Option('bold')
     color_update_remote    = Option('normal')
-
     color_search_match = Option('bold')
 
     sslcacert = Option()
@@ -859,17 +843,9 @@ class YumConf(BaseConfig):
     history_record_packages = ListOption(['dnf', 'rpm'])
 
     rpmverbosity = Option('info')
-
     protected_packages = ListOption("yum, glob:/etc/yum/protected.d/*.conf",
                                     parse_default=True)
-    protected_multilib = BoolOption(True)
-    exit_on_lock = BoolOption(False)
-
-    loadts_ignoremissing = BoolOption(False)
-    loadts_ignorerpm = BoolOption(False)
-
     clean_requirements_on_remove = BoolOption(False)
-
     history_list_view = SelectionOption('single-user-commands',
                                         ('single-user-commands', 'users',
                                          'commands'),
@@ -957,23 +933,18 @@ class RepoConf(BaseConfig):
     proxy = Inherit(YumConf.proxy)
     proxy_username = Inherit(YumConf.proxy_username)
     proxy_password = Inherit(YumConf.proxy_password)
-    retries = Inherit(YumConf.retries)
-    failovermethod = Inherit(YumConf.failovermethod)
     username = Inherit(YumConf.username)
     password = Inherit(YumConf.password)
 
     # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = Inherit(YumConf.gpgcheck)
     repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
-    keepalive = Inherit(YumConf.keepalive)
     enablegroups = Inherit(YumConf.enablegroups)
 
     bandwidth = Inherit(YumConf.bandwidth)
     throttle = Inherit(YumConf.throttle)
-    timeout = Inherit(YumConf.timeout)
     ip_resolve = Inherit(YumConf.ip_resolve)
 
-    http_caching = Inherit(YumConf.http_caching)
     metadata_expire = Inherit(YumConf.metadata_expire)
     cost = IntOption(1000)
 

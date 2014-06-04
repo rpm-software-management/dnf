@@ -130,7 +130,6 @@ class RepoTest(RepoTestMixin, support.TestCase):
         opts = parser.options('r')
         self.assertIn('bandwidth', opts)
         self.assertIn('gpgkey', opts)
-        self.assertEqual(parser.get('r', 'timeout'), '30.0')
 
     def test_cost(self):
         """Test the cost is passed down to the hawkey repo instance."""
