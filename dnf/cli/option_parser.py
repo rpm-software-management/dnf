@@ -99,6 +99,9 @@ class OptionParser(argparse.ArgumentParser):
             if opts.showdupesfromrepos:
                 conf.showdupesfromrepos = True
 
+            if opts.ip_resolve:
+                conf.ip_resolve = opts.ip_resolve
+
             demands.refresh_metadata = opts.refresh_metadata
 
             if opts.color not in (None, 'auto', 'always', 'never',
@@ -239,6 +242,12 @@ class OptionParser(argparse.ArgumentParser):
                            help=_("set arbitrary config and repo options"))
         self.add_argument("--refresh", dest="refresh_metadata",
                           action="store_true")
+        self.add_argument("-4", dest="ip_resolve", default=None,
+                          help=_("resolve to IPv4 addresses only"),
+                          action="store_const", const='ipv4')
+        self.add_argument("-6", dest="ip_resolve", default=None,
+                          help=_("resolve to IPv6 addresses only"),
+                          action="store_const", const='ipv6')
         # we add our own help option, so we can control that help is not shown
         # automatic when we do the .parse_known_args(args)
         # but first after plugins are loaded.

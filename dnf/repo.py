@@ -416,10 +416,17 @@ class Repo(dnf.yum.config.RepoConf):
         return _Handle.new_local(self.yumvar, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
+    def _set_ip_resolve(self, handle):
+        if self.ip_resolve == 'ipv4':
+            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V4)
+        elif self.ip_resolve == 'ipv6':
+            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V6)
+
     def _handle_new_remote(self, destdir, mirror_setup=True):
         h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
         h.varsub = _subst2tuples(self.yumvar)
         h.destdir = destdir
+        self._set_ip_resolve(h)
 
         # setup mirror URLs
         mirrorlist = self.metalink or self.mirrorlist
