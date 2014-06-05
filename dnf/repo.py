@@ -127,6 +127,14 @@ def update_saving(saving, payloads, errs):
         full += pload.full_size
     return real, full
 
+
+class _DetailedLibrepoError(Exception):
+    def __init__(self, librepo_msg, source_url):
+        Exception.__init__(self)
+        self.librepo_msg = librepo_msg
+        self.source_url = source_url
+
+
 class _Handle(librepo.Handle):
     def __init__(self, gpgcheck, max_mirror_tries):
         super(_Handle, self).__init__()
@@ -165,6 +173,15 @@ class _Handle(librepo.Handle):
     @property
     def mirrorlist_path(self):
         return _mirrorlist_path(self.destdir)
+
+    def perform(self, result=None):
+        try:
+            return super(_Handle, self).perform(result)
+        except librepo.LibrepoException as exc:
+            lr_msg = exc.args[1]
+            source = self.metalinkurl or self.mirrorlisturl or self.urls
+            raise _DetailedLibrepoError(lr_msg, source)
+
 
 class Metadata(object):
     def __init__(self, res, handle):
@@ -375,8 +392,9 @@ class Repo(dnf.yum.config.RepoConf):
         super(Repo, self).__init__()
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self.id = id_ # :api
         self.basecachedir = basecachedir
+        self.id = id_ # :api
+        self.hawkey_repo = None
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.yumvar = {} # empty dict of yumvariables for $string replacement
@@ -385,12 +403,6 @@ class Repo(dnf.yum.config.RepoConf):
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.id)
-
-    def _exc2msg(self, librepo_exception):
-        exc_msg = librepo_exception.args[1]
-        msg = _("Failed to synchronize cache for repo '%s': %s") % \
-              (self.id, exc_msg)
-        return msg
 
     def _handle_load(self, handle):
         if handle.progresscb:
@@ -487,7 +499,7 @@ class Repo(dnf.yum.config.RepoConf):
         handle = self._handle_new_local(self.cachedir)
         try:
             self.metadata = self._handle_load(handle)
-        except (librepo.LibrepoException, IOError):
+        except (_DetailedLibrepoError, IOError):
             return False
         if self.sync_strategy == SYNC_EXPIRED:
             # we shouldn't exit earlier as reviving needs self.metadata
@@ -610,9 +622,10 @@ class Repo(dnf.yum.config.RepoConf):
             handle = self._handle_new_local(self.cachedir)
             self.metadata = self._handle_load(handle)
             self.metadata.fresh = True
-        except librepo.LibrepoException as e:
-            self.metadata = None
-            raise dnf.exceptions.RepoError(self._exc2msg(e))
+        except _DetailedLibrepoError as e:
+            msg = _("Failed to synchronize cache for repo '%s' from '%s': %s") % \
+                  (self.id, e.source_url, e.librepo_msg)
+            raise dnf.exceptions.RepoError(msg)
         self.sync_strategy = SYNC_TRY_CACHE
         return True
 

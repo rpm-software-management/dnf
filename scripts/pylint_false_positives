@@ -7,6 +7,9 @@
 ^W0622:[ a-z0-9,._:]*Redefining built-in 'reduce'$
 ^C0103:[ a-z0-9,._:]*Invalid constant name "logger"$
 ^C0103: dnf.repo:[0-9,: ]*Invalid attribute name "id"$
+^C0103: tests.[ a-z0-9,._:]*Invalid method name "setUpClass"$
+^C0103: tests.[ a-z0-9,._:]*Invalid method name "tearDown"$
+^C0103: tests.[ a-z0-9,._:]*Invalid method name "tearDownClass"$
 ^E1002: dnf.repo:[0-9,: ]*Use of super on an old style class$
 ^E1101: dnf.repo:[0-9,: ]*Instance of 'PackagePayload' has no '_target_params' member$
 ^W0201: dnf.repo:[0-9,: ]*Attribute '[_a-z]+' defined outside __init__$

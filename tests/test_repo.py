@@ -64,7 +64,7 @@ class RepoTestMixin(object):
 
     @classmethod
     def setUpClass(cls):
-         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix="dnf-repotest-")
+        cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix='dnf-repotest-')
 
     @classmethod
     def tearDownClass(cls):
@@ -97,11 +97,11 @@ class MetadataTest(support.TestCase):
         result.yum_repo = {'primary': support.NONEXISTENT_FILE}
         handle = mock.Mock(spec=['mirrors'])
         handle.mirrors = []
-        self.md = dnf.repo.Metadata(result, handle)
+        self.metadata = dnf.repo.Metadata(result, handle)
 
     def test_file_timestamp(self):
         self.assertRaises(dnf.exceptions.MetadataError,
-                          self.md.file_timestamp, 'primary')
+                          self.metadata.file_timestamp, 'primary')
 
 class RepoTest(RepoTestMixin, support.TestCase):
     """Test the logic of dnf.repo.Repo.
@@ -237,11 +237,11 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_repo_gpgcheck(self, setopt):
         """Test repo_gpgcheck option works."""
         self.repo.repo_gpgcheck = False
-        handle = self.repo._handle_new_remote("/bag")
+        self.repo._handle_new_remote('/bag')
         setopt.assert_any_call(librepo.LRO_GPGCHECK, False)
 
         self.repo.repo_gpgcheck = True
-        handle = self.repo._handle_new_remote("/bag")
+        self.repo._handle_new_remote('/bag')
         setopt.assert_any_call(librepo.LRO_GPGCHECK, True)
 
     def test_reset_metadata_expired(self):
@@ -310,7 +310,7 @@ class LocalRepoTest(support.TestCase):
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
-    def test_reviving_lame_hashes(self, new_remote_m, reset_age_m):
+    def test_reviving_lame_hashes(self, new_remote_m, _):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
         new_remote_m().metalink = \
@@ -321,7 +321,7 @@ class LocalRepoTest(support.TestCase):
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
-    def test_reviving_mismatched_hashes(self, new_remote_m, reset_age_m):
+    def test_reviving_mismatched_hashes(self, new_remote_m, _):
         self.repo.md_expire_cache()
         self.repo.metalink = 'http://meh'
         new_remote_m().metalink = \
@@ -334,11 +334,14 @@ class LocalRepoTest(support.TestCase):
 
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_404(self, new_remote_m):
+        url = 'http://meh'
         self.repo.md_expire_cache()
-        self.repo.metalink = 'http://meh'
-        exc = librepo.LibrepoException(10, 'Error HTTP/FTP status code: 404', 404)
+        self.repo.metalink = url
+        exc = dnf.repo._DetailedLibrepoError('Error HTTP/FTP status code: 404',
+                                             url)
         new_remote_m().perform = mock.Mock(side_effect=exc)
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+
 
 class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
@@ -359,7 +362,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         self.assertEmpty(errs.irrecoverable)
 
     def test_fatal_error(self):
-        def raiser(targets, failfast):
+        def raiser(_, failfast):
             raise librepo.LibrepoException(10, 'hit', 'before')
 
         drpm = dnf.drpm.DeltaInfo(None, None)
