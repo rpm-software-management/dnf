@@ -1039,46 +1039,5 @@ def _getsysver(installroot, distroverpkg):
     del ts
     return releasever
 
-def writeRawRepoFile(repo,only=None):
-    """Write changes in a repo object back to a .repo file.
-
-    :param repo: the Repo Object to write back out
-    :param only: list of attributes to work on. If *only* is None, all
-       options will be written out
-    """
-    ini = INIConfig(open(repo.repofile))
-    # b/c repoids can have $values in them we need to map both ways to figure
-    # out which one is which
-    section_id = repo.id
-    if repo.id not in ini._sections:
-        for sect in ini._sections.keys():
-            if varReplace(sect, repo.yumvar) == repo.id:
-                section_id = sect
-
-    # Updated the ConfigParser with the changed values
-    cfgOptions = repo.cfg.options(repo.id)
-    for name,value in repo.iteritems():
-        if value is None: # Proxy
-            continue
-
-        if only is not None and name not in only:
-            continue
-
-        option = repo.optionobj(name)
-        ovalue = option.tostring(value)
-        #  If the value is the same, but just interpreted ... when we don't want
-        # to keep the interpreted values.
-        if (name in ini[section_id] and
-            ovalue == varReplace(ini[section_id][name], repo.yumvar)):
-            ovalue = ini[section_id][name]
-
-        if name not in cfgOptions and option.default == value:
-            continue
-
-        ini[section_id][name] = ovalue
-    fp = open(repo.repofile,"w")
-    fp.write(str(ini))
-    fp.close()
-
 def logdir_fit(current_logdir):
     return current_logdir if dnf.util.am_i_root() else misc.getCacheDir()
