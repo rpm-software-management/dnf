@@ -21,15 +21,15 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
-import logging
-import operator
 from functools import reduce
+import operator
 
 DOWNGRADE = 1
 ERASE     = 2
 INSTALL   = 3
 REINSTALL = 4
 UPGRADE   = 5
+
 
 class TransactionItem(object):
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
@@ -113,7 +113,6 @@ class Transaction(object):
     def __init__(self):
         # :api
         self._tsis = []
-        self.logger = logging.getLogger("dnf")
 
     def __iter__(self):
         return iter(self._tsis)
@@ -168,31 +167,21 @@ class Transaction(object):
                 ts.addErase(tsi.erased.idx)
                 hdr = tsi.installed.header
                 ts.addInstall(hdr, tsi, 'i')
-                self.logger.debug("populate_rpm_ts: downgrade: %s/%s" %
-                                  (tsi.installed, tsi.erased))
             elif tsi.op_type == ERASE:
                 ts.addErase(tsi.erased.idx)
-                self.logger.debug("populate_rpm_ts: erase: %s" % tsi.erased)
             elif tsi.op_type == INSTALL:
                 hdr = tsi.installed.header
                 if tsi.obsoleted:
                     ts.addInstall(hdr, tsi, 'u')
-                    msg = "populate_rpm_ts: install: %s promoted to upgrade."
-                    self.logger.debug(msg % tsi.installed)
                 else:
                     ts.addInstall(hdr, tsi, 'i')
-                    self.logger.debug("populate_rpm_ts: install: %s" %
-                                      tsi.installed)
             elif tsi.op_type == REINSTALL:
                 ts.addErase(tsi.erased.idx)
                 hdr = tsi.installed.header
                 ts.addInstall(hdr, tsi, 'i')
-                self.logger.debug("populate_rpm_ts: reinstall: %s" %
-                                  tsi.erased)
             elif tsi.op_type == UPGRADE:
                 hdr = tsi.installed.header
                 ts.addInstall(hdr, tsi, 'u')
-                self.logger.debug("populate_rpm_ts: upgrade: %s" % tsi.installed)
         return ts
 
     @property
