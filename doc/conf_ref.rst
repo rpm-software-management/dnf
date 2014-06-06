@@ -85,7 +85,7 @@ one main section. The repository sections define the configuration for each
 ``ip_resolve``
     IP address type
 
-    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. Default is whatever.
+    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
 .. _keepcache-label:
 
@@ -162,7 +162,7 @@ configuration.
 ``ip_resolve``
     IP address type
 
-    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. Default is whatever.
+    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only.  By default, DNF resolves to either addresses.
 
 .. _metadata_expire-label:
 
