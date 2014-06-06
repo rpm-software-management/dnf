@@ -62,6 +62,12 @@ See the reference for each command below.
 Options
 =======
 
+``-4``
+    Resolve to IPv4 addresses only.
+
+``-6``
+    Resolve to IPv6 addresses only.
+
 ``--allowerasing``
     Allow erasing of installed packages to resolve dependencies.
 

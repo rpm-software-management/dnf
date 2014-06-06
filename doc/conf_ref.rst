@@ -82,6 +82,11 @@ one main section. The repository sections define the configuration for each
     Number of installonly packages allowed to be installed
     concurrently. Defaults to 3.
 
+``ip_resolve``
+    IP address type
+
+    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. Default is whatever.
+
 .. _keepcache-label:
 
 ``keepcache``
@@ -153,6 +158,11 @@ configuration.
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is off.
+
+``ip_resolve``
+    IP address type
+
+    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. Default is whatever.
 
 .. _metadata_expire-label:
 
