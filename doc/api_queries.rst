@@ -68,6 +68,25 @@
     provides     string     match against packages' provides
     ==========   ========== ===============================================
 
+    The key name can be supplemented with a relation-specifying suffix, separated by ``__``:
+
+    ==========   =========== ==========================================================
+    key suffix   value type  semantics
+    ==========   =========== ==========================================================
+    eq           any         exact match; This is the default if no suffix is specified.
+    glob         string      shell-style wildcard match
+    gt           integer     the actual value is greater than specified
+    gte          integer     the actual value is greater than or qual to specified
+    lt           integer     the actual value is less than specified
+    lte          integer     the actual value is less than or equal to specified
+    neq          any         does not equal
+    substr       string      the specified value is contained in the actual value
+    ==========   =========== ==========================================================
+
+    For example, the following creates a query that matches all packages containing the string "club" in its name::
+
+      q = base.sack.query().filter(name__substr="club")
+
   .. method:: installed
 
     Return a new query that limits the result to the installed packages only.
