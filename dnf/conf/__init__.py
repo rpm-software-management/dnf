@@ -1,7 +1,7 @@
 # conf.py
 # dnf configuration classes.
 #
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2014  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -36,12 +36,12 @@ goal is to:
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf import util
 from dnf.i18n import ucd, _
+from dnf.yum import misc
 import dnf.const
 import dnf.yum.config
 import os.path
-from . import util
-from .yum import misc
 
 Conf = dnf.yum.config.YumConf
 
