@@ -1,0 +1,2 @@
+FILE(GLOB conf *.py)
+INSTALL (FILES ${conf} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/conf)
