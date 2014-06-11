@@ -61,6 +61,8 @@
 
     Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.
 
+    Before this method is invoked, the client application is supposed to have setup relevant configuration like the substitutions used in repository URLs. See :attr:`.Conf.substitutions`.
+
     This operation can take a long time. Adding repositories or changing repositories' configuration does not affect the information within the sack until :meth:`fill_sack` has been called.
 
   .. method:: do_transaction([display])

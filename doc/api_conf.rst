@@ -71,6 +71,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     List of directories to search for repo configuration files. Has a reasonable default commonly used on the given distribution.
 
+  .. attribute:: substitutions
+
+    A mapping of substitutions used in repositories' remote URL configuration. The commonly used ones are:
+
+    ==========     ============================================== ============
+    key            meaning                                        default
+    ==========     ============================================== ============
+    arch           architecture of the machine                    autodetected
+    basearch       the architecture family of the current "arch"  autodetected
+    releasever     release name of the system distribution        ``None``
+    ==========     ============================================== ============
+
   .. attribute:: tsflags
 
     List of strings adding extra flags for the RPM transaction.
