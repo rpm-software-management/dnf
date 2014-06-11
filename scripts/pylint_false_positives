@@ -3,6 +3,7 @@
 ^R0902:[ a-z0-9,._:]*Too many instance attributes \([0-9]+/[0-9]+\)$
 ^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NODIGESTS of a client class$
 ^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NOSIGNATURES of a client class$
+^W0622:[ a-z0-9,._:]*Redefining built-in 'basestring'$
 ^W0622:[ a-z0-9,._:]*Redefining built-in 'unicode'$
 ^W0622:[ a-z0-9,._:]*Redefining built-in 'reduce'$
 ^C0103:[ a-z0-9,._:]*Invalid constant name "logger"$

@@ -26,8 +26,7 @@ from . import misc
 from .misc import read_in_items_from_dot_dir
 from .parser import ConfigPreProcessor, varReplace
 from dnf.pycomp import basestring
-from iniparse.compat import NoSectionError, NoOptionError, ParsingError
-from iniparse.compat import RawConfigParser as ConfigParser
+from iniparse.compat import ParsingError, RawConfigParser as ConfigParser
 
 import copy
 import dnf.conf.substitutions
@@ -124,7 +123,7 @@ class Option(object):
         new._setattrname()
         return new
 
-    def parse(self, s):
+    def parse(self, val):
         """Parse the string value to the :class:`Option`'s native value.
 
         :param s: raw string value to parse
@@ -132,16 +131,16 @@ class Option(object):
         :raise: ValueError if there was a problem parsing the string.
            Subclasses should override this
         """
-        return s
+        return val
 
-    def parse_int(self, n):
+    def parse_int(self, val):
         """Parse `n`, ensuring it is a suitable integer value.
 
         Return parsed value or raise ValueError if it is not suitable.
 
         """
 
-        return n
+        return val
 
     def tostring(self, value):
         """Convert the :class:`Option`'s native value to a string value.  This
@@ -154,13 +153,12 @@ class Option(object):
         return str(value)
 
 def Inherit(option_obj):
-    """Clone an :class:`Option` instance for the purposes of inheritance. The returned
-    instance has all the same properties as the input :class:`Option` and shares items
-    such as the default value. Use this to avoid redefinition of reused
-    options.
+    """Clone an Option` instance for the purposes of inheritance.
 
-    :param option_obj: :class:`Option` instance to inherit
-    :return: New :class:`Option` instance inherited from the input
+    The returned instance has all the same properties as the input Option and
+    shares items such as the default value. Use this to avoid redefinition of
+    reused options.
+
     """
     new_option = option_obj.clone()
     new_option.inherit = True
@@ -234,7 +232,7 @@ class UrlOption(Option):
                 raise ValueError('"_none_" is not a valid value')
 
         # Check that scheme is valid
-        (s,b,p,q,f,o) = urlparse.urlparse(url)
+        s = urlparse.urlparse(url)[0]
         if s not in self.schemes:
             raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
 
@@ -272,7 +270,7 @@ class UrlListOption(ListOption):
         out = []
         s = s.replace('\n', ' ')
         s = s.replace(',', ' ')
-        items = [ item.replace(' ', '%20') for item in shlex.split(s) ]
+        items = [item.replace(' ', '%20') for item in shlex.split(s)]
         tmp = []
         for item in items:
             if item.startswith('glob:'):
@@ -304,7 +302,7 @@ class IntOption(Option):
         """
         try:
             val = int(s)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             raise ValueError('invalid integer value')
         return self.parse_int(val)
 
@@ -383,7 +381,7 @@ class SecondsOption(Option):
 
         try:
             n = float(n)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError):
             raise ValueError('invalid value')
 
         if n < 0:
@@ -449,7 +447,7 @@ class SelectionOption(Option):
     def __init__(self, default=None, allowed=(), mapper={}):
         super(SelectionOption, self).__init__(default)
         self._allowed = allowed
-        self._mapper  = mapper
+        self._mapper = mapper
 
     def parse(self, s):
         """Parse a string for specific values.
@@ -568,6 +566,7 @@ class BaseConfig(object):
 
     def __init__(self):
         self._section = None
+        self.cfg = None
 
         for name in self.iterkeys():
             option = self.optionobj(name)
@@ -685,11 +684,12 @@ class BaseConfig(object):
             section = self._section
 
         # Updated the ConfigParser with the changed values
-        cfgOptions = self.cfg.options(section)
-        for name,value in self.iteritems():
+        cfg_options = self.cfg.options(section)
+        for name, value in self.iteritems():
             option = self.optionobj(name)
-            if always is None or name in always or option.default != value or name in cfgOptions :
-                self.cfg.set(section,name, option.tostring(value))
+            if always is None or name in always or option.default != value \
+               or name in cfg_options:
+                self.cfg.set(section, name, option.tostring(value))
         # write the updated ConfigParser to the fileobj.
         self.cfg.write(fileobj)
 
@@ -759,7 +759,7 @@ class YumConf(BaseConfig):
     tsflags = ListOption() # :api
 
     assumeyes = BoolOption(False)
-    assumeno  = BoolOption(False)
+    assumeno = BoolOption(False)
     defaultyes = BoolOption(False)
     alwaysprompt = BoolOption(True)
     diskspacecheck = BoolOption(True)
@@ -774,8 +774,8 @@ class YumConf(BaseConfig):
     bandwidth = BytesOption(0)
     throttle = ThrottleOption(0)
     ip_resolve = CaselessSelectionOption(
-            allowed = ('ipv4', 'ipv6', 'whatever'),
-            mapper  = {'4': 'ipv4', '6': 'ipv6'})
+            allowed=('ipv4', 'ipv6', 'whatever'),
+            mapper={'4': 'ipv4', '6': 'ipv6'})
 
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
@@ -799,8 +799,8 @@ class YumConf(BaseConfig):
     color_list_available_reinstall = Option('bold,underline,green')
     color_list_available_install = Option('normal')
     color_update_installed = Option('normal')
-    color_update_local     = Option('bold')
-    color_update_remote    = Option('normal')
+    color_update_local = Option('bold')
+    color_update_remote = Option('normal')
     color_search_match = Option('bold')
 
     sslcacert = Option()
@@ -895,7 +895,7 @@ class RepoConf(BaseConfig):
     enabled = Inherit(YumConf.enabled)
     baseurl = UrlListOption() # :api
     mirrorlist = UrlOption() # :api
-    metalink   = UrlOption() # :api
+    metalink = UrlOption() # :api
     mediaid = Option()
     gpgkey = UrlListOption()
     gpgcakey = UrlListOption()
@@ -909,7 +909,6 @@ class RepoConf(BaseConfig):
     username = Inherit(YumConf.username)
     password = Inherit(YumConf.password)
 
-    # FIXME: rename gpgcheck to pkgs_gpgcheck
     gpgcheck = Inherit(YumConf.gpgcheck)
     repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
     enablegroups = Inherit(YumConf.enablegroups)
