@@ -929,49 +929,6 @@ class RepoConf(BaseConfig):
 
     skip_if_unavailable = BoolOption(True)
 
-class VersionGroupConf(BaseConfig):
-    """Option definitions for version groups."""
-
-    pkglist = ListOption()
-    run_with_packages = BoolOption(False)
-
-def readVersionGroupsConfig(configfile="/etc/yum/version-groups.conf"):
-    """Parse the configuration file for version groups.
-
-    :param configfile: the configuration file to read
-    :return: a dictionary containing the parsed options
-    """
-
-    parser = ConfigParser()
-    confpp_obj = ConfigPreProcessor(configfile)
-    try:
-        parser.readfp(confpp_obj)
-    except ParsingError as e:
-        raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
-    ret = {}
-    for section in parser.sections():
-        ret[section] = VersionGroupConf()
-        ret[section].populate(parser, section)
-    return ret
-
-
-def getOption(conf, section, name, option):
-    """Convenience function to retrieve a parsed and converted value from a
-    :class:`ConfigParser`.
-
-    :param conf: ConfigParser instance or similar
-    :param section: Section name
-    :param name: :class:`Option` name
-    :param option: :class:`Option` instance to use for conversion
-    :return: The parsed value or default if value was not present
-    :raises: :class:`ValueError` if the option could not be parsed
-    """
-    try:
-        val = conf.get(section, name)
-    except (NoSectionError, NoOptionError):
-        return option.default
-    return option.parse(val)
-
 
 def logdir_fit(current_logdir):
     return current_logdir if dnf.util.am_i_root() else misc.getCacheDir()
