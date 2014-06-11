@@ -44,8 +44,9 @@ import dnf.persistor
 import dnf.plugin
 import dnf.repo
 import dnf.repodict
-import dnf.rpmUtils.connection
-import dnf.rpmUtils.transaction
+import dnf.rpm.connection
+import dnf.rpm.miscutils
+import dnf.rpm.transaction
 import dnf.subject
 import dnf.transaction
 import dnf.util
@@ -171,7 +172,7 @@ class Base(object):
     @property
     @dnf.util.lazyattr("_rpmconn")
     def rpmconn(self):
-        return dnf.rpmUtils.connection.RpmConnection(self.conf.installroot)
+        return dnf.rpm.connection.RpmConnection(self.conf.installroot)
 
     @property
     def sack(self):
@@ -350,7 +351,7 @@ class Base(object):
         """Set up the RPM transaction set that will be used for all the work."""
         if self._ts is not None:
             return self._ts
-        self._ts = dnf.rpmUtils.transaction.TransactionWrapper(
+        self._ts = dnf.rpm.transaction.TransactionWrapper(
             self.conf.installroot)
         self._ts.setFlags(0) # reset everything.
         for flag in self.conf.tsflags:
@@ -952,7 +953,7 @@ class Base(object):
 
         if check:
             ts = self.rpmconn.readonly_ts
-            sigresult = dnf.rpmUtils.miscutils.checkSig(ts, po.localPkg())
+            sigresult = dnf.rpm.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
 
             if sigresult == 0:
@@ -1444,7 +1445,7 @@ class Base(object):
             return 1
 
         installroot = self.conf.installroot
-        myts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
+        myts = dnf.rpm.transaction.initReadOnlyTransaction(root=installroot)
         myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
         keys = len(idx)

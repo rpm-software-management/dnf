@@ -16,7 +16,7 @@
 #
 
 from __future__ import unicode_literals
-from dnf.rpmUtils.connection import RpmConnection
+from dnf.rpm.connection import RpmConnection
 import inspect
 from tests.support import PycompTestCase
 

@@ -33,7 +33,6 @@ import copy
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
-import dnf.rpmUtils.transaction
 import dnf.util
 import os
 import shlex

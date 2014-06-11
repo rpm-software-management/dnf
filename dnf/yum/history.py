@@ -27,7 +27,7 @@ from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import dnf.arch
 import dnf.exceptions
-import dnf.rpmUtils.miscutils
+import dnf.rpm.miscutils
 import dnf.i18n
 import functools
 
@@ -187,7 +187,7 @@ class YumHistoryPackage(object):
         """
         (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
         (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
-        return dnf.rpmUtils.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
+        return dnf.rpm.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
 
     def __eq__(self, other):
         """ Compare packages for yes/no equality, includes everything in the

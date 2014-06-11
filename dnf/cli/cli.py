@@ -47,7 +47,7 @@ import dnf.cli.format
 import dnf.logging
 import dnf.plugin
 import dnf.persistor
-import dnf.rpmUtils
+import dnf.rpm
 import dnf.sack
 import dnf.util
 import dnf.yum.config
@@ -1118,7 +1118,7 @@ class Cli(object):
         conf.releasever = releasever
         if releasever is None:
             distroverpkg = conf.distroverpkg
-            conf.releasever = dnf.rpmUtils.detect_releasever(root, distroverpkg)
+            conf.releasever = dnf.rpm.detect_releasever(root, distroverpkg)
         subst = conf.substitutions
         subst.update_from_etc(root)
 

@@ -1,2 +1,0 @@
-FILE(GLOB rpmUtils_SRCS *.py)
-INSTALL (FILES ${rpmUtils_SRCS} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/rpmUtils)

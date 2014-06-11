@@ -24,7 +24,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import binascii
-import dnf.rpmUtils.miscutils
+import dnf.rpm.miscutils
 import dnf.yum.misc
 import hawkey
 import logging
@@ -69,7 +69,7 @@ class Package(hawkey.Package):
         rpmfile = self.localPkg()
         if not os.path.exists(rpmfile):
             raise RuntimeError("Rpm file does not exist: '%s'", rpmfile)
-        return dnf.rpmUtils.miscutils.headerFromFilename(rpmfile)
+        return dnf.rpm.miscutils.headerFromFilename(rpmfile)
 
     @property
     def size(self):

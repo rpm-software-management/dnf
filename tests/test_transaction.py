@@ -149,7 +149,7 @@ class PopulateTSTest(tests.support.TestCase):
 
 class RPMProbFilters(tests.support.TestCase):
 
-    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_filters_install(self, mock_ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'search')
@@ -158,7 +158,7 @@ class RPMProbFilters(tests.support.TestCase):
         ts = self.base.ts
         ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
-    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_filters_downgrade(self, ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'old_versions')
@@ -167,7 +167,7 @@ class RPMProbFilters(tests.support.TestCase):
         ts = self.base.ts
         ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
-    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_filters_reinstall(self, ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main')

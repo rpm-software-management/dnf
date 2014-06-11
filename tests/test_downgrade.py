@@ -26,7 +26,7 @@ import rpm
 
 class DowngradeTest(support.ResultTestCase):
 
-    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_package_downgrade(self, ts):
         base = support.MockBase()
 

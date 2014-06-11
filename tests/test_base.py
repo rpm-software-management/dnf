@@ -59,7 +59,7 @@ class BaseTest(support.TestCase):
         self.assertIsNone(base._sack)
         self.assertLength(base.repos, 1)
 
-    @mock.patch('dnf.rpmUtils.transaction.TransactionWrapper')
+    @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_ts(self, mock_ts):
         base = dnf.Base()
         self.assertEqual(base._ts, None)

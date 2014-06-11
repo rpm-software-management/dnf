@@ -1,0 +1,2 @@
+FILE(GLOB rpm *.py)
+INSTALL (FILES ${rpm} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/rpm)
