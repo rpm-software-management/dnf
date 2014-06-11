@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from dnf.i18n import ucd, _
 
 import dnf.callback
+import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
 import dnf.logging
@@ -397,7 +398,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.hawkey_repo = None
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
-        self.yumvar = {} # empty dict of yumvariables for $string replacement
+        self.substitutions = dnf.conf.substitutions.Substitutions()
         self.max_mirror_tries = 0 # try them all
         self._handle = None
 
@@ -413,7 +414,7 @@ class Repo(dnf.yum.config.RepoConf):
         return Metadata(result, handle)
 
     def _handle_new_local(self, destdir):
-        return _Handle.new_local(self.yumvar, self.repo_gpgcheck,
+        return _Handle.new_local(self.substitutions, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
     def _set_ip_resolve(self, handle):
@@ -424,7 +425,7 @@ class Repo(dnf.yum.config.RepoConf):
 
     def _handle_new_remote(self, destdir, mirror_setup=True):
         h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
-        h.varsub = _subst2tuples(self.yumvar)
+        h.varsub = _subst2tuples(self.substitutions)
         h.destdir = destdir
         self._set_ip_resolve(h)
 

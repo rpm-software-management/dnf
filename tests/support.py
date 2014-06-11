@@ -394,7 +394,11 @@ class FakeConf(object):
         self.showdupesfromrepos = False
         self.tsflags = []
         self.verbose = False
-        self.yumvar = {'releasever' : 'Fedora69'}
+        self.substitutions = {'releasever' : 'Fedora69'}
+
+    @property
+    def releasever(self):
+        return self.substitutions['releasever']
 
 class FakePersistor(object):
     def get_expired_repos(self):

@@ -25,15 +25,12 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf import const, query, sack
 from dnf.i18n import _, P_, ucd
-from dnf.yum import config
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
-from dnf.yum.config import ParsingError, ConfigParser
 from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce
 
-import dnf.arch
 import dnf.callback
 import dnf.comps
 import dnf.conf
@@ -52,6 +49,7 @@ import dnf.rpmUtils.transaction
 import dnf.subject
 import dnf.transaction
 import dnf.util
+import dnf.yum.config
 import dnf.yum.rpmtrans
 import functools
 import glob
@@ -68,7 +66,7 @@ class Base(object):
     def __init__(self):
         # :api
         self._closed = False
-        self._conf = config.YumConf()
+        self._conf = dnf.conf.Conf()
         self._goal = None
         self._persistor = None
         self._sack = None
@@ -89,10 +87,6 @@ class Base(object):
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
 
-        arch = hawkey.detect_arch()
-        self._conf.yumvar['arch'] = arch
-        self._conf.yumvar['basearch'] = dnf.arch.basearch(arch)
-        self._conf.yumvar_update_from_env()
 
     def __enter__(self):
         return self
@@ -239,11 +233,11 @@ class Base(object):
     def read_repos(self, repofn):
         """Read in repositories from a config .repo file."""
 
-        confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.yumvar)
-        parser = ConfigParser()
+        confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.substitutions)
+        parser = dnf.yum.config.ConfigParser()
         try:
             parser.readfp(confpp_obj)
-        except ParsingError as e:
+        except dnf.yum.config.ParsingError as e:
             msg = str(e)
             raise dnf.exceptions.ConfigError(msg)
 
@@ -320,7 +314,7 @@ class Base(object):
                     'using id') % section)
         repo.name = ucd(repo.name)
 
-        repo.yumvar.update(self.conf.yumvar)
+        repo.substitutions.update(self.conf.substitutions)
         repo.cfg = parser
 
         return repo
@@ -427,7 +421,7 @@ class Base(object):
            history information. """
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
-            releasever = self.conf.yumvar['releasever']
+            releasever = self.conf.releasever
             self._history = history.YumHistory(db_path, self.yumdb,
                                                root=self.conf.installroot,
                                                releasever=releasever)
@@ -806,7 +800,7 @@ class Base(object):
             yumdb_info.from_repo = rpo.repoid
 
             yumdb_info.reason = tsi.propagated_reason(self.yumdb)
-            yumdb_info.releasever = self.conf.yumvar['releasever']
+            yumdb_info.releasever = self.conf.releasever
             if hasattr(self, 'args') and self.args:
                 yumdb_info.command_line = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:

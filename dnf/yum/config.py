@@ -25,20 +25,18 @@ from __future__ import unicode_literals
 from . import misc
 from .misc import read_in_items_from_dot_dir
 from .parser import ConfigPreProcessor, varReplace
-from dnf.pycomp import is_py3bytes, basestring
-from iniparse import INIConfig
+from dnf.pycomp import basestring
 from iniparse.compat import NoSectionError, NoOptionError, ParsingError
 from iniparse.compat import RawConfigParser as ConfigParser
 
 import copy
+import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
 import dnf.rpmUtils.transaction
 import dnf.util
 import os
-import rpm
 import shlex
-import sys
 import types
 
 try:
@@ -712,11 +710,11 @@ class YumConf(BaseConfig):
 
     def __init__(self):
         super(YumConf, self).__init__()
-        self.yumvar = {}
+        self.substitutions = dnf.conf.substitutions.Substitutions()
 
     def _var_replace(self, option):
         path = getattr(self, option)
-        setattr(self, option, varReplace(path, self.yumvar))
+        setattr(self, option, varReplace(path, self.substitutions))
 
     def prepend_installroot(self, option):
         # :api
@@ -727,39 +725,12 @@ class YumConf(BaseConfig):
     @property
     def releasever(self):
         # :api
-        return self.yumvar.get('releasever')
+        return self.substitutions.get('releasever')
 
     @releasever.setter
     def releasever(self, val):
         # :api
-        if val is None:
-            val = _getsysver(self.installroot,
-                             self.distroverpkg)
-        self.yumvar['releasever'] = val
-
-    def yumvar_update_from_env(self):
-        for num in range(0, 10):
-            env = 'YUM%d' % num
-            val = os.environ.get(env, '')
-            if val:
-                self.yumvar[env.lower()] = val
-
-    def yumvar_update_from_etc(self):
-        try:
-            dir_fsvars = self.installroot + "/etc/yum/vars/"
-            fsvars = os.listdir(dir_fsvars)
-        except OSError:
-            fsvars = []
-        for fsvar in fsvars:
-            if os.path.islink(dir_fsvars + fsvar):
-                continue
-            try:
-                val = open(dir_fsvars + fsvar).readline()
-                if val and val[-1] == '\n':
-                    val = val[:-1]
-            except (OSError, IOError):
-                continue
-            self.yumvar[fsvar] = val
+        self.substitutions['releasever'] = val
 
     recent = IntOption(7, range_min=0)
     reset_nice = BoolOption(True)
@@ -861,7 +832,10 @@ class YumConf(BaseConfig):
         """
         output = '[main]\n'
         # we exclude all vars which start with _ or are in this list:
-        excluded_vars = ('cfg', 'yumvar', 'disable_excludes', 'config_file_path')
+        excluded_vars = ('cfg',
+                         'config_file_path',
+                         'disable_excludes',
+                         'substitutions')
         for attr in dir(self):
             if attr.startswith('_'):
                 continue
@@ -999,45 +973,6 @@ def getOption(conf, section, name, option):
         return option.default
     return option.parse(val)
 
-def _getsysver(installroot, distroverpkg):
-    '''Calculate the release version for the system.
-
-    @param installroot: The value of the installroot option.
-    @param distroverpkg: The value of the distroverpkg option.
-    @return: The release version as a string (eg. '4' for FC4)
-    '''
-    ts = dnf.rpmUtils.transaction.initReadOnlyTransaction(root=installroot)
-    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
-    try:
-        idx = ts.dbMatch('provides', distroverpkg)
-    except TypeError as e:
-        # This is code for "cannot open rpmdb"
-        # this is for pep 352 compliance on python 2.6 and above :(
-        if sys.hexversion < 0x02050000:
-            if hasattr(e,'message'):
-                raise dnf.exceptions.Error("Error: " + str(e.message))
-            else:
-                raise dnf.exceptions.Error("Error: " + str(e))
-        raise dnf.exceptions.Error("Error: " + str(e))
-    except rpm.error as e:
-        # This is the "new" code for "cannot open rpmdb", 4.8.0 ish
-        raise dnf.exceptions.Error("Error: " + str(e))
-    # we're going to take the first one - if there is more than one of these
-    # then the user needs a beating
-    if len(idx) == 0:
-        releasever = '$releasever'
-    else:
-        try:
-            hdr = next(idx)
-        except StopIteration:
-            raise dnf.exceptions.Error("Error: rpmdb failed release provides. Try: rpm --rebuilddb")
-        releasever = hdr['version']
-        if is_py3bytes(releasever):
-            releasever = str(releasever, "utf-8")
-        del hdr
-    del idx
-    del ts
-    return releasever
 
 def logdir_fit(current_logdir):
     return current_logdir if dnf.util.am_i_root() else misc.getCacheDir()

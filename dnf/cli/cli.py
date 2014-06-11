@@ -40,12 +40,14 @@ import dnf.cli.commands.distrosync
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
+import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
 import dnf.cli.format
 import dnf.logging
 import dnf.plugin
 import dnf.persistor
+import dnf.rpmUtils
 import dnf.sack
 import dnf.util
 import dnf.yum.config
@@ -827,7 +829,8 @@ class Cli(object):
     def _configure_cachedir(self):
         # perform the CLI-specific cachedir tricks
         conf = self.base.conf
-        suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, conf.yumvar)
+        subst = conf.substitutions
+        suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
         cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
         conf.cachedir = cli_cache.cachedir
         self._system_cachedir = cli_cache.system_cachedir
@@ -1113,7 +1116,11 @@ class Cli(object):
         conf.installroot = root
         conf.read(path)
         conf.releasever = releasever
-        conf.yumvar_update_from_etc()
+        if releasever is None:
+            distroverpkg = conf.distroverpkg
+            conf.releasever = dnf.rpmUtils.detect_releasever(root, distroverpkg)
+        subst = conf.substitutions
+        subst.update_from_etc(root)
 
         if overrides is not None:
             conf.override(overrides)
@@ -1126,11 +1133,10 @@ class Cli(object):
         self.base.logging.setup_from_dnf_conf(conf)
 
         # repos are ver/arch specific so add $basearch/$releasever
-        yumvar = conf.yumvar
         conf._repos_persistdir = os.path.normpath(
             '%s/repos/%s/%s/' % (conf.persistdir,
-                                 yumvar.get('basearch', '$basearch'),
-                                 yumvar.get('releasever', '$releasever')))
+                                 subst.get('basearch', '$basearch'),
+                                 subst.get('releasever', '$releasever')))
         self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
         return conf
 
