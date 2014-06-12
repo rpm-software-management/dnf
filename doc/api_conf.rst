@@ -83,6 +83,8 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     releasever     release name of the system distribution        ``None``
     ==========     ============================================== ============
 
+    :func:`dnf.rpm.detect_releasever` can be used to detect the ``releasever`` value.
+
   .. attribute:: tsflags
 
     List of strings adding extra flags for the RPM transaction.

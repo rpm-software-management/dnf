@@ -43,7 +43,7 @@ import dnf.const
 import dnf.yum.config
 import os.path
 
-Conf = dnf.yum.config.YumConf
+Conf = dnf.yum.config.YumConf # :api
 
 class CliCache(object):
     def __init__(self, prefix, suffix):

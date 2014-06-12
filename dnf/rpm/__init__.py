@@ -26,7 +26,7 @@ import sys
 
 
 def detect_releasever(installroot):
-    """Calculate the release version for the system."""
+    """Calculate the release version for the system. :api"""
 
     ts = transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
