@@ -699,7 +699,6 @@ class YumConf(BaseConfig):
     debuglevel = IntOption(2, 0, 10) # :api
     errorlevel = IntOption(2, 0, 10)
 
-    distroverpkg = Option('redhat-release')
     installroot = Option('/') # :api
     config_file_path = Option(dnf.const.CONF_FILENAME) # :api
     plugins = BoolOption(True)
@@ -729,6 +728,9 @@ class YumConf(BaseConfig):
     @releasever.setter
     def releasever(self, val):
         # :api
+        if val is None:
+            self.substitutions.pop('releasever', None)
+            return
         self.substitutions['releasever'] = val
 
     recent = IntOption(7, range_min=0)

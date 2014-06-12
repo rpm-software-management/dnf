@@ -1117,8 +1117,7 @@ class Cli(object):
         conf.read(path)
         conf.releasever = releasever
         if releasever is None:
-            distroverpkg = conf.distroverpkg
-            conf.releasever = dnf.rpm.detect_releasever(root, distroverpkg)
+            conf.releasever = dnf.rpm.detect_releasever(root)
         subst = conf.substitutions
         subst.update_from_etc(root)
 
