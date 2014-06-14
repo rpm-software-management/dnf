@@ -155,7 +155,7 @@ Options
     verbose operation, show debug messages.
 
 ``--version``
-    show Yum version and exit
+    show DNF version and exit
 
 ``-y, --assumeyes``
     answer yes for all questions
