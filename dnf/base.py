@@ -1885,7 +1885,7 @@ class Base(object):
                 rawkey = fh.read()
 
         except IOError as e:
-            raise dnf.exceptions.Error(_('GPG key retrieval failed: ') %
+            raise dnf.exceptions.Error(_('GPG key retrieval failed: %s') %
                                        ucd(e))
 
         # check for a .asc file accompanying it - that's our gpg sig on the key
