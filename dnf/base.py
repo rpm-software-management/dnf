@@ -581,7 +581,7 @@ class Base(object):
                 print(_('ERROR with transaction check vs depsolve:'))
 
             for msg in msgs:
-                print(i18n.to_utf8(msg))
+                print(msg)
 
             if rpmlib_only:
                 return 1, [_('RPM needs to be upgraded')]
