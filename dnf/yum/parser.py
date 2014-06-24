@@ -21,7 +21,7 @@ import re
 try:
     import urlparse
 except ImportError:
-	import urllib.parse as urlparse
+    import urllib.parse as urlparse
 import os.path
 
 import dnf.exceptions
