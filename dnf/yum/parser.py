@@ -25,6 +25,7 @@ except ImportError:
 import os.path
 
 import dnf.exceptions
+import dnf.i18n
 import dnf.util
 
 _KEYCRE = re.compile(r"\$(\w+)")
@@ -166,6 +167,7 @@ class ConfigPreProcessor(object):
         # if the section is prefixed by a space then it is breaks iniparser/configparser
         # so fix it
         broken_sec_match = re.match(r'\s+\[(?P<section>.*)\]', line)
+        line = dnf.i18n.ucd(line)
         if broken_sec_match:
             line = line.lstrip()
         # at this point we have a line from the topmost file on the stack

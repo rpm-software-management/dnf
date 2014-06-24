@@ -17,6 +17,7 @@
 from __future__ import unicode_literals
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
+from dnf.pycomp import unicode
 from time import time
 
 import sys
@@ -65,7 +66,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
 
     def progress(self, payload, done):
         now = time()
-        text = str(payload)
+        text = unicode(payload)
         total = int(payload.download_size)
         done = int(done)
 
@@ -124,7 +125,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
 
     def end(self, payload, status, err_msg):
         start = now = time()
-        text = str(payload)
+        text = unicode(payload)
         size = int(payload.download_size)
 
         # update state

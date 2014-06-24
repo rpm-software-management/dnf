@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import ucd, _
+from dnf.pycomp import PY3
 
 import dnf.callback
 import dnf.conf.substitutions
@@ -339,6 +340,12 @@ class RPMPayload(PackagePayload):
 class MDPayload(dnf.callback.Payload):
 
     def __str__(self):
+        if PY3:
+            return self._text
+        else:
+            return self._text.encode('utf-8')
+
+    def __unicode__(self):
         return self._text
 
     def _progress_cb(self, cbdata, total, done):
