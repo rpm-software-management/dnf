@@ -30,6 +30,7 @@ import dnf.pycomp
 import itertools
 import librepo
 import os
+import pwd
 import shutil
 import subprocess
 import tempfile
@@ -71,6 +72,9 @@ def file_age(fn):
 
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
+
+def get_effective_login():
+    return pwd.getpwuid(os.geteuid())[0]
 
 def group_by_filter(fn, iterable):
     def splitter(acc, item):

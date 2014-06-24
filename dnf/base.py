@@ -711,7 +711,10 @@ class Base(object):
                 self.logger.debug(errstring)
                 return_code = 1
             else:
-                self.logger.critical(_("Transaction couldn't start (no root?)"))
+                login = dnf.util.get_effective_login()
+                msg = _("Failed to obtain the transaction lock "
+                        "(logged in as: %s).")
+                self.logger.critical(msg % login)
                 msg = _('Could not run transaction.')
                 raise dnf.exceptions.YumRPMTransError(msg=msg, errors=[])
         else:
