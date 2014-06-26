@@ -31,7 +31,7 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API and plugin interface.
+`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below.
 
 Available commands are:
 
@@ -645,5 +645,6 @@ See Also
 ========
 
 * :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
+* :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
 * `DNF`_ project homepage (https://github.com/akozumpl/dnf/)
 * `Yum`_ project homepage (http://yum.baseurl.org/)
