@@ -32,8 +32,10 @@ import os
 
 logger = logging.getLogger("dnf")
 
+
 class Package(hawkey.Package):
-    """ Represents a package. """
+    """ Represents a package. #:api """
+
     def __init__(self, initobject, base):
         super(Package, self).__init__(initobject)
         self.base = base

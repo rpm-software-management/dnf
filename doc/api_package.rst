@@ -20,3 +20,37 @@
 =========
 
 .. class:: dnf.package.Package
+
+  Represents a unit of software management, typically corresponds to an RPM file.
+
+  .. attribute:: arch
+
+    Architecture of the package (string).
+
+  .. attribute:: buildtime
+
+    Seconds since the epoch when the package was built (integer).
+
+  .. attribute:: epoch
+
+    Epoch of the package (integer)
+
+  .. attribute:: installtime
+
+    Seconds since the epoch when the package was installed (integer).
+
+  .. attribute:: name
+
+    The name of the package (string).
+
+  .. attribute:: release
+
+    Release of the package (string).
+
+  .. attribute:: sourcerpm
+
+    Full name of the SRPM used to build this package (string).
+
+  .. attribute:: version
+
+    Version of the package (string).
