@@ -71,6 +71,7 @@ def ex_IOError(e):
 
 
 def ex_Error(e):
+    logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
     if e.value is not None:
         logger.critical(_('Error: %s'), ucd(e))
     return 1
@@ -87,6 +88,8 @@ def main(args):
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
         return 1
+    except dnf.exceptions.Error as e:
+        return ex_Error(e)
     except IOError as e:
         return ex_IOError(e)
     except KeyboardInterrupt as e:
@@ -112,8 +115,6 @@ def _main(base, args):
         cli.check()
     except dnf.exceptions.LockError:
         raise
-    except dnf.exceptions.Error as e:
-        return ex_Error(e)
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
@@ -132,8 +133,6 @@ def _main(base, args):
         cli.run()
     except dnf.exceptions.LockError:
         raise
-    except dnf.exceptions.Error as e:
-        return ex_Error(e)
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
@@ -149,12 +148,7 @@ def resolving(cli, base):
     """Perform the depsolve, download and RPM transaction stage."""
 
     if base.transaction is None:
-        try:
-            got_transaction = base.resolve(cli.demands.allow_erasing)
-        except dnf.exceptions.Error as e:
-            logger.critical(_('Error: %s'), e)
-            return 1
-
+        got_transaction = base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
     else:
         got_transaction = len(base.transaction)
@@ -171,8 +165,6 @@ def resolving(cli, base):
         raise
     except dnf.exceptions.TransactionCheckError as err:
         return_code, resultmsgs = 1, cli.command.get_error_output(err)
-    except dnf.exceptions.Error as e:
-        return ex_Error(e)
     except IOError as e:
         return ex_IOError(e)
 
