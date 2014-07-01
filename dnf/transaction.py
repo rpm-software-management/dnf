@@ -32,6 +32,8 @@ UPGRADE   = 5
 
 
 class TransactionItem(object):
+    # :api
+
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
 
     def __init__(self, op_type, installed=None, erased=None, obsoleted=None,
@@ -84,6 +86,7 @@ class TransactionItem(object):
         return self._HISTORY_INSTALLED_STATES[self.op_type]
 
     def installs(self):
+        # :api
         return [] if self.installed is None else [self.installed]
 
     @property
@@ -104,8 +107,10 @@ class TransactionItem(object):
         return self.reason
 
     def removes(self):
+        # :api
         l =  [] if self.erased is None else [self.erased]
         return l + self.obsoleted
+
 
 class Transaction(object):
     # :api
@@ -115,6 +120,7 @@ class Transaction(object):
         self._tsis = []
 
     def __iter__(self):
+        #: api
         return iter(self._tsis)
 
     def __len__(self):

@@ -181,6 +181,7 @@ class Base(object):
 
     @property
     def transaction(self):
+        # :api
         return self._transaction
 
     def activate_persistor(self):
