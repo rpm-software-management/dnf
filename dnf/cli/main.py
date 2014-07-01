@@ -158,6 +158,8 @@ def resolving(cli, base):
         logger.info(_('Nothing to do.'))
         return 0
 
+    base.plugins.run_resolved()
+
     # Run the transaction
     try:
         return_code, resultmsgs = base.do_transaction()
