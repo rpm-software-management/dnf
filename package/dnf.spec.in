@@ -103,6 +103,7 @@ popd
 %{_bindir}/dnf
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
+%config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
@@ -119,6 +120,7 @@ popd
 %{_bindir}/dnf
 %dir %{confdir}
 %config(noreplace) %{confdir}/dnf.conf
+%config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
