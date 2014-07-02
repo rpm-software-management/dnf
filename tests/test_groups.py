@@ -44,7 +44,7 @@ class EmptyPersistorTest(support.ResultTestCase):
         self.assertGreater(self.base._add_comps_trans(trans), 0)
         self.assertIn('trampoline', self.base._goal.group_members)
         (installed, removed) = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+        self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
         self.assertEmpty(removed)
 
         trans = dnf.comps.TransactionBunch()
@@ -79,7 +79,7 @@ class PresetPersistorTest(support.ResultTestCase):
             warnings.simplefilter("ignore")
             self.assertEqual(self.base.select_group(grp), 1)
         inst, removed = self.installed_removed(self.base)
-        self.assertItemsEqual([pkg.name for pkg in inst], ("trampoline",))
+        self.assertCountEqual([pkg.name for pkg in inst], ("trampoline",))
         self.assertLength(removed, 0)
 
     def test_group_install(self):
@@ -102,7 +102,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertGreater(self.base.group_remove(grp), 0)
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
-        self.assertItemsEqual([pkg.name for pkg in removed], ('pepper',))
+        self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
         self.assertFalse(p_grp.installed)
 
 
@@ -126,11 +126,11 @@ class EnvironmentInstallTest(support.ResultTestCase):
         env = comps.environment_by_pattern("sugar-desktop-environment")
         self.base.environment_install(env, ('mandatory',))
         installed, _ = self.installed_removed(self.base)
-        self.assertItemsEqual(map(operator.attrgetter('name'), installed),
+        self.assertCountEqual(map(operator.attrgetter('name'), installed),
                               ('trampoline',))
 
         p_env = self.prst.environment('sugar-desktop-environment')
-        self.assertItemsEqual(p_env.full_list, ('somerset', 'Peppers'))
+        self.assertCountEqual(p_env.full_list, ('somerset', 'Peppers'))
         self.assertTrue(p_env.installed)
 
         peppers = self.prst.group('Peppers')

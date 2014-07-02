@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.pycomp import PY3
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from tests.support import mock
 
 import unittest
@@ -32,12 +32,12 @@ UC_TEXT_OSERROR  = u'Soubor již existuje' # 'File already exists'
 STR_TEXT_OSERROR = 'Soubor již existuje'
 
 @mock.patch('locale.setlocale')
-class TestLocale(PycompTestCase):
+class TestLocale(TestCase):
     def test_setup_locale(self, mock_setlocale):
         dnf.i18n.setup_locale()
         self.assertTrue(2 <= mock_setlocale.call_count <= 3)
 
-class TestStdout(PycompTestCase):
+class TestStdout(TestCase):
     def test_setup_stdout(self):
         # No stdout output can be seen when sys.stdout is patched, debug msgs,
         # etc. included.
@@ -65,7 +65,7 @@ class TestStdout(PycompTestCase):
         self.assertEqual(output, u'\u0160\xed\u0159ka' if PY3 else b'\xa9\xed\xf8ka')
         self.assertEqual(len(output), len(UC_TEXT))
 
-class TestInput(PycompTestCase):
+class TestInput(TestCase):
     @unittest.skipIf(PY3, "builtin input accepts unicode and bytes")
     def test_assumption(self):
         """ Test that raw_input() always fails on a unicode string with accented
@@ -91,7 +91,7 @@ class TestInput(PycompTestCase):
 
         self.assertRaises(TypeError, dnf.i18n.ucd_input, b"string")
 
-class TestConversion(PycompTestCase):
+class TestConversion(TestCase):
     @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
     def test_ucd(self, _unused):
         s = UC_TEXT.encode('utf8')

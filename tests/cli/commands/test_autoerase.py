@@ -37,4 +37,4 @@ class AutoEraseCommandTest(support.ResultTestCase):
         inst, rem = self.installed_removed(base)
         self.assertEmpty(inst)
         removed = ('librita-1-1.i686', 'librita-1-1.x86_64', 'pepper-20-0.x86_64')
-        self.assertItemsEqual((map(str, rem)), removed)
+        self.assertCountEqual((map(str, rem)), removed)

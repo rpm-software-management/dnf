@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from functools import reduce
-from sys import version_info as python_version
 
 import contextlib
 import dnf
@@ -454,17 +453,15 @@ class ObjectMatcher(object):
 
         return '%s(%s)' % (type(self).__name__, ", ".join(args_strs))
 
-# test cases
 
-if python_version.major < 3:
-    class PycompTestCase(unittest.TestCase):
-        pass
-else:
-    class PycompTestCase(unittest.TestCase):
-        def assertItemsEqual(self, item1, item2):
-            super().assertCountEqual(item1, item2)
+# test cases:
 
-class TestCase(PycompTestCase):
+
+class TestCase(unittest.TestCase):
+
+    if not dnf.pycomp.PY3:
+        assertCountEqual = unittest.TestCase.assertItemsEqual
+
     def assertEmpty(self, collection):
         return self.assertEqual(len(collection), 0)
 
@@ -485,6 +482,7 @@ class TestCase(PycompTestCase):
         """Test that a traceback ending with line *end* is in the *string*."""
         traces = (match.group() for match in TRACEBACK_RE.finditer(string))
         self.assertTrue(any(trace.endswith(end) for trace in traces))
+
 
 class ResultTestCase(TestCase):
 
@@ -510,7 +508,7 @@ class ResultTestCase(TestCase):
         INSTALLed.
         """
 
-        self.assertItemsEqual(self._get_installed(base), pkgs)
+        self.assertCountEqual(self._get_installed(base), pkgs)
 
     def installed_removed(self, base):
         try:

@@ -18,12 +18,12 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from tests.support import mock
 
 import dnf.selector
 
-class SelectorTest(PycompTestCase):
+class SelectorTest(TestCase):
     def setUp(self):
         self.sack = support.mock_sack()
 

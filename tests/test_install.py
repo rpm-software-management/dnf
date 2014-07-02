@@ -51,7 +51,7 @@ class InstallMultilib(support.ResultTestCase):
     def test_install_by_filename(self):
         self.base.install("/usr/lib64/liblot*")
         inst, _ = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, inst), ['lotus-3-16.x86_64'])
+        self.assertCountEqual(map(str, inst), ['lotus-3-16.x86_64'])
 
     def test_install_nevra(self):
         self.base.install("lotus-3-16.i686")
@@ -152,19 +152,19 @@ class MultilibBest(support.ResultTestCase):
     def test_install_by_filename_glob(self):
         self.base.install("/*/be/there")
         (installed, _) = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+        self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
 
         self.base.reset(goal=True)
         self.base.install("*/there")
         (installed, _) = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+        self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
 
     def test_install_glob(self):
         self.base.install("mrkite*")
         q = self.base.sack.query().available().filter(name="mrkite*")
         new_set = self.installed + q.run()
         installed, removed = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, installed),
+        self.assertCountEqual(map(str, installed),
                               ['mrkite-2-0.x86_64',
                                'mrkite-k-h-1-1.x86_64',
                                'trampoline-2.1-1.noarch'])
@@ -172,7 +172,7 @@ class MultilibBest(support.ResultTestCase):
     def test_install_glob_arch(self):
         self.base.install("lotus.*6*")
         installed, removed = self.installed_removed(self.base)
-        self.assertItemsEqual(map(str, installed),
+        self.assertCountEqual(map(str, installed),
                               ['lotus-3-17.i686',
                                'lotus-3-17.x86_64'])
 

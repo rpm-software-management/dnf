@@ -19,7 +19,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from argparse import Namespace
 from tests import support
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from tests.support import mock
 
 import dnf.cli.cli
@@ -38,7 +38,7 @@ VERSIONS_OUTPUT="""\
   Built    :  at 1970-01-01 00:00
 """
 
-class VersionStringTest(PycompTestCase):
+class VersionStringTest(TestCase):
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_print_versions(self):
         base = support.MockBase()
@@ -120,7 +120,7 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(id_or_offset, 1)
 
 @mock.patch('dnf.cli.cli.Cli.read_conf_file')
-class CliTest(PycompTestCase):
+class CliTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.base.output = support.MockOutput()
@@ -175,7 +175,7 @@ class CliTest(PycompTestCase):
                          dnf.repo.SYNC_ONLY_CACHE)
 
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
-class ConfigureTest(PycompTestCase):
+class ConfigureTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.base._conf = dnf.conf.Conf()

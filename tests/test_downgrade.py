@@ -36,8 +36,8 @@ class DowngradeTest(support.ResultTestCase):
             rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertGreater(cnt, 0)
         (installed, removed) = self.installed_removed(base)
-        self.assertItemsEqual(map(str, installed), ("tour-4-4.noarch", ))
-        self.assertItemsEqual(map(str, removed), ("tour-5-0.noarch", ))
+        self.assertCountEqual(map(str, installed), ("tour-4-4.noarch", ))
+        self.assertCountEqual(map(str, removed), ("tour-5-0.noarch", ))
 
     def test_downgrade(self):
         base = support.MockBase("main")
@@ -54,8 +54,8 @@ class DowngradeTest(support.ResultTestCase):
         b = support.MockBase("old_versions")
         ret = b.downgrade("tour")
         installed, removed = self.installed_removed(b)
-        self.assertItemsEqual(map(str, installed), ['tour-4.9-1.noarch'])
-        self.assertItemsEqual(map(str, removed), ['tour-5-0.noarch'])
+        self.assertCountEqual(map(str, installed), ['tour-4.9-1.noarch'])
+        self.assertCountEqual(map(str, removed), ['tour-5-0.noarch'])
 
 class DowngradeTest2(support.TestCase):
 

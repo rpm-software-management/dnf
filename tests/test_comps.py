@@ -59,11 +59,11 @@ class CompsTest(support.TestCase):
         self.assertEqual(env.desc_by_lang['de'],
 
                          u'Eine Software-Spielwiese zum Lernen des Lernens.')
-        self.assertItemsEqual((id_.name for id_ in env.group_ids),
+        self.assertCountEqual((id_.name for id_ in env.group_ids),
                               ('somerset', 'Peppers'))
-        self.assertItemsEqual((id_.default for id_ in env.group_ids),
+        self.assertCountEqual((id_.default for id_ in env.group_ids),
                               (True, False))
-        self.assertItemsEqual((id_.name for id_ in env.option_ids),
+        self.assertCountEqual((id_.name for id_ in env.option_ids),
                               ('base',))
 
         self.assertTrue(all(isinstance(grp, dnf.comps.Group)
@@ -77,7 +77,7 @@ class CompsTest(support.TestCase):
 
     def test_group_packages(self):
         g = self.comps.group_by_pattern('base')
-        self.assertItemsEqual(map(operator.attrgetter('name'), g.packages_iter()),
+        self.assertCountEqual(map(operator.attrgetter('name'), g.packages_iter()),
                               ('tour', 'pepper'))
 
     def test_iteration(self):
@@ -134,8 +134,8 @@ class TestTransactionBunch(support.TestCase):
         t2.install = {'pepper'}
         t2.upgrade = {'right'}
         t1 += t2
-        self.assertItemsEqual(t1.install, ('right', 'pepper'))
-        self.assertItemsEqual(t1.upgrade, ('tour', 'right'))
+        self.assertCountEqual(t1.install, ('right', 'pepper'))
+        self.assertCountEqual(t1.upgrade, ('tour', 'right'))
         self.assertEmpty(t1.remove)
 
 
@@ -156,8 +156,8 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         trans = self.solver.group_install(grp, dnf.comps.MANDATORY, ['right'])
         self.assertLength(trans.install, 2)
         p_grp = self.persistor.group('base')
-        self.assertItemsEqual(p_grp.full_list, ['pepper', 'tour'])
-        self.assertItemsEqual(p_grp.pkg_exclude, ['right'])
+        self.assertCountEqual(p_grp.full_list, ['pepper', 'tour'])
+        self.assertCountEqual(p_grp.pkg_exclude, ['right'])
         self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
 
     def test_removable_pkg(self):
@@ -182,7 +182,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         grp = self.comps.group_by_pattern('base')
         trans = self.solver.group_remove(grp)
         self.assertFalse(p_grp.installed)
-        self.assertItemsEqual(trans.remove, ('tour',))
+        self.assertCountEqual(trans.remove, ('tour',))
 
     def test_upgrade(self):
         # setup of the "current state"
@@ -192,10 +192,10 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
         grp = self.comps.group_by_pattern('base')
         trans = self.solver.group_upgrade(grp)
-        self.assertItemsEqual(trans.install, ('tour',))
-        self.assertItemsEqual(trans.remove, ('handerson',))
-        self.assertItemsEqual(trans.upgrade, ('pepper',))
-        self.assertItemsEqual(p_grp.full_list, ('tour', 'pepper'))
+        self.assertCountEqual(trans.install, ('tour',))
+        self.assertCountEqual(trans.remove, ('handerson',))
+        self.assertCountEqual(trans.upgrade, ('pepper',))
+        self.assertCountEqual(p_grp.full_list, ('tour', 'pepper'))
 
 
 class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
@@ -207,14 +207,14 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
     def test_install(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
-        self.assertItemsEqual(trans.install, ('pepper', 'trampoline', 'hole',
+        self.assertCountEqual(trans.install, ('pepper', 'trampoline', 'hole',
                                               'lotus'))
         sugar = self.persistor.environment('sugar-desktop-environment')
-        self.assertItemsEqual(sugar.full_list, ('Peppers', 'somerset'))
+        self.assertCountEqual(sugar.full_list, ('Peppers', 'somerset'))
         somerset = self.persistor.group('somerset')
         self.assertTrue(somerset.installed)
         self.assertEqual(somerset.pkg_types, dnf.comps.MANDATORY)
-        self.assertItemsEqual(somerset.pkg_exclude, ('lotus',))
+        self.assertCountEqual(somerset.pkg_exclude, ('lotus',))
         base = self.persistor.group('somerset')
         self.assertTrue(base.installed)
 
@@ -224,7 +224,7 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         trans = self.solver.environment_remove(env)
 
         p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertItemsEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
+        self.assertCountEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
         self.assertFalse(p_env.grp_types)
         self.assertFalse(p_env.pkg_types)
 
@@ -237,5 +237,5 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self.solver.environment_upgrade(env)
-        self.assertItemsEqual(trans.install, ('hole', 'lotus'))
+        self.assertCountEqual(trans.install, ('hole', 'lotus'))
         self.assertEmpty(trans.upgrade)

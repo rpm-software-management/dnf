@@ -18,9 +18,9 @@
 from __future__ import unicode_literals
 from dnf.rpm.connection import RpmConnection
 import inspect
-from tests.support import PycompTestCase
+from tests.support import TestCase
 
-class TestConnection(PycompTestCase):
+class TestConnection(TestCase):
     def test_sanity(self):
         rpm = RpmConnection('/')
         ts = rpm.readonly_ts

@@ -18,7 +18,7 @@
 from __future__ import unicode_literals
 from dnf.conf import CliCache
 from dnf.yum.config import Option, BaseConfig, YumConf
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from tests.support import mock
 
 import unittest
@@ -38,7 +38,7 @@ class OptionTest(unittest.TestCase):
         else:
             self.fail("option should be deleted now.")
 
-class CacheTest(PycompTestCase):
+class CacheTest(TestCase):
      @mock.patch('dnf.util.am_i_root', return_value=True)
      def test_root(self, unused_am_i_root):
          cache = CliCache('/var/lib/spinning', 'i286/20')
@@ -57,7 +57,7 @@ class CacheTest(PycompTestCase):
          self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
          self.assertEqual(fn_getcachedir.call_count, 1)
 
-class YumConfTest(PycompTestCase):
+class YumConfTest(TestCase):
     def test_bugtracker(self):
         conf = YumConf()
         self.assertEqual(conf.bugtracker_url,

@@ -50,10 +50,10 @@ class MatchCounterTest(support.TestCase):
         counter.add(pkg, 'summary', 'poignant')
         counter.add(pkg, 'url', 'humbert')
         counter.add(pkg, 'summary', 'humbert')
-        self.assertItemsEqual(counter.matched_needles(pkg),
+        self.assertCountEqual(counter.matched_needles(pkg),
                               ['humbert', 'poignant'])
-        self.assertItemsEqual(counter.matched_keys(pkg), ['url', 'summary'])
-        self.assertItemsEqual(counter.matched_haystacks(pkg), [url, summary])
+        self.assertCountEqual(counter.matched_keys(pkg), ['url', 'summary'])
+        self.assertCountEqual(counter.matched_haystacks(pkg), [url, summary])
 
     @mock.patch('dnf.match_counter.MatchCounter._eval_distance', return_value=0)
     def test_sorted(self, _):

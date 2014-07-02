@@ -22,7 +22,7 @@ from tests.support import mock
 
 import hawkey
 import binascii
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from dnf.pycomp import long
 
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
@@ -30,7 +30,7 @@ TOUR_SHA256 = binascii.unhexlify("ce77c1e5694b037b6687cf0ab812ca60431ec0b65116ab
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
-class PackageTest(PycompTestCase):
+class PackageTest(TestCase):
     def setUp(self):
         base = support.MockBase("main")
         self.sack = base.sack

@@ -155,8 +155,8 @@ class Util(support.TestCase):
     def test_partition(self):
         l = list(range(6))
         smaller, larger = dnf.util.partition(lambda i: i > 4, l)
-        self.assertItemsEqual(smaller, (0, 1, 2, 3, 4))
-        self.assertItemsEqual(larger, (5,))
+        self.assertCountEqual(smaller, (0, 1, 2, 3, 4))
+        self.assertCountEqual(larger, (5,))
 
     def test_split_by(self):
         """Test split_by with sometimes fulfilled condition."""

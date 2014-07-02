@@ -20,9 +20,9 @@ from __future__ import unicode_literals
 from tests import support
 import os.path
 import sys
-from tests.support import PycompTestCase
+from tests.support import TestCase
 
-class Sanity(PycompTestCase):
+class Sanity(TestCase):
     def test_sanity(self):
         assert(os.access(support.repo("@System.repo"), os.R_OK))
         sack = support.mock_sack()

@@ -17,9 +17,9 @@
 
 from __future__ import unicode_literals
 import dnf.yum.misc
-from tests.support import PycompTestCase
+from tests.support import TestCase
 
-class TestGenericHolder(PycompTestCase):
+class TestGenericHolder(TestCase):
     def test_merge_lists(self):
         gh = dnf.yum.misc.GenericHolder()
         gh2 = dnf.yum.misc.GenericHolder()

@@ -35,7 +35,7 @@ class SearchCountedTest(support.TestCase):
         haystacks = set()
         for pkg in counter:
             haystacks.update(counter.matched_haystacks(pkg))
-        self.assertItemsEqual(haystacks, ["It's an invitation.",
+        self.assertCountEqual(haystacks, ["It's an invitation.",
                                           "Make a reservation."])
 
     def test_search_counted_glob(self):

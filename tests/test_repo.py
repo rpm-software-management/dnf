@@ -89,7 +89,7 @@ class HandleTest(support.TestCase):
     def test_substs(self):
         subst_dct = {'version': '69'}
         h = dnf.repo._Handle.new_local(subst_dct, False, 1, '/')
-        self.assertItemsEqual(h.varsub, [('version', '69'),])
+        self.assertCountEqual(h.varsub, [('version', '69'),])
 
 class MetadataTest(support.TestCase):
     def setUp(self):

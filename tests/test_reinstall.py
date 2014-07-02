@@ -89,7 +89,7 @@ class Reinstall(support.ResultTestCase):
             self.base.reinstall('hole')
 
         self.assertEqual(ctx.exception.pkg_spec, 'hole')
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ctx.exception.packages,
             dnf.subject.Subject('hole').get_best_query(self.sack).installed())
         self.assertResult(self.base, self.sack.query().installed())

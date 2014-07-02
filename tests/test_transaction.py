@@ -49,19 +49,19 @@ class TransactionItemTest(tests.support.TestCase):
                                               'old', ['o1', 'o2', 'o3'])
         self.assertEqual(tsi.installed, 'new')
         self.assertEqual(tsi.erased, 'old')
-        self.assertItemsEqual(tsi.obsoleted, ('o1', 'o2', 'o3'))
+        self.assertCountEqual(tsi.obsoleted, ('o1', 'o2', 'o3'))
 
         tsi = dnf.transaction.TransactionItem(dnf.transaction.ERASE,
                                               erased='old')
         self.assertEqual(tsi.installed, None)
         self.assertEqual(tsi.erased, 'old')
-        self.assertItemsEqual(tsi.obsoleted, ())
+        self.assertCountEqual(tsi.obsoleted, ())
 
     def test_history_iterator_reinstall(self):
         """Test history_iterator with the reinstall op_type."""
         tsi = dnf.transaction.TransactionItem(dnf.transaction.REINSTALL, 'new',
                                               'old', ['o1', 'o2', 'o3'])
-        self.assertItemsEqual(tsi.history_iterator(),
+        self.assertCountEqual(tsi.history_iterator(),
                               [('new', 'Reinstall'), ('old', 'Reinstalled'),
                                ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
                                ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
@@ -70,7 +70,7 @@ class TransactionItemTest(tests.support.TestCase):
         """Test history_iterator with the upgrade op_type."""
         tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
                                               'old', ['o1', 'o2', 'o3'])
-        self.assertItemsEqual(tsi.history_iterator(),
+        self.assertCountEqual(tsi.history_iterator(),
                               [('new', 'Update'), ('old', 'Updated'),
                                ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
                                ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
@@ -95,7 +95,7 @@ class TransactionItemTest(tests.support.TestCase):
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
                                               'old', ['o1', 'o2', 'o3'])
-        self.assertItemsEqual(tsi.removes(), ('old', 'o1', 'o2', 'o3'))
+        self.assertCountEqual(tsi.removes(), ('old', 'o1', 'o2', 'o3'))
 
 class TransactionTest(tests.support.TestCase):
     def setUp(self):
@@ -118,8 +118,8 @@ class TransactionTest(tests.support.TestCase):
         self.assertLength(self.ts, 4)
 
     def test_sets(self):
-        self.assertItemsEqual(self.ts.install_set, ('i1', 'u1', 'u2', 'd1'))
-        self.assertItemsEqual(self.ts.remove_set,
+        self.assertCountEqual(self.ts.install_set, ('i1', 'u1', 'u2', 'd1'))
+        self.assertCountEqual(self.ts.remove_set,
                               ('o1', 'o2', 'o3', 'o4', 'r1', 'r2', 'r3'))
 
     def test_total_package_count(self):

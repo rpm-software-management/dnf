@@ -52,7 +52,7 @@ class Remove(support.ResultTestCase):
         pepper = self.base.sack.query().installed().filter(name="pepper")
         (installed, removed) = self.installed_removed(self.base)
         self.assertLength(installed, 0)
-        self.assertItemsEqual(removed, pepper.run())
+        self.assertCountEqual(removed, pepper.run())
 
     def test_remove_glob(self):
         """ Test that weird input combinations with globs work. """

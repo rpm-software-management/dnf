@@ -19,7 +19,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
-from tests.support import PycompTestCase
+from tests.support import TestCase
 
 import binascii
 import dnf
@@ -51,7 +51,7 @@ class BaseTest(support.TestCase):
         # test:
         base.push_userinstalled(goal)
         calls = [c[0][0].name for c in goal.userinstalled.call_args_list]
-        self.assertItemsEqual(calls, ('hole', 'pepper'))
+        self.assertCountEqual(calls, ('hole', 'pepper'))
 
     def test_reset(self):
         base = support.MockBase('main')
@@ -120,7 +120,7 @@ class BaseTest(support.TestCase):
         num = base._translate_comps_pkg_types(('mandatory', 'optional'))
         self.assertEqual(num, 12)
 
-class MockBaseTest(PycompTestCase):
+class MockBaseTest(TestCase):
     """Test the Base methods that need a Sack."""
 
     def setUp(self):
@@ -150,7 +150,7 @@ def mock_sack_fn():
 def ret_pkgid(self):
     return self.name
 
-class VerifyTransactionTest(PycompTestCase):
+class VerifyTransactionTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.base._transaction = dnf.transaction.Transaction()
@@ -188,7 +188,7 @@ class InstallReasonTest(support.ResultTestCase):
         self.base.resolve()
         new_pkgs = self.base._transaction.get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
-        self.assertItemsEqual([("mrkite", "user"), ("trampoline", "dep")],
+        self.assertCountEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
 
 class InstalledMatchingTest(support.ResultTestCase):
@@ -200,16 +200,16 @@ class InstalledMatchingTest(support.ResultTestCase):
         subj = dnf.subject.Subject("pepper")
         query = subj.get_best_query(self.sack)
         inst, avail = self.base._query_matches_installed(query)
-        self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
-        self.assertItemsEqual(['pepper-20-0.src'], map(str, avail))
+        self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
+        self.assertCountEqual(['pepper-20-0.src'], map(str, avail))
 
     def test_selector_matching(self):
         subj = dnf.subject.Subject("pepper")
         sltr = subj.get_best_selector(self.sack)
         inst = self.base._sltr_matches_installed(sltr)
-        self.assertItemsEqual(['pepper-20-0.x86_64'], map(str, inst))
+        self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
 
-class CleanTest(PycompTestCase):
+class CleanTest(TestCase):
     def test_clean_binary_cache(self):
         base = support.MockBase("main")
         with mock.patch('os.access', return_value=True) as access,\
@@ -262,6 +262,6 @@ class Goal2TransactionTest(support.TestCase):
         ts = base._goal2transaction(goal)
         self.assertLength(ts._tsis, 1)
         tsi = ts._tsis[0]
-        self.assertItemsEqual(map(str, tsi.installs()), ('hole-2-1.x86_64',))
-        self.assertItemsEqual(map(str, tsi.removes()),
+        self.assertCountEqual(map(str, tsi.installs()), ('hole-2-1.x86_64',))
+        self.assertCountEqual(map(str, tsi.removes()),
                               ('hole-1-1.x86_64', 'tour-5-0.noarch'))

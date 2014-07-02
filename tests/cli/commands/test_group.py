@@ -73,9 +73,9 @@ class CompsQueryTest(support.TestCase):
         q = group.CompsQuery(self.comps, self.prst, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
-        self.assertItemsEqual(names(res.environments),
+        self.assertCountEqual(names(res.environments),
                               ('Sugar Desktop Environment',))
-        self.assertItemsEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
+        self.assertCountEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
 
     def test_err(self):
         q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.ENVIRONMENTS,
@@ -88,4 +88,4 @@ class CompsQueryTest(support.TestCase):
                              group.CompsQuery.INSTALLED)
         res = q.get('somerset')
         self.assertEmpty(res.environments)
-        self.assertItemsEqual(names(res.groups), ('Solid Ground',))
+        self.assertCountEqual(names(res.groups), ('Solid Ground',))

@@ -29,7 +29,7 @@ class List(support.TestCase):
         lists = base.doPackageLists(reponame=reponame)
 
         pkgs = itertools.chain.from_iterable(lists.all_lists().values())
-        self.assertItemsEqual({pkg.reponame for pkg in pkgs}, {reponame})
+        self.assertCountEqual({pkg.reponame for pkg in pkgs}, {reponame})
 
         assert len(set(pkg.reponame for pkg in base.sack.query())) > 1, \
                ('the base must contain packages from multiple repos, '
@@ -50,7 +50,7 @@ class List(support.TestCase):
 
         lists = base.doPackageLists('installed', reponame='main')
 
-        self.assertItemsEqual(lists.installed, expected)
+        self.assertCountEqual(lists.installed, expected)
 
     def test_list_updates(self):
         base = support.MockBase("updates", "main")
@@ -92,10 +92,10 @@ class TestListAllRepos(support.TestCase):
 
     def test_list_available(self):
         ypl = self.base.doPackageLists('available', ['hole'], showdups=False)
-        self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
+        self.assertCountEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64'))
 
         ypl = self.base.doPackageLists('available', ['hole'], showdups=True)
-        self.assertItemsEqual(map(str, ypl.available), ('hole-2-1.i686',
+        self.assertCountEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64',
                                                         'hole-1-2.x86_64'))

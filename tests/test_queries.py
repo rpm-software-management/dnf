@@ -20,7 +20,7 @@ from __future__ import unicode_literals
 from tests import support
 import dnf.query
 import dnf.subject
-from tests.support import PycompTestCase
+from tests.support import TestCase
 
 class QueriesTest(support.TestCase):
     def test_duplicities(self):
@@ -80,7 +80,7 @@ class SubjectTest(support.TestCase):
 
     def test_best_selector_for_version(self):
         sltr = dnf.subject.Subject("hole-2").get_best_selector(self.sack)
-        self.assertItemsEqual(map(str, sltr.matches()),
+        self.assertCountEqual(map(str, sltr.matches()),
                               ['hole-2-1.x86_64', 'hole-2-1.i686'])
 
     def test_with_confusing_dashes(self):
@@ -90,11 +90,11 @@ class SubjectTest(support.TestCase):
             get_best_selector(self.sack)
         self.assertLength(sltr.matches(), 1)
 
-class DictsTest(PycompTestCase):
+class DictsTest(TestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
         pkgs = sack.query().filter(name="lotus")
         dct = dnf.query.per_nevra_dict(pkgs)
-        self.assertItemsEqual(dct.keys(),
+        self.assertCountEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
-        self.assertItemsEqual(dct.values(), pkgs)
+        self.assertCountEqual(dct.values(), pkgs)

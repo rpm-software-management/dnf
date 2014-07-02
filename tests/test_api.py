@@ -17,10 +17,10 @@
 
 from __future__ import unicode_literals
 from dnf.pycomp import unicode
-from tests.support import PycompTestCase
+from tests.support import TestCase
 import dnf
 
-class APITest(PycompTestCase):
+class APITest(TestCase):
     def test_base(self):
         self.assertIsInstance(dnf.Base, type)
 

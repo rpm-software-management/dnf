@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
-from tests.support import PycompTestCase
+from tests.support import TestCase
 from tests.support import mock
 
 import dnf.history
@@ -33,7 +33,7 @@ class TestedHistory(dnf.yum.history.YumHistory):
     def _create_db_file(self):
         return None
 
-class History(PycompTestCase):
+class History(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.sack = self.base.sack
@@ -156,7 +156,7 @@ class HistoryWrapperTest(support.TestCase):
         with self._create_wrapper(yum_history) as history:
             result_ops = history.transaction_nevra_ops(1)
 
-        self.assertItemsEqual(result_ops, expected_ops)
+        self.assertCountEqual(result_ops, expected_ops)
 
 class NEVRAOperationsTest(support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
@@ -167,7 +167,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64',))
         ops.add('Erase', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Erase', 'lotus-0:3-16.x86_64', None, set()),))
 
@@ -195,7 +195,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Erase', 'tour-0:4.6-1.noarch')
         ops.add('Install', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch', set()),))
 
@@ -205,7 +205,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Install', 'lotus-0:3-16.x86_64')
         ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64',))
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Install', 'tour-0:4.6-1.noarch', None, set()),))
 
@@ -215,7 +215,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'))
         ops.add('Install', 'pepper-0:20-0.x86_64', obsoleted_nevras=('lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'))
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Install', 'tour-0:4.6-1.noarch', None, {'lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'}),
              ('Install', 'pepper-0:20-0.x86_64', None, {'lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'})))
@@ -235,7 +235,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Install', 'tour-0:4.6-1.noarch')
         ops.add('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Install', 'tour-0:4.6-1.noarch', None, set()),))
 
@@ -254,7 +254,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.8-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),))
 
@@ -265,7 +265,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Install', 'tour-0:4.6-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),))
 
@@ -275,7 +275,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Erase', 'tour-0:4.8-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Reinstall', 'tour-0:4.8-1.noarch', 'tour-0:4.8-1.noarch', set()),
              ('Erase', 'tour-0:4.6-1.noarch', None, set())))
@@ -286,7 +286,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.9-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Erase', 'tour-0:4.9-1.noarch', None, set()),
              ('Install', 'tour-0:4.8-1.noarch', None, set())))
@@ -306,7 +306,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Reinstall', 'tour-0:4.6-1.noarch', 'tour-0:4.6-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch', set()),))
 
@@ -316,7 +316,7 @@ class NEVRAOperationsTest(support.TestCase):
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
         ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
 
-        self.assertItemsEqual(
+        self.assertCountEqual(
             ops,
             (('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.6-1.noarch', set()),))
 

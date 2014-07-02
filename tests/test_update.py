@@ -87,8 +87,8 @@ class Update(support.ResultTestCase):
         base = support.MockBase("main", "updates")
         base.upgrade("hole")
         installed, removed = self.installed_removed(base)
-        self.assertItemsEqual(map(str, installed), ['hole-2-1.x86_64'])
-        self.assertItemsEqual(map(str, removed),
+        self.assertCountEqual(map(str, installed), ['hole-2-1.x86_64'])
+        self.assertCountEqual(map(str, removed),
                               ['hole-1-1.x86_64', 'tour-5-0.noarch'])
 
     def test_upgrade_reponame(self):
@@ -105,7 +105,7 @@ class Update(support.ResultTestCase):
         self.assertIn(
             dnf.util.first(installed),
             base.sack.query().upgrades().filter(name='pepper'))
-        self.assertItemsEqual(
+        self.assertCountEqual(
             removed,
             base.sack.query().installed().filter(name='pepper'))
         assert dnf.subject.Subject('*e*').get_best_query(base.sack).upgrades().filter(name__neq='pepper', reponame__neq='broken_deps'), \
