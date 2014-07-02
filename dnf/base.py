@@ -1397,47 +1397,6 @@ class Base(object):
         trans = solver.group_upgrade(grp)
         return self._add_comps_trans(trans)
 
-    def select_group(self, group, pkg_types=const.GROUP_PACKAGE_TYPES):
-        """Mark all the packages in the given group to be installed. :api
-
-        :param group: the group containing the packages to mark for installation
-        :return: number of transaction members added to the transaction set
-
-        """
-
-        # :deprecated in 0.4.18, eligible for dropping after 2014-06-20 AND no
-        # sooner than in 0.4.21
-        msg = "dnf.Base.select_group() is deprecated. Use group_install()."
-        dnf.logging.depr(msg)
-
-        if group.selected:
-            return 0
-        group.selected = True
-
-        pkgs = []
-        if 'mandatory' in pkg_types:
-            pkgs.extend(group.mandatory_packages)
-        if 'default' in pkg_types:
-            pkgs.extend(group.default_packages)
-        if 'optional' in pkg_types:
-            pkgs.extend(group.optional_packages)
-
-        inst_set = set([pkg.name for pkg in self.sack.query().installed()])
-        adding_msg = _('Adding package %s from group %s')
-        cnt = 0
-        for pkg in pkgs:
-            self.logger.debug(adding_msg % (pkg.name, group.id))
-            if pkg.name in inst_set:
-                continue
-            inst_set.add(pkg.name)
-            current_cnt = self.install_groupie(pkg.name, inst_set)
-            cnt += current_cnt
-
-        if cnt == 0:
-            msg = _('Warning: Group %s does not have any packages.')
-            self.logger.warning(msg % group.id)
-        return cnt
-
     def gpgKeyCheck(self):
         """Checks for the presence of GPG keys in the rpmdb.
 

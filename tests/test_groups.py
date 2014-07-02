@@ -72,16 +72,6 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(peppers.installed)
         self.assertFalse(somerset.installed)
 
-    def test_install(self):
-        comps = self.base.comps
-        grp = dnf.util.first(comps.groups_by_pattern("Solid Ground"))
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            self.assertEqual(self.base.select_group(grp), 1)
-        inst, removed = self.installed_removed(self.base)
-        self.assertCountEqual([pkg.name for pkg in inst], ("trampoline",))
-        self.assertLength(removed, 0)
-
     def test_group_install(self):
         prst = self.base.group_persistor
         grp = self.base.comps.group_by_pattern('Base')
