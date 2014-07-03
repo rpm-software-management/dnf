@@ -82,6 +82,8 @@ one main section. The repository sections define the configuration for each
     Number of installonly packages allowed to be installed
     concurrently. Defaults to 3.
 
+.. _ip-resolve-label:
+
 ``ip_resolve``
     IP address type
 

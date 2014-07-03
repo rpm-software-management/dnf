@@ -764,7 +764,7 @@ We have been plagued with many crashes related to Unicode and encodings since th
 
 There's more: improvement in startup time, `extended globbing semantics for input arguments <https://bugzilla.redhat.com/show_bug.cgi?id=1083679>`_ and `better search relevance sorting <https://bugzilla.redhat.com/show_bug.cgi?id=1093888>`_.
 
-Bugs fixed in 0.5.2
+Bugs fixed in 0.5.2:
 
 * :rhbug:`963345`
 * :rhbug:`1073457`
@@ -777,3 +777,48 @@ Bugs fixed in 0.5.2
 * :rhbug:`1095580`
 * :rhbug:`1095861`
 * :rhbug:`1096506`
+
+===================
+0.5.3 Release Notes
+===================
+
+A set of bugfixes related to i18n and Unicode handling. There is a ``-4/-6`` switch and a corresponding :ref:`ip_resolve <ip-resolve-label>` configuration option (both known from Yum) to force DNS resolving of hosts to IPv4 or IPv6 addresses.
+
+0.5.3 comes with several extensions and clarifications in the API: notably :class:`~.dnf.transaction.Transaction` is introspectible now, :class:`Query.filter <dnf.query.Query.filter>` is more useful with new types of arguments and we've hopefully shed more light on how a client is expected to setup the configuration :attr:`~dnf.conf.Conf.substitutions`.
+
+Finally, plugin authors can now use a new :meth:`~dnf.Plugin.resolved` hook.
+
+API changes in 0.5.3:
+
+* extended description given for :meth:`dnf.Base.fill_sack`
+* :meth:`dnf.Base.select_group` has been dropped as announced in `0.4.18 Release Notes`_
+
+API additions in 0.5.3:
+
+* :attr:`dnf.conf.Conf.substitutions`
+* :attr:`dnf.package.Package.arch`
+* :attr:`dnf.package.Package.buildtime`
+* :attr:`dnf.package.Package.epoch`
+* :attr:`dnf.package.Package.installtime`
+* :attr:`dnf.package.Package.name`
+* :attr:`dnf.package.Package.release`
+* :attr:`dnf.package.Package.sourcerpm`
+* :attr:`dnf.package.Package.version`
+* :meth:`dnf.Plugin.resolved`
+* :meth:`dnf.query.Query.filter` accepts suffixes for its argument keys now which change the filter semantics.
+* :mod:`dnf.rpm`
+* :class:`dnf.transaction.TransactionItem`
+* :class:`dnf.transaction.Transaction` is iterable now.
+
+Bugs fixed in 0.5.3:
+
+* :rhbug:`1047049`
+* :rhbug:`1067156`
+* :rhbug:`1093420`
+* :rhbug:`1104757`
+* :rhbug:`1105009`
+* :rhbug:`1110800`
+* :rhbug:`1111569`
+* :rhbug:`1111997`
+* :rhbug:`1112669`
+* :rhbug:`1112704`

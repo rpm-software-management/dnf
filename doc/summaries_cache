@@ -670,5 +670,45 @@
     [
         1096506, 
         "[doc] promoting 'install a' to 'install b' when b obsoletes a"
+    ], 
+    [
+        1047049, 
+        "distroverpkg default should be the same in dnf as in yum"
+    ], 
+    [
+        1067156, 
+        "[api] introspecting transaction"
+    ], 
+    [
+        1093420, 
+        "Add to dnf.conf ip_resolve entry"
+    ], 
+    [
+        1104757, 
+        "[api] yumvars not set fail fedora metadata download"
+    ], 
+    [
+        1105009, 
+        "Please update the queries api documentation"
+    ], 
+    [
+        1110800, 
+        "[abrt] dnf: parser.py:59:varReplace:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 6: ordinal not in range(128)"
+    ], 
+    [
+        1111569, 
+        "make \"Transaction couldn't start (no root?)\" error more clear"
+    ], 
+    [
+        1111997, 
+        "[abrt] dnf: base.py:1894:_retrievePublicKey:TypeError: not all arguments converted during string formatting"
+    ], 
+    [
+        1112669, 
+        "commands from dnf-plugins-core not mentioned in man page"
+    ], 
+    [
+        1112704, 
+        "NameError: global name 'i18n' is not defined"
     ]
 ]
