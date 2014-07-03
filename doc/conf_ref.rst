@@ -82,13 +82,6 @@ one main section. The repository sections define the configuration for each
     Number of installonly packages allowed to be installed
     concurrently. Defaults to 3.
 
-.. _ip-resolve-label:
-
-``ip_resolve``
-    IP address type
-
-    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
-
 .. _keepcache-label:
 
 ``keepcache``
@@ -161,10 +154,12 @@ configuration.
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is off.
 
+.. _ip-resolve-label:
+
 ``ip_resolve``
     IP address type
 
-    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only.  By default, DNF resolves to either addresses.
+    Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
 .. _metadata_expire-label:
 
