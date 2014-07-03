@@ -1,5 +1,5 @@
 %global gitrev 272eb06
-%global hawkey_version 0.4.16
+%global hawkey_version 0.4.17
 %global librepo_version 1.7.4
 %global libcomps_version 0.1.6
 
