@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Transaction &mdash; DNF 0.5.2-1 documentation</title>
+    <title>Transaction &mdash; DNF 0.5.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2-1',
+        VERSION:     '0.5.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
-    <link rel="next" title="Comps, or the Ditribution Compose Metadata" href="api_comps.html" />
+    <link rel="next" title="Comps, or the Distribution Compose Metadata" href="api_comps.html" />
     <link rel="prev" title="Package" href="api_package.html" /> 
   </head>
   <body>
@@ -41,12 +41,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+          <a href="api_comps.html" title="Comps, or the Distribution Compose Metadata"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="api_package.html" title="Package"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,12 +56,30 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="transaction">
-<h1>Transaction<a class="headerlink" href="#transaction" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-dnf.transaction">
+<span id="transaction"></span><h1>Transaction<a class="headerlink" href="#module-dnf.transaction" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="dnf.transaction.TransactionItem">
+<em class="property">class </em><tt class="descclassname">dnf.transaction.</tt><tt class="descname">TransactionItem</tt><a class="headerlink" href="#dnf.transaction.TransactionItem" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="dnf.transaction.TransactionItem.installs">
+<tt class="descname">installs</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.transaction.TransactionItem.installs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">packages</span></tt></a> that will get added onto the system by this transaction item.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dnf.transaction.TransactionItem.removes">
+<tt class="descname">removes</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.transaction.TransactionItem.removes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <a class="reference internal" href="api_package.html#dnf.package.Package" title="dnf.package.Package"><tt class="xref py py-class docutils literal"><span class="pre">packages</span></tt></a> that will get removed from the system by this transaction item.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="dnf.transaction.Transaction">
 <em class="property">class </em><tt class="descclassname">dnf.transaction.</tt><tt class="descname">Transaction</tt><a class="headerlink" href="#dnf.transaction.Transaction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instances of this class describe a resolved transaction set. The members of the transaction are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.</p>
+<dd><p>Instances of this class describe a resolved transaction set. The transaction object can be iterated for the contained <a class="reference internal" href="#dnf.transaction.TransactionItem" title="dnf.transaction.TransactionItem"><tt class="xref py py-class docutils literal"><span class="pre">items</span></tt></a>.</p>
+<p>The packaging requests from the contained items are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.</p>
 <dl class="method">
 <dt id="dnf.transaction.Transaction.add_downgrade">
 <tt class="descname">add_downgrade</tt><big>(</big><em>new</em>, <em>downgraded</em>, <em>obsoleted</em><big>)</big><a class="headerlink" href="#dnf.transaction.Transaction.add_downgrade" title="Permalink to this definition">¶</a></dt>
@@ -107,7 +125,7 @@
                         title="previous chapter">Package</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="api_comps.html"
-                        title="next chapter">Comps, or the Ditribution Compose Metadata</a></p>
+                        title="next chapter">Comps, or the Distribution Compose Metadata</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api_transaction.txt"
@@ -140,12 +158,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+          <a href="api_comps.html" title="Comps, or the Distribution Compose Metadata"
              >next</a> |</li>
         <li class="right" >
           <a href="api_package.html" title="Package"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; DNF 0.5.2-1 documentation</title>
+    <title>Index &mdash; DNF 0.5.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2-1',
+        VERSION:     '0.5.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" /> 
+    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -71,6 +71,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="_">_</h2>
@@ -130,12 +131,12 @@
   <dt><a href="api_base.html#dnf.Base.add_remote_rpm">add_remote_rpm() (dnf.Base method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_transaction.html#dnf.transaction.Transaction.add_upgrade">add_upgrade() (dnf.transaction.Transaction method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_cli.html#dnf.cli.Command.aliases">aliases (dnf.cli.Command attribute)</a>
   </dt>
@@ -146,6 +147,10 @@
 
       
   <dt><a href="api_cli.html#dnf.cli.demand.DemandSheet.allow_erasing">allow_erasing (dnf.cli.demand.DemandSheet attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_package.html#dnf.package.Package.arch">arch (dnf.package.Package attribute)</a>
   </dt>
 
       
@@ -174,6 +179,10 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_conf.html#dnf.conf.Conf.best">best (dnf.conf.Conf attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_package.html#dnf.package.Package.buildtime">buildtime (dnf.package.Package attribute)</a>
   </dt>
 
   </dl></td>
@@ -271,6 +280,10 @@
   </dt>
 
       
+  <dt><a href="api_rpm.html#dnf.rpm.detect_releasever">detect_releasever() (in module dnf.rpm)</a>
+  </dt>
+
+      
   <dt><a href="api_repos.html#dnf.repo.Repo.disable">disable() (dnf.repo.Repo method)</a>
   </dt>
 
@@ -345,6 +358,10 @@
   </dt>
 
       
+  <dt><a href="api_rpm.html#module-dnf.rpm">dnf.rpm (module)</a>
+  </dt>
+
+      
   <dt><a href="api_sack.html#dnf.sack.Sack">dnf.sack.Sack (built-in class)</a>
   </dt>
 
@@ -357,7 +374,7 @@
   </dt>
 
       
-  <dt><a href="api_transaction.html#dnf.transaction.Transaction">dnf.transaction.Transaction (built-in class)</a>
+  <dt><a href="api_transaction.html#module-dnf.transaction">dnf.transaction (module)</a>
   </dt>
 
       
@@ -418,6 +435,10 @@
 
       
   <dt><a href="api_comps.html#dnf.comps.Comps.environments_iter">environments_iter (dnf.comps.Comps attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_package.html#dnf.package.Package.epoch">epoch (dnf.package.Package attribute)</a>
   </dt>
 
   </dl></td>
@@ -516,14 +537,22 @@
   <dt><a href="api_queries.html#dnf.query.Query.installed">installed() (dnf.query.Query method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_conf.html#dnf.conf.Conf.installonly_limit">installonly_limit (dnf.conf.Conf attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_conf.html#dnf.conf.Conf.installroot">installroot (dnf.conf.Conf attribute)</a>
+  </dt>
+
+      
+  <dt><a href="api_transaction.html#dnf.transaction.TransactionItem.installs">installs() (dnf.transaction.TransactionItem method)</a>
+  </dt>
+
+      
+  <dt><a href="api_package.html#dnf.package.Package.installtime">installtime (dnf.package.Package attribute)</a>
   </dt>
 
       
@@ -599,6 +628,10 @@
 
         
   <dt><a href="api_comps.html#dnf.comps.Package.name">(dnf.comps.Package attribute)</a>
+  </dt>
+
+        
+  <dt><a href="api_package.html#dnf.package.Package.name">(dnf.package.Package attribute)</a>
   </dt>
 
         
@@ -713,6 +746,10 @@
   </dt>
 
       
+  <dt><a href="api_package.html#dnf.package.Package.release">release (dnf.package.Package attribute)</a>
+  </dt>
+
+      
   <dt><a href="api_conf.html#dnf.conf.Conf.releasever">releasever (dnf.conf.Conf attribute)</a>
   </dt>
 
@@ -721,15 +758,19 @@
   </dt>
 
       
-  <dt><a href="api_repos.html#dnf.repo.Repo">Repo (class in dnf.repo)</a>
+  <dt><a href="api_transaction.html#dnf.transaction.TransactionItem.removes">removes() (dnf.transaction.TransactionItem method)</a>
   </dt>
 
       
-  <dt><a href="api_repos.html#dnf.repo.repo_id_invalid">repo_id_invalid() (in module dnf.repo)</a>
+  <dt><a href="api_repos.html#dnf.repo.Repo">Repo (class in dnf.repo)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_repos.html#dnf.repo.repo_id_invalid">repo_id_invalid() (in module dnf.repo)</a>
+  </dt>
+
       
   <dt><a href="api_base.html#dnf.Base.repos">repos (dnf.Base attribute)</a>
   </dt>
@@ -744,6 +785,10 @@
 
       
   <dt><a href="api_base.html#dnf.Base.resolve">resolve() (dnf.Base method)</a>
+  </dt>
+
+      
+  <dt><a href="api_plugins.html#dnf.Plugin.resolved">resolved() (dnf.Plugin method)</a>
   </dt>
 
       
@@ -783,25 +828,29 @@
   </dt>
 
       
-  <dt><a href="api_base.html#dnf.Base.select_group">select_group() (dnf.Base method)</a>
-  </dt>
-
-      
   <dt><a href="api_repos.html#dnf.repo.Repo.set_progress_bar">set_progress_bar() (dnf.repo.Repo method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_package.html#dnf.package.Package.sourcerpm">sourcerpm (dnf.package.Package attribute)</a>
+  </dt>
+
       
   <dt><a href="api_repos.html#dnf.repo.Repo.sslverify">sslverify (dnf.repo.Repo attribute)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="api_callback.html#dnf.callback.DownloadProgress.start">start() (dnf.callback.DownloadProgress method)</a>
   </dt>
 
       
   <dt><a href="api_queries.html#dnf.subject.Subject">Subject (class in dnf.subject)</a>
+  </dt>
+
+      
+  <dt><a href="api_conf.html#dnf.conf.Conf.substitutions">substitutions (dnf.conf.Conf attribute)</a>
   </dt>
 
       
@@ -819,6 +868,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="api_transaction.html#dnf.transaction.Transaction">Transaction (class in dnf.transaction)</a>
+  </dt>
+
+      
   <dt><a href="api_base.html#dnf.Base.transaction">transaction (dnf.Base attribute)</a>
   </dt>
 
@@ -828,6 +881,10 @@
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_transaction.html#dnf.transaction.TransactionItem">TransactionItem (class in dnf.transaction)</a>
+  </dt>
+
       
   <dt><a href="api_conf.html#dnf.conf.Conf.tsflags">tsflags (dnf.conf.Conf attribute)</a>
   </dt>
@@ -862,6 +919,16 @@
 
       
   <dt><a href="api_cli.html#dnf.cli.Command.usage">usage (dnf.cli.Command attribute)</a>
+  </dt>
+
+  </dl></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="api_package.html#dnf.package.Package.version">version (dnf.package.Package attribute)</a>
   </dt>
 
   </dl></td>
@@ -903,7 +970,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

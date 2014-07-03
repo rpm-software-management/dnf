@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.5.2-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.5.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2-1',
+        VERSION:     '0.5.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,7 +93,7 @@
 <p>The <tt class="docutils literal"><span class="pre">--skip-broken</span></tt> command line switch is not recognized by DNF. The
 semantics this was supposed to trigger in Yum is now the default for plain <tt class="docutils literal"><span class="pre">dnf</span>
 <span class="pre">update</span></tt>. There is no equivalent for <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">--skip-broken</span> <span class="pre">update</span> <span class="pre">foo</span></tt>, as
-silentnly skipping <tt class="docutils literal"><span class="pre">foo</span></tt> in this case only amounts to masking an error
+silently skipping <tt class="docutils literal"><span class="pre">foo</span></tt> in this case only amounts to masking an error
 contradicting the user request. To try using the latest versions of packages in
 transactions there is the <tt class="docutils literal"><span class="pre">--best</span></tt> command line switch.</p>
 </div>
@@ -221,7 +221,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <div class="highlight-python"><pre>---&gt; Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
 --&gt; Processing Dependency: rubygem-net-ssh-multi &gt;= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch</pre>
 </div>
-<p>DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependnecies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.</p>
+<p>DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependencies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.</p>
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1044999">Fedora bug 1044999</a>.</p>
 </div>
 <div class="section" id="dnf-provides-complies-with-the-yum-documentation-of-the-command">
@@ -352,7 +352,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

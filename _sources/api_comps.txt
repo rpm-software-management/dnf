@@ -16,7 +16,7 @@
   Red Hat, Inc.
 
 =============================================
- Comps, or the Ditribution Compose Metadata
+ Comps, or the Distribution Compose Metadata
 =============================================
 
 .. module:: dnf.comps

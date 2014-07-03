@@ -28,7 +28,7 @@
 The ``--skip-broken`` command line switch is not recognized by DNF. The
 semantics this was supposed to trigger in Yum is now the default for plain ``dnf
 update``. There is no equivalent for ``yum --skip-broken update foo``, as
-silentnly skipping ``foo`` in this case only amounts to masking an error
+silently skipping ``foo`` in this case only amounts to masking an error
 contradicting the user request. To try using the latest versions of packages in
 transactions there is the ``--best`` command line switch.
 
@@ -208,7 +208,7 @@ During its depsolving phase, Yum outputs lines similar to::
   ---> Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
   --> Processing Dependency: rubygem-net-ssh-multi >= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch
 
-DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependnecies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.
+DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependencies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.
 
 See the the related `Fedora bug 1044999
 <https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.

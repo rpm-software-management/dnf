@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Package &mdash; DNF 0.5.2-1 documentation</title>
+    <title>Package &mdash; DNF 0.5.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2-1',
+        VERSION:     '0.5.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Transaction" href="api_transaction.html" />
     <link rel="prev" title="Selector" href="api_selector.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_selector.html" title="Selector"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -61,7 +61,56 @@
 <dl class="class">
 <dt id="dnf.package.Package">
 <em class="property">class </em><tt class="descclassname">dnf.package.</tt><tt class="descname">Package</tt><a class="headerlink" href="#dnf.package.Package" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Represents a unit of software management, typically corresponds to an RPM file.</p>
+<dl class="attribute">
+<dt id="dnf.package.Package.arch">
+<tt class="descname">arch</tt><a class="headerlink" href="#dnf.package.Package.arch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Architecture of the package (string).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.buildtime">
+<tt class="descname">buildtime</tt><a class="headerlink" href="#dnf.package.Package.buildtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seconds since the epoch when the package was built (integer).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.epoch">
+<tt class="descname">epoch</tt><a class="headerlink" href="#dnf.package.Package.epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Epoch of the package (integer)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.installtime">
+<tt class="descname">installtime</tt><a class="headerlink" href="#dnf.package.Package.installtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seconds since the epoch when the package was installed (integer).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.name">
+<tt class="descname">name</tt><a class="headerlink" href="#dnf.package.Package.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>The name of the package (string).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.release">
+<tt class="descname">release</tt><a class="headerlink" href="#dnf.package.Package.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release of the package (string).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.sourcerpm">
+<tt class="descname">sourcerpm</tt><a class="headerlink" href="#dnf.package.Package.sourcerpm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Full name of the SRPM used to build this package (string).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="dnf.package.Package.version">
+<tt class="descname">version</tt><a class="headerlink" href="#dnf.package.Package.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version of the package (string).</p>
+</dd></dl>
+
+</dd></dl>
 
 </div>
 
@@ -114,7 +163,7 @@
         <li class="right" >
           <a href="api_selector.html" title="Selector"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

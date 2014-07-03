@@ -19,9 +19,24 @@
 Transaction
 ===========
 
-.. class:: dnf.transaction.Transaction()
+.. module:: dnf.transaction
 
-  Instances of this class describe a resolved transaction set. The members of the transaction are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.
+.. class:: TransactionItem
+
+  .. method:: installs()
+
+    Return :class:`packages <dnf.package.Package>` that will get added onto the system by this transaction item.
+
+  .. method:: removes()
+
+    Return :class:`packages <dnf.package.Package>` that will get removed from the system by this transaction item.
+
+
+.. class:: Transaction
+
+  Instances of this class describe a resolved transaction set. The transaction object can be iterated for the contained :class:`items <.TransactionItem>`.
+
+  The packaging requests from the contained items are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.
 
   .. method:: add_downgrade(new, downgraded, obsoleted)
 

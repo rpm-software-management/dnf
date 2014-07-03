@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Plugin Interface &mdash; DNF 0.5.2-1 documentation</title>
+    <title>Plugin Interface &mdash; DNF 0.5.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.2-1',
+        VERSION:     '0.5.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Progress Reporting with Callbacks" href="api_callback.html" />
-    <link rel="prev" title="Comps, or the Ditribution Compose Metadata" href="api_comps.html" /> 
+    <link rel="prev" title="Comps, or the Distribution Compose Metadata" href="api_comps.html" /> 
   </head>
   <body>
     <div class="related">
@@ -44,9 +44,9 @@
           <a href="api_callback.html" title="Progress Reporting with Callbacks"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+          <a href="api_comps.html" title="Comps, or the Distribution Compose Metadata"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -94,6 +94,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="dnf.Plugin.resolved">
+<tt class="descname">resolved</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Plugin.resolved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plugin can override this. This hook is called immediately after the CLI has finished resolving a transaction. The plugin can use this to inspect the resolved but not yet executed <tt class="xref py py-attr docutils literal"><span class="pre">Base.transaction</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="dnf.Plugin.sack">
 <tt class="descname">sack</tt><big>(</big><big>)</big><a class="headerlink" href="#dnf.Plugin.sack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plugin can override this. This hook is called immediately after <a class="reference internal" href="api_base.html#dnf.Base.sack" title="dnf.Base.sack"><tt class="xref py py-attr docutils literal"><span class="pre">Base.sack</span></tt></a> is initialized with data from all the enabled repos.</p>
@@ -117,7 +123,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="api_comps.html"
-                        title="previous chapter">Comps, or the Ditribution Compose Metadata</a></p>
+                        title="previous chapter">Comps, or the Distribution Compose Metadata</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="api_callback.html"
                         title="next chapter">Progress Reporting with Callbacks</a></p>
@@ -156,9 +162,9 @@
           <a href="api_callback.html" title="Progress Reporting with Callbacks"
              >next</a> |</li>
         <li class="right" >
-          <a href="api_comps.html" title="Comps, or the Ditribution Compose Metadata"
+          <a href="api_comps.html" title="Comps, or the Distribution Compose Metadata"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.2-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>
