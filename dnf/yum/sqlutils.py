@@ -51,7 +51,7 @@ def Tokenize(str, whitespace=" \t\r\n", quotes="\"", escapes="\\"):
 
     @param        str: string to tokenize
     @type         str: string
-    @param whitespace: whitespace characters seperating tokens
+    @param whitespace: whitespace characters separating tokens
     @type  whitespace: string
     @param     quotes: legal quoting characters
     @type      quotes: string

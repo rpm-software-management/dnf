@@ -258,7 +258,7 @@ class OptionParser(argparse.ArgumentParser):
             self._add_cmd_usage(cmd, group)
 
     def get_usage(self):
-        """ get the usage infomation to show the user. """
+        """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands'),
                 'plugin': _('List of Plugin Commands')}
         name = dnf.const.PROGRAM_NAME
