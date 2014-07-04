@@ -194,7 +194,7 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--assumeno", action="store_true",
                            default=None, help=_("answer no for all questions"))
         self.add_argument("--version", action="store_true", default=None,
-                           help=_("show Yum version and exit"))
+                           help=_("show DNF version and exit"))
         self.add_argument("--installroot", help=_("set install root"),
                            metavar='[path]')
         self.add_argument("--enablerepo", action=self._RepoCallback,
