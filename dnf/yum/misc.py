@@ -488,7 +488,7 @@ def getCacheDir():
     uid = os.geteuid()
     try:
         usertup = pwd.getpwuid(uid)
-        username = usertup[0]
+        username = dnf.i18n.ucd(usertup[0])
     except KeyError:
         return None # if it returns None then, well, it's bollocksed
 
