@@ -1112,7 +1112,7 @@ class Cli(object):
 
     def read_conf_file(self, path=None, root="/", releasever=None,
                        overrides=None):
-        conf_st = time.time()
+        timer = dnf.logging.Timer('config')
         conf = self.base.conf
         conf.installroot = root
         conf.read(path)
@@ -1137,7 +1137,8 @@ class Cli(object):
             '%s/repos/%s/%s/' % (conf.persistdir,
                                  subst.get('basearch', '$basearch'),
                                  subst.get('releasever', '$releasever')))
-        self.logger.debug('Config time: %0.3f' % (time.time() - conf_st))
+
+        timer()
         return conf
 
     def register_command(self, command_cls):

@@ -26,6 +26,7 @@ import dnf.util
 import logging
 import os
 import sys
+import time
 import warnings
 
 # :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
@@ -100,6 +101,7 @@ def _paint_mark(logger):
 def depr(msg):
     warnings.warn(msg, dnf.exceptions.DeprecationWarning, 2)
 
+
 class Logging(object):
     def __init__(self):
         self.stdout_handler = self.stderr_handler = None
@@ -161,3 +163,14 @@ class Logging(object):
         error_level_r = _cfg_err_val2level(conf.errorlevel)
         logdir = conf.logdir
         return self.setup(verbose_level_r, error_level_r, logdir)
+
+
+class Timer(object):
+    def __init__(self, what):
+        self.what = what
+        self.start = time.time()
+
+    def __call__(self):
+        diff = time.time() - self.start
+        msg = 'timer: %s: %d ms' % (self.what, diff * 1000)
+        logging.getLogger("dnf").log(SUBDEBUG, msg)

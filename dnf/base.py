@@ -189,7 +189,7 @@ class Base(object):
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""
-        start = time.time()
+        timer = dnf.logging.Timer('sack setup')
         self._sack = sack.build_sack(self)
         with dnf.lock.metadata_cache_lock:
             if load_system_repo is not False:
@@ -203,9 +203,8 @@ class Base(object):
                     self._add_repo_to_sack(r.id)
         conf = self.conf
         self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
-        self.logger.debug('hawkey sack setup time: %0.3f' %
-                                  (time.time() - start))
         self._setup_excludes()
+        timer()
         self._goal = dnf.goal.Goal(self._sack)
         return self._sack
 
@@ -383,7 +382,7 @@ class Base(object):
 
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
-        group_st = time.time()
+        timer = dnf.logging.Timer('loading comps')
         self.group_persistor = self._activate_group_persistor()
         self._comps = dnf.comps.Comps()
 
@@ -414,8 +413,7 @@ class Base(object):
                 msg = _('Failed to add groups file for repository: %s - %s')
                 self.logger.critical(msg % (repo.id, e))
 
-
-        self.logger.debug('group time: %0.3f' % (time.time() - group_st))
+        timer()
         return self._comps
 
     def _getHistory(self):
@@ -530,7 +528,7 @@ class Base(object):
         """Build the transaction set. :api"""
         exc = None
 
-        ds_st = time.time()
+        timer = dnf.logging.Timer('depsolve')
         self.ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
@@ -543,7 +541,7 @@ class Base(object):
             self._transaction = self._goal2transaction(goal)
 
         self.ds_callback.end()
-        self.logger.debug('Depsolve time: %0.3f' % (time.time() - ds_st))
+        timer()
 
         got_transaction = self._transaction is not None and \
                           len(self._transaction) > 0
@@ -567,7 +565,6 @@ class Base(object):
         self.ds_callback = None
         self.transaction.populate_rpm_ts(self.ts)
 
-        rcd_st = time.time()
         self.logger.info(_('Running transaction check'))
         msgs = self._run_rpm_check()
         if msgs:
@@ -590,10 +587,8 @@ class Base(object):
                 'transaction not consistent with package database')
 
         self.logger.info(_('Transaction check succeeded.'))
-        self.logger.debug('Transaction check time: %0.3f' %
-                          (time.time() - rcd_st))
 
-        tt_st = time.time()
+        timer = dnf.logging.Timer('transaction test')
         self.logger.info(_('Running transaction test'))
         if not self.conf.diskspacecheck:
             self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
@@ -614,12 +609,11 @@ class Base(object):
                  self.errorSummary(errstring))
 
         self.logger.info(_('Transaction test succeeded.'))
-        self.logger.debug('Transaction test time: %0.3f' % (time.time() - tt_st))
+        timer()
 
         # unset the sigquit handler
         sigquit = signal.signal(signal.SIGQUIT, signal.SIG_DFL)
-        ts_st = time.time()
-
+        timer = dnf.logging.Timer('transaction')
         # put back our depcheck callback
         self.ds_callback = dscb
         # setup our rpm ts callback
@@ -635,7 +629,7 @@ class Base(object):
         if return_code == 0 and self.group_persistor:
             self.group_persistor.commit()
 
-        self.logger.debug('Transaction time: %0.3f' % (time.time() - ts_st))
+        timer()
         # put back the sigquit handler
         signal.signal(signal.SIGQUIT, sigquit)
 
@@ -778,7 +772,7 @@ class Base(object):
                 verify_pkg_cb(pkg, count, total)
             return count
 
-        vt_st = time.time()
+        timer = dnf.logging.Timer('verify transaction')
         count = 0
         # the rpmdb has changed by now. hawkey doesn't support dropping a repo
         # yet we have to check what packages are in now: build a transient sack
@@ -866,7 +860,7 @@ class Base(object):
         if self._record_history():
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.history.end(rpmdbv, return_code)
-        self.logger.debug('VerifyTransaction time: %0.3f' % (time.time() - vt_st))
+        timer()
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api
