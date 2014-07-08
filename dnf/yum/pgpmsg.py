@@ -16,7 +16,7 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-import struct, time, io, base64, types
+import struct, time, io, base64
 from dnf.pycomp import long, to_ord
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.

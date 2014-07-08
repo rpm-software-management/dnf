@@ -28,10 +28,8 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import collections
-import dbm
 import dnf.util
 import errno
-import hashlib
 import json
 import logging
 import os

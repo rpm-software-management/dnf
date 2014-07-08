@@ -23,7 +23,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf import const, query, sack
+from dnf import query, sack
 from dnf.i18n import _, P_, ucd
 from dnf.yum import history
 from dnf.yum import misc

@@ -24,7 +24,6 @@ import dnf.util
 import dnf.yum.misc
 import hawkey
 import logging
-import sys
 import dnf.package
 import dnf.query
 from dnf.pycomp import basestring

@@ -19,9 +19,10 @@
 #
 
 from __future__ import unicode_literals
-import fnmatch
+from dnf.exceptions import ConfigError
 import dnf.util
-from dnf.exceptions import ConfigError, RepoError
+import fnmatch
+
 
 class MultiCallList(list):
     def __init__(self, iterable):
@@ -39,6 +40,7 @@ class MultiCallList(list):
         def setter(item):
             setattr(item, what, val)
         return list(map(setter, self))
+
 
 class RepoDict(dict):
     # :api
