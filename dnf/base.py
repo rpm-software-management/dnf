@@ -88,7 +88,6 @@ class Base(object):
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
 
-
     def __enter__(self):
         return self
 
@@ -330,6 +329,8 @@ class Base(object):
             self._goal = None
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
+            if self.group_persistor is not None:
+                self.group_persistor = self._activate_group_persistor()
 
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
