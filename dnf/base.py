@@ -680,9 +680,9 @@ class Base(object):
                 except:
                     onice = 0
 
-        self.logger.debug('runTransaction: rpm transaction start.')
+        self.logger.log(dnf.logging.SUBDEBUG, 'RPM transaction start.')
         errors = self.ts.run(cb.callback, '')
-        self.logger.debug('runTransaction: rpm transaction over.')
+        self.logger.log(dnf.logging.SUBDEBUG, 'RPM transaction over.')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty
         # list means some errors happened in the transaction and non-empty
         # list that there were errors preventing the ts from starting...
