@@ -26,12 +26,11 @@ import time
 import logging
 import pwd
 import re
-import textwrap
 
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
-from dnf.i18n import _, P_, ucd, fill_exact_width
+from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.yum.misc import prco_tuple_to_string
 import dnf.yum.misc
 
@@ -45,7 +44,7 @@ import dnf.util
 
 from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
-from dnf.pycomp import xrange, basestring, is_py3bytes, long
+from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 
 import locale
 import hawkey
@@ -547,7 +546,7 @@ class Output(object):
             columns = [1] * (cols - 1)
             columns.append(0)
 
-        total_width -= (sum(columns) + (cols - 1) + len(indent))
+        total_width -= (sum(columns) + (cols - 1) + exact_width(indent))
         if not columns[-1]:
             total_width += 1
         while total_width > 0:
@@ -609,9 +608,10 @@ class Output(object):
 
     @staticmethod
     def _fmt_column_align_width(width):
+        """Returns tuple of (align_left, width)"""
         if width < 0:
-            return (u"-", -width)
-        return (u"", width)
+            return (True, -width)
+        return (False, width)
 
     def _col_data(self, col_data):
         assert len(col_data) == 2 or len(col_data) == 3
@@ -633,9 +633,6 @@ class Output(object):
            optionally a type of highlighting for the item
         :param msg: a string to begin the line of output with
         :param end: a string to end the line of output with
-        :param text_width: a function to find the width of the items
-           in the columns.  This defaults to utf8 but can be changed
-           to len() if you know it'll be fine
         :return: a row of data formatted into a string for output
         """
         total_width = len(msg)
@@ -648,14 +645,14 @@ class Output(object):
                 data.append(val)
                 continue
 
-            (align, width) = self._fmt_column_align_width(width)
-            val_width = len(val)
+            (align_left, width) = self._fmt_column_align_width(width)
+            val_width = exact_width(val)
             if val_width <= width:
-                #  Don't use utf8_width_fill() because it sucks performance
+                #  Don't use fill_exact_width() because it sucks performance
                 # wise for 1,000s of rows. Also allows us to use len(), when
                 # we can.
                 msg += u"%s%s%s%s "
-                if (align == u'-'):
+                if align_left:
                     data.extend([hibeg, val, " " * (width - val_width), hiend])
                 else:
                     data.extend([hibeg, " " * (width - val_width), val, hiend])
@@ -665,8 +662,9 @@ class Output(object):
             total_width += width
             total_width += 1
         (val, width, hibeg, hiend) = self._col_data(columns[-1])
-        (align, width) = self._fmt_column_align_width(width)
-        val = ("%s%" + align + "*s%s") % (hibeg, width, val, hiend)
+        (align_left, width) = self._fmt_column_align_width(width)
+        val = fill_exact_width(val, width, left=align_left,
+                              prefix=hibeg, suffix=hiend)
         msg += u"%%s%s" % end
         data.append(val)
         return msg % tuple(data)
@@ -727,18 +725,18 @@ class Output(object):
         :param val: the value associated with *key*
         :return: the key value pair formatted in two columns for output
         """
-        keylen = len(key)
+        keylen = exact_width(key)
         cols = self.term.columns
         nxt = ' ' * (keylen - 2) + ': '
         if not val:
             # textwrap.fill in case of empty val returns empty string
             return key
         val = ucd(val)
-        ret = textwrap.fill(val, width=cols, initial_indent=key,
+        ret = textwrap_fill(val, width=cols, initial_indent=key,
                             subsequent_indent=nxt)
         if ret.count("\n") > 1 and keylen > (cols // 3):
             # If it's big, redo it again with a smaller subsequent off
-            ret = textwrap.fill(val, width=cols, initial_indent=key,
+            ret = textwrap_fill(val, width=cols, initial_indent=key,
                                 subsequent_indent='     ...: ')
         return ret
 
@@ -754,7 +752,7 @@ class Output(object):
         """
         name = ucd(name)
         cols = self.term.columns - 2
-        name_len = len(name)
+        name_len = exact_width(name)
         if name_len >= (cols - 4):
             beg = end = fill * 2
         else:
@@ -982,8 +980,8 @@ class Output(object):
             pkg = name_dict.get(pkg_name)
             if pkg is None:
                 continue
-            nevra_l = len(ucd(pkg)) + len(self.GRP_PACKAGE_INDENT)
-            repo_l = len(ucd(pkg.reponame))
+            nevra_l = exact_width(ucd(pkg)) + exact_width(self.GRP_PACKAGE_INDENT)
+            repo_l = exact_width(ucd(pkg.reponame))
             nevra_lengths[nevra_l] = nevra_lengths.get(nevra_l, 0) + 1
             repo_lengths[repo_l] = repo_lengths.get(repo_l, 0) + 1
         return (nevra_lengths, repo_lengths)
@@ -1318,12 +1316,12 @@ Transaction Summary
                 continue
 
             msg_pkgs = P_('Package', 'Packages', count)
-            len_msg_action = len(action)
-            len_msg_count = len(str(count))
-            len_msg_pkgs = len(msg_pkgs)
+            len_msg_action = exact_width(action)
+            len_msg_count = exact_width(unicode(count))
+            len_msg_pkgs = exact_width(msg_pkgs)
 
             if depcount:
-                len_msg_depcount = len(str(depcount))
+                len_msg_depcount = exact_width(unicode(depcount))
             else:
                 len_msg_depcount = 0
 
@@ -1337,7 +1335,7 @@ Transaction Summary
             if depcount:
                 msg_deppkgs = P_('Dependent package', 'Dependent packages',
                                  depcount)
-                action_msg = "%-*s" % (max_msg_action, action)
+                action_msg = fill_exact_width(action, max_msg_action)
                 if count:
                     msg = '%s  %*d %s (+%*d %s)\n'
                     out.append(msg % (action_msg,
@@ -1351,7 +1349,7 @@ Transaction Summary
                                       max_msg_depcount, depcount, msg_deppkgs))
             elif count:
                 msg = '%s  %*d %s\n'
-                out.append(msg % ("%-*s" % (max_msg_action, action),
+                out.append(msg % (fill_exact_width(action, max_msg_action),
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
@@ -1454,7 +1452,7 @@ Transaction Summary
             format_number(remote_size // dl_time),
             format_number(remote_size),
             format_time(dl_time))
-        msg = "%-*s" % (width - len(msg), _("Total")) + msg
+        msg = fill_exact_width(_("Total"), width - len(msg)) + msg
         self.logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
@@ -1650,11 +1648,11 @@ Transaction Summary
             name = _("Command line")
         else:
             name = _("Login user")
-        print(fmt % (fill_exact_width(_("ID"), 6),
-                     fill_exact_width(name, 24),
-                     fill_exact_width(_("Date and time"), 6),
-                     fill_exact_width(_("Action(s)"), 6),
-                     fill_exact_width(_("Altered"), 6)))
+        print(fmt % (fill_exact_width(_("ID"), 6, 6),
+                     fill_exact_width(name, 24, 24),
+                     fill_exact_width(_("Date and time"), 6, 6),
+                     fill_exact_width(_("Action(s)"), 6, 6),
+                     fill_exact_width(_("Altered"), 6, 6)))
         print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
         done = 0
@@ -1670,8 +1668,8 @@ Transaction Summary
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(old.beg_timestamp))
             num, uiacts = self._history_uiactions(old.trans_data)
-            name = fill_exact_width(name, 24)
-            uiacts = fill_exact_width(uiacts, 14)
+            name = fill_exact_width(name, 24, 24)
+            uiacts = fill_exact_width(uiacts, 14, 14)
             rmark = lmark = ' '
             if old.return_code is None:
                 rmark = lmark = '*'
@@ -1832,7 +1830,7 @@ Transaction Summary
                 (hibeg, hiend) = self._highlight('bold')
             else:
                 (hibeg, hiend) = self._highlight('normal')
-            state = "%-*s" % (_pkg_states['maxlen'], state)
+            state = fill_exact_width(state, _pkg_states['maxlen'])
             ui_repo = ''
             if show_repo:
                 ui_repo = self._hpkg2from_repo(hpkg)
@@ -2006,7 +2004,7 @@ Transaction Summary
             cn = hpkg.ui_nevra
 
             uistate = all_uistates.get(hpkg.state, hpkg.state)
-            uistate = "%-*s" % (maxlen, uistate)
+            uistate = fill_exact_width(uistate, maxlen)
             # Should probably use columns here...
             if False: pass
             elif (last is not None and
@@ -2037,10 +2035,10 @@ Transaction Summary
             return 1, ['Failed history info']
 
         fmt = "%s | %s | %s | %s"
-        print(fmt % (fill_exact_width(_("Login user"), 26),
-                     fill_exact_width(_("Time"), 19),
-                     fill_exact_width(_("Action(s)"), 16),
-                     fill_exact_width(_("Altered"), 8)))
+        print(fmt % (fill_exact_width(_("Login user"), 26, 26),
+                     fill_exact_width(_("Time"), 19, 19),
+                     fill_exact_width(_("Action(s)"), 16, 16),
+                     fill_exact_width(_("Altered"), 8, 8)))
         print("-" * 79)
         fmt = "%s | %s | %s | %8u"
         data = {'day' : {}, 'week' : {},
@@ -2087,9 +2085,9 @@ Transaction Summary
                 count, uiacts = self._history_uiactions(hpkgs)
                 uperiod = _period2user[period]
                 # Should probably use columns here, esp. for uiacts?
-                print(fmt % (fill_exact_width(name, 26),
-                             fill_exact_width(uperiod, 19),
-                             fill_exact_width(uiacts, 16), count))
+                print(fmt % (fill_exact_width(name, 26, 26),
+                             fill_exact_width(uperiod, 19, 19),
+                             fill_exact_width(uiacts, 16, 16), count))
 
     def historyAddonInfoCmd(self, extcmds):
         """Print addon information about transaction in history.
@@ -2158,9 +2156,9 @@ Transaction Summary
 
         fmt = "%s | %s | %s"
         # REALLY Needs to use columns!
-        print(fmt % (fill_exact_width(_("ID"), 6),
-                     fill_exact_width(_("Action(s)"), 14),
-                     fill_exact_width(_("Package"), 53)))
+        print(fmt % (fill_exact_width(_("ID"), 6, 6),
+                     fill_exact_width(_("Action(s)"), 14, 14),
+                     fill_exact_width(_("Package"), 53, 53)))
         print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
@@ -2194,7 +2192,7 @@ Transaction Summary
                         continue
 
                 uistate = all_uistates.get(hpkg.state, hpkg.state)
-                uistate = "%-*s" % (14, uistate)
+                uistate = fill_exact_width(uistate, 14)
 
                 #  To chop the name off we need nevra strings, str(pkg) gives
                 # envra so we have to do it by hand ... *sigh*.
@@ -2398,7 +2396,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
             for val in self.action.values():
-                wid_val = len(val)
+                wid_val = exact_width(val)
                 if wid1 < wid_val:
                     wid1 = wid_val
             self._max_action_wid_cache = wid1
@@ -2412,8 +2410,8 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
             pkgname = ucd(pkgname)
-            msg = fmt % ("%-*.*s" % (wid1, wid1, process),
-                         "%-*.*s" % (wid2, wid2, pkgname))
+            msg = fmt % (fill_exact_width(process, wid1, wid1),
+                         fill_exact_width(pkgname, wid2, wid2))
             if msg != self.lastmsg:
                 sys.stdout.write(msg)
                 sys.stdout.flush()
@@ -2442,7 +2440,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         if pkgname is None:
             pnl = 22
         else:
-            pnl = len(pkgname)
+            pnl = exact_width(pkgname)
 
         overhead  = (2 * l) + 2 # Length of done, above
         overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
@@ -2481,7 +2479,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
     def verify_tsi_package(self, pkg, count, total):
         percent = 100
         process = _('Verifying')
-        wid1 = max(len(process), self._max_action_width())
+        wid1 = max(exact_width(process), self._max_action_width())
         self._out_event(100, 100, count, total, percent, process, str(pkg), wid1)
 
 def progressbar(current, total, name=None):
@@ -2524,17 +2522,17 @@ def progressbar(current, total, name=None):
         hashbar = mark * int(width * percent)
         output = '\r[%-*s]%s' % (width, hashbar, end)
     elif current == total: # Don't chop name on 100%
-        output = '\r%s%s' % (fill_exact_width(name, width), end)
+        output = '\r%s%s' % (fill_exact_width(name, width, width), end)
     else:
         width -= 4
         if width < 0:
             width = 0
         nwid = width // 2
-        if nwid > len(name):
-            nwid = len(name)
+        if nwid > exact_width(name):
+            nwid = exact_width(name)
         width -= nwid
         hashbar = mark * int(width * percent)
-        output = '\r%s: [%-*s]%s' % (fill_exact_width(name, nwid), width,
+        output = '\r%s: [%-*s]%s' % (fill_exact_width(name, nwid, nwid), width,
                                      hashbar, end)
 
     if current <= total:

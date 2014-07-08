@@ -21,7 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
-from dnf.i18n import _, ucd, fill_exact_width
+from dnf.i18n import _, ucd, fill_exact_width, exact_width
 import dnf.cli.format
 import fnmatch
 import locale
@@ -111,7 +111,7 @@ class RepoListCommand(commands.Command):
                     continue
                 if force_show or verbose:
                     ui_enabled = ehibeg + _('enabled') + hiend
-                    ui_endis_wid = len(_('enabled'))
+                    ui_endis_wid = exact_width(_('enabled'))
                     if not verbose:
                         ui_enabled += ": "
                         ui_endis_wid += 2
@@ -130,7 +130,7 @@ class RepoListCommand(commands.Command):
                 elif arg == 'enabled' and not force_show:
                     continue
                 ui_enabled = dhibeg + _('disabled') + hiend
-                ui_endis_wid = len(_('disabled'))
+                ui_endis_wid = exact_width(_('disabled'))
 
             if not verbose:
                 rid = repo.id
@@ -215,25 +215,25 @@ class RepoListCommand(commands.Command):
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
             # then chop the middle (name)...
-            id_len = len(_('repo id'))
+            id_len = exact_width(_('repo id'))
             nm_len = 0
             st_len = 0
             ui_len = 0
 
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
-                if id_len < len(rid):
-                    id_len = len(rid)
-                if nm_len < len(rname):
-                    nm_len = len(rname)
+                if id_len < exact_width(rid):
+                    id_len = exact_width(rid)
+                if nm_len < exact_width(rname):
+                    nm_len = exact_width(rname)
                 if st_len < (ui_endis_wid + len(ui_num)):
                     st_len = (ui_endis_wid + len(ui_num))
-                # Need this as well as above for: utf8_width_fill()
+                # Need this as well as above for: fill_exact_width()
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
                 left = term.columns - (id_len + 1)
-            elif len(_('status')) > st_len:
-                left = term.columns - (id_len + len(_('status')) +2)
+            elif exact_width(_('status')) > st_len:
+                left = term.columns - (id_len + len(_('status')) + 2)
             else:
                 left = term.columns - (id_len + st_len + 2)
 
@@ -244,8 +244,8 @@ class RepoListCommand(commands.Command):
                 id_len += left // 2
                 nm_len += left - (left // 2)
 
-            txt_rid = "%-*s" % (id_len, _('repo id'))
-            txt_rnam = fill_exact_width(_('repo name'), nm_len)
+            txt_rid = fill_exact_width(_('repo id'), id_len)
+            txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
                 self.base.logger.info("%s %s",
                                         txt_rid, txt_rnam)
@@ -255,15 +255,16 @@ class RepoListCommand(commands.Command):
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
                     self.base.logger.info("%s %s",
-                                          "%-*s" % (id_len, rid),
-                                          fill_exact_width(rname, nm_len))
+                                          fill_exact_width(rid, id_len),
+                                          fill_exact_width(rname, nm_len,
+-                                                         nm_len))
                     continue
 
                 if ui_num:
-                    ui_num = "%*s" % (ui_len, ui_num)
+                    ui_num = fill_exact_width(ui_num, ui_len, left=False)
                 self.base.logger.info("%s %s %s%s",
-                                      "%-*s" % (id_len, rid),
-                                      fill_exact_width(rname, nm_len),
+                                      fill_exact_width(rid, id_len),
+                                      fill_exact_width(rname, nm_len, nm_len),
                                       ui_enabled, ui_num)
         msg = 'Total packages: %s' % ucd(locale.format("%d", tot_num, True))
         self.base.logger.debug(msg)

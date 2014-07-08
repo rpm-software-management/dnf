@@ -24,6 +24,7 @@ import gettext
 import locale
 import os
 import sys
+import unicodedata
 
 """
 Centralize i18n stuff here. Must be unittested.
@@ -129,8 +130,151 @@ def ucd(obj):
         return unicode(str(obj), _guess_encoding())
 
 
-def fill_exact_width(msg, width):
-    return "%-*.*s" % (width, width, msg)
+# functions for formating output according to terminal width,
+# They should be used instead of build-in functions to count on different
+# widths of Unicode characters
+
+def _exact_width_char(uchar):
+    return 2 if unicodedata.east_asian_width(uchar) in ('W', 'F', 'A') else 1
+
+
+def chop_str(msg, chop=None):
+    """ Return the textual width of a Unicode string, chopping it to
+        a specified value. This is what you want to use instead of %.*s, as it
+        does the "right" thing with regard to different Unicode character width
+        Eg. "%.*s" % (10, msg)   <= becomes => "%s" % (chop_str(msg, 10)) """
+
+    if chop is None:
+        return exact_width(msg), msg
+
+    width = 0
+    chopped_msg = ""
+    for char in msg:
+        char_width = _exact_width_char(char)
+        if width + char_width > chop:
+            break
+        chopped_msg += char
+        width += char_width
+    return width, chopped_msg
+
+
+def exact_width(msg):
+    """ Calculates width of char at terminal screen
+        (Asian char counts for two) """
+    return sum(_exact_width_char(c) for c in msg)
+
+
+def fill_exact_width(msg, fill, chop=None, left=True, prefix='', suffix=''):
+    """ Expand a msg to a specified "width" or chop to same.
+        Expansion can be left or right. This is what you want to use instead of
+        %*.*s, as it does the "right" thing with regard to different Unicode
+        character width.
+        prefix and suffix should be used for "invisible" bytes, like
+        highlighting.
+
+        Examples:
+
+        ``"%-*.*s" % (10, 20, msg)`` becomes
+            ``"%s" % (fill_exact_width(msg, 10, 20))``.
+
+        ``"%20.10s" % (msg)`` becomes
+            ``"%s" % (fill_exact_width(msg, 20, 10, left=False))``.
+
+        ``"%s%.10s%s" % (pre, msg, suf)`` becomes
+            ``"%s" % (fill_exact_width(msg, 0, 10, prefix=pre, suffix=suf))``.
+        """
+    width, msg = chop_str(msg, chop)
+
+    if width >= fill:
+        if prefix or suffix:
+            msg = ''.join([prefix, msg, suffix])
+    else:
+        extra = " " * (fill - width)
+        if left:
+            msg = ''.join([prefix, msg, suffix, extra])
+        else:
+            msg = ''.join([extra, prefix, msg, suffix])
+
+    return msg
+
+
+def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
+    """ Works like we want textwrap.wrap() to work, uses Unicode strings
+        and doesn't screw up lists/blocks/etc. """
+
+    def _indent_at_beg(line):
+        count = 0
+        byte = 'X'
+        for byte in line:
+            if byte != ' ':
+                break
+            count += 1
+        if byte not in ("-", "*", ".", "o", '\xe2'):
+            return count, 0
+        list_chr = chop_str(line[count:], 1)[1]
+        if list_chr in ("-", "*", ".", "o",
+                        "\u2022", "\u2023", "\u2218"):
+            nxt = _indent_at_beg(line[count+len(list_chr):])
+            nxt = nxt[1] or nxt[0]
+            if nxt:
+                return count, count + 1 + nxt
+        return count, 0
+
+    text = text.rstrip('\n')
+    lines = text.replace('\t', ' ' * 8).split('\n')
+
+    ret = []
+    indent = initial_indent
+    wrap_last = False
+    csab = 0
+    cspc_indent = 0
+    for line in lines:
+        line = line.rstrip(' ')
+        (lsab, lspc_indent) = (csab, cspc_indent)
+        (csab, cspc_indent) = _indent_at_beg(line)
+        force_nl = False # We want to stop wrapping under "certain" conditions:
+        if wrap_last and cspc_indent:        # if line starts a list or
+            force_nl = True
+        if wrap_last and csab == len(line):  # is empty line
+            force_nl = True
+        # if line doesn't continue a list and is "block indented"
+        if wrap_last and not lspc_indent:
+            if csab >= 4 and csab != lsab:
+                force_nl = True
+        if force_nl:
+            ret.append(indent.rstrip(' '))
+            indent = subsequent_indent
+            wrap_last = False
+        if csab == len(line):  # empty line, remove spaces to make it easier.
+            line = ''
+        if wrap_last:
+            line = line.lstrip(' ')
+            cspc_indent = lspc_indent
+
+        if exact_width(indent + line) <= width:
+            wrap_last = False
+            ret.append(indent + line)
+            indent = subsequent_indent
+            continue
+
+        wrap_last = True
+        words = line.split(' ')
+        line = indent
+        spcs = cspc_indent
+        if not spcs and csab >= 4:
+            spcs = csab
+        for word in words:
+            if (width < exact_width(line + word)) and \
+               (exact_width(line) > exact_width(subsequent_indent)):
+                ret.append(line.rstrip(' '))
+                line = subsequent_indent + ' ' * spcs
+            line += word
+            line += ' '
+        indent = line.rstrip(' ') + ' '
+    if wrap_last:
+        ret.append(indent.rstrip(' '))
+
+    return '\n'.join(ret)
 
 
 # setup translation
