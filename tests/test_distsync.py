@@ -50,9 +50,6 @@ class DistroSync(support.ResultTestCase):
         self._base.distro_sync_userlist(('bla', 'hole'))
         obsolete_pkg = list(filter(lambda p: p.name == "tour", installed))
 
-        # check from log package name that is not installed
-        self.assertEqual(self._base.logger.mock_calls[1][1][1], 'bla')
-
         installed2 = self._get_installed(self._base)
         updated_pkg = list(filter(lambda p: p.name == "hole", installed2))
         self.assertLength(updated_pkg, 1)
