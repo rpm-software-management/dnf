@@ -29,6 +29,17 @@ import operator
 import time
 
 
+def _expire_str(repo, md):
+    last = time.ctime(md.timestamp) if md else _("unknown")
+    if repo.metadata_expire <= -1:
+        return _("Never (last: %s)") % last
+    elif not repo.metadata_expire:
+        return _("Instant (last: %s)") % last
+    else:
+        num = _num2ui_num(repo.metadata_expire)
+        return _("%s second(s) (last: %s)") % (num, last)
+
+
 def _num2ui_num(num):
     return ucd(locale.format("%d", num, True))
 
@@ -179,16 +190,8 @@ class RepoListCommand(commands.Command):
                     url = "%s (%d more)" % (md.mirrors[0], len(md.mirrors) - 1)
                     out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
-                last = time.ctime(md.timestamp)
-                if repo.metadata_expire <= -1:
-                    num = _("Never (last: %s)") % last
-                elif not repo.metadata_expire:
-                    num = _("Instant (last: %s)") % last
-                else:
-                    num = _num2ui_num(repo.metadata_expire)
-                    num = _("%s second(s) (last: %s)") % (num, last)
-
-                out += [self.output.fmtKeyValFill(_("Repo-expire  : "), num)]
+                expire = _expire_str(repo, md)
+                out += [self.output.fmtKeyValFill(_("Repo-expire  : "), expire)]
 
                 if repo.exclude:
                     out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
