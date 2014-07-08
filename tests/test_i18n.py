@@ -20,6 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.pycomp import PY3
+from dnf.i18n import fill_exact_width, textwrap_fill
 from tests.support import TestCase
 from tests.support import mock
 
@@ -106,3 +107,31 @@ class TestConversion(TestCase):
         self.assertEqual(dnf.i18n.ucd(obj), expected)
         # ucd() should return unicode unmodified
         self.assertEqual(dnf.i18n.ucd(expected), expected)
+
+
+class TestFormatedOutput(TestCase):
+    def test_fill_exact_width(self):
+        msg = "message"
+        pre = "<"
+        suf = ">"
+        self.assertEqual("%-*.*s" % (5, 10, msg), fill_exact_width(msg, 5, 10))
+        self.assertEqual("重uř ", fill_exact_width("重uř", 5, 10))
+        self.assertEqual("%10.5s" % msg,
+                         fill_exact_width(msg, 10, 5, left=False))
+        self.assertEqual("%s%.5s%s" % (pre, msg, suf),
+                         fill_exact_width(msg, 0, 5, prefix=pre, suffix=suf))
+
+    def test_exact_width(self):
+        self.assertEqual(dnf.i18n.exact_width("重uř"), 4)
+
+    def test_textwrap_fill(self):
+        msg = "12345 67890"
+        one_line = textwrap_fill(msg, 12)
+        self.assertEqual(one_line, "12345 67890")
+        two_lines = textwrap_fill(msg, 7, subsequent_indent=">>")
+        self.assertEqual(two_lines,
+                         "12345\n>>67890")
+        asian_msg = "重重 uř"
+        self.assertEqual(textwrap_fill(asian_msg, 7), asian_msg)
+        asian_two_lines = textwrap_fill("重重\nuř", 5, subsequent_indent=">>")
+        self.assertEqual(asian_two_lines, "重重\n>>uř")
