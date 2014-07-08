@@ -32,7 +32,6 @@ import dnf.i18n
 import dnf.logging
 import dnf.util
 import dnf.yum.config
-import fnmatch
 import functools
 import locale
 import operator

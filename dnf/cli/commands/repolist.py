@@ -23,9 +23,32 @@ from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.i18n import _, ucd, fill_exact_width
 import dnf.cli.format
+import fnmatch
 import locale
 import operator
 import time
+
+
+def _num2ui_num(num):
+    return ucd(locale.format("%d", num, True))
+
+
+def _repo_match(repo, patterns):
+    rid = repo.id.lower()
+    rnm = repo.name.lower()
+    for pat in patterns:
+        if fnmatch.fnmatch(rid, pat):
+            return True
+        if fnmatch.fnmatch(rnm, pat):
+            return True
+    return False
+
+
+def _repo_size(sack, repo):
+    ret = 0
+    for pkg in sack.query().filter(reponame__eq=repo.id):
+        ret += pkg.size
+    return dnf.cli.format.format_number(ret)
 
 
 class RepoListCommand(commands.Command):
@@ -39,25 +62,6 @@ class RepoListCommand(commands.Command):
     usage = '[all|enabled|disabled]'
 
     def run(self, extcmds):
-        def _repo_size(repo):
-            ret = 0
-            for pkg in self.base.sack.query().filter(reponame__eq=repo.id):
-                ret += pkg.size
-            return dnf.cli.format.format_number(ret)
-
-        def _repo_match(repo, patterns):
-            rid = repo.id.lower()
-            rnm = repo.name.lower()
-            for pat in patterns:
-                if fnmatch.fnmatch(rid, pat):
-                    return True
-                if fnmatch.fnmatch(rnm, pat):
-                    return True
-            return False
-
-        def _num2ui_num(num):
-            return ucd(locale.format("%d", num, True))
-
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
             extcmds = extcmds[1:]
@@ -70,18 +74,19 @@ class RepoListCommand(commands.Command):
         repos = list(self.base.repos.values())
         repos.sort(key=operator.attrgetter('id'))
         enabled_repos = self.base.repos.enabled()
-        on_ehibeg = self.output.term.FG_COLOR['green'] + self.output.term.MODE['bold']
-        on_dhibeg = self.output.term.FG_COLOR['red']
-        on_hiend  = self.output.term.MODE['normal']
+        term = self.output.term
+        on_ehibeg = term.FG_COLOR['green'] + term.MODE['bold']
+        on_dhibeg = term.FG_COLOR['red']
+        on_hiend = term.MODE['normal']
         tot_num = 0
         cols = []
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
-            (ehibeg, dhibeg, hiend)  = '', '', ''
-            ui_enabled      = ''
-            ui_endis_wid    = 0
-            ui_num          = ""
+            (ehibeg, dhibeg, hiend) = '', '', ''
+            ui_enabled = ''
+            ui_endis_wid = 0
+            ui_num = ""
             ui_excludes_num = ''
             force_show = False
             if arg == 'all' or repo.id in extcmds or repo.name in extcmds:
@@ -100,13 +105,13 @@ class RepoListCommand(commands.Command):
                         ui_enabled += ": "
                         ui_endis_wid += 2
                 if verbose:
-                    ui_size = _repo_size(repo)
+                    ui_size = _repo_size(self.base.sack, repo)
                 # We don't show status for list disabled
                 if arg != 'disabled' or verbose:
                     num = len(self.base.sack.query().filter(
                         reponame__eq=repo.id))
-                    ui_num     = _num2ui_num(num)
-                    tot_num   += num
+                    ui_num = _num2ui_num(num)
+                    tot_num += num
             else:
                 enabled = False
                 if arg == 'disabled':
@@ -150,10 +155,11 @@ class RepoListCommand(commands.Command):
                                                    ", ".join(sorted(tags))))]
 
                 if md:
-                    out += [self.output.fmtKeyValFill(_("Repo-updated : "),
-                                               time.ctime(md.md_timestamp)),
-                            self.output.fmtKeyValFill(_("Repo-pkgs    : "),ui_num),
-                            self.output.fmtKeyValFill(_("Repo-size    : "),ui_size)]
+                    out += [
+                        self.output.fmtKeyValFill(_("Repo-updated : "),
+                                                  time.ctime(md.md_timestamp)),
+                        self.output.fmtKeyValFill(_("Repo-pkgs    : "), ui_num),
+                        self.output.fmtKeyValFill(_("Repo-size    : "), ui_size)]
 
                 if repo.metalink:
                     out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
@@ -222,11 +228,11 @@ class RepoListCommand(commands.Command):
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
             if arg == 'disabled': # Don't output a status column.
-                left = self.output.term.columns - (id_len + 1)
+                left = term.columns - (id_len + 1)
             elif len(_('status')) > st_len:
-                left = self.output.term.columns - (id_len + len(_('status')) +2)
+                left = term.columns - (id_len + len(_('status')) +2)
             else:
-                left = self.output.term.columns - (id_len + st_len + 2)
+                left = term.columns - (id_len + st_len + 2)
 
             if left < nm_len: # Name gets chopped
                 nm_len = left
