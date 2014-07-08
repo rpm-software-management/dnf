@@ -25,6 +25,7 @@ from dnf.yum.misc import unlink_f
 from dnf.i18n import _
 
 import dnf.callback
+import dnf.logging
 import dnf.repo
 import hawkey
 import librepo
@@ -124,7 +125,8 @@ class DeltaInfo(object):
 
     def job_done(self, pid, code):
         # handle a finished delta rebuild
-        logger.debug('drpm: %d: return code: %d, %d', pid, code >> 8, code & 0xff)
+        logger.log(dnf.logging.SUBDEBUG, 'drpm: %d: return code: %d, %d', pid,
+                   code >> 8, code & 0xff)
 
         pload = self.jobs.pop(pid)
         pkg = pload.pkg
@@ -143,7 +145,8 @@ class DeltaInfo(object):
                       '-a', pload.pkg.arch,
                       pload.localPkg(), pload.pkg.localPkg()]
         pid = os.spawnl(os.P_NOWAIT, *spawn_args)
-        logger.debug('drpm: spawned %d: %s', pid, ' '.join(spawn_args[1:]))
+        logger.log(dnf.logging.SUBDEBUG, 'drpm: spawned %d: %s', pid,
+                   ' '.join(spawn_args[1:]))
         self.jobs[pid] = pload
 
     def enqueue(self, pload):
