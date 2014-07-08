@@ -100,6 +100,11 @@ one main section. The repository sections define the configuration for each
     disable automatic metadata synchronizing. The default corresponds to three
     hours.
 
+``pluginpath``
+    list
+
+    List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
+
 ==============
  Repo Options
 ==============
