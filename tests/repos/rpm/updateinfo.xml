@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<updates>
+ <update from="rholy@redhat.com" status="stable" type="bugfix" version="1.4">
+  <id>DNF-2014-1</id>
+  <title>tour-4-4</title>
+  <release>Fedora 20</release>
+  <issued date="2014-07-08 17:34:01"/>
+  <references/>
+  <description>testing advisory</description>
+  <pkglist>
+   <collection short="F20">
+    <name>Fedora 20</name>
+    <package arch="noarch" epoch="0" name="tour" release="4" src="https://github.com/akozumpl/dnf/blob/master/tests/repos/rpm/tour-4-4.noarch.rpm" version="4">
+     <filename>tour-4-4.noarch.rpm</filename>
+    </package>
+   </collection>
+  </pkglist>
+ </update>
+ <update from="rholy@redhat.com" status="stable" type="enhancement" version="1.4">
+  <id>DNF-2014-2</id>
+  <title>tour-5-0</title>
+  <release>Fedora 20</release>
+  <issued date="2014-07-08 17:38:02"/>
+  <references/>
+  <description>testing advisory</description>
+  <pkglist>
+   <collection short="F20">
+    <name>Fedora 20</name>
+    <package arch="noarch" epoch="0" name="tour" release="0" src="https://github.com/akozumpl/dnf/blob/master/tests/repos/rpm/tour-5-0.noarch.rpm" version="5">
+     <filename>tour-5-0.noarch.rpm</filename>
+    </package>
+   </collection>
+  </pkglist>
+ </update>
+ <update from="rholy@redhat.com" status="stable" type="security" version="1.4">
+  <id>DNF-2014-3</id>
+  <title>tour-5-1</title>
+  <release>Fedora 20</release>
+  <issued date="2014-07-08 17:39:03"/>
+  <references/>
+  <description>testing advisory</description>
+  <pkglist>
+   <collection short="F20">
+    <name>Fedora 20</name>
+    <package arch="noarch" epoch="0" name="tour" release="1" src="https://github.com/akozumpl/dnf/blob/master/tests/repos/rpm/tour-5-1.noarch.rpm" version="5">
+     <filename>tour-5-1.noarch.rpm</filename>
+    </package>
+   </collection>
+  </pkglist>
+ </update>
+</updates>
+

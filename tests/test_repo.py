@@ -303,10 +303,10 @@ class LocalRepoTest(support.TestCase):
         self.repo.metalink = 'http://meh'
         remote_handle_m = new_remote_m()
         remote_handle_m.metalink = \
-            {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
-                        ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0'),
-                        ('sha256', '4394be16de62563321f6ea9604513a8a2f6b9ab67898bbed218feeca8e6a7180'),
-                        ('sha512', 'e583eeb91874954b24a376176a087462403e518563f9cb3bdc4f7eae792e8d15ac488bc6d3fb632bbf0ac6cf58bf769e94e9773df6605616a28cf2c00adf8e14')]}
+            {'hashes': [('md5', '308d71cc873ef60efa5ef2ba5a97b34a'),
+                        ('sha1', 'd5f18c856e765cd88a50dbf1bfaea51de3b5e516'),
+                        ('sha256', 'ead48d5c448a481bd66a4413d7be28bd44ce5de1ee59ecb723c78dcf4e441696'),
+                        ('sha512', '9a3131485c0c0a3f65bb5f25155e89d2d6b09e74ffdaa1c3339d3874885d160d8b4667a4a83dbd7d2702a5d41a4e1bc5622c4783b77dcf1f69626c68975202ce')]}
         self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertEqual(self.repo.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
