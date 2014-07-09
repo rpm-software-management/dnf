@@ -768,25 +768,32 @@ class Output(object):
         :param hightlight: highlighting options for the name of the
            package
         """
+        def print_key_val(key, val):
+            print(fill_exact_width(key, 11, 11), ":", val)
+
+        def print_key_val_fill(key, val):
+            print(self.fmtKeyValFill(fill_exact_width(key, 11, 11) +
+                  " : ", val or ""))
+
         (hibeg, hiend) = self._highlight(highlight)
         yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
-        print(_("Name        : %s%s%s") % (hibeg, pkg.name, hiend))
-        print(_("Arch        : %s") % pkg.arch)
+        print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
+        print_key_val(_("Arch"), pkg.arch)
         if pkg.e != "0":
-            print(_("Epoch       : %s") % pkg.e)
-        print(_("Version     : %s") % pkg.v)
-        print(_("Release     : %s") % pkg.r)
-        print(_("Size        : %s") % format_number(float(pkg.size)))
-        print(_("Repo        : %s") % pkg.repoid)
+            print_key_val(_("Epoch"), pkg.e)
+        print_key_val(_("Version"), pkg.v)
+        print_key_val(_("Release"), pkg.r)
+        print_key_val(_("Size"), format_number(float(pkg.size)))
+        print_key_val(_("Repo"), pkg.repoid)
         if 'from_repo' in yumdb_info:
-            print(_("From repo   : %s") % yumdb_info.from_repo)
+            print_key_val(_("From repo"), yumdb_info.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
-            print(_("Buildtime   : %s") % time.ctime(pkg.buildtime))
+            print_key_val(_("Buildtime"), time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
-                print(_("Install time: %s") % time.ctime(pkg.installtime))
+                print_key_val(_("Install time"), time.ctime(pkg.installtime))
             if pkg.repoid == 'installed':
                 uid = None
                 if 'installed_by' in pkg.yumdb_info:
@@ -794,20 +801,19 @@ class Output(object):
                         uid = int(pkg.yumdb_info.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print(_("Installed by: %s") % self._pwd_ui_username(uid))
+                print_key_val(_("Installed by"), self._pwd_ui_username(uid))
                 uid = None
                 if 'changed_by' in pkg.yumdb_info:
                     try:
                         uid = int(pkg.yumdb_info.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print(_("Changed by  : %s") % self._pwd_ui_username(uid))
-        print(self.fmtKeyValFill(_("Summary     : "), pkg.summary or ""))
+                print_key_val(_("Changed by"), self._pwd_ui_username(uid))
+        print_key_val_fill(_("Summary"), pkg.summary)
         if pkg.url:
-            print(_("URL         : %s") % ucd(pkg.url))
-        print(self.fmtKeyValFill(_("License     : "), pkg.license))
-        print(self.fmtKeyValFill(_("Description : "),
-              pkg.description or ""))
+            print_key_val(_("URL"), ucd(pkg.url))
+        print_key_val_fill(_("License"), pkg.license)
+        print_key_val_fill(_("Description"), pkg.description)
         print("")
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
