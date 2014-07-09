@@ -167,9 +167,6 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("-c", "--config", dest="conffile",
                            default=None, metavar='[config file]',
                            help=_("config file location"))
-        self.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
-                           default=None, metavar='[minutes]',
-                           help=_("maximum command wait time"))
         self.add_argument("-d", "--debuglevel", dest="debuglevel",
                            metavar='[debug level]', default=None,
                            help=_("debugging output level"), type=int)

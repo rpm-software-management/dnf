@@ -59,7 +59,6 @@ import logging
 import operator
 import os
 from . import output
-import random
 import re
 import signal
 import sys
@@ -1066,11 +1065,6 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        if opts.sleeptime is not None:
-            sleeptime = random.randrange(opts.sleeptime*60)
-        else:
-            sleeptime = 0
-
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         if self.base.conf.plugins:
@@ -1108,8 +1102,6 @@ class Cli(object):
             self.base.conf.debug_solver = True
 
         self.base.plugins.run_config()
-        # run the sleep - if it's unchanged then it won't matter
-        time.sleep(sleeptime)
 
     def check(self):
         """Make sure the command line and options make sense."""
