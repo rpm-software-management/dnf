@@ -39,6 +39,7 @@ import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.repolist
 import dnf.cli.commands.search
+import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgradeto
 import dnf.cli.demand
@@ -725,6 +726,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.repolist.RepoListCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)
+        self.register_command(dnf.cli.commands.updateinfo.UpdateInfoCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.upgradeto.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
