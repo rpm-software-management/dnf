@@ -4,4 +4,5 @@ THISDIR=$(readlink -f $(dirname $0))
 cd $THISDIR
 git rm -rf repodata/
 createrepo --no-database -o . ..
+modifyrepo updateinfo.xml repodata/
 git add repodata/
