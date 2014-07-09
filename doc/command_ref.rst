@@ -53,6 +53,7 @@ Available commands are:
 * repolist
 * repository-packages
 * search
+* updateinfo
 * upgrade
 * upgrade-to
 
@@ -534,6 +535,13 @@ Update Command
 
 ``dnf [options] update``
     Deprecated alias for the :ref:`\upgrade_command-label`.
+
+------------------
+Updateinfo Command
+------------------
+
+``dnf [options] updateinfo``
+    Display counts of advisories about newer versions of installed packages.
 
 .. _upgrade_command-label:
 
