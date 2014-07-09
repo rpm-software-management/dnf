@@ -876,6 +876,15 @@ class Cli(object):
         confirm_func = self.base.output._cli_confirm_gpg_key_import
         self.base.repos.all().confirm_func = confirm_func
 
+    def _log_essentials(self):
+        self.logger.debug('DNF version: %s', dnf.const.VERSION)
+        self.logger.log(dnf.logging.SUBDEBUG,
+                        'Command: %s', self.cmdstring)
+        self.logger.log(dnf.logging.SUBDEBUG,
+                        'Installroot: %s', self.base.conf.installroot)
+        self.logger.log(dnf.logging.SUBDEBUG, 'Releasever: %s',
+                        self.base.conf.releasever)
+
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
         installroot and conffile.
@@ -905,11 +914,6 @@ class Cli(object):
         all.  This function will also set :attr:`self.base.basecmd` and
         :attr:`self.extcmds`.
         """
-        self.logger.debug('dnf version: %s', dnf.const.VERSION)
-        self.logger.log(dnf.logging.SUBDEBUG,
-                        'Command: %s', self.cmdstring)
-        self.logger.log(dnf.logging.SUBDEBUG,
-                        'Installroot: %s', self.base.conf.installroot)
         if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
             self.base.cmds = self.base.conf.commands
         else:
@@ -1092,6 +1096,7 @@ class Cli(object):
         for arg in self.base.args:
             self.cmdstring += '%s ' % arg
 
+        self._log_essentials()
         try:
             self._parse_commands() # before we return check over the base command
                                   # + args make sure they match/make sense
@@ -1116,9 +1121,13 @@ class Cli(object):
         conf = self.base.conf
         conf.installroot = root
         conf.read(path)
-        conf.releasever = releasever
         if releasever is None:
-            conf.releasever = dnf.rpm.detect_releasever(root)
+            releasever = dnf.rpm.detect_releasever(root)
+            if releasever is None:
+                msg = _('releasever not given and can not be detected '
+                        'from the installroot.')
+                raise dnf.exceptions.ConfigError(msg)
+        conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(root)
 
