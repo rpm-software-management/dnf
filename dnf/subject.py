@@ -130,6 +130,9 @@ class Subject(object):
     def get_best_selector(self, sack, forms=None):
         # :api
         kwargs = {'allow_globs' : True}
+        if self.filename_pattern:
+            key = "file__glob" if is_glob_pattern(self.pattern) else "file"
+            return dnf.selector.Selector(sack).set(**{key: self.pattern})
         if forms:
             kwargs['form'] = forms
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
