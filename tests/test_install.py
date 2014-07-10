@@ -149,6 +149,11 @@ class MultilibBest(support.ResultTestCase):
         new_set = self.installed + trampoline.run()
         self.assertResult(self.base, new_set)
 
+    def test_install_by_filename_best(self):
+        self.base.install("/usr/lib*/liblot*")
+        inst, _ = self.installed_removed(self.base)
+        self.assertCountEqual(map(str, inst), ['lotus-3-16.x86_64'])
+
     def test_install_by_filename_glob(self):
         self.base.install("/*/be/there")
         (installed, _) = self.installed_removed(self.base)
