@@ -77,19 +77,19 @@ _dnf ()
     done
     if [[ "$command" == "install" || "$command" == "update" || "$command" == "info" ]]; then
         if [ -r '/var/cache/dnf/available.cache' ]; then
-            COMPREPLY=($(compgen -W "`egrep ^$cur /var/cache/dnf/available.cache`" -- "$cur"))
+            COMPREPLY=($(compgen -W "`grep -E ^$cur /var/cache/dnf/available.cache`" -- "$cur"))
             return
         else
-            COMPREPLY=($(compgen -W "`dnf list --cacheonly 2>/dev/null | cut -d' ' -f1 | egrep ^$cur`" -- "$cur"))
+            COMPREPLY=($(compgen -W "`dnf list --cacheonly 2>/dev/null | cut -d' ' -f1 | grep -E ^$cur`" -- "$cur"))
             return
         fi
     fi
     if [[ "$command" == "remove" || "$command" == "erase" ]]; then
         if [ -r '/var/cache/dnf/installed.cache' ]; then
-            COMPREPLY=($(compgen -W "`egrep ^$cur /var/cache/dnf/installed.cache`" -- "$cur"))
+            COMPREPLY=($(compgen -W "`grep -E ^$cur /var/cache/dnf/installed.cache`" -- "$cur"))
             return
         else
-            COMPREPLY=($(compgen -W "`rpm -qav --qf '%{NAME}.%{ARCH}\n' | egrep ^$cur`" -- "$cur"))
+            COMPREPLY=($(compgen -W "`rpm -qav --qf '%{NAME}.%{ARCH}\n' | grep -E ^$cur`" -- "$cur"))
             return
         fi
     fi
