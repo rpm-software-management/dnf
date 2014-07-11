@@ -23,11 +23,11 @@
 
 
 __dnf_commandlist="
-    clean
+    autoerase
     check-update
+    clean
     distro-sync
     downgrade
-    remove
     erase
     group
     help
@@ -39,6 +39,7 @@ __dnf_commandlist="
     provides
     reinstall
     repolist
+    repository-packages
     search
     upgrade
     upgrade-to
@@ -98,22 +99,51 @@ _dnf ()
         case "${COMP_WORDS[COMP_CWORD]}" in
         --*=*) COMPREPLY=() ;;
         --*)   __dnfcomp "
-            --version
-            --cacheonly
-            --verbose
-            --help
+            --allowerasing
             --best
+            --cacheonly
+            --config
+            --randomwait
+            --debuglevel
+            --debugsolver
+            --showduplicates
+            --errorlevel
+            --rpmverbosity
             --quiet
-            --assumeno
+            --verbose
             --assumeyes
+            --assumeno
+            --version
+            --installroot
+            --enablerepo
+            --disablerepo
+            --exclude
+            --disableexcludes
+            --obsoletes
+            --noplugins
+            --nogpgcheck
+            --disableplugin
+            --color
+            --releasever
+            --setopt
             --refresh
+            --help
             "
             ;;
         -*) __dnfcomp "
-            -C
             -b
+            -C
+            -c
+            -R
+            -d
+            -e
             -q
+            -v
             -y
+            -x
+            -4
+            -6
+            -h
             "
             ;;
         *)     __dnfcomp "$__dnf_commandlist" ;;
