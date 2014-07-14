@@ -22,7 +22,6 @@ from dnf.util import Bunch
 
 import dnf.drpm
 import dnf.exceptions
-import hawkey
 
 PACKAGE = 'tour-5-1.noarch'
 
@@ -36,15 +35,8 @@ class DrpmTest(support.TestCase):
         repo = support.MockRepo('drpm', '/tmp/dnf-cache')
         self.base.repos[repo.id] = repo
         repo.baseurl = ['file://%s/%s' % (support.repo_dir(), repo.id)]
-        repo.load()
-
-        # add it to sack
-        hrepo = hawkey.Repo(repo.id)
-        hrepo.repomd_fn = repo.repomd_fn
-        hrepo.primary_fn = repo.primary_fn
-        hrepo.filelists_fn = repo.filelists_fn
-        hrepo.presto_fn = repo.presto_fn
-        self.sack.load_yum_repo(hrepo, load_filelists=True, load_presto=True)
+        repo.deltarpm = True
+        self.base._add_repo_to_sack(repo.id)
 
     def setUp(self):
         # find the newest 'tour' package available

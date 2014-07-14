@@ -32,6 +32,7 @@ import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
 import functools
+import hawkey
 import logging
 import librepo
 import operator
@@ -402,7 +403,7 @@ class Repo(dnf.yum.config.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.basecachedir = basecachedir
         self.id = id_ # :api
-        self.hawkey_repo = None
+        self.hawkey_repo = hawkey.Repo(id_)
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()

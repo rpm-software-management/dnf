@@ -95,7 +95,6 @@ class Base(object):
         self.close()
 
     def _add_repo_to_sack(self, name):
-        hrepo = hawkey.Repo(name)
         repo = self.repos[name]
         try:
             repo.load()
@@ -105,6 +104,7 @@ class Base(object):
             self.logger.warning(_("%s, disabling."), e)
             repo.disable()
             return
+        hrepo = repo.hawkey_repo
         hrepo.repomd_fn = repo.repomd_fn
         hrepo.primary_fn = repo.primary_fn
         hrepo.filelists_fn = repo.filelists_fn
@@ -113,7 +113,6 @@ class Base(object):
             hrepo.presto_fn = repo.presto_fn
         else:
             self.logger.debug("not found deltainfo for: %s" % repo.name)
-        repo.hawkey_repo = hrepo
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
                                  load_presto=repo.deltarpm)
 
