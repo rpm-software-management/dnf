@@ -133,20 +133,13 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_cost(self):
         """Test the cost is passed down to the hawkey repo instance."""
-        repo2 = dnf.repo.Repo("r2", self.TMP_CACHEDIR)
-        repo2.baseurl = [BASEURL]
-        repo2.name = "r2 repo"
-        self.repo.cost = 500
-        repo2.cost = 700
+        r = self.repo
+        self.assertEqual(r.cost, 1000)
+        self.assertEqual(r.hawkey_repo.cost, 1000)
 
-        base = support.MockBase()
-        base.init_sack()
-        base.repos.add(self.repo)
-        base.repos.add(repo2)
-        base._add_repo_to_sack('r')
-        base._add_repo_to_sack('r2')
-        self.assertEqual(500, self.repo.hawkey_repo.cost)
-        self.assertEqual(700, repo2.hawkey_repo.cost)
+        r.cost = 300
+        self.assertEqual(r.cost, 300)
+        self.assertEqual(r.hawkey_repo.cost, 300)
 
     def test_expire_cache(self):
         self.repo.load()

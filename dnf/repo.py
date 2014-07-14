@@ -72,6 +72,7 @@ def pkg2payload(pkg, progress, *factories):
             return pload
     raise ValueError('no matching payload factory for %s' % pkg)
 
+
 class _DownloadErrors(object):
     def __init__(self):
         self.fatal = None
@@ -259,6 +260,7 @@ class Metadata(object):
     def timestamp(self):
         return self.file_timestamp('primary')
 
+
 class PackagePayload(dnf.callback.Payload):
     def __init__(self, pkg, progress):
         super(PackagePayload, self).__init__(progress)
@@ -388,9 +390,11 @@ class MDPayload(dnf.callback.Payload):
         self._download_size = 0
         self.progress.end(self, None, None)
 
+
 SYNC_TRY_CACHE = 1
 SYNC_EXPIRED = 2    # consider the current cache expired, no matter its real age
 SYNC_ONLY_CACHE = 3 # use the local cache, even if it's expired, never download.
+
 
 class Repo(dnf.yum.config.RepoConf):
     # :api
@@ -403,12 +407,22 @@ class Repo(dnf.yum.config.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.basecachedir = basecachedir
         self.id = id_ # :api
-        self.hawkey_repo = hawkey.Repo(id_)
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
         self.max_mirror_tries = 0 # try them all
         self._handle = None
+        self.hawkey_repo = self._init_hawkey_repo()
+
+    def __setattr__(self, name, value):
+        super(Repo, self).__setattr__(name, value)
+        if name == 'cost':
+            self.hawkey_repo.cost = value
+
+    def _init_hawkey_repo(self):
+        hrepo = hawkey.Repo(self.id)
+        hrepo.cost = self.cost
+        return hrepo
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.id)
