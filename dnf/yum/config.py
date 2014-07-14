@@ -921,6 +921,7 @@ class RepoConf(BaseConfig):
 
     metadata_expire = Inherit(YumConf.metadata_expire)
     cost = IntOption(1000)
+    priority = IntOption(99)
 
     sslcacert = Inherit(YumConf.sslcacert)
     sslverify = Inherit(YumConf.sslverify) # :api

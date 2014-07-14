@@ -418,10 +418,13 @@ class Repo(dnf.yum.config.RepoConf):
         super(Repo, self).__setattr__(name, value)
         if name == 'cost':
             self.hawkey_repo.cost = value
+        if name == 'priority':
+            self.hawkey_repo.priority = value
 
     def _init_hawkey_repo(self):
         hrepo = hawkey.Repo(self.id)
         hrepo.cost = self.cost
+        hrepo.priority = self.priority
         return hrepo
 
     def __repr__(self):

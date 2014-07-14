@@ -131,15 +131,20 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertIn('bandwidth', opts)
         self.assertIn('gpgkey', opts)
 
-    def test_cost(self):
-        """Test the cost is passed down to the hawkey repo instance."""
+    def test_hawkey_repo(self):
+        """Test settings get passed down to the hawkey repo instance."""
         r = self.repo
         self.assertEqual(r.cost, 1000)
         self.assertEqual(r.hawkey_repo.cost, 1000)
-
         r.cost = 300
         self.assertEqual(r.cost, 300)
         self.assertEqual(r.hawkey_repo.cost, 300)
+
+        self.assertEqual(r.priority, 99)
+        self.assertEqual(r.hawkey_repo.priority, 99)
+        r.priority = 9
+        self.assertEqual(r.priority, 9)
+        self.assertEqual(r.hawkey_repo.priority, 9)
 
     def test_expire_cache(self):
         self.repo.load()
