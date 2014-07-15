@@ -49,7 +49,7 @@ class PluginTest(tests.support.TestCase):
 
     def test_config(self):
         base = tests.support.MockBase()
-        base.conf.pluginconfpath = PLUGINS
+        base.conf.pluginconfpath = ['/wrong', PLUGINS]
         self.plugins.run_init(base, None)
         lucky = self.plugins.plugins[0]
         conf = lucky.read_config(base.conf, 'lucky')

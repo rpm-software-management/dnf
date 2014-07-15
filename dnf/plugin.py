@@ -47,9 +47,9 @@ class Plugin(object):
     @staticmethod
     def read_config(conf, name):
         # :api
-        fn = '%s/%s.conf' % (conf.pluginconfpath, name)
         parser = iniparse.compat.ConfigParser()
-        parser.read(fn)
+        files = ['%s/%s.conf' % (path, name) for path in conf.pluginconfpath]
+        parser.read(files)
         return parser
 
     def __init__(self, base, cli):

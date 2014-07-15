@@ -703,7 +703,7 @@ class YumConf(BaseConfig):
     config_file_path = Option(dnf.const.CONF_FILENAME) # :api
     plugins = BoolOption(True)
     pluginpath = ListOption([dnf.const.PLUGINPATH]) # :api
-    pluginconfpath = ListOption(['/etc/dnf/plugins'])
+    pluginconfpath = ListOption([dnf.const.PLUGINCONFPATH])
     persistdir = Option(dnf.const.PERSISTDIR) # :api
 
     def __init__(self):
