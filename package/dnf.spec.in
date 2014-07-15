@@ -85,8 +85,10 @@ pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
+%global pluginconfpath %{confdir}/plugins
 %global py2pluginpath %{python_sitelib}/dnf-plugins
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
+mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
@@ -102,6 +104,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
+%dir %{pluginconfpath}
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
@@ -119,6 +122,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %dir %{confdir}
+%dir %{pluginconfpath}
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
