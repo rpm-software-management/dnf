@@ -19,35 +19,32 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-import itertools
-import operator
-import sys
-import time
-import logging
-import pwd
-import re
-
+from dnf.cli.format import format_number, format_time
+from dnf.cli.term import _term_width
+from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
+from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
+from dnf.yum.misc import prco_tuple_to_string
+from dnf.yum.rpmtrans import LoggingTransactionDisplay
+import curses
 import dnf.callback
 import dnf.cli.progress
 import dnf.conf
-from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
-from dnf.yum.misc import prco_tuple_to_string
-import dnf.yum.misc
-
-from dnf.yum.rpmtrans import LoggingTransactionDisplay
-import dnf.yum.packages
-
 import dnf.i18n
-import dnf.yum.history
 import dnf.transaction
 import dnf.util
-
-from dnf.cli.format import format_number, format_time
-from dnf.cli.term import _term_width
-from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
-
-import locale
+import dnf.yum.history
+import dnf.yum.misc
+import dnf.yum.packages
 import hawkey
+import itertools
+import locale
+import logging
+import operator
+import pwd
+import re
+import sys
+import time
+
 
 def _make_lists(transaction):
     b = dnf.util.Bunch()
@@ -208,13 +205,6 @@ class Term(object):
             self.__enabled = False
             return
         assert color == 'auto'
-
-        # Curses isn't available on all platforms
-        try:
-            import curses
-        except Exception:
-            self.__enabled = False
-            return
 
         # If the stream isn't a tty, then assume it has no capabilities.
         if not term_stream:
