@@ -49,19 +49,6 @@ from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
 import locale
 import hawkey
 
-try:
-    assert max(2, 4) == 4
-except:
-    # Python-2.4.x doesn't have min/max ... *sigh*
-    def min(x, *args):
-        for y in args:
-            if x > y: x = y
-        return x
-    def max(x, *args):
-        for y in args:
-            if x < y: x = y
-        return x
-
 def _make_lists(transaction):
     b = dnf.util.Bunch()
     for t in ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded'):
@@ -225,7 +212,7 @@ class Term(object):
         # Curses isn't available on all platforms
         try:
             import curses
-        except:
+        except Exception:
             self.__enabled = False
             return
 
@@ -240,7 +227,7 @@ class Term(object):
         # terminal has no capabilities.
         try:
             curses.setupterm(fd=term_stream.fileno())
-        except:
+        except Exception:
             self.__enabled = False
             return
         self._ctigetstr = curses.tigetstr
@@ -452,8 +439,7 @@ class Output(object):
         else:
             # Turn a string into a specific output: colour, bold, etc.
             for high in highlight.replace(',', ' ').split():
-                if False: pass
-                elif high == 'normal':
+                if high == 'normal':
                     hibeg = ''
                 elif high in self.term.MODE:
                     hibeg += self.term.MODE[high]
@@ -527,7 +513,7 @@ class Output(object):
         cols = len(data)
         # Convert the data to ascending list of tuples, (field_length, pkgs)
         pdata = data
-        data  = [None] * cols # Don't modify the passed in data
+        data = [None] * cols # Don't modify the passed in data
         for d in range(0, cols):
             data[d] = sorted(pdata[d].items())
 
@@ -552,7 +538,7 @@ class Output(object):
         while total_width > 0:
             # Find which field all the spaces left will help best
             helps = 0
-            val   = 0
+            val = 0
             for d in xrange(0, cols):
                 thelps = self._calc_columns_spaces_helps(columns[d], data[d],
                                                          total_width)
@@ -566,7 +552,7 @@ class Output(object):
                 if thelps < helps:
                     continue
                 helps = thelps
-                val   = d
+                val = d
 
             #  If we found a column to expand, move up to the next level with
             # that column and start again with any remaining space.
@@ -575,9 +561,9 @@ class Output(object):
                 if not columns[val] and (val == (cols - 1)):
                     #  If we are going from 0 => N on the last column, take 1
                     # for the space before the column.
-                    total_width  -= 1
+                    total_width -= 1
                 columns[val] += diff
-                total_width  -= diff
+                total_width -= diff
                 continue
 
             overflowed_columns = 0
@@ -841,7 +827,7 @@ class Output(object):
             if changePkg.reponame != hawkey.SYSTEM_REPO_NAME:
                 chi = self.conf.color_update_local
             self.simpleList(changePkg, columns=columns, highlight=chi)
-            self.simpleList(instPkg,   columns=columns, indent=' ' * 4,
+            self.simpleList(instPkg, columns=columns, indent=' ' * 4,
                             highlight=self.conf.color_update_installed)
             return
 
@@ -849,7 +835,8 @@ class Output(object):
         c_compact = changePkg.compactPrint()
         i_compact = '%s.%s' % (instPkg.name, instPkg.arch)
         c_repo = changePkg.repoid
-        print('%-35.35s [%.12s] %.10s %-20.20s' % (c_compact, c_repo, changetype, i_compact))
+        print('%-35.35s [%.12s] %.10s %-20.20s' %
+              (c_compact, c_repo, changetype, i_compact))
 
     def listPkgs(self, lst, description, outputType, highlight_na={},
                  columns=None, highlight_modes={}):
@@ -883,14 +870,17 @@ class Output(object):
 
                  'not_in' - highlighting used for packages not in *highlight_na*
                  '=' - highlighting used when the package versions are equal
-                 '<' - highlighting used when the package has a lower version number
-                 '>' - highlighting used when the package has a higher version number
+                 '<' - highlighting used when the package has a lower version
+                       number
+                 '>' - highlighting used when the package has a higher version
+                       number
         :return: (exit_code, [errors])
 
         exit_code is::
 
             0 = we're done, exit
             1 = we've errored, exit with error string
+
         """
         if outputType in ['list', 'info', 'name']:
             thingslisted = 0
@@ -900,8 +890,7 @@ class Output(object):
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
-                    if False: pass
-                    elif key not in highlight_na:
+                    if key not in highlight_na:
                         highlight = highlight_modes.get('not in', 'normal')
                     elif pkg.evr_eq(highlight_na[key]):
                         highlight = highlight_modes.get('=', 'normal')
@@ -964,7 +953,6 @@ class Output(object):
         return False
 
     def _cli_confirm_gpg_key_import(self, keydict):
-        # FIXME what should we be printing here?
         return self.userconfirm()
 
     def _pkgs2name_dict(self, sections):
@@ -1094,7 +1082,7 @@ class Output(object):
         if matchfor:
             if highlight is None:
                 highlight = self.conf.color_search_match
-            msg = self._sub_highlight(msg, highlight, matchfor,ignore_case=True)
+            msg = self._sub_highlight(msg, highlight, matchfor, ignore_case=True)
         print(msg)
 
         if verbose is None:
@@ -1112,8 +1100,7 @@ class Output(object):
                 print(_('Matched from:'))
                 done = True
             can_overflow = True
-            if False: pass
-            elif po.description == item:
+            if po.description == item:
                 key = _("Description : ")
                 item = ucd(item)
             elif po.url == item:
@@ -1158,7 +1145,7 @@ class Output(object):
         """
         totsize = 0
         locsize = 0
-        insize  = 0
+        insize = 0
         error = False
         for pkg in packages:
             # Just to be on the safe side, if for some reason getting
@@ -1170,7 +1157,7 @@ class Output(object):
                 try:
                     if pkg.verifyLocalPkg():
                         locsize += size
-                except:
+                except Exception:
                     pass
 
                 if not installonly:
@@ -1178,15 +1165,16 @@ class Output(object):
 
                 try:
                     size = int(pkg.installsize)
-                except:
+                except Exception:
                     pass
                 insize += size
-            except:
+            except Exception:
                 error = True
-                self.logger.error(_('There was an error calculating total download size'))
+                msg = _('There was an error calculating total download size')
+                self.logger.error(msg)
                 break
 
-        if (not error):
+        if not error:
             if locsize:
                 self.logger.info(_("Total size: %s"),
                                         format_number(totsize))
@@ -1212,14 +1200,13 @@ class Output(object):
             try:
                 size = pkg.size
                 totsize += size
-            except:
+            except Exception:
                 error = True
-                self.logger.error(_('There was an error calculating installed size'))
+                msg = _('There was an error calculating installed size')
+                self.logger.error(msg)
                 break
-        if (not error):
-            self.logger.info(
-                                    _("Installed size: %s"),
-                                    format_number(totsize))
+        if not error:
+            self.logger.info(_("Installed size: %s"), format_number(totsize))
 
     def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
@@ -1227,7 +1214,7 @@ class Output(object):
         """
         list_bunch = _make_lists(transaction)
         pkglist_lines = []
-        data  = {'n' : {}, 'v' : {}, 'r' : {}}
+        data = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
 
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
@@ -1249,7 +1236,7 @@ class Output(object):
             lines.append((n, a, evr, repoid, size, obsoletes, hi))
             #  Create a dict of field_length => number of packages, for
             # each field.
-            for (d, v) in (("n",len(n)), ("v",len(evr)), ("r",len(repoid))):
+            for (d, v) in (("n", len(n)), ("v", len(evr)), ("r", len(repoid))):
                 data[d].setdefault(v, 0)
                 data[d][v] += 1
             a_wid = max(a_wid, len(a))
@@ -1270,8 +1257,8 @@ class Output(object):
         if not data['n']:
             return u''
         else:
-            data    = [data['n'],    {}, data['v'], data['r'], {}]
-            columns = [1,         a_wid,         1,         1,  5]
+            data = [data['n'], {}, data['v'], data['r'], {}]
+            columns = [1, a_wid, 1, 1, 5]
             columns = self.calcColumns(data, indent="  ", columns=columns,
                                        remainder_column=2)
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
@@ -1291,7 +1278,7 @@ class Output(object):
             if lines:
                 totalmsg = u"%s:\n" % action
             for (n, a, evr, repoid, size, obsoletes, hi) in lines:
-                columns = ((n,   -n_wid, hi), (a,      -a_wid),
+                columns = ((n, -n_wid, hi), (a, -a_wid),
                            (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
@@ -1308,14 +1295,14 @@ class Output(object):
 Transaction Summary
 %s
 """) % ('=' * self.term.columns))
-        summary_data =  (
+        summary_data = (
             (_('Install'), len(list_bunch.installed), 0),
             (_('Upgrade'), len(list_bunch.upgraded), 0),
             (_('Remove'), len(list_bunch.erased), 0),
             (_('Downgrade'), len(list_bunch.downgraded), 0))
-        max_msg_action   = 0
-        max_msg_count    = 0
-        max_msg_pkgs     = 0
+        max_msg_action = 0
+        max_msg_count = 0
+        max_msg_pkgs = 0
         max_msg_depcount = 0
         for action, count, depcount in summary_data:
             if not count and not depcount:
@@ -1331,9 +1318,9 @@ Transaction Summary
             else:
                 len_msg_depcount = 0
 
-            max_msg_action   = max(len_msg_action,   max_msg_action)
-            max_msg_count    = max(len_msg_count,    max_msg_count)
-            max_msg_pkgs     = max(len_msg_pkgs,     max_msg_pkgs)
+            max_msg_action = max(len_msg_action, max_msg_action)
+            max_msg_count = max(len_msg_count, max_msg_count)
+            max_msg_pkgs = max(len_msg_pkgs, max_msg_pkgs)
             max_msg_depcount = max(len_msg_depcount, max_msg_depcount)
 
         for action, count, depcount in summary_data:
@@ -1569,7 +1556,8 @@ Transaction Summary
         last_end = -1 # This just makes displaying it easier...
         for mtid in sorted(rtids):
             if mtid[0] < last_end:
-                self.logger.warn(_('Skipping merged transaction %d to %d, as it overlaps' % (mtid[0], mtid[1])))
+                msg = ('Skipping merged transaction %d to %d, as it overlaps')
+                self.logger.warn(msg, mtid[0], mtid[1])
                 continue # Don't do overlapping
             last_end = mtid[1]
             for num in range(mtid[0], mtid[1] + 1):
@@ -1631,7 +1619,7 @@ Transaction Summary
         old_tids = self.history.old(tids, limit=limit)
         done = 0
         if self.conf.history_list_view == 'users':
-            uids = [1,2]
+            uids = [1, 2]
         elif self.conf.history_list_view == 'commands':
             uids = [1]
         else:
@@ -1692,7 +1680,7 @@ Transaction Summary
                 rmark = '<'
             if old.altered_gt_rpmdb:
                 lmark = '>'
-            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark,rmark))
+            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
     def historyInfoCmd(self, extcmds):
         """Output information about a transaction in history
@@ -1760,7 +1748,7 @@ Transaction Summary
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv  = self.sack.rpmdb_version(self.yumdb)
+                rpmdbv = self.sack.rpmdb_version(self.yumdb)
                 if lastdbv != rpmdbv:
                     tid.altered_gt_rpmdb = True
             lastdbv = None
@@ -1819,17 +1807,17 @@ Transaction Summary
                 _pkg_states = _pkg_states_installed
             else:
                 _pkg_states = _pkg_states_available
-            state  = _pkg_states['i']
+            state = _pkg_states['i']
             ipkgs = self.sack.query().installed().filter(name=hpkg.name).run()
             ipkgs.sort()
             if not ipkgs:
-                state  = _pkg_states['e']
+                state = _pkg_states['e']
             elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
                 pass
             elif ipkgs[-1] > hpkg:
-                state  = _pkg_states['o']
+                state = _pkg_states['o']
             elif ipkgs[0] < hpkg:
-                state  = _pkg_states['n']
+                state = _pkg_states['n']
             else:
                 assert False, "Impossible, installed not newer and not older"
             if highlight:
@@ -2000,7 +1988,7 @@ Transaction Summary
 
             highlight = 'normal'
             if pats:
-                x,m,u = dnf.yum.packages.parsePackages([hpkg], pats)
+                x, m, u = dnf.yum.packages.parsePackages([hpkg], pats)
                 if x or m:
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
@@ -2193,7 +2181,7 @@ Transaction Summary
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
                 if limit is None:
-                    x,m,u = dnf.yum.packages.parsePackages([hpkg], extcmds)
+                    x, m, u = dnf.yum.packages.parsePackages([hpkg], extcmds)
                     if not x and not m:
                         continue
 
@@ -2204,11 +2192,9 @@ Transaction Summary
                 # envra so we have to do it by hand ... *sigh*.
                 cn = hpkg.ui_nevra
 
-                # Should probably use columns here...
-                if False: pass
-                elif (last is not None and
-                      last.state == 'Updated' and last.name == hpkg.name and
-                      hpkg.state == 'Update'):
+                if (last is not None and
+                    last.state == 'Updated' and last.name == hpkg.name and
+                    hpkg.state == 'Update'):
                     ln = len(hpkg.name) + 1
                     cn = (" " * ln) + cn[ln:]
                 elif (last is not None and
@@ -2222,7 +2208,7 @@ Transaction Summary
                         last = hpkg
 
                 num += 1
-                print(fmt % (old.tid, uistate, cn), "%s%s" % (lmark,rmark))
+                print(fmt % (old.tid, uistate, cn), "%s%s" % (lmark, rmark))
 
     def historyPackageInfoCmd(self, extcmds):
         """Print information about packages in history transactions.
@@ -2246,7 +2232,7 @@ Transaction Summary
 
             for hpkg in old.trans_data: # Find a pkg to go with each cmd...
                 if limit is None:
-                    x,m,u = dnf.yum.packages.parsePackages([hpkg], extcmds)
+                    x, m, u = dnf.yum.packages.parsePackages([hpkg], extcmds)
                     if not x and not m:
                         continue
 
@@ -2299,7 +2285,7 @@ Transaction Summary
                 num += 1
 
 class DepSolveProgressCallBack(dnf.callback.Depsolve):
-    """A class to provide text output callback functions for Dependency Solver callback."""
+    """Provides text output callback functions for Dependency Solver callback."""
 
     def __init__(self):
         """requires yum-cli log and errorlog functions as arguments"""
@@ -2326,15 +2312,15 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
            ud = the package will be updated
            od = the package will be obsoleted
         """
-        modedict = { 'i': _('installed'),
-                     'u': _('an upgrade'),
-                     'e': _('erased'),
-                     'r': _('reinstalled'),
-                     'd': _('a downgrade'),
-                     'o': _('obsoleting'),
-                     'ud': _('upgraded'),
-                     'od': _('obsoleted'),
-                     'dd': _('downgraded')}
+        modedict = {'i': _('installed'),
+                    'u': _('an upgrade'),
+                    'e': _('erased'),
+                    'r': _('reinstalled'),
+                    'd': _('a downgrade'),
+                    'o': _('obsoleting'),
+                    'ud': _('upgraded'),
+                    'od': _('obsoleted'),
+                    'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
         self.logger.debug(_('---> Package %s.%s %s will be %s'), n, a, evr,
@@ -2434,7 +2420,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             sys.stdout.write(ucd(msgs))
             sys.stdout.flush()
 
-    def _makefmt(self, percent, ts_current, ts_total, progress = True,
+    def _makefmt(self, percent, ts_current, ts_total, progress=True,
                  pkgname=None, wid1=15):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
@@ -2448,11 +2434,11 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         else:
             pnl = exact_width(pkgname)
 
-        overhead  = (2 * l) + 2 # Length of done, above
-        overhead +=  2+ wid1 +2 # Length of beginning ("  " action " :")
-        overhead +=  1          # Space between pn and done
-        overhead +=  2          # Ends for progress
-        overhead +=  1          # Space for end
+        overhead = (2 * l) + 2 # Length of done, above
+        overhead += 2 + wid1 +2 # Length of beginning ("  " action " :")
+        overhead += 1          # Space between pn and done
+        overhead += 2          # Ends for progress
+        overhead += 1          # Space for end
         width = self.width
         if width < overhead:
             width = overhead    # Give up
@@ -2498,7 +2484,6 @@ def progressbar(current, total, name=None):
        to be done
     :param name: a name to label the progress bar with
     """
-    """simple progress bar 50 # marks"""
 
     mark = '#'
     if not sys.stdout.isatty():
