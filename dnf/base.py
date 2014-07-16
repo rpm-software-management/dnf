@@ -1595,7 +1595,7 @@ class Base(object):
         clean_deps = self.conf.clean_requirements_on_remove
         for installed_pkg in installed_pkgs:
             try:
-                available_pkg = available_nevra2pkg[str(installed_pkg)]
+                available_pkg = available_nevra2pkg[ucd(installed_pkg)]
             except KeyError:
                 if not remove_na:
                     continue

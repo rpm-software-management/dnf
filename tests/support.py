@@ -26,6 +26,7 @@ import dnf.cli.demand
 import dnf.comps
 import dnf.exceptions
 import dnf.goal
+import dnf.i18n
 import dnf.package
 import dnf.persistor
 import dnf.pycomp
@@ -447,7 +448,7 @@ class ObjectMatcher(object):
             args_strs.append('type_=%s' % repr(self._type))
 
         if self._attrs:
-            attrs_str = ', '.join('%s: %s' % (str(attr), repr(value))
+            attrs_str = ', '.join('%s: %s' % (dnf.i18n.ucd(attr), repr(value))
                                   for attr, value in self._attrs.items())
             args_strs.append('attrs={%s}' % attrs_str)
 

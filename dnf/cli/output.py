@@ -2365,7 +2365,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
 
         wid1 = self._max_action_width()
 
-        pkgname = str(package)
+        pkgname = ucd(package)
         self.lastpackage = package
         if te_total == 0:
             percent = 0
@@ -2462,7 +2462,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         percent = 100
         process = _('Verifying')
         wid1 = max(exact_width(process), self._max_action_width())
-        self._out_event(100, 100, count, total, percent, process, str(pkg), wid1)
+        self._out_event(100, 100, count, total, percent, process, ucd(pkg), wid1)
 
 def progressbar(current, total, name=None):
     """Output the current status to the terminal using a simple

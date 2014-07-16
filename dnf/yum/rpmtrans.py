@@ -16,7 +16,7 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 from dnf.pycomp import basestring
 import dnf.transaction
 import rpm
@@ -374,6 +374,8 @@ class RPMTransaction(object):
             self._ts_done = None
 
     def callback( self, what, bytes, total, h, user ):
+        if isinstance(h, str):
+            h = ucd(h)
         if what == rpm.RPMCALLBACK_TRANS_START:
             self._transStart( bytes, total, h )
         elif what == rpm.RPMCALLBACK_TRANS_PROGRESS:

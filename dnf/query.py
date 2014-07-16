@@ -26,6 +26,7 @@ import dnf.exceptions
 import dnf.selector
 import dnf.util
 
+from dnf.i18n import ucd
 from dnf.pycomp import basestring
 
 def is_nevra(pattern):
@@ -122,4 +123,4 @@ def per_pkgtup_dict(pkg_list):
     return d
 
 def per_nevra_dict(pkg_list):
-    return {str(pkg):pkg for pkg in pkg_list}
+    return {ucd(pkg):pkg for pkg in pkg_list}
