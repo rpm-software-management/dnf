@@ -118,6 +118,8 @@ one main section. The repository sections define the configuration for each
     same package can be downloaded from two or more repositories, the repository
     with the lowest cost is preferred.
 
+.. _repo_priority-label:
+
 ``priority``
     integer
 

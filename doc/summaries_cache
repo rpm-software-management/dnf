@@ -710,5 +710,49 @@
     [
         1112704, 
         "NameError: global name 'i18n' is not defined"
+    ], 
+    [
+        1048973, 
+        "[rfe] repo priorities"
+    ], 
+    [
+        1108908, 
+        "dnf dies immediately complaining that ascii codec can't decode 0xc3"
+    ], 
+    [
+        1116544, 
+        "[i18n] double width Unicode characters"
+    ], 
+    [
+        1116839, 
+        "CompsError: Group 'Core' is already installed."
+    ], 
+    [
+        1116845, 
+        "dnf crashed when executing 'dnf -v repolist all'"
+    ], 
+    [
+        1117102, 
+        "[doc] configuring plugin search directories"
+    ], 
+    [
+        1117293, 
+        "--installroot proceeds with an undefined conf.releasever"
+    ], 
+    [
+        1117678, 
+        "[py3] proper binary for python3-dnf"
+    ], 
+    [
+        1118178, 
+        "should create /etc/dnf/plugins directory"
+    ], 
+    [
+        1118796, 
+        "TypeError: must be unicode, not str"
+    ], 
+    [
+        1119032, 
+        "python3-dnf-0.5.3 conflicts with  dnf-0.5.2"
     ]
 ]

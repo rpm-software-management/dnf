@@ -822,3 +822,25 @@ Bugs fixed in 0.5.3:
 * :rhbug:`1111997`
 * :rhbug:`1112669`
 * :rhbug:`1112704`
+
+===================
+0.5.4 Release Notes
+===================
+
+Several encodings bugs were fixed in this release, along with some packaging issues and updates to :doc:`conf_ref`.
+
+Repository :ref:`priority <repo_priority-label>` configuration setting has been added, providing similar functionality to Yum Utils' Priorities plugin.
+
+Bugs fixed in 0.5.4:
+
+* :rhbug:`1048973`
+* :rhbug:`1108908`
+* :rhbug:`1116544`
+* :rhbug:`1116839`
+* :rhbug:`1116845`
+* :rhbug:`1117102`
+* :rhbug:`1117293`
+* :rhbug:`1117678`
+* :rhbug:`1118178`
+* :rhbug:`1118796`
+* :rhbug:`1119032`
