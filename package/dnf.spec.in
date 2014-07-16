@@ -120,7 +120,7 @@ popd
 
 %files -n python3-dnf -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
-%{_bindir}/dnf
+%{_bindir}/dnf-3
 %dir %{confdir}
 %dir %{pluginconfpath}
 %config(noreplace) %{confdir}/dnf.conf
