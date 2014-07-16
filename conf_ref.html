@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Configuration Reference &mdash; DNF 0.5.3-1 documentation</title>
+    <title>DNF Configuration Reference &mdash; DNF 0.5.4-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.3-1',
+        VERSION:     '0.5.4-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.3-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.4-1 documentation" href="index.html" />
     <link rel="next" title="DNF Release Notes" href="release_notes.html" />
     <link rel="prev" title="DNF Command Reference" href="command_ref.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.4-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -108,12 +108,6 @@ upgraded. Kernels in particular fall into this category.</p>
 concurrently. Defaults to 3.</p>
 </dd>
 </dl>
-<dl class="docutils" id="ip-resolve-label">
-<dt><tt class="docutils literal"><span class="pre">ip_resolve</span></tt></dt>
-<dd><p class="first">IP address type</p>
-<p class="last">Determines how DNF resolves host names. Set this to &#8216;4&#8217;/&#8217;IPv4&#8217; or &#8216;6&#8217;/&#8217;IPv6&#8217; to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.</p>
-</dd>
-</dl>
 <dl class="docutils" id="keepcache-label">
 <dt><tt class="docutils literal"><span class="pre">keepcache</span></tt></dt>
 <dd><p class="first">boolean</p>
@@ -129,6 +123,10 @@ last run. Does not affect simple <tt class="docutils literal"><span class="pre">
 disable automatic metadata synchronizing. The default corresponds to three
 hours.</p>
 </dd>
+<dt><tt class="docutils literal"><span class="pre">pluginpath</span></tt></dt>
+<dd><p class="first">list</p>
+<p class="last">List of directories that are searched for plugins to load. Plugins found in <em>any of the directories</em> in this configuration option are used. The default contains a Python version-specific path.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="repo-options">
@@ -139,6 +137,12 @@ hours.</p>
 <p class="last">The relative cost of accessing this repository, defaulting to 1000. If the
 same package can be downloaded from two or more repositories, the repository
 with the lowest cost is preferred.</p>
+</dd>
+</dl>
+<dl class="docutils" id="repo-priority-label">
+<dt><tt class="docutils literal"><span class="pre">priority</span></tt></dt>
+<dd><p class="first">integer</p>
+<p class="last">The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with <em>the lowest priority value</em> is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).</p>
 </dd>
 <dt><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt></dt>
 <dd><p class="first">boolean</p>
@@ -173,9 +177,11 @@ separated by a comma, from all operations.</p>
 files, rebuilding them to RPM locally. However, this is quite CPU and I/O
 intensive. Default is off.</p>
 </dd>
+</dl>
+<dl class="docutils" id="ip-resolve-label">
 <dt><tt class="docutils literal"><span class="pre">ip_resolve</span></tt></dt>
 <dd><p class="first">IP address type</p>
-<p class="last">Determines how DNF resolves host names. Set this to &#8216;4&#8217;/&#8217;IPv4&#8217; or &#8216;6&#8217;/&#8217;IPv6&#8217; to resolve to IPv4 or IPv6 addresses only.  By default, DNF resolves to either addresses.</p>
+<p class="last">Determines how DNF resolves host names. Set this to &#8216;4&#8217;/&#8217;IPv4&#8217; or &#8216;6&#8217;/&#8217;IPv6&#8217; to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.</p>
 </dd>
 </dl>
 <dl class="docutils" id="metadata-expire-label">
@@ -270,7 +276,7 @@ intensive. Default is off.</p>
         <li class="right" >
           <a href="command_ref.html" title="DNF Command Reference"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.3-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.5.4-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
