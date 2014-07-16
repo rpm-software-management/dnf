@@ -1,4 +1,4 @@
-%global gitrev 70d6e3b
+%global gitrev 2aa5c6b
 %global hawkey_version 0.4.18
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -135,6 +135,41 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Wed Jul 16 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.4-1
+- pkg name from rpm transaction callback is in Unicode (RhBug:1118796) (Jan Silhan)
+- packaging: python3-dnf depends on dnf. (RhBug:1119032) (Ales Kozumplik)
+- Ship /usr/bin/dnf-3 to run DNF under Py3. (RhBug:1117678) (Ales Kozumplik)
+- packaging: own /etc/dnf/plugins. (RhBug:1118178) (Ales Kozumplik)
+- fix: pluginconfpath is a list. (Ales Kozumplik)
+- cosmetic: use classmethod as a decorator in config.py. (Ales Kozumplik)
+- cleanup: imports in dnf.cli.output (Ales Kozumplik)
+- lint: straightforward lint fixes in dnf.cli.output. (Ales Kozumplik)
+- Repo.__setattr__ has to use the parsed value. (Ales Kozumplik)
+- Repo priorities. (RhBug:1048973) (Ales Kozumplik)
+- repo: simplify how things are propagated to repo.hawkey_repo. (Ales Kozumplik)
+- refactor: concentrate Repo.hawkey_repo construction in Repo.__init__(). (Ales Kozumplik)
+- bash-completion: Update command and option lists, sort in same order as --help (Ville Skyttä)
+- bash-completion: Use grep -E instead of deprecated egrep (Ville Skyttä)
+- output: fixed identation of info command output (Jan Silhan)
+- i18n: calculates right width of asian utf-8 strings (RhBug:1116544) (Jan Silhan)
+- transifex update + renamed po files to Fedora conventions (Jan Silhan)
+- remove: CLI: --randomwait (Ales Kozumplik)
+- cli: fix: --installroot has to be used with --releasever (RhBug:1117293) (Ales Kozumplik)
+- Base.reset(goal=True) also resets the group persistor (RhBug:1116839) (Ales Kozumplik)
+- tests: fix failing DistroSync.test_distro_sync(). (Ales Kozumplik)
+- logging: RPM transaction markers are too loud. (Ales Kozumplik)
+- logging: silence drpm a bit. (Ales Kozumplik)
+- logging: put timing functionality into one place. (Ales Kozumplik)
+- repolist: fix traceback with disabled repos. (RhBug:1116845) (Ales Kozumplik)
+- refactor: cleanups in repolist. (Ales Kozumplik)
+- lint: remove some unused imports. (Ales Kozumplik)
+- cli: break out the repolsit command into a separate module. (Ales Kozumplik)
+- does not crash with non-ascii user name (RhBug:1108908) (Jan Silhan)
+- doc: document 'pluginpath' configuration option. (RhBug:1117102) (Ales Kozumplik)
+- Spelling fixes (Ville Skyttä)
+- cli: Fix software name in --version help (Ville Skyttä)
+- doc: ip_resolve documented at two places. remove one. (Ales Kozumplik)
 
 * Thu Jul 3 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.3-1
 - packaging: bump hawkey dep to 0.4.17. (Ales Kozumplik)
