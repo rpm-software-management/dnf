@@ -52,6 +52,7 @@ BuildRequires:	python3-libcomps >= %{libcomps_version}
 BuildRequires:	python3-librepo >= %{librepo_version}
 BuildRequires:	python3-nose
 BuildRequires:	rpm-python3
+Requires:	dnf = %{version}-%{release}
 Requires:	python3-hawkey >= %{hawkey_version}
 Requires:	python3-iniparse
 Requires:	python3-libcomps >= %{libcomps_version}
@@ -118,20 +119,9 @@ popd
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
-%files -n python3-dnf -f %{name}.lang
+%files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
-%dir %{confdir}
-%dir %{pluginconfpath}
-%config(noreplace) %{confdir}/dnf.conf
-%config(noreplace) %{confdir}/protected.d/dnf.conf
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%ghost %{_localstatedir}/log/%{name}.log
-%{_sysconfdir}/libreport/events.d/collect_dnf.conf
-%{_mandir}/man8/dnf.8.gz
-%{_mandir}/man8/dnf.conf.8.gz
-%{_unitdir}/dnf-makecache.service
-%{_unitdir}/dnf-makecache.timer
 %{python3_sitelib}/dnf/
 %{py3pluginpath}
 
