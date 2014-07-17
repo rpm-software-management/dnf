@@ -30,6 +30,13 @@ What does DNF stand for?
 
 Dandified `Yum <http://yum.baseurl.org/>`_.
 
+Can I have DNF and Yum installed side by side?
+==============================================
+
+Yes, you can. And this setup is tested by many.
+
+There is one restriction: DNF and Yum keep additional data about each installed package and every performed transaction. This data is currently not shared between the two managers so if the admin installs half of the packages with DNF and the other half with Yum then each program can not benefit from the information held by the other one. The practical bottom line is that commands like ``autoremove`` can not take a completely informed decision and thus have to "play it safe" and remove only a subset of dependencies they would be able to otherwise. Similar situation exists with groups.
+
 What to do with packages that DNF refuses to remove because their ``%pre`` or ``%preun`` scripts are failing?
 =============================================================================================================
 
@@ -62,15 +69,15 @@ It might seem odd but in fact this can happen quite easily: what the first comma
 
     $ dnf upgrade --best
 
-Why do I get different results with ``dnf update`` vs ``yum update``?
-=====================================================================
+Why do I get different results with ``dnf upgrade`` vs ``yum update``?
+======================================================================
 
 We get this reported as a bug quite often, but it usually is not. One reason to see this is that DNF does not list update candidates as it explores them. More frequently however the reporter means actual difference in the proposed transaction. This is most often because the metadata the two packagers are working with were taken at a different time (DNF has a notoriously looser schedule on metadata updates to save time and bandwidth), and sometimes also because the depsolvers inside are designed to take a different course of action when encountering some specific update scenario.
 
 The bottom line is: unless a real update problem occurs (i.e. DNF refuses to update a package that Yum updates) with the same set of metadata, this is not an issue.
 
 Is it possible to force DNF to get the latest metadata on ``dnf upgrade``?
-==============================================================================
+==========================================================================
 
 Yes, clear the cache first::
 
