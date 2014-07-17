@@ -355,7 +355,7 @@ class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage)
         for item in self.__iter__(show_hidden=True):
             self._delete(item)
 
-# mock object taken from testbase.py in yum/test:
+
 class FakeConf(object):
     def __init__(self):
         self.assumeyes = None

@@ -400,12 +400,12 @@ class Repo(dnf.yum.config.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
-    def __init__(self, id_, basecachedir):
+    def __init__(self, id_, cachedir):
         # :api
         super(Repo, self).__init__()
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self.basecachedir = basecachedir
+        self.basecachedir = cachedir
         self.id = id_ # :api
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC

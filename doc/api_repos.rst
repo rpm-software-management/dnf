@@ -25,7 +25,7 @@ Repository Configuration
 
   .. method:: add(repo)
 
-    Add `repo` to the repodict.
+    Add a :class:`.Repo` to the repodict.
 
   .. method:: all()
 
