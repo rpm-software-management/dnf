@@ -151,11 +151,8 @@ def checkEnabledRepo(base, possible_local_files=[]):
         if lfile.endswith(".rpm") and os.path.exists(lfile):
             return
 
-    msg = _('There are no enabled repos.\n'
-            ' Run "yum repolist all" to see the repos you have.\n'
-            ' You can enable repos with yum-config-manager --enable <repo>')
-    base.logger.critical(msg)
-    raise dnf.cli.CliError
+    msg = _('There are no enabled repos.')
+    raise dnf.cli.CliError(msg)
 
 class Command(object):
     """Abstract base class for CLI commands."""
