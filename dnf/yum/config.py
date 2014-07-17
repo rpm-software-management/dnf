@@ -815,8 +815,6 @@ class YumConf(BaseConfig):
     history_record_packages = ListOption(['dnf', 'rpm'])
 
     rpmverbosity = Option('info')
-    protected_packages = ListOption("yum, glob:/etc/yum/protected.d/*.conf",
-                                    parse_default=True)
     clean_requirements_on_remove = BoolOption(False)
     history_list_view = SelectionOption('single-user-commands',
                                         ('single-user-commands', 'users',
