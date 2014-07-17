@@ -131,10 +131,10 @@ def print_versions(pkgs, base, output):
 class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
 
-    def __init__(self):
+    def __init__(self, conf=None):
         # handle sigquit early on
         signal.signal(signal.SIGQUIT, sigquit)
-        dnf.Base.__init__(self)
+        super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
         self.logger = logging.getLogger("dnf")
 

@@ -150,13 +150,12 @@ class _BaseStubMixin(object):
 
     """
     def __init__(self, *extra_repos):
-        super(_BaseStubMixin, self).__init__()
+        super(_BaseStubMixin, self).__init__(FakeConf())
         for r in extra_repos:
             repo = MockRepo(r, None)
             repo.enable()
             self._repos.add(repo)
 
-        self._conf = FakeConf()
         self._persistor = FakePersistor()
         self._yumdb = MockYumDB()
         self.ds_callback = mock.Mock()

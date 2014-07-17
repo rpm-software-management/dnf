@@ -64,10 +64,10 @@ import signal
 import time
 
 class Base(object):
-    def __init__(self):
+    def __init__(self, conf=None):
         # :api
         self._closed = False
-        self._conf = dnf.conf.Conf()
+        self._conf = conf or dnf.conf.Conf()
         self._goal = None
         self._persistor = None
         self._sack = None
