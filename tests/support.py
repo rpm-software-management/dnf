@@ -167,6 +167,13 @@ class _BaseStubMixin(object):
         self._yumdb = MockYumDB()
         self.ds_callback = mock.Mock()
 
+    def add_test_dir_repo(self, id_, cachedir):
+        """Add a repository located in a directory in the tests."""
+        repo = dnf.repo.Repo(id_, cachedir)
+        repo.baseurl = ['file://%s/%s' % (REPO_DIR, repo.id)]
+        self.repos.add(repo)
+        return repo
+
     @property
     def sack(self):
         if self._sack:
@@ -188,8 +195,11 @@ class _BaseStubMixin(object):
         self._sack = TestSack(REPO_DIR, self)
         self._sack.load_system_repo()
         for repo in self.repos.iter_enabled():
-            fn = "%s.repo" % repo.id
-            self._sack.load_test_repo(repo.id, fn)
+            if repo.__class__ is dnf.repo.Repo:
+                self._add_repo_to_sack(repo.id)
+            else:
+                fn = "%s.repo" % repo.id
+                self._sack.load_test_repo(repo.id, fn)
 
         self._sack.configure(self.conf.installonlypkgs)
         self._goal = dnf.goal.Goal(self._sack)
