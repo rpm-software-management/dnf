@@ -20,7 +20,6 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
-import dnf.exceptions
 import dnf.pycomp
 import dnf.cli.commands.updateinfo
 import hawkey
@@ -66,6 +65,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
              ('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
             'incorrect pairs')
+        cmd.clear_installed_cache()
 
     def test_updating_apkg_adv_insts(self):
         """Test updating triplets querying."""
@@ -77,6 +77,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
+        cmd.clear_installed_cache()
 
     def test_all_apkg_adv_insts(self):
         """Test all triplets querying."""
@@ -89,6 +90,21 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
              ('tour-5-0.noarch.rpm', 'DNF-2014-2', True),
              ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)])
+        cmd.clear_installed_cache()
+
+    def test_all_apkg_adv_insts_filter_advisories(self):
+        """Test querying with an advisories filter."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.refresh_installed_cache()
+        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts(
+            ['DNF-201*-[13]', 'NO-0000-0'])
+        self.assertTrue(mixed, 'incorrect flag')
+        self.assertCountEqual(
+            ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
+            [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
+             ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
+            'incorrect pairs')
+        cmd.clear_installed_cache()
 
     def test_display_list_mixed(self):
         """Test list displaying with mixed installs."""
@@ -229,8 +245,3 @@ class UpdateInfoCommandTest(tests.support.TestCase):
                          'Description : testing advisory\n'
                          '\n',
                          'incorrect output')
-
-    def test_run_invalid(self):
-        """Test running with invalid arguments."""
-        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        self.assertRaises(dnf.exceptions.Error, cmd.run, ['fail'])

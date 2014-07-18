@@ -31,7 +31,7 @@ from itertools import chain
 from operator import itemgetter
 
 import collections
-import dnf.exceptions
+import fnmatch
 import itertools
 import hawkey
 
@@ -100,40 +100,49 @@ class UpdateInfoCommand(commands.Command):
         super(UpdateInfoCommand, self).configure(args)
         self.cli.demands.sack_activation = True
 
-    def _apackage_advisory_installeds(self, packages, cmptype, requested_apkg):
-        """Return (adv. package, advisory, installed) triplets and a flag."""
-        for package in packages:
-            for advisory in package.get_advisories(cmptype):
-                for apackage in advisory.packages:
-                    if requested_apkg(apackage):
-                        installed = self._newer_equal_installed(apackage)
-                        yield apackage, advisory, installed
+    @staticmethod
+    def _advisory_match(advisory, specs=()):
+        """Test whether an advisory matches specifications."""
+        if not specs:
+            return True
+        specs = set(specs)
+        return any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs)
 
-    def available_apkg_adv_insts(self):
+    def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs=()):
+        """Return (adv. package, advisory, installed) triplets and a flag."""
+        for package in pkgs:
+            for advisory in package.get_advisories(cmptype):
+                if self._advisory_match(advisory, specs):
+                    for apackage in advisory.packages:
+                        if req_apkg(apackage):
+                            installed = self._newer_equal_installed(apackage)
+                            yield apackage, advisory, installed
+
+    def available_apkg_adv_insts(self, specs=()):
         """Return available (adv. package, adv., inst.) triplets and a flag."""
         return False, self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
-            self._older_installed)
+            self._older_installed, specs)
 
-    def installed_apkg_adv_insts(self):
+    def installed_apkg_adv_insts(self, specs=()):
         """Return installed (adv. package, adv., inst.) triplets and a flag."""
         return False, self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
-            self._newer_equal_installed)
+            self._newer_equal_installed, specs)
 
-    def updating_apkg_adv_insts(self):
+    def updating_apkg_adv_insts(self, specs=()):
         """Return updating (adv. package, adv., inst.) triplets and a flag."""
         return False, self._apackage_advisory_installeds(
             self.base.sack.query().filter(upgradable=True), hawkey.GT,
-            self._older_installed)
+            self._older_installed, specs)
 
-    def all_apkg_adv_insts(self):
+    def all_apkg_adv_insts(self, specs=()):
         """Return installed (adv. package, adv., inst.) triplets and a flag."""
         ipackages = self.base.sack.query().installed()
         gttriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.GT, self._any_installed)
+            ipackages, hawkey.GT, self._any_installed, specs)
         lteqtriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.LT | hawkey.EQ, self._any_installed)
+            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, specs)
         return True, chain(gttriplets, lteqtriplets)
 
     @staticmethod
@@ -301,19 +310,20 @@ class UpdateInfoCommand(commands.Command):
 
         self.refresh_installed_cache()
 
-        mixed, apkg_adv_insts = self.available_apkg_adv_insts()
-        description = _('available')
-        if args == ['installed']:
-            mixed, apkg_adv_insts = self.installed_apkg_adv_insts()
+        if args[:1] == ['installed']:
+            mixed, apkg_adv_insts = self.installed_apkg_adv_insts(args[1:])
             description = _('installed')
-        elif args == ['updates']:
-            mixed, apkg_adv_insts = self.updating_apkg_adv_insts()
+        elif args[:1] == ['updates']:
+            mixed, apkg_adv_insts = self.updating_apkg_adv_insts(args[1:])
             description = _('updates')
-        elif args == ['all']:
-            mixed, apkg_adv_insts = self.all_apkg_adv_insts()
+        elif args[:1] == ['all']:
+            mixed, apkg_adv_insts = self.all_apkg_adv_insts(args[1:])
             description = _('all')
-        elif args not in (['available'], []):
-            raise dnf.exceptions.Error('invalid command arguments')
+        else:
+            if args[:1] == ['available']:
+                args = args[1:]
+            mixed, apkg_adv_insts = self.available_apkg_adv_insts(args)
+            description = _('available')
 
         display(apkg_adv_insts, mixed, description)
 
