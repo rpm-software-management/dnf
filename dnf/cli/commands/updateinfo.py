@@ -81,6 +81,8 @@ class UpdateInfoCommand(commands.Command):
     def run(self, args):
         """Execute the command with arguments."""
         super(UpdateInfoCommand, self).run(args)
-        if args not in (['summary'], []):
+        if args[:1] in (['summary'], []):
+            args = args[1:]
+        if args not in (['available'], []):
             raise dnf.exceptions.Error('invalid command arguments')
         self._display(self._summary(self._advisories()), _('available'))
