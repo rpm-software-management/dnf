@@ -549,9 +549,13 @@ Updateinfo Command
     information is even more detailed.
 
     ``<availability>`` specifies whether advisories about newer versions of
-    installed packages (omitted or ``available``) or advisories about equal and
-    older versions of installed packages (``installed``) are taken into
-    account.
+    installed packages (omitted or ``available``), advisories about equal and
+    older versions of installed packages (``installed``) or advisories about
+    newer versions of those installed packages for which a newer version is
+    available (``updates``) are taken into account. Most of the time,
+    ``available`` and ``updates`` displays the same output. The outputs differ
+    only in the cases when an advisory refers to a newer version but there is
+    no enabled repository which contains any newer version.
 
 .. _upgrade_command-label:
 

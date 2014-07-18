@@ -65,6 +65,16 @@ class UpdateInfoCommandTest(tests.support.TestCase):
              ('tour-5-0.noarch.rpm', 'DNF-2014-2')],
             'incorrect pairs')
 
+    def test_updating_apackage_advisories(self):
+        """Test updating pairs querying."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.refresh_installed_cache()
+        apkg_advs = cmd.updating_apackage_advisories()
+        self.assertCountEqual(
+            ((apkg.filename, adv.id) for apkg, adv in apkg_advs),
+            [('tour-5-1.noarch.rpm', 'DNF-2014-3')],
+            'incorrect pairs')
+
     def test_display_info_verbose(self):
         """Test verbose displaying."""
         apkg_advs = ((apkg, adv)

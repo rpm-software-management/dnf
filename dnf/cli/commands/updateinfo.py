@@ -93,9 +93,9 @@ class UpdateInfoCommand(commands.Command):
         super(UpdateInfoCommand, self).configure(args)
         self.cli.demands.sack_activation = True
 
-    def _apackage_advisories(self, cmptype, requested_apkg):
+    def _apackage_advisories(self, packages, cmptype, requested_apkg):
         """Return (advisory package, advisory) pairs."""
-        for package in self.base.sack.query().installed():
+        for package in packages:
             for advisory in package.get_advisories(cmptype):
                 for apackage in advisory.packages:
                     if requested_apkg(apackage):
@@ -103,12 +103,21 @@ class UpdateInfoCommand(commands.Command):
 
     def available_apackage_advisories(self):
         """Return available (advisory package, advisory) pairs."""
-        return self._apackage_advisories(hawkey.GT, self._older_installed)
+        return self._apackage_advisories(
+            self.base.sack.query().installed(), hawkey.GT,
+            self._older_installed)
 
     def installed_apackage_advisories(self):
         """Return installed (advisory package, advisory) pairs."""
         return self._apackage_advisories(
-            hawkey.LT | hawkey.EQ, self._newer_equal_installed)
+            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
+            self._newer_equal_installed)
+
+    def updating_apackage_advisories(self):
+        """Return updating (advisory package, advisory) pairs."""
+        return self._apackage_advisories(
+            self.base.sack.query().filter(upgradable=True), hawkey.GT,
+            self._older_installed)
 
     @staticmethod
     def _summary(apkg_advs):
@@ -270,6 +279,9 @@ class UpdateInfoCommand(commands.Command):
         if args == ['installed']:
             apackage_advisories = self.installed_apackage_advisories()
             description = _('installed')
+        elif args == ['updates']:
+            apackage_advisories = self.updating_apackage_advisories()
+            description = _('updates')
         elif args not in (['available'], []):
             raise dnf.exceptions.Error('invalid command arguments')
 
