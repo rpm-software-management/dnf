@@ -540,7 +540,7 @@ Update Command
 Updateinfo Command
 ------------------
 
-``dnf [options] updateinfo [<output>] [<availability>]``
+``dnf [options] updateinfo [<output>] [<availability>] [<advisory>...]``
     Display information about update advisories.
 
     Depending on ``<output>``, DNF displays just counts of advisory types
@@ -557,6 +557,10 @@ Updateinfo Command
     and ``updates`` displays the same output. The outputs differ only in the
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
+
+    If given and if ID of an advisory does not match ``<advisory>``, the
+    advisory is not taken into account. The matching is case-sensitive and
+    globbing is supported.
 
 .. _upgrade_command-label:
 
