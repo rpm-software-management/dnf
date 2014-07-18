@@ -540,7 +540,7 @@ Update Command
 Updateinfo Command
 ------------------
 
-``dnf [options] updateinfo [summary]``
+``dnf [options] updateinfo [summary] [available]``
     Display counts of advisories about newer versions of installed packages.
 
 .. _upgrade_command-label:
