@@ -22,23 +22,21 @@ from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
 
 import dnf.exceptions
+import shutil
+import tempfile
 
 PACKAGE = 'tour-5-1.noarch'
 
 class DrpmTest(support.TestCase):
-    def __init__(self, *args):
-        support.TestCase.__init__(self, *args)
+    def setUp(self):
+        cachedir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, cachedir)
         self.base = support.MockBase()
-        self.sack = self.base.sack
 
         # load the testing repo
-        repo = support.MockRepo('drpm', '/tmp/dnf-cache')
-        self.base.repos[repo.id] = repo
-        repo.baseurl = ['file://%s/%s' % (support.REPO_DIR, repo.id)]
+        repo = self.base.add_test_dir_repo('drpm', cachedir)
         repo.deltarpm = True
-        self.base._add_repo_to_sack(repo.id)
 
-    def setUp(self):
         # find the newest 'tour' package available
         self.pkg = max(self.base.sack.query().available().filter(name='tour'))
         self.assertEqual(str(self.pkg), PACKAGE)
