@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import datetime
 import dnf.exceptions
 import dnf.pycomp
 import dnf.cli.commands.updateinfo
@@ -68,6 +69,24 @@ class UpdateInfoCommandTest(unittest.TestCase):
         cmd.run(['list'])
         self.assertEqual(self._stdout.getvalue(),
                          'DNF-2014-3 security tour-5-1.noarch\n',
+                         'incorrect output')
+
+    def test_run_info(self):
+        """Test running the info sub-command."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.run(['info'])
+        updated = datetime.datetime.fromtimestamp(1404841143)
+        self.assertEqual(self._stdout.getvalue(),
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-1\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID : DNF-2014-3\n'
+                         '       Type : security\n'
+                         '    Updated : ' + str(updated) + '\n'
+                         'Description : testing advisory\n'
+                         '\n',
                          'incorrect output')
 
     def test_run_invalid(self):
