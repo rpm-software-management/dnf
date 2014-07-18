@@ -15,12 +15,12 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support, mock
 from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
 
-import dnf.drpm
 import dnf.exceptions
 
 PACKAGE = 'tour-5-1.noarch'
@@ -44,13 +44,10 @@ class DrpmTest(support.TestCase):
         self.assertEqual(str(self.pkg), PACKAGE)
 
         # pretend it's remote and not cached
-        self.pkg.repo.__class__.local = False
+        self.addCleanup(mock.patch.stopall)
+        mock.patch.object(self.pkg.repo.__class__, 'local', False).start()
         self.pkg.localPkg = lambda: '/tmp/%s.rpm' % PACKAGE
         unlink_f(self.pkg.localPkg())
-
-    def tearDown(self):
-        # don't break other tests
-        del self.pkg.repo.__class__.local
 
     def test_delta(self):
         # there should be a delta from 5-0 to 5-1
