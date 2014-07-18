@@ -24,7 +24,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf import query, sack
-from dnf.i18n import _, P_, ucd
+from dnf.i18n import _, ucd
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
@@ -1013,81 +1013,6 @@ class Base(object):
             else:
                 self.logger.log(dnf.logging.SUBDEBUG,
                     _('%s removed'), fn)
-
-    def cleanPackages(self):
-        """Delete the package files from the yum cache."""
-
-        exts = ['rpm']
-        return self._cleanFiles(exts, 'pkgdir', 'package')
-
-    def clean_binary_cache(self):
-        """ Delete the binary cache files from the DNF cache.
-
-            IOW, clean up the .solv and .solvx hawkey cache files.
-        """
-        files = [os.path.join(self.conf.cachedir,
-                              hawkey.SYSTEM_REPO_NAME + ".solv")]
-        for repo in self.repos.iter_enabled():
-            basename = os.path.join(self.conf.cachedir, repo.id)
-            files.append(basename + ".solv")
-            files.append(basename + "-filenames.solvx")
-        files = [f for f in files if os.access(f, os.F_OK)]
-
-        return self._cleanFilelist('dbcache', files)
-
-    def cleanMetadata(self):
-        """Delete the metadata files from the yum cache."""
-
-        exts = ['xml.gz', 'xml', 'cachecookie', 'mirrorlist', 'asc',
-                'xml.bz2', 'xml.xz']
-        # Metalink is also here, but is a *.xml file
-        return self._cleanFiles(exts, 'cachedir', 'metadata')
-
-    def cleanExpireCache(self):
-        """Delete the local data saying when the metadata and mirror
-           lists were downloaded for each repository."""
-
-        for repo in self.repos.iter_enabled():
-            repo.md_expire_cache()
-        return 0, [_('The enabled repos were expired')]
-
-    def cleanRpmDB(self):
-        """Delete any cached data from the local rpmdb."""
-
-        cachedir = self.conf.persistdir + "/rpmdb-indexes/"
-        if not os.path.exists(cachedir):
-            filelist = []
-        else:
-            filelist = misc.getFileList(cachedir, '', [])
-        return self._cleanFilelist('rpmdb', filelist)
-
-    def _cleanFiles(self, exts, pathattr, filetype):
-        filelist = []
-        for ext in exts:
-            for repo in self.repos.iter_enabled():
-                if repo.local:
-                    continue
-                path = getattr(repo, pathattr)
-                if os.path.exists(path) and os.path.isdir(path):
-                    filelist = misc.getFileList(path, ext, filelist)
-        return self._cleanFilelist(filetype, filelist)
-
-    def _cleanFilelist(self, filetype, filelist):
-        removed = 0
-        for item in filelist:
-            try:
-                misc.unlink_f(item)
-            except OSError:
-                self.logger.critical(_('Cannot remove %s file %s'),
-                                     filetype, item)
-                continue
-            else:
-                self.logger.log(dnf.logging.SUBDEBUG,
-                    _('%s file %s removed'), filetype, item)
-                removed += 1
-        msg = P_('%d %s file removed', '%d %s files removed', removed)
-        msg %= (removed, filetype)
-        return 0, [msg]
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False, reponame=None):

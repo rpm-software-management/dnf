@@ -23,7 +23,6 @@ from tests.support import TestCase
 
 import binascii
 import dnf
-import dnf.const
 import dnf.exceptions
 import dnf.package
 import dnf.subject
@@ -209,32 +208,6 @@ class InstalledMatchingTest(support.ResultTestCase):
         inst = self.base._sltr_matches_installed(sltr)
         self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
 
-class CleanTest(TestCase):
-    def test_clean_binary_cache(self):
-        base = support.MockBase("main")
-        with mock.patch('os.access', return_value=True) as access,\
-                mock.patch.object(base, "_cleanFilelist") as _:
-            base.clean_binary_cache()
-        self.assertEqual(len(access.call_args_list), 3)
-        fname = access.call_args_list[0][0][0]
-        assert(fname.startswith(dnf.const.TMPDIR))
-        assert(fname.endswith(hawkey.SYSTEM_REPO_NAME + '.solv'))
-        fname = access.call_args_list[1][0][0]
-        assert(fname.endswith('main.solv'))
-        fname = access.call_args_list[2][0][0]
-        assert(fname.endswith('main-filenames.solvx'))
-
-    def test_clean_files_local(self):
-        """Do not delete files from a local repo."""
-        base = support.MockBase("main")
-        repo = base.repos['main']
-        repo.baseurl = ['file:///dnf-bad-test']
-        repo.basecachedir = '/tmp/dnf-bad-test'
-        with mock.patch.object(base, "_cleanFilelist") as cf_mock,\
-             mock.patch('os.path.exists', return_value=True) as exists_mock:
-            base._cleanFiles(['rpm'], 'pkgdir', 'package')
-        # local repo is not even checked for directory existence:
-        self.assertIsNone(exists_mock.call_args)
 
 class CompsTest(support.TestCase):
     # Also see test_comps.py

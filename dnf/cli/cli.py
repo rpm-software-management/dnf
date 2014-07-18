@@ -561,73 +561,6 @@ class BaseCli(dnf.Base):
         if not matches:
             raise dnf.exceptions.Error(_('No Matches found'))
 
-    def cleanCli(self, userlist):
-        """Remove data from the yum cache directory.  What data is
-        removed depends on the options supplied by the user.
-
-        :param userlist: a list of options.  The following are valid
-           options::
-
-             expire-cache = Eliminate the local data saying when the
-               metadata and mirror lists were downloaded for each
-               repository.
-             packages = Eliminate any cached packages
-             metadata = Eliminate all of the files which yum uses to
-               determine the remote availability of packages
-             dbcache = Eliminate the sqlite cache used for faster
-               access to metadata
-             rpmdb = Eliminate any cached datat from the local rpmdb
-             all = do all of the above
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        pkgcode = xmlcode = dbcode = expccode = 0
-        pkgresults = xmlresults = dbresults = expcresults = []
-        msg = self.output.fmtKeyValFill(_('Cleaning repos: '),
-                        ' '.join([ x.id for x in self.repos.iter_enabled()]))
-        self.logger.info(msg)
-        if 'all' in userlist:
-            self.logger.info(_('Cleaning up Everything'))
-            pkgcode, pkgresults = self.cleanPackages()
-            xmlcode, xmlresults = self.cleanMetadata()
-            dbcode, dbresults = self.clean_binary_cache()
-            rpmcode, rpmresults = self.cleanRpmDB()
-
-            code = pkgcode + xmlcode + dbcode + rpmcode
-            results = (pkgresults + xmlresults + dbresults +
-                       rpmresults)
-            for msg in results:
-                self.logger.debug(msg)
-            return code, []
-
-        if 'packages' in userlist:
-            self.logger.debug(_('Cleaning up Packages'))
-            pkgcode, pkgresults = self.cleanPackages()
-        if 'metadata' in userlist:
-            self.logger.debug(_('Cleaning up xml metadata'))
-            xmlcode, xmlresults = self.cleanMetadata()
-        if 'dbcache' in userlist or 'metadata' in userlist:
-            self.logger.debug(_('Cleaning up database cache'))
-            dbcode, dbresults =  self.clean_binary_cache()
-        if 'expire-cache' in userlist or 'metadata' in userlist:
-            self.logger.debug(_('Cleaning up expire-cache metadata'))
-            expccode, expcresults = self.cleanExpireCache()
-        if 'rpmdb' in userlist:
-            self.logger.debug(_('Cleaning up cached rpmdb data'))
-            expccode, expcresults = self.cleanRpmDB()
-
-        results = pkgresults + xmlresults + dbresults + expcresults
-        for msg in results:
-            self.logger.info( msg)
-        code = pkgcode + xmlcode + dbcode + expccode
-        if code:
-            raise dnf.exceptions.Error('Error cleaning up.')
-
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
         if self.conf.assumeyes and not self.conf.assumeno:
@@ -1151,7 +1084,7 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         if self.demands.refresh_metadata:
-            self.base.cleanCli('expire-cache')
+            dnf.cli.commands.clean.clean_expire_cache(self.base.repos)
         if self.demands.sack_activation:
             lar = self.demands.available_repos
             self.base.fill_sack(load_system_repo='auto',
