@@ -62,6 +62,14 @@ class UpdateInfoCommandTest(unittest.TestCase):
                          '    1 Security notice(s)\n',
                          'incorrect output')
 
+    def test_run_list(self):
+        """Test running the list sub-command."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.run(['list'])
+        self.assertEqual(self._stdout.getvalue(),
+                         'DNF-2014-3 security tour-5-1.noarch\n',
+                         'incorrect output')
+
     def test_run_invalid(self):
         """Test running with invalid arguments."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
