@@ -28,7 +28,7 @@ class Error(Exception):
     """
     def __init__(self, value=None):
         Exception.__init__(self)
-        self.value = ucd(value)
+        self.value = None if value is None else ucd(value)
 
     def __str__(self):
         return "%s" %(self.value,)
