@@ -23,6 +23,7 @@ import datetime
 import dnf.exceptions
 import dnf.pycomp
 import dnf.cli.commands.updateinfo
+import hawkey
 import shutil
 import tempfile
 import tests.mock
@@ -54,6 +55,31 @@ class UpdateInfoCommandTest(unittest.TestCase):
         """Pretend to print to standard output."""
         print(*objects, file=self._stdout)
 
+    def test_display_info_verbose(self):
+        """Test verbose displaying."""
+        apkg_advs = ((apkg, adv)
+                     for pkg in self.cli.base.sack.query().installed()
+                     for adv in pkg.get_advisories(hawkey.GT)
+                     for apkg in adv.packages)
+        self.cli.base.conf.verbose = True
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.display_info(apkg_advs, '')
+        updated = datetime.datetime.fromtimestamp(1404841143)
+        self.assertEqual(self._stdout.getvalue(),
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-1\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID : DNF-2014-3\n'
+                         '       Type : security\n'
+                         '    Updated : ' + str(updated) + '\n'
+                         'Description : testing advisory\n'
+                         '      Files : tour-5-1.noarch.rpm\n'
+                         '\n',
+                         'incorrect output')
+
+    # This test also tests the display_summary method.
     def test_run_available(self):
         """Test running with available advisories."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
@@ -63,6 +89,7 @@ class UpdateInfoCommandTest(unittest.TestCase):
                          '    1 Security notice(s)\n',
                          'incorrect output')
 
+    # This test also tests the display_list method.
     def test_run_list(self):
         """Test running the list sub-command."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
@@ -71,6 +98,7 @@ class UpdateInfoCommandTest(unittest.TestCase):
                          'DNF-2014-3 security tour-5-1.noarch\n',
                          'incorrect output')
 
+    # This test also tests the display_info method.
     def test_run_info(self):
         """Test running the info sub-command."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)

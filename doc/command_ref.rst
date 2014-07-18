@@ -546,7 +546,8 @@ Updateinfo Command
 
     Depending on ``<output>``, DNF displays just counts of advisory types
     (omitted or ``summary``), list of advisories (``list``) or detailed
-    information (``info``).
+    information (``info``). When ``info`` with ``-v`` option is used, the
+    information is even more detailed.
 
 .. _upgrade_command-label:
 

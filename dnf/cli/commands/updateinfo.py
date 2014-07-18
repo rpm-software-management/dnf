@@ -100,7 +100,7 @@ class UpdateInfoCommand(commands.Command):
         return collections.Counter(id2type.values())
 
     @classmethod
-    def _display_summary(cls, apkg_advs, description):
+    def display_summary(cls, apkg_advs, description):
         """Display the summary of advisories."""
         typ2cnt = cls._summary(apkg_advs)
         if not typ2cnt:
@@ -136,7 +136,7 @@ class UpdateInfoCommand(commands.Command):
             yield nevra, {nit[1]: nit[2] for nit in nits}
 
     @classmethod
-    def _display_list(cls, apkg_advs, description):
+    def display_list(cls, apkg_advs, description):
         """Display the list of advisories."""
         nevra_id2types = cls._list(apkg_advs)
         # Sort IDs and convert types to labels.
@@ -158,11 +158,12 @@ class UpdateInfoCommand(commands.Command):
     def _info(self, apkg_advs):
         """Make detailed information about advisories."""
         # Get mapping from identity to (title, ID, type, time, BZs, CVEs,
-        # description). This way we get rid of unneeded advisory packages given
-        # with the advisories and we remove duplicate advisories (that SPEEDS
-        # UP the information extraction because the advisory attribute getters
-        # are expensive, so we won't get the attributes multiple times). We
-        # cannot use a set because advisories are not hashable.
+        # description, rights, files). This way we get rid of unneeded advisory
+        # packages given with the advisories and we remove duplicate advisories
+        # (that SPEEDS UP the information extraction because the advisory
+        # attribute getters are expensive, so we won't get the attributes
+        # multiple times). We cannot use a set because advisories are not
+        # hashable.
         getrefs = lambda apkg, typ: (
             (ref.id, ref.title) for ref in apkg.references if ref.type == typ)
         id2tuple = OrderedDict()
@@ -178,41 +179,51 @@ class UpdateInfoCommand(commands.Command):
                     apkg_adv[1].updated,
                     getrefs(apkg_adv[1], hawkey.REFERENCE_BUGZILLA),
                     getrefs(apkg_adv[1], hawkey.REFERENCE_CVE),
-                    apkg_adv[1].description)
+                    apkg_adv[1].description,
+                    apkg_adv[1].rights,
+                    (pkg.filename for pkg in apkg_adv[1].packages
+                     if pkg.arch in self.base.sack.list_arches()))
         # Get mapping from title to (ID, type, time, BZs, CVEs, description,
         # rights, files) => group by titles and merge values. We assume that
         # two advisories with the same title (e.g. from different repositories)
-        # must have the same ID, type, time, description. References are
-        # merged.
+        # must have the same ID, type, time, description and rights.
+        # References and files are merged.
         merge = lambda old, new: set(chain(old, new))
         title2info = OrderedDict()
         for tuple_ in id2tuple.values():
             title, new = tuple_[0], tuple_[1:]
-            old = title2info.get(title, (None, None, None, [], [], None))
+            old = title2info.get(
+                title, (None, None, None, [], [], None, None, []))
             title2info[title] = (
                 new[:3] +
                 (merge(old[3], new[3]),
                  merge(old[4], new[4])) +
-                new[5:6])
+                new[5:7] +
+                (merge(old[7], new[7]),))
         return title2info
 
-    def _display_info(self, apkg_advs, description):
+    def display_info(self, apkg_advs, description):
         """Display the details about available advisories."""
         info = self._info(apkg_advs).items()
-        # Convert objects to string lines.
+        # Convert objects to string lines and mark verbose fields.
+        verbose = lambda value: value if self.base.conf.verbose else None
         title_vallines = (
-            (title, ([id_], [self.TYPE2LABEL[type_]], [unicode(updated)],
-                     (id_title[0] + ' - ' + id_title[1] for id_title in bugs),
-                     (id_title[0] for id_title in cves), desc.splitlines()))
-             for title, (id_, type_, updated, bugs, cves, desc) in info)
+            (title, ([id_], [self.TYPE2LABEL[type_]], [unicode(upd)],
+                     (id_title[0] + ' - ' + id_title[1] for id_title in bzs),
+                     (id_title[0] for id_title in cvs), desc.splitlines(),
+                     verbose(rigs.splitlines() if rigs else None),
+                     verbose(fils)))
+             for title, (id_, type_, upd, bzs, cvs, desc, rigs, fils) in info)
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
-                  _('CVEs'), _('Description'))
+                  _('CVEs'), _('Description'), _('Rights'), _('Files'))
         width = _maxlen(labels)
         for title, vallines in title_vallines:
             print('=' * 79)
             print('  ' + title)
             print('=' * 79)
             for label, lines in zip(labels, vallines):
+                if lines is None:
+                    continue
                 # Use the label only for the first item. For the remaining
                 # items, use an empty label.
                 labels_ = chain([label], itertools.repeat(''))
@@ -224,13 +235,13 @@ class UpdateInfoCommand(commands.Command):
         """Execute the command with arguments."""
 
         super(UpdateInfoCommand, self).run(args)
-        display = self._display_summary
+        display = self.display_summary
         if args[:1] in (['summary'], []):
             args = args[1:]
         elif args[:1] == ['list']:
-            display, args = self._display_list, args[1:]
+            display, args = self.display_list, args[1:]
         elif args[:1] == ['info']:
-            display, args = self._display_info, args[1:]
+            display, args = self.display_info, args[1:]
 
         if args not in (['available'], []):
             raise dnf.exceptions.Error('invalid command arguments')
