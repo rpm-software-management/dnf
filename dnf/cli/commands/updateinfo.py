@@ -77,18 +77,38 @@ class UpdateInfoCommand(commands.Command):
             return False
         return self.base.sack.evr_cmp(ievr, apackage.evr) < 0
 
+    def _newer_equal_installed(self, apkg):
+        """Test whether a newer or equal version of a package is installed."""
+        # Non-cached lookup not implemented. Fill the cache or implement the
+        # functionality via the slow sack query.
+        assert self._ina2evr_cache is not None
+        try:
+            ievr = self._ina2evr_cache[(apkg.name, apkg.arch)]
+        except KeyError:
+            return False
+        return self.base.sack.evr_cmp(ievr, apkg.evr) >= 0
+
     def configure(self, args):
         """Do any command-specific configuration based on command arguments."""
         super(UpdateInfoCommand, self).configure(args)
         self.cli.demands.sack_activation = True
 
-    def _apackage_advisories(self):
+    def _apackage_advisories(self, cmptype, requested_apkg):
         """Return (advisory package, advisory) pairs."""
         for package in self.base.sack.query().installed():
-            for advisory in package.get_advisories(hawkey.GT):
+            for advisory in package.get_advisories(cmptype):
                 for apackage in advisory.packages:
-                    if self._older_installed(apackage):
+                    if requested_apkg(apackage):
                         yield apackage, advisory
+
+    def available_apackage_advisories(self):
+        """Return available (advisory package, advisory) pairs."""
+        return self._apackage_advisories(hawkey.GT, self._older_installed)
+
+    def installed_apackage_advisories(self):
+        """Return installed (advisory package, advisory) pairs."""
+        return self._apackage_advisories(
+            hawkey.LT | hawkey.EQ, self._newer_equal_installed)
 
     @staticmethod
     def _summary(apkg_advs):
@@ -243,9 +263,16 @@ class UpdateInfoCommand(commands.Command):
         elif args[:1] == ['info']:
             display, args = self.display_info, args[1:]
 
-        if args not in (['available'], []):
+        self.refresh_installed_cache()
+
+        apackage_advisories = self.available_apackage_advisories()
+        description = _('available')
+        if args == ['installed']:
+            apackage_advisories = self.installed_apackage_advisories()
+            description = _('installed')
+        elif args not in (['available'], []):
             raise dnf.exceptions.Error('invalid command arguments')
 
-        self.refresh_installed_cache()
-        display(self._apackage_advisories(), _('available'))
+        display(apackage_advisories, description)
+
         self.clear_installed_cache()

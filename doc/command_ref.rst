@@ -540,14 +540,18 @@ Update Command
 Updateinfo Command
 ------------------
 
-``dnf [options] updateinfo [<output>] [available]``
-    Display information about advisories about newer versions of installed
-    packages.
+``dnf [options] updateinfo [<output>] [<availability>]``
+    Display information about update advisories.
 
     Depending on ``<output>``, DNF displays just counts of advisory types
     (omitted or ``summary``), list of advisories (``list``) or detailed
     information (``info``). When ``info`` with ``-v`` option is used, the
     information is even more detailed.
+
+    ``<availability>`` specifies whether advisories about newer versions of
+    installed packages (omitted or ``available``) or advisories about equal and
+    older versions of installed packages (``installed``) are taken into
+    account.
 
 .. _upgrade_command-label:
 
