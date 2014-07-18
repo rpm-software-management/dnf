@@ -160,7 +160,8 @@ class _Handle(librepo.Handle):
         self.interruptible = True
         self.repotype = librepo.LR_YUMREPO
         self.useragent = dnf.const.USER_AGENT
-        self.yumdlist = ["primary", "filelists", "prestodelta", "group_gz"]
+        self.yumdlist = [
+            "primary", "filelists", "prestodelta", "group_gz", "updateinfo"]
 
     def __str__(self):
         return '_Handle: metalnk: %s, mlist: %s, urls %s.' % \
@@ -273,6 +274,9 @@ class Metadata(object):
     def timestamp(self):
         return self.file_timestamp('primary')
 
+    @property
+    def updateinfo_fn(self):
+        return self.repo_dct.get('updateinfo')
 
 class PackagePayload(dnf.callback.Payload):
     def __init__(self, pkg, progress):
@@ -763,6 +767,10 @@ class Repo(dnf.yum.config.RepoConf):
     def set_progress_bar(self, progress):
         # :api
         self._md_pload.progress = progress
+
+    @property
+    def updateinfo_fn(self):
+        return self.metadata.updateinfo_fn
 
     def valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
