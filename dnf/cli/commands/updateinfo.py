@@ -101,22 +101,25 @@ class UpdateInfoCommand(commands.Command):
         self.cli.demands.sack_activation = True
 
     @staticmethod
-    def _advisory_match(advisory, specs=()):
-        """Test whether an advisory matches specifications."""
+    def _apackage_advisory_match(apackage, advisory, specs=()):
+        """Test whether an (adv. pkg., adv.) pair matches specifications."""
         if not specs:
             return True
         specs = set(specs)
-        return any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs)
+        return (any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs) or
+                any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs))
 
     def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs=()):
         """Return (adv. package, advisory, installed) triplets and a flag."""
         for package in pkgs:
             for advisory in package.get_advisories(cmptype):
-                if self._advisory_match(advisory, specs):
-                    for apackage in advisory.packages:
-                        if req_apkg(apackage):
-                            installed = self._newer_equal_installed(apackage)
-                            yield apackage, advisory, installed
+                for apackage in advisory.packages:
+                    passed = (req_apkg(apackage) and
+                              self._apackage_advisory_match(
+                                  apackage, advisory, specs))
+                    if passed:
+                        installed = self._newer_equal_installed(apackage)
+                        yield apackage, advisory, installed
 
     def available_apkg_adv_insts(self, specs=()):
         """Return available (adv. package, adv., inst.) triplets and a flag."""
