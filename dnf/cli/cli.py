@@ -31,6 +31,8 @@ from dnf.i18n import ucd, _, P_
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoerase
+import dnf.cli.commands.clean
+import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
 import dnf.cli.commands.install
@@ -38,7 +40,6 @@ import dnf.cli.commands.reinstall
 import dnf.cli.commands.repolist
 import dnf.cli.commands.search
 import dnf.cli.commands.upgrade
-import dnf.cli.commands.distrosync
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
@@ -794,6 +795,7 @@ class Cli(object):
         self.nogpgcheck = False
 
         self.register_command(dnf.cli.commands.autoerase.AutoeraseCommand)
+        self.register_command(dnf.cli.commands.clean.CleanCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.UpgradeToCommand)
@@ -802,7 +804,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.EraseCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.MakeCacheCommand)
-        self.register_command(dnf.cli.commands.CleanCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)

@@ -114,28 +114,6 @@ def checkItemArg(cli, basecmd, extcmds):
         err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 
-def checkCleanArg(cli, basecmd, extcmds):
-    """Verify that *extcmds* contains at least one argument, and that all
-    arguments in *extcmds* are valid options for clean.
-
-    :param base: a :class:`dnf.Base` object
-    :param basecmd: the name of the command being checked for
-    :param extcmds: a list of arguments passed to *basecmd*
-    :raises: :class:`cli.CliError`
-    """
-    VALID_ARGS = ('packages', 'metadata', 'dbcache', 'plugins',
-                  'expire-cache', 'rpmdb', 'all')
-
-    if len(extcmds) == 0:
-        cli.logger.critical(_('Error: clean requires an option: %s') % (
-            ", ".join(VALID_ARGS)))
-
-    for cmd in extcmds:
-        if cmd not in VALID_ARGS:
-            cli.logger.critical(_('Error: invalid clean argument: %r') % cmd)
-            err_mini_usage(cli, basecmd)
-            raise dnf.cli.CliError
-
 def checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
@@ -405,29 +383,6 @@ class MakeCacheCommand(Command):
         self.base.fill_sack() # performs the md sync
         self.base.logger.info(_('Metadata cache created.'))
         return True
-
-class CleanCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    clean command.
-    """
-
-    aliases = ('clean',)
-    summary = _("Remove cached data")
-    usage = "[packages|metadata|dbcache|plugins|expire-cache|all]"
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-        These include that there is at least one enabled repository,
-        and that this command is called with appropriate arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkCleanArg(self.cli, basecmd, extcmds)
-        checkEnabledRepo(self.base)
-
-    def run(self, extcmds):
-        return self.base.cleanCli(extcmds)
 
 class ProvidesCommand(Command):
     """A class containing methods needed by the cli to execute the
