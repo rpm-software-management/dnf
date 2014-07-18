@@ -88,50 +88,67 @@ class UpdateInfoCommand(commands.Command):
             return False
         return self.base.sack.evr_cmp(ievr, apkg.evr) >= 0
 
+    def _any_installed(self, apkg):
+        """Test whether any version of a package is installed."""
+        # Non-cached lookup not implemented. Fill the cache or implement the
+        # functionality via the slow sack query.
+        assert self._ina2evr_cache is not None
+        return (apkg.name, apkg.arch) in self._ina2evr_cache
+
     def configure(self, args):
         """Do any command-specific configuration based on command arguments."""
         super(UpdateInfoCommand, self).configure(args)
         self.cli.demands.sack_activation = True
 
-    def _apackage_advisories(self, packages, cmptype, requested_apkg):
-        """Return (advisory package, advisory) pairs."""
+    def _apackage_advisory_installeds(self, packages, cmptype, requested_apkg):
+        """Return (adv. package, advisory, installed) triplets and a flag."""
         for package in packages:
             for advisory in package.get_advisories(cmptype):
                 for apackage in advisory.packages:
                     if requested_apkg(apackage):
-                        yield apackage, advisory
+                        installed = self._newer_equal_installed(apackage)
+                        yield apackage, advisory, installed
 
-    def available_apackage_advisories(self):
-        """Return available (advisory package, advisory) pairs."""
-        return self._apackage_advisories(
+    def available_apkg_adv_insts(self):
+        """Return available (adv. package, adv., inst.) triplets and a flag."""
+        return False, self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
             self._older_installed)
 
-    def installed_apackage_advisories(self):
-        """Return installed (advisory package, advisory) pairs."""
-        return self._apackage_advisories(
+    def installed_apkg_adv_insts(self):
+        """Return installed (adv. package, adv., inst.) triplets and a flag."""
+        return False, self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
             self._newer_equal_installed)
 
-    def updating_apackage_advisories(self):
-        """Return updating (advisory package, advisory) pairs."""
-        return self._apackage_advisories(
+    def updating_apkg_adv_insts(self):
+        """Return updating (adv. package, adv., inst.) triplets and a flag."""
+        return False, self._apackage_advisory_installeds(
             self.base.sack.query().filter(upgradable=True), hawkey.GT,
             self._older_installed)
 
+    def all_apkg_adv_insts(self):
+        """Return installed (adv. package, adv., inst.) triplets and a flag."""
+        ipackages = self.base.sack.query().installed()
+        gttriplets = self._apackage_advisory_installeds(
+            ipackages, hawkey.GT, self._any_installed)
+        lteqtriplets = self._apackage_advisory_installeds(
+            ipackages, hawkey.LT | hawkey.EQ, self._any_installed)
+        return True, chain(gttriplets, lteqtriplets)
+
     @staticmethod
-    def _summary(apkg_advs):
+    def _summary(apkg_adv_insts):
         """Make the summary of advisories."""
         # Remove duplicate advisory IDs. We assume that the ID is unique within
         # a repository and two advisories with the same IDs in different
         # repositories must have the same type.
-        id2type = {apkg_adv[1].id: apkg_adv[1].type for apkg_adv in apkg_advs}
+        id2type = {pkadin[1].id: pkadin[1].type for pkadin in apkg_adv_insts}
         return collections.Counter(id2type.values())
 
     @classmethod
-    def display_summary(cls, apkg_advs, description):
+    def display_summary(cls, apkg_adv_insts, mixed, description):
         """Display the summary of advisories."""
-        typ2cnt = cls._summary(apkg_advs)
+        typ2cnt = cls._summary(apkg_adv_insts)
         if not typ2cnt:
             return
         print(_('Updates Information Summary: ') + description)
@@ -149,102 +166,112 @@ class UpdateInfoCommand(commands.Command):
             print('    %*s %s' % (width, value, label))
 
     @staticmethod
-    def _list(apkg_advs):
+    def _list(apkg_adv_insts):
         """Make the list of advisories."""
-        # Get (NEVRA, advisory ID, advisory type)
+        # Get ((NEVRA, installed), advisory ID, advisory type)
         apkg2nevra = lambda apkg: apkg.name + '-' + apkg.evr + '.' + apkg.arch
-        nevra_id_types = (
-            (apkg2nevra(apkg), adv.id, adv.type)
-            for apkg, adv in apkg_advs)
-        # Sort and group by NEVRAs.
-        nevra_nits = itertools.groupby(
-            sorted(nevra_id_types, key=itemgetter(0)), key=itemgetter(0))
-        for nevra, nits in nevra_nits:
+        nevrains_id_types = (
+            ((apkg2nevra(apkg), inst), adv.id, adv.type)
+            for apkg, adv, inst in apkg_adv_insts)
+        # Sort and group by (NEVRA, installed).
+        nevrains_nits = itertools.groupby(
+            sorted(nevrains_id_types, key=itemgetter(0)), key=itemgetter(0))
+        for nevra_ins, nits in nevrains_nits:
             # Remove duplicate IDs. We assume that two advisories with the same
             # IDs (e.g. from different repositories) must have the same type.
-            yield nevra, {nit[1]: nit[2] for nit in nits}
+            yield nevra_ins, {nit[1]: nit[2] for nit in nits}
 
     @classmethod
-    def display_list(cls, apkg_advs, description):
+    def display_list(cls, apkg_adv_insts, mixed, description):
         """Display the list of advisories."""
-        nevra_id2types = cls._list(apkg_advs)
+        nevrainst_id2types = cls._list(apkg_adv_insts)
         # Sort IDs and convert types to labels.
-        nevra2id2tlbl = OrderedDict(
-            (nevra, OrderedDict(sorted(((id_, cls.TYPE2LABEL[typ])
-                                        for id_, typ in id2type.items()),
-                                       key=itemgetter(0))))
-            for nevra, id2type in nevra_id2types)
-        if not nevra2id2tlbl:
+        inst2mark = lambda ins: '' if not mixed else 'i ' if ins else '  '
+        nevramark2id2tlbl = OrderedDict(
+            ((nevra, inst2mark(inst)),
+             OrderedDict(sorted(((id_, cls.TYPE2LABEL[typ])
+                                 for id_, typ in id2type.items()),
+                                key=itemgetter(0))))
+            for (nevra, inst), id2type in nevrainst_id2types)
+        if not nevramark2id2tlbl:
             return
         # Get all advisory IDs and types as two iterables.
         ids, tlbls = zip(*chain.from_iterable(
-            id2tlbl.items() for id2tlbl in nevra2id2tlbl.values()))
+            id2tlbl.items() for id2tlbl in nevramark2id2tlbl.values()))
         idw, tlw = _maxlen(ids), _maxlen(tlbls)
-        for nevra, id2tlbl in nevra2id2tlbl.items():
+        for (nevra, mark), id2tlbl in nevramark2id2tlbl.items():
             for id_, tlbl in id2tlbl.items():
-                print('%-*s %-*s %s' % (idw, id_, tlw, tlbl, nevra))
+                print('%s%-*s %-*s %s' % (mark, idw, id_, tlw, tlbl, nevra))
 
-    def _info(self, apkg_advs):
+    def _info(self, apkg_adv_insts):
         """Make detailed information about advisories."""
         # Get mapping from identity to (title, ID, type, time, BZs, CVEs,
-        # description, rights, files). This way we get rid of unneeded advisory
-        # packages given with the advisories and we remove duplicate advisories
-        # (that SPEEDS UP the information extraction because the advisory
-        # attribute getters are expensive, so we won't get the attributes
-        # multiple times). We cannot use a set because advisories are not
-        # hashable.
+        # description, rights, files, installed). This way we get rid of
+        # unneeded advisory packages given with the advisories and we remove
+        # duplicate advisories (that SPEEDS UP the information extraction
+        # because the advisory attribute getters are expensive, so we won't get
+        # the attributes multiple times). We cannot use a set because
+        # advisories are not hashable.
         getrefs = lambda apkg, typ: (
             (ref.id, ref.title) for ref in apkg.references if ref.type == typ)
         id2tuple = OrderedDict()
-        for apkg_adv in apkg_advs:
-            identity = id(apkg_adv[1])
-            # Don't use id2tuple.setdefault because we don't want to access the
-            # attributes unless needed.
-            if identity not in id2tuple:
+        for apkg_adv_inst in apkg_adv_insts:
+            identity, inst = id(apkg_adv_inst[1]), apkg_adv_inst[2]
+            try:
+                tuple_ = id2tuple[identity]
+            except KeyError:
                 id2tuple[identity] = (
-                    apkg_adv[1].title,
-                    apkg_adv[1].id,
-                    apkg_adv[1].type,
-                    apkg_adv[1].updated,
-                    getrefs(apkg_adv[1], hawkey.REFERENCE_BUGZILLA),
-                    getrefs(apkg_adv[1], hawkey.REFERENCE_CVE),
-                    apkg_adv[1].description,
-                    apkg_adv[1].rights,
-                    (pkg.filename for pkg in apkg_adv[1].packages
-                     if pkg.arch in self.base.sack.list_arches()))
+                    apkg_adv_inst[1].title,
+                    apkg_adv_inst[1].id,
+                    apkg_adv_inst[1].type,
+                    apkg_adv_inst[1].updated,
+                    getrefs(apkg_adv_inst[1], hawkey.REFERENCE_BUGZILLA),
+                    getrefs(apkg_adv_inst[1], hawkey.REFERENCE_CVE),
+                    apkg_adv_inst[1].description,
+                    apkg_adv_inst[1].rights,
+                    (pkg.filename for pkg in apkg_adv_inst[1].packages
+                     if pkg.arch in self.base.sack.list_arches()),
+                    inst)
+            else:
+                # If the stored advisory is marked as not installed and the
+                # current is marked as installed, mark the stored as installed.
+                if not tuple_[9] and inst:
+                    id2tuple[identity] = tuple_[:9] + (inst,)
         # Get mapping from title to (ID, type, time, BZs, CVEs, description,
-        # rights, files) => group by titles and merge values. We assume that
-        # two advisories with the same title (e.g. from different repositories)
-        # must have the same ID, type, time, description and rights.
-        # References and files are merged.
+        # rights, files, installed) => group by titles and merge values. We
+        # assume that two advisories with the same title (e.g. from different
+        # repositories) must have the same ID, type, time, description and
+        # rights. References, files and installs are merged.
         merge = lambda old, new: set(chain(old, new))
         title2info = OrderedDict()
         for tuple_ in id2tuple.values():
             title, new = tuple_[0], tuple_[1:]
             old = title2info.get(
-                title, (None, None, None, [], [], None, None, []))
+                title, (None, None, None, [], [], None, None, [], False))
             title2info[title] = (
                 new[:3] +
                 (merge(old[3], new[3]),
                  merge(old[4], new[4])) +
                 new[5:7] +
-                (merge(old[7], new[7]),))
+                (merge(old[7], new[7]),
+                 old[8] or new[8]))
         return title2info
 
-    def display_info(self, apkg_advs, description):
+    def display_info(self, apkg_adv_insts, mixed, description):
         """Display the details about available advisories."""
-        info = self._info(apkg_advs).items()
+        info = self._info(apkg_adv_insts).items()
         # Convert objects to string lines and mark verbose fields.
-        verbose = lambda value: value if self.base.conf.verbose else None
+        verbse = lambda value: value if self.base.conf.verbose else None
         title_vallines = (
-            (title, ([id_], [self.TYPE2LABEL[type_]], [unicode(upd)],
-                     (id_title[0] + ' - ' + id_title[1] for id_title in bzs),
-                     (id_title[0] for id_title in cvs), desc.splitlines(),
-                     verbose(rigs.splitlines() if rigs else None),
-                     verbose(fils)))
-             for title, (id_, type_, upd, bzs, cvs, desc, rigs, fils) in info)
+            (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
+                   (id_title[0] + ' - ' + id_title[1] for id_title in bzs),
+                   (id_title[0] for id_title in cvs), desc.splitlines(),
+                   verbse(rigs.splitlines() if rigs else None), verbse(fils),
+                   None if not mixed else [_('true') if ins else _('false')]))
+             for tit, (id_, typ, upd, bzs, cvs, desc, rigs, fils, ins) in info)
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
-                  _('CVEs'), _('Description'), _('Rights'), _('Files'))
+                  _('CVEs'), _('Description'), _('Rights'), _('Files'),
+                  _('Installed'))
         width = _maxlen(labels)
         for title, vallines in title_vallines:
             print('=' * 79)
@@ -274,17 +301,20 @@ class UpdateInfoCommand(commands.Command):
 
         self.refresh_installed_cache()
 
-        apackage_advisories = self.available_apackage_advisories()
+        mixed, apkg_adv_insts = self.available_apkg_adv_insts()
         description = _('available')
         if args == ['installed']:
-            apackage_advisories = self.installed_apackage_advisories()
+            mixed, apkg_adv_insts = self.installed_apkg_adv_insts()
             description = _('installed')
         elif args == ['updates']:
-            apackage_advisories = self.updating_apackage_advisories()
+            mixed, apkg_adv_insts = self.updating_apkg_adv_insts()
             description = _('updates')
+        elif args == ['all']:
+            mixed, apkg_adv_insts = self.all_apkg_adv_insts()
+            description = _('all')
         elif args not in (['available'], []):
             raise dnf.exceptions.Error('invalid command arguments')
 
-        display(apackage_advisories, description)
+        display(apkg_adv_insts, mixed, description)
 
         self.clear_installed_cache()

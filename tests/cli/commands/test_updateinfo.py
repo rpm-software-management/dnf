@@ -24,6 +24,7 @@ import dnf.exceptions
 import dnf.pycomp
 import dnf.cli.commands.updateinfo
 import hawkey
+import itertools
 import shutil
 import tempfile
 import tests.mock
@@ -54,36 +55,69 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         """Pretend to print to standard output."""
         print(*objects, file=self._stdout)
 
-    def test_installed_apackage_advisories(self):
-        """Test installed pairs querying."""
+    def test_installed_apkg_adv_insts(self):
+        """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        apkg_advs = cmd.installed_apackage_advisories()
+        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts()
+        self.assertFalse(mixed, 'incorrect flag')
         self.assertCountEqual(
-            ((apkg.filename, adv.id) for apkg, adv in apkg_advs),
-            [('tour-4-4.noarch.rpm', 'DNF-2014-1'),
-             ('tour-5-0.noarch.rpm', 'DNF-2014-2')],
+            ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
+            [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
+             ('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
             'incorrect pairs')
 
-    def test_updating_apackage_advisories(self):
-        """Test updating pairs querying."""
+    def test_updating_apkg_adv_insts(self):
+        """Test updating triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        apkg_advs = cmd.updating_apackage_advisories()
+        mixed, apkg_adv_insts = cmd.updating_apkg_adv_insts()
+        self.assertFalse(mixed, 'incorrect flag')
         self.assertCountEqual(
-            ((apkg.filename, adv.id) for apkg, adv in apkg_advs),
-            [('tour-5-1.noarch.rpm', 'DNF-2014-3')],
+            ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
+            [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
+
+    def test_all_apkg_adv_insts(self):
+        """Test all triplets querying."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.refresh_installed_cache()
+        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts()
+        self.assertTrue(mixed, 'incorrect flag')
+        self.assertCountEqual(
+            ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
+            [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
+             ('tour-5-0.noarch.rpm', 'DNF-2014-2', True),
+             ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)])
+
+    def test_display_list_mixed(self):
+        """Test list displaying with mixed installs."""
+        apkg_adv_insts = itertools.chain(
+            ((apkg, adv, False)
+             for pkg in self.cli.base.sack.query().installed()
+             for adv in pkg.get_advisories(hawkey.GT)
+             for apkg in adv.packages),
+            ((apkg, adv, True)
+             for pkg in self.cli.base.sack.query().installed()
+             for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
+             for apkg in adv.packages))
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.display_list(apkg_adv_insts, True, '')
+        self.assertEqual(self._stdout.getvalue(),
+                         'i DNF-2014-1 bugfix      tour-4-4.noarch\n'
+                         'i DNF-2014-2 enhancement tour-5-0.noarch\n'
+                         '  DNF-2014-3 security    tour-5-1.noarch\n',
+                         'incorrect output')
 
     def test_display_info_verbose(self):
         """Test verbose displaying."""
-        apkg_advs = ((apkg, adv)
+        apkg_adv_insts = ((apkg, adv, False)
                      for pkg in self.cli.base.sack.query().installed()
                      for adv in pkg.get_advisories(hawkey.GT)
                      for apkg in adv.packages)
         self.cli.base.conf.verbose = True
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_advs, '')
+        cmd.display_info(apkg_adv_insts, False, '')
         updated = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
@@ -99,8 +133,64 @@ class UpdateInfoCommandTest(tests.support.TestCase):
                          '\n',
                          'incorrect output')
 
-    # This test also tests the display_summary and
-    # available_apackage_advisories methods.
+    def test_display_info_verbose_mixed(self):
+        """Test verbose displaying with mixed installs."""
+        apkg_adv_insts = itertools.chain(
+            ((apkg, adv, False)
+             for pkg in self.cli.base.sack.query().installed()
+             for adv in pkg.get_advisories(hawkey.GT)
+             for apkg in adv.packages),
+            ((apkg, adv, True)
+             for pkg in self.cli.base.sack.query().installed()
+             for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
+             for apkg in adv.packages))
+        self.cli.base.conf.verbose = True
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.display_info(apkg_adv_insts, True, '')
+        updated1 = datetime.datetime.fromtimestamp(1404840841)
+        updated2 = datetime.datetime.fromtimestamp(1404841082)
+        updated3 = datetime.datetime.fromtimestamp(1404841143)
+        self.assertEqual(self._stdout.getvalue(),
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-1\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID : DNF-2014-3\n'
+                         '       Type : security\n'
+                         '    Updated : ' + str(updated3) + '\n'
+                         'Description : testing advisory\n'
+                         '      Files : tour-5-1.noarch.rpm\n'
+                         '  Installed : false\n'
+                         '\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-4-4\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID : DNF-2014-1\n'
+                         '       Type : bugfix\n'
+                         '    Updated : ' + str(updated1) + '\n'
+                         'Description : testing advisory\n'
+                         '      Files : tour-4-4.noarch.rpm\n'
+                         '  Installed : true\n'
+                         '\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-0\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID : DNF-2014-2\n'
+                         '       Type : enhancement\n'
+                         '    Updated : ' + str(updated2) + '\n'
+                         'Description : testing advisory\n'
+                         '      Files : tour-5-0.noarch.rpm\n'
+                         '  Installed : true\n'
+                         '\n',
+                         'incorrect output')
+
+    # This test also tests the display_summary and available_apkg_adv_insts
+    # methods.
     def test_run_available(self):
         """Test running with available advisories."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
@@ -110,7 +200,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
                          '    1 Security notice(s)\n',
                          'incorrect output')
 
-    # This test also tests the display_list and available_apackage_advisories
+    # This test also tests the display_list and available_apkg_adv_insts
     # methods.
     def test_run_list(self):
         """Test running the list sub-command."""
@@ -120,7 +210,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
                          'DNF-2014-3 security tour-5-1.noarch\n',
                          'incorrect output')
 
-    # This test also tests the display_info and available_apackage_advisories
+    # This test also tests the display_info and available_apkg_adv_insts
     # methods.
     def test_run_info(self):
         """Test running the info sub-command."""
