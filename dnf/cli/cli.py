@@ -24,6 +24,7 @@ Command line interface yum class and related.
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from . import output
 from dnf.cli import CliError
 from dnf.i18n import ucd, _, P_
 
@@ -58,9 +59,7 @@ import hawkey
 import logging
 import operator
 import os
-from . import output
 import re
-import signal
 import sys
 import time
 
@@ -91,15 +90,6 @@ def _list_cmd_calc_columns(output, ypl):
     columns = output.calcColumns(data, remainder_column=1)
     return (-columns[0], -columns[1], -columns[2])
 
-def sigquit(signum, frame):
-    """SIGQUIT handler for the yum cli.  This function will print an
-    error message and exit the program.
-
-    :param signum: unused
-    :param frame: unused
-    """
-    print("Quit signal sent - exiting immediately", file=sys.stderr)
-    sys.exit(1)
 
 def print_versions(pkgs, base, output):
     def sm_ui_time(x):
@@ -132,8 +122,6 @@ class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
 
     def __init__(self, conf=None):
-        # handle sigquit early on
-        signal.signal(signal.SIGQUIT, sigquit)
         super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
         self.logger = logging.getLogger("dnf")

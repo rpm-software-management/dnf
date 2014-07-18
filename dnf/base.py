@@ -60,7 +60,6 @@ import logging
 import os
 import operator
 import rpm
-import signal
 import time
 
 class Base(object):
@@ -612,7 +611,6 @@ class Base(object):
         timer()
 
         # unset the sigquit handler
-        sigquit = signal.signal(signal.SIGQUIT, signal.SIG_DFL)
         timer = dnf.logging.Timer('transaction')
         # put back our depcheck callback
         self.ds_callback = dscb
@@ -628,10 +626,7 @@ class Base(object):
         return_code = self.runTransaction(cb=cb)
         if return_code == 0 and self.group_persistor:
             self.group_persistor.commit()
-
         timer()
-        # put back the sigquit handler
-        signal.signal(signal.SIGQUIT, sigquit)
 
         return return_code, None
 
