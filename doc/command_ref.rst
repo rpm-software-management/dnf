@@ -558,10 +558,10 @@ Updateinfo Command
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
 
-    If given and if neither ID, type (``enhancement``) nor a package name of an
-    advisory does match ``<spec>``, the advisory is not taken into account. The
-    matching is case-sensitive and in the case of advisory IDs and package
-    names, globbing is supported.
+    If given and if neither ID, type (``bugfix``, ``enhancement``) nor a
+    package name of an advisory does match ``<spec>``, the advisory is not
+    taken into account. The matching is case-sensitive and in the case of
+    advisory IDs and package names, globbing is supported.
 
 .. _upgrade_command-label:
 
