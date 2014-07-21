@@ -77,6 +77,18 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             [], 'incorrect pairs')
         cmd.clear_installed_cache()
 
+    def test_available_apkg_adv_insts_filter_security(self):
+        """Test querying with a security filter."""
+        cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
+        cmd.refresh_installed_cache()
+        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['security'])
+        self.assertFalse(mixed, 'incorrect flag')
+        self.assertCountEqual(
+            ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
+            [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
+            'incorrect pairs')
+        cmd.clear_installed_cache()
+
     def test_installed_apkg_adv_insts(self):
         """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
