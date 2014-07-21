@@ -113,6 +113,8 @@ class UpdateInfoCommand(commands.Command):
             types.add(hawkey.ADVISORY_BUGFIX)
         if 'enhancement' in specs:
             types.add(hawkey.ADVISORY_ENHANCEMENT)
+        if {'security', 'sec'} & specs:
+            types.add(hawkey.ADVISORY_SECURITY)
 
         return (any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs) or
                 advisory.type in types or
