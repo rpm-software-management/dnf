@@ -109,6 +109,8 @@ class UpdateInfoCommand(commands.Command):
 
         specs = set(specs)
         types = set()
+        if 'bugfix' in specs:
+            types.add(hawkey.ADVISORY_BUGFIX)
         if 'enhancement' in specs:
             types.add(hawkey.ADVISORY_ENHANCEMENT)
 
