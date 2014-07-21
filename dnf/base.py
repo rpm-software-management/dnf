@@ -23,7 +23,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf import query, sack
 from dnf.i18n import _, ucd
 from dnf.yum import history
 from dnf.yum import misc
@@ -42,11 +41,13 @@ import dnf.lock
 import dnf.logging
 import dnf.persistor
 import dnf.plugin
+import dnf.query
 import dnf.repo
 import dnf.repodict
 import dnf.rpm.connection
 import dnf.rpm.miscutils
 import dnf.rpm.transaction
+import dnf.sack
 import dnf.subject
 import dnf.transaction
 import dnf.util
@@ -182,7 +183,7 @@ class Base(object):
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""
         timer = dnf.logging.Timer('sack setup')
-        self._sack = sack.build_sack(self)
+        self._sack = dnf.sack.build_sack(self)
         with dnf.lock.metadata_cache_lock:
             if load_system_repo is not False:
                 try:
@@ -641,7 +642,7 @@ class Base(object):
                 fn = getattr(cb, i)
                 try:
                     misc.unlink_f(fn)
-                except (IOError, OSError) as e:
+                except (IOError, OSError):
                     msg = _('Failed to remove transaction file %s')
                     self.logger.critical(msg, fn)
 
@@ -691,7 +692,7 @@ class Base(object):
         # with only rpmdb in it. In the future when RPM Python bindings can tell
         # us if a particular transaction element failed or not we can skip this
         # completely.
-        rpmdb_sack = sack.rpmdb_sack(self)
+        rpmdb_sack = dnf.sack.rpmdb_sack(self)
 
         for tsi in self._transaction:
             rpo = tsi.installed
@@ -1422,7 +1423,7 @@ class Base(object):
             available_q = available_q.filter(reponame=new_reponame)
         if new_reponame_neq is not None:
             available_q = available_q.filter(reponame__neq=new_reponame_neq)
-        available_nevra2pkg = query.per_nevra_dict(available_q)
+        available_nevra2pkg = dnf.query.per_nevra_dict(available_q)
 
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
@@ -1477,7 +1478,7 @@ class Base(object):
         return 1
 
     def provides(self, provides_spec):
-        providers = query.by_provides(self.sack, provides_spec)
+        providers = dnf.query.by_provides(self.sack, provides_spec)
         if providers:
             return providers
         if any(map(dnf.util.is_glob_pattern, provides_spec)):
