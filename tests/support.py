@@ -77,8 +77,12 @@ def repo(reponame):
     return os.path.join(repo_dir(), reponame)
 
 def repo_dir():
-    this_dir=os.path.dirname(__file__)
+    this_dir = os.path.dirname(__file__)
     return os.path.join(this_dir, "repos")
+
+def test_resource_path(path):
+    this_dir = os.path.dirname(__file__)
+    return os.path.join(this_dir, path)
 
 COMPS_PATH = os.path.join(repo_dir(), "main_comps.xml")
 NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")

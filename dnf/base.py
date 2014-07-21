@@ -28,12 +28,12 @@ from dnf.i18n import _, ucd
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
-from dnf.yum.parser import ConfigPreProcessor
 from functools import reduce
 
 import dnf.callback
 import dnf.comps
 import dnf.conf
+import dnf.conf.read
 import dnf.drpm
 import dnf.exceptions
 import dnf.goal
@@ -53,7 +53,6 @@ import dnf.util
 import dnf.yum.config
 import dnf.yum.rpmtrans
 import functools
-import glob
 import hawkey
 import io
 import logging
@@ -224,96 +223,16 @@ class Base(object):
         self._store_persistent_data()
         self.closeRpmDB()
 
-    def read_repos(self, repofn, repo_setopts):
-        """Read in repositories from a config .repo file."""
-
-        confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.substitutions)
-        parser = dnf.yum.config.ConfigParser()
-        try:
-            parser.readfp(confpp_obj)
-        except dnf.yum.config.ParsingError as e:
-            msg = str(e)
-            raise dnf.exceptions.ConfigError(msg)
-
-        # Check sections in the .repo file that was just slurped up
-        for section in parser.sections():
-
-            if section in ['main', 'installed']:
-                continue
-
-            # Check the repo.id against the valid chars
-            invalid = dnf.repo.repo_id_invalid(section)
-            if invalid is not None:
-                self.logger.warning("Bad id for repo: %s, byte = %s %d" %
-                                    (section, section[invalid], invalid))
-                continue
-
-            try:
-                thisrepo = self.readRepoConfig(parser, section)
-            except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError) as e:
-                self.logger.warning(e)
-                continue
-            else:
-                thisrepo.repofile = repofn
-
-            if thisrepo.id in repo_setopts:
-                for opt in repo_setopts[thisrepo.id].items:
-                    if not hasattr(thisrepo, opt):
-                        msg = "Repo %s did not have a %s attr. before setopt"
-                        self.logger.warning(msg % (thisrepo.id, opt))
-                    setattr(thisrepo, opt, getattr(repo_setopts[thisrepo.id],
-                                                   opt))
-
-            # Got our list of repo objects, add them to the repos
-            # collection
-            try:
-                self.repos.add(thisrepo)
-            except dnf.exceptions.ConfigError as e:
-                self.logger.warning(e)
-
     def read_all_repos(self, repo_setopts=None):
         """Read repositories from the main conf file and from .repo files."""
         # :api
 
-        repo_setopts = repo_setopts or {}
-        # Get the repos from the main yum.conf file
-        self.read_repos(self.conf.config_file_path, repo_setopts)
-
-        # Read .repo files from directories specified by conf.reposdir
-        for repofn in (repofn for reposdir in self.conf.reposdir
-                       for repofn in sorted(glob.glob('%s/*.repo' % reposdir))):
+        reader = dnf.conf.read.RepoReader(self.conf, repo_setopts or {})
+        for repo in reader:
             try:
-                self.read_repos(repofn, repo_setopts)
-            except dnf.exceptions.ConfigError:
-                self.logger.warning(_("Warning: failed loading '%s', skipping."),
-                                    repofn)
-
-    def readRepoConfig(self, parser, section):
-        """Parse an INI file section for a repository.
-
-        :param parser: :class:`ConfigParser` or similar object to read
-           INI file values from
-        :param section: INI file section to read
-        :return: :class:`dnf.repo.Repo` instance
-        """
-        repo = dnf.repo.Repo(section, self.conf.cachedir)
-        try:
-            repo.populate(parser, section, self.conf)
-        except ValueError as e:
-            msg = _('Repository %r: Error parsing config: %s' % (section, e))
-            raise dnf.exceptions.ConfigError(msg)
-
-        # Ensure that the repo name is set
-        if not repo.name:
-            repo.name = section
-            self.logger.error(_('Repository %r is missing name in configuration, '
-                    'using id') % section)
-        repo.name = ucd(repo.name)
-
-        repo.substitutions.update(self.conf.substitutions)
-        repo.cfg = parser
-
-        return repo
+                self.repos.add(repo)
+            except dnf.exceptions.ConfigError as e:
+                self.logger.warning(e)
 
     def reset(self, sack=False, repos=False, goal=False):
         """Make the Base object forget about various things. :api"""
