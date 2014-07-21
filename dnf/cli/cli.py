@@ -720,12 +720,14 @@ class BaseCli(dnf.Base):
 class Cli(object):
     def __init__(self, base):
         self._system_cachedir = None
-        self.demands = dnf.cli.demand.DemandSheet() #:cli
-        self.logger = logging.getLogger("dnf")
-        self.command = None
         self.base = base
         self.cli_commands = {}
+        self.command = None
+        self.demands = dnf.cli.demand.DemandSheet() #:cli
+        self.logger = logging.getLogger("dnf")
+        self.main_setopts = {}
         self.nogpgcheck = False
+        self.repo_setopts = {}
 
         self.register_command(dnf.cli.commands.autoerase.AutoeraseCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
@@ -759,7 +761,7 @@ class Cli(object):
         self.logger.debug("cachedir: %s", conf.cachedir)
 
     def _configure_repos(self, opts):
-        self.base.read_all_repos()
+        self.base.read_all_repos(self.repo_setopts)
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
@@ -858,8 +860,7 @@ class Cli(object):
         self.logger.log(dnf.logging.SUBDEBUG, 'Extra commands: %s', ext)
 
     def _parse_setopts(self, setopts):
-        """parse the setopts list handed to us and saves the results as
-           repo_setopts and main_setopts in the base object"""
+        """Parse setopts and repo_setopts."""
 
         repoopts = {}
         mainopts = dnf.yum.misc.GenericHolder()
@@ -891,7 +892,7 @@ class Cli(object):
                 mainopts.items.append(k)
 
         self.main_setopts = mainopts
-        self.base.repo_setopts = repoopts
+        self.repo_setopts = repoopts
 
         return bad_setopt_tm, bad_setopt_ne
 

@@ -203,7 +203,7 @@ class _BaseStubMixin(object):
         self._comps, self.group_persistor = mock_comps(seed_persistor)
         return self._comps
 
-    def read_all_repos(self):
+    def read_all_repos(self, repo_setopts=None):
         pass
 
 

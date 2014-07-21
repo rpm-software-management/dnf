@@ -80,10 +80,6 @@ class Base(object):
         self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
-        self.repo_setopts = {} # since we have to use repo_setopts in base and
-                               # not in cli - set it up as empty so no one
-                               # trips over it later
-
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
 
@@ -228,7 +224,7 @@ class Base(object):
         self._store_persistent_data()
         self.closeRpmDB()
 
-    def read_repos(self, repofn):
+    def read_repos(self, repofn, repo_setopts):
         """Read in repositories from a config .repo file."""
 
         confpp_obj = ConfigPreProcessor(repofn, vars=self.conf.substitutions)
@@ -260,12 +256,12 @@ class Base(object):
             else:
                 thisrepo.repofile = repofn
 
-            if thisrepo.id in self.repo_setopts:
-                for opt in self.repo_setopts[thisrepo.id].items:
+            if thisrepo.id in repo_setopts:
+                for opt in repo_setopts[thisrepo.id].items:
                     if not hasattr(thisrepo, opt):
                         msg = "Repo %s did not have a %s attr. before setopt"
                         self.logger.warning(msg % (thisrepo.id, opt))
-                    setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id],
+                    setattr(thisrepo, opt, getattr(repo_setopts[thisrepo.id],
                                                    opt))
 
             # Got our list of repo objects, add them to the repos
@@ -275,17 +271,19 @@ class Base(object):
             except dnf.exceptions.ConfigError as e:
                 self.logger.warning(e)
 
-    def read_all_repos(self):
+    def read_all_repos(self, repo_setopts=None):
         """Read repositories from the main conf file and from .repo files."""
         # :api
+
+        repo_setopts = repo_setopts or {}
         # Get the repos from the main yum.conf file
-        self.read_repos(self.conf.config_file_path)
+        self.read_repos(self.conf.config_file_path, repo_setopts)
 
         # Read .repo files from directories specified by conf.reposdir
         for repofn in (repofn for reposdir in self.conf.reposdir
                        for repofn in sorted(glob.glob('%s/*.repo' % reposdir))):
             try:
-                self.read_repos(repofn)
+                self.read_repos(repofn, repo_setopts)
             except dnf.exceptions.ConfigError:
                 self.logger.warning(_("Warning: failed loading '%s', skipping."),
                                     repofn)
