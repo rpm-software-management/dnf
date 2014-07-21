@@ -89,7 +89,7 @@ class RepoReader(object):
         # Check sections in the .repo file that was just slurped up
         for section in parser.sections():
 
-            if section in ['main', 'installed']:
+            if section == 'main':
                 continue
 
             # Check the repo.id against the valid chars
