@@ -103,10 +103,17 @@ class UpdateInfoCommand(commands.Command):
     @staticmethod
     def _apackage_advisory_match(apackage, advisory, specs=()):
         """Test whether an (adv. pkg., adv.) pair matches specifications."""
+
         if not specs:
             return True
+
         specs = set(specs)
+        types = set()
+        if 'enhancement' in specs:
+            types.add(hawkey.ADVISORY_ENHANCEMENT)
+
         return (any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs) or
+                advisory.type in types or
                 any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs))
 
     def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs=()):
