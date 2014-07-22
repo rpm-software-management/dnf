@@ -25,8 +25,11 @@ import itertools
 import locale
 import types
 
-if version_info.major >= 3:
-    PY3 = True
+PY3 = version_info.major >= 3
+
+if PY3:
+    from io import StringIO
+    import urllib.parse
 
     # functions renamed in py3
     basestring = unicode = str
@@ -36,8 +39,8 @@ if version_info.major >= 3:
     NullTranslations.ungettext = NullTranslations.ngettext
     xrange = range
     raw_input = input
-    from io import StringIO
     to_ord = lambda i: i
+    urllib_quote = urllib.parse.quote
 
     # string helpers
     def is_py2str_py3bytes(o):
@@ -53,13 +56,14 @@ if version_info.major >= 3:
         f.write(content)
 
 else:
-    PY3 = False
-
     # functions renamed in py3
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     from StringIO import StringIO
+    import urllib
+
     filterfalse = itertools.ifilterfalse
     to_ord = lambda i: ord(i)
+    urllib_quote = urllib.quote
 
     # string helpers
     def is_py2str_py3bytes(o):

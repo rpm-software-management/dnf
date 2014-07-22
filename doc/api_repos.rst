@@ -92,6 +92,18 @@ Repository Configuration
 
     Directory where packages of a remote repo will be downloaded to. By default it is derived from `cachedir` in :meth:`.__init__` but can be overriden by assigning to this attribute.
 
+  .. attribute:: proxy
+
+    URL of of a proxy server to use when connecting to this repo. Defaults to ``None``, i.e. no proxy used. Also see :attr:`.Conf.proxy`.
+
+  .. attribute:: proxy_username
+
+    The username to use for connecting to the proxy server. Defaults to ``None``.
+
+  .. attribute:: proxy_password
+
+    The password to use for connecting to the proxy server. Defaults to ``None``.
+
   .. attribute:: sslverify
 
     Whether SSL certificate checking should be performed at all. Defaults to ``True``.

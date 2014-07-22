@@ -21,13 +21,13 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import ucd, _
-from dnf.pycomp import PY3
 
 import dnf.callback
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
 import dnf.logging
+import dnf.pycomp
 import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
@@ -49,6 +49,7 @@ _RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
 
 logger = logging.getLogger("dnf")
 
+
 def repo_id_invalid(repo_id):
     """Return index of an invalid character in the repo ID (if present). :api"""
     allowed_chars = ''.join((string.ascii_letters, string.digits, '-_.:'))
@@ -56,14 +57,26 @@ def repo_id_invalid(repo_id):
                 if char not in allowed_chars)
     return dnf.util.first(invalids)
 
+
+def _user_pass_str(user, password):
+    if user is None:
+        return None
+    user = dnf.pycomp.urllib_quote(user)
+    password = '' if password is None else dnf.pycomp.urllib_quote(password)
+    return '%s:%s' % (user, password)
+
+
 def _metalink_path(dirname):
     return os.path.join(dirname, _METALINK_FILENAME)
+
 
 def _mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
+
 def _subst2tuples(subst_dct):
     return [(k, v) for (k, v) in subst_dct.items()]
+
 
 def pkg2payload(pkg, progress, *factories):
     for fn in factories:
@@ -343,7 +356,7 @@ class RPMPayload(PackagePayload):
 class MDPayload(dnf.callback.Payload):
 
     def __str__(self):
-        if PY3:
+        if dnf.pycomp.PY3:
             return self._text
         else:
             return self._text.encode('utf-8')
@@ -480,6 +493,7 @@ class Repo(dnf.yum.config.RepoConf):
         h.maxspeed = self.throttle if type(self.throttle) is int \
                      else int(self.bandwidth * self.throttle)
         h.proxy = self.proxy
+        h.proxyuserpwd = _user_pass_str(self.proxy_username, self.proxy_password)
         h.sslverifypeer = h.sslverifyhost = self.sslverify
 
         return h

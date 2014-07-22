@@ -38,17 +38,23 @@ BASEURL = "file://%s/rpm" % REPOS
 TOUR_CHKSUM = """\
 ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
 
-class RepoIdInvalidTest(unittest.TestCase):
+class RepoFunctionsTest(unittest.TestCase):
 
-    def test(self):
-        """Test repo_id_invalid with a good repo ID."""
+    def test_repo_id_invalid(self):
+        """Test repo_id_invalid."""
         index = dnf.repo.repo_id_invalid('R_e-p.o:i3d')
         self.assertIsNone(index)
-
-    def test_invalid(self):
-        """Test repo_id_invalid with a repo ID with an invalid character."""
         index = dnf.repo.repo_id_invalid('R_e-p.o/:i3d')
         self.assertEqual(index, 7)
+
+    def test_user_pass_str(self):
+        user = 'cap'
+        passwd = 'bag'
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd), 'cap:bag')
+        passwd = 'm:ltr'
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd), 'cap:m%3Altr')
+        user = None
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd), None)
 
 class RepoTestMixin(object):
     """Test the logic of dnf.repo.Repo.
@@ -276,6 +282,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         with mock.patch('librepo.Handle.setopt', opts.__setitem__):
             self.repo.get_handle()
         self.assertEquals(opts[librepo.LRO_MAXSPEED], 5 << 20)
+
 
 class LocalRepoTest(support.TestCase):
     def setUp(self):

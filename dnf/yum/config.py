@@ -747,9 +747,9 @@ class YumConf(BaseConfig):
     commands = ListOption()
     exclude = ListOption()
     fastestmirror = BoolOption(False)
-    proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True)
-    proxy_username = Option()
-    proxy_password = Option()
+    proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True) #:api
+    proxy_username = Option() #:api
+    proxy_password = Option() #:api
     username = Option()
     password = Option()
     installonlypkgs = ListOption(dnf.const.INSTALLONLYPKGS)
@@ -903,9 +903,9 @@ class RepoConf(BaseConfig):
     includepkgs = ListOption()
 
     fastestmirror = Inherit(YumConf.fastestmirror)
-    proxy = Inherit(YumConf.proxy)
-    proxy_username = Inherit(YumConf.proxy_username)
-    proxy_password = Inherit(YumConf.proxy_password)
+    proxy = Inherit(YumConf.proxy) #:api
+    proxy_username = Inherit(YumConf.proxy_username) #:api
+    proxy_password = Inherit(YumConf.proxy_password) #:api
     username = Inherit(YumConf.username)
     password = Inherit(YumConf.password)
 

@@ -63,6 +63,20 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     List of directories where DNF searches for :doc:`plugins <api_plugins>`. The default contains a Python version-specific path.
 
+  .. attribute:: proxy
+
+    URL of of a proxy server to use for network connections. Defaults to ``None``, i.e. no proxy used. The expected format of this option is::
+
+      <scheme>://<ip-or-hostname>[:port]
+
+  .. attribute:: proxy_username
+
+    The username to use for connecting to the proxy server. Defaults to ``None``.
+
+  .. attribute:: proxy_password
+
+    The password to use for connecting to the proxy server. Defaults to ``None``.
+
   .. attribute:: releasever
 
     Used for substitution of ``$releasever`` in the repository configuration.
