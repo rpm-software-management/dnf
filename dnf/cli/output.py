@@ -1491,14 +1491,14 @@ Transaction Summary
 
         try:
             user = pwd.getpwuid(uid)
-            fullname = _safe_split_0(user.pw_gecos, ';', 2)
+            fullname = _safe_split_0(ucd(user.pw_gecos), ';', 2)
             user_name = ucd(user.pw_name)
             name = "%s <%s>" % (fullname, user_name)
             if limit is not None and len(name) > limit:
                 name = "%s ... <%s>" % (_safe_split_0(fullname), user_name)
                 if len(name) > limit:
                     name = "<%s>" % user_name
-            return ucd(name)
+            return name
         except KeyError:
             return ucd(uid)
 
