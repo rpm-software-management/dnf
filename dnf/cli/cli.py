@@ -832,15 +832,8 @@ class Cli(object):
         return installroot, conffile
 
     def _parse_commands(self):
-        """Read :attr:`self.cmds` and parse them out to make sure that
-        the requested base command and argument makes any sense at
-        all.  This function will also set :attr:`self.base.basecmd` and
-        :attr:`self.extcmds`.
-        """
-        if len(self.base.conf.commands) == 0 and len(self.base.cmds) < 1:
-            self.base.cmds = self.base.conf.commands
-        else:
-            self.base.conf.commands = self.base.cmds
+        """Check that the requested CLI command exists."""
+
         if len(self.base.cmds) < 1:
             self.logger.critical(_('You need to give some command'))
             self.print_usage()

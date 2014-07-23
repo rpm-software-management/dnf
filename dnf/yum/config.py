@@ -744,7 +744,6 @@ class YumConf(BaseConfig):
 
     debug_solver = BoolOption(False)
 
-    commands = ListOption()
     exclude = ListOption()
     fastestmirror = BoolOption(False)
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True) #:api
