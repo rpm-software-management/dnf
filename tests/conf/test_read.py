@@ -22,7 +22,7 @@ import tests.support
 import dnf.conf
 import dnf.conf.read
 
-FN = tests.support.test_resource_path('etc/repos.conf')
+FN = tests.support.resource_path('etc/repos.conf')
 
 class RepoReaderTest(tests.support.TestCase):
     def test_read(self):

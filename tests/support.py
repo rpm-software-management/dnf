@@ -74,21 +74,18 @@ def dnf_toplevel():
     return os.path.normpath(os.path.join(__file__, "../../"))
 
 def repo(reponame):
-    return os.path.join(repo_dir(), reponame)
+    return os.path.join(REPO_DIR, reponame)
 
-def repo_dir():
-    this_dir = os.path.dirname(__file__)
-    return os.path.join(this_dir, "repos")
-
-def test_resource_path(path):
+def resource_path(path):
     this_dir = os.path.dirname(__file__)
     return os.path.join(this_dir, path)
 
-COMPS_PATH = os.path.join(repo_dir(), "main_comps.xml")
-NONEXISTENT_FILE = os.path.join(dnf_toplevel(), "does-not/exist")
-TOUR_44_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-4-4.noarch.rpm")
-TOUR_50_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-0.noarch.rpm")
-TOUR_51_PKG_PATH = os.path.join(repo_dir(), "rpm/tour-5-1.noarch.rpm")
+REPO_DIR = resource_path('repos')
+COMPS_PATH = os.path.join(REPO_DIR, "main_comps.xml")
+NONEXISTENT_FILE = resource_path('does-not/exist')
+TOUR_44_PKG_PATH = resource_path('repos/rpm/tour-4-4.noarch.rpm')
+TOUR_50_PKG_PATH = resource_path('repos/rpm/tour-5-0.noarch.rpm')
+TOUR_51_PKG_PATH = resource_path('repos/rpm/tour-5-1.noarch.rpm')
 USER_RUNDIR = '/tmp/dnf-user-rundir'
 
 # often used query
@@ -182,7 +179,7 @@ class _BaseStubMixin(object):
     def init_sack(self):
         # Create the Sack, tell it how to build packages, passing in the Package
         # class and a Base reference.
-        self._sack = TestSack(repo_dir(), self)
+        self._sack = TestSack(REPO_DIR, self)
         self._sack.load_system_repo()
         for repo in self.repos.iter_enabled():
             fn = "%s.repo" % repo.id

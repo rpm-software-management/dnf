@@ -143,7 +143,7 @@ class BuildTransactionTest(support.TestCase):
 # verify transaction test helpers
 HASH = "68e9ded8ea25137c964a638f12e9987c"
 def mock_sack_fn():
-    return (lambda base: support.TestSack(support.repo_dir(), base))
+    return (lambda base: support.TestSack(support.REPO_DIR, base))
 
 @property
 def ret_pkgid(self):

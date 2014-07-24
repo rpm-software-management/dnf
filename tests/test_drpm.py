@@ -34,7 +34,7 @@ class DrpmTest(support.TestCase):
         # load the testing repo
         repo = support.MockRepo('drpm', '/tmp/dnf-cache')
         self.base.repos[repo.id] = repo
-        repo.baseurl = ['file://%s/%s' % (support.repo_dir(), repo.id)]
+        repo.baseurl = ['file://%s/%s' % (support.REPO_DIR, repo.id)]
         repo.deltarpm = True
         self.base._add_repo_to_sack(repo.id)
 
