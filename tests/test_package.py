@@ -17,20 +17,20 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.pycomp import long
 from tests import support
 from tests.support import mock
 
-import hawkey
 import binascii
-from tests.support import TestCase
-from dnf.pycomp import long
+import hawkey
+import rpm
 
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
 TOUR_SHA256 = binascii.unhexlify("ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62")
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
-class PackageTest(TestCase):
+class PackageTest(support.TestCase):
     def setUp(self):
         base = support.MockBase("main")
         self.sack = base.sack
@@ -46,6 +46,16 @@ class PackageTest(TestCase):
         pkg = self.sack.query().installed().filter(name="pepper")[0]
         self.assertTrue(pkg.from_system)
         self.assertFalse(self.pkg.from_system)
+
+    def test_header(self):
+        self.sack.create_cmdline_repo()
+        pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
+        header = pkg.header
+        self.assertIsInstance(header, rpm.hdr)
+        fn_getter = lambda: support.NONEXISTENT_FILE
+        with mock.patch.object(pkg, 'localPkg', fn_getter):
+            with self.assertRaises(IOError):
+                pkg.header
 
     @mock.patch("dnf.package.Package.rpmdbid", long(3))
     def test_idx(self):

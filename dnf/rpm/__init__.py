@@ -47,3 +47,10 @@ def detect_releasever(installroot):
             releasever = str(releasever, "utf-8")
         return releasever
     return None
+
+def header(path):
+    """Return RPM header of the file."""
+    ts = transaction.initReadOnlyTransaction()
+    with open(path) as package:
+        fdno = package.fileno()
+        return ts.hdrFromFdno(fdno)

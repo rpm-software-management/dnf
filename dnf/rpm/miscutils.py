@@ -161,33 +161,6 @@ def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
         out.write(tmp)
     f.close()
 
-def hdrFromPackage(ts, package):
-    """hand back the rpm header or raise an Error if the pkg is fubar"""
-    try:
-        fdno = os.open(package, os.O_RDONLY)
-    except OSError as e:
-        raise RpmUtilsError('Unable to open file')
-
-    # XXX: We should start a readonly ts here, so we don't get the options
-    # from the other one (sig checking, etc)
-    try:
-        hdr = ts.hdrFromFdno(fdno)
-    except rpm.error as e:
-        os.close(fdno)
-        msg = "RPM error opening package '%s': %s"
-        raise RpmUtilsError(msg % (package, str(e)))
-    if type(hdr) != rpm.hdr:
-        os.close(fdno)
-        raise RpmUtilsError("RPM Error opening Package (type)")
-
-    os.close(fdno)
-    return hdr
-
-def headerFromFilename(filename):
-    ts = transaction.initReadOnlyTransaction()
-    hdr = hdrFromPackage(ts, filename)
-    return hdr
-
 def checkSignals():
     if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
         if rpm.signalsCaught([signal.SIGINT,
