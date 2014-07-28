@@ -1,4 +1,4 @@
-%global gitrev 2aa5c6b
+%global gitrev fe34987
 %global hawkey_version 0.4.18
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -137,6 +137,33 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Mon Jul 28 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.5-1
+- packaging: also add pyliblzma to BuildRequires. (Ales Kozumplik)
+- essential cleanup in dnf.yum.misc, removing a couple of functions too. (Ales Kozumplik)
+- remove: Base.findDeps and friends. (Ales Kozumplik)
+- Make pyliblzma a requriement. (RhBug:1123688) (Ales Kozumplik)
+- whole user name can contain non-ascii chars (RhBug:1121280) (Jan Silhan)
+- Straighten up the exceptions when getting a packages header. (RhBug:1122900) (Ales Kozumplik)
+- tests: refactor: rename test_resource_path() -> resource_path() and use it more. (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- remove: conf.commands. (Ales Kozumplik)
+- proxy username and password, for both CLI and API. (RhBug:1120583) (Ales Kozumplik)
+- conf: only 'main' is a reserved section name. (Ales Kozumplik)
+- refactoring: cleanup a couple of lint warnings in base.py. (Ales Kozumplik)
+- refactoring: move repo reading implementation out of dnf.Base. (Ales Kozumplik)
+- refactor: repo_setopts is a CLI thing and doesn't belong to Base. (Ales Kozumplik)
+- refactor: move cleanup methods to dnf.cli.commands.clean. (Ales Kozumplik)
+- depsolving: doesn't install both architectures of pkg by filename (RhBug:1100946) (Jan Silhan)
+- refactor: put CleanCommand in its own module. (Ales Kozumplik)
+- cli: avoid 'Error: None' output on malformed CLI commands. (Ales Kozumplik)
+- remove the special SIGQUIT handler. (Ales Kozumplik)
+- api: In Repo(), cachedir is a required argument. (Ales Kozumplik)
+- api: better describe how Repos should be created, example. (RhBug:1117789) (Ales Kozumplik)
+- Base._conf lasts the lifetime of Base and can be passed via constructor. (Ales Kozumplik)
+- doc: faq: having Yum and DNF installed at the same time. (Ales Kozumplik)
+- remove: protected_packages config option, it has been ignored. (Ales Kozumplik)
+- fix: misleading error message when no repo is enabled. (Ales Kozumplik)
 
 * Wed Jul 16 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.4-1
 - pkg name from rpm transaction callback is in Unicode (RhBug:1118796) (Jan Silhan)
