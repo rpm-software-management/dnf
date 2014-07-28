@@ -1024,34 +1024,6 @@ class Output(object):
                 print(section_name)
                 self._display_packages(packages)
 
-    def depListOutput(self, results):
-        """Format and output a list of findDeps results
-
-        :param results: a list of package dependency information as
-           returned by findDeps
-        """
-        verb = self.conf.verbose
-        for pkg in sorted(results):
-            print(_("package: %s") % pkg.compactPrint())
-            if len(results[pkg]) == 0:
-                print(_("  No dependencies for this package"))
-                continue
-
-            for req in sorted(results[pkg]):
-                reqlist = results[pkg][req]
-                print(_("  dependency: %s") % prco_tuple_to_string(req))
-                if not reqlist:
-                    print(_("   Unsatisfied dependency"))
-                    continue
-
-                seen = {}
-                for po in reversed(sorted(reqlist)):
-                    key = (po.name, po.arch)
-                    if not verb and key in seen:
-                        continue
-                    seen[key] = po
-                    print("   provider: %s" % po.compactPrint())
-
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
         """Output search/provides type callback matches.

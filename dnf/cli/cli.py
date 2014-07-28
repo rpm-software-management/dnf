@@ -499,40 +499,6 @@ class BaseCli(dnf.Base):
             ypl.installed = []
         return ypl
 
-    def deplist(self, args):
-        """Print out a formatted list of dependencies for a list of
-        packages.  This is a cli wrapper method for
-        :class:`dnf.yum.base.Base.findDeps`.
-
-        :param args: a list of names or wildcards specifying packages
-           that should have their dependenices printed
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        # :dead
-        pkgs = []
-        for arg in args:
-            if arg.endswith('.rpm'):
-                # :hawkey
-                # thispkg = dnf.yum.packages.YumUrlPackage(self, self.ts, arg)
-                thispkg = None
-                pkgs.append(thispkg)
-            elif self.conf.showdupesfromrepos:
-                pkgs.extend(self.pkgSack.returnPackages(patterns=[arg]))
-            else:
-                try:
-                    pkgs.extend(self.pkgSack.returnNewestByName(patterns=[arg]))
-                except dnf.exceptions.Error:
-                    pass
-
-        results = self.findDeps(pkgs)
-        self.output.depListOutput(results)
-
     def provides(self, args):
         """Print out a list of packages that provide the given file or
         feature.  This a cli wrapper to the provides methods in the

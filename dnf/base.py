@@ -1121,37 +1121,6 @@ class Base(object):
 
         return ygh
 
-    def findDeps(self, pkgs):
-        """Return the dependencies for a given package object list, as well
-        as possible solutions for those dependencies.
-
-        :param pkgs: a list of package objects
-        :return: the dependencies as a dictionary of dictionaries:
-           packageobject = [reqs] = [list of satisfying pkgs]
-        """
-        results = {}
-
-        for pkg in pkgs:
-            results[pkg] = {}
-            reqs = pkg.requires
-            reqs.sort()
-            pkgresults = results[pkg] # shorthand so we don't have to do the
-                                      # double bracket thing
-
-            for req in reqs:
-                (r, f, v) = req
-                if r.startswith('rpmlib('):
-                    continue
-
-                satisfiers = []
-
-                for po in self.whatProvides(r, f, v):
-                    satisfiers.append(po)
-
-                pkgresults[req] = satisfiers
-
-        return results
-
     def _add_comps_trans(self, trans):
         cnt = 0
         attr_fn = ((trans.install, self._goal.install),
