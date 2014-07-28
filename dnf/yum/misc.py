@@ -29,6 +29,7 @@ import os.path
 from io import StringIO
 import base64
 import binascii
+import lzma
 import struct
 import re
 import errno
@@ -40,12 +41,6 @@ import pwd
 import bz2
 import gzip
 import shutil
-_available_compression = ['gz', 'bz2']
-try:
-    import lzma
-    _available_compression.append('xz')
-except ImportError:
-    lzma = None
 
 from stat import *
 try:
@@ -544,18 +539,12 @@ def prco_tuple_to_string(prcoTuple):
     return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
 
 def _decompress_chunked(source, dest, ztype):
-
-    if ztype not in _available_compression:
-        msg = "%s compression not available" % ztype
-        raise dnf.exceptions.MiscError(msg)
-
     if ztype == 'bz2':
         s_fn = bz2.BZ2File(source, 'r')
     elif ztype == 'xz':
         s_fn = lzma.LZMAFile(source, 'r')
     elif ztype == 'gz':
         s_fn = gzip.GzipFile(source, 'r')
-
 
     destination = open(dest, 'wb')
 

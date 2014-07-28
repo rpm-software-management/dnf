@@ -181,12 +181,7 @@ class GroupCommand(commands.Command):
         return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
 
     def _grp_setup(self):
-        try:
-            comps = self.base.read_comps()
-        except dnf.exceptions.Error as e:
-            return 1, [str(e)]
-        if not comps:
-            return 1, [_('No Groups Available in any repository')]
+        comps = self.base.read_comps()
 
     def _info(self, userlist):
         for strng in userlist:
