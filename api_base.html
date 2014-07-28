@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.5.4-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.5.5-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.4-1',
+        VERSION:     '0.5.5-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.4-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.5.5-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -115,8 +115,19 @@
 <dt id="dnf.Base.fill_sack">
 <tt class="descname">fill_sack</tt><big>(</big><span class="optional">[</span><em>load_system_repo=True</em>, <em>load_available_repos=True</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#dnf.Base.fill_sack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup the package sack. If <cite>load_system_repo</cite> is <tt class="docutils literal"><span class="pre">True</span></tt>, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If <cite>load_available_repos</cite> is <tt class="docutils literal"><span class="pre">True</span></tt>, load information about packages from the available repositories into the sack.</p>
-<p>Before this method is invoked, the client application is supposed to have setup relevant configuration like the substitutions used in repository URLs. See <a class="reference internal" href="api_conf.html#dnf.conf.Conf.substitutions" title="dnf.conf.Conf.substitutions"><tt class="xref py py-attr docutils literal"><span class="pre">Conf.substitutions</span></tt></a>.</p>
-<p>This operation can take a long time. Adding repositories or changing repositories&#8217; configuration does not affect the information within the sack until <a class="reference internal" href="#dnf.Base.fill_sack" title="dnf.Base.fill_sack"><tt class="xref py py-meth docutils literal"><span class="pre">fill_sack()</span></tt></a> has been called.</p>
+<p>This operation will call <a class="reference internal" href="api_repos.html#dnf.repo.Repo.load" title="dnf.repo.Repo.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> for repos as necessary and can take a long time. Adding repositories or changing repositories&#8217; configuration does not affect the information within the sack until <a class="reference internal" href="#dnf.Base.fill_sack" title="dnf.Base.fill_sack"><tt class="xref py py-meth docutils literal"><span class="pre">fill_sack()</span></tt></a> has been called.</p>
+<p>Before this method is invoked, the client application should setup any explicit configuration relevant to the operation. This will often be at least <a class="reference internal" href="api_conf.html#dnf.conf.Conf.cachedir" title="dnf.conf.Conf.cachedir"><tt class="xref py py-attr docutils literal"><span class="pre">conf.cachedir</span></tt></a> and the substitutions used in repository URLs. See <a class="reference internal" href="api_conf.html#dnf.conf.Conf.substitutions" title="dnf.conf.Conf.substitutions"><tt class="xref py py-attr docutils literal"><span class="pre">Conf.substitutions</span></tt></a>.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">base</span> <span class="o">=</span> <span class="n">dnf</span><span class="o">.</span><span class="n">Base</span><span class="p">()</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">conf</span>
+<span class="n">conf</span><span class="o">.</span><span class="n">cachedir</span> <span class="o">=</span> <span class="n">CACHEDIR</span>
+<span class="n">conf</span><span class="o">.</span><span class="n">substitutions</span><span class="p">[</span><span class="s">&#39;releasever&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">22</span>
+<span class="n">repo</span> <span class="o">=</span> <span class="n">dnf</span><span class="o">.</span><span class="n">repo</span><span class="o">.</span><span class="n">Repo</span><span class="p">(</span><span class="s">&#39;my-repo&#39;</span><span class="p">,</span> <span class="n">CACHEDIR</span><span class="p">)</span>
+<span class="n">repo</span><span class="o">.</span><span class="n">baseurl</span> <span class="o">=</span> <span class="p">[</span><span class="n">MY_REPO_URL</span><span class="p">]</span>
+<span class="n">base</span><span class="o">.</span><span class="n">repos</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">repo</span><span class="p">)</span>
+<span class="n">base</span><span class="o">.</span><span class="n">fill_sack</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -300,7 +311,7 @@ affect the package data already loaded into the <a class="reference internal" hr
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.4-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.5.5-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

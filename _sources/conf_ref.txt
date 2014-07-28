@@ -183,7 +183,17 @@ configuration.
 ``proxy``
     string
 
-    URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
+     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
+
+``proxy_username``
+    string
+
+    The username to use for connecting to the proxy server. Empty by default.
+
+``proxy_password``
+    string
+
+    The password to use for connecting to the proxy server. Empty by default.
 
 .. _sslverify-label:
 

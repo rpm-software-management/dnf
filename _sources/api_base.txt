@@ -61,9 +61,20 @@
 
     Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.
 
-    Before this method is invoked, the client application is supposed to have setup relevant configuration like the substitutions used in repository URLs. See :attr:`.Conf.substitutions`.
+    This operation will call :meth:`load() <dnf.repo.Repo.load>` for repos as necessary and can take a long time. Adding repositories or changing repositories' configuration does not affect the information within the sack until :meth:`fill_sack` has been called.
 
-    This operation can take a long time. Adding repositories or changing repositories' configuration does not affect the information within the sack until :meth:`fill_sack` has been called.
+    Before this method is invoked, the client application should setup any explicit configuration relevant to the operation. This will often be at least :attr:`conf.cachedir <.Conf.cachedir>` and the substitutions used in repository URLs. See :attr:`.Conf.substitutions`.
+
+    Example::
+
+      base = dnf.Base()
+      conf = base.conf
+      conf.cachedir = CACHEDIR
+      conf.substitutions['releasever'] = 22
+      repo = dnf.repo.Repo('my-repo', CACHEDIR)
+      repo.baseurl = [MY_REPO_URL]
+      base.repos.add(repo)
+      base.fill_sack()
 
   .. method:: do_transaction([display])
 

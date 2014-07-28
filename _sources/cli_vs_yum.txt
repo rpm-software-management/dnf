@@ -68,13 +68,11 @@ following will work::
 
     dnf -x '*flask*' list installed 'python-f*'
 
-===================================
- ``protected_packages`` is ignored
-===================================
+================================================
+ ``protected_packages`` is supported via plugin
+================================================
 
-DNF drops Yum's ``protected_packages`` configuration option. Generally, DNF lets
-the user do what she specified, even have DNF itself removed. Similar functionality
-can be implemented by a plugin.
+DNF drops Yum's ``protected_packages`` configuration option. Generally, the core DNF lets the user do what she specified, even have DNF itself removed. Similar functionality to ``protected_packages`` is however provided by the `protected_packages plugin <http://akozumpl.github.io/dnf-plugins-core/protected_packages.html>`_.
 
 =============================================================
  ``dnf erase kernel`` deletes all packages called ``kernel``
