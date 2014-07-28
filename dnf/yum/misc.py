@@ -22,45 +22,43 @@ Assorted utility functions for yum.
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
+from . import pgpmsg
 from dnf.exceptions import MiscError
 from dnf.pycomp import basestring, unicode, long
-import os
-import os.path
 from io import StringIO
+from stat import *
+
 import base64
 import binascii
-import lzma
-import struct
-import re
-import errno
-import dnf.exceptions
-from . import pgpmsg
-import tempfile
-import glob
-import pwd
 import bz2
+import dnf.const
+import dnf.exceptions
+import dnf.i18n
+import errno
+import glob
 import gzip
+import hashlib
+import lzma
+import os
+import os.path
+import pwd
+import re
 import shutil
+import struct
+import tempfile
 
-from stat import *
 try:
     import gpgme
     import gpgme.editutil
 except ImportError:
     gpgme = None
 
-import hashlib
 _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
-
-import dnf.i18n
-import dnf.const
 
 _re_compiled_glob_match = None
 def re_glob(s):
     """ Tests if a string is a shell wildcard. """
-    # TODO/FIXME maybe consider checking if it is a stringsType before going on - otherwise
-    # returning None
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
         _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
@@ -105,7 +103,8 @@ class Checksums(object):
             elif ignore_missing:
                 continue
             else:
-                raise MiscError('Error Checksumming, bad checksum type %s' % sumtype)
+                raise MiscError('Error Checksumming, bad checksum type %s' %
+                                sumtype)
             done.add(sumtype)
             self._sumtypes.append(sumtype)
             self._sumalgos.append(sumalgo)
@@ -174,7 +173,7 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
         try:
             with open(file, 'rb', CHUNK) as fo:
                 return checksum(sumtype, fo, CHUNK, datasize)
-        except (IOError, OSError) as e:
+        except (IOError, OSError):
             raise MiscError('Error opening file for checksum: %s' % file)
 
     try:
@@ -246,7 +245,6 @@ class GenericHolder(object):
 def procgpgkey(rawkey):
     '''Convert ASCII armoured GPG key to binary
     '''
-    # TODO: CRC checking? (will RPM do this anyway?)
 
     # Normalise newlines
     rawkey = re.sub('\r\n?', '\n', rawkey)
@@ -373,8 +371,8 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
-def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_copy=True):
-    # FIXME - cachedir can be removed from this method when we break api
+def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
+                          make_ro_copy=True):
     if gpgme is None:
         return False
 
@@ -409,7 +407,7 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None, make_ro_cop
                 os.chmod(ro_f, 0o755)
             fp = open(rodir + '/gpg.conf', 'w', 0o755)
             # yes it is this stupid, why do you ask?
-            opts="""lock-never
+            opts = """lock-never
 no-auto-check-trustdb
 trust-model direct
 no-expensive-trust-checks
@@ -460,7 +458,7 @@ def valid_detached_sig(sig_file, signed_file, gpghome=None):
 
     try:
         sigs = ctx.verify(sig, signed_text, plaintext)
-    except gpgme.GpgmeError as e:
+    except gpgme.GpgmeError:
         return False
     else:
         if not sigs:
@@ -500,44 +498,6 @@ def getCacheDir():
     cachedir = tempfile.mkdtemp(prefix=prefix, dir=dnf.const.TMPDIR)
     return cachedir
 
-def sortPkgObj(pkg1 ,pkg2):
-    """sorts a list of yum package objects by name"""
-    if pkg1.name > pkg2.name:
-        return 1
-    elif pkg1.name == pkg2.name:
-        return 0
-    else:
-        return -1
-
-def version_tuple_to_string(evrTuple):
-    """
-    Convert a tuple representing a package version to a string.
-
-    @param evrTuple: A 3-tuple of epoch, version, and release.
-
-    Return the string representation of evrTuple.
-    """
-    (e, v, r) = evrTuple
-    s = ""
-
-    if e not in [0, '0', None]:
-        s += '%s:' % e
-    if v is not None:
-        s += '%s' % v
-    if r is not None:
-        s += '-%s' % r
-    return s
-
-def prco_tuple_to_string(prcoTuple):
-    """returns a text string of the prco from the tuple format"""
-
-    (name, flag, evr) = prcoTuple
-    flags = {'GT':'>', 'GE':'>=', 'EQ':'=', 'LT':'<', 'LE':'<='}
-    if flag is None:
-        return name
-
-    return '%s %s %s' % (name, flags[flag], version_tuple_to_string(evr))
-
 def _decompress_chunked(source, dest, ztype):
     if ztype == 'bz2':
         s_fn = bz2.BZ2File(source, 'r')
@@ -554,7 +514,8 @@ def _decompress_chunked(source, dest, ztype):
         except IOError:
             break
 
-        if not data: break
+        if not data:
+            break
 
         try:
             destination.write(data)
@@ -564,10 +525,6 @@ def _decompress_chunked(source, dest, ztype):
 
     destination.close()
     s_fn.close()
-
-def bunzipFile(source,dest):
-    """ Extract the bzipped contents of source to dest. """
-    _decompress_chunked(source, dest, ztype='bz2')
 
 def seq_max_split(seq, max_entries):
     """ Given a seq, split into a list of lists of length max_entries each. """
@@ -624,33 +581,6 @@ def getloginuid():
         _cached_getloginuid = _getloginuid()
     return _cached_getloginuid
 
-
-# ---------- i18n ----------
-import locale
-
-def get_my_lang_code():
-    try:
-        mylang = locale.getlocale(locale.LC_MESSAGES)
-    except ValueError as e:
-        # This is RHEL-5 python crack, Eg. en_IN can't be parsed properly
-        mylang = (None, None)
-    if mylang == (None, None): # odd :)
-        mylang = 'C'
-    else:
-        mylang = '.'.join(mylang)
-
-    return mylang
-
-def return_running_pids():
-    """return list of running processids, excluding this one"""
-    mypid = os.getpid()
-    pids = []
-    for fn in glob.glob('/proc/[0123456789]*'):
-        if mypid == os.path.basename(fn):
-            continue
-        pids.append(os.path.basename(fn))
-    return pids
-
 def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
@@ -660,20 +590,20 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
         out = filename
 
     if filename.endswith('.gz'):
-        ztype='gz'
+        ztype = 'gz'
         if not dest:
             out = filename.replace('.gz', '')
 
     elif filename.endswith('.bz') or filename.endswith('.bz2'):
-        ztype='bz2'
+        ztype = 'bz2'
         if not dest:
             if filename.endswith('.bz'):
-                out = filename.replace('.bz','')
+                out = filename.replace('.bz', '')
             else:
                 out = filename.replace('.bz2', '')
 
     elif filename.endswith('.xz'):
-        ztype='xz'
+        ztype = 'xz'
         if not dest:
             out = filename.replace('.xz', '')
 
@@ -707,7 +637,7 @@ def repo_gen_decompress(filename, generated_name, cached=False):
         a repo. and generated_name is the type of the file. """
 
     dest = calculate_repo_gen_dest(filename, generated_name)
-    return decompress(filename, dest=dest, check_timestamps=True,fn_only=cached)
+    return decompress(filename, dest=dest, check_timestamps=True, fn_only=cached)
 
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """ Takes a glob of a dir (like /etc/foo.d/\*.foo) returns a list of all the

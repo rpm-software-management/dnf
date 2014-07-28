@@ -23,7 +23,6 @@ from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, is_py3bytes, long, unicode
-from dnf.yum.misc import prco_tuple_to_string
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import curses
 import dnf.callback
