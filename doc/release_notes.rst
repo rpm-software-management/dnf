@@ -844,3 +844,32 @@ Bugs fixed in 0.5.4:
 * :rhbug:`1118178`
 * :rhbug:`1118796`
 * :rhbug:`1119032`
+
+===================
+0.5.5 Release Notes
+===================
+
+The full proxy configuration, API extensions and several bugfixes are provided in this release.
+
+API changes in 0.5.5:
+
+* `cachedir`, the second parameter of :meth:`dnf.repo.Repo.__init__` is not optional (the method has always been this way but the documentation was not matching)
+
+API additions in 0.5.5:
+
+* extended description and an example provided for :meth:`dnf.Base.fill_sack`
+* :attr:`dnf.conf.Conf.proxy`
+* :attr:`dnf.conf.Conf.proxy_username`
+* :attr:`dnf.conf.Conf.proxy_password`
+* :attr:`dnf.repo.Repo.proxy`
+* :attr:`dnf.repo.Repo.proxy_username`
+* :attr:`dnf.repo.Repo.proxy_password`
+
+Bugs fixed in 0.5.5:
+
+* :rhbug:`1100946`
+* :rhbug:`1117789`
+* :rhbug:`1120583`
+* :rhbug:`1121280`
+* :rhbug:`1122900`
+* :rhbug:`1123688`

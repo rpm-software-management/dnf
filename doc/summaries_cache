@@ -754,5 +754,29 @@
     [
         1119032, 
         "python3-dnf-0.5.3 conflicts with  dnf-0.5.2"
+    ], 
+    [
+        1100946, 
+        "dnf install <bin filename> installs both i686 and x86_64 packages for no reason"
+    ], 
+    [
+        1117789, 
+        "[doc] [api] custom repos"
+    ], 
+    [
+        1120583, 
+        "[api] full-featured proxy configuration"
+    ], 
+    [
+        1121280, 
+        "History list with login names fails with non-ascii names"
+    ], 
+    [
+        1122900, 
+        "[abrt] dnf: package.py:73:header:RuntimeError: (Rpm file does not exist)"
+    ], 
+    [
+        1123688, 
+        "dnf missing Requires on pyliblzma"
     ]
 ]
