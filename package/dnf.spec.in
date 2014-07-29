@@ -1,4 +1,4 @@
-%global gitrev 2aa5c6b
+%global gitrev 8976df5
 %global hawkey_version 0.4.18
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -7,7 +7,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -135,6 +135,9 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %changelog
+
+* Tue Jul 29 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.4-2
+- whole user name can contain non-ascii chars (RhBug:1121280) (Jan Silhan)
 
 * Wed Jul 16 2014 Aleš Kozumplík <ales@redhat.com> - 0.5.4-1
 - pkg name from rpm transaction callback is in Unicode (RhBug:1118796) (Jan Silhan)
