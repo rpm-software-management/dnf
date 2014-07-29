@@ -207,31 +207,6 @@ class Command(object):
         """
         pass
 
-class UpgradeToCommand(Command):
-    """ A class containing methods needed by the cli to execute the upgrade-to
-        command.
-    """
-
-    aliases = ('upgrade-to', 'update-to')
-    activate_sack = True
-    resolve = True
-    summary = _("Upgrade a package on your system to the specified version")
-    usage = "[%s...]" % _('PACKAGE')
-    writes_rpmdb = True
-
-    def doCheck(self, basecmd, extcmds):
-        checkGPGKey(self.base, self.cli)
-        checkEnabledRepo(self.base, extcmds)
-
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        return extcmds
-
-    def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        return self.base.upgrade_userlist_to(patterns)
-
 class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.

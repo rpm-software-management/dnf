@@ -40,6 +40,7 @@ import dnf.cli.commands.reinstall
 import dnf.cli.commands.repolist
 import dnf.cli.commands.search
 import dnf.cli.commands.upgrade
+import dnf.cli.commands.upgradeto
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
@@ -697,24 +698,24 @@ class Cli(object):
 
         self.register_command(dnf.cli.commands.autoerase.AutoeraseCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
+        self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
+        self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
+        self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
+        self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
+        self.register_command(dnf.cli.commands.repolist.RepoListCommand)
+        self.register_command(dnf.cli.commands.search.SearchCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
-        self.register_command(dnf.cli.commands.UpgradeToCommand)
+        self.register_command(dnf.cli.commands.upgradeto.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
         self.register_command(dnf.cli.commands.EraseCommand)
-        self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.MakeCacheCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
-        self.register_command(dnf.cli.commands.search.SearchCommand)
-        self.register_command(dnf.cli.commands.repolist.RepoListCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
-        self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
-        self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
-        self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
 
     def _configure_cachedir(self):
         # perform the CLI-specific cachedir tricks
