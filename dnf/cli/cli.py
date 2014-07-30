@@ -768,11 +768,11 @@ class Cli(object):
 
     def _log_essentials(self):
         self.logger.debug('DNF version: %s', dnf.const.VERSION)
-        self.logger.log(dnf.logging.SUBDEBUG,
+        self.logger.log(dnf.logging.DDEBUG,
                         'Command: %s', self.cmdstring)
-        self.logger.log(dnf.logging.SUBDEBUG,
+        self.logger.log(dnf.logging.DDEBUG,
                         'Installroot: %s', self.base.conf.installroot)
-        self.logger.log(dnf.logging.SUBDEBUG, 'Releasever: %s',
+        self.logger.log(dnf.logging.DDEBUG, 'Releasever: %s',
                         self.base.conf.releasever)
 
     def _root_and_conffile(self, installroot, conffile):
@@ -816,8 +816,8 @@ class Cli(object):
 
         (base, ext) = self.command.canonical(self.base.cmds)
         self.base.basecmd, self.base.extcmds = (base, ext)
-        self.logger.log(dnf.logging.SUBDEBUG, 'Base command: %s', base)
-        self.logger.log(dnf.logging.SUBDEBUG, 'Extra commands: %s', ext)
+        self.logger.log(dnf.logging.DDEBUG, 'Base command: %s', base)
+        self.logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', ext)
 
     def _parse_setopts(self, setopts):
         """Parse setopts and repo_setopts."""

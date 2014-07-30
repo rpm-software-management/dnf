@@ -660,7 +660,7 @@ class Repo(dnf.yum.config.RepoConf):
             with dnf.util.tmpdir() as tmpdir:
                 handle = self._handle_new_remote(tmpdir)
                 msg = 'repo: downloading from remote: %s, %s'
-                logger.log(dnf.logging.SUBDEBUG, msg, self.id, handle)
+                logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
                 self._handle_load(handle)
                 # override old md with the new ones:
                 self._replace_metadata(handle)

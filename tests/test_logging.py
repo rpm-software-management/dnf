@@ -71,7 +71,7 @@ class TestLogging(support.TestCase):
         self.assertEqual(dnf.logging._cfg_verbose_val2level(0),
                          dnf.logging.SUPERCRITICAL)
         self.assertEqual(dnf.logging._cfg_verbose_val2level(7),
-                         dnf.logging.SUBDEBUG)
+                         dnf.logging.DDEBUG)
 
     def test_setup(self):
         logger = logging.getLogger("dnf")

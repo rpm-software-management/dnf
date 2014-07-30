@@ -32,12 +32,13 @@ import warnings
 # :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
 
 SUPERCRITICAL = 100 # do not use this for logging
-CRITICAL      = logging.CRITICAL
-ERROR         = logging.ERROR
-WARNING       = logging.WARNING
-INFO          = logging.INFO
-DEBUG         = logging.DEBUG
-SUBDEBUG      = 6
+CRITICAL = logging.CRITICAL
+ERROR = logging.ERROR
+WARNING = logging.WARNING
+INFO = logging.INFO
+DEBUG = logging.DEBUG
+DDEBUG = 8
+SUBDEBUG = 6
 
 def only_once(fn):
     """Method decorator turning the method into noop on second or later calls."""
@@ -69,7 +70,7 @@ _VERBOSE_VAL_MAPPING = {
 
 def _cfg_verbose_val2level(cfg_errval):
     assert(0 <= cfg_errval <= 10)
-    return _VERBOSE_VAL_MAPPING.get(cfg_errval, SUBDEBUG)
+    return _VERBOSE_VAL_MAPPING.get(cfg_errval, DDEBUG)
 
 # Both the DNF default and the verbose default are WARNING. Note that ERROR has
 # no specific level.
@@ -108,6 +109,7 @@ class Logging(object):
 
     @only_once
     def presetup(self):
+        logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(SUBDEBUG)
@@ -173,4 +175,4 @@ class Timer(object):
     def __call__(self):
         diff = time.time() - self.start
         msg = 'timer: %s: %d ms' % (self.what, diff * 1000)
-        logging.getLogger("dnf").log(SUBDEBUG, msg)
+        logging.getLogger("dnf").log(DDEBUG, msg)

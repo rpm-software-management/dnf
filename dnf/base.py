@@ -216,7 +216,7 @@ class Base(object):
 
         if self._closed:
             return
-        self.logger.log(dnf.logging.SUBDEBUG, 'Cleaning up.')
+        self.logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
         self._closed = True
         # Do not trigger the lazy creation:
         if self._history is not None:
@@ -303,7 +303,7 @@ class Base(object):
         self.group_persistor = self._activate_group_persistor()
         self._comps = dnf.comps.Comps()
 
-        self.logger.log(dnf.logging.SUBDEBUG, 'Getting group metadata')
+        self.logger.log(dnf.logging.DDEBUG, 'Getting group metadata')
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
                 continue
@@ -313,7 +313,7 @@ class Base(object):
             if comps_fn is None:
                 continue
 
-            self.logger.log(dnf.logging.SUBDEBUG,
+            self.logger.log(dnf.logging.DDEBUG,
                             'Adding group file from repository: %s', repo.id)
             if repo.md_only_cached:
                 decompressed = misc.calculate_repo_gen_dest(comps_fn,
@@ -593,9 +593,9 @@ class Base(object):
                 except:
                     onice = 0
 
-        self.logger.log(dnf.logging.SUBDEBUG, 'RPM transaction start.')
+        self.logger.log(dnf.logging.DDEBUG, 'RPM transaction start.')
         errors = self.ts.run(cb.callback, '')
-        self.logger.log(dnf.logging.SUBDEBUG, 'RPM transaction over.')
+        self.logger.log(dnf.logging.DDEBUG, 'RPM transaction over.')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty
         # list means some errors happened in the transaction and non-empty
         # list that there were errors preventing the ts from starting...
@@ -929,7 +929,7 @@ class Base(object):
                 self.logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
-                self.logger.log(dnf.logging.SUBDEBUG,
+                self.logger.log(dnf.logging.DDEBUG,
                     _('%s removed'), fn)
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,

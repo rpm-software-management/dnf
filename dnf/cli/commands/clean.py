@@ -76,7 +76,7 @@ def _clean_filelist(filetype, filelist):
                                  filetype, item)
             continue
         else:
-            logger.log(dnf.logging.SUBDEBUG,
+            logger.log(dnf.logging.DDEBUG,
                 _('%s file %s removed'), filetype, item)
             removed += 1
     msg = P_('%d %s file removed', '%d %s files removed', removed)
