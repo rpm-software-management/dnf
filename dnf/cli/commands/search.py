@@ -78,8 +78,7 @@ class SearchCommand(commands.Command):
                                            args)
 
         if len(counter) == 0:
-            self.base.logger.warning(_('Warning: No matches found for: %s'), arg)
-            raise dnf.exceptions.Error(_('No Matches found'))
+            raise dnf.exceptions.Error(_('No matches found.'))
 
     def _search_counted(self, counter, attr, needle):
         fdict = {'%s__substr' % attr : needle}
