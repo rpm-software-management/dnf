@@ -30,10 +30,10 @@ disable "-d R0903" # too few public methods
 disable "-d W0141" # used builtin 'map' function
 disable "-d W0142" # used star magic
 
-VAR_NAMES=--variable-rgx='[a-z_][a-z0-9_]*$'
-VAR_NAMES+=" "--dummy-variables-rgx='_.*'
+VAR_NAMES='--variable-rgx=[a-z_][a-z0-9_]*$'
+DUMMY_NAMES='--dummy-variables-rgx=_.*'
 MISC=--max-line-length=82
 
-pylint --rcfile=/dev/null --reports=n $DISABLED $VAR_NAMES $MISC $* \
+pylint --rcfile=/dev/null --reports=n $DISABLED "$VAR_NAMES" "$DUMMY_NAMES" $MISC $* \
     "$TEMPLATE" \
     | egrep -v -f $FALSE_POSITIVES
