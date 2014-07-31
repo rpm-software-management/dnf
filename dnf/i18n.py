@@ -100,6 +100,7 @@ def ucd_input(ucstring):
         (raw_input() won't check sys.stdout.encoding as e.g. print does, see
         test_i18n.TestInput.test_assumption()).
     """
+    # :api
     if not isinstance(ucstring, unicode):
         raise TypeError("input() accepts Unicode strings")
     if PY3:
@@ -110,6 +111,7 @@ def ucd_input(ucstring):
 
 def ucd(obj):
     """ Like the builtin unicode() but tries to use a reasonable encoding. """
+    # :api
     if PY3:
         if is_py3bytes(obj):
             return str(obj, _guess_encoding())
