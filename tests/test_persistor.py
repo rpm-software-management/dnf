@@ -26,6 +26,7 @@ import tests.support
 
 IDS = set(['one', 'two', 'three'])
 
+
 class ClonableDictTest(tests.support.TestCase):
     def test_clone(self):
         g = dnf.persistor.ClonableDict({})
@@ -77,6 +78,34 @@ class GroupPersistorTest(tests.support.TestCase):
     def test_version(self):
         version = self.prst.db['meta']['version']
         self.assertIsInstance(version, dnf.pycomp.unicode)
+
+
+class GroupDiffTest(tests.support.TestCase):
+    def test_added_removed(self):
+        prst1 = dnf.persistor.GroupPersistor(tests.support.NONEXISTENT_FILE)
+        prst1.db = prst1._empty_db()
+        prst2 = dnf.persistor.GroupPersistor(tests.support.NONEXISTENT_FILE)
+        prst2.db = prst1._empty_db()
+
+        prst1.group('kite').full_list.extend(('the', 'show'))
+        prst2.environment('pepper').full_list.extend(('stop', 'the', 'show'))
+
+        diff = dnf.persistor._GroupsDiff(prst1.db, prst2.db)
+        self.assertEmpty(diff.new_groups)
+        self.assertEmpty(diff.removed_environments)
+        self.assertCountEqual(diff.removed_groups, ('kite',))
+        self.assertCountEqual(diff.new_environments, ('pepper',))
+
+    def test_diff_dcts(self):
+        dct1 = {'stop' : [1, 2, 3],
+                'the' : {'show' : [1, 2]}}
+        dct2 = {'stop' : [1, 2],
+                'the' : {'show' : [2]},
+                'three' : 8}
+
+        added, removed = dnf.persistor._diff_dcts(dct1, dct2)
+        self.assertEqual(added, {'three': 8})
+        self.assertEqual(removed, {'the': {'show': set([1])}, 'stop': set([3])})
 
 
 class RepoPersistorTest(tests.support.TestCase):

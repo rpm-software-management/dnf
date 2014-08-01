@@ -47,6 +47,45 @@ def _clone_dct(dct):
             cln[k] = v
     return cln
 
+
+def _diff_dcts(dct1, dct2):
+    """Specific kind of diff between the two dicts.
+
+    Namely, differences between values of non-collections are not considered.
+
+    """
+
+    added = {}
+    removed = {}
+    keys1 = set(dct1.keys())
+    keys2 = set(dct2.keys())
+
+    for key in keys2 - keys1:
+        added[key] = dct2[key]
+    for key in keys1 - keys2:
+        removed[key] = dct1[key]
+    for key in keys1 & keys2:
+        val1 = dct1[key]
+        val2 = dct2[key]
+        if type(val1) is type(val2) is dict:
+            added_dct, removed_dct = _diff_dcts(val1, val2)
+            if added_dct:
+                added[key] = added_dct
+            if removed_dct:
+                removed[key] = removed_dct
+        elif type(val1) is type(val2) is list:
+            set1 = set(val1)
+            set2 = set(val2)
+            added_set = set2 - set1
+            if added_set:
+                added[key] = added_set
+            removed_set = set1 - set2
+            if removed_set:
+                removed[key] = removed_set
+
+    return added, removed
+
+
 class ClonableDict(collections.MutableMapping):
     """A dict with list values that can be cloned.
 
@@ -126,6 +165,42 @@ class _PersistMember(object):
         self.param_dct['pkg_types'] = val
 
 
+class _GroupsDiff(object):
+    def __init__(self, db_old, db_new):
+        self.added, self.removed = _diff_dcts(db_old, db_new)
+
+    def _diff_keys(self, what, removing):
+        added = set(self.added.get(what, {}).keys())
+        removed = set(self.removed.get(what, {}).keys())
+        if removing:
+            return list(removed - added)
+        return list(added-removed)
+
+    @property
+    def new_environments(self):
+        return self._diff_keys('ENVIRONMENTS', False)
+
+    @property
+    def removed_environments(self):
+        return self._diff_keys('ENVIRONMENTS', True)
+
+    @property
+    def new_groups(self):
+        return self._diff_keys('GROUPS', False)
+
+    @property
+    def removed_groups(self):
+        return self._diff_keys('GROUPS', True)
+
+    def added_packages(self, group_id):
+        keys = ('GROUPS', group_id, 'full_list')
+        return dnf.util.get_in(self.added, keys, set())
+
+    def removed_packages(self, group_id):
+        keys = ('GROUPS', group_id, 'full_list')
+        return dnf.util.get_in(self.removed, keys, set())
+
+
 class GroupPersistor(object):
 
     @staticmethod
@@ -193,6 +268,9 @@ class GroupPersistor(object):
 
     def commit(self):
         self._commit = True
+
+    def diff(self):
+        return _GroupsDiff(self._original, self.db)
 
     def environment(self, id_):
         return self._access('ENVIRONMENTS', id_)
