@@ -83,6 +83,14 @@ class Util(support.TestCase):
                 yield 10
         self.assertEqual(dnf.util.first(generator()), None)
 
+    def test_get_in(self):
+        dct = {1: {2: 3},
+               5: {8: {9: 10}}}
+
+        self.assertEqual(dnf.util.get_in(dct, (5, 8, 9), -3), 10)
+        self.assertEqual(dnf.util.get_in(dct, (5, 8, 8), -3), -3)
+        self.assertEqual(dnf.util.get_in(dct, (0, 8, 8), -3), -3)
+
     def test_group_by_filter(self):
         self.assertEqual(dnf.util.group_by_filter(lambda x: x % 2, range(5)),
                          ([1, 3], [0, 2, 4]))

@@ -76,6 +76,14 @@ def file_timestamp(fn):
 def get_effective_login():
     return pwd.getpwuid(os.geteuid())[0]
 
+def get_in(dct, keys, not_found):
+    """Like dict.get() for nested dicts."""
+    for k in keys:
+        dct = dct.get(k)
+        if dct is None:
+            return not_found
+    return dct
+
 def group_by_filter(fn, iterable):
     def splitter(acc, item):
         acc[not bool(fn(item))].append(item)
