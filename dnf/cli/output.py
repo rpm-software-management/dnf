@@ -46,9 +46,13 @@ import time
 
 
 def _make_lists(transaction):
+    def tsi_cmp_key(tsi):
+        return str(tsi.active)
+
+    TYPES = ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded')
     b = dnf.util.Bunch()
-    for t in ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded'):
-        b[t] = []
+    for ttype in TYPES:
+        b[ttype] = []
     for tsi in transaction:
         if tsi.op_type == dnf.transaction.DOWNGRADE:
             b.downgraded.append(tsi)
@@ -60,6 +64,8 @@ def _make_lists(transaction):
             b.reinstalled.append(tsi)
         elif tsi.op_type == dnf.transaction.UPGRADE:
             b.upgraded.append(tsi)
+    for ttype in TYPES:
+        b[ttype].sort(key=tsi_cmp_key)
     return b
 
 _ACTIVE_DCT = {

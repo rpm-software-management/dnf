@@ -55,6 +55,17 @@ Upgrade  1 Package
 
 
 class OutputFunctionsTest(support.TestCase):
+    def test_make_lists(self):
+        TSI = dnf.transaction.TransactionItem
+
+        ts = dnf.transaction.Transaction()
+        ts.add_install('pepper-3', [])
+        ts.add_install('pepper-2', [])
+        lists = dnf.cli.output._make_lists(ts)
+        self.assertEmpty(lists.erased)
+        self.assertEqual([tsi.active for tsi in lists.installed],
+                         ['pepper-2', 'pepper-3'])
+
     def test_spread(self):
         fun = dnf.cli.output._spread_in_columns
         self.assertEqual(fun(3, "tour", list(range(3))),
