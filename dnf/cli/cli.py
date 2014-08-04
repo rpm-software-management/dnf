@@ -128,6 +128,11 @@ class BaseCli(dnf.Base):
         self.output = output.Output(self, self.conf)
         self.logger = logging.getLogger("dnf")
 
+    def _groups_diff(self):
+        if not self.group_persistor:
+            return None
+        return self.group_persistor.diff()
+
     def errorSummary(self, errstring):
         """Parse the error string for 'interesting' errors which can
         be grouped, such as disk space issues.
@@ -165,64 +170,72 @@ class BaseCli(dnf.Base):
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
         """
-        # make sure there's something to do
-        if len(self._transaction) == 0:
-            msg = _('Trying to run the transaction but nothing to do. Exiting.')
-            self.logger.info(msg)
-            return -1, None
 
-        lsts = self.output.list_transaction(self.transaction)
-        self.logger.info(lsts)
-        # Check which packages have to be downloaded
-        downloadpkgs = []
-        rmpkgs = []
-        stuff_to_download = False
-        install_only = True
-        for tsi in self._transaction:
-            installed = tsi.installed
-            if installed is not None:
-                stuff_to_download = True
-                downloadpkgs.append(installed)
-            erased = tsi.erased
-            if erased is not None:
-                install_only = False
-                rmpkgs.append(erased)
+        grp_diff = self._groups_diff()
+        grp_str = self.output.list_group_transaction(self.comps, grp_diff)
+        if grp_str:
+            self.logger.info(grp_str)
+        trans = self.transaction
+        pkg_str = self.output.list_transaction(trans)
+        if pkg_str:
+            self.logger.info(pkg_str)
 
-        # Close the connection to the rpmdb so that rpm doesn't hold the SIGINT
-        # handler during the downloads.
-        del self.ts
+        if trans:
+            # Check which packages have to be downloaded
+            downloadpkgs = []
+            rmpkgs = []
+            stuff_to_download = False
+            install_only = True
+            for tsi in trans:
+                installed = tsi.installed
+                if installed is not None:
+                    stuff_to_download = True
+                    downloadpkgs.append(installed)
+                erased = tsi.erased
+                if erased is not None:
+                    install_only = False
+                    rmpkgs.append(erased)
 
-        # report the total download size to the user
-        if not stuff_to_download:
-            self.output.reportRemoveSize(rmpkgs)
+            # Close the connection to the rpmdb so that rpm doesn't hold the
+            # SIGINT handler during the downloads.
+            del self.ts
+
+            # report the total download size to the user
+            if not stuff_to_download:
+                self.output.reportRemoveSize(rmpkgs)
+            else:
+                self.output.reportDownloadSize(downloadpkgs, install_only)
+
+        if trans or grp_diff:
+            # confirm with user
+            if self._promptWanted():
+                if self.conf.assumeno or not self.output.userconfirm():
+                    self.logger.info(_('Exiting on user Command'))
+                    return -1, None
         else:
-            self.output.reportDownloadSize(downloadpkgs, install_only)
+            self.logger.info(_('Nothing to do.'))
+            return 0, []
 
-        # confirm with user
-        if self._promptWanted():
-            if self.conf.assumeno or not self.output.userconfirm():
-                self.logger.info(_('Exiting on user Command'))
+        if trans:
+            if downloadpkgs:
+                self.logger.info(_('Downloading Packages:'))
+            try:
+                total_cb = self.output.download_callback_total_cb
+                self.download_packages(downloadpkgs, self.output.progress,
+                                       total_cb)
+            except dnf.exceptions.DownloadError as e:
+                specific = dnf.cli.format.indent_block(str(e))
+                errstring = _('Error downloading packages:\n%s') % specific
+                raise dnf.exceptions.Error(errstring)
+
+            # Check GPG signatures
+            if self.gpgsigcheck(downloadpkgs) != 0:
                 return -1, None
-
-
-        if downloadpkgs:
-            self.logger.info(_('Downloading Packages:'))
-        try:
-            total_cb = self.output.download_callback_total_cb
-            self.download_packages(downloadpkgs, self.output.progress, total_cb)
-        except dnf.exceptions.DownloadError as e:
-            specific = dnf.cli.format.indent_block(str(e))
-            errstring = _('Error downloading packages:\n%s') % specific
-            raise dnf.exceptions.Error(errstring)
-
-        # Check GPG signatures
-        if self.gpgsigcheck(downloadpkgs) != 0:
-            return -1, None
 
         display = output.CliTransactionDisplay()
         return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
-        if return_code == 0:
-            msg = self.output.post_transaction_output(self.transaction)
+        if trans and return_code == 0:
+            msg = self.output.post_transaction_output(trans)
             self.logger.info(msg)
         return return_code, resultmsgs
 

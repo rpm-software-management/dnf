@@ -148,15 +148,8 @@ def resolving(cli, base):
     """Perform the depsolve, download and RPM transaction stage."""
 
     if base.transaction is None:
-        got_transaction = base.resolve(cli.demands.allow_erasing)
+        base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
-    else:
-        got_transaction = len(base.transaction)
-
-    # Act on the depsolve result
-    if not got_transaction:
-        logger.info(_('Nothing to do.'))
-        return 0
 
     base.plugins.run_resolved()
 
