@@ -53,6 +53,17 @@ Transaction Summary
 Upgrade  1 Package
 """
 
+
+class OutputFunctionsTest(support.TestCase):
+    def test_spread(self):
+        fun = dnf.cli.output._spread_in_columns
+        self.assertEqual(fun(3, "tour", list(range(3))),
+                         [('tour', 0, 1), ('', 2, '')])
+        self.assertEqual(fun(3, "tour", ()), [('tour', '', '')])
+        self.assertEqual(fun(5, "tour", list(range(8))),
+                         [('tour', 0, 1, 2, 3), ('', 4, 5, 6, 7)])
+
+
 class OutputTest(support.TestCase):
     @staticmethod
     def _keyboard_interrupt(*ignored):
@@ -65,6 +76,12 @@ class OutputTest(support.TestCase):
     def setUp(self):
         self.base = support.MockBase('updates')
         self.output = dnf.cli.output.Output(self.base, self.base.conf)
+
+    @mock.patch('dnf.cli.output._term_width', return_value=80)
+    def test_col_widths(self, _term_width):
+        rows = (('pep', 'per', 'row',
+                 '', 'lon', 'e'))
+        self.assertCountEqual(self.output._col_widths(rows), (-38, -37, -1))
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output.P_', dnf.pycomp.NullTranslations().ungettext)
@@ -164,6 +181,7 @@ class OutputTest(support.TestCase):
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                           if mc[0] == 'write'])
         self.assertEqual(written, INFOOUTPUT_OUTPUT)
+
 
 PKGS_IN_GROUPS_OUTPUT = u"""\
 

@@ -404,6 +404,20 @@ class Term(object):
         """
         return self.sub_norm(haystack, self.BG_COLOR[color], needles, **kwds)
 
+
+def _spread_in_columns(cols_count, label, lst):
+    left = itertools.chain((label,), itertools.repeat(''))
+    lst_length = len(lst)
+    right_count = cols_count - 1
+    missing_items = -lst_length % right_count
+    if not lst_length:
+        lst = itertools.repeat('', right_count)
+    elif missing_items:
+        lst.extend(('',) * missing_items)
+    lst_iter = iter(lst)
+    return list(zip(left, *[lst_iter] * right_count))
+
+
 class Output(object):
     """Main output class for the yum command line."""
 
@@ -415,6 +429,23 @@ class Output(object):
         self.logger = logging.getLogger("dnf")
         self.term = Term()
         self.progress = None
+
+    def _banner(self, col_data, row):
+        term_width = self.term.columns
+        rule = '%s' % '=' * term_width
+        header = self.fmtColumns(zip(row, col_data), ' ')
+        return rule, header, rule
+
+    def _col_widths(self, rows):
+        col_data = [dict() for _ in rows[0]]
+        for row in rows:
+            for (i, val) in enumerate(row):
+                col_dct = col_data[i]
+                length = len(val)
+                col_dct[length] = col_dct.get(length, 0) + 1
+        cols = self.calcColumns(col_data, None, indent='  ')
+        # align to the left
+        return list(map(operator.neg, cols))
 
     def _highlight(self, highlight):
         hibeg = ''
@@ -1169,10 +1200,41 @@ class Output(object):
         if not error:
             self.logger.info(_("Installed size: %s"), format_number(totsize))
 
+    def list_group_transaction(self, comps, diff):
+        if not diff:
+            return None
+
+        out = []
+        rows = []
+        if diff.new_groups:
+            out.append(_('Marking installed:'))
+        for grp_id in diff.new_groups:
+            pkgs = list(diff.added_packages(grp_id))
+            grp_name = comps.group_by_id(grp_id).ui_name
+            rows.extend(_spread_in_columns(4, grp_name, pkgs))
+        if diff.removed_groups:
+            assert not rows
+            out.append(_('Marking removed:'))
+        for grp_id in diff.removed_groups:
+            pkgs = list(diff.removed_packages(grp_id))
+            grp_name = comps.group_by_id(grp_id).ui_name
+            rows.extend(_spread_in_columns(4, grp_name, pkgs))
+
+        if rows:
+            col_data = self._col_widths(rows)
+            for row in rows:
+                out.append(self.fmtColumns(zip(row, col_data), ' '))
+            out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
+        return '\n'.join(out)
+
     def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
+
+        if transaction is None:
+            return None
+
         list_bunch = _make_lists(transaction)
         pkglist_lines = []
         data = {'n' : {}, 'v' : {}, 'r' : {}}
