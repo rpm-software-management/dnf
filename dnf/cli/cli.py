@@ -210,11 +210,10 @@ class BaseCli(dnf.Base):
             # confirm with user
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
-                    self.logger.info(_('Exiting on user Command'))
-                    return -1, None
+                    raise CliError(_("Operation aborted."))
         else:
             self.logger.info(_('Nothing to do.'))
-            return 0, []
+            return
 
         if trans:
             if downloadpkgs:
@@ -227,17 +226,14 @@ class BaseCli(dnf.Base):
                 specific = dnf.cli.format.indent_block(str(e))
                 errstring = _('Error downloading packages:\n%s') % specific
                 raise dnf.exceptions.Error(errstring)
-
             # Check GPG signatures
-            if self.gpgsigcheck(downloadpkgs) != 0:
-                return -1, None
+            self.gpgsigcheck(downloadpkgs)
 
         display = output.CliTransactionDisplay()
-        return_code, resultmsgs = super(BaseCli, self).do_transaction(display)
-        if trans and return_code == 0:
+        super(BaseCli, self).do_transaction(display)
+        if trans:
             msg = self.output.post_transaction_output(trans)
             self.logger.info(msg)
-        return return_code, resultmsgs
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,

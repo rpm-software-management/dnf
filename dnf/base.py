@@ -474,15 +474,15 @@ class Base(object):
 
     def do_transaction(self, display=None):
         # :api
-        # save our ds_callback out
 
         persistor = self.group_persistor
         if persistor:
             persistor.commit()
 
         if not self.transaction:
-            return 0, None
+            return
 
+        # save our ds_callback out
         dscb = self.ds_callback
         self.ds_callback = None
         self.transaction.populate_rpm_ts(self.ts)
@@ -490,23 +490,11 @@ class Base(object):
         self.logger.info(_('Running transaction check'))
         msgs = self._run_rpm_check()
         if msgs:
-            rpmlib_only = True
+            msg = _('Error: transaction check vs depsolve:')
+            self.logger.error(msg)
             for msg in msgs:
-                if msg.startswith('rpmlib('):
-                    continue
-                rpmlib_only = False
-            if rpmlib_only:
-                print(_("ERROR You need to upgrade rpm to handle:"))
-            else:
-                print(_('ERROR with transaction check vs depsolve:'))
-
-            for msg in msgs:
-                print(msg)
-
-            if rpmlib_only:
-                return 1, [_('RPM needs to be upgraded')]
-            raise dnf.exceptions.TransactionCheckError(
-                'transaction not consistent with package database')
+                self.logger.error(msg)
+            raise dnf.exceptions.TransactionCheckError(msg)
 
         self.logger.info(_('Transaction check succeeded.'))
 
@@ -546,10 +534,8 @@ class Base(object):
             cb.display.output = False
 
         self.logger.info(_('Running transaction'))
-        return_code = self.runTransaction(cb=cb)
+        self.runTransaction(cb=cb)
         timer()
-
-        return return_code, None
 
     def _record_history(self):
         return self.conf.history_record and \
@@ -560,8 +546,6 @@ class Base(object):
         """Perform the transaction.
 
         :param cb: an rpm callback object to use in the transaction
-        :return: a :class:`misc.GenericHolder` containing
-           information about the results of the transaction
         :raises: :class:`dnf.exceptions.YumRPMTransError` if there is a
            transaction cannot be completed
         """
@@ -608,7 +592,6 @@ class Base(object):
             except:
                 pass
 
-        return_code = 0
         if errors is None:
             pass
         elif len(errors) == 0:
@@ -620,7 +603,6 @@ class Base(object):
                 errstring = _('Warning: scriptlet or other non-fatal errors '
                               'occurred during transaction.')
                 self.logger.debug(errstring)
-                return_code = 1
             else:
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
@@ -651,13 +633,11 @@ class Base(object):
 
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verify_transaction(return_code, cb.verify_tsi_package)
+            self.verify_transaction(0, cb.verify_tsi_package)
 
         if (not self.conf.keepcache and
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.clean_used_packages()
-
-        return return_code
 
     def verify_transaction(self, return_code, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and

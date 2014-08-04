@@ -51,6 +51,7 @@ suppress_keyboard_interrupt_message()
 from dnf.cli.utils import show_lock_owner
 from dnf.i18n import _
 
+import dnf.cli
 import dnf.cli.cli
 import dnf.exceptions
 import dnf.i18n
@@ -155,29 +156,16 @@ def resolving(cli, base):
 
     # Run the transaction
     try:
-        return_code, resultmsgs = base.do_transaction()
-    except dnf.exceptions.LockError:
-        raise
+        base.do_transaction()
+    except dnf.cli.CliError as exc:
+        logger.error(ucd(exc))
+        return 1
     except dnf.exceptions.TransactionCheckError as err:
-        return_code, resultmsgs = 1, cli.command.get_error_output(err)
+        for msg in cli.command.get_error_output(err):
+            logger.critical(msg)
     except IOError as e:
         return ex_IOError(e)
-
-    # rpm ts.check() failed.
-    if resultmsgs:
-        for msg in resultmsgs:
-            logger.critical("%s", msg)
-    elif return_code < 0:
-        return_code = 1 # Means the pre-transaction checks failed...
-        #  This includes:
-        # . No packages.
-        # . Hitting N at the prompt.
-        # . GPG check failures.
-    else:
-        base.plugins.run_transaction()
-        logger.info(_('Complete!'))
-
-    return return_code
+    return 0
 
 
 def user_main(args, exit_code=False):
