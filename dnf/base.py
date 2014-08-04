@@ -62,6 +62,7 @@ import operator
 import rpm
 import time
 
+
 class Base(object):
     def __init__(self, conf=None):
         # :api
@@ -469,15 +470,19 @@ class Base(object):
 
         if exc is not None:
             raise exc
-        if not got_transaction:
-            persistor = self.group_persistor
-            if persistor:
-                persistor.commit()
         return got_transaction
 
     def do_transaction(self, display=None):
         # :api
         # save our ds_callback out
+
+        persistor = self.group_persistor
+        if persistor:
+            persistor.commit()
+
+        if not self.transaction:
+            return 0, None
+
         dscb = self.ds_callback
         self.ds_callback = None
         self.transaction.populate_rpm_ts(self.ts)
@@ -542,8 +547,6 @@ class Base(object):
 
         self.logger.info(_('Running transaction'))
         return_code = self.runTransaction(cb=cb)
-        if return_code == 0 and self.group_persistor:
-            self.group_persistor.commit()
         timer()
 
         return return_code, None
