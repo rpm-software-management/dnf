@@ -755,7 +755,7 @@ class Base(object):
                     count = display_banner(rpo, count)
                     continue
             count = display_banner(rpo, count)
-            yumdb_item = self.yumdb.get_package(po=rpo)
+            yumdb_item = self.yumdb.get_package(rpo)
             yumdb_item.clean()
 
         if self._record_history():

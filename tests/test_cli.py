@@ -28,10 +28,8 @@ import dnf.goal
 import dnf.repo
 import dnf.repodict
 import os
-import tests.support
-import unittest
 
-VERSIONS_OUTPUT="""\
+VERSIONS_OUTPUT = """\
   Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
   Built    :  at 1970-01-01 00:00
 
@@ -53,7 +51,7 @@ class VersionStringTest(TestCase):
         self.assertEqual(written, VERSIONS_OUTPUT)
 
 
-@mock.patch('dnf.cli.cli.logger', new_callable=tests.support.mock_logger)
+@mock.patch('dnf.cli.cli.logger', new_callable=support.mock_logger)
 class BaseCliTest(support.ResultTestCase):
     def setUp(self):
         self._base = dnf.cli.cli.BaseCli()
@@ -81,9 +79,11 @@ class BaseCliTest(support.ResultTestCase):
             self._base.downgradePkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('non-existent')])
+        self.assertEqual(self._base.downgrade.mock_calls,
+                         [mock.call('non-existent')])
         self.assertEqual(logger.mock_calls,
-                         [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
+                         [mock.call.info('No package %s%s%s available.', '',
+                                         'non-existent', '')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notinstalled(self, logger):
@@ -94,8 +94,8 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('lotus')])
-        self.assertEqual(logger.mock_calls,
-                         [mock.call.info('No match for available package: %s', pkg)] * 2)
+        self.assertEqual(logger.mock_calls, [
+            mock.call.info('No match for available package: %s', pkg)] * 2)
 
     def test_transaction_id_or_offset_bad(self, _):
         """Test transaction_id_or_offset with a bad input."""
@@ -130,23 +130,23 @@ class CliTest(TestCase):
         self.base.output = support.MockOutput()
         self.cli = dnf.cli.cli.Cli(self.base)
 
-    def test_knows_upgrade(self, read_conf_file):
+    def test_knows_upgrade(self, _):
         upgrade = self.cli.cli_commands['upgrade']
         update = self.cli.cli_commands['update']
         self.assertIs(upgrade, update)
 
-    def test_simple(self, read_conf_file):
+    def test_simple(self, _):
         self.assertFalse(self.base.conf.assumeyes)
         self.cli.configure(['update', '-y'])
         self.assertTrue(self.base.conf.assumeyes)
 
-    def test_opt_between_cmds(self,read_conf_file):
+    def test_opt_between_cmds(self, _):
         self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
         self.assertTrue(self.base.conf.assumeyes)
         self.assertEqual(self.base.basecmd, "install")
         self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
 
-    def test_configure_repos(self, read_conf_file):
+    def test_configure_repos(self, _):
         opts = Namespace()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
@@ -164,7 +164,7 @@ class CliTest(TestCase):
         self.assertEqual(self.base.repos["comb"].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
-    def test_configure_repos_expired(self, read_conf_file):
+    def test_configure_repos_expired(self, _):
         """Ensure that --cacheonly beats the expired status."""
         opts = Namespace()
         opts.repos_ed = []
