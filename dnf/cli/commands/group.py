@@ -31,6 +31,7 @@ import operator
 
 logger = logging.getLogger("dnf")
 
+
 def _ensure_grp_arg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one group for
     *basecmd* to act on.
@@ -137,6 +138,7 @@ class GroupCommand(commands.Command):
 
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)
+        self._remark = False
 
     def _assert_comps(self):
         msg = _('No group data available for configured repositories.')
@@ -205,6 +207,7 @@ class GroupCommand(commands.Command):
             self.base.environment_install(env, types)
         for grp in res.groups:
             self.base.group_install(grp, types)
+        self._remark = True
 
     def _list(self, userlist):
         uservisible = 1
@@ -445,3 +448,13 @@ class GroupCommand(commands.Command):
             return self._upgrade(extcmds)
         if cmd == 'remove':
             return self._remove(extcmds)
+
+    def run_transaction(self):
+        if not self._remark:
+            return
+        goal = self.base.goal
+        pkgdb = self.base.yumdb
+        names = goal.group_members
+        for pkg in self.base.sack.query().installed().filter(name=names):
+            db_pkg = pkgdb.get_package(pkg)
+            db_pkg.reason = goal.group_reason(pkg, db_pkg.reason)

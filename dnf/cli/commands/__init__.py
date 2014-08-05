@@ -207,6 +207,10 @@ class Command(object):
         """
         pass
 
+    def run_transaction(self):
+        """Finalize operations post-transaction."""
+        pass
+
 class InfoCommand(Command):
     """A class containing methods needed by the cli to execute the
     info command.

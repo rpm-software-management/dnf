@@ -26,6 +26,7 @@ class GoalTest(tests.support.TestCase):
     def setUp(self):
         base = tests.support.MockBase('main')
         self.sack = base.sack
+        self.goal = dnf.goal.Goal(self.sack)
 
     def test_get_reason(self):
         sltr = dnf.selector.Selector(self.sack)
@@ -33,7 +34,7 @@ class GoalTest(tests.support.TestCase):
         grp_sltr = dnf.selector.Selector(self.sack)
         grp_sltr.set(name='lotus')
 
-        goal = dnf.goal.Goal(self.sack)
+        goal = self.goal
         goal.install(select=sltr)
         goal.install(select=grp_sltr)
         goal.group_members.add('lotus')
@@ -45,3 +46,10 @@ class GoalTest(tests.support.TestCase):
         self.assertEqual(goal.get_reason(lotus), 'group')
         self.assertEqual(goal.get_reason(mrkite), 'user')
         self.assertEqual(goal.get_reason(trampoline), 'dep')
+
+    def test_group_reason(self):
+        goal = self.goal
+        hole = self.sack.query().filter(name='hole')[0]
+        goal.group_members.add('hole')
+        self.assertEqual('group', goal.group_reason(hole, 'unknown'))
+        self.assertEqual('dep', goal.group_reason(hole, 'dep'))

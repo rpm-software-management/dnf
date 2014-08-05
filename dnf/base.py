@@ -156,6 +156,10 @@ class Base(object):
         return self._conf
 
     @property
+    def goal(self):
+        return self._goal
+
+    @property
     def repos(self):
         return self._repos
 
