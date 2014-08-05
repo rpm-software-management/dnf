@@ -76,6 +76,7 @@ def _add_pkg_simple_list_lens(data, pkg, indent=''):
         data[d].setdefault(v, 0)
         data[d][v] += 1
 
+
 def _list_cmd_calc_columns(output, ypl):
     """ Work out the dynamic size of the columns to pass to fmtColumns. """
     data = {'na' : {}, 'ver' : {}, 'rid' : {}}
@@ -119,6 +120,7 @@ def print_versions(pkgs, base, output):
         # :hawkey, no changelist information yet
         # print(_("  Committed: %s at %s") % (pkg.committer,
         #                                    sm_ui_date(pkg.committime)))
+
 
 class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
@@ -234,6 +236,8 @@ class BaseCli(dnf.Base):
         if trans:
             msg = self.output.post_transaction_output(trans)
             self.logger.info(msg)
+        self.plugins.run_transaction()
+        self.logger.info(_('Complete!'))
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,
