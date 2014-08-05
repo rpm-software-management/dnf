@@ -20,6 +20,12 @@ Core DNF Errors.
 from __future__ import unicode_literals
 from dnf.i18n import ucd
 
+
+class DeprecationWarning(DeprecationWarning):
+    # :api
+    pass
+
+
 class Error(Exception):
     """Base Error. All other Errors thrown by DNF should inherit from this.
 
@@ -27,7 +33,7 @@ class Error(Exception):
 
     """
     def __init__(self, value=None):
-        Exception.__init__(self)
+        super(Error, self).__init__()
         self.value = None if value is None else ucd(value)
 
     def __str__(self):
@@ -36,47 +42,24 @@ class Error(Exception):
     def __unicode__(self):
         return '%s' % self.value
 
-class DeprecationWarning(DeprecationWarning):
-    # :api
-    pass
 
 class CompsError(Error):
     pass
 
-class YumRPMTransError(Error):
-    def __init__(self, msg, errors):
-        Error.__init__(self, msg)
-        self.errors = errors
-
-class LockError(Error):
-    pass
-
-class ProcessLockError(LockError):
-    def __init__(self, value, pid):
-        super(ProcessLockError, self).__init__(value)
-        self.pid = pid
-
-    def __reduce__(self):
-        """Pickling support."""
-        return (ProcessLockError, (self.value, self.pid))
-
-class ThreadLockError(LockError):
-    pass
-
-class RepoError(Error):
-    # :api
-    pass
 
 class ConfigError(Error):
     pass
+
 
 class DepsolveError(Error):
     # :api
     pass
 
+
 class DownloadError(Error):
     # :api
     def __init__(self, errmap):
+        super(DownloadError, self).__init__()
         self.errmap = errmap
 
     @staticmethod
@@ -94,11 +77,10 @@ class DownloadError(Error):
     def __unicode__(self):
         return ucd(self)
 
-class MetadataError(Error):
+
+class LockError(Error):
     pass
 
-class MiscError(Error):
-    pass
 
 class MarkingError(Error):
     # :api
@@ -108,18 +90,55 @@ class MarkingError(Error):
         super(MarkingError, self).__init__(value)
         self.pkg_spec = pkg_spec
 
+
+class MetadataError(Error):
+    pass
+
+
+class MiscError(Error):
+    pass
+
+
+class PackagesNotAvailableError(MarkingError):
+    def __init__(self, value=None, pkg_spec=None, packages=None):
+        super(PackagesNotAvailableError, self).__init__(value, pkg_spec)
+        self.packages = packages or []
+
+
 class PackageNotFoundError(MarkingError):
     pass
 
-class PackagesNotInstalledError(MarkingError):
-    def __init__(self, value=None, pkg_spec=None, packages=[]):
-        super(PackagesNotInstalledError, self).__init__(value, pkg_spec)
-        self.packages = packages
 
-class PackagesNotAvailableError(MarkingError):
-    def __init__(self, value=None, pkg_spec=None, packages=[]):
-        super(PackagesNotAvailableError, self).__init__(value, pkg_spec)
-        self.packages = packages
+class PackagesNotInstalledError(MarkingError):
+    def __init__(self, value=None, pkg_spec=None, packages=None):
+        super(PackagesNotInstalledError, self).__init__(value, pkg_spec)
+        self.packages = packages or []
+
+
+class ProcessLockError(LockError):
+    def __init__(self, value, pid):
+        super(ProcessLockError, self).__init__(value)
+        self.pid = pid
+
+    def __reduce__(self):
+        """Pickling support."""
+        return (ProcessLockError, (self.value, self.pid))
+
+
+class RepoError(Error):
+    # :api
+    pass
+
+
+class ThreadLockError(LockError):
+    pass
+
 
 class TransactionCheckError(Error):
     pass
+
+
+class YumRPMTransError(Error):
+    def __init__(self, msg, errors):
+        super(YumRPMTransError, self).__init__(msg)
+        self.errors = errors
