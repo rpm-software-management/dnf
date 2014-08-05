@@ -32,6 +32,7 @@ import dnf.persistor
 import dnf.pycomp
 import dnf.repo
 import dnf.sack
+import dnf.yum.rpmsack
 import hawkey
 import hawkey.test
 import itertools
@@ -49,10 +50,10 @@ logger = logging.getLogger('dnf')
 skip = unittest.skip
 
 TRACEBACK_RE = re.compile(
-    '(Traceback \(most recent call last\):\n'
-    '(?:  File "[^"\n]+", line \d+, in \w+\n'
-    '(?:    .+\n)?)+'
-    '\S.*\n)')
+    r'(Traceback \(most recent call last\):\n'
+    r'(?:  File "[^"\n]+", line \d+, in \w+\n'
+    r'(?:    .+\n)?)+'
+    r'\S.*\n)')
 REASONS = {
     'hole'      : 'group',
     'pepper'    : 'group',
@@ -316,11 +317,11 @@ class MockYumDB(mock.Mock):
         super(mock.Mock, self).__init__()
         self.db = {}
 
-    def get_package(self, po):
-        return self.db.setdefault(str(po), mock.Mock())
+    def get_package(self, pkg):
+        return self.db.setdefault(str(pkg), mock.Mock())
 
     def assertLength(self, length):
-        assert(len(self.db) == length)
+        assert len(self.db) == length
 
 class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage):
 
