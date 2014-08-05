@@ -45,6 +45,7 @@ if dnf.pycomp.PY3:
 else:
     from tests import mock
 
+logger = logging.getLogger('dnf')
 skip = unittest.skip
 
 TRACEBACK_RE = re.compile(
@@ -139,6 +140,11 @@ def mock_comps(seed_persistor):
         p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
 
     return comps, persistor
+
+
+def mock_logger():
+    return mock.create_autospec(logger)
+
 
 class _BaseStubMixin(object):
     """A reusable class for creating `dnf.Base` stubs.

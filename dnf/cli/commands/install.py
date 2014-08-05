@@ -25,7 +25,11 @@ from dnf.i18n import _
 
 import dnf.exceptions
 import functools
+import logging
 import operator
+
+logger = logging.getLogger('dnf')
+
 
 class InstallCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
@@ -81,7 +85,7 @@ class InstallCommand(commands.Command):
             group = self.base.comps.group_by_pattern(spec)
             if group is None:
                 msg = _("Warning: Group '%s' does not exist.")
-                self.base.logger.error(msg, dnf.i18n.ucd(spec))
+                logger.error(msg, dnf.i18n.ucd(spec))
                 continue
             cnt += self.base.group_install(group, dnf.const.GROUP_PACKAGE_TYPES)
         if grp_specs and not cnt:
@@ -97,9 +101,8 @@ class InstallCommand(commands.Command):
                 self.base.install(pkg_spec)
             except dnf.exceptions.MarkingError:
                 msg = _('No package %s%s%s available.')
-                self.base.logger.info(
-                    msg, self.base.output.term.MODE['bold'], pkg_spec,
-                    self.base.output.term.MODE['normal'])
+                logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
+                            self.base.output.term.MODE['normal'])
             else:
                 done = True
 

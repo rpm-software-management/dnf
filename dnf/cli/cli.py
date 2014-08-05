@@ -65,6 +65,8 @@ import re
 import sys
 import time
 
+logger = logging.getLogger('dnf')
+
 
 def _add_pkg_simple_list_lens(data, pkg, indent=''):
     """ Get the length of each pkg's column. Add that to data.
@@ -128,7 +130,6 @@ class BaseCli(dnf.Base):
     def __init__(self, conf=None):
         super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
-        self.logger = logging.getLogger("dnf")
 
     def _groups_diff(self):
         if not self.group_persistor:
@@ -176,11 +177,11 @@ class BaseCli(dnf.Base):
         grp_diff = self._groups_diff()
         grp_str = self.output.list_group_transaction(self.comps, grp_diff)
         if grp_str:
-            self.logger.info(grp_str)
+            logger.info(grp_str)
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)
         if pkg_str:
-            self.logger.info(pkg_str)
+            logger.info(pkg_str)
 
         if trans:
             # Check which packages have to be downloaded
@@ -214,12 +215,12 @@ class BaseCli(dnf.Base):
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
         else:
-            self.logger.info(_('Nothing to do.'))
+            logger.info(_('Nothing to do.'))
             return
 
         if trans:
             if downloadpkgs:
-                self.logger.info(_('Downloading Packages:'))
+                logger.info(_('Downloading Packages:'))
             try:
                 total_cb = self.output.download_callback_total_cb
                 self.download_packages(downloadpkgs, self.output.progress,
@@ -235,9 +236,9 @@ class BaseCli(dnf.Base):
         super(BaseCli, self).do_transaction(display)
         if trans:
             msg = self.output.post_transaction_output(trans)
-            self.logger.info(msg)
+            logger.info(msg)
         self.plugins.run_transaction()
-        self.logger.info(_('Complete!'))
+        logger.info(_('Complete!'))
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,
@@ -367,11 +368,11 @@ class BaseCli(dnf.Base):
                 self.downgrade(arg)
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s%s%s available.')
-                self.logger.info(msg, self.output.term.MODE['bold'], arg,
+                logger.info(msg, self.output.term.MODE['bold'], arg,
                                  self.output.term.MODE['normal'])
             except dnf.exceptions.PackagesNotInstalledError as err:
                 for pkg in err.packages:
-                    self.logger.info(_('No match for available package: %s'), pkg)
+                    logger.info(_('No match for available package: %s'), pkg)
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
@@ -580,7 +581,7 @@ class BaseCli(dnf.Base):
 
     def _history_get_transactions(self, extcmds):
         if not extcmds:
-            self.logger.critical(_('No transaction ID given'))
+            logger.critical(_('No transaction ID given'))
             return None
 
         tids = []
@@ -589,7 +590,7 @@ class BaseCli(dnf.Base):
             try:
                 id_or_offset = self.transaction_id_or_offset(extcmd)
             except ValueError:
-                self.logger.critical(_('Bad transaction ID given'))
+                logger.critical(_('Bad transaction ID given'))
                 return None
 
             if id_or_offset < 0:
@@ -597,7 +598,7 @@ class BaseCli(dnf.Base):
                     cto = False
                     last = self.history.last(complete_transactions_only=cto)
                     if last is None:
-                        self.logger.critical(_('Bad transaction ID given'))
+                        logger.critical(_('Bad transaction ID given'))
                         return None
                 tids.append(str(last.tid + id_or_offset + 1))
             else:
@@ -605,7 +606,7 @@ class BaseCli(dnf.Base):
 
         old = self.history.old(tids)
         if not old:
-            self.logger.critical(_('Not found given transaction ID'))
+            logger.critical(_('Not found given transaction ID'))
             return None
         return old
 
@@ -614,7 +615,7 @@ class BaseCli(dnf.Base):
         if old is None:
             return None
         if len(old) > 1:
-            self.logger.critical(_('Found more than one transaction ID!'))
+            logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
     def history_rollback_transaction(self, extcmd):
@@ -631,9 +632,9 @@ class BaseCli(dnf.Base):
         mobj = None
         for tid in self.history.old(list(range(old.tid + 1, last.tid + 1))):
             if tid.altered_lt_rpmdb:
-                self.logger.warning(_('Transaction history is incomplete, before %u.'), tid.tid)
+                logger.warning(_('Transaction history is incomplete, before %u.'), tid.tid)
             elif tid.altered_gt_rpmdb:
-                self.logger.warning(_('Transaction history is incomplete, after %u.'), tid.tid)
+                logger.warning(_('Transaction history is incomplete, after %u.'), tid.tid)
 
             if mobj is None:
                 mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
@@ -656,11 +657,11 @@ class BaseCli(dnf.Base):
         try:
             self.history_undo_operations(operations)
         except dnf.exceptions.PackagesNotInstalledError as err:
-            self.logger.info(_('No package %s%s%s installed.'),
+            logger.info(_('No package %s%s%s installed.'),
                              hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
-            self.logger.info(_('No package %s%s%s available.'),
+            logger.info(_('No package %s%s%s available.'),
                              hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.MarkingError:
@@ -685,11 +686,11 @@ class BaseCli(dnf.Base):
         try:
             self.history_undo_operations(history.transaction_nevra_ops(old.tid))
         except dnf.exceptions.PackagesNotInstalledError as err:
-            self.logger.info(_('No package %s%s%s installed.'),
+            logger.info(_('No package %s%s%s installed.'),
                              hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
-            self.logger.info(_('No package %s%s%s available.'),
+            logger.info(_('No package %s%s%s available.'),
                              hibeg, ucd(err.pkg_spec), hiend)
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.MarkingError:
@@ -704,7 +705,6 @@ class Cli(object):
         self.cli_commands = {}
         self.command = None
         self.demands = dnf.cli.demand.DemandSheet() #:cli
-        self.logger = logging.getLogger("dnf")
         self.main_setopts = {}
         self.nogpgcheck = False
         self.repo_setopts = {}
@@ -738,7 +738,7 @@ class Cli(object):
         cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
         conf.cachedir = cli_cache.cachedir
         self._system_cachedir = cli_cache.system_cachedir
-        self.logger.debug("cachedir: %s", conf.cachedir)
+        logger.debug("cachedir: %s", conf.cachedir)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(self.repo_setopts)
@@ -754,7 +754,7 @@ class Cli(object):
                 else:
                     repolist.disable()
         except dnf.exceptions.ConfigError as e:
-            self.logger.critical(e)
+            logger.critical(e)
             self.print_usage()
             sys.exit(1)
 
@@ -780,12 +780,12 @@ class Cli(object):
         self.base.repos.all().confirm_func = confirm_func
 
     def _log_essentials(self):
-        self.logger.debug('DNF version: %s', dnf.const.VERSION)
-        self.logger.log(dnf.logging.DDEBUG,
+        logger.debug('DNF version: %s', dnf.const.VERSION)
+        logger.log(dnf.logging.DDEBUG,
                         'Command: %s', self.cmdstring)
-        self.logger.log(dnf.logging.DDEBUG,
+        logger.log(dnf.logging.DDEBUG,
                         'Installroot: %s', self.base.conf.installroot)
-        self.logger.log(dnf.logging.DDEBUG, 'Releasever: %s',
+        logger.log(dnf.logging.DDEBUG, 'Releasever: %s',
                         self.base.conf.releasever)
 
     def _root_and_conffile(self, installroot, conffile):
@@ -815,22 +815,22 @@ class Cli(object):
         """Check that the requested CLI command exists."""
 
         if len(self.base.cmds) < 1:
-            self.logger.critical(_('You need to give some command'))
+            logger.critical(_('You need to give some command'))
             self.print_usage()
             raise CliError
 
         basecmd = self.base.cmds[0] # our base command
         command_cls = self.cli_commands.get(basecmd)
         if command_cls is None:
-            self.logger.critical(_('No such command: %s. Please use %s --help'),
+            logger.critical(_('No such command: %s. Please use %s --help'),
                                   basecmd, sys.argv[0])
             raise CliError
         self.command = command_cls(self)
 
         (base, ext) = self.command.canonical(self.base.cmds)
         self.base.basecmd, self.base.extcmds = (base, ext)
-        self.logger.log(dnf.logging.DDEBUG, 'Base command: %s', base)
-        self.logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', ext)
+        logger.log(dnf.logging.DDEBUG, 'Base command: %s', base)
+        logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', ext)
 
     def _parse_setopts(self, setopts):
         """Parse setopts and repo_setopts."""
@@ -920,22 +920,22 @@ class Cli(object):
                 for opt in self.main_setopts.items:
                     if not hasattr(self.base.conf, opt):
                         msg ="Main config did not have a %s attr. before setopt"
-                        self.logger.warning(msg % opt)
+                        logger.warning(msg % opt)
                     setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
 
         except (dnf.exceptions.ConfigError, ValueError) as e:
-            self.logger.critical(_('Config error: %s'), e)
+            logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         except IOError as e:
             e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
-            self.logger.critical(_('Config error: %s'), e)
+            logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         for item in bad_setopt_tm:
             msg = "Setopt argument has multiple values: %s"
-            self.logger.warning(msg % item)
+            logger.warning(msg % item)
         for item in bad_setopt_ne:
             msg = "Setopt argument has no value: %s"
-            self.logger.warning(msg % item)
+            logger.warning(msg % item)
 
         self.optparser.configure_from_options(opts, self.base.conf, self.demands,
                                               self.base.output)

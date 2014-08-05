@@ -25,8 +25,11 @@ from dnf.i18n import _, ucd, fill_exact_width, exact_width
 import dnf.cli.format
 import fnmatch
 import locale
+import logging
 import operator
 import time
+
+logger = logging.getLogger('dnf')
 
 
 def _expire_str(repo, md):
@@ -209,8 +212,7 @@ class RepoListCommand(commands.Command):
                     out += [self.output.fmtKeyValFill(_("Repo-filename: "),
                                                repo.repofile)]
 
-                self.base.logger.log(dnf.logging.DEBUG, "%s\n",
-                                        "\n".join(map(ucd, out)))
+                logger.log(dnf.logging.DEBUG, "%s\n", "\n".join(map(ucd, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
@@ -247,24 +249,19 @@ class RepoListCommand(commands.Command):
             txt_rid = fill_exact_width(_('repo id'), id_len)
             txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                self.base.logger.info("%s %s",
-                                        txt_rid, txt_rnam)
+                logger.info("%s %s", txt_rid, txt_rnam)
             else:
-                self.base.logger.info("%s %s %s",
-                                        txt_rid, txt_rnam, _('status'))
+                logger.info("%s %s %s", txt_rid, txt_rnam, _('status'))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    self.base.logger.info("%s %s",
-                                          fill_exact_width(rid, id_len),
-                                          fill_exact_width(rname, nm_len,
--                                                         nm_len))
+                    logger.info("%s %s", fill_exact_width(rid, id_len),
+                                fill_exact_width(rname, nm_len, -nm_len))
                     continue
 
                 if ui_num:
                     ui_num = fill_exact_width(ui_num, ui_len, left=False)
-                self.base.logger.info("%s %s %s%s",
-                                      fill_exact_width(rid, id_len),
-                                      fill_exact_width(rname, nm_len, nm_len),
-                                      ui_enabled, ui_num)
+                logger.info("%s %s %s%s", fill_exact_width(rid, id_len),
+                            fill_exact_width(rname, nm_len, nm_len),
+                            ui_enabled, ui_num)
         msg = 'Total packages: %s' % ucd(locale.format("%d", tot_num, True))
-        self.base.logger.debug(msg)
+        logger.debug(msg)

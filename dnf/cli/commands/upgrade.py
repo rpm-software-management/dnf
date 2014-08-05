@@ -25,7 +25,11 @@ from dnf.i18n import _
 
 import dnf.exceptions
 import functools
+import logging
 import operator
+
+logger = logging.getLogger('dnf')
+
 
 class UpgradeCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
@@ -79,8 +83,7 @@ class UpgradeCommand(commands.Command):
                 try:
                     self.base.upgrade(pkg_spec)
                 except dnf.exceptions.MarkingError:
-                    self.base.logger.info(_('No match for argument: %s'),
-                                          pkg_spec)
+                    logger.info(_('No match for argument: %s'), pkg_spec)
                 else:
                     done = True
 

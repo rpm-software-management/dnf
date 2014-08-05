@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 import dnf.util
 import dnf.yum.misc
 import hawkey
-import logging
 import dnf.package
 import dnf.query
 from dnf.pycomp import basestring
@@ -57,7 +56,6 @@ class SackVersion(object):
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
-        self.logger = logging.getLogger("dnf")
 
     def configure(self, installonly=None, installonly_limit=0):
         if installonly:

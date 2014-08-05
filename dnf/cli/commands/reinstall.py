@@ -25,7 +25,11 @@ from dnf.i18n import _
 
 import dnf.exceptions
 import functools
+import logging
 import operator
+
+logger = logging.getLogger('dnf')
+
 
 class ReinstallCommand(commands.Command):
     """A class containing s needed by the cli to execute the
@@ -78,8 +82,7 @@ class ReinstallCommand(commands.Command):
             try:
                 self.base.reinstall(pkg_spec)
             except dnf.exceptions.PackagesNotInstalledError:
-                self.base.logger.info(_('No match for argument: %s'),
-                                      pkg_spec)
+                logger.info(_('No match for argument: %s'), pkg_spec)
             except dnf.exceptions.PackagesNotAvailableError as err:
                 for pkg in err.packages:
                     xmsg = ''
@@ -87,9 +90,8 @@ class ReinstallCommand(commands.Command):
                     if 'from_repo' in yumdb_info:
                         xmsg = _(' (from %s)') % yumdb_info.from_repo
                     msg = _('Installed package %s%s%s%s not available.')
-                    self.base.logger.info(
-                        msg, self.base.output.term.MODE['bold'], pkg,
-                        self.base.output.term.MODE['normal'], xmsg)
+                    logger.info(msg, self.base.output.term.MODE['bold'], pkg,
+                                self.base.output.term.MODE['normal'], xmsg)
             except dnf.exceptions.MarkingError:
                 assert False, 'Only the above marking errors are expected.'
             else:

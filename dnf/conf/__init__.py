@@ -41,9 +41,12 @@ from dnf.i18n import ucd, _
 from dnf.yum import misc
 import dnf.const
 import dnf.yum.config
+import logging
 import os.path
 
 Conf = dnf.yum.config.YumConf # :api
+logger = logging.getLogger('dnf')
+
 
 class CliCache(object):
     def __init__(self, prefix, suffix):
@@ -68,7 +71,7 @@ class CliCache(object):
                 user_prefix = misc.getCacheDir()
                 self._cachedir = self._retdir(user_prefix)
             except (IOError, OSError) as e:
-                self.logger.critical(_('Could not set cachedir: %s'), ucd(e))
+                logger.critical(_('Could not set cachedir: %s'), ucd(e))
 
     def _retdir(self, dir):
         return os.path.join(dir, self.suffix)

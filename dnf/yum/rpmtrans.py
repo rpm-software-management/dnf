@@ -42,6 +42,9 @@ TS_FAILED = 100
 TS_INSTALL_STATES = [TS_INSTALL, TS_UPDATE, TS_OBSOLETING]
 TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
 
+logger = logging.getLogger('dnf')
+
+
 class TransactionDisplay(object):
     # per-package events
     PKG_CLEANUP   = 1
@@ -98,6 +101,7 @@ class TransactionDisplay(object):
     def verify_tsi_package(self, pkg, count, total):
         pass
 
+
 class LoggingTransactionDisplay(TransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
@@ -118,11 +122,11 @@ class LoggingTransactionDisplay(TransactionDisplay):
                            self.PKG_OBSOLETE  : 'Obsoleted',
                            self.PKG_REINSTALL : 'Reinstalled',
                            self.PKG_UPGRADE   :  'Upgraded'}
-        self.logger = logging.getLogger("dnf.rpm")
+        self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def errorlog(self, msg):
         super(LoggingTransactionDisplay, self).errorlog(msg)
-        self.logger.error(msg)
+        self.rpm_logger.error(msg)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -131,7 +135,7 @@ class LoggingTransactionDisplay(TransactionDisplay):
         if process is None:
             return
         msg = '%s: %s' % (process, package)
-        self.logger.info(msg)
+        self.rpm_logger.info(msg)
 
 class RPMTransaction(object):
     def __init__(self, base, test=False, display=TransactionDisplay):
@@ -147,7 +151,6 @@ class RPMTransaction(object):
         self.complete_actions = 0
         self.installed_pkg_names = set()
         self.total_removed = 0
-        self.logger = logging.getLogger("dnf.rpm")
         self.filelog = False
 
         self._setupOutputLogging(base.conf.rpmverbosity)

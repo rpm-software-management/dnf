@@ -42,7 +42,7 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        cli.logger.critical(_('Error: Need a group or list of groups'))
+        logger.critical(_('Error: Need a group or list of groups'))
         commands.err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 

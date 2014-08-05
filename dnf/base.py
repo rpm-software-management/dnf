@@ -62,6 +62,8 @@ import operator
 import rpm
 import time
 
+logger = logging.getLogger("dnf")
+
 
 class Base(object):
     def __init__(self, conf=None):
@@ -78,7 +80,6 @@ class Base(object):
         self._tempfiles = []
         self.ds_callback = dnf.callback.Depsolve()
         self.group_persistor = None
-        self.logger = logging.getLogger("dnf")
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
@@ -97,7 +98,7 @@ class Base(object):
         except dnf.exceptions.RepoError as e:
             if repo.skip_if_unavailable is False:
                 raise
-            self.logger.warning(_("%s, disabling."), e)
+            logger.warning(_("%s, disabling."), e)
             repo.disable()
             return
         hrepo = repo.hawkey_repo
@@ -108,7 +109,7 @@ class Base(object):
         if repo.presto_fn:
             hrepo.presto_fn = repo.presto_fn
         else:
-            self.logger.debug("not found deltainfo for: %s" % repo.name)
+            logger.debug("not found deltainfo for: %s" % repo.name)
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
                                  load_presto=repo.deltarpm)
 
@@ -221,7 +222,7 @@ class Base(object):
 
         if self._closed:
             return
-        self.logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
+        logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
         self._closed = True
         # Do not trigger the lazy creation:
         if self._history is not None:
@@ -238,7 +239,7 @@ class Base(object):
             try:
                 self.repos.add(repo)
             except dnf.exceptions.ConfigError as e:
-                self.logger.warning(e)
+                logger.warning(e)
 
     def reset(self, sack=False, repos=False, goal=False):
         """Make the Base object forget about various things. :api"""
@@ -279,7 +280,7 @@ class Base(object):
         for flag in self.conf.tsflags:
             rpm_flag = self._TS_FLAGS_TO_RPM.get(flag)
             if rpm_flag is None:
-                self.logger.critical(_('Invalid tsflag in config file: %s'), flag)
+                logger.critical(_('Invalid tsflag in config file: %s'), flag)
                 continue
             self._ts.addTsFlag(rpm_flag)
             vs_flag = self._TS_VSFLAGS_TO_RPM.get(flag)
@@ -308,7 +309,7 @@ class Base(object):
         self.group_persistor = self._activate_group_persistor()
         self._comps = dnf.comps.Comps()
 
-        self.logger.log(dnf.logging.DDEBUG, 'Getting group metadata')
+        logger.log(dnf.logging.DDEBUG, 'Getting group metadata')
         for repo in self.repos.iter_enabled():
             if not repo.enablegroups:
                 continue
@@ -318,7 +319,7 @@ class Base(object):
             if comps_fn is None:
                 continue
 
-            self.logger.log(dnf.logging.DDEBUG,
+            logger.log(dnf.logging.DDEBUG,
                             'Adding group file from repository: %s', repo.id)
             if repo.md_only_cached:
                 decompressed = misc.calculate_repo_gen_dest(comps_fn,
@@ -333,7 +334,7 @@ class Base(object):
                 self._comps.add_from_xml_filename(decompressed)
             except dnf.exceptions.CompsError as e:
                 msg = _('Failed to add groups file for repository: %s - %s')
-                self.logger.critical(msg % (repo.id, e))
+                logger.critical(msg % (repo.id, e))
 
         timer()
         return self._comps
@@ -429,7 +430,7 @@ class Base(object):
 
     def push_userinstalled(self, goal):
         msg = _('--> Finding unneeded leftover dependencies')
-        self.logger.debug(msg)
+        logger.debug(msg)
         for pkg in self.sack.query().installed().run():
             yumdb_info = self.yumdb.get_package(pkg)
             reason = 'user'
@@ -491,19 +492,19 @@ class Base(object):
         self.ds_callback = None
         self.transaction.populate_rpm_ts(self.ts)
 
-        self.logger.info(_('Running transaction check'))
+        logger.info(_('Running transaction check'))
         msgs = self._run_rpm_check()
         if msgs:
             msg = _('Error: transaction check vs depsolve:')
-            self.logger.error(msg)
+            logger.error(msg)
             for msg in msgs:
-                self.logger.error(msg)
+                logger.error(msg)
             raise dnf.exceptions.TransactionCheckError(msg)
 
-        self.logger.info(_('Transaction check succeeded.'))
+        logger.info(_('Transaction check succeeded.'))
 
         timer = dnf.logging.Timer('transaction test')
-        self.logger.info(_('Running transaction test'))
+        logger.info(_('Running transaction test'))
         if not self.conf.diskspacecheck:
             self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
@@ -522,7 +523,7 @@ class Base(object):
             raise dnf.exceptions.Error(errstring + '\n' + \
                  self.errorSummary(errstring))
 
-        self.logger.info(_('Transaction test succeeded.'))
+        logger.info(_('Transaction test succeeded.'))
         timer()
 
         # unset the sigquit handler
@@ -537,7 +538,7 @@ class Base(object):
         if self.conf.debuglevel < 2:
             cb.display.output = False
 
-        self.logger.info(_('Running transaction'))
+        logger.info(_('Running transaction'))
         self.runTransaction(cb=cb)
         timer()
 
@@ -563,7 +564,7 @@ class Base(object):
                 lastdbv = lastdbv.end_rpmdbversion
 
             if lastdbv is None or rpmdbv != lastdbv:
-                self.logger.debug("RPMDB altered outside of DNF.")
+                logger.debug("RPMDB altered outside of DNF.")
 
             cmdline = None
             if hasattr(self, 'args') and self.args:
@@ -584,9 +585,9 @@ class Base(object):
                 except:
                     onice = 0
 
-        self.logger.log(dnf.logging.DDEBUG, 'RPM transaction start.')
+        logger.log(dnf.logging.DDEBUG, 'RPM transaction start.')
         errors = self.ts.run(cb.callback, '')
-        self.logger.log(dnf.logging.DDEBUG, 'RPM transaction over.')
+        logger.log(dnf.logging.DDEBUG, 'RPM transaction over.')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty
         # list means some errors happened in the transaction and non-empty
         # list that there were errors preventing the ts from starting...
@@ -606,12 +607,12 @@ class Base(object):
             if len([el for el in self.ts if el.Failed()]) > 0:
                 errstring = _('Warning: scriptlet or other non-fatal errors '
                               'occurred during transaction.')
-                self.logger.debug(errstring)
+                logger.debug(errstring)
             else:
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
                         "(logged in as: %s).")
-                self.logger.critical(msg % login)
+                logger.critical(msg % login)
                 msg = _('Could not run transaction.')
                 raise dnf.exceptions.YumRPMTransError(msg=msg, errors=[])
         else:
@@ -620,9 +621,9 @@ class Base(object):
                 self.history.end(rpmdbv, 2, errors=herrors)
 
 
-            self.logger.critical(_("Transaction couldn't start:"))
+            logger.critical(_("Transaction couldn't start:"))
             for e in errors:
-                self.logger.critical(e[0]) # should this be 'to_unicoded'?
+                logger.critical(e[0]) # should this be 'to_unicoded'?
             msg = _("Could not run transaction.")
             raise dnf.exceptions.YumRPMTransError(msg=msg, errors=errors)
 
@@ -633,7 +634,7 @@ class Base(object):
                     misc.unlink_f(fn)
                 except (IOError, OSError):
                     msg = _('Failed to remove transaction file %s')
-                    self.logger.critical(msg, fn)
+                    logger.critical(msg, fn)
 
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
@@ -689,7 +690,7 @@ class Base(object):
             installed = rpmdb_sack.query().installed().nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
-                self.logger.critical(_('%s was supposed to be installed' \
+                logger.critical(_('%s was supposed to be installed' \
                                            ' but is not!' % rpo))
                 count = display_banner(rpo, count)
                 continue
@@ -750,7 +751,7 @@ class Base(object):
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
                                                  evr=rpo.evr)):
                     msg = _('%s was supposed to be removed but is not!')
-                    self.logger.critical(msg % rpo)
+                    logger.critical(msg % rpo)
                     count = display_banner(rpo, count)
                     continue
             count = display_banner(rpo, count)
@@ -793,7 +794,7 @@ class Base(object):
 
         if errors.recoverable:
             msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
-            self.logger.info(msg)
+            logger.info(msg)
 
             remaining_pkgs = [pkg for pkg in errors.recoverable]
             payloads = [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
@@ -818,7 +819,7 @@ class Base(object):
             msg = _("Delta RPMs reduced %.1f MB of updates to %.1f MB "
                     "(%d.1%% saved)")
             percent = 100 - real / full * 100
-            self.logger.info(msg, full / 1024**2, real / 1024**2, percent)
+            logger.info(msg, full / 1024**2, real / 1024**2, percent)
 
     def add_remote_rpm(self, path):
         # :api
@@ -913,10 +914,10 @@ class Base(object):
             try:
                 misc.unlink_f(fn)
             except OSError:
-                self.logger.warning(_('Cannot remove %s'), fn)
+                logger.warning(_('Cannot remove %s'), fn)
                 continue
             else:
-                self.logger.log(dnf.logging.DDEBUG,
+                logger.log(dnf.logging.DDEBUG,
                     _('%s removed'), fn)
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
@@ -1169,7 +1170,7 @@ class Base(object):
         solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = solver.group_install(grp, pkg_types, exclude)
-        self.logger.debug("Adding packages from group '%s': %s",
+        logger.debug("Adding packages from group '%s': %s",
                           grp.id, trans.install)
         return self._add_comps_trans(trans)
 
@@ -1222,7 +1223,7 @@ class Base(object):
         def msg_installed(pkg):
             name = ucd(pkg)
             msg = _('Package %s is already installed, skipping.') % name
-            self.logger.warning(msg)
+            logger.warning(msg)
 
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or \
@@ -1342,7 +1343,7 @@ class Base(object):
         else:
             sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
             if not sltr:
-                self.logger.info(_('No package %s installed.'), pkg_spec)
+                logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
             self._goal.distupgrade(select=sltr)
         return 1
@@ -1478,7 +1479,7 @@ class Base(object):
                         done = True
                 except dnf.exceptions.Error:
                     # :dead
-                    self.logger.critical(_('Failed to downgrade: %s'), pkg)
+                    logger.critical(_('Failed to downgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if force_changed_removal and pkg.state == 'Downgraded':
                 if self.tsInfo.getMembers(pkg.pkgtup):
@@ -1495,7 +1496,7 @@ class Base(object):
                 if self.upgrade(pkgtup=pkg.pkgtup):
                     done = True
                 else:
-                    self.logger.critical(_('Failed to upgrade: %s'), pkg)
+                    logger.critical(_('Failed to upgrade: %s'), pkg)
         for pkg in transaction.trans_data:
             if force_changed_removal and pkg.state == 'Updated':
                 if self.tsInfo.getMembers(pkg.pkgtup):
@@ -1627,7 +1628,7 @@ class Base(object):
         """
 
         msg = _('Retrieving key from %s') % keyurl
-        self.logger.info(msg)
+        logger.info(msg)
 
         # Go get the GPG key from the given URL
         try:
@@ -1661,7 +1662,7 @@ class Base(object):
                           'CA Key for repo: %s') % (keyurl, repo.id))
                 else:
                     msg = _('GPG key signature verified against CA Key(s)')
-                    self.logger.info(msg)
+                    logger.info(msg)
                     valid_sig = True
 
         # Parse the key
@@ -1709,7 +1710,7 @@ class Base(object):
                    (keytype, info['hexkeyid'], ucd(info['userid']),
                     misc.gpgkey_fingerprint_ascii(info),
                     keyurl.replace("file://", "")))
-        self.logger.critical("%s", msg)
+        logger.critical("%s", msg)
 
     def getKeyForPackage(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
@@ -1745,7 +1746,7 @@ class Base(object):
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
                     msg = _('GPG key at %s (0x%s) is already installed')
-                    self.logger.info(msg, keyurl, info['hexkeyid'])
+                    logger.info(msg, keyurl, info['hexkeyid'])
                     continue
 
                 if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
@@ -1782,7 +1783,7 @@ class Base(object):
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
                     raise dnf.exceptions.Error(_prov_key_data(msg))
-                self.logger.info(_('Key imported successfully'))
+                logger.info(_('Key imported successfully'))
                 key_installed = True
 
         if not key_installed and user_cb_fail:
@@ -1800,7 +1801,7 @@ class Base(object):
         result, errmsg = self.sigCheckPkg(po)
         if result != 0:
             msg = _("Import of key(s) didn't help, wrong key(s)?")
-            self.logger.info(msg)
+            logger.info(msg)
             errmsg = ucd(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
 
@@ -1840,7 +1841,7 @@ class Base(object):
                 keyids = misc.return_keyids_from_pubring(destdir)
                 if hex(int(info['keyid']))[2:-1].upper() in keyids:
                     msg = _('GPG key at %s (0x%s) is already imported')
-                    self.logger.info(msg, keyurl, info['hexkeyid'])
+                    logger.info(msg, keyurl, info['hexkeyid'])
                     key_installed = True
                     continue
                 # Try installing/updating GPG key
@@ -1888,7 +1889,7 @@ class Base(object):
                 if not result:
                     msg = _('Key %s import failed') % info['hexkeyid']
                     raise dnf.exceptions.Error(_prov_key_data(msg))
-                self.logger.info(_('Key imported successfully'))
+                logger.info(_('Key imported successfully'))
                 key_installed = True
                 # write out the key id to imported_cakeys in the repos basedir
                 if is_cakey and key_installed:

@@ -29,15 +29,16 @@ import dnf.cli
 import dnf.const
 import dnf.exceptions
 import dnf.i18n
-import dnf.logging
 import dnf.util
 import dnf.yum.config
 import functools
 import locale
+import logging
 import operator
 import os
 import time
 
+logger = logging.getLogger('dnf')
 _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'
 _RPM_REBUILDDB = _("To fix inconsistent RPMDB, try running: '%s'.") % \
@@ -50,8 +51,8 @@ def err_mini_usage(cli, basecmd):
         return
     cmd = cli.cli_commands[basecmd]
     txt = cli.cli_commands["help"]._makeOutput(cmd)
-    cli.logger.critical(_(' Mini usage:\n'))
-    cli.logger.critical(txt)
+    logger.critical(_(' Mini usage:\n'))
+    logger.critical(txt)
 
 def checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
@@ -79,8 +80,8 @@ will install it for you.
 
 For more information contact your distribution or package provider.
 """)
-                base.logger.critical(msg)
-                base.logger.critical(_("Problem repository: %s"), repo)
+                logger.critical(msg)
+                logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
 def checkPackageArg(cli, basecmd, extcmds):
@@ -93,7 +94,7 @@ def checkPackageArg(cli, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        cli.logger.critical(
+        logger.critical(
                 _('Error: Need to pass a list of pkgs to %s') % basecmd)
         err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
@@ -110,7 +111,7 @@ def checkItemArg(cli, basecmd, extcmds):
     :raises: :class:`cli.CliError`
     """
     if len(extcmds) == 0:
-        cli.logger.critical(_('Error: Need an item to match'))
+        logger.critical(_('Error: Need an item to match'))
         err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 
@@ -293,7 +294,7 @@ class EraseCommand(Command):
             try:
                 self.base.remove(pkg_spec)
             except dnf.exceptions.MarkingError:
-                self.base.logger.info(_('No match for argument: %s'),
+                logger.info(_('No match for argument: %s'),
                                       pkg_spec)
             else:
                 done = True
@@ -321,7 +322,7 @@ class MakeCacheCommand(Command):
 
     def run(self, extcmds):
         msg = _("Making cache files for all metadata files.")
-        self.base.logger.debug(msg)
+        logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
         timer = 'timer' == dnf.util.first(extcmds)
         persistor = self.base._persistor
@@ -329,38 +330,38 @@ class MakeCacheCommand(Command):
             if dnf.util.on_ac_power() is False:
                 msg = _('Metadata timer caching disabled '
                         'when running on a battery.')
-                self.base.logger.info(msg)
+                logger.info(msg)
                 return False
             if period <= 0:
                 msg = _('Metadata timer caching disabled.')
-                self.base.logger.info(msg)
+                logger.info(msg)
                 return False
             since_last_makecache = persistor.since_last_makecache()
             if since_last_makecache is not None and since_last_makecache < period:
-                self.base.logger.info(_('Metadata cache refreshed recently.'))
+                logger.info(_('Metadata cache refreshed recently.'))
                 return False
             self.base.repos.all().max_mirror_tries = 1
 
         for r in self.base.repos.iter_enabled():
             (is_cache, expires_in) = r.metadata_expire_in()
             if not is_cache or expires_in <= 0:
-                self.base.logger.debug("%s: has expired and will be "
+                logger.debug("%s: has expired and will be "
                                           "refreshed." % r.id)
                 r.md_expire_cache()
             elif timer and expires_in < period:
                 # expires within the checking period:
                 msg = "%s: metadata will expire after %d seconds " \
                     "and will be refreshed now" % (r.id, expires_in)
-                self.base.logger.debug(msg)
+                logger.debug(msg)
                 r.md_expire_cache()
             else:
-                self.base.logger.debug("%s: will expire after %d "
+                logger.debug("%s: will expire after %d "
                                           "seconds." % (r.id, expires_in))
 
         if timer:
             persistor.reset_last_makecache()
         self.base.fill_sack() # performs the md sync
-        self.base.logger.info(_('Metadata cache created.'))
+        logger.info(_('Metadata cache created.'))
         return True
 
 class ProvidesCommand(Command):
@@ -383,7 +384,7 @@ class ProvidesCommand(Command):
         checkItemArg(self.cli, basecmd, extcmds)
 
     def run(self, extcmds):
-        self.base.logger.debug("Searching Packages: ")
+        logger.debug("Searching Packages: ")
         return self.base.provides(extcmds)
 
 class CheckUpdateCommand(Command):
@@ -518,7 +519,7 @@ class RepoPkgsCommand(Command):
                 try:
                     self.base.install('*', reponame)
                 except dnf.exceptions.MarkingError:
-                    self.base.logger.info(_('No package available.'))
+                    logger.info(_('No package available.'))
                 else:
                     done = True
             else:
@@ -528,7 +529,7 @@ class RepoPkgsCommand(Command):
                         self.base.install(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
                         msg = _('No package %s%s%s available.')
-                        self.base.logger.info(
+                        logger.info(
                             msg, self.output.term.MODE['bold'],
                             pkg_spec, self.output.term.MODE['normal'])
                     else:
@@ -594,9 +595,9 @@ class RepoPkgsCommand(Command):
                 try:
                     self.base.reinstall('*', new_reponame=reponame)
                 except dnf.exceptions.PackagesNotInstalledError:
-                    self.base.logger.info(_('No package installed.'))
+                    logger.info(_('No package installed.'))
                 except dnf.exceptions.PackagesNotAvailableError:
-                    self.base.logger.info(_('No package available.'))
+                    logger.info(_('No package available.'))
                 except dnf.exceptions.MarkingError:
                     assert False, 'Only the above marking errors are expected.'
                 else:
@@ -608,7 +609,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, new_reponame=reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, pkg_spec)
+                        logger.info(msg, pkg_spec)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -616,7 +617,7 @@ class RepoPkgsCommand(Command):
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
                             msg = _('Installed package %s%s%s%s not available.')
-                            self.base.logger.info(
+                            logger.info(
                                 msg, self.output.term.MODE['bold'], pkg,
                                 self.output.term.MODE['normal'], xmsg)
                     except dnf.exceptions.MarkingError:
@@ -661,9 +662,9 @@ class RepoPkgsCommand(Command):
                     self.base.reinstall('*', reponame, reponame)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
-                    self.base.logger.info(msg)
+                    logger.info(msg)
                 except dnf.exceptions.PackagesNotAvailableError:
-                    self.base.logger.info(_('No package available.'))
+                    logger.info(_('No package available.'))
                 except dnf.exceptions.MarkingError:
                     assert False, 'Only the above marking errors are expected.'
                 else:
@@ -675,7 +676,7 @@ class RepoPkgsCommand(Command):
                         self.base.reinstall(pkg_spec, reponame, reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, pkg_spec)
+                        logger.info(msg, pkg_spec)
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
@@ -683,7 +684,7 @@ class RepoPkgsCommand(Command):
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
                             msg = _('Installed package %s%s%s%s not available.')
-                            self.base.logger.info(
+                            logger.info(
                                 msg, self.output.term.MODE['bold'], pkg,
                                 self.output.term.MODE['normal'], xmsg)
                     except dnf.exceptions.MarkingError:
@@ -776,7 +777,7 @@ class RepoPkgsCommand(Command):
                         remove_na=True)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
-                    self.base.logger.info(msg)
+                    logger.info(msg)
                 except dnf.exceptions.MarkingError:
                     assert False, 'Only the above marking error is expected.'
                 else:
@@ -790,7 +791,7 @@ class RepoPkgsCommand(Command):
                             new_reponame_neq=reponame, remove_na=True)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
-                        self.base.logger.info(msg, pkg_spec)
+                        logger.info(msg, pkg_spec)
                     except dnf.exceptions.MarkingError:
                         assert False, 'Only the above marking error is expected.'
                     else:
@@ -832,7 +833,7 @@ class RepoPkgsCommand(Command):
                     self.base.remove('*', reponame)
                 except dnf.exceptions.MarkingError:
                     msg = _('No package installed from the repository.')
-                    self.base.logger.info(msg)
+                    logger.info(msg)
                 else:
                     done = True
             else:
@@ -841,7 +842,7 @@ class RepoPkgsCommand(Command):
                     try:
                         self.base.remove(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
-                        self.base.logger.info(_('No match for argument: %s'),
+                        logger.info(_('No match for argument: %s'),
                                               pkg_spec)
                     else:
                         done = True
@@ -887,7 +888,7 @@ class RepoPkgsCommand(Command):
                     try:
                         self.base.upgrade(pkg_spec, reponame)
                     except dnf.exceptions.MarkingError:
-                        self.base.logger.info(_('No match for argument: %s'),
+                        logger.info(_('No match for argument: %s'),
                                               pkg_spec)
                     else:
                         done = True
@@ -913,7 +914,7 @@ class RepoPkgsCommand(Command):
             try:
                 self.parse_arguments(cli_args)
             except ValueError:
-                self.cli.logger.critical(
+                logger.critical(
                     _('Error: Requires at least one package specification'))
                 raise dnf.cli.CliError('a package specification required')
 
@@ -984,7 +985,7 @@ class RepoPkgsCommand(Command):
         try:
             _repo, subcmd, subargs = self.parse_extcmds(extcmds)
         except ValueError:
-            self.cli.logger.critical(
+            logger.critical(
                 _('Error: Requires a repo ID and a valid sub-command'))
             dnf.cli.commands.err_mini_usage(self.cli, basecmd)
             raise dnf.cli.CliError('a repo ID and a valid sub-command required')
@@ -1060,7 +1061,7 @@ class HelpCommand(Command):
     def run(self, extcmds):
         if extcmds[0] in self.cli.cli_commands:
             command = self.cli.cli_commands[extcmds[0]]
-            self.base.logger.info(self._makeOutput(command))
+            logger.info(self._makeOutput(command))
 
 class HistoryCommand(Command):
     """A class containing methods needed by the cli to execute the
@@ -1129,9 +1130,9 @@ class HistoryCommand(Command):
             extcmd, = extcmds
         except ValueError:
             if not extcmds:
-                self.base.logger.critical(_('No transaction ID given'))
+                logger.critical(_('No transaction ID given'))
             elif len(extcmds) > 1:
-                self.base.logger.critical(_('Found more than one transaction ID!'))
+                logger.critical(_('Found more than one transaction ID!'))
             return 1, ['Failed history undo']
 
         try:
@@ -1145,9 +1146,9 @@ class HistoryCommand(Command):
             extcmd, = extcmds
         except ValueError:
             if not extcmds:
-                self.base.logger.critical(_('No transaction ID given'))
+                logger.critical(_('No transaction ID given'))
             elif len(extcmds) > 1:
-                self.base.logger.critical(_('Found more than one transaction ID!'))
+                logger.critical(_('Found more than one transaction ID!'))
             return 1, ['Failed history rollback']
 
         try:
@@ -1193,7 +1194,7 @@ class HistoryCommand(Command):
     def _hcmd_userinstalled(self, extcmds):
         """Execute history userinstalled command."""
         if extcmds:
-            self.base.logger.critical(_('Unrecognized options "%s"!') %
+            logger.critical(_('Unrecognized options "%s"!') %
                                       ' '.join(extcmds))
             return 1, ['Failed history userinstalled']
 
@@ -1210,13 +1211,13 @@ class HistoryCommand(Command):
         """
         cmds = ('list', 'info', 'summary', 'undo', 'rollback', 'userinstalled')
         if extcmds and extcmds[0] not in cmds:
-            self.base.logger.critical(_('Invalid history sub-command, use: %s.'),
+            logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise dnf.cli.CliError
         if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
             checkGPGKey(self.base, self.cli)
         elif not os.access(self.base.history._db_file, os.R_OK):
-            self.base.logger.critical(_("You don't have access to the history DB."))
+            logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
 
     def run(self, extcmds):

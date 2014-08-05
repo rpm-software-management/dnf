@@ -44,6 +44,8 @@ import re
 import sys
 import time
 
+logger = logging.getLogger('dnf')
+
 
 def _make_lists(transaction):
     def tsi_cmp_key(tsi):
@@ -432,7 +434,6 @@ class Output(object):
     def __init__(self, base, conf):
         self.conf = conf
         self.base = base
-        self.logger = logging.getLogger("dnf")
         self.term = Term()
         self.progress = None
 
@@ -1169,20 +1170,18 @@ class Output(object):
             except Exception:
                 error = True
                 msg = _('There was an error calculating total download size')
-                self.logger.error(msg)
+                logger.error(msg)
                 break
 
         if not error:
             if locsize:
-                self.logger.info(_("Total size: %s"),
+                logger.info(_("Total size: %s"),
                                         format_number(totsize))
             if locsize != totsize:
-                self.logger.info(_("Total download size: %s"),
+                logger.info(_("Total download size: %s"),
                                         format_number(totsize - locsize))
             if installonly:
-                self.logger.info(
-                                        _("Installed size: %s"),
-                                        format_number(insize))
+                logger.info(_("Installed size: %s"), format_number(insize))
 
     def reportRemoveSize(self, packages):
         """Report the total size of packages being removed.
@@ -1201,10 +1200,10 @@ class Output(object):
             except Exception:
                 error = True
                 msg = _('There was an error calculating installed size')
-                self.logger.error(msg)
+                logger.error(msg)
                 break
         if not error:
-            self.logger.info(_("Installed size: %s"), format_number(totsize))
+            logger.info(_("Installed size: %s"), format_number(totsize))
 
     def list_group_transaction(self, comps, diff):
         if not diff:
@@ -1468,14 +1467,14 @@ Transaction Summary
             return
 
         width = _term_width()
-        self.logger.info("-" * width)
+        logger.info("-" * width)
         dl_time = max(0.01, time.time() - download_start_timestamp)
         msg = ' %5sB/s | %5sB %9s     ' % (
             format_number(remote_size // dl_time),
             format_number(remote_size),
             format_time(dl_time))
         msg = fill_exact_width(_("Total"), width - len(msg)) + msg
-        self.logger.info(msg)
+        logger.info(msg)
 
     def _history_uiactions(self, hpkgs):
         actions = set()
@@ -1586,7 +1585,7 @@ Transaction Summary
         for mtid in sorted(rtids):
             if mtid[0] < last_end:
                 msg = ('Skipping merged transaction %d to %d, as it overlaps')
-                self.logger.warn(msg, mtid[0], mtid[1])
+                logger.warn(msg, mtid[0], mtid[1])
                 continue # Don't do overlapping
             last_end = mtid[1]
             for num in range(mtid[0], mtid[1] + 1):
@@ -1596,7 +1595,7 @@ Transaction Summary
     def _history_list_transactions(self, extcmds):
         old = self.history.last()
         if old is None:
-            self.logger.critical(_('No transactions'))
+            logger.critical(_('No transactions'))
             return None, None
 
         tids = set()
@@ -1621,7 +1620,7 @@ Transaction Summary
             tids.update(self.history.search(pats))
 
         if not tids and usertids:
-            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            logger.critical(_('Bad transaction IDs, or package(s), given'))
             return None, None
         return tids, printall
 
@@ -1727,7 +1726,7 @@ Transaction Summary
         pats = []
         old = self.history.last()
         if old is None:
-            self.logger.critical(_('No transactions'))
+            logger.critical(_('No transactions'))
             return 1, ['Failed history info']
 
         for tid in extcmds[1:]:
@@ -1760,7 +1759,7 @@ Transaction Summary
                 utids.add(old.tid)
 
         if not tids:
-            self.logger.critical(_('No transaction ID, or package, given'))
+            logger.critical(_('No transaction ID, or package, given'))
             return 1, ['Failed history info']
 
         lastdbv = self.history.last()
@@ -2126,7 +2125,7 @@ Transaction Summary
             try:
                 int(tid)
             except ValueError:
-                self.logger.critical(_('Bad transaction ID given'))
+                logger.critical(_('Bad transaction ID given'))
                 return 1, ['Failed history addon-info']
 
         if tid is not None:
@@ -2134,11 +2133,11 @@ Transaction Summary
         else:
             old = [self.history.last(complete_transactions_only=False)]
             if old[0] is None:
-                self.logger.critical(_('No transaction ID, or package, given'))
+                logger.critical(_('No transaction ID, or package, given'))
                 return 1, ['Failed history addon-info']
 
         if not old:
-            self.logger.critical(_('No Transaction %s found') % tid)
+            logger.critical(_('No Transaction %s found') % tid)
             return 1, ['Failed history addon-info']
 
         hist_data = old[0]
@@ -2154,12 +2153,12 @@ Transaction Summary
 
         for item in extcmds[2:]:
             if item in addon_info:
-                self.logger.info('%s:', item)
+                logger.info('%s:', item)
                 print(self.history.return_addon_data(hist_data.tid, item), end='')
-                self.logger.info('')
+                logger.info('')
             else:
                 print(_('%s: No additional data found by this name') % item)
-            self.logger.info('')
+            logger.info('')
 
     def historyPackageListCmd(self, extcmds):
         """Print a list of information about transactions from history
@@ -2170,7 +2169,7 @@ Transaction Summary
         tids = self.history.search(extcmds)
         limit = None
         if extcmds and not tids:
-            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            logger.critical(_('Bad transaction IDs, or package(s), given'))
             return 1, ['Failed history packages-list']
         if not tids:
             limit = 20
@@ -2247,7 +2246,7 @@ Transaction Summary
         tids = self.history.search(extcmds)
         limit = None
         if extcmds and not tids:
-            self.logger.critical(_('Bad transaction IDs, or package(s), given'))
+            logger.critical(_('Bad transaction IDs, or package(s), given'))
             return 1, ['Failed history packages-info']
         if not tids:
             limit = 20
@@ -2318,7 +2317,6 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
 
     def __init__(self):
         """requires yum-cli log and errorlog functions as arguments"""
-        self.logger = logging.getLogger("dnf")
         self.loops = 0
 
     def pkg_added(self, pkg, mode):
@@ -2352,19 +2350,19 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
                     'dd': _('downgraded')}
         (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
         modeterm = modedict[mode]
-        self.logger.debug(_('---> Package %s.%s %s will be %s'), n, a, evr,
+        logger.debug(_('---> Package %s.%s %s will be %s'), n, a, evr,
                           modeterm)
 
     def start(self):
         """Perform setup at the beginning of the dependency solving
         process.
         """
-        self.logger.debug(_('--> Starting dependency resolution'))
+        logger.debug(_('--> Starting dependency resolution'))
         self.loops += 1
 
     def end(self):
         """Output a message stating that dependency resolution has finished."""
-        self.logger.debug(_('--> Finished dependency resolution'))
+        logger.debug(_('--> Finished dependency resolution'))
 
 class CliTransactionDisplay(LoggingTransactionDisplay):
     """A Yum specific callback class for RPM operations."""

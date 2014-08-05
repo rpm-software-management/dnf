@@ -28,6 +28,9 @@ import dnf.i18n
 import dnf.match_counter
 import dnf.util
 import hawkey
+import logging
+
+logger = logging.getLogger('dnf')
 
 
 class SearchCommand(commands.Command):
@@ -98,5 +101,5 @@ class SearchCommand(commands.Command):
         commands.checkItemArg(self.cli, basecmd, extcmds)
 
     def run(self, extcmds):
-        self.base.logger.debug(_('Searching Packages: '))
+        logger.debug(_('Searching Packages: '))
         return self._search(extcmds)

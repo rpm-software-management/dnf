@@ -28,6 +28,7 @@ import dnf.goal
 import dnf.repo
 import dnf.repodict
 import os
+import tests.support
 import unittest
 
 VERSIONS_OUTPUT="""\
@@ -37,6 +38,7 @@ VERSIONS_OUTPUT="""\
   Installed: tour-0:5-0.noarch at 1970-01-01 00:00
   Built    :  at 1970-01-01 00:00
 """
+
 
 class VersionStringTest(TestCase):
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
@@ -50,6 +52,8 @@ class VersionStringTest(TestCase):
                            if mc[0] == 'write'])
         self.assertEqual(written, VERSIONS_OUTPUT)
 
+
+@mock.patch('dnf.cli.cli.logger', new_callable=tests.support.mock_logger)
 class BaseCliTest(support.ResultTestCase):
     def setUp(self):
         self._base = dnf.cli.cli.BaseCli()
@@ -61,29 +65,28 @@ class BaseCliTest(support.ResultTestCase):
         main_repo.enable()
         self._base.repos.add(main_repo)
 
-        self._base.logger = mock.create_autospec(self._base.logger)
         self._base.output.term = support.MockTerminal()
         self._base.downgrade = mock.Mock(wraps=self._base.downgrade)
 
     @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
-    def test_downgradePkgs(self):
+    def test_downgradePkgs(self, logger):
         self._base.downgradePkgs(('tour',))
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('tour')])
-        self.assertEqual(self._base.logger.mock_calls, [])
+        self.assertEqual(logger.mock_calls, [])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_downgradePkgs_notfound(self):
+    def test_downgradePkgs_notfound(self, logger):
         with self.assertRaises(dnf.exceptions.Error) as ctx:
             self._base.downgradePkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('non-existent')])
-        self.assertEqual(self._base.logger.mock_calls,
+        self.assertEqual(logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '', 'non-existent', '')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    def test_downgradePkgs_notinstalled(self):
+    def test_downgradePkgs_notinstalled(self, logger):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
 
         with self.assertRaises(dnf.exceptions.Error) as ctx:
@@ -91,33 +94,34 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('lotus')])
-        self.assertEqual(self._base.logger.mock_calls,
+        self.assertEqual(logger.mock_calls,
                          [mock.call.info('No match for available package: %s', pkg)] * 2)
 
-    def test_transaction_id_or_offset_bad(self):
+    def test_transaction_id_or_offset_bad(self, _):
         """Test transaction_id_or_offset with a bad input."""
         self.assertRaises(ValueError,
                           dnf.cli.cli.BaseCli.transaction_id_or_offset, 'bad')
 
-    def test_transaction_id_or_offset_last(self):
+    def test_transaction_id_or_offset_last(self, _):
         """Test transaction_id_or_offset with the zero offset."""
         id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last')
         self.assertEqual(id_or_offset, -1)
 
-    def test_transaction_id_or_offset_negativeid(self):
+    def test_transaction_id_or_offset_negativeid(self, _):
         """Test transaction_id_or_offset with a negative ID."""
         self.assertRaises(ValueError,
                           dnf.cli.cli.BaseCli.transaction_id_or_offset, '-1')
 
-    def test_transaction_id_or_offset_offset(self):
+    def test_transaction_id_or_offset_offset(self, _):
         """Test transaction_id_or_offset with an offset."""
         id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last-1')
         self.assertEqual(id_or_offset, -2)
 
-    def test_transaction_id_or_offset_positiveid(self):
+    def test_transaction_id_or_offset_positiveid(self, _):
         """Test transaction_id_or_offset with a positive ID."""
         id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('1')
         self.assertEqual(id_or_offset, 1)
+
 
 @mock.patch('dnf.cli.cli.Cli.read_conf_file')
 class CliTest(TestCase):
