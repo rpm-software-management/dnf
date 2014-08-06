@@ -96,6 +96,13 @@ def _list_cmd_calc_columns(output, ypl):
     return (-columns[0], -columns[1], -columns[2])
 
 
+def cachedir_fit(conf):
+    subst = conf.substitutions
+    suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
+    cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
+    return cli_cache.cachedir, cli_cache.system_cachedir
+
+
 def print_versions(pkgs, base, output):
     def sm_ui_time(x):
         return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
@@ -731,13 +738,9 @@ class Cli(object):
         self.register_command(dnf.cli.commands.HistoryCommand)
 
     def _configure_cachedir(self):
-        # perform the CLI-specific cachedir tricks
+        """Set CLI-specific cachedir and its alternative."""
         conf = self.base.conf
-        subst = conf.substitutions
-        suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
-        cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
-        conf.cachedir = cli_cache.cachedir
-        self._system_cachedir = cli_cache.system_cachedir
+        conf.cachedir, self._system_cachedir = cachedir_fit(conf)
         logger.debug("cachedir: %s", conf.cachedir)
 
     def _configure_repos(self, opts):
