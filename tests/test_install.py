@@ -154,6 +154,9 @@ class MultilibBest(support.ResultTestCase):
         inst, _ = self.installed_removed(self.base)
         self.assertCountEqual(map(str, inst), ['lotus-3-16.x86_64'])
 
+        self.assertRaises(dnf.exceptions.MarkingError,
+                          self.base.install, "/not/exist/")
+
     def test_install_by_filename_glob(self):
         self.base.install("/*/be/there")
         (installed, _) = self.installed_removed(self.base)

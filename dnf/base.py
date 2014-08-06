@@ -1247,7 +1247,7 @@ class Base(object):
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
-            if not sltr:
+            if not sltr or not sltr.matches():
                 raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
@@ -1308,7 +1308,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-        if sltr:
+        if sltr and sltr.matches():
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
 
@@ -1350,7 +1350,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-            if not sltr:
+            if not sltr or not sltr.matches():
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
             self._goal.distupgrade(select=sltr)
