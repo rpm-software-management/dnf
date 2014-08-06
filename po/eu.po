@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dnf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-23 13:47+0200\n"
-"PO-Revision-Date: 2014-07-23 11:48+0000\n"
+"POT-Creation-Date: 2014-08-06 15:47+0200\n"
+"PO-Revision-Date: 2014-08-06 13:47+0000\n"
 "Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/dnf/language/eu/)\n"
 "MIME-Version: 1.0\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../dnf/persistor.py:160
+#: ../dnf/persistor.py:235
 msgid "Invalid groups database, clearing."
 msgstr ""
 
-#: ../dnf/persistor.py:179
+#: ../dnf/persistor.py:254
 msgid "Unsupported installed groups database found, resetting."
 msgstr ""
 
-#: ../dnf/persistor.py:248
+#: ../dnf/persistor.py:326
 #, python-format
 msgid "%s is empty file"
 msgstr ""
@@ -85,36 +85,36 @@ msgstr "%r biltegia: Errorea konfigurazioa analizatzean: %s"
 msgid "Repository %r is missing name in configuration, using id."
 msgstr ""
 
-#: ../dnf/conf/__init__.py:71
+#: ../dnf/conf/__init__.py:74
 #, python-format
 msgid "Could not set cachedir: %s"
 msgstr "Ezin izan da katxe-direktorioa ezarri: %s"
 
-#: ../dnf/yum/rpmtrans.py:107
+#: ../dnf/yum/rpmtrans.py:111
 msgid "Cleanup"
 msgstr "Garbitzen"
 
-#: ../dnf/yum/rpmtrans.py:108 ../dnf/cli/output.py:1239
+#: ../dnf/yum/rpmtrans.py:112 ../dnf/cli/output.py:946
 msgid "Downgrading"
 msgstr "Bertsio zaharra instalatzen"
 
-#: ../dnf/yum/rpmtrans.py:109
+#: ../dnf/yum/rpmtrans.py:113
 msgid "Erasing"
 msgstr "Ezabatzen"
 
-#: ../dnf/yum/rpmtrans.py:110 ../dnf/cli/output.py:1235
+#: ../dnf/yum/rpmtrans.py:114 ../dnf/cli/output.py:942
 msgid "Installing"
 msgstr "Instalatzen"
 
-#: ../dnf/yum/rpmtrans.py:111 ../dnf/cli/output.py:1944
+#: ../dnf/yum/rpmtrans.py:115 ../dnf/cli/output.py:1651
 msgid "Obsoleting"
 msgstr "Zaharkitutzat hartzen"
 
-#: ../dnf/yum/rpmtrans.py:112 ../dnf/cli/output.py:1237
+#: ../dnf/yum/rpmtrans.py:116 ../dnf/cli/output.py:944
 msgid "Reinstalling"
 msgstr "Berrinstalatzen"
 
-#: ../dnf/yum/rpmtrans.py:113 ../dnf/cli/output.py:1236
+#: ../dnf/yum/rpmtrans.py:117 ../dnf/cli/output.py:943
 msgid "Upgrading"
 msgstr "Eguneratzen"
 
@@ -303,410 +303,404 @@ msgstr "    Hasiera: %s - duela %s"
 msgid "    State  : %s"
 msgstr " Egoera : %s"
 
-#: ../dnf/cli/cli.py:114
+#: ../dnf/cli/cli.py:118
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Instalatua: %s-%s %s-(e)n"
 
-#: ../dnf/cli/cli.py:116
+#: ../dnf/cli/cli.py:120
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Eraikia    : %s %s-(e)n"
 
-#: ../dnf/cli/cli.py:148
+#: ../dnf/cli/cli.py:157
 msgid "Disk Requirements:\n"
 msgstr "Disko-eskakizunak:\n"
 
-#: ../dnf/cli/cli.py:155
+#: ../dnf/cli/cli.py:164
 msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr "Erroreen laburpena\n-------------\n"
 
-#: ../dnf/cli/cli.py:169
-msgid "Trying to run the transaction but nothing to do. Exiting."
-msgstr "Transakzioaren exekuzioa saiatzen baina ez dago egiteko ezer. Irteten."
+#: ../dnf/cli/cli.py:216
+msgid "Operation aborted."
+msgstr ""
 
-#: ../dnf/cli/cli.py:203
-msgid "Exiting on user Command"
-msgstr "Irteten erabiltzaile-komandoaren ondoren"
+#: ../dnf/cli/cli.py:218 ../dnf/cli/cli.py:380
+#: ../dnf/cli/commands/install.py:110 ../dnf/cli/commands/reinstall.py:101
+#: ../dnf/cli/commands/__init__.py:539 ../dnf/cli/commands/__init__.py:629
+#: ../dnf/cli/commands/__init__.py:696 ../dnf/cli/commands/__init__.py:742
+#: ../dnf/cli/commands/__init__.py:801
+msgid "Nothing to do."
+msgstr "Ez dago egiteko ezer."
 
-#: ../dnf/cli/cli.py:208
+#: ../dnf/cli/cli.py:223
 msgid "Downloading Packages:"
 msgstr "Paketeak deskargatzen:"
 
-#: ../dnf/cli/cli.py:214
+#: ../dnf/cli/cli.py:230
 #, python-format
 msgid ""
 "Error downloading packages:\n"
 "%s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:247
+#: ../dnf/cli/cli.py:241
+msgid "Complete!"
+msgstr "Osatua!"
+
+#: ../dnf/cli/cli.py:262
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr "Baztertzen gakoak automatikoki inportatzea arretarik gabe exekutatzen ari denean.\nErabili \"-y\" gainidazteko."
 
-#: ../dnf/cli/cli.py:287 ../dnf/cli/cli.py:440 ../dnf/cli/cli.py:446
+#: ../dnf/cli/cli.py:302 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
 msgid "Obsoleting Packages"
 msgstr "Paketeak zaharkitutzat hartzen"
 
-#: ../dnf/cli/cli.py:302 ../dnf/cli/commands/group.py:392
-#: ../dnf/cli/commands/upgrade.py:88 ../dnf/cli/commands/__init__.py:917
+#: ../dnf/cli/cli.py:317 ../dnf/cli/commands/group.py:390
+#: ../dnf/cli/commands/upgrade.py:91 ../dnf/cli/commands/__init__.py:897
 msgid "No packages marked for upgrade."
 msgstr "Ez da paketerik markatu eguneratzeko."
 
-#: ../dnf/cli/cli.py:324
+#: ../dnf/cli/cli.py:339
 msgid "No packages marked for distribution synchronization."
 msgstr ""
 
-#: ../dnf/cli/cli.py:355 ../dnf/cli/cli.py:683 ../dnf/cli/cli.py:712
-#: ../dnf/cli/commands/install.py:99 ../dnf/cli/commands/__init__.py:551
+#: ../dnf/cli/cli.py:370 ../dnf/cli/cli.py:664 ../dnf/cli/cli.py:693
+#: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/__init__.py:531
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "%s%s%s paketea ez dago eskuragarri."
 
-#: ../dnf/cli/cli.py:360
+#: ../dnf/cli/cli.py:375
 #, python-format
 msgid "No match for available package: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:365 ../dnf/cli/main.py:158
-#: ../dnf/cli/commands/install.py:107 ../dnf/cli/commands/reinstall.py:99
-#: ../dnf/cli/commands/__init__.py:559 ../dnf/cli/commands/__init__.py:649
-#: ../dnf/cli/commands/__init__.py:716 ../dnf/cli/commands/__init__.py:762
-#: ../dnf/cli/commands/__init__.py:821
-msgid "Nothing to do."
-msgstr "Ez dago egiteko ezer."
-
-#: ../dnf/cli/cli.py:416
+#: ../dnf/cli/cli.py:431
 msgid "Installed Packages"
 msgstr "Instalatutako paketeak"
 
-#: ../dnf/cli/cli.py:424
+#: ../dnf/cli/cli.py:439
 msgid "Available Packages"
 msgstr "Pakete eskuragarriak"
 
-#: ../dnf/cli/cli.py:428
+#: ../dnf/cli/cli.py:443
 msgid "Extra Packages"
 msgstr "Pakete gehigarriak"
 
-#: ../dnf/cli/cli.py:432
+#: ../dnf/cli/cli.py:447
 msgid "Upgraded Packages"
 msgstr "Eguneratutako paketeak"
 
-#: ../dnf/cli/cli.py:448
+#: ../dnf/cli/cli.py:463
 msgid "Recently Added Packages"
 msgstr "Berriki gehitutako paketeak"
 
-#: ../dnf/cli/cli.py:452
+#: ../dnf/cli/cli.py:467
 msgid "No matching Packages to list"
 msgstr "Ez dago bat datorren paketerik zerrendatzeko"
 
-#: ../dnf/cli/cli.py:562 ../dnf/cli/commands/search.py:82
+#: ../dnf/cli/cli.py:543
 msgid "No Matches found"
 msgstr "Ez da parekatzerik aurkitu"
 
-#: ../dnf/cli/cli.py:603 ../dnf/cli/commands/__init__.py:1153
-#: ../dnf/cli/commands/__init__.py:1169
+#: ../dnf/cli/cli.py:584 ../dnf/cli/commands/__init__.py:1133
+#: ../dnf/cli/commands/__init__.py:1149
 msgid "No transaction ID given"
 msgstr "Ez da transakzio-IDrik eman"
 
-#: ../dnf/cli/cli.py:612 ../dnf/cli/cli.py:620 ../dnf/cli/output.py:2090
+#: ../dnf/cli/cli.py:593 ../dnf/cli/cli.py:601 ../dnf/cli/output.py:1797
 msgid "Bad transaction ID given"
 msgstr "Transakzio-ID okerra eman da"
 
-#: ../dnf/cli/cli.py:628
+#: ../dnf/cli/cli.py:609
 msgid "Not found given transaction ID"
 msgstr "Ez da aurkitu emandako transakzio-IDarekin"
 
-#: ../dnf/cli/cli.py:637 ../dnf/cli/commands/__init__.py:1155
-#: ../dnf/cli/commands/__init__.py:1171
+#: ../dnf/cli/cli.py:618 ../dnf/cli/commands/__init__.py:1135
+#: ../dnf/cli/commands/__init__.py:1151
 msgid "Found more than one transaction ID!"
 msgstr "Transakzio-ID bat baino gehiago aurkitu da!"
 
-#: ../dnf/cli/cli.py:654
+#: ../dnf/cli/cli.py:635
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:656
+#: ../dnf/cli/cli.py:637
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:679 ../dnf/cli/cli.py:708
+#: ../dnf/cli/cli.py:660 ../dnf/cli/cli.py:689
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr ""
 
-#: ../dnf/cli/cli.py:770
+#: ../dnf/cli/cli.py:750
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr ""
 
-#: ../dnf/cli/cli.py:838
+#: ../dnf/cli/cli.py:818
 msgid "You need to give some command"
 msgstr "Komandoren bat eman behar duzu"
 
-#: ../dnf/cli/cli.py:845
+#: ../dnf/cli/cli.py:825
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Ez dago halako komandorik: %s. Erabili %s --help"
 
-#: ../dnf/cli/cli.py:947 ../dnf/cli/cli.py:951
+#: ../dnf/cli/cli.py:927 ../dnf/cli/cli.py:931
 #, python-format
 msgid "Config error: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1035
+#: ../dnf/cli/cli.py:1015
 msgid "releasever not given and can not be detected from the installroot."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1065
+#: ../dnf/cli/cli.py:1045
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "\"%s\" komandoa jadanik definitua"
 
-#: ../dnf/cli/main.py:76
+#: ../dnf/cli/main.py:77
 #, python-format
 msgid "Error: %s"
 msgstr "Errorea: %s"
 
-#: ../dnf/cli/main.py:96
+#: ../dnf/cli/main.py:97
 msgid "Terminated."
 msgstr "Amaitu da."
 
-#: ../dnf/cli/main.py:127
+#: ../dnf/cli/main.py:128
 msgid "No read/execute access in current directory, moving to /"
 msgstr ""
 
-#: ../dnf/cli/main.py:152
+#: ../dnf/cli/main.py:154
 msgid "Dependencies resolved."
 msgstr "Mendekotasunak ebatzi dira."
 
-#: ../dnf/cli/main.py:185
-msgid "Complete!"
-msgstr "Osatua!"
-
-#: ../dnf/cli/output.py:756
+#: ../dnf/cli/output.py:462
 msgid "Name"
-msgstr ""
+msgstr "Izena"
 
-#: ../dnf/cli/output.py:757 ../dnf/cli/output.py:1262
+#: ../dnf/cli/output.py:463 ../dnf/cli/output.py:969
 msgid "Arch"
 msgstr "Arkitektura"
 
-#: ../dnf/cli/output.py:759
+#: ../dnf/cli/output.py:465
 msgid "Epoch"
 msgstr ""
 
-#: ../dnf/cli/output.py:760 ../dnf/cli/output.py:1263
+#: ../dnf/cli/output.py:466 ../dnf/cli/output.py:970
 msgid "Version"
 msgstr "Bertsioa"
 
-#: ../dnf/cli/output.py:761
+#: ../dnf/cli/output.py:467
 msgid "Release"
-msgstr ""
+msgstr "Argitalpena"
 
-#: ../dnf/cli/output.py:762 ../dnf/cli/output.py:1264
+#: ../dnf/cli/output.py:468 ../dnf/cli/output.py:971
 msgid "Size"
 msgstr "Tamaina"
 
-#: ../dnf/cli/output.py:763
+#: ../dnf/cli/output.py:469
 msgid "Repo"
-msgstr ""
+msgstr "Biltegia"
 
-#: ../dnf/cli/output.py:765
+#: ../dnf/cli/output.py:471
 msgid "From repo"
-msgstr ""
+msgstr "Biltegitik"
 
-#: ../dnf/cli/output.py:770
+#: ../dnf/cli/output.py:476
 msgid "Buildtime"
 msgstr ""
 
-#: ../dnf/cli/output.py:772
+#: ../dnf/cli/output.py:478
 msgid "Install time"
 msgstr ""
 
-#: ../dnf/cli/output.py:780
+#: ../dnf/cli/output.py:486
 msgid "Installed by"
 msgstr ""
 
-#: ../dnf/cli/output.py:787
+#: ../dnf/cli/output.py:493
 msgid "Changed by"
 msgstr ""
 
-#: ../dnf/cli/output.py:788
+#: ../dnf/cli/output.py:494
 msgid "Summary"
-msgstr ""
+msgstr "Laburpena"
 
-#: ../dnf/cli/output.py:790
+#: ../dnf/cli/output.py:496
 msgid "URL"
-msgstr ""
+msgstr "URLa"
 
-#: ../dnf/cli/output.py:791
+#: ../dnf/cli/output.py:497
 msgid "License"
-msgstr ""
+msgstr "Lizentzia"
 
-#: ../dnf/cli/output.py:792
+#: ../dnf/cli/output.py:498
 msgid "Description"
 msgstr ""
 
-#: ../dnf/cli/output.py:912
+#: ../dnf/cli/output.py:618
 msgid "y"
 msgstr "b"
 
-#: ../dnf/cli/output.py:912
+#: ../dnf/cli/output.py:618
 msgid "yes"
 msgstr "bai"
 
-#: ../dnf/cli/output.py:913
+#: ../dnf/cli/output.py:619
 msgid "n"
 msgstr "e"
 
-#: ../dnf/cli/output.py:913
+#: ../dnf/cli/output.py:619
 msgid "no"
 msgstr "ez"
 
-#: ../dnf/cli/output.py:916
+#: ../dnf/cli/output.py:622
 msgid "Is this ok [y/N]: "
 msgstr "Ados? [b/E]:  "
 
-#: ../dnf/cli/output.py:919
+#: ../dnf/cli/output.py:625
 msgid "Is this ok [Y/n]: "
 msgstr "Ongi [Y/n]:"
 
-#: ../dnf/cli/output.py:995
+#: ../dnf/cli/output.py:701
 #, python-format
 msgid ""
 "\n"
 "Group: %s"
 msgstr "\nTaldea: %s"
 
-#: ../dnf/cli/output.py:999
+#: ../dnf/cli/output.py:705
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Talde-IDa: %s"
 
-#: ../dnf/cli/output.py:1001
+#: ../dnf/cli/output.py:707
 #, python-format
 msgid " Description: %s"
 msgstr " Deskribapena: %s"
 
-#: ../dnf/cli/output.py:1003
+#: ../dnf/cli/output.py:709
 #, python-format
 msgid " Language: %s"
 msgstr " Hizkuntza: %s"
 
-#: ../dnf/cli/output.py:1006
+#: ../dnf/cli/output.py:712
 msgid " Mandatory Packages:"
 msgstr " Derrigorrezko paketeak:"
 
-#: ../dnf/cli/output.py:1007
+#: ../dnf/cli/output.py:713
 msgid " Default Packages:"
 msgstr " Pakete lehenetsiak:"
 
-#: ../dnf/cli/output.py:1008
+#: ../dnf/cli/output.py:714
 msgid " Optional Packages:"
 msgstr " Hautazko paketeak:"
 
-#: ../dnf/cli/output.py:1009
+#: ../dnf/cli/output.py:715
 msgid " Conditional Packages:"
 msgstr " Baldintzapeko paketeak:"
 
-#: ../dnf/cli/output.py:1035
-#, python-format
-msgid "package: %s"
-msgstr "paketea: %s"
-
-#: ../dnf/cli/output.py:1037
-msgid "  No dependencies for this package"
-msgstr "  Ez dago mendekotasunik pakete honetarako"
-
-#: ../dnf/cli/output.py:1042
-#, python-format
-msgid "  dependency: %s"
-msgstr "  mendekotasuna: %s"
-
-#: ../dnf/cli/output.py:1044
-msgid "   Unsatisfied dependency"
-msgstr "   Bete gabeko mendekotasuna"
-
-#: ../dnf/cli/output.py:1083
+#: ../dnf/cli/output.py:761
 #, python-format
 msgid "Repo        : %s"
 msgstr "Biltegia        : %s"
 
-#: ../dnf/cli/output.py:1090
+#: ../dnf/cli/output.py:768
 msgid "Matched from:"
 msgstr "Bat-egitea hemendik:"
 
-#: ../dnf/cli/output.py:1094
+#: ../dnf/cli/output.py:772
 msgid "Description : "
 msgstr "Deskribapena: "
 
-#: ../dnf/cli/output.py:1097
+#: ../dnf/cli/output.py:775
 #, python-format
 msgid "URL         : %s"
 msgstr "URLa        : %s"
 
-#: ../dnf/cli/output.py:1100
+#: ../dnf/cli/output.py:778
 #, python-format
 msgid "License     : %s"
 msgstr "Lizentzia     : %s"
 
-#: ../dnf/cli/output.py:1103
+#: ../dnf/cli/output.py:781
 #, python-format
 msgid "Filename    : %s"
 msgstr "Fitxategi-izena    : %s"
 
-#: ../dnf/cli/output.py:1107
+#: ../dnf/cli/output.py:785
 msgid "Other       : "
 msgstr "Besterik       : "
 
-#: ../dnf/cli/output.py:1163
+#: ../dnf/cli/output.py:841
 msgid "There was an error calculating total download size"
 msgstr "Errorea gertatu da deskarga-tamaina osoa kalkulatzean"
 
-#: ../dnf/cli/output.py:1169
+#: ../dnf/cli/output.py:847
 #, python-format
 msgid "Total size: %s"
 msgstr "Tamaina osoa: %s"
 
-#: ../dnf/cli/output.py:1172
+#: ../dnf/cli/output.py:850
 #, python-format
 msgid "Total download size: %s"
 msgstr "Deskargaren tamaina osoa: %s"
 
-#: ../dnf/cli/output.py:1176 ../dnf/cli/output.py:1199
+#: ../dnf/cli/output.py:853 ../dnf/cli/output.py:875
 #, python-format
 msgid "Installed size: %s"
 msgstr "Tamaina instalatu ondoren: %s"
 
-#: ../dnf/cli/output.py:1195
+#: ../dnf/cli/output.py:871
 msgid "There was an error calculating installed size"
 msgstr "Errorea gertatu da instalatu ondoren duen tamaina kalkulatzean"
 
-#: ../dnf/cli/output.py:1238
+#: ../dnf/cli/output.py:884
+msgid "Marking installed:"
+msgstr ""
+
+#: ../dnf/cli/output.py:891
+msgid "Marking removed:"
+msgstr ""
+
+#: ../dnf/cli/output.py:901
+msgid "Group"
+msgstr ""
+
+#: ../dnf/cli/output.py:901
+msgid "Packages"
+msgstr ""
+
+#: ../dnf/cli/output.py:945
 msgid "Removing"
 msgstr "Kentzen"
 
-#: ../dnf/cli/output.py:1262 ../dnf/cli/output.py:2145
+#: ../dnf/cli/output.py:969 ../dnf/cli/output.py:1852
 msgid "Package"
 msgstr "Paketea"
 
-#: ../dnf/cli/output.py:1263
+#: ../dnf/cli/output.py:970
 msgid "Repository"
 msgstr "Biltegia"
 
-#: ../dnf/cli/output.py:1276
+#: ../dnf/cli/output.py:983
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     %s%s%s.%s %s ordezten\n"
 
-#: ../dnf/cli/output.py:1284
+#: ../dnf/cli/output.py:991
 #, python-format
 msgid ""
 "\n"
@@ -714,566 +708,562 @@ msgid ""
 "%s\n"
 msgstr "\nTransakzio-laburpena\n%s\n"
 
-#: ../dnf/cli/output.py:1289 ../dnf/cli/output.py:1940
-#: ../dnf/cli/output.py:1941
+#: ../dnf/cli/output.py:996 ../dnf/cli/output.py:1647
+#: ../dnf/cli/output.py:1648
 msgid "Install"
 msgstr "Instalatu"
 
-#: ../dnf/cli/output.py:1290 ../dnf/cli/output.py:1949
+#: ../dnf/cli/output.py:997 ../dnf/cli/output.py:1656
 msgid "Upgrade"
 msgstr "Eguneratu"
 
-#: ../dnf/cli/output.py:1291
+#: ../dnf/cli/output.py:998
 msgid "Remove"
 msgstr "Kendu"
 
-#: ../dnf/cli/output.py:1292 ../dnf/cli/output.py:1947
+#: ../dnf/cli/output.py:999 ../dnf/cli/output.py:1654
 msgid "Downgrade"
 msgstr "Bertsio zaharra instalatu"
 
-#: ../dnf/cli/output.py:1378
+#: ../dnf/cli/output.py:1085
 msgid "Reinstalled"
 msgstr "Berriro instalatua"
 
-#: ../dnf/cli/output.py:1379
+#: ../dnf/cli/output.py:1086
 msgid "Removed"
 msgstr "Kendua"
 
-#: ../dnf/cli/output.py:1380 ../dnf/cli/output.py:1785
-#: ../dnf/cli/output.py:1787
+#: ../dnf/cli/output.py:1087 ../dnf/cli/output.py:1492
+#: ../dnf/cli/output.py:1494
 msgid "Installed"
 msgstr "Instalatua"
 
-#: ../dnf/cli/output.py:1381 ../dnf/cli/output.py:1786
-#: ../dnf/cli/output.py:1950
+#: ../dnf/cli/output.py:1088 ../dnf/cli/output.py:1493
+#: ../dnf/cli/output.py:1657
 msgid "Upgraded"
 msgstr "Eguneratua"
 
-#: ../dnf/cli/output.py:1382 ../dnf/cli/output.py:1786
-#: ../dnf/cli/output.py:1948
+#: ../dnf/cli/output.py:1089 ../dnf/cli/output.py:1493
+#: ../dnf/cli/output.py:1655
 msgid "Downgraded"
 msgstr "Bertsio zaharra instalatua"
 
-#: ../dnf/cli/output.py:1438
+#: ../dnf/cli/output.py:1145
 msgid "Total"
 msgstr "Guztira"
 
-#: ../dnf/cli/output.py:1459
+#: ../dnf/cli/output.py:1166
 msgid "I"
 msgstr "I"
 
-#: ../dnf/cli/output.py:1460
+#: ../dnf/cli/output.py:1167
 msgid "O"
 msgstr "O"
 
-#: ../dnf/cli/output.py:1461
+#: ../dnf/cli/output.py:1168
 msgid "E"
 msgstr "E"
 
-#: ../dnf/cli/output.py:1462
+#: ../dnf/cli/output.py:1169
 msgid "R"
 msgstr "R"
 
-#: ../dnf/cli/output.py:1463
+#: ../dnf/cli/output.py:1170
 msgid "D"
 msgstr "D"
 
-#: ../dnf/cli/output.py:1464
+#: ../dnf/cli/output.py:1171
 msgid "U"
 msgstr "U"
 
-#: ../dnf/cli/output.py:1478
+#: ../dnf/cli/output.py:1185
 msgid "<unset>"
 msgstr "<ezarri gabea>"
 
-#: ../dnf/cli/output.py:1479
+#: ../dnf/cli/output.py:1186
 msgid "System"
 msgstr "Sistema"
 
-#: ../dnf/cli/output.py:1560 ../dnf/cli/output.py:1691
+#: ../dnf/cli/output.py:1267 ../dnf/cli/output.py:1398
 msgid "No transactions"
 msgstr "Ez dago transakziorik"
 
-#: ../dnf/cli/output.py:1585 ../dnf/cli/output.py:2134
-#: ../dnf/cli/output.py:2211
+#: ../dnf/cli/output.py:1292 ../dnf/cli/output.py:1841
+#: ../dnf/cli/output.py:1918
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Transakzio-ID, edo pakete, okerra(k) eman dira"
 
-#: ../dnf/cli/output.py:1632
+#: ../dnf/cli/output.py:1339
 msgid "Command line"
 msgstr "Komando-lerroa"
 
-#: ../dnf/cli/output.py:1634 ../dnf/cli/output.py:2022
+#: ../dnf/cli/output.py:1341 ../dnf/cli/output.py:1729
 msgid "Login user"
 msgstr "Saioa hasteko erabiltzailea"
 
-#: ../dnf/cli/output.py:1635 ../dnf/cli/output.py:2143
+#: ../dnf/cli/output.py:1342 ../dnf/cli/output.py:1850
 msgid "ID"
 msgstr "IDa"
 
-#: ../dnf/cli/output.py:1637
+#: ../dnf/cli/output.py:1344
 msgid "Date and time"
 msgstr "Data eta ordua"
 
-#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:2024
-#: ../dnf/cli/output.py:2144
+#: ../dnf/cli/output.py:1345 ../dnf/cli/output.py:1731
+#: ../dnf/cli/output.py:1851
 msgid "Action(s)"
 msgstr "Ekintza(k)"
 
-#: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:2025
+#: ../dnf/cli/output.py:1346 ../dnf/cli/output.py:1732
 msgid "Altered"
 msgstr "Aldatua"
 
-#: ../dnf/cli/output.py:1724 ../dnf/cli/output.py:2098
+#: ../dnf/cli/output.py:1431 ../dnf/cli/output.py:1805
 msgid "No transaction ID, or package, given"
 msgstr "Ez da transakzio-IDrik, edo paketerik, eman"
 
-#: ../dnf/cli/output.py:1785
+#: ../dnf/cli/output.py:1492
 msgid "Erased"
 msgstr "Ezabatua"
 
-#: ../dnf/cli/output.py:1787
+#: ../dnf/cli/output.py:1494
 msgid "Not installed"
 msgstr "Ez instalatua"
 
-#: ../dnf/cli/output.py:1788
+#: ../dnf/cli/output.py:1495
 msgid "Older"
 msgstr "Zaharragoa"
 
-#: ../dnf/cli/output.py:1788
+#: ../dnf/cli/output.py:1495
 msgid "Newer"
 msgstr "Berriagoa"
 
-#: ../dnf/cli/output.py:1825 ../dnf/cli/output.py:1827
-#: ../dnf/cli/output.py:2232
+#: ../dnf/cli/output.py:1532 ../dnf/cli/output.py:1534
+#: ../dnf/cli/output.py:1939
 msgid "Transaction ID :"
 msgstr "Transakzio-IDa :"
 
-#: ../dnf/cli/output.py:1829 ../dnf/cli/output.py:2234
+#: ../dnf/cli/output.py:1536 ../dnf/cli/output.py:1941
 msgid "Begin time     :"
 msgstr "Hasiera-ordua     :"
 
-#: ../dnf/cli/output.py:1832 ../dnf/cli/output.py:1834
+#: ../dnf/cli/output.py:1539 ../dnf/cli/output.py:1541
 msgid "Begin rpmdb    :"
 msgstr "Hasierako rpmdb-a    :"
 
-#: ../dnf/cli/output.py:1850
+#: ../dnf/cli/output.py:1557
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u segundo)"
 
-#: ../dnf/cli/output.py:1852
+#: ../dnf/cli/output.py:1559
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minutu)"
 
-#: ../dnf/cli/output.py:1854
+#: ../dnf/cli/output.py:1561
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u ordu)"
 
-#: ../dnf/cli/output.py:1856
+#: ../dnf/cli/output.py:1563
 #, python-format
 msgid "(%u days)"
 msgstr "(%u egun)"
 
-#: ../dnf/cli/output.py:1857
+#: ../dnf/cli/output.py:1564
 msgid "End time       :"
 msgstr "Amaiera-ordua       :"
 
-#: ../dnf/cli/output.py:1860 ../dnf/cli/output.py:1862
+#: ../dnf/cli/output.py:1567 ../dnf/cli/output.py:1569
 msgid "End rpmdb      :"
 msgstr "Amaierako rpmdb-a      :"
 
-#: ../dnf/cli/output.py:1865 ../dnf/cli/output.py:1867
+#: ../dnf/cli/output.py:1572 ../dnf/cli/output.py:1574
 msgid "User           :"
 msgstr "Erabiltzailea           :"
 
-#: ../dnf/cli/output.py:1871 ../dnf/cli/output.py:1874
-#: ../dnf/cli/output.py:1876 ../dnf/cli/output.py:1878
-#: ../dnf/cli/output.py:1880
+#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1581
+#: ../dnf/cli/output.py:1583 ../dnf/cli/output.py:1585
+#: ../dnf/cli/output.py:1587
 msgid "Return-Code    :"
 msgstr "Itzulera-kodea    :"
 
-#: ../dnf/cli/output.py:1871 ../dnf/cli/output.py:1876
+#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1583
 msgid "Aborted"
 msgstr "Abortatua"
 
-#: ../dnf/cli/output.py:1874
+#: ../dnf/cli/output.py:1581
 msgid "Failures:"
 msgstr "Hutsegiteak:"
 
-#: ../dnf/cli/output.py:1878
+#: ../dnf/cli/output.py:1585
 msgid "Failure:"
 msgstr "Hutsegitea:"
 
-#: ../dnf/cli/output.py:1880
+#: ../dnf/cli/output.py:1587
 msgid "Success"
 msgstr "Arrakasta"
 
-#: ../dnf/cli/output.py:1885 ../dnf/cli/output.py:1887
-#: ../dnf/cli/output.py:2263
+#: ../dnf/cli/output.py:1592 ../dnf/cli/output.py:1594
+#: ../dnf/cli/output.py:1970
 msgid "Command Line   :"
 msgstr "Komando-lerroa   :"
 
-#: ../dnf/cli/output.py:1896
+#: ../dnf/cli/output.py:1603
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Informazio gehigarri ez-lehenetsia gorde da: %d"
 
-#: ../dnf/cli/output.py:1901
+#: ../dnf/cli/output.py:1608
 msgid "Transaction performed with:"
 msgstr "Transakzioa honekin burutu da:"
 
-#: ../dnf/cli/output.py:1905
+#: ../dnf/cli/output.py:1612
 msgid "Packages Altered:"
 msgstr "Aldatutako paketeak:"
 
-#: ../dnf/cli/output.py:1909
+#: ../dnf/cli/output.py:1616
 msgid "Packages Skipped:"
 msgstr "Saltatutako paketeak:"
 
-#: ../dnf/cli/output.py:1917
+#: ../dnf/cli/output.py:1624
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb-arazoak:"
 
-#: ../dnf/cli/output.py:1928
+#: ../dnf/cli/output.py:1635
 msgid "Scriptlet output:"
 msgstr "Scriptlet-irteera:"
 
-#: ../dnf/cli/output.py:1934
+#: ../dnf/cli/output.py:1641
 msgid "Errors:"
 msgstr "Erroreak:"
 
-#: ../dnf/cli/output.py:1942
+#: ../dnf/cli/output.py:1649
 msgid "Dep-Install"
 msgstr "Mendekotasunak instalatu"
 
-#: ../dnf/cli/output.py:1943
+#: ../dnf/cli/output.py:1650
 msgid "Obsoleted"
 msgstr "Zaharkitua"
 
-#: ../dnf/cli/output.py:1945
+#: ../dnf/cli/output.py:1652
 msgid "Erase"
 msgstr "Ezabatu"
 
-#: ../dnf/cli/output.py:1946
+#: ../dnf/cli/output.py:1653
 msgid "Reinstall"
 msgstr "Berrinstalatu"
 
-#: ../dnf/cli/output.py:2023
+#: ../dnf/cli/output.py:1730
 msgid "Time"
 msgstr "Noiz"
 
-#: ../dnf/cli/output.py:2049
+#: ../dnf/cli/output.py:1756
 msgid "Last day"
 msgstr "Azken eguna"
 
-#: ../dnf/cli/output.py:2050
+#: ../dnf/cli/output.py:1757
 msgid "Last week"
 msgstr "Azken astea"
 
-#: ../dnf/cli/output.py:2051
+#: ../dnf/cli/output.py:1758
 msgid "Last 2 weeks"
 msgstr "Azken 2 asteak"
 
-#: ../dnf/cli/output.py:2052
+#: ../dnf/cli/output.py:1759
 msgid "Last 3 months"
 msgstr "Azken 3 hilabeteak"
 
-#: ../dnf/cli/output.py:2053
+#: ../dnf/cli/output.py:1760
 msgid "Last 6 months"
 msgstr "Azken 6 hilabeteak"
 
-#: ../dnf/cli/output.py:2054
+#: ../dnf/cli/output.py:1761
 msgid "Last year"
 msgstr "Azken urtea"
 
-#: ../dnf/cli/output.py:2055
+#: ../dnf/cli/output.py:1762
 msgid "Over a year ago"
 msgstr "Duela urtebete inguru"
 
-#: ../dnf/cli/output.py:2102
+#: ../dnf/cli/output.py:1809
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Ez da %s transakziorik aurkitu"
 
-#: ../dnf/cli/output.py:2108
+#: ../dnf/cli/output.py:1815
 msgid "Transaction ID:"
 msgstr "Transakzioaren IDa:"
 
-#: ../dnf/cli/output.py:2109
+#: ../dnf/cli/output.py:1816
 msgid "Available additional history information:"
 msgstr "Historia-informazio gehigarria eskuragarri:"
 
-#: ../dnf/cli/output.py:2122
+#: ../dnf/cli/output.py:1829
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Ez da datu gehigarririk aurkitu izen horrekin"
 
-#: ../dnf/cli/output.py:2235
+#: ../dnf/cli/output.py:1942
 msgid "Package        :"
 msgstr "Paketea:"
 
-#: ../dnf/cli/output.py:2236
+#: ../dnf/cli/output.py:1943
 msgid "State          :"
 msgstr "Egoera:"
 
-#: ../dnf/cli/output.py:2239
+#: ../dnf/cli/output.py:1946
 msgid "Size           :"
 msgstr "Tamaina:"
 
-#: ../dnf/cli/output.py:2241
+#: ../dnf/cli/output.py:1948
 msgid "Build host     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2244
+#: ../dnf/cli/output.py:1951
 msgid "Build time     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2246
+#: ../dnf/cli/output.py:1953
 msgid "Packager       :"
 msgstr "Paketatzailea:"
 
-#: ../dnf/cli/output.py:2248
+#: ../dnf/cli/output.py:1955
 msgid "Vendor         :"
 msgstr "Hornitzailea:"
 
-#: ../dnf/cli/output.py:2250
+#: ../dnf/cli/output.py:1957
 msgid "License        :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2252
+#: ../dnf/cli/output.py:1959
 msgid "URL            :"
 msgstr "URLa:"
 
-#: ../dnf/cli/output.py:2254
+#: ../dnf/cli/output.py:1961
 msgid "Source RPM     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2257
+#: ../dnf/cli/output.py:1964
 msgid "Commit Time    :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2259
+#: ../dnf/cli/output.py:1966
 msgid "Committer      :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2261
+#: ../dnf/cli/output.py:1968
 msgid "Reason         :"
 msgstr "Arrazoia:"
 
-#: ../dnf/cli/output.py:2265
+#: ../dnf/cli/output.py:1972
 msgid "From repo      :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2269
+#: ../dnf/cli/output.py:1976
 msgid "Installed by   :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2273
+#: ../dnf/cli/output.py:1980
 msgid "Changed by     :"
 msgstr ""
 
-#: ../dnf/cli/output.py:2305
+#: ../dnf/cli/output.py:2011
 msgid "installed"
 msgstr "instalatua"
 
-#: ../dnf/cli/output.py:2306
+#: ../dnf/cli/output.py:2012
 msgid "an upgrade"
 msgstr "eguneraketa bat"
 
-#: ../dnf/cli/output.py:2307
+#: ../dnf/cli/output.py:2013
 msgid "erased"
 msgstr "ezabatua"
 
-#: ../dnf/cli/output.py:2308
+#: ../dnf/cli/output.py:2014
 msgid "reinstalled"
 msgstr "berrinstalatua"
 
-#: ../dnf/cli/output.py:2309
+#: ../dnf/cli/output.py:2015
 msgid "a downgrade"
 msgstr "bertsio-zahartze bat"
 
-#: ../dnf/cli/output.py:2310
+#: ../dnf/cli/output.py:2016
 msgid "obsoleting"
 msgstr "zaharkitzen"
 
-#: ../dnf/cli/output.py:2311
+#: ../dnf/cli/output.py:2017
 msgid "upgraded"
 msgstr "eguneratua"
 
-#: ../dnf/cli/output.py:2312
+#: ../dnf/cli/output.py:2018
 msgid "obsoleted"
 msgstr "zaharkitua"
 
-#: ../dnf/cli/output.py:2313
+#: ../dnf/cli/output.py:2019
 msgid "downgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:2316
+#: ../dnf/cli/output.py:2022
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:2323
+#: ../dnf/cli/output.py:2029
 msgid "--> Starting dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2328
+#: ../dnf/cli/output.py:2034
 msgid "--> Finished dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2463
+#: ../dnf/cli/output.py:2169
 msgid "Verifying"
 msgstr "Egiaztatzen"
 
-#: ../dnf/cli/commands/install.py:38
+#: ../dnf/cli/commands/install.py:42
 msgid "Install a package or packages on your system"
 msgstr "Instalatu pakete bat edo gehiago zure sisteman"
 
-#: ../dnf/cli/commands/install.py:39 ../dnf/cli/commands/reinstall.py:39
-#: ../dnf/cli/commands/upgrade.py:38 ../dnf/cli/commands/distrosync.py:35
-#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:219
-#: ../dnf/cli/commands/__init__.py:243 ../dnf/cli/commands/__init__.py:289
-#: ../dnf/cli/commands/__init__.py:418
+#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/reinstall.py:43
+#: ../dnf/cli/commands/upgrade.py:42 ../dnf/cli/commands/distrosync.py:35
+#: ../dnf/cli/commands/upgradeto.py:32 ../dnf/cli/commands/downgrade.py:35
+#: ../dnf/cli/commands/__init__.py:223 ../dnf/cli/commands/__init__.py:269
+#: ../dnf/cli/commands/__init__.py:398
 msgid "PACKAGE"
-msgstr ""
+msgstr "PAKETEA"
 
-#: ../dnf/cli/commands/install.py:83
+#: ../dnf/cli/commands/install.py:87
 #, python-format
 msgid "Warning: Group '%s' does not exist."
 msgstr ""
 
-#: ../dnf/cli/commands/install.py:88
+#: ../dnf/cli/commands/install.py:92
 msgid "No packages in any requested group available to install or upgrade."
 msgstr ""
 
-#: ../dnf/cli/commands/reinstall.py:38
+#: ../dnf/cli/commands/reinstall.py:42
 msgid "reinstall a package"
 msgstr "Berrinstalatu pakete bat"
 
-#: ../dnf/cli/commands/reinstall.py:81 ../dnf/cli/commands/upgrade.py:82
-#: ../dnf/cli/commands/__init__.py:317 ../dnf/cli/commands/__init__.py:631
-#: ../dnf/cli/commands/__init__.py:698 ../dnf/cli/commands/__init__.py:813
-#: ../dnf/cli/commands/__init__.py:865 ../dnf/cli/commands/__init__.py:911
+#: ../dnf/cli/commands/reinstall.py:85 ../dnf/cli/commands/upgrade.py:86
+#: ../dnf/cli/commands/__init__.py:297 ../dnf/cli/commands/__init__.py:611
+#: ../dnf/cli/commands/__init__.py:678 ../dnf/cli/commands/__init__.py:793
+#: ../dnf/cli/commands/__init__.py:845 ../dnf/cli/commands/__init__.py:891
 #, python-format
 msgid "No match for argument: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/reinstall.py:88 ../dnf/cli/commands/__init__.py:638
-#: ../dnf/cli/commands/__init__.py:705
+#: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/__init__.py:618
+#: ../dnf/cli/commands/__init__.py:685
 #, python-format
 msgid " (from %s)"
 msgstr " (%s-(e)tik)"
 
-#: ../dnf/cli/commands/reinstall.py:89 ../dnf/cli/commands/__init__.py:639
-#: ../dnf/cli/commands/__init__.py:706
+#: ../dnf/cli/commands/reinstall.py:92 ../dnf/cli/commands/__init__.py:619
+#: ../dnf/cli/commands/__init__.py:686
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "%s%s%s%s pakete instalatua ez dago eskuragarri."
 
-#: ../dnf/cli/commands/group.py:44
+#: ../dnf/cli/commands/group.py:45
 msgid "Error: Need a group or list of groups"
 msgstr "Errorea: Talde bat edo taldeen zerrenda bat behar da"
 
-#: ../dnf/cli/commands/group.py:88
+#: ../dnf/cli/commands/group.py:89
 #, python-format
 msgid "No relevant match for the specified '%s'."
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:104
+#: ../dnf/cli/commands/group.py:105
 msgid "Display, or use, the groups information"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:105
+#: ../dnf/cli/commands/group.py:106
 msgid "GROUP"
-msgstr ""
+msgstr "TALDEA"
 
-#: ../dnf/cli/commands/group.py:142
+#: ../dnf/cli/commands/group.py:144
 msgid "No group data available for configured repositories."
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:189
-msgid "No Groups Available in any repository"
-msgstr "Ez dago talderik eskuragarri biltegietan"
-
-#: ../dnf/cli/commands/group.py:199
+#: ../dnf/cli/commands/group.py:196
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "Abisua: %s taldea ez da existitzen."
 
-#: ../dnf/cli/commands/group.py:228
+#: ../dnf/cli/commands/group.py:226
 #, python-format
 msgid "Warning: No groups match: %s"
 msgstr "Abisua: Ez dago taldeen bat etortzerik: %s"
 
-#: ../dnf/cli/commands/group.py:251
+#: ../dnf/cli/commands/group.py:249
 msgid "Available environment groups:"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:252
+#: ../dnf/cli/commands/group.py:250
 msgid "Installed environment groups:"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:258
+#: ../dnf/cli/commands/group.py:256
 msgid "Installed groups:"
 msgstr "Instalatutako taldeak:"
 
-#: ../dnf/cli/commands/group.py:265
+#: ../dnf/cli/commands/group.py:263
 msgid "Installed language groups:"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:272
+#: ../dnf/cli/commands/group.py:270
 msgid "Available groups:"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:279
+#: ../dnf/cli/commands/group.py:277
 msgid "Available language groups:"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:295
+#: ../dnf/cli/commands/group.py:293
 #, python-format
 msgid "Environments marked installed: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:300
+#: ../dnf/cli/commands/group.py:298
 #, python-format
 msgid "Groups marked installed: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:314
+#: ../dnf/cli/commands/group.py:312
 #, python-format
 msgid "Environments marked removed: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:319
+#: ../dnf/cli/commands/group.py:317
 #, python-format
 msgid "Groups marked removed: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:359
+#: ../dnf/cli/commands/group.py:357
 msgid "Installed Groups:"
 msgstr "Talde instalatuak:"
 
-#: ../dnf/cli/commands/group.py:366
+#: ../dnf/cli/commands/group.py:364
 msgid "Installed Language Groups:"
 msgstr "Instalatutako hizkuntza-taldeak:"
 
-#: ../dnf/cli/commands/group.py:373
+#: ../dnf/cli/commands/group.py:371
 msgid "Available Groups:"
 msgstr "Talde eskuragarriak:"
 
-#: ../dnf/cli/commands/group.py:380
+#: ../dnf/cli/commands/group.py:378
 msgid "Available Language Groups:"
 msgstr "Eskuragarri dauden hizkuntza-taldeak:"
 
-#: ../dnf/cli/commands/group.py:423
+#: ../dnf/cli/commands/group.py:421
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
 msgstr ""
 
-#: ../dnf/cli/commands/upgrade.py:37
+#: ../dnf/cli/commands/upgrade.py:41
 msgid "Upgrade a package or packages on your system"
 msgstr ""
 
@@ -1337,173 +1327,176 @@ msgstr "Metadatuen expire-cache garbitzen"
 msgid "Cleaning up cached rpmdb data"
 msgstr "Katxetutako rpmdb datuak garbitzen"
 
-#: ../dnf/cli/commands/repolist.py:33
+#: ../dnf/cli/commands/repolist.py:36
 msgid "unknown"
-msgstr ""
+msgstr "ezezaguna"
 
-#: ../dnf/cli/commands/repolist.py:35
+#: ../dnf/cli/commands/repolist.py:38
 #, python-format
 msgid "Never (last: %s)"
 msgstr "Inoiz ez (azkena: %s)"
 
-#: ../dnf/cli/commands/repolist.py:37
+#: ../dnf/cli/commands/repolist.py:40
 #, python-format
 msgid "Instant (last: %s)"
 msgstr "Berehala (azkena: %s)"
 
-#: ../dnf/cli/commands/repolist.py:40
+#: ../dnf/cli/commands/repolist.py:43
 #, python-format
 msgid "%s second(s) (last: %s)"
 msgstr "%s segundo (azkena: %s)"
 
-#: ../dnf/cli/commands/repolist.py:72
+#: ../dnf/cli/commands/repolist.py:75
 msgid "Display the configured software repositories"
 msgstr "Erakutsi konfiguratutako software-biltegiak"
 
-#: ../dnf/cli/commands/repolist.py:113 ../dnf/cli/commands/repolist.py:114
+#: ../dnf/cli/commands/repolist.py:116 ../dnf/cli/commands/repolist.py:117
 msgid "enabled"
 msgstr "gaitua"
 
-#: ../dnf/cli/commands/repolist.py:132 ../dnf/cli/commands/repolist.py:133
+#: ../dnf/cli/commands/repolist.py:135 ../dnf/cli/commands/repolist.py:136
 msgid "disabled"
 msgstr "desgaitua"
 
-#: ../dnf/cli/commands/repolist.py:148
+#: ../dnf/cli/commands/repolist.py:151
 msgid "Repo-id      : "
 msgstr "Biltegi-id      : "
 
-#: ../dnf/cli/commands/repolist.py:149
+#: ../dnf/cli/commands/repolist.py:152
 msgid "Repo-name    : "
 msgstr "Biltegi-izena      : "
 
-#: ../dnf/cli/commands/repolist.py:152
+#: ../dnf/cli/commands/repolist.py:155
 msgid "Repo-status  : "
 msgstr "Biltegi-egoera  : "
 
-#: ../dnf/cli/commands/repolist.py:155
+#: ../dnf/cli/commands/repolist.py:158
 msgid "Repo-revision: "
 msgstr "Biltegi-berrikuspena: "
 
-#: ../dnf/cli/commands/repolist.py:159
+#: ../dnf/cli/commands/repolist.py:162
 msgid "Repo-tags    : "
 msgstr "Biltegi-etiketak    : "
 
-#: ../dnf/cli/commands/repolist.py:164
+#: ../dnf/cli/commands/repolist.py:167
 msgid "Repo-distro-tags: "
 msgstr "Banaketa-biltegi-etiketak: "
 
-#: ../dnf/cli/commands/repolist.py:170
+#: ../dnf/cli/commands/repolist.py:173
 msgid "Repo-updated : "
 msgstr "Biltegi-eguneratua: "
 
-#: ../dnf/cli/commands/repolist.py:172
+#: ../dnf/cli/commands/repolist.py:175
 msgid "Repo-pkgs    : "
 msgstr "Biltegi-pkgs: "
 
-#: ../dnf/cli/commands/repolist.py:173
+#: ../dnf/cli/commands/repolist.py:176
 msgid "Repo-size    : "
 msgstr "Biltegi-tamaina: "
 
-#: ../dnf/cli/commands/repolist.py:176
+#: ../dnf/cli/commands/repolist.py:179
 msgid "Repo-metalink: "
 msgstr "Biltegi-metaesteka: "
 
-#: ../dnf/cli/commands/repolist.py:180
+#: ../dnf/cli/commands/repolist.py:183
 msgid "  Updated    : "
 msgstr "  Eguneratua    : "
 
-#: ../dnf/cli/commands/repolist.py:183
+#: ../dnf/cli/commands/repolist.py:186
 msgid "Repo-mirrors : "
 msgstr "Biltegi-ispiluak: "
 
-#: ../dnf/cli/commands/repolist.py:187 ../dnf/cli/commands/repolist.py:191
+#: ../dnf/cli/commands/repolist.py:190 ../dnf/cli/commands/repolist.py:194
 msgid "Repo-baseurl : "
 msgstr "Biltegi-baseurl: "
 
-#: ../dnf/cli/commands/repolist.py:194
+#: ../dnf/cli/commands/repolist.py:197
 msgid "Repo-expire  : "
 msgstr "Biltegi-iraungipena: "
 
-#: ../dnf/cli/commands/repolist.py:197
+#: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-exclude : "
 msgstr "Biltegi-baztertu: "
 
-#: ../dnf/cli/commands/repolist.py:201
+#: ../dnf/cli/commands/repolist.py:204
 msgid "Repo-include : "
 msgstr "Biltegi-barneratu: "
 
-#: ../dnf/cli/commands/repolist.py:205
+#: ../dnf/cli/commands/repolist.py:208
 msgid "Repo-excluded: "
 msgstr "Biltegi-baztertua: "
 
-#: ../dnf/cli/commands/repolist.py:209
+#: ../dnf/cli/commands/repolist.py:212
 msgid "Repo-filename: "
 msgstr "Biltegi-izena: "
 
-#: ../dnf/cli/commands/repolist.py:218 ../dnf/cli/commands/repolist.py:247
+#: ../dnf/cli/commands/repolist.py:220 ../dnf/cli/commands/repolist.py:249
 msgid "repo id"
 msgstr "biltegi id-a"
 
-#: ../dnf/cli/commands/repolist.py:235 ../dnf/cli/commands/repolist.py:236
+#: ../dnf/cli/commands/repolist.py:237 ../dnf/cli/commands/repolist.py:238
 #: ../dnf/cli/commands/repolist.py:254
 msgid "status"
 msgstr "egoera"
 
-#: ../dnf/cli/commands/repolist.py:248
+#: ../dnf/cli/commands/repolist.py:250
 msgid "repo name"
 msgstr "biltegi-izena"
+
+#: ../dnf/cli/commands/upgradeto.py:31
+msgid "Upgrade a package on your system to the specified version"
+msgstr ""
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "downgrade a package"
 msgstr "Pakete baten bertsio zaharragoa instalatu"
 
-#: ../dnf/cli/commands/search.py:39
+#: ../dnf/cli/commands/search.py:42
 msgid "Search package details for the given string"
 msgstr "Bilatu pakete-xehetasunak emandako katetik abiatuz"
 
-#: ../dnf/cli/commands/search.py:40
+#: ../dnf/cli/commands/search.py:43
 msgid "QUERY_STRING"
 msgstr ""
 
-#: ../dnf/cli/commands/search.py:62
+#: ../dnf/cli/commands/search.py:65
 #, python-format
 msgid "N/S Matched: %s"
 msgstr "N/S bat etortze: %s"
 
-#: ../dnf/cli/commands/search.py:64
+#: ../dnf/cli/commands/search.py:67
 #, python-format
 msgid "Matched: %s"
 msgstr "Bat dator: %s"
 
-#: ../dnf/cli/commands/search.py:81
-#, python-format
-msgid "Warning: No matches found for: %s"
-msgstr "Abisua: Ez da bat datorrenik aurkitu honentzako: %s"
+#: ../dnf/cli/commands/search.py:84
+msgid "No matches found."
+msgstr ""
 
-#: ../dnf/cli/commands/search.py:102
+#: ../dnf/cli/commands/search.py:104
 msgid "Searching Packages: "
 msgstr "Paketeak bilatzen: "
 
-#: ../dnf/cli/commands/__init__.py:41
+#: ../dnf/cli/commands/__init__.py:42
 #, python-format
 msgid "To diagnose the problem, try running: '%s'."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:43
+#: ../dnf/cli/commands/__init__.py:44
 #, python-format
 msgid "To fix inconsistent RPMDB, try running: '%s'."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:45
+#: ../dnf/cli/commands/__init__.py:46
 #, python-format
 msgid "If the above doesn't help please report this error at '%s'."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:53
+#: ../dnf/cli/commands/__init__.py:54
 msgid " Mini usage:\n"
 msgstr " Mini erabilera:\n"
 
-#: ../dnf/cli/commands/__init__.py:68
+#: ../dnf/cli/commands/__init__.py:69
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing.\n"
@@ -1520,386 +1513,374 @@ msgid ""
 "For more information contact your distribution or package provider.\n"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:83
+#: ../dnf/cli/commands/__init__.py:84
 #, python-format
 msgid "Problem repository: %s"
 msgstr "Arazoa duen biltegia:  %s"
 
-#: ../dnf/cli/commands/__init__.py:97
+#: ../dnf/cli/commands/__init__.py:98
 #, python-format
 msgid "Error: Need to pass a list of pkgs to %s"
 msgstr "Errorea: Pkgs-en zerrenda bat pasatu behar zaio %s-(e)ri"
 
-#: ../dnf/cli/commands/__init__.py:113
+#: ../dnf/cli/commands/__init__.py:114
 msgid "Error: Need an item to match"
 msgstr "Errorea: Bat datorren elementu bat behar da"
 
-#: ../dnf/cli/commands/__init__.py:132
+#: ../dnf/cli/commands/__init__.py:133
 msgid "There are no enabled repos."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:218
-msgid "Upgrade a package on your system to the specified version"
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:242
+#: ../dnf/cli/commands/__init__.py:222
 msgid "Display details about a package or group of packages"
 msgstr "Erakutsi pakete bati edo pakete-multzo bati buruzko xehetasunak"
 
-#: ../dnf/cli/commands/__init__.py:272
+#: ../dnf/cli/commands/__init__.py:252
 msgid "List a package or groups of packages"
 msgstr "Zerrendatu pakete bat edo pakete-multzo bat"
 
-#: ../dnf/cli/commands/__init__.py:288
+#: ../dnf/cli/commands/__init__.py:268
 msgid "Remove a package or packages from your system"
 msgstr "Kendu pakete bat edo gehiago zure sistematik"
 
-#: ../dnf/cli/commands/__init__.py:323 ../dnf/cli/commands/__init__.py:871
+#: ../dnf/cli/commands/__init__.py:303 ../dnf/cli/commands/__init__.py:851
 msgid "No packages marked for removal."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:331
+#: ../dnf/cli/commands/__init__.py:311
 msgid "Generate the metadata cache"
 msgstr "Sortu metadatuen katxea"
 
-#: ../dnf/cli/commands/__init__.py:344
+#: ../dnf/cli/commands/__init__.py:324
 msgid "Making cache files for all metadata files."
 msgstr "Katxe-fitxategiak egiten metadatu-fitxategi guztietarako"
 
-#: ../dnf/cli/commands/__init__.py:351
+#: ../dnf/cli/commands/__init__.py:331
 msgid "Metadata timer caching disabled when running on a battery."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:356
+#: ../dnf/cli/commands/__init__.py:336
 msgid "Metadata timer caching disabled."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:361
+#: ../dnf/cli/commands/__init__.py:341
 msgid "Metadata cache refreshed recently."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:384
+#: ../dnf/cli/commands/__init__.py:364
 msgid "Metadata cache created."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:394
+#: ../dnf/cli/commands/__init__.py:374
 msgid "Find what package provides the given value"
 msgstr "Aurkitu zein paketek hornitzen duen emandako balioaz"
 
-#: ../dnf/cli/commands/__init__.py:395
+#: ../dnf/cli/commands/__init__.py:375
 msgid "SOME_STRING"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:417
+#: ../dnf/cli/commands/__init__.py:397
 msgid "Check for available package upgrades"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:542 ../dnf/cli/commands/__init__.py:620
-#: ../dnf/cli/commands/__init__.py:687
+#: ../dnf/cli/commands/__init__.py:522 ../dnf/cli/commands/__init__.py:600
+#: ../dnf/cli/commands/__init__.py:667
 msgid "No package available."
 msgstr "Ez dago paketerik eskuragarri."
 
-#: ../dnf/cli/commands/__init__.py:618
+#: ../dnf/cli/commands/__init__.py:598
 msgid "No package installed."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:684 ../dnf/cli/commands/__init__.py:799
-#: ../dnf/cli/commands/__init__.py:855
+#: ../dnf/cli/commands/__init__.py:664 ../dnf/cli/commands/__init__.py:779
+#: ../dnf/cli/commands/__init__.py:835
 msgid "No package installed from the repository."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:938
+#: ../dnf/cli/commands/__init__.py:918
 msgid "Error: Requires at least one package specification"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:961
+#: ../dnf/cli/commands/__init__.py:941
 msgid "Run commands on top of all packages in given repository"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:964
+#: ../dnf/cli/commands/__init__.py:944
 msgid "REPO"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:964
+#: ../dnf/cli/commands/__init__.py:944
 msgid "ARG"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1009
+#: ../dnf/cli/commands/__init__.py:989
 msgid "Error: Requires a repo ID and a valid sub-command"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1036
+#: ../dnf/cli/commands/__init__.py:1016
 msgid "Display a helpful usage message"
 msgstr "Erakutsi erabilera-mezu laguntzailea"
 
-#: ../dnf/cli/commands/__init__.py:1037
+#: ../dnf/cli/commands/__init__.py:1017
 msgid "COMMAND"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1069
+#: ../dnf/cli/commands/__init__.py:1049
 #, python-format
 msgid "No help available for %s"
 msgstr "Ez dago laguntzarik %s-(e)rako"
 
-#: ../dnf/cli/commands/__init__.py:1074
+#: ../dnf/cli/commands/__init__.py:1054
 msgid ""
 "\n"
 "\n"
 "aliases: "
 msgstr "\n\naliasak: "
 
-#: ../dnf/cli/commands/__init__.py:1076
+#: ../dnf/cli/commands/__init__.py:1056
 msgid ""
 "\n"
 "\n"
 "alias: "
 msgstr "\n\naliasa: "
 
-#: ../dnf/cli/commands/__init__.py:1093
+#: ../dnf/cli/commands/__init__.py:1073
 msgid "Display, or use, the transaction history"
 msgstr "Erakutsi, edo erabili, transakzio-historia"
 
-#: ../dnf/cli/commands/__init__.py:1103
+#: ../dnf/cli/commands/__init__.py:1083
 #, python-format
 msgid ""
 "Cannot undo transaction %s, doing so would result in an inconsistent package"
 " database."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1107
+#: ../dnf/cli/commands/__init__.py:1087
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1189
+#: ../dnf/cli/commands/__init__.py:1169
 msgid "Transactions:"
 msgstr "Transakzioak:"
 
-#: ../dnf/cli/commands/__init__.py:1190
+#: ../dnf/cli/commands/__init__.py:1170
 msgid "Begin time  :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1191
+#: ../dnf/cli/commands/__init__.py:1171
 msgid "End time    :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1192
+#: ../dnf/cli/commands/__init__.py:1172
 msgid "Counts      :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1193
+#: ../dnf/cli/commands/__init__.py:1173
 msgid "  NEVRAC :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1194
+#: ../dnf/cli/commands/__init__.py:1174
 msgid "  NEVRA  :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1195
+#: ../dnf/cli/commands/__init__.py:1175
 msgid "  NA     :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1196
+#: ../dnf/cli/commands/__init__.py:1176
 msgid "  NEVR   :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1197
+#: ../dnf/cli/commands/__init__.py:1177
 msgid "  rpm DB :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1198
+#: ../dnf/cli/commands/__init__.py:1178
 msgid "  yum DB :"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1217
+#: ../dnf/cli/commands/__init__.py:1197
 #, python-format
 msgid "Unrecognized options \"%s\"!"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:1234
+#: ../dnf/cli/commands/__init__.py:1214
 #, python-format
 msgid "Invalid history sub-command, use: %s."
 msgstr "Baliogabeko historia-azpikomandoa, erabili: %s."
 
-#: ../dnf/cli/commands/__init__.py:1240
+#: ../dnf/cli/commands/__init__.py:1220
 msgid "You don't have access to the history DB."
 msgstr "Ez daukazu historiaren DBra sartzeko baimenik."
 
-#: ../dnf/base.py:99
+#: ../dnf/base.py:101
 #, python-format
 msgid "%s, disabling."
 msgstr ""
 
-#: ../dnf/base.py:277
+#: ../dnf/base.py:283
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Baliogabeko tsflag konfigurazio-fitxategian: %s"
 
-#: ../dnf/base.py:330
+#: ../dnf/base.py:336
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Taldeen fitxategiak biltegitik gehitzeak huts egin du: %s - %s"
 
-#: ../dnf/base.py:426
+#: ../dnf/base.py:432
 msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Behar ez diren gainerako mendekotasunak aurkitzen"
 
-#: ../dnf/base.py:485
+#: ../dnf/base.py:495
 msgid "Running transaction check"
 msgstr ""
 
-#: ../dnf/base.py:494
-msgid "ERROR You need to upgrade rpm to handle:"
+#: ../dnf/base.py:498
+msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:496
-msgid "ERROR with transaction check vs depsolve:"
-msgstr "ERROREA transakzio-egiaztapena eta depsolve artean:"
-
-#: ../dnf/base.py:502
-msgid "RPM needs to be upgraded"
-msgstr ""
-
-#: ../dnf/base.py:506
+#: ../dnf/base.py:504
 msgid "Transaction check succeeded."
 msgstr ""
 
-#: ../dnf/base.py:509
+#: ../dnf/base.py:507
 msgid "Running transaction test"
 msgstr ""
 
-#: ../dnf/base.py:521
+#: ../dnf/base.py:519
 msgid "Transaction check error:\n"
 msgstr ""
 
-#: ../dnf/base.py:528
+#: ../dnf/base.py:526
 msgid "Transaction test succeeded."
 msgstr ""
 
-#: ../dnf/base.py:543
+#: ../dnf/base.py:541
 msgid "Running transaction"
 msgstr ""
 
-#: ../dnf/base.py:617
+#: ../dnf/base.py:608
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr "Abisua: transakzioan zehar erroreak scriptlet-ekin edo beste errore ez-larri batzuk gertatu dira"
 
-#: ../dnf/base.py:623
+#: ../dnf/base.py:613
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr ""
 
-#: ../dnf/base.py:626 ../dnf/base.py:637
+#: ../dnf/base.py:616 ../dnf/base.py:627
 msgid "Could not run transaction."
 msgstr "Ezin izan da transakzioa exekutatu."
 
-#: ../dnf/base.py:634
+#: ../dnf/base.py:624
 msgid "Transaction couldn't start:"
 msgstr "Transakzioa ezin izan da abiarazi:"
 
-#: ../dnf/base.py:646
+#: ../dnf/base.py:636
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "%s transakzio-fitxategia kentzeak huts egin du"
 
-#: ../dnf/base.py:705
+#: ../dnf/base.py:693
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s instalatuko zela uste zen baina ez dago instalatuta!"
 
-#: ../dnf/base.py:765
+#: ../dnf/base.py:753
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s kenduko zela uste zen baina ez da kendu!"
 
-#: ../dnf/base.py:831
+#: ../dnf/base.py:819
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 
-#: ../dnf/base.py:879
+#: ../dnf/base.py:867
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s-(r)entzako gako publikoa ez dago instalatuta"
 
-#: ../dnf/base.py:883
+#: ../dnf/base.py:871
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Arazoa %s paketea irekitzen"
 
-#: ../dnf/base.py:891
+#: ../dnf/base.py:879
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s-(r)entzako gako publikoa ez da fidagarria"
 
-#: ../dnf/base.py:895
+#: ../dnf/base.py:883
 #, python-format
 msgid "Package %s is not signed"
 msgstr "%s paketea ez dago sinatuta"
 
-#: ../dnf/base.py:929
+#: ../dnf/base.py:917
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Ezin da %s kendu"
 
-#: ../dnf/base.py:933
+#: ../dnf/base.py:921
 #, python-format
 msgid "%s removed"
 msgstr "%s kendu da"
 
-#: ../dnf/base.py:1268
+#: ../dnf/base.py:1225
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr ""
 
-#: ../dnf/base.py:1389
+#: ../dnf/base.py:1346
 #, python-format
 msgid "No package %s installed."
 msgstr ""
 
-#: ../dnf/base.py:1525
+#: ../dnf/base.py:1482
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Bertsio zaharragoa instalatzeak huts egin du: %s"
 
-#: ../dnf/base.py:1542
+#: ../dnf/base.py:1499
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr ""
 
-#: ../dnf/base.py:1673
+#: ../dnf/base.py:1630
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "Gakoa atzitzen %s-(e)tik"
 
-#: ../dnf/base.py:1683
+#: ../dnf/base.py:1640
 #, python-format
 msgid "GPG key retrieval failed: %s"
 msgstr ""
 
-#: ../dnf/base.py:1704
+#: ../dnf/base.py:1661
 #, python-format
 msgid "GPG key signature on key %s does not match CA Key for repo: %s"
 msgstr "%s gakoaren GPG gako-sinadura ez dator bat biltegiaren CA gakoarekin: %s"
 
-#: ../dnf/base.py:1707
+#: ../dnf/base.py:1664
 msgid "GPG key signature verified against CA Key(s)"
 msgstr "GPG gako-sinadura CA gakoen aurka egiaztatu dira"
 
-#: ../dnf/base.py:1715
+#: ../dnf/base.py:1672
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "GPG gako baliogabea %s-(e)tik: %s"
 
-#: ../dnf/base.py:1723
+#: ../dnf/base.py:1680
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "GPG gakoaren analisiak huts egin du: gakoak ez dauka %s balioa"
 
-#: ../dnf/base.py:1740
+#: ../dnf/base.py:1697
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1909,7 +1890,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:1749
+#: ../dnf/base.py:1706
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1918,7 +1899,7 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:1777
+#: ../dnf/base.py:1734
 #, python-format
 msgid ""
 "\n"
@@ -1928,44 +1909,44 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:1791
+#: ../dnf/base.py:1748
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s-(e)ko GPG gakoa (0x%s) jadanik instalatuta dago"
 
-#: ../dnf/base.py:1827
+#: ../dnf/base.py:1784
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Gakoaren inportazioak huts egin du (%d kodea)"
 
-#: ../dnf/base.py:1829 ../dnf/base.py:1935
+#: ../dnf/base.py:1786 ../dnf/base.py:1892
 msgid "Key imported successfully"
 msgstr "Gakoa ongi inportatu da"
 
-#: ../dnf/base.py:1833
+#: ../dnf/base.py:1790
 msgid "Didn't install any keys"
 msgstr "Ez da gakorik instalatu"
 
-#: ../dnf/base.py:1836
+#: ../dnf/base.py:1793
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr "\"%s\" biltegirako zerrendatu diren GPG gakoak jadanik instalatuta daude, baina ez dira zuzenak pakete honetarako.\nEgiaztatu gako URL zuzena konfiguratuta dagoela biltegi honetarako."
 
-#: ../dnf/base.py:1846
+#: ../dnf/base.py:1803
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Gako(ar)en inportazioak ez du balio izan, gako okerra(k)?"
 
-#: ../dnf/base.py:1869
+#: ../dnf/base.py:1826
 msgid "No"
 msgstr ""
 
-#: ../dnf/base.py:1871
+#: ../dnf/base.py:1828
 msgid "Yes"
 msgstr ""
 
-#: ../dnf/base.py:1872
+#: ../dnf/base.py:1829
 #, python-format
 msgid ""
 "\n"
@@ -1976,22 +1957,22 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:1886
+#: ../dnf/base.py:1843
 #, python-format
 msgid "GPG key at %s (0x%s) is already imported"
 msgstr "%s (0x%s)-(e)ko GPG gakoa jadanik inportatuta dago"
 
-#: ../dnf/base.py:1933
+#: ../dnf/base.py:1890
 #, python-format
 msgid "Key %s import failed"
 msgstr ""
 
-#: ../dnf/base.py:1950
+#: ../dnf/base.py:1907
 #, python-format
 msgid "Didn't install any keys for repo %s"
 msgstr "Ez da gakorik instalatu %s biltegirako"
 
-#: ../dnf/base.py:1955
+#: ../dnf/base.py:1912
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
