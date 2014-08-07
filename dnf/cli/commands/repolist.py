@@ -200,9 +200,9 @@ class RepoListCommand(commands.Command):
                     out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
                                                ", ".join(repo.exclude))]
 
-                if repo.includepkgs:
+                if repo.include:
                     out += [self.output.fmtKeyValFill(_("Repo-include : "),
-                                               ", ".join(repo.includepkgs))]
+                                               ", ".join(repo.include))]
 
                 if ui_excludes_num:
                     out += [self.output.fmtKeyValFill(_("Repo-excluded: "),

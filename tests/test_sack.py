@@ -33,25 +33,33 @@ class SackTest(support.TestCase):
         self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 
-    def test_setup_excludes(self):
+    def test_setup_excludes_includes(self):
         base = support.MockBase()
         base.conf.exclude=['pepper']
-        base._setup_excludes()
+        base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
         base = support.MockBase()
         base.conf.disable_excludes = ['all']
         base.conf.exclude=['pepper']
-        base._setup_excludes()
+        base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
         base = support.MockBase('main')
         base.repos['main'].exclude=['pepp*']
-        base._setup_excludes()
+        base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
+
+        base = support.MockBase()
+        base.conf.exclude = ['*.i?86']
+        base.conf.include = ['lib*']
+        base._setup_excludes_includes()
+        peppers = base.sack.query().filter().run()
+        self.assertLength(peppers, 1)
+        self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
     def test_add_repo_to_sack(self):
         def raiser():
