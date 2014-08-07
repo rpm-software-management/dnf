@@ -113,7 +113,7 @@ class Base(object):
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
                                  load_presto=repo.deltarpm)
 
-    def _setup_excludes(self):
+    def _setup_excludes_includes(self):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
             return
@@ -122,6 +122,10 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
+            for incl in self.conf.include:
+                subj = dnf.subject.Subject(incl)
+                pkgs = subj.get_best_query(self.sack)
+                self.sack.add_includes(pkgs)
         for r in self.repos.iter_enabled():
             if r.id in disabled:
                 continue
@@ -129,6 +133,10 @@ class Base(object):
                 pkgs = self.sack.query().filter(reponame=r.id).\
                     filter_autoglob(name=excl)
                 self.sack.add_excludes(pkgs)
+            for incl in r.include:
+                pkgs = self.sack.query().filter(reponame=r.id).\
+                    filter_autoglob(name=incl)
+                self.sack.add_includes(pkgs)
 
     def _store_persistent_data(self):
         def check_expired(repo):
@@ -202,7 +210,7 @@ class Base(object):
                     self._add_repo_to_sack(r.id)
         conf = self.conf
         self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
-        self._setup_excludes()
+        self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         return self._sack

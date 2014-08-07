@@ -745,6 +745,7 @@ class YumConf(BaseConfig):
     debug_solver = BoolOption(False)
 
     exclude = ListOption()
+    include = ListOption()
     fastestmirror = BoolOption(False)
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True) #:api
     proxy_username = Option() #:api
@@ -899,7 +900,7 @@ class RepoConf(BaseConfig):
     gpgkey = UrlListOption()
     gpgcakey = UrlListOption()
     exclude = ListOption()
-    includepkgs = ListOption()
+    include = ListOption()
 
     fastestmirror = Inherit(YumConf.fastestmirror)
     proxy = Inherit(YumConf.proxy) #:api
