@@ -19,8 +19,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
-
 import dnf.util
+import operator
 
 class Slow(object):
     def __init__(self, val):
@@ -196,3 +196,17 @@ class Util(support.TestCase):
     def test_touch(self):
         self.assertRaises(OSError, dnf.util.touch,
                           support.NONEXISTENT_FILE, no_create=True)
+
+
+class TestMultiCall(support.TestCase):
+    def test_multi_call(self):
+        l = dnf.util.MultiCallList(["one", "two", "three"])
+        self.assertEqual(l.upper(), ["ONE", "TWO", "THREE"])
+        self.assertEqual(l.pop(), "three")
+
+    def test_assignment(self):
+        o1 = mock.Mock(x=3)
+        o2 = mock.Mock(x=5)
+        l = dnf.util.MultiCallList([o1, o2])
+        l.x = 5
+        self.assertEqual([5, 5], list(map(operator.attrgetter('x'), [o1, o2])))

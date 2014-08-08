@@ -18,23 +18,8 @@
 from __future__ import unicode_literals
 from tests import support
 from tests.support import TestCase
-from tests.support import mock
-
 import dnf.repodict
-import operator
 
-class TestMultiCall(TestCase):
-    def test_multi_call(self):
-        l = dnf.repodict.MultiCallList(["one", "two", "three"])
-        self.assertEqual(l.upper(), ["ONE", "TWO", "THREE"])
-        self.assertEqual(l.pop(), "three")
-
-    def test_assignment(self):
-        o1 = mock.Mock(x=3)
-        o2 = mock.Mock(x=5)
-        l = dnf.repodict.MultiCallList([o1, o2])
-        l.x = 5
-        self.assertEqual([5, 5], list(map(operator.attrgetter('x'), [o1, o2])))
 
 class TestRepoDict(TestCase):
     def setUp(self):

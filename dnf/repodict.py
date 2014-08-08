@@ -24,24 +24,6 @@ import dnf.util
 import fnmatch
 
 
-class MultiCallList(list):
-    def __init__(self, iterable):
-        self.extend(iterable)
-
-    def __getattr__(self, what):
-        def fn(*args, **kwargs):
-            def call_what(v):
-                method = getattr(v, what)
-                return method(*args, **kwargs)
-            return list(map(call_what, self))
-        return fn
-
-    def __setattr__(self, what, val):
-        def setter(item):
-            setattr(item, what, val)
-        return list(map(setter, self))
-
-
 class RepoDict(dict):
     # :api
     def add(self, repo):
@@ -57,7 +39,7 @@ class RepoDict(dict):
 
     def all(self):
         # :api
-        return MultiCallList(self.values())
+        return dnf.util.MultiCallList(self.values())
 
     def any_enabled(self):
         return not dnf.util.empty(self.iter_enabled())
@@ -69,11 +51,11 @@ class RepoDict(dict):
         # :api
         if dnf.util.is_glob_pattern(key):
             l = [self[k] for k in self if fnmatch.fnmatch(k, key)]
-            return MultiCallList(l)
+            return dnf.util.MultiCallList(l)
         repo = self.get(key, None)
         if repo is None:
-            return MultiCallList([])
-        return MultiCallList([repo])
+            return dnf.util.MultiCallList([])
+        return dnf.util.MultiCallList([repo])
 
     def iter_enabled(self):
         # :api

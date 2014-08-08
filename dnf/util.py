@@ -227,9 +227,36 @@ def touch(path, no_create=False):
     with open(path, 'a'):
         pass
 
+
+default_handle = librepo.Handle()
+default_handle.useragent = dnf.const.USER_AGENT
+
+
+def urlopen(absurl, repo=None, **kwargs):
+    """Open the specified absolute url, return a file object.
+
+    repo -- Use this repo-specific config (proxies, certs)
+    kwargs -- These are passed to TemporaryFile
+    """
+    if PY3:
+        kwargs['mode'] = 'w+'
+        kwargs['encoding'] = 'utf-8'
+    fo = tempfile.NamedTemporaryFile(**kwargs)
+    handle = default_handle
+    if repo:
+        handle = repo.get_handle()
+    try:
+        librepo.download_url(absurl, fo.fileno(), handle)
+    except librepo.LibrepoException as e:
+        raise IOError(e.args[1])
+    fo.seek(0)
+    return fo
+
+
 def user_run_dir():
     uid = str(os.getuid())
     return os.path.join(dnf.const.USER_RUNDIR, uid, dnf.const.PROGRAM_NAME)
+
 
 class tmpdir(object):
     def __init__(self):
@@ -257,25 +284,21 @@ class Bunch(dict):
     def __hash__(self):
         return id(self)
 
-default_handle = librepo.Handle()
-default_handle.useragent = dnf.const.USER_AGENT
 
-def urlopen(absurl, repo=None, **kwargs):
-    """Open the specified absolute url, return a file object.
+class MultiCallList(list):
+    def __init__(self, iterable):
+        super(MultiCallList, self).__init__()
+        self.extend(iterable)
 
-    repo -- Use this repo-specific config (proxies, certs)
-    kwargs -- These are passed to TemporaryFile
-    """
-    if PY3:
-        kwargs['mode'] = 'w+'
-        kwargs['encoding'] = 'utf-8'
-    fo = tempfile.NamedTemporaryFile(**kwargs)
-    handle = default_handle
-    if repo:
-        handle = repo.get_handle()
-    try:
-        librepo.download_url(absurl, fo.fileno(), handle)
-    except librepo.LibrepoException as e:
-        raise IOError(e.args[1])
-    fo.seek(0)
-    return fo
+    def __getattr__(self, what):
+        def fn(*args, **kwargs):
+            def call_what(v):
+                method = getattr(v, what)
+                return method(*args, **kwargs)
+            return list(map(call_what, self))
+        return fn
+
+    def __setattr__(self, what, val):
+        def setter(item):
+            setattr(item, what, val)
+        return list(map(setter, self))
