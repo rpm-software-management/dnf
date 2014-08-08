@@ -961,8 +961,7 @@ class Output(object):
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
             assert s_wid == 5
 
-            out = [u"""
-%s
+            out = [u"""%s
 %s
 %s
 """ % ('=' * self.term.columns,

@@ -39,7 +39,7 @@ Description :
 
 """
 
-LIST_TRANSACTION_OUTPUT=u"""
+LIST_TRANSACTION_OUTPUT=u"""\
 ================================================================================
  Package           Arch              Version           Repository          Size
 ================================================================================
