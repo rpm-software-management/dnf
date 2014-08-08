@@ -193,7 +193,7 @@ configuration.
 ``proxy``
     string
 
-     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
+    URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
 ``proxy_username``
     string
