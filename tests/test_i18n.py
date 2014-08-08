@@ -108,6 +108,12 @@ class TestConversion(TestCase):
         # ucd() should return unicode unmodified
         self.assertEqual(dnf.i18n.ucd(expected), expected)
 
+    def test_download_error_unicode(self):
+        err_map = {"e1": ["x", "y"]}
+        err = dnf.exceptions.DownloadError(err_map)
+        self.assertEqual("e1: x\ne1: y", str(err))
+        self.assertEqual("e1: x\ne1: y", dnf.i18n.ucd(err))
+
 
 class TestFormatedOutput(TestCase):
     def test_fill_exact_width(self):
