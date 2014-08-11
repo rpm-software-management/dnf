@@ -44,6 +44,7 @@ import dnf.cli.commands.upgradeto
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
+import dnf.conf.parser
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
@@ -56,7 +57,6 @@ import dnf.sack
 import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
-import dnf.yum.parser
 import hawkey
 import logging
 import operator
@@ -98,7 +98,7 @@ def _list_cmd_calc_columns(output, ypl):
 
 def cachedir_fit(conf):
     subst = conf.substitutions
-    suffix = dnf.yum.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
+    suffix = dnf.conf.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
     cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
     return cli_cache.cachedir, cli_cache.system_cachedir
 

@@ -24,11 +24,11 @@ from __future__ import unicode_literals
 
 from . import misc
 from .misc import read_in_items_from_dot_dir
-from .parser import ConfigPreProcessor, varReplace
 from dnf.pycomp import basestring
 from iniparse.compat import ParsingError, RawConfigParser as ConfigParser
 
 import copy
+import dnf.conf.parser
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
@@ -712,7 +712,8 @@ class YumConf(BaseConfig):
 
     def _var_replace(self, option):
         path = getattr(self, option)
-        setattr(self, option, varReplace(path, self.substitutions))
+        new_path = dnf.conf.parser.varReplace(path, self.substitutions)
+        setattr(self, option, new_path)
 
     def prepend_installroot(self, option):
         # :api
@@ -860,7 +861,7 @@ class YumConf(BaseConfig):
         if filename is None:
             filename = self.config_file_path
         parser = ConfigParser()
-        config_pp = ConfigPreProcessor(filename)
+        config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
         try:
             parser.readfp(config_pp)
         except ParsingError as e:

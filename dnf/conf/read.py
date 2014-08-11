@@ -21,11 +21,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
-
+import dnf.conf.parser
 import dnf.exceptions
 import dnf.repo
 import dnf.yum.config
-import dnf.yum.parser
 import glob
 import logging
 
@@ -79,7 +78,7 @@ class RepoReader(object):
         substs = self.conf.substitutions
         parser = dnf.yum.config.ConfigParser()
         try:
-            confpp_obj = dnf.yum.parser.ConfigPreProcessor(repofn, vars=substs)
+            confpp_obj = dnf.conf.parser.ConfigPreProcessor(repofn, vars=substs)
 
             parser.readfp(confpp_obj)
         except dnf.yum.config.ParsingError as e:

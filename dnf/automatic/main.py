@@ -27,11 +27,11 @@ import dnf.automatic.emitter
 import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
+import dnf.conf.parser
 import dnf.const
 import dnf.exceptions
 import dnf.util
 import dnf.yum.config
-import dnf.yum.parser
 import iniparse.compat
 import logging
 import socket
@@ -70,7 +70,7 @@ class AutomaticConfig(object):
 
     def _load(self, filename):
         parser = iniparse.compat.ConfigParser()
-        config_pp = dnf.yum.parser.ConfigPreProcessor(filename)
+        config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
         try:
             parser.readfp(config_pp)
         except iniparse.compat.ParsingError as e:
