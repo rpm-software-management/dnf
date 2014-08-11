@@ -21,6 +21,7 @@
 from __future__ import unicode_literals
 import warnings
 import dnf.exceptions
+import dnf.pycomp
 
 warnings.filterwarnings('once', category=dnf.exceptions.DeprecationWarning)
 
@@ -34,9 +35,4 @@ import dnf.plugin
 Plugin = dnf.plugin.Plugin # :api
 
 # setup libraries
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
-urlparse.uses_fragment.append("media")
-
+dnf.pycomp.urlparse.uses_fragment.append("media")

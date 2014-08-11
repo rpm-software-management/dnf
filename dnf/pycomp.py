@@ -40,7 +40,8 @@ if PY3:
     xrange = range
     raw_input = input
     to_ord = lambda i: i
-    urllib_quote = urllib.parse.quote
+    urlparse = urllib.parse
+    urllib_quote = urlparse.quote
 
     # string helpers
     def is_py2str_py3bytes(o):
@@ -60,6 +61,7 @@ else:
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     from StringIO import StringIO
     import urllib
+    import urlparse
 
     filterfalse = itertools.ifilterfalse
     to_ord = lambda i: ord(i)

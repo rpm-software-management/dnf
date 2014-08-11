@@ -32,15 +32,12 @@ import dnf.conf.parser
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
+import dnf.pycomp
 import dnf.util
 import os
 import shlex
 import types
 
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
 
 class Option(object):
     """
@@ -232,7 +229,7 @@ class UrlOption(Option):
                 raise ValueError('"_none_" is not a valid value')
 
         # Check that scheme is valid
-        s = urlparse.urlparse(url)[0]
+        s = dnf.pycomp.urlparse.urlparse(url)[0]
         if s not in self.schemes:
             raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
 

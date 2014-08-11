@@ -15,20 +15,18 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-import re
-try:
-    import urlparse
-except ImportError:
-    import urllib.parse as urlparse
-import os.path
-
 import dnf.exceptions
 import dnf.i18n
+import dnf.pycomp
 import dnf.util
+import os.path
+import re
 
 _KEYCRE = re.compile(r"\$(\w+)")
+
 
 def varReplace(raw, vars):
     '''Perform variable replacement
@@ -58,6 +56,7 @@ def varReplace(raw, vars):
         raw = raw[end:]             # Continue with remainder of string
 
     return ''.join(done)
+
 
 class ConfigPreProcessor(object):
     """
@@ -90,7 +89,7 @@ class ConfigPreProcessor(object):
 
         # first make configfile a url even if it points to
         # a local file
-        scheme = urlparse.urlparse(configfile)[0]
+        scheme = dnf.pycomp.urlparse.urlparse(configfile)[0]
         if scheme == '':
             # check it to make sure it's not a relative file url
             if configfile[0] != '/':
@@ -189,7 +188,7 @@ class ConfigPreProcessor(object):
             # it's the initial config file. No base url to resolve against.
             return url
         else:
-            return urlparse.urljoin( self.geturl(), url )
+            return dnf.pycomp.urlparse.urljoin( self.geturl(), url )
 
     def _pushfile( self, url ):
         """
