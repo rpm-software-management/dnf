@@ -207,15 +207,14 @@ class UpdateInfoCommand(commands.Command):
     @classmethod
     def display_list(cls, apkg_adv_insts, mixed, description):
         """Display the list of advisories."""
-        nevrainst_id2types = cls._list(apkg_adv_insts)
         # Sort IDs and convert types to labels.
-        inst2mark = lambda ins: '' if not mixed else 'i ' if ins else '  '
+        inst2mark = lambda inst: '' if not mixed else 'i ' if inst else '  '
         nevramark2id2tlbl = OrderedDict(
             ((nevra, inst2mark(inst)),
              OrderedDict(sorted(((id_, cls.TYPE2LABEL[typ])
                                  for id_, typ in id2type.items()),
                                 key=itemgetter(0))))
-            for (nevra, inst), id2type in nevrainst_id2types)
+            for (nevra, inst), id2type in cls._list(apkg_adv_insts))
         if not nevramark2id2tlbl:
             return
         # Get all advisory IDs and types as two iterables.
@@ -285,7 +284,7 @@ class UpdateInfoCommand(commands.Command):
         info = self._info(apkg_adv_insts).items()
         # Convert objects to string lines and mark verbose fields.
         verbse = lambda value: value if self.base.conf.verbose else None
-        title_vallines = (
+        info = (
             (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
                    (id_title[0] + ' - ' + id_title[1] for id_title in bzs),
                    (id_title[0] for id_title in cvs), desc.splitlines(),
@@ -296,7 +295,7 @@ class UpdateInfoCommand(commands.Command):
                   _('CVEs'), _('Description'), _('Rights'), _('Files'),
                   _('Installed'))
         width = _maxlen(labels)
-        for title, vallines in title_vallines:
+        for title, vallines in info:
             print('=' * 79)
             print('  ' + title)
             print('=' * 79)

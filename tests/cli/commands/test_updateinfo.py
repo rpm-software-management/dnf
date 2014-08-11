@@ -54,7 +54,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         """Pretend to print to standard output."""
         print(*objects, file=self._stdout)
 
-    def test_available_apkg_adv_insts_filter_packages(self):
+    def test_avail_filter_pkgs(self):
         """Test querying with an packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -66,7 +66,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_available_apkg_adv_insts_filter_packages_nonexistent(self):
+    def test_avail_filter_pkgs_nonex(self):
         """Test querying with a non-existent packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -77,7 +77,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             [], 'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_available_apkg_adv_insts_filter_security(self):
+    def test_avail_filter_security(self):
         """Test querying with a security filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -89,7 +89,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_installed_apkg_adv_insts(self):
+    def test_inst(self):
         """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -102,7 +102,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_installed_apkg_adv_insts_filter_bugfix(self):
+    def test_inst_filter_bugfix(self):
         """Test querying with a bugfix filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -114,7 +114,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_installed_apkg_adv_insts_filter_enhancement(self):
+    def test_inst_filter_enhancement(self):
         """Test querying with an enhancement filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -126,7 +126,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_updating_apkg_adv_insts(self):
+    def test_upd(self):
         """Test updating triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -138,7 +138,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
             'incorrect pairs')
         cmd.clear_installed_cache()
 
-    def test_all_apkg_adv_insts(self):
+    def test_all(self):
         """Test all triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
@@ -151,7 +151,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
              ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)])
         cmd.clear_installed_cache()
 
-    def test_all_apkg_adv_insts_filter_advisories(self):
+    def test_all_filter_advisories(self):
         """Test querying with an advisories filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
