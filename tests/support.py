@@ -18,7 +18,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from functools import reduce
-
 import contextlib
 import dnf
 import dnf.cli.cli
@@ -73,7 +72,7 @@ TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 # testing infrastructure
 
 def dnf_toplevel():
-    return os.path.normpath(os.path.join(__file__, "../../"))
+    return os.path.normpath(os.path.join(__file__, '../../'))
 
 def repo(reponame):
     return os.path.join(REPO_DIR, reponame)
@@ -83,7 +82,7 @@ def resource_path(path):
     return os.path.join(this_dir, path)
 
 REPO_DIR = resource_path('repos')
-COMPS_PATH = os.path.join(REPO_DIR, "main_comps.xml")
+COMPS_PATH = os.path.join(REPO_DIR, 'main_comps.xml')
 NONEXISTENT_FILE = resource_path('does-not/exist')
 TOUR_44_PKG_PATH = resource_path('repos/rpm/tour-4-4.noarch.rpm')
 TOUR_50_PKG_PATH = resource_path('repos/rpm/tour-5-0.noarch.rpm')

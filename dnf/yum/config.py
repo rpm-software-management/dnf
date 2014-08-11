@@ -869,7 +869,6 @@ class YumConf(BaseConfig):
 
         # update to where we read the file from
         self.config_file_path = filename
-        # not really a config value:
 
     @property
     def verbose(self):
