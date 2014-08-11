@@ -28,7 +28,7 @@ import re
 _KEYCRE = re.compile(r"\$(\w+)")
 
 
-def substitute(raw, vars):
+def substitute(raw, substs):
     '''Perform variable replacement
 
     :param raw: String to perform substitution on.
@@ -48,7 +48,7 @@ def substitute(raw, vars):
         # Determine replacement value (if unknown variable then preserve
         # original)
         varname = m.group(1).lower()
-        replacement = vars.get(varname, m.group())
+        replacement = substs.get(varname, m.group())
 
         start, end = m.span()
         done.append(raw[:start])    # Keep stuff leading up to token
@@ -86,6 +86,7 @@ class ConfigPreProcessor(object):
         # set some file-like object attributes for ConfigParser
         # these just make confpp look more like a real file object.
         self.mode = 'r'
+        self.name = None
 
         # first make configfile a url even if it points to
         # a local file
@@ -104,11 +105,11 @@ class ConfigPreProcessor(object):
         self._alreadyincluded = []
 
         # _pushfile will return None if he couldn't open the file
-        fo = self._pushfile( url )
+        fo = self._pushfile(url)
         if fo is None:
             raise dnf.exceptions.ConfigError('Error accessing file: %s' % url)
 
-    def readline( self, size=0 ):
+    def readline(self, _size=0):
         """
         Implementation of File-Like Object readline function. This should be
         the only function called by ConfigParser according to the python docs.
@@ -137,23 +138,25 @@ class ConfigPreProcessor(object):
         """
 
         # set line to EOF initially.
-        line=''
+        line = ''
         while len(self._incstack) > 0:
             # peek at the file like object on top of the stack
             fo = self._incstack[-1]
             line = fo.readline()
             if len(line) > 0:
-                m = re.match( r'\s*include\s*=\s*(?P<url>.*)', line )
+                m = re.match(r'\s*include\s*=\s*(?P<url>.*)', line)
                 if m:
                     url = m.group('url')
                     if len(url) == 0:
-                        raise dnf.exceptions.ConfigError('Error parsing config %s: include must specify file to include.' % (self.name))
+                        msg = 'Error parsing config %s: '\
+                              'include must specify file to include.'
+                        raise dnf.exceptions.ConfigError(msg % self.name)
                     else:
                         # whooohoo a valid include line.. push it on the stack
-                        fo = self._pushfile( url )
+                        fo = self._pushfile(url)
                 else:
                     # check if the current line starts a new section
-                    secmatch = re.match( r'\s*\[(?P<section>.*)\]', line )
+                    secmatch = re.match(r'\s*\[(?P<section>.*)\]', line)
                     if secmatch:
                         self._section = secmatch.group('section')
                     # line didn't match include=, just return it as is
@@ -163,8 +166,8 @@ class ConfigPreProcessor(object):
                 # the current file returned EOF, pop it off the stack.
                 self._popfile()
 
-        # if the section is prefixed by a space then it is breaks iniparser/configparser
-        # so fix it
+        # if the section is prefixed by a space then it is breaks
+        # iniparser/configparser so fix it:
         broken_sec_match = re.match(r'\s+\[(?P<section>.*)\]', line)
         line = dnf.i18n.ucd(line)
         if broken_sec_match:
@@ -176,7 +179,7 @@ class ConfigPreProcessor(object):
         return line
 
 
-    def _absurl( self, url ):
+    def _absurl(self, url):
         """
         Returns an absolute url for the (possibly) relative
         url specified. The base url used to resolve the
@@ -188,9 +191,9 @@ class ConfigPreProcessor(object):
             # it's the initial config file. No base url to resolve against.
             return url
         else:
-            return dnf.pycomp.urlparse.urljoin( self.geturl(), url )
+            return dnf.pycomp.urlparse.urljoin(self.geturl(), url)
 
-    def _pushfile( self, url ):
+    def _pushfile(self, url):
         """
         Opens the url specified, pushes it on the stack, and
         returns a file like object. Returns None if the url
@@ -210,11 +213,11 @@ class ConfigPreProcessor(object):
             return None
         try:
             fo = dnf.util.urlopen(absurl)
-        except IOError as e:
+        except IOError:
             fo = None
         if fo is not None:
             self.name = absurl
-            self._incstack.append( fo )
+            self._incstack.append(fo)
             self._alreadyincluded.append(includetuple)
         else:
             fn = dnf.util.strip_prefix(absurl, 'file://')
@@ -223,7 +226,7 @@ class ConfigPreProcessor(object):
 
         return fo
 
-    def _popfile( self ):
+    def _popfile(self):
         """
         Pop a file off the stack signaling completion of including that file.
         """
@@ -235,14 +238,16 @@ class ConfigPreProcessor(object):
             self.name = None
 
 
-    def _isalreadyincluded( self, tuple ):
+    def _isalreadyincluded(self, atuple):
         """
         Checks if the tuple describes an include that was already done.
         This does not necessarily have to be recursive
         """
         for etuple in self._alreadyincluded:
-            if etuple == tuple: return 1
+            if etuple == atuple:
+                return 1
         return 0
 
 
-    def geturl(self): return self.name
+    def geturl(self):
+        return self.name
