@@ -25,6 +25,8 @@ sys.path.insert(0, _dirname)
 
 # -- General configuration -----------------------------------------------------
 
+AUTHORS=[u'See AUTHORS in DNF source distribution.']
+
 # If your documentation needs a minimal Sphinx version, state it here.
 #needs_sphinx = '1.0'
 
@@ -205,7 +207,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'dnf.tex', u'DNF Documentation',
-   u'Aleš Kozumplík', 'manual'),
+   AUTHORS[0], 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -234,12 +236,12 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('command_ref', 'dnf', u'DNF Command Reference',
-     [u'Aleš Kozumplík'], 8),
-    ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
-     [u'Aleš Kozumplík'], 8),
     ('automatic', 'dnf.automatic', u'DNF Automatic',
-     [u'Aleš Kozumplík'], 8)
+     AUTHORS, 8),
+    ('command_ref', 'dnf', u'DNF Command Reference',
+     AUTHORS, 8),
+    ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
+     AUTHORS, 8),
 ]
 
 # If true, show URL addresses after external links.
@@ -253,7 +255,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'dnf', u'DNF Documentation',
-   u'Aleš Kozumplík', 'DNF', 'One line description of project.',
+   AUTHORS[0], 'DNF', 'Package manager for RPM-based distributions.',
    'Miscellaneous'),
 ]
 
