@@ -28,7 +28,7 @@ import re
 _KEYCRE = re.compile(r"\$(\w+)")
 
 
-def varReplace(raw, vars):
+def substitute(raw, vars):
     '''Perform variable replacement
 
     :param raw: String to perform substitution on.
@@ -172,7 +172,7 @@ class ConfigPreProcessor(object):
         # at this point we have a line from the topmost file on the stack
         # or EOF if the stack is empty
         if self._vars:
-            return varReplace(line, self._vars)
+            return substitute(line, self._vars)
         return line
 
 

@@ -98,7 +98,7 @@ def _list_cmd_calc_columns(output, ypl):
 
 def cachedir_fit(conf):
     subst = conf.substitutions
-    suffix = dnf.conf.parser.varReplace(dnf.const.CACHEDIR_SUFFIX, subst)
+    suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
     cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
     return cli_cache.cachedir, cli_cache.system_cachedir
 

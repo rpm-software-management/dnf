@@ -709,7 +709,7 @@ class YumConf(BaseConfig):
 
     def _var_replace(self, option):
         path = getattr(self, option)
-        new_path = dnf.conf.parser.varReplace(path, self.substitutions)
+        new_path = dnf.conf.parser.substitute(path, self.substitutions)
         setattr(self, option, new_path)
 
     def prepend_installroot(self, option):
