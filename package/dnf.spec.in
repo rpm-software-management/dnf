@@ -64,6 +64,16 @@ Requires:	rpm-python3
 %description -n python3-dnf
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package automatic
+Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Group:		System Environment/Base
+BuildRequires:	python2
+BuildRequires:  python-nose
+Requires:	dnf = %{version}-%{release}
+
+%description automatic
+Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+
 %prep
 %setup -q -n dnf
 rm -rf py3
@@ -118,14 +128,23 @@ popd
 %{_mandir}/man8/dnf.conf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
 %{py2pluginpath}
 
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
+%exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
 %{py3pluginpath}
+
+%files automatic
+%doc AUTHORS COPYING PACKAGE-LICENSING
+%{_bindir}/dnf-automatic
+%config(noreplace) %{confdir}/automatic.conf
+%{_mandir}/man8/dnf.automatic.8.gz
+%{python_sitelib}/dnf/automatic
 
 %post
 %systemd_post dnf-makecache.timer
