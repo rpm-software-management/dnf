@@ -237,6 +237,8 @@ man_pages = [
     ('command_ref', 'dnf', u'DNF Command Reference',
      [u'Aleš Kozumplík'], 8),
     ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
+     [u'Aleš Kozumplík'], 8),
+    ('automatic', 'dnf.automatic', u'DNF Automatic',
      [u'Aleš Kozumplík'], 8)
 ]
 

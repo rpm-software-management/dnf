@@ -30,6 +30,7 @@ Contents:
    cli_vs_yum
    api
    user_faq
+   automatic
 
 Indices and tables
 
