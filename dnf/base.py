@@ -115,7 +115,8 @@ class Base(object):
         else:
             logger.debug("not found updateinfo for: %s" % repo.name)
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
-                                 load_presto=repo.deltarpm, load_updateinfo=True)
+                                 load_presto=repo.deltarpm,
+                                 load_updateinfo=bool(repo.updateinfo_fn))
 
     def _setup_excludes_includes(self):
         disabled = set(self.conf.disable_excludes)
