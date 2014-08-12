@@ -32,6 +32,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.util
 import dnf.yum.config
+import hawkey
 import iniparse.compat
 import logging
 import socket
@@ -88,10 +89,10 @@ class AutomaticConfig(object):
 
 class CommandsConfig(dnf.yum.config.BaseConfig):
     apply_updates = dnf.yum.config.BoolOption(False)
-    base_config_file = dnf.yum.config.Option("/etc/dnf/dnf.conf")
+    base_config_file = dnf.yum.config.Option('/etc/dnf/dnf.conf')
     download_updates = dnf.yum.config.BoolOption(False)
-    update_cmd = dnf.yum.config.Option("default")
-    update_messages = dnf.yum.config.BoolOption(False)
+    upgrade_type = dnf.yum.config.SelectionOption(
+        'default', ('default', 'security'))
 
     def imply(self):
         if self.apply_updates:
@@ -129,7 +130,7 @@ def main(args):
             logger.debug('Started dnf-automatic.')
             base.read_all_repos()
             base.fill_sack()
-            base.upgrade_all()
+            upgrade(base, conf.commands.upgrade_type)
             base.resolve()
             output = dnf.cli.output.Output(base, base.conf)
             trans = base.transaction
@@ -156,3 +157,16 @@ def main(args):
         logger.error(_('Error: %s'), ucd(exc))
         return 1
     return 0
+
+
+def upgrade(base, upgrade_type):
+    if upgrade_type == 'default':
+        base.upgrade_all()
+    elif upgrade_type == 'security':
+        for pkg in base.sack.query().installed():
+            for advisory in pkg.get_advisories(hawkey.GT):
+                if advisory.type != hawkey.ADVISORY_SECURITY:
+                    continue
+                base.upgrade(pkg.name)
+    else:
+        assert False
