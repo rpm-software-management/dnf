@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.5.5-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.6.0-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.5-1',
+        VERSION:     '0.6.0-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.5.5-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.6.0-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -83,6 +83,7 @@
 <li>repolist</li>
 <li>repository-packages</li>
 <li>search</li>
+<li>updateinfo</li>
 <li>upgrade</li>
 <li>upgrade-to</li>
 </ul>
@@ -472,6 +473,32 @@ and URLs. The result is sorted from the most relevant results to the least.</dd>
 <dd>Deprecated alias for the <a class="reference internal" href="#upgrade-command-label"><em>Upgrade Command</em></a>.</dd>
 </dl>
 </div>
+<div class="section" id="updateinfo-command">
+<span id="updateinfo-command-label"></span><h3>Updateinfo Command<a class="headerlink" href="#updateinfo-command" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">updateinfo</span> <span class="pre">[&lt;output&gt;]</span> <span class="pre">[&lt;availability&gt;]</span> <span class="pre">[&lt;spec&gt;...]</span></tt></dt>
+<dd><p class="first">Display information about update advisories.</p>
+<p>Depending on <tt class="docutils literal"><span class="pre">&lt;output&gt;</span></tt>, DNF displays just counts of advisory types
+(omitted or <tt class="docutils literal"><span class="pre">summary</span></tt>), list of advisories (<tt class="docutils literal"><span class="pre">list</span></tt>) or detailed
+information (<tt class="docutils literal"><span class="pre">info</span></tt>). When <tt class="docutils literal"><span class="pre">info</span></tt> with <tt class="docutils literal"><span class="pre">-v</span></tt> option is used, the
+information is even more detailed.</p>
+<p><tt class="docutils literal"><span class="pre">&lt;availability&gt;</span></tt> specifies whether advisories about newer versions of
+installed packages (omitted or <tt class="docutils literal"><span class="pre">available</span></tt>), advisories about equal and
+older versions of installed packages (<tt class="docutils literal"><span class="pre">installed</span></tt>), advisories about
+newer versions of those installed packages for which a newer version is
+available (<tt class="docutils literal"><span class="pre">updates</span></tt>) or advisories about any versions of installed
+packages (<tt class="docutils literal"><span class="pre">all</span></tt>) are taken into account. Most of the time, <tt class="docutils literal"><span class="pre">available</span></tt>
+and <tt class="docutils literal"><span class="pre">updates</span></tt> displays the same output. The outputs differ only in the
+cases when an advisory refers to a newer version but there is no enabled
+repository which contains any newer version.</p>
+<p class="last">If given and if neither ID, type (<tt class="docutils literal"><span class="pre">bugfix</span></tt>, <tt class="docutils literal"><span class="pre">enhancement</span></tt>,
+<tt class="docutils literal"><span class="pre">security</span></tt>/<tt class="docutils literal"><span class="pre">sec</span></tt>) nor a package name of an advisory does match
+<tt class="docutils literal"><span class="pre">&lt;spec&gt;</span></tt>, the advisory is not taken into account. The matching is
+case-sensitive and in the case of advisory IDs and package names, globbing
+is supported.</p>
+</dd>
+</dl>
+</div>
 <div class="section" id="upgrade-command">
 <span id="upgrade-command-label"></span><h3>Upgrade Command<a class="headerlink" href="#upgrade-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
@@ -595,6 +622,7 @@ the most recent transaction.</p>
 <li><a class="reference internal" href="#repository-packages-command">Repository-Packages Command</a></li>
 <li><a class="reference internal" href="#search-command">Search Command</a></li>
 <li><a class="reference internal" href="#update-command">Update Command</a></li>
+<li><a class="reference internal" href="#updateinfo-command">Updateinfo Command</a></li>
 <li><a class="reference internal" href="#upgrade-command">Upgrade Command</a></li>
 <li><a class="reference internal" href="#update-to-command">Update-To Command</a></li>
 <li><a class="reference internal" href="#upgrade-to-command">Upgrade-To Command</a></li>
@@ -653,7 +681,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.5.5-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

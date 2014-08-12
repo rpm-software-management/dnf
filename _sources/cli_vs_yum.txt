@@ -68,6 +68,12 @@ following will work::
 
     dnf -x '*flask*' list installed 'python-f*'
 
+==========================================================
+ Yum's conf directive ``includepkgs`` is just ``include``
+==========================================================
+
+``include`` directive name of [main] and Repo configuration is more logical and better named counterpart of ``exclude`` in DNF.
+
 ================================================
  ``protected_packages`` is supported via plugin
 ================================================

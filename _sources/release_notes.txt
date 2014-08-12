@@ -873,3 +873,21 @@ Bugs fixed in 0.5.5:
 * :rhbug:`1121280`
 * :rhbug:`1122900`
 * :rhbug:`1123688`
+
+===================
+0.6.0 Release Notes
+===================
+
+0.6.0 marks a new minor version of DNF and the first release to support advisories listing with the :ref:`udpateinfo command <updateinfo_command-label>`.
+
+Support for the :ref:`include configuration directive <include-label>` has been added. Its functionality reflects Yum's ``includepkgs`` but it has been renamed to make it consistent with the ``exclude`` setting.
+
+Group operations now produce a list of proposed marking changes to group objects and the user is given a chance to accept or reject them just like with an ordinary package transaction.
+
+Bugs fixed in 0.6.0:
+
+* :rhbug:`850912`
+* :rhbug:`1055910`
+* :rhbug:`1116666`
+* :rhbug:`1118272`
+* :rhbug:`1127206`

@@ -148,11 +148,23 @@ configuration.
 
     Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>` option. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
 
+.. _exclude-label:
+
 ``exclude``
     list
 
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
+    Can be disabled using ``--disableexcludes`` command line switch.
+
+.. _include-label:
+
+``include``
+    list
+
+    Include packages of this repository, specified by a name or a glob and separated by a comma, from all operations.
+    Inverse of :ref:`exclude <exclude-label>`, DNF will exclude any package in the repo. that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'exclude=*.i386' and 'include=python*' then only packages starting with python that do not have an i386 arch. will be seen by DNF in this repo.
+    Can be disabled using ``--disableexcludes`` command line switch.
 
 ``fastestmirror``
     boolean
@@ -183,7 +195,7 @@ configuration.
 ``proxy``
     string
 
-     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
+    URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
 ``proxy_username``
     string
