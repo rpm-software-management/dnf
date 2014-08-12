@@ -157,6 +157,8 @@ configuration.
     separated by a comma, from all operations.
     Can be disabled using ``--disableexcludes`` command line switch.
 
+.. _include-label:
+
 ``include``
     list
 

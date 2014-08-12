@@ -778,5 +778,25 @@
     [
         1123688, 
         "dnf missing Requires on pyliblzma"
+    ], 
+    [
+        850912, 
+        "RFE: support updateinfo"
+    ], 
+    [
+        1055910, 
+        "[rfe] includepkgs directive support"
+    ], 
+    [
+        1116666, 
+        "handling groups installed by Yum"
+    ], 
+    [
+        1127206, 
+        "[abrt] dnf: __init__.py:186:install:Exception: Goal operation failed."
+    ], 
+    [
+        1118272, 
+        "search command show traceback when in a debug mode"
     ]
 ]

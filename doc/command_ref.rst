@@ -536,6 +536,8 @@ Update Command
 ``dnf [options] update``
     Deprecated alias for the :ref:`\upgrade_command-label`.
 
+.. _updateinfo_command-label:
+
 ------------------
 Updateinfo Command
 ------------------
