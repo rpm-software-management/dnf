@@ -1251,7 +1251,7 @@ class Base(object):
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack)
-            if not sltr or not sltr.matches():
+            if not sltr.matches():
                 raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
@@ -1273,7 +1273,7 @@ class Base(object):
             return len(q)
         elif self.conf.multilib_policy == "best":
             sltr = subj.get_best_selector(self.sack, forms=forms)
-            if sltr:
+            if sltr.matches():
                 self._goal.install(select=sltr)
                 return 1
         return 0
@@ -1312,7 +1312,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-        if sltr and sltr.matches():
+        if sltr.matches():
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
 
@@ -1338,7 +1338,7 @@ class Base(object):
         forms = [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
         sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack,
                                                                forms=forms)
-        if sltr:
+        if sltr.matches():
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
 
@@ -1354,7 +1354,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-            if not sltr or not sltr.matches():
+            if not sltr.matches():
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
             self._goal.distupgrade(select=sltr)
