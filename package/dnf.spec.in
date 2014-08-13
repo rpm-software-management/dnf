@@ -69,7 +69,11 @@ Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execut
 Group:		System Environment/Base
 BuildRequires:	python2
 BuildRequires:  python-nose
+BuildRequires:  systemd
 Requires:	dnf = %{version}-%{release}
+Requires(post):		systemd
+Requires(preun):	systemd
+Requires(postun):	systemd
 
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
@@ -144,6 +148,8 @@ popd
 %{_bindir}/dnf-automatic
 %config(noreplace) %{confdir}/automatic.conf
 %{_mandir}/man8/dnf.automatic.8.gz
+%{_unitdir}/dnf-automatic.service
+%{_unitdir}/dnf-automatic.timer
 %{python_sitelib}/dnf/automatic
 
 %post
@@ -154,6 +160,15 @@ popd
 
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
+
+%post automatic
+%systemd_post dnf-automatic.timer
+
+%preun automatic
+%systemd_preun dnf-automatic.timer
+
+%postun automatic
+%systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
 
