@@ -197,7 +197,8 @@ class _Handle(librepo.Handle):
             return super(_Handle, self).perform(result)
         except librepo.LibrepoException as exc:
             lr_msg = exc.args[1]
-            source = self.metalinkurl or self.mirrorlisturl or self.urls
+            source = self.metalinkurl or self.mirrorlisturl or \
+                     ', '.join(self.urls)
             raise _DetailedLibrepoError(lr_msg, source)
 
 
