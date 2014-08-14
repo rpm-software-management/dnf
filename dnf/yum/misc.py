@@ -306,8 +306,6 @@ def getgpgkeyinfo(rawkey, multiple=False):
             'timestamp': key.public_key.timestamp,
             'fingerprint' : key.public_key.fingerprint,
             'raw_key' : key.raw_key,
-            'has_sig' : False,
-            'valid_sig': False,
         }
 
         # Retrieve the timestamp from the matching signature packet

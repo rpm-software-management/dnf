@@ -895,7 +895,6 @@ class RepoConf(BaseConfig):
     metalink = UrlOption() # :api
     mediaid = Option()
     gpgkey = UrlListOption()
-    gpgcakey = UrlListOption()
     exclude = ListOption()
     include = ListOption()
 

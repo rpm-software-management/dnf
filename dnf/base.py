@@ -55,7 +55,6 @@ import dnf.yum.config
 import dnf.yum.rpmtrans
 import functools
 import hawkey
-import io
 import logging
 import os
 import operator
@@ -1632,7 +1631,7 @@ class Base(object):
             else:
                 assert False
 
-    def _retrievePublicKey(self, keyurl, repo=None, getSig=True):
+    def _retrievePublicKey(self, keyurl, repo=None):
         """
         Retrieve a key file
         @param keyurl: url to the key to retrieve
@@ -1652,31 +1651,6 @@ class Base(object):
             raise dnf.exceptions.Error(_('GPG key retrieval failed: %s') %
                                        ucd(e))
 
-        # check for a .asc file accompanying it - that's our gpg sig on the key
-        # suck it down and do the check
-        sigfile = None
-        valid_sig = False
-        if getSig and repo and repo.gpgcakey:
-            self.getCAKeyForRepo(repo, callback=repo.confirm_func)
-            try:
-                sigfile = dnf.util.urlopen(keyurl + '.asc', repo)
-
-            except IOError as e:
-                sigfile = None
-
-            if sigfile:
-                if not misc.valid_detached_sig(sigfile,
-                                    io.StringIO(rawkey), repo.gpgcadir):
-                    #if we decide we want to check, even though the sig failed
-                    # here is where we would do that
-                    raise dnf.exceptions.Error(
-                        _('GPG key signature on key %s does not match '
-                          'CA Key for repo: %s') % (keyurl, repo.id))
-                else:
-                    msg = _('GPG key signature verified against CA Key(s)')
-                    logger.info(msg)
-                    valid_sig = True
-
         # Parse the key
         try:
             keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
@@ -1693,8 +1667,6 @@ class Base(object):
                     raise dnf.exceptions.Error(msg % info)
                 thiskey[info] = keyinfo[info]
             thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
-            thiskey['valid_sig'] = valid_sig
-            thiskey['has_sig'] = bool(sigfile)
             keys.append(thiskey)
 
         return keys
@@ -1761,34 +1733,31 @@ class Base(object):
                     logger.info(msg, keyurl, info['hexkeyid'])
                     continue
 
-                if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
-                    key_installed = True
-                else:
-                    # Try installing/updating GPG key
-                    self._log_key_import(info, keyurl)
+                # Try installing/updating GPG key
+                self._log_key_import(info, keyurl)
+                rc = False
+                if self.conf.assumeno:
                     rc = False
-                    if self.conf.assumeno:
-                        rc = False
-                    elif self.conf.assumeyes:
-                        rc = True
+                elif self.conf.assumeyes:
+                    rc = True
 
-                    # grab the .sig/.asc for the keyurl, if it exists if it
-                    # does check the signature on the key if it is signed by
-                    # one of our ca-keys for this repo or the global one then
-                    # rc = True else ask as normal.
+                # grab the .sig/.asc for the keyurl, if it exists if it
+                # does check the signature on the key if it is signed by
+                # one of our ca-keys for this repo or the global one then
+                # rc = True else ask as normal.
 
-                    elif fullaskcb:
-                        rc = fullaskcb({"po": po, "userid": info['userid'],
-                                        "hexkeyid": info['hexkeyid'],
-                                        "keyurl": keyurl,
-                                        "fingerprint": info['fingerprint'],
-                                        "timestamp": info['timestamp']})
-                    elif askcb:
-                        rc = askcb(po, info['userid'], info['hexkeyid'])
+                elif fullaskcb:
+                    rc = fullaskcb({"po": po, "userid": info['userid'],
+                                    "hexkeyid": info['hexkeyid'],
+                                    "keyurl": keyurl,
+                                    "fingerprint": info['fingerprint'],
+                                    "timestamp": info['timestamp']})
+                elif askcb:
+                    rc = askcb(po, info['userid'], info['hexkeyid'])
 
-                    if not rc:
-                        user_cb_fail = True
-                        continue
+                if not rc:
+                    user_cb_fail = True
+                    continue
 
                 # Import the key
                 result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
@@ -1816,127 +1785,6 @@ class Base(object):
             logger.info(msg)
             errmsg = ucd(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
-
-    def _getAnyKeyForRepo(self, repo, destdir, keyurl_list, is_cakey=False,
-                          callback=None):
-        """
-        Retrieve a key for a repository If needed, prompt for if the key should
-        be imported using callback
-
-        @param repo: Repository object to retrieve the key of.
-        @param destdir: destination of the gpg pub ring
-        @param keyurl_list: list of urls for gpg keys
-        @param is_cakey: bool - are we pulling in a ca key or not
-        @param callback: Callback function to use for asking for permission to
-                         import a key. This is verification, but also "choice".
-                         Takes a dictionary of key info.
-        """
-
-        key_installed = False
-
-        def _prov_key_data(msg):
-            cakeytxt = _("No")
-            if is_cakey:
-                cakeytxt = _("Yes")
-            msg += _('\n\n\n'
-                     ' CA Key: %s\n'
-                     ' Failing repo is: %s\n'
-                     ' GPG Keys are configured as: %s\n'
-                     ) % (cakeytxt, repo, ", ".join(keyurl_list))
-            return msg
-
-        user_cb_fail = False
-        for keyurl in keyurl_list:
-            keys = self._retrievePublicKey(keyurl, repo, getSig=not is_cakey)
-            for info in keys:
-                # Check if key is already installed
-                keyids = misc.return_keyids_from_pubring(destdir)
-                if hex(int(info['keyid']))[2:-1].upper() in keyids:
-                    msg = _('GPG key at %s (0x%s) is already imported')
-                    logger.info(msg, keyurl, info['hexkeyid'])
-                    key_installed = True
-                    continue
-                # Try installing/updating GPG key
-                if is_cakey:
-                    # know where the 'imported_cakeys' file is
-                    ikf = self.conf._repos_persistdir + '/imported_cakeys'
-                    keytype = 'CA'
-                    cakeys = []
-                    try:
-                        cakeys_d = open(ikf, 'r').read()
-                        cakeys = cakeys_d.split('\n')
-                    except (IOError, OSError):
-                        pass
-                    if str(info['hexkeyid']) in cakeys:
-                        key_installed = True
-                else:
-                    keytype = 'GPG'
-                    if repo.gpgcakey and info['has_sig'] and info['valid_sig']:
-                        key_installed = True
-
-                if not key_installed:
-                    self._log_key_import(info, keyurl, keytype)
-                    rc = False
-                    if self.conf.assumeno:
-                        rc = False
-                    elif self.conf.assumeyes:
-                        rc = True
-
-                    elif callback:
-                        rc = callback({"repo": repo, "userid": info['userid'],
-                                       "hexkeyid": info['hexkeyid'],
-                                       "keyurl": keyurl,
-                                       "fingerprint": info['fingerprint'],
-                                       "timestamp": info['timestamp']})
-
-
-                    if not rc:
-                        user_cb_fail = True
-                        continue
-
-                # Import the key
-                result = misc.import_key_to_pubring(info['raw_key'],
-                                                    info['hexkeyid'],
-                                                    gpgdir=destdir)
-                if not result:
-                    msg = _('Key %s import failed') % info['hexkeyid']
-                    raise dnf.exceptions.Error(_prov_key_data(msg))
-                logger.info(_('Key imported successfully'))
-                key_installed = True
-                # write out the key id to imported_cakeys in the repos basedir
-                if is_cakey and key_installed:
-                    if info['hexkeyid'] not in cakeys:
-                        ikfo = open(ikf, 'a')
-                        try:
-                            ikfo.write(info['hexkeyid']+'\n')
-                            ikfo.flush()
-                            ikfo.close()
-                        except (IOError, OSError):
-                            # not-critical
-                            pass
-
-        if not key_installed and user_cb_fail:
-            msg = _("Didn't install any keys for repo %s") % repo
-            raise dnf.exceptions.Error(_prov_key_data(msg))
-
-        if not key_installed:
-            msg = \
-                  _('The GPG keys listed for the "%s" repository are ' \
-                  'already installed but they are not correct.\n' \
-                  'Check that the correct key URLs are configured for ' \
-                  'this repository.') % (repo.name)
-            raise dnf.exceptions.Error(_prov_key_data(msg))
-
-    def getCAKeyForRepo(self, repo, callback=None):
-        """Retrieve a key for a repository.  If needed, use the given
-        callback to prompt whether the key should be imported.
-
-        :param repo: repository object to retrieve the key of
-        :param callback: callback function to use for asking for
-           verification of key information
-        """
-        self._getAnyKeyForRepo(repo, repo.gpgcadir, repo.gpgcakey, is_cakey=True,
-                               callback=callback)
 
     def _run_rpm_check(self):
         results = []
