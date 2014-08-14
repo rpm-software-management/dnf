@@ -146,9 +146,10 @@ def update_saving(saving, payloads, errs):
 
 
 class _DetailedLibrepoError(Exception):
-    def __init__(self, librepo_msg, source_url):
+    def __init__(self, librepo_err, source_url):
         Exception.__init__(self)
-        self.librepo_msg = librepo_msg
+        self.librepo_code = librepo_err.args[0]
+        self.librepo_msg = librepo_err.args[1]
         self.source_url = source_url
 
 
@@ -196,10 +197,9 @@ class _Handle(librepo.Handle):
         try:
             return super(_Handle, self).perform(result)
         except librepo.LibrepoException as exc:
-            lr_msg = exc.args[1]
             source = self.metalinkurl or self.mirrorlisturl or \
                      ', '.join(self.urls)
-            raise _DetailedLibrepoError(lr_msg, source)
+            raise _DetailedLibrepoError(exc, source)
 
 
 class Metadata(object):

@@ -342,8 +342,9 @@ class LocalRepoTest(support.TestCase):
         url = 'http://meh'
         self.repo.md_expire_cache()
         self.repo.metalink = url
-        exc = dnf.repo._DetailedLibrepoError('Error HTTP/FTP status code: 404',
-                                             url)
+        lr_exc = librepo.LibrepoException(
+            librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
+        exc = dnf.repo._DetailedLibrepoError(lr_exc, url)
         new_remote_m().perform = mock.Mock(side_effect=exc)
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
