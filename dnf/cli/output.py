@@ -36,7 +36,6 @@ import dnf.yum.misc
 import dnf.yum.packages
 import hawkey
 import itertools
-import locale
 import logging
 import operator
 import pwd
@@ -1941,8 +1940,8 @@ Transaction Summary
                 print(_("Package        :"), hpkg.ui_nevra)
                 print(_("State          :"), uistate)
                 if hpkg.size is not None:
-                    num = int(hpkg.size)
-                    print(_("Size           :"), locale.format("%d", num, True))
+                    size = ucd(dnf.pycomp.format("%d", int(hpkg.size), True))
+                    print(_("Size           :"), size)
                 if hpkg.buildhost is not None:
                     print(_("Build host     :"), hpkg.buildhost)
                 if hpkg.buildtime is not None:

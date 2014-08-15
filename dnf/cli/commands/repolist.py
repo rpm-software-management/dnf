@@ -23,8 +23,8 @@ from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.i18n import _, ucd, fill_exact_width, exact_width
 import dnf.cli.format
+import dnf.pycomp
 import fnmatch
-import locale
 import logging
 import operator
 import time
@@ -44,7 +44,7 @@ def _expire_str(repo, md):
 
 
 def _num2ui_num(num):
-    return ucd(locale.format("%d", num, True))
+    return ucd(dnf.pycomp.format("%d", num, True))
 
 
 def _repo_match(repo, patterns):
@@ -263,5 +263,5 @@ class RepoListCommand(commands.Command):
                 logger.info("%s %s %s%s", fill_exact_width(rid, id_len),
                             fill_exact_width(rname, nm_len, nm_len),
                             ui_enabled, ui_num)
-        msg = 'Total packages: %s' % ucd(locale.format("%d", tot_num, True))
+        msg = 'Total packages: %s' % _num2ui_num(tot_num)
         logger.debug(msg)
