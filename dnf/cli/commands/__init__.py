@@ -29,10 +29,10 @@ import dnf.cli
 import dnf.const
 import dnf.exceptions
 import dnf.i18n
+import dnf.pycomp
 import dnf.util
 import dnf.yum.config
 import functools
-import locale
 import logging
 import operator
 import os
@@ -1160,9 +1160,11 @@ class HistoryCommand(Command):
         self.base.history._create_db_file()
 
     def _hcmd_stats(self, extcmds):
+        def six_digits(num):
+            return ucd(dnf.pycomp.format("%6d", num, True))
         print("File        :", self.base.history._db_file)
         num = os.stat(self.base.history._db_file).st_size
-        print("Size        :", locale.format("%d", num, True))
+        print("Size        :", ucd(dnf.pycomp.format("%d", num, True)))
         counts = self.base.history._pkg_stats()
         trans_1 = self.base.history.old("1")[0]
         trans_N = self.base.history.last()
@@ -1170,12 +1172,12 @@ class HistoryCommand(Command):
         print(_("Begin time  :"), time.ctime(trans_1.beg_timestamp))
         print(_("End time    :"), time.ctime(trans_N.end_timestamp))
         print(_("Counts      :"))
-        print(_("  NEVRAC :"), locale.format("%6d", counts['nevrac'], True))
-        print(_("  NEVRA  :"), locale.format("%6d", counts['nevra'],  True))
-        print(_("  NA     :"), locale.format("%6d", counts['na'],     True))
-        print(_("  NEVR   :"), locale.format("%6d", counts['nevr'],   True))
-        print(_("  rpm DB :"), locale.format("%6d", counts['rpmdb'],  True))
-        print(_("  yum DB :"), locale.format("%6d", counts['yumdb'],  True))
+        print(_("  NEVRAC :"), six_digits(counts['nevrac']))
+        print(_("  NEVRA  :"), six_digits(counts['nevra']))
+        print(_("  NA     :"), six_digits(counts['na']))
+        print(_("  NEVR   :"), six_digits(counts['nevr']))
+        print(_("  rpm DB :"), six_digits(counts['rpmdb']))
+        print(_("  yum DB :"), six_digits(counts['yumdb']))
 
     def _hcmd_sync(self, extcmds):
         extcmds = extcmds[1:]
