@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dnf\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-06 15:47+0200\n"
-"PO-Revision-Date: 2014-08-06 13:47+0000\n"
+"POT-Creation-Date: 2014-08-18 12:47+0200\n"
+"PO-Revision-Date: 2014-08-18 10:47+0000\n"
 "Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,7 @@ msgstr ""
 msgid "%s is empty file"
 msgstr ""
 
-#: ../dnf/drpm.py:63 ../dnf/repo.py:340
+#: ../dnf/drpm.py:63 ../dnf/repo.py:345
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr ""
@@ -64,22 +64,22 @@ msgstr ""
 msgid "Group '%s' not installed."
 msgstr ""
 
-#: ../dnf/repo.py:673
+#: ../dnf/repo.py:678
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
 msgstr ""
 
-#: ../dnf/conf/read.py:52
+#: ../dnf/conf/read.py:51
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
 msgstr ""
 
-#: ../dnf/conf/read.py:62
+#: ../dnf/conf/read.py:61
 #, python-format
 msgid "Repository %r: Error parsing config: %s"
 msgstr "Сховище %r: помилка під час обробки налаштувань: %s"
 
-#: ../dnf/conf/read.py:68
+#: ../dnf/conf/read.py:67
 #, python-format
 msgid "Repository %r is missing name in configuration, using id."
 msgstr ""
@@ -105,7 +105,7 @@ msgstr "Вилучення"
 msgid "Installing"
 msgstr "Встановлення"
 
-#: ../dnf/yum/rpmtrans.py:115 ../dnf/cli/output.py:1651
+#: ../dnf/yum/rpmtrans.py:115 ../dnf/cli/output.py:1650
 msgid "Obsoleting"
 msgstr "Робить застарілим"
 
@@ -302,31 +302,31 @@ msgstr "    Почато: %s - %s тому"
 msgid "    State  : %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:118
+#: ../dnf/cli/cli.py:126
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Встановлено: %s-%s у %s"
 
-#: ../dnf/cli/cli.py:120
+#: ../dnf/cli/cli.py:128
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Зібрано    : %s о %s"
 
-#: ../dnf/cli/cli.py:157
+#: ../dnf/cli/cli.py:165
 msgid "Disk Requirements:\n"
 msgstr "Вимоги до диска:\n"
 
-#: ../dnf/cli/cli.py:164
+#: ../dnf/cli/cli.py:172
 msgid ""
 "Error Summary\n"
 "-------------\n"
 msgstr "Резюме помилок\n-------------\n"
 
-#: ../dnf/cli/cli.py:216
+#: ../dnf/cli/cli.py:224
 msgid "Operation aborted."
 msgstr ""
 
-#: ../dnf/cli/cli.py:218 ../dnf/cli/cli.py:380
+#: ../dnf/cli/cli.py:226 ../dnf/cli/cli.py:388
 #: ../dnf/cli/commands/install.py:110 ../dnf/cli/commands/reinstall.py:101
 #: ../dnf/cli/commands/__init__.py:539 ../dnf/cli/commands/__init__.py:629
 #: ../dnf/cli/commands/__init__.py:696 ../dnf/cli/commands/__init__.py:742
@@ -334,141 +334,141 @@ msgstr ""
 msgid "Nothing to do."
 msgstr ""
 
-#: ../dnf/cli/cli.py:223
+#: ../dnf/cli/cli.py:231
 msgid "Downloading Packages:"
 msgstr "Звантаження пакунків:"
 
-#: ../dnf/cli/cli.py:230
+#: ../dnf/cli/cli.py:238
 #, python-format
 msgid ""
 "Error downloading packages:\n"
 "%s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:241
+#: ../dnf/cli/cli.py:249
 msgid "Complete!"
 msgstr "Завершено!"
 
-#: ../dnf/cli/cli.py:262
+#: ../dnf/cli/cli.py:270
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr "Автоматичне імпортування ключів під час некерованого запуску заборонено.\nСкасувати заборону можна параметром «-y»."
 
-#: ../dnf/cli/cli.py:302 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
+#: ../dnf/cli/cli.py:310 ../dnf/cli/cli.py:463 ../dnf/cli/cli.py:469
 msgid "Obsoleting Packages"
 msgstr "Застарілих пакунків"
 
-#: ../dnf/cli/cli.py:317 ../dnf/cli/commands/group.py:390
+#: ../dnf/cli/cli.py:325 ../dnf/cli/commands/group.py:390
 #: ../dnf/cli/commands/upgrade.py:91 ../dnf/cli/commands/__init__.py:897
 msgid "No packages marked for upgrade."
 msgstr ""
 
-#: ../dnf/cli/cli.py:339
+#: ../dnf/cli/cli.py:347
 msgid "No packages marked for distribution synchronization."
 msgstr ""
 
-#: ../dnf/cli/cli.py:370 ../dnf/cli/cli.py:664 ../dnf/cli/cli.py:693
+#: ../dnf/cli/cli.py:378 ../dnf/cli/cli.py:672 ../dnf/cli/cli.py:701
 #: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/__init__.py:531
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Пакунок %s%s%s недоступний."
 
-#: ../dnf/cli/cli.py:375
+#: ../dnf/cli/cli.py:383
 #, python-format
 msgid "No match for available package: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:431
+#: ../dnf/cli/cli.py:439
 msgid "Installed Packages"
 msgstr "Встановлені пакунки"
 
-#: ../dnf/cli/cli.py:439
+#: ../dnf/cli/cli.py:447
 msgid "Available Packages"
 msgstr "Доступних пакунків"
 
-#: ../dnf/cli/cli.py:443
+#: ../dnf/cli/cli.py:451
 msgid "Extra Packages"
 msgstr "Зайвих пакунків"
 
-#: ../dnf/cli/cli.py:447
+#: ../dnf/cli/cli.py:455
 msgid "Upgraded Packages"
 msgstr ""
 
-#: ../dnf/cli/cli.py:463
+#: ../dnf/cli/cli.py:471
 msgid "Recently Added Packages"
 msgstr "Останні додані пакунки"
 
-#: ../dnf/cli/cli.py:467
+#: ../dnf/cli/cli.py:475
 msgid "No matching Packages to list"
 msgstr "У списку не виявлено відповідних пакунків"
 
-#: ../dnf/cli/cli.py:543
+#: ../dnf/cli/cli.py:551
 msgid "No Matches found"
 msgstr "Не знайдено відповідників"
 
-#: ../dnf/cli/cli.py:584 ../dnf/cli/commands/__init__.py:1133
+#: ../dnf/cli/cli.py:592 ../dnf/cli/commands/__init__.py:1133
 #: ../dnf/cli/commands/__init__.py:1149
 msgid "No transaction ID given"
 msgstr "Не вказано ідентифікатора операції"
 
-#: ../dnf/cli/cli.py:593 ../dnf/cli/cli.py:601 ../dnf/cli/output.py:1797
+#: ../dnf/cli/cli.py:601 ../dnf/cli/cli.py:609 ../dnf/cli/output.py:1796
 msgid "Bad transaction ID given"
 msgstr "Вказано помилковий ідентифікатор операції"
 
-#: ../dnf/cli/cli.py:609
+#: ../dnf/cli/cli.py:617
 msgid "Not found given transaction ID"
 msgstr "Не виявлено вказаного ідентифікатора операції"
 
-#: ../dnf/cli/cli.py:618 ../dnf/cli/commands/__init__.py:1135
+#: ../dnf/cli/cli.py:626 ../dnf/cli/commands/__init__.py:1135
 #: ../dnf/cli/commands/__init__.py:1151
 msgid "Found more than one transaction ID!"
 msgstr "Виявлено більше одного ідентифікатора операції!"
 
-#: ../dnf/cli/cli.py:635
+#: ../dnf/cli/cli.py:643
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:637
+#: ../dnf/cli/cli.py:645
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr ""
 
-#: ../dnf/cli/cli.py:660 ../dnf/cli/cli.py:689
+#: ../dnf/cli/cli.py:668 ../dnf/cli/cli.py:697
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr ""
 
-#: ../dnf/cli/cli.py:750
+#: ../dnf/cli/cli.py:755
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr ""
 
-#: ../dnf/cli/cli.py:818
+#: ../dnf/cli/cli.py:823
 msgid "You need to give some command"
 msgstr "Вам слід вказати якусь команду"
 
-#: ../dnf/cli/cli.py:825
+#: ../dnf/cli/cli.py:830
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Команди %s не виявлено. Будь ласка, скористайтеся командою %s --help"
 
-#: ../dnf/cli/cli.py:927 ../dnf/cli/cli.py:931
+#: ../dnf/cli/cli.py:932 ../dnf/cli/cli.py:936
 #, python-format
 msgid "Config error: %s"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1015
+#: ../dnf/cli/cli.py:1020
 msgid "releasever not given and can not be detected from the installroot."
 msgstr ""
 
-#: ../dnf/cli/cli.py:1045
+#: ../dnf/cli/cli.py:1050
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Команду «%s» вже визначено"
 
-#: ../dnf/cli/main.py:77
+#: ../dnf/cli/main.py:77 ../dnf/automatic/main.py:157
 #, python-format
 msgid "Error: %s"
 msgstr "Помилка: %s"
@@ -489,7 +489,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: ../dnf/cli/output.py:463 ../dnf/cli/output.py:969
+#: ../dnf/cli/output.py:463 ../dnf/cli/output.py:968
 msgid "Arch"
 msgstr "Архітектура"
 
@@ -497,7 +497,7 @@ msgstr "Архітектура"
 msgid "Epoch"
 msgstr ""
 
-#: ../dnf/cli/output.py:466 ../dnf/cli/output.py:970
+#: ../dnf/cli/output.py:466 ../dnf/cli/output.py:969
 msgid "Version"
 msgstr "Версія"
 
@@ -505,7 +505,7 @@ msgstr "Версія"
 msgid "Release"
 msgstr ""
 
-#: ../dnf/cli/output.py:468 ../dnf/cli/output.py:971
+#: ../dnf/cli/output.py:468 ../dnf/cli/output.py:970
 msgid "Size"
 msgstr "Розмір"
 
@@ -545,7 +545,7 @@ msgstr ""
 msgid "License"
 msgstr ""
 
-#: ../dnf/cli/output.py:498
+#: ../dnf/cli/output.py:498 ../dnf/cli/commands/updateinfo.py:295
 msgid "Description"
 msgstr ""
 
@@ -680,26 +680,26 @@ msgstr ""
 
 #: ../dnf/cli/output.py:901
 msgid "Packages"
-msgstr ""
+msgstr "Пакунки"
 
 #: ../dnf/cli/output.py:945
 msgid "Removing"
 msgstr "Вилучення"
 
-#: ../dnf/cli/output.py:969 ../dnf/cli/output.py:1852
+#: ../dnf/cli/output.py:968 ../dnf/cli/output.py:1851
 msgid "Package"
 msgstr ""
 
-#: ../dnf/cli/output.py:970
+#: ../dnf/cli/output.py:969
 msgid "Repository"
 msgstr "Сховище"
 
-#: ../dnf/cli/output.py:983
+#: ../dnf/cli/output.py:982
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     заміна  %s%s%s.%s %s\n"
 
-#: ../dnf/cli/output.py:991
+#: ../dnf/cli/output.py:990
 #, python-format
 msgid ""
 "\n"
@@ -707,417 +707,417 @@ msgid ""
 "%s\n"
 msgstr "\nРезюме операції\n%s\n"
 
-#: ../dnf/cli/output.py:996 ../dnf/cli/output.py:1647
-#: ../dnf/cli/output.py:1648
+#: ../dnf/cli/output.py:995 ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1647
 msgid "Install"
 msgstr "Встановити"
 
-#: ../dnf/cli/output.py:997 ../dnf/cli/output.py:1656
+#: ../dnf/cli/output.py:996 ../dnf/cli/output.py:1655
 msgid "Upgrade"
 msgstr "Оновити"
 
-#: ../dnf/cli/output.py:998
+#: ../dnf/cli/output.py:997
 msgid "Remove"
 msgstr "Вилучити"
 
-#: ../dnf/cli/output.py:999 ../dnf/cli/output.py:1654
+#: ../dnf/cli/output.py:998 ../dnf/cli/output.py:1653
 msgid "Downgrade"
 msgstr "Понизити"
 
-#: ../dnf/cli/output.py:1085
+#: ../dnf/cli/output.py:1084
 msgid "Reinstalled"
 msgstr ""
 
-#: ../dnf/cli/output.py:1086
+#: ../dnf/cli/output.py:1085
 msgid "Removed"
 msgstr "Вилучено"
 
-#: ../dnf/cli/output.py:1087 ../dnf/cli/output.py:1492
-#: ../dnf/cli/output.py:1494
+#: ../dnf/cli/output.py:1086 ../dnf/cli/output.py:1491
+#: ../dnf/cli/output.py:1493 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Встановлено"
 
-#: ../dnf/cli/output.py:1088 ../dnf/cli/output.py:1493
-#: ../dnf/cli/output.py:1657
+#: ../dnf/cli/output.py:1087 ../dnf/cli/output.py:1492
+#: ../dnf/cli/output.py:1656
 msgid "Upgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:1089 ../dnf/cli/output.py:1493
-#: ../dnf/cli/output.py:1655
+#: ../dnf/cli/output.py:1088 ../dnf/cli/output.py:1492
+#: ../dnf/cli/output.py:1654
 msgid "Downgraded"
 msgstr "Знижено версію"
 
-#: ../dnf/cli/output.py:1145
+#: ../dnf/cli/output.py:1144
 msgid "Total"
 msgstr "Загалом"
 
-#: ../dnf/cli/output.py:1166
+#: ../dnf/cli/output.py:1165
 msgid "I"
 msgstr "I"
 
-#: ../dnf/cli/output.py:1167
+#: ../dnf/cli/output.py:1166
 msgid "O"
 msgstr "O"
 
-#: ../dnf/cli/output.py:1168
+#: ../dnf/cli/output.py:1167
 msgid "E"
 msgstr "E"
 
-#: ../dnf/cli/output.py:1169
+#: ../dnf/cli/output.py:1168
 msgid "R"
 msgstr "R"
 
-#: ../dnf/cli/output.py:1170
+#: ../dnf/cli/output.py:1169
 msgid "D"
 msgstr "D"
 
-#: ../dnf/cli/output.py:1171
+#: ../dnf/cli/output.py:1170
 msgid "U"
 msgstr "U"
 
-#: ../dnf/cli/output.py:1185
+#: ../dnf/cli/output.py:1184
 msgid "<unset>"
 msgstr "<не встановлено>"
 
-#: ../dnf/cli/output.py:1186
+#: ../dnf/cli/output.py:1185
 msgid "System"
 msgstr "Система"
 
-#: ../dnf/cli/output.py:1267 ../dnf/cli/output.py:1398
+#: ../dnf/cli/output.py:1266 ../dnf/cli/output.py:1397
 msgid "No transactions"
 msgstr "Немає операцій"
 
-#: ../dnf/cli/output.py:1292 ../dnf/cli/output.py:1841
-#: ../dnf/cli/output.py:1918
+#: ../dnf/cli/output.py:1291 ../dnf/cli/output.py:1840
+#: ../dnf/cli/output.py:1917
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Вказано помилкові ідентифікатори операцій або пакунки"
 
-#: ../dnf/cli/output.py:1339
+#: ../dnf/cli/output.py:1338
 msgid "Command line"
 msgstr "Командний рядок"
 
-#: ../dnf/cli/output.py:1341 ../dnf/cli/output.py:1729
+#: ../dnf/cli/output.py:1340 ../dnf/cli/output.py:1728
 msgid "Login user"
 msgstr "Користувач"
 
-#: ../dnf/cli/output.py:1342 ../dnf/cli/output.py:1850
+#: ../dnf/cli/output.py:1341 ../dnf/cli/output.py:1849
 msgid "ID"
 msgstr "Ід."
 
-#: ../dnf/cli/output.py:1344
+#: ../dnf/cli/output.py:1343
 msgid "Date and time"
 msgstr "Дата і час"
 
-#: ../dnf/cli/output.py:1345 ../dnf/cli/output.py:1731
-#: ../dnf/cli/output.py:1851
+#: ../dnf/cli/output.py:1344 ../dnf/cli/output.py:1730
+#: ../dnf/cli/output.py:1850
 msgid "Action(s)"
 msgstr "Дії"
 
-#: ../dnf/cli/output.py:1346 ../dnf/cli/output.py:1732
+#: ../dnf/cli/output.py:1345 ../dnf/cli/output.py:1731
 msgid "Altered"
 msgstr "Змінено"
 
-#: ../dnf/cli/output.py:1431 ../dnf/cli/output.py:1805
+#: ../dnf/cli/output.py:1430 ../dnf/cli/output.py:1804
 msgid "No transaction ID, or package, given"
 msgstr "Не вказано ідентифікатора операції або назви пакунка"
 
-#: ../dnf/cli/output.py:1492
+#: ../dnf/cli/output.py:1491
 msgid "Erased"
 msgstr "Вилучено"
 
-#: ../dnf/cli/output.py:1494
+#: ../dnf/cli/output.py:1493
 msgid "Not installed"
 msgstr "Не встановлено"
 
-#: ../dnf/cli/output.py:1495
+#: ../dnf/cli/output.py:1494
 msgid "Older"
 msgstr "Старіший"
 
-#: ../dnf/cli/output.py:1495
+#: ../dnf/cli/output.py:1494
 msgid "Newer"
 msgstr "Новіший"
 
-#: ../dnf/cli/output.py:1532 ../dnf/cli/output.py:1534
-#: ../dnf/cli/output.py:1939
+#: ../dnf/cli/output.py:1531 ../dnf/cli/output.py:1533
+#: ../dnf/cli/output.py:1938
 msgid "Transaction ID :"
 msgstr "Ід. операції   :"
 
-#: ../dnf/cli/output.py:1536 ../dnf/cli/output.py:1941
+#: ../dnf/cli/output.py:1535 ../dnf/cli/output.py:1940
 msgid "Begin time     :"
 msgstr "Час початку     :"
 
-#: ../dnf/cli/output.py:1539 ../dnf/cli/output.py:1541
+#: ../dnf/cli/output.py:1538 ../dnf/cli/output.py:1540
 msgid "Begin rpmdb    :"
 msgstr "Початок rpmdb   :"
 
-#: ../dnf/cli/output.py:1557
+#: ../dnf/cli/output.py:1556
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u секунд)"
 
-#: ../dnf/cli/output.py:1559
+#: ../dnf/cli/output.py:1558
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u хвилин)"
 
-#: ../dnf/cli/output.py:1561
+#: ../dnf/cli/output.py:1560
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u годин)"
 
-#: ../dnf/cli/output.py:1563
+#: ../dnf/cli/output.py:1562
 #, python-format
 msgid "(%u days)"
 msgstr "(%u днів)"
 
-#: ../dnf/cli/output.py:1564
+#: ../dnf/cli/output.py:1563
 msgid "End time       :"
 msgstr "Час завершення  :"
 
-#: ../dnf/cli/output.py:1567 ../dnf/cli/output.py:1569
+#: ../dnf/cli/output.py:1566 ../dnf/cli/output.py:1568
 msgid "End rpmdb      :"
 msgstr "Завершення rpmdb:"
 
-#: ../dnf/cli/output.py:1572 ../dnf/cli/output.py:1574
+#: ../dnf/cli/output.py:1571 ../dnf/cli/output.py:1573
 msgid "User           :"
 msgstr "Користувач     :"
 
-#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1581
-#: ../dnf/cli/output.py:1583 ../dnf/cli/output.py:1585
-#: ../dnf/cli/output.py:1587
+#: ../dnf/cli/output.py:1577 ../dnf/cli/output.py:1580
+#: ../dnf/cli/output.py:1582 ../dnf/cli/output.py:1584
+#: ../dnf/cli/output.py:1586
 msgid "Return-Code    :"
 msgstr "Повернутий код :"
 
-#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1583
+#: ../dnf/cli/output.py:1577 ../dnf/cli/output.py:1582
 msgid "Aborted"
 msgstr "Перервано"
 
-#: ../dnf/cli/output.py:1581
+#: ../dnf/cli/output.py:1580
 msgid "Failures:"
 msgstr "Помилки:"
 
-#: ../dnf/cli/output.py:1585
+#: ../dnf/cli/output.py:1584
 msgid "Failure:"
 msgstr "Помилка:"
 
-#: ../dnf/cli/output.py:1587
+#: ../dnf/cli/output.py:1586
 msgid "Success"
 msgstr "Успіх"
 
-#: ../dnf/cli/output.py:1592 ../dnf/cli/output.py:1594
-#: ../dnf/cli/output.py:1970
+#: ../dnf/cli/output.py:1591 ../dnf/cli/output.py:1593
+#: ../dnf/cli/output.py:1969
 msgid "Command Line   :"
 msgstr "Командний рядок :"
 
-#: ../dnf/cli/output.py:1603
+#: ../dnf/cli/output.py:1602
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Збережені додаткові нетипові дані        : %d"
 
-#: ../dnf/cli/output.py:1608
+#: ../dnf/cli/output.py:1607
 msgid "Transaction performed with:"
 msgstr "Результат виконання операції:"
 
-#: ../dnf/cli/output.py:1612
+#: ../dnf/cli/output.py:1611
 msgid "Packages Altered:"
 msgstr "Змінено пакунків:"
 
-#: ../dnf/cli/output.py:1616
+#: ../dnf/cli/output.py:1615
 msgid "Packages Skipped:"
 msgstr "Пропущено пакунків:"
 
-#: ../dnf/cli/output.py:1624
+#: ../dnf/cli/output.py:1623
 msgid "Rpmdb Problems:"
 msgstr "Проблеми з rpmdb:"
 
-#: ../dnf/cli/output.py:1635
+#: ../dnf/cli/output.py:1634
 msgid "Scriptlet output:"
 msgstr "Виведено скриптом:"
 
-#: ../dnf/cli/output.py:1641
+#: ../dnf/cli/output.py:1640
 msgid "Errors:"
 msgstr "Помилки:"
 
-#: ../dnf/cli/output.py:1649
+#: ../dnf/cli/output.py:1648
 msgid "Dep-Install"
 msgstr "Встановлення з залежностями"
 
-#: ../dnf/cli/output.py:1650
+#: ../dnf/cli/output.py:1649
 msgid "Obsoleted"
 msgstr "Став застарілим"
 
-#: ../dnf/cli/output.py:1652
+#: ../dnf/cli/output.py:1651
 msgid "Erase"
 msgstr "Стерти"
 
-#: ../dnf/cli/output.py:1653
+#: ../dnf/cli/output.py:1652
 msgid "Reinstall"
 msgstr "Перевстановлення"
 
-#: ../dnf/cli/output.py:1730
+#: ../dnf/cli/output.py:1729
 msgid "Time"
 msgstr "Час"
 
-#: ../dnf/cli/output.py:1756
+#: ../dnf/cli/output.py:1755
 msgid "Last day"
 msgstr "Протягом дня"
 
-#: ../dnf/cli/output.py:1757
+#: ../dnf/cli/output.py:1756
 msgid "Last week"
 msgstr "Попереднього тижня"
 
-#: ../dnf/cli/output.py:1758
+#: ../dnf/cli/output.py:1757
 msgid "Last 2 weeks"
 msgstr "Попередні 2 тижні"
 
-#: ../dnf/cli/output.py:1759
+#: ../dnf/cli/output.py:1758
 msgid "Last 3 months"
 msgstr "Попередні 3 місяці"
 
-#: ../dnf/cli/output.py:1760
+#: ../dnf/cli/output.py:1759
 msgid "Last 6 months"
 msgstr "Попередні 6 місяців"
 
-#: ../dnf/cli/output.py:1761
+#: ../dnf/cli/output.py:1760
 msgid "Last year"
 msgstr "Попередній рік"
 
-#: ../dnf/cli/output.py:1762
+#: ../dnf/cli/output.py:1761
 msgid "Over a year ago"
 msgstr "Понад рік тому"
 
-#: ../dnf/cli/output.py:1809
+#: ../dnf/cli/output.py:1808
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Не знайдено операції %s"
 
-#: ../dnf/cli/output.py:1815
+#: ../dnf/cli/output.py:1814
 msgid "Transaction ID:"
 msgstr "Ід. операції  :"
 
-#: ../dnf/cli/output.py:1816
+#: ../dnf/cli/output.py:1815
 msgid "Available additional history information:"
 msgstr "Доступні додаткові дані з журналу:"
 
-#: ../dnf/cli/output.py:1829
+#: ../dnf/cli/output.py:1828
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: для цієї назви додаткових даних не знайдено"
 
-#: ../dnf/cli/output.py:1942
+#: ../dnf/cli/output.py:1941
 msgid "Package        :"
 msgstr "Пакунок        :"
 
-#: ../dnf/cli/output.py:1943
+#: ../dnf/cli/output.py:1942
 msgid "State          :"
 msgstr "Стан           :"
 
-#: ../dnf/cli/output.py:1946
+#: ../dnf/cli/output.py:1945
 msgid "Size           :"
 msgstr "Розмір         :"
 
-#: ../dnf/cli/output.py:1948
+#: ../dnf/cli/output.py:1947
 msgid "Build host     :"
 msgstr "Вузол збирання :"
 
-#: ../dnf/cli/output.py:1951
+#: ../dnf/cli/output.py:1950
 msgid "Build time     :"
 msgstr "Час збирання   :"
 
-#: ../dnf/cli/output.py:1953
+#: ../dnf/cli/output.py:1952
 msgid "Packager       :"
 msgstr "Пакувальник    :"
 
-#: ../dnf/cli/output.py:1955
+#: ../dnf/cli/output.py:1954
 msgid "Vendor         :"
 msgstr "Постачальник   :"
 
-#: ../dnf/cli/output.py:1957
+#: ../dnf/cli/output.py:1956
 msgid "License        :"
 msgstr "Ліцензія       :"
 
-#: ../dnf/cli/output.py:1959
+#: ../dnf/cli/output.py:1958
 msgid "URL            :"
 msgstr "Адреса         :"
 
-#: ../dnf/cli/output.py:1961
+#: ../dnf/cli/output.py:1960
 msgid "Source RPM     :"
 msgstr "RPM з кодом    :"
 
-#: ../dnf/cli/output.py:1964
+#: ../dnf/cli/output.py:1963
 msgid "Commit Time    :"
 msgstr "Час надсилання :"
 
-#: ../dnf/cli/output.py:1966
+#: ../dnf/cli/output.py:1965
 msgid "Committer      :"
 msgstr "Автор внеску   :"
 
-#: ../dnf/cli/output.py:1968
+#: ../dnf/cli/output.py:1967
 msgid "Reason         :"
 msgstr "Причина        :"
 
-#: ../dnf/cli/output.py:1972
+#: ../dnf/cli/output.py:1971
 msgid "From repo      :"
 msgstr "Зі сховища      :"
 
-#: ../dnf/cli/output.py:1976
+#: ../dnf/cli/output.py:1975
 msgid "Installed by   :"
 msgstr "Встановлено    :"
 
-#: ../dnf/cli/output.py:1980
+#: ../dnf/cli/output.py:1979
 msgid "Changed by     :"
 msgstr "Автор змін     :"
 
-#: ../dnf/cli/output.py:2011
+#: ../dnf/cli/output.py:2010 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "встановлено"
 
-#: ../dnf/cli/output.py:2012
+#: ../dnf/cli/output.py:2011
 msgid "an upgrade"
 msgstr ""
 
-#: ../dnf/cli/output.py:2013
+#: ../dnf/cli/output.py:2012
 msgid "erased"
 msgstr "вилучено"
 
-#: ../dnf/cli/output.py:2014
+#: ../dnf/cli/output.py:2013
 msgid "reinstalled"
 msgstr "перевстановлено"
 
-#: ../dnf/cli/output.py:2015
+#: ../dnf/cli/output.py:2014
 msgid "a downgrade"
 msgstr "зниженням версії"
 
-#: ../dnf/cli/output.py:2016
+#: ../dnf/cli/output.py:2015
 msgid "obsoleting"
 msgstr "робити застарілим"
 
-#: ../dnf/cli/output.py:2017
+#: ../dnf/cli/output.py:2016
 msgid "upgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:2018
+#: ../dnf/cli/output.py:2017
 msgid "obsoleted"
 msgstr "визнано застарілим"
 
-#: ../dnf/cli/output.py:2019
+#: ../dnf/cli/output.py:2018
 msgid "downgraded"
 msgstr ""
 
-#: ../dnf/cli/output.py:2022
+#: ../dnf/cli/output.py:2021
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:2029
+#: ../dnf/cli/output.py:2028
 msgid "--> Starting dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2034
+#: ../dnf/cli/output.py:2033
 msgid "--> Finished dependency resolution"
 msgstr ""
 
-#: ../dnf/cli/output.py:2169
+#: ../dnf/cli/output.py:2168
 msgid "Verifying"
 msgstr ""
 
@@ -1326,7 +1326,7 @@ msgstr "Вилучення метаданих застарілого кешу"
 msgid "Cleaning up cached rpmdb data"
 msgstr "Вилучення кешованих даних rpmdb"
 
-#: ../dnf/cli/commands/repolist.py:36
+#: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
 msgid "unknown"
 msgstr ""
 
@@ -1715,171 +1715,246 @@ msgstr "Некоректна підкоманда журналу, скорист
 msgid "You don't have access to the history DB."
 msgstr "У вас немає права доступу до бази даних журналу."
 
-#: ../dnf/base.py:101
+#: ../dnf/cli/commands/updateinfo.py:45
+msgid "bugfix"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:46
+msgid "enhancement"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:47
+msgid "security"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:51
+msgid "Display advisories about packages"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:177
+msgid "Updates Information Summary: "
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:180
+msgid "Security notice(s)"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:181
+msgid "Bugfix notice(s)"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:182
+msgid "Enhancement notice(s)"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:183
+msgid "other notice(s)"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "true"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "false"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Update ID"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Type"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Updated"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Bugs"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "CVEs"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Rights"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Files"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:331
+msgid "updates"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:334
+msgid "all"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:339
+msgid "available"
+msgstr ""
+
+#: ../dnf/base.py:100
 #, python-format
 msgid "%s, disabling."
 msgstr ""
 
-#: ../dnf/base.py:283
+#: ../dnf/base.py:294
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Некоректне значення tsflag у файлі налаштувань: %s"
 
-#: ../dnf/base.py:336
+#: ../dnf/base.py:347
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Не вдалося додати файл груп зі сховища: %s — %s"
 
-#: ../dnf/base.py:432
+#: ../dnf/base.py:443
 msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Пошук непотрібних залишкових операцій"
 
-#: ../dnf/base.py:495
+#: ../dnf/base.py:506
 msgid "Running transaction check"
 msgstr ""
 
-#: ../dnf/base.py:498
+#: ../dnf/base.py:509
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:504
+#: ../dnf/base.py:515
 msgid "Transaction check succeeded."
 msgstr ""
 
-#: ../dnf/base.py:507
+#: ../dnf/base.py:518
 msgid "Running transaction test"
 msgstr ""
 
-#: ../dnf/base.py:519
+#: ../dnf/base.py:530
 msgid "Transaction check error:\n"
 msgstr ""
 
-#: ../dnf/base.py:526
+#: ../dnf/base.py:537
 msgid "Transaction test succeeded."
 msgstr ""
 
-#: ../dnf/base.py:541
+#: ../dnf/base.py:552
 msgid "Running transaction"
 msgstr ""
 
-#: ../dnf/base.py:608
+#: ../dnf/base.py:619
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr "Попередження: під час виконання операції сталися помилки виконання скриптів та інші некритичні помилки."
 
-#: ../dnf/base.py:613
+#: ../dnf/base.py:624
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr ""
 
-#: ../dnf/base.py:616 ../dnf/base.py:627
+#: ../dnf/base.py:627 ../dnf/base.py:638
 msgid "Could not run transaction."
 msgstr "Не вдалося розпочати операцію."
 
-#: ../dnf/base.py:624
+#: ../dnf/base.py:635
 msgid "Transaction couldn't start:"
 msgstr "Не вдалося розпочати операцію:"
 
-#: ../dnf/base.py:636
+#: ../dnf/base.py:647
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Не вдалося вилучити файл операції %s"
 
-#: ../dnf/base.py:693
+#: ../dnf/base.py:704
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s мало бути встановлено, але цю дію не було виконано!"
 
-#: ../dnf/base.py:753
+#: ../dnf/base.py:764
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s мало бути вилучено, але цього не сталося!"
 
-#: ../dnf/base.py:819
+#: ../dnf/base.py:830
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 
-#: ../dnf/base.py:867
+#: ../dnf/base.py:878
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Відкритий ключ для %s не встановлено"
 
-#: ../dnf/base.py:871
+#: ../dnf/base.py:882
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Проблеми з відкриттям пакунка %s"
 
-#: ../dnf/base.py:879
+#: ../dnf/base.py:890
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Відкритий ключ %s не є надійним"
 
-#: ../dnf/base.py:883
+#: ../dnf/base.py:894
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Пакунок %s не підписано"
 
-#: ../dnf/base.py:917
+#: ../dnf/base.py:928
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Не вдалося вилучити %s"
 
-#: ../dnf/base.py:921
+#: ../dnf/base.py:932
 #, python-format
 msgid "%s removed"
 msgstr "%s вилучено"
 
-#: ../dnf/base.py:1225
+#: ../dnf/base.py:1236
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr ""
 
-#: ../dnf/base.py:1346
+#: ../dnf/base.py:1357
 #, python-format
 msgid "No package %s installed."
 msgstr ""
 
-#: ../dnf/base.py:1482
+#: ../dnf/base.py:1493
 #, python-format
 msgid "Failed to downgrade: %s"
 msgstr "Не вдалося знизити версію: %s"
 
-#: ../dnf/base.py:1499
+#: ../dnf/base.py:1510
 #, python-format
 msgid "Failed to upgrade: %s"
 msgstr "Не вдалося оновити: %s"
 
-#: ../dnf/base.py:1630
+#: ../dnf/base.py:1641
 #, python-format
 msgid "Retrieving key from %s"
 msgstr "Отримання ключа з %s"
 
-#: ../dnf/base.py:1640
+#: ../dnf/base.py:1651
 #, python-format
 msgid "GPG key retrieval failed: %s"
 msgstr ""
 
-#: ../dnf/base.py:1661
-#, python-format
-msgid "GPG key signature on key %s does not match CA Key for repo: %s"
-msgstr "Ключ підпису GPG ключа %s не збігається з ключем CA сховища: %s"
-
-#: ../dnf/base.py:1664
-msgid "GPG key signature verified against CA Key(s)"
-msgstr "Перевірено відповідність підпису ключа GPG ключам CA"
-
-#: ../dnf/base.py:1672
+#: ../dnf/base.py:1658
 #, python-format
 msgid "Invalid GPG Key from %s: %s"
 msgstr "Некоректний ключ GPG з %s: %s"
 
-#: ../dnf/base.py:1680
+#: ../dnf/base.py:1666
 #, python-format
 msgid "GPG key parsing failed: key does not have value %s"
 msgstr "Помилка обробник ключа GPG: у ключі немає значення %s"
 
-#: ../dnf/base.py:1697
+#: ../dnf/base.py:1681
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1889,7 +1964,7 @@ msgid ""
 " From       : %s"
 msgstr "Імпортування ключа %s 0x%s:\n Ід. корист.: «%s»\n Відбиток   : %s\n Пакунок    : %s (%s)\n Походження : %s"
 
-#: ../dnf/base.py:1706
+#: ../dnf/base.py:1690
 #, python-format
 msgid ""
 "Importing %s key 0x%s:\n"
@@ -1898,7 +1973,7 @@ msgid ""
 " From       : %s"
 msgstr "Імпортування ключа %s 0x%s:\n Ід. корист.: «%s»\n Відбиток   : %s\n Походження : %s"
 
-#: ../dnf/base.py:1734
+#: ../dnf/base.py:1718
 #, python-format
 msgid ""
 "\n"
@@ -1908,75 +1983,34 @@ msgid ""
 " GPG Keys are configured as: %s\n"
 msgstr ""
 
-#: ../dnf/base.py:1748
+#: ../dnf/base.py:1732
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "Ключ GPG у %s (0x%s) вже встановлено"
 
-#: ../dnf/base.py:1784
+#: ../dnf/base.py:1765
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Помилка імпортування ключа (код %d)"
 
-#: ../dnf/base.py:1786 ../dnf/base.py:1892
+#: ../dnf/base.py:1767
 msgid "Key imported successfully"
 msgstr "Ключ успішно імпортовано"
 
-#: ../dnf/base.py:1790
+#: ../dnf/base.py:1771
 msgid "Didn't install any keys"
 msgstr "Не встановлено жодного ключа"
 
-#: ../dnf/base.py:1793
+#: ../dnf/base.py:1774
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr "Ключі GPG зі списку сховища «%s» вже встановлено, але вони є некоректними для цього пакунка.\nПеревірте, чи правильно вказано адреси URL для цього сховища."
 
-#: ../dnf/base.py:1803
+#: ../dnf/base.py:1784
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Імпортування ключів не допомогло, помилкові ключі?"
-
-#: ../dnf/base.py:1826
-msgid "No"
-msgstr ""
-
-#: ../dnf/base.py:1828
-msgid "Yes"
-msgstr ""
-
-#: ../dnf/base.py:1829
-#, python-format
-msgid ""
-"\n"
-"\n"
-"\n"
-" CA Key: %s\n"
-" Failing repo is: %s\n"
-" GPG Keys are configured as: %s\n"
-msgstr ""
-
-#: ../dnf/base.py:1843
-#, python-format
-msgid "GPG key at %s (0x%s) is already imported"
-msgstr "Ключ GPG у %s (0x%s) вже імпортовано"
-
-#: ../dnf/base.py:1890
-#, python-format
-msgid "Key %s import failed"
-msgstr ""
-
-#: ../dnf/base.py:1907
-#, python-format
-msgid "Didn't install any keys for repo %s"
-msgstr "Не встановлено жодного ключа для сховища %s"
-
-#: ../dnf/base.py:1912
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr "Ключі GPG зі списку сховища «%s» вже встановлено, але вони є некоректними.\nПеревірте, чи правильно вказано адреси URL для цього сховища."
 
 #: ../dnf/transaction.py:204
 #, python-format
@@ -1986,4 +2020,39 @@ msgstr ""
 #: ../dnf/plugin.py:126
 #, python-format
 msgid "Failed loading plugin: %s"
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:29
+#, python-format
+msgid "The following updates have been applied on '%s':"
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:30
+#, python-format
+msgid "The following updates are available on '%s':"
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:31
+#, python-format
+msgid "The following updates were downloaded on '%s':"
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:78
+#, python-format
+msgid "Updates applied on '%s'."
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:80
+#, python-format
+msgid "Updates downloaded on '%s'."
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:82
+#, python-format
+msgid "Updates available on '%s'."
+msgstr ""
+
+#: ../dnf/automatic/emitter.py:102
+#, python-format
+msgid "Failed to send an email via '%s': %s"
 msgstr ""
