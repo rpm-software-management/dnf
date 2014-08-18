@@ -120,26 +120,27 @@ class Base(object):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
             return
+        excluded_pkgs = []
+        included_pkgs = []
         if 'main' not in disabled:
             for excl in self.conf.exclude:
                 subj = dnf.subject.Subject(excl)
-                pkgs = subj.get_best_query(self.sack)
-                self.sack.add_excludes(pkgs)
+                excluded_pkgs += subj.get_best_query(self.sack)
             for incl in self.conf.include:
                 subj = dnf.subject.Subject(incl)
-                pkgs = subj.get_best_query(self.sack)
-                self.sack.add_includes(pkgs)
+                included_pkgs += subj.get_best_query(self.sack)
         for r in self.repos.iter_enabled():
             if r.id in disabled:
                 continue
             for excl in r.exclude:
-                pkgs = self.sack.query().filter(reponame=r.id).\
+                excluded_pkgs += self.sack.query().filter(reponame=r.id).\
                     filter_autoglob(name=excl)
-                self.sack.add_excludes(pkgs)
             for incl in r.include:
-                pkgs = self.sack.query().filter(reponame=r.id).\
+                included_pkgs += self.sack.query().filter(reponame=r.id).\
                     filter_autoglob(name=incl)
-                self.sack.add_includes(pkgs)
+        self.sack.add_excludes(excluded_pkgs)
+        if included_pkgs:
+            self.sack.add_includes(included_pkgs)
 
     def _store_persistent_data(self):
         def check_expired(repo):
