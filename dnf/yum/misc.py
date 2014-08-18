@@ -27,7 +27,6 @@ from dnf.exceptions import MiscError
 from dnf.pycomp import basestring, unicode, long
 from io import StringIO
 from stat import *
-
 import base64
 import binascii
 import bz2
@@ -36,6 +35,8 @@ import dnf.exceptions
 import dnf.i18n
 import errno
 import glob
+import gpgme
+import gpgme.editutil
 import gzip
 import hashlib
 import lzma
@@ -47,14 +48,9 @@ import shutil
 import struct
 import tempfile
 
-try:
-    import gpgme
-    import gpgme.editutil
-except ImportError:
-    gpgme = None
-
 _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
+
 
 _re_compiled_glob_match = None
 def re_glob(s):
@@ -371,9 +367,6 @@ def keyInstalled(ts, keyid, timestamp):
 
 def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
                           make_ro_copy=True):
-    if gpgme is None:
-        return False
-
     if not gpgdir:
         gpgdir = '%s/gpgdir' % cachedir
 
@@ -434,10 +427,6 @@ def return_keyids_from_pubring(gpgdir):
 
 def valid_detached_sig(sig_file, signed_file, gpghome=None):
     """takes signature , file that was signed and an optional gpghomedir"""
-
-    if gpgme is None:
-        return False
-
     if gpghome:
         if not os.path.exists(gpghome):
             return False
