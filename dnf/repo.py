@@ -25,6 +25,7 @@ from dnf.i18n import ucd, _
 import dnf.callback
 import dnf.conf.substitutions
 import dnf.const
+import dnf.crypto
 import dnf.exceptions
 import dnf.logging
 import dnf.pycomp
@@ -449,12 +450,28 @@ class Repo(dnf.yum.config.RepoConf):
         return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def _handle_load(self, handle):
+        if not self.repo_gpgcheck:
+            return self._handle_load_core(handle)
+        try:
+            return self._handle_load_with_pubring(handle)
+        except _DetailedLibrepoError as e:
+            if e.librepo_code != librepo.LRE_BADGPG:
+                raise
+            dnf.util.clear_dir(handle.destdir)
+            dnf.crypto.import_repo_keys(self)
+            return self._handle_load_with_pubring(handle)
+
+    def _handle_load_core(self, handle):
         if handle.progresscb:
             self._md_pload.start(self.name)
         result = handle.perform()
         if handle.progresscb:
             self._md_pload.end()
         return Metadata(result, handle)
+
+    def _handle_load_with_pubring(self, handle):
+        with dnf.crypto.pubring_dir(self.pubring_dir):
+            return self._handle_load_core(handle)
 
     def _handle_new_local(self, destdir):
         return _Handle.new_local(self.substitutions, self.repo_gpgcheck,
@@ -760,6 +777,10 @@ class Repo(dnf.yum.config.RepoConf):
     @property
     def primary_fn(self):
         return self.metadata.primary_fn
+
+    @property
+    def pubring_dir(self):
+        return os.path.join(self.cachedir, 'pubring')
 
     @property
     def repomd_fn(self):

@@ -39,6 +39,7 @@ import gpgme
 import gpgme.editutil
 import gzip
 import hashlib
+import io
 import lzma
 import os
 import os.path
@@ -296,9 +297,11 @@ def getgpgkeyinfo(rawkey, multiple=False):
     for key in keys:
         keyid_blob = key.public_key.key_id()
 
+        keyid = struct.unpack(b'>Q', keyid_blob)[0]
         info = {
             'userid': key.user_id,
-            'keyid': struct.unpack(b'>Q', keyid_blob)[0],
+            'keyid': keyid,
+            'hexkeyid': keyIdToRPMVer(keyid).upper(),
             'timestamp': key.public_key.timestamp,
             'fingerprint' : key.public_key.fingerprint,
             'raw_key' : key.raw_key,
@@ -365,6 +368,7 @@ def keyInstalled(ts, keyid, timestamp):
 
     return -1
 
+
 def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
                           make_ro_copy=True):
     if not gpgdir:
@@ -373,7 +377,7 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
 
-    key_fo = StringIO(rawkey)
+    key_fo = io.BytesIO(rawkey)
     os.environ['GNUPGHOME'] = gpgdir
     # import the key
     ctx = gpgme.Context()
@@ -411,19 +415,6 @@ preserve-permissions
 
     return True
 
-def return_keyids_from_pubring(gpgdir):
-    if gpgme is None or not os.path.exists(gpgdir):
-        return []
-
-    os.environ['GNUPGHOME'] = gpgdir
-    ctx = gpgme.Context()
-    keyids = []
-    for k in ctx.keylist():
-        for subkey in k.subkeys:
-            if subkey.can_sign:
-                keyids.append(subkey.keyid)
-
-    return keyids
 
 def valid_detached_sig(sig_file, signed_file, gpghome=None):
     """takes signature , file that was signed and an optional gpghomedir"""

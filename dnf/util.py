@@ -45,6 +45,16 @@ Generally these are not a part of the public DNF API.
 def am_i_root():
     return os.geteuid() == 0
 
+def clear_dir(path):
+    """Remove all files and dirs under `path`
+
+    Also see rm_rf()
+
+    """
+    for entry in os.listdir(path):
+        contained_path = os.path.join(path, entry)
+        rm_rf(contained_path)
+
 def ensure_dir(dname):
     if os.path.exists(dname):
         if not os.path.isdir(dname):

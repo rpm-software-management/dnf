@@ -1274,22 +1274,22 @@ def decode_multiple_keys(msg):
     #ditto of above - but handling multiple certs/keys per file
     certs = []
 
-    pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
+    pgpkey_lines = map(lambda x : x.rstrip(), msg.split(b'\n'))
     in_block = 0
-    block = ''
+    block = b''
     for l in pgpkey_lines :
         if not in_block :
-            if l == '-----BEGIN PGP PUBLIC KEY BLOCK-----' :
+            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----' :
                 in_block = 1
-                block += '%s\n' % l
+                block += b'%s\n' % l
                 continue
 
-        block += '%s\n' % l
-        if l == '-----END PGP PUBLIC KEY BLOCK-----':
+        block += b'%s\n' % l
+        if l == b'-----END PGP PUBLIC KEY BLOCK-----':
             in_block = 0
             thesecerts = decode_msg(block, multi=True)
             if thesecerts:
                 certs.extend(thesecerts)
-            block = ''
+            block = b''
             continue
     return certs
