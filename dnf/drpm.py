@@ -120,7 +120,7 @@ class DeltaInfo(object):
                 best = delta.downloadsize
                 best_delta = delta
         if best_delta:
-           return DeltaPayload(self, best_delta, po, progress)
+            return DeltaPayload(self, best_delta, po, progress)
         return None
 
     def job_done(self, pid, code):
