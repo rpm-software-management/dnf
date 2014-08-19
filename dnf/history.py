@@ -26,6 +26,8 @@ from collections import defaultdict, Container, Iterable, Sized
 from dnf.util import is_exhausted, split_by
 from dnf.yum.history import YumHistory
 
+import dnf.exceptions
+
 INSTALLING_STATES = {'Install', 'Reinstall', 'Update', 'Downgrade'}
 
 PRIMARY_STATES = {'Install', 'Erase', 'Reinstall', 'Downgrade', 'Update'}
@@ -385,3 +387,56 @@ class NEVRAOperations(Sized, Iterable, Container):
 
         for obsoleted_nevra in obsoleted_nevras:
             self._add_obsoleted(nevra, obsoleted_nevra)
+
+
+class TransactionConverter(object):
+
+    """Converter from packages operations to transactions."""
+
+    def __init__(self, sack):
+        """Initialize the converter."""
+        self.sack = sack
+
+    def _find_available(self, nevra):
+        """Find an available package."""
+        packages = self.sack.query().available().nevra(nevra)
+        if not packages:
+            raise dnf.exceptions.PackagesNotAvailableError(
+                'no package matched', nevra)
+        return next(iter(packages))
+
+    def _find_installed(self, nevra):
+        """Find an installed package."""
+        packages = self.sack.query().installed().nevra(nevra)
+        if not packages:
+            raise dnf.exceptions.PackagesNotInstalledError(
+                'no package matched', nevra)
+        assert len(packages) == 1
+        return packages[0]
+
+    def convert(self, operations, reason='unknown'):
+        """Convert operations to a transaction."""
+        transaction = dnf.transaction.Transaction()
+        for state, nevra, rnevra, onevras in operations:
+            rpkg = None if rnevra is None else self._find_installed(rnevra)
+            opkgs = [self._find_installed(onevra) for onevra in onevras]
+            if state == 'Install':
+                assert not rpkg
+                transaction.add_install(
+                    self._find_available(nevra), opkgs, reason)
+            elif state == 'Erase':
+                assert not rpkg and not opkgs
+                transaction.add_erase(
+                    self._find_installed(nevra))
+            elif state == 'Reinstall':
+                transaction.add_reinstall(
+                    self._find_available(nevra), rpkg, opkgs)
+            elif state == 'Downgrade':
+                transaction.add_downgrade(
+                    self._find_available(nevra), rpkg, opkgs)
+            elif state == 'Update':
+                transaction.add_upgrade(
+                    self._find_available(nevra), rpkg, opkgs)
+            else:
+                assert False
+        return transaction

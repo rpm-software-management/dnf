@@ -492,3 +492,119 @@ class NEVRAOperationsTest(support.TestCase):
         is_in = 'tour-0:4.9-1.noarch' in ops
 
         self.assertFalse(is_in)
+
+
+class TransactionConverterTest(TestCase):
+    """Unit tests of dnf.history.TransactionConverter."""
+
+    def assert_transaction_equal(self, actual, expected):
+        """Assert that two transactions are equal."""
+        self.assertCountEqual(self.transaction2tuples(actual),
+                              self.transaction2tuples(expected))
+
+    def test_find_available_na(self):
+        """Test finding with an unavailable NEVRA."""
+        sack = support.mock_sack('main')
+        converter = dnf.history.TransactionConverter(sack)
+        with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as ctx:
+            converter._find_available('none-1-0.noarch')
+
+        self.assertEqual(ctx.exception.pkg_spec, 'none-1-0.noarch')
+
+    def test_find_installed_ni(self):
+        """Test finding with an unistalled NEVRA."""
+        sack = support.mock_sack('main')
+        converter = dnf.history.TransactionConverter(sack)
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as ctx:
+            converter._find_installed('none-1-0.noarch')
+
+        self.assertEqual(ctx.exception.pkg_spec, 'none-1-0.noarch')
+
+    def test_convert_downgrade(self):
+        """Test conversion with a downgrade."""
+        operations = dnf.history.NEVRAOperations()
+        operations.add('Downgrade', 'tour-4.6-1.noarch', 'tour-5-0.noarch',
+                       ['hole-1-1.x86_64'])
+
+        sack = support.mock_sack('main')
+        converter = dnf.history.TransactionConverter(sack)
+        actual = converter.convert(operations)
+
+        expected = dnf.transaction.Transaction()
+        expected.add_downgrade(
+            next(iter(sack.query().available().nevra('tour-4.6-1.noarch'))),
+            next(iter(sack.query().installed().nevra('tour-5-0.noarch'))),
+            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+        self.assert_transaction_equal(actual, expected)
+
+    def test_convert_erase(self):
+        """Test conversion with an erasure."""
+        operations = dnf.history.NEVRAOperations()
+        operations.add('Erase', 'pepper-20-0.x86_64')
+
+        sack = support.mock_sack()
+        converter = dnf.history.TransactionConverter(sack)
+        actual = converter.convert(operations)
+
+        expected = dnf.transaction.Transaction()
+        expected.add_erase(
+            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))))
+        self.assert_transaction_equal(actual, expected)
+
+    def test_convert_install(self):
+        """Test conversion with an installation."""
+        operations = dnf.history.NEVRAOperations()
+        operations.add('Install', 'lotus-3-16.x86_64',
+                       obsoleted_nevras=['hole-1-1.x86_64'])
+
+        sack = support.mock_sack('main')
+        converter = dnf.history.TransactionConverter(sack)
+        actual = converter.convert(operations, 'reason')
+
+        expected = dnf.transaction.Transaction()
+        expected.add_install(
+            next(iter(sack.query().available().nevra('lotus-3-16.x86_64'))),
+            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))],
+            'reason')
+        self.assert_transaction_equal(actual, expected)
+
+    def test_convert_reinstall(self):
+        """Test conversion with a reinstallation."""
+        operations = dnf.history.NEVRAOperations()
+        operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64',
+                       ['hole-1-1.x86_64'])
+
+        sack = support.mock_sack('main')
+        converter = dnf.history.TransactionConverter(sack)
+        actual = converter.convert(operations)
+
+        expected = dnf.transaction.Transaction()
+        expected.add_reinstall(
+            next(iter(sack.query().available().nevra('pepper-20-0.x86_64'))),
+            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))),
+            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+        self.assert_transaction_equal(actual, expected)
+
+    def test_upgrade(self):
+        """Test repeating with an upgrade."""
+        operations = dnf.history.NEVRAOperations()
+        operations.add('Update', 'pepper-20-1.x86_64', 'pepper-20-0.x86_64',
+                       ['hole-1-1.x86_64'])
+
+        sack = support.mock_sack('updates')
+        converter = dnf.history.TransactionConverter(sack)
+        actual = converter.convert(operations)
+
+        expected = dnf.transaction.Transaction()
+        expected.add_upgrade(
+            next(iter(sack.query().available().nevra('pepper-20-1.x86_64'))),
+            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))),
+            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+        self.assert_transaction_equal(actual, expected)
+
+    @staticmethod
+    def transaction2tuples(transaction):
+        """Convert a transaction to the iterable of tuples."""
+        for item in transaction:
+            yield (item.op_type, item.installed, item.erased, item.obsoleted,
+                   item.reason)
