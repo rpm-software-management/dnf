@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DNF Automatic &mdash; DNF 0.6.0-1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.6.0-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="DNF 0.6.0-1 documentation" href="index.html" />
+    <link rel="prev" title="DNF User’s FAQ" href="user_faq.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user_faq.html" title="DNF User’s FAQ"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dnf-automatic">
+<h1>DNF Automatic<a class="headerlink" href="#dnf-automatic" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">dnf-automatic</span> <span class="pre">[&lt;config</span> <span class="pre">file&gt;]</span></tt></p>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>Alternative CLI to <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> with specific facilities to make it suitable to be executed automatically and regularly from systemd timers, cron jobs and similar.</p>
+<p>The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, <tt class="docutils literal"><span class="pre">/etc/dnf/automatic.conf</span></tt> is used.</p>
+<p>The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output or email.</p>
+</div>
+<div class="section" id="configuration-file-format">
+<h2>Configuration File Format<a class="headerlink" href="#configuration-file-format" title="Permalink to this headline">¶</a></h2>
+<p>The configuration file is separated into topical sections.</p>
+<div class="section" id="command-section">
+<h3><tt class="docutils literal"><span class="pre">[command]</span></tt> section<a class="headerlink" href="#command-section" title="Permalink to this headline">¶</a></h3>
+<p>Setting the mode of operation of the program.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">download_updates</span></tt></dt>
+<dd><p class="first">boolean, default: False</p>
+<p class="last">Whether packages comprising the available should be downloaded.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">apply_updates</span></tt></dt>
+<dd><p class="first">boolean, default: False</p>
+<p class="last">Whether packages comprising the available should be applied (i.e. installed via RPM). Implies <tt class="docutils literal"><span class="pre">download_updates</span></tt>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="emitters-section">
+<h3><tt class="docutils literal"><span class="pre">[emitters]</span></tt> section<a class="headerlink" href="#emitters-section" title="Permalink to this headline">¶</a></h3>
+<p>Choosing how the results should be reported.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">emit_via</span></tt></dt>
+<dd><p class="first">list, default: <tt class="docutils literal"><span class="pre">email,</span> <span class="pre">stdio</span></tt></p>
+<p class="last">List of emitters to report the results through. Available emitters are <tt class="docutils literal"><span class="pre">stdio</span></tt> to print the result to standard output and <tt class="docutils literal"><span class="pre">email</span></tt> to send the report via email.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">system_name</span></tt></dt>
+<dd><p class="first">string, default: hostname of the given system</p>
+<p class="last">How the system is called in the reports.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="email-section">
+<h3><tt class="docutils literal"><span class="pre">[email]</span></tt> section<a class="headerlink" href="#email-section" title="Permalink to this headline">¶</a></h3>
+<p>The email emitter configuration.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">email_from</span></tt></dt>
+<dd><p class="first">string, default: <tt class="docutils literal"><span class="pre">root</span></tt></p>
+<p class="last">Message&#8217;s &#8220;From:&#8221; address.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">email_to</span></tt></dt>
+<dd><p class="first">list, default: <tt class="docutils literal"><span class="pre">root</span></tt></p>
+<p class="last">List of recipients of the message.</p>
+</dd>
+<dt><tt class="docutils literal"><span class="pre">email_host</span></tt></dt>
+<dd><p class="first">string, default: <tt class="docutils literal"><span class="pre">localhost</span></tt></p>
+<p class="last">Hostname of the SMTP server used to send the message.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="base-section">
+<h3><tt class="docutils literal"><span class="pre">[base]</span></tt> section<a class="headerlink" href="#base-section" title="Permalink to this headline">¶</a></h3>
+<p>Can be used to override settings from DNF&#8217;s main configuration file. See <a class="reference internal" href="command_ref.html"><em>DNF Command Reference</em></a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">DNF Automatic</a><ul>
+<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#configuration-file-format">Configuration File Format</a><ul>
+<li><a class="reference internal" href="#command-section"><tt class="docutils literal"><span class="pre">[command]</span></tt> section</a></li>
+<li><a class="reference internal" href="#emitters-section"><tt class="docutils literal"><span class="pre">[emitters]</span></tt> section</a></li>
+<li><a class="reference internal" href="#email-section"><tt class="docutils literal"><span class="pre">[email]</span></tt> section</a></li>
+<li><a class="reference internal" href="#base-section"><tt class="docutils literal"><span class="pre">[base]</span></tt> section</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="user_faq.html"
+                        title="previous chapter">DNF User&#8217;s FAQ</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/automatic.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user_faq.html" title="DNF User’s FAQ"
+             >previous</a> |</li>
+        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012-2014, Red Hat, Licensed under GPLv2+.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
