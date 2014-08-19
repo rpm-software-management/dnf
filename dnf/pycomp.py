@@ -20,7 +20,7 @@
 
 from gettext import NullTranslations
 from sys import version_info
-
+import base64
 import itertools
 import locale
 import types
@@ -40,6 +40,7 @@ if PY3:
     xrange = range
     raw_input = input
     to_ord = lambda i: i
+    base64_decodebytes = base64.decodebytes
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
 
@@ -65,6 +66,7 @@ else:
 
     filterfalse = itertools.ifilterfalse
     to_ord = lambda i: ord(i)
+    base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote
 
     # string helpers

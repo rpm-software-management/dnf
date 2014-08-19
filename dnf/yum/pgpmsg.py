@@ -16,8 +16,8 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.pycomp import long, to_ord, base64_decodebytes
 import struct, time, io, base64
-from dnf.pycomp import long, to_ord
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
@@ -1212,16 +1212,15 @@ a PGP "certificate" includes a public key, user id(s), and signature.
 """
     # first we'll break the block up into lines and trim each line of any
     # carriage return chars
-    pgpkey_lines = map(lambda x : x.rstrip(), msg.split('\n'))
+    pgpkey_lines = map(lambda x : x.rstrip(), msg.split(b'\n'))
 
     # check out block
     in_block = 0
     in_data = 0
-
-    block_buf = io.StringIO()
-    for l in pgpkey_lines :
+    block_buf = io.BytesIO()
+    for l in pgpkey_lines:
         if not in_block :
-            if l == '-----BEGIN PGP PUBLIC KEY BLOCK-----' :
+            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----' :
                 in_block = 1
             continue
 
@@ -1232,15 +1231,15 @@ a PGP "certificate" includes a public key, user id(s), and signature.
             continue
 
         # are we at the checksum line?
-        if l and l[0] == '=' :
+        if l and l.startswith(b'='):
+
             # get the checksum number
-            csum = base64.decodestring(l[1:5].encode('utf-8'))
+            csum = base64_decodebytes(l[1:5])
             i = 0
             csum, i = get_whole_number(csum, i, 3)
 
             # convert the base64 cert data to binary data
-            cert_msg = base64.decodestring(
-                block_buf.getvalue().encode('utf-8'))
+            cert_msg = base64_decodebytes(block_buf.getvalue())
             block_buf.close()
 
             # check the checksum
@@ -1271,9 +1270,12 @@ a PGP "certificate" includes a public key, user id(s), and signature.
     return []
 
 def decode_multiple_keys(msg):
-    #ditto of above - but handling multiple certs/keys per file
-    certs = []
+    """Decode keys from a message.
 
+    `msg` must be bytes.
+    """
+
+    certs = []
     pgpkey_lines = map(lambda x : x.rstrip(), msg.split(b'\n'))
     in_block = 0
     block = b''
@@ -1281,10 +1283,10 @@ def decode_multiple_keys(msg):
         if not in_block :
             if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----' :
                 in_block = 1
-                block += b'%s\n' % l
+                block += l + b'\n'
                 continue
 
-        block += b'%s\n' % l
+        block += l + b'\n'
         if l == b'-----END PGP PUBLIC KEY BLOCK-----':
             in_block = 0
             thesecerts = decode_msg(block, multi=True)

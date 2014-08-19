@@ -24,7 +24,7 @@ from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
 from . import pgpmsg
 from dnf.exceptions import MiscError
-from dnf.pycomp import basestring, unicode, long
+from dnf.pycomp import base64_decodebytes, basestring, unicode, long
 from io import StringIO
 from stat import *
 import base64
@@ -265,7 +265,7 @@ def procgpgkey(rawkey):
             block.write(line+'\n')
 
     # Decode and return
-    return base64.decodestring(block.getvalue().encode('utf-8'))
+    return base64_decodebytes(block.getvalue().encode('utf-8'))
 
 def gpgkey_fingerprint_ascii(info, chop=4):
     ''' Given a key_info data from getgpgkeyinfo(), return an ascii
@@ -382,7 +382,7 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
     # import the key
     ctx = gpgme.Context()
     fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
-    fp.write('')
+    fp.write(b'')
     fp.close()
     ctx.import_(key_fo)
     key_fo.close()
