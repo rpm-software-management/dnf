@@ -781,8 +781,8 @@ class Cli(object):
         # setup the progress bars/callbacks
         (bar, self.base.ds_callback) = self.base.output.setup_progress_callbacks()
         self.base.repos.all().set_progress_bar(bar)
-        confirm_func = self.base.output._cli_confirm_gpg_key_import
-        self.base.repos.all().confirm_func = confirm_func
+        key_import = output.CliKeyImport(self.base, self.base.output)
+        self.base.repos.all().set_key_import(key_import)
 
     def _log_essentials(self):
         logger.debug('DNF version: %s', dnf.const.VERSION)

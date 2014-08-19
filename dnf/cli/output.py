@@ -648,9 +648,6 @@ class Output(object):
             return True
         return False
 
-    def _cli_confirm_gpg_key_import(self, keydict):
-        return self.userconfirm()
-
     def _pkgs2name_dict(self, sections):
         installed = self.sack.query().installed().name_dict()
         available = self.sack.query().available().name_dict()
@@ -2031,6 +2028,28 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
     def end(self):
         """Output a message stating that dependency resolution has finished."""
         logger.debug(_('--> Finished dependency resolution'))
+
+
+class CliKeyImport(dnf.callback.KeyImport):
+    def __init__(self, base, output):
+        self.base = base
+        self.output = output
+
+    def confirm(self, keyinfo):
+        msg = (_('Importing GPG key 0x%s:\n'
+                 ' Userid     : "%s"\n'
+                 ' Fingerprint: %s\n'
+                 ' From       : %s') %
+               (keyinfo['hexkeyid'], ucd(keyinfo['userid']),
+                dnf.yum.misc.gpgkey_fingerprint_ascii(keyinfo),
+                keyinfo['url'].replace("file://", "")))
+        logger.critical("%s", msg)
+        if self.base.conf.assumeyes:
+            return True
+        if self.base.conf.assumeno:
+            return False
+        return self.output.userconfirm()
+
 
 class CliTransactionDisplay(LoggingTransactionDisplay):
     """A Yum specific callback class for RPM operations."""

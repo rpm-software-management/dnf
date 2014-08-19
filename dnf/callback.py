@@ -28,6 +28,12 @@ STATUS_MIRROR = 3  # :api
 STATUS_DRPM = 4    # :api
 
 
+class KeyImport(object):
+    def confirm(self, _keyinfo):
+        """Ask the user if the key should be imported."""
+        return False
+
+
 class Payload(object):
     # :api
 
@@ -79,8 +85,10 @@ class DownloadProgress(object):
 
         pass
 
+
 class NullDownloadProgress(DownloadProgress):
     pass
+
 
 class Depsolve(object):
     def start(self):

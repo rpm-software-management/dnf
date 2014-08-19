@@ -263,8 +263,6 @@ class HistoryStub(dnf.yum.history.YumHistory):
         return tuple(limited)
 
 class MockOutput(object):
-    _cli_confirm_gpg_key_import = None
-
     def __init__(self):
         self.term = MockTerminal()
 

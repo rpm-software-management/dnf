@@ -109,6 +109,7 @@ class _DownloadErrors(object):
     def recoverable(self, new_dct):
         self._recoverable = new_dct
 
+
 def download_payloads(payloads, drpm):
     # download packages
     drpm.err.clear()
@@ -201,6 +202,11 @@ class _Handle(librepo.Handle):
             source = self.metalinkurl or self.mirrorlisturl or \
                      ', '.join(self.urls)
             raise _DetailedLibrepoError(exc, source)
+
+
+class _NullKeyImport(dnf.callback.KeyImport):
+    def confirm(self, _keyinfo):
+        return True
 
 
 class Metadata(object):
@@ -426,6 +432,7 @@ class Repo(dnf.yum.config.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.basecachedir = cachedir
         self.id = id_ # :api
+        self.key_import = _NullKeyImport()
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
@@ -789,6 +796,9 @@ class Repo(dnf.yum.config.RepoConf):
     def set_progress_bar(self, progress):
         # :api
         self._md_pload.progress = progress
+
+    def set_key_import(self, key_import):
+        self.key_import = key_import
 
     @property
     def updateinfo_fn(self):

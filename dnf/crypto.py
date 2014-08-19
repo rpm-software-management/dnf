@@ -60,9 +60,12 @@ def import_repo_keys(repo):
             rawkey = handle.read().encode('utf-8')
         keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey, multiple=True)
         for keyinfo in keyinfos:
+            keyinfo['url'] = keyurl
             keyid = keyinfo2keyid(keyinfo)
             if keyid in known_keys:
                 logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
+                continue
+            if not repo.key_import.confirm(keyinfo):
                 continue
             result = dnf.yum.misc.import_key_to_pubring(
                 keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=gpgdir,
