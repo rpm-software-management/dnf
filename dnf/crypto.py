@@ -67,7 +67,7 @@ def import_repo_keys(repo):
                 continue
             if not repo.key_import.confirm(keyinfo):
                 continue
-            result = dnf.yum.misc.import_key_to_pubring(
+            dnf.yum.misc.import_key_to_pubring(
                 keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=gpgdir,
                 make_ro_copy=False)
             logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)

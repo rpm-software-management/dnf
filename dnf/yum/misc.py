@@ -27,7 +27,6 @@ from dnf.exceptions import MiscError
 from dnf.pycomp import base64_decodebytes, basestring, unicode, long
 from io import StringIO
 from stat import *
-import base64
 import binascii
 import bz2
 import dnf.const

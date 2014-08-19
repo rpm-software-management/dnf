@@ -17,7 +17,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.pycomp import long, to_ord, base64_decodebytes
-import struct, time, io, base64
+import struct, time, io
 
 #  We use this so that we can work on python-2.4 and python-2.6, and thus.
 # use import md5/import sha on the older one and import hashlib on the newer.
@@ -1201,7 +1201,7 @@ def decode(msg) :
         idx = idx + pkt_len
     return pkt_list
 
-def decode_msg(msg, multi=False) :
+def decode_msg(msg, multi=False):
     """decode_msg(msg) ==> list of OpenPGP "packet" objects
 Takes an ascii-armored PGP block and returns a list of objects each of which
 corresponds to a PGP "packets".
@@ -1212,21 +1212,21 @@ a PGP "certificate" includes a public key, user id(s), and signature.
 """
     # first we'll break the block up into lines and trim each line of any
     # carriage return chars
-    pgpkey_lines = map(lambda x : x.rstrip(), msg.split(b'\n'))
+    pgpkey_lines = map(lambda x: x.rstrip(), msg.split(b'\n'))
 
     # check out block
     in_block = 0
     in_data = 0
     block_buf = io.BytesIO()
     for l in pgpkey_lines:
-        if not in_block :
-            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----' :
+        if not in_block:
+            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----':
                 in_block = 1
             continue
 
         # are we at the actual data yet?
-        if not in_data :
-            if len(l) == 0 :
+        if not in_data:
+            if len(l) == 0:
                 in_data = 1
             continue
 
@@ -1243,14 +1243,14 @@ a PGP "certificate" includes a public key, user id(s), and signature.
             block_buf.close()
 
             # check the checksum
-            if csum != crc24(cert_msg) :
+            if csum != crc24(cert_msg):
                 raise Exception('bad checksum on pgp message')
 
             # ok, the sum looks ok so we'll actually decode the thing
             pkt_list = decode(cert_msg)
             # turn it into a real cert
             cert_list = []
-            while len(pkt_list) > 0 :
+            while len(pkt_list) > 0:
                 cert = pgp_certificate()
                 cert.raw_key = msg
                 pkt_idx = cert.load(pkt_list)
@@ -1276,12 +1276,12 @@ def decode_multiple_keys(msg):
     """
 
     certs = []
-    pgpkey_lines = map(lambda x : x.rstrip(), msg.split(b'\n'))
+    pgpkey_lines = map(lambda x: x.rstrip(), msg.split(b'\n'))
     in_block = 0
     block = b''
-    for l in pgpkey_lines :
-        if not in_block :
-            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----' :
+    for l in pgpkey_lines:
+        if not in_block:
+            if l == b'-----BEGIN PGP PUBLIC KEY BLOCK-----':
                 in_block = 1
                 block += l + b'\n'
                 continue
