@@ -212,7 +212,7 @@ class ConfigPreProcessor(object):
         if self._isalreadyincluded(includetuple):
             return None
         try:
-            fo = dnf.util.urlopen(absurl)
+            fo = dnf.util.urlopen(absurl, mode='w+')
         except IOError:
             fo = None
         if fo is not None:

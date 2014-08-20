@@ -242,16 +242,15 @@ default_handle = librepo.Handle()
 default_handle.useragent = dnf.const.USER_AGENT
 
 
-def urlopen(absurl, repo=None, **kwargs):
+def urlopen(absurl, repo=None, mode='w+b', **kwargs):
     """Open the specified absolute url, return a file object.
 
     repo -- Use this repo-specific config (proxies, certs)
     kwargs -- These are passed to TemporaryFile
     """
-    if PY3:
-        kwargs['mode'] = 'w+'
-        kwargs['encoding'] = 'utf-8'
-    fo = tempfile.NamedTemporaryFile(**kwargs)
+    if PY3 and 'b' not in mode:
+        kwargs.setdefault('encoding', 'utf-8')
+    fo = tempfile.NamedTemporaryFile(mode, **kwargs)
     handle = default_handle
     if repo:
         handle = repo.get_handle()
