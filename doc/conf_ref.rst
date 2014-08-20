@@ -118,6 +118,11 @@ one main section. The repository sections define the configuration for each
     same package can be downloaded from two or more repositories, the repository
     with the lowest cost is preferred.
 
+``gpgkey``
+    list of strings
+
+    URLs of a GPG key files that can be used for signing metadata and packages of this repository, empty by default. If a file can not be verified using the already imported keys, import of keys from this option is attempted and the keys are then used for verification.
+
 .. _repo_priority-label:
 
 ``priority``
@@ -156,6 +161,11 @@ configuration.
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
     Can be disabled using ``--disableexcludes`` command line switch.
+
+``gpgcheck``
+    boolean
+
+    Whether to perform GPG signature check on packages found in this repository. The default is False.
 
 .. _include-label:
 
@@ -206,6 +216,11 @@ configuration.
     string
 
     The password to use for connecting to the proxy server. Empty by default.
+
+``repo_gpgcheck``
+    boolean
+
+    Whether to perform GPG signature check on this repository's metadata. The default is False.
 
 .. _sslverify-label:
 
