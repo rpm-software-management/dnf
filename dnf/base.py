@@ -195,6 +195,12 @@ class Base(object):
         # :api
         return self._transaction
 
+    @transaction.setter
+    def transaction(self, value):
+        if self._transaction:
+            raise ValueError('transaction already set')
+        self._transaction = value
+
     def activate_persistor(self):
         self._persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
@@ -1469,83 +1475,6 @@ class Base(object):
         if any(map(dnf.util.is_glob_pattern, provides_spec)):
             return self.sack.query().filter(file__glob=provides_spec)
         return self.sack.query().filter(file=provides_spec)
-
-    def history_redo(self, transaction,
-                     force_reinstall=False, force_changed_removal=False):
-        """Repeat the transaction represented by the given
-        :class:`history.YumHistoryTransaction` object.
-
-        :param transaction: a
-           :class:`history.YumHistoryTransaction` object
-           representing the transaction to be repeated
-        :param force_reinstall: bool - do we want to reinstall anything that was
-           installed/updated/downgraded/etc.
-        :param force_changed_removal: bool - do we want to force remove anything
-           that was downgraded or upgraded.
-        :return: whether the transaction was repeated successfully
-        """
-        # NOTE: This is somewhat basic atm. ... see comment in undo.
-        #  Also note that redo doesn't force install Dep-Install packages,
-        # which is probably what is wanted the majority of the time.
-
-        old_conf_obs = self.conf.obsoletes
-        self.conf.obsoletes = False
-        done = False
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Reinstall':
-                if self.reinstall(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Downgrade':
-                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
-                    if self.reinstall(pkgtup=pkg.pkgtup):
-                        done = True
-                    continue
-
-                try:
-                    if self.downgrade(pkgtup=pkg.pkgtup):
-                        done = True
-                except dnf.exceptions.Error:
-                    # :dead
-                    logger.critical(_('Failed to downgrade: %s'), pkg)
-        for pkg in transaction.trans_data:
-            if force_changed_removal and pkg.state == 'Downgraded':
-                if self.tsInfo.getMembers(pkg.pkgtup):
-                    continue
-                if self.remove(pkgtup=pkg.pkgtup, silence_warnings=True):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Update':
-                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
-                    if self.reinstall(pkgtup=pkg.pkgtup):
-                        done = True
-                    continue
-
-                if self.upgrade(pkgtup=pkg.pkgtup):
-                    done = True
-                else:
-                    logger.critical(_('Failed to upgrade: %s'), pkg)
-        for pkg in transaction.trans_data:
-            if force_changed_removal and pkg.state == 'Updated':
-                if self.tsInfo.getMembers(pkg.pkgtup):
-                    continue
-                if self.remove(pkgtup=pkg.pkgtup, silence_warnings=True):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state in ('Install', 'True-Install', 'Obsoleting'):
-                if force_reinstall and self.rpmdb.searchPkgTuple(pkg.pkgtup):
-                    if self.reinstall(pkgtup=pkg.pkgtup):
-                        done = True
-                    continue
-
-                if self.install(pkgtup=pkg.pkgtup):
-                    done = True
-        for pkg in transaction.trans_data:
-            if pkg.state == 'Erase':
-                if self.remove(pkgtup=pkg.pkgtup):
-                    done = True
-        self.conf.obsoletes = old_conf_obs
-        return done
 
     def history_undo_operations(self, operations):
         """Undo the operations on packages by their NEVRAs.

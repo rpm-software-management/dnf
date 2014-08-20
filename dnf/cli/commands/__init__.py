@@ -1156,36 +1156,40 @@ class HistoryCommand(Command):
         super(HistoryCommand, self).__init__(cli)
 
     def _hcmd_redo(self, extcmds):
-        kwargs = {'force_reinstall' : False,
-                  'force_changed_removal' : False,
-                  }
-        kwargs_map = {'reinstall' : 'force_reinstall',
-                      'force-reinstall' : 'force_reinstall',
-                      'remove' : 'force_changed_removal',
-                      'force-remove' : 'force_changed_removal',
-                      }
-        while len(extcmds) > 1:
-            done = False
-            for arg in extcmds[1].replace(' ', ',').split(','):
-                if arg not in kwargs_map:
-                    continue
+        try:
+            extcmd, = extcmds
+        except ValueError:
+            if not extcmds:
+                logger.critical(_('No transaction ID given'))
+            elif len(extcmds) > 1:
+                logger.critical(_('Found more than one transaction ID!'))
+            return 1, ['Failed history redo']
 
-                done = True
-                key = kwargs_map[extcmds[1]]
-                kwargs[key] = not kwargs[key]
-
-            if not done:
-                break
-            extcmds = [extcmds[0]] + extcmds[2:]
-
-        old = self.base.history_get_transaction(extcmds[1:])
+        old = self.base.history_get_transaction((extcmd,))
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
-        print("Repeating transaction %u, from %s" % (old.tid, tm))
+        print('Repeating transaction %u, from %s' % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
-        if self.base.history_redo(old, **kwargs):
-            return 2, ["Repeating transaction %u" % (old.tid,)]
+
+        converter = dnf.history.TransactionConverter(self.base.sack)
+        history = dnf.history.open_history(self.base.history)
+        operations = history.transaction_nevra_ops(old.tid)
+
+        hibeg = self.output.term.MODE['bold']
+        hiend = self.output.term.MODE['normal']
+        try:
+            self.base.transaction = converter.convert(operations, 'history')
+        except dnf.exceptions.PackagesNotInstalledError as err:
+            logger.info(_('No package %s%s%s installed.'),
+                        hibeg, ucd(err.pkg_spec), hiend)
+            return 1, ['An operation cannot be redone']
+        except dnf.exceptions.PackagesNotAvailableError as err:
+            logger.info(_('No package %s%s%s available.'),
+                        hibeg, ucd(err.pkg_spec), hiend)
+            return 1, ['An operation cannot be redone']
+        else:
+            return 2, ['Repeating transaction %u' % (old.tid,)]
 
     def _hcmd_undo(self, extcmds):
         # Parse the transaction specification.
@@ -1274,7 +1278,7 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary', 'undo', 'rollback', 'userinstalled')
+        cmds = ('list', 'info', 'summary', 'redo', 'undo', 'rollback', 'userinstalled')
         if extcmds and extcmds[0] not in cmds:
             logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
@@ -1305,7 +1309,7 @@ class HistoryCommand(Command):
         elif vcmd == 'undo':
             ret = self._hcmd_undo(extcmds[1:])
         elif vcmd in ('redo', 'repeat'):
-            ret = self._hcmd_redo(extcmds)
+            ret = self._hcmd_redo(extcmds[1:])
         elif vcmd == 'rollback':
             ret = self._hcmd_rollback(extcmds[1:])
         elif vcmd == 'new':
