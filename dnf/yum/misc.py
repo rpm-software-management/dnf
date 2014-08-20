@@ -29,6 +29,7 @@ from stat import *
 import binascii
 import bz2
 import dnf.const
+import dnf.crypto
 import dnf.exceptions
 import dnf.i18n
 import errno
@@ -374,42 +375,42 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
         os.makedirs(gpgdir)
 
     key_fo = io.BytesIO(rawkey)
-    os.environ['GNUPGHOME'] = gpgdir
-    # import the key
-    ctx = gpgme.Context()
-    fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
-    fp.write(b'')
-    fp.close()
-    ctx.import_(key_fo)
-    key_fo.close()
-    # ultimately trust the key or pygpgme is definitionally stupid
-    k = ctx.get_key(keyid)
-    gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
+    with dnf.crypto.pubring_dir(gpgdir):
+        # import the key
+        ctx = gpgme.Context()
+        fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
+        fp.write(b'')
+        fp.close()
+        ctx.import_(key_fo)
+        key_fo.close()
+        # ultimately trust the key or pygpgme is definitionally stupid
+        k = ctx.get_key(keyid)
+        gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
 
-    if make_ro_copy:
+        if make_ro_copy:
 
-        rodir = gpgdir + '-ro'
-        if not os.path.exists(rodir):
-            os.makedirs(rodir, mode=0o755)
-            for f in glob.glob(gpgdir + '/*'):
-                basename = os.path.basename(f)
-                ro_f = rodir + '/' + basename
-                shutil.copy(f, ro_f)
-                os.chmod(ro_f, 0o755)
-            fp = open(rodir + '/gpg.conf', 'w', 0o755)
-            # yes it is this stupid, why do you ask?
-            opts = """lock-never
-no-auto-check-trustdb
-trust-model direct
-no-expensive-trust-checks
-no-permission-warning
-preserve-permissions
-"""
-            fp.write(opts)
-            fp.close()
+            rodir = gpgdir + '-ro'
+            if not os.path.exists(rodir):
+                os.makedirs(rodir, mode=0o755)
+                for f in glob.glob(gpgdir + '/*'):
+                    basename = os.path.basename(f)
+                    ro_f = rodir + '/' + basename
+                    shutil.copy(f, ro_f)
+                    os.chmod(ro_f, 0o755)
+                fp = open(rodir + '/gpg.conf', 'w', 0o755)
+                # yes it is this stupid, why do you ask?
+                opts = """lock-never
+    no-auto-check-trustdb
+    trust-model direct
+    no-expensive-trust-checks
+    no-permission-warning
+    preserve-permissions
+    """
+                fp.write(opts)
+                fp.close()
 
 
-    return True
+        return True
 
 
 def valid_detached_sig(sig_file, signed_file, gpghome=None):

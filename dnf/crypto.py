@@ -39,14 +39,14 @@ def keyids_from_pubring(gpgdir):
     if not os.path.exists(gpgdir):
         return []
 
-    os.environ[GPG_HOME_ENV] = gpgdir
-    ctx = gpgme.Context()
-    keyids = []
-    for k in ctx.keylist():
-        for subkey in k.subkeys:
-            if subkey.can_sign:
-                keyids.append(subkey.keyid)
-    return keyids
+    with pubring_dir(gpgdir):
+        ctx = gpgme.Context()
+        keyids = []
+        for k in ctx.keylist():
+            for subkey in k.subkeys:
+                if subkey.can_sign:
+                    keyids.append(subkey.keyid)
+        return keyids
 
 
 def keyinfo2keyid(keyinfo):
