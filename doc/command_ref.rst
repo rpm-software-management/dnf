@@ -321,6 +321,10 @@ transactions and act according to this information (assuming the
     it manipulated. When no transaction is specified describe what happened
     during the latest transaction.
 
+``dnf history redo <transaction-spec>``
+    Repeat the specified transaction. If it is not possible to redo any
+    operation due to the current state of RPMDB, do not redo any operation.
+
 ``dnf history rollback <transaction-spec>``
     Undo all transactions performed after the specified transaction. If it is
     not possible to undo any transaction due to the current state of RPMDB,
