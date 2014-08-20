@@ -25,7 +25,6 @@ from __future__ import unicode_literals
 from . import pgpmsg
 from dnf.exceptions import MiscError
 from dnf.pycomp import base64_decodebytes, basestring, unicode, long
-from io import StringIO
 from stat import *
 import binascii
 import bz2
@@ -243,28 +242,28 @@ def procgpgkey(rawkey):
     '''
 
     # Normalise newlines
-    rawkey = re.sub('\r\n?', '\n', rawkey)
+    rawkey = re.sub(b'\r\n?', b'\n', rawkey)
 
     # Extract block
-    block = StringIO()
+    block = io.BytesIO()
     inblock = 0
     pastheaders = 0
-    for line in rawkey.split('\n'):
-        if line.startswith('-----BEGIN PGP PUBLIC KEY BLOCK-----'):
+    for line in rawkey.split(b'\n'):
+        if line.startswith(b'-----BEGIN PGP PUBLIC KEY BLOCK-----'):
             inblock = 1
-        elif inblock and line.strip() == '':
+        elif inblock and line.strip() == b'':
             pastheaders = 1
-        elif inblock and line.startswith('-----END PGP PUBLIC KEY BLOCK-----'):
+        elif inblock and line.startswith(b'-----END PGP PUBLIC KEY BLOCK-----'):
             # Hit the end of the block, get out
             break
-        elif pastheaders and line.startswith('='):
+        elif pastheaders and line.startswith(b'='):
             # Hit the CRC line, don't include this and stop
             break
         elif pastheaders:
-            block.write(line+'\n')
+            block.write(line + b'\n')
 
     # Decode and return
-    return base64_decodebytes(block.getvalue().encode('utf-8'))
+    return base64_decodebytes(block.getvalue())
 
 def gpgkey_fingerprint_ascii(info, chop=4):
     ''' Given a key_info data from getgpgkeyinfo(), return an ascii
