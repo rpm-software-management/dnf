@@ -21,8 +21,9 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
-
+from dnf.i18n import _
 import contextlib
+import dnf.i18n
 import dnf.util
 import dnf.yum.misc
 import gpgme
@@ -50,6 +51,17 @@ def keyids_from_pubring(gpgdir):
 
 def keyinfo2keyid(keyinfo):
     return hex(int(keyinfo['keyid']))[2:-1].upper()
+
+
+def log_key_import(keyinfo):
+    msg = (_('Importing GPG key 0x%s:\n'
+             ' Userid     : "%s"\n'
+             ' Fingerprint: %s\n'
+             ' From       : %s') %
+           (keyinfo['hexkeyid'], dnf.i18n.ucd(keyinfo['userid']),
+            dnf.yum.misc.gpgkey_fingerprint_ascii(keyinfo),
+            keyinfo['url'].replace("file://", "")))
+    logger.critical("%s", msg)
 
 
 def import_repo_keys(repo):

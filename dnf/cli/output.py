@@ -28,6 +28,7 @@ import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
 import dnf.conf
+import dnf.crypto
 import dnf.i18n
 import dnf.transaction
 import dnf.util
@@ -2036,14 +2037,7 @@ class CliKeyImport(dnf.callback.KeyImport):
         self.output = output
 
     def confirm(self, keyinfo):
-        msg = (_('Importing GPG key 0x%s:\n'
-                 ' Userid     : "%s"\n'
-                 ' Fingerprint: %s\n'
-                 ' From       : %s') %
-               (keyinfo['hexkeyid'], ucd(keyinfo['userid']),
-                dnf.yum.misc.gpgkey_fingerprint_ascii(keyinfo),
-                keyinfo['url'].replace("file://", "")))
-        logger.critical("%s", msg)
+        dnf.crypto.log_key_import(keyinfo)
         if self.base.conf.assumeyes:
             return True
         if self.base.conf.assumeno:

@@ -28,11 +28,11 @@ from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from functools import reduce
-
 import dnf.callback
 import dnf.comps
 import dnf.conf
 import dnf.conf.read
+import dnf.crypto
 import dnf.drpm
 import dnf.exceptions
 import dnf.goal
@@ -1671,31 +1671,6 @@ class Base(object):
 
         return keys
 
-    def _log_key_import(self, info, keyurl, keytype='GPG'):
-        msg = None
-        fname = dnf.util.strip_prefix(keyurl, "file://")
-        if fname:
-            pkgs = self.sack.query().filter(file=fname)
-            if pkgs:
-                pkg = pkgs[0]
-                msg = (_('Importing %s key 0x%s:\n'
-                         ' Userid     : "%s"\n'
-                         ' Fingerprint: %s\n'
-                         ' Package    : %s (%s)\n'
-                         ' From       : %s') %
-                       (keytype, info['hexkeyid'], ucd(info['userid']),
-                        misc.gpgkey_fingerprint_ascii(info),
-                        pkg, pkg.reponame, fname))
-        if msg is None:
-            msg = (_('Importing %s key 0x%s:\n'
-                     ' Userid     : "%s"\n'
-                     ' Fingerprint: %s\n'
-                     ' From       : %s') %
-                   (keytype, info['hexkeyid'], ucd(info['userid']),
-                    misc.gpgkey_fingerprint_ascii(info),
-                    keyurl.replace("file://", "")))
-        logger.critical("%s", msg)
-
     def getKeyForPackage(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
         callback to prompt whether the key should be imported.
@@ -1734,7 +1709,8 @@ class Base(object):
                     continue
 
                 # Try installing/updating GPG key
-                self._log_key_import(info, keyurl)
+                info['url'] = keyurl
+                dnf.crypto.log_key_import(info)
                 rc = False
                 if self.conf.assumeno:
                     rc = False
