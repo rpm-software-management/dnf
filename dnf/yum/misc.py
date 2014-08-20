@@ -413,42 +413,6 @@ def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
         return True
 
 
-def valid_detached_sig(sig_file, signed_file, gpghome=None):
-    """takes signature , file that was signed and an optional gpghomedir"""
-    if gpghome:
-        if not os.path.exists(gpghome):
-            return False
-        os.environ['GNUPGHOME'] = gpghome
-
-    if hasattr(sig_file, 'read'):
-        sig = sig_file
-    else:
-        sig = open(sig_file, 'r')
-    if hasattr(signed_file, 'read'):
-        signed_text = signed_file
-    else:
-        signed_text = open(signed_file, 'r')
-    plaintext = None
-    ctx = gpgme.Context()
-
-    try:
-        sigs = ctx.verify(sig, signed_text, plaintext)
-    except gpgme.GpgmeError:
-        return False
-    else:
-        if not sigs:
-            return False
-        # is there ever a case where we care about a sig beyond the first one?
-        thissig = sigs[0]
-        if not thissig:
-            return False
-
-        if thissig.validity in (gpgme.VALIDITY_FULL, gpgme.VALIDITY_MARGINAL,
-                                gpgme.VALIDITY_ULTIMATE):
-            return True
-
-    return False
-
 def getCacheDir():
     """return a path to a valid and safe cachedir - only used when not running
        as root or when --tempcache is set"""
