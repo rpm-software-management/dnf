@@ -276,7 +276,8 @@ def gpgkey_fingerprint_ascii(info, chop=4):
         fp = " ".join(fp)
     return fp
 
-def getgpgkeyinfo(rawkey, multiple=False):
+
+def getgpgkeyinfo(rawkey):
     '''Return a dict of info for the given ASCII armoured key text
 
     Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
@@ -320,10 +321,7 @@ def getgpgkeyinfo(rawkey, multiple=False):
                         info['timestamp'] = int(tspkt[1])
                         break
         key_info_objs.append(info)
-    if multiple:
-        return key_info_objs
-    else:
-        return key_info_objs[0]
+    return key_info_objs
 
 
 def keyIdToRPMVer(keyid):

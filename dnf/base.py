@@ -1653,7 +1653,7 @@ class Base(object):
 
         # Parse the key
         try:
-            keys_info = misc.getgpgkeyinfo(rawkey, multiple=True)
+            keys_info = misc.getgpgkeyinfo(rawkey)
         except ValueError as e:
             raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
                                       (keyurl, ucd(e)))

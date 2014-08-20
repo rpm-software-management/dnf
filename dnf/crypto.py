@@ -70,7 +70,7 @@ def import_repo_keys(repo):
     for keyurl in repo.gpgkey:
         with dnf.util.urlopen(keyurl, repo) as handle:
             rawkey = handle.read()
-        keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey, multiple=True)
+        keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
         for keyinfo in keyinfos:
             keyinfo['url'] = keyurl
             keyid = keyinfo2keyid(keyinfo)
