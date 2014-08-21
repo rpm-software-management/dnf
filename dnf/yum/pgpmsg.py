@@ -17,31 +17,10 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.pycomp import long, to_ord, base64_decodebytes
-import struct, time, io
-
-#  We use this so that we can work on python-2.4 and python-2.6, and thus.
-# use import md5/import sha on the older one and import hashlib on the newer.
-#  Stupid deprecation warnings.
-
-# pylint: disable-msg=W0108
-# Ignore :W0108: *Lambda may not be necessary*
-
-
-try:
-    import hashlib
-except ImportError:
-    # Python-2.4.z ... gah!
-    import sha
-    import md5
-    class hashlib:
-
-        @staticmethod
-        def new(algo):
-            if algo == 'md5':
-                return md5.new()
-            if algo == 'sha1':
-                return sha.new()
-            raise ValueError("Bad checksum type")
+import hashlib
+import io
+import struct
+import time
 
 debug = None
 
