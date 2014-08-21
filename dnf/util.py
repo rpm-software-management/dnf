@@ -238,22 +238,25 @@ def touch(path, no_create=False):
         pass
 
 
-default_handle = librepo.Handle()
-default_handle.useragent = dnf.const.USER_AGENT
-
-
 def urlopen(absurl, repo=None, mode='w+b', **kwargs):
     """Open the specified absolute url, return a file object.
 
     repo -- Use this repo-specific config (proxies, certs)
     kwargs -- These are passed to TemporaryFile
     """
+
+    def build_default_handle():
+        handle = librepo.Handle()
+        handle.useragent = dnf.const.USER_AGENT
+        return handle
+
     if PY3 and 'b' not in mode:
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
-    handle = default_handle
     if repo:
         handle = repo.get_handle()
+    else:
+        handle = build_default_handle()
     try:
         librepo.download_url(absurl, fo.fileno(), handle)
     except librepo.LibrepoException as e:
