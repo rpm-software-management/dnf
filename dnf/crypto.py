@@ -35,6 +35,27 @@ GPG_HOME_ENV = 'GNUPGHOME'
 logger = logging.getLogger('dnf')
 
 
+def import_repo_keys(repo):
+    gpgdir = repo.pubring_dir
+    known_keys = keyids_from_pubring(gpgdir)
+    for keyurl in repo.gpgkey:
+        with dnf.util.urlopen(keyurl, repo) as handle:
+            rawkey = handle.read()
+        keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
+        for keyinfo in keyinfos:
+            keyinfo['url'] = keyurl
+            keyid = keyinfo2keyid(keyinfo)
+            if keyid in known_keys:
+                logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
+                continue
+            if not repo.key_import.confirm(keyinfo):
+                continue
+            dnf.yum.misc.import_key_to_pubring(
+                keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=gpgdir,
+                make_ro_copy=False)
+            logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)
+
+
 def keyids_from_pubring(gpgdir):
     if not os.path.exists(gpgdir):
         return []
@@ -62,27 +83,6 @@ def log_key_import(keyinfo):
             dnf.yum.misc.gpgkey_fingerprint_ascii(keyinfo),
             keyinfo['url'].replace("file://", "")))
     logger.critical("%s", msg)
-
-
-def import_repo_keys(repo):
-    gpgdir = repo.pubring_dir
-    known_keys = keyids_from_pubring(gpgdir)
-    for keyurl in repo.gpgkey:
-        with dnf.util.urlopen(keyurl, repo) as handle:
-            rawkey = handle.read()
-        keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
-        for keyinfo in keyinfos:
-            keyinfo['url'] = keyurl
-            keyid = keyinfo2keyid(keyinfo)
-            if keyid in known_keys:
-                logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
-                continue
-            if not repo.key_import.confirm(keyinfo):
-                continue
-            dnf.yum.misc.import_key_to_pubring(
-                keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=gpgdir,
-                make_ro_copy=False)
-            logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)
 
 
 @contextlib.contextmanager
