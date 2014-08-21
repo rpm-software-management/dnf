@@ -366,11 +366,7 @@ def keyInstalled(ts, keyid, timestamp):
     return -1
 
 
-def import_key_to_pubring(rawkey, keyid, cachedir=None, gpgdir=None,
-                          make_ro_copy=True):
-    if not gpgdir:
-        gpgdir = '%s/gpgdir' % cachedir
-
+def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
 
