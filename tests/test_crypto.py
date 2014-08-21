@@ -25,6 +25,8 @@ import tests.support
 import tempfile
 
 KEYFILE = tests.support.resource_path('keys/key.pub')
+KEYFILE_URL = 'file://%s' % KEYFILE
+
 
 class CryptoTest(tests.support.TestCase):
     PUBRING_DIR = None
@@ -47,7 +49,21 @@ class CryptoTest(tests.support.TestCase):
         ids = dnf.crypto.keyids_from_pubring(self.PUBRING_DIR)
         self.assertIn('24362A8492530C8E', ids)
 
+    def test_keyinfo2keyid(self):
+        keyinfo = dnf.crypto.retrieve(KEYFILE_URL)[0]
+        self.assertEquals(dnf.crypto.keyinfo2keyid(keyinfo), '24362A8492530C8')
+
     def test_pubring_dir(self):
         self.assertNotEquals(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
         with dnf.crypto.pubring_dir(self.PUBRING_DIR):
             self.assertEquals(os.environ['GNUPGHOME'], self.PUBRING_DIR)
+
+    def test_retrieve(self):
+        keyinfos = dnf.crypto.retrieve(KEYFILE_URL)
+        self.assertLength(keyinfos, 1)
+        keyinfo = keyinfos[0]
+        self.assertEqual(keyinfo['url'], KEYFILE_URL)
+        self.assertEqual(keyinfo['hexkeyid'], '92530C8E')
+        self.assertIn('fingerprint', keyinfo)
+        self.assertIn('userid', keyinfo)
+        self.assertIn('raw_key', keyinfo)

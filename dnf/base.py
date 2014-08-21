@@ -1631,46 +1631,6 @@ class Base(object):
             else:
                 assert False
 
-    def _retrievePublicKey(self, keyurl, repo=None):
-        """
-        Retrieve a key file
-        @param keyurl: url to the key to retrieve
-        Returns a list of dicts with all the keyinfo
-        """
-
-        msg = _('Retrieving key from %s') % keyurl
-        logger.info(msg)
-
-        # Go get the GPG key from the given URL
-        try:
-            # If we have a repo, use the proxy etc. configuration for it.
-            with dnf.util.urlopen(keyurl, repo) as fh:
-                rawkey = fh.read()
-
-        except IOError as e:
-            raise dnf.exceptions.Error(_('GPG key retrieval failed: %s') %
-                                       ucd(e))
-
-        # Parse the key
-        try:
-            keys_info = misc.getgpgkeyinfo(rawkey)
-        except ValueError as e:
-            raise dnf.exceptions.Error(_('Invalid GPG Key from %s: %s') %
-                                      (keyurl, ucd(e)))
-        keys = []
-        for keyinfo in keys_info:
-            thiskey = {}
-            for info in ('keyid', 'timestamp', 'userid',
-                         'fingerprint', 'raw_key'):
-                if info not in keyinfo:
-                    msg = _('GPG key parsing failed: key does not have value %s')
-                    raise dnf.exceptions.Error(msg % info)
-                thiskey[info] = keyinfo[info]
-            thiskey['hexkeyid'] = misc.keyIdToRPMVer(keyinfo['keyid']).upper()
-            keys.append(thiskey)
-
-        return keys
-
     def getKeyForPackage(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
         callback to prompt whether the key should be imported.
@@ -1698,7 +1658,7 @@ class Base(object):
 
         user_cb_fail = False
         for keyurl in keyurls:
-            keys = self._retrievePublicKey(keyurl, repo)
+            keys = dnf.crypto.retrieve(keyurl, repo)
 
             for info in keys:
                 ts = self.rpmconn.readonly_ts

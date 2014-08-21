@@ -39,11 +39,7 @@ def import_repo_keys(repo):
     gpgdir = repo.pubring_dir
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
-        with dnf.util.urlopen(keyurl, repo) as handle:
-            rawkey = handle.read()
-        keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
-        for keyinfo in keyinfos:
-            keyinfo['url'] = keyurl
+        for keyinfo in retrieve(keyurl):
             keyid = keyinfo2keyid(keyinfo)
             if keyid in known_keys:
                 logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
@@ -94,3 +90,12 @@ def pubring_dir(pubring_dir):
         del os.environ[GPG_HOME_ENV]
     else:
         os.environ[GPG_HOME_ENV] = orig
+
+
+def retrieve(keyurl, repo=None):
+    with dnf.util.urlopen(keyurl, repo) as handle:
+        rawkey = handle.read()
+    keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
+    for keyinfo in keyinfos:
+        keyinfo['url'] = keyurl
+    return keyinfos
