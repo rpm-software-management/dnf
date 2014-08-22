@@ -829,6 +829,7 @@ class Cli(object):
         if command_cls is None:
             logger.critical(_('No such command: %s. Please use %s --help'),
                                   basecmd, sys.argv[0])
+            logger.info(_("It could be a DNF plugin command."))
             raise CliError
         self.command = command_cls(self)
 
