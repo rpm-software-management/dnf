@@ -440,21 +440,89 @@ class Repo(dnf.yum.config.RepoConf):
         self._handle = None
         self.hawkey_repo = self._init_hawkey_repo()
 
+    @property
+    def cachedir(self):
+        return os.path.join(self.basecachedir, self.id)
+
+    @property
+    def filelists_fn(self):
+        return self.metadata.filelists_fn
+
+    @property
+    def local(self):
+        if self.metalink or self.mirrorlist:
+            return False
+        if self.baseurl[0].startswith('file://'):
+            return True
+        return False
+
+    @property
+    def md_only_cached(self):
+        return self.sync_strategy == SYNC_ONLY_CACHE
+
+    @md_only_cached.setter
+    def md_only_cached(self, val):
+        """Force using only the metadata the repo has in the local cache."""
+        if val:
+            self.sync_strategy = SYNC_ONLY_CACHE
+        else:
+            self.sync_strategy = SYNC_TRY_CACHE
+
+    @property
+    def metadata_dir(self):
+        return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+
+    @property
+    def metalink_path(self):
+        return _metalink_path(self.cachedir)
+
+    @property
+    def mirrorlist_path(self):
+        return _mirrorlist_path(self.cachedir)
+
+    @property
+    def pkgdir(self):
+        # :api
+        if self.local:
+            return dnf.util.strip_prefix(self.baseurl[0], 'file://')
+        if self._pkgdir is not None:
+            return self._pkgdir
+        return os.path.join(self.cachedir, 'packages')
+
+    @pkgdir.setter
+    def pkgdir(self, val):
+        # :api
+        self._pkgdir = val
+
+    @property
+    def presto_fn(self):
+        return self.metadata.presto_fn
+
+    @property
+    def primary_fn(self):
+        return self.metadata.primary_fn
+
+    @property
+    def pubring_dir(self):
+        return os.path.join(self.cachedir, 'pubring')
+
+    @property
+    def repomd_fn(self):
+        return self.metadata.repomd_fn
+
+    @property
+    def updateinfo_fn(self):
+        return self.metadata.updateinfo_fn
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.id)
+
     def __setattr__(self, name, value):
         super(Repo, self).__setattr__(name, value)
         if name == 'cost':
             self.hawkey_repo.cost = self.cost
         if name == 'priority':
             self.hawkey_repo.priority = self.priority
-
-    def _init_hawkey_repo(self):
-        hrepo = hawkey.Repo(self.id)
-        hrepo.cost = self.cost
-        hrepo.priority = self.priority
-        return hrepo
-
-    def __repr__(self):
-        return "<%s %s>" % (self.__class__.__name__, self.id)
 
     def _handle_load(self, handle):
         if not self.repo_gpgcheck:
@@ -484,11 +552,8 @@ class Repo(dnf.yum.config.RepoConf):
         return _Handle.new_local(self.substitutions, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
-    def _set_ip_resolve(self, handle):
-        if self.ip_resolve == 'ipv4':
-            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V4)
-        elif self.ip_resolve == 'ipv6':
-            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V6)
+    def _handle_new_pkg_download(self):
+        return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
     def _handle_new_remote(self, destdir, mirror_setup=True):
         h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
@@ -527,25 +592,11 @@ class Repo(dnf.yum.config.RepoConf):
 
         return h
 
-    def _handle_new_pkg_download(self):
-        return self._handle_new_remote(self.pkgdir, mirror_setup=False)
-
-    def get_handle(self):
-        """Returns a librepo handle, set as per the repo options
-
-        Note that destdir is None, and the handle is cached.
-        """
-        if not self._handle:
-            self._handle = self._handle_new_remote(None)
-        return self._handle
-
-    @property
-    def local(self):
-        if self.metalink or self.mirrorlist:
-            return False
-        if self.baseurl[0].startswith('file://'):
-            return True
-        return False
+    def _init_hawkey_repo(self):
+        hrepo = hawkey.Repo(self.id)
+        hrepo.cost = self.cost
+        hrepo.priority = self.priority
+        return hrepo
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
@@ -562,6 +613,12 @@ class Repo(dnf.yum.config.RepoConf):
         self.metadata.expired = self.metadata.age >= self.metadata_expire
         if self.metadata_expire == -1:
             self.metadata.expired = False
+
+    def _set_ip_resolve(self, handle):
+        if self.ip_resolve == 'ipv4':
+            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V4)
+        elif self.ip_resolve == 'ipv6':
+            handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V6)
 
     def _try_cache(self):
         """Tries to load metadata from the local cache.
@@ -620,9 +677,9 @@ class Repo(dnf.yum.config.RepoConf):
         logger.debug("reviving: '%s' can be revived.", self.id)
         return True
 
-    @property
-    def cachedir(self):
-        return os.path.join(self.basecachedir, self.id)
+    def disable(self):
+        # :api
+        self.enabled = False
 
     _REPOCONF_ATTRS = set(dir(dnf.yum.config.RepoConf))
     def dump(self):
@@ -646,17 +703,18 @@ class Repo(dnf.yum.config.RepoConf):
 
         return output
 
-    def disable(self):
-        # :api
-        self.enabled = False
-
     def enable(self):
         # :api
         self.enabled = True
 
-    @property
-    def filelists_fn(self):
-        return self.metadata.filelists_fn
+    def get_handle(self):
+        """Returns a librepo handle, set as per the repo options
+
+        Note that destdir is None, and the handle is cached.
+        """
+        if not self._handle:
+            self._handle = self._handle_new_remote(None)
+        return self._handle
 
     def load(self):
         """Load the metadata for this repo. :api
@@ -705,17 +763,20 @@ class Repo(dnf.yum.config.RepoConf):
         self.sync_strategy = SYNC_TRY_CACHE
         return True
 
-    @property
-    def metadata_dir(self):
-        return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+    def md_expire_cache(self):
+        """Mark whatever is in the current cache expired.
 
-    @property
-    def metalink_path(self):
-        return _metalink_path(self.cachedir)
+        This repo instance will alway try to fetch a fresh metadata after this
+        method is called.
 
-    @property
-    def mirrorlist_path(self):
-        return _mirrorlist_path(self.cachedir)
+        """
+        if self.metadata:
+            self.metadata.expired = True
+        self.sync_strategy = SYNC_EXPIRED
+
+    def md_try_cache(self):
+        """Use cache for metadata if possible, sync otherwise."""
+        self.sync_strategy = SYNC_TRY_CACHE
 
     def metadata_expire_in(self):
         """Get the number of seconds after which the cached metadata will expire.
@@ -736,73 +797,12 @@ class Repo(dnf.yum.config.RepoConf):
             return True, expiration
         return False, 0
 
-    def md_expire_cache(self):
-        """Mark whatever is in the current cache expired.
-
-        This repo instance will alway try to fetch a fresh metadata after this
-        method is called.
-
-        """
-        if self.metadata:
-            self.metadata.expired = True
-        self.sync_strategy = SYNC_EXPIRED
-
-    def md_try_cache(self):
-        """Use cache for metadata if possible, sync otherwise."""
-        self.sync_strategy = SYNC_TRY_CACHE
-
-    @property
-    def md_only_cached(self):
-        return self.sync_strategy == SYNC_ONLY_CACHE
-
-    @md_only_cached.setter
-    def md_only_cached(self, val):
-        """Force using only the metadata the repo has in the local cache."""
-        if val:
-            self.sync_strategy = SYNC_ONLY_CACHE
-        else:
-            self.sync_strategy = SYNC_TRY_CACHE
-
-    @property
-    def presto_fn(self):
-        return self.metadata.presto_fn
-
-    @property
-    def pkgdir(self):
-        # :api
-        if self.local:
-            return dnf.util.strip_prefix(self.baseurl[0], 'file://')
-        if self._pkgdir is not None:
-            return self._pkgdir
-        return os.path.join(self.cachedir, 'packages')
-
-    @pkgdir.setter
-    def pkgdir(self, val):
-        # :api
-        self._pkgdir = val
-
-    @property
-    def primary_fn(self):
-        return self.metadata.primary_fn
-
-    @property
-    def pubring_dir(self):
-        return os.path.join(self.cachedir, 'pubring')
-
-    @property
-    def repomd_fn(self):
-        return self.metadata.repomd_fn
+    def set_key_import(self, key_import):
+        self.key_import = key_import
 
     def set_progress_bar(self, progress):
         # :api
         self._md_pload.progress = progress
-
-    def set_key_import(self, key_import):
-        self.key_import = key_import
-
-    @property
-    def updateinfo_fn(self):
-        return self.metadata.updateinfo_fn
 
     def valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
