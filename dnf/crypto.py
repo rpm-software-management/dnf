@@ -67,7 +67,7 @@ def keyids_from_pubring(gpgdir):
 
 
 def keyinfo2keyid(keyinfo):
-    return hex(int(keyinfo['keyid']))[2:-1].upper()
+    return ("%x" % keyinfo['keyid']).upper()
 
 
 def log_key_import(keyinfo):

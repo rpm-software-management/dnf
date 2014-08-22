@@ -51,7 +51,7 @@ class CryptoTest(tests.support.TestCase):
 
     def test_keyinfo2keyid(self):
         keyinfo = dnf.crypto.retrieve(KEYFILE_URL)[0]
-        self.assertEquals(dnf.crypto.keyinfo2keyid(keyinfo), '24362A8492530C8')
+        self.assertEquals(dnf.crypto.keyinfo2keyid(keyinfo), '24362A8492530C8E')
 
     def test_pubring_dir(self):
         self.assertNotEquals(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
