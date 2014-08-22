@@ -24,6 +24,7 @@ import os
 import tests.support
 import tempfile
 
+FINGERPRINT = '0BE49FAF9C955F4F1A98D14B24362A8492530C8E'
 KEYFILE = tests.support.resource_path('keys/key.pub')
 KEYFILE_URL = 'file://%s' % KEYFILE
 
@@ -35,8 +36,7 @@ class CryptoTest(tests.support.TestCase):
     def setUpClass(cls):
         cls.PUBRING_DIR = tempfile.mkdtemp()
         with open(KEYFILE, 'rb') as keyfile:
-            rawkey = keyfile.read()
-        keyinfo = dnf.yum.misc.getgpgkeyinfo(rawkey)[0]
+            keyinfo = dnf.crypto.rawkey2infos(keyfile)[0]
         dnf.yum.misc.import_key_to_pubring(
             keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=cls.PUBRING_DIR,
             make_ro_copy=False)
@@ -53,17 +53,26 @@ class CryptoTest(tests.support.TestCase):
         keyinfo = dnf.crypto.retrieve(KEYFILE_URL)[0]
         self.assertEquals(dnf.crypto.keyinfo2keyid(keyinfo), '24362A8492530C8E')
 
+    def test_printable_fingerprint(self):
+        self.assertEqual(dnf.crypto._printable_fingerprint(FINGERPRINT),
+                         '0BE4 9FAF 9C95 5F4F 1A98 D14B 2436 2A84 9253 0C8E')
+
     def test_pubring_dir(self):
         self.assertNotEquals(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
         with dnf.crypto.pubring_dir(self.PUBRING_DIR):
             self.assertEquals(os.environ['GNUPGHOME'], self.PUBRING_DIR)
+
+    def test_rawkey2infos(self):
+        with open(KEYFILE, 'rb') as keyfile:
+            info = dnf.crypto.rawkey2infos(keyfile)[0]
+        self.assertEqual(info['fingerprint'], FINGERPRINT)
+        self.assertEqual(info['hexkeyid'], '92530C8E')
+        self.assertIn(b'Frmy6HXUL\n', info['raw_key'])
+        self.assertEqual(info['timestamp'], 1408534646)
+        self.assertEqual(info['userid'], 'Dandy Fied <dnf@example.com>')
 
     def test_retrieve(self):
         keyinfos = dnf.crypto.retrieve(KEYFILE_URL)
         self.assertLength(keyinfos, 1)
         keyinfo = keyinfos[0]
         self.assertEqual(keyinfo['url'], KEYFILE_URL)
-        self.assertEqual(keyinfo['hexkeyid'], '92530C8E')
-        self.assertIn('fingerprint', keyinfo)
-        self.assertIn('userid', keyinfo)
-        self.assertIn('raw_key', keyinfo)

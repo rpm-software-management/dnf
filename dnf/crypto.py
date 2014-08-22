@@ -27,12 +27,23 @@ import dnf.i18n
 import dnf.util
 import dnf.yum.misc
 import gpgme
+import io
 import logging
 import os
+import tempfile
 
 
 GPG_HOME_ENV = 'GNUPGHOME'
 logger = logging.getLogger('dnf')
+
+
+def _extract_signing_subkey(key):
+    return dnf.util.first(subkey for subkey in key.subkeys if subkey.can_sign)
+
+
+def _printable_fingerprint(fpr_hex):
+    segments = (fpr_hex[i:i + 4] for i in range(0, len(fpr_hex), 4))
+    return " ".join(segments)
 
 
 def import_repo_keys(repo):
@@ -76,7 +87,7 @@ def log_key_import(keyinfo):
              ' Fingerprint: %s\n'
              ' From       : %s') %
            (keyinfo['hexkeyid'], dnf.i18n.ucd(keyinfo['userid']),
-            dnf.yum.misc.gpgkey_fingerprint_ascii(keyinfo),
+            _printable_fingerprint(keyinfo['fingerprint']),
             keyinfo['url'].replace("file://", "")))
     logger.critical("%s", msg)
 
@@ -92,10 +103,36 @@ def pubring_dir(pubring_dir):
         os.environ[GPG_HOME_ENV] = orig
 
 
+def rawkey2infos(key_fo):
+    pb_dir = tempfile.mkdtemp()
+    keyinfos = []
+    with pubring_dir(pb_dir):
+        ctx = gpgme.Context()
+        ctx.import_(key_fo)
+        for key in ctx.keylist():
+            subkey = _extract_signing_subkey(key)
+            if subkey is None:
+                continue
+            int_keyid = int(subkey.keyid, base=16)
+            keyinfos.append({
+                'hexkeyid': dnf.yum.misc.keyIdToRPMVer(int_keyid).upper(),
+                'keyid': int_keyid,
+                'fingerprint' : subkey.fpr,
+                'timestamp' : subkey.timestamp,
+                'userid': key.uids[0].uid,
+                })
+        ctx.armor = True
+        for info in keyinfos:
+            buf = io.BytesIO()
+            ctx.export(hex(info['keyid']), buf)
+            info['raw_key'] = buf.getvalue()
+    dnf.util.rm_rf(pb_dir)
+    return keyinfos
+
+
 def retrieve(keyurl, repo=None):
     with dnf.util.urlopen(keyurl, repo) as handle:
-        rawkey = handle.read()
-    keyinfos = dnf.yum.misc.getgpgkeyinfo(rawkey)
+        keyinfos = rawkey2infos(handle)
     for keyinfo in keyinfos:
         keyinfo['url'] = keyurl
     return keyinfos
