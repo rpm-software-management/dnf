@@ -131,5 +131,5 @@ def iter_py_files(paths, skips):
         for fn in glob.glob('%s/*.py' % p):
             (name, _) = os.path.splitext(os.path.basename(fn))
             if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
-                 continue
+                continue
             yield fn
