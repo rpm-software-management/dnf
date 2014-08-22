@@ -22,11 +22,9 @@ Assorted utility functions for yum.
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-from . import pgpmsg
 from dnf.exceptions import MiscError
 from dnf.pycomp import base64_decodebytes, basestring, unicode, long
 from stat import *
-import binascii
 import bz2
 import dnf.const
 import dnf.crypto
@@ -45,7 +43,6 @@ import os.path
 import pwd
 import re
 import shutil
-import struct
 import tempfile
 
 _available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
@@ -265,64 +262,6 @@ def procgpgkey(rawkey):
 
     # Decode and return
     return base64_decodebytes(block.getvalue())
-
-def gpgkey_fingerprint_ascii(info, chop=4):
-    ''' Given a key_info data from getgpgkeyinfo(), return an ascii
-    fingerprint. Chop every 4 ascii values, as that is what GPG does. '''
-    # First "duh" ... it's a method...
-    fp = info['fingerprint']()
-    fp = binascii.hexlify(fp).decode()
-    if chop:
-        fp = [fp[i:i+chop] for i in range(0, len(fp), chop)]
-        fp = " ".join(fp)
-    return fp
-
-
-def getgpgkeyinfo(rawkey):
-    '''Return a dict of info for the given ASCII armoured key text
-
-    Returned dict will have the following keys: 'userid', 'keyid', 'timestamp'
-
-    Will raise ValueError if there was a problem decoding the key.
-    '''
-    # Catch all exceptions as there can be quite a variety raised by this call
-    key_info_objs = []
-    try:
-        keys = pgpmsg.decode_multiple_keys(rawkey)
-    except Exception as e:
-        raise ValueError(str(e))
-    if len(keys) == 0:
-        raise ValueError('No key found in given key data')
-
-    for key in keys:
-        keyid_blob = key.public_key.key_id()
-
-        keyid = struct.unpack(b'>Q', keyid_blob)[0]
-        info = {
-            'userid': key.user_id,
-            'keyid': keyid,
-            'hexkeyid': keyIdToRPMVer(keyid).upper(),
-            'timestamp': key.public_key.timestamp,
-            'fingerprint' : key.public_key.fingerprint,
-            'raw_key' : key.raw_key,
-        }
-
-        # Retrieve the timestamp from the matching signature packet
-        # (this is what RPM appears to do)
-        for userid in key.user_ids[0]:
-            if not isinstance(userid, pgpmsg.signature):
-                continue
-
-            if userid.key_id() == keyid_blob:
-                # Get the creation time sub-packet if available
-                if hasattr(userid, 'hashed_subpaks'):
-                    tspkt = \
-                        userid.get_hashed_subpak(pgpmsg.SIG_SUB_TYPE_CREATE_TIME)
-                    if tspkt != None:
-                        info['timestamp'] = int(tspkt[1])
-                        break
-        key_info_objs.append(info)
-    return key_info_objs
 
 
 def keyIdToRPMVer(keyid):
