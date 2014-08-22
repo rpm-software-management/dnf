@@ -38,6 +38,18 @@ class EmptyPersistorTest(support.ResultTestCase):
         cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
         self.assertEqual(cnt, 0)
 
+    def test_group_install_exclude_glob(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        cnt = self.base.group_install(grp, ('optional',), exclude=('lo*',))
+        self.assertEqual(cnt, 0)
+
+    def test_group_install_exclude_notexist(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        cnt = self.base.group_install(grp, ('optional',), exclude=('x*',))
+        self.assertEqual(cnt, 1)
+
     def test_add_comps_trans(self):
         trans = dnf.comps.TransactionBunch()
         trans.install.add('trampoline')

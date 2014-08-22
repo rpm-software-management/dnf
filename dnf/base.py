@@ -55,6 +55,7 @@ import dnf.yum.config
 import dnf.yum.rpmtrans
 import functools
 import hawkey
+import itertools
 import logging
 import os
 import operator
@@ -1177,10 +1178,26 @@ class Base(object):
         return ret
 
     def group_install(self, grp, pkg_types, exclude=None):
+        """Installs packages of selected group
+        :param exclude: list of package name glob patterns
+            that will be excluded from install set
+        """
         # :api
+        def _pattern_to_pkgname(pattern):
+            if dnf.util.is_glob_pattern(pattern):
+                q = self.sack.query().filter(name__glob=pattern)
+                return map(lambda p: p.name, q)
+            else:
+                return (pattern,)
+
+        exclude_pkgnames = None
+        if exclude:
+            nested_excludes = [_pattern_to_pkgname(p) for p in exclude]
+            exclude_pkgnames = itertools.chain.from_iterable(nested_excludes)
+
         solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
-        trans = solver.group_install(grp, pkg_types, exclude)
+        trans = solver.group_install(grp, pkg_types, exclude_pkgnames)
         logger.debug("Adding packages from group '%s': %s",
                           grp.id, trans.install)
         return self._add_comps_trans(trans)
