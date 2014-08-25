@@ -71,9 +71,9 @@ def keyids_from_pubring(gpgdir):
         ctx = gpgme.Context()
         keyids = []
         for k in ctx.keylist():
-            for subkey in k.subkeys:
-                if subkey.can_sign:
-                    keyids.append(subkey.keyid)
+            subkey = _extract_signing_subkey(k)
+            if subkey is not None:
+                keyids.append(subkey.keyid)
         return keyids
 
 
