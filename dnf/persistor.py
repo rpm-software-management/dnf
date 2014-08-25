@@ -241,11 +241,11 @@ class GroupPersistor(object):
             with open(self._dbfile) as db:
                 content = db.read()
                 self.db = ClonableDict.wrap_dict(json.loads(content))
-                self._original = self.db.clone()
                 self._migrate()
         except IOError as e:
             if e.errno != errno.ENOENT:
                 raise
+        self._original = self.db.clone()
 
     def _migrate(self):
         try:
