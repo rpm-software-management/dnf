@@ -39,7 +39,6 @@ if PY3:
     NullTranslations.ungettext = NullTranslations.ngettext
     xrange = range
     raw_input = input
-    to_ord = lambda i: i
     base64_decodebytes = base64.decodebytes
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
@@ -66,7 +65,6 @@ else:
     import urlparse
 
     filterfalse = itertools.ifilterfalse
-    to_ord = lambda i: ord(i)
     base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote
 
