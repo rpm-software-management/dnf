@@ -124,7 +124,7 @@ def rawkey2infos(key_fo):
         ctx.armor = True
         for info in keyinfos:
             buf = io.BytesIO()
-            ctx.export(hex(info['keyid']), buf)
+            ctx.export(keyinfo2keyid(info), buf)
             info['raw_key'] = buf.getvalue()
     dnf.util.rm_rf(pb_dir)
     return keyinfos
