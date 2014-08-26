@@ -2,7 +2,7 @@
  Dandified Yum
 ###############
 
-Dandified Yum (DNF) is the next upcoming major version of `Yum <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/akozumpl/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
+Dandified Yum (DNF) is the next upcoming major version of `Yum <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/rpm-software-management/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
 
 ============
  Installing
@@ -35,7 +35,7 @@ Then to run DNF::
  Documentation
 ===============
 
-The DNF package distribution contains man pages, dnf(8) and dnf.conf(8). It is also possible to `read the DNF documentation <http://akozumpl.github.io/dnf/>`_ online, the page includes API documentation. There's also a `wiki <https://github.com/akozumpl/dnf/wiki>`_ meant for contributors to DNF and related projects.
+The DNF package distribution contains man pages, dnf(8) and dnf.conf(8). It is also possible to `read the DNF documentation <http://rpm-software-management.github.io/dnf/>`_ online, the page includes API documentation. There's also a `wiki <https://github.com/rpm-software-management/dnf/wiki>`_ meant for contributors to DNF and related projects.
 
 ====================
  Bug reporting etc.
