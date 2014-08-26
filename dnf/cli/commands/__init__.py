@@ -453,9 +453,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.CheckUpdateSubCommand, self).run(cli_args)
             self.check(cli_args)
             patterns = self.parse_arguments(cli_args)
             found = self.base.check_updates(patterns, reponame, print_=True)
@@ -479,9 +478,8 @@ class RepoPkgsCommand(Command):
             else:
                 return cli_args[0], cli_args[1:]
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.InfoSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('info', pkgnarrow, patterns, reponame)
@@ -506,9 +504,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.InstallSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -555,9 +552,8 @@ class RepoPkgsCommand(Command):
             else:
                 return cli_args[0], cli_args[1:]
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.ListSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkgnarrow, patterns = self.parse_arguments(cli_args)
             self.base.output_packages('list', pkgnarrow, patterns, reponame)
@@ -582,9 +578,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.MoveToSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -648,9 +643,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.ReinstallOldSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -724,13 +718,12 @@ class RepoPkgsCommand(Command):
             for command in self.wrapped_commands:
                 command.check(cli_args)
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.ReinstallSubCommand, self).run(cli_args)
             self.check(cli_args)
             for command in self.wrapped_commands:
                 try:
-                    command.run(reponame, cli_args)
+                    command.run_on_repo(reponame, cli_args)
                 except dnf.exceptions.Error:
                     continue
                 else:
@@ -784,10 +777,8 @@ class RepoPkgsCommand(Command):
                 else:
                     self.cli.base.goal.erase(package, clean_deps=clean_deps)
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.RemoveOrDistroSyncSubCommand, self).run(
-                cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -836,9 +827,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.RemoveOrReinstallSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -894,9 +884,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.RemoveSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -945,9 +934,8 @@ class RepoPkgsCommand(Command):
             """Parse command arguments."""
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.UpgradeSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
 
@@ -999,9 +987,8 @@ class RepoPkgsCommand(Command):
                 raise ValueError('at least one argument must be given')
             return cli_args
 
-        def run(self, reponame, cli_args):
+        def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
-            super(RepoPkgsCommand.UpgradeToSubCommand, self).run(cli_args)
             self.check(cli_args)
             pkg_specs = self.parse_arguments(cli_args)
             self.base.upgrade_userlist_to(pkg_specs, reponame)
@@ -1079,7 +1066,7 @@ class RepoPkgsCommand(Command):
 
         repo, subcmd, subargs = self.parse_extcmds(extcmds)
 
-        subcmd.run(repo, subargs)
+        subcmd.run_on_repo(repo, subargs)
 
         self.cli.demands.resolving = subcmd.resolve
 
