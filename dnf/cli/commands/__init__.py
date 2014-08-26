@@ -1081,7 +1081,7 @@ class RepoPkgsCommand(Command):
 
         subcmd.run(repo, subargs)
 
-        self.resolve = subcmd.resolve
+        self.cli.demands.resolving = subcmd.resolve
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
