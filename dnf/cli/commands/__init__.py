@@ -741,6 +741,81 @@ class RepoPkgsCommand(Command):
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
+    class RemoveOrDistroSyncSubCommand(SubCommand):
+        """Implementation of the remove-or-distro-sync sub-command."""
+
+        activate_sack = True
+
+        aliases = ('remove-or-distro-sync',)
+
+        resolve = True
+
+        writes_rpmdb = True
+
+        def check(self, cli_args):
+            """Verify whether the command can run with given arguments."""
+            super(RepoPkgsCommand.RemoveOrDistroSyncSubCommand, self).check(
+                cli_args)
+            checkGPGKey(self.base, self.cli)
+
+        @staticmethod
+        def parse_arguments(cli_args):
+            """Parse command arguments."""
+            return cli_args
+
+        def _replace(self, pkg_spec, reponame):
+            """Synchronize a package with another repository or remove it."""
+            self.cli.base.sack.disable_repo(reponame)
+
+            subject = dnf.subject.Subject(pkg_spec)
+            matches = subject.get_best_query(self.cli.base.sack)
+            yumdb = self.cli.base.yumdb
+            installed = [
+                pkg for pkg in matches.installed()
+                if yumdb.get_package(pkg).get('from_repo') == reponame]
+            if not installed:
+                raise dnf.exceptions.PackagesNotInstalledError(
+                    'no package matched', pkg_spec)
+            available = matches.available()
+            clean_deps = self.cli.base.conf.clean_requirements_on_remove
+            for package in installed:
+                if available.filter(name=package.name, arch=package.arch):
+                    self.cli.base.goal.distupgrade(package)
+                else:
+                    self.cli.base.goal.erase(package, clean_deps=clean_deps)
+
+        def run(self, reponame, cli_args):
+            """Execute the command with respect to given arguments *cli_args*."""
+            super(RepoPkgsCommand.RemoveOrDistroSyncSubCommand, self).run(
+                cli_args)
+            self.check(cli_args)
+            pkg_specs = self.parse_arguments(cli_args)
+
+            done = False
+
+            if not pkg_specs:
+                # Sync all packages.
+                try:
+                    self._replace('*', reponame)
+                except dnf.exceptions.PackagesNotInstalledError:
+                    msg = _('No package installed from the repository.')
+                    logger.info(msg)
+                else:
+                    done = True
+            else:
+                # Reinstall packages.
+                for pkg_spec in pkg_specs:
+                    try:
+                        self._replace(pkg_spec, reponame)
+                    except dnf.exceptions.PackagesNotInstalledError:
+                        msg = _('No match for argument: %s')
+                        logger.info(msg, pkg_spec)
+                    else:
+                        done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+
     class RemoveOrReinstallSubCommand(SubCommand):
         """Implementation of the remove-or-reinstall sub-command."""
 
@@ -933,15 +1008,16 @@ class RepoPkgsCommand(Command):
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
-               ReinstallSubCommand, RemoveOrReinstallSubCommand,
-               RemoveSubCommand, UpgradeSubCommand, UpgradeToSubCommand}
+               ReinstallSubCommand, RemoveOrDistroSyncSubCommand,
+               RemoveOrReinstallSubCommand, RemoveSubCommand,
+               UpgradeSubCommand, UpgradeToSubCommand}
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
     summary = _('Run commands on top of all packages in given repository')
     usage = '%s check-update|info|install|list|move-to|reinstall|' \
-                 'reinstall-old|remove|remove-or-reinstall|upgrade|' \
-                 'upgrade-to [%s...]' % (_('REPO'), _('ARG'))
+            'reinstall-old|remove|remove-or-distro-sync|remove-or-reinstall|' \
+            'upgrade|upgrade-to [%s...]' % (_('REPO'), _('ARG'))
 
     def __init__(self, cli):
         """Initialize the command."""

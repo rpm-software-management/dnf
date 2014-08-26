@@ -692,6 +692,92 @@ class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
         self.assertEqual(self.mock.mock_calls,
                          [mock.call.reinstall_old_run('main', [])])
 
+class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
+
+    """Tests of ``RemoveOrDistroSyncSubCommand`` class."""
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsRemoveOrDistroSyncSubCommandTest, self).setUp()
+        self.cli = support.BaseCliStub('distro').mock_cli()
+        self.cli.base.init_sack()
+
+    def test_run_spec_sync(self):
+        """Test running with a package which can be synchronized."""
+        for pkg in self.cli.base.sack.query().installed():
+            data = support.RPMDBAdditionalDataPackageStub()
+            data.from_repo = 'non-distro' if pkg.name == 'pepper' else 'distro'
+            self.cli.base.yumdb.db[str(pkg)] = data
+
+        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
+            self.cli)
+        cmd.run('non-distro', ['pepper'])
+
+        self.assertResult(self.cli.base, itertools.chain(
+            self.cli.base.sack.query().installed().filter(name__neq='pepper'),
+            dnf.subject.Subject('pepper').get_best_query(self.cli.base.sack)
+            .available()))
+
+    def test_run_spec_remove(self):
+        """Test running with a package which must be removed."""
+        for pkg in self.cli.base.sack.query().installed():
+            data = support.RPMDBAdditionalDataPackageStub()
+            data.from_repo = 'non-distro' if pkg.name == 'hole' else 'distro'
+            self.cli.base.yumdb.db[str(pkg)] = data
+
+        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
+            self.cli)
+        cmd.run('non-distro', ['hole'])
+
+        self.assertResult(
+            self.cli.base,
+            self.cli.base.sack.query().installed().filter(name__neq='hole'))
+
+    def test_run_all(self):
+        """Test running without a package specification."""
+        nondist = {'pepper', 'hole'}
+        for pkg in self.cli.base.sack.query().installed():
+            data = support.RPMDBAdditionalDataPackageStub()
+            data.from_repo = 'non-distro' if pkg.name in nondist else 'distro'
+            self.cli.base.yumdb.db[str(pkg)] = data
+
+        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
+            self.cli)
+        cmd.run('non-distro', [])
+
+        self.assertResult(self.cli.base, itertools.chain(
+            self.cli.base.sack.query().installed().filter(name__neq='pepper')
+            .filter(name__neq='hole'),
+            dnf.subject.Subject('pepper').get_best_query(self.cli.base.sack)
+            .available()))
+
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test_run_spec_notinstalled(self):
+        """Test running with a package which is not installed."""
+        stdout = dnf.pycomp.StringIO()
+
+        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
+            self.cli)
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error,
+                              cmd.run, 'non-distro', ['not-installed'])
+
+        self.assertIn('No match for argument: not-installed\n', stdout.getvalue(),
+                      'mismatch not logged')
+
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test_run_all_notinstalled(self):
+        """Test running with a repository from which nothing is installed."""
+        stdout = dnf.pycomp.StringIO()
+
+        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
+            self.cli)
+        with support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, cmd.run, 'non-distro', [])
+
+        self.assertIn('No package installed from the repository.\n',
+                      stdout.getvalue(), 'mismatch not logged')
+
 class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand`` class."""
