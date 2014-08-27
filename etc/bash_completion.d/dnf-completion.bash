@@ -77,6 +77,10 @@ _dnf ()
             return
         fi
     fi
+    if [[ "$command" == "help" ]]; then
+      COMPREPLY=($(compgen -W "`echo $__dnf_commandlist`" -- "$cur"))
+        return
+    fi
 
     if [ $c -eq $COMP_CWORD -a -z "$command" ]; then
         case "${COMP_WORDS[COMP_CWORD]}" in
