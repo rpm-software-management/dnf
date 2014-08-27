@@ -22,28 +22,11 @@
 #  02110-1301  USA
 
 
-__dnf_commandlist="
-    autoerase
-    check-update
-    clean
-    distro-sync
-    downgrade
-    erase
-    group
-    help
-    history
-    info
-    install
-    list
-    makecache
-    provides
-    reinstall
-    repolist
-    repository-packages
-    search
-    upgrade
-    upgrade-to
-    "
+__dnf_commandlist="$(compgen -W "`dnf help | sed -e "s/\(  \)\+.*$//g" -e "/^$/d" -e "/^[A-Z ]/d" -e "/:/d"`")"
+# s/\(  \)\+.*$//g : remove description for commands
+# /^$/d            : remove blank lines
+# /^[A-Z ]/d       : remove lines starts with capital letter or with space (all commands in help starts without spaces)
+# /:/d             : remove lines which contains ':' (now we have only commands, so commands can't contain this sym)
 
 __dnfcomp ()
 {
