@@ -75,7 +75,6 @@ class ReinstallCommand(commands.Command):
         local_pkgs = map(self.base.add_remote_rpm, filenames)
         results = map(self.base.package_install, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
-        self.base._add_reinstall_rpm_probfilters()
 
         # Reinstall packages.
         for pkg_spec in pkg_specs:
