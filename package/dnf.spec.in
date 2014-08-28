@@ -1,4 +1,4 @@
-%global gitrev 2c846d0
+%global gitrev da278da
 %global hawkey_version 0.5.0
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -189,6 +189,59 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+
+* Thu Aug 28 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.1-1
+- packaging: add dnf-yum. (Ales Kozumplik)
+- cli: added plugins missing hint (RhBug:1132335) (Jan Silhan)
+- using ts.addReinstall for package reinstallation (RhBug:1071854) (Jan Silhan)
+- Add history redo command. (Radek Holy)
+- Add a TransactionConverter class. (Radek Holy)
+- bash-completion: complete `help` with commands (Igor Gnatenko)
+- bash-completion: generate commands dynamically (Igor Gnatenko)
+- base: group_install accepts glob exclude names (RhBug:1131969) (Jan Silhan)
+- README: changed references to new repo location (Jan Silhan)
+- transifex update (Jan Silhan)
+- syntax: fixed indentation (Jan Silhan)
+- removed lt.po which was accidentally added in c2e9b39 (Jan Silhan)
+- lint: fix convention violations in the new source files (Radek Holy)
+- Fix setting of the resolving demand for repo-pkgs command. (Radek Holy)
+- Add repository-packages remove-or-distro-sync command. (RhBug:908764) (Radek Holy)
+- fix: traceback that GroupPersistor._original might not exist. (RhBug:1130878) (Ales Kozumplik)
+- pycomp: drop to_ord(). (Ales Kozumplik)
+- refactor: crypto.keyids_from_pubring() using _extract_signing_subkey(). (Ales Kozumplik)
+- fix: another 32-bit hex() problem in crypto. (Ales Kozumplik)
+- remove: pgpmsg.py. (Ales Kozumplik)
+- replace the whole of pgpmsg.py with gpgme and a dummy context. (Ales Kozumplik)
+- cosmetic: sort methods of Repo according to the coding standard. (Ales Kozumplik)
+- Fix dnf.crypto.keyinfo2keyid(). (Ales Kozumplik)
+- util: get rid of an inconvenient 'default_handle' constant. (Ales Kozumplik)
+- simplify misc.import_key_to_pubring()'s signature. (Ales Kozumplik)
+- cleanup: header of dnf.yum.pgpmsg. (Ales Kozumplik)
+- crypto: add crypto.retrieve() and drop Base._retrievePublicKey() (Ales Kozumplik)
+- cosmetic: order of functions in dnf.crypto. (Ales Kozumplik)
+- unicode: fixed locale.format error (RhBug:1130432) (Jan Silhan)
+- remove: misc.valid_detached_sig(). (Ales Kozumplik)
+- tests: some tests for dnf.crypto. (Ales Kozumplik)
+- crypto: use pubring_dir() context manager systematically. (Ales Kozumplik)
+- Drop unused argument from getgpgkeyinfo(). (Ales Kozumplik)
+- remove: Base._log_key_import(). (Ales Kozumplik)
+- doc: cosmetic: conf_ref: maintain alphabetical order of the options. (Ales Kozumplik)
+- crypto: document crypto options for repo. (Ales Kozumplik)
+- crypto: fixup procgpgkey() to work with Py3 bytes. (Ales Kozumplik)
+- dnf.util.urlopen(): do not create unicode streams for Py3 and bytes for Py2 by default. (Ales Kozumplik)
+- lint: delinting of the repo_gpgcheck patchset. (Ales Kozumplik)
+- Add CLI parts to let the user confirm key imports. (RhBug:1118236) (Ales Kozumplik)
+- gpg: make key decoding work under Py3. (Ales Kozumplik)
+- crypto: add dnf.crypto and fix things up so untrusted repo keys can be imported. (Ales Kozumplik)
+- transifex update (Jan Silhan)
+- syntax: fixed indentation (Jan Silhan)
+- packaging: pygpgme is a requirement. (Ales Kozumplik)
+- remove: support for gpgcakey gets dropped for now. (Ales Kozumplik)
+- repo: smarter _DetailedLibrepoError construction. (Ales Kozumplik)
+- repo: nicer error message on librepo's perform() failure. (Ales Kozumplik)
+- get_best_selector returns empty selector instead of None (Jan Silhan)
+- packaging: add automatic's systemd unit files. (RhBug:1109915) (Ales Kozumplik)
+- automatic: handle 'security' update_cmd. (Ales Kozumplik)
 
 * Tue Aug 12 2014 Aleš Kozumplík <ales@redhat.com> - 0.6.0-1
 - lint: fix convention violations in the new source files (Radek Holy)
