@@ -37,6 +37,8 @@ Yes, you can. And this setup is tested by many.
 
 There is one restriction: DNF and Yum keep additional data about each installed package and every performed transaction. This data is currently not shared between the two managers so if the admin installs half of the packages with DNF and the other half with Yum then each program can not benefit from the information held by the other one. The practical bottom line is that commands like ``autoremove`` can not take a completely informed decision and thus have to "play it safe" and remove only a subset of dependencies they would be able to otherwise. Similar situation exists with groups.
 
+.. _dnf_yum_package-label:
+
 Is there a compatibility layer for Yum?
 =======================================
 

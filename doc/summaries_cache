@@ -798,5 +798,37 @@
     [
         1118272, 
         "search command show traceback when in a debug mode"
+    ], 
+    [
+        1132335, 
+        "RFE [UX] - Give users hint on uknown command"
+    ], 
+    [
+        1071854, 
+        "dnf reinstall does not work as expected"
+    ], 
+    [
+        1131969, 
+        "[rfe] group_install: accepts package specs as excludes"
+    ], 
+    [
+        908764, 
+        "RFE: Support repo-pkgs command set"
+    ], 
+    [
+        1130878, 
+        "[abrt] dnf: persistor.py:60:_diff_dcts:AttributeError: 'NoneType' object has no attribute 'keys'"
+    ], 
+    [
+        1130432, 
+        "[abrt] dnf: locale.py:166:_group:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)"
+    ], 
+    [
+        1118236, 
+        "dnf doesn't seem to support repo_gpgcheck config"
+    ], 
+    [
+        1109915, 
+        "[rfe] yum-cron replacement"
     ]
 ]

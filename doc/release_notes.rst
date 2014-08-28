@@ -891,3 +891,30 @@ Bugs fixed in 0.6.0:
 * :rhbug:`1116666`
 * :rhbug:`1118272`
 * :rhbug:`1127206`
+
+===================
+0.6.1 Release Notes
+===================
+
+New release adds :ref:`upgrade-type command <upgrade_type_automatic-label>` to `dnf-automatic` for choosing specific advisory type updates.
+
+Implemented missing :ref:`history redo command <history_redo_command-label>` for repeating transactions.
+
+Supports :ref:`gpgkey <repo_gpgkey-label>` repo config, :ref:`repo_gpgcheck <repo_gpgcheck-label>` and :ref:`gpgcheck <gpgcheck-label>` [main] and Repo configs.
+
+Distributing new package :ref:`dnf-yum <dnf_yum_package-label>` that provides `/usr/bin/yum` as a symlink to `/usr/bin/dnf`.
+
+API changes in 0.6.1:
+
+* `exclude`, the third parameter of :meth:`dnf.Base.group_install` takes list package name glob patterns instead of just package names.
+
+Bugs fixed in 0.6.0:
+
+* :rhbug:`1132335`
+* :rhbug:`1071854`
+* :rhbug:`1131969`
+* :rhbug:`908764`
+* :rhbug:`1130878`
+* :rhbug:`1130432`
+* :rhbug:`1118236`
+* :rhbug:`1109915`
