@@ -57,6 +57,8 @@ Setting the mode of operation of the program.
 
     Whether packages comprising the available should be downloaded.
 
+.. _upgrade_type_automatic-label:
+
 ``upgrade_type``
     either one of ``default``, ``security``, default: ``default``
 
