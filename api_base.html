@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Base—The centerpiece of DNF &mdash; DNF 0.6.0-1 documentation</title>
+    <title>Base—The centerpiece of DNF &mdash; DNF 0.6.1-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6.0-1',
+        VERSION:     '0.6.1-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.6.0-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.6.1-1 documentation" href="index.html" />
     <link rel="up" title="DNF API Reference" href="api.html" />
     <link rel="next" title="Exceptions" href="api_exceptions.html" />
     <link rel="prev" title="Common Provisions of the DNF API" href="api_common.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.6.1-1 documentation</a> &raquo;</li>
           <li><a href="api.html" accesskey="U">DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -145,7 +145,7 @@
 <dl class="method">
 <dt id="dnf.Base.group_install">
 <tt class="descname">group_install</tt><big>(</big><em>group</em>, <em>pkg_types</em>, <em>exclude=None</em><big>)</big><a class="headerlink" href="#dnf.Base.group_install" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mark <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance) installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> in it. If <cite>exclude</cite> is given, it has to be an iterable of package names: <a class="reference internal" href="#dnf.Base.group_install" title="dnf.Base.group_install"><tt class="xref py py-meth docutils literal"><span class="pre">group_install()</span></tt></a> will then not mark the respective packages for installation whenever possible (but e.g. packages tagged <em>mandatory</em> will be marked for intallation no matter the value of <cite>exlcude</cite>)</p>
+<dd><p>Mark <cite>group</cite> (a <a class="reference internal" href="api_comps.html#dnf.comps.Group" title="dnf.comps.Group"><tt class="xref py py-class docutils literal"><span class="pre">dnf.comps.Group</span></tt></a> instance) installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. <cite>pkg_types</cite> is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including <tt class="docutils literal"><span class="pre">&quot;mandatory&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;default&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;optional&quot;</span></tt> in it. If <cite>exclude</cite> is given, it has to be an iterable of package name glob patterns: <a class="reference internal" href="#dnf.Base.group_install" title="dnf.Base.group_install"><tt class="xref py py-meth docutils literal"><span class="pre">group_install()</span></tt></a> will then not mark the respective packages for installation whenever possible (but e.g. packages tagged <em>mandatory</em> will be marked for installation no matter the value of <cite>exclude</cite>)</p>
 </dd></dl>
 
 <dl class="method">
@@ -311,7 +311,7 @@ affect the package data already loaded into the <a class="reference internal" hr
         <li class="right" >
           <a href="api_common.html" title="Common Provisions of the DNF API"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li>
+        <li><a href="index.html">DNF 0.6.1-1 documentation</a> &raquo;</li>
           <li><a href="api.html" >DNF API Reference</a> &raquo;</li> 
       </ul>
     </div>

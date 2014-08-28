@@ -47,15 +47,22 @@ The configuration file is separated into topical sections.
 
 Setting the mode of operation of the program.
 
+``apply_updates``
+    boolean, default: False
+
+    Whether packages comprising the available should be applied (i.e. installed via RPM). Implies ``download_updates``.
+
 ``download_updates``
     boolean, default: False
 
     Whether packages comprising the available should be downloaded.
 
-``apply_updates``
-    boolean, default: False
+.. _upgrade_type_automatic-label:
 
-    Whether packages comprising the available should be applied (i.e. installed via RPM). Implies ``download_updates``.
+``upgrade_type``
+    either one of ``default``, ``security``, default: ``default``
+
+    What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an  issued security advisory.
 
 ----------------------
 ``[emitters]`` section

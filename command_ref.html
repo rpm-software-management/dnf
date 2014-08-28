@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Command Reference &mdash; DNF 0.6.0-1 documentation</title>
+    <title>DNF Command Reference &mdash; DNF 0.6.1-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6.0-1',
+        VERSION:     '0.6.1-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.6.0-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.6.1-1 documentation" href="index.html" />
     <link rel="next" title="DNF Configuration Reference" href="conf_ref.html" />
     <link rel="prev" title="DNF, Experimental Yum Replacement" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.1-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -295,6 +295,11 @@ table.</dd>
 <tt class="docutils literal"><span class="pre">&lt;package-name-spec&gt;</span></tt>, which specifies a transaction by a package which
 it manipulated. When no transaction is specified describe what happened
 during the latest transaction.</dd>
+</dl>
+<dl class="docutils" id="history-redo-command-label">
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">redo</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
+<dd>Repeat the specified transaction. If it is not possible to redo any
+operation due to the current state of RPMDB, do not redo any operation.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span> <span class="pre">&lt;transaction-spec&gt;</span></tt></dt>
 <dd>Undo all transactions performed after the specified transaction. If it is
 not possible to undo any transaction due to the current state of RPMDB,
@@ -447,6 +452,8 @@ detailed information when <tt class="docutils literal"><span class="pre">-v</spa
 <dd>Reinstall all those packages that were installed from the repository and simultaneously are available in the repository.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">remove</span> <span class="pre">[&lt;package-name-spec&gt;...]</span></tt></dt>
 <dd>Remove all packages installed from the repository along with any packages depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> is enabled (the default) also removes any dependencies that are no longer needed.</dd>
+<dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">remove-or-distro-sync</span> <span class="pre">[&lt;package-name-spec&gt;...]</span></tt></dt>
+<dd>Select all packages installed from the repository. Upgrade, downgrade or keep those of them that are available in another repositories to match the latest version available there and remove the others along with any packages depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> is enabled (the default) also removes any dependencies that are no longer needed.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">remove-or-reinstall</span> <span class="pre">[&lt;package-name-spec&gt;...]</span></tt></dt>
 <dd>Select all packages installed from the repository. Reinstall those of them that are available in another repositories and remove the others along with any packages depending on the packages being removed. If <tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> is enabled (the default) also removes any dependencies that are no longer needed.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">repository-packages</span> <span class="pre">&lt;repoid&gt;</span> <span class="pre">upgrade</span> <span class="pre">[&lt;package-name-spec&gt;...]</span></tt></dt>
@@ -681,7 +688,7 @@ the most recent transaction.</p>
         <li class="right" >
           <a href="index.html" title="DNF, Experimental Yum Replacement"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.0-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.1-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

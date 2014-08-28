@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "DNF.AUTOMATIC" "8" "August 12, 2014" "0.6.0" "DNF"
+.TH "DNF.AUTOMATIC" "8" "August 28, 2014" "0.6.1" "DNF"
 .SH NAME
 dnf.automatic \- DNF Automatic
 .
@@ -75,15 +75,22 @@ The configuration file is separated into topical sections.
 Setting the mode of operation of the program.
 .INDENT 0.0
 .TP
-.B \fBdownload_updates\fP
-boolean, default: False
-.sp
-Whether packages comprising the available should be downloaded.
-.TP
 .B \fBapply_updates\fP
 boolean, default: False
 .sp
 Whether packages comprising the available should be applied (i.e. installed via RPM). Implies \fBdownload_updates\fP\&.
+.TP
+.B \fBdownload_updates\fP
+boolean, default: False
+.sp
+Whether packages comprising the available should be downloaded.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \fBupgrade_type\fP
+either one of \fBdefault\fP, \fBsecurity\fP, default: \fBdefault\fP
+.sp
+What kind of upgrades to look at. \fBdefault\fP signals looking for all available updates, \fBsecurity\fP only those with an  issued security advisory.
 .UNINDENT
 .SS \fB[emitters]\fP section
 .sp
