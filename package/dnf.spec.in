@@ -46,6 +46,14 @@ Requires(postun):	systemd
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package -n dnf-yum
+Conflicts:      yum
+Requires:	dnf = %{version}-%{release}
+Summary:	As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
+%description -n dnf-yum
+As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
 %package -n python3-dnf
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 Group:		System Environment/Base
@@ -115,6 +123,7 @@ mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
+ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
 make ARGS="-V" test
@@ -140,6 +149,10 @@ popd
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
 %{py2pluginpath}
+
+%files -n dnf-yum
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
+%{_bindir}/yum
 
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
