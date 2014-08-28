@@ -89,9 +89,10 @@ def pkg2payload(pkg, progress, *factories):
 
 class _DownloadErrors(object):
     def __init__(self):
-        self.fatal = None
         self._irrecoverable = {}
         self._recoverable = {}
+        self.fatal = None
+        self.skipped = set()
 
     @property
     def irrecoverable(self):
@@ -109,6 +110,11 @@ class _DownloadErrors(object):
     def recoverable(self, new_dct):
         self._recoverable = new_dct
 
+    def bandwidth_used(self, pload):
+        if pload.pkg in self.skipped:
+            return 0
+        return pload.download_size
+
 
 def download_payloads(payloads, drpm):
     # download packages
@@ -125,12 +131,13 @@ def download_payloads(payloads, drpm):
     errs.recoverable = drpm.err.copy()
     for tgt in targets:
         err = tgt.err
-        if err is None:
-            continue
-        if err == 'Already downloaded' or err.startswith('Not finished'):
+        if err is None or err.startswith('Not finished'):
             continue
         payload = tgt.cbdata
         pkg = payload.pkg
+        if err == 'Already downloaded':
+            errs.skipped.add(pkg)
+            continue
         errs.irrecoverable[pkg] = [err]
 
     return errs

@@ -1118,17 +1118,15 @@ Transaction Summary
         # setup our depsolve progress callback
         return (progressbar, DepSolveProgressCallBack())
 
-    def download_callback_total_cb(self, remote_pkgs, remote_size,
-                                   download_start_timestamp):
+    def download_callback_total_cb(self, remote_size, download_start_timestamp):
         """Outputs summary information about the download process.
 
-        :param remote_pkgs: a list of package objects that were downloaded
         :param remote_size: the total amount of information that was
            downloaded, in bytes
         :param download_start_timestamp: the time when the download
            process started, in seconds since the epoch
         """
-        if len(remote_pkgs) <= 1:
+        if remote_size <= 0:
             return
 
         width = dnf.cli.term._term_width()

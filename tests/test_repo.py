@@ -86,6 +86,22 @@ class RepoTestMixin(object):
         repo_path = os.path.join(self.TMP_CACHEDIR, "r")
         dnf.util.rm_rf(repo_path)
 
+
+class DownloadErrorsTest(support.TestCase):
+    def test_bandwidth_used(self):
+        errors = dnf.repo._DownloadErrors()
+        pkg1 = support.MockPackage('penny-1-1.noarch')
+        pkg1.downloadsize = 10
+        pkg2 = support.MockPackage('lane-2-1.noarch')
+        pkg2.downloadsize = 1
+        pl1 = dnf.repo.RPMPayload(pkg1, None)
+        pl2 = dnf.repo.RPMPayload(pkg2, None)
+        errors.skipped.add(pl2.pkg)
+
+        self.assertEqual(errors.bandwidth_used(pl1), 10)
+        self.assertEqual(errors.bandwidth_used(pl2), 0)
+
+
 class HandleTest(support.TestCase):
     def test_useragent(self):
         h = dnf.repo._Handle(False, 0)
