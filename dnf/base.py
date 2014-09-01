@@ -1607,13 +1607,13 @@ class Base(object):
             for info in keys:
                 ts = self.rpmconn.readonly_ts
                 # Check if key is already installed
-                if misc.keyInstalled(ts, info['keyid'], info['timestamp']) >= 0:
+                if misc.keyInstalled(ts, info.keyid, info.timestamp) >= 0:
                     msg = _('GPG key at %s (0x%s) is already installed')
-                    logger.info(msg, keyurl, info['hexkeyid'])
+                    logger.info(msg, keyurl, info.hex_keyid)
                     continue
 
                 # Try installing/updating GPG key
-                info['url'] = keyurl
+                info.url = keyurl
                 dnf.crypto.log_key_import(info)
                 rc = False
                 if self.conf.assumeno:
@@ -1627,20 +1627,20 @@ class Base(object):
                 # rc = True else ask as normal.
 
                 elif fullaskcb:
-                    rc = fullaskcb({"po": po, "userid": info['userid'],
-                                    "hexkeyid": info['hexkeyid'],
+                    rc = fullaskcb({"po": po, "userid": info.userid,
+                                    "hexkeyid": info.hex_keyid,
                                     "keyurl": keyurl,
-                                    "fingerprint": info['fingerprint'],
-                                    "timestamp": info['timestamp']})
+                                    "fingerprint": info.fingerprint,
+                                    "timestamp": info.timestamp})
                 elif askcb:
-                    rc = askcb(po, info['userid'], info['hexkeyid'])
+                    rc = askcb(po, info.userid, info.hex_keyid)
 
                 if not rc:
                     user_cb_fail = True
                     continue
 
                 # Import the key
-                result = ts.pgpImportPubkey(misc.procgpgkey(info['raw_key']))
+                result = ts.pgpImportPubkey(misc.procgpgkey(info.raw_key))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
                     raise dnf.exceptions.Error(_prov_key_data(msg))

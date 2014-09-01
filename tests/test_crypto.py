@@ -38,7 +38,7 @@ class CryptoTest(tests.support.TestCase):
         with open(KEYFILE, 'rb') as keyfile:
             keyinfo = dnf.crypto.rawkey2infos(keyfile)[0]
         dnf.yum.misc.import_key_to_pubring(
-            keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=cls.PUBRING_DIR,
+            keyinfo.raw_key, keyinfo.hex_keyid, gpgdir=cls.PUBRING_DIR,
             make_ro_copy=False)
 
     @classmethod
@@ -65,14 +65,14 @@ class CryptoTest(tests.support.TestCase):
     def test_rawkey2infos(self):
         with open(KEYFILE, 'rb') as keyfile:
             info = dnf.crypto.rawkey2infos(keyfile)[0]
-        self.assertEqual(info['fingerprint'], FINGERPRINT)
-        self.assertEqual(info['hexkeyid'], '92530C8E')
-        self.assertIn(b'Frmy6HXUL\n', info['raw_key'])
-        self.assertEqual(info['timestamp'], 1408534646)
-        self.assertEqual(info['userid'], 'Dandy Fied <dnf@example.com>')
+        self.assertEqual(info.fingerprint, FINGERPRINT)
+        self.assertEqual(info.hex_keyid, '92530C8E')
+        self.assertIn(b'Frmy6HXUL\n', info.raw_key)
+        self.assertEqual(info.timestamp, 1408534646)
+        self.assertEqual(info.userid, 'Dandy Fied <dnf@example.com>')
 
     def test_retrieve(self):
         keyinfos = dnf.crypto.retrieve(KEYFILE_URL)
         self.assertLength(keyinfos, 1)
         keyinfo = keyinfos[0]
-        self.assertEqual(keyinfo['url'], KEYFILE_URL)
+        self.assertEqual(keyinfo.url, KEYFILE_URL)

@@ -58,7 +58,7 @@ def import_repo_keys(repo):
             if not repo.key_import.confirm(keyinfo):
                 continue
             dnf.yum.misc.import_key_to_pubring(
-                keyinfo['raw_key'], keyinfo['hexkeyid'], gpgdir=gpgdir,
+                keyinfo.raw_key, keyinfo.hex_keyid, gpgdir=gpgdir,
                 make_ro_copy=False)
             logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)
 
@@ -78,7 +78,7 @@ def keyids_from_pubring(gpgdir):
 
 
 def keyinfo2keyid(keyinfo):
-    return ("%x" % keyinfo['keyid']).upper()
+    return ("%x" % keyinfo.keyid).upper()
 
 
 def log_key_import(keyinfo):
@@ -86,9 +86,9 @@ def log_key_import(keyinfo):
              ' Userid     : "%s"\n'
              ' Fingerprint: %s\n'
              ' From       : %s') %
-           (keyinfo['hexkeyid'], dnf.i18n.ucd(keyinfo['userid']),
-            _printable_fingerprint(keyinfo['fingerprint']),
-            keyinfo['url'].replace("file://", "")))
+           (keyinfo.hex_keyid, dnf.i18n.ucd(keyinfo.userid),
+            _printable_fingerprint(keyinfo.fingerprint),
+            keyinfo.url.replace("file://", "")))
     logger.critical("%s", msg)
 
 
@@ -113,19 +113,12 @@ def rawkey2infos(key_fo):
             subkey = _extract_signing_subkey(key)
             if subkey is None:
                 continue
-            int_keyid = int(subkey.keyid, base=16)
-            keyinfos.append({
-                'hexkeyid': dnf.yum.misc.keyIdToRPMVer(int_keyid).upper(),
-                'keyid': int_keyid,
-                'fingerprint' : subkey.fpr,
-                'timestamp' : subkey.timestamp,
-                'userid': key.uids[0].uid,
-                })
+            keyinfos.append(Key(key, subkey))
         ctx.armor = True
         for info in keyinfos:
             buf = io.BytesIO()
             ctx.export(keyinfo2keyid(info), buf)
-            info['raw_key'] = buf.getvalue()
+            info.raw_key = buf.getvalue()
     dnf.util.rm_rf(pb_dir)
     return keyinfos
 
@@ -134,5 +127,19 @@ def retrieve(keyurl, repo=None):
     with dnf.util.urlopen(keyurl, repo) as handle:
         keyinfos = rawkey2infos(handle)
     for keyinfo in keyinfos:
-        keyinfo['url'] = keyurl
+        keyinfo.url = keyurl
     return keyinfos
+
+
+class Key(object):
+    def __init__(self, key, subkey):
+        self.keyid = int(subkey.keyid, base=16)
+        self.fingerprint = subkey.fpr
+        self.raw_key = None
+        self.timestamp = subkey.timestamp
+        self.url = None
+        self.userid = key.uids[0].uid
+
+    @property
+    def hex_keyid(self):
+        return dnf.yum.misc.keyIdToRPMVer(self.keyid).upper()
