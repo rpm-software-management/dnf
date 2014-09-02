@@ -51,7 +51,7 @@ def import_repo_keys(repo):
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
         for keyinfo in retrieve(keyurl):
-            keyid = keyinfo2keyid(keyinfo)
+            keyid = keyinfo.id_
             if keyid in known_keys:
                 logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
                 continue
@@ -75,10 +75,6 @@ def keyids_from_pubring(gpgdir):
             if subkey is not None:
                 keyids.append(subkey.keyid)
         return keyids
-
-
-def keyinfo2keyid(keyinfo):
-    return ("%x" % keyinfo.keyid).upper()
 
 
 def log_key_import(keyinfo):
@@ -117,7 +113,7 @@ def rawkey2infos(key_fo):
         ctx.armor = True
         for info in keyinfos:
             buf = io.BytesIO()
-            ctx.export(keyinfo2keyid(info), buf)
+            ctx.export(info.id_, buf)
             info.raw_key = buf.getvalue()
     dnf.util.rm_rf(pb_dir)
     return keyinfos
@@ -133,6 +129,7 @@ def retrieve(keyurl, repo=None):
 
 class Key(object):
     def __init__(self, key, subkey):
+        self.id_ = subkey.keyid
         self.keyid = int(subkey.keyid, base=16)
         self.fingerprint = subkey.fpr
         self.raw_key = None

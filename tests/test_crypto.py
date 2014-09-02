@@ -49,10 +49,6 @@ class CryptoTest(tests.support.TestCase):
         ids = dnf.crypto.keyids_from_pubring(self.PUBRING_DIR)
         self.assertIn('24362A8492530C8E', ids)
 
-    def test_keyinfo2keyid(self):
-        keyinfo = dnf.crypto.retrieve(KEYFILE_URL)[0]
-        self.assertEquals(dnf.crypto.keyinfo2keyid(keyinfo), '24362A8492530C8E')
-
     def test_printable_fingerprint(self):
         self.assertEqual(dnf.crypto._printable_fingerprint(FINGERPRINT),
                          '0BE4 9FAF 9C95 5F4F 1A98 D14B 2436 2A84 9253 0C8E')
