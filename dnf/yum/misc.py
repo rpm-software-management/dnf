@@ -23,7 +23,7 @@ Assorted utility functions for yum.
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
 from dnf.exceptions import MiscError
-from dnf.pycomp import base64_decodebytes, basestring, unicode, long
+from dnf.pycomp import base64_decodebytes, basestring, unicode
 from stat import *
 import bz2
 import dnf.const
@@ -264,13 +264,6 @@ def procgpgkey(rawkey):
     return base64_decodebytes(block.getvalue())
 
 
-def keyIdToRPMVer(keyid):
-    '''Convert an integer representing a GPG key ID to the hex version string
-    used by RPM
-    '''
-    return "%08x" % (keyid & long(0xffffffff))
-
-
 def keyInstalled(ts, keyid, timestamp):
     '''
     Return if the GPG key described by the given keyid and timestamp are
@@ -288,9 +281,6 @@ def keyInstalled(ts, keyid, timestamp):
     No effort is made to handle duplicates. The first matching keyid is used to
     calculate the return result.
     '''
-    # Convert key id to 'RPM' form
-    keyid = keyIdToRPMVer(keyid)
-
     # Search
     for hdr in ts.dbMatch('name', 'gpg-pubkey'):
         if hdr['version'] == keyid:

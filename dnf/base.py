@@ -1607,9 +1607,9 @@ class Base(object):
             for info in keys:
                 ts = self.rpmconn.readonly_ts
                 # Check if key is already installed
-                if misc.keyInstalled(ts, info.keyid, info.timestamp) >= 0:
+                if misc.keyInstalled(ts, info.rpm_id, info.timestamp) >= 0:
                     msg = _('GPG key at %s (0x%s) is already installed')
-                    logger.info(msg, keyurl, info.hex_keyid)
+                    logger.info(msg, keyurl, info.short_id)
                     continue
 
                 # Try installing/updating GPG key
@@ -1628,12 +1628,12 @@ class Base(object):
 
                 elif fullaskcb:
                     rc = fullaskcb({"po": po, "userid": info.userid,
-                                    "hexkeyid": info.hex_keyid,
+                                    "hexkeyid": info.short_id,
                                     "keyurl": keyurl,
                                     "fingerprint": info.fingerprint,
                                     "timestamp": info.timestamp})
                 elif askcb:
-                    rc = askcb(po, info.userid, info.hex_keyid)
+                    rc = askcb(po, info.userid, info.short_id)
 
                 if not rc:
                     user_cb_fail = True

@@ -58,7 +58,7 @@ def import_repo_keys(repo):
             if not repo.key_import.confirm(keyinfo):
                 continue
             dnf.yum.misc.import_key_to_pubring(
-                keyinfo.raw_key, keyinfo.hex_keyid, gpgdir=gpgdir,
+                keyinfo.raw_key, keyinfo.short_id, gpgdir=gpgdir,
                 make_ro_copy=False)
             logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)
 
@@ -82,7 +82,7 @@ def log_key_import(keyinfo):
              ' Userid     : "%s"\n'
              ' Fingerprint: %s\n'
              ' From       : %s') %
-           (keyinfo.hex_keyid, dnf.i18n.ucd(keyinfo.userid),
+           (keyinfo.short_id, dnf.i18n.ucd(keyinfo.userid),
             _printable_fingerprint(keyinfo.fingerprint),
             keyinfo.url.replace("file://", "")))
     logger.critical("%s", msg)
@@ -130,7 +130,6 @@ def retrieve(keyurl, repo=None):
 class Key(object):
     def __init__(self, key, subkey):
         self.id_ = subkey.keyid
-        self.keyid = int(subkey.keyid, base=16)
         self.fingerprint = subkey.fpr
         self.raw_key = None
         self.timestamp = subkey.timestamp
@@ -138,5 +137,9 @@ class Key(object):
         self.userid = key.uids[0].uid
 
     @property
-    def hex_keyid(self):
-        return dnf.yum.misc.keyIdToRPMVer(self.keyid).upper()
+    def short_id(self):
+        return self.id_[-8:].rjust(8, '0')
+
+    @property
+    def rpm_id(self):
+        return self.short_id.lower()
