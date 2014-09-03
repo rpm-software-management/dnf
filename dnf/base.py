@@ -1254,11 +1254,6 @@ class Base(object):
         """Mark package(s) given by pkg_spec and reponame for installation.:api
         """
 
-        def msg_installed(pkg):
-            name = ucd(pkg)
-            msg = _('Package %s is already installed, skipping.') % name
-            logger.warning(msg)
-
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or \
            subj.is_arch_specified(self.sack):
@@ -1267,7 +1262,7 @@ class Base(object):
                 q = q.filter(reponame=reponame)
             already_inst, available = self._query_matches_installed(q)
             for i in already_inst:
-                msg_installed(i)
+                _msg_installed(i)
             for a in available:
                 self._goal.install(a)
             return len(available)
@@ -1279,7 +1274,7 @@ class Base(object):
                 sltr = sltr.set(reponame=reponame)
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
-                msg_installed(already_inst[0])
+                _msg_installed(already_inst[0])
             self._goal.install(select=sltr)
             return 1
         return 0
@@ -1315,6 +1310,15 @@ class Base(object):
 
     def package_install(self, pkg):
         # :api
+        q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
+        already_inst, _ = self._query_matches_installed(q)
+        if pkg in already_inst:
+            _msg_installed(pkg)
+        else:
+            self._goal.install(pkg)
+        return 1
+
+    def package_reinstall(self, pkg):
         self._goal.install(pkg)
         return 1
 
@@ -1684,3 +1688,9 @@ class Base(object):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
+
+
+def _msg_installed(pkg):
+    name = ucd(pkg)
+    msg = _('Package %s is already installed, skipping.') % name
+    logger.warning(msg)

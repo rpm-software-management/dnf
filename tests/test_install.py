@@ -97,6 +97,17 @@ class MultilibAllMainRepo(support.ResultTestCase):
         new_set = self.installed + q.run()
         self.assertResult(self.base, new_set)
 
+    def test_install_installed(self):
+        p = self.base.sack.query().available().nevra("librita-1-1.x86_64")[0]
+        self.base.package_install(p)
+        self.base.resolve()
+        self.assertEmpty(self.base._goal.list_reinstalls())
+
+        self.base.package_reinstall(p)
+        self.base.resolve()
+        self.assertLength(self.base._goal.list_reinstalls(), 1)
+
+
 class MultilibBest(support.ResultTestCase):
     def setUp(self):
         self.base = support.MockBase('main', 'third_party')

@@ -73,7 +73,7 @@ class ReinstallCommand(commands.Command):
 
         # Reinstall files.
         local_pkgs = map(self.base.add_remote_rpm, filenames)
-        results = map(self.base.package_install, local_pkgs)
+        results = map(self.base.package_reinstall, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
 
         # Reinstall packages.
