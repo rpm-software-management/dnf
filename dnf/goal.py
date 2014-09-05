@@ -36,7 +36,7 @@ class Goal(hawkey.Goal):
             if pkg.name in self.group_members:
                 return 'group'
             return 'user'
-        raise ValueError('Unknown reason: %d' % reason)
+        assert False, 'Unknown reason: %d' % code
 
     def group_reason(self, pkg, current_reason):
         if current_reason == 'unknown' and pkg.name in self.group_members:
