@@ -317,6 +317,7 @@ class Output(object):
         :param end: a string to end the line of output with
         :return: a row of data formatted into a string for output
         """
+        columns = list(columns)
         total_width = len(msg)
         data = []
         for col_data in columns[:-1]:
@@ -369,7 +370,7 @@ class Output(object):
             columns = (-40, -22, -16) # Old default
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = list(zip((na, pkg.evr, pkg.reponame), columns, hi_cols))
+        columns = zip((na, pkg.evr, pkg.reponame), columns, hi_cols)
         print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -392,7 +393,7 @@ class Output(object):
         envra = '%s%s' % (indent, ucd(pkg))
         hi_cols = [highlight, 'normal', 'normal']
         rid = pkg.ui_from_repo
-        columns = list(zip((envra, rid), columns, hi_cols))
+        columns = zip((envra, rid), columns, hi_cols)
         print(self.fmtColumns(columns))
 
     def simple_name_list(self, pkg):
@@ -1101,7 +1102,7 @@ Transaction Summary
             while msgs:
                 current_msgs = msgs[:len(cols)]
                 out += '  '
-                out += self.fmtColumns(list(zip(current_msgs, cols)), end=u'\n')
+                out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
                 msgs = msgs[len(cols):]
 
         return out
