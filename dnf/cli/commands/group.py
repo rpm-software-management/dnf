@@ -397,6 +397,8 @@ class GroupCommand(commands.Command):
         demands.sack_activation = True
         if cmd in ('install', 'mark', 'remove', 'upgrade'):
             demands.root_user = True
+        if cmd == 'remove':
+            demands.allow_erasing = True
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.

@@ -61,6 +61,12 @@ class GroupCommandTest(support.TestCase):
         self.assertLength(env_avail, 0)
         self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
 
+    def test_configure(self):
+        self.cmd.configure(['remove', 'crack'])
+        demands = self.cmd.cli.demands
+        self.assertTrue(demands.allow_erasing)
+        self.assertFalse(demands.refresh_metadata)
+
 
 class CompsQueryTest(support.TestCase):
 
