@@ -459,4 +459,5 @@ class GroupCommand(commands.Command):
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
             db_pkg = pkgdb.get_package(pkg)
-            db_pkg.reason = goal.group_reason(pkg, db_pkg.reason)
+            reason = db_pkg.get('reason') or 'unknown'
+            db_pkg.reason = goal.group_reason(pkg, reason)
