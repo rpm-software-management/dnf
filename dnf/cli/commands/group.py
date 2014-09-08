@@ -457,4 +457,9 @@ class GroupCommand(commands.Command):
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
             db_pkg = pkgdb.get_package(pkg)
-            db_pkg.reason = goal.group_reason(pkg, db_pkg.reason)
+            try:
+                reason = db_pkg.reason
+            except AttributeError:
+                # package installed outside DNF is marked as group install
+                reason = 'unknown'
+            db_pkg.reason = goal.group_reason(pkg, reason)
