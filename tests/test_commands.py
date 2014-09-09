@@ -28,21 +28,13 @@ import dnf.cli.commands.upgrade
 import dnf.repo
 import itertools
 import logging
-import tests.support
 import unittest
-
-logger = logging.getLogger('dnf')
 
 
 class CommandsCliTest(support.TestCase):
     def setUp(self):
         self.base = support.MockBase()
         self.cli = self.base.mock_cli()
-
-    def test_erase_configure(self):
-        erase_cmd = dnf.cli.commands.EraseCommand(self.cli)
-        erase_cmd.configure([])
-        self.assertTrue(self.cli.demands.allow_erasing)
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
@@ -81,7 +73,7 @@ class CommandsCliTest(support.TestCase):
         self.assertEqual(logger.info.mock_calls[-1],
                          mock.call(msg))
 
-    @mock.patch('dnf.cli.commands.logger', new_callable=tests.support.mock_logger)
+    @mock.patch('dnf.cli.commands.logger', new_callable=support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
     def test_makecache_timer(self, _on_ac_power, logger):
@@ -124,7 +116,7 @@ class CommandsCliTest(support.TestCase):
         self.assertLastInfo(logger, u'Metadata cache created.')
         self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
 
-    @mock.patch('dnf.cli.commands.logger', new_callable=tests.support.mock_logger)
+    @mock.patch('dnf.cli.commands.logger', new_callable=support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=False)
     def test_makecache_timer_battery(self, _on_ac_power, logger):
@@ -142,6 +134,7 @@ class CommandsCliTest(support.TestCase):
         self.base.conf.metadata_timer_sync = 5
         self.assertTrue(self._do_makecache(cmd))
 
+
 class CommandTest(support.TestCase):
     def test_canonical(self):
         cmd = dnf.cli.commands.upgrade.UpgradeCommand(None)
@@ -149,36 +142,6 @@ class CommandTest(support.TestCase):
         self.assertEqual(base, 'upgrade')
         self.assertEqual(ext, ['cracker', 'filling'])
 
-class EraseCommandTest(support.ResultTestCase):
-
-    """Tests of ``dnf.cli.commands.EraseCommand`` class."""
-
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(EraseCommandTest, self).setUp()
-        base = support.BaseCliStub()
-        base.init_sack()
-        self.cmd = dnf.cli.commands.EraseCommand(base.mock_cli())
-
-    def test_run(self):
-        """Test whether the package is installed."""
-        self.cmd.run(['pepper'])
-
-        self.assertResult(
-            self.cmd.base,
-            self.cmd.base.sack.query().installed().filter(name__neq='pepper'))
-
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
-    def test_run_notfound(self):
-        """Test whether it fails if the package cannot be found."""
-        stdout = dnf.pycomp.StringIO()
-
-        with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self.cmd.run, ['non-existent'])
-
-        self.assertEqual(stdout.getvalue(),
-                         'No match for argument: non-existent\n')
-        self.assertResult(self.cmd.base, self.cmd.base.sack.query().installed())
 
 class InstallCommandTest(support.ResultTestCase):
 

@@ -34,6 +34,7 @@ import dnf.cli.commands.autoerase
 import dnf.cli.commands.clean
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
+import dnf.cli.commands.erase
 import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
@@ -721,6 +722,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.clean.CleanCommand)
         self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
+        self.register_command(dnf.cli.commands.erase.EraseCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
@@ -731,7 +733,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.upgradeto.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
-        self.register_command(dnf.cli.commands.EraseCommand)
         self.register_command(dnf.cli.commands.MakeCacheCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)

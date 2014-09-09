@@ -255,52 +255,6 @@ class ListCommand(InfoCommand):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
         return self.base.output_packages('list', pkgnarrow, patterns)
 
-class EraseCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    erase command.
-    """
-
-    activate_sack = True
-    aliases = ('erase', 'remove')
-    load_available_repos = False
-    resolve = True
-    allow_erasing = True
-    summary = _("Remove a package or packages from your system")
-    usage = "%s..." % _('PACKAGE')
-    writes_rpmdb = True
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run.  These include that the program is being run by the root
-        user, and that this command is called with appropriate
-        arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkPackageArg(self.cli, basecmd, extcmds)
-
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        return extcmds
-
-    def run(self, extcmds):
-        pkg_specs = self.parse_extcmds(extcmds)
-
-        done = False
-
-        for pkg_spec in pkg_specs:
-            try:
-                self.base.remove(pkg_spec)
-            except dnf.exceptions.MarkingError:
-                logger.info(_('No match for argument: %s'),
-                                      pkg_spec)
-            else:
-                done = True
-
-        if not done:
-            raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
 class MakeCacheCommand(Command):
     """A class containing methods needed by the cli to execute the
