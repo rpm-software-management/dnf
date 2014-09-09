@@ -29,9 +29,11 @@ PY3 = version_info.major >= 3
 
 if PY3:
     from io import StringIO
+    import queue
     import urllib.parse
 
     # functions renamed in py3
+    Queue = queue.Queue
     basestring = unicode = str
     filterfalse = itertools.filterfalse
     long = int
@@ -61,9 +63,11 @@ else:
     # functions renamed in py3
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     from StringIO import StringIO
+    import Queue
     import urllib
     import urlparse
 
+    Queue = Queue.Queue
     filterfalse = itertools.ifilterfalse
     base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote

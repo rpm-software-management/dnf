@@ -28,13 +28,10 @@ from dnf.exceptions import ProcessLockError, ThreadLockError
 from tests.support import mock
 
 import dnf.lock
+import dnf.pycomp
 import dnf.util
 import multiprocessing
 import os
-try:
-    import queue
-except ImportError:
-    import Queue as queue
 import re
 import tests.support
 import threading
@@ -54,7 +51,7 @@ class OtherThread(ConcurrencyMixin, threading.Thread):
     def __init__(self, lock):
         ConcurrencyMixin.__init__(self, lock)
         threading.Thread.__init__(self)
-        self.queue = queue.Queue(1)
+        self.queue = dnf.pycomp.Queue(1)
 
 class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
     def __init__(self, lock):
