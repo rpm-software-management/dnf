@@ -19,42 +19,54 @@
 #
 
 from __future__ import unicode_literals
-import dnf.const
 from dnf.exceptions import ProcessLockError, ThreadLockError
 import dnf.util
+import hashlib
 import os
 import threading
 
+
+def _fit_lock_dir(dir_):
+    if not dnf.util.am_i_root():
+        # for regular users the best we currently do is not to clash with
+        # another DNF process of the same user. Since dir_ is quite definitely
+        # not writable for us, yet significant, use its hash:
+        hexdir = hashlib.md5(dir_.encode('utf-8')).hexdigest()
+        dir_ = os.path.join(dnf.util.user_run_dir(), hexdir)
+    return dir_
+
+
+def build_metadata_lock(cachedir):
+    return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'metadata_lock.pid'),
+                       'metadata')
+
+
+def build_rpmdb_lock(persistdir):
+    return ProcessLock(os.path.join(_fit_lock_dir(persistdir), 'rpmdb_lock.pid'),
+                       'RPMDB')
+
+
 class ProcessLock(object):
-    def __init__(self, name):
-        self.name = name
-        self.thread_lock = threading.RLock()
+    def __init__(self, target, description):
         self.count = 0
+        self.description = description
+        self.target = target
+        self.thread_lock = threading.RLock()
 
     def _lock_thread(self):
         if not self.thread_lock.acquire(blocking=False):
-            msg = '%s already locked by a different thread' % self.name
+            msg = '%s already locked by a different thread' % self.description
             raise ThreadLockError(msg)
         self.count += 1
 
     def _read_lock(self):
-        with open(self._target, 'r') as f:
+        with open(self.target, 'r') as f:
             return int(f.readline())
-
-    @property
-    @dnf.util.lazyattr('_tgt')
-    def _target(self):
-        fn = 'dnf-%s-lock.pid' % self.name
-        if dnf.util.am_i_root():
-            return os.path.join(dnf.const.RUNDIR, fn)
-        user_run_dir = dnf.util.user_run_dir()
-        dnf.util.ensure_dir(user_run_dir)
-        return os.path.join(user_run_dir, fn)
 
     def _try_lock(self):
         pid = str(os.getpid()).encode('utf-8')
         try:
-            fd = os.open(self._target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
+            fd = os.open(self.target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
             os.write(fd, pid)
             os.close(fd)
             return True
@@ -66,6 +78,7 @@ class ProcessLock(object):
         self.thread_lock.release()
 
     def __enter__(self):
+        dnf.util.ensure_dir(os.path.dirname(self.target))
         self._lock_thread()
         if self._try_lock():
             return
@@ -75,23 +88,14 @@ class ProcessLock(object):
             return
         if not os.access('/proc/%d/stat' % pid, os.F_OK):
             # locked by a dead process
-            os.unlink(self._target)
+            os.unlink(self.target)
             if self._try_lock():
                 return
         self._unlock_thread()
-        msg = '%s already locked by %d' % (self.name, pid)
+        msg = '%s already locked by %d' % (self.description, pid)
         raise ProcessLockError(msg, pid)
 
     def __exit__(self, *exc_args):
         if self.count == 1:
-            os.unlink(self._target)
+            os.unlink(self.target)
         self._unlock_thread()
-
-    def decorator(self, fn):
-        def wrapped(*args, **kwargs):
-            with self:
-                return fn(*args, **kwargs)
-        return wrapped
-
-metadata_cache_lock = ProcessLock('metadata-cache')
-rpmdb_lock = ProcessLock('package-cache-lock')

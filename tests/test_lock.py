@@ -30,10 +30,12 @@ from tests.support import mock
 import dnf.lock
 import dnf.util
 import multiprocessing
+import os
 try:
     import queue
 except ImportError:
     import Queue as queue
+import re
 import tests.support
 import threading
 
@@ -60,27 +62,45 @@ class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.queue = multiprocessing.Queue(1)
 
-@mock.patch('dnf.const.USER_RUNDIR', tests.support.USER_RUNDIR)
+TARGET = os.path.join(tests.support.USER_RUNDIR, 'unit-test.pid')
+
+
+def build_lock():
+    return dnf.lock.ProcessLock(TARGET, 'unit-tests')
+
+
+class LockTest(tests.support.TestCase):
+    def test_fit_lock_dir(self):
+        orig = '/some'
+        with mock.patch('dnf.util.am_i_root', return_value=True):
+            self.assertEqual(dnf.lock._fit_lock_dir(orig), '/some')
+        with mock.patch('dnf.util.am_i_root', return_value=False):
+            dir_ = dnf.lock._fit_lock_dir(orig)
+            match = re.match(
+                r'/run/user/\d+/dnf/8e58d9adbd213a8b602f30604a8875f2', dir_)
+            self.assertTrue(match)
+
+
 class ProcessLockTest(tests.support.TestCase):
     @classmethod
     def tearDownClass(cls):
         dnf.util.rm_rf(tests.support.USER_RUNDIR)
 
     def test_simple(self):
-        l1 = dnf.lock.ProcessLock("unit-test")
-        target = l1._target
+        l1 = build_lock()
+        target = l1.target
         with l1:
             self.assertFile(target)
         self.assertPathDoesNotExist(target)
 
     def test_reentrance(self):
-        l1 = dnf.lock.ProcessLock("unit-test")
+        l1 = build_lock()
         with l1:
             with l1:
                 pass
 
     def test_another_process(self):
-        l1 = dnf.lock.ProcessLock("unit-test")
+        l1 = build_lock()
         process = OtherProcess(l1)
         with l1:
             process.start()
@@ -88,18 +108,9 @@ class ProcessLockTest(tests.support.TestCase):
         self.assertIsInstance(process.queue.get(), ProcessLockError)
 
     def test_another_thread(self):
-        l1 = dnf.lock.ProcessLock("unit-test")
+        l1 = build_lock()
         thread = OtherThread(l1)
         with l1:
             thread.start()
             thread.join()
         self.assertIsInstance(thread.queue.get(), ThreadLockError)
-
-    def test_decorator(self):
-        l1 = dnf.lock.ProcessLock("unit-test")
-
-        @l1.decorator
-        def decorated():
-            self.assertEqual(l1.count, 1)
-
-        decorated()

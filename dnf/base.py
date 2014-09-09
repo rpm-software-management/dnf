@@ -208,7 +208,8 @@ class Base(object):
         """Prepare the Sack and the Goal objects. :api."""
         timer = dnf.logging.Timer('sack setup')
         self._sack = dnf.sack.build_sack(self)
-        with dnf.lock.metadata_cache_lock:
+        lock = dnf.lock.build_metadata_lock(self.conf.cachedir)
+        with lock:
             if load_system_repo is not False:
                 try:
                     self._sack.load_system_repo(build_cache=True)
@@ -557,14 +558,15 @@ class Base(object):
             cb.display.output = False
 
         logger.info(_('Running transaction'))
-        self.runTransaction(cb=cb)
+        lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
+        with lock:
+            self.runTransaction(cb=cb)
         timer()
 
     def _record_history(self):
         return self.conf.history_record and \
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
-    @dnf.lock.rpmdb_lock.decorator
     def runTransaction(self, cb):
         """Perform the transaction.
 
