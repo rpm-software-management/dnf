@@ -84,7 +84,7 @@ def main(args):
             return _main(base, args)
     except dnf.exceptions.ProcessLockError as e:
         logger.critical(e.value)
-        show_lock_owner(e.pid, logger)
+        show_lock_owner(e.pid)
         return 1
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
