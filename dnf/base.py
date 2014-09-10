@@ -568,12 +568,8 @@ class Base(object):
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
     def _run_transaction(self, cb):
-        """Perform the transaction.
+        """Perform the RPM transaction."""
 
-        :param cb: an rpm callback object to use in the transaction
-        :raises: :class:`dnf.exceptions.YumRPMTransError` if there is a
-           transaction cannot be completed
-        """
         if self._record_history():
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
@@ -634,7 +630,7 @@ class Base(object):
                         "(logged in as: %s).")
                 logger.critical(msg % login)
                 msg = _('Could not run transaction.')
-                raise dnf.exceptions.YumRPMTransError(msg=msg, errors=[])
+                raise dnf.exceptions.Error(msg)
         else:
             if self._record_history():
                 herrors = [ucd(x) for x in errors]
@@ -645,7 +641,7 @@ class Base(object):
             for e in errors:
                 logger.critical(e[0]) # should this be 'to_unicoded'?
             msg = _("Could not run transaction.")
-            raise dnf.exceptions.YumRPMTransError(msg=msg, errors=errors)
+            raise dnf.exceptions.Error(msg)
 
         for i in ('ts_all_fn', 'ts_done_fn'):
             if hasattr(cb, i):

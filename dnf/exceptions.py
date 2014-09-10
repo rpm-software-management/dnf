@@ -136,9 +136,3 @@ class ThreadLockError(LockError):
 
 class TransactionCheckError(Error):
     pass
-
-
-class YumRPMTransError(Error):
-    def __init__(self, msg, errors):
-        super(YumRPMTransError, self).__init__(msg)
-        self.errors = errors
