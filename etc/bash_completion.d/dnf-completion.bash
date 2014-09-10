@@ -20,6 +20,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
+_dnf_help_command()
+{
+    local cmd=$( dnf help $1 | grep -E "^$1" | tr "|" " " )
+    cmd=${cmd#*[} && cmd=${cmd%%]*}
+    eval "$2='$cmd'"
+}
+
 _dnf()
 {
     local commandlist="$( compgen -W '$( dnf help | cut -d" " -s -f1 | sed -e "/^[A-Z]/d" -e "/:/d" )' )"
@@ -59,6 +66,7 @@ _dnf()
 
     $split && return
 
+    local comp
     if [[ $command ]]; then
 
         case $command in
@@ -82,6 +90,33 @@ _dnf()
                 case $nth in
                     1)
                         COMPREPLY=( $( compgen -W '$( echo $commandlist )' -- "$cur" ) )
+                        ;;
+                    *)
+                        ;;
+                esac
+                ext=''
+                ;;
+            clean)
+                _dnf_help_command "clean" comp
+                COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
+                ext=''
+                ;;
+            repolist)
+                case $nth in
+                    1)
+                        _dnf_help_command "repolist" comp
+                        COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
+                        ;;
+                    *)
+                        ;;
+                esac
+                ext=''
+                ;;
+            group)
+                case $nth in
+                    1)
+                        _dnf_help_command "group" comp
+                        COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
                         ;;
                     *)
                         ;;
