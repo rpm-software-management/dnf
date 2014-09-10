@@ -658,20 +658,17 @@ class Base(object):
 
         # sync up what just happened versus what is in the rpmdb
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verify_transaction(0, cb.verify_tsi_package)
+            self.verify_transaction(cb.verify_tsi_package)
 
         if (not self.conf.keepcache and
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
             self.clean_used_packages()
 
-    def verify_transaction(self, return_code, verify_pkg_cb=None):
+    def verify_transaction(self, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
 
-        :param resultobject: the :class:`misc.GenericHolder`
-           object returned from the :func:`runTransaction` call that
-           ran the transaction
         :param txmbr_cb: the callback for the rpm transaction members
         """
         # check to see that the rpmdb and the transaction roughly matches
@@ -780,7 +777,7 @@ class Base(object):
 
         if self._record_history():
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
-            self.history.end(rpmdbv, return_code)
+            self.history.end(rpmdbv, 0)
         timer()
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
