@@ -560,14 +560,14 @@ class Base(object):
         logger.info(_('Running transaction'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
         with lock:
-            self.runTransaction(cb=cb)
+            self._run_transaction(cb=cb)
         timer()
 
     def _record_history(self):
         return self.conf.history_record and \
             not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
-    def runTransaction(self, cb):
+    def _run_transaction(self, cb):
         """Perform the transaction.
 
         :param cb: an rpm callback object to use in the transaction
