@@ -357,8 +357,8 @@ Install Command
     Installs the given packages and their dependencies. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a
     ``@<group-spec>``, which specifies a group which contains it. After the
-    transaction is finished all the specified packages are installed on the
-    system.
+    transaction is finished all not yet installed specified packages are installed
+    on the system.
 
 ------------
 List Command
