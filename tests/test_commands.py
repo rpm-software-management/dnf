@@ -98,7 +98,8 @@ class CommandsCliTest(support.TestCase):
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
         self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
+        self.assertTrue(r._expired)
+        r._expired = False
 
         # regular case 2: metadata is cached and will expire later than
         # metadata_timer_sync:
@@ -106,7 +107,7 @@ class CommandsCliTest(support.TestCase):
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
         self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertEqual(r.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
+        self.assertFalse(r._expired)
 
         # regular case 3: metadata is cached but will eqpire before
         # metadata_timer_sync:
@@ -114,7 +115,7 @@ class CommandsCliTest(support.TestCase):
         r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
         self.assertTrue(self._do_makecache(cmd))
         self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertEqual(r.sync_strategy, dnf.repo.SYNC_EXPIRED)
+        self.assertTrue(r._expired)
 
     @mock.patch('dnf.cli.commands.logger', new_callable=support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)

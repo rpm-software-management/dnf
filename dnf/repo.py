@@ -218,7 +218,6 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 class Metadata(object):
     def __init__(self, res, handle):
-        self.expired = False
         self.fresh = False # :api
         self.repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
@@ -424,9 +423,7 @@ class MDPayload(dnf.callback.Payload):
 
 
 SYNC_TRY_CACHE = 1
-SYNC_EXPIRED = 2    # consider the current cache expired, no matter its real age
-SYNC_ONLY_CACHE = 3 # use the local cache, even if it's expired, never download.
-
+SYNC_ONLY_CACHE = 2 # use the local cache, even if it's expired, never download.
 
 class Repo(dnf.yum.config.RepoConf):
     # :api
@@ -435,6 +432,7 @@ class Repo(dnf.yum.config.RepoConf):
     def __init__(self, id_, cachedir):
         # :api
         super(Repo, self).__init__()
+        self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.basecachedir = cachedir
@@ -617,9 +615,12 @@ class Repo(dnf.yum.config.RepoConf):
             shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
 
     def _reset_metadata_expired(self):
-        self.metadata.expired = self.metadata.age >= self.metadata_expire
+        if self._expired:
+            # explicitly requested expired state
+            return
+        self._expired = self.metadata.age >= self.metadata_expire
         if self.metadata_expire == -1:
-            self.metadata.expired = False
+            self._expired = False
 
     def _set_ip_resolve(self, handle):
         if self.ip_resolve == 'ipv4':
@@ -630,7 +631,7 @@ class Repo(dnf.yum.config.RepoConf):
     def _try_cache(self):
         """Tries to load metadata from the local cache.
 
-        Correctly sets self.metadata.expired.
+        Correctly sets self._expired.
 
         Returns True if we got any (even expired) metadata locally.
 
@@ -641,11 +642,6 @@ class Repo(dnf.yum.config.RepoConf):
             self.metadata = self._handle_load(handle)
         except (_DetailedLibrepoError, IOError):
             return False
-        if self.sync_strategy == SYNC_EXPIRED:
-            # we shouldn't exit earlier as reviving needs self.metadata
-            self.metadata.expired = True
-            return False
-
         self._reset_metadata_expired()
         return True
 
@@ -737,7 +733,7 @@ class Repo(dnf.yum.config.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if self.sync_strategy == SYNC_ONLY_CACHE or not self.metadata.expired:
+            if self.sync_strategy == SYNC_ONLY_CACHE or not self._expired:
                 logger.debug('repo: using cache for: %s', self.id)
                 return False
         if self.sync_strategy == SYNC_ONLY_CACHE:
@@ -747,8 +743,7 @@ class Repo(dnf.yum.config.RepoConf):
             if self._try_revive():
                 # the expired metadata still reflect the origin:
                 self.metadata.reset_age()
-                self.sync_strategy = SYNC_TRY_CACHE
-                self.metadata.expired = False
+                self._expired = False
                 return True
 
             with dnf.util.tmpdir() as tmpdir:
@@ -767,7 +762,7 @@ class Repo(dnf.yum.config.RepoConf):
             msg = _("Failed to synchronize cache for repo '%s' from '%s': %s") % \
                   (self.id, e.source_url, e.librepo_msg)
             raise dnf.exceptions.RepoError(msg)
-        self.sync_strategy = SYNC_TRY_CACHE
+        self._expired = False
         return True
 
     def md_expire_cache(self):
@@ -777,9 +772,7 @@ class Repo(dnf.yum.config.RepoConf):
         method is called.
 
         """
-        if self.metadata:
-            self.metadata.expired = True
-        self.sync_strategy = SYNC_EXPIRED
+        self._expired = True
 
     def md_try_cache(self):
         """Use cache for metadata if possible, sync otherwise."""
@@ -799,7 +792,7 @@ class Repo(dnf.yum.config.RepoConf):
             if self.metadata_expire == -1:
                 return True, None
             expiration = self.metadata_expire - self.metadata.age
-            if self.metadata.expired:
+            if self._expired:
                 expiration = min(0, expiration)
             return True, expiration
         return False, 0

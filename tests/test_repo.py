@@ -269,10 +269,15 @@ class RepoTest(RepoTestMixin, support.TestCase):
         repo.load()
         repo.metadata_expire = 0
         repo._reset_metadata_expired()
-        self.assertTrue(repo.metadata.expired)
+        self.assertTrue(repo._expired)
+
+        # the expired state only resets outside of _reset_metadata_expired():
+        repo.metadata_expired = 'never'
+        self.assertTrue(repo._expired)
+        repo._expired = False
         repo.metadata_expire = 'never'
         repo._reset_metadata_expired()
-        self.assertFalse(repo.metadata.expired)
+        self.assertFalse(repo._expired)
 
     def test_valid(self):
         self.assertIsNone(self.repo.valid())
@@ -325,8 +330,7 @@ class LocalRepoTest(support.TestCase):
                         ('sha512', '9a3131485c0c0a3f65bb5f25155e89d2d6b09e74ffdaa1c3339d3874885d160d8b4667a4a83dbd7d2702a5d41a4e1bc5622c4783b77dcf1f69626c68975202ce')]}
         self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
-        self.assertEqual(self.repo.sync_strategy, dnf.repo.SYNC_TRY_CACHE)
-        self.assertFalse(self.repo.metadata.expired)
+        self.assertFalse(self.repo._expired)
         reset_age_m.assert_called()
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
