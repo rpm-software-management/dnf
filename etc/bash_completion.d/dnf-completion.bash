@@ -74,7 +74,7 @@ _dnf()
                 if [ -r '/var/cache/dnf/available.cache' ]; then
                     COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/available.cache )' -- "$cur" ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list 2>/dev/null | cut -d' ' -f1 | grep -E ^$cur )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list $cur* 2>/dev/null | cut -d' ' -f1 )' -- "$cur" ) )
                 fi
                 [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
@@ -82,7 +82,7 @@ _dnf()
                 if [ -r '/var/cache/dnf/installed.cache' ]; then
                     COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/installed.cache )' -- "$cur" ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( rpm -qav --qf "%{NAME}.%{ARCH}\n" | grep -E ^$cur )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( rpm -qav --qf "%{NAME}.%{ARCH}\n" | grep -E "^$cur" )' -- "$cur" ) )
                 fi
                 ext=''
                 ;;
