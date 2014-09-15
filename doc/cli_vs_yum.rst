@@ -272,6 +272,13 @@ DNF will terminate early with an error if a command is executed requesting an in
 
 Yum will only issue warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
 
+============================================
+ ``install`` command does installation only
+============================================
+
+Any parameter for the ``install`` command that resolves into an already installed package will be ignored not upgraded, downgraded or reinstalled.
+
+
 =============================================================
  Promoting package to install to a package that obsoletes it
 =============================================================

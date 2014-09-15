@@ -53,6 +53,13 @@ class Update(support.ResultTestCase):
         base.upgrade("mrkite")
         self.assertResult(base, base.sack.query().installed().run())
 
+    def test_package_upgrade_not_installed(self):
+        base = support.MockBase("main")
+        p = base.sack.query().available().filter(name="mrkite")[0]
+        self.assertEqual(0, base.package_upgrade(p))
+        base.resolve()
+        self.assertEmpty(base._goal.list_upgrades())
+
     def test_update_all(self):
         """ Update all you can. """
         base = support.MockBase("main", "updates")

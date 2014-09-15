@@ -1305,13 +1305,13 @@ class Base(object):
 
     def package_install(self, pkg):
         # :api
-        q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
-        already_inst, _ = self._query_matches_installed(q)
-        if pkg in already_inst:
-            _msg_installed(pkg)
+        q = self.sack.query().installed().filter(name=pkg.name)
+        if q:
+            _msg_installed(q[0])
+            return 0
         else:
             self._goal.install(pkg)
-        return 1
+            return 1
 
     def package_reinstall(self, pkg):
         self._goal.install(pkg)
@@ -1327,8 +1327,14 @@ class Base(object):
             msg = 'upgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        self._goal.upgrade_to(pkg)
-        return 1
+        q = self.sack.query().installed().filter(name=pkg.name)
+        if q:
+            self._goal.upgrade_to(pkg)
+            return 1
+        else:
+            msg = _("Package %s not installed, cannot update it.") % pkg.name
+            logger.warning(msg)
+            return 0
 
     def upgrade(self, pkg_spec, reponame=None):
         # :api
