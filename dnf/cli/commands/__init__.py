@@ -218,7 +218,6 @@ class InfoCommand(Command):
     """
 
     aliases = ('info',)
-    activate_sack = True
     summary = _("Display details about a package or group of packages")
     usage = "[%s|all|available|installed|updates|extras|obsoletes|recent]" % _('PACKAGE')
 
@@ -238,6 +237,12 @@ class InfoCommand(Command):
         else:
             return DEFAULT_PKGNARROW, extcmds
 
+    def configure(self, _):
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.fresh_metadata = False
+        demands.sack_activation = True
+
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
         return self.base.output_packages('info', pkgnarrow, patterns)
@@ -248,7 +253,6 @@ class ListCommand(InfoCommand):
     """
 
     aliases = ('list',)
-    activate_sack = True
     summary = _("List a package or groups of packages")
 
     def run(self, extcmds):
@@ -323,10 +327,15 @@ class ProvidesCommand(Command):
     provides command.
     """
 
-    activate_sack = True
     aliases = ('provides', 'whatprovides')
     summary = _("Find what package provides the given value")
     usage = _("SOME_STRING")
+
+    def configure(self, _):
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.fresh_metadata = False
+        demands.sack_activation = True
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can
@@ -1085,10 +1094,15 @@ class HistoryCommand(Command):
     history command.
     """
 
-    activate_sack = True
     aliases = ('history',)
     summary = _("Display, or use, the transaction history")
     usage = "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
+
+    def configure(self, _):
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.fresh_metadata = False
+        demands.sack_activation = True
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""

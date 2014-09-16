@@ -95,6 +95,7 @@ class SearchCommand(commands.Command):
     def configure(self, _):
         demands = self.cli.demands
         demands.available_repos = True
+        demands.fresh_metadata = False
         demands.sack_activation = True
 
     def doCheck(self, basecmd, extcmds):

@@ -50,4 +50,5 @@ class DemandSheet(object):
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
 
+    fresh_metadata = _BoolDefault(True)
     refresh_metadata = _BoolDefault(False)

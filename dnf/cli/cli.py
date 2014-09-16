@@ -794,6 +794,19 @@ class Cli(object):
         logger.log(dnf.logging.DDEBUG, 'Releasever: %s',
                         self.base.conf.releasever)
 
+    def _process_demands(self):
+        demands = self.demands
+
+        if not demands.fresh_metadata:
+            for repo in self.base.repos.values():
+                repo.md_lazy = True
+
+        if demands.sack_activation:
+            lar = self.demands.available_repos
+            self.base.fill_sack(load_system_repo='auto',
+                                load_available_repos=lar)
+            self.base.plugins.run_sack()
+
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
         installroot and conffile.
@@ -1066,11 +1079,7 @@ class Cli(object):
         """
         if self.demands.refresh_metadata:
             dnf.cli.commands.clean.clean_expire_cache(self.base.repos)
-        if self.demands.sack_activation:
-            lar = self.demands.available_repos
-            self.base.fill_sack(load_system_repo='auto',
-                                load_available_repos=lar)
-            self.base.plugins.run_sack()
+        self._process_demands()
         return self.command.run(self.base.extcmds)
 
     def print_usage(self):

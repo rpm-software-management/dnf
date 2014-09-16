@@ -32,6 +32,7 @@ class AutoeraseCommand(commands.Command):
     def configure(self, _):
         demands = self.cli.demands
         demands.available_repos = True
+        demands.fresh_metadata = False
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True

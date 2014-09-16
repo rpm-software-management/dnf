@@ -187,6 +187,9 @@ Auto Erase Command
 
     Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+
 --------------------
 Check Update Command
 --------------------
@@ -342,12 +345,16 @@ transactions and act according to this information (assuming the
     the %packages section in a `kickstart <http://fedoraproject.org/wiki/
     Anaconda/Kickstart>`_ file.
 
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
 ------------
 Info Command
 ------------
 
 ``dnf [options] info [<package-spec>...]``
     Is used to list description and summary information about available packages.
+
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 ---------------
 Install Command
@@ -396,6 +403,8 @@ result to only those packages matching it.
 ``dnf [options] list upgrades [<package-name-specs>...]``
     List upgrades available for the installed packages.
 
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
 -----------------
 Makecache Command
 -----------------
@@ -421,6 +430,8 @@ Provides Command
     when one knows a filename and wants to find what package (installed or not)
     provides this file.
 
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
 -----------------
 Reinstall Command
 -----------------
@@ -445,6 +456,8 @@ Repolist Command
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
     detailed information when ``-v`` option is used.
+
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 ---------------------------
 Repository-Packages Command
@@ -532,11 +545,9 @@ Search Command
 --------------
 
 ``dnf [options] search [all] <keywords>...``
-    Search package metadata for the keywords. Keywords are matched as
-    case-insensitive substrings, globbing is supported. By default the command
-    will only look at package names and summaries, failing that (or whenever
-    ``all`` was given as an argument) it will match against package descriptions
-    and URLs. The result is sorted from the most relevant results to the least.
+    Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever ``all`` was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.
+
+This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 --------------
 Update Command
@@ -679,6 +690,16 @@ specifies a transaction ID. Specifying ``last`` is the same as specifying the ID
 of the most recent transaction. The last form is ``last-<offset>``, where
 ``<offset>`` is a positive integer. It specifies offset-th transaction preceding
 the most recent transaction.
+
+.. _metadata_synchronization-label:
+
+========================
+Metadata Synchronization
+========================
+
+Correct operation of DNF depends on having access to up-to-date data from all enabled repositories but contacting remote mirrors on every operation considerably slows it down and costs bandwidth for both the client and the repository provider. The :ref:`metadata_expire <metadata_expire-label>` (see :manpage:`dnf.conf(8)`) repo config option is used by DNF to determine whether particular local copy of repository data is due to be re-synced. It is crucial that the repository providers set the option well, namely to a value where it is guaranteed that if particular metadata was available in time ``T`` on the server, then all packages it references will still be available for download from the server in time ``T + metadata_expire``.
+
+To further reduce the bandwidth load, some of the commands where having up-to-date metadata is not critical (e.g. the ``list`` command) do not look at whether a repository is expired and whenever any version of it is locally available, it will be used. Note that in all situations the user can force synchronization of all enabled repositories with the ``--refresh`` switch.
 
 ========
 See Also

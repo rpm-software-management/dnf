@@ -70,10 +70,15 @@ class RepoListCommand(commands.Command):
     repolist command.
     """
 
-    activate_sack = True
     aliases = ('repolist',)
     summary = _('Display the configured software repositories')
     usage = '[all|enabled|disabled]'
+
+    def configure(self, _):
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.fresh_metadata = False
+        demands.sack_activation = True
 
     def run(self, extcmds):
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):

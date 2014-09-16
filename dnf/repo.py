@@ -422,8 +422,12 @@ class MDPayload(dnf.callback.Payload):
         self.progress.end(self, None, None)
 
 
-SYNC_TRY_CACHE = 1
-SYNC_ONLY_CACHE = 2 # use the local cache, even if it's expired, never download.
+# use the local cache even if it's expired. download if there's no cache.
+SYNC_LAZY = 1
+ # use the local cache, even if it's expired, never download.
+SYNC_ONLY_CACHE = 2
+# try the cache, if it is expired download new md.
+SYNC_TRY_CACHE = 3
 
 class Repo(dnf.yum.config.RepoConf):
     # :api
@@ -460,6 +464,18 @@ class Repo(dnf.yum.config.RepoConf):
         if self.baseurl[0].startswith('file://'):
             return True
         return False
+
+    @property
+    def md_lazy(self):
+        return self.sync_strategy == SYNC_LAZY
+
+    @md_lazy.setter
+    def md_lazy(self, val):
+        """Set whether it is fine to use stale metadata."""
+        if val:
+            self.sync_strategy = SYNC_LAZY
+        else:
+            self.sync_strategy = SYNC_TRY_CACHE
 
     @property
     def md_only_cached(self):
@@ -733,7 +749,8 @@ class Repo(dnf.yum.config.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if self.sync_strategy == SYNC_ONLY_CACHE or not self._expired:
+            if self.sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
+               not self._expired:
                 logger.debug('repo: using cache for: %s', self.id)
                 return False
         if self.sync_strategy == SYNC_ONLY_CACHE:

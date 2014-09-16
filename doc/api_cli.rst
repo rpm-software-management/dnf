@@ -22,7 +22,7 @@
 
 .. class:: dnf.cli.demand.DemandSheet
 
-  Instances are used to track requests of commands and plugins about how CLI should set up/handle other parts of CLI processing that are not under the command's/plugin's direct control. The boolean attributes of the sheet can not be reset once enabled, doing so raises an :exc:`AttributeError`.
+  Instances are used to track requests of commands and plugins about how CLI should set up/handle other parts of CLI processing that are not under the command's/plugin's direct control. The boolean attributes of the sheet can not be reset once explicitly set, doing so raises an :exc:`AttributeError`.
 
     .. attribute:: allow_erasing
 

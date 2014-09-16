@@ -38,8 +38,8 @@ BASEURL = "file://%s/rpm" % REPOS
 TOUR_CHKSUM = """\
 ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
 
-class RepoFunctionsTest(unittest.TestCase):
 
+class RepoFunctionsTest(unittest.TestCase):
     def test_repo_id_invalid(self):
         """Test repo_id_invalid."""
         index = dnf.repo.repo_id_invalid('R_e-p.o:i3d')
@@ -55,6 +55,7 @@ class RepoFunctionsTest(unittest.TestCase):
         self.assertEqual(dnf.repo._user_pass_str(user, passwd), 'cap:m%3Altr')
         user = None
         self.assertEqual(dnf.repo._user_pass_str(user, passwd), None)
+
 
 class RepoTestMixin(object):
     """Test the logic of dnf.repo.Repo.
@@ -113,6 +114,7 @@ class HandleTest(support.TestCase):
         h = dnf.repo._Handle.new_local(subst_dct, False, 1, '/')
         self.assertCountEqual(h.varsub, [('version', '69'),])
 
+
 class MetadataTest(support.TestCase):
     def setUp(self):
         result = mock.Mock(spec=['yum_repo', 'yum_repomd'])
@@ -124,6 +126,7 @@ class MetadataTest(support.TestCase):
     def test_file_timestamp(self):
         self.assertRaises(dnf.exceptions.MetadataError,
                           self.metadata.file_timestamp, 'primary')
+
 
 class RepoTest(RepoTestMixin, support.TestCase):
     """Test the logic of dnf.repo.Repo.
@@ -210,6 +213,14 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_load_badconf(self):
         self.repo.baseurl = []
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+
+    def test_md_lazy(self):
+        self.repo.load()
+        self.setUp()
+        repo = self.repo
+        repo.md_expire_cache()
+        repo.md_lazy = True
+        self.assertFalse(repo.load())
 
     def test_metadata_expire_in(self):
         repo = self.repo
