@@ -51,4 +51,4 @@ class DemandSheet(object):
     success_exit_status = 0
 
     fresh_metadata = _BoolDefault(True)
-    refresh_metadata = _BoolDefault(False)
+    freshest_metadata = _BoolDefault(False)

@@ -65,7 +65,7 @@ class GroupCommandTest(support.TestCase):
         self.cmd.configure(['remove', 'crack'])
         demands = self.cmd.cli.demands
         self.assertTrue(demands.allow_erasing)
-        self.assertFalse(demands.refresh_metadata)
+        self.assertFalse(demands.freshest_metadata)
 
 
 class CompsQueryTest(support.TestCase):

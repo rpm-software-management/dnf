@@ -796,9 +796,13 @@ class Cli(object):
 
     def _process_demands(self):
         demands = self.demands
+        repos = self.base.repos
 
-        if not demands.fresh_metadata:
-            for repo in self.base.repos.values():
+        if self.demands.freshest_metadata:
+            for repo in repos.iter_enabled():
+                repo.md_expire_cache()
+        elif not demands.fresh_metadata:
+            for repo in repos.values():
                 repo.md_lazy = True
 
         if demands.sack_activation:
@@ -1077,8 +1081,6 @@ class Cli(object):
             1 = we've errored, exit with error string
             2 = we've got work yet to do, onto the next stage
         """
-        if self.demands.refresh_metadata:
-            dnf.cli.commands.clean.clean_expire_cache(self.base.repos)
         self._process_demands()
         return self.command.run(self.base.extcmds)
 

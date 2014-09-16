@@ -92,7 +92,7 @@ class OptionParser(argparse.ArgumentParser):
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
 
-            demands.refresh_metadata = opts.refresh_metadata
+            demands.freshest_metadata = opts.freshest_metadata
 
             if opts.color not in (None, 'auto', 'always', 'never',
                                   'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
@@ -224,7 +224,7 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--setopt", dest="setopts", default=[],
                            action="append",
                            help=_("set arbitrary config and repo options"))
-        self.add_argument("--refresh", dest="refresh_metadata",
+        self.add_argument("--refresh", dest="freshest_metadata",
                           action="store_true")
         self.add_argument("-4", dest="ip_resolve", default=None,
                           help=_("resolve to IPv4 addresses only"),
