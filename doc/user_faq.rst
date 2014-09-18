@@ -129,7 +129,7 @@ Yes, in two steps: first install the necessary ``.repo`` files::
 
 Then, when you want to include the packages from the rawhide repo, execute a DNF command with Rawhide enabled::
 
-    dnf install --enablerepo=rawhide upgrade rpm
+    dnf --enablerepo=rawhide upgrade rpm
 
 .. note::
 
