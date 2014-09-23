@@ -20,6 +20,15 @@
  Command Line Interface Hooks
 ==============================
 
+
+.. module:: dnf.cli
+
+:mod:`dnf.cli` is a part of DNF that contains code handling the command line tasks for DNF, like for instance ``dnf install emacs``, and outputs the results to the terminal. It is usually of no interest for DNF extension applications, but some parts of it described here can be used by the :doc:`api_plugins` to hook up custom commands.
+
+.. exception:: CliError
+
+    Signals a CLI-specific problem (reading configuration, parsing user input, etc.). Derives from :exc:`dnf.exceptions.Error`.
+
 .. class:: dnf.cli.demand.DemandSheet
 
   Instances are used to track requests of commands and plugins about how CLI should set up/handle other parts of CLI processing that are not under the command's/plugin's direct control. The boolean attributes of the sheet can not be reset once explicitly set, doing so raises an :exc:`AttributeError`.
@@ -49,11 +58,6 @@
     .. attribute:: success_exit_status
 
       The return status of the DNF command on success. Defaults to ``0``.
-
-.. module:: dnf.cli
-
-:mod:`dnf.cli` is a part of DNF that contains code handling the command line tasks for DNF, like for instance ``dnf install emacs``, and outputs the results to the terminal. It is usually of no interest for DNF extension applications, but some parts of it described here can be used by the :doc:`api_plugins` to hook up custom commands.
-
 .. class:: Command
 
   Base class of every DNF command.
