@@ -260,68 +260,6 @@ class ListCommand(InfoCommand):
         return self.base.output_packages('list', pkgnarrow, patterns)
 
 
-class MakeCacheCommand(Command):
-    """A class containing methods needed by the cli to execute the
-    makecache command.
-    """
-
-    aliases = ('makecache',)
-    summary = _("Generate the metadata cache")
-    usage = ""
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that there is an enabled repository.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkEnabledRepo(self.base)
-
-    def run(self, extcmds):
-        msg = _("Making cache files for all metadata files.")
-        logger.debug(msg)
-        period = self.base.conf.metadata_timer_sync
-        timer = 'timer' == dnf.util.first(extcmds)
-        persistor = self.base._persistor
-        if timer:
-            if dnf.util.on_ac_power() is False:
-                msg = _('Metadata timer caching disabled '
-                        'when running on a battery.')
-                logger.info(msg)
-                return False
-            if period <= 0:
-                msg = _('Metadata timer caching disabled.')
-                logger.info(msg)
-                return False
-            since_last_makecache = persistor.since_last_makecache()
-            if since_last_makecache is not None and since_last_makecache < period:
-                logger.info(_('Metadata cache refreshed recently.'))
-                return False
-            self.base.repos.all().max_mirror_tries = 1
-
-        for r in self.base.repos.iter_enabled():
-            (is_cache, expires_in) = r.metadata_expire_in()
-            if not is_cache or expires_in <= 0:
-                logger.debug("%s: has expired and will be "
-                                          "refreshed." % r.id)
-                r.md_expire_cache()
-            elif timer and expires_in < period:
-                # expires within the checking period:
-                msg = "%s: metadata will expire after %d seconds " \
-                    "and will be refreshed now" % (r.id, expires_in)
-                logger.debug(msg)
-                r.md_expire_cache()
-            else:
-                logger.debug("%s: will expire after %d "
-                                          "seconds." % (r.id, expires_in))
-
-        if timer:
-            persistor.reset_last_makecache()
-        self.base.fill_sack() # performs the md sync
-        logger.info(_('Metadata cache created.'))
-        return True
-
 class ProvidesCommand(Command):
     """A class containing methods needed by the cli to execute the
     provides command.

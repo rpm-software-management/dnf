@@ -25,6 +25,7 @@ import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.upgrade
+import dnf.pycomp
 import dnf.repo
 import itertools
 import logging
@@ -63,77 +64,6 @@ class CommandsCliTest(support.TestCase):
             lines,
             ('Cannot undo transaction 1, doing so would result in an '
              'inconsistent package database.',))
-
-    @staticmethod
-    @mock.patch('dnf.Base.fill_sack')
-    def _do_makecache(cmd, fill_sack):
-        return cmd.run(['timer'])
-
-    def assertLastInfo(self, logger, msg):
-        self.assertEqual(logger.info.mock_calls[-1],
-                         mock.call(msg))
-
-    @mock.patch('dnf.cli.commands.logger', new_callable=support.mock_logger)
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.util.on_ac_power', return_value=True)
-    def test_makecache_timer(self, _on_ac_power, logger):
-        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
-
-        self.base.conf.metadata_timer_sync = 0
-        self.assertFalse(self._do_makecache(cmd))
-        self.assertLastInfo(logger, u'Metadata timer caching disabled.')
-
-        self.base.conf.metadata_timer_sync = 5 # resync after 5 seconds
-        self.base._persistor.since_last_makecache = mock.Mock(return_value=3)
-        self.assertFalse(self._do_makecache(cmd))
-        self.assertLastInfo(logger, u'Metadata cache refreshed recently.')
-
-        self.base._persistor.since_last_makecache = mock.Mock(return_value=10)
-        self.base._sack = 'nonempty'
-        r = support.MockRepo("glimpse", None)
-        self.base.repos.add(r)
-
-        # regular case 1: metadata is already expired:
-        r.metadata_expire_in = mock.Mock(return_value=(False, 0))
-        r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertTrue(r._expired)
-        r._expired = False
-
-        # regular case 2: metadata is cached and will expire later than
-        # metadata_timer_sync:
-        r.metadata_expire_in = mock.Mock(return_value=(True, 100))
-        r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertFalse(r._expired)
-
-        # regular case 3: metadata is cached but will eqpire before
-        # metadata_timer_sync:
-        r.metadata_expire_in = mock.Mock(return_value=(True, 4))
-        r.sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assertLastInfo(logger, u'Metadata cache created.')
-        self.assertTrue(r._expired)
-
-    @mock.patch('dnf.cli.commands.logger', new_callable=support.mock_logger)
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.util.on_ac_power', return_value=False)
-    def test_makecache_timer_battery(self, _on_ac_power, logger):
-        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
-        self.base.conf.metadata_timer_sync = 5
-
-        self.assertFalse(self._do_makecache(cmd))
-        msg = u'Metadata timer caching disabled when running on a battery.'
-        self.assertLastInfo(logger, msg)
-
-    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.util.on_ac_power', return_value=None)
-    def test_makecache_timer_battery2(self, _on_ac_power):
-        cmd = dnf.cli.commands.MakeCacheCommand(self.cli)
-        self.base.conf.metadata_timer_sync = 5
-        self.assertTrue(self._do_makecache(cmd))
 
 
 class CommandTest(support.TestCase):

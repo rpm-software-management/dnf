@@ -37,6 +37,7 @@ import dnf.cli.commands.downgrade
 import dnf.cli.commands.erase
 import dnf.cli.commands.group
 import dnf.cli.commands.install
+import dnf.cli.commands.makecache
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.repolist
 import dnf.cli.commands.search
@@ -725,6 +726,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.erase.EraseCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
+        self.register_command(dnf.cli.commands.makecache.MakeCacheCommand)
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.repolist.RepoListCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)
@@ -733,7 +735,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.upgradeto.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
-        self.register_command(dnf.cli.commands.MakeCacheCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
