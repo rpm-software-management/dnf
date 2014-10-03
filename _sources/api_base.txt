@@ -143,7 +143,7 @@
 
   .. method:: package_install(pkg)
 
-    Mark `pkg` (a :class:`dnf.package.Package` instance) for installation.
+    Mark `pkg` (a :class:`dnf.package.Package` instance) for installation. Ignores package that is already installed.
 
   .. method:: package_upgrade(pkg)
 

@@ -84,7 +84,8 @@
 <li><a class="reference internal" href="#bandwidth-limiting" id="id27">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id28">The usage of Delta RPM files</a></li>
 <li><a class="reference internal" href="#handling-srpm-files" id="id29">Handling .srpm files</a></li>
-<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" id="id30">Promoting package to install to a package that obsoletes it</a></li>
+<li><a class="reference internal" href="#install-command-does-installation-only" id="id30"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a></li>
+<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" id="id31">Promoting package to install to a package that obsoletes it</a></li>
 </ul>
 </li>
 </ul>
@@ -268,8 +269,12 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 </div>
 <p>Yum will only issue warning in this case and continue installing the &#8220;tour&#8221; package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.</p>
 </div>
+<div class="section" id="install-command-does-installation-only">
+<span id="install-only"></span><h2><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a><a class="headerlink" href="#install-command-does-installation-only" title="Permalink to this headline">¶</a></h2>
+<p>Any parameter for the <tt class="docutils literal"><span class="pre">install</span></tt> command that resolves into an already installed package will be ignored not upgraded, downgraded or reinstalled.</p>
+</div>
 <div class="section" id="promoting-package-to-install-to-a-package-that-obsoletes-it">
-<h2><a class="toc-backref" href="#id30">Promoting package to install to a package that obsoletes it</a><a class="headerlink" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id31">Promoting package to install to a package that obsoletes it</a><a class="headerlink" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" title="Permalink to this headline">¶</a></h2>
 <p>DNF will not magically replace a request for installing package <tt class="docutils literal"><span class="pre">X</span></tt> to installing package <tt class="docutils literal"><span class="pre">Y</span></tt> if <tt class="docutils literal"><span class="pre">Y</span></tt> obsoletes <tt class="docutils literal"><span class="pre">X</span></tt>. Yum does this if its <tt class="docutils literal"><span class="pre">obsoletes</span></tt> config option is enabled but the behavior is not properly documented and can be harmful.</p>
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1096506">Fedora bug 1096506</a> and <a class="reference external" href="http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages">guidelines for renaming and obsoleting packages in Fedora</a>.</p>
 </div>
@@ -308,6 +313,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 <li><a class="reference internal" href="#bandwidth-limiting">Bandwidth limiting</a></li>
 <li><a class="reference internal" href="#the-usage-of-delta-rpm-files">The usage of Delta RPM files</a></li>
 <li><a class="reference internal" href="#handling-srpm-files">Handling .srpm files</a></li>
+<li><a class="reference internal" href="#install-command-does-installation-only"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a></li>
 <li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it">Promoting package to install to a package that obsoletes it</a></li>
 </ul>
 </li>

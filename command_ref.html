@@ -182,6 +182,7 @@ system.</dd>
 <p><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">autoerase</span></tt></p>
 <blockquote>
 <div>Removes all &#8220;leaf&#8221; packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.</div></blockquote>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="check-update-command">
 <h3>Check Update Command<a class="headerlink" href="#check-update-command" title="Permalink to this headline">¶</a></h3>
@@ -312,6 +313,7 @@ the current state of RPMDB, do not undo any operation.</dd>
 <dd>List names of all packages installed by a user. The output can be used as
 the %packages section in a <a class="reference external" href="http://fedoraproject.org/wiki/Anaconda/Kickstart">kickstart</a> file.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="info-command">
 <h3>Info Command<a class="headerlink" href="#info-command" title="Permalink to this headline">¶</a></h3>
@@ -319,6 +321,7 @@ the %packages section in a <a class="reference external" href="http://fedoraproj
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">info</span> <span class="pre">[&lt;package-spec&gt;...]</span></tt></dt>
 <dd>Is used to list description and summary information about available packages.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="install-command">
 <h3>Install Command<a class="headerlink" href="#install-command" title="Permalink to this headline">¶</a></h3>
@@ -327,8 +330,8 @@ the %packages section in a <a class="reference external" href="http://fedoraproj
 <dd>Installs the given packages and their dependencies. Each <tt class="docutils literal"><span class="pre">&lt;spec&gt;</span></tt> can be
 either a <tt class="docutils literal"><span class="pre">&lt;package-spec&gt;</span></tt>, which specifies a package directly, or a
 <tt class="docutils literal"><span class="pre">&#64;&lt;group-spec&gt;</span></tt>, which specifies a group which contains it. After the
-transaction is finished all the specified packages are installed on the
-system.</dd>
+transaction is finished all not yet installed specified packages are installed
+on the system.</dd>
 </dl>
 </div>
 <div class="section" id="list-command">
@@ -358,6 +361,7 @@ any known repository.</dd>
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">list</span> <span class="pre">upgrades</span> <span class="pre">[&lt;package-name-specs&gt;...]</span></tt></dt>
 <dd>List upgrades available for the installed packages.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="makecache-command">
 <h3>Makecache Command<a class="headerlink" href="#makecache-command" title="Permalink to this headline">¶</a></h3>
@@ -381,6 +385,7 @@ immediately if it&#8217;s too soon after the last successful <tt class="docutils
 when one knows a filename and wants to find what package (installed or not)
 provides this file.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="reinstall-command">
 <h3>Reinstall Command<a class="headerlink" href="#reinstall-command" title="Permalink to this headline">¶</a></h3>
@@ -406,6 +411,7 @@ download the same RPM).</dd>
 repositories. Lists all enabled repositories by default. Provides more
 detailed information when <tt class="docutils literal"><span class="pre">-v</span></tt> option is used.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="repository-packages-command">
 <h3>Repository-Packages Command<a class="headerlink" href="#repository-packages-command" title="Permalink to this headline">¶</a></h3>
@@ -466,12 +472,9 @@ detailed information when <tt class="docutils literal"><span class="pre">-v</spa
 <h3>Search Command<a class="headerlink" href="#search-command" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
 <dt><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">[options]</span> <span class="pre">search</span> <span class="pre">[all]</span> <span class="pre">&lt;keywords&gt;...</span></tt></dt>
-<dd>Search package metadata for the keywords. Keywords are matched as
-case-insensitive substrings, globbing is supported. By default the command
-will only look at package names and summaries, failing that (or whenever
-<tt class="docutils literal"><span class="pre">all</span></tt> was given as an argument) it will match against package descriptions
-and URLs. The result is sorted from the most relevant results to the least.</dd>
+<dd>Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever <tt class="docutils literal"><span class="pre">all</span></tt> was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.</dd>
 </dl>
+<p>This command by default does not force a sync of expired metadata. See also <a class="reference internal" href="#metadata-synchronization-label"><em>Metadata Synchronization</em></a>.</p>
 </div>
 <div class="section" id="update-command">
 <h3>Update Command<a class="headerlink" href="#update-command" title="Permalink to this headline">¶</a></h3>
@@ -584,6 +587,11 @@ of the most recent transaction. The last form is <tt class="docutils literal"><s
 <tt class="docutils literal"><span class="pre">&lt;offset&gt;</span></tt> is a positive integer. It specifies offset-th transaction preceding
 the most recent transaction.</p>
 </div>
+<div class="section" id="metadata-synchronization">
+<span id="metadata-synchronization-label"></span><h2>Metadata Synchronization<a class="headerlink" href="#metadata-synchronization" title="Permalink to this headline">¶</a></h2>
+<p>Correct operation of DNF depends on having access to up-to-date data from all enabled repositories but contacting remote mirrors on every operation considerably slows it down and costs bandwidth for both the client and the repository provider. The <a class="reference internal" href="conf_ref.html#metadata-expire-label"><em>metadata_expire</em></a> (see <em class="manpage">dnf.conf(8)</em>) repo config option is used by DNF to determine whether particular local copy of repository data is due to be re-synced. It is crucial that the repository providers set the option well, namely to a value where it is guaranteed that if particular metadata was available in time <tt class="docutils literal"><span class="pre">T</span></tt> on the server, then all packages it references will still be available for download from the server in time <tt class="docutils literal"><span class="pre">T</span> <span class="pre">+</span> <span class="pre">metadata_expire</span></tt>.</p>
+<p>To further reduce the bandwidth load, some of the commands where having up-to-date metadata is not critical (e.g. the <tt class="docutils literal"><span class="pre">list</span></tt> command) do not look at whether a repository is expired and whenever any version of it is locally available, it will be used. Note that in all situations the user can force synchronization of all enabled repositories with the <tt class="docutils literal"><span class="pre">--refresh</span></tt> switch.</p>
+</div>
 <div class="section" id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -640,6 +648,7 @@ the most recent transaction.</p>
 <li><a class="reference internal" href="#specifying-provides">Specifying Provides</a></li>
 <li><a class="reference internal" href="#specifying-groups">Specifying Groups</a></li>
 <li><a class="reference internal" href="#specifying-transactions">Specifying Transactions</a></li>
+<li><a class="reference internal" href="#metadata-synchronization">Metadata Synchronization</a></li>
 <li><a class="reference internal" href="#see-also">See Also</a></li>
 </ul>
 </li>
