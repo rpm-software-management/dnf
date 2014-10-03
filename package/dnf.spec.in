@@ -1,4 +1,4 @@
-%global gitrev da278da
+%global gitrev e1a35e5
 %global hawkey_version 0.5.0
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -189,6 +189,37 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+
+* Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
+- transifex update (Jan Silhan)
+- refactor: move MakeCacheCommand out into its own file. (Ales Kozumplik)
+- api: add dnf.cli.CliError. (Ales Kozumplik)
+- Update user_faq.rst (Stef Krie)
+- Make --refresh play nice with lazy commands. (Ales Kozumplik)
+- bash-completion: more faster completing install/remove (Igor Gnatenko)
+- bash-completion: complete 'clean|groups|repolist' using help (Igor Gnatenko)
+- Allow some commands to use stale metadata. (RhBug:909856) (Ales Kozumplik)
+- does not install new pkgs when updating from local pkgs (RhBug:1134893) (Jan Silhan)
+- doesn't upgrade packages by installing local packages (Related:RhBug:1138700) (Jan Silhan)
+- refactor: repo: separate concepts of 'expiry' and 'sync strategy'. (Ales Kozumplik)
+- fix: dnf.cli.util.* leaks file handles. (Ales Kozumplik)
+- remove: YumRPMTransError. (Ales Kozumplik)
+- rename: Base's runTransaction -> _run_transaction(). (Ales Kozumplik)
+- drop unused parameter of Base.verify_transaction(). (Ales Kozumplik)
+- bash-completion: new completion from scratch (RhBug:1070902) (Igor Gnatenko)
+- py3: add queue.Queue to pycomp. (Ales Kozumplik)
+- locking: store lockfiles with the resource they are locking. (RhBug:1124316) (Ales Kozumplik)
+- groups: marks reason 'group' for packages that have no record yet (RhBug:1136584) (Jan Silhan)
+- goal: renamed undefined name variable (Jan Silhan)
+- refactor: split out and clean up the erase command. (Ales Kozumplik)
+- py3: fix traceback in fmtColumns() on a non-subscriptable 'columns'. (Ales Kozumplik)
+- groups: allow erasing depending packages on remove (RhBug:1135861) (Ales Kozumplik)
+- history: fixed wrong set operation (RhBug:1136223) (Jan Silhan)
+- base: does not reinstall pkgs from local rpms with install command (RhBug:1122617) (Jan Silhan)
+- refactor: crypto: drop the integer keyid representation altogether. (Ales Kozumplik)
+- crypto: fix importing rpmfusion keys. (RhBug:1133830) (Ales Kozumplik)
+- refactor: crypto: Key is a class, not an "info" dict. (Ales Kozumplik)
+- repos: fix total downloaded size reporting for cached packages. (RhBug:1121184) (Ales Kozumplik)
 
 * Thu Aug 28 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.1-1
 - packaging: add dnf-yum. (Ales Kozumplik)
