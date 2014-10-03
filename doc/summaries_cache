@@ -830,5 +830,49 @@
     [
         1109915, 
         "[rfe] yum-cron replacement"
+    ], 
+    [
+        909856, 
+        "[rfe] lazy mode for metadata syncing"
+    ], 
+    [
+        1134893, 
+        "\"dnf update\" works as \"dnf install\" on local package files"
+    ], 
+    [
+        1138700, 
+        "dnf doesn't install all packages on command line"
+    ], 
+    [
+        1070902, 
+        "dnf autocomplete for install ./* + <TAB> takes ages"
+    ], 
+    [
+        1124316, 
+        "[locking] per-installroot metadata lock"
+    ], 
+    [
+        1136584, 
+        "[abrt] dnf: rpmsack.py:255:_read:AttributeError: <dnf.yum.rpmsack.RPMDBAdditionalDataPackage object at 0x7f10fed01b50> has no attribute reason"
+    ], 
+    [
+        1135861, 
+        "group erase libreoffice fails, package requires but none of the providers can be installed"
+    ], 
+    [
+        1136223, 
+        "[abrt] dnf: packages.py:76:parsePackages:TypeError: unsupported operand type(s) for |=: 'set' and 'list'"
+    ], 
+    [
+        1122617, 
+        "reinstall of local rpms gives traceback"
+    ], 
+    [
+        1133830, 
+        "Does not import gpg keys"
+    ], 
+    [
+        1121184, 
+        "dnf: shows fake download speed when not downloading anything"
     ]
 ]

@@ -918,3 +918,28 @@ Bugs fixed in 0.6.1:
 * :rhbug:`1130432`
 * :rhbug:`1118236`
 * :rhbug:`1109915`
+
+===================
+0.6.2 Release Notes
+===================
+
+API additions in 0.6.2:
+
+* Now :meth:`dnf.Base.package_install` method ignores already installed packages
+* `CliError` exception from :mod:`dnf.cli` documented
+* `Autoerase`, `History`, `Info`, `list`, `Provides`, `Repolist` commands do not force a sync of expired :ref:`metadata <metadata_synchronization-label>`
+* Install command does :ref:`install only <install_only>`
+
+Bugs fixed in 0.6.2:
+
+* :rhbug:`909856`
+* :rhbug:`1134893`
+* :rhbug:`1138700`
+* :rhbug:`1070902`
+* :rhbug:`1124316`
+* :rhbug:`1136584`
+* :rhbug:`1135861`
+* :rhbug:`1136223`
+* :rhbug:`1122617`
+* :rhbug:`1133830`
+* :rhbug:`1121184`
