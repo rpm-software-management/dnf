@@ -38,6 +38,7 @@ Requires:	python-hawkey >= %{hawkey_version}
 Requires:	python-iniparse
 Requires:	python-libcomps >= %{libcomps_version}
 Requires:	python-librepo >= %{librepo_version}
+Requires:	rpm-plugin-systemd-inhibit
 Requires:	rpm-python >= %{rpm_version}
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -72,6 +73,7 @@ Requires:	python3-iniparse
 Requires:	python3-libcomps >= %{libcomps_version}
 Requires:	python3-librepo >= %{librepo_version}
 Requires:	python3-pygpgme
+Requires:	rpm-plugin-systemd-inhibit
 Requires:	rpm-python3 >= %{rpm_version}
 
 %description -n python3-dnf
