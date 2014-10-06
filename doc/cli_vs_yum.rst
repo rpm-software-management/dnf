@@ -57,6 +57,12 @@ The Yum version of this command is maintained for legacy reasons only. The user
 can just do ``dnf provides`` to find out what package gives a particular
 provide.
 
+===========================
+ No ``deplist`` command
+===========================
+
+Alternative to Yum ``deplist`` command to find out dependencies of the package is ``dnf repoquery --requires`` using `repoquery plugin <http://rpm-software-management.github.io/dnf-plugins-core/repoquery.html>`_.
+
 ====================================================
  Excludes and repo excludes apply to all operations
 ====================================================
