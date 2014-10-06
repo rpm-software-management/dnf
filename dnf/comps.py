@@ -28,6 +28,7 @@ import dnf.i18n
 import dnf.util
 import fnmatch
 import gettext
+import itertools
 import libcomps
 import locale
 import operator
@@ -131,13 +132,24 @@ class Environment(Forwarder):
         super(Environment, self).__init__(iobj, langs)
         self._group_factory = group_factory
 
+    def _build_group(self, grp_id):
+        grp = self._group_factory(grp_id.name)
+        if grp is None:
+            msg = "no group '%s' from environment '%s'"
+            raise ValueError(msg % (grp_id.name, self.id))
+        return grp
+
     def groups_iter(self):
-        for grp_id in self.group_ids:
-            grp = self._group_factory(grp_id.name)
-            if grp is None:
-                msg = "no group '%s' from environment '%s'"
-                raise ValueError(msg % (grp_id.name, self.id))
-            yield grp
+        for grp_id in itertools.chain(self.group_ids, self.option_ids):
+            yield self._build_group(grp_id)
+
+    @property
+    def mandatory_groups(self):
+        return [self._build_group(gi) for gi in self.group_ids]
+
+    @property
+    def optional_groups(self):
+        return [self._build_group(gi) for gi in self.option_ids]
 
 class Group(Forwarder):
     # :api
@@ -303,8 +315,8 @@ class Solver(object):
         self._reason_fn = reason_fn
 
     @staticmethod
-    def _full_group_set(env):
-        return {grp.id for grp in env.groups_iter()}
+    def _mandatory_group_set(env):
+        return {grp.id for grp in env.mandatory_groups}
 
     @staticmethod
     def _full_package_set(grp):
@@ -352,10 +364,10 @@ class Solver(object):
         exclude = set() if exclude is None else set(exclude)
         p_env.pkg_exclude.extend(exclude)
         p_env.pkg_types = pkg_types
-        p_env.full_list.extend(self._full_group_set(env))
+        p_env.full_list.extend(self._mandatory_group_set(env))
 
         trans = TransactionBunch()
-        for grp in env.groups_iter():
+        for grp in env.mandatory_groups:
             try:
                 trans += self.group_install(grp, pkg_types, exclude)
             except dnf.exceptions.CompsError:
@@ -371,7 +383,7 @@ class Solver(object):
         trans = TransactionBunch()
         group_names = set(p_env.full_list)
 
-        for grp in env.groups_iter():
+        for grp in env.mandatory_groups:
             if grp.id not in group_names:
                 continue
             if not self._removable_grp(grp.id):
@@ -391,12 +403,11 @@ class Solver(object):
                              env.ui_name)
 
         old_set = set(p_env.full_list)
-        new_set = self._full_group_set(env)
         pkg_types = p_env.pkg_types
         exclude = p_env.pkg_exclude
 
         trans = TransactionBunch()
-        for grp in env.groups_iter():
+        for grp in env.mandatory_groups:
             if grp.id in old_set:
                 # upgrade
                 try:

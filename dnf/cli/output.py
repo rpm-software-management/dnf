@@ -728,6 +728,30 @@ class Output(object):
                 print(section_name)
                 self._display_packages(packages)
 
+    def displayGroupsInEnvironment(self, environment):
+        """Output information about the packages in a given environment
+
+        :param environment: a Environment object to output information about
+        """
+        def names(groups):
+            return sorted(group.name for group in groups)
+        print(_('Environment Group: %s') % environment.ui_name)
+
+        if self.conf.verbose:
+            print(_(' Environment-Id: %s') % ucd(environment.id))
+        if environment.ui_description:
+            description = ucd(environment.ui_description) or ""
+            print(_(' Description: %s') % description)
+
+        sections = (
+            (_(' Mandatory Groups:'), names(environment.mandatory_groups)),
+            (_(' Optional Groups:'), names(environment.optional_groups)))
+        for (section_name, packages) in sections:
+            if len(packages) < 1:
+                continue
+            print(section_name)
+            self._display_packages(packages)
+
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
         """Output search/provides type callback matches.

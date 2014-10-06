@@ -122,7 +122,7 @@ class LoggingTransactionDisplay(TransactionDisplay):
                            self.PKG_OBSOLETE  : 'Obsoleted',
                            self.PKG_REINSTALL : 'Reinstalled',
                            self.PKG_UPGRADE   :  'Upgraded'}
-        self.rpm_logger = logging.getLogger('dnf.rpm')
+        self.rpm_logger = logging.getLogger('dnf-rpm')
 
     def errorlog(self, msg):
         super(LoggingTransactionDisplay, self).errorlog(msg)
