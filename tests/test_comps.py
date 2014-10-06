@@ -61,11 +61,16 @@ class CompsTest(support.TestCase):
                          u'Eine Software-Spielwiese zum Lernen des Lernens.')
         self.assertCountEqual((id_.name for id_ in env.group_ids),
                               ('somerset', 'Peppers'))
+        self.assertEqual(2, len(env.mandatory_groups))
+        self.assertTrue(all(isinstance(grp, dnf.comps.Group)
+                            for grp in env.mandatory_groups))
         self.assertCountEqual((id_.default for id_ in env.group_ids),
                               (True, False))
         self.assertCountEqual((id_.name for id_ in env.option_ids),
                               ('base',))
-
+        self.assertEqual(1, len(env.optional_groups))
+        self.assertTrue(all(isinstance(grp, dnf.comps.Group)
+                            for grp in env.optional_groups))
         self.assertTrue(all(isinstance(grp, dnf.comps.Group)
                             for grp in env.groups_iter()))
 
