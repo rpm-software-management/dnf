@@ -270,8 +270,8 @@ texinfo_documents = [
 
 rst_prolog = """
 .. default-domain:: py
-.. _DNF: https://github.com/akozumpl/dnf/
-.. _hawkey: http://akozumpl.github.io/hawkey/
+.. _DNF: https://github.com/rpm-software-management/dnf/
+.. _hawkey: http://rpm-software-management.github.io/hawkey/
 .. _Yum: http://yum.baseurl.org/
 .. _bugzilla: https://bugzilla.redhat.com/enter_bug.cgi?product=Fedora&component=dnf
 """
