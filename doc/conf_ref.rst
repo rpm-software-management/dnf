@@ -160,7 +160,7 @@ configuration.
 
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
-    intensive. Default is off.
+    intensive. Default is on.
 
 .. _exclude-label:
 

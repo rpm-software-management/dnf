@@ -807,7 +807,7 @@ class YumConf(BaseConfig):
     sslverify = BoolOption(True)
     sslclientcert = Option()
     sslclientkey = Option()
-    deltarpm = BoolOption(False)
+    deltarpm = BoolOption(True)
 
     history_record = BoolOption(True)
     history_record_packages = ListOption(['dnf', 'rpm'])
