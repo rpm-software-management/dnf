@@ -210,6 +210,16 @@ Group: Pepper's
    lotus-3-16.i686                                                       main   
 """
 
+GROUPS_IN_ENVIRONMENT_OUTPUT = """\
+Environment Group: Sugar Desktop Environment
+ Description: A software playground for learning about learning.
+ Mandatory Groups:
+   Pepper's
+   Solid Ground
+ Optional Groups:
+   Base
+"""
+
 class GroupOutputTest(unittest.TestCase):
     def setUp(self):
         base = support.MockBase('main')
@@ -235,3 +245,11 @@ class GroupOutputTest(unittest.TestCase):
         with support.patch_std_streams() as (stdout, stderr):
             self.output.displayPkgsInGroups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)
+
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.term._term_width', return_value=80)
+    def test_environment_info(self, _term_width):
+        env = self.base.comps.environments[0]
+        with support.patch_std_streams() as (stdout, stderr):
+            self.output.display_groups_in_environment(env)
+        self.assertEqual(stdout.getvalue(), GROUPS_IN_ENVIRONMENT_OUTPUT)

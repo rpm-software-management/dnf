@@ -190,7 +190,7 @@ class GroupCommand(commands.Command):
             group_matched = False
 
             for env in self.base.comps.environments_by_pattern(strng):
-                self.output.displayGroupsInEnvironment(env)
+                self.output.display_groups_in_environment(env)
                 group_matched = True
 
             for group in self.base.comps.groups_by_pattern(strng):

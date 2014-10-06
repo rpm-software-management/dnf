@@ -728,7 +728,7 @@ class Output(object):
                 print(section_name)
                 self._display_packages(packages)
 
-    def displayGroupsInEnvironment(self, environment):
+    def display_groups_in_environment(self, environment):
         """Output information about the packages in a given environment
 
         :param environment: a Environment object to output information about
@@ -743,10 +743,14 @@ class Output(object):
             description = ucd(environment.ui_description) or ""
             print(_(' Description: %s') % description)
 
-        groups = names(environment.groups_iter())
-        if len(groups) > 0:
-            print(_(' Mandatory Groups:'))
-            self._display_packages(groups)
+        sections = (
+            (_(' Mandatory Groups:'), names(environment.mandatory_groups)),
+            (_(' Optional Groups:'), names(environment.optional_groups)))
+        for (section_name, packages) in sections:
+            if len(packages) < 1:
+                continue
+            print(section_name)
+            self._display_packages(packages)
 
     def matchcallback(self, po, values, matchfor=None, verbose=None,
                       highlight=None):
