@@ -29,7 +29,7 @@ import sys
 import time
 import warnings
 
-# :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
+# :api loggers are: 'dnf', 'dnf-plugin', 'dnf-rpm'
 
 SUPERCRITICAL = 100 # do not use this for logging
 CRITICAL = logging.CRITICAL
@@ -152,7 +152,7 @@ class Logging(object):
         logger_warnings.addHandler(handler)
 
         # setup RPM callbacks logger
-        logger_rpm = logging.getLogger("dnf.rpm")
+        logger_rpm = logging.getLogger("dnf-rpm")
         logger_rpm.propagate = False
         logger_rpm.setLevel(SUBDEBUG)
         logfile = os.path.join(logdir, dnf.const.LOG_RPM)

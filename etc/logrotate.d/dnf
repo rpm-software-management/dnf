@@ -5,3 +5,19 @@
     yearly
     create 0600 root root
 }
+
+/var/log/dnf-rpm.log {
+    missingok
+    notifempty
+    size 30k
+    yearly
+    create 0600 root root
+}
+
+/var/log/dnf-plugin.log {
+    missingok
+    notifempty
+    size 30k
+    yearly
+    create 0600 root root
+}

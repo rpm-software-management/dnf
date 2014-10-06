@@ -32,7 +32,7 @@ INSTALLONLYPKGS=('kernel',
                  'installonlypkg(vm)')
 LOG='dnf.log'
 LOG_MARKER='--- logging initialized ---'
-LOG_RPM='dnf.rpm.log'
+LOG_RPM='dnf-rpm.log'
 NAME='DNF'
 PERSISTDIR='/var/lib/dnf' # :api
 PID_FILENAME = '/var/run/dnf.pid'
