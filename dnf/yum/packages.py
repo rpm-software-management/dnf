@@ -87,7 +87,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
                 foundit = 0
                 for item in trylist:
                     if regex.match(item):
-                        matched |= pkgdict[item]
+                        matched.update(pkgdict[item])
                         del pkgdict[item]
                         foundit = 1
 
