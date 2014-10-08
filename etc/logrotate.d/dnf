@@ -21,3 +21,11 @@
     yearly
     create 0600 root root
 }
+
+/var/cache/dnf/*/*/hawkey.log {
+    missingok
+    notifempty
+    size 30k
+    yearly
+    create 0600 root root
+}
