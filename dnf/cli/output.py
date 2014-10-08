@@ -689,7 +689,7 @@ class Output(object):
                                  highlight=highlight,
                                  columns=columns)
 
-    def displayPkgsInGroups(self, group):
+    def display_pkgs_in_groups(self, group):
         """Output information about the packages in a given group
 
         :param group: a Group object to output information about

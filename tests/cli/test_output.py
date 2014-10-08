@@ -234,7 +234,7 @@ class GroupOutputTest(unittest.TestCase):
     def test_group_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
         with support.patch_std_streams() as (stdout, stderr):
-            self.output.displayPkgsInGroups(group)
+            self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
@@ -243,7 +243,7 @@ class GroupOutputTest(unittest.TestCase):
         group = self.base.comps.group_by_pattern('Peppers')
         self.output.conf.verbose = True
         with support.patch_std_streams() as (stdout, stderr):
-            self.output.displayPkgsInGroups(group)
+            self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)

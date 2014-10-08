@@ -194,7 +194,7 @@ class GroupCommand(commands.Command):
                 group_matched = True
 
             for group in self.base.comps.groups_by_pattern(strng):
-                self.output.displayPkgsInGroups(group)
+                self.output.display_pkgs_in_groups(group)
                 group_matched = True
 
             if not group_matched:
