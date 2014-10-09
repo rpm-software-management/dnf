@@ -74,7 +74,7 @@ _dnf()
                 if [ -r '/var/cache/dnf/available.cache' ]; then
                     COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/available.cache )' -- "$cur" ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list $cur* 2>/dev/null | cut -d' ' -f1 )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list "$cur*" 2>/dev/null | cut -d" " -f1 )' -- "$cur" ) )
                 fi
                 [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
