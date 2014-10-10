@@ -64,7 +64,7 @@ def _by_pattern(pattern, case_sensitive, sqn):
     else:
         match = re.compile(fnmatch.translate(pattern), flags=re.I).match
 
-    return {g for g in sqn if match(g.name) or match(g.id)}
+    return {g for g in sqn if match(g.name) or match(g.id) or match(g.ui_name)}
 
 class _Langs(object):
 

@@ -22,7 +22,6 @@ from tests import support
 import dnf.comps
 import dnf.util
 import operator
-import warnings
 
 class EmptyPersistorTest(support.ResultTestCase):
     """Test group operations with empty persistor."""
@@ -37,6 +36,13 @@ class EmptyPersistorTest(support.ResultTestCase):
         grp = comps.group_by_pattern('somerset')
         cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
         self.assertEqual(cnt, 0)
+
+    @support.mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    def test_group_install_locale(self, _unused):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
+        cnt = self.base.group_install(grp, ('mandatory',))
+        self.assertEqual(cnt, 2)
 
     def test_group_install_exclude_glob(self):
         comps = self.base.comps
