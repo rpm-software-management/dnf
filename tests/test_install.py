@@ -148,6 +148,14 @@ class MultilibBest(support.ResultTestCase):
             name="trampoline")
         new_set = self.installed + trampoline.run()
         self.assertResult(self.base, new_set)
+    
+    def test_install_by_glob_provides(self):
+        self.base.install("*nry(the_*)")
+        self.assertEqual(self.base._goal.req_length(), 1)
+        trampoline = self.base.sack.query().available().filter(
+            name="trampoline")
+        new_set = self.installed + trampoline.run()
+        self.assertResult(self.base, new_set)
 
     def test_install_by_cmp_provides(self):
         """Test the package to be installed can be specified by as provide with

@@ -127,7 +127,7 @@ class Subject(object):
                 return sack.query().filter(provides=reldep)
         return sack.query().filter(empty=True)
 
-    def get_best_selector(self, sack, forms=None):
+    def get_best_selector(self, sack, with_provides=True, forms=None):
         # :api
         sltr = dnf.selector.Selector(sack)
         kwargs = {'allow_globs': True}
@@ -144,4 +144,8 @@ class Subject(object):
         if reldep:
             dep = str(reldep)
             return sltr.set(provides=dep)
+        if with_provides and is_glob_pattern(self.pattern):
+            key = "provides__glob"
+            return sltr.set(**{key: self.pattern})
+        
         return sltr
