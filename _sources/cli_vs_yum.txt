@@ -78,7 +78,7 @@ following will work::
  ``protected_packages`` is supported via plugin
 ================================================
 
-DNF drops Yum's ``protected_packages`` configuration option. Generally, the core DNF lets the user do what she specified, even have DNF itself removed. Similar functionality to ``protected_packages`` is however provided by the `protected_packages plugin <http://akozumpl.github.io/dnf-plugins-core/protected_packages.html>`_.
+DNF drops Yum's ``protected_packages`` configuration option. Generally, the core DNF lets the user do what she specified, even have DNF itself removed. Similar functionality to ``protected_packages`` is however provided by the `protected_packages plugin <http://rpm-software-management.github.io/dnf-plugins-core/protected_packages.html>`_.
 
 =============================================================
  ``dnf erase kernel`` deletes all packages called ``kernel``

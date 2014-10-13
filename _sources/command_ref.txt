@@ -707,5 +707,5 @@ See Also
 
 * :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
-* `DNF`_ project homepage (https://github.com/akozumpl/dnf/)
+* `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * `Yum`_ project homepage (http://yum.baseurl.org/)

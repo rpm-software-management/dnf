@@ -76,7 +76,7 @@ reported bugs are fixed:
 The improvements in 0.3.3 are only API changes to the logging. There is a new
 module ``dnf.logging`` that defines simplified logging structure compared to
 Yum, with fewer logging levels and `simpler usage for the developers
-<https://github.com/akozumpl/dnf/wiki/Hacking#logging>`_. The RPM transaction logs are
+<https://github.com/rpm-software-management/dnf/wiki/Hacking#logging>`_. The RPM transaction logs are
 no longer in ``/var/log/dnf.transaction.log`` but in ``/var/log/dnf.rpm.log`` by
 default.
 
@@ -927,8 +927,8 @@ API additions in 0.6.2:
 
 * Now :meth:`dnf.Base.package_install` method ignores already installed packages
 * `CliError` exception from :mod:`dnf.cli` documented
-* `Autoerase`, `History`, `Info`, `list`, `Provides`, `Repolist` commands do not force a sync of expired :ref:`metadata <metadata_synchronization-label>`
-* Install command does :ref:`install only <install_only>`
+* `Autoerase`, `History`, `Info`, `List`, `Provides`, `Repolist` commands do not force a sync of expired :ref:`metadata <metadata_synchronization-label>`
+* `Install` command does :ref:`installation only <install_only>`
 
 Bugs fixed in 0.6.2:
 
