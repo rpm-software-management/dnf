@@ -176,7 +176,7 @@ class CleanCommand(commands.Command):
         logger.info(msg)
 
         persistdir = self.base.conf.persistdir
-        cachedir = self.base.conf.persistdir
+        cachedir = self.base.conf.cachedir
         if 'all' in userlist:
             logger.info(_('Cleaning up Everything'))
             pkgcode, pkgresults = _clean_packages(repos)
