@@ -140,6 +140,9 @@ class Subject(object):
         if nevra:
             return self._nevra_to_selector(sltr, nevra)
 
+        if is_glob_pattern(self.pattern):
+            return sltr.set(provides__glob=self.pattern)
+
         reldep = first(self.subj.reldep_possibilities_real(sack))
         if reldep:
             dep = str(reldep)
