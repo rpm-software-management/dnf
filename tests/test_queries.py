@@ -78,6 +78,10 @@ class SubjectTest(support.TestCase):
         s = dnf.subject.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
         self.assertIsNotNone(s)
 
+    def test_get_best_selector_for_provides_glob(self):
+        s = dnf.subject.Subject("*otus.so*").get_best_selector(self.sack)
+        self.assertIsNotNone(s)
+
     def test_best_selector_for_version(self):
         sltr = dnf.subject.Subject("hole-2").get_best_selector(self.sack)
         self.assertCountEqual(map(str, sltr.matches()),
