@@ -144,4 +144,8 @@ class Subject(object):
         if reldep:
             dep = str(reldep)
             return sltr.set(provides=dep)
+        if is_glob_pattern(self.pattern):
+            key = "provides__glob"
+            return sltr.set(**{key: self.pattern})
+        
         return sltr
