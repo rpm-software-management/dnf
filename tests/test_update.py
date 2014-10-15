@@ -60,6 +60,11 @@ class Update(support.ResultTestCase):
         base.resolve()
         self.assertEmpty(base._goal.list_upgrades())
 
+        p = base.sack.query().available().filter(nevra="librita-1-1.x86_64")[0]
+        self.assertEqual(0, base.package_upgrade(p))
+        base.resolve()
+        self.assertEmpty(base._goal.list_upgrades())
+
     def test_update_all(self):
         """ Update all you can. """
         base = support.MockBase("main", "updates")
