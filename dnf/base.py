@@ -1327,12 +1327,17 @@ class Base(object):
             msg = 'upgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        q = self.sack.query().installed().filter(name=pkg.name)
-        if q:
+        q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
+        if not q:
+            msg = _("Package %s not installed, cannot update it.") % pkg.name
+            logger.warning(msg)
+            return 0
+        elif sorted(q)[-1] < pkg:
             self._goal.upgrade_to(pkg)
             return 1
         else:
-            msg = _("Package %s not installed, cannot update it.") % pkg.name
+            msg = _("Package %s of higher version already installed, "
+                    "cannot update it.") % pkg.name
             logger.warning(msg)
             return 0
 
