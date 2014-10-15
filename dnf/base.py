@@ -1312,7 +1312,7 @@ class Base(object):
 
     def package_install(self, pkg):
         # :api
-        q = self.sack.query().installed().filter(name=pkg.name)
+        q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
         if q:
             _msg_installed(q[0])
             return 0

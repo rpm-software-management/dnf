@@ -1,0 +1,6 @@
+=Ver: 2.0
+#
+=Pkg: pepper 20 0 i686
+=Req: librita >= 1-0
+=Prv: parking
+=Prv: /raised/smile

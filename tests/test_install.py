@@ -43,6 +43,14 @@ class InstallMultilib(support.ResultTestCase):
         new_set = self.base.sack.query().installed() + expected
         self.assertResult(self.base, new_set)
 
+    def test_package_install(self):
+        self.base = support.MockBase('main', 'multilib')
+        p = self.base.sack.query().available().filter(
+            nevra="pepper-20-0.i686")[0]
+        self.assertEqual(1, self.base.package_install(p))
+        self.base.resolve()
+        self.assertEqual(1, len(self.base._goal.list_installs()))
+
     def test_install_by_provides(self):
         """ Test the package to be installed can be specified by provide. """
         self.base.install("henry(the_horse)")
