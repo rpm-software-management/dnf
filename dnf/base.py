@@ -1296,12 +1296,19 @@ class Base(object):
             msg = 'downgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        installed = sorted(self.sack.query().installed().filter(name=pkg.name))
-        if len(installed) > 0 and installed[0] > pkg:
-            self._goal.install(pkg)
-            self._goal.erase(installed[0])
-            return 2
-        return 0
+        q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
+        if not q:
+            msg = _("Package %s not installed, cannot downgrade it.")
+            logger.warning(msg, pkg.name)
+            return 0
+        elif sorted(q)[0] > pkg:
+            self._goal.downgrade_to(pkg)
+            return 1
+        else:
+            msg = _("Package %s of lower version already installed, "
+                    "cannot downgrade it.") % pkg.name
+            logger.warning(msg)
+            return 0
 
     def package_install(self, pkg):
         # :api
