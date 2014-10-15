@@ -27,6 +27,21 @@ class Reinstall(support.ResultTestCase):
         self.base.conf.multilib_policy = 'all'
         self.sack = self.base.sack
 
+    def test_package_reinstall(self):
+        p = self.base.sack.query().available().filter(
+            nevra="librita-1-1.x86_64")[0]
+        self.assertEqual(1, self.base.package_reinstall(p))
+        self.base.resolve()
+        self.assertEqual(1, len(self.base._goal.list_reinstalls()))
+
+    def test_package_reinstall_fail(self):
+        base = support.MockBase('main', 'updates')
+        base.conf.multilib_policy = 'all'
+        p = base.sack.query().available().filter(nevra="hole-1-2.x86_64")[0]
+        self.assertEqual(0, base.package_reinstall(p))
+        base.resolve()
+        self.assertEmpty(base._goal.list_downgrades())
+
     def test_reinstall(self):
         cnt = self.base.reinstall('pepper')
         self.assertEqual(cnt, 1)

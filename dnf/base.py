@@ -1321,8 +1321,12 @@ class Base(object):
             return 1
 
     def package_reinstall(self, pkg):
-        self._goal.install(pkg)
-        return 1
+        if self.sack.query().installed().filter(nevra=str(pkg)):
+            self._goal.install(pkg)
+            return 1
+        msg = _("Package %s not installed, cannot reinstall it.") % str(pkg)
+        logger.warning(msg)
+        return 0
 
     def package_remove(self, pkg):
         self._goal.erase(pkg)
