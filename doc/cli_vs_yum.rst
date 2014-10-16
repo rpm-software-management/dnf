@@ -191,15 +191,17 @@ is not needed anymore.
 
 .. _allowerasing_instead_of_shell:
 
-============================================
- Packages replacement without ``yum shell``
-============================================
+============================================================
+ Packages replacement without ``yum shell`` or ``yum swap``
+============================================================
 
 Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the erase and the install in one transaction. The common way to setup such transaction in Yum is to use ``yum shell``.
 
 There is no shell in DNF but the case above is still valid. We provide the ``--allowerasing`` switch for this purpose, e.g. say you want to replace ``A`` (providing ``P``)  with B (also providing ``P``, conflicting with ``A``) without deleting ``C`` (which requires ``P``) in the process. Use::
 
   dnf --allowerasing install B
+
+This command is equal to ``yum swap A B``.
 
 ===========================
  ``dnf history info last``
