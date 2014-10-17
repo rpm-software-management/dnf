@@ -107,3 +107,11 @@ class StdIoEmitter(Emitter):
     def commit(self):
         msg = self._prepare_msg()
         print(msg)
+
+
+class MotdEmitter(Emitter):
+    def commit(self):
+        msg = self._prepare_msg()
+        with open('/etc/motd', 'w') as fobj:
+            fobj.write(msg)
+

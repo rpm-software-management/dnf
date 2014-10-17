@@ -31,6 +31,7 @@ import dnf.conf.parser
 import dnf.const
 import dnf.exceptions
 import dnf.util
+import dnf.logging
 import dnf.yum.config
 import hawkey
 import iniparse.compat
@@ -49,6 +50,9 @@ def build_emitters(conf):
             emitters.append(emitter)
         elif name == 'stdio':
             emitter = dnf.automatic.emitter.StdIoEmitter(system_name)
+            emitters.append(emitter)
+        elif name == 'motd':
+            emitter = dnf.automatic.emitter.MotdEmitter(system_name)
             emitters.append(emitter)
         else:
             assert False

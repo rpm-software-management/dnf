@@ -33,7 +33,7 @@ Alternative CLI to ``dnf upgrade`` with specific facilities to make it suitable 
 
 The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used.
 
-The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output or email.
+The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.
 
 ===========================
  Configuration File Format
@@ -71,9 +71,9 @@ Setting the mode of operation of the program.
 Choosing how the results should be reported.
 
 ``emit_via``
-    list, default: ``email, stdio``
+    list, default: ``email, stdio, motd``
 
-    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output and ``email`` to send the report via email.
+    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
 
 ``system_name``
     string, default: hostname of the given system

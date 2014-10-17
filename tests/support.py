@@ -42,8 +42,24 @@ import unittest
 
 if dnf.pycomp.PY3:
     from unittest import mock
+    from unittest.mock import MagicMock, mock_open
 else:
     from tests import mock
+    from tests.mock import MagicMock
+
+    def mock_open(mock=None, data=None):
+        if mock is None:
+            mock = MagicMock(spec=file)
+
+        handle = MagicMock(spec=file)
+        handle.write.return_value = None
+        if data is None:
+            handle.__enter__.return_value = handle
+        else:
+            handle.__enter__.return_value = data
+        mock.return_value = handle
+        return mock
+
 
 logger = logging.getLogger('dnf')
 skip = unittest.skip
@@ -428,6 +444,7 @@ class MockGroupPersistor(dnf.persistor.GroupPersistor):
     """Empty persistor that doesn't need any I/O."""
     def __init__(self):
         self.db = self._empty_db()
+
 
 # object matchers for asserts
 
