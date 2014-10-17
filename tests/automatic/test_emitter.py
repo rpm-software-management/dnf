@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock
+from tests.support import mock, mock_open
 import dnf.automatic.emitter
 import tests.support
 
@@ -33,3 +33,17 @@ class TestEmitter(tests.support.TestCase):
         emitter.notify_downloaded()
         with mock.patch('dnf.automatic.emitter.DOWNLOADED', 'downloaded on %s:'):
             self.assertEqual(emitter._prepare_msg(), MSG)
+
+
+class TestMotdEmitter(tests.support.TestCase):
+    def test_motd(self):
+        m = mock_open()
+        with mock.patch('dnf.automatic.emitter.open', m, create=True):
+            emitter = dnf.automatic.emitter.MotdEmitter('myhost')
+            emitter.notify_available('packages...')
+            emitter.notify_downloaded()
+            with mock.patch('dnf.automatic.emitter.DOWNLOADED', 'downloaded on %s:'):
+                emitter.commit()
+            handle = m()
+            handle.write.assert_called_once_with(MSG)
+
