@@ -14,3 +14,8 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
+
+import os
+
+# run tests with C locales
+os.environ["LC_ALL"] = "C"
