@@ -23,7 +23,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.i18n import _, ucd
+from dnf.i18n import _, P_, ucd
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
@@ -59,6 +59,7 @@ import itertools
 import logging
 import os
 import operator
+import re
 import rpm
 import time
 
@@ -539,8 +540,8 @@ class Base(object):
             for descr in tserrors:
                 errstring += '  %s\n' % ucd(descr)
 
-            raise dnf.exceptions.Error(errstring + '\n' + \
-                 self.errorSummary(errstring))
+            raise dnf.exceptions.Error(errstring + '\n' +
+                                       self._trans_error_summary(errstring))
 
         logger.info(_('Transaction test succeeded.'))
         timer()
@@ -562,6 +563,32 @@ class Base(object):
         with lock:
             self._run_transaction(cb=cb)
         timer()
+
+    def _trans_error_summary(self, errstring):
+        """Parse the error string for 'interesting' errors which can
+        be grouped, such as disk space issues.
+
+        :param errstring: the error string
+        :return: a string containing a summary of the errors
+        """
+        summary = ''
+        # do disk space report first
+        p = re.compile('needs (\d+)MB on the (\S+) filesystem')
+        disk = {}
+        for m in p.finditer(errstring):
+            if m.group(2) not in disk:
+                disk[m.group(2)] = int(m.group(1))
+            if disk[m.group(2)] < int(m.group(1)):
+                disk[m.group(2)] = int(m.group(1))
+
+        if disk:
+            summary += _('Disk Requirements:\n')
+            for k in disk:
+                summary += P_('  At least %dMB more space needed on the %s filesystem.\n', '  At least %dMB more space needed on the %s filesystem.\n', disk[k]) % (disk[k], k)
+
+        summary = _('Error Summary\n-------------\n') + summary
+
+        return summary
 
     def _record_history(self):
         return self.conf.history_record and \

@@ -146,35 +146,6 @@ class BaseCli(dnf.Base):
             return None
         return self.group_persistor.diff()
 
-    def errorSummary(self, errstring):
-        """Parse the error string for 'interesting' errors which can
-        be grouped, such as disk space issues.
-
-        :param errstring: the error string
-        :return: a string containing a summary of the errors
-        """
-        summary = ''
-        # do disk space report first
-        p = re.compile('needs (\d+)MB on the (\S+) filesystem')
-        disk = {}
-        for m in p.finditer(errstring):
-            if m.group(2) not in disk:
-                disk[m.group(2)] = int(m.group(1))
-            if disk[m.group(2)] < int(m.group(1)):
-                disk[m.group(2)] = int(m.group(1))
-
-        if disk:
-            summary += _('Disk Requirements:\n')
-            for k in disk:
-                summary += P_('  At least %dMB more space needed on the %s filesystem.\n', '  At least %dMB more space needed on the %s filesystem.\n', disk[k]) % (disk[k], k)
-
-        # TODO: simplify the dependency errors?
-
-        # Fixup the summary
-        summary = _('Error Summary\n-------------\n') + summary
-
-        return summary
-
     def do_transaction(self):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
