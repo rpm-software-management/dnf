@@ -26,7 +26,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import output
 from dnf.cli import CliError
-from dnf.i18n import ucd, _, P_
+from dnf.i18n import ucd, _
 
 import dnf
 import dnf.cli.commands
