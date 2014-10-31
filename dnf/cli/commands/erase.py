@@ -55,15 +55,22 @@ class EraseCommand(commands.Command):
         """
         commands.checkPackageArg(self.cli, basecmd, extcmds)
 
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        return extcmds
-
     def run(self, extcmds):
-        pkg_specs = self.parse_extcmds(extcmds)
+        pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
+            extcmds)
+        pkg_specs += filenames  # local pkgs not supported in erase command
 
+        # Remove groups.
+        if grp_specs:
+            self.base.read_comps()
+        cnt = self.base.env_group_remove(grp_specs)
         done = False
+
+        if grp_specs and not cnt:
+            msg = _('No packages in any requested group available to erase.')
+            raise dnf.exceptions.Error(msg)
+        elif cnt:
+            done = True
 
         for pkg_spec in pkg_specs:
             try:

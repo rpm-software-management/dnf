@@ -260,8 +260,8 @@ Downgrade Command
 Erase Command
 -------------
 
-``dnf [options] erase <package-spec>...``
-     Removes the specified packages from the system along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
+``dnf [options] erase <spec>...``
+     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 -------------
 Group Command
@@ -365,7 +365,7 @@ Install Command
 ``dnf [options] install <spec>...``
     Installs the given packages and their dependencies. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a
-    ``@<group-spec>``, which specifies a group which contains it. After the
+    ``@<group-spec>``, which specifies an (environment) group which contains it. After the
     transaction is finished all not yet installed specified packages are installed
     on the system.
 
@@ -676,7 +676,7 @@ case-sensitive and globbing is supported.
 Specifying Groups
 =================
 
-``<group-spec>`` allows one to select groups a particular operation should work
+``<group-spec>`` allows one to select (environment) groups a particular operation should work
 on. It is a case insensitive string (supporting globbing characters) that is
 matched against a group's ID, canonical name and name translated into the
 current LC_MESSAGES locale (if possible).

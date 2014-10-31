@@ -56,21 +56,9 @@ class InstallCommand(commands.Command):
         commands.checkPackageArg(self.cli, basecmd, extcmds)
         commands.checkEnabledRepo(self.base, extcmds)
 
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        pkg_specs, grp_specs, filenames = [], [], []
-        for argument in extcmds:
-            if argument.endswith('.rpm'):
-                filenames.append(argument)
-            elif argument.startswith('@'):
-                grp_specs.append(argument[1:])
-            else:
-                pkg_specs.append(argument)
-        return pkg_specs, grp_specs, filenames
-
     def run(self, extcmds):
-        pkg_specs, grp_specs, filenames = self.parse_extcmds(extcmds)
+        pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
+            extcmds)
 
         # Install files.
         local_pkgs = map(self.base.add_remote_rpm, filenames)
@@ -80,16 +68,11 @@ class InstallCommand(commands.Command):
         # Install groups.
         if grp_specs:
             self.base.read_comps()
-        cnt = 0
-        for spec in grp_specs:
-            group = self.base.comps.group_by_pattern(spec)
-            if group is None:
-                msg = _("Warning: Group '%s' does not exist.")
-                logger.error(msg, dnf.i18n.ucd(spec))
-                continue
-            cnt += self.base.group_install(group, dnf.const.GROUP_PACKAGE_TYPES)
+        cnt = self.base.env_group_install(grp_specs,
+                                          dnf.const.GROUP_PACKAGE_TYPES)
+
         if grp_specs and not cnt:
-            msg = _('No packages in any requested group available '\
+            msg = _('No packages in any requested group available '
                     'to install or upgrade.')
             raise dnf.exceptions.Error(msg)
         elif cnt:

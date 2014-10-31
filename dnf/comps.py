@@ -21,7 +21,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.exceptions import CompsError
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 from functools import reduce
 
 import dnf.i18n
@@ -97,6 +97,51 @@ class _Langs(object):
 
         self.last_locale = current_locale
         return self.cache
+
+
+class CompsQuery(object):
+
+    AVAILABLE = 1
+    INSTALLED = 2
+
+    ENVIRONMENTS = 1
+    GROUPS = 2
+
+    def __init__(self, comps, prst, kinds, status):
+        self.comps = comps
+        self.prst = prst
+        self.kinds = kinds
+        self.status = status
+
+    def _get(self, items, persistence_fn):
+        lst = []
+        for it in items:
+            installed = persistence_fn(it.id).installed
+            if self.status & self.INSTALLED and installed:
+                lst.append(it)
+            if self.status & self.AVAILABLE and not installed:
+                lst.append(it)
+        return lst
+
+    def get(self, *patterns):
+        res = dnf.util.Bunch()
+        res.environments = []
+        res.groups = []
+        for pat in patterns:
+            envs = grps = None
+            if self.kinds & self.ENVIRONMENTS:
+                envs = self._get(self.comps.environments_by_pattern(pat),
+                                 self.prst.environment)
+                res.environments.extend(envs)
+            if self.kinds & self.GROUPS:
+                grps = self._get(self.comps.groups_by_pattern(pat),
+                                 self.prst.group)
+                res.groups.extend(grps)
+            if not envs and not grps:
+                msg = _("Group '%s' does not exist.") % ucd(pat)
+                raise CompsError(msg)
+        return res
+
 
 class Forwarder(object):
     def __init__(self, iobj, langs):

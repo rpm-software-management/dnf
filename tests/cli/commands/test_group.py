@@ -17,9 +17,12 @@
 
 from __future__ import absolute_import
 from tests import support
+from dnf.comps import CompsQuery
 
 import dnf.cli.commands.group as group
 import dnf.comps
+import dnf.exceptions
+
 
 def names(items):
     return (it.name for it in items)
@@ -74,9 +77,9 @@ class CompsQueryTest(support.TestCase):
         (self.comps, self.prst) = support.mock_comps(True)
 
     def test_all(self):
-        status_all = group.CompsQuery.AVAILABLE | group.CompsQuery.INSTALLED
-        kinds_all = group.CompsQuery.ENVIRONMENTS | group.CompsQuery.GROUPS
-        q = group.CompsQuery(self.comps, self.prst, kinds_all, status_all)
+        status_all = CompsQuery.AVAILABLE | CompsQuery.INSTALLED
+        kinds_all = CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS
+        q = CompsQuery(self.comps, self.prst, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
         self.assertCountEqual(names(res.environments),
@@ -84,14 +87,14 @@ class CompsQueryTest(support.TestCase):
         self.assertCountEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
 
     def test_err(self):
-        q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.ENVIRONMENTS,
-                             group.CompsQuery.AVAILABLE)
-        with self.assertRaises(dnf.cli.CliError):
+        q = CompsQuery(self.comps, self.prst, CompsQuery.ENVIRONMENTS,
+                       CompsQuery.AVAILABLE)
+        with self.assertRaises(dnf.exceptions.CompsError):
             q.get('*er*')
 
     def test_installed(self):
-        q = group.CompsQuery(self.comps, self.prst, group.CompsQuery.GROUPS,
-                             group.CompsQuery.INSTALLED)
+        q = CompsQuery(self.comps, self.prst, CompsQuery.GROUPS,
+                       CompsQuery.INSTALLED)
         res = q.get('somerset')
         self.assertEmpty(res.environments)
         self.assertCountEqual(names(res.groups), ('Solid Ground',))
