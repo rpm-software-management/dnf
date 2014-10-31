@@ -20,8 +20,9 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from .. import commands
-from dnf.i18n import _, ucd
+from dnf.comps import CompsQuery
+from dnf.cli import commands
+from dnf.i18n import _
 
 import dnf.cli
 import dnf.exceptions
@@ -45,51 +46,6 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
         logger.critical(_('Error: Need a group or list of groups'))
         commands.err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
-
-
-class CompsQuery(object):
-
-    AVAILABLE = 1
-    INSTALLED = 2
-
-    ENVIRONMENTS = 1
-    GROUPS = 2
-
-    def __init__(self, comps, prst, kinds, status):
-        self.comps = comps
-        self.prst = prst
-        self.kinds = kinds
-        self.status = status
-
-    def _get(self, items, persistence_fn):
-        lst = []
-        for it in items:
-            installed = persistence_fn(it.id).installed
-            if self.status & self.INSTALLED and installed:
-                lst.append(it)
-            if self.status & self.AVAILABLE and not installed:
-                lst.append(it)
-        return lst
-
-    def get(self, *patterns):
-        res = dnf.util.Bunch()
-        res.environments = []
-        res.groups = []
-        for pat in patterns:
-            envs = grps = None
-            if self.kinds & self.ENVIRONMENTS:
-                envs = self._get(self.comps.environments_by_pattern(pat),
-                                 self.prst.environment)
-                res.environments.extend(envs)
-            if self.kinds & self.GROUPS:
-                grps = self._get(self.comps.groups_by_pattern(pat),
-                                 self.prst.group)
-                res.groups.extend(grps)
-            if not envs and not grps:
-                msg = _("No relevant match for the specified '%s'.")
-                msg = msg % ucd(pat)
-                raise dnf.cli.CliError(msg)
-        return res
 
 
 class GroupCommand(commands.Command):
@@ -201,18 +157,6 @@ class GroupCommand(commands.Command):
                 logger.error(_('Warning: Group %s does not exist.'), strng)
 
         return 0, []
-
-    def _install(self, extcmds):
-        types, patterns = self._split_extcmds(extcmds)
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
-                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
-                       CompsQuery.AVAILABLE)
-        res = q.get(*patterns)
-        for env in res.environments:
-            self.base.environment_install(env, types)
-        for grp in res.groups:
-            self.base.group_install(grp, types)
-        self._remark = True
 
     def _list(self, userlist):
         uservisible = 1
@@ -328,17 +272,6 @@ class GroupCommand(commands.Command):
             return extcmds[0], extcmds[1:]
         return 'install', extcmds
 
-    def _remove(self, patterns):
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
-                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
-                       CompsQuery.INSTALLED)
-        res = q.get(*patterns)
-
-        for env in res.environments:
-            self.base.environment_remove(env)
-        for grp in res.groups:
-            self.base.group_remove(grp)
-
     def _summary(self, userlist):
         uservisible = 1
         if len(userlist) > 0:
@@ -450,11 +383,13 @@ class GroupCommand(commands.Command):
 
         self.cli.demands.resolving = True
         if cmd == 'install':
-            return self._install(extcmds)
+            types, patterns = self._split_extcmds(extcmds)
+            self._remark = True
+            return self.base.env_group_install(patterns, types)
         if cmd == 'upgrade':
             return self._upgrade(extcmds)
         if cmd == 'remove':
-            return self._remove(extcmds)
+            return self.base.env_group_remove(extcmds)
 
     def run_transaction(self):
         if not self._remark:

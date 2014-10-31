@@ -133,6 +133,18 @@ def checkEnabledRepo(base, possible_local_files=[]):
     msg = _('There are no enabled repos.')
     raise dnf.cli.CliError(msg)
 
+
+def parse_spec_group_file(extcmds):
+    pkg_specs, grp_specs, filenames = [], [], []
+    for argument in extcmds:
+        if argument.endswith('.rpm'):
+            filenames.append(argument)
+        elif argument.startswith('@'):
+            grp_specs.append(argument[1:])
+        else:
+            pkg_specs.append(argument)
+    return pkg_specs, grp_specs, filenames
+
 class Command(object):
     """Abstract base class for CLI commands."""
 

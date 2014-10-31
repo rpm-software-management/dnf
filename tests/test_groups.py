@@ -78,6 +78,10 @@ class PresetPersistorTest(support.ResultTestCase):
         self.base.read_mock_comps()
         self.base.init_sack()
 
+    def test_env_group_remove(self):
+        cnt = self.base.env_group_remove(["sugar-desktop-environment"])
+        self.assertEqual(3, cnt)
+
     def test_environment_remove(self):
         comps = self.base.comps
         env = comps.environment_by_pattern("sugar-desktop-environment")

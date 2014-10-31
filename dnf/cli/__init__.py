@@ -27,5 +27,5 @@ class CliError(dnf.exceptions.Error):
     pass
 
 
-from . cli import Cli # :api
-from . commands import Command # :api
+from dnf.cli.cli import Cli  # :api
+from dnf.cli.commands import Command  # :api

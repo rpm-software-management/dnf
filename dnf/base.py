@@ -23,6 +23,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.yum import history
 from dnf.yum import misc
@@ -1230,11 +1231,43 @@ class Base(object):
                           grp.id, trans.install)
         return self._add_comps_trans(trans)
 
+    def env_group_install(self, patterns, types):
+        q = CompsQuery(self.comps, self.group_persistor,
+                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.AVAILABLE)
+        try:
+            res = q.get(*patterns)
+        except dnf.exceptions.CompsError as err:
+            logger.error("Warning: %s", ucd(err))
+            return 0
+        cnt = 0
+        for env in res.environments:
+            cnt += self.environment_install(env, types)
+        for grp in res.groups:
+            cnt += self.group_install(grp, types)
+        return cnt
+
     def group_remove(self, grp):
         # :api
         solver = self.build_comps_solver()
         trans = solver.group_remove(grp)
         return self._add_comps_trans(trans)
+
+    def env_group_remove(self, patterns):
+        q = CompsQuery(self.comps, self.group_persistor,
+                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.INSTALLED)
+        try:
+            res = q.get(*patterns)
+        except dnf.exceptions.CompsError as err:
+            logger.error("Warning: %s", ucd(err))
+            return 0
+        cnt = 0
+        for env in res.environments:
+            cnt += self.environment_remove(env)
+        for grp in res.groups:
+            cnt += self.group_remove(grp)
+        return cnt
 
     def group_upgrade(self, grp):
         # :api
