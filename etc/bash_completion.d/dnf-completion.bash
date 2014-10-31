@@ -29,7 +29,7 @@ _dnf_help_command()
 
 _dnf()
 {
-    local commandlist="$( compgen -W '$( dnf help | cut -d" " -s -f1 | sed -e "/^[A-Z]/d" -e "/:/d" )' )"
+    local commandlist="$( compgen -W '$( LANG=C dnf help | cut -d" " -s -f1 | LANG=C sed -e "/^[A-Z]/d" -e "/:/d" )' )"
 
     local cur prev words cword
     _init_completion -s || return
