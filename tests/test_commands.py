@@ -217,7 +217,6 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         base = support.BaseCliStub('main', 'updates', 'third_party')
         self.cli = base.mock_cli()
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test(self):
         """Test whether only upgrades in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(self.cli)
@@ -311,8 +310,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
         base.conf.recent = 7
         self.cli = base.mock_cli()
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_all(self):
         """Test whether only packages related to the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
@@ -352,8 +349,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'Description : \n'
                 u'\n')))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_available(self):
         """Test whether only packages in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
@@ -368,8 +363,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.HOLE_X86_64_INFO,
                 self.PEPPER_UPDATES_INFO)))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
@@ -395,8 +388,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             u'License     : \n'
             u'Description : \n\n')
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
@@ -411,8 +402,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             stdout.getvalue(),
             ''.join((self.INSTALLED_TITLE, self.PEPPER_SYSTEM_INFO)))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_obsoletes(self):
         """Test whether only obsoletes in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
@@ -426,8 +415,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.HOLE_I686_INFO,
                 self.HOLE_X86_64_INFO)))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_recent(self):
         """Test whether only packages in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
@@ -443,8 +430,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.HOLE_X86_64_INFO,
                 self.PEPPER_UPDATES_INFO)))
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     def test_info_upgrades(self):
         """Test whether only upgrades in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)

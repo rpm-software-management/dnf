@@ -39,7 +39,6 @@ VERSIONS_OUTPUT = """\
 
 
 class VersionStringTest(TestCase):
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_print_versions(self):
         base = support.MockBase()
         output = support.MockOutput()
@@ -66,14 +65,12 @@ class BaseCliTest(support.ResultTestCase):
         self._base.output.term = support.MockTerminal()
         self._base.downgrade = mock.Mock(wraps=self._base.downgrade)
 
-    @mock.patch('dnf.cli.cli.P_', dnf.pycomp.NullTranslations().ungettext)
     def test_downgradePkgs(self, logger):
         self._base.downgradePkgs(('tour',))
 
         self.assertEqual(self._base.downgrade.mock_calls, [mock.call('tour')])
         self.assertEqual(logger.mock_calls, [])
 
-    @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notfound(self, logger):
         with self.assertRaises(dnf.exceptions.Error) as ctx:
             self._base.downgradePkgs(('non-existent',))
