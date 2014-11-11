@@ -747,6 +747,7 @@ class Cli(object):
                 repo.md_expire_cache()
 
         if opts.cacheonly:
+            self.demands.cacheonly = True
             for repo in self.base.repos.values():
                 repo.basecachedir = self._system_cachedir
                 repo.md_only_cached = True
@@ -770,12 +771,13 @@ class Cli(object):
         demands = self.demands
         repos = self.base.repos
 
-        if self.demands.freshest_metadata:
-            for repo in repos.iter_enabled():
-                repo.md_expire_cache()
-        elif not demands.fresh_metadata:
-            for repo in repos.values():
-                repo.md_lazy = True
+        if not demands.cacheonly:
+            if demands.freshest_metadata:
+                for repo in repos.iter_enabled():
+                    repo.md_expire_cache()
+            elif not demands.fresh_metadata:
+                for repo in repos.values():
+                    repo.md_lazy = True
 
         if demands.sack_activation:
             lar = self.demands.available_repos

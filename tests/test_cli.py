@@ -172,6 +172,9 @@ class CliTest(TestCase):
         self.base._repos = dnf.repodict.RepoDict()
         self.base._repos.add(support.MockRepo('one', None))
         self.cli._configure_repos(opts)
+        # _process_demands() should respect --cacheonly in spite of modified demands
+        self.cli.demands.fresh_metadata = False
+        self.cli._process_demands()
         self.assertEqual(self.base.repos['one'].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
