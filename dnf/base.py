@@ -1296,7 +1296,8 @@ class Base(object):
                 sltr = sltr.set(reponame=reponame)
             already_inst = self._sltr_matches_installed(sltr)
             if already_inst:
-                _msg_installed(already_inst[0])
+                for package in already_inst:
+                    _msg_installed(package)
             self._goal.install(select=sltr)
             return 1
         return 0
