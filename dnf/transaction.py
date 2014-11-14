@@ -162,6 +162,7 @@ class Transaction(object):
 
     @property
     def install_set(self):
+        # :api
         fn = operator.methodcaller('installs')
         return self._items2set(fn)
 
@@ -192,6 +193,7 @@ class Transaction(object):
 
     @property
     def remove_set(self):
+        # :api
         fn = operator.methodcaller('removes')
         return self._items2set(fn)
 
