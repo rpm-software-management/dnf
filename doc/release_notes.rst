@@ -352,7 +352,7 @@ option.
 DNF now supports the ``group summary`` command and one-word group commands no
 longer cause tracebacks, e.g. ``dnf grouplist``.
 
-There are vast internal changes to ``dnf.cli``, the subpackge that provides CLI
+There are vast internal changes to ``dnf.cli``, the subpackage that provides CLI
 to DNF. In particular, it is now better separated from the core.
 
 The hawkey library used against DNF from with this versions uses a `recent RPMDB
