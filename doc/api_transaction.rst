@@ -48,7 +48,7 @@ Transaction
 
   .. method:: add_install(new, obsoleted, reason='unknown')
 
-    Add an install operation to the transaction. `new` is a :class:`~.package.Package` to install, `obsoleted` is a list of installed :class:`Packages <.package.Package>` that are obsoleted by `new` (or ``None`` for no obsoletes). `reason`, if provided, must be either ``'dep'`` for a package installed as a dependnecy, ``'user'`` for a package installed per user's explicit request or ``'unknown'`` for cases where the package's origin can not be decided. This information is stored in the DNF package database and used for instance by the functionality that removes excess packages (see :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`).
+    Add an install operation to the transaction. `new` is a :class:`~.package.Package` to install, `obsoleted` is a list of installed :class:`Packages <.package.Package>` that are obsoleted by `new` (or ``None`` for no obsoletes). `reason`, if provided, must be either ``'dep'`` for a package installed as a dependency, ``'user'`` for a package installed per user's explicit request or ``'unknown'`` for cases where the package's origin can not be decided. This information is stored in the DNF package database and used for instance by the functionality that removes excess packages (see :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`).
 
   .. method:: add_reinstall(new, reinstalled, obsoleted)
 
