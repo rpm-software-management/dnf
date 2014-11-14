@@ -38,6 +38,14 @@ Transaction
 
   The packaging requests from the contained items are later passed to the core package manager (RPM) as they are without further dependency resolving. If the set is not fit for an actual transaction (e.g. introduces conflicts, has inconsistent dependencies) RPM then by default refuses to proceed.
 
+  .. attribute:: install_set
+
+    Read-only property which contains set of :class:`Packages <.package.Package>` to be installed.
+
+  .. attribute:: remove_set
+
+    Read-only property which contains set of :class:`Packages <.package.Package>` to be removed.
+
   .. method:: add_downgrade(new, downgraded, obsoleted)
 
     Add a downgrade operation to the transaction. `new` is a :class:`~.package.Package` to downgrade to, `downgraded` is the installed :class:`~.package.Package` being downgraded, `obsoleted` is a list of installed :class:`Packages <.package.Package>` that are obsoleted by the `downgrade` (or ``None`` for no obsoletes).
