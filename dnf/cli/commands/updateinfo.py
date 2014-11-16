@@ -54,7 +54,6 @@ class UpdateInfoCommand(commands.Command):
     def __init__(self, cli):
         """Initialize the command."""
         super(UpdateInfoCommand, self).__init__(cli)
-        self._ina2evr_cache = None
         self.clear_installed_cache()
 
     def refresh_installed_cache(self):
