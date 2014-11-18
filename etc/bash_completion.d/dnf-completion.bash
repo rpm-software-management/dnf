@@ -67,20 +67,21 @@ _dnf()
     $split && return
 
     local comp
+    local cache_file="/var/cache/dnf/packages.db"
     if [[ $command ]]; then
 
         case $command in
             install|update|info)
-                if [ -r '/var/cache/dnf/available.cache' ]; then
-                    COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/available.cache )' -- "$cur" ) )
+                if [ -r $cache_file ]; then
+                    COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
                     COMPREPLY=( $( compgen -W '$( dnf --cacheonly list $cur* 2>/dev/null | cut -d' ' -f1 )' -- "$cur" ) )
                 fi
                 [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
             remove|erase)
-                if [ -r '/var/cache/dnf/installed.cache' ]; then
-                    COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/installed.cache )' -- "$cur" ) )
+                if [ -r $cache_file ]; then
+                    COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
                     COMPREPLY=( $( compgen -W '$( rpm -qav --qf "%{NAME}.%{ARCH}\n" | grep -E "^$cur" )' -- "$cur" ) )
                 fi
