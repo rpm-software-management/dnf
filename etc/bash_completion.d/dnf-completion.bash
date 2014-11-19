@@ -75,7 +75,34 @@ _dnf()
                 if [ -r $cache_file ]; then
                     COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list $cur* 2>/dev/null | cut -d' ' -f1 )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( python << END
+import dnf
+import sys
+from platform import machine
+import logging
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+h = NullHandler()
+logging.getLogger("dnf").addHandler(h)
+b = dnf.Base()
+b.read_all_repos()
+cachedir = "/var/cache/dnf/{}/{}".format(machine(), dnf.rpm.detect_releasever("/"))
+b.conf.cachedir = cachedir
+for repo in b.repos.values():
+    repo.basecachedir = cachedir
+    repo.md_only_cached = True
+try:
+    b.fill_sack()
+except OSError:
+    sys.exit(0)
+except dnf.exceptions.RepoError:
+    pass
+q = b.sack.query().available()
+for pkg in q:
+    print("{}.{}").format(pkg.name, pkg.arch)
+END
+)' -- "$cur" ) )
                 fi
                 [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
@@ -83,7 +110,15 @@ _dnf()
                 if [ -r $cache_file ]; then
                     COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( rpm -qav --qf "%{NAME}.%{ARCH}\n" | grep -E "^$cur" )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( python << END
+import hawkey
+sack = hawkey.Sack()
+sack.load_system_repo()
+q = hawkey.Query(sack).filter(reponame=hawkey.SYSTEM_REPO_NAME)
+for pkg in q:
+    print("{}.{}").format(pkg.name, pkg.arch)
+END
+)' -- "$cur" ) )
                 fi
                 ext=''
                 ;;
