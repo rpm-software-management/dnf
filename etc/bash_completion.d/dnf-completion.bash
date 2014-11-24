@@ -72,10 +72,13 @@ _dnf()
 
         case $command in
             install|update|info)
-                if [ -r $cache_file ]; then
-                    COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
+                if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
+                    [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 else
-                    COMPREPLY=( $( compgen -W '$( python << END
+                    if [ -r $cache_file ]; then
+                        COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
+                    else
+                        COMPREPLY=( $( compgen -W '$( python << END
 import dnf
 import sys
 from platform import machine
@@ -103,8 +106,8 @@ for pkg in q:
     print("{}.{}").format(pkg.name, pkg.arch)
 END
 )' -- "$cur" ) )
+                    fi
                 fi
-                [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
             remove|erase)
                 if [ -r $cache_file ]; then
