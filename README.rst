@@ -32,6 +32,17 @@ Then to run DNF::
     PYTHONPATH=`readlink -f .` bin/dnf <arguments>
 
 ===============
+ Running tests
+===============
+
+From the DNF git checkout directory::
+
+    mkdir build;
+    pushd build;
+    cmake .. && make ARGS="-V" test;
+    popd;
+
+===============
  Documentation
 ===============
 
