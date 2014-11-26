@@ -82,7 +82,9 @@ _dnf()
 import dnf
 import sys
 from platform import machine
+from os.path import isdir
 import logging
+from tempfile import mkdtemp
 class NullHandler(logging.Handler):
     def emit(self, record):
         pass
@@ -91,14 +93,16 @@ logging.getLogger("dnf").addHandler(h)
 b = dnf.Base()
 b.read_all_repos()
 cachedir = "/var/cache/dnf/{}/{}".format(machine(), dnf.rpm.detect_releasever("/"))
+if not isdir(cachedir):
+    cachedir = mkdtemp()
 b.conf.cachedir = cachedir
 for repo in b.repos.values():
     repo.basecachedir = cachedir
     repo.md_only_cached = True
 try:
     b.fill_sack()
-except OSError:
-    sys.exit(0)
+except IOError:
+    sys.exc_clear()
 except dnf.exceptions.RepoError:
     pass
 q = b.sack.query().available()
