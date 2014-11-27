@@ -14,6 +14,7 @@ ADD_DEPENDENCIES (doc doc-html doc-man)
 if (NOT WITH_MAN EQUAL 0)
 	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.8
 		      ${CMAKE_CURRENT_BINARY_DIR}/dnf.automatic.8
-		      ${CMAKE_CURRENT_BINARY_DIR}/dnf.conf.8
 		      DESTINATION share/man/man8)
+	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.conf.5
+		      DESTINATION share/man/man5)
 endif()

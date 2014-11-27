@@ -241,7 +241,7 @@ man_pages = [
     ('command_ref', 'dnf', u'DNF Command Reference',
      AUTHORS, 8),
     ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
-     AUTHORS, 8),
+     AUTHORS, 5),
 ]
 
 # If true, show URL addresses after external links.
