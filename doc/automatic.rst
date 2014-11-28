@@ -70,6 +70,8 @@ Setting the mode of operation of the program.
 
 Choosing how the results should be reported.
 
+.. _emit_via_automatic-label:
+
 ``emit_via``
     list, default: ``email, stdio, motd``
 

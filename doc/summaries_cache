@@ -874,5 +874,65 @@
     [
         1121184, 
         "dnf: shows fake download speed when not downloading anything"
+    ], 
+    [
+        1153543, 
+        "dnf bash completion hangs when trying to complete local path"
+    ], 
+    [
+        1151231, 
+        "Broken bash completion (does not occur when dnf-plugins-core installed)"
+    ], 
+    [
+        1163063, 
+        "dnf install with glob pattern output should be similar to yum install with glob"
+    ], 
+    [
+        1151854, 
+        "--cacheonly is not being respected \u2013 will update the cache if expired"
+    ], 
+    [
+        1151740, 
+        "dnf base api should not use errorSummary from dnf.cli.BaseCli"
+    ], 
+    [
+        1110780, 
+        "dnf swap not supported"
+    ], 
+    [
+        1149972, 
+        "update command implicitly working as reinstall"
+    ], 
+    [
+        1150474, 
+        "dnf group install broken for locale other than en_US"
+    ], 
+    [
+        995537, 
+        "RFE: /etc/motd emitter for yum-cron"
+    ], 
+    [
+        1149952, 
+        "Python exception thrown when searching dnf history"
+    ], 
+    [
+        1149350, 
+        "Odd placement and no rotation of hawkey.log"
+    ], 
+    [
+        1074715, 
+        "/var/log/dnf.rpm.log is an annoying filename - please change it to /var/log/dnf.log"
+    ], 
+    [
+        1147523, 
+        "missing group info environment group support"
+    ], 
+    [
+        1148208, 
+        "[rfe] enable deltarpm support by default"
+    ], 
+    [
+        1109927, 
+        "RFE: take systemd inhibitor lock while doing operations that shouldn't be interrupted by shutdown"
     ]
 ]

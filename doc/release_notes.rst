@@ -943,3 +943,31 @@ Bugs fixed in 0.6.2:
 * :rhbug:`1122617`
 * :rhbug:`1133830`
 * :rhbug:`1121184`
+
+===================
+0.6.3 Release Notes
+===================
+
+:ref:`Deltarpm <deltarpm-label>` configuration option is set on by default.
+
+API additions in 0.6.3:
+
+* dnf-automatic adds :ref:`motd emitter <emit_via_automatic-label>` as an alternative output
+
+Bugs fixed in 0.6.3:
+
+* :rhbug:`1153543`
+* :rhbug:`1151231`
+* :rhbug:`1163063`
+* :rhbug:`1151854`
+* :rhbug:`1151740`
+* :rhbug:`1110780`
+* :rhbug:`1149972`
+* :rhbug:`1150474`
+* :rhbug:`995537`
+* :rhbug:`1149952`
+* :rhbug:`1149350`
+* :rhbug:`1074715`
+* :rhbug:`1147523`
+* :rhbug:`1148208`
+* :rhbug:`1109927`
