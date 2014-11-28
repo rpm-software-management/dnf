@@ -920,6 +920,10 @@
         "Odd placement and no rotation of hawkey.log"
     ], 
     [
+        1170232, 
+        "dnf eats newlines from error message"
+    ], 
+    [
         1147523, 
         "missing group info environment group support"
     ], 
