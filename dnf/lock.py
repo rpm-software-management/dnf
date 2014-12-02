@@ -18,13 +18,19 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.exceptions import ProcessLockError, ThreadLockError
+from dnf.i18n import _
+import dnf.logging
 import dnf.util
 import hashlib
+import logging
 import os
 import threading
+import time
 
+logger = logging.getLogger("dnf")
 
 def _fit_lock_dir(dir_):
     if not dnf.util.am_i_root():
@@ -35,6 +41,9 @@ def _fit_lock_dir(dir_):
         dir_ = os.path.join(dnf.util.user_run_dir(), hexdir)
     return dir_
 
+def build_download_lock(cachedir):
+    return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'download_lock.pid'),
+                       'cachedir', True)
 
 def build_metadata_lock(cachedir):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'metadata_lock.pid'),
@@ -47,7 +56,8 @@ def build_rpmdb_lock(persistdir):
 
 
 class ProcessLock(object):
-    def __init__(self, target, description):
+    def __init__(self, target, description, blocking=False):
+        self.blocking = blocking
         self.count = 0
         self.description = description
         self.target = target
@@ -80,20 +90,27 @@ class ProcessLock(object):
     def __enter__(self):
         dnf.util.ensure_dir(os.path.dirname(self.target))
         self._lock_thread()
-        if self._try_lock():
-            return
-        pid = self._read_lock()
-        if pid == os.getpid():
-            # already locked by this process
-            return
-        if not os.access('/proc/%d/stat' % pid, os.F_OK):
-            # locked by a dead process
-            os.unlink(self.target)
-            if self._try_lock():
+        inform = True
+        prev_pid = 0
+        while not self._try_lock():
+            pid = self._read_lock()
+            if pid == os.getpid():
+                # already locked by this process
                 return
-        self._unlock_thread()
-        msg = '%s already locked by %d' % (self.description, pid)
-        raise ProcessLockError(msg, pid)
+            if not os.access('/proc/%d/stat' % pid, os.F_OK):
+                # locked by a dead process
+                os.unlink(self.target)
+                continue
+            if not self.blocking:
+                self._unlock_thread()
+                msg = '%s already locked by %d' % (self.description, pid)
+                raise ProcessLockError(msg, pid)
+            if inform or prev_pid != pid:
+                msg = _('Waiting for process with pid %d to finish.' % (pid))
+                logger.info(msg)
+                inform = False
+                prev_pid = pid
+            time.sleep(2)
 
     def __exit__(self, *exc_args):
         if self.count == 1:

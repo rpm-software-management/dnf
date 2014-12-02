@@ -826,7 +826,10 @@ class Base(object):
         beg_download = time.time()
         est_remote_size = sum(pload.download_size for pload in payloads)
         progress.start(len(payloads), est_remote_size)
-        errors = dnf.repo.download_payloads(payloads, drpm)
+        lock = dnf.lock.build_download_lock(self.conf.cachedir)
+        with lock:
+            errors = dnf.repo.download_payloads(payloads, drpm)
+
         if errors.irrecoverable:
             raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
@@ -842,8 +845,9 @@ class Base(object):
                         for pkg in remaining_pkgs]
             est_remote_size = sum(pload.download_size for pload in payloads)
             progress.start(len(payloads), est_remote_size)
+            with lock:
+                errors = dnf.repo.download_payloads(payloads, drpm)
 
-            errors = dnf.repo.download_payloads(payloads, drpm)
             assert not errors.recoverable
             if errors.irrecoverable:
                 raise dnf.exceptions.DownloadError(errors.irrecoverable)

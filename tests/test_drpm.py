@@ -22,6 +22,7 @@ from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
 
 import dnf.exceptions
+import os
 import shutil
 import tempfile
 
@@ -32,6 +33,7 @@ class DrpmTest(support.TestCase):
         cachedir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, cachedir)
         self.base = support.MockBase()
+        self.base.conf.cachedir = support.USER_RUNDIR
 
         # load the testing repo
         repo = self.base.add_test_dir_repo('drpm', cachedir)
@@ -66,7 +68,11 @@ class DrpmTest(support.TestCase):
                 # PackageTarget.err is not writable
                 targets[0] = Bunch(cbdata=target.cbdata, err=err)
 
-        with mock.patch('librepo.download_packages', dlp):
+        def lock_dir(_dir):
+            return os.path.join(support.USER_RUNDIR, dnf.const.PROGRAM_NAME)
+
+        with mock.patch('librepo.download_packages', dlp),\
+                mock.patch('dnf.lock._fit_lock_dir', lock_dir):
             try:
                 self.base.download_packages([self.pkg])
             except dnf.exceptions.DownloadError as e:
