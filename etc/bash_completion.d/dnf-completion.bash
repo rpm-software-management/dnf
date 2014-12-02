@@ -82,7 +82,6 @@ _dnf()
 import dnf
 import sys
 from platform import machine
-from os.path import isdir
 import logging
 from tempfile import mkdtemp
 class NullHandler(logging.Handler):
@@ -93,7 +92,9 @@ logging.getLogger("dnf").addHandler(h)
 b = dnf.Base()
 b.read_all_repos()
 cachedir = "/var/cache/dnf/{}/{}".format(machine(), dnf.rpm.detect_releasever("/"))
-if not isdir(cachedir):
+try:
+    dnf.util.ensure_dir(cachedir)
+except OSError:
     cachedir = mkdtemp()
 b.conf.cachedir = cachedir
 for repo in b.repos.values():
