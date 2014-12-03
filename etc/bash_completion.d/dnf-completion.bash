@@ -91,19 +91,14 @@ h = NullHandler()
 logging.getLogger("dnf").addHandler(h)
 b = dnf.Base()
 b.read_all_repos()
-cachedir = "/var/cache/dnf/{}/{}".format(machine(), dnf.rpm.detect_releasever("/"))
-try:
-    dnf.util.ensure_dir(cachedir)
-except OSError:
-    cachedir = mkdtemp()
-b.conf.cachedir = cachedir
+if not dnf.util.am_i_root():
+    cachedir = dnf.yum.misc.getCacheDir()
+    b.conf.cachedir = cachedir
 for repo in b.repos.values():
-    repo.basecachedir = cachedir
+    repo.basecachedir = "{}/{}/{}".format(b.conf.cachedir, machine(), dnf.rpm.detect_releasever("/"))
     repo.md_only_cached = True
 try:
     b.fill_sack()
-except IOError:
-    sys.exc_clear()
 except dnf.exceptions.RepoError:
     pass
 q = b.sack.query().available()
