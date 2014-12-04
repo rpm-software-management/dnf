@@ -79,8 +79,9 @@ _dnf()
                         COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
                     else
                         COMPREPLY=( $( compgen -W '$( python << END
-import dnf
 import sys
+sys.path.pop(0)
+import dnf
 import os
 from platform import machine
 import logging
@@ -117,6 +118,8 @@ END
                     COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
                     COMPREPLY=( $( compgen -W '$( python << END
+import sys
+sys.path.pop(0)
 import hawkey
 sack = hawkey.Sack()
 sack.load_system_repo()
