@@ -152,7 +152,7 @@ configuration.
 ``bandwidth``
     storage size
 
-    Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>` option. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
+    Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>`. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
 
 .. _deltarpm-label:
 
