@@ -122,6 +122,8 @@ Options
 ``--installroot=<path>``
     set install root
 
+.. _refresh_command-label:
+
 ``--refresh``
     set metadata as expired before running the command
 
