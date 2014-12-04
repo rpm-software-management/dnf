@@ -81,6 +81,7 @@ _dnf()
                         COMPREPLY=( $( compgen -W '$( python << END
 import dnf
 import sys
+import os
 from platform import machine
 import logging
 from tempfile import mkdtemp
@@ -94,8 +95,10 @@ b.read_all_repos()
 if not dnf.util.am_i_root():
     cachedir = dnf.yum.misc.getCacheDir()
     b.conf.cachedir = cachedir
+b.conf.substitutions ["releasever"] = dnf.rpm.detect_releasever("/")
+suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, b.conf.substitutions)
 for repo in b.repos.values():
-    repo.basecachedir = "{}/{}/{}".format(b.conf.cachedir, machine(), dnf.rpm.detect_releasever("/"))
+    repo.basecachedir = os.path.join(b.conf.cachedir, suffix)
     repo.md_only_cached = True
 try:
     b.fill_sack()
