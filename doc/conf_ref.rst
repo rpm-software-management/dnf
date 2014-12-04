@@ -135,8 +135,7 @@ one main section. The repository sections define the configuration for each
 ``skip_if_unavailable``
     boolean
 
-    If enabled, DNF will continue running if this repository cannot be contacted
-    for any reason. The default is True.
+    If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
 
 
 ==================================
