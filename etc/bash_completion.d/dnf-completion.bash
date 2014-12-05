@@ -67,22 +67,67 @@ _dnf()
     $split && return
 
     local comp
+    local cache_file="/var/cache/dnf/packages.db"
     if [[ $command ]]; then
 
         case $command in
             install|update|info)
-                if [ -r '/var/cache/dnf/available.cache' ]; then
-                    COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/available.cache )' -- "$cur" ) )
+                if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
+                    [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 else
-                    COMPREPLY=( $( compgen -W '$( dnf --cacheonly list $cur* 2>/dev/null | cut -d' ' -f1 )' -- "$cur" ) )
+                    if [ -r $cache_file ]; then
+                        COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
+                    else
+                        COMPREPLY=( $( compgen -W '$( python << END
+import sys
+sys.path.pop(0)
+import dnf
+import os
+from platform import machine
+import logging
+from tempfile import mkdtemp
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+h = NullHandler()
+logging.getLogger("dnf").addHandler(h)
+b = dnf.Base()
+b.read_all_repos()
+if not dnf.util.am_i_root():
+    cachedir = dnf.yum.misc.getCacheDir()
+    b.conf.cachedir = cachedir
+b.conf.substitutions ["releasever"] = dnf.rpm.detect_releasever("/")
+suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, b.conf.substitutions)
+for repo in b.repos.values():
+    repo.basecachedir = os.path.join(b.conf.cachedir, suffix)
+    repo.md_only_cached = True
+try:
+    b.fill_sack()
+except dnf.exceptions.RepoError:
+    pass
+q = b.sack.query().available()
+for pkg in q:
+    print("{}.{}").format(pkg.name, pkg.arch)
+END
+)' -- "$cur" ) )
+                    fi
                 fi
-                [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 ;;
             remove|erase)
-                if [ -r '/var/cache/dnf/installed.cache' ]; then
-                    COMPREPLY=( $( compgen -W '$( grep -E ^$cur /var/cache/dnf/installed.cache )' -- "$cur" ) )
+                if [ -r $cache_file ]; then
+                    COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" )' ) )
                 else
-                    COMPREPLY=( $( compgen -W '$( rpm -qav --qf "%{NAME}.%{ARCH}\n" | grep -E "^$cur" )' -- "$cur" ) )
+                    COMPREPLY=( $( compgen -W '$( python << END
+import sys
+sys.path.pop(0)
+import hawkey
+sack = hawkey.Sack()
+sack.load_system_repo()
+q = hawkey.Query(sack).filter(reponame=hawkey.SYSTEM_REPO_NAME)
+for pkg in q:
+    print("{}.{}").format(pkg.name, pkg.arch)
+END
+)' -- "$cur" ) )
                 fi
                 ext=''
                 ;;

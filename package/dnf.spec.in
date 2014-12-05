@@ -40,6 +40,7 @@ Requires:	python-libcomps >= %{libcomps_version}
 Requires:	python-librepo >= %{librepo_version}
 Requires:	rpm-plugin-systemd-inhibit
 Requires:	rpm-python >= %{rpm_version}
+Requires:	sqlite
 Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
