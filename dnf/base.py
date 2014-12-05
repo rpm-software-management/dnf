@@ -479,7 +479,7 @@ class Base(object):
         if not self.run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
-            exc = dnf.exceptions.DepsolveError('. '.join(goal.problems))
+            exc = dnf.exceptions.DepsolveError('.\n'.join(goal.problems))
         else:
             self._transaction = self._goal2transaction(goal)
 
