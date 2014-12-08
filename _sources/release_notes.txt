@@ -967,7 +967,6 @@ Bugs fixed in 0.6.3:
 * :rhbug:`995537`
 * :rhbug:`1149952`
 * :rhbug:`1149350`
-* :rhbug:`1074715`
 * :rhbug:`1147523`
 * :rhbug:`1148208`
 * :rhbug:`1109927`
