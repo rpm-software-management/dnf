@@ -1,4 +1,4 @@
-%global gitrev e1a35e5
+%global gitrev 9e8fd6b
 %global hawkey_version 0.5.2
 %global librepo_version 1.7.5
 %global libcomps_version 0.1.6
@@ -193,6 +193,37 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+
+* Mon Dec 8 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.3-1
+- transifex update (Jan Silhan)
+- bash-completion: don't query if we trying to use local file (RhBug:1153543) (Igor Gnatenko)
+- bash-completion: fix local completion (RhBug:1151231) (Igor Gnatenko)
+- bash-completion: use sqlite cache from dnf-plugins-core (Igor Gnatenko)
+- base: output a whole list of installed packages with glob pattern (RhBug:1163063) (Michal Luscon)
+- cli: _process_demands() does not respect --caheonly (RhBug:1151854) (Michal Luscon)
+- new authors added (Jan Silhan)
+- install: allow installation of provides with glob (Related:RhBug:1148353) (Michal Luscon)
+- tests: removed mock patch for _, P_ (Jan Silhan)
+- fixed error summary traceback (RhBug:1151740) (Jan Silhan)
+- doc: swap command alternative mentioned (RhBug:1110780) (Jan Silhan)
+- base: package_reinstall works only with the same package versions (Jan Silhan)
+- base: package_install allows install different arch of installed package (Jan Silhan)
+- base: package_downgrade prints message on failure (Jan Silhan)
+- base: package_upgrade does not reinstall or downgrade (RhBug:1149972) (Jan Silhan)
+- groups: searches also within localized names (RhBug:1150474) (Jan Silhan)
+- Run tests with C locales. (Daniel Mach)
+- Adds new motd emitter for dnf-automatic (RhBug:995537) (Kushal Das)
+- Fix wrong cache directory path used to clean up binary cache (Satoshi Matsumoto)
+- fix: traceback in history info <name> (RhBug: 1149952) (Tim Lauridsen)
+- logging: added logrotate script for hawkey.log (RhBug:1149350) (Jan Silhan)
+- output: renamed displayPkgsInGroups (Jan Silhan)
+- logging: renamed log files (RhBug:1074715)" (Jan Silhan)
+- comps: Environment differentiates optional and mandatory groups (Jan Silhan)
+- group info handles environments (RhBug:1147523) (Jan Silhan)
+- deltarpm enabled by default (RhBug:1148208) (Jan Silhan)
+- doc: deplist command (Jan Silhan)
+- doc: minor fixes + repo references changed (Jan Silhan)
+- spec: requires rpm-plugin-systemd-inhibit (RhBug:1109927) (Jan Silhan)
 
 * Fri Oct 3 2014 Jan Silhan <jsilhan@redhat.com> - 0.6.2-1
 - transifex update (Jan Silhan)
