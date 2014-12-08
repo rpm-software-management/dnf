@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.6.2-1 documentation</title>
+    <title>Changes in DNF CLI compared to Yum &mdash; DNF 0.6.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6.2-1',
+        VERSION:     '0.6.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.6.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.6.3-1 documentation" href="index.html" />
     <link rel="next" title="DNF API Reference" href="api.html" />
     <link rel="prev" title="DNF Release Notes" href="release_notes.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -64,28 +64,29 @@
 <li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same" id="id7">Update and Upgrade Commands are the Same</a></li>
 <li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default" id="id8"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
 <li><a class="reference internal" href="#no-resolvedep-command" id="id9">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
-<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id10">Excludes and repo excludes apply to all operations</a></li>
-<li><a class="reference internal" href="#yum-s-conf-directive-includepkgs-is-just-include" id="id11">Yum&#8217;s conf directive <tt class="docutils literal"><span class="pre">includepkgs</span></tt> is just <tt class="docutils literal"><span class="pre">include</span></tt></a></li>
-<li><a class="reference internal" href="#protected-packages-is-supported-via-plugin" id="id12"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is supported via plugin</a></li>
-<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id13"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
-<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id14"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
-<li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default" id="id15"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
-<li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id16"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
-<li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id17"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
-<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id18">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
-<li><a class="reference internal" href="#group-package-types-dropped" id="id19"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
-<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id20"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
-<li><a class="reference internal" href="#dnf-history-rollback-check-dropped" id="id21"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
-<li><a class="reference internal" href="#packages-replacement-without-yum-shell" id="id22">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
-<li><a class="reference internal" href="#dnf-history-info-last" id="id23"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
-<li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id24">Dependency processing details are not shown in the CLI</a></li>
-<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
-<li><a class="reference internal" href="#enableplugin-not-recognized" id="id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
-<li><a class="reference internal" href="#bandwidth-limiting" id="id27">Bandwidth limiting</a></li>
-<li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id28">The usage of Delta RPM files</a></li>
-<li><a class="reference internal" href="#handling-srpm-files" id="id29">Handling .srpm files</a></li>
-<li><a class="reference internal" href="#install-command-does-installation-only" id="id30"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a></li>
-<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" id="id31">Promoting package to install to a package that obsoletes it</a></li>
+<li><a class="reference internal" href="#no-deplist-command" id="id10">No <tt class="docutils literal"><span class="pre">deplist</span></tt> command</a></li>
+<li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations" id="id11">Excludes and repo excludes apply to all operations</a></li>
+<li><a class="reference internal" href="#yum-s-conf-directive-includepkgs-is-just-include" id="id12">Yum&#8217;s conf directive <tt class="docutils literal"><span class="pre">includepkgs</span></tt> is just <tt class="docutils literal"><span class="pre">include</span></tt></a></li>
+<li><a class="reference internal" href="#protected-packages-is-supported-via-plugin" id="id13"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is supported via plugin</a></li>
+<li><a class="reference internal" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" id="id14"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" id="id15"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a></li>
+<li><a class="reference internal" href="#skip-if-unavailable-enabled-by-default" id="id16"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a></li>
+<li><a class="reference internal" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" id="id17"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a></li>
+<li><a class="reference internal" href="#mirrorlist-expire-dropped" id="id18"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" id="id19">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a></li>
+<li><a class="reference internal" href="#group-package-types-dropped" id="id20"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#upgrade-requirements-on-install-dropped" id="id21"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
+<li><a class="reference internal" href="#dnf-history-rollback-check-dropped" id="id22"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
+<li><a class="reference internal" href="#packages-replacement-without-yum-shell-or-yum-swap" id="id23">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt> or <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">swap</span></tt></a></li>
+<li><a class="reference internal" href="#dnf-history-info-last" id="id24"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
+<li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli" id="id25">Dependency processing details are not shown in the CLI</a></li>
+<li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" id="id26"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
+<li><a class="reference internal" href="#enableplugin-not-recognized" id="id27"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a></li>
+<li><a class="reference internal" href="#bandwidth-limiting" id="id28">Bandwidth limiting</a></li>
+<li><a class="reference internal" href="#the-usage-of-delta-rpm-files" id="id29">The usage of Delta RPM files</a></li>
+<li><a class="reference internal" href="#handling-srpm-files" id="id30">Handling .srpm files</a></li>
+<li><a class="reference internal" href="#install-command-does-installation-only" id="id31"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a></li>
+<li><a class="reference internal" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" id="id32">Promoting package to install to a package that obsoletes it</a></li>
 </ul>
 </li>
 </ul>
@@ -118,8 +119,12 @@ more packages.</p>
 can just do <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> to find out what package gives a particular
 provide.</p>
 </div>
+<div class="section" id="no-deplist-command">
+<h2><a class="toc-backref" href="#id10">No <tt class="docutils literal"><span class="pre">deplist</span></tt> command</a><a class="headerlink" href="#no-deplist-command" title="Permalink to this headline">¶</a></h2>
+<p>Alternative to Yum <tt class="docutils literal"><span class="pre">deplist</span></tt> command to find out dependencies of the package is <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">repoquery</span> <span class="pre">--requires</span></tt> using <a class="reference external" href="http://rpm-software-management.github.io/dnf-plugins-core/repoquery.html">repoquery plugin</a>.</p>
+</div>
 <div class="section" id="excludes-and-repo-excludes-apply-to-all-operations">
-<h2><a class="toc-backref" href="#id10">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id11">Excludes and repo excludes apply to all operations</a><a class="headerlink" href="#excludes-and-repo-excludes-apply-to-all-operations" title="Permalink to this headline">¶</a></h2>
 <p>Yum only respects excludes during installs and upgrades. DNF extends this to all
 operations, among others erasing and listing. If you e.g. want to see a list of
 all installed <tt class="docutils literal"><span class="pre">python-f*</span></tt> packages but not any of the Flask packages, the
@@ -128,22 +133,22 @@ following will work:</p>
 </div>
 </div>
 <div class="section" id="yum-s-conf-directive-includepkgs-is-just-include">
-<h2><a class="toc-backref" href="#id11">Yum&#8217;s conf directive <tt class="docutils literal"><span class="pre">includepkgs</span></tt> is just <tt class="docutils literal"><span class="pre">include</span></tt></a><a class="headerlink" href="#yum-s-conf-directive-includepkgs-is-just-include" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id12">Yum&#8217;s conf directive <tt class="docutils literal"><span class="pre">includepkgs</span></tt> is just <tt class="docutils literal"><span class="pre">include</span></tt></a><a class="headerlink" href="#yum-s-conf-directive-includepkgs-is-just-include" title="Permalink to this headline">¶</a></h2>
 <p><tt class="docutils literal"><span class="pre">include</span></tt> directive name of [main] and Repo configuration is more logical and better named counterpart of <tt class="docutils literal"><span class="pre">exclude</span></tt> in DNF.</p>
 </div>
 <div class="section" id="protected-packages-is-supported-via-plugin">
-<h2><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is supported via plugin</a><a class="headerlink" href="#protected-packages-is-supported-via-plugin" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is supported via plugin</a><a class="headerlink" href="#protected-packages-is-supported-via-plugin" title="Permalink to this headline">¶</a></h2>
 <p>DNF drops Yum&#8217;s <tt class="docutils literal"><span class="pre">protected_packages</span></tt> configuration option. Generally, the core DNF lets the user do what she specified, even have DNF itself removed. Similar functionality to <tt class="docutils literal"><span class="pre">protected_packages</span></tt> is however provided by the <a class="reference external" href="http://rpm-software-management.github.io/dnf-plugins-core/protected_packages.html">protected_packages plugin</a>.</p>
 </div>
 <div class="section" id="dnf-erase-kernel-deletes-all-packages-called-kernel">
-<h2><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">erase</span> <span class="pre">kernel</span></tt> deletes all packages called <tt class="docutils literal"><span class="pre">kernel</span></tt></a><a class="headerlink" href="#dnf-erase-kernel-deletes-all-packages-called-kernel" title="Permalink to this headline">¶</a></h2>
 <p>In Yum, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.:</p>
 <div class="highlight-python"><pre>dnf erase kernel-3.9.4</pre>
 </div>
 </div>
 <div class="section" id="dnf-provides-bin-file-does-not-find-any-packages-on-fedora">
-<h2><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span> <span class="pre">/bin/&lt;file&gt;</span></tt> does not find any packages on Fedora</a><a class="headerlink" href="#dnf-provides-bin-file-does-not-find-any-packages-on-fedora" title="Permalink to this headline">¶</a></h2>
 <p>After <a class="reference external" href="https://fedoraproject.org/wiki/Features/UsrMove">UsrMove</a> there&#8217;s no
 directory <tt class="docutils literal"><span class="pre">/bin</span></tt> on Fedora systems and no files get installed there,
 <tt class="docutils literal"><span class="pre">/bin</span></tt> is only a symlink created by the <tt class="docutils literal"><span class="pre">filesystem</span></tt> package to point to
@@ -159,7 +164,7 @@ binary use the actual path for binaries on Fedora:</p>
 <p>Also see related Fedora bugzillas <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982947">982947</a> and <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=982664">982664</a>.</p>
 </div>
 <div class="section" id="skip-if-unavailable-enabled-by-default">
-<span id="skip-if-unavailable-default"></span><h2><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a><a class="headerlink" href="#skip-if-unavailable-enabled-by-default" title="Permalink to this headline">¶</a></h2>
+<span id="skip-if-unavailable-default"></span><h2><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">skip_if_unavailable</span></tt> enabled by default</a><a class="headerlink" href="#skip-if-unavailable-enabled-by-default" title="Permalink to this headline">¶</a></h2>
 <p>The important system repos should never be down and we see the third party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit <tt class="docutils literal"><span class="pre">skip_if_unavailable=True</span></tt> in the relevant repo .ini file
@@ -167,17 +172,17 @@ Yum immediately stops on a repo error, confusing and bothering the user.</p>
 <p>See the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=984483">Fedora bug 984483</a>.</p>
 </div>
 <div class="section" id="overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled">
-<h2><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a><a class="headerlink" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">overwrite_groups</span></tt> dropped, comps functions acting as if always disabled</a><a class="headerlink" href="#overwrite-groups-dropped-comps-functions-acting-as-if-always-disabled" title="Permalink to this headline">¶</a></h2>
 <p>This config option has been dropped. When DNF sees several groups with the same
 group id it merges the groups&#8217; contents together.</p>
 </div>
 <div class="section" id="mirrorlist-expire-dropped">
-<h2><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a><a class="headerlink" href="#mirrorlist-expire-dropped" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id18"><tt class="docutils literal"><span class="pre">mirrorlist_expire</span></tt> dropped</a><a class="headerlink" href="#mirrorlist-expire-dropped" title="Permalink to this headline">¶</a></h2>
 <p>To simplify things for the user, DNF uses <tt class="docutils literal"><span class="pre">metadata_expire</span></tt> for both expiring
 metadata and the mirrorlist file (which is a kind of metadata itself).</p>
 </div>
 <div class="section" id="metalink-not-recognized-in-the-mirrorlist-repo-option">
-<h2><a class="toc-backref" href="#id18">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a><a class="headerlink" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id19">metalink not recognized in the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt> repo option</a><a class="headerlink" href="#metalink-not-recognized-in-the-mirrorlist-repo-option" title="Permalink to this headline">¶</a></h2>
 <p>The following part of <tt class="docutils literal"><span class="pre">yum.conf(5)</span></tt> no longer applies for the <tt class="docutils literal"><span class="pre">mirrorlist</span></tt>
 option:</p>
 <blockquote>
@@ -187,40 +192,41 @@ the value of mirrorlist is copied to metalink (if metalink is not set).</div></b
 the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=948788">Fedora bug 948788</a>.</p>
 </div>
 <div class="section" id="group-package-types-dropped">
-<span id="id3"></span><h2><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
+<span id="id3"></span><h2><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a><a class="headerlink" href="#group-package-types-dropped" title="Permalink to this headline">¶</a></h2>
 <p>Done to simplify the configuration. User will typically want to decide what
 packages to install per-group and not via a global setting:</p>
 <div class="highlight-python"><pre>dnf group install with-optional Editors</pre>
 </div>
 </div>
 <div class="section" id="upgrade-requirements-on-install-dropped">
-<span id="id4"></span><h2><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
+<span id="id4"></span><h2><a class="toc-backref" href="#id21"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a><a class="headerlink" href="#upgrade-requirements-on-install-dropped" title="Permalink to this headline">¶</a></h2>
 <p>Dropping this config option with blurry semantics simplifies the
 configuration. DNF behaves as if this was disabled. If the user wanted to
 upgrade everything to the latest version she&#8217;d simply use <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt>.</p>
 </div>
 <div class="section" id="dnf-history-rollback-check-dropped">
-<h2><a class="toc-backref" href="#id21"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a><a class="headerlink" href="#dnf-history-rollback-check-dropped" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a><a class="headerlink" href="#dnf-history-rollback-check-dropped" title="Permalink to this headline">¶</a></h2>
 <p>DNF tolerates the use of other package managers. Then it is possible that not
 all changes to RPMDB are stored in the history of transactions. Therefore, DNF
 does not fail if such a situation is encountered and thus the <tt class="docutils literal"><span class="pre">force</span></tt> option
 is not needed anymore.</p>
 </div>
-<div class="section" id="packages-replacement-without-yum-shell">
-<span id="allowerasing-instead-of-shell"></span><h2><a class="toc-backref" href="#id22">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a><a class="headerlink" href="#packages-replacement-without-yum-shell" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="packages-replacement-without-yum-shell-or-yum-swap">
+<span id="allowerasing-instead-of-shell"></span><h2><a class="toc-backref" href="#id23">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt> or <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">swap</span></tt></a><a class="headerlink" href="#packages-replacement-without-yum-shell-or-yum-swap" title="Permalink to this headline">¶</a></h2>
 <p>Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the erase and the install in one transaction. The common way to setup such transaction in Yum is to use <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt>.</p>
 <p>There is no shell in DNF but the case above is still valid. We provide the <tt class="docutils literal"><span class="pre">--allowerasing</span></tt> switch for this purpose, e.g. say you want to replace <tt class="docutils literal"><span class="pre">A</span></tt> (providing <tt class="docutils literal"><span class="pre">P</span></tt>)  with B (also providing <tt class="docutils literal"><span class="pre">P</span></tt>, conflicting with <tt class="docutils literal"><span class="pre">A</span></tt>) without deleting <tt class="docutils literal"><span class="pre">C</span></tt> (which requires <tt class="docutils literal"><span class="pre">P</span></tt>) in the process. Use:</p>
 <div class="highlight-python"><pre>dnf --allowerasing install B</pre>
 </div>
+<p>This command is equal to <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">swap</span> <span class="pre">A</span> <span class="pre">B</span></tt>.</p>
 </div>
 <div class="section" id="dnf-history-info-last">
-<h2><a class="toc-backref" href="#id23"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a><a class="headerlink" href="#dnf-history-info-last" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id24"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a><a class="headerlink" href="#dnf-history-info-last" title="Permalink to this headline">¶</a></h2>
 <p>In this case, DNF recognizes <tt class="docutils literal"><span class="pre">last</span></tt> as the ID of the last transaction (like
 other <tt class="docutils literal"><span class="pre">history</span></tt> subcommands), while Yum considers it a package name. It goes
 similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.</p>
 </div>
 <div class="section" id="dependency-processing-details-are-not-shown-in-the-cli">
-<h2><a class="toc-backref" href="#id24">Dependency processing details are not shown in the CLI</a><a class="headerlink" href="#dependency-processing-details-are-not-shown-in-the-cli" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25">Dependency processing details are not shown in the CLI</a><a class="headerlink" href="#dependency-processing-details-are-not-shown-in-the-cli" title="Permalink to this headline">¶</a></h2>
 <p>During its depsolving phase, Yum outputs lines similar to:</p>
 <div class="highlight-python"><pre>---&gt; Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
 --&gt; Processing Dependency: rubygem-net-ssh-multi &gt;= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch</pre>
@@ -229,7 +235,7 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1044999">Fedora bug 1044999</a>.</p>
 </div>
 <div class="section" id="dnf-provides-complies-with-the-yum-documentation-of-the-command">
-<h2><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a><a class="headerlink" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a><a class="headerlink" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command" title="Permalink to this headline">¶</a></h2>
 <p>When one executes:</p>
 <div class="highlight-python"><pre>yum provides sandbox</pre>
 </div>
@@ -242,22 +248,22 @@ similarly for <tt class="docutils literal"><span class="pre">last-N</span></tt>.
 <p>to obtain similar results.</p>
 </div>
 <div class="section" id="enableplugin-not-recognized">
-<h2><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id27"><tt class="docutils literal"><span class="pre">--enableplugin</span></tt> not recognized</a><a class="headerlink" href="#enableplugin-not-recognized" title="Permalink to this headline">¶</a></h2>
 <p>This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).</p>
 </div>
 <div class="section" id="bandwidth-limiting">
-<h2><a class="toc-backref" href="#id27">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id28">Bandwidth limiting</a><a class="headerlink" href="#bandwidth-limiting" title="Permalink to this headline">¶</a></h2>
 <p>DNF supports the <tt class="docutils literal"><span class="pre">throttle</span></tt> and <tt class="docutils literal"><span class="pre">bandwidth</span></tt> options familiar from Yum.
 Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.</p>
 </div>
 <div class="section" id="the-usage-of-delta-rpm-files">
-<h2><a class="toc-backref" href="#id28">The usage of Delta RPM files</a><a class="headerlink" href="#the-usage-of-delta-rpm-files" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id29">The usage of Delta RPM files</a><a class="headerlink" href="#the-usage-of-delta-rpm-files" title="Permalink to this headline">¶</a></h2>
 <p>The boolean <tt class="docutils literal"><span class="pre">deltarpm</span></tt> option controls whether delta RPM files are used. Compared to Yum, DNF does not support <tt class="docutils literal"><span class="pre">deltarpm_percentage</span></tt> and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.</p>
 </div>
 <div class="section" id="handling-srpm-files">
-<h2><a class="toc-backref" href="#id29">Handling .srpm files</a><a class="headerlink" href="#handling-srpm-files" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id30">Handling .srpm files</a><a class="headerlink" href="#handling-srpm-files" title="Permalink to this headline">¶</a></h2>
 <p>DNF will terminate early with an error if a command is executed requesting an installing operation on a local <tt class="docutils literal"><span class="pre">.srpm</span></tt> file:</p>
 <div class="highlight-python"><pre>$ dnf install fdn-0.4.17-1.fc20.src.rpm tour-4-6.noarch.rpm
 Resolving dependencies
@@ -270,11 +276,11 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 <p>Yum will only issue warning in this case and continue installing the &#8220;tour&#8221; package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.</p>
 </div>
 <div class="section" id="install-command-does-installation-only">
-<span id="install-only"></span><h2><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a><a class="headerlink" href="#install-command-does-installation-only" title="Permalink to this headline">¶</a></h2>
+<span id="install-only"></span><h2><a class="toc-backref" href="#id31"><tt class="docutils literal"><span class="pre">install</span></tt> command does installation only</a><a class="headerlink" href="#install-command-does-installation-only" title="Permalink to this headline">¶</a></h2>
 <p>Any parameter for the <tt class="docutils literal"><span class="pre">install</span></tt> command that resolves into an already installed package will be ignored not upgraded, downgraded or reinstalled.</p>
 </div>
 <div class="section" id="promoting-package-to-install-to-a-package-that-obsoletes-it">
-<h2><a class="toc-backref" href="#id31">Promoting package to install to a package that obsoletes it</a><a class="headerlink" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id32">Promoting package to install to a package that obsoletes it</a><a class="headerlink" href="#promoting-package-to-install-to-a-package-that-obsoletes-it" title="Permalink to this headline">¶</a></h2>
 <p>DNF will not magically replace a request for installing package <tt class="docutils literal"><span class="pre">X</span></tt> to installing package <tt class="docutils literal"><span class="pre">Y</span></tt> if <tt class="docutils literal"><span class="pre">Y</span></tt> obsoletes <tt class="docutils literal"><span class="pre">X</span></tt>. Yum does this if its <tt class="docutils literal"><span class="pre">obsoletes</span></tt> config option is enabled but the behavior is not properly documented and can be harmful.</p>
 <p>See the the related <a class="reference external" href="https://bugzilla.redhat.com/show_bug.cgi?id=1096506">Fedora bug 1096506</a> and <a class="reference external" href="http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages">guidelines for renaming and obsoleting packages in Fedora</a>.</p>
 </div>
@@ -293,6 +299,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 <li><a class="reference internal" href="#update-and-upgrade-commands-are-the-same">Update and Upgrade Commands are the Same</a></li>
 <li><a class="reference internal" href="#clean-requirements-on-remove-on-by-default"><tt class="docutils literal"><span class="pre">clean_requirements_on_remove</span></tt> on by default</a></li>
 <li><a class="reference internal" href="#no-resolvedep-command">No <tt class="docutils literal"><span class="pre">resolvedep</span></tt> command</a></li>
+<li><a class="reference internal" href="#no-deplist-command">No <tt class="docutils literal"><span class="pre">deplist</span></tt> command</a></li>
 <li><a class="reference internal" href="#excludes-and-repo-excludes-apply-to-all-operations">Excludes and repo excludes apply to all operations</a></li>
 <li><a class="reference internal" href="#yum-s-conf-directive-includepkgs-is-just-include">Yum&#8217;s conf directive <tt class="docutils literal"><span class="pre">includepkgs</span></tt> is just <tt class="docutils literal"><span class="pre">include</span></tt></a></li>
 <li><a class="reference internal" href="#protected-packages-is-supported-via-plugin"><tt class="docutils literal"><span class="pre">protected_packages</span></tt> is supported via plugin</a></li>
@@ -305,7 +312,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
 <li><a class="reference internal" href="#group-package-types-dropped"><tt class="docutils literal"><span class="pre">group_package_types</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#upgrade-requirements-on-install-dropped"><tt class="docutils literal"><span class="pre">upgrade_requirements_on_install</span></tt> dropped</a></li>
 <li><a class="reference internal" href="#dnf-history-rollback-check-dropped"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">rollback</span></tt> check dropped</a></li>
-<li><a class="reference internal" href="#packages-replacement-without-yum-shell">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt></a></li>
+<li><a class="reference internal" href="#packages-replacement-without-yum-shell-or-yum-swap">Packages replacement without <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">shell</span></tt> or <tt class="docutils literal"><span class="pre">yum</span> <span class="pre">swap</span></tt></a></li>
 <li><a class="reference internal" href="#dnf-history-info-last"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">history</span> <span class="pre">info</span> <span class="pre">last</span></tt></a></li>
 <li><a class="reference internal" href="#dependency-processing-details-are-not-shown-in-the-cli">Dependency processing details are not shown in the CLI</a></li>
 <li><a class="reference internal" href="#dnf-provides-complies-with-the-yum-documentation-of-the-command"><tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">provides</span></tt> complies with the Yum documentation of the command</a></li>
@@ -362,7 +369,7 @@ Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).</pre>
         <li class="right" >
           <a href="release_notes.html" title="DNF Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

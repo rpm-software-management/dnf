@@ -155,12 +155,14 @@ configuration.
 
     Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>` option. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
 
+.. _deltarpm-label:
+
 ``deltarpm``
     boolean
 
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
-    intensive. Default is off.
+    intensive. Default is on.
 
 .. _exclude-label:
 

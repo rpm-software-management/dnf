@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DNF Automatic &mdash; DNF 0.6.2-1 documentation</title>
+    <title>DNF Automatic &mdash; DNF 0.6.3-1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6.2-1',
+        VERSION:     '0.6.3-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="DNF 0.6.2-1 documentation" href="index.html" />
+    <link rel="top" title="DNF 0.6.3-1 documentation" href="index.html" />
     <link rel="prev" title="DNF User’s FAQ" href="user_faq.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="user_faq.html" title="DNF User’s FAQ"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,7 +60,7 @@
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
 <p>Alternative CLI to <tt class="docutils literal"><span class="pre">dnf</span> <span class="pre">upgrade</span></tt> with specific facilities to make it suitable to be executed automatically and regularly from systemd timers, cron jobs and similar.</p>
 <p>The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, <tt class="docutils literal"><span class="pre">/etc/dnf/automatic.conf</span></tt> is used.</p>
-<p>The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output or email.</p>
+<p>The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.</p>
 </div>
 <div class="section" id="configuration-file-format">
 <h2>Configuration File Format<a class="headerlink" href="#configuration-file-format" title="Permalink to this headline">¶</a></h2>
@@ -88,10 +88,10 @@
 <div class="section" id="emitters-section">
 <h3><tt class="docutils literal"><span class="pre">[emitters]</span></tt> section<a class="headerlink" href="#emitters-section" title="Permalink to this headline">¶</a></h3>
 <p>Choosing how the results should be reported.</p>
-<dl class="docutils">
+<dl class="docutils" id="emit-via-automatic-label">
 <dt><tt class="docutils literal"><span class="pre">emit_via</span></tt></dt>
-<dd><p class="first">list, default: <tt class="docutils literal"><span class="pre">email,</span> <span class="pre">stdio</span></tt></p>
-<p class="last">List of emitters to report the results through. Available emitters are <tt class="docutils literal"><span class="pre">stdio</span></tt> to print the result to standard output and <tt class="docutils literal"><span class="pre">email</span></tt> to send the report via email.</p>
+<dd><p class="first">list, default: <tt class="docutils literal"><span class="pre">email,</span> <span class="pre">stdio,</span> <span class="pre">motd</span></tt></p>
+<p class="last">List of emitters to report the results through. Available emitters are <tt class="docutils literal"><span class="pre">stdio</span></tt> to print the result to standard output, <tt class="docutils literal"><span class="pre">email</span></tt> to send the report via email and <tt class="docutils literal"><span class="pre">motd</span></tt> sends the result to <em>/etc/motd</em> file.</p>
 </dd>
 <dt><tt class="docutils literal"><span class="pre">system_name</span></tt></dt>
 <dd><p class="first">string, default: hostname of the given system</p>
@@ -183,7 +183,7 @@
         <li class="right" >
           <a href="user_faq.html" title="DNF User’s FAQ"
              >previous</a> |</li>
-        <li><a href="index.html">DNF 0.6.2-1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">DNF 0.6.3-1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

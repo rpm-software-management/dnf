@@ -1,6 +1,6 @@
 .\" Man page generated from reStructuredText.
 .
-.TH "DNF.AUTOMATIC" "8" "October 13, 2014" "0.6.2" "DNF"
+.TH "DNF.AUTOMATIC" "8" "December 08, 2014" "0.6.3" "DNF"
 .SH NAME
 dnf.automatic \- DNF Automatic
 .
@@ -66,7 +66,7 @@ Alternative CLI to \fBdnf upgrade\fP with specific facilities to make it suitabl
 .sp
 The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, \fB/etc/dnf/automatic.conf\fP is used.
 .sp
-The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output or email.
+The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.
 .SH CONFIGURATION FILE FORMAT
 .sp
 The configuration file is separated into topical sections.
@@ -98,9 +98,9 @@ Choosing how the results should be reported.
 .INDENT 0.0
 .TP
 .B \fBemit_via\fP
-list, default: \fBemail, stdio\fP
+list, default: \fBemail, stdio, motd\fP
 .sp
-List of emitters to report the results through. Available emitters are \fBstdio\fP to print the result to standard output and \fBemail\fP to send the report via email.
+List of emitters to report the results through. Available emitters are \fBstdio\fP to print the result to standard output, \fBemail\fP to send the report via email and \fBmotd\fP sends the result to \fI/etc/motd\fP file.
 .TP
 .B \fBsystem_name\fP
 string, default: hostname of the given system

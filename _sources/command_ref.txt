@@ -70,7 +70,7 @@ Options
     Resolve to IPv6 addresses only.
 
 ``--allowerasing``
-    Allow erasing of installed packages to resolve dependencies.
+    Allow erasing of installed packages to resolve dependencies. This option could be used as an alternative to ``yum swap`` command where packages to remove are not explicitly defined.
 
 ``--assumeno``
     answer no for all questions
