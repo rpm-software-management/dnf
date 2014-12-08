@@ -920,10 +920,6 @@
         "Odd placement and no rotation of hawkey.log"
     ], 
     [
-        1074715, 
-        "/var/log/dnf.rpm.log is an annoying filename - please change it to /var/log/dnf.log"
-    ], 
-    [
         1147523, 
         "missing group info environment group support"
     ], 

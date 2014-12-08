@@ -6,7 +6,7 @@
     create 0600 root root
 }
 
-/var/log/dnf-rpm.log {
+/var/log/dnf.rpm.log {
     missingok
     notifempty
     size 30k
@@ -14,7 +14,7 @@
     create 0600 root root
 }
 
-/var/log/dnf-plugin.log {
+/var/log/dnf.plugin.log {
     missingok
     notifempty
     size 30k

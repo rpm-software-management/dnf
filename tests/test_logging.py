@@ -38,7 +38,7 @@ def _split_logfile_entry(entry):
                         time=record[2], message=message)
 
 def drop_all_handlers():
-    for logger_name in ('dnf', 'dnf-rpm'):
+    for logger_name in ('dnf', 'dnf.rpm'):
         logger = logging.getLogger(logger_name)
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
@@ -124,13 +124,13 @@ class TestLogging(support.TestCase):
         # log everything to the console:
         self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                           self.logdir)
-        logger = logging.getLogger("dnf-rpm")
+        logger = logging.getLogger("dnf.rpm")
         with support.patch_std_streams() as (stdout, stderr):
             logger.info('rpm transaction happens.')
         # rpm logger never outputs to the console:
         self.assertEqual(stdout.getvalue(), "")
         self.assertEqual(stderr.getvalue(), "")
-        logfile = os.path.join(self.logdir, "dnf-rpm.log")
+        logfile = os.path.join(self.logdir, "dnf.rpm.log")
         self.assertFile(logfile)
         with open(logfile) as f:
             msgs =  map(operator.attrgetter("message"),
