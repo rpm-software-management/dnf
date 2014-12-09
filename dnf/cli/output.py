@@ -1338,8 +1338,6 @@ Transaction Summary
                 if old.cmdline is None:
                     blanks += 1
                 uids.add(old.loginuid)
-            if len(uids) == 1 and blanks > (done // 2):
-                uids.add('blah')
 
         fmt = "%s | %s | %s | %s | %s"
         if len(uids) == 1:
