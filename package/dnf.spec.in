@@ -142,8 +142,8 @@ popd
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %{_localstatedir}/log/%{name}.log
-%ghost %{_localstatedir}/log/%{name}-rpm.log
-%ghost %{_localstatedir}/log/%{name}-plugin.log
+%ghost %{_localstatedir}/log/%{name}.rpm.log
+%ghost %{_localstatedir}/log/%{name}.plugin.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 %{_mandir}/man8/dnf.8.gz
