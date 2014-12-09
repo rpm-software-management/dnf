@@ -1284,16 +1284,11 @@ Transaction Summary
         old = self.history.last()
         if old is None:
             logger.critical(_('No transactions'))
-            return None, None
+            return None
 
         tids = set()
         pats = []
         usertids = extcmds[1:]
-        printall = False
-        if usertids:
-            printall = True
-            if usertids[0] == 'all':
-                usertids.pop(0)
         for tid in usertids:
             try:
                 int(tid)
@@ -1309,8 +1304,8 @@ Transaction Summary
 
         if not tids and usertids:
             logger.critical(_('Bad transaction IDs, or package(s), given'))
-            return None, None
-        return tids, printall
+            return None
+        return tids
 
     def historyListCmd(self, extcmds):
         """Output a list of information about the history of yum
@@ -1324,16 +1319,11 @@ Transaction Summary
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
-        tids, printall = self._history_list_transactions(extcmds)
+        tids = self._history_list_transactions(extcmds)
         if tids is None:
             return 1, ['Failed history list']
 
-        limit = 20
-        if printall:
-            limit = None
-
-        old_tids = self.history.old(tids, limit=limit)
-        done = 0
+        old_tids = self.history.old(tids)
         if self.conf.history_list_view == 'users':
             uids = [1, 2]
         elif self.conf.history_list_view == 'commands':
@@ -1341,11 +1331,9 @@ Transaction Summary
         else:
             assert self.conf.history_list_view == 'single-user-commands'
             uids = set()
+            done = 0
             blanks = 0
             for old in old_tids:
-                if not printall and done >= limit:
-                    break
-
                 done += 1
                 if old.cmdline is None:
                     blanks += 1
@@ -1365,12 +1353,8 @@ Transaction Summary
                      fill_exact_width(_("Altered"), 6, 6)))
         print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
-        done = 0
-        for old in old_tids:
-            if not printall and done >= limit:
-                break
 
-            done += 1
+        for old in old_tids:
             if len(uids) == 1:
                 name = old.cmdline or ''
             else:
