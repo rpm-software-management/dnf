@@ -110,8 +110,9 @@ END
                 fi
                 ;;
             remove|erase)
-                if [ -r $cache_file ]; then
-                    COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" )' ) )
+                [ -r $cache_file ] && installed=$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )
+                if [ $? -eq 0 ]; then
+                    COMPREPLY=( $( compgen -W '$( echo $installed )' ) )
                 else
                     COMPREPLY=( $( compgen -W '$( python << END
 import hawkey
