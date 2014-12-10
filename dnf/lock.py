@@ -69,16 +69,26 @@ class ProcessLock(object):
             raise ThreadLockError(msg)
         self.count += 1
 
-    def _read_lock(self):
-        with open(self.target, 'r') as f:
-            return int(f.readline())
-
     def _try_lock(self):
         pid = str(os.getpid()).encode('utf-8')
         try:
             fd = os.open(self.target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
             os.write(fd, pid)
             os.close(fd)
+            return True
+        except OSError:
+            return False
+
+    def _try_read_lock(self):
+        try:
+            with open(self.target, 'r') as f:
+                return int(f.readline())
+        except IOError:
+            return -1
+
+    def _try_unlink(self):
+        try:
+            os.unlink(self.target)
             return True
         except OSError:
             return False
@@ -93,13 +103,16 @@ class ProcessLock(object):
         inform = True
         prev_pid = 0
         while not self._try_lock():
-            pid = self._read_lock()
+            pid = self._try_read_lock()
+            if pid == -1:
+                # already removed by other process
+                continue
             if pid == os.getpid():
                 # already locked by this process
                 return
             if not os.access('/proc/%d/stat' % pid, os.F_OK):
                 # locked by a dead process
-                os.unlink(self.target)
+                self._try_unlink()
                 continue
             if not self.blocking:
                 self._unlock_thread()
