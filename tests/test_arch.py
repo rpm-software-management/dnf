@@ -26,6 +26,7 @@ class ArchTest(tests.support.TestCase):
 
     def test_basearch(self):
         fn = dnf.arch.basearch
+        self.assertEqual(fn('armv6hl'), 'armhfp')
         self.assertEqual(fn('armv7hl'), 'armhfp')
         self.assertEqual(fn('i686'), 'i386')
         self.assertEqual(fn('noarch'), 'noarch')
