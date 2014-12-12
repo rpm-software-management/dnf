@@ -144,7 +144,7 @@ class ConfigPreProcessor(object):
             fo = self._incstack[-1]
             line = fo.readline()
             if len(line) > 0:
-                m = re.match(r'\s*include\s*=\s*(?P<url>.*)', line)
+                m = re.match(r'\s*includeconf\s*=\s*(?P<url>.*)', line)
                 if m:
                     url = m.group('url')
                     if len(url) == 0:
