@@ -34,6 +34,7 @@ Requires:	deltarpm
 Requires:	libreport-filesystem
 Requires:	pygpgme
 Requires:	pyliblzma
+Requires:	python-argcomplete
 Requires:	python-hawkey >= %{hawkey_version}
 Requires:	python-iniparse
 Requires:	python-libcomps >= %{libcomps_version}

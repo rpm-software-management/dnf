@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import argparse
+import argcomplete
+from dnf.cli.completion_helper import CompletionHelper
 import dnf.exceptions
 import dnf.yum.misc
 import logging
@@ -36,9 +38,11 @@ class OptionParser(argparse.ArgumentParser):
 
     def __init__(self, **kwargs):
         argparse.ArgumentParser.__init__(self, add_help=False, **kwargs)
+        self._CompletionHelper = CompletionHelper()
         self._cmd_usage = {} # names, summary for dnf commands, to build usage
         self._cmd_groups = set() # cmd groups added (main, plugin)
         self._addYumBasicOptions()
+        argcomplete.autocomplete(self)
 
     def error(self, msg):
         """Output an error message, and exit the program.  This method
@@ -169,7 +173,8 @@ class OptionParser(argparse.ArgumentParser):
                            help=_("config file location"))
         self.add_argument("-d", "--debuglevel", dest="debuglevel",
                            metavar='[debug level]', default=None,
-                           help=_("debugging output level"), type=int)
+                           help=_("debugging output level"), type=int
+                         ).completer=self._CompletionHelper.debuglevel
         self.add_argument("--debugsolver",
                            action="store_true", default=None,
                            help=_("dumps detailed solving results into files"))
