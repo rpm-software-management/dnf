@@ -62,8 +62,8 @@ class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
 TARGET = os.path.join(tests.support.USER_RUNDIR, 'unit-test.pid')
 
 
-def build_lock():
-    return dnf.lock.ProcessLock(TARGET, 'unit-tests')
+def build_lock(blocking=False):
+    return dnf.lock.ProcessLock(TARGET, 'unit-tests', blocking)
 
 
 class LockTest(tests.support.TestCase):
@@ -103,6 +103,17 @@ class ProcessLockTest(tests.support.TestCase):
             process.start()
             process.join()
         self.assertIsInstance(process.queue.get(), ProcessLockError)
+
+    def test_another_process_blocking(self):
+        l1 = build_lock(blocking=True)
+        l2 = build_lock(blocking=True)
+        process = OtherProcess(l1)
+        target = l1.target
+        with l2:
+            process.start()
+        process.join()
+        self.assertEqual(process.queue.empty(), True)
+        self.assertPathDoesNotExist(target)
 
     def test_another_thread(self):
         l1 = build_lock()
