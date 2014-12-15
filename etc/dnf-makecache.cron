@@ -1,11 +1,13 @@
 #! /bin/bash
 
-LOGFILE=/var/log/dnf-makecache.cron
-STAMP=`date +%c`:
-echo $STAMP >>$LOGFILE
-
-# Intentionally ignore errors here, for example in the case we don't
-# have a connection available to the remote repository.  Erroring out
-# would result in cron job mail. This could obviously be optimized and
-# improved, but this is just documenting the current code.
-/usr/bin/dnf makecache timer >>$LOGFILE || true
+if test -d /var/cache/dnf; then
+    LOGFILE=/var/log/dnf-makecache.cron
+    STAMP=`date +%c`:
+    echo $STAMP >>$LOGFILE
+    
+    # Intentionally ignore errors here, for example in the case we don't
+    # have a connection available to the remote repository.  Erroring out
+    # would result in cron job mail. This could obviously be optimized and
+    # improved, but this is just documenting the current code.
+    /usr/bin/dnf makecache timer >>$LOGFILE || true
+fi
