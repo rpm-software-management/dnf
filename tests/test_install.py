@@ -203,6 +203,17 @@ class MultilibBest(support.ResultTestCase):
                               ['lotus-3-17.i686',
                                'lotus-3-17.x86_64'])
 
+    def test_install_glob_exclude(self):
+        subj_ex = dnf.subject.Subject('*-1')
+        pkgs_ex = subj_ex.get_best_query(self.base.sack)
+        self.base.sack.add_excludes(pkgs_ex)
+
+        self.base.install('mrkite*')
+        (installed, _) = self.installed_removed(self.base)
+        self.assertCountEqual(map(str, installed),
+                              ['mrkite-2-0.x86_64',
+                               'trampoline-2.1-1.noarch'])
+
     def test_install_reponame(self):
         """Test whether packages are filtered by the reponame."""
         result = itertools.chain(

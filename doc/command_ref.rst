@@ -641,7 +641,9 @@ patterns above, DNF tries to see if the argument matches an existing provide.
 If multiple versions of the selected package exist in the repo, the most recent
 version suitable for the given operation is used.  The name specification is
 case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
-trigger shell-like glob matching.
+trigger shell-like glob matching. If globbing character is present in ``name``,
+DNF expands given ``name`` first and consequently selects all packages
+matching expanded ``<package-spec>``.
 
 ``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
 matching is never attempted there.

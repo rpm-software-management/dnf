@@ -1,6 +1,7 @@
 ^E110[0-9]:[ a-z0-9,._:]*Instance of 'Goal' has no '[_a-z]+' member.*$
 ^E110[0-9]:[ a-z0-9,._:]*Instance of 'Sack' has no '[_a-z]+' member.*$
 ^E110[0-9]:[ a-z0-9,._:]*Instance of 'Selector' has no '[_a-z]+' member.*$
+^E1103:[ a-z0-9,._:]*Instance of 'TestSack' has no 'add_excludes' member.*$
 ^R0902:[ a-z0-9,._:]*Too many instance attributes \([0-9]+/[0-9]+\)$
 ^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NODIGESTS of a client class$
 ^W0212:[ a-z0-9,._:]*Access to a protected member _RPMVSF_NOSIGNATURES of a client class$

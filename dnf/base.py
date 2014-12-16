@@ -1326,16 +1326,20 @@ class Base(object):
                 self._goal.install(a)
             return len(available)
         elif self.conf.multilib_policy == "best":
-            sltr = subj.get_best_selector(self.sack)
-            if not sltr.matches():
+            sltrs = subj.get_best_selectors(self.sack)
+            match = reduce(lambda x, y: y.matches() or x, sltrs, [])
+            if not match:
                 raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
-            if reponame is not None:
-                sltr = sltr.set(reponame=reponame)
-            already_inst = self._sltr_matches_installed(sltr)
-            if already_inst:
-                for package in already_inst:
-                    _msg_installed(package)
-            self._goal.install(select=sltr)
+            for sltr in sltrs:
+                if not sltr.matches():
+                    continue
+                if reponame is not None:
+                    sltr = sltr.set(reponame=reponame)
+                already_inst = self._sltr_matches_installed(sltr)
+                if already_inst:
+                    for package in already_inst:
+                        _msg_installed(package)
+                self._goal.install(select=sltr)
             return 1
         return 0
 
@@ -1419,13 +1423,17 @@ class Base(object):
 
     def upgrade(self, pkg_spec, reponame=None):
         # :api
-        sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-        if sltr.matches():
-            if reponame is not None:
-                sltr = sltr.set(reponame=reponame)
-
+        sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+        match = reduce(lambda x, y: y.matches() or x, sltrs, [])
+        if match:
             prev_count = self._goal.req_length()
-            self._goal.upgrade(select=sltr)
+            for sltr in sltrs:
+                if not sltr.matches():
+                    continue
+                if reponame is not None:
+                    sltr = sltr.set(reponame=reponame)
+                self._goal.upgrade(select=sltr)
+
             if self._goal.req_length() - prev_count:
                 return 1
 
@@ -1461,11 +1469,15 @@ class Base(object):
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
-            sltr = dnf.subject.Subject(pkg_spec).get_best_selector(self.sack)
-            if not sltr.matches():
+            sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+            match = reduce(lambda x, y: y.matches() or x, sltrs, [])
+            if not match:
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
-            self._goal.distupgrade(select=sltr)
+            for sltr in sltrs:
+                if not sltr.matches():
+                    continue
+                self._goal.distupgrade(select=sltr)
         return 1
 
     def remove(self, pkg_spec, reponame=None):
