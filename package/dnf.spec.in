@@ -152,7 +152,7 @@ popd
 %{_unitdir}/dnf-makecache.timer
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
-%{py2pluginpath}
+%dir %{py2pluginpath}
 
 %files -n dnf-yum
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -163,7 +163,8 @@ popd
 %{_bindir}/dnf-3
 %exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
-%{py3pluginpath}
+%dir %{py3pluginpath}
+%dir %{py3pluginpath}/__pycache__/
 
 %files automatic
 %doc AUTHORS COPYING PACKAGE-LICENSING
