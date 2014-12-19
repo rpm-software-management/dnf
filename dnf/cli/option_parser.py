@@ -51,7 +51,7 @@ class OptionParser(argparse.ArgumentParser):
         sys.exit(1)
 
     @staticmethod
-    def _splitArg(seq):
+    def _split_arg(seq):
         """ Split all strings in seq, at "," and whitespace.
             Returns a new list. """
         ret = []
@@ -86,7 +86,7 @@ class OptionParser(argparse.ArgumentParser):
             # config file is parsed and moving us forward
             # set some things in it.
             if opts.disableplugins:
-                opts.disableplugins = self._splitArg(opts.disableplugins)
+                opts.disableplugins = self._split_arg(opts.disableplugins)
 
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
@@ -111,12 +111,12 @@ class OptionParser(argparse.ArgumentParser):
                     output.term.reinit(color=opts.color)
 
             if opts.disableexcludes:
-                disable_excludes = self._splitArg(opts.disableexcludes)
+                disable_excludes = self._split_arg(opts.disableexcludes)
             else:
                 disable_excludes = []
             conf.disable_excludes = disable_excludes
 
-            for exclude in self._splitArg(opts.exclude):
+            for exclude in self._split_arg(opts.exclude):
                 try:
                     excludelist = conf.exclude
                     excludelist.append(exclude)
