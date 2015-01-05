@@ -138,6 +138,7 @@ popd
 %{_bindir}/dnf
 %dir %{confdir}
 %dir %{pluginconfpath}
+%dir %{confdir}/protected.d
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
