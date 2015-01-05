@@ -135,7 +135,7 @@ def ucd(obj):
 # widths of Unicode characters
 
 def _exact_width_char(uchar):
-    return 2 if unicodedata.east_asian_width(uchar) in ('W', 'F', 'A') else 1
+    return 2 if unicodedata.east_asian_width(uchar) in ('W', 'F') else 1
 
 
 def chop_str(msg, chop=None):
