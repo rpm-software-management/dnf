@@ -22,7 +22,7 @@
     create 0600 root root
 }
 
-/var/cache/dnf/*/*/hawkey.log {
+/var/log/hawkey.log {
     missingok
     notifempty
     maxsize 30k

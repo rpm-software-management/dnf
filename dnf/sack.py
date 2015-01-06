@@ -1,7 +1,7 @@
 # sack.py
 # The dnf.Sack class, derived from hawkey.Sack
 #
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -22,9 +22,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import dnf.util
 import dnf.yum.misc
-import hawkey
 import dnf.package
 import dnf.query
+import hawkey
+import os
 from dnf.pycomp import basestring
 
 class SackVersion(object):
@@ -82,8 +83,8 @@ def build_sack(base):
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
     return Sack(pkgcls=dnf.package.Package, pkginitval=base,
-                cachedir=cachedir,
-                rootdir=base.conf.installroot)
+                cachedir=cachedir, rootdir=base.conf.installroot,
+                logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
 
 def rpmdb_sack(base):
     sack = build_sack(base)
