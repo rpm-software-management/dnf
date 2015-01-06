@@ -1,7 +1,7 @@
 /var/log/dnf.log {
     missingok
     notifempty
-    size 30k
+    maxsize 30k
     yearly
     create 0600 root root
 }
@@ -9,7 +9,7 @@
 /var/log/dnf.rpm.log {
     missingok
     notifempty
-    size 30k
+    maxsize 30k
     yearly
     create 0600 root root
 }
@@ -17,7 +17,7 @@
 /var/log/dnf.plugin.log {
     missingok
     notifempty
-    size 30k
+    maxsize 30k
     yearly
     create 0600 root root
 }
@@ -25,7 +25,7 @@
 /var/cache/dnf/*/*/hawkey.log {
     missingok
     notifempty
-    size 30k
+    maxsize 30k
     yearly
     create 0600 root root
 }
