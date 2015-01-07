@@ -364,9 +364,7 @@ Install Command
 
 ``dnf [options] install <spec>...``
     Installs the given packages and their dependencies. Each ``<spec>`` can be
-    either a ``<package-spec>``, which specifies a package directly, or a
-    ``@<group-spec>``, which specifies an (environment) group which contains it. After the
-    transaction is finished all not yet installed specified packages are installed
+    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. After the transaction is finished all not yet installed specified packages are installed
     on the system.
 
 ------------
