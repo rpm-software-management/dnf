@@ -28,7 +28,6 @@ import dnf.cli
 import dnf.exceptions
 import dnf.util
 import logging
-import operator
 
 logger = logging.getLogger("dnf")
 
@@ -102,8 +101,8 @@ class GroupCommand(commands.Command):
             raise dnf.exceptions.CompsError(msg)
 
     def _environment_lists(self, patterns):
-        def installed_pred(env):
-            return self.base.group_persistor.environment(env.id).installed
+        def available_pred(env):
+            return not self.base.group_persistor.environment(env.id).installed
 
         self._assert_comps()
         if patterns is None:
@@ -111,10 +110,7 @@ class GroupCommand(commands.Command):
         else:
             envs = self.base.comps.environments_by_pattern(",".join(patterns))
 
-        available, installed = dnf.util.partition(installed_pred, envs)
-
-        sort_fn = operator.attrgetter('ui_name')
-        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
+        return dnf.util.mapall(list, dnf.util.partition(available_pred, envs))
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
@@ -135,8 +131,7 @@ class GroupCommand(commands.Command):
             if not uservisible or grp.uservisible:
                 tgt_list.append(grp)
 
-        sort_fn = operator.attrgetter('ui_name')
-        return sorted(installed, key=sort_fn), sorted(available, key=sort_fn)
+        return installed, available
 
     def _grp_setup(self):
         comps = self.base.read_comps()

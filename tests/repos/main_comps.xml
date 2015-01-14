@@ -21,7 +21,7 @@
    <id>somerset</id>
    <default>true</default>
    <uservisible>false</uservisible>
-   <display_order>1024</display_order>
+   <display_order>2000</display_order>
    <name>Solid Ground</name>
    <description>--</description>
     <packagelist>
@@ -32,6 +32,7 @@
   </group>
   <group>
     <id>Peppers</id>
+    <display_order>50</display_order>
     <name>Pepper's</name>
     <packagelist>
       <packagereq>hole</packagereq>

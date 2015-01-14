@@ -29,11 +29,11 @@
 
   .. attribute:: categories
 
-    List of all contained :class:`dnf.comps.Category` objects.
+    List of all contained :class:`dnf.comps.Category` objects ordered by `display_order` tag defined in comps.xml file.
 
   .. attribute:: environments
 
-    List of all contained :class:`dnf.comps.Environment` objects.
+    List of all contained :class:`dnf.comps.Environment` objects ordered by `display_order` tag defined in comps.xml file.
 
   .. attribute:: groups
 
@@ -57,11 +57,11 @@
 
   .. method:: environments_by_pattern(pattern, case_sensitive=False)
 
-    Return an iterable of :class:`dnf.comps.Environment` objects matching `pattern`.
+    Return an iterable of :class:`dnf.comps.Environment` objects matching `pattern` ordered by `display_order` tag defined in comps.xml file.
 
   .. attribute:: environments_iter
 
-    Return iterator over all contained :class:`dnf.comps.Environment` objects.
+    Return iterator over all contained :class:`dnf.comps.Environment` objects in order they appear in comps.xml file.
 
   .. method:: group_by_pattern(pattern, case_sensitive=False)
 
@@ -69,11 +69,11 @@
 
   .. method:: groups_by_pattern(pattern, case_sensitive=False)
 
-    Return an iterable of :class:`dnf.comps.Group` objects matching `pattern`.
+    Return an iterable of :class:`dnf.comps.Group` objects matching `pattern` ordered by `display_order` tag defined in comps.xml file.
 
   .. attribute:: groups_iter
 
-    Return iterator over all contained :class:`dnf.comps.Group` objects.
+    Return iterator over all contained :class:`dnf.comps.Group` objects in order they appear in comps.xml file.
 
 .. class:: Package
 
