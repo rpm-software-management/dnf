@@ -94,6 +94,10 @@ class CompsTest(support.TestCase):
         g = dnf.util.first(comps.groups_iter())
         self.assertEqual(g.desc_by_lang['cs'], TRANSLATION)
 
+    def test_group_display_order(self):
+        self.assertEqual([g.name for g in self.comps.groups],
+                         ["Pepper's", 'Base', 'Solid Ground'])
+
     def test_packages(self):
         comps = self.comps
         group = dnf.util.first(comps.groups_iter())

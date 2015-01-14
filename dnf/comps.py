@@ -33,6 +33,7 @@ import libcomps
 import locale
 import operator
 import re
+import sys
 
 # :api :binformat
 CONDITIONAL = 1
@@ -42,14 +43,17 @@ OPTIONAL    = 8
 
 ALL_TYPES = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
 
+
 def _internal_comps_length(comps):
     collections = (comps.categories, comps.groups, comps.environments)
     return reduce(operator.__add__, map(len, collections))
+
 
 def _first_if_iterable(seq):
     if seq is None:
         return None
     return dnf.util.first(seq)
+
 
 def _by_pattern(pattern, case_sensitive, sqn):
     """Return items from sqn matching either exactly or glob-wise."""
@@ -65,6 +69,11 @@ def _by_pattern(pattern, case_sensitive, sqn):
         match = re.compile(fnmatch.translate(pattern), flags=re.I).match
 
     return {g for g in sqn if match(g.name) or match(g.id) or match(g.ui_name)}
+
+
+def _fn_display_order(group):
+    return sys.maxsize if group.display_order is None else group.display_order
+
 
 class _Langs(object):
 
@@ -304,7 +313,7 @@ class Comps(object):
     @property
     def environments(self):
         # :api
-        return list(self.environments_iter())
+        return sorted(self.environments_iter(), key=_fn_display_order)
 
     def environment_by_pattern(self, pattern, case_sensitive=False):
         # :api
@@ -313,7 +322,9 @@ class Comps(object):
 
     def environments_by_pattern(self, pattern, case_sensitive=False):
         # :api
-        return _by_pattern(pattern, case_sensitive, self.environments)
+        envs = list(self.environments_iter())
+        found_envs = _by_pattern(pattern, case_sensitive, envs)
+        return sorted(found_envs, key=_fn_display_order)
 
     def environments_iter(self):
         # :api
@@ -322,7 +333,7 @@ class Comps(object):
     @property
     def groups(self):
         # :api
-        return list(self.groups_iter())
+        return sorted(self.groups_iter(), key=_fn_display_order)
 
     def group_by_id(self, id_):
         return dnf.util.first(g for g in self.groups_iter() if g.id == id_)
@@ -334,7 +345,8 @@ class Comps(object):
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
         # :api
-        return _by_pattern(pattern, case_sensitive, self.groups)
+        grps = _by_pattern(pattern, case_sensitive, list(self.groups_iter()))
+        return sorted(grps, key=_fn_display_order)
 
     def groups_iter(self):
         # :api
