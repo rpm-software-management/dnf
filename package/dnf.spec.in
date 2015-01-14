@@ -122,7 +122,7 @@ popd
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
-mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}
+mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
@@ -165,6 +165,7 @@ popd
 %exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
 %dir %{py3pluginpath}
+%dir %{py3pluginpath}/__pycache__
 
 %files automatic
 %doc AUTHORS COPYING PACKAGE-LICENSING
