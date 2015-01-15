@@ -3,7 +3,7 @@
 # This file is part of dnf.
 #
 # Copyright 2013 (C) Elad Alfassa <elad@fedoraproject.org>
-# Copyright 2014 (C) Igor Gnatenko <i.gnatenko.brain@gmail.com>
+# Copyright 2014-2015 (C) Igor Gnatenko <i.gnatenko.brain@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -109,12 +109,15 @@ END
                     fi
                 fi
                 ;;
-            remove|erase)
-                [ -r $cache_file ] && installed=$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )
-                if [ $? -eq 0 ]; then
-                    COMPREPLY=( $( compgen -W '$( echo $installed )' ) )
+            remove|erase|downgrade)
+                if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
+                    [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 else
-                    COMPREPLY=( $( compgen -W '$( python << END
+                    [ -r $cache_file ] && installed=$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )
+                     if [ $? -eq 0 ]; then
+                        COMPREPLY=( $( compgen -W '$( echo $installed )' ) )
+                    else
+                        COMPREPLY=( $( compgen -W '$( python << END
 import hawkey
 sack = hawkey.Sack()
 sack.load_system_repo()
@@ -123,8 +126,8 @@ for pkg in q:
     print("{}.{}").format(pkg.name, pkg.arch)
 END
 )' -- "$cur" ) )
+                    fi
                 fi
-                ext=''
                 ;;
             help)
                 case $nth in
