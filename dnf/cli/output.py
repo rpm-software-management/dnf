@@ -680,7 +680,12 @@ class Output(object):
 
     def _display_packages_verbose(self, pkg_names, name_dict, columns):
         for name in pkg_names:
-            pkg = name_dict[name]
+            try:
+                pkg = name_dict[name]
+            except KeyError:
+                # package not in any repo -> print only package name
+                print('%s%s' % (self.GRP_PACKAGE_INDENT, name))
+                continue
             highlight = False
             if not pkg.from_system:
                 highlight = self.conf.color_list_available_install
