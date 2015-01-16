@@ -12,7 +12,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -22,80 +22,92 @@ URL:		https://github.com/rpm-software-management/dnf
 # cd dnf/package
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
-Source0:	http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
-BuildArch:	noarch
-BuildRequires:	cmake
-BuildRequires:	pygpgme
-BuildRequires:	pyliblzma
-BuildRequires:	python2
-BuildRequires:	python-bugzilla
-BuildRequires:	python-hawkey >= %{hawkey_version}
-BuildRequires:	python-iniparse
-BuildRequires:	python-libcomps >= %{libcomps_version}
-BuildRequires:	python-librepo >= %{librepo_version}
-BuildRequires:  python-nose
-BuildRequires:  python-sphinx
-BuildRequires:  rpm-python >= %{rpm_version}
-BuildRequires:  systemd
+Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
+BuildArch:  noarch
+BuildRequires:  cmake
 BuildRequires:  gettext
-Requires:	deltarpm
-Requires:	libreport-filesystem
-Requires:	pygpgme
-Requires:	pyliblzma
-Requires:	python-hawkey >= %{hawkey_version}
-Requires:	python-iniparse
-Requires:	python-libcomps >= %{libcomps_version}
-Requires:	python-librepo >= %{librepo_version}
-Requires:	rpm-plugin-systemd-inhibit
-Requires:	rpm-python >= %{rpm_version}
-Requires(post):		systemd
-Requires(preun):	systemd
-Requires(postun):	systemd
-
+BuildRequires:  python-bugzilla
+BuildRequires:  python-sphinx
+BuildRequires:  systemd
+%if 0%{?fedora} >= 23
+Requires:   python3-dnf = %{version}-%{release}
+%else
+Requires:   python-dnf = %{version}-%{release}
+%endif
+Requires(post):     systemd
+Requires(preun):    systemd
+Requires(postun):   systemd
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
+%package conf
+Requires:   libreport-filesystem
+Summary:    Configuration files for DNF.
+%description conf
+Configuration files for DNF.
+
 %package -n dnf-yum
 Conflicts:      yum
-Requires:	dnf = %{version}-%{release}
-Summary:	As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
-
+Requires:   dnf = %{version}-%{release}
+Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 %description -n dnf-yum
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
-%package -n python3-dnf
-Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-BuildRequires:	python3
-BuildRequires:	python3-devel
-BuildRequires:	python3-hawkey >= %{hawkey_version}
-BuildRequires:	python3-iniparse
-BuildRequires:	python3-libcomps >= %{libcomps_version}
-BuildRequires:	python3-librepo >= %{librepo_version}
-BuildRequires:	python3-nose
-BuildRequires:	python3-pygpgme
-BuildRequires:	rpm-python3 >= %{rpm_version}
-Requires:	dnf = %{version}-%{release}
-Requires:	python3-hawkey >= %{hawkey_version}
-Requires:	python3-iniparse
-Requires:	python3-libcomps >= %{libcomps_version}
-Requires:	python3-librepo >= %{librepo_version}
-Requires:	python3-pygpgme
-Requires:	rpm-plugin-systemd-inhibit
-Requires:	rpm-python3 >= %{rpm_version}
+%package -n python-dnf
+Summary:    Python 2 interface to DNF.
+BuildRequires:  pygpgme
+BuildRequires:  pyliblzma
+BuildRequires:  python2
+BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python-iniparse
+BuildRequires:  python-libcomps >= %{libcomps_version}
+BuildRequires:  python-librepo >= %{librepo_version}
+BuildRequires:  python-nose
+BuildRequires:  rpm-python >= %{rpm_version}
+Requires:   dnf-conf = %{version}-%{release}
+Requires:   deltarpm
+Requires:   pygpgme
+Requires:   pyliblzma
+Requires:   python-hawkey >= %{hawkey_version}
+Requires:   python-iniparse
+Requires:   python-libcomps >= %{libcomps_version}
+Requires:   python-librepo >= %{librepo_version}
+Requires:   rpm-plugin-systemd-inhibit
+Requires:   rpm-python >= %{rpm_version}
+%description -n python-dnf
+Python 2 interface to DNF.
 
+%package -n python3-dnf
+Summary:    Python 3 interface to DNF.
+BuildRequires:  python3
+BuildRequires:  python3-devel
+BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  python3-iniparse
+BuildRequires:  python3-libcomps >= %{libcomps_version}
+BuildRequires:  python3-librepo >= %{librepo_version}
+BuildRequires:  python3-nose
+BuildRequires:  python3-pygpgme
+BuildRequires:  rpm-python3 >= %{rpm_version}
+Requires:   dnf-conf = %{version}-%{release}
+Requires:   deltarpm
+Requires:   python3-hawkey >= %{hawkey_version}
+Requires:   python3-iniparse
+Requires:   python3-libcomps >= %{libcomps_version}
+Requires:   python3-librepo >= %{librepo_version}
+Requires:   python3-pygpgme
+Requires:   rpm-plugin-systemd-inhibit
+Requires:   rpm-python3 >= %{rpm_version}
+Obsoletes:  dnf <= 0.6.4-1
 %description -n python3-dnf
-Package manager forked from Yum, using libsolv as a dependency resolver.
+Python 3 interface to DNF.
 
 %package automatic
-Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
-BuildRequires:	python2
-BuildRequires:  python-nose
+Summary:    Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 BuildRequires:  systemd
-Requires:	dnf = %{version}-%{release}
-Requires(post):		systemd
-Requires(preun):	systemd
+Requires:   dnf = %{version}-%{release}
+Requires(post):     systemd
+Requires(preun):    systemd
 Requires(postun):	systemd
-
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
@@ -127,6 +139,11 @@ mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
+%if 0%{?fedora} >= 23
+ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
+%else
+ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
+%endif
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
@@ -138,29 +155,38 @@ popd
 %files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
+%{_mandir}/man8/dnf.8.gz
+%{_mandir}/man5/dnf.conf.5.gz
+%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%{_unitdir}/dnf-makecache.service
+%{_unitdir}/dnf-makecache.timer
+%{_tmpfilesdir}/dnf.conf
+
+%files conf
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %dir %{confdir}
 %dir %{pluginconfpath}
 %dir %{confdir}/protected.d
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%ghost %{_localstatedir}/log/hawkey.log
 %ghost %{_localstatedir}/log/%{name}.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
-%{_mandir}/man8/dnf.8.gz
-%{_mandir}/man5/dnf.conf.5.gz
-%{_unitdir}/dnf-makecache.service
-%{_unitdir}/dnf-makecache.timer
-%{_tmpfilesdir}/dnf.conf
-%exclude %{python_sitelib}/dnf/automatic
-%{python_sitelib}/dnf/
-%dir %{py2pluginpath}
 
 %files -n dnf-yum
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/yum
+
+%files -n python-dnf
+%{_bindir}/dnf-2
+%doc AUTHORS README.rst COPYING PACKAGE-LICENSING
+%exclude %{python_sitelib}/dnf/automatic
+%{python_sitelib}/dnf/
+%dir %{py2pluginpath}
 
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
