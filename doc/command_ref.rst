@@ -35,12 +35,11 @@ Description
 
 Available commands are:
 
-* autoerase
+* autoremove
 * check-update
 * clean
 * distro-sync
 * downgrade
-* erase
 * group
 * help
 * history
@@ -50,6 +49,7 @@ Available commands are:
 * makecache
 * provides
 * reinstall
+* remove
 * repolist
 * repository-packages
 * search
@@ -182,10 +182,10 @@ For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
 
 -------------------
-Auto Erase Command
+Auto Remove Command
 -------------------
 
-``dnf [options] autoerase``
+``dnf [options] autoremove``
 
     Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
@@ -261,7 +261,7 @@ Erase Command
 -------------
 
 ``dnf [options] erase <spec>...``
-     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
+    Deprecated alias for the :ref:`\remove_command-label`.
 
 -------------
 Group Command
@@ -444,12 +444,14 @@ Reinstall Command
     not installed or not available (i.e. there is no repository where to
     download the same RPM).
 
+.. _remove_command-label:
+
 --------------
 Remove Command
 --------------
 
 ``dnf [options] remove <package-specs>...``
-    Deprecated alias for the :ref:`\erase_command-label`.
+    Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 ----------------
 Repolist Command

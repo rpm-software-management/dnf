@@ -1,7 +1,7 @@
-# erase_command.py
-# Erase CLI command.
+# remove_command.py
+# Remove CLI command.
 #
-# Copyright (C) 2012-2014  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -29,10 +29,10 @@ import logging
 logger = logging.getLogger("dnf")
 
 
-class EraseCommand(commands.Command):
-    """Erase command."""
+class RemoveCommand(commands.Command):
+    """Remove command."""
 
-    aliases = ('erase', 'remove')
+    aliases = ('remove', 'erase')
     summary = _("Remove a package or packages from your system")
     usage = "%s..." % _('PACKAGE')
 

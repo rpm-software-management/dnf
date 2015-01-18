@@ -1,7 +1,7 @@
-# autoerase.py
-# Autoerase CLI command.
+# autoremove.py
+# Autoremove CLI command.
 #
-# Copyright (C) 2014  Red Hat, Inc.
+# Copyright (C) 2014-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -25,9 +25,9 @@ from .. import commands
 import hawkey
 
 
-class AutoeraseCommand(commands.Command):
+class AutoremoveCommand(commands.Command):
 
-    aliases = ('autoerase',)
+    aliases = ('autoremove',)
 
     def configure(self, _):
         demands = self.cli.demands
@@ -46,7 +46,7 @@ class AutoeraseCommand(commands.Command):
 
         solved = goal.run()
         if base.conf.debug_solver:
-            goal.write_debugdata('./debugdata-autoerase')
+            goal.write_debugdata('./debugdata-autoremove')
         assert solved
 
         for pkg in goal.list_unneeded():
