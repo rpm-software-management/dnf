@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,10 +18,10 @@
 from __future__ import absolute_import
 from tests import support
 
-import dnf.cli.commands.autoerase as autoerase
+import dnf.cli.commands.autoremove as autoremove
 
 
-class AutoEraseCommandTest(support.ResultTestCase):
+class AutoRemoveCommandTest(support.ResultTestCase):
 
     def test_run(self):
         base = support.MockBase()
@@ -32,7 +32,7 @@ class AutoEraseCommandTest(support.ResultTestCase):
             yumdb.get_package(pkg).reason = 'dep'
 
         cli = base.mock_cli()
-        cmd = autoerase.AutoeraseCommand(cli)
+        cmd = autoremove.AutoremoveCommand(cli)
         cmd.run([])
         inst, rem = self.installed_removed(base)
         self.assertEmpty(inst)
