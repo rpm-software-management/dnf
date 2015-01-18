@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -20,24 +20,24 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
-import dnf.cli.commands.erase
+import dnf.cli.commands.remove
 import logging
 
-class EraseCommandTest(support.ResultTestCase):
+class RemoveCommandTest(support.ResultTestCase):
     """Tests of ``dnf.cli.commands.EraseCommand`` class."""
 
     def setUp(self):
         """Prepare the test fixture."""
-        super(EraseCommandTest, self).setUp()
+        super(RemoveCommandTest, self).setUp()
         base = support.BaseCliStub()
         base.init_sack()
-        self.cmd = dnf.cli.commands.erase.EraseCommand(base.mock_cli())
+        self.cmd = dnf.cli.commands.remove.RemoveCommand(base.mock_cli())
 
     def test_configure(self):
         self.cmd.configure([])
         self.assertTrue(self.cmd.cli.demands.allow_erasing)
 
-    @mock.patch('dnf.cli.commands.erase._',
+    @mock.patch('dnf.cli.commands.remove._',
                 dnf.pycomp.NullTranslations().ugettext)
     def test_run_notfound(self):
         """Test whether it fails if the package cannot be found."""

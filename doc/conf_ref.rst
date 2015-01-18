@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -51,7 +51,7 @@ one main section. The repository sections define the configuration for each
 ``clean_requirements_on_remove``
     boolean
 
-    Remove dependencies that are no longer used during ``dnf erase``. A package
+    Remove dependencies that are no longer used during ``dnf remove``. A package
     only qualifies for removal via ``clean_requirements_on_remove`` if it was
     installed through DNF but not on explicit user request, i.e. it was
     pulled in as a dependency. The default is on.
