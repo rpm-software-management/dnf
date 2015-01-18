@@ -45,7 +45,7 @@ exactly like ``yum --obsoletes update``.
 ================================================
 
 The :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
-switch is on by default in DNF. It can thus be confusing to compare the "erase"
+switch is on by default in DNF. It can thus be confusing to compare the "remove"
 operation results between DNF and Yum as by default DNF is often going to remove
 more packages.
 
@@ -87,13 +87,13 @@ following will work::
 DNF drops Yum's ``protected_packages`` configuration option. Generally, the core DNF lets the user do what she specified, even have DNF itself removed. Similar functionality to ``protected_packages`` is however provided by the `protected_packages plugin <http://rpm-software-management.github.io/dnf-plugins-core/protected_packages.html>`_.
 
 =============================================================
- ``dnf erase kernel`` deletes all packages called ``kernel``
+ ``dnf remove kernel`` deletes all packages called ``kernel``
 =============================================================
 
 In Yum, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.::
 
-    dnf erase kernel-3.9.4
+    dnf remove kernel-3.9.4
 
 =====================================================================
 ``dnf provides /bin/<file>`` does not find any packages on Fedora
@@ -195,7 +195,7 @@ is not needed anymore.
  Packages replacement without ``yum shell`` or ``yum swap``
 ============================================================
 
-Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the erase and the install in one transaction. The common way to setup such transaction in Yum is to use ``yum shell``.
+Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the remove and the install in one transaction. The common way to setup such transaction in Yum is to use ``yum shell``.
 
 There is no shell in DNF but the case above is still valid. We provide the ``--allowerasing`` switch for this purpose, e.g. say you want to replace ``A`` (providing ``P``)  with B (also providing ``P``, conflicting with ``A``) without deleting ``C`` (which requires ``P``) in the process. Use::
 
