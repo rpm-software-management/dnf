@@ -6,14 +6,21 @@
 
 %global confdir %{_sysconfdir}/dnf
 
+%global pluginconfpath %{confdir}/plugins
+%global py2pluginpath %{python_sitelib}/dnf-plugins
+%global py3pluginpath %{python3_sitelib}/dnf-plugins
+
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
 Release:	2%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
 URL:		https://github.com/rpm-software-management/dnf
+# The Source0 tarball can be generated using following commands:
+# git clone http://github.com/rpm-software-management/dnf.git
+# cd dnf
+# git archive --format=tar %%{gitrev} | xz -z --force - > dnf-%%{gitrev}.tar.xz
 Source0:	http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
 BuildArch:	noarch
 BuildRequires:	cmake
@@ -57,7 +64,6 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 %package -n python3-dnf
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
-Group:		System Environment/Base
 BuildRequires:	python3
 BuildRequires:	python3-devel
 BuildRequires:	python3-hawkey >= %{hawkey_version}
@@ -81,7 +87,6 @@ Package manager forked from Yum, using libsolv as a dependency resolver.
 
 %package automatic
 Summary:	Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
-Group:		System Environment/Base
 BuildRequires:	python2
 BuildRequires:  python-nose
 BuildRequires:  systemd
@@ -110,16 +115,12 @@ make %{?_smp_mflags}
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 %find_lang %{name}
 pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
 
-%global pluginconfpath %{confdir}/plugins
-%global py2pluginpath %{python_sitelib}/dnf-plugins
-%global py3pluginpath %{python3_sitelib}/dnf-plugins
 mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
