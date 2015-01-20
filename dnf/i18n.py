@@ -63,7 +63,8 @@ def _full_ucd_support(encoding):
 
 def _guess_encoding():
     """ Take the best shot at the current system's string encoding. """
-    return locale.getpreferredencoding()
+    encoding = locale.getpreferredencoding()
+    return 'utf-8' if encoding.startswith("ANSI") else encoding
 
 def setup_locale():
     try:
@@ -112,7 +113,7 @@ def ucd(obj):
     """ Like the builtin unicode() but tries to use a reasonable encoding. """
     if PY3:
         if is_py3bytes(obj):
-            return str(obj, _guess_encoding())
+            return str(obj, _guess_encoding(), errors='ignore')
         elif isinstance(obj, str):
             return obj
         return str(obj)
@@ -127,7 +128,7 @@ def ucd(obj):
                 return unicode(obj)
             except UnicodeError:
                 pass
-        return unicode(str(obj), _guess_encoding())
+        return unicode(str(obj), _guess_encoding(), errors='ignore')
 
 
 # functions for formating output according to terminal width,
