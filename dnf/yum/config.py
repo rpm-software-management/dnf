@@ -772,6 +772,7 @@ class YumConf(BaseConfig):
     enablegroups = BoolOption(True)
 
     bandwidth = BytesOption(0)
+    minrate = BytesOption(0)
     ip_resolve = CaselessSelectionOption(
             allowed=('ipv4', 'ipv6', 'whatever'),
             mapper={'4': 'ipv4', '6': 'ipv6'})
@@ -911,6 +912,7 @@ class RepoConf(BaseConfig):
     enablegroups = Inherit(YumConf.enablegroups)
 
     bandwidth = Inherit(YumConf.bandwidth)
+    minrate = Inherit(YumConf.minrate)
     ip_resolve = Inherit(YumConf.ip_resolve)
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
