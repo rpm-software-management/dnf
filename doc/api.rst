@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -29,6 +29,8 @@ The provided Python API to DNF is supposed to mainly allow writing the following
 
 1. :doc:`plugins <api_plugins>` to DNF which extend functionality of the system's DNF installation.
 2. extension applications that embed DNF (by importing its Python modules) to perform specific package management tasks.
+
+Please refer to the :doc:`use_cases` where you can find examples of API usage.
 
 .. NOTE::
 
