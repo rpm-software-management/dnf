@@ -28,8 +28,8 @@ import unittest
 import dnf.i18n
 import sys
 
-UC_TEXT          = u'Šířka' # means 'Width' in Czech
-UC_TEXT_OSERROR  = u'Soubor již existuje' # 'File already exists'
+UC_TEXT          = 'Šířka' # means 'Width' in Czech
+UC_TEXT_OSERROR  = 'Soubor již existuje' # 'File already exists'
 STR_TEXT_OSERROR = 'Soubor již existuje'
 
 @mock.patch('locale.setlocale')
@@ -113,6 +113,20 @@ class TestConversion(TestCase):
         err = dnf.exceptions.DownloadError(err_map)
         self.assertEqual("e1: x\ne1: y", str(err))
         self.assertEqual("e1: x\ne1: y", dnf.i18n.ucd(err))
+
+    @mock.patch('locale.getpreferredencoding', return_value='ANSI_X3.4-1968')
+    def test_ucd_acii(self, _unused):
+        s = UC_TEXT.encode('utf8')
+        # ascii coding overridden by utf8
+        u = dnf.i18n.ucd(s)
+        self.assertEqual(u, UC_TEXT)
+
+    @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
+    def test_ucd_skip(self, _unused):
+        s = UC_TEXT.encode('iso-8859-2')
+        # not decoded chars are skipped
+        u = dnf.i18n.ucd(s)
+        self.assertEqual(u, "ka")
 
 
 class TestFormatedOutput(TestCase):
