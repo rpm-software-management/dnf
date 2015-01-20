@@ -207,6 +207,13 @@ configuration.
 
     The period after which the remote repository is checked for metadata update and in the positive case the local metadata cache is updated. The default corresponds to 48 hours. Set this to ``-1`` or ``never`` to make the repo never considered expired.
 
+.. _minrate-label:
+
+``minrate``
+    storage size
+
+    This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 0. Valid units are 'k', 'M', 'G'.
+
 ``proxy``
     string
 
