@@ -772,10 +772,11 @@ class YumConf(BaseConfig):
     enablegroups = BoolOption(True)
 
     bandwidth = BytesOption(0)
-    throttle = ThrottleOption(0)
     ip_resolve = CaselessSelectionOption(
             allowed=('ipv4', 'ipv6', 'whatever'),
             mapper={'4': 'ipv4', '6': 'ipv6'})
+    throttle = ThrottleOption(0)
+    timeout = SecondsOption(120)
 
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
@@ -910,8 +911,9 @@ class RepoConf(BaseConfig):
     enablegroups = Inherit(YumConf.enablegroups)
 
     bandwidth = Inherit(YumConf.bandwidth)
-    throttle = Inherit(YumConf.throttle)
     ip_resolve = Inherit(YumConf.ip_resolve)
+    throttle = Inherit(YumConf.throttle)
+    timeout = Inherit(YumConf.timeout)
 
     metadata_expire = Inherit(YumConf.metadata_expire)
     cost = IntOption(1000)

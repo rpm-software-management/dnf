@@ -248,6 +248,13 @@ configuration.
 
     Limits the downloading speed. It might be an absolute value or a percentage, relative to the value of the :ref:`bandwidth option <bandwidth-label>` option. ``0`` means no throttling (the default). The absolute value is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
 
+.. _timeout-label:
+
+``timeout``
+    time in seconds
+
+    Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 30 seconds.
+
 ==========
  See Also
 ==========

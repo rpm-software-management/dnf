@@ -608,6 +608,9 @@ class Repo(dnf.yum.config.RepoConf):
         h.maxspeed = self.throttle if type(self.throttle) is int \
                      else int(self.bandwidth * self.throttle)
         h.proxy = self.proxy
+        h.lowspeedtime = self.timeout
+        current_timeout = h.getinfo(librepo.LRO_CONNECTTIMEOUT)
+        h.connecttimeout = max(self.timeout, current_timeout)
         h.proxyuserpwd = _user_pass_str(self.proxy_username, self.proxy_password)
         h.sslverifypeer = h.sslverifyhost = self.sslverify
 
