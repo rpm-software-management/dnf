@@ -153,6 +153,7 @@ popd
 %{_mandir}/man5/dnf.conf.5.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{_tmpfilesdir}/dnf.conf
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
 %dir %{py2pluginpath}
