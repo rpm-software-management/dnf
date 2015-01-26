@@ -868,7 +868,6 @@ class Base(object):
 
     def add_remote_rpm(self, path):
         # :api
-        self.sack.create_cmdline_repo()
         if not os.path.exists(path) and '://' in path:
             # download remote rpm to a tempfile
             path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
