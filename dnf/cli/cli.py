@@ -783,6 +783,10 @@ class Cli(object):
             lar = self.demands.available_repos
             self.base.fill_sack(load_system_repo='auto',
                                 load_available_repos=lar)
+            if lar:
+                repos = self.base.repos.iter_enabled()
+                timestamp = min(repo.metadata.timestamp for repo in repos)
+                logger.info(_("Using metadata from %s"), time.ctime(timestamp))
             self.base.plugins.run_sack()
 
     def _root_and_conffile(self, installroot, conffile):
