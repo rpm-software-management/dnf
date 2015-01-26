@@ -83,6 +83,8 @@ class UpgradeCommand(commands.Command):
                 try:
                     self.base.upgrade(pkg_spec)
                 except dnf.exceptions.MarkingError:
+                    self.cli.demands.success_exit_status = \
+                        dnf.const.PARTIALLY_SUCC
                     logger.info(_('No match for argument: %s'), pkg_spec)
                 else:
                     done = True

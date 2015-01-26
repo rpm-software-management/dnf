@@ -365,7 +365,7 @@ Install Command
 ``dnf [options] install <spec>...``
     Installs the given packages and their dependencies. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. After the transaction is finished all not yet installed specified packages are installed
-    on the system.
+    on the system. Install command returns nonzero exit code if some of the packages from ``<packege-spec>`` are not available.
 
 ------------
 List Command
@@ -437,7 +437,7 @@ Reinstall Command
 -----------------
 
 ``dnf [options] reinstall <package-specs>...``
-    Installs the specified packages, fails if some of the packages are either
+    Installs the specified packages, returns nonzero exit code if some of the packages are either
     not installed or not available (i.e. there is no repository where to
     download the same RPM).
 
@@ -598,7 +598,8 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-specs>...``
     Updates each specified package to the latest available version. Updates
-    dependencies as necessary.
+    dependencies as necessary. Upgrade command returns nonzero exit code
+    if some of the packages from ``<packege-spec>`` are not available.
 
 -----------------
 Update-To Command
