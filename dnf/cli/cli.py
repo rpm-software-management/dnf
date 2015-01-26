@@ -101,6 +101,8 @@ def _list_cmd_calc_columns(output, ypl):
 
 def cachedir_fit(conf):
     subst = conf.substitutions
+    if not 'releasever' in subst:
+        subst['releasever'] = dnf.rpm.detect_releasever('/')
     suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
     cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
     return cli_cache.cachedir, cli_cache.system_cachedir
