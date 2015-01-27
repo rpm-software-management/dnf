@@ -163,6 +163,11 @@ configuration.
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is on.
 
+``enablegroups``
+    boolean
+
+    Determines whether DNF will allow the use of package groups for this repository. Default is True (package groups are allowed).
+
 .. _exclude-label:
 
 ``exclude``
