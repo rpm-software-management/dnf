@@ -44,8 +44,6 @@ import time
 import types
 
 _METADATA_RELATIVE_DIR = "repodata"
-_METALINK_FILENAME = "metalink.xml"
-_MIRRORLIST_FILENAME = "mirrorlist"
 _RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
 
 logger = logging.getLogger("dnf")
@@ -65,14 +63,6 @@ def _user_pass_str(user, password):
     user = dnf.pycomp.urllib_quote(user)
     password = '' if password is None else dnf.pycomp.urllib_quote(password)
     return '%s:%s' % (user, password)
-
-
-def _metalink_path(dirname):
-    return os.path.join(dirname, _METALINK_FILENAME)
-
-
-def _mirrorlist_path(dirname):
-    return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
 
 def _subst2tuples(subst_dct):
@@ -186,18 +176,6 @@ class _Handle(librepo.Handle):
         h.local = True
         return h
 
-    @property
-    def metadata_dir(self):
-        return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
-
-    @property
-    def metalink_path(self):
-        return _metalink_path(self.destdir)
-
-    @property
-    def mirrorlist_path(self):
-        return _mirrorlist_path(self.destdir)
-
     def perform(self, result=None):
         try:
             return super(_Handle, self).perform(result)
@@ -232,6 +210,10 @@ class Metadata(object):
         return self.repomd_dct.get('content_tags')
 
     @property
+    def destination_dir(self):
+        return self.repo_dct.get('destdir')
+
+    @property
     def distro_tags(self):
         pairs = self.repomd_dct.get('distro_tags', [])
         return {k:v for (k, v) in pairs}
@@ -250,6 +232,10 @@ class Metadata(object):
         return self.repo_dct.get('filelists')
 
     @property
+    def mirrorlist_fn(self):
+        return self.repo_dct.get('mirrorlist')
+
+    @property
     def mirrors(self):
         return self._mirrors
 
@@ -260,6 +246,16 @@ class Metadata(object):
                       for (_, content) in self.repomd_dct.items()
                       if isinstance(content, dict)]
         return max(timestamps)
+
+    @property
+    def metadata_dir(self):
+        return (
+            os.path.join(self.destination_dir, _METADATA_RELATIVE_DIR)
+            if self.destination_dir else None)
+
+    @property
+    def metalink_fn(self):
+        return self.repo_dct.get('metalink')
 
     @property
     def presto_fn(self):
@@ -420,7 +416,7 @@ class MDPayload(dnf.callback.Payload):
 
 # use the local cache even if it's expired. download if there's no cache.
 SYNC_LAZY = 1
- # use the local cache, even if it's expired, never download.
+# use the local cache, even if it's expired, never download.
 SYNC_ONLY_CACHE = 2
 # try the cache, if it is expired download new md.
 SYNC_TRY_CACHE = 3
@@ -487,15 +483,18 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def metadata_dir(self):
-        return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+        # Returns None if the repository is not cached yet.
+        return self.metadata.metadata_dir if self.metadata else None
 
     @property
-    def metalink_path(self):
-        return _metalink_path(self.cachedir)
+    def metalink_fn(self):
+        # Returns None if the repository is not cached yet.
+        return self.metadata.metalink_fn if self.metadata else None
 
     @property
-    def mirrorlist_path(self):
-        return _mirrorlist_path(self.cachedir)
+    def mirrorlist_fn(self):
+        # Returns None if the repository is not cached yet.
+        return self.metadata.mirrorlist_fn if self.metadata else None
 
     @property
     def pkgdir(self):
@@ -615,16 +614,29 @@ class Repo(dnf.yum.config.RepoConf):
         hrepo.priority = self.priority
         return hrepo
 
-    def _replace_metadata(self, handle):
+    def _replace_metadata(self, metadata):
+        # This method may invalidate metadata paths, reload the metadata.
+        cache_fn = lambda orig_fn: os.path.join(
+            self.cachedir, os.path.relpath(orig_fn, metadata.destination_dir))
         dnf.util.ensure_dir(self.cachedir)
-        dnf.util.rm_rf(self.metadata_dir)
-        dnf.util.rm_rf(self.metalink_path)
-        dnf.util.rm_rf(self.mirrorlist_path)
-        shutil.move(handle.metadata_dir, self.metadata_dir)
-        if handle.metalink:
-            shutil.move(handle.metalink_path, self.metalink_path)
-        elif handle.mirrorlist:
-            shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
+        if self.metadata_dir:
+            dnf.util.rm_rf(self.metadata_dir)
+        if self.metalink_fn:
+            dnf.util.rm_rf(self.metalink_fn)
+        if self.mirrorlist_fn:
+            dnf.util.rm_rf(self.mirrorlist_fn)
+        assert metadata.metadata_dir
+        dest = self.metadata_dir or cache_fn(metadata.metadata_dir)
+        dnf.util.rm_rf(dest)
+        shutil.move(metadata.metadata_dir, dest)
+        if metadata.metalink_fn:
+            dest = self.metalink_fn or cache_fn(metadata.metalink_fn)
+            dnf.util.rm_rf(dest)
+            shutil.move(metadata.metalink_fn, dest)
+        if metadata.mirrorlist_fn:
+            dest = self.mirrorlist_fn or cache_fn(metadata.mirrorlist_fn)
+            dnf.util.rm_rf(dest)
+            shutil.move(metadata.mirrorlist_fn, dest)
 
     def _reset_metadata_expired(self):
         if self._expired:
@@ -763,9 +775,9 @@ class Repo(dnf.yum.config.RepoConf):
                 handle = self._handle_new_remote(tmpdir)
                 msg = 'repo: downloading from remote: %s, %s'
                 logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
-                self._handle_load(handle)
+                metadata = self._handle_load(handle)
                 # override old md with the new ones:
-                self._replace_metadata(handle)
+                self._replace_metadata(metadata)
 
             # get md from the cache now:
             handle = self._handle_new_local(self.cachedir)
