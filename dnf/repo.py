@@ -614,10 +614,14 @@ class Repo(dnf.yum.config.RepoConf):
         hrepo.priority = self.priority
         return hrepo
 
-    def _replace_metadata(self, metadata):
-        # This method may invalidate metadata paths, reload the metadata.
-        cache_fn = lambda orig_fn: os.path.join(
-            self.cachedir, os.path.relpath(orig_fn, metadata.destination_dir))
+    def _cache_metadata(self, metadata):
+        """Replace metadata cache with the given files.
+
+        The given metadata files will be removed from the original location and
+        the metadata instance of the repository will be replaced with a new
+        fresh and valid instance."""
+
+        # Remove the current metadata files.
         dnf.util.ensure_dir(self.cachedir)
         if self.metadata_dir:
             dnf.util.rm_rf(self.metadata_dir)
@@ -625,6 +629,10 @@ class Repo(dnf.yum.config.RepoConf):
             dnf.util.rm_rf(self.metalink_fn)
         if self.mirrorlist_fn:
             dnf.util.rm_rf(self.mirrorlist_fn)
+
+        # Move the new metadata files.
+        cache_fn = lambda orig_fn: os.path.join(
+            self.cachedir, os.path.relpath(orig_fn, metadata.destination_dir))
         assert metadata.metadata_dir
         dest = self.metadata_dir or cache_fn(metadata.metadata_dir)
         dnf.util.rm_rf(dest)
@@ -637,6 +645,11 @@ class Repo(dnf.yum.config.RepoConf):
             dest = self.mirrorlist_fn or cache_fn(metadata.mirrorlist_fn)
             dnf.util.rm_rf(dest)
             shutil.move(metadata.mirrorlist_fn, dest)
+
+        # get md from the cache now:
+        handle = self._handle_new_local(self.cachedir)
+        self.metadata = self._handle_load(handle)
+        self.metadata.fresh = True
 
     def _reset_metadata_expired(self):
         if self._expired:
@@ -777,12 +790,7 @@ class Repo(dnf.yum.config.RepoConf):
                 logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
                 metadata = self._handle_load(handle)
                 # override old md with the new ones:
-                self._replace_metadata(metadata)
-
-            # get md from the cache now:
-            handle = self._handle_new_local(self.cachedir)
-            self.metadata = self._handle_load(handle)
-            self.metadata.fresh = True
+                self._cache_metadata(metadata)
         except _DetailedLibrepoError as e:
             msg = _("Failed to synchronize cache for repo '%s' from '%s': %s") % \
                   (self.id, e.source_url, e.librepo_msg)
