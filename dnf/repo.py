@@ -1,7 +1,7 @@
 # repo.py
 # DNF Repository objects.
 #
-# Copyright (C) 2013-2014  Red Hat, Inc.
+# Copyright (C) 2013-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -184,10 +184,6 @@ class _Handle(librepo.Handle):
         h.destdir = cachedir
         h.urls = [cachedir]
         h.local = True
-        if os.access(h.metalink_path, os.R_OK):
-            h.mirrorlist = h.metalink_path
-        elif os.access(h.mirrorlist_path, os.R_OK):
-            h.mirrorlist = h.mirrorlist_path
         return h
 
     @property
