@@ -29,11 +29,30 @@ import dnf.subject
 import dnf.transaction
 import hawkey
 import os
+import re
 import rpm
 
 class BaseTest(support.TestCase):
     def test_instance(self):
         base = dnf.Base()
+
+    @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
+    @mock.patch('dnf.util.am_i_root', lambda: True)
+    def test_default_config_root(self):
+        base = dnf.Base()
+        self.assertIsNotNone(base.conf)
+        self.assertIsNotNone(base.conf.cachedir)
+        reg = re.compile('/var/cache/dnf/[a-zA-Z0-9_]+/x')
+        self.assertIsNotNone(reg.match(base.conf.cachedir))
+
+    @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
+    @mock.patch('dnf.util.am_i_root', lambda: False)
+    def test_default_config_user(self):
+        base = dnf.Base()
+        self.assertIsNotNone(base.conf)
+        self.assertIsNotNone(base.conf.cachedir)
+        reg = re.compile('/var/tmp/dnf-[a-zA-Z0-9_-]+/[a-zA-Z0-9_]+/x')
+        self.assertIsNotNone(reg.match(base.conf.cachedir))
 
     def test_push_userinstalled(self):
         base = support.MockBase()

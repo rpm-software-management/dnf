@@ -71,7 +71,7 @@ class Base(object):
     def __init__(self, conf=None):
         # :api
         self._closed = False
-        self._conf = conf or dnf.conf.Conf()
+        self._conf = conf or self._setup_default_conf()
         self._goal = None
         self._persistor = None
         self._sack = None
@@ -118,6 +118,19 @@ class Base(object):
             logger.debug("not found updateinfo for: %s" % repo.name)
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
                                  load_presto=repo.deltarpm, load_updateinfo=True)
+
+    @staticmethod
+    def _setup_default_conf():
+        conf = dnf.conf.Conf()
+        subst = conf.substitutions
+        if not 'releasever' in subst:
+            subst['releasever'] = \
+                dnf.rpm.detect_releasever(conf.installroot) or ''
+        suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
+        cache_dirs = dnf.conf.CliCache(conf.cachedir, suffix)
+
+        conf.cachedir = cache_dirs.cachedir
+        return conf
 
     def _setup_excludes_includes(self):
         disabled = set(self.conf.disable_excludes)
