@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2014  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ from dnf.i18n import ucd, _
 
 import dnf
 import dnf.cli.commands
-import dnf.cli.commands.autoerase
+import dnf.cli.commands.autoremove
 import dnf.cli.commands.clean
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
-import dnf.cli.commands.erase
+import dnf.cli.commands.remove
 import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.makecache
@@ -690,15 +690,15 @@ class Cli(object):
         self.nogpgcheck = False
         self.repo_setopts = {}
 
-        self.register_command(dnf.cli.commands.autoerase.AutoeraseCommand)
+        self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
         self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
-        self.register_command(dnf.cli.commands.erase.EraseCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.makecache.MakeCacheCommand)
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
+        self.register_command(dnf.cli.commands.remove.RemoveCommand)
         self.register_command(dnf.cli.commands.repolist.RepoListCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)
         self.register_command(dnf.cli.commands.updateinfo.UpdateInfoCommand)
