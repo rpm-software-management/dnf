@@ -59,6 +59,7 @@
     empty        boolean    ``True`` limits to empty result set.
                             Defaults to ``False``.
     epoch        integer    match against packages' epoch.
+    file         string     match against packages' files
     latest       boolean    see :meth:`latest`.  Defaults to ``False``.
     name         string     match against packages' names
     release      string     match against packages' releases
