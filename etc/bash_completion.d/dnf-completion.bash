@@ -29,7 +29,15 @@ _dnf_help_command()
 
 _dnf()
 {
-    local commandlist="$( compgen -W '$( LANG=C dnf help | cut -d" " -s -f1 | LANG=C sed -e "/^[A-Z]/d" -e "/:/d" )' )"
+    local commandlist="$( compgen -W '$( python << END
+import dnf.cli
+b = dnf.cli.cli.BaseCli()
+c = dnf.cli.Cli(b)
+c.configure(["help"])
+for cmd in c.cli_commands:
+    print(cmd)
+END
+)' )"
 
     local cur prev words cword
     _init_completion -s || return
@@ -71,7 +79,7 @@ _dnf()
     if [[ $command ]]; then
 
         case $command in
-            install|update|info)
+            install|update|upgrade|info)
                 if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
                     [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 else
