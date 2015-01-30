@@ -159,6 +159,8 @@ class Command(object):
 
     def __init__(self, cli):
         self.cli = cli # :api
+        self.opts = None
+        self.parser = None
 
     @property
     def base(self):
