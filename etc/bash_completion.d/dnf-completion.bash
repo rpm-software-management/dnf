@@ -22,29 +22,40 @@
 
 if [ -e /usr/bin/dnf-2 ]; then
     alias dnf="dnf-2"
+    alias python="python2"
 else
     alias dnf="dnf-3"
+    alias python="python3"
 fi
 
-_dnf_help_command()
+_dnf_helper()
 {
-    local cmd=$( dnf help $1 | grep -E "^$1" | tr "|" " " )
-    cmd=${cmd#*[} && cmd=${cmd%%]*}
-    eval "$2='$cmd'"
+    local helper=$( python -c "import dnf.cli; print('{}/completion_helper.py'.format(dnf.cli.__path__[0]))" )
+    COMPREPLY+=( $( python ${helper} "$@" -d 0 -q -C 2>/dev/null ) )
+}
+
+_is_path()
+{
+    if [[ "$1" == \.* ]] || [[ "$1" == \/* ]] || [[ "$1" == ~* ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+_modified_sack()
+{
+    local arr=( "${!1}" )
+    for i in "${arr[@]}"; do
+        if [[ "$i" == --installroot* ]] || [[ "$i" == --enablerepo* ]] || [[ "$i" == --disablerepo* ]]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
 _dnf()
 {
-    local commandlist="$( compgen -W '$( python << END
-import dnf.cli
-b = dnf.cli.cli.BaseCli()
-c = dnf.cli.Cli(b)
-c.configure(["help"])
-for cmd in c.cli_commands:
-    print(cmd)
-END
-)' )"
-
     local cur prev words cword
     _init_completion -s || return
 
@@ -68,11 +79,17 @@ END
         -h|--help|--version)
             return
             ;;
-        --enablerepo)
-            COMPREPLY=( $( compgen -W '$( dnf --cacheonly repolist disabled | sed -e "1d" )' -- "$cur" ) )
+        -d|--debuglevel|-e|--errorlevel)
+            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
             ;;
-        --disablerepo )
-            COMPREPLY=( $( compgen -W '$( dnf --cacheonly repolist enabled | sed -e "1d" | cut -d" " -f1 | tr -d "*" )' -- "$cur" ) )
+        --installroot)
+            COMPREPLY=( $( compgen -d -- "$cur" ) )
+            ;;
+        --enablerepo)
+            _dnf_helper repolist disabled "$cur"
+            ;;
+        --disablerepo)
+            _dnf_helper repolist enabled "$cur"
             ;;
         *)
             ;;
@@ -85,106 +102,39 @@ END
     if [[ $command ]]; then
 
         case $command in
-            install|update|upgrade|info)
-                if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
-                    [[ $command != "info" ]] && ext='@(rpm)' || ext=''
-                else
-                    if [ -r $cache_file ]; then
+            install|update|upgrade|reinstall)
+                if ! _is_path "$cur"; then
+                    if [ -r $cache_file ] && ! _modified_sack words[@]; then
                         COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
                     else
-                        COMPREPLY=( $( compgen -W '$( python << END
-import dnf
-import os
-import logging
-class NullHandler(logging.Handler):
-    def emit(self, record):
-        pass
-h = NullHandler()
-logging.getLogger("dnf").addHandler(h)
-b = dnf.Base()
-b.read_all_repos()
-if not dnf.util.am_i_root():
-    cachedir = dnf.yum.misc.getCacheDir()
-    b.conf.cachedir = cachedir
-b.conf.substitutions["releasever"] = dnf.rpm.detect_releasever("/")
-suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, b.conf.substitutions)
-for repo in b.repos.values():
-    repo.basecachedir = os.path.join(b.conf.cachedir, suffix)
-    repo.md_only_cached = True
-try:
-    b.fill_sack()
-except dnf.exceptions.RepoError:
-    pass
-q = b.sack.query().available()
-for pkg in q:
-    print("{}.{}").format(pkg.name, pkg.arch)
-END
-)' -- "$cur" ) )
+                        _dnf_helper $command "$cur"
                     fi
                 fi
+                ext='@(rpm)'
                 ;;
-            remove|erase|downgrade|reinstall)
-                if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
-                    [[ $command != "info" ]] && ext='@(rpm)' || ext=''
-                else
-                    [ -r $cache_file ] && installed=$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )
-                     if [ $? -eq 0 ]; then
-                        COMPREPLY=( $( compgen -W '$( echo $installed )' ) )
+            erase|remove)
+                if ! _is_path "$cur"; then
+                    if [ -r $cache_file ] && ! _modified_sack words[@]; then
+                        COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
                     else
-                        COMPREPLY=( $( compgen -W '$( python << END
-import hawkey
-sack = hawkey.Sack()
-sack.load_system_repo()
-q = hawkey.Query(sack).filter(reponame=hawkey.SYSTEM_REPO_NAME)
-for pkg in q:
-    print("{}.{}").format(pkg.name, pkg.arch)
-END
-)' -- "$cur" ) )
+                        _dnf_helper $command "$cur"
                     fi
                 fi
+                ext='NULL'
                 ;;
-            help)
-                case $nth in
-                    1)
-                        COMPREPLY=( $( compgen -W '$( echo $commandlist )' -- "$cur" ) )
-                        ;;
-                    *)
-                        ;;
-                esac
-                ext=''
-                ;;
-            clean)
-                _dnf_help_command "clean" comp
-                COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
-                ext=''
-                ;;
-            repolist)
-                case $nth in
-                    1)
-                        _dnf_help_command "repolist" comp
-                        COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
-                        ;;
-                    *)
-                        ;;
-                esac
-                ext=''
-                ;;
-            group)
-                case $nth in
-                    1)
-                        _dnf_help_command "group" comp
-                        COMPREPLY=( $( compgen -W '$( echo $comp )' -- "$cur" ) )
-                        ;;
-                    *)
-                        ;;
-                esac
-                ext=''
+            list)
+                _dnf_helper $command "$prev" "$cur"
+                ext='NULL'
                 ;;
             *)
-                ext=''
+                ext='NULL'
                 ;;
         esac
-        [[ ${#COMPREPLY[@]} -eq 0 ]] && [[ -n $ext ]] && _filedir $ext
+        if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
+            if [[ "$ext" != "NULL" ]]; then
+                _filedir $ext
+            fi
+        fi
         return
 
     fi
@@ -193,7 +143,7 @@ END
         COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
         [[ $COMPREPLY == *= ]] && compopt -o nospace
     elif [[ ! $command ]]; then
-        [[ $prev != -* ]] && COMPREPLY=( $( compgen -W '$( echo $commandlist )' -- "$cur" ) )
+        [[ $prev != -* ]] && _dnf_helper _cmds "$cur"
     fi
 } &&
-complete -F _dnf dnf dnf-2 dnf-3
+complete -F _dnf -o filenames dnf dnf-2 dnf-3
