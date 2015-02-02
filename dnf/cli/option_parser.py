@@ -25,6 +25,7 @@ import argparse
 import dnf.exceptions
 import dnf.yum.misc
 import logging
+import re
 import sys
 
 logger = logging.getLogger("dnf")
@@ -51,15 +52,6 @@ class OptionParser(argparse.ArgumentParser):
         sys.exit(1)
 
     @staticmethod
-    def _split_arg(seq):
-        """ Split all strings in seq, at "," and whitespace.
-            Returns a new list. """
-        ret = []
-        for arg in seq:
-            ret.extend(arg.replace(",", " ").split())
-        return ret
-
-    @staticmethod
     def _non_nones2dict(in_dct):
         dct = {k: in_dct[k] for k in in_dct
                if in_dct[k] is not None
@@ -71,7 +63,7 @@ class OptionParser(argparse.ArgumentParser):
 
         options_to_move = ('best', 'assumeyes', 'assumeno', 'obsoletes',
                            'showdupesfromrepos', 'plugins', 'ip_resolve',
-                           'rpmverbosity')
+                           'rpmverbosity', 'disable_excludes')
 
         # transfer user specified options to conf
         for option_name in options_to_move:
@@ -85,9 +77,6 @@ class OptionParser(argparse.ArgumentParser):
         try:
             # config file is parsed and moving us forward
             # set some things in it.
-            if opts.disableplugins:
-                opts.disableplugins = self._split_arg(opts.disableplugins)
-
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
@@ -110,21 +99,7 @@ class OptionParser(argparse.ArgumentParser):
                 if opts.color != 'auto':
                     output.term.reinit(color=opts.color)
 
-            if opts.disableexcludes:
-                disable_excludes = self._split_arg(opts.disableexcludes)
-            else:
-                disable_excludes = []
-            conf.disable_excludes = disable_excludes
-
-            for exclude in self._split_arg(opts.exclude):
-                try:
-                    excludelist = conf.exclude
-                    excludelist.append(exclude)
-                    conf.exclude = excludelist
-                except dnf.exceptions.ConfigError as e:
-                    logger.critical(e)
-                    self.print_help()
-                    sys.exit(1)
+            conf.exclude.extend(opts.excludepkgs)
 
         except ValueError as e:
             logger.critical(_('Options Error: %s'), e)
@@ -147,6 +122,13 @@ class OptionParser(argparse.ArgumentParser):
             operation = 'disable' if opt_str == '--disablerepo' else 'enable'
             l = getattr(namespace, self.dest)
             l.append((values, operation))
+
+    class _SplitCallback(argparse.Action):
+        """ Split all strings in seq, at "," and whitespace.
+        Returns a new list. """
+        def __call__(self, parser, namespace, values, opt_str):
+            res = getattr(namespace, self.dest)
+            res.extend(re.split("\s*,?\s*", values))
 
     def _addYumBasicOptions(self):
         # All defaults need to be a None, so we can always tell whether the user
@@ -200,10 +182,13 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--disablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        self.add_argument("-x", "--exclude", default=[], action="append",
-                           help=_("exclude packages by name or glob"),
-                           metavar='[package]')
-        self.add_argument("--disableexcludes", default=[], action="append",
+        self.add_argument("-x", "--exclude", default=[], dest='excludepkgs',
+                          action=self._SplitCallback,
+                          help=_("exclude packages by name or glob"),
+                          metavar='[package]')
+        self.add_argument("--disableexcludes", default=[],
+                          dest="disable_excludes",
+                          action=self._SplitCallback,
                           help=_("disable excludes"),
                           metavar='[repo]')
         self.add_argument("--obsoletes", action="store_true", default=None,
@@ -213,9 +198,9 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("--nogpgcheck", action="store_true", default=None,
                           help=_("disable gpg signature checking"))
         self.add_argument("--disableplugin", dest="disableplugins", default=[],
-                           action="append",
-                           help=_("disable plugins by name"),
-                           metavar='[plugin]')
+                          action=self._SplitCallback,
+                          help=_("disable plugins by name"),
+                          metavar='[plugin]')
         self.add_argument("--color", dest="color", default=None,
                           help=_("control whether color is used"))
         self.add_argument("--releasever", default=None,
