@@ -52,6 +52,6 @@ The DNF package distribution contains man pages, dnf(8) and dnf.conf(8). It is a
  Bug reporting etc.
 ====================
 
-Please report discovered bugs to the `Red Hat bugzilla <https://bugzilla.redhat.com/>`_.
+Please report discovered bugs to the `Red Hat bugzilla <https://bugzilla.redhat.com/>`_ following this `guide <https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting>`_.
 
 Freenode's irc channel ``#yum`` is meant for discussions related to both Yum and DNF. Questions should be asked there, issues discussed. Remember: ``#yum`` is not a support channel and prior research is expected from the questioner.
