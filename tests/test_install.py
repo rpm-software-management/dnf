@@ -20,14 +20,14 @@ from __future__ import unicode_literals
 from tests import support
 import dnf.exceptions
 import itertools
+import logging
 
 class MultilibCommonTest(support.ResultTestCase):
 
     """Tests common to any multilib_policy."""
 
     def setUp(self):
-        self.base = support.MockBase('main')
-        self.base.conf.multilib_policy = "all"
+        self.base = support.MockBase('main', 'multilib')
 
     def test_install_arch_glob(self):
         """Test that the pkg specification can contain an architecture glob."""
@@ -39,11 +39,6 @@ class MultilibCommonTest(support.ResultTestCase):
 
     def test_install_filename_glob(self):
         """Test that the pkg to be installed can be specified by fname glob."""
-        self.base.install("/*/be/there")
-        (installed, _) = self.installed_removed(self.base)
-        self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
-
-        self.base.reset(goal=True)
         self.base.install("*/there")
         (installed, _) = self.installed_removed(self.base)
         self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
@@ -97,7 +92,6 @@ class MultilibCommonTest(support.ResultTestCase):
         new_set = self.base.sack.query().installed() + trampoline.run()
         self.assertResult(self.base, new_set)
 
-    @support.mock.patch('dnf.transaction._', dnf.pycomp.NullTranslations().ugettext)
     def test_install_srpm(self):
         """Test that the exception is raised if a source arch is specified."""
         self.base.install("pepper-20-0.src")
@@ -131,14 +125,14 @@ class MultilibAllTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase('main', 'third_party')
-        self.installed = self.base.sack.query().installed().run()
         self.base.conf.multilib_policy = "all"
 
     def test_install_filename(self):
         """Test that the pkg to be installed can be specified by filename."""
-        self.base.install("/usr/lib64/liblot*")
+        self.base.install("/usr/lib*/liblot*")
         inst, _ = self.installed_removed(self.base)
-        self.assertCountEqual(map(str, inst), ['lotus-3-16.x86_64'])
+        self.assertCountEqual(
+            map(str, inst), ['lotus-3-16.x86_64', 'lotus-3-16.i686'])
 
     def test_install_multilib(self):
         """Test that pkgs for all architectures are installed if available."""
@@ -171,7 +165,7 @@ class MultilibAllTest(support.ResultTestCase):
         self.base.install('lotus', reponame='main')
         self.assertResult(self.base, result)
 
-        assert dnf.subject.Subject('lotus-3-17.i686').get_best_query(self.base.sack), \
+        assert dnf.subject.Subject('lotus-3-17').get_best_query(self.base.sack), \
                ('the base must contain packages a package in another repo '
                 'which matches the pattern but is preferred, otherwise the '
                 'test makes no sense')
@@ -230,14 +224,19 @@ class MultilibBestTest(support.ResultTestCase):
         self.base.install('lotus', reponame='main')
         self.assertResult(self.base, result)
 
-        assert dnf.subject.Subject('lotus-3-17.i686').get_best_query(self.base.sack), \
+        assert dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.base.sack), \
                ('the base must contain packages a package in another repo '
                 'which matches the pattern but is preferred, otherwise the '
                 'test makes no sense')
 
     def test_install_unavailable(self):
         """Test that nothing changes if an unavailable package matches."""
-        cnt = self.base.install("hole")
+        stdout = dnf.pycomp.StringIO()
+        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+            cnt = self.base.install('hole')
         self.assertEqual(cnt, 1)
         installed_pkgs = self.base.sack.query().installed().run()
         self.assertResult(self.base, installed_pkgs)
+        self.assertIn(
+            'Package hole-1-1.x86_64 is already installed, skipping.',
+            stdout.getvalue())
