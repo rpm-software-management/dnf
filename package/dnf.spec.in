@@ -1,8 +1,8 @@
-%global gitrev a7e0aa1
-%global hawkey_version 0.5.3
-%global librepo_version 1.7.5
-%global libcomps_version 0.1.6
-%global rpm_version 4.12.0
+%{!?gitrev: %global gitrev a7e0aa1}
+%{!?hawkey_version: %global hawkey_version 0.5.3}
+%{!?librepo_version: %global librepo_version 1.7.5}
+%{!?libcomps_version: %global libcomps_version 0.1.6}
+%{!?rpm_version: %global rpm_version 4.12.0}
 
 %global confdir %{_sysconfdir}/dnf
 
