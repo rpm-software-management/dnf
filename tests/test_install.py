@@ -124,7 +124,7 @@ class MultilibAllTest(support.ResultTestCase):
     """Tests for multilib_policy='all'."""
 
     def setUp(self):
-        self.base = support.MockBase('main', 'third_party')
+        self.base = support.MockBase('main', 'third_party', 'broken_deps')
         self.base.conf.multilib_policy = "all"
 
     def test_install_filename(self):
@@ -134,6 +134,16 @@ class MultilibAllTest(support.ResultTestCase):
         self.assertCountEqual(
             map(str, inst), ['lotus-3-16.x86_64', 'lotus-3-16.i686'])
 
+    def test_install_installed(self):
+        """Test that nothing changes if an installed package matches."""
+        stdout = dnf.pycomp.StringIO()
+        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+            self.base.install('librita')
+        self.assertEqual(self.base.goal.req_length(), 0)
+        self.assertIn(
+            'Package librita-1-1.x86_64 is already installed, skipping.',
+            stdout.getvalue())
+
     def test_install_multilib(self):
         """Test that pkgs for all architectures are installed if available."""
         cnt = self.base.install("lotus")
@@ -142,6 +152,20 @@ class MultilibAllTest(support.ResultTestCase):
         self.assertLessEqual(
             set(installed),
             set(self.base.sack.query().available().filter(name='lotus')))
+
+    def test_install_name_choice(self):
+        """Test that the matching pkg that can be installed is installed."""
+        # Don't install the SRPM.
+        self.base.sack.add_excludes(
+            dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
+
+        stdout = dnf.pycomp.StringIO()
+        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+            self.base.install('pepper')
+        self.assertEqual(self.base.goal.req_length(), 0)
+        self.assertIn(
+            'Package pepper-20-0.x86_64 is already installed, skipping.',
+            stdout.getvalue())
 
     def test_install_nonexistent(self):
         """Test that the exception is raised if no package matches."""
@@ -170,6 +194,16 @@ class MultilibAllTest(support.ResultTestCase):
                 'which matches the pattern but is preferred, otherwise the '
                 'test makes no sense')
 
+    def test_install_upgrade(self):
+        """Test that the pkg to be installed can be an upgrade."""
+        self.base.install('hole-1-2')
+        installed, removed = self.installed_removed(self.base)
+        self.assertGreaterEqual(
+            installed,
+            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+        self.assertGreaterEqual(
+            removed,
+            set(self.base.sack.query().installed().filter(name='hole')))
 
 class MultilibBestTest(support.ResultTestCase):
 
@@ -188,6 +222,18 @@ class MultilibBestTest(support.ResultTestCase):
 
         self.assertRaises(dnf.exceptions.MarkingError,
                           self.base.install, "/not/exist/")
+
+    def test_install_installed(self):
+        """Test that nothing changes if an installed package matches."""
+        stdout = dnf.pycomp.StringIO()
+        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+            self.base.install('librita')
+        installed, removed = self.installed_removed(self.base)
+        self.assertEmpty(installed)
+        self.assertEmpty(removed)
+        self.assertIn(
+            'Package librita-1-1.x86_64 is already installed, skipping.',
+            stdout.getvalue())
 
     def test_install_multilib(self):
         """Test that a pkg for only one architecture are installed."""
@@ -240,3 +286,14 @@ class MultilibBestTest(support.ResultTestCase):
         self.assertIn(
             'Package hole-1-1.x86_64 is already installed, skipping.',
             stdout.getvalue())
+
+    def test_install_upgrade(self):
+        """Test that the pkg to be installed can be an upgrade."""
+        self.base.install('hole-1-2')
+        installed, removed = self.installed_removed(self.base)
+        self.assertGreaterEqual(
+            installed,
+            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+        self.assertGreaterEqual(
+            removed,
+            set(self.base.sack.query().installed().filter(name='hole')))
