@@ -31,13 +31,25 @@
 
     Seconds since the epoch when the package was built (integer).
 
+  .. attribute:: downloadsize
+
+    The size of rpm package in bytes (integer).
+
   .. attribute:: epoch
 
     Epoch of the package (integer)
 
+  .. attribute:: files
+
+    Files the package provides (list of strings)
+
   .. attribute:: installtime
 
     Seconds since the epoch when the package was installed (integer).
+
+  .. attribute:: installsize
+
+    Space in bytes the package takes on the system after installation (integer).
 
   .. attribute:: name
 
