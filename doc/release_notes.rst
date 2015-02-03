@@ -928,7 +928,7 @@ API additions in 0.6.2:
 * Now :meth:`dnf.Base.package_install` method ignores already installed packages
 * `CliError` exception from :mod:`dnf.cli` documented
 * `Autoerase`, `History`, `Info`, `List`, `Provides`, `Repolist` commands do not force a sync of expired :ref:`metadata <metadata_synchronization-label>`
-* `Install` command does :ref:`installation only <install_only>`
+* `Install` command does installation only
 
 Bugs fixed in 0.6.2:
 
