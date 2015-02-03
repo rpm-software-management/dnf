@@ -1,8 +1,6 @@
 #! /bin/bash
 
-GITREV=`git log|head -1| sed 's/commit //'`
-[[ $# -gt 1 ]] && GITREV=$1
-
+GITREV=${1:-$(git rev-parse --short HEAD)}
 # shorten to 7 characters
 GITREV=${GITREV:0:7}
 
