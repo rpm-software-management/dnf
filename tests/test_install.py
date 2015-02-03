@@ -32,7 +32,7 @@ class MultilibCommonTest(support.ResultTestCase):
     def test_install_arch_glob(self):
         """Test that the pkg specification can contain an architecture glob."""
         self.base.install("lotus.*6*")
-        installed, removed = self.installed_removed(self.base)
+        installed = self.installed_removed(self.base)[0]
         self.assertCountEqual(map(str, installed),
                               ['lotus-3-16.i686',
                                'lotus-3-16.x86_64'])
@@ -56,9 +56,7 @@ class MultilibCommonTest(support.ResultTestCase):
     def test_install_name_glob(self):
         """Test that the pkg to be installed can be specified by name glob."""
         self.base.install("mrkite*")
-        q = self.base.sack.query().available().filter(name="mrkite*")
-        new_set = self.base.sack.query().installed() + q.run()
-        installed, removed = self.installed_removed(self.base)
+        installed = self.installed_removed(self.base)[0]
         self.assertCountEqual(map(str, installed),
                               ['mrkite-2-0.x86_64',
                                'mrkite-k-h-1-1.x86_64',
@@ -79,7 +77,8 @@ class MultilibCommonTest(support.ResultTestCase):
     def test_install_nevra(self):
         """Test that the package to be installed can be specified by NEVRA."""
         self.base.install("lotus-3-16.i686")
-        lotus, = dnf.subject.Subject('lotus-3-16.i686').get_best_query(self.base.sack)
+        lotus, = dnf.subject.Subject('lotus-3-16.i686') \
+                     .get_best_query(self.base.sack)
         new_set = self.base.sack.query().installed() + [lotus]
         self.assertResult(self.base, new_set)
 
@@ -183,8 +182,7 @@ class MultilibAllTest(support.ResultTestCase):
         """Test whether packages are filtered by the reponame."""
         result = itertools.chain(
             self.base.sack.query().installed(),
-            dnf.subject.Subject('lotus-3-16.i686').get_best_query(self.base.sack),
-            dnf.subject.Subject('lotus-3-16.x86_64').get_best_query(self.base.sack))
+            dnf.subject.Subject('lotus-3-16').get_best_query(self.base.sack))
 
         self.base.install('lotus', reponame='main')
         self.assertResult(self.base, result)
@@ -240,7 +238,8 @@ class MultilibBestTest(support.ResultTestCase):
         cnt = self.base.install("lotus")
         self.assertEqual(cnt, 1)
 
-        new_package, = dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.base.sack)
+        new_package, = dnf.subject.Subject('lotus-3-17.x86_64') \
+                           .get_best_query(self.base.sack)
         new_set = self.installed + [new_package]
         self.assertResult(self.base, new_set)
 
@@ -265,12 +264,14 @@ class MultilibBestTest(support.ResultTestCase):
         """Test whether packages are filtered by the reponame."""
         result = itertools.chain(
             self.base.sack.query().installed(),
-            dnf.subject.Subject('lotus-3-16.x86_64').get_best_query(self.base.sack))
+            dnf.subject.Subject('lotus-3-16.x86_64')
+            .get_best_query(self.base.sack))
 
         self.base.install('lotus', reponame='main')
         self.assertResult(self.base, result)
 
-        assert dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.base.sack), \
+        assert dnf.subject.Subject('lotus-3-17.x86_64') \
+               .get_best_query(self.base.sack), \
                ('the base must contain packages a package in another repo '
                 'which matches the pattern but is preferred, otherwise the '
                 'test makes no sense')
