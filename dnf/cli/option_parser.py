@@ -25,6 +25,7 @@ import argparse
 import dnf.exceptions
 import dnf.yum.misc
 import logging
+import re
 import sys
 
 logger = logging.getLogger("dnf")
@@ -54,10 +55,11 @@ class OptionParser(argparse.ArgumentParser):
     def _split_arg(seq):
         """ Split all strings in seq, at "," and whitespace.
             Returns a new list. """
-        ret = []
-        for arg in seq:
-            ret.extend(arg.replace(",", " ").split())
-        return ret
+        res = []
+        for i in seq:
+            for e in re.split("\s*,?\s*", i):
+                res.append(e)
+        return res
 
     @staticmethod
     def _non_nones2dict(in_dct):
