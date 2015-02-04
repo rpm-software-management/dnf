@@ -971,3 +971,49 @@ Bugs fixed in 0.6.3:
 * :rhbug:`1147523`
 * :rhbug:`1148208`
 * :rhbug:`1109927`
+
+===================
+0.6.4 Release Notes
+===================
+
+Added example code snippets into :doc:`use_cases`.
+
+Shows ordered groups/environments by `display_order` tag from :ref:`cli <grouplist_command-label>` and :doc:`api_comps` DNF API.
+
+In commands the environment group is specified the same as :ref:`group <specifying_groups-label>`.
+
+:ref:`skip_if_unavailable <skip_if_unavailable-label>` configuration option affects the metadata only.
+
+added `enablegroups`, `minrate` and `timeout` :doc:`configuration options <conf_ref>`
+
+API additions in 0.6.4:
+
+Documented `install_set` and `remove_set attributes` from :doc:`api_transaction`.
+
+Exposed `downloadsize`, `files`, `installsize` attributes from :doc:`api_package`.
+
+Bugs fixed in 0.6.4:
+
+* :rhbug:`1155877`
+* :rhbug:`1175466`
+* :rhbug:`1175466`
+* :rhbug:`1186461`
+* :rhbug:`1170156`
+* :rhbug:`1184943`
+* :rhbug:`1177002`
+* :rhbug:`1169165`
+* :rhbug:`1167982`
+* :rhbug:`1157233`
+* :rhbug:`1138096`
+* :rhbug:`1181189`
+* :rhbug:`1181397`
+* :rhbug:`1175434`
+* :rhbug:`1162887`
+* :rhbug:`1156084`
+* :rhbug:`1175098`
+* :rhbug:`1174136`
+* :rhbug:`1055910`
+* :rhbug:`1155918`
+* :rhbug:`1119030`
+* :rhbug:`1177394`
+* :rhbug:`1154476`

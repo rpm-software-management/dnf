@@ -934,5 +934,89 @@
     [
         1109927, 
         "RFE: take systemd inhibitor lock while doing operations that shouldn't be interrupted by shutdown"
+    ], 
+    [
+        1155877, 
+        "[abrt] dnf: i18n.py:130:ucd:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 1: ordinal not in range(128)"
+    ], 
+    [
+        1175466, 
+        "add timeout option to repo conf"
+    ], 
+    [
+        1186461, 
+        "\"file\" filter in DNF"
+    ], 
+    [
+        1170156, 
+        "[RFE][UX] Display metadata timestamp"
+    ], 
+    [
+        1184943, 
+        "please enrich DNF API with a method for setting up base.conf.cachedir for non privileged users"
+    ], 
+    [
+        1177002, 
+        "comps display_order for environment groups not respected by installer with dnf payload (or dnf itself)"
+    ], 
+    [
+        1169165, 
+        "let glob pattern describing package to match multiple packages"
+    ], 
+    [
+        1167982, 
+        "dnf.conf man page is in the wrong section"
+    ], 
+    [
+        1157233, 
+        "'dnf download' cannot be run in parallel as non-root user"
+    ], 
+    [
+        1138096, 
+        "[doc] add examples on install, resolve, do_transaction api usage"
+    ], 
+    [
+        1181189, 
+        "dnf downgrade ./<TAB> doesn't autocomplete"
+    ], 
+    [
+        1181397, 
+        "[abrt] dnf: output.py:683:_display_packages_verbose:KeyError: u'ppc64-utils'"
+    ], 
+    [
+        1175434, 
+        "Odd placement and no rotation of hawkey.log"
+    ], 
+    [
+        1162887, 
+        "[api] introspecting transaction package sets"
+    ], 
+    [
+        1156084, 
+        "dnf install @some-environment-id does not work"
+    ], 
+    [
+        1175098, 
+        "dnf: unowned dir /etc/dnf/protected.d"
+    ], 
+    [
+        1174136, 
+        "wrongly computed text width with nonascii characters"
+    ], 
+    [
+        1155918, 
+        "let \"history list\" show all records"
+    ], 
+    [
+        1119030, 
+        "skip_if_unavailable to correctly treat repos that are down during package download"
+    ], 
+    [
+        1177394, 
+        "Dnf specifies both \"size\" and an age in the logrotate configuration"
+    ], 
+    [
+        1154476, 
+        "[abrt] dnf: lock.py:64:_read_lock:ValueError: invalid literal for int() with base 10: ''"
     ]
 ]

@@ -281,6 +281,8 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
 ``dnf [options] group install [with-optional] <group-spec>...``
     Mark the specified group installed and install packages it contains. Also include optional packages of the group if ``with-optional`` is specified.
 
+.. _grouplist_command-label:
+
 ``dnf [options] group list <group-spec>...``
     List all matching groups, either among installed or available groups. If
     nothing is specified list all known groups. Records are ordered by `display_order` tag defined in comps.xml file.

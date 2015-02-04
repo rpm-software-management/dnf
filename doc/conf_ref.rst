@@ -132,6 +132,8 @@ one main section. The repository sections define the configuration for each
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
 
+.. _skip_if_unavailable-label:
+
 ``skip_if_unavailable``
     boolean
 
