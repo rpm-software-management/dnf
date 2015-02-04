@@ -29,7 +29,7 @@
 
   .. attribute:: categories
 
-    List of all contained :class:`dnf.comps.Category` objects ordered by `display_order` tag defined in comps.xml file.
+    List of all contained :class:`dnf.comps.Category` objects.
 
   .. attribute:: environments
 
@@ -37,7 +37,7 @@
 
   .. attribute:: groups
 
-    List of all contained :class:`dnf.comps.Group` objects.
+    List of all contained :class:`dnf.comps.Group` objects ordered by `display_order` tag defined in comps.xml file.
 
   .. method:: category_by_pattern(pattern, case_sensitive=False)
 
