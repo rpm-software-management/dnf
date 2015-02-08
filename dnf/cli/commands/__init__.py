@@ -331,7 +331,8 @@ class CheckUpdateCommand(Command):
         patterns = self.parse_extcmds(extcmds)
         found = self.base.check_updates(patterns, print_=True)
         if found:
-            self.cli.demands.success_exit_status = 100
+            self.cli.demands.success_exit_status = \
+                dnf.const.UPDATES_AVAIL
 
 
 class RepoPkgsCommand(Command):
@@ -372,7 +373,8 @@ class RepoPkgsCommand(Command):
             patterns = self.parse_arguments(cli_args)
             found = self.base.check_updates(patterns, reponame, print_=True)
             if found:
-                self.cli.demands.success_exit_status = 100
+                self.cli.demands.success_exit_status = \
+                    dnf.const.UPDATES_AVAIL
 
     class InfoSubCommand(SubCommand):
         """Implementation of the info sub-command."""

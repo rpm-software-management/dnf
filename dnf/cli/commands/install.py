@@ -78,6 +78,7 @@ class InstallCommand(commands.Command):
             try:
                 self.base.install(pkg_spec)
             except dnf.exceptions.MarkingError:
+                self.cli.demands.success_exit_status = dnf.const.PARTIALLY_SUCC
                 msg = _('No package %s%s%s available.')
                 logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
                             self.base.output.term.MODE['normal'])

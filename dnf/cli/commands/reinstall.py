@@ -81,8 +81,10 @@ class ReinstallCommand(commands.Command):
             try:
                 self.base.reinstall(pkg_spec)
             except dnf.exceptions.PackagesNotInstalledError:
+                self.cli.demands.success_exit_status = dnf.const.PARTIALLY_SUCC
                 logger.info(_('No match for argument: %s'), pkg_spec)
             except dnf.exceptions.PackagesNotAvailableError as err:
+                self.cli.demands.success_exit_status = dnf.const.PARTIALLY_SUCC
                 for pkg in err.packages:
                     xmsg = ''
                     yumdb_info = self.base.yumdb.get_package(pkg)
