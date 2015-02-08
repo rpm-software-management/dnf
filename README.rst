@@ -16,6 +16,18 @@ rawhide Fedora. You can install DNF from the distribution repositories there::
 In other RPM-based distributions you need to build all the components from their
 sources.
 
+=============================================================
+ Installing nightly builds for last 2 stable Fedora versions
+=============================================================
+
+    sudo cat << 'EOF' > /etc/yum.repos.d/dnf-nightly.repo
+    [dnf-nightly]
+    name=DNF nightly $releasever - $basearch
+    baseurl=http://jenkins.cloud.fedoraproject.org/job/DNF/lastSuccessfulBuild/artifact/fedora-$releasever-$basearch-build
+    enabled=1
+    EOF
+    sudo yum install dnf
+
 ======================
  Building from source
 ======================
@@ -30,6 +42,16 @@ From the DNF git checkout directory::
 Then to run DNF::
 
     PYTHONPATH=`readlink -f .` bin/dnf <arguments>
+
+=============================
+ Building and installing rpm
+=============================
+
+From the DNF git checkout directory::
+    
+    cmake .
+    ./package/build-test-rpm
+    sudo rpm -i ~/rpmbuild/RPMS/noarch/dnf-<version>-<release>.noarch.rpm
 
 ===============
  Running tests
