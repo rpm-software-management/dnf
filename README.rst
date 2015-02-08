@@ -27,14 +27,6 @@ Then install DNF typing::
 In other RPM-based distributions you need to build all the components from their
 sources.
 
-=============================================================
- Installing nightly builds for last 2 stable Fedora versions
-=============================================================
-
-From the DNF git checkout directory::
-
-    
-
 ======================
  Building from source
 ======================
