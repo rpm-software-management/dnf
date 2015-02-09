@@ -27,15 +27,15 @@ class MultilibCommonTest(support.ResultTestCase):
     """Tests common to any multilib_policy."""
 
     def setUp(self):
-        self.base = support.MockBase('main', 'multilib')
+        self.base = support.MockBase('main', 'third_party', 'broken_deps')
 
     def test_install_arch_glob(self):
         """Test that the pkg specification can contain an architecture glob."""
         self.base.install("lotus.*6*")
         installed = self.installed_removed(self.base)[0]
         self.assertCountEqual(map(str, installed),
-                              ['lotus-3-16.i686',
-                               'lotus-3-16.x86_64'])
+                              ['lotus-3-17.i686',
+                               'lotus-3-17.x86_64'])
 
     def test_install_filename_glob(self):
         """Test that the pkg to be installed can be specified by fname glob."""
@@ -98,6 +98,14 @@ class MultilibCommonTest(support.ResultTestCase):
         self.assertRaisesRegexp(dnf.exceptions.Error, re,
                                 self.base.resolve)
 
+    def test_package_install_conflict(self):
+        """Test that a conflicting package cannot be installed."""
+        p = self.base.sack.query().available().filter(
+            nevra='pepper-20-2.x86_64')[0]
+        self.assertEqual(1, self.base.package_install(p))
+        with self.assertRaises(dnf.exceptions.DepsolveError):
+            self.base.resolve()
+
     def test_package_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         p = self.base.sack.query().available().nevra("librita-1-1.x86_64")[0]
@@ -109,6 +117,17 @@ class MultilibCommonTest(support.ResultTestCase):
         self.base.resolve()
         self.assertLength(self.base._goal.list_reinstalls(), 1)
 
+    def test_package_install_upgrade(self):
+        """Test that the pkg to be installed can be an upgrade."""
+        p = self.base.sack.query().available().filter(
+            nevra='hole-1-2.x86_64')[0]
+        self.assertEqual(1, self.base.package_install(p))
+        installed, removed = self.installed_removed(self.base)
+        self.assertIn(p, installed)
+        self.assertGreaterEqual(
+            removed,
+            set(self.base.sack.query().installed().filter(name='hole')))
+
     def test_pkg_install_installable(self):
         """Test that the package to be installed can be a package instance."""
         self.base = support.MockBase('main', 'multilib')
@@ -117,6 +136,18 @@ class MultilibCommonTest(support.ResultTestCase):
         self.assertEqual(1, self.base.package_install(p))
         self.base.resolve()
         self.assertEqual(1, len(self.base._goal.list_installs()))
+
+    def test_pkg_install_installonly(self):
+        """Test that installonly packages are installed, not upgraded."""
+        self.base.conf.installonlypkgs.append('hole')
+        p = self.base.sack.query().available().filter(
+            nevra='hole-1-2.x86_64')[0]
+        self.assertEqual(1, self.base.package_install(p))
+        installed, removed = self.installed_removed(self.base)
+        self.assertIn(p, installed)
+        self.assertFalse(
+            set(removed) &
+            set(self.base.sack.query().installed().filter(name='hole')))
 
 class MultilibAllTest(support.ResultTestCase):
 
