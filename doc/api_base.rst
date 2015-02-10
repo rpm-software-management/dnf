@@ -65,6 +65,8 @@
 
     Before this method is invoked, the client application should setup any explicit configuration relevant to the operation. This will often be at least :attr:`conf.cachedir <.Conf.cachedir>` and the substitutions used in repository URLs. See :attr:`.Conf.substitutions`.
 
+    Throws `IOError` exception in case cached metadata could not be opened.
+
     Example::
 
       base = dnf.Base()
