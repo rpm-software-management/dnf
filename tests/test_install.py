@@ -22,9 +22,29 @@ import dnf.exceptions
 import itertools
 import logging
 
-class MultilibCommonTest(support.ResultTestCase):
+class CommonTest(support.ResultTestCase):
 
-    """Tests common to any multilib_policy."""
+    """Tests common to any 'multilib_policy' and 'best'.
+
+    The test fixture consists of a dnf.Base instance that:
+
+    - contains a package "lotus-3-17.x86_64" (The package can be installed.)
+    - contains a package "lotus-3-17.i686" (The package can be installed.)
+    - contains a package "trampoline-2.1-1.noarch" that contains "*/there" and
+      provides "splendid > 2.0" (The package can be installed.)
+    - contains a package "mrkite-2-0.x86_64" (The package can be installed
+      together with the package "trampoline".)
+    - contains a package "mrkite-k-h-1-1.x86_64" (The package can be
+      installed.)
+    - contains a package "pepper-20-0.src"
+    - contains a package "pepper-20-2.x86_64" (The package cannot be
+      installed.)
+    - contains a package "librita-1-1.x86_64" (The package is already
+      installed.)
+    - contains a package "hole-1-2.x86_64" (The package can be installed as an
+      upgrade.)
+
+    """
 
     def setUp(self):
         self.base = support.MockBase('main', 'third_party', 'broken_deps')
@@ -76,8 +96,8 @@ class MultilibCommonTest(support.ResultTestCase):
 
     def test_install_nevra(self):
         """Test that the package to be installed can be specified by NEVRA."""
-        self.base.install("lotus-3-16.i686")
-        lotus, = dnf.subject.Subject('lotus-3-16.i686') \
+        self.base.install("lotus-3-17.i686")
+        lotus, = dnf.subject.Subject('lotus-3-17.i686') \
                      .get_best_query(self.base.sack)
         new_set = self.base.sack.query().installed() + [lotus]
         self.assertResult(self.base, new_set)
@@ -130,9 +150,8 @@ class MultilibCommonTest(support.ResultTestCase):
 
     def test_pkg_install_installable(self):
         """Test that the package to be installed can be a package instance."""
-        self.base = support.MockBase('main', 'multilib')
         p = self.base.sack.query().available().filter(
-            nevra="pepper-20-0.i686")[0]
+            nevra='lotus-3-17.x86_64')[0]
         self.assertEqual(1, self.base.package_install(p))
         self.base.resolve()
         self.assertEqual(1, len(self.base._goal.list_installs()))
@@ -151,11 +170,44 @@ class MultilibCommonTest(support.ResultTestCase):
 
 class MultilibAllTest(support.ResultTestCase):
 
-    """Tests for multilib_policy='all'."""
+    """Tests for multilib_policy='all'.
+
+    The test fixture consists of a dnf.Base instance that:
+
+    - has conf.multilib_policy == "all"
+    - has conf.best == False
+    - contains a package "pepper-20-2" (The package cannot be installed.)
+    - contains a package "lotus-3-16.x86_64" that contains "/usr/lib*/liblot*"
+      in a "main" repository (The package can be installed.)
+    - contains a package "lotus-3-16.i686" that contains "/usr/lib*/liblot*" in
+      the "main" repository (The package can be installed.)
+    - contains a package "librita-1-1.x86_64" (The package is already
+      installed.)
+    - contains a package "hole-1-2.x86_64" (The package can be installed as an
+      upgrade.)
+    - contains a package "pepper-20-0.src"
+    - contains a package "pepper-20-0.x86_64" (The package is already
+      installed.)
+    - contains nothing that matches "not-available"
+    - contains a package that provides "henry(the_horse)" (The package can be
+      installed.)
+    - contains a package "lotus-3-17.x86_64" not in a "main" repository (The
+      package can be installed.)
+    - contains a package "lotus-3-17.i686" not in the "main" repository (The
+      package can be installed.)
+
+    """
 
     def setUp(self):
         self.base = support.MockBase('main', 'third_party', 'broken_deps')
         self.base.conf.multilib_policy = "all"
+        assert self.base.conf.best == False
+
+    def test_install_conflict(self):
+        """Test that the exception is raised if the package conflicts."""
+        self.base.install('pepper-20-2')
+        with self.assertRaises(dnf.exceptions.DepsolveError):
+            self.base.resolve()
 
     def test_install_filename(self):
         """Test that the pkg to be installed can be specified by filename."""
@@ -173,6 +225,16 @@ class MultilibAllTest(support.ResultTestCase):
         self.assertIn(
             'Package librita-1-1.x86_64 is already installed, skipping.',
             stdout.getvalue())
+
+    def test_install_installonly(self):
+        """Test that installonly packages are installed, not upgraded."""
+        self.base.conf.installonlypkgs.append('hole')
+        self.base.install('hole-1-2')
+        installed, removed = self.installed_removed(self.base)
+        self.assertGreaterEqual(
+            installed,
+            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+        self.assertEmpty(removed)
 
     def test_install_multilib(self):
         """Test that pkgs for all architectures are installed if available."""
@@ -236,12 +298,48 @@ class MultilibAllTest(support.ResultTestCase):
 
 class MultilibBestTest(support.ResultTestCase):
 
-    """Tests for multilib_policy='best'."""
+    """Tests for multilib_policy='best'.
+
+    The test fixture consists of a dnf.Base instance that:
+
+    - has conf.multilib_policy == "best"
+    - has conf.best == False
+    - contains a package "pepper-20-2" (The package cannot be installed.)
+    - contains a package "lotus-3-16.x86_64" that contains "/usr/lib*/liblot*"
+      in a "main" repository (The package can be installed.)
+    - contains a package "lotus-3-16.i686" that contains "/usr/lib*/liblot*"
+      in the "main" repository (The package can be installed.)
+    - contains nothing that matches "/not/exist/"
+    - contains a package "librita-1-1.x86_64" (The package is already
+      installed.)
+    - contains a package "hole-1-2.x86_64" (The package can be installed as an
+      upgrade.)
+    - contains a package "lotus-3-17.x86_64" not in the "main" repository (The
+      package can be installed.)
+    - contains a package "pepper-20-0.src"
+    - contains a package "pepper-20-0.x86_64" (The package is already
+      installed.)
+    - contains nothing that matches "not-available"
+    - contains a package "trampoline" that provides "henry(the_horse)" (The
+      package can be installed.)
+    - contains a package "lotus-3-17.i686" not in the "main" repository (The
+      package can be installed.)
+    - contains a package "hole-1-1.x86_64" (The package is already installed
+      and is not available.)
+
+    """
 
     def setUp(self):
-        self.base = support.MockBase('main', 'third_party')
+        self.base = support.MockBase('main', 'third_party', 'broken_deps')
         self.installed = self.base.sack.query().installed().run()
         self.assertEqual(self.base.conf.multilib_policy, "best")
+        assert self.base.conf.best == False
+
+    def test_install_conflict(self):
+        """Test that the exception is raised if the package conflicts."""
+        self.base.install('pepper-20-2')
+        with self.assertRaises(dnf.exceptions.DepsolveError):
+            self.base.resolve()
 
     def test_install_filename(self):
         """Test that the pkg to be installed can be specified by filename."""
@@ -264,6 +362,16 @@ class MultilibBestTest(support.ResultTestCase):
             'Package librita-1-1.x86_64 is already installed, skipping.',
             stdout.getvalue())
 
+    def test_install_installonly(self):
+        """Test that installonly packages are installed, not upgraded."""
+        self.base.conf.installonlypkgs.append('hole')
+        self.base.install('hole-1-2')
+        installed, removed = self.installed_removed(self.base)
+        self.assertGreaterEqual(
+            installed,
+            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+        self.assertEmpty(removed)
+
     def test_install_multilib(self):
         """Test that a pkg for only one architecture are installed."""
         cnt = self.base.install("lotus")
@@ -273,6 +381,21 @@ class MultilibBestTest(support.ResultTestCase):
                            .get_best_query(self.base.sack)
         new_set = self.installed + [new_package]
         self.assertResult(self.base, new_set)
+
+    def test_install_name_choice(self):
+        """Test that the matching pkg that can be installed is installed."""
+        # Don't install the SRPM.
+        self.base.sack.add_excludes(
+            dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
+
+        stdout = dnf.pycomp.StringIO()
+        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+            self.base.install('pepper')
+        installed, removed = self.installed_removed(self.base)
+        self.assertEmpty(installed | removed)
+        self.assertIn(
+            'Package pepper-20-0.x86_64 is already installed, skipping.',
+            stdout.getvalue())
 
     def test_install_nonexistent(self):
         """Test that the exception is raised if no package matches."""
@@ -329,3 +452,24 @@ class MultilibBestTest(support.ResultTestCase):
         self.assertGreaterEqual(
             removed,
             set(self.base.sack.query().installed().filter(name='hole')))
+
+class BestTrueTest(support.ResultTestCase):
+
+    """Tests for best=True.
+
+    The test fixture consists of a dnf.Base instance that:
+
+    - has conf.best == True
+    - contains a package "pepper-20-2" (The package cannot be installed.)
+
+    """
+
+    def setUp(self):
+        self.base = support.MockBase('broken_deps')
+        self.base.conf.best = True
+
+    def test_install_name_choice(self):
+        """Test that the latest version of the matching pkg is installed."""
+        self.base.install('pepper')
+        with self.assertRaises(dnf.exceptions.DepsolveError):
+            self.base.resolve()
