@@ -44,7 +44,7 @@ one main section. The repository sections define the configuration for each
     When upgrading a package, always try to install its highest version
     available, even only to find out some of its deps are not
     satisfiable. Enable this if you want to experience broken dependencies in
-    the repositories firsthand. The default is off.
+    the repositories firsthand. The default is False.
 
 .. _clean_requirements_on_remove-label:
 
@@ -54,7 +54,7 @@ one main section. The repository sections define the configuration for each
     Remove dependencies that are no longer used during ``dnf erase``. A package
     only qualifies for removal via ``clean_requirements_on_remove`` if it was
     installed through DNF but not on explicit user request, i.e. it was
-    pulled in as a dependency. The default is on.
+    pulled in as a dependency. The default is True.
 
 ``debuglevel``
     integer
@@ -87,7 +87,7 @@ one main section. The repository sections define the configuration for each
 ``keepcache``
     boolean
 
-    Keep downloaded packages in the cache. The default is off.
+    Keep downloaded packages in the cache. The default is False.
 
 .. _metadata_timer_sync-label:
 
@@ -163,7 +163,7 @@ configuration.
 
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
-    intensive. Default is on.
+    intensive. Default is True.
 
 ``enablegroups``
     boolean
