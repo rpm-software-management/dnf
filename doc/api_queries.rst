@@ -112,7 +112,7 @@
 
   .. method:: __init__(pkg_spec, ignore_case=False)
 
-    Initialize the :class:`Subject` with `pkg_spec` input string. If `ignore_case` is ``True`` ignore the case of characters in `pkg_spec`.
+    Initialize the :class:`Subject` with `pkg_spec` input string with following :ref:`semantic <specifying_packages-label>`. If `ignore_case` is ``True`` ignore the case of characters in `pkg_spec`.
 
   .. method:: get_best_query(sack, with_provides=True, forms=None)
 
