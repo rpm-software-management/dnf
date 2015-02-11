@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2014  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1331,6 +1331,9 @@ class Base(object):
             q = subj.get_best_query(self.sack)
             if reponame is not None:
                 q = q.filter(reponame=reponame)
+            if not q:
+                raise dnf.exceptions.PackageNotFoundError(
+                    _('no package matched'), pkg_spec)
             already_inst, available = self._query_matches_installed(q)
             for i in already_inst:
                 _msg_installed(i)
@@ -1341,7 +1344,8 @@ class Base(object):
             sltrs = subj.get_best_selectors(self.sack)
             match = reduce(lambda x, y: y.matches() or x, sltrs, [])
             if not match:
-                raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
+                raise dnf.exceptions.MarkingError(
+                    _('no package matched'), pkg_spec)
             for sltr in sltrs:
                 if not sltr.matches():
                     continue
