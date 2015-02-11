@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -365,9 +365,10 @@ Install Command
 ---------------
 
 ``dnf [options] install <spec>...``
-    Installs the given packages and their dependencies. Each ``<spec>`` can be
-    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. After the transaction is finished all the specified packages are installed
-    on the system.
+    Make sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
+    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or an URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
+
+    Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`).
 
 ------------
 List Command
@@ -640,12 +641,14 @@ Note that ``name`` can in general contain dashes (e.g. ``package-subpackage``).
 Failing to match the input argument to an existing package name based on the
 patterns above, DNF tries to see if the argument matches an existing provide.
 
-If multiple versions of the selected package exist in the repo, the most recent
-version suitable for the given operation is used.  The name specification is
+By default, if multiple versions of the selected package exist in the repo, the
+most recent version suitable for the given operation is used. If the selected
+package exists for multiple architectures, the packages which best match the
+system's architecture will be preferred. The name specification is
 case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
 trigger shell-like glob matching. If globbing character is present in ``name``,
-DNF expands given ``name`` first and consequently selects all packages
-matching expanded ``<package-spec>``.
+DNF expands given ``name`` first and consequently selects all packages matching
+expanded ``<package-spec>``.
 
 ``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
 matching is never attempted there.

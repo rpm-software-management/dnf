@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -264,19 +264,16 @@ downloaders ran in different processes.
 
 The boolean ``deltarpm`` option controls whether delta RPM files are used. Compared to Yum, DNF does not support ``deltarpm_percentage`` and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.
 
-======================
- Handling .srpm files
-======================
+================================================
+ Handling .srpm files and non-existent packages
+================================================
 
 DNF will terminate early with an error if a command is executed requesting an installing operation on a local ``.srpm`` file::
 
   $ dnf install fdn-0.4.17-1.fc20.src.rpm tour-4-6.noarch.rpm
-  Resolving dependencies
-  --> Starting dependency resolution
-  ---> Package fdn.src 0.4.17-1.fc20 will be installed
-  ---> Package tour.noarch 4-6 will be installed
-  --> Finished dependency resolution
   Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).
+
+The same applies for package specifications that does not match any available package.
 
 Yum will only issue warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
 
