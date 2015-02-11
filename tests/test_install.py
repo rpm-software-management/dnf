@@ -261,8 +261,9 @@ class MultilibAllTest(support.ResultTestCase):
 
     def test_install_nonexistent(self):
         """Test that the exception is raised if no package matches."""
-        cnt = self.base.install("not-available")
-        self.assertEqual(cnt, 0)
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            self.base.install('not-available')
+        self.assertEqual(context.exception.pkg_spec, 'not-available')
         installed_pkgs = self.base.sack.query().installed().run()
         self.assertResult(self.base, installed_pkgs)
 

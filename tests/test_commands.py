@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2014  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -133,7 +133,7 @@ class InstallCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self._cmd.run, ['non-existent'])
+                              self._cmd.run, ['non-existent', 'lotus'])
 
         self.assertEqual(stdout.getvalue(),
                          'No package non-existent available.\n')

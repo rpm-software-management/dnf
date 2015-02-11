@@ -88,7 +88,14 @@ class MarkingError(Error):
     def __init__(self, value=None, pkg_spec=None):
         """Initialize the marking error instance."""
         super(MarkingError, self).__init__(value)
-        self.pkg_spec = pkg_spec
+        self.pkg_spec = None if pkg_spec is None else ucd(pkg_spec)
+
+    def __unicode__(self):
+        string = super(MarkingError, self).__unicode__()
+        if self.pkg_spec:
+            string += ': ' + self.pkg_spec
+        return string
+
 
 
 class MetadataError(Error):

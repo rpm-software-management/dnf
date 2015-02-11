@@ -1,7 +1,7 @@
 # install.py
 # Install CLI command.
 #
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -81,8 +81,8 @@ class InstallCommand(commands.Command):
                 msg = _('No package %s%s%s available.')
                 logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
                             self.base.output.term.MODE['normal'])
-            else:
-                done = True
+                raise
+            done = True
 
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
