@@ -134,15 +134,14 @@ class Subject(object):
         return sltr
 
     def get_best_selectors(self, sack, forms=None):
-        if not self.filename_pattern:
+        if not self.filename_pattern and is_glob_pattern(self.pattern):
             nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
             nevra = first(nevras)
             if nevra and nevra.name:
                 sltrs = []
                 pkgs = self._nevra_to_filters(sack.query(), nevra)
-
-                for pkg in pkgs:
-                    exp_name = self.pattern.replace(nevra.name, pkg.name, 1)
+                for pkg_name in {pkg.name for pkg in pkgs}:
+                    exp_name = self.pattern.replace(nevra.name, pkg_name, 1)
                     sltrs.append(Subject(exp_name).get_best_selector(sack, forms))
                 return sltrs
 
