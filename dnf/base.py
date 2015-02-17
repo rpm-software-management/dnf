@@ -1185,6 +1185,8 @@ class Base(object):
     def _add_comps_trans(self, trans):
         cnt = 0
         attr_fn = ((trans.install, self._goal.install),
+                   (trans.install_opt,
+                    functools.partial(self._goal.install, optional=True)),
                    (trans.upgrade, self._goal.upgrade),
                    (trans.remove, self._goal.erase))
 
@@ -1199,6 +1201,7 @@ class Base(object):
                 cnt += 1
 
         self._goal.group_members.update(trans.install)
+        self._goal.group_members.update(trans.install_opt)
         return cnt
 
     def build_comps_solver(self):

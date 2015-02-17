@@ -356,13 +356,16 @@ class Comps(object):
 class TransactionBunch(object):
     def __init__(self):
         self.install = set()
+        self.install_opt = set()
         self.remove = set()
         self.upgrade = set()
 
     def __iadd__(self, other):
         self.install.update(other.install)
+        self.install_opt.update(other.install_opt)
         self.upgrade.update(other.upgrade)
-        self.remove = (self.remove | other.remove) - self.install - self.upgrade
+        self.remove = (self.remove | other.remove) - \
+            self.install - self.install_opt - self.upgrade
         return self
 
 
@@ -489,7 +492,10 @@ class Solver(object):
         p_grp.full_list.extend(self._full_package_set(group))
 
         trans = TransactionBunch()
-        trans.install = self._pkgs_of_type(group, pkg_types, exclude)
+        types = pkg_types & MANDATORY
+        trans.install = self._pkgs_of_type(group, types, exclude)
+        types = pkg_types & (DEFAULT | OPTIONAL)
+        trans.install_opt = self._pkgs_of_type(group, types, exclude)
         return trans
 
     def group_remove(self, group):
