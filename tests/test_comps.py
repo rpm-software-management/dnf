@@ -169,6 +169,13 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertCountEqual(p_grp.pkg_exclude, ['right'])
         self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
 
+    def test_install_opt(self):
+        grp = self.comps.group_by_pattern('somerset')
+        types = dnf.comps.DEFAULT | dnf.comps.OPTIONAL
+        trans = self.solver.group_install(grp, types, [])
+        self.assertLength(trans.install, 0)
+        self.assertLength(trans.install_opt, 1)
+
     def test_removable_pkg(self):
         p_grp1 = self.persistor.group('base')
         p_grp2 = self.persistor.group('tune')

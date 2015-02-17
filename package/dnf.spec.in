@@ -1,5 +1,5 @@
 %{!?gitrev: %global gitrev 3a22891}
-%{!?hawkey_version: %global hawkey_version 0.5.3}
+%{!?hawkey_version: %global hawkey_version 0.5.4}
 %{!?librepo_version: %global librepo_version 1.7.5}
 %{!?libcomps_version: %global libcomps_version 0.1.6}
 %{!?rpm_version: %global rpm_version 4.12.0}
