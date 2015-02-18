@@ -1047,6 +1047,7 @@ class Base(object):
         obsoletesTuples = []
         recent = []
         extras = []
+        duplicates = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1121,6 +1122,13 @@ class Base(object):
                     else:
                         old_available.append(avail_pkg)
 
+        # installed duplicates
+        elif pkgnarrow == 'duplicates':
+	    installed_na = q.installed().na_dict()
+	    for (name, arch), pkgs in installed_na.items():
+		if len(pkgs) > 1 and name not in self.conf.installonlypkgs:
+		    duplicates.extend(pkgs)
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1163,6 +1171,7 @@ class Base(object):
         ygh.obsoletesTuples = obsoletesTuples
         ygh.recent = recent
         ygh.extras = extras
+        ygh.duplicates = duplicates
 
         return ygh
 
