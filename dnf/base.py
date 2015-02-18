@@ -1048,6 +1048,7 @@ class Base(object):
         recent = []
         extras = []
         duplicates = []
+        installonly = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1129,6 +1130,12 @@ class Base(object):
 		if len(pkgs) > 1 and name not in self.conf.installonlypkgs:
 		    duplicates.extend(pkgs)
 
+        # all installed versions of installonly packages
+        elif pkgnarrow == 'installonly':
+	    for pkg in q.installed():
+                if pkg.name in self.conf.installonlypkgs:
+                    installonly.append(pkg)
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1172,6 +1179,7 @@ class Base(object):
         ygh.recent = recent
         ygh.extras = extras
         ygh.duplicates = duplicates
+        ygh.installonly = installonly
 
         return ygh
 
