@@ -231,7 +231,7 @@ class InfoCommand(Command):
 
     aliases = ('info',)
     summary = _("Display details about a package or group of packages")
-    usage = "[%s|all|available|installed|updates|extras|obsoletes|recent]" % _('PACKAGE')
+    usage = "[%s|all|available|installed|updates|extras|autoremove|obsoletes|recent]" % _('PACKAGE')
 
     @staticmethod
     def parse_extcmds(extcmds):
@@ -240,7 +240,7 @@ class InfoCommand(Command):
         if len(extcmds) == 0:
             return DEFAULT_PKGNARROW, extcmds
 
-        pkgnarrows = {'available', 'installed', 'extras', 'upgrades',
+        pkgnarrows = {'available', 'installed', 'extras', 'upgrades', 'autoremove',
                       'recent', 'obsoletes', DEFAULT_PKGNARROW}
         if extcmds[0] in pkgnarrows:
             return extcmds[0], extcmds[1:]
@@ -384,7 +384,7 @@ class RepoPkgsCommand(Command):
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
             DEFAULT_PKGNARROW = 'all'
-            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
                           'extras', 'obsoletes', 'recent', 'upgrades'}
             if not cli_args or cli_args[0] not in pkgnarrows:
                 return DEFAULT_PKGNARROW, cli_args
@@ -458,7 +458,7 @@ class RepoPkgsCommand(Command):
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
             DEFAULT_PKGNARROW = 'all'
-            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
                           'extras', 'obsoletes', 'recent', 'upgrades'}
             if not cli_args or cli_args[0] not in pkgnarrows:
                 return DEFAULT_PKGNARROW, cli_args

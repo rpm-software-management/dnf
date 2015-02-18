@@ -1047,6 +1047,7 @@ class Base(object):
         obsoletesTuples = []
         recent = []
         extras = []
+        autoremove = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1121,6 +1122,13 @@ class Base(object):
                     else:
                         old_available.append(avail_pkg)
 
+        # packages to be removed by autoremove
+        elif pkgnarrow == 'autoremove':
+            goal = hawkey.Goal(self.sack)
+            self.push_userinstalled(goal)
+            solved = goal.run()
+            autoremove = list(goal.list_unneeded())
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1163,6 +1171,7 @@ class Base(object):
         ygh.obsoletesTuples = obsoletesTuples
         ygh.recent = recent
         ygh.extras = extras
+        ygh.autoremove = autoremove
 
         return ygh
 
