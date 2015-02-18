@@ -1049,6 +1049,7 @@ class Base(object):
         extras = []
         duplicates = []
         installonly = []
+        autoerase = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1136,6 +1137,13 @@ class Base(object):
                 if pkg.name in self.conf.installonlypkgs:
                     installonly.append(pkg)
 
+        # packages to be removed by autoerase
+        elif pkgnarrow == 'autoerase':
+	    goal = hawkey.Goal(self.sack)
+            self.push_userinstalled(goal)
+            solved = goal.run()
+            autoerase = list(goal.list_unneeded())
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1180,6 +1188,7 @@ class Base(object):
         ygh.extras = extras
         ygh.duplicates = duplicates
         ygh.installonly = installonly
+        ygh.autoerase = autoerase
 
         return ygh
 
