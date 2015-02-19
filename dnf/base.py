@@ -465,6 +465,10 @@ class Base(object):
                 duplicates.extend(pkgs)
         return duplicates
 
+    def iter_installonly(self):
+	return (pkg for pkg in self.sack.query().installed()
+                if pkg.name in self.conf.installonlypkgs)
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
@@ -1141,9 +1145,7 @@ class Base(object):
 
         # all installed versions of installonly packages
         elif pkgnarrow == 'installonly':
-	    for pkg in q.installed():
-                if pkg.name in self.conf.installonlypkgs:
-                    installonly.append(pkg)
+            installonly = list(self.iter_installonly())
 
         # packages to be removed by autoerase
         elif pkgnarrow == 'autoerase':
