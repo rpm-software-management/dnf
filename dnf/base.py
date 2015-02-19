@@ -1050,6 +1050,8 @@ class Base(object):
         duplicates = []
         installonly = []
         autoerase = []
+        problems = []
+        problemsTuples = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1144,6 +1146,24 @@ class Base(object):
             solved = goal.run()
             autoerase = list(goal.list_unneeded())
 
+        # conflicts and missing requires
+        elif pkgnarrow == 'problems':
+            rpmdb = dnf.sack.rpmdb_sack(self)
+            current = rpmdb.query().installed()
+
+            problemsTuples = []
+            for pkg in current:
+                problemsTuples.extend(
+                    [(pkg, 'requires', req) for req in pkg.requires
+                     if not str(req) == 'solvable:prereqmarker'
+                     and not str(req).startswith('rpmlib(')
+                     and not current.filter(provides=req)])
+                problemsTuples.extend(
+                    [(pkg, 'conflicts', conf) for conf in pkg.conflicts
+                     if current.filter(provides=conf)])
+
+            problems = [pkg for (pkg, prob, req) in problemsTuples]
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1189,6 +1209,8 @@ class Base(object):
         ygh.duplicates = duplicates
         ygh.installonly = installonly
         ygh.autoerase = autoerase
+        ygh.problems = problems
+        ygh.problemsTuples = problemsTuples
 
         return ygh
 

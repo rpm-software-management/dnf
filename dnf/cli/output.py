@@ -535,6 +535,43 @@ class Output(object):
         print('%-35.35s [%.12s] %.10s %-20.20s' %
               (c_compact, c_repo, changetype, i_compact))
 
+    def problemsList(self, pkg, problem, reldep, columns=None):
+        """Print package and problem description (missing require, conflict).
+
+        :param pkg: dnf.Package object, package with a problem
+        :param problem: problem description, i.e. 'requires' or 'conflicts'
+        :param reldep: hawkey.Reldep object, problematic dependency
+        :param columns: a tuple containing information about how to
+           format the columns of output.  The absolute value of each
+           number in the tuple indicates how much space has been
+           allocated for the corresponding column.  If the number is
+           negative, the text in the column will be left justified,
+           and if it is positive, the text will be right justified.
+           The columns of output are the package name, version, and repository
+        """
+
+        if problem == 'requires':
+            descr = _("has missing require")
+        elif problem == 'conflicts':
+            descr = _("has conflict with")
+        else:
+            descr = _("has unspecified problem")
+
+        if columns is not None:
+            # New style, output all info. for both old/new with old indented
+            chi = self.conf.color_update_remote
+            if pkg.reponame != hawkey.SYSTEM_REPO_NAME:
+                chi = self.conf.color_update_local
+            self.simpleList(pkg, columns=columns, highlight=chi)
+            print("    %s '%s'" % (descr, reldep))
+            return
+
+        # Old style
+        c_compact = pkg.compactPrint()
+        c_repo = changePkg.repoid
+        print("%-35.35s [%.12s] %s '%s'" %
+              (c_compact, c_repo, descr, reldep))
+
     def listPkgs(self, lst, description, outputType, highlight_na={},
                  columns=None, highlight_modes={}):
         """Prints information about the given list of packages.
