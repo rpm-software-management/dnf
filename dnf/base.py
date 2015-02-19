@@ -469,6 +469,12 @@ class Base(object):
 	return (pkg for pkg in self.sack.query().installed()
                 if pkg.name in self.conf.installonlypkgs)
 
+    def iter_autoerase(self):
+	goal = hawkey.Goal(self.sack)
+        self.push_userinstalled(goal)
+        solved = goal.run()
+        return goal.list_unneeded()
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
@@ -1149,10 +1155,7 @@ class Base(object):
 
         # packages to be removed by autoerase
         elif pkgnarrow == 'autoerase':
-	    goal = hawkey.Goal(self.sack)
-            self.push_userinstalled(goal)
-            solved = goal.run()
-            autoerase = list(goal.list_unneeded())
+            autoerase = list(self.iter_autoerase())
 
         # conflicts and missing requires
         elif pkgnarrow == 'problems':
