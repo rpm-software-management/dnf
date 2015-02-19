@@ -469,10 +469,13 @@ class Base(object):
 	return (pkg for pkg in self.sack.query().installed()
                 if pkg.name in self.conf.installonlypkgs)
 
-    def iter_autoerase(self):
+    def iter_autoerase(self, debug_solver=False):
 	goal = hawkey.Goal(self.sack)
         self.push_userinstalled(goal)
         solved = goal.run()
+        if self.conf.debug_solver:
+            goal.write_debugdata('./debugdata-autoerase')
+        assert solved
         return goal.list_unneeded()
 
     def iter_problemsTuples(self):
