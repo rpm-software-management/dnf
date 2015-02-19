@@ -456,6 +456,15 @@ class Base(object):
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
+    def iter_duplicates(self):
+        """Get iterator over the duplicated packages (except for installonly)."""
+        installed_na = self.sack.query().installed().na_dict()
+        duplicates = []
+        for (name, arch), pkgs in installed_na.items():
+            if len(pkgs) > 1 and name not in self.conf.installonlypkgs:
+                duplicates.extend(pkgs)
+        return duplicates
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
@@ -1128,10 +1137,7 @@ class Base(object):
 
         # installed duplicates
         elif pkgnarrow == 'duplicates':
-	    installed_na = q.installed().na_dict()
-	    for (name, arch), pkgs in installed_na.items():
-		if len(pkgs) > 1 and name not in self.conf.installonlypkgs:
-		    duplicates.extend(pkgs)
+	    duplicates = self.iter_duplicates()
 
         # all installed versions of installonly packages
         elif pkgnarrow == 'installonly':
