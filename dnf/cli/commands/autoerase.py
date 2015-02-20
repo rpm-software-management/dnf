@@ -38,16 +38,6 @@ class AutoeraseCommand(commands.Command):
         demands.sack_activation = True
 
     def run(self, extcmds):
-        base = self.base
-        sack = base.sack
-        goal = hawkey.Goal(sack)
-
-        base.push_userinstalled(goal)
-
-        solved = goal.run()
-        if base.conf.debug_solver:
-            goal.write_debugdata('./debugdata-autoerase')
-        assert solved
-
-        for pkg in goal.list_unneeded():
+        pkgs = self.base.iter_autoerase(debug_solver=True)
+        for pkg in pkgs:
             base.package_remove(pkg)

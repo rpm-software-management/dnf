@@ -285,3 +285,18 @@ DNF will not magically replace a request for installing package ``X`` to install
 
 See the the related `Fedora bug 1096506
 <https://bugzilla.redhat.com/show_bug.cgi?id=1096506>`_ and `guidelines for renaming and obsoleting packages in Fedora <http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages>`_.
+
+===============================
+ No ``package-cleanup`` command
+===============================
+
+DNF implements functionality of ``package-cleanup`` command in its the core commands::
+
+  package-cleanup --dupes       ->      dnf list duplicates
+  package-cleanup --problems    ->      dnf list problems
+  package-cleanup --orphans     ->      dnf list extras
+  package-cleanup --leaves      ->      dnf list autoerase
+
+  package-cleanup --cleandupes  ->      dnf erase duplicates
+  package-cleanup --oldkernels  ->      dnf erase installonly
+

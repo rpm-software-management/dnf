@@ -86,6 +86,8 @@ def _list_cmd_calc_columns(output, ypl):
     """ Work out the dynamic size of the columns to pass to fmtColumns. """
     data = {'na' : {}, 'ver' : {}, 'rid' : {}}
     for lst in (ypl.installed, ypl.available, ypl.extras,
+                ypl.duplicates, ypl.installonly, ypl.autoerase,
+                ypl.problems,
                 ypl.updates, ypl.recent):
         for pkg in lst:
             _add_pkg_simple_list_lens(data, pkg)
@@ -421,6 +423,12 @@ class BaseCli(dnf.Base):
                                 highlight_na=inst_pkgs, columns=columns,
                                 highlight_modes={'<' : clau, '>' : clad,
                                                  '=' : clar, 'not in' : clai})
+            rdp = self.output.listPkgs(ypl.duplicates, _('Duplicate Packages'),
+                                basecmd, columns=columns)
+            riop = self.output.listPkgs(ypl.installonly, _('Installonly Packages'),
+                                basecmd, columns=columns)
+            raep = self.output.listPkgs(ypl.autoerase, _('Autoerase Packages'),
+                                basecmd, columns=columns)
             rep = self.output.listPkgs(ypl.extras, _('Extra Packages'), basecmd,
                                 columns=columns)
             cul = self.conf.color_update_local
@@ -441,10 +449,20 @@ class BaseCli(dnf.Base):
             else:
                 rop = self.output.listPkgs(ypl.obsoletes, _('Obsoleting Packages'),
                                     basecmd, columns=columns)
+            if len(ypl.problems) > 0 and basecmd == 'list':
+                rpp = [0, '']
+                print(_('Problem Packages'))
+                for (pkg, prob, rel) in sorted(ypl.problemsTuples,
+                                    key=operator.itemgetter(0)):
+                    self.output.problemsList(pkg, prob, rel, columns=columns)
+            else:
+                rpp = self.output.listPkgs(ypl.problems, _('Problem Packages'),
+                                    basecmd, columns=columns)
             rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
             if len(patterns) and \
-               rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and rip[0]:
+                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and \
+                rdp[0] and riop[0] and raep[0] and rip[0]:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def returnPkgLists(self, pkgnarrow='all', patterns=None,

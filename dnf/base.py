@@ -456,6 +456,44 @@ class Base(object):
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
+    def iter_duplicates(self):
+        """Get iterator over the duplicated packages (except for installonly)."""
+        installed_na = self.sack.query().installed().na_dict()
+        duplicates = []
+        for (name, arch), pkgs in installed_na.items():
+            if len(pkgs) > 1 and name not in self.conf.installonlypkgs:
+                duplicates.extend(pkgs)
+        return duplicates
+
+    def iter_installonly(self):
+	return (pkg for pkg in self.sack.query().installed()
+                if pkg.name in self.conf.installonlypkgs)
+
+    def iter_autoerase(self, debug_solver=False):
+	goal = hawkey.Goal(self.sack)
+        self.push_userinstalled(goal)
+        solved = goal.run()
+        if self.conf.debug_solver:
+            goal.write_debugdata('./debugdata-autoerase')
+        assert solved
+        return goal.list_unneeded()
+
+    def iter_problemsTuples(self):
+        rpmdb = dnf.sack.rpmdb_sack(self)
+        current = rpmdb.query().installed()
+
+        problemsTuples = []
+        for pkg in current:
+            problemsTuples.extend(
+                [(pkg, 'requires', req) for req in pkg.requires
+                 if not str(req) == 'solvable:prereqmarker'
+                 and not str(req).startswith('rpmlib(')
+                 and not current.filter(provides=req)])
+            problemsTuples.extend(
+                [(pkg, 'conflicts', conf) for conf in pkg.conflicts
+                 if current.filter(provides=conf)])
+        return problemsTuples
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
@@ -1047,6 +1085,11 @@ class Base(object):
         obsoletesTuples = []
         recent = []
         extras = []
+        duplicates = []
+        installonly = []
+        autoerase = []
+        problems = []
+        problemsTuples = []
 
         # do the initial pre-selection
         q = self.sack.query()
@@ -1121,6 +1164,23 @@ class Base(object):
                     else:
                         old_available.append(avail_pkg)
 
+        # installed duplicates
+        elif pkgnarrow == 'duplicates':
+	    duplicates = self.iter_duplicates()
+
+        # all installed versions of installonly packages
+        elif pkgnarrow == 'installonly':
+            installonly = list(self.iter_installonly())
+
+        # packages to be removed by autoerase
+        elif pkgnarrow == 'autoerase':
+            autoerase = list(self.iter_autoerase())
+
+        # conflicts and missing requires
+        elif pkgnarrow == 'problems':
+            problemsTuples = self.iter_problemsTuples()
+            problems = [pkg for (pkg, prob, req) in problemsTuples]
+
         # not in a repo but installed
         elif pkgnarrow == 'extras':
             # anything installed but not in a repo is an extra
@@ -1163,6 +1223,11 @@ class Base(object):
         ygh.obsoletesTuples = obsoletesTuples
         ygh.recent = recent
         ygh.extras = extras
+        ygh.duplicates = duplicates
+        ygh.installonly = installonly
+        ygh.autoerase = autoerase
+        ygh.problems = problems
+        ygh.problemsTuples = problemsTuples
 
         return ygh
 

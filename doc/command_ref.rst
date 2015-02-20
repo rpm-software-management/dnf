@@ -263,6 +263,17 @@ Erase Command
 ``dnf [options] erase <spec>...``
      Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
+``dnf [options] erase duplicates``
+    Removes older versions of duplicated packages. Installonly packages are ignored by this command.
+
+``dnf [options] erase installonly``
+    Removes old versions of installonly packages according to ``installonly_limit`` (i.e. preserves ``installonly_limit`` latest versions of every installonly package).
+
+``dnf [options] erase problems``
+    Removes packages with unsatisfied dependencied, i.e. with missing ``requires`` or ``conflicts``.
+
+.. note:: Use with caution it may remove a lot of packages to fix broken dependencies. In most cases you should better install missing dependencies.
+
 -------------
 Group Command
 -------------
@@ -405,6 +416,19 @@ result to only those packages matching it.
 
 ``dnf [options] list upgrades [<package-name-specs>...]``
     List upgrades available for the installed packages.
+
+``dnf [options] list duplicates``
+    List packages with more than one version installed on the system.
+    Installonly packages are not listed.
+
+``dnf [options] list installonly``
+    List all versions of installonly packages installed on the system.
+
+``dnf [options] list autoerase``
+    List packages which will be removed by ``dnf autoerase`` command.
+
+``dnf [options] list problems``
+    List packages with unsatisfied dependencied, i.e. packages which have missing ``requires`` dependencies or ``conflicts`` with other installed package.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 

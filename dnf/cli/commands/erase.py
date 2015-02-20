@@ -55,26 +55,60 @@ class EraseCommand(commands.Command):
         """
         commands.checkPackageArg(self.cli, basecmd, extcmds)
 
+    @staticmethod
+    def parse_extcmds(extcmds):
+        """Parse command arguments."""
+        DEFAULT_PKGNARROW = 'all'
+        pkgnarrows = {'duplicates', 'installonly', 'problems'}
+        if extcmds[0] in pkgnarrows:
+            return extcmds[0], extcmds[1:]
+        else:
+            return DEFAULT_PKGNARROW, extcmds
+
     def run(self, extcmds):
+        pkgnarrow, extcmds = self.parse_extcmds(extcmds)
         pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
             extcmds)
         pkg_specs += filenames  # local pkgs not supported in erase command
         done = False
 
-        # Remove groups.
-        if grp_specs:
-            self.base.read_comps()
-            if self.base.env_group_remove(grp_specs):
+        if pkgnarrow == 'duplicates':
+            seen = {}
+            for pkg in sorted(self.base.iter_duplicates(), reverse=True):
+                if (pkg.name, pkg.arch) not in seen:
+                    # skip first (newest) package
+                    seen[(pkg.name, pkg.arch)] = 1
+                else:
+                    self.base.package_remove(pkg)
+                    done = True
+        elif pkgnarrow == 'installonly':
+            seen = {}
+            for pkg in sorted(self.base.iter_installonly(), reverse=True):
+                if (seen.setdefault((pkg.name, pkg.arch), 0)
+                        < self.base.conf.installonly_limit):
+                    seen[(pkg.name, pkg.arch)] += 1
+                else:
+                    self.base.package_remove(pkg)
+                    done = True
+        elif pkgnarrow == 'problems':
+            for (pkg, prob, reldep) in self.base.iter_problemsTuples():
+                self.base.package_remove(pkg)
                 done = True
+        else:
+            # Remove groups.
+            if grp_specs:
+                self.base.read_comps()
+                if self.base.env_group_remove(grp_specs):
+                    done = True
 
-        for pkg_spec in pkg_specs:
-            try:
-                self.base.remove(pkg_spec)
-            except dnf.exceptions.MarkingError:
-                logger.info(_('No match for argument: %s'),
-                                      pkg_spec)
-            else:
-                done = True
+            for pkg_spec in pkg_specs:
+                try:
+                    self.base.remove(pkg_spec)
+                except dnf.exceptions.MarkingError:
+                    logger.info(_('No match for argument: %s'),
+                                          pkg_spec)
+                else:
+                    done = True
 
         if not done:
             raise dnf.exceptions.Error(_('No packages marked for removal.'))
