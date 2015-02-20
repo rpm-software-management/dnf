@@ -475,6 +475,22 @@ class Base(object):
         solved = goal.run()
         return goal.list_unneeded()
 
+    def iter_problemsTuples(self):
+        rpmdb = dnf.sack.rpmdb_sack(self)
+        current = rpmdb.query().installed()
+
+        problemsTuples = []
+        for pkg in current:
+            problemsTuples.extend(
+                [(pkg, 'requires', req) for req in pkg.requires
+                 if not str(req) == 'solvable:prereqmarker'
+                 and not str(req).startswith('rpmlib(')
+                 and not current.filter(provides=req)])
+            problemsTuples.extend(
+                [(pkg, 'conflicts', conf) for conf in pkg.conflicts
+                 if current.filter(provides=conf)])
+        return problemsTuples
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
@@ -1159,20 +1175,7 @@ class Base(object):
 
         # conflicts and missing requires
         elif pkgnarrow == 'problems':
-            rpmdb = dnf.sack.rpmdb_sack(self)
-            current = rpmdb.query().installed()
-
-            problemsTuples = []
-            for pkg in current:
-                problemsTuples.extend(
-                    [(pkg, 'requires', req) for req in pkg.requires
-                     if not str(req) == 'solvable:prereqmarker'
-                     and not str(req).startswith('rpmlib(')
-                     and not current.filter(provides=req)])
-                problemsTuples.extend(
-                    [(pkg, 'conflicts', conf) for conf in pkg.conflicts
-                     if current.filter(provides=conf)])
-
+            problemsTuples = self.iter_problemsTuples()
             problems = [pkg for (pkg, prob, req) in problemsTuples]
 
         # not in a repo but installed
