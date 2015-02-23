@@ -28,6 +28,7 @@ import dnf.goal
 import dnf.repo
 import dnf.repodict
 import os
+import re
 
 VERSIONS_OUTPUT = """\
   Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
@@ -189,12 +190,20 @@ class ConfigureTest(TestCase):
         self.cli.command = mock.Mock()
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")
 
-    def test_configure(self):
-        """ Test Cli.configure.
-
-            For now just see that the method runs.
-        """
+    @mock.patch('dnf.util.am_i_root', lambda: False)
+    def test_configure_user(self):
+        """ Test Cli.configure as user."""
         self.cli.configure(['update', '-c', self.conffile])
+        reg = re.compile('^/var/tmp/dnf-[a-zA-Z0-9_-]+/[a-zA-Z0-9_]+/[0-9]+$')
+        self.assertIsNotNone(reg.match(self.base.conf.cachedir))
+        self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
+
+    @mock.patch('dnf.util.am_i_root', lambda: True)
+    def test_configure_root(self):
+        """ Test Cli.configure as root."""
+        self.cli.configure(['update', '-c', self.conffile])
+        reg = re.compile('^/var/cache/dnf/[a-zA-Z0-9_]+/[0-9]+$')
+        self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
 
     def test_configure_verbose(self):

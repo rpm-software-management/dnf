@@ -138,6 +138,7 @@ class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
 
     def __init__(self, conf=None):
+        conf = conf or dnf.conf.Conf()
         super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
 
