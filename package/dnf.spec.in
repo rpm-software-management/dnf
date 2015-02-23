@@ -191,6 +191,7 @@ popd
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
+%config %{_sysconfdir}/bash_completion.d/dnf-3-completion.bash
 %exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
 %dir %{py3pluginpath}
