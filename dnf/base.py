@@ -219,7 +219,8 @@ class Base(object):
     def activate_persistor(self):
         self._persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
-    def fill_sack(self, load_system_repo=True, load_available_repos=True):
+    def fill_sack(self, load_system_repo=True, load_available_repos=True,
+                  skip_if_unavailable=False):
         """Prepare the Sack and the Goal objects. :api."""
         timer = dnf.logging.Timer('sack setup')
         self._sack = dnf.sack.build_sack(self)
@@ -233,6 +234,8 @@ class Base(object):
                         raise
             if load_available_repos:
                 for r in self.repos.iter_enabled():
+                    if skip_if_unavailable:
+                        r.skip_if_unavailable = True
                     self._add_repo_to_sack(r.id)
         conf = self.conf
         self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
