@@ -267,7 +267,9 @@ def urlopen(absurl, repo=None, mode='w+b', **kwargs):
 
 def user_run_dir():
     uid = str(os.getuid())
-    return os.path.join(dnf.const.USER_RUNDIR, uid, dnf.const.PROGRAM_NAME)
+    res = os.path.join(dnf.const.USER_RUNDIR, uid, dnf.const.PROGRAM_NAME)
+    if not os.path.exists(res):
+        return os.path.join(dnf.const.TMPDIR, "%s-run-user-%s" % (dnf.const.PROGRAM_NAME, uid));
 
 
 class tmpdir(object):
