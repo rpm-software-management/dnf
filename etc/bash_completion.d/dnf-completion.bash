@@ -109,7 +109,7 @@ END
                     fi
                 fi
                 ;;
-            remove|erase|downgrade)
+            remove|erase|downgrade|reinstall)
                 if [[ "$cur" == \.* ]] || [[ "$cur" == \/* ]]; then
                     [[ $command != "info" ]] && ext='@(rpm)' || ext=''
                 else
