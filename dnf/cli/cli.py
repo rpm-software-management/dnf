@@ -28,6 +28,7 @@ from . import output
 from dnf.cli import CliError
 from dnf.i18n import ucd, _
 
+import datetime
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoremove
@@ -787,7 +788,11 @@ class Cli(object):
                 repos = list(self.base.repos.iter_enabled())
                 if repos:
                     mts = min(repo.metadata.timestamp for repo in repos)
-                    logger.info(_("Using metadata from %s"), time.ctime(mts))
+                    # do not bother users with fractions of seconds
+                    age = int(max(repo.metadata.age for repo in repos))
+                    logger.info(_("Using metadata from %s (%s hours old)"),
+                                time.ctime(mts),
+                                datetime.timedelta(seconds=age))
             self.base.plugins.run_sack()
 
     def _root_and_conffile(self, installroot, conffile):
