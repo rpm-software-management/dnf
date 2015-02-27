@@ -1052,7 +1052,7 @@ class Base(object):
         q = self.sack.query()
         if pattern is not None:
             subj = dnf.subject.Subject(pattern, ignore_case=ignore_case)
-            q = subj.get_greedy_query(self.sack)
+            q = subj.get_greedy_query(self.sack, with_provides=False)
 
         # list all packages - those installed and available:
         if pkgnarrow == 'all':
