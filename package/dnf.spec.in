@@ -1,4 +1,4 @@
-%{!?gitrev: %global gitrev 3a22891}
+%{!?gitrev: %global gitrev 8c7d45a}
 %{!?hawkey_version: %global hawkey_version 0.5.3}
 %{!?librepo_version: %global librepo_version 1.7.5}
 %{!?libcomps_version: %global libcomps_version 0.1.6}
@@ -9,9 +9,13 @@
 %global py2pluginpath %{python_sitelib}/dnf-plugins
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
+%if 0%{?rhel} <= 7
+%bcond_with python3
+%endif
+
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2%{?snapshot}%{?dist}
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -75,6 +79,7 @@ Requires:   rpm-python
 %description -n python-dnf
 Python 2 interface to DNF.
 
+%if %{with python3}
 %package -n python3-dnf
 Summary:    Python 3 interface to DNF.
 BuildRequires:  python3
@@ -97,6 +102,7 @@ Requires:   rpm-python3
 Obsoletes:  dnf <= 0.6.4-1
 %description -n python3-dnf
 Python 3 interface to DNF.
+%endif
 
 %package automatic
 Summary:    Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
@@ -110,44 +116,58 @@ Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
 %setup -q -n dnf
+
+%if %{with python3}
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
 mv ../py3 ./
+%endif
 
 %build
 %cmake .
 make %{?_smp_mflags}
 make doc-man
+
+%if %{with python3}
 pushd py3
 %cmake -DPYTHON_DESIRED:str=3 -DWITH_MAN=0 .
 make %{?_smp_mflags}
 popd
+%endif
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
 %find_lang %{name}
+
+%if %{with python3}
 pushd py3
 make install DESTDIR=$RPM_BUILD_ROOT
 popd
+mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
+%endif
 
 mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
-mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
+
 %if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
 %else
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
 %endif
+
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
 make ARGS="-V" test
+
+%if %{with python3}
 pushd py3
 make ARGS="-V" test
 popd
+%endif
 
 %files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
@@ -185,6 +205,7 @@ popd
 %{python_sitelib}/dnf/
 %dir %{py2pluginpath}
 
+%if %{with python3}
 %files -n python3-dnf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf-3
@@ -192,6 +213,7 @@ popd
 %{python3_sitelib}/dnf/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
+%endif
 
 %files automatic
 %doc AUTHORS COPYING PACKAGE-LICENSING
@@ -222,7 +244,50 @@ popd
 
 %changelog
 
-* Wed Feb 4 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-1
+* Fri Feb 27 2015 Jan Silhan <jsilhan@redhat.com> - 0.6.4-1
+- revert of e56dd41, does not fix BZ:1109927 now (Jan Silhan)
+- revert of 516aad9, does not fix BZ:1071854 now (Jan Silhan)
+- removed unused dnf-makecache.cron (Jan Silhan)
+- renamed erase command to remove (RhBug:1160806) (Jan Silhan)
+- spec: made python3-dnf package installed by default in f23 (Jan Silhan)
+- AUTHORS: changed email address (Jan Silhan)
+- doc: improve the documentation of the "install" command (Radek Holy)
+- "dnf install non-existent" should fail (Radek Holy)
+- tests: add some tests of Base.install (Radek Holy)
+- tests: add some tests of Base.package_install (Radek Holy)
+- Revert "doesn't upgrade packages by installing local packages" (RhBug:1160950) (Radek Holy)
+- lint: fix all Pylint errors in test_install (Radek Holy)
+- tests: add some tests to test_install (Radek Holy)
+- tests: improve some tests in test_install (Radek Holy)
+- cosmetic: reorder tests in test_install (Radek Holy)
+- cosmetic: rename some tests in test_install and add some docstrings (Radek Holy)
+- AUTHORS: updated (Jan Silhan)
+- Add support for armv6hl (Peter Hjalmarsson)
+- doc: subject.__init__(): what is pkg_spec (Jan Silhan)
+- doc: mentioning raising IOError from Base.fill_sack() (Jan Silhan)
+- option_parser: fixed splitting multiple values (RhBug:1186710) (Jan Silhan)
+- AUTHORS: updated (Jan Silhan)
+- Standardize words describing boolean data type (Christopher Meng)
+- build 0.6.4-1 (Jan Silhan)
+- Adapt to librepo-1.7.13, metalink and mirrorlist are not loaded anymore when the repo is local. (Radek Holy)
+- not raises value error when no metadata exist (Jan Silhan)
+- README: fixed formating 2 (Jan Silhan)
+- README: fixed formating (Jan Silhan)
+- README: expanded DNF installation options (Jan Silhan)
+- allow snapshot versions (Michael Mraka)
+- simple script to build test package (Michael Mraka)
+- more standard way to find out latest commit (Michael Mraka)
+- let package version be specified on commandline (Michael Mraka)
+- New version: 0.6.4 (Jan Silhan)
+- Remove lock files during boot (RhBug:1154476) (Michal Luscon)
+- doc: groups are ordered not categories (Jan Silhan)
+- doc: added Package attributes to API (Jan Silhan)
+- README: link to bug reporting guide (Jan Silhan)
+- README: the official documentation is on readthedoc (Jan Silhan)
+- i18n: unicode encoding does not throw error (RhBug:1155877) (Jan Silhan)
+- conf: added minrate repo option (Related:RhBug:1175466) (Jan Silhan)
+- conf: added timeout repo option (RhBug:1175466) (Jan Silhan)
+- doc: api_queries: add 'file' filter description (RhBug:1186461) (Igor Gnatenko)
 - Adapt to librepo-1.7.13, metalink and mirrorlist are not loaded anymore when the repo is local. (Radek Holy)
 - not raises value error when no metadata exist (Jan Silhan)
 - Remove lock files during boot (RhBug:1154476) (Michal Luscon)
