@@ -1515,6 +1515,7 @@ class Base(object):
 
     def reinstall(self, pkg_spec, old_reponame=None, new_reponame=None,
                   new_reponame_neq=None, remove_na=False):
+        self._add_reinstall_rpm_probfilters()
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed_pkgs = [
@@ -1653,6 +1654,7 @@ class Base(object):
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
             assert len(news) == 1
+            self._add_reinstall_rpm_probfilters()
             self._transaction.add_reinstall(dnf.util.first(olds), news[0],
                                             obsoleteds)
 
@@ -1799,6 +1801,8 @@ class Base(object):
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
 
+    def _add_reinstall_rpm_probfilters(self):
+        self.rpm_probfilter.add(rpm.RPMPROB_FILTER_REPLACEPKG)
 
 def _msg_installed(pkg):
     name = ucd(pkg)

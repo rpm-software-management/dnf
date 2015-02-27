@@ -25,7 +25,6 @@ class TransactionWrapper(object):
                          'order',
                          'addErase',
                          'addInstall',
-                         'addReinstall',
                          'run',
                          'pgpImportPubkey',
                          'pgpPrtPkts',
