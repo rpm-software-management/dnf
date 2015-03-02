@@ -39,15 +39,6 @@ class AutoremoveCommand(commands.Command):
 
     def run(self, extcmds):
         base = self.base
-        sack = base.sack
-        goal = hawkey.Goal(sack)
-
-        base.push_userinstalled(goal)
-
-        solved = goal.run()
-        if base.conf.debug_solver:
-            goal.write_debugdata('./debugdata-autoremove')
-        assert solved
-
-        for pkg in goal.list_unneeded():
+        pkgs = base.list_autoremove(debug_solver=True)
+        for pkg in pkgs:
             base.package_remove(pkg)

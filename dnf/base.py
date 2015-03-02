@@ -462,10 +462,13 @@ class Base(object):
                 if self.yumdb.get_package(pkg).get('reason') == 'user' and
                    self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
-    def list_autoremove(self):
+    def list_autoremove(self, debug_solver=False):
         goal = hawkey.Goal(self.sack)
         self.push_userinstalled(goal)
         solved = goal.run()
+        if self.conf.debug_solver:
+            goal.write_debugdata('./debugdata-autoremove')
+        assert solved
         return goal.list_unneeded()
 
     def push_userinstalled(self, goal):
