@@ -265,11 +265,6 @@ def urlopen(absurl, repo=None, mode='w+b', **kwargs):
     return fo
 
 
-def user_run_dir():
-    uid = str(os.getuid())
-    return os.path.join(dnf.const.USER_RUNDIR, uid, dnf.const.PROGRAM_NAME)
-
-
 class tmpdir(object):
     def __init__(self):
         prefix = '%s-' % dnf.const.PREFIX
