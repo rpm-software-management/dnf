@@ -406,6 +406,9 @@ result to only those packages matching it.
 ``dnf [options] list upgrades [<package-name-specs>...]``
     List upgrades available for the installed packages.
 
+``dnf [options] list autoremove``
+    List packages which will be removed by ``dnf autoremove`` command.
+
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 -----------------
