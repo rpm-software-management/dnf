@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.exceptions import ProcessLockError, ThreadLockError
 from dnf.i18n import _
+from dnf.yum import misc
 import dnf.logging
 import dnf.util
 import hashlib
@@ -38,7 +39,7 @@ def _fit_lock_dir(dir_):
         # another DNF process of the same user. Since dir_ is quite definitely
         # not writable for us, yet significant, use its hash:
         hexdir = hashlib.md5(dir_.encode('utf-8')).hexdigest()
-        dir_ = os.path.join(dnf.util.user_run_dir(), hexdir)
+        dir_ = os.path.join(misc.getCacheDir(), 'locks', hexdir)
     return dir_
 
 def build_download_lock(cachedir):
