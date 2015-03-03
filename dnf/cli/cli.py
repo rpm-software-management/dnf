@@ -209,7 +209,7 @@ class BaseCli(dnf.Base):
                 self.download_packages(downloadpkgs, self.output.progress,
                                        total_cb)
             except dnf.exceptions.DownloadError as e:
-                specific = dnf.cli.format.indent_block(str(e))
+                specific = dnf.cli.format.indent_block(ucd(e))
                 errstring = _('Error downloading packages:\n%s') % specific
                 raise dnf.exceptions.Error(errstring)
             # Check GPG signatures
