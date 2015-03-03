@@ -75,7 +75,7 @@ class DownloadError(Error):
         return self.errmap2str(self.errmap)
 
     def __unicode__(self):
-        return str(self).decode('utf-8')
+        return ucd(self.__str__())
 
 
 class LockError(Error):
