@@ -48,7 +48,7 @@ def build_download_lock(cachedir):
 
 def build_metadata_lock(cachedir):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'metadata_lock.pid'),
-                       'metadata')
+                       'metadata', True)
 
 
 def build_rpmdb_lock(persistdir):
