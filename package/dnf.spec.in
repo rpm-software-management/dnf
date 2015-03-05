@@ -12,7 +12,7 @@
 
 Name:		dnf
 Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
-Release:	2%{?snapshot}%{?dist}
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -74,6 +74,7 @@ Requires:   python-libcomps >= %{libcomps_version}
 Requires:   python-librepo >= %{librepo_version}
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python >= %{rpm_version}
+Obsoletes:  dnf <= 0.6.4
 %description -n python-dnf
 Python 2 interface to DNF.
 
@@ -97,7 +98,7 @@ Requires:   python3-librepo >= %{librepo_version}
 Requires:   python3-pygpgme
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python3 >= %{rpm_version}
-Obsoletes:  dnf <= 0.6.4-1
+Obsoletes:  dnf <= 0.6.4
 %description -n python3-dnf
 Python 3 interface to DNF.
 
