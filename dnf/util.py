@@ -56,11 +56,11 @@ def clear_dir(path):
         rm_rf(contained_path)
 
 def ensure_dir(dname):
-    if os.path.exists(dname):
-        if not os.path.isdir(dname):
-            raise IOError("%s is not a directory" % dname)
-    else:
+    try:
         os.makedirs(dname, mode=0o755)
+    except OSError as e:
+        if e.errno != os.errno.EEXIST or not os.path.isdir(dname):
+            raise e
 
 def empty(iterable):
     try:
