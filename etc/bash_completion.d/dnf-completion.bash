@@ -20,6 +20,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
+if [ -e /usr/bin/dnf-2 ]; then
+    alias dnf="dnf-2"
+else
+    alias dnf="dnf-3"
+fi
+
 _dnf_help_command()
 {
     local cmd=$( dnf help $1 | grep -E "^$1" | tr "|" " " )
@@ -182,4 +188,4 @@ END
         [[ $prev != -* ]] && COMPREPLY=( $( compgen -W '$( echo $commandlist )' -- "$cur" ) )
     fi
 } &&
-complete -F _dnf dnf
+complete -F _dnf dnf dnf-2 dnf-3
