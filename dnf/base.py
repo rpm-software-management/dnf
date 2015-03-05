@@ -830,44 +830,45 @@ class Base(object):
         if progress is None:
             progress = dnf.callback.NullDownloadProgress()
 
-        drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
-        remote_pkgs = [po for po in pkglist
-                       if not (po.from_cmdline or po.repo.local)]
-        payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
-                                         dnf.repo.RPMPayload)
-                    for pkg in remote_pkgs]
-
-        beg_download = time.time()
-        est_remote_size = sum(pload.download_size for pload in payloads)
-        progress.start(len(payloads), est_remote_size)
         lock = dnf.lock.build_download_lock(self.conf.cachedir)
         with lock:
-            errors = dnf.repo.download_payloads(payloads, drpm)
+            drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
+            remote_pkgs = [po for po in pkglist
+                        if not (po.from_cmdline or po.repo.local)]
+            payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
+                                            dnf.repo.RPMPayload)
+                        for pkg in remote_pkgs]
 
-        if errors.irrecoverable:
-            raise dnf.exceptions.DownloadError(errors.irrecoverable)
-
-        remote_size = sum(errors.bandwidth_used(pload) for pload in payloads)
-        saving = dnf.repo.update_saving((0, 0), payloads, errors.recoverable)
-
-        if errors.recoverable:
-            msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
-            logger.info(msg)
-
-            remaining_pkgs = [pkg for pkg in errors.recoverable]
-            payloads = [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
-                        for pkg in remaining_pkgs]
+            beg_download = time.time()
             est_remote_size = sum(pload.download_size for pload in payloads)
             progress.start(len(payloads), est_remote_size)
-            with lock:
-                errors = dnf.repo.download_payloads(payloads, drpm)
+            errors = dnf.repo.download_payloads(payloads, drpm)
 
-            assert not errors.recoverable
             if errors.irrecoverable:
                 raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
-            remote_size += sum(errors.bandwidth_used(pload) for pload in payloads)
-            saving = dnf.repo.update_saving(saving, payloads, {})
+            remote_size = sum(errors.bandwidth_used(pload) for pload in payloads)
+            saving = dnf.repo.update_saving((0, 0), payloads, errors.recoverable)
+
+            if errors.recoverable:
+                msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
+                logger.info(msg)
+
+                remaining_pkgs = [pkg for pkg in errors.recoverable]
+                payloads = \
+                    [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
+                     for pkg in remaining_pkgs]
+                est_remote_size = sum(pload.download_size for pload in payloads)
+                progress.start(len(payloads), est_remote_size)
+                errors = dnf.repo.download_payloads(payloads, drpm)
+
+                assert not errors.recoverable
+                if errors.irrecoverable:
+                    raise dnf.exceptions.DownloadError(errors.irrecoverable)
+
+                remote_size += \
+                    sum(errors.bandwidth_used(pload) for pload in payloads)
+                saving = dnf.repo.update_saving(saving, payloads, {})
 
         if callback_total is not None:
             callback_total(remote_size, beg_download)
