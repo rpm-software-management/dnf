@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.exceptions import ProcessLockError, ThreadLockError
+from dnf.exceptions import ProcessLockError, ThreadLockError, LockError
 from dnf.i18n import _
 from dnf.yum import misc
 import dnf.logging
@@ -86,6 +86,19 @@ class ProcessLock(object):
                 return int(f.readline())
         except IOError:
             return -1
+        except ValueError:
+            time.sleep(2)
+            try:
+                with open(self.target, 'r') as f:
+                    return int(f.readline())
+            except IOError:
+                return -1
+            except ValueError:
+                msg = _('Malformed lock file found: %s.\n'
+                        'Ensure no other dnf process is running and '
+                        'remove the lock file manually or run '
+                        'systemd-tmpfiles --remove dnf.conf.' % (self.target))
+                raise LockError(msg)
 
     def _try_unlink(self):
         try:
