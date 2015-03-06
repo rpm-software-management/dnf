@@ -109,3 +109,59 @@ line.
 .. include:: examples/install_extension.py
    :code: python
    :start-line: 16
+
+=========================================================================
+Get a list of available packages filtered by their relation to the system
+=========================================================================
+
+A system user wants to obtain a list of available RPM packages for their
+consecutive automatic processing or for informative purpose only.
+The list of RPM packages is filtered by requested relation to the system
+or user provided <package-name-specs>. The obtained list of packages
+is based on available data supplied by accessible system repositories.
+
+A relation to the system might be for example one of the following:
+
+installed - packages already installed on the system
+
+available - packages available in any accessible repository
+
+extras - packages installed on the system not available in any known
+repository
+
+obsoletes - installed packages that are obsoleted by packages in any
+accessible repository
+
+recent - packages recently added into accessible repositories
+
+upgrades - available packages upgrading some installed packages
+
+-----
+CLI
+-----
+
+::
+
+    dnf list *dnf*
+    dnf list installed *debuginfo
+    dnf list available gtk*devel
+    dnf list extras
+    dnf list obsoletes
+    dnf list recent
+    dnf list upgrades
+
+-----------------
+Plugins/CLI API
+-----------------
+
+.. include:: examples/list_obsoletes_plugin.py
+   :code: python
+   :start-line: 16
+
+---------------
+Extension API
+---------------
+
+.. include:: examples/list_extras_extension.py
+   :code: python
+   :start-line: 16
