@@ -30,8 +30,8 @@ class CommonTest(support.ResultTestCase):
 
     - contains a package "lotus-3-17.x86_64" (The package can be installed.)
     - contains a package "lotus-3-17.i686" (The package can be installed.)
-    - contains a package "trampoline-2.1-1.noarch" that contains "*/there" and
-      provides "splendid > 2.0" (The package can be installed.)
+    - contains a package "trampoline-2.1-1.noarch" that contains "*/there",
+      provides "splendid > 2.0" and "php(a/b)" (The package can be installed.)
     - contains a package "mrkite-2-0.x86_64" (The package can be installed
       together with the package "trampoline".)
     - contains a package "mrkite-k-h-1-1.x86_64" (The package can be
@@ -61,7 +61,19 @@ class CommonTest(support.ResultTestCase):
         """Test that the pkg to be installed can be specified by fname glob."""
         self.base.install("*/there")
         (installed, _) = self.installed_removed(self.base)
-        self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
+        self.assertCountEqual(map(str, installed),
+                              ('trampoline-2.1-1.noarch',))
+
+        self.base.install("/all/*/there")
+        (installed, _) = self.installed_removed(self.base)
+        self.assertCountEqual(map(str, installed),
+                              ('trampoline-2.1-1.noarch',))
+
+    def test_install_provide_glob(self):
+        self.base.install("php(a/b)")
+        (installed, _) = self.installed_removed(self.base)
+        self.assertCountEqual(map(str, installed),
+                              ('trampoline-2.1-1.noarch',))
 
     def test_install_name(self):
         """Test that the package to be installed can be specified by name."""
