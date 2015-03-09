@@ -25,6 +25,7 @@ from dnf.util import first, is_glob_pattern
 
 import dnf.selector
 import hawkey
+import re
 
 class Subject(object):
     # :api
@@ -77,7 +78,7 @@ class Subject(object):
 
     @property
     def filename_pattern(self):
-        return self.subj.pattern.find('/') != -1
+        return re.search(r"^\*?/", self.subj.pattern)
 
     @property
     def pattern(self):
