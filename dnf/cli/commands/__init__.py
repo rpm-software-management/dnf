@@ -1046,7 +1046,7 @@ class HistoryCommand(Command):
 
     aliases = ('history',)
     summary = _("Display, or use, the transaction history")
-    usage = "[info|list|packages-list|summary|addon-info|redo|undo|rollback|new]"
+    usage = "[info|list|redo|undo|rollback|userinstalled]"
 
     def configure(self, _):
         demands = self.cli.demands
@@ -1196,12 +1196,12 @@ class HistoryCommand(Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        cmds = ('list', 'info', 'summary', 'redo', 'undo', 'rollback', 'userinstalled')
+        cmds = ('list', 'info', 'redo', 'undo', 'rollback', 'userinstalled')
         if extcmds and extcmds[0] not in cmds:
             logger.critical(_('Invalid history sub-command, use: %s.'),
                                  ", ".join(cmds))
             raise dnf.cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback', 'new'):
+        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback'):
             checkGPGKey(self.base, self.cli)
         elif not os.access(self.base.history._db_file, os.R_OK):
             logger.critical(_("You don't have access to the history DB."))
