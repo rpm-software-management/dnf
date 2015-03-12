@@ -124,6 +124,10 @@ def duplicated_pkgs(query, installonlypkgs):
             duplicated.extend(pkgs)
     return duplicated
 
+def installonly_pkgs(query, installonlypkgs):
+    q = query.filter(name=installonlypkgs).installed()
+    return q.run()
+
 def per_pkgtup_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
