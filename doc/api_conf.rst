@@ -59,6 +59,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Directory where the data that DNF keeps track of between different runs is stored. Default is ``"/var/lib/dnf"``.
 
+  .. attribute:: pluginconfpath
+
+    List of directories that are searched for plugin configuration to load. All configuration files found in these directories, that are named same as a plugin, are parsed. The default contains ``/etc/dnf/plugins`` path.
+
   .. attribute:: pluginpath
 
     List of directories where DNF searches for :doc:`plugins <api_plugins>`. The default contains a Python version-specific path.

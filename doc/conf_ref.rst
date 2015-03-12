@@ -100,6 +100,11 @@ one main section. The repository sections define the configuration for each
     disable automatic metadata synchronizing. The default corresponds to three
     hours.
 
+``pluginconfpath``
+    list
+
+    List of directories that are searched for plugin configuration to load. All configuration files found in these directories, that are named same as a plugin, are parsed. The default contains ``/etc/dnf/plugins`` path.
+
 ``pluginpath``
     list
 
