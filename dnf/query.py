@@ -116,6 +116,14 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
+def duplicated_pkgs(query, installonlypkgs):
+    installed_na = query.installed().na_dict()
+    duplicated = []
+    for (name, arch), pkgs in installed_na.items():
+        if len(pkgs) > 1 and name not in installonlypkgs:
+            duplicated.extend(pkgs)
+    return duplicated
+
 def per_pkgtup_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
