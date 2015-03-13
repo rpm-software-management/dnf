@@ -1139,12 +1139,7 @@ class Base(object):
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
-            # anything installed but not in a repo is an extra
-            avail_dict = q.available().pkgtup_dict()
-            inst_dict = q.installed().pkgtup_dict()
-            for pkgtup, pkgs in inst_dict.items():
-                if pkgtup not in avail_dict:
-                    extras.extend(pkg for pkg in pkgs if is_from_repo(pkg))
+            extras = [pkg for pkg in dnf.query.extras_pkgs(q) if is_from_repo(pkg)]
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':

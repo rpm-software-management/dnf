@@ -124,6 +124,16 @@ def duplicated_pkgs(query, installonlypkgs):
             duplicated.extend(pkgs)
     return duplicated
 
+def extras_pkgs(query):
+    # anything installed but not in a repo is an extra
+    avail_dict = query.available().pkgtup_dict()
+    inst_dict = query.installed().pkgtup_dict()
+    extras = []
+    for pkgtup, pkgs in inst_dict.items():
+        if pkgtup not in avail_dict:
+            extras.extend(pkgs)
+    return extras
+
 def installonly_pkgs(query, installonlypkgs):
     q = query.filter(name=installonlypkgs).installed()
     return q.run()
