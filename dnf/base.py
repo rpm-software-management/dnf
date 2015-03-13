@@ -1148,16 +1148,10 @@ class Base(object):
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
-            now = time.time()
-            recentlimit = now - (self.conf.recent * 86400)
-            if showdups:
-                avail = q.available()
-            else:
-                avail = q.latest()
-
-            for po in query_for_repo(avail):
-                if int(po.buildtime) > recentlimit:
-                    recent.append(po)
+            avail = q.available()
+            if not showdups:
+                avail = avail.latest()
+            recent = dnf.query.recent_pkgs(query_for_repo(avail), self.conf.recent)
 
         ygh.installed = installed
         ygh.available = available
