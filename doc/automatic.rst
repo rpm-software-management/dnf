@@ -113,4 +113,4 @@ Can be used to override settings from DNF's main configuration file. See :doc:`c
  Run dnf-automatic
 ===================
 
-Once you are finished with configuration, execute ``systemctl enable dnf-automatic && systemctl start dnf-automatic`` to enable and start the systemd timer.
+Once you are finished with configuration, execute ``systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer`` to enable and start the systemd timer.
