@@ -57,9 +57,9 @@
 
     Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.
 
-  .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
+  .. method:: fill_sack([load_system_repo=True, load_available_repos=True, skip_if_unavailable=False])
 
-    Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.
+    Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack. When skip_if_unavailable is set to True, all repositories which metadata cannot be fetched will be skipped and disabled without raising :exc:`.RepoError`.
 
     This operation will call :meth:`load() <dnf.repo.Repo.load>` for repos as necessary and can take a long time. Adding repositories or changing repositories' configuration does not affect the information within the sack until :meth:`fill_sack` has been called.
 
