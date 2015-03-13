@@ -108,3 +108,9 @@ The email emitter configuration.
 ------------------
 
 Can be used to override settings from DNF's main configuration file. See :doc:`command_ref`.
+
+===================
+ Run dnf-automatic
+===================
+
+Once you are finished with configuration, execute ``systemctl enable dnf-automatic && systemctl start dnf-automatic`` to enable and start the systemd timer.
