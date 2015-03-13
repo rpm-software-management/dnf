@@ -25,6 +25,7 @@ import hawkey
 import dnf.exceptions
 import dnf.selector
 import dnf.util
+import time
 
 from dnf.i18n import ucd
 from dnf.pycomp import basestring
@@ -155,3 +156,9 @@ def per_pkgtup_dict(pkg_list):
 
 def per_nevra_dict(pkg_list):
     return {ucd(pkg):pkg for pkg in pkg_list}
+
+def recent_pkgs(query, recent):
+    now = time.time()
+    recentlimit = now - (recent*86400)
+    recent = [po for po in query if int(po.buildtime) > recentlimit]
+    return recent
