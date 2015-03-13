@@ -100,6 +100,15 @@ class Query(hawkey.Query):
             release=nevra.release, arch=nevra.arch)
 
 
+def autoremove_pkgs(query, sack, yumdb, debug_solver=False):
+    goal = dnf.goal.Goal(sack)
+    goal.push_userinstalled(query.installed(), yumdb)
+    solved = goal.run()
+    if debug_solver:
+        goal.write_debugdata('./debugdata-autoremove')
+    assert solved
+    return goal.list_unneeded()
+
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]

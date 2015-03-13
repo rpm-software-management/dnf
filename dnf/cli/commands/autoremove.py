@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
 
-import hawkey
+import dnf
 
 
 class AutoremoveCommand(commands.Command):
@@ -39,6 +39,8 @@ class AutoremoveCommand(commands.Command):
 
     def run(self, extcmds):
         base = self.base
-        pkgs = base.list_autoremove(debug_solver=True)
+        pkgs = dnf.query.autoremove_pkgs(base.sack.query(),
+                                         base.sack, base.yumdb,
+                                         debug_solver=base.conf.debug_solver)
         for pkg in pkgs:
             base.package_remove(pkg)

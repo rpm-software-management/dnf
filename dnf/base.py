@@ -471,15 +471,6 @@ class Base(object):
                 if self.yumdb.get_package(pkg).get('reason') == 'user' and
                 self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
-    def list_autoremove(self, debug_solver=False):
-        goal = hawkey.Goal(self.sack)
-        self.push_userinstalled(goal)
-        solved = goal.run()
-        if self.conf.debug_solver:
-            goal.write_debugdata('./debugdata-autoremove')
-        assert solved
-        return goal.list_unneeded()
-
     def push_userinstalled(self, goal):
         msg = _('--> Finding unneeded leftover dependencies')
         logger.debug(msg)
@@ -1135,7 +1126,8 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove = self.list_autoremove()
+            autoremove = dnf.query.autoremove_pkgs(query_for_repo(q),
+                                                   self.sack, self.yumdb)
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
