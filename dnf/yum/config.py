@@ -927,7 +927,7 @@ class RepoConf(BaseConfig):
     sslclientkey = Inherit(YumConf.sslclientkey)
     deltarpm = Inherit(YumConf.deltarpm)
 
-    skip_if_unavailable = BoolOption(True)
+    skip_if_unavailable = BoolOption(True)  # :api
 
 
 def logdir_fit(current_logdir):
