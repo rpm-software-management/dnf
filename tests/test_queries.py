@@ -20,6 +20,8 @@ from __future__ import unicode_literals
 from tests import support
 import dnf.query
 import dnf.subject
+import hawkey
+import time
 from tests.support import TestCase
 
 class QueriesTest(support.TestCase):
@@ -32,6 +34,17 @@ class QueriesTest(support.TestCase):
         res = sack.query().installed().filter(name=["pep*", "*per"])
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))
+
+    def test_autoremove_pkgs(self):
+        sack = support.mock_sack("main")
+        base = support.MockBase("main")
+        installed = sack.query().installed()
+        for pkg in installed:
+            base.yumdb.get_package(pkg).reason = "dep"
+        hole = installed.filter(name="hole")[0]
+        base.yumdb.get_package(hole).reason = "user"
+        pkgs = dnf.query.autoremove_pkgs(installed, sack, base.yumdb)
+        self.assertEqual(len(pkgs), 4)
 
     def test_by_file(self):
         # check sanity first:
@@ -47,6 +60,11 @@ class QueriesTest(support.TestCase):
         pkgs = sack.query().filter(reponame__eq="main")
         self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
+    def test_extras_pkgs(self):
+        sack = support.mock_sack("main")
+        pkgs = dnf.query.extras_pkgs(sack.query())
+        self.assertEqual(len(pkgs), 3)
+
     def test_installed_exact(self):
         sack = support.mock_sack()
         pkgs = sack.query().installed().nevra("tour-4.9-0.noarch")
@@ -54,6 +72,15 @@ class QueriesTest(support.TestCase):
         pkgs = sack.query().installed().nevra("tour-5-0.x86_64")
         self.assertEqual(len(pkgs), 0)
         pkgs = sack.query().installed().nevra("tour-5-0.noarch")
+        self.assertEqual(len(pkgs), 1)
+
+    def test_recent_pkgs(self):
+        sack = support.mock_sack("main")
+        now = time.time()
+        installed = [support.MockPackage(str(p))
+                     for p in sack.query().installed().run()]
+        installed[0].buildtime = now - 86400/2
+        pkgs = dnf.query.recent_pkgs(installed, 1)
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
