@@ -295,6 +295,7 @@ class MockPackage(object):
         self.repo = repo
         self.reponame = None if repo is None else repo.id
         self.str = nevra
+        self.buildtime = 0
         (self.name, self.epoch, self.version, self.release, self.arch) = \
             hawkey.split_nevra(nevra)
         self.evr = '%(epoch)d:%(version)s-%(release)s' % vars(self)
