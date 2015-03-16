@@ -166,6 +166,9 @@ def resolving(cli, base):
             logger.critical(msg)
     except IOError as e:
         return ex_IOError(e)
+    else:
+        base.plugins.run_transaction()
+        logger.info(_('Complete!'))
     return 0
 
 

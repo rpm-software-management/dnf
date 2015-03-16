@@ -220,8 +220,6 @@ class BaseCli(dnf.Base):
         if trans:
             msg = self.output.post_transaction_output(trans)
             logger.info(msg)
-        self.plugins.run_transaction()
-        logger.info(_('Complete!'))
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,
