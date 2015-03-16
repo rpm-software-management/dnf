@@ -20,8 +20,11 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.i18n import _
+import logging
 import hawkey
 
+logger = logging.getLogger('dnf')
 
 class Goal(hawkey.Goal):
     def __init__(self, sack):
@@ -42,3 +45,12 @@ class Goal(hawkey.Goal):
         if current_reason == 'unknown' and pkg.name in self.group_members:
             return 'group'
         return current_reason
+
+    def push_userinstalled(self, query, yumdb):
+        msg = _('--> Finding unneeded leftover dependencies')
+        logger.debug(msg)
+        for pkg in query.installed():
+            yumdb_info = yumdb.get_package(pkg)
+            reason = getattr(yumdb_info, 'reason', 'user')
+            if reason != 'dep':
+                self.userinstalled(pkg)

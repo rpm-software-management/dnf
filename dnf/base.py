@@ -471,19 +471,6 @@ class Base(object):
                 if self.yumdb.get_package(pkg).get('reason') == 'user' and
                 self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
-    def push_userinstalled(self, goal):
-        msg = _('--> Finding unneeded leftover dependencies')
-        logger.debug(msg)
-        for pkg in self.sack.query().installed().run():
-            yumdb_info = self.yumdb.get_package(pkg)
-            reason = 'user'
-            try:
-                reason = yumdb_info.reason
-            except AttributeError:
-                pass
-            if reason != 'dep':
-                goal.userinstalled(pkg)
-
     def run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(
             allow_uninstall=allow_erasing, force_best=self.conf.best)
@@ -499,7 +486,7 @@ class Base(object):
         self.ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
-            self.push_userinstalled(goal)
+            goal.push_userinstalled(self.sack.query().installed(), self.yumdb)
         if not self.run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()

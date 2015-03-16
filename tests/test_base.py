@@ -54,23 +54,6 @@ class BaseTest(support.TestCase):
         reg = re.compile('/var/tmp/dnf-[a-zA-Z0-9_-]+/[a-zA-Z0-9_]+/x')
         self.assertIsNotNone(reg.match(base.conf.cachedir))
 
-    def test_push_userinstalled(self):
-        base = support.MockBase()
-        # setup:
-        base.conf.clean_requirements_on_remove = True
-        goal = mock.Mock(spec=["userinstalled"])
-        for pkg in base.sack.query().installed():
-            base.yumdb.get_package(pkg).reason = 'dep'
-        pkg1 = base.sack.query().installed().filter(name="pepper")[0]
-        base.yumdb.get_package(pkg1).reason = "user"
-        pkg2 = base.sack.query().installed().filter(name="hole")[0]
-        base.yumdb.get_package(pkg2).reason = "unknown"
-
-        # test:
-        base.push_userinstalled(goal)
-        calls = [c[0][0].name for c in goal.userinstalled.call_args_list]
-        self.assertCountEqual(calls, ('hole', 'pepper'))
-
     def test_reset(self):
         base = support.MockBase('main')
         base.reset(sack=True, repos=False)
