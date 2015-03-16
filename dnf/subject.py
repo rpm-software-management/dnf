@@ -90,16 +90,17 @@ class Subject(object):
             return is_glob_pattern(nevra.arch)
         return False
 
-    def get_greedy_query(self, sack):
+    def get_greedy_query(self, sack, with_provides=True):
         pkgs = set()
         for nevra in self.subj.nevra_possibilities_real(sack, allow_globs=True,
                                                         icase=self.icase):
             q = self._nevra_to_filters(sack.query(), nevra)
             pkgs |= set(q.run())
 
-        for rd in self.subj.reldep_possibilities_real(sack, icase=self.icase):
-            q = sack.query().filter(provides=rd)
-            pkgs |= set(q.run())
+        if with_provides:
+            for rd in self.subj.reldep_possibilities_real(sack, icase=self.icase):
+                q = sack.query().filter(provides=rd)
+                pkgs |= set(q.run())
 
         q = sack.query().filter(*self._query_flags,
                                 nevra__glob=self.subj.pattern)
