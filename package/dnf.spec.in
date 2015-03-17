@@ -187,6 +187,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
+%ghost %{_sharedstatedir}/dnf
 %dir %{py2pluginpath}
 
 %files -n python3-dnf
@@ -194,6 +195,7 @@ popd
 %{_bindir}/dnf-3
 %exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
+%ghost %{_sharedstatedir}/dnf
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
 
