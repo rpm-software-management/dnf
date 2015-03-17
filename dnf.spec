@@ -1,8 +1,7 @@
-%{!?gitrev: %global gitrev 3a22891}
-%{!?hawkey_version: %global hawkey_version 0.5.3}
-%{!?librepo_version: %global librepo_version 1.7.5}
-%{!?libcomps_version: %global libcomps_version 0.1.6}
-%{!?rpm_version: %global rpm_version 4.12.0}
+%global hawkey_version 0.5.3
+%global librepo_version 1.7.5
+%global libcomps_version 0.1.6
+%global rpm_version 4.12.0
 
 %global confdir %{_sysconfdir}/dnf
 
@@ -11,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	@DNF_MAJOR@.@DNF_MINOR@.@DNF_PATCH@
+Version:	0.6.4
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -22,7 +21,7 @@ URL:		https://github.com/rpm-software-management/dnf
 # cd dnf/package
 # ./archive
 # tarball will be generated in $HOME/rpmbuild/sources/
-Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{gitrev}.tar.xz
+Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
