@@ -3,3 +3,7 @@ builder = tito.builder.Builder
 tagger = tito.tagger.VersionTagger
 changelog_do_not_remove_cherrypick = 1
 changelog_format = %s (%a)
+
+[version_template]
+destination_file = VERSION.cmake
+template_file = rel-eng/templates/version
