@@ -148,6 +148,20 @@ def installonly_pkgs(query, installonlypkgs):
     q = query.filter(name=installonlypkgs).installed()
     return q.run()
 
+def latest_limit_pkgs(query, limit):
+    """ filter to `limit` latest packages per (name,arch)
+        or skip first `limit` latest packages if limit is negative
+    """
+    pkgs_na = query.na_dict()
+    latest_pkgs = []
+    for pkg_list in pkgs_na.values():
+        pkg_list.sort(reverse=True)
+        if limit > 0:
+            latest_pkgs.extend(pkg_list[0:limit])
+        else:
+            latest_pkgs.extend(pkg_list[-limit:])
+    return latest_pkgs
+
 def per_pkgtup_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
