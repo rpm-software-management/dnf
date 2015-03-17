@@ -1059,10 +1059,11 @@ class Base(object):
         autoremove = []
 
         # do the initial pre-selection
+        ic = ignore_case
         q = self.sack.query()
         if pattern is not None:
-            subj = dnf.subject.Subject(pattern, ignore_case=ignore_case)
-            q = subj.get_greedy_query(self.sack)
+            subj = dnf.subject.Subject(pattern, ignore_case=ic)
+            q = subj.get_best_query(self.sack, with_provides=False)
 
         # list all packages - those installed and available:
         if pkgnarrow == 'all':
