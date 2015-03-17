@@ -39,7 +39,9 @@ class RemoveCommand(commands.Command):
     def configure(self, _):
         demands = self.cli.demands
         demands.allow_erasing = True
-        demands.available_repos = True
+        # disable all available repos to delete whole dependency tree
+        # instead of replacing removable package with available packages
+        demands.available_repos = False
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True
