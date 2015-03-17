@@ -1,9 +1,0 @@
-#!/bin/bash
-
-DIR=$(dirname "$0")
-GITREV=${1:-$(git rev-parse --short HEAD)}
-# shorten long SHA1 from user to 7 characters
-GITREV=${GITREV:0:7}
-
-$DIR/archive "$GITREV"
-rpmbuild -ba --define "gitrev $GITREV" $DIR/*.spec

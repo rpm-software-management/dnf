@@ -30,5 +30,4 @@ ADD_SUBDIRECTORY (po)
 ENABLE_TESTING()
 ADD_SUBDIRECTORY (tests)
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/package/dnf.spec.in ${CMAKE_SOURCE_DIR}/package/dnf.spec @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/const.py.in ${CMAKE_SOURCE_DIR}/dnf/const.py @ONLY)
