@@ -68,6 +68,7 @@ logger = logging.getLogger("dnf")
 
 
 class Base(object):
+
     def __init__(self, conf=None):
         # :api
         self._closed = False
@@ -117,13 +118,14 @@ class Base(object):
         else:
             logger.debug("not found updateinfo for: %s" % repo.name)
         self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
-                                 load_presto=repo.deltarpm, load_updateinfo=True)
+                                 load_presto=repo.deltarpm,
+                                 load_updateinfo=True)
 
     @staticmethod
     def _setup_default_conf():
         conf = dnf.conf.Conf()
         subst = conf.substitutions
-        if not 'releasever' in subst:
+        if 'releasever' not in subst:
             subst['releasever'] = \
                 dnf.rpm.detect_releasever(conf.installroot) or ''
         suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
@@ -304,18 +306,19 @@ class Base(object):
                         'test': rpm.RPMTRANS_FLAG_TEST,
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS,
-                        'nocrypto' : rpm.RPMTRANS_FLAG_NOFILEDIGEST}
-    _TS_VSFLAGS_TO_RPM = {'nocrypto' : rpm._RPMVSF_NOSIGNATURES |
+                        'nocrypto': rpm.RPMTRANS_FLAG_NOFILEDIGEST}
+    _TS_VSFLAGS_TO_RPM = {'nocrypto': rpm._RPMVSF_NOSIGNATURES |
                           rpm._RPMVSF_NODIGESTS}
 
     @property
     def ts(self):
-        """Set up the RPM transaction set that will be used for all the work."""
+        """Set up the RPM transaction set that will be used
+           for all the work."""
         if self._ts is not None:
             return self._ts
         self._ts = dnf.rpm.transaction.TransactionWrapper(
             self.conf.installroot)
-        self._ts.setFlags(0) # reset everything.
+        self._ts.setFlags(0)  # reset everything.
         for flag in self.conf.tsflags:
             rpm_flag = self._TS_FLAGS_TO_RPM.get(flag)
             if rpm_flag is None:
@@ -359,7 +362,7 @@ class Base(object):
                 continue
 
             logger.log(dnf.logging.DDEBUG,
-                            'Adding group file from repository: %s', repo.id)
+                       'Adding group file from repository: %s', repo.id)
             if repo.md_only_cached:
                 decompressed = misc.calculate_repo_gen_dest(comps_fn,
                                                             'groups.xml')
@@ -390,7 +393,8 @@ class Base(object):
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
-                       fset=lambda self, value: setattr(self, "_history", value),
+                       fset=lambda self, value: setattr(
+                           self, "_history", value),
                        fdel=lambda self: setattr(self, "_history", None),
                        doc="Yum History Object")
 
@@ -437,8 +441,8 @@ class Base(object):
         """ See what packages in the query match packages (also in older
             versions, but always same architecture) that are already installed.
 
-            Unlike in case of _sltr_matches_installed(), it is practical here to
-            know even the packages in the original query that can still be
+            Unlike in case of _sltr_matches_installed(), it is practical here
+            to know even the packages in the original query that can still be
             installed.
         """
         inst = q.installed()
@@ -465,7 +469,7 @@ class Base(object):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
                 if self.yumdb.get_package(pkg).get('reason') == 'user' and
-                   self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
+                self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
     def list_autoremove(self, debug_solver=False):
         goal = hawkey.Goal(self.sack)
@@ -490,7 +494,8 @@ class Base(object):
                 goal.userinstalled(pkg)
 
     def run_hawkey_goal(self, goal, allow_erasing):
-        ret = goal.run(allow_uninstall=allow_erasing, force_best=self.conf.best)
+        ret = goal.run(
+            allow_uninstall=allow_erasing, force_best=self.conf.best)
         if self.conf.debug_solver:
             goal.write_debugdata('./debugdata')
         return ret
@@ -515,7 +520,7 @@ class Base(object):
         timer()
 
         got_transaction = self._transaction is not None and \
-                          len(self._transaction) > 0
+            len(self._transaction) > 0
         if got_transaction:
             msg = self._transaction.rpm_limitations()
             if msg:
@@ -556,8 +561,8 @@ class Base(object):
         if not self.conf.diskspacecheck:
             self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
-        self.ts.order() # order the transaction
-        self.ts.clean() # release memory not needed beyond this point
+        self.ts.order()  # order the transaction
+        self.ts.clean()  # release memory not needed beyond this point
 
         testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
         tserrors = self.ts.test(testcb)
@@ -612,7 +617,10 @@ class Base(object):
         if disk:
             summary += _('Disk Requirements:\n')
             for k in disk:
-                summary += P_('  At least %dMB more space needed on the %s filesystem.\n', '  At least %dMB more space needed on the %s filesystem.\n', disk[k]) % (disk[k], k)
+                summary += P_(
+                    '  At least %dMB more space needed on the %s filesystem.\n',
+                    '  At least %dMB more space needed on the %s filesystem.\n',
+                    disk[k]) % (disk[k], k)
 
         summary = _('Error Summary\n-------------\n') + summary
 
@@ -691,10 +699,9 @@ class Base(object):
                 herrors = [ucd(x) for x in errors]
                 self.history.end(rpmdbv, 2, errors=herrors)
 
-
             logger.critical(_("Transaction couldn't start:"))
             for e in errors:
-                logger.critical(e[0]) # should this be 'to_unicoded'?
+                logger.critical(e[0])  # should this be 'to_unicoded'?
             msg = _("Could not run transaction.")
             raise dnf.exceptions.Error(msg)
 
@@ -731,6 +738,7 @@ class Base(object):
         # and the install reason
 
         total = self.transaction.total_package_count()
+
         def display_banner(pkg, count):
             count += 1
             if verify_pkg_cb is not None:
@@ -741,9 +749,9 @@ class Base(object):
         count = 0
         # the rpmdb has changed by now. hawkey doesn't support dropping a repo
         # yet we have to check what packages are in now: build a transient sack
-        # with only rpmdb in it. In the future when RPM Python bindings can tell
-        # us if a particular transaction element failed or not we can skip this
-        # completely.
+        # with only rpmdb in it. In the future when RPM Python bindings can
+        # tell us if a particular transaction element failed or not we can skip
+        # this completely.
         rpmdb_sack = dnf.sack.rpmdb_sack(self)
 
         for tsi in self._transaction:
@@ -754,8 +762,8 @@ class Base(object):
             installed = rpmdb_sack.query().installed().nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
-                logger.critical(_('%s was supposed to be installed' \
-                                           ' but is not!' % rpo))
+                logger.critical(_('%s was supposed to be installed'
+                                  ' but is not!' % rpo))
                 count = display_banner(rpo, count)
                 continue
             po = installed[0]
@@ -844,11 +852,11 @@ class Base(object):
         with lock:
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist
-                        if not (po.from_cmdline or po.repo.local)]
+                           if not (po.from_cmdline or po.repo.local)]
             for pkg in remote_pkgs:
                 self._tempfiles.add(pkg.localPkg())
             payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
-                                            dnf.repo.RPMPayload)
+                                             dnf.repo.RPMPayload)
                         for pkg in remote_pkgs]
 
             beg_download = time.time()
@@ -859,18 +867,22 @@ class Base(object):
             if errors.irrecoverable:
                 raise dnf.exceptions.DownloadError(errors.irrecoverable)
 
-            remote_size = sum(errors.bandwidth_used(pload) for pload in payloads)
-            saving = dnf.repo.update_saving((0, 0), payloads, errors.recoverable)
+            remote_size = sum(errors.bandwidth_used(pload)
+                              for pload in payloads)
+            saving = dnf.repo.update_saving((0, 0), payloads,
+                                            errors.recoverable)
 
             if errors.recoverable:
-                msg = dnf.exceptions.DownloadError.errmap2str(errors.recoverable)
+                msg = dnf.exceptions.DownloadError.errmap2str(
+                    errors.recoverable)
                 logger.info(msg)
 
                 remaining_pkgs = [pkg for pkg in errors.recoverable]
                 payloads = \
                     [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
                      for pkg in remaining_pkgs]
-                est_remote_size = sum(pload.download_size for pload in payloads)
+                est_remote_size = sum(pload.download_size
+                                      for pload in payloads)
                 progress.start(len(payloads), est_remote_size)
                 errors = dnf.repo.download_payloads(payloads, drpm)
 
@@ -890,7 +902,7 @@ class Base(object):
             msg = _("Delta RPMs reduced %.1f MB of updates to %.1f MB "
                     "(%d.1%% saved)")
             percent = 100 - real / full * 100
-            logger.info(msg, full / 1024**2, real / 1024**2, percent)
+            logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
 
     def add_remote_rpm(self, path):
         # :api
@@ -972,7 +984,7 @@ class Base(object):
                 continue
             else:
                 logger.log(dnf.logging.DDEBUG,
-                    _('%s removed'), fn)
+                           _('%s removed'), fn)
 
     def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False, reponame=None):
@@ -1056,7 +1068,7 @@ class Base(object):
         # list all packages - those installed and available:
         if pkgnarrow == 'all':
             dinst = {}
-            ndinst = {} # Newest versions by name.arch
+            ndinst = {}  # Newest versions by name.arch
             for po in q.installed():
                 dinst[po.pkgtup] = po
                 if showdups:
@@ -1108,7 +1120,8 @@ class Base(object):
                         available.append(avail_pkg)
             else:
                 # we will only look at the latest versions of packages:
-                available_dict = query_for_repo(q).available().latest().na_dict()
+                available_dict = query_for_repo(
+                    q).available().latest().na_dict()
                 installed_dict = q.installed().latest().na_dict()
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)][0]
@@ -1137,17 +1150,19 @@ class Base(object):
         elif pkgnarrow == 'obsoletes':
             self.conf.obsoletes = 1
             inst = q.installed()
-            obsoletes = query_for_repo(self.sack.query()).filter(obsoletes=inst)
+            obsoletes = query_for_repo(
+                self.sack.query()).filter(obsoletes=inst)
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
-                obsoletesTuples.extend([(new, old) for old in
-                                        inst.filter(provides=obsoleted_reldeps)])
+                obsoletesTuples.extend(
+                    [(new, old) for old in
+                     inst.filter(provides=obsoleted_reldeps)])
 
         # packages recently added to the repositories
         elif pkgnarrow == 'recent':
             now = time.time()
-            recentlimit = now-(self.conf.recent*86400)
+            recentlimit = now - (self.conf.recent * 86400)
             if showdups:
                 avail = q.available()
             else:
@@ -1216,9 +1231,9 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     _COMPS_TRANSLATION = {
-        'default'   : dnf.comps.DEFAULT,
-        'mandatory' : dnf.comps.MANDATORY,
-        'optional'  : dnf.comps.OPTIONAL
+        'default': dnf.comps.DEFAULT,
+        'mandatory': dnf.comps.MANDATORY,
+        'optional': dnf.comps.OPTIONAL
     }
 
     @staticmethod
@@ -1251,7 +1266,7 @@ class Base(object):
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = solver.group_install(grp, pkg_types, exclude_pkgnames)
         logger.debug("Adding packages from group '%s': %s",
-                          grp.id, trans.install)
+                     grp.id, trans.install)
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types):
@@ -1310,7 +1325,7 @@ class Base(object):
 
         installroot = self.conf.installroot
         myts = dnf.rpm.transaction.initReadOnlyTransaction(root=installroot)
-        myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+        myts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
         idx = myts.dbMatch('name', 'gpg-pubkey')
         keys = len(idx)
         del idx
@@ -1371,7 +1386,8 @@ class Base(object):
         forms = [hawkey.FORM_NAME]
         subj = dnf.subject.Subject(pkg_name)
         if self.conf.multilib_policy == "all":
-            q = subj.get_best_query(self.sack, with_provides=False, forms=forms)
+            q = subj.get_best_query(
+                self.sack, with_provides=False, forms=forms)
             for pkg in q:
                 self._goal.install(pkg)
             return len(q)
@@ -1510,10 +1526,10 @@ class Base(object):
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
-               self.yumdb.get_package(pkg).get('from_repo') == reponame]
+            self.yumdb.get_package(pkg).get('from_repo') == reponame]
         if not installed:
-            raise dnf.exceptions.PackagesNotInstalledError('no package matched',
-                                                           pkg_spec)
+            raise dnf.exceptions.PackagesNotInstalledError(
+                'no package matched', pkg_spec)
 
         clean_deps = self.conf.clean_requirements_on_remove
         for pkg in installed:
@@ -1527,7 +1543,7 @@ class Base(object):
         installed_pkgs = [
             pkg for pkg in q.installed()
             if old_reponame is None or
-               self.yumdb.get_package(pkg).get('from_repo') == old_reponame]
+            self.yumdb.get_package(pkg).get('from_repo') == old_reponame]
 
         available_q = q.available()
         if new_reponame is not None:
@@ -1630,7 +1646,8 @@ class Base(object):
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
-            self._transaction.add_install(dnf.util.first(pkgs), None, 'history')
+            self._transaction.add_install(
+                dnf.util.first(pkgs), None, 'history')
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
@@ -1674,7 +1691,8 @@ class Base(object):
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
             assert len(news) == 1
-            self._transaction.add_downgrade(dnf.util.first(olds), news[0], None)
+            self._transaction.add_downgrade(
+                dnf.util.first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
@@ -1772,11 +1790,11 @@ class Base(object):
             raise dnf.exceptions.Error(_("Didn't install any keys"))
 
         if not key_installed:
-            msg = _('The GPG keys listed for the "%s" repository are ' \
-                  'already installed but they are not correct for this ' \
-                  'package.\n' \
-                  'Check that the correct key URLs are configured for ' \
-                  'this repository.') % repo.name
+            msg = _('The GPG keys listed for the "%s" repository are '
+                    'already installed but they are not correct for this '
+                    'package.\n'
+                    'Check that the correct key URLs are configured for '
+                    'this repository.') % repo.name
             raise dnf.exceptions.Error(_prov_key_data(msg))
 
         # Check if the newly installed keys helped
