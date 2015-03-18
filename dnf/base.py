@@ -79,7 +79,8 @@ class Base(object):
         self._ts = None
         self._comps = None
         self._history = None
-        self._tempfiles = []
+        self._tempfiles = set()
+        self._packages_to_clean = []
         self.ds_callback = dnf.callback.Depsolve()
         self.group_persistor = None
         self.logging = dnf.logging.Logging()
@@ -248,7 +249,7 @@ class Base(object):
         return rpmsack.AdditionalPkgDB(db_path)
 
     def close(self):
-        """Close all potential handles. :api
+        """Close all potential handles and clean cache. :api
 
         Typically the handles are to data sources and sinks.
 
@@ -258,6 +259,11 @@ class Base(object):
             return
         logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
         self._closed = True
+
+        if (not self.conf.keepcache and
+                not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
+            self.clean_used_packages()
+
         # Do not trigger the lazy creation:
         if self._history is not None:
             self.history.close()
@@ -706,10 +712,6 @@ class Base(object):
         if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self.verify_transaction(cb.verify_tsi_package)
 
-        if (not self.conf.keepcache and
-            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
-            self.clean_used_packages()
-
     def verify_transaction(self, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
@@ -842,6 +844,7 @@ class Base(object):
         drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
         remote_pkgs = [po for po in pkglist
                        if not (po.from_cmdline or po.repo.local)]
+        self._packages_to_clean.extend(remote_pkgs)
         payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
                                          dnf.repo.RPMPayload)
                     for pkg in remote_pkgs]
@@ -893,7 +896,7 @@ class Base(object):
         if not os.path.exists(path) and '://' in path:
             # download remote rpm to a tempfile
             path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
-            self._tempfiles.append(path)
+            self._tempfiles.add(path)
         return self.sack.add_cmdline_package(path)
 
     def sigCheckPkg(self, po):
@@ -959,19 +962,12 @@ class Base(object):
         transaction from the yum cache.
         """
         filelist = self._tempfiles
-        for pkg in self.transaction.install_set:
+        for pkg in self._packages_to_clean:
             if pkg is None:
                 continue
             if pkg.from_system or pkg.from_cmdline:
                 continue
-
-            # make sure it's not a local file
-            repo = self.repos[pkg.repoid]
-            for u in repo.baseurl:
-                if u.startswith("file:"):
-                    break
-            else:
-                filelist.append(pkg.localPkg())
+            filelist.add(pkg.localPkg())
 
         # now remove them
         for fn in filelist:
