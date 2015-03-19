@@ -1430,12 +1430,20 @@ class Base(object):
 
     def upgrade(self, pkg_spec, reponame=None):
         # :api
+        def is_installed_by_name(pkg_name):
+            return dnf.util.first(self.sack.query().installed().filter(name=pkg_name))
+
         sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
         match = reduce(lambda x, y: y.matches() or x, sltrs, [])
         if match:
             prev_count = self._goal.req_length()
             for sltr in sltrs:
                 if not sltr.matches():
+                    continue
+                pkg_name = sltr.matches()[0].name
+                if not is_installed_by_name(pkg_name):
+                    msg = _("Package %s not installed, cannot update it.")
+                    logger.warning(msg, pkg_name)
                     continue
                 if reponame is not None:
                     sltr = sltr.set(reponame=reponame)
