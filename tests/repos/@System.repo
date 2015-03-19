@@ -8,3 +8,6 @@
 =Prv: parking
 =Prv: /raised/smile
 =Pkg: tour 5 0 noarch
+=Pkg: dup 1 0 noarch
+=Pkg: dup 2 0 noarch
+=Pkg: dup 3 0 noarch
