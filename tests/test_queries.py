@@ -44,7 +44,7 @@ class QueriesTest(support.TestCase):
         hole = installed.filter(name="hole")[0]
         base.yumdb.get_package(hole).reason = "user"
         pkgs = dnf.query.autoremove_pkgs(installed, sack, base.yumdb)
-        self.assertEqual(len(pkgs), 4)
+        self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-1)
 
     def test_by_file(self):
         # check sanity first:
@@ -61,19 +61,14 @@ class QueriesTest(support.TestCase):
         self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
     def test_duplicated_pkgs(self):
-        class AllInstalled(object):
-            def __init__(self, q):
-                self.q = q
-            def installed(self):
-                return self.q
-        sack = support.mock_sack("old_versions")
-        pkgs = dnf.query.duplicated_pkgs(AllInstalled(sack.query()), [])
+        sack = support.mock_sack()
+        pkgs = dnf.query.duplicated_pkgs(sack.query(), [])
         self.assertEqual(len(pkgs), 3)
 
     def test_extras_pkgs(self):
         sack = support.mock_sack("main")
         pkgs = dnf.query.extras_pkgs(sack.query())
-        self.assertEqual(len(pkgs), 3)
+        self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-2)
 
     def test_installed_exact(self):
         sack = support.mock_sack()

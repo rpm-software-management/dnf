@@ -65,9 +65,10 @@ class GoalTest(tests.support.TestCase):
         base.yumdb.get_package(pkg1).reason = "user"
         pkg2 = installed.filter(name="hole")[0]
         base.yumdb.get_package(pkg2).reason = "unknown"
-        pkg3 = installed.filter(name="tour")[0]
+        pkgs = installed.filter(name__neq=["pepper", "hole", "librita"]
+                               ).run()
 
         # test:
         goal.push_userinstalled(installed, base.yumdb)
         goal.run()
-        self.assertEqual(goal.list_unneeded(), [pkg3])
+        self.assertEqual(goal.list_unneeded(), pkgs)
