@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
@@ -1431,7 +1432,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         def is_installed_by_name(pkg_name):
-            return dnf.util.first(self.sack.query().installed().filter(name=pkg_name))
+            return first(self.sack.query().installed().filter(name=pkg_name))
 
         sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
         match = reduce(lambda x, y: y.matches() or x, sltrs, [])
@@ -1561,7 +1562,7 @@ class Base(object):
         subj = dnf.subject.Subject(pkg_spec)
         q = subj.get_best_query(self.sack)
         installed = sorted(q.installed())
-        installed_pkg = dnf.util.first(installed)
+        installed_pkg = first(installed)
         if installed_pkg is None:
             available_pkgs = q.available()
             if available_pkgs:
@@ -1573,7 +1574,7 @@ class Base(object):
         arch = installed_pkg.arch
         q = self.sack.query().filter(name=installed_pkg.name, arch=arch)
         avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
-        avail_pkg = dnf.util.first(sorted(avail, reverse=True))
+        avail_pkg = first(sorted(avail, reverse=True))
         if avail_pkg is None:
             return 0
 
@@ -1612,7 +1613,7 @@ class Base(object):
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
             assert len(news) == 1
-            self._transaction.add_upgrade(dnf.util.first(olds), news[0], None)
+            self._transaction.add_upgrade(first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
@@ -1623,7 +1624,7 @@ class Base(object):
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
             self._transaction.add_install(
-                dnf.util.first(pkgs), None, 'history')
+                first(pkgs), None, 'history')
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
@@ -1653,7 +1654,7 @@ class Base(object):
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
             assert len(news) == 1
-            self._transaction.add_reinstall(dnf.util.first(olds), news[0],
+            self._transaction.add_reinstall(first(olds), news[0],
                                             obsoleteds)
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
@@ -1668,7 +1669,7 @@ class Base(object):
                     'no package matched', old_nevra)
             assert len(news) == 1
             self._transaction.add_downgrade(
-                dnf.util.first(olds), news[0], None)
+                first(olds), news[0], None)
             for obsoleted_nevra in obsoleted_nevras:
                 handle_erase(obsoleted_nevra)
 
