@@ -46,12 +46,19 @@ class Update(support.ResultTestCase):
         self.assertEqual(context.exception.pkg_spec, 'non-existent')
         self.assertEqual(goal.mock_calls, [])
 
-    def test_update_not_installed(self):
-        """ Updating an uninstalled package is a void operation. """
+    @mock.patch('dnf.base.logger.warning')
+    def test_update_not_installed(self, logger):
+        """ Updating an uninstalled package is a not valid operation. """
         base = support.MockBase("main")
+        base._goal = goal = mock.create_autospec(dnf.goal.Goal)
         # no "mrkite" installed:
-        base.upgrade("mrkite")
-        self.assertResult(base, base.sack.query().installed().run())
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            base.upgrade("mrkite")
+        self.assertEqual(logger.mock_calls, [
+            mock.call(u'Package %s not installed, cannot update it.',
+                      u'mrkite')])
+        self.assertEqual(context.exception.pkg_spec, 'mrkite')
+        self.assertEqual(goal.mock_calls, [])
 
     def test_package_upgrade_fail(self):
         base = support.MockBase("main")
