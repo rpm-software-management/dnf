@@ -64,6 +64,7 @@ BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  rpm-python >= %{rpm_version}
+Recommends: bash-completion
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   pygpgme
@@ -89,6 +90,7 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
+Recommends: bash-completion
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   python3-hawkey >= %{hawkey_version}
@@ -158,7 +160,7 @@ popd
 %{_bindir}/dnf
 %{_mandir}/man8/dnf.8.gz
 %{_mandir}/man5/dnf.conf.5.gz
-%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%{_datadir}/bash-completion/completions/dnf
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 %{_tmpfilesdir}/dnf.conf
@@ -175,7 +177,7 @@ popd
 %ghost %{_localstatedir}/log/%{name}.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
-%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%{_datadir}/bash-completion/completions/dnf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %files -n dnf-yum
