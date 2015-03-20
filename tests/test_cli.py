@@ -57,19 +57,13 @@ class BaseCliTest(support.ResultTestCase):
         self._base = dnf.cli.cli.BaseCli()
         self._base._sack = support.mock_sack('main', 'updates')
         self._base._goal = dnf.goal.Goal(self._base.sack)
-
-        main_repo = support.MockRepo('main', None)
-        main_repo.metadata = mock.Mock(comps_fn=support.COMPS_PATH)
-        main_repo.enable()
-        self._base.repos.add(main_repo)
-
         self._base.output.term = support.MockTerminal()
-        self._base.downgrade = mock.Mock(wraps=self._base.downgrade)
+        self._base.downgrade_to = mock.Mock(wraps=self._base.downgrade_to)
 
     def test_downgradePkgs(self, logger):
         self._base.downgradePkgs(('tour',))
 
-        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('tour')])
+        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('tour')])
         self.assertEqual(logger.mock_calls, [])
 
     def test_downgradePkgs_notfound(self, logger):
@@ -77,7 +71,7 @@ class BaseCliTest(support.ResultTestCase):
             self._base.downgradePkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._base.downgrade.mock_calls,
+        self.assertEqual(self._base.downgrade_to.mock_calls,
                          [mock.call('non-existent')])
         self.assertEqual(logger.mock_calls,
                          [mock.call.info('No package %s%s%s available.', '',
@@ -91,7 +85,7 @@ class BaseCliTest(support.ResultTestCase):
             self._base.downgradePkgs(('lotus',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._base.downgrade.mock_calls, [mock.call('lotus')])
+        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus')])
         self.assertEqual(logger.mock_calls, [
             mock.call.info('No match for available package: %s', pkg)] * 2)
 

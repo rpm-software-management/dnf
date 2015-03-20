@@ -1572,6 +1572,31 @@ class Base(object):
         self._goal.install(avail_pkg)
         return 1
 
+    def downgrade_to(self, pkg_spec):
+        """Downgrade to specific version if specified otherwise downgrades
+        to one version lower than the package installed.
+        """
+        subj = dnf.subject.Subject(pkg_spec)
+        poss = subj.subj.nevra_possibilities_real(self.sack, allow_globs=True)
+        nevra = dnf.util.first(poss)
+        if not nevra:
+            raise dnf.exceptions.PackageNotFoundError('no package matched',
+                                                      pkg_spec)
+
+        q = subj._nevra_to_filters(self.sack.query(), nevra)
+        available_pkgs = q.available()
+        if not self.sack.query().filter(name=nevra.name).installed():
+            raise dnf.exceptions.PackagesNotInstalledError(
+                'no package matched', pkg_spec, available_pkgs)
+        downgrade_pkgs = available_pkgs.downgrades().latest()
+        if not downgrade_pkgs:
+            msg = _("Package %s of lowest version already installed, "
+                    "cannot downgrade it.") % nevra.name
+            logger.warning(msg)
+            return 0
+        dnf.util.mapall(self._goal.downgrade_to, downgrade_pkgs)
+        return 1
+
     def provides(self, provides_spec):
         providers = dnf.query.by_provides(self.sack, provides_spec)
         if providers:
