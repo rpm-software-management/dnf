@@ -346,7 +346,7 @@ class BaseCli(dnf.Base):
                          # no matter what we don't go looking at repos
 
             try:
-                self.downgrade(arg)
+                self.downgrade_to(arg)
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s%s%s available.')
                 logger.info(msg, self.output.term.MODE['bold'], arg,
