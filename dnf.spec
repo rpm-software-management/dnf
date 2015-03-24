@@ -143,8 +143,12 @@ mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 %if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
+mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3 $RPM_BUILD_ROOT%{_bindir}/dnf-automatic
+rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2
 %else
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
+mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2 $RPM_BUILD_ROOT%{_bindir}/dnf-automatic
+rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3
 %endif
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
@@ -206,7 +210,12 @@ popd
 %{_mandir}/man8/dnf.automatic.8.gz
 %{_unitdir}/dnf-automatic.service
 %{_unitdir}/dnf-automatic.timer
+%if 0%{?fedora} >= 23
+%{python3_sitelib}/dnf/automatic
+%{python3_sitelib}/dnf/automatic/__pycache__/*
+%else
 %{python_sitelib}/dnf/automatic
+%endif
 
 %post
 %systemd_post dnf-makecache.timer

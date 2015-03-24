@@ -1,6 +1,7 @@
 if (${PYTHON_DESIRED} STREQUAL "2")
     INSTALL (PROGRAMS "dnf-2" DESTINATION bin)
+    INSTALL (PROGRAMS "dnf-automatic-2" DESTINATION bin)
 else()
     INSTALL (PROGRAMS "dnf-3" DESTINATION bin)
+    INSTALL (PROGRAMS "dnf-automatic-3" DESTINATION bin)
 endif()
-INSTALL (PROGRAMS "dnf-automatic" DESTINATION bin)
