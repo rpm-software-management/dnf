@@ -46,7 +46,7 @@ Summary:    Configuration files for DNF.
 Configuration files for DNF.
 
 %package -n dnf-yum
-Conflicts:      yum
+Conflicts:      yum < 3.4.3-505
 Requires:   dnf = %{version}-%{release}
 Summary:    As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 %description -n dnf-yum
@@ -154,7 +154,6 @@ ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-2 $RPM_BUILD_ROOT%{_bindir}/dnf
 mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2 $RPM_BUILD_ROOT%{_bindir}/dnf-automatic
 rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3
 %endif
-ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
 %check
 make ARGS="-V" test
