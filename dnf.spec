@@ -63,7 +63,9 @@ BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  rpm-python >= %{rpm_version}
+%if 0%{?fedora} >= 21
 Recommends: bash-completion
+%endif
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   pygpgme
@@ -89,7 +91,9 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
+%if 0%{?fedora} >= 21
 Recommends: bash-completion
+%endif
 Requires:   dnf-conf = %{version}-%{release}
 Requires:   deltarpm
 Requires:   python3-hawkey >= %{hawkey_version}
