@@ -238,6 +238,8 @@ man_pages = [
      AUTHORS, 8),
     ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
      AUTHORS, 5),
+    ('cli_vs_yum', 'yum2dnf', u'Changes in DNF compared to Yum',
+     AUTHORS, 8)
 ]
 
 # If true, show URL addresses after external links.
