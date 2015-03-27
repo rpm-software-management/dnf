@@ -227,17 +227,24 @@ class GroupCommand(commands.Command):
         persistor = self.base.group_persistor
         q = CompsQuery(self.base.comps, persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
-                       CompsQuery.AVAILABLE)
+                       CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         solver = self.base.build_comps_solver()
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
-        for env in res.environments:
-            solver.environment_install(env, types, None)
+
+        def install_or_skip(install_fnc, grp_or_env):
+            for grp in grp_or_env:
+                try:
+                    install_fnc(grp, types, None)
+                except dnf.comps.CompsError as e:
+                    logger.warning("%s, %s", str(e)[:-1], _("skipping."))
+                    grp_or_env.remove(grp)
+
+        install_or_skip(solver.environment_install, res.environments)
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
                         ','.join([g.ui_name for g in res.environments]))
-        for grp in res.groups:
-            solver.group_install(grp, types, None)
+        install_or_skip(solver.group_install, res.groups)
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
                         ','.join([g.ui_name for g in res.groups]))
