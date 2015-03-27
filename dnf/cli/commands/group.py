@@ -332,6 +332,7 @@ class GroupCommand(commands.Command):
             demands.root_user = True
         if cmd == 'remove':
             demands.allow_erasing = True
+            demands.available_repos = False
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
