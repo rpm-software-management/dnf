@@ -177,6 +177,7 @@ popd
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+%ghost %{_localstatedir}/%{_lib}/dnf
 %ghost %{_localstatedir}/log/hawkey.log
 %ghost %{_localstatedir}/log/%{name}.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
@@ -195,7 +196,6 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
-%ghost %{_sharedstatedir}/dnf
 %dir %{py2pluginpath}
 
 %files -n python3-dnf
@@ -203,7 +203,6 @@ popd
 %{_bindir}/dnf-3
 %exclude %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/
-%ghost %{_sharedstatedir}/dnf
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
 
