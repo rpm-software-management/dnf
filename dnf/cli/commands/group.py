@@ -326,13 +326,14 @@ class GroupCommand(commands.Command):
     def configure(self, extcmds):
         cmd = extcmds[0]
         demands = self.cli.demands
-        demands.available_repos = True
         demands.sack_activation = True
         if cmd in ('install', 'mark', 'remove', 'upgrade'):
             demands.root_user = True
         if cmd == 'remove':
             demands.allow_erasing = True
             demands.available_repos = False
+        else:
+            demands.available_repos = True
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
