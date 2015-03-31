@@ -99,7 +99,7 @@ Requires(postun):	systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%setup -q -n dnf
+%setup -q -n dnf-%{version}
 rm -rf py3
 mkdir ../py3
 cp -a . ../py3/
