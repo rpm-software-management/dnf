@@ -240,6 +240,8 @@ man_pages = [
      AUTHORS, 5),
     ('cli_vs_yum', 'yum2dnf', u'Changes in DNF compared to Yum',
      AUTHORS, 8)
+    ('yum-dnf', 'yum', u'/usr/bin/yum to /usr/bin/dnf redirecting executable',
+     AUTHORS, 8),
 ]
 
 # If true, show URL addresses after external links.

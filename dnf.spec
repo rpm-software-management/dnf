@@ -190,6 +190,7 @@ popd
 %files -n dnf-yum
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/yum
+%{_mandir}/man8/yum.8.gz
 
 %files -n python-dnf
 %{_bindir}/dnf-2
