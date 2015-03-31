@@ -165,6 +165,7 @@ popd
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
 %{_mandir}/man8/dnf.8.gz
+%{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 
