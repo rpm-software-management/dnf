@@ -239,7 +239,7 @@ man_pages = [
     ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
      AUTHORS, 5),
     ('cli_vs_yum', 'yum2dnf', u'Changes in DNF compared to Yum',
-     AUTHORS, 8)
+     AUTHORS, 8),
     ('yum-dnf', 'yum', u'/usr/bin/yum to /usr/bin/dnf redirecting executable',
      AUTHORS, 8),
 ]
