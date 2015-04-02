@@ -130,6 +130,20 @@ class UpgradeCompletionCommand(dnf.cli.commands.upgrade.UpgradeCommand):
             print(str(pkg))
 
 
+class DowngradeCompletionCommand(dnf.cli.commands.downgrade.DowngradeCommand):
+    def __init__(self, args):
+        super(DowngradeCompletionCommand, self).__init__(args)
+
+    def configure(self, args):
+        self.cli.demands.root_user = False
+        self.cli.demands.available_repos = True
+        self.cli.demands.sack_activation = True
+
+    def run(self, args):
+        for pkg in ListCompletionCommand.available(self.base, args[0]).downgrades():
+            print(str(pkg))
+
+
 def main(args):
     base = dnf.cli.cli.BaseCli()
     cli = dnf.cli.Cli(base)
@@ -145,6 +159,7 @@ def main(args):
     cli.register_command(ListCompletionCommand)
     cli.register_command(RepoListCompletionCommand)
     cli.register_command(UpgradeCompletionCommand)
+    cli.register_command(DowngradeCompletionCommand)
     cli.configure(args)
     cli.run()
 

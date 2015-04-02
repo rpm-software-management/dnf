@@ -112,7 +112,7 @@ _dnf()
                 fi
                 ext='@(rpm)'
                 ;;
-            erase|remove)
+            erase|remove|downgrade)
                 if ! _is_path "$cur"; then
                     if [ -r $cache_file ] && ! _modified_sack words[@]; then
                         COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
@@ -120,7 +120,7 @@ _dnf()
                         _dnf_helper $command "$cur"
                     fi
                 fi
-                ext='NULL'
+                [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
                 ;;
             list)
                 _dnf_helper $command "$prev" "$cur"
