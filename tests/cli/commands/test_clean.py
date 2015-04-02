@@ -31,7 +31,7 @@ class CleanTest(tests.support.TestCase):
         with mock.patch('os.access', return_value=True) as access,\
              mock.patch('dnf.cli.commands.clean._clean_filelist'):
             clean._clean_binary_cache(base.repos, base.conf.cachedir)
-        self.assertEqual(len(access.call_args_list), 3)
+        self.assertEqual(len(access.call_args_list), 5)
         fname = access.call_args_list[0][0][0]
         assert fname.startswith(dnf.const.TMPDIR)
         assert fname.endswith(hawkey.SYSTEM_REPO_NAME + '.solv')
