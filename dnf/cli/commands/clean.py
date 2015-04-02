@@ -61,6 +61,8 @@ def _clean_binary_cache(repos, cachedir):
         basename = os.path.join(cachedir, repo.id)
         files.append(basename + ".solv")
         files.append(basename + "-filenames.solvx")
+        files.append(basename + "-presto.solvx")
+        files.append(basename + "-updateinfo.solvx")
     files = [f for f in files if os.access(f, os.F_OK)]
 
     return _clean_filelist('dbcache', files)
