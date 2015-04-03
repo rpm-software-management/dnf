@@ -127,7 +127,11 @@ _dnf()
                 ext='NULL'
                 ;;
             help)
-                _dnf_helper _cmds "$cur"
+                case $nth in
+                    1)
+                        _dnf_helper _cmds "$cur"
+                        ;;
+                esac
                 ext='NULL'
                 ;;
             *)
