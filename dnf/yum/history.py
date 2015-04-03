@@ -361,15 +361,16 @@ class YumHistoryTransaction(object):
         self.altered_lt_rpmdb = None
         self.altered_gt_rpmdb = None
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if other is None:
-            return 1
-        ret = cmp(self.beg_timestamp, other.beg_timestamp)
-        if ret: return -ret
-        ret = cmp(self.end_timestamp, other.end_timestamp)
-        if ret: return ret
-        ret = cmp(self.tid, other.tid)
-        return -ret
+            return False
+        if self.beg_timestamp == other.beg_timestamp:
+            if self.end_timestamp == other.end_timestamp:
+                return self.tid > other.tid
+            else:
+                return self.end_timestamp < other.end_timestamp
+        else:
+            return self.beg_timestamp > other.beg_timestamp
 
     def _getTransWith(self):
         if self._loaded_TW is None:
