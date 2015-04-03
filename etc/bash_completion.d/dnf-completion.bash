@@ -122,7 +122,7 @@ _dnf()
                 fi
                 [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
                 ;;
-            list|clean)
+            list|clean|history)
                 _dnf_helper $command "$prev" "$cur"
                 ext='NULL'
                 ;;

@@ -153,6 +153,16 @@ class CleanCompletionCommand(dnf.cli.commands.clean.CleanCommand):
         print("\n".join(filter_list_by_kw(args[1], subcmds)))
 
 
+class HistoryCompletionCommand(dnf.cli.commands.HistoryCommand):
+    def __init__(self, args):
+        super(HistoryCompletionCommand, self).__init__(args)
+
+    def run(self, args):
+        subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
+        if args[0] not in subcmds:
+            print("\n".join(filter_list_by_kw(args[1], subcmds)))
+
+
 def main(args):
     base = dnf.cli.cli.BaseCli()
     cli = dnf.cli.Cli(base)
@@ -170,6 +180,7 @@ def main(args):
     cli.register_command(UpgradeCompletionCommand)
     cli.register_command(DowngradeCompletionCommand)
     cli.register_command(CleanCompletionCommand)
+    cli.register_command(HistoryCompletionCommand)
     cli.configure(args)
     cli.run()
 
