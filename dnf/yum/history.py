@@ -316,13 +316,12 @@ class YumHistoryRpmdbProblem(object):
 
         self._loaded_P = None
 
-    def __cmp__(self, other):
+    def __lt__(self, other):
         if other is None:
-            return 1
-        ret = cmp(self.problem, other.problem)
-        if ret: return -ret
-        ret = cmp(self.rpid, other.rpid)
-        return ret
+            return False
+        if self.problem == other.problem:
+            return self.rpid < other.rpid
+        return self.problem > other.problem
 
     def _getProbPkgs(self):
         if self._loaded_P is None:
