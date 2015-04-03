@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
-if [ -e /usr/bin/dnf-2 ]; then
+if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
     alias dnf="dnf-2"
     alias python="python2"
 else
