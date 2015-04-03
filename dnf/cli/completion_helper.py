@@ -144,6 +144,15 @@ class DowngradeCompletionCommand(dnf.cli.commands.downgrade.DowngradeCommand):
             print(str(pkg))
 
 
+class CleanCompletionCommand(dnf.cli.commands.clean.CleanCommand):
+    def __init__(self, args):
+        super(CleanCompletionCommand, self).__init__(args)
+
+    def run(self, args):
+        subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
+        print("\n".join(filter_list_by_kw(args[1], subcmds)))
+
+
 def main(args):
     base = dnf.cli.cli.BaseCli()
     cli = dnf.cli.Cli(base)
@@ -160,6 +169,7 @@ def main(args):
     cli.register_command(RepoListCompletionCommand)
     cli.register_command(UpgradeCompletionCommand)
     cli.register_command(DowngradeCompletionCommand)
+    cli.register_command(CleanCompletionCommand)
     cli.configure(args)
     cli.run()
 
