@@ -126,6 +126,10 @@ _dnf()
                 _dnf_helper $command "$prev" "$cur"
                 ext='NULL'
                 ;;
+            help)
+                _dnf_helper _cmds "$cur"
+                ext='NULL'
+                ;;
             *)
                 ext='NULL'
                 ;;
