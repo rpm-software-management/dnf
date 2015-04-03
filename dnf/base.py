@@ -1240,17 +1240,16 @@ class Base(object):
     def env_group_install(self, patterns, types):
         q = CompsQuery(self.comps, self.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
-                       CompsQuery.AVAILABLE)
+                       CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         try:
             res = q.get(*patterns)
         except dnf.exceptions.CompsError as err:
             logger.error("Warning: %s", ucd(err))
             return 0
-        cnt = 0
-        for env in res.environments:
-            cnt += self.environment_install(env, types)
-        for grp in res.groups:
-            cnt += self.group_install(grp, types)
+        cnt = dnf.cli.commands.group.install_or_skip(self.environment_install,
+                                                     res.environments, types)
+        cnt += dnf.cli.commands.group.install_or_skip(self.group_install,
+                                                      res.groups, types)
         return cnt
 
     def group_remove(self, grp):
