@@ -1017,3 +1017,46 @@ Bugs fixed in 0.6.4:
 * :rhbug:`1119030`
 * :rhbug:`1177394`
 * :rhbug:`1154476`
+
+===================
+0.6.5 Release Notes
+===================
+
+Python 3 version of DNF is now default in Fedora 23 and later.
+
+yum-dnf package does not conflict with yum package.
+
+`dnf erase` was deprecated in favor of `dnf remove`.
+
+Extended documentation of handling non-existent packages and YUM to DNF transition in :doc:`cli_vs_yum`.
+
+API additions in 0.6.5:
+
+Newly added `pluginconfpath` option in :doc:`configuration <conf_ref>`.
+
+Exposed `skip_if_unavailable` attribute from :doc:`api_repos`.
+
+Documented `IOError` exception of method `fill_sack` from :class:`dnf.Base`.
+
+Bugs fixed in 0.6.5:
+
+* :rhbug:`1203151`
+* :rhbug:`1187579`
+* :rhbug:`1185977`
+* :rhbug:`1195240`
+* :rhbug:`1193914`
+* :rhbug:`1195385`
+* :rhbug:`1160806`
+* :rhbug:`1186710`
+* :rhbug:`1207726`
+* :rhbug:`1157233`
+* :rhbug:`1190671`
+* :rhbug:`1191579`
+* :rhbug:`1195325`
+* :rhbug:`1154202`
+* :rhbug:`1189083`
+* :rhbug:`1193915`
+* :rhbug:`1195661`
+* :rhbug:`1190458`
+* :rhbug:`1194685`
+* :rhbug:`1160950`

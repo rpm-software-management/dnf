@@ -184,16 +184,20 @@
         "'upgrade' command displays old version numbers in summary, rather than new version numbers"
     ], 
     [
-        1002798, 
-        "Error when checking librepo explicit requires"
-    ], 
-    [
         997403, 
         "Error message instructs users to invoke 'yum' rather than 'dnf' to fix a problem"
     ], 
     [
         1002508, 
         "Updated to install any packages \"An Curl handle error: Unsupported protocol\""
+    ], 
+    [
+        1002798, 
+        "Error when checking librepo explicit requires"
+    ], 
+    [
+        998859, 
+        "\"dnf upgrade --best\" will always install 64bits package when 32bit package is installed"
     ], 
     [
         1006366, 
@@ -206,10 +210,6 @@
     [
         1003220, 
         "[abrt] dnf-0.3.11-1.git7d717c7.fc19: output.py:838:_enc:TypeError: object of type 'NoneType' has no len()"
-    ], 
-    [
-        998859, 
-        "\"dnf upgrade --best\" will always install 64bits package when 32bit package is installed"
     ], 
     [
         909744, 
@@ -408,6 +408,10 @@
         "disable fastestmirror by default (and make it configurable)"
     ], 
     [
+        909468, 
+        "[rfe] delta rpm support"
+    ], 
+    [
         1030440, 
         "[RFE] bash completion support"
     ], 
@@ -422,14 +426,6 @@
     [
         1056400, 
         "DNF not support url installation for a package"
-    ], 
-    [
-        1060522, 
-        "dnf says \"Nothing to do\" instead of \"Error: broken dependencies.\""
-    ], 
-    [
-        909468, 
-        "[rfe] delta rpm support"
     ], 
     [
         1062390, 
@@ -461,7 +457,7 @@
     ], 
     [
         1065959, 
-        "bash-completion should use \"distro-sync\" as the preferred completion for dnf"
+        "dnf tab completion should use \"distro-sync\" instead of \"distribution-synchronization\""
     ], 
     [
         1066743, 
@@ -501,7 +497,7 @@
     ], 
     [
         1071501, 
-        "Back trace (OSError No such file or directory) During update With DRPM Enabled"
+        "[drpm] fallback to full RPM download on drpm failure"
     ], 
     [
         1071518, 
@@ -596,6 +592,10 @@
         "TypeError in dnf history info <id>"
     ], 
     [
+        1083432, 
+        "group is marked as installed, even if install of the packages failed"
+    ], 
+    [
         1083767, 
         "dnf documents cached packages in a way which does not agree with reality"
     ], 
@@ -610,10 +610,6 @@
     [
         1088166, 
         "[doc] DNF doesn't say you need root rights to run dnf update"
-    ], 
-    [
-        1083432, 
-        "group is marked as installed, even if install of the packages failed"
     ], 
     [
         1065882, 
@@ -669,7 +665,7 @@
     ], 
     [
         1096506, 
-        "[doc] promoting 'install a' to 'install b' when b obsoletes a"
+        "promoting 'install a' to 'install b' when b obsoletes a"
     ], 
     [
         1047049, 
@@ -792,12 +788,12 @@
         "handling groups installed by Yum"
     ], 
     [
-        1127206, 
-        "[abrt] dnf: __init__.py:186:install:Exception: Goal operation failed."
-    ], 
-    [
         1118272, 
         "search command show traceback when in a debug mode"
+    ], 
+    [
+        1127206, 
+        "[abrt] dnf: __init__.py:186:install:Exception: Goal operation failed."
     ], 
     [
         1132335, 
@@ -1018,5 +1014,81 @@
     [
         1154476, 
         "[abrt] dnf: lock.py:64:_read_lock:ValueError: invalid literal for int() with base 10: ''"
+    ], 
+    [
+        1203151, 
+        "Duplicated output for already installed packages"
+    ], 
+    [
+        1187579, 
+        "dnf upgrade ./<TAB> doesn't autocomplete"
+    ], 
+    [
+        1185977, 
+        "[api] remove cached package file only after transaction()"
+    ], 
+    [
+        1195240, 
+        "dnf-automatic \"how to use\""
+    ], 
+    [
+        1193914, 
+        "'help history' does not correspond with supported commands"
+    ], 
+    [
+        1195385, 
+        "dnf regression: cannot resolve provides with slashes"
+    ], 
+    [
+        1160806, 
+        "DNF shoud not deprecate \"remove\" command"
+    ], 
+    [
+        1186710, 
+        "dnf --setopt exclude=XXX adds garbage to excludes"
+    ], 
+    [
+        1207726, 
+        "Update dnf and yum packages for proposed dnf default change"
+    ], 
+    [
+        1190671, 
+        "DNF ships bash completition file but lacks requirement on bash completion"
+    ], 
+    [
+        1191579, 
+        "python3-dnf cannot be used without python2"
+    ], 
+    [
+        1195325, 
+        "RFE: provide a way to configure the config directory used by plugins"
+    ], 
+    [
+        1154202, 
+        "[depsolv] removing a package results in downloading more packages"
+    ], 
+    [
+        1189083, 
+        "[doc] please document 'skip_if_unavailable' Repo flag"
+    ], 
+    [
+        1193915, 
+        "[abrt] dnf: output.py:1730:historySummaryCmd:ValueError: need more than 0 values to unpack"
+    ], 
+    [
+        1195661, 
+        "lock files cannot be created for non logged users"
+    ], 
+    [
+        1190458, 
+        "[abrt] dnf: cli.py:210:do_transaction:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xf3' in position 196: ordinal not in range(128)"
+    ], 
+    [
+        1194685, 
+        "CACHEDIR_SUFFIX appended twice to cachedir when using dnf CLI."
+    ], 
+    [
+        1160950, 
+        "\"dnf install foo.rpm\" doesn't upgrade \"foo\""
     ]
 ]
