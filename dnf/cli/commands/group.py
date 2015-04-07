@@ -48,13 +48,14 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
 
 
 def install_or_skip(install_fnc, grp_or_env, types):
+    count = 0
     for grp in grp_or_env:
         try:
-            install_fnc(grp, types, None)
+            count += install_fnc(grp, types, None)
         except dnf.comps.CompsError as e:
             logger.warning("%s, %s", str(e)[:-1], _("skipping."))
             grp_or_env.remove(grp)
-
+    return count
 
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
