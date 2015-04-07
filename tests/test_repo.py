@@ -264,6 +264,11 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertTrue(m.progress.called)
         self.assertTrue(m.end.called)
 
+    def test_repo_cmp(self):
+        r1 = self.build_repo('abc', '1. repo')
+        r2 = self.build_repo('zzz', '2. repo')
+        self.assertLess(r1, r2)
+
     @mock.patch('librepo.Handle.setopt')
     def test_repo_gpgcheck(self, setopt):
         """Test repo_gpgcheck option works."""

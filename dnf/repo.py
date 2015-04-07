@@ -535,6 +535,9 @@ class Repo(dnf.yum.config.RepoConf):
     def updateinfo_fn(self):
         return self.metadata.updateinfo_fn
 
+    def __lt__(self, other):
+        return self.id < other.id
+
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.id)
 
