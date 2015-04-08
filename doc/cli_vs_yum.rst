@@ -335,7 +335,7 @@ All ported yum tools are now implemented as DNF plugins.
 =========================  =============================  =======================
 Original Yum tool          New DNF command                Package
 -------------------------  -----------------------------  -----------------------
-``debuginfo-install``      `dnf debuginfo-install`_       ``dnf-plugins-extras``
+``debuginfo-install``      `dnf debuginfo-install`_       ``dnf-plugins-core``
 ``find-repos-of-install``  `dnf list installed`_          ``dnf``
 ``needs-restarting``       `dnf tracer`_                  ``dnf-plugins-extras``
 ``repoclosure``            `dnf repoclosure`_             ``dnf-plugins-extras``
