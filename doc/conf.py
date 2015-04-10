@@ -58,20 +58,16 @@ copyright = u'2012-2014, Red Hat, Licensed under GPLv2+'
 # The short X.Y version.
 
 def version_readout():
-    def submatch(sub, in_str):
-        pat = re.compile('SET\(DNF_%s "(\d+)"\)' % sub)
-        return pat.match(in_str).group(1)
-
     fn = os.path.join(_dirname, '../VERSION.cmake')
     with open(fn) as f:
         lines = f.readlines()
 
-    major = submatch('MAJOR', lines[0])
-    minor = submatch('MINOR', lines[1])
-    patch = submatch('PATCH', lines[2])
-    return (major, minor, patch)
+    pat = re.compile('\d+.\d+.\d+')
+    version = pat.findall(lines[0])[0]
 
-version = '%s.%s.%s' % version_readout()
+    return version
+
+version = version_readout()
 # The full version, including alpha/beta/rc tags.
 release = '%s-1' % version
 

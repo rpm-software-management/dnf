@@ -43,16 +43,13 @@ SYSTEM_CACHEDIR='/var/cache/dnf'
 TMPDIR='/var/tmp/'
 # CLI verbose values greater or equal to this are considered "verbose":
 VERBOSE_LEVEL=6
-VERSION_MAJOR=@DNF_MAJOR@
-VERSION_MINOR=@DNF_MINOR@
-VERSION_PATCH=@DNF_PATCH@
 
 PREFIX=NAME.lower()
 PROGRAM_NAME=NAME.lower()
 PLUGINCONFPATH = '/etc/dnf/plugins'  # :api
 PLUGINPATH = '%s/%s-plugins' % (distutils.sysconfig.get_python_lib(),
                                 PROGRAM_NAME)
-VERSION="%d.%d.%d" % (VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH)
+VERSION='@DNF_VERSION@'
 USER_AGENT = "dnf/%s" % VERSION
 
 BUGTRACKER_COMPONENT=NAME.lower()
