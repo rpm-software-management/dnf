@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	0.6.4
-Release:	2%{?snapshot}%{?dist}
+Release:	3%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -197,6 +197,9 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Mon Apr 13 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-3
+- rel-eng: use distro releaser
+
 * Fri Apr 10 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-2
 - spec: fix prep section (Michal Luscon)
 - subject: expand every glob name only once (RhBug:1203151) (Michal Luscon)
@@ -237,25 +240,25 @@ popd
 - api: exposed Repo.skip_if_unavailable config (RhBug:1189083) (Jan Silhan)
 - updated documentation for 'dnf list autoremove' (Michael Mraka)
 - reuse list_autoremove() in autoremove command (Michael Mraka)
-- function for autoremove package list (Michael Mraka)                                                               
-- implemented dnf list autoremove (Michael Mraka)                                                                    
-- exclude not documented history subcommands (RhBug:1193914,1193915) (Jan Silhan)                                    
-- better file pattern recognition (RhBug:1195385) (Jan Silhan)                                                       
-- remove boot only constraint and add missing download lock (Michal Luscon)                                          
-- util: remove unused user_run_dir() function (Michal Luscon)                                                        
+- function for autoremove package list (Michael Mraka)
+- implemented dnf list autoremove (Michael Mraka)
+- exclude not documented history subcommands (RhBug:1193914,1193915) (Jan Silhan)
+- better file pattern recognition (RhBug:1195385) (Jan Silhan)
+- remove boot only constraint and add missing download lock (Michal Luscon)
+- util: remove unused user_run_dir() function (Michal Luscon)
 - lock: change the destination folder of locks to allow suided programs work properly (RhBug:1195661) (Michal Luscon)
-- fixed unicode Download error (RhBug:1190458) (Jan Silhan)                                                          
-- log: print metadata age along with timestamp (Petr Spacek)                                                         
-- cli: fix double expansion of cachedir (RhBug:1194685) (Michal Luscon)                                              
-- removed unused dnf-makecache.cron (Jan Silhan)                                                                     
-- renamed erase command to remove (RhBug:1160806) (Jan Silhan)                                                       
-- AUTHORS: changed email address (Jan Silhan)                                                                        
-- doc: improve the documentation of the "install" command (Radek Holy)                                               
-- "dnf install non-existent" should fail (Radek Holy)                                                                
-- tests: add some tests of Base.install (Radek Holy)                                                                 
-- tests: add some tests of Base.package_install (Radek Holy)                                                         
-- Revert "doesn't upgrade packages by installing local packages" (RhBug:1160950) (Radek Holy)                        
-- lint: fix all Pylint errors in test_install (Radek Holy)                                                           
+- fixed unicode Download error (RhBug:1190458) (Jan Silhan)
+- log: print metadata age along with timestamp (Petr Spacek)
+- cli: fix double expansion of cachedir (RhBug:1194685) (Michal Luscon)
+- removed unused dnf-makecache.cron (Jan Silhan)
+- renamed erase command to remove (RhBug:1160806) (Jan Silhan)
+- AUTHORS: changed email address (Jan Silhan)
+- doc: improve the documentation of the "install" command (Radek Holy)
+- "dnf install non-existent" should fail (Radek Holy)
+- tests: add some tests of Base.install (Radek Holy)
+- tests: add some tests of Base.package_install (Radek Holy)
+- Revert "doesn't upgrade packages by installing local packages" (RhBug:1160950) (Radek Holy)
+- lint: fix all Pylint errors in test_install (Radek Holy)
 - tests: add some tests to test_install (Radek Holy)
 - tests: improve some tests in test_install (Radek Holy)
 - cosmetic: reorder tests in test_install (Radek Holy)
