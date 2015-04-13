@@ -338,6 +338,7 @@ Original Yum tool          New DNF command                Package
 ``debuginfo-install``      `dnf debuginfo-install`_       ``dnf-plugins-core``
 ``find-repos-of-install``  `dnf list installed`_          ``dnf``
 ``needs-restarting``       `dnf tracer`_                  ``dnf-plugins-extras-tracer``
+``package-cleanup``        `dnf list`, `dnf repoquery`_   ``dnf-plugins-core``
 ``repoclosure``            `dnf repoclosure`_             ``dnf-plugins-extras-repoclosure``
 ``repo-graph``             `dnf repograph`_               ``dnf-plugins-extras-repograph``
 ``repomanage``             `dnf repomanage`_              ``dnf-plugins-extras-repomanage``
@@ -351,9 +352,20 @@ Original Yum tool          New DNF command                Package
 ``yumdownloader``          `dnf download`_                ``dnf-plugins-core``
 =========================  =============================  ===================================
 
+Detailed table for ``package-cleanup`` replacement:
+
+================================        =============================
+``package-cleanup --dupes``             ``dnf repoquery --duplicates``
+``package-cleanup --leaves``            ``dnf list autoremove``
+``package-cleanup --orphans``           ``dnf list extras``
+``package-cleanup --oldkernels``        ``dnf repoquery --installonly``
+``package-cleanup --problems``          ``dnf repoquery --unsatisfied``
+``package-cleanup --cleandupes``        ``dnf remove $(dnf repoquery --duplicates --latest-limit -1)``
+``package-cleanup --oldkernels``        ``dnf remove $(dnf repoquery --installonly --latest-limit -3)``
+================================        =============================
+
 Utilities that have not been ported yet:
 
-``package-cleanup``,
 ``repodiff``,
 ``repo-rss``,
 ``show-changed-rco``,
