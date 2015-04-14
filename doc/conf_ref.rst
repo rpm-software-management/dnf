@@ -119,9 +119,10 @@ one main section. The repository sections define the configuration for each
 ``cost``
     integer
 
-    The relative cost of accessing this repository, defaulting to 1000. If the
-    same package can be downloaded from two or more repositories, the repository
-    with the lowest cost is preferred.
+    The relative cost of accessing this repository, defaulting to 1000. This
+    value is compared when the priorities of two repositories are the same. The
+    repository with *the lowest cost* is picked. It is useful to make the
+    library prefer on-disk repositories to remote ones.
 
 .. _repo_gpgkey-label:
 
