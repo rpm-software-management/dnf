@@ -600,6 +600,13 @@ class Repo(dnf.yum.config.RepoConf):
             msg = 'Cannot find a valid baseurl for repo: %s' % self.id
             raise dnf.exceptions.RepoError(msg)
 
+        # setup username/password if needed
+        if self.username:
+            userpwd = self.username
+            if self.password:
+                userpwd += ":" + self.password
+            h.setopt(librepo.LRO_USERPWD, userpwd)
+
         # setup download progress
         h.progresscb = self._md_pload._progress_cb
         self._md_pload.fm_running = False
