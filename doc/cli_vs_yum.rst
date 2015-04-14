@@ -332,24 +332,24 @@ Feel free to file a RFE_ for missing functionality if you need it.
 
 All ported yum tools are now implemented as DNF plugins.
 
-=========================  =============================  =======================
+=========================  =============================  ===================================
 Original Yum tool          New DNF command                Package
--------------------------  -----------------------------  -----------------------
+-------------------------  -----------------------------  -----------------------------------
 ``debuginfo-install``      `dnf debuginfo-install`_       ``dnf-plugins-core``
 ``find-repos-of-install``  `dnf list installed`_          ``dnf``
-``needs-restarting``       `dnf tracer`_                  ``dnf-plugins-extras``
-``repoclosure``            `dnf repoclosure`_             ``dnf-plugins-extras``
-``repo-graph``             `dnf repograph`_               ``dnf-plugins-extras``
-``repomanage``             `dnf repomanage`_              ``dnf-plugins-extras``
+``needs-restarting``       `dnf tracer`_                  ``dnf-plugins-extras-tracer``
+``repoclosure``            `dnf repoclosure`_             ``dnf-plugins-extras-repoclosure``
+``repo-graph``             `dnf repograph`_               ``dnf-plugins-extras-repograph``
+``repomanage``             `dnf repomanage`_              ``dnf-plugins-extras-repomanage``
 ``repoquery``              `dnf repoquery`_               ``dnf-plugins-core``
 ``reposync``               `dnf reposync`_                ``dnf-plugins-core``
 ``repotrack``              `dnf download`_                ``dnf-plugins-core``
 ``yum-builddep``           `dnf builddep`_                ``dnf-plugins-core``
 ``yum-config-manager``     `dnf config-manager`_          ``dnf-plugins-core``
-``yum-debug-dump``         `dnf debug-dump`_              ``dnf-plugins-extras``
-``yum-debug-restore``      `dnf debug-restore`_           ``dnf-plugins-extras``
+``yum-debug-dump``         `dnf debug-dump`_              ``dnf-plugins-extras-debug``
+``yum-debug-restore``      `dnf debug-restore`_           ``dnf-plugins-extras-debug``
 ``yumdownloader``          `dnf download`_                ``dnf-plugins-core``
-=========================  =============================  =======================
+=========================  =============================  ===================================
 
 Utilities that have not been ported yet:
 
