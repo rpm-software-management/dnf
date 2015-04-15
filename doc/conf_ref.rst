@@ -270,6 +270,16 @@ configuration.
 
     Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 30 seconds.
 
+``username``
+    string
+
+    The username to use for connecting to repo with basic HTTP authentication. Empty by default.
+
+``password``
+    string
+
+    The password to use for connecting to repo with basic HTTP authentication. Empty by default.
+
 ==========
  See Also
 ==========
