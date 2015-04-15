@@ -121,6 +121,14 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     The ``"nocrypto"`` option will also set the ``_RPMVSF_NOSIGNATURES`` and ``_RPMVSF_NODIGESTS`` VS flags.
 
+  .. attribute:: username
+
+    The username to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
+
+  .. attribute:: password
+
+    The password to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
+
   .. method:: prepend_installroot(option)
 
     Prefix config option named `option` with :attr:`installroot`.

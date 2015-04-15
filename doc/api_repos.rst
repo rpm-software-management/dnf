@@ -112,6 +112,14 @@ Repository Configuration
 
     Whether SSL certificate checking should be performed at all. Defaults to ``True``.
 
+  .. attribute:: username
+
+    The username to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
+
+  .. attribute:: password
+
+    The password to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
+
   .. method:: __init__(id_, cachedir)
 
     Init repository with ID `id_` and using the `cachedir` path for storing downloaded and temporary files.
