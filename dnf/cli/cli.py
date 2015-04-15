@@ -789,12 +789,17 @@ class Cli(object):
             if lar:
                 repos = list(self.base.repos.iter_enabled())
                 if repos:
-                    mts = min(repo.metadata.timestamp for repo in repos)
+                    mts = max(repo.metadata.timestamp for repo in repos)
                     # do not bother users with fractions of seconds
-                    age = int(max(repo.metadata.age for repo in repos))
-                    logger.info(_("Using metadata from %s (%s hours old)"),
-                                time.ctime(mts),
-                                datetime.timedelta(seconds=age))
+                    age = int(min(repo.metadata.age for repo in repos))
+                    for repo in repos:
+                        logger.debug(_("%s: using metadata from %s."),
+                                     repo.id,
+                                     time.ctime(repo.metadata.timestamp))
+                    logger.info(_("Last metadata expiration check performed "
+                                  "%s ago on %s."),
+                                datetime.timedelta(seconds=age),
+                                time.ctime(mts))
             self.base.plugins.run_sack()
 
     def _root_and_conffile(self, installroot, conffile):
