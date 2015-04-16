@@ -20,7 +20,7 @@
 #
 
 executable="/usr/bin/dnf"
-msg="Yum command has been deprecated, Redirecting to '$executable $@'.\n"\
+msg="Yum command has been deprecated, redirecting to '$executable $@'.\n"\
 "See 'man dnf' and 'man yum2dnf' for more information.\n"\
 "To transfer transaction metadata from yum to DNF, run:\n"\
 "'dnf install python-dnf-plugins-extras-migrate && dnf-2 migrate'\n"
