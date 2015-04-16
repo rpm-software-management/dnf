@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	0.6.4
-Release:	3%{?snapshot}%{?dist}
+Release:	4%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -197,6 +197,9 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Thu Apr 16 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-4
+- upload correct source archive 0.6.4 
+
 * Mon Apr 13 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-3
 - rel-eng: use distro releaser
 
