@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	0.6.4
-Release:	4%{?snapshot}%{?dist}
+Release:	5%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -197,6 +197,10 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Thu Apr 16 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-5
+- Revert "completion: work with just python(3)-dnf"
+- Revert "bash-completion: use python method to get commands (RhBug:1187579)"
+
 * Thu Apr 16 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-4
 - upload correct source archive 0.6.4 
 
