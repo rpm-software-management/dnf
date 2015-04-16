@@ -394,6 +394,10 @@ class MDPayload(dnf.callback.Payload):
             return
         self.progress.message(msg)
 
+    def _mirror_failure_cb(self, cbdata, msg, url, metadata):
+        msg = 'error: %s (%s).' % (msg, url)
+        logger.debug(msg)
+
     @property
     def download_size(self):
         return self._download_size
@@ -581,6 +585,7 @@ class Repo(dnf.yum.config.RepoConf):
         # setup mirror URLs
         mirrorlist = self.metalink or self.mirrorlist
         if mirrorlist:
+            h.hmfcb = self._md_pload._mirror_failure_cb
             if mirror_setup:
                 h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
                 h.setopt(librepo.LRO_FASTESTMIRROR, self.fastestmirror)
