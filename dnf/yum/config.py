@@ -748,8 +748,8 @@ class YumConf(BaseConfig):
     proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True) #:api
     proxy_username = Option() #:api
     proxy_password = Option() #:api
-    username = Option()
-    password = Option()
+    username = Option() #:api
+    password = Option() #:api
     installonlypkgs = ListOption(dnf.const.INSTALLONLYPKGS)
     # NOTE: If you set this to 2, then because it keeps the current kernel it
     # means if you ever install an "old" kernel it'll get rid of the newest one
@@ -904,8 +904,8 @@ class RepoConf(BaseConfig):
     proxy = Inherit(YumConf.proxy) #:api
     proxy_username = Inherit(YumConf.proxy_username) #:api
     proxy_password = Inherit(YumConf.proxy_password) #:api
-    username = Inherit(YumConf.username)
-    password = Inherit(YumConf.password)
+    username = Inherit(YumConf.username) #:api
+    password = Inherit(YumConf.password) #:api
 
     gpgcheck = Inherit(YumConf.gpgcheck)
     repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
