@@ -81,11 +81,11 @@ class TransactionItemTest(tests.support.TestCase):
         yumdb.get_package().get = lambda s: 'dep'
 
         tsi = TI(dnf.transaction.INSTALL, installed='i1', reason='user')
-        self.assertEqual(tsi.propagated_reason(yumdb), 'user')
+        self.assertEqual(tsi.propagated_reason(yumdb, []), 'user')
         tsi = TI(dnf.transaction.UPGRADE, installed='u1', erased='r1')
-        self.assertEqual(tsi.propagated_reason(yumdb), 'dep')
+        self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
         tsi = TI(dnf.transaction.DOWNGRADE, installed='d1', erased='r2')
-        self.assertEqual(tsi.propagated_reason(yumdb), 'dep')
+        self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
 
         # test the call can survive if no reason is known:
         yumdb = mock.Mock()

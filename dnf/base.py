@@ -749,7 +749,8 @@ class Base(object):
             yumdb_info = self.yumdb.get_package(po)
             yumdb_info.from_repo = rpo.repoid
 
-            yumdb_info.reason = tsi.propagated_reason(self.yumdb)
+            yumdb_info.reason = tsi.propagated_reason(self.yumdb,
+                                                      self.conf.installonlypkgs)
             yumdb_info.releasever = self.conf.releasever
             if hasattr(self, 'args') and self.args:
                 yumdb_info.command_line = ' '.join(self.args)
