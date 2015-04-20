@@ -55,6 +55,7 @@ one main section. The repository sections define the configuration for each
     only qualifies for removal via ``clean_requirements_on_remove`` if it was
     installed through DNF but not on explicit user request, i.e. it was
     pulled in as a dependency. The default is True.
+    (:ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed.)
 
 ``debuglevel``
     integer
@@ -68,11 +69,17 @@ one main section. The repository sections define the configuration for each
     Error messages output level, in the range 0 to 10. The higher the number the
     more error output is put to stderr. Default is 2. This is deprecated in DNF.
 
+.. _installonlypkgs-label:
+
 ``installonlypkgs``
     list
 
     List of provide names of packages that should only ever be installed, never
     upgraded. Kernels in particular fall into this category.
+    These packages are never removed by ``dnf autoremove`` even if they were
+    installed as dependencies (see
+    :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
+    for auto removal details).
 
 .. _installonly-limit-label:
 
