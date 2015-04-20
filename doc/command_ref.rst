@@ -189,6 +189,9 @@ Auto Remove Command
 
     Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
+Packages listed in :ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed by
+this command.
+
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 
