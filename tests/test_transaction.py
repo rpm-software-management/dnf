@@ -26,10 +26,19 @@ import rpm
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Prepare the class level fixture."""
+        cls.newpkg = tests.support.MockPackage('new-1.0-1.x86_64')
+        cls.oldpkg = tests.support.MockPackage('old-4.23-13.x86_64')
+        cls.obspkg1 = tests.support.MockPackage('obs1-3.12-12.x86_64')
+        cls.obspkg2 = tests.support.MockPackage('obs2-2.1-11.x86_64')
+        cls.obspkg3 = tests.support.MockPackage('obs3-1.0-10.x86_64')
+
     def test_active_hist_state_erase(self):
         """Test active_history_state with the erase op_type."""
         tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.ERASE, erased='old')
+            dnf.transaction.ERASE, erased=self.oldpkg)
 
         history_state = tsi.active_history_state
 
@@ -38,53 +47,63 @@ class TransactionItemTest(tests.support.TestCase):
     def test_active_hist_state_install(self):
         """Test active_history_state with the install op_type."""
         tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL, installed='new', obsoleted=['o1', 'o2'])
+            dnf.transaction.INSTALL, installed=self.newpkg,
+            obsoleted=[self.obspkg1, self.obspkg2])
 
         history_state = tsi.active_history_state
 
         self.assertEqual(history_state, 'Install')
 
     def test_creating(self):
-        tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
-                                              'old', ['o1', 'o2', 'o3'])
-        self.assertEqual(tsi.installed, 'new')
-        self.assertEqual(tsi.erased, 'old')
-        self.assertCountEqual(tsi.obsoleted, ('o1', 'o2', 'o3'))
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.UPGRADE, self.newpkg, self.oldpkg,
+            [self.obspkg1, self.obspkg2, self.obspkg3])
+        self.assertEqual(tsi.installed, self.newpkg)
+        self.assertEqual(tsi.erased, self.oldpkg)
+        self.assertCountEqual(
+            tsi.obsoleted, [self.obspkg1, self.obspkg2, self.obspkg3])
 
         tsi = dnf.transaction.TransactionItem(dnf.transaction.ERASE,
-                                              erased='old')
+                                              erased=self.oldpkg)
         self.assertEqual(tsi.installed, None)
-        self.assertEqual(tsi.erased, 'old')
+        self.assertEqual(tsi.erased, self.oldpkg)
         self.assertCountEqual(tsi.obsoleted, ())
 
     def test_history_iterator_reinstall(self):
         """Test history_iterator with the reinstall op_type."""
-        tsi = dnf.transaction.TransactionItem(dnf.transaction.REINSTALL, 'new',
-                                              'old', ['o1', 'o2', 'o3'])
-        self.assertCountEqual(tsi.history_iterator(),
-                              [('new', 'Reinstall'), ('old', 'Reinstalled'),
-                               ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
-                               ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.REINSTALL, self.newpkg, self.oldpkg,
+            [self.obspkg1, self.obspkg2, self.obspkg3])
+        self.assertCountEqual(
+            tsi.history_iterator(),
+            [(self.newpkg, 'Reinstall'), (self.oldpkg, 'Reinstalled'),
+             (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
+             (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
 
     def test_history_iterator_upgrade(self):
         """Test history_iterator with the upgrade op_type."""
-        tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
-                                              'old', ['o1', 'o2', 'o3'])
-        self.assertCountEqual(tsi.history_iterator(),
-                              [('new', 'Update'), ('old', 'Updated'),
-                               ('new', 'Obsoleting'), ('o1', 'Obsoleted'),
-                               ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.UPGRADE, self.newpkg, self.oldpkg,
+            [self.obspkg1, self.obspkg2, self.obspkg3])
+        self.assertCountEqual(
+            tsi.history_iterator(),
+            [(self.newpkg, 'Update'), (self.oldpkg, 'Updated'),
+             (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
+             (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
 
     def test_propagated_reason(self):
-        ti_cls = dnf.transaction.TransactionItem
         yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: 'dep'
 
-        tsi = ti_cls(dnf.transaction.INSTALL, installed='i1', reason='user')
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL, installed=self.newpkg, reason='user')
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'user')
-        tsi = ti_cls(dnf.transaction.UPGRADE, installed='u1', erased='r1')
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.UPGRADE, installed=self.newpkg, erased=self.oldpkg)
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
-        tsi = ti_cls(dnf.transaction.DOWNGRADE, installed='d1', erased='r2')
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.DOWNGRADE,
+            installed=self.newpkg, erased=self.oldpkg)
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
 
         # test the call can survive if no reason is known:
@@ -93,17 +112,31 @@ class TransactionItemTest(tests.support.TestCase):
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'unknown')
 
     def test_removes(self):
-        tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
-                                              'old', ['o1', 'o2', 'o3'])
-        self.assertCountEqual(tsi.removes(), ('old', 'o1', 'o2', 'o3'))
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.UPGRADE, self.newpkg, self.oldpkg,
+            [self.obspkg1, self.obspkg2, self.obspkg3])
+        self.assertCountEqual(
+            tsi.removes(),
+            [self.oldpkg, self.obspkg1, self.obspkg2, self.obspkg3])
 
 class TransactionTest(tests.support.TestCase):
     def setUp(self):
+        self.ipkg = tests.support.MockPackage('inst-1.0-1.x86_64')
+        self.upkg1 = tests.support.MockPackage('upg1-2.1-2.x86_64')
+        self.upkg2 = tests.support.MockPackage('upg2-3.2-3.x86_64')
+        self.dpkg = tests.support.MockPackage('down-4.3-4.x86_64')
+        self.rpkg1 = tests.support.MockPackage('rem1-2.1-1.x86_64')
+        self.rpkg2 = tests.support.MockPackage('rem2-3.2-2.x86_64')
+        self.rpkg3 = tests.support.MockPackage('rem3-4.3-5.x86_64')
+        self.opkg1 = tests.support.MockPackage('obs1-4.23-13.x86_64')
+        self.opkg2 = tests.support.MockPackage('obs2-3.12-12.x86_64')
+        self.opkg3 = tests.support.MockPackage('obs3-2.1-11.x86_64')
+        self.opkg4 = tests.support.MockPackage('obs4-1.0-10.x86_64')
         self.trans = dnf.transaction.Transaction()
-        self.trans.add_install('i1', ['o1', 'o2', 'o3'])
-        self.trans.add_upgrade('u1', 'r1', ['o4'])
-        self.trans.add_upgrade('u2', 'r2', [])
-        self.trans.add_downgrade('d1', 'r3', [])
+        self.trans.add_install(self.ipkg, [self.opkg1, self.opkg2, self.opkg3])
+        self.trans.add_upgrade(self.upkg1, self.rpkg1, [self.opkg4])
+        self.trans.add_upgrade(self.upkg2, self.rpkg2, [])
+        self.trans.add_downgrade(self.dpkg, self.rpkg3, [])
 
     def test_get_items(self):
         self.assertLength(self.trans.get_items(dnf.transaction.ERASE), 0)
@@ -118,9 +151,13 @@ class TransactionTest(tests.support.TestCase):
         self.assertLength(self.trans, 4)
 
     def test_sets(self):
-        self.assertCountEqual(self.trans.install_set, ('i1', 'u1', 'u2', 'd1'))
-        self.assertCountEqual(self.trans.remove_set,
-                              ('o1', 'o2', 'o3', 'o4', 'r1', 'r2', 'r3'))
+        self.assertCountEqual(
+            self.trans.install_set,
+            [self.ipkg, self.upkg1, self.upkg2, self.dpkg])
+        self.assertCountEqual(
+            self.trans.remove_set,
+            [self.opkg1, self.opkg2, self.opkg3, self.opkg4,
+             self.rpkg1, self.rpkg2, self.rpkg3])
 
     def test_total_package_count(self):
         self.assertEqual(self.trans.total_package_count(), 11)
