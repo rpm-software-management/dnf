@@ -373,6 +373,8 @@ Install Command
 
     Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`).
 
+.. _list_command-label:
+
 ------------
 List Command
 ------------
