@@ -293,6 +293,7 @@ See the the related `Fedora bug 1096506
 ==================================  ========================================  ===============================
 Original Yum tool                   DNF command/option                        Package
 ----------------------------------  ----------------------------------------  -------------------------------
+``yum check``                       `dnf repoquery`_ ``--unsatisfied``        ``dnf-plugins-core``
 ``yum-langpacks``                                                             ``dnf-langpacks``
 ``yum-plugin-copr``                 `dnf copr`_                               ``dnf-plugins-core``
 ``yum-plugin-fastestmirror``        ``fastestmirror`` option in `dnf.conf`_   ``dnf``
