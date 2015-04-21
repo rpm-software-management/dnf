@@ -1,4 +1,4 @@
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -26,7 +26,7 @@ import rpm
 import tests.support
 
 class TransactionItemTest(tests.support.TestCase):
-    def test_active_history_state_erase(self):
+    def test_active_hist_state_erase(self):
         """Test active_history_state with the erase op_type."""
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.ERASE, erased='old')
@@ -35,7 +35,7 @@ class TransactionItemTest(tests.support.TestCase):
 
         self.assertEqual(history_state, 'Erase')
 
-    def test_active_history_state_install(self):
+    def test_active_hist_state_install(self):
         """Test active_history_state with the install op_type."""
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL, installed='new', obsoleted=['o1', 'o2'])
@@ -76,21 +76,21 @@ class TransactionItemTest(tests.support.TestCase):
                                ('o2', 'Obsoleted'), ('o3', 'Obsoleted')])
 
     def test_propagated_reason(self):
-        TI = dnf.transaction.TransactionItem
+        ti_cls = dnf.transaction.TransactionItem
         yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: 'dep'
 
-        tsi = TI(dnf.transaction.INSTALL, installed='i1', reason='user')
+        tsi = ti_cls(dnf.transaction.INSTALL, installed='i1', reason='user')
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'user')
-        tsi = TI(dnf.transaction.UPGRADE, installed='u1', erased='r1')
+        tsi = ti_cls(dnf.transaction.UPGRADE, installed='u1', erased='r1')
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
-        tsi = TI(dnf.transaction.DOWNGRADE, installed='d1', erased='r2')
+        tsi = ti_cls(dnf.transaction.DOWNGRADE, installed='d1', erased='r2')
         self.assertEqual(tsi.propagated_reason(yumdb, []), 'dep')
 
         # test the call can survive if no reason is known:
         yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: None
-        self.assertEqual(tsi.propagated_reason(yumdb), 'unknown')
+        self.assertEqual(tsi.propagated_reason(yumdb, []), 'unknown')
 
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(dnf.transaction.UPGRADE, 'new',
@@ -99,31 +99,31 @@ class TransactionItemTest(tests.support.TestCase):
 
 class TransactionTest(tests.support.TestCase):
     def setUp(self):
-        self.ts = dnf.transaction.Transaction()
-        self.ts.add_install('i1', ['o1', 'o2', 'o3'])
-        self.ts.add_upgrade('u1', 'r1', ['o4'])
-        self.ts.add_upgrade('u2', 'r2', [])
-        self.ts.add_downgrade('d1', 'r3', [])
+        self.trans = dnf.transaction.Transaction()
+        self.trans.add_install('i1', ['o1', 'o2', 'o3'])
+        self.trans.add_upgrade('u1', 'r1', ['o4'])
+        self.trans.add_upgrade('u2', 'r2', [])
+        self.trans.add_downgrade('d1', 'r3', [])
 
     def test_get_items(self):
-        self.assertLength(self.ts.get_items(dnf.transaction.ERASE), 0)
-        self.assertLength(self.ts.get_items(dnf.transaction.UPGRADE), 2)
+        self.assertLength(self.trans.get_items(dnf.transaction.ERASE), 0)
+        self.assertLength(self.trans.get_items(dnf.transaction.UPGRADE), 2)
 
     def test_iter(self):
-        self.assertLength(list(self.ts), 4)
-        self.assertIsInstance(next(iter(self.ts)),
+        self.assertLength(list(self.trans), 4)
+        self.assertIsInstance(next(iter(self.trans)),
                               dnf.transaction.TransactionItem)
 
     def test_length(self):
-        self.assertLength(self.ts, 4)
+        self.assertLength(self.trans, 4)
 
     def test_sets(self):
-        self.assertCountEqual(self.ts.install_set, ('i1', 'u1', 'u2', 'd1'))
-        self.assertCountEqual(self.ts.remove_set,
+        self.assertCountEqual(self.trans.install_set, ('i1', 'u1', 'u2', 'd1'))
+        self.assertCountEqual(self.trans.remove_set,
                               ('o1', 'o2', 'o3', 'o4', 'r1', 'r2', 'r3'))
 
     def test_total_package_count(self):
-        self.assertEqual(self.ts.total_package_count(), 11)
+        self.assertEqual(self.trans.total_package_count(), 11)
 
 class RPMLimitationsTest(tests.support.TestCase):
     def test_rpm_limitations(self):
@@ -134,7 +134,8 @@ class RPMLimitationsTest(tests.support.TestCase):
         self.assertIsNot(msg, None)
 
 class PopulateTSTest(tests.support.TestCase):
-    def test_populate_rpm_ts(self):
+    @staticmethod
+    def test_populate_rpm_ts():
         ts = dnf.transaction.Transaction()
         repo = dnf.repo.Repo('r', '/tmp')
 
@@ -150,7 +151,7 @@ class PopulateTSTest(tests.support.TestCase):
 class RPMProbFilters(tests.support.TestCase):
 
     @mock.patch('dnf.rpm.transaction.TransactionWrapper')
-    def test_filters_install(self, mock_ts):
+    def test_filters_install(self, _mock_ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'search')
         self.base._goal = dnf.goal.Goal(self.base.sack)
@@ -159,7 +160,7 @@ class RPMProbFilters(tests.support.TestCase):
         ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     @mock.patch('dnf.rpm.transaction.TransactionWrapper')
-    def test_filters_downgrade(self, ts):
+    def test_filters_downgrade(self, _ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main', 'old_versions')
         self.base._goal = dnf.goal.Goal(self.base.sack)
@@ -168,7 +169,7 @@ class RPMProbFilters(tests.support.TestCase):
         ts.setProbFilter.assert_called_with(rpm.RPMPROB_FILTER_OLDPACKAGE)
 
     @mock.patch('dnf.rpm.transaction.TransactionWrapper')
-    def test_filters_reinstall(self, ts):
+    def test_filters_reinstall(self, _ts):
         self.base = tests.support.BaseCliStub()
         self.base._sack = tests.support.mock_sack('main')
         self.base._goal = dnf.goal.Goal(self.base.sack)
