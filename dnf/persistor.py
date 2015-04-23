@@ -123,6 +123,8 @@ class ClonableDict(collections.MutableMapping):
 
 class _PersistMember(object):
     DEFAULTS = ClonableDict({
+        'name' : '',
+        'ui_name' : '',
         'full_list' : [],
         'grp_types' : 0,
         'pkg_exclude' : [],
@@ -135,6 +137,22 @@ class _PersistMember(object):
 
     def __init__(self, param_dct):
         self.param_dct = param_dct
+
+    @property
+    def name(self):
+        return self.param_dct['name']
+
+    @name.setter
+    def name(self, val):
+        self.param_dct['name'] = val
+
+    @property
+    def ui_name(self):
+        return self.param_dct['ui_name']
+
+    @ui_name.setter
+    def ui_name(self, val):
+        self.param_dct['ui_name'] = val
 
     @property
     def pkg_exclude(self):
