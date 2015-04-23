@@ -437,6 +437,8 @@ class Solver(object):
 
         p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = set() if exclude is None else set(exclude)
+        p_env.name = env.name
+        p_env.ui_name = env.ui_name
         p_env.pkg_exclude.extend(exclude)
         p_env.pkg_types = pkg_types
         p_env.full_list.extend(self._mandatory_group_set(env))
@@ -502,6 +504,8 @@ class Solver(object):
                              group.ui_name)
 
         exclude = set() if exclude is None else set(exclude)
+        p_grp.name = group.name
+        p_grp.ui_name = group.ui_name
         p_grp.pkg_exclude.extend(exclude)
         p_grp.pkg_types = pkg_types
         p_grp.full_list.extend(self._full_package_set(group))
