@@ -47,6 +47,16 @@ def _ensure_grp_arg(cli, basecmd, extcmds):
         raise dnf.cli.CliError
 
 
+def install_or_skip(install_fnc, grp_or_env, types):
+    count = 0
+    for grp in grp_or_env:
+        try:
+            count += install_fnc(grp, types, None)
+        except dnf.comps.CompsError as e:
+            logger.warning("%s, %s", str(e)[:-1], _("skipping."))
+            grp_or_env.remove(grp)
+    return count
+
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
 
@@ -232,19 +242,11 @@ class GroupCommand(commands.Command):
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
-        def install_or_skip(install_fnc, grp_or_env):
-            for grp in grp_or_env:
-                try:
-                    install_fnc(grp, types, None)
-                except dnf.comps.CompsError as e:
-                    logger.warning("%s, %s", str(e)[:-1], _("skipping."))
-                    grp_or_env.remove(grp)
-
-        install_or_skip(solver.environment_install, res.environments)
+        install_or_skip(solver.environment_install, res.environments, types)
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
                         ','.join([g.ui_name for g in res.environments]))
-        install_or_skip(solver.group_install, res.groups)
+        install_or_skip(solver.group_install, res.groups, types)
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
                         ','.join([g.ui_name for g in res.groups]))
