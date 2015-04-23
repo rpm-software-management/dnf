@@ -82,6 +82,10 @@ class LockError(Error):
     pass
 
 
+class NothingToDo(Error):
+    pass
+
+
 class MarkingError(Error):
     # :api
 
