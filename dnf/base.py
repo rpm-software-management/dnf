@@ -1247,10 +1247,10 @@ class Base(object):
         except dnf.exceptions.CompsError as err:
             logger.error("Warning: %s", ucd(err))
             return 0
-        cnt = dnf.cli.commands.group.install_or_skip(self.environment_install,
-                                                     res.environments, types)
-        cnt += dnf.cli.commands.group.install_or_skip(self.group_install,
-                                                      res.groups, types)
+        cnt = dnf.comps.install_or_skip(self.environment_install,
+                                        res.environments, types)
+        cnt += dnf.comps.install_or_skip(self.group_install,
+                                         res.groups, types)
         return cnt
 
     def group_remove(self, grp):

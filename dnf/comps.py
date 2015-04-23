@@ -18,6 +18,7 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.exceptions import CompsError
@@ -31,9 +32,12 @@ import gettext
 import itertools
 import libcomps
 import locale
+import logging
 import operator
 import re
 import sys
+
+logger = logging.getLogger("dnf")
 
 # :api :binformat
 CONDITIONAL = 1
@@ -73,6 +77,17 @@ def _by_pattern(pattern, case_sensitive, sqn):
 
 def _fn_display_order(group):
     return sys.maxsize if group.display_order is None else group.display_order
+
+
+def install_or_skip(install_fnc, grp_or_env, types):
+    count = 0
+    for grp in grp_or_env:
+        try:
+            count += install_fnc(grp, types, None)
+        except dnf.comps.CompsError as e:
+            logger.warning("%s, %s", str(e)[:-1], _("skipping."))
+            grp_or_env.remove(grp)
+    return count
 
 
 class _Langs(object):
