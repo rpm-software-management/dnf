@@ -162,7 +162,10 @@ class CompsQuery(object):
                                  self.prst.group)
                 res.groups.extend(grps)
             if not envs and not grps:
-                msg = _("Group '%s' does not exist.") % ucd(pat)
+                if self.status == self.INSTALLED:
+                    msg = _("Group '%s' is not installed.") % ucd(pat)
+                else:
+                    msg = _("Group '%s' does not exist.") % ucd(pat)
                 raise CompsError(msg)
         return res
 
