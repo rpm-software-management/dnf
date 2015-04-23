@@ -362,8 +362,8 @@ Detailed table for ``package-cleanup`` replacement:
 ``package-cleanup --orphans``           ``dnf list extras``
 ``package-cleanup --oldkernels``        ``dnf repoquery --installonly``
 ``package-cleanup --problems``          ``dnf repoquery --unsatisfied``
-``package-cleanup --cleandupes``        ``dnf remove $(dnf repoquery --duplicates --latest-limit -1)``
-``package-cleanup --oldkernels``        ``dnf remove $(dnf repoquery --installonly --latest-limit -3)``
+``package-cleanup --cleandupes``        ``dnf remove $(dnf repoquery --duplicates --latest-limit -1 -q)``
+``package-cleanup --oldkernels``        ``dnf remove $(dnf repoquery --installonly --latest-limit -3 -q)``
 ================================        =============================
 
 Utilities that have not been ported yet:
