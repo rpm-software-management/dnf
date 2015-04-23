@@ -1247,7 +1247,7 @@ class Base(object):
             res = q.get(*patterns)
         except dnf.exceptions.CompsError as err:
             logger.error("Warning: %s", ucd(err))
-            return 0
+            raise dnf.exceptions.Error(_('Nothing to do.'))
         cnt = dnf.comps.install_or_skip(self.environment_install,
                                         res.environments, types)
         cnt += dnf.comps.install_or_skip(self.group_install,
