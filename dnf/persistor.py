@@ -176,6 +176,10 @@ class _GroupsDiff(object):
             return list(removed - added)
         return list(added-removed)
 
+    def empty(self):
+        return not self.new_environments and not self.removed_environments and \
+            not self.new_groups and not self.removed_groups
+
     @property
     def new_environments(self):
         return self._diff_keys('ENVIRONMENTS', False)
