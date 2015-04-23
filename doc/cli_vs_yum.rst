@@ -293,6 +293,7 @@ See the the related `Fedora bug 1096506
 ==================================  ========================================  ===============================
 Original Yum tool                   DNF command/option                        Package
 ----------------------------------  ----------------------------------------  -------------------------------
+``yum check``                       `dnf repoquery`_ ``--unsatisfied``        ``dnf-plugins-core``
 ``yum-langpacks``                                                             ``dnf-langpacks``
 ``yum-plugin-copr``                 `dnf copr`_                               ``dnf-plugins-core``
 ``yum-plugin-fastestmirror``        ``fastestmirror`` option in `dnf.conf`_   ``dnf``
@@ -332,28 +333,41 @@ Feel free to file a RFE_ for missing functionality if you need it.
 
 All ported yum tools are now implemented as DNF plugins.
 
-=========================  =============================  ===================================
-Original Yum tool          New DNF command                Package
--------------------------  -----------------------------  -----------------------------------
-``debuginfo-install``      `dnf debuginfo-install`_       ``dnf-plugins-core``
-``find-repos-of-install``  `dnf list installed`_          ``dnf``
-``needs-restarting``       `dnf tracer`_                  ``dnf-plugins-extras-tracer``
-``repoclosure``            `dnf repoclosure`_             ``dnf-plugins-extras-repoclosure``
-``repo-graph``             `dnf repograph`_               ``dnf-plugins-extras-repograph``
-``repomanage``             `dnf repomanage`_              ``dnf-plugins-extras-repomanage``
-``repoquery``              `dnf repoquery`_               ``dnf-plugins-core``
-``reposync``               `dnf reposync`_                ``dnf-plugins-core``
-``repotrack``              `dnf download`_                ``dnf-plugins-core``
-``yum-builddep``           `dnf builddep`_                ``dnf-plugins-core``
-``yum-config-manager``     `dnf config-manager`_          ``dnf-plugins-core``
-``yum-debug-dump``         `dnf debug-dump`_              ``dnf-plugins-extras-debug``
-``yum-debug-restore``      `dnf debug-restore`_           ``dnf-plugins-extras-debug``
-``yumdownloader``          `dnf download`_                ``dnf-plugins-core``
-=========================  =============================  ===================================
+=========================  ===================================== =================================
+Original Yum tool          New DNF command                       Package
+-------------------------  ------------------------------------- ---------------------------------
+``debuginfo-install``      `dnf debuginfo-install`_              ``dnf-plugins-core``
+``find-repos-of-install``  `dnf list installed`_                 ``dnf``
+``needs-restarting``       `dnf tracer`_                         ``dnf-plugins-extras-tracer``
+``package-cleanup``        :ref:`dnf list <list_command-label>`,
+                           `dnf repoquery`_                      ``dnf-plugins-core``
+``repoclosure``            `dnf repoclosure`_                    ``dnf-plugins-extras-repoclosure``
+``repo-graph``             `dnf repograph`_                      ``dnf-plugins-extras-repograph``
+``repomanage``             `dnf repomanage`_                     ``dnf-plugins-extras-repomanage``
+``repoquery``              `dnf repoquery`_                      ``dnf-plugins-core``
+``reposync``               `dnf reposync`_                       ``dnf-plugins-core``
+``repotrack``              `dnf download`_                       ``dnf-plugins-core``
+``yum-builddep``           `dnf builddep`_                       ``dnf-plugins-core``
+``yum-config-manager``     `dnf config-manager`_                 ``dnf-plugins-core``
+``yum-debug-dump``         `dnf debug-dump`_                     ``dnf-plugins-extras-debug``
+``yum-debug-restore``      `dnf debug-restore`_                  ``dnf-plugins-extras-debug``
+``yumdownloader``          `dnf download`_                       ``dnf-plugins-core``
+=========================  ===================================== =================================
+
+Detailed table for ``package-cleanup`` replacement:
+
+================================        =============================
+``package-cleanup --dupes``             ``dnf repoquery --duplicates``
+``package-cleanup --leaves``            ``dnf list autoremove``
+``package-cleanup --orphans``           ``dnf list extras``
+``package-cleanup --oldkernels``        ``dnf repoquery --installonly``
+``package-cleanup --problems``          ``dnf repoquery --unsatisfied``
+``package-cleanup --cleandupes``        ``dnf remove $(dnf repoquery --duplicates --latest-limit -1)``
+``package-cleanup --oldkernels``        ``dnf remove $(dnf repoquery --installonly --latest-limit -3)``
+================================        =============================
 
 Utilities that have not been ported yet:
 
-``package-cleanup``,
 ``repodiff``,
 ``repo-rss``,
 ``show-changed-rco``,
