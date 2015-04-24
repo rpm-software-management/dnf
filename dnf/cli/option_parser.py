@@ -210,7 +210,8 @@ class OptionParser(argparse.ArgumentParser):
                            action="append",
                            help=_("set arbitrary config and repo options"))
         self.add_argument("--refresh", dest="freshest_metadata",
-                          action="store_true")
+                          action="store_true",
+                          help=_("set metadata as expired before running the command"))
         self.add_argument("-4", dest="ip_resolve", default=None,
                           help=_("resolve to IPv4 addresses only"),
                           action="store_const", const='ipv4')
