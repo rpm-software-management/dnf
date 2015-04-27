@@ -145,13 +145,19 @@ def mock_comps(seed_persistor):
     persistor = MockGroupPersistor()
     if seed_persistor:
         p_env = persistor.environment('sugar-desktop-environment')
+        p_env.name = 'Sugar Desktop Environment'
+        p_env.ui_name = 'Sugar Desktop Environment'
         p_env.grp_types = dnf.comps.ALL_TYPES
         p_env.pkg_types = dnf.comps.ALL_TYPES
         p_env.full_list.extend(('Peppers', 'somerset'))
         p_pep = persistor.group('Peppers')
+        p_pep.name = 'Pepper\'s'
+        p_pep.ui_name = 'Pepper\'s'
         p_pep.pkg_types = dnf.comps.MANDATORY
         p_pep.full_list.extend(('hole', 'lotus'))
         p_som = persistor.group('somerset')
+        p_som.name = 'Solid Ground'
+        p_som.ui_name = 'Solid Ground'
         p_som.pkg_types = dnf.comps.MANDATORY
         p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
 
