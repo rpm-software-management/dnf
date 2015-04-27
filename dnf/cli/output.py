@@ -20,6 +20,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.cli.format import format_date, format_datetime
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
@@ -40,11 +41,12 @@ import itertools
 import logging
 import operator
 import pwd
+import re
 import sys
+import textwrap
 import time
 
 logger = logging.getLogger('dnf')
-
 
 def _make_lists(transaction):
     def tsi_cmp_key(tsi):
@@ -2250,3 +2252,75 @@ def progressbar(current, total, name=None):
         sys.stdout.write('\n')
 
     sys.stdout.flush()
+
+class PackageFormatter(object):
+    """
+    Formatter that implements --queryformat output
+    """
+    TAGS = ['name', 'arch', 'epoch', 'version', 'release', 'reponame', 'evr',
+            'installtime', 'buildtime', 'size', 'downloadsize', 'installsize',
+            'provides', 'requires', 'obsoletes', 'conflicts', 'sourcerpm',
+            'description', 'summary', 'license', 'url', 'filenames',
+            'packager']
+    TAG_FORMATS = {'date': format_datetime,
+                   'day': format_date,
+                   'string': ucd,
+                   'units': format_number,
+                   'wrapped': lambda x: '\n'.join(textwrap.wrap(x)),
+    }
+    TAG_RE = re.compile(r'%([\d\+-]*){([\w:]+)}', re.IGNORECASE)
+    TERNARY_RE = re.compile(r'%\|(\w+?)\?{(.*?)(}:{(.*?))?}\|', re.IGNORECASE)
+
+    def __init__(self, fmt=''):
+        fmt = fmt.replace("\\n", "\n")
+        fmt = fmt.replace("\\t", "\t")
+        self.fmt = fmt
+        self.pkg = None
+
+    def _attr(self, name):
+        if name not in self.TAGS:
+            raise KeyError(name)
+        return getattr(self.pkg, name, "(none)")
+
+    def _replace_tag(self, match):
+        subfmt = "%%%ss" % match.group(1)
+        value = self._tag_format(match.group(2))
+        return subfmt % (value,)
+
+    def _replace_ternary(self, match):
+        if self._attr(match.group(1)):
+            tag = match.group(2)
+        else:
+            tag = match.group(4) if match.groups() > 2 else ""
+        return tag
+
+    def _tag_format(self, tag):
+        tag = tag.lower()
+        sep = tag.find(':')
+        if sep > -1:
+            name = tag[:sep]
+            tag_format = tag[sep+1:]
+        else:
+            name = tag
+            tag_format = 'string'
+
+        # value for tag
+        if name in ['conflicts', 'enhances', 'obsoletes', 'provides',
+                    'recommends', 'requires', 'suggests', 'supplements']:
+            val = '\n'.join([ucd(reldep) for reldep in getattr(self.pkg, name)])
+        elif name == 'filenames':
+            val = '\n'.join(self.pkg.files)
+        else:
+            val = self._attr(name)
+
+        # format value
+        if tag_format in self.TAG_FORMATS:
+            val = self.TAG_FORMATS[tag_format](val)
+        else:
+            raise ValueError("Unknown format code '%s'" % tag_format)
+        return val
+
+    def format(self, pkg):
+        self.pkg = pkg
+        out = self.TERNARY_RE.sub(self._replace_ternary, self.fmt)
+        return self.TAG_RE.sub(self._replace_tag, out)

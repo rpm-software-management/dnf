@@ -17,6 +17,16 @@
 from __future__ import unicode_literals
 from dnf.pycomp import long
 
+import time
+
+def format_date(timestamp):
+    """Format UTC timestamp as human readable date in local timezone"""
+    return time.strftime("%a %b %Oe %Y", time.localtime(timestamp))
+
+def format_datetime(timestamp):
+    """Format UTC timestamp as human readable date and time in local timezone"""
+    return time.strftime("%c", time.localtime(timestamp))
+
 def format_number(number, SI=0, space=' '):
     """Return a human-readable metric-like string representation
     of a number.
