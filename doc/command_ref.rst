@@ -181,6 +181,8 @@ For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
 
+.. _autoremove_command-label:
+
 -------------------
 Auto Remove Command
 -------------------
@@ -249,6 +251,8 @@ Distribution-synchronization command
 
 ``dnf distribution-synchronization``
     Deprecated alias for the :ref:`\distro_sync_command-label`.
+
+.. _downgrade_command-label:
 
 -----------------
 Downgrade Command

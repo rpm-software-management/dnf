@@ -1060,3 +1060,36 @@ Bugs fixed in 0.6.5:
 * :rhbug:`1190458`
 * :rhbug:`1194685`
 * :rhbug:`1160950`
+
+===================
+1.0.0 Release Notes
+===================
+
+Improved documentation of YUM to DNF transition in :doc:`cli_vs_yum`.
+
+:ref:`Auto remove command <autoremove_command-label>` does not remove `installonly` packages.
+
+:ref:`Downgrade command <downgrade_command-label>` downgrades to specified package version if that is lower than currently installed one.
+
+DNF now uses :attr:`dnf.repo.Repo.id` as a default value for :attr:`dnf.repo.Repo.name`.
+
+Added support of repositories which use basic HTTP authentication.
+
+API additions in 1.0.0:
+
+:doc:`configuration <conf_ref>` options `username` and `password` (HTTP authentication)
+
+:attr:`dnf.repo.Repo.username` and :attr:`dnf.repo.Repo.password` (HTTP authentication)
+
+Bugs fixed in 1.0.0:
+
+* :rhbug:`1215560`
+* :rhbug:`1199648`
+* :rhbug:`1208773`
+* :rhbug:`1208018`
+* :rhbug:`1207861`
+* :rhbug:`1201445`
+* :rhbug:`1210275`
+* :rhbug:`1191275`
+* :rhbug:`1207965`
+* :rhbug:`1215289`

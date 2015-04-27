@@ -1090,5 +1090,45 @@
     [
         1160950, 
         "\"dnf install foo.rpm\" doesn't upgrade \"foo\""
+    ], 
+    [
+        1199648, 
+        "[UX] dnf groupinstall claims that installed group does not exist"
+    ], 
+    [
+        1208773, 
+        "[RFE] Define virtual provides for DNF commands and suggest installing the appropriate one if a command was not found"
+    ], 
+    [
+        1208018, 
+        "config-manager: enable won't work. TypeError: unorderable types: Repo() < Repo()"
+    ], 
+    [
+        1207861, 
+        "Python 3: historical transactions that had multiple problems causes tracebacks"
+    ], 
+    [
+        1201445, 
+        "\"dnf autoremove\" removes \"user-installed\" installonly packages installed using \"dnf upgrade\""
+    ], 
+    [
+        1210275, 
+        "DNF doesn't support http authentication"
+    ], 
+    [
+        1191275, 
+        "dnf downgrade <target-nevra> fails"
+    ], 
+    [
+        1207965, 
+        "Improve yum deprecated message"
+    ], 
+    [
+        1215560, 
+        "[abrt] dnf: i18n.py:165:exact_width:TypeError: 'NoneType' object is not iterable"
+    ], 
+    [
+        1215289, 
+        "bash completion file adds a shell alias for python"
     ]
 ]
