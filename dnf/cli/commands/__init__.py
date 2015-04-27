@@ -75,7 +75,7 @@ You can do that by running the command:
 
 
 Alternatively you can specify the url to the key you would like to use
-for a repository in the 'gpgkey' option in a repository section and yum
+for a repository in the 'gpgkey' option in a repository section and DNF
 will install it for you.
 
 For more information contact your distribution or package provider.
@@ -1162,7 +1162,7 @@ class HistoryCommand(Command):
         print(_("  NA     :"), six_digits(counts['na']))
         print(_("  NEVR   :"), six_digits(counts['nevr']))
         print(_("  rpm DB :"), six_digits(counts['rpmdb']))
-        print(_("  yum DB :"), six_digits(counts['yumdb']))
+        print(_("  DNF DB :"), six_digits(counts['yumdb']))
 
     def _hcmd_sync(self, extcmds):
         extcmds = extcmds[1:]

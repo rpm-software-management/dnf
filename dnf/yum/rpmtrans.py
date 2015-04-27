@@ -71,7 +71,7 @@ class TransactionDisplay(object):
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         """
-        @param package: A yum package object or simple string of a package name
+        @param package: A DNF package object or simple string of a package name
         @param action: A constant transaction set state
         @param te_current: current number of bytes processed in the transaction
                            element being processed
@@ -142,8 +142,8 @@ class RPMTransaction(object):
         self.display = display
         if isinstance(display, collections.Callable):
             self.display = display()
-        self.base = base # base yum object b/c we need so much
-        self.test = test # are we a test?
+        self.base = base
+        self.test = test  # are we a test?
         self.trans_running = False
         self.fd = None
         self.total_actions = 0

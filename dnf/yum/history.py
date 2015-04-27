@@ -755,7 +755,7 @@ class YumHistory(object):
                 os.makedirs(self.conf.db_path)
             except (IOError, OSError) as e:
                 error = dnf.i18n.ucd(e)
-                msg = _("Unable to initialize yumdb history: %s") % error
+                msg = _("Unable to initialize DNF DB history: %s") % error
                 raise dnf.exceptions.Error(msg)
             else:
                 self.conf.writable = True
