@@ -441,6 +441,7 @@ class Repo(dnf.yum.config.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.basecachedir = cachedir
         self.id = id_ # :api
+        self.name = self.id
         self.key_import = _NullKeyImport()
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC

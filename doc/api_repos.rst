@@ -86,7 +86,7 @@ Repository Configuration
 
   .. attribute:: name
 
-    A string with the repo's name.
+    A string with the repo's name. By default it has value of repo's ID.
 
   .. attribute:: pkgdir
 
