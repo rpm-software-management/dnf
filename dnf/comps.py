@@ -123,6 +123,27 @@ class _Langs(object):
         return self.cache
 
 
+class CompsAdapter(object):
+
+    def __init__(self, id, prst):
+        self.id = id
+        self.name = prst.name
+        self.full_list = prst.full_list
+        self.ui_name = prst.ui_name
+
+    def id(self):
+        self.id
+
+    def name(self):
+        self.name
+
+    def ui_name(self):
+        self.ui_name
+
+    def mandatory_groups(self):
+        self.full_list
+
+
 class CompsQuery(object):
 
     AVAILABLE = 1
@@ -137,30 +158,39 @@ class CompsQuery(object):
         self.kinds = kinds
         self.status = status
 
-    def _get(self, items, persistence_fn):
-        lst = []
-        for it in items:
-            installed = persistence_fn(it.id).installed
-            if self.status & self.INSTALLED and installed:
-                lst.append(it)
-            if self.status & self.AVAILABLE and not installed:
-                lst.append(it)
-        return lst
-
     def get(self, *patterns):
         res = dnf.util.Bunch()
         res.environments = []
         res.groups = []
         for pat in patterns:
-            envs = grps = None
+            envs = []
+            grps = []
             if self.kinds & self.ENVIRONMENTS:
-                envs = self._get(self.comps.environments_by_pattern(pat),
-                                 self.prst.environment)
+                if self.status & self.AVAILABLE:
+                    available = self.comps.environments_by_pattern(pat)
+                    envs.extend(available)
+                if self.status & self.INSTALLED:
+                    installed = [CompsAdapter(id, self.prst.environment(id))
+                                 for id in self.prst.environments]
+                    filtered = _by_pattern(pat, False, installed)
+                    found_ids = [env.id for env in envs]
+                    envs.extend([env for env in filtered
+                                 if env.id not in found_ids])
                 res.environments.extend(envs)
+
             if self.kinds & self.GROUPS:
-                grps = self._get(self.comps.groups_by_pattern(pat),
-                                 self.prst.group)
+                if self.status & self.AVAILABLE:
+                    available = self.comps.groups_by_pattern(pat)
+                    grps.extend(available)
+                if self.status & self.INSTALLED:
+                    installed = [CompsAdapter(id, self.prst.group(id))
+                                 for id in self.prst.groups]
+                    filtered = _by_pattern(pat, False, installed)
+                    found_ids = [grp.id for grp in grps]
+                    grps.extend([grp for grp in filtered
+                                 if grp.id not in found_ids])
                 res.groups.extend(grps)
+
             if not envs and not grps:
                 msg = _("Group '%s' does not exist.") % ucd(pat)
                 raise CompsError(msg)
@@ -455,17 +485,16 @@ class Solver(object):
         p_env = self.persistor.environment(env.id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %
-                             env.ui_name)
+                             p_env.ui_name)
 
         trans = TransactionBunch()
         group_names = set(p_env.full_list)
-
-        for grp in env.mandatory_groups:
-            if grp.id not in group_names:
+        for grp in self.persistor.groups.keys():
+            if grp not in group_names:
                 continue
-            if not self._removable_grp(grp.id):
+            if not self._removable_grp(grp):
                 continue
-            trans += self.group_remove(grp)
+            trans += self.group_remove(CompsAdapter(grp, self.persistor.group(grp)))
 
         del p_env.full_list[:]
         del p_env.pkg_exclude[:]
@@ -521,7 +550,7 @@ class Solver(object):
         p_grp = self.persistor.group(group.id)
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %
-                             group.ui_name)
+                             p_grp.ui_name)
 
         trans = TransactionBunch()
         exclude = p_grp.pkg_exclude
