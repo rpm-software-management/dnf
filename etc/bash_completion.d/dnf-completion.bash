@@ -20,18 +20,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
-if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
-    alias dnf="dnf-2"
-    alias python="python2"
-else
-    alias dnf="dnf-3"
-    alias python="python3"
-fi
-
 _dnf_helper()
 {
-    local helper=$( python -c "import dnf.cli; print('{}/completion_helper.py'.format(dnf.cli.__path__[0]))" )
-    COMPREPLY+=( $( python ${helper} "$@" -d 0 -q -C 2>/dev/null ) )
+    local helper=$( ${python_exec} -c "import dnf.cli; print('{}/completion_helper.py'.format(dnf.cli.__path__[0]))" )
+    COMPREPLY+=( $( ${python_exec} ${helper} "$@" -d 0 -q -C 2>/dev/null ) )
 }
 
 _is_path()
@@ -56,6 +48,12 @@ _modified_sack()
 
 _dnf()
 {
+    if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
+        local python_exec="python2"
+    else
+        local python_exec="python3"
+    fi
+
     local cur prev words cword
     _init_completion -s || return
 
