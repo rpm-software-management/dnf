@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	0.6.5
+Version:	1.0.0
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -240,6 +240,58 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Wed Apr 29 2015 Michal Luscon <mluscon@redhat.com> 1.0.0-1
+- doc: release notes dnf-1.0.0 (Michal Luscon)
+- completion: don't do aliases (RhBug:1215289) (Jan Silhan)
+- use Sack.load_repo() instead of Sack.load_yum_repo() (Jan Silhan)
+- Repo.name has default value of repo ID (RhBug:1215560) (Jan Silhan)
+- cosmetic: get rid of user visible yum references (Jan Silhan)
+- moved install_or_skip to dnf.comps (Jan Silhan)
+- group: see already installed group during installation (RhBug:1199648) (Jan
+  Silhan)
+- group: install_or_skip returns num of packages to install (Jan Silhan)
+- group: made global function install_or_skip (Jan Silhan)
+- AUTHORS: updated (Radek Holy)
+- describe --refresh option in --help output (Pádraig Brady)
+- better no such command message (RhBug:1208773) (Jan Silhan)
+- doc: package-cleanup example doesn't print 'No match for argument:...'
+  garbage (Jan Silhan)
+- mention yum check replacement (Michael Mraka)
+- added ref to dnf list (Michael Mraka)
+- added package-cleanup to dnf translation table (Michael Mraka)
+- python3: Repo comparison (RhBug:1208018) (Jan Silhan)
+- python3: YumHistoryRpmdbProblem comparison (RhBug:1207861) (Jan Silhan)
+- python3: YumHistoryTransaction comparison (Jan Silhan)
+- tests: use packages in test_transaction (Radek Holy)
+- cosmetic: fix some Pylint errors (Radek Holy)
+- updated documentation wrt installonlypkgs and auto removal (Michael Mraka)
+- mark installonly packages always as userinstalled (RhBug:1201445) (Michael
+  Mraka)
+- mark username/password as api (Michael Mraka)
+- document username/password repo attributes (Michael Mraka)
+- support HTTP basic auth (RhBug:1210275) (Michael Mraka)
+- cli: better metadata timestamp info (Michal Luscon)
+- repo: add metadata mirror failure callback (Michal Luscon)
+- dnf-yum: cosmetic: lower case after comma (Jan Silhan)
+- dnf-yum: print how to install migrate plugin (Jan Silhan)
+- doc: show the real package for each tool in dnf-plugins-extras (Tim
+  Lauridsen)
+- doc: improve the documentation of repo costs (Radek Holy)
+- doc: fix debuginfo-install package name (Michal Luscon)
+- doc: release notes 0.6.5 (Michal Luscon)
+- bash-completion: allow only one subcmd for help (Igor Gnatenko)
+- bash-completion: add history completion (Igor Gnatenko)
+- bash-completion: add completion for help (Igor Gnatenko)
+- bash-completion: check where pointing bin/dnf (Igor Gnatenko)
+- bash-completion: implement completion for clean cmd (Igor Gnatenko)
+- bash_completion: implement downgrade command (Igor Gnatenko)
+- bash-completion: refactor to python helper (Igor Gnatenko)
+- command downgrade does downgrade_to (RhBug:1191275) (Jan Silhan)
+- AUTHORS: updated (Jan Silhan)
+- clean: 'dnf clean all' should also clean presto and updateinfo solvx files
+  (Parag Nemade)
+- dnf-yum: modified warning message (RhBug:1207965) (Jan Silhan)
+
 * Tue Mar 31 2015 Michal Luscon <mluscon@redhat.com> 0.6.5-1
 - subject: expand every glob name only once (RhBug:1203151) (Michal Luscon)
 - group mark: skips already installed groups (Jan Silhan)
