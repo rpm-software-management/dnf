@@ -117,9 +117,9 @@ class Base(object):
             hrepo.updateinfo_fn = repo.updateinfo_fn
         else:
             logger.debug("not found updateinfo for: %s" % repo.name)
-        self._sack.load_yum_repo(hrepo, build_cache=True, load_filelists=True,
-                                 load_presto=repo.deltarpm,
-                                 load_updateinfo=True)
+        self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
+                             load_presto=repo.deltarpm,
+                             load_updateinfo=True)
 
     @staticmethod
     def _setup_default_conf():
