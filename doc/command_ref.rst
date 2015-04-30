@@ -31,7 +31,9 @@ Synopsis
 Description
 ===========
 
-`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below.
+.. _command_provides-label:
+
+`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below. If you know the name of such a command, you may find/install the package which provides it using the appropriate virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the name of the command; e.g. ``dnf-command(repoquery)`` for a ``repoquery`` command (the same applies to specifying dependencies of packages that require a particular command).
 
 Available commands are:
 

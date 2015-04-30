@@ -25,6 +25,8 @@
 
 :mod:`dnf.cli` is a part of DNF that contains code handling the command line tasks for DNF, like for instance ``dnf install emacs``, and outputs the results to the terminal. It is usually of no interest for DNF extension applications, but some parts of it described here can be used by the :doc:`api_plugins` to hook up custom commands.
 
+When packaging your custom command, we recommend you to define a virtual provide in the form of ``Provides: dnf-command(<alias>)`` in the spec file. See :ref:`the virtual provides usage <command_provides-label>` for the details.
+
 .. exception:: CliError
 
     Signals a CLI-specific problem (reading configuration, parsing user input, etc.). Derives from :exc:`dnf.exceptions.Error`.
