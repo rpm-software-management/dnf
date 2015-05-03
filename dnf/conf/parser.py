@@ -93,8 +93,8 @@ class ConfigPreProcessor(object):
         scheme = dnf.pycomp.urlparse.urlparse(configfile)[0]
         if scheme == '':
             # check it to make sure it's not a relative file url
-            if configfile[0] != '/':
-                configfile = os.getcwd() + '/' + configfile
+            if not os.path.isabs(configfile):
+                configfile = os.path.abspath(configfile)
             url = 'file://' + configfile
         else:
             url = configfile
