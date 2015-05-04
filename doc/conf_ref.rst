@@ -105,7 +105,7 @@ one main section. The repository sections define the configuration for each
     command will stop immediately if it's less than this time period since its
     last run. Does not affect simple ``makecache`` run. Use ``0`` to completely
     disable automatic metadata synchronizing. The default corresponds to three
-    hours.
+    hours. The value is rounded to the next commenced hour.
 
 ``pluginconfpath``
     list
