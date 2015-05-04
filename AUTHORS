@@ -38,25 +38,29 @@ YUM AUTHORS
 ----------------
 DNF AUTHORS
 ----------------
-    Albert Uchytil <auchytil@redhat.com>
-    Alberto Ruiz <aruiz@redhat.com>
     Ales Kozumplik <ales@redhat.com>
-    Christopher Meng <cickumqt@gmail.com>
-    Daniel Mach <dmach@redhat.com>
     Elad Alfassa <elad@fedoraproject.org>
     Igor Gnatenko <i.gnatenko.brain@gmail.com>
     Jan Silhan <jsilhan@redhat.com>
-    Kevin Kofler <kevin.kofler@chello.at>
-    Kushal Das <kushaldas@gmail.com>
     Michael Mraka <michael.mraka@redhat.com>
     Michal Luscon <mluscon@redhat.com>
-    Padraig Brady <P@draigBrady.com>
     Panu Matilainen <pmatilai@redhat.com>
     Parag Nemade <pnemade@redhat.com>
-    Peter Hjalmarsson <kanelxake@gmail.com>
-    Petr Spacek <pspacek@redhat.com>
     Radek Holy <rholy@redhat.com>
-    Satoshi Matsumoto <kaorimatz@gmail.com>
     Tim Lauridsen <tla@rasmil.dk>
     Ville Skyttä <ville.skytta@iki.fi>
     Zdenek Pavlas <zpavlas@redhat.com>
+
+----------------
+DNF CONTRIBUTORS
+----------------
+    Albert Uchytil <auchytil@redhat.com>
+    Alberto Ruiz <aruiz@redhat.com>
+    Christopher Meng <cickumqt@gmail.com>
+    Daniel Mach <dmach@redhat.com>
+    Kevin Kofler <kevin.kofler@chello.at>
+    Kushal Das <kushaldas@gmail.com>
+    Padraig Brady <P@draigBrady.com>
+    Peter Hjalmarsson <kanelxake@gmail.com>
+    Petr Spacek <pspacek@redhat.com>
+    Satoshi Matsumoto <kaorimatz@gmail.com>
