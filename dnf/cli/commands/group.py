@@ -382,11 +382,20 @@ class GroupCommand(commands.Command):
         if cmd == 'install':
             types, patterns = self._split_extcmds(extcmds)
             self._remark = True
-            return self.base.env_group_install(patterns, types)
+            try:
+                installed = self.base.env_group_install(patterns, types)
+            except dnf.exceptions.CompsError:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+            if installed == 0:
+                raise dnf.exceptions.NothingToDo(_('Nothing to do.'))
+            return installed
         if cmd == 'upgrade':
             return self._upgrade(extcmds)
         if cmd == 'remove':
-            return self.base.env_group_remove(extcmds)
+            removed = self.base.env_group_remove(extcmds)
+            if removed == 0:
+                raise dnf.exceptions.Error(_('No groups marked for removal.'))
+            return removed
 
     def run_transaction(self):
         if not self._remark:

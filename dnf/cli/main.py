@@ -89,6 +89,9 @@ def main(args):
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
         return 1
+    except dnf.exceptions.NothingToDo as e:
+        logger.warning(e.value)
+        return 0
     except dnf.exceptions.Error as e:
         return ex_Error(e)
     except IOError as e:
