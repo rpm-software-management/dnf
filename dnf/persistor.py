@@ -28,8 +28,10 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import collections
+import distutils.version
 import dnf.util
 import errno
+import itertools
 import json
 import logging
 import os
@@ -230,7 +232,7 @@ class GroupPersistor(object):
         return ClonableDict({
             'ENVIRONMENTS' : {},
             'GROUPS' : {},
-            'meta' : {'version' : '0.5.0'}
+            'meta' : {'version' : '0.6.0'}
         })
 
     def __init__(self, persistdir):
@@ -249,6 +251,16 @@ class GroupPersistor(object):
             subdict[id_] = dct
 
         return _PersistMember(dct)
+
+    def _add_missing_entries(self):
+        envs = [self.environment(env) for env in self.db['ENVIRONMENTS']]
+        grps = [self.group(grp) for grp in self.db['GROUPS']]
+        for item in itertools.chain(envs, grps):
+            for key in item.DEFAULTS.keys():
+                try:
+                    getattr(item, key)
+                except KeyError:
+                    setattr(item, key, item.DEFAULTS[key])
 
     def _ensure_sanity(self):
         """Make sure the input db is valid."""
@@ -277,6 +289,17 @@ class GroupPersistor(object):
             logger.warning(msg)
             self.db = self._empty_db()
             version = self.db['meta']['version']
+        else:
+            current = self._empty_db()['meta']['version']
+            dist = distutils.version.LooseVersion
+            if dist(version) < dist(current):
+                logger.debug('Migrating group persistor from %s to %s. ',
+                             version, current)
+                self._add_missing_entries()
+                self.db['meta']['version'] = current
+                self.commit()
+                self.save()
+
         logger.debug('group persistor md version: %s', version)
 
     def _prune_db(self):
