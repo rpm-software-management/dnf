@@ -172,6 +172,7 @@ class OutputTest(support.TestCase):
         self.assertEqual(input_fnc.called, 3)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.term._term_width', lambda: 80)
     def test_infoOutput_with_none_description(self):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg.from_system = False
