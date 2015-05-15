@@ -200,7 +200,7 @@ class Transaction(object):
         return self._items2set(fn)
 
     def rpm_limitations(self):
-        """ Ensures all the members can be passed to rpm as they are to pefrom
+        """ Ensures all the members can be passed to rpm as they are to perform
             the transaction.
         """
         src_installs = [pkg for pkg in self.install_set if pkg.arch == 'src']
