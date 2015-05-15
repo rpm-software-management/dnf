@@ -32,6 +32,7 @@ INSTALLONLYPKGS=('kernel',
                  'installonlypkg(vm)')
 LOG='dnf.log'
 LOG_HAWKEY='hawkey.log'
+LOG_LIBREPO='dnf.librepo.log'
 LOG_MARKER='--- logging initialized ---'
 LOG_RPM='dnf.rpm.log'
 NAME='DNF'

@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 import dnf.exceptions
 import dnf.const
 import dnf.util
+import librepo
 import logging
 import os
 import sys
@@ -150,6 +151,9 @@ class Logging(object):
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(self.stderr_handler)
         logger_warnings.addHandler(handler)
+
+        lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
+        librepo.log_set_file(lr_logfile)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
