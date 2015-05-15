@@ -6,6 +6,14 @@
     create 0600 root root
 }
 
+/var/log/dnf.librepo.log {
+    missingok
+    notifempty
+    maxsize 5000k
+    yearly
+    create 0600 root root
+}
+
 /var/log/dnf.rpm.log {
     missingok
     notifempty

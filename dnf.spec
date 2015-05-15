@@ -1,5 +1,5 @@
 %global hawkey_version 0.5.5
-%global librepo_version 1.7.5
+%global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
 
@@ -180,6 +180,7 @@ popd
 %ghost %{_localstatedir}/%{_lib}/dnf
 %ghost %{_localstatedir}/log/hawkey.log
 %ghost %{_localstatedir}/log/%{name}.log
+%ghost %{_localstatedir}/log/%{name}.librepo.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
 %config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
