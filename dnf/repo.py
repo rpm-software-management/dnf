@@ -611,6 +611,14 @@ class Repo(dnf.yum.config.RepoConf):
                 userpwd += ":" + self.password
             h.setopt(librepo.LRO_USERPWD, userpwd)
 
+        # setup ssl stuff
+        if self.sslcacert:
+            h.setopt(librepo.LRO_SSLCACERT, self.sslcacert)
+        if self.sslclientcert:
+            h.setopt(librepo.LRO_SSLCLIENTCERT, self.sslclientcert)
+        if self.sslclientkey:
+            h.setopt(librepo.LRO_SSLCLIENTKEY, self.sslclientkey)
+
         # setup download progress
         h.progresscb = self._md_pload._progress_cb
         self._md_pload.fm_running = False

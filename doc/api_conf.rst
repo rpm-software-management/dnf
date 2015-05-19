@@ -89,6 +89,25 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     List of directories to search for repo configuration files. Has a reasonable default commonly used on the given distribution.
 
+  .. attribute:: sslcacert
+
+    Path to the directory or file containing the certificate authorities to verify SSL certificates.
+    Defaults to None - uses system default.
+
+  .. attribute:: sslverify
+
+    Whether SSL certificate checking should be performed at all. Defaults to ``True``.
+
+  .. attribute:: sslclientcert
+
+    Path to the SSL client certificate used to connect to remote sites.
+    Defaults to None.
+
+  .. attribute:: sslclientkey
+
+    Path to the SSL client key used to connect to remote sites.
+    Defaults to None.
+
   .. attribute:: substitutions
 
     A mapping of substitutions used in repositories' remote URL configuration. The commonly used ones are:

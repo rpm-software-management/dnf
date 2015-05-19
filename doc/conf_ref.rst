@@ -256,12 +256,36 @@ configuration.
 
     Whether to perform GPG signature check on this repository's metadata. The default is False.
 
+.. _sslcacert-label:
+
+``sslcacert``
+    string
+
+    Path to the directory or file containing the certificate authorities to verify SSL certificates.
+    Empty by default - uses system default.
+
 .. _sslverify-label:
 
 ``sslverify``
     boolean
 
     When enabled, remote SSL connections are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is True.
+
+.. _sslclientcert-label:
+
+``sslclientcert``
+    string
+
+    Path to the SSL client certificate used to connect to remote sites.
+    Empty by default.
+
+.. _sslclientkey-label:
+
+``sslclientkey``
+    string
+
+    Path to the SSL client key used to connect to remote sites.
+    Empty by default.
 
 .. _throttle-label:
 
