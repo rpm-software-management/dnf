@@ -805,10 +805,10 @@ class YumConf(BaseConfig):
     color_update_remote = Option('normal')
     color_search_match = Option('bold')
 
-    sslcacert = Option()
-    sslverify = BoolOption(True)
-    sslclientcert = Option()
-    sslclientkey = Option()
+    sslcacert = Option() # :api
+    sslverify = BoolOption(True) # :api
+    sslclientcert = Option() # :api
+    sslclientkey = Option() # :api
     deltarpm = BoolOption(True)
 
     history_record = BoolOption(True)
@@ -921,10 +921,10 @@ class RepoConf(BaseConfig):
     cost = IntOption(1000)
     priority = IntOption(99)
 
-    sslcacert = Inherit(YumConf.sslcacert)
+    sslcacert = Inherit(YumConf.sslcacert) # :api
     sslverify = Inherit(YumConf.sslverify) # :api
-    sslclientcert = Inherit(YumConf.sslclientcert)
-    sslclientkey = Inherit(YumConf.sslclientkey)
+    sslclientcert = Inherit(YumConf.sslclientcert) # :api
+    sslclientkey = Inherit(YumConf.sslclientkey)   # :api
     deltarpm = Inherit(YumConf.deltarpm)
 
     skip_if_unavailable = BoolOption(True)  # :api

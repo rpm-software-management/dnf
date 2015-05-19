@@ -108,9 +108,24 @@ Repository Configuration
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. The default is ``True``.
 
+  .. attribute:: sslcacert
+
+    Path to the directory or file containing the certificate authorities to verify SSL certificates.
+    Defaults to None - uses system default.
+
   .. attribute:: sslverify
 
     Whether SSL certificate checking should be performed at all. Defaults to ``True``.
+
+  .. attribute:: sslclientcert
+
+    Path to the SSL client certificate used to connect to remote sites.
+    Defaults to None.
+
+  .. attribute:: sslclientkey
+
+    Path to the SSL client key used to connect to remote sites.
+    Defaults to None.
 
   .. attribute:: username
 
