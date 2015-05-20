@@ -76,6 +76,7 @@ Requires:   python-libcomps >= %{libcomps_version}
 Requires:   python-librepo >= %{librepo_version}
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python >= %{rpm_version}
+Requires:   sqlite
 Obsoletes:  dnf <= 0.6.4
 %description -n python-dnf
 Python 2 interface to DNF.
@@ -103,6 +104,7 @@ Requires:   python3-librepo >= %{librepo_version}
 Requires:   python3-pygpgme
 Requires:   rpm-plugin-systemd-inhibit
 Requires:   rpm-python3 >= %{rpm_version}
+Requires:   sqlite
 Obsoletes:  dnf <= 0.6.4
 %description -n python3-dnf
 Python 3 interface to DNF.
