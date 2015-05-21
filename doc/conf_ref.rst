@@ -131,6 +131,11 @@ one main section. The repository sections define the configuration for each
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
 
+``baseurl``
+    list
+
+    URLs for the repository.
+
 ``enabled``
     boolean
 
