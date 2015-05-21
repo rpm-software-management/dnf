@@ -148,6 +148,11 @@ one main section. The repository sections define the configuration for each
 
     URLs of a GPG key files that can be used for signing metadata and packages of this repository, empty by default. If a file can not be verified using the already imported keys, import of keys from this option is attempted and the keys are then used for verification.
 
+``metalink``
+    string
+
+    URL of a metalink for the repository.
+
 ``name``
     string
 
