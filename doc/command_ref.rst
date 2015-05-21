@@ -333,9 +333,10 @@ transactions and act according to this information (assuming the
 ``dnf history info [<spec>...]``
     Describe the given transactions. Each ``<spec>`` can be either a
     ``<transaction-spec>``, which specifies a transaction directly, or a
-    ``<package-name-spec>``, which specifies a transaction by a package which
-    it manipulated. When no transaction is specified describe what happened
-    during the latest transaction.
+    ``<transaction-spec>..<transaction-spec>``, which specifies a range of
+    transactions, or a ``<package-name-spec>``, which specifies a transaction
+    by a package which it manipulated. When no transaction is specified
+    describe what happened during the latest transaction.
 
 .. _history_redo_command-label:
 
