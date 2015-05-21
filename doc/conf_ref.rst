@@ -131,6 +131,11 @@ one main section. The repository sections define the configuration for each
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
 
+``enabled``
+    boolean
+
+    Include this repository as a package source. The default is True.
+
 .. _repo_gpgkey-label:
 
 ``gpgkey``
