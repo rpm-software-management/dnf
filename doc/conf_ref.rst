@@ -138,6 +138,11 @@ one main section. The repository sections define the configuration for each
 
     URLs of a GPG key files that can be used for signing metadata and packages of this repository, empty by default. If a file can not be verified using the already imported keys, import of keys from this option is attempted and the keys are then used for verification.
 
+``name``
+    string
+
+    A human-readable name of the repository. Defaults to the ID of the repository.
+
 .. _repo_priority-label:
 
 ``priority``
