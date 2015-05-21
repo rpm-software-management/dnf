@@ -326,17 +326,21 @@ The history command allows the user to view what has happened in past
 transactions and act according to this information (assuming the
 ``history_record`` configuration option is set).
 
-``dnf history [list]``
-    The default history action is listing all known transaction information in a
-    table.
+.. _history_list_command-label:
+
+``dnf history [list] [<spec>...]``
+    The default history action is listing information about given transactions
+    in a table. Each ``<spec>`` can be either a ``<transaction-spec>``, which
+    specifies a transaction directly, or a ``<transaction-spec>..<transaction-spec>``,
+    which specifies a range of transactions, or a ``<package-name-spec>``,
+    which specifies a transaction by a package which it manipulated. When no
+    transaction is specified, list all known transactions.
 
 ``dnf history info [<spec>...]``
-    Describe the given transactions. Each ``<spec>`` can be either a
-    ``<transaction-spec>``, which specifies a transaction directly, or a
-    ``<transaction-spec>..<transaction-spec>``, which specifies a range of
-    transactions, or a ``<package-name-spec>``, which specifies a transaction
-    by a package which it manipulated. When no transaction is specified
-    describe what happened during the latest transaction.
+    Describe the given transactions. The meaning of ``<spec>`` is the same as
+    in the :ref:`History List Command <history_list_command-label>`. When no
+    transaction is specified, describe what happened during the latest
+    transaction.
 
 .. _history_redo_command-label:
 
