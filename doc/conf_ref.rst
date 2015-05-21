@@ -153,6 +153,11 @@ one main section. The repository sections define the configuration for each
 
     URL of a metalink for the repository.
 
+``mirrorlist``
+    string
+
+    URL of a mirrorlist for the repository.
+
 ``name``
     string
 
