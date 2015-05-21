@@ -31,6 +31,11 @@ class EmptyPersistorTest(support.ResultTestCase):
         self.base.read_mock_comps(False)
         self.base.init_sack()
 
+    def test_env_group_install(self):
+        cnt = self.base.env_group_install(['*sugar*', '*er*'],
+                                          dnf.const.GROUP_PACKAGE_TYPES)
+        self.assertEqual(cnt, 4)
+
     def test_group_install_exclude(self):
         comps = self.base.comps
         grp = comps.group_by_pattern('somerset')

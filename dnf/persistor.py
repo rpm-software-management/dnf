@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import collections
+import distutils.version
 import dnf.util
 import errno
 import json
@@ -123,6 +124,8 @@ class ClonableDict(collections.MutableMapping):
 
 class _PersistMember(object):
     DEFAULTS = ClonableDict({
+        'name' : '',
+        'ui_name' : '',
         'full_list' : [],
         'grp_types' : 0,
         'pkg_exclude' : [],
@@ -135,6 +138,22 @@ class _PersistMember(object):
 
     def __init__(self, param_dct):
         self.param_dct = param_dct
+
+    @property
+    def name(self):
+        return self.param_dct['name']
+
+    @name.setter
+    def name(self, val):
+        self.param_dct['name'] = val
+
+    @property
+    def ui_name(self):
+        return self.param_dct['ui_name']
+
+    @ui_name.setter
+    def ui_name(self, val):
+        self.param_dct['ui_name'] = val
 
     @property
     def pkg_exclude(self):
@@ -176,6 +195,10 @@ class _GroupsDiff(object):
             return list(removed - added)
         return list(added-removed)
 
+    def empty(self):
+        return not self.new_environments and not self.removed_environments and \
+            not self.new_groups and not self.removed_groups
+
     @property
     def new_environments(self):
         return self._diff_keys('ENVIRONMENTS', False)
@@ -208,7 +231,7 @@ class GroupPersistor(object):
         return ClonableDict({
             'ENVIRONMENTS' : {},
             'GROUPS' : {},
-            'meta' : {'version' : '0.5.0'}
+            'meta' : {'version' : '0.6.0'}
         })
 
     def __init__(self, persistdir):
@@ -227,6 +250,13 @@ class GroupPersistor(object):
             subdict[id_] = dct
 
         return _PersistMember(dct)
+
+    def _add_entry(self, entry, pairs):
+        for (value, item) in pairs:
+            try:
+                getattr(item, entry)
+            except KeyError:
+                setattr(item, entry, value)
 
     def _ensure_sanity(self):
         """Make sure the input db is valid."""
@@ -255,6 +285,24 @@ class GroupPersistor(object):
             logger.warning(msg)
             self.db = self._empty_db()
             version = self.db['meta']['version']
+        else:
+            current = self._empty_db()['meta']['version']
+            dist = distutils.version.LooseVersion
+            if dist(version) < dist(current):
+                logger.debug('Migrating group persistor from %s to %s. ',
+                             version, current)
+                envs = [(env, self.environment(env))
+                        for env in self.db['ENVIRONMENTS']]
+                self._add_entry('name', envs)
+                self._add_entry('ui_name', envs)
+                grps = [(grp, self.group(grp))
+                        for grp in self.db['GROUPS']]
+                self._add_entry('name', grps)
+                self._add_entry('ui_name', grps)
+                self.db['meta']['version'] = current
+                self.commit()
+                self.save()
+
         logger.debug('group persistor md version: %s', version)
 
     def _prune_db(self):

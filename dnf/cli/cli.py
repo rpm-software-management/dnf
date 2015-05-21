@@ -158,7 +158,7 @@ class BaseCli(dnf.Base):
         """
 
         grp_diff = self._groups_diff()
-        grp_str = self.output.list_group_transaction(self.comps, grp_diff)
+        grp_str = self.output.list_group_transaction(self.comps, self.group_persistor, grp_diff)
         if grp_str:
             logger.info(grp_str)
         trans = self.transaction
@@ -192,7 +192,7 @@ class BaseCli(dnf.Base):
             else:
                 self.output.reportDownloadSize(downloadpkgs, install_only)
 
-        if trans or grp_diff:
+        if trans or not grp_diff.empty():
             # confirm with user
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
