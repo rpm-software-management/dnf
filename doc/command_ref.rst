@@ -247,6 +247,8 @@ Distro-sync command
     As necessary upgrades, downgrades or keeps selected installed packages to match
     the latest version available from any enabled repository. If no package is given, all installed packages are considered.
 
+    See also :ref:`\configuration_files_replacement_policy-label`.
+
 ------------------------------------
 Distribution-synchronization command
 ------------------------------------
@@ -310,6 +312,8 @@ Groups can be also be marked installed or removed without physically manipualtin
 ``dnf [options] group mark remove <group-spec>...``
     Mark the specified group removed. No packages will be removed by this command.
 
+See also :ref:`\configuration_files_replacement_policy-label`.
+
 ------------
 Help Command
 ------------
@@ -363,7 +367,9 @@ transactions and act according to this information (assuming the
     the %packages section in a `kickstart <http://fedoraproject.org/wiki/
     Anaconda/Kickstart>`_ file.
 
-This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+This command by default does not force a sync of expired metadata.
+See also :ref:`\metadata_synchronization-label`
+and :ref:`\configuration_files_replacement_policy-label`.
 
 ------------
 Info Command
@@ -382,7 +388,7 @@ Install Command
     Make sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or an URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
 
-    Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`).
+    Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`). See also :ref:`\configuration_files_replacement_policy-label`.
 
 .. _list_command-label:
 
@@ -624,6 +630,8 @@ Upgrade Command
     Updates each specified package to the latest available version. Updates
     dependencies as necessary.
 
+See also :ref:`\configuration_files_replacement_policy-label`.
+
 -----------------
 Update-To Command
 -----------------
@@ -728,6 +736,18 @@ Metadata Synchronization
 Correct operation of DNF depends on having access to up-to-date data from all enabled repositories but contacting remote mirrors on every operation considerably slows it down and costs bandwidth for both the client and the repository provider. The :ref:`metadata_expire <metadata_expire-label>` (see :manpage:`dnf.conf(8)`) repo config option is used by DNF to determine whether particular local copy of repository data is due to be re-synced. It is crucial that the repository providers set the option well, namely to a value where it is guaranteed that if particular metadata was available in time ``T`` on the server, then all packages it references will still be available for download from the server in time ``T + metadata_expire``.
 
 To further reduce the bandwidth load, some of the commands where having up-to-date metadata is not critical (e.g. the ``list`` command) do not look at whether a repository is expired and whenever any version of it is locally available, it will be used. Note that in all situations the user can force synchronization of all enabled repositories with the ``--refresh`` switch.
+
+.. _configuration_files_replacement_policy-label:
+
+======================================
+Configuration Files Replacement Policy
+======================================
+
+The updated packages could replace the old modified configuration files
+with the new ones or keep the older files. Neither of the files are actually replaced.
+To the conflicting ones RPM gives additional suffix to the origin name. Which file
+should maintain the true name after transaction is not controlled by package manager
+but is specified by each package itself, following packaging guideline.
 
 ========
 See Also
