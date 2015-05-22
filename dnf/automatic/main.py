@@ -37,6 +37,9 @@ import hawkey
 import iniparse.compat
 import logging
 import socket
+import argparse
+import random
+import time
 
 logger = logging.getLogger('dnf')
 
@@ -59,9 +62,12 @@ def build_emitters(conf):
     return emitters
 
 
-def synopsis():
-    print('usage: dnf-automatic <config-file>')
-    return 1
+def parse_arguments(args):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
+    parser.add_argument('--timer', action='store_true')
+
+    return parser.parse_args(args), parser
 
 
 class AutomaticConfig(object):
@@ -97,6 +103,7 @@ class CommandsConfig(dnf.yum.config.BaseConfig):
     download_updates = dnf.yum.config.BoolOption(False)
     upgrade_type = dnf.yum.config.SelectionOption(
         'default', ('default', 'security'))
+    random_sleep = dnf.yum.config.SecondsOption(300)
 
     def imply(self):
         if self.apply_updates:
@@ -117,14 +124,10 @@ class EmittersConfig(dnf.yum.config.BaseConfig):
 
 
 def main(args):
-    conf_fn = dnf.const.CONF_AUTOMATIC_FILENAME
-    if len(args) == 1:
-        conf_fn = args[0]
-    elif len(args) > 1:
-        return synopsis()
+    (opts, parser) = parse_arguments(args)
 
     try:
-        conf = AutomaticConfig(conf_fn)
+        conf = AutomaticConfig(opts.conf_path)
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
             cli.read_conf_file(conf.commands.base_config_file,
@@ -132,6 +135,12 @@ def main(args):
             base_conf = base.conf
             base_conf.cachedir, _alt_dir = dnf.cli.cli.cachedir_fit(base_conf)
             logger.debug('Started dnf-automatic.')
+
+            if opts.timer:
+                sleeper = random.randint(0, conf.commands.random_sleep)
+                logger.debug('Sleep for %s seconds', sleeper)
+                time.sleep(sleeper)
+
             base.read_all_repos()
             base.fill_sack()
             upgrade(base, conf.commands.upgrade_type)
