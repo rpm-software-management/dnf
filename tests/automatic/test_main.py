@@ -26,4 +26,5 @@ class TestConfig(tests.support.TestCase):
         conf = dnf.automatic.main.AutomaticConfig(FILE)
         self.assertTrue(conf.commands.apply_updates)
         self.assertTrue(conf.commands.download_updates)
+        self.assertEqual(conf.commands.random_sleep, 300)
         self.assertEqual(conf.email.email_from, 'staring@crowd.net')
