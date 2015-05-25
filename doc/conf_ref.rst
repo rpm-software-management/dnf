@@ -36,10 +36,11 @@ configuration options and should be only one.
 
 The repository sections define the configuration for each (remote or local)
 repository. The section name of the repository in brackets serve as repo ID reference
-and should be unique across configuration files. The minimal repository configuration
-file should aside from repo ID consists of :ref:`baseurl <baseurl-label>`,
-:ref:`metalink <metalink-label>` or :ref:`mirrorlist <mirrorlist-label>`
-option definition.
+and should be unique across configuration files. The allowed characters of repo ID
+string are lower and upper case alphabetic letters, digits, ``-``, ``_``, ``.``
+and ``:``. The minimal repository configuration file should aside from repo ID
+consists of :ref:`baseurl <baseurl-label>`, :ref:`metalink <metalink-label>`
+or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
 ================
  [main] Options
