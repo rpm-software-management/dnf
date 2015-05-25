@@ -196,6 +196,24 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
 
+================
+ Repo Variables
+================
+
+Right side of every repo option can be enriched by the following variables:
+
+``$releasever``
+
+    Refers to the release version of operating system which DNF derives from information available in RPMDB.
+
+``$arch``
+
+    Refers to the system’s CPU architecture e.g, aarch64, i586, i686 and x86_64.
+
+``$basearch``
+
+    Refers to the base architecture of the system. For example, i686 and i586 machines
+    both have a base architecture of i386, and AMD64 and Intel64 machines have a base architecture of x86_64.
 
 ==================================
  Options for both [main] and Repo
