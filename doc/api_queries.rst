@@ -47,27 +47,33 @@
 
   .. method:: filter(**kwargs)
 
-    Return a new query limiting the orignal query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND).
+    Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). In case of value in form of list or query, the filter behaves cumulatively (logical OR).
 
     Allowed keys are:
 
-    ==========   ========== ===============================================
-    key          value type value meaning
-    ==========   ========== ===============================================
-    arch         string     match against packages' architecture
-    downgrades   boolean    see :meth:`downgrades`. Defaults to ``False``.
-    empty        boolean    ``True`` limits to empty result set.
-                            Defaults to ``False``.
-    epoch        integer    match against packages' epoch.
-    file         string     match against packages' files
-    latest       boolean    see :meth:`latest`.  Defaults to ``False``.
-    name         string     match against packages' names
-    release      string     match against packages' releases
-    reponame     string     match against packages repositories' names
-    version      string     match against packages' versions
-    upgrades     boolean    see :meth:`upgrades`. Defaults to ``False``.
-    provides     string     match against packages' provides
-    ==========   ========== ===============================================
+    ==========   ============== ======================================================
+    key          value type     value meaning
+    ==========   ============== ======================================================
+    arch         string         match against packages' architecture
+    downgrades   boolean        see :meth:`downgrades`. Defaults to ``False``.
+    empty        boolean        ``True`` limits to empty result set.
+                                Defaults to ``False``.
+    epoch        integer        match against packages' epoch.
+    file         string         match against packages' files
+    latest       boolean        see :meth:`latest`.  Defaults to ``False``.
+    name         string         match against packages' names
+    release      string         match against packages' releases
+    reponame     string         match against packages repositories' names
+    version      string         match against packages' versions
+    obsoletes    Query          match packages that obsolete any package from query
+    provides     string         match against packages' provides
+    provides*    Hawkey.Reldep  match against packages' provides
+    requires     string         match against packages' requirements
+    requires*    Hawkey.Reldep  match against packages' requirements
+    upgrades     boolean        see :meth:`upgrades`. Defaults to ``False``.
+    ==========   ============== =====================================================
+
+    *The key can also accept a list of values with specified type.
 
     The key name can be supplemented with a relation-specifying suffix, separated by ``__``:
 

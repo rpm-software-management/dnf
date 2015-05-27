@@ -55,9 +55,21 @@
 
     The name of the package (string).
 
+  .. attribute:: obsoletes
+
+    Packages that are obsoleted by the package (list of Hawkey.Reldep).
+
+  .. attribute:: provides
+
+    Package's provides (list of Hawkey.Reldep).
+
   .. attribute:: release
 
     Release of the package (string).
+
+  .. attribute:: requires
+
+    Package's requirements (list of Hawkey.Reldep).
 
   .. attribute:: sourcerpm
 
