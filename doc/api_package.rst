@@ -55,6 +55,10 @@
 
     The name of the package (string).
 
+  .. attribute:: obsoletes
+
+    Packages that are obsoleted by the package (list of reldeps).
+
   .. attribute:: release
 
     Release of the package (string).
