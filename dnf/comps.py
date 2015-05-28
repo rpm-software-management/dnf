@@ -85,7 +85,7 @@ def install_or_skip(install_fnc, grp_or_env, types):
         try:
             count += install_fnc(grp, types, None)
         except dnf.comps.CompsError as e:
-            logger.warning("%s, %s", str(e)[:-1], _("skipping."))
+            logger.warning("%s, %s", e[:-1], _("skipping."))
             grp_or_env.remove(grp)
     return count
 
