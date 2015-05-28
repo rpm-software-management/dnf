@@ -23,7 +23,7 @@
  Synopsis
 ==========
 
-``dnf-automatic [<config file>]``
+``dnf-automatic [<config file>] [--timer]``
 
 =============
  Description
@@ -31,7 +31,7 @@
 
 Alternative CLI to ``dnf upgrade`` with specific facilities to make it suitable to be executed automatically and regularly from systemd timers, cron jobs and similar.
 
-The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used.
+The operation of the tool is controlled by the configuration file and the command only accepts optional argument pointing to it and optional argument timer. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used. The ``--timer`` is used as identification of automatic startup of the operation. Do not use this argument if you call it yourself.
 
 The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.
 
@@ -63,6 +63,11 @@ Setting the mode of operation of the program.
     either one of ``default``, ``security``, default: ``default``
 
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an  issued security advisory.
+
+``random_sleep``
+    time in seconds, default: 300
+
+    Maximum of random delay before the updates downloading.
 
 ----------------------
 ``[emitters]`` section
