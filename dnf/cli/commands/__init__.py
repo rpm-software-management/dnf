@@ -41,9 +41,8 @@ import time
 logger = logging.getLogger('dnf')
 _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
     'rpm -Va --nofiles --nodigest'
-_RPM_REBUILDDB = _("To fix inconsistent RPMDB, try running: '%s'.") % \
-    'rpm --rebuilddb'
-_REPORT_TMPLT = _("If the above doesn't help please report this error at '%s'.")
+_RPM_REBUILDDB = _("You probably have corrupted RPMDB, running '%s'"
+                   " might fix the issue.") % 'rpm --rebuilddb'
 
 def err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
@@ -199,8 +198,7 @@ class Command(object):
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
         if isinstance(error, dnf.exceptions.TransactionCheckError):
-            return (_RPM_VERIFY, _RPM_REBUILDDB,
-                    _REPORT_TMPLT % self.base.conf.bugtracker_url)
+            return (_RPM_VERIFY, _RPM_REBUILDDB)
         raise NotImplementedError('error not supported yet: %s' % error)
 
     def doCheck(self, basecmd, extcmds):
