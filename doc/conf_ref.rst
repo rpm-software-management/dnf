@@ -29,10 +29,18 @@
 all \*.repo files found under ``/etc/yum.repos.d``. The latter is typically used
 for repository configuration.
 
-There are two types of sections in the configuration files: main and
-repository. Main defines all global configuration options. There should be only
-one main section. The repository sections define the configuration for each
-(remote or local) repository.
+The configuration file has INI format consisting of section declaration and
+``name=value`` options below each on separate line. There are two types of sections
+in the configuration files: main and repository. Main section defines all global
+configuration options and should be only one.
+
+The repository sections define the configuration for each (remote or local)
+repository. The section name of the repository in brackets serve as repo ID reference
+and should be unique across configuration files. The allowed characters of repo ID
+string are lower and upper case alphabetic letters, digits, ``-``, ``_``, ``.``
+and ``:``. The minimal repository configuration file should aside from repo ID
+consists of :ref:`baseurl <baseurl-label>`, :ref:`metalink <metalink-label>`
+or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
 ================
  [main] Options
@@ -131,6 +139,8 @@ one main section. The repository sections define the configuration for each
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
 
+.. _baseurl-label:
+
 ``baseurl``
     list
 
@@ -148,10 +158,14 @@ one main section. The repository sections define the configuration for each
 
     URLs of a GPG key files that can be used for signing metadata and packages of this repository, empty by default. If a file can not be verified using the already imported keys, import of keys from this option is attempted and the keys are then used for verification.
 
+.. _metalink-label:
+
 ``metalink``
     string
 
     URL of a metalink for the repository.
+
+.. _mirrorlist-label:
 
 ``mirrorlist``
     string
@@ -161,7 +175,7 @@ one main section. The repository sections define the configuration for each
 ``name``
     string
 
-    A human-readable name of the repository. Defaults to the ID of the repository.
+    A human-readable name of the repository. Defaults to the ID of the repository. 
 
 .. _repo_priority-label:
 
