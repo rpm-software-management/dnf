@@ -1,5 +1,5 @@
 [Unit]
-Description=dnf makecache
+Description=dnf automatic
 
 [Service]
 Type=oneshot
