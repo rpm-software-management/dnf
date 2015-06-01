@@ -758,7 +758,7 @@ class YumConf(BaseConfig):
                                           names_of_0=["0", "<off>"])
     tsflags = ListOption() # :api
 
-    assumeyes = BoolOption(False)
+    assumeyes = BoolOption(False)  # :api
     assumeno = BoolOption(False)
     defaultyes = BoolOption(False)
     alwaysprompt = BoolOption(True)

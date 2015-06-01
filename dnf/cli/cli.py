@@ -257,7 +257,7 @@ class BaseCli(dnf.Base):
     def check_updates(self, patterns=(), reponame=None, print_=True):
         """Check updates matching given *patterns* in selected repository."""
         ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
-        if self.conf.obsoletes or self.conf.verbose:
+        if self.conf.verbose:
             typl = self.returnPkgLists('obsoletes', patterns, reponame=reponame)
             ypl.obsoletes = typl.obsoletes
             ypl.obsoletesTuples = typl.obsoletesTuples

@@ -1124,7 +1124,6 @@ class Base(object):
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
-            self.conf.obsoletes = 1
             inst = q.installed()
             obsoletes = query_for_repo(
                 self.sack.query()).filter(obsoletes=inst)

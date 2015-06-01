@@ -61,7 +61,7 @@ class OptionParser(argparse.ArgumentParser):
     def configure_from_options(self, opts, conf, demands, output):
         """Configure parts of CLI from the opts. """
 
-        options_to_move = ('best', 'assumeyes', 'assumeno', 'obsoletes',
+        options_to_move = ('best', 'assumeyes', 'assumeno',
                            'showdupesfromrepos', 'plugins', 'ip_resolve',
                            'rpmverbosity', 'disable_excludes')
 
@@ -191,8 +191,6 @@ class OptionParser(argparse.ArgumentParser):
                           action=self._SplitCallback,
                           help=_("disable excludes"),
                           metavar='[repo]')
-        self.add_argument("--obsoletes", action="store_true", default=None,
-                          help=_("enable obsoletes processing during upgrades"))
         self.add_argument("--noplugins", action="store_false", default=None,
                           dest='plugins', help=_("disable all plugins"))
         self.add_argument("--nogpgcheck", action="store_true", default=None,
