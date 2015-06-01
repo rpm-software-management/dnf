@@ -128,7 +128,7 @@ def main(args):
 
     try:
         conf = AutomaticConfig(opts.conf_path)
-        with dnf.Base() as base:
+        with dnf.cli.cli.BaseCli() as base:
             cli = dnf.cli.Cli(base)
             cli.read_conf_file(conf.commands.base_config_file,
                                overrides=conf.base_overrides)
