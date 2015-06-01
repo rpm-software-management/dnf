@@ -46,6 +46,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
  [main] Options
 ================
 
+``assumeyes``
+    boolean
+
+    If enabled then on any user input asking for confirmation (e.g. after transaction summary) the answer is implicitly ``yes``. Default is True.
+
 ``best``
     boolean
 
