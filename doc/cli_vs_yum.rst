@@ -19,7 +19,9 @@
  Changes in DNF CLI compared to Yum
 ####################################
 
-.. contents::
+.. only :: html
+    
+    .. contents::
 
 ======================
  No ``--skip-broken``
