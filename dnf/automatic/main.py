@@ -160,6 +160,7 @@ def main(args):
             base.download_packages(trans.install_set)
             emitters.notify_downloaded()
             if not conf.commands.apply_updates:
+                base.conf.keepcache = True
                 emitters.commit()
                 return 0
 
