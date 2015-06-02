@@ -47,13 +47,13 @@
 
   .. method:: filter(**kwargs)
 
-    Return a new query limiting the orignal query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND).
+    Return a new query limiting the orignal query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). In case of value in form of list or query, the filter behaves cumulatively (logical OR).
 
     Allowed keys are:
 
-    ==========   ========== ===============================================
+    ==========   ========== ======================================================
     key          value type value meaning
-    ==========   ========== ===============================================
+    ==========   ========== ======================================================
     arch         string     match against packages' architecture
     downgrades   boolean    see :meth:`downgrades`. Defaults to ``False``.
     empty        boolean    ``True`` limits to empty result set.
@@ -66,8 +66,10 @@
     reponame     string     match against packages repositories' names
     version      string     match against packages' versions
     upgrades     boolean    see :meth:`upgrades`. Defaults to ``False``.
+    obsoletes    Query      match packages that obsolete any package from query
     provides     string     match against packages' provides
-    ==========   ========== ===============================================
+    provides     [Reldep]   match against list of Reldeps
+    ==========   ========== =====================================================
 
     The key name can be supplemented with a relation-specifying suffix, separated by ``__``:
 
