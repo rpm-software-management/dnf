@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-16 17:46+0100\n"
-"PO-Revision-Date: 2015-05-04 15:59+0400\n"
+"PO-Revision-Date: 2015-06-04 03:40+0400\n"
 "Last-Translator: George Machitidze <giomac@gmail.com>\n"
 "Language-Team: Georgian <trans-ka (at) lists.fedoraproject.org>\n"
 "Language: ka_GE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Lokalize 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.8.1\n"
 
 #: ../dnf/persistor.py:235
 msgid "Invalid groups database, clearing."
@@ -28,7 +28,7 @@ msgstr ""
 #: ../dnf/persistor.py:326
 #, python-format
 msgid "%s is empty file"
-msgstr ""
+msgstr "ფაილი %s ცარიელია"
 
 #: ../dnf/drpm.py:63 ../dnf/repo.py:354
 #, python-format
@@ -37,7 +37,7 @@ msgstr ""
 
 #: ../dnf/drpm.py:135
 msgid "Delta RPM rebuild failed"
-msgstr ""
+msgstr "დელტა RPM-ის აგება ვერ მოხერხდა"
 
 #: ../dnf/drpm.py:137
 msgid "Checksum of the delta-rebuilt RPM failed"
@@ -46,7 +46,7 @@ msgstr ""
 #: ../dnf/comps.py:150
 #, python-format
 msgid "Group '%s' does not exist."
-msgstr ""
+msgstr "ჯგუფი '%s' არ არსებობს."
 
 #: ../dnf/comps.py:417
 #, python-format
@@ -512,11 +512,11 @@ msgstr "სახელი"
 
 #: ../dnf/cli/output.py:464 ../dnf/cli/output.py:995
 msgid "Arch"
-msgstr ""
+msgstr "არქიტექტურა"
 
 #: ../dnf/cli/output.py:466
 msgid "Epoch"
-msgstr ""
+msgstr "ეპოქა"
 
 #: ../dnf/cli/output.py:467 ../dnf/cli/output.py:996
 msgid "Version"
@@ -540,11 +540,11 @@ msgstr "რეპოდან"
 
 #: ../dnf/cli/output.py:477
 msgid "Buildtime"
-msgstr ""
+msgstr "აგების დრო"
 
 #: ../dnf/cli/output.py:479
 msgid "Install time"
-msgstr ""
+msgstr "ჩადგმის დრო"
 
 #: ../dnf/cli/output.py:487
 msgid "Installed by"
@@ -606,25 +606,25 @@ msgstr ""
 #: ../dnf/cli/output.py:708
 #, python-format
 msgid " Group-Id: %s"
-msgstr ""
+msgstr " ჯგუფის Id: %s"
 
 #: ../dnf/cli/output.py:710 ../dnf/cli/output.py:749
 #, python-format
 msgid " Description: %s"
-msgstr ""
+msgstr " აღწერა: %s"
 
 #: ../dnf/cli/output.py:712
 #, python-format
 msgid " Language: %s"
-msgstr ""
+msgstr " ენა: %s"
 
 #: ../dnf/cli/output.py:715
 msgid " Mandatory Packages:"
-msgstr ""
+msgstr " აუცილებელი პაკეტები:"
 
 #: ../dnf/cli/output.py:716
 msgid " Default Packages:"
-msgstr ""
+msgstr " ნაგულისხმები პაკეტები:"
 
 #: ../dnf/cli/output.py:717
 msgid " Optional Packages:"
@@ -646,7 +646,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:752
 msgid " Mandatory Groups:"
-msgstr ""
+msgstr " აუცილებელი ჯგუფები:"
 
 #: ../dnf/cli/output.py:753
 msgid " Optional Groups:"
@@ -655,7 +655,7 @@ msgstr ""
 #: ../dnf/cli/output.py:788
 #, python-format
 msgid "Repo        : %s"
-msgstr ""
+msgstr "რეპო        : %s"
 
 #: ../dnf/cli/output.py:795
 msgid "Matched from:"
@@ -668,40 +668,40 @@ msgstr ""
 #: ../dnf/cli/output.py:802
 #, python-format
 msgid "URL         : %s"
-msgstr ""
+msgstr "URL         : %s"
 
 #: ../dnf/cli/output.py:805
 #, python-format
 msgid "License     : %s"
-msgstr ""
+msgstr "ლიცენზია    : %s"
 
 #: ../dnf/cli/output.py:808
 #, python-format
 msgid "Filename    : %s"
-msgstr ""
+msgstr "ფაილი       : %s"
 
 #: ../dnf/cli/output.py:812
 msgid "Other       : "
-msgstr ""
+msgstr "სხვა        : "
 
 #: ../dnf/cli/output.py:868
 msgid "There was an error calculating total download size"
-msgstr ""
+msgstr "შეცდომა ჯამური ჩამოტვირთვის ზომის გამოთვლისას"
 
 #: ../dnf/cli/output.py:874
 #, python-format
 msgid "Total size: %s"
-msgstr ""
+msgstr "ჯამური ზომა : %s"
 
 #: ../dnf/cli/output.py:877
 #, python-format
 msgid "Total download size: %s"
-msgstr ""
+msgstr "ჩამოტვირთვის ჯამური ზომა: %s"
 
 #: ../dnf/cli/output.py:880 ../dnf/cli/output.py:902
 #, python-format
 msgid "Installed size: %s"
-msgstr ""
+msgstr "ჩადგმულის ზომა: %s"
 
 #: ../dnf/cli/output.py:898
 msgid "There was an error calculating installed size"
@@ -881,7 +881,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1538 ../dnf/cli/output.py:1540
 #: ../dnf/cli/output.py:1945
 msgid "Transaction ID :"
-msgstr ""
+msgstr "ტრანზაქციის ID :"
 
 #: ../dnf/cli/output.py:1542 ../dnf/cli/output.py:1947
 msgid "Begin time     :"
@@ -965,7 +965,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1622
 msgid "Packages Skipped:"
-msgstr ""
+msgstr "გამოტოვებული პაკეტები:"
 
 #: ../dnf/cli/output.py:1630
 msgid "Rpmdb Problems:"
@@ -1030,7 +1030,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1815
 #, python-format
 msgid "No Transaction %s found"
-msgstr ""
+msgstr "ტრანზაქცია %s ვერ მოიძებნა"
 
 #: ../dnf/cli/output.py:1821
 msgid "Transaction ID:"
@@ -1051,7 +1051,7 @@ msgstr "პაკეტი         :"
 
 #: ../dnf/cli/output.py:1949
 msgid "State          :"
-msgstr ""
+msgstr "მდგომარეობა    :"
 
 #: ../dnf/cli/output.py:1952
 msgid "Size           :"
@@ -1059,23 +1059,23 @@ msgstr "ზომა           :"
 
 #: ../dnf/cli/output.py:1954
 msgid "Build host     :"
-msgstr ""
+msgstr "აგების ჰოსტი   :"
 
 #: ../dnf/cli/output.py:1957
 msgid "Build time     :"
-msgstr ""
+msgstr "აგების დრო     :"
 
 #: ../dnf/cli/output.py:1959
 msgid "Packager       :"
-msgstr ""
+msgstr "პაკეტის ამწყობი:"
 
 #: ../dnf/cli/output.py:1961
 msgid "Vendor         :"
-msgstr ""
+msgstr "მომწოდებელი    :"
 
 #: ../dnf/cli/output.py:1963
 msgid "License        :"
-msgstr ""
+msgstr "ლიცენზია       :"
 
 #: ../dnf/cli/output.py:1965
 msgid "URL            :"
@@ -1083,7 +1083,7 @@ msgstr "URL            :"
 
 #: ../dnf/cli/output.py:1967
 msgid "Source RPM     :"
-msgstr ""
+msgstr "საწყისი RPM    :"
 
 #: ../dnf/cli/output.py:1970
 msgid "Commit Time    :"
@@ -1099,7 +1099,7 @@ msgstr "მიზეზი         :"
 
 #: ../dnf/cli/output.py:1978
 msgid "From repo      :"
-msgstr ""
+msgstr "რეპოზიტორიიდან :"
 
 #: ../dnf/cli/output.py:1982
 msgid "Installed by   :"
@@ -1152,11 +1152,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:2035
 msgid "--> Starting dependency resolution"
-msgstr ""
+msgstr "--> ურთიერთდამოკიდებულებების დადგების დაწყება"
 
 #: ../dnf/cli/output.py:2040
 msgid "--> Finished dependency resolution"
-msgstr ""
+msgstr "--> ურთიერთდამოკიდებულებების დადგენა დასრულდა"
 
 #: ../dnf/cli/output.py:2190
 msgid "Verifying"
@@ -1164,7 +1164,7 @@ msgstr "შემოწმება"
 
 #: ../dnf/cli/commands/makecache.py:36
 msgid "Generate the metadata cache"
-msgstr ""
+msgstr "მეტამონაცემების კეშის გენერირება"
 
 #: ../dnf/cli/commands/makecache.py:49
 msgid "Making cache files for all metadata files."
@@ -1184,7 +1184,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/makecache.py:88
 msgid "Metadata cache created."
-msgstr ""
+msgstr "მეტამონაცემების კეში შეიქმნა."
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:43
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:43
@@ -1237,35 +1237,35 @@ msgstr ""
 #: ../dnf/cli/commands/clean.py:174
 #: ../dnf/cli/commands/clean.py.BASE.16936.py:174
 msgid "Cleaning repos: "
-msgstr ""
+msgstr "რეპოზიტორიების გაწმენდა:"
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:181
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:181
 #: ../dnf/cli/commands/clean.py:181
 #: ../dnf/cli/commands/clean.py.BASE.16936.py:181
 msgid "Cleaning up Everything"
-msgstr ""
+msgstr "ყველაფრის გაწმენდა"
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:194
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:194
 #: ../dnf/cli/commands/clean.py:194
 #: ../dnf/cli/commands/clean.py.BASE.16936.py:194
 msgid "Cleaning up Packages"
-msgstr ""
+msgstr "პაკეტების გაწმენდა"
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:197
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:197
 #: ../dnf/cli/commands/clean.py:197
 #: ../dnf/cli/commands/clean.py.BASE.16936.py:197
 msgid "Cleaning up xml metadata"
-msgstr ""
+msgstr "xml მეტამონაცემების გაწმენდა"
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:200
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:200
 #: ../dnf/cli/commands/clean.py:200
 #: ../dnf/cli/commands/clean.py.BASE.16936.py:200
 msgid "Cleaning up database cache"
-msgstr ""
+msgstr "მონაცემთა ბაზის კეშის გაწმენდა"
 
 #: ../dnf/cli/commands/clean.py.REMOTE.16936.py:203
 #: ../dnf/cli/commands/clean.py.BACKUP.16936.py:203
@@ -1362,7 +1362,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:200
 msgid "Installed groups:"
-msgstr ""
+msgstr "ჩადგმული ჯგუფები:"
 
 #: ../dnf/cli/commands/group.py:207
 msgid "Installed language groups:"
@@ -1370,7 +1370,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:214
 msgid "Available groups:"
-msgstr ""
+msgstr "ხელმისაწვდომი ჯგუფები:"
 
 #: ../dnf/cli/commands/group.py:221
 msgid "Available language groups:"
@@ -1398,7 +1398,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:290
 msgid "Installed Groups:"
-msgstr ""
+msgstr "ჩადგმული ჯგუფები:"
 
 #: ../dnf/cli/commands/group.py:297
 msgid "Installed Language Groups:"
@@ -1406,7 +1406,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:304
 msgid "Available Groups:"
-msgstr ""
+msgstr "ხელმისაწვდომი ჯგუფები:"
 
 #: ../dnf/cli/commands/group.py:311
 msgid "Available Language Groups:"
@@ -1432,7 +1432,7 @@ msgstr "უცნობი"
 #: ../dnf/cli/commands/repolist.py:38
 #, python-format
 msgid "Never (last: %s)"
-msgstr ""
+msgstr "არასდროს (უკანასკნელი: %s)"
 
 #: ../dnf/cli/commands/repolist.py:40
 #, python-format
@@ -1530,7 +1530,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
 msgid "repo id"
-msgstr ""
+msgstr "რეპოს id"
 
 #: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
 #: ../dnf/cli/commands/repolist.py:259
@@ -1539,7 +1539,7 @@ msgstr "მდგომარეობა"
 
 #: ../dnf/cli/commands/repolist.py:255
 msgid "repo name"
-msgstr ""
+msgstr "რეპოს სახელი"
 
 #: ../dnf/cli/commands/upgradeto.py:31
 msgid "Upgrade a package on your system to the specified version"
@@ -1573,7 +1573,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr ""
+msgstr "პაკეტების ძებნა: "
 
 #: ../dnf/cli/commands/__init__.py:42
 #, python-format
@@ -1653,11 +1653,11 @@ msgstr ""
 #: ../dnf/cli/commands/__init__.py:432 ../dnf/cli/commands/__init__.py:508
 #: ../dnf/cli/commands/__init__.py:574
 msgid "No package available."
-msgstr ""
+msgstr "პაკეტი არაა ხელმისაწვდომი."
 
 #: ../dnf/cli/commands/__init__.py:506
 msgid "No package installed."
-msgstr ""
+msgstr "პაკეტი არაა ჩადგმული."
 
 #: ../dnf/cli/commands/__init__.py:571 ../dnf/cli/commands/__init__.py:705
 #: ../dnf/cli/commands/__init__.py:757 ../dnf/cli/commands/__init__.py:812
@@ -1737,7 +1737,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:1156
 msgid "Transactions:"
-msgstr ""
+msgstr "ტრანზაქციები:"
 
 #: ../dnf/cli/commands/__init__.py:1157
 msgid "Begin time  :"
@@ -1795,7 +1795,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "enhancement"
-msgstr ""
+msgstr "გაუმჯობესება"
 
 #: ../dnf/cli/commands/updateinfo.py:47
 msgid "security"
@@ -1911,11 +1911,11 @@ msgstr ""
 
 #: ../dnf/base.py:547
 msgid "Transaction check succeeded."
-msgstr ""
+msgstr "ტრანზაქცია წარმატებით შემოწმდა."
 
 #: ../dnf/base.py:550
 msgid "Running transaction test"
-msgstr ""
+msgstr "ტრანზაქციის შემოწმება"
 
 #: ../dnf/base.py:562
 msgid "Transaction check error:\n"
@@ -1985,7 +1985,7 @@ msgstr ""
 #: ../dnf/base.py:937
 #, python-format
 msgid "Problem opening package %s"
-msgstr ""
+msgstr "პრობლემა %s პაკეტის გახსნისას"
 
 #: ../dnf/base.py:945
 #, python-format
@@ -1995,7 +1995,7 @@ msgstr ""
 #: ../dnf/base.py:949
 #, python-format
 msgid "Package %s is not signed"
-msgstr ""
+msgstr "პაკეტი %s არაა ხელმოწერილი"
 
 #: ../dnf/base.py:983
 #, python-format
@@ -2064,7 +2064,7 @@ msgstr ""
 #: ../dnf/base.py:1774
 #, python-format
 msgid "Key import failed (code %d)"
-msgstr ""
+msgstr "გასაღების შემოტანა ვერ მოხერხდა (კოდი %d)"
 
 #: ../dnf/base.py:1776
 msgid "Key imported successfully"
@@ -2135,4 +2135,3 @@ msgstr ""
 #, python-format
 msgid "Failed to send an email via '%s': %s"
 msgstr ""
-
