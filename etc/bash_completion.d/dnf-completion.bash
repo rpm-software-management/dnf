@@ -97,13 +97,14 @@ _dnf()
 
     local comp
     local cache_file="/var/cache/dnf/packages.db"
+    local sqlite3="sqlite3 -batch -init /dev/null"
     if [[ $command ]]; then
 
         case $command in
             install|update|upgrade|reinstall)
                 if ! _is_path "$cur"; then
                     if [ -r $cache_file ] && ! _modified_sack words[@]; then
-                        COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" )' ) )
+                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
                     else
                         _dnf_helper $command "$cur"
                     fi
@@ -113,7 +114,7 @@ _dnf()
             erase|remove|downgrade)
                 if ! _is_path "$cur"; then
                     if [ -r $cache_file ] && ! _modified_sack words[@]; then
-                        COMPREPLY=( $( compgen -W '$( sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
+                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
                     else
                         _dnf_helper $command "$cur"
                     fi
