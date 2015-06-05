@@ -236,14 +236,14 @@ class GroupCommand(commands.Command):
             if not dnf.comps.install_or_skip(solver.environment_install,
                                              env, types):
                 res.environments.remove(env)
-        if res.environments:
-            logger.info(_('Environments marked installed: %s'),
-                        ','.join([g.ui_name for g in res.environments]))
         for group in res.groups:
             if not dnf.comps.install_or_skip(solver.group_install,
                                              group, types):
                 res.groups.remove(group)
 
+        if res.environments:
+            logger.info(_('Environments marked installed: %s'),
+                        ','.join([g.ui_name for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
                         ','.join([g.ui_name for g in res.groups]))
@@ -258,11 +258,12 @@ class GroupCommand(commands.Command):
         res = q.get(*patterns)
         for env in res.environments:
             solver.environment_remove(env)
+        for grp in res.groups:
+            solver.group_remove(grp)
+
         if res.environments:
             logger.info(_('Environments marked removed: %s'),
                         ','.join([g.ui_name for g in res.environments]))
-        for grp in res.groups:
-            solver.group_remove(grp)
         if res.groups:
             logger.info(_('Groups marked removed: %s'),
                         ','.join([g.ui_name for g in res.groups]))
