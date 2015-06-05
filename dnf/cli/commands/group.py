@@ -232,12 +232,18 @@ class GroupCommand(commands.Command):
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
-        dnf.comps.install_or_skip(solver.environment_install,
-                                  res.environments, types)
+        for env in res.environments:
+            if not dnf.comps.install_or_skip(solver.environment_install,
+                                             env, types):
+                res.environments.remove(env)
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
                         ','.join([g.ui_name for g in res.environments]))
-        dnf.comps.install_or_skip(solver.group_install, res.groups, types)
+        for group in res.groups:
+            if not dnf.comps.install_or_skip(solver.group_install,
+                                             group, types):
+                res.groups.remove(group)
+
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
                         ','.join([g.ui_name for g in res.groups]))

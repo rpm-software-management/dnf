@@ -1191,8 +1191,10 @@ class Base(object):
     def environment_install(self, env, types, exclude=None):
         solver = self.build_comps_solver()
         types = self._translate_comps_pkg_types(types)
-        trans = solver.environment_install(env, types, exclude or set())
-        return self._add_comps_trans(trans)
+        trans = dnf.comps.install_or_skip(solver.environment_install,
+                                          env, types, exclude or set())
+        if trans:
+            return self._add_comps_trans(trans)
 
     def environment_remove(self, env):
         solver = self.build_comps_solver()
@@ -1233,7 +1235,10 @@ class Base(object):
 
         solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
-        trans = solver.group_install(grp, pkg_types, exclude_pkgnames)
+        trans = dnf.comps.install_or_skip(solver.group_install,
+                                          grp, pkg_types, exclude_pkgnames)
+        if not trans:
+            return 0
         logger.debug("Adding packages from group '%s': %s",
                      grp.id, trans.install)
         return self._add_comps_trans(trans)
@@ -1247,10 +1252,11 @@ class Base(object):
         except dnf.exceptions.CompsError as err:
             logger.error("Warning: %s", ucd(err))
             raise dnf.exceptions.Error(_('Nothing to do.'))
-        cnt = dnf.comps.install_or_skip(self.environment_install,
-                                        res.environments, types)
-        cnt += dnf.comps.install_or_skip(self.group_install,
-                                         res.groups, types)
+        cnt = 0
+        for group in res.groups:
+            cnt += self.group_install(group, types)
+        for env in res.environments:
+            cnt += self.environment_install(env, types)
         return cnt
 
     def group_remove(self, grp):
