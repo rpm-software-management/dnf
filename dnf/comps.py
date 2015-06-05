@@ -79,15 +79,16 @@ def _fn_display_order(group):
     return sys.maxsize if group.display_order is None else group.display_order
 
 
-def install_or_skip(install_fnc, grp_or_env, types):
-    count = 0
-    for grp in grp_or_env:
-        try:
-            count += install_fnc(grp, types, None)
-        except dnf.comps.CompsError as e:
-            logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
-            grp_or_env.remove(grp)
-    return count
+def install_or_skip(install_fnc, grp_or_env, types, exclude=None):
+    """Either mark in persistor as installed given `grp_or_env` (group
+       or environment) or skip it (if it's already installed).
+       `install_fnc` has to be Solver.group_install
+       or Solver.environment_install.
+       """
+    try:
+        return install_fnc(grp_or_env, types, exclude)
+    except dnf.comps.CompsError as e:
+        logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
 
 
 class _Langs(object):
