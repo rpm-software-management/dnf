@@ -47,7 +47,7 @@
 
   .. method:: filter(**kwargs)
 
-    Return a new query limiting the orignal query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND).
+    Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND).
 
     Allowed keys are:
 
@@ -77,7 +77,7 @@
     eq           any         exact match; This is the default if no suffix is specified.
     glob         string      shell-style wildcard match
     gt           integer     the actual value is greater than specified
-    gte          integer     the actual value is greater than or qual to specified
+    gte          integer     the actual value is greater than or equal to specified
     lt           integer     the actual value is less than specified
     lte          integer     the actual value is less than or equal to specified
     neq          any         does not equal
