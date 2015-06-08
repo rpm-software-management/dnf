@@ -331,7 +331,8 @@ class GroupCommand(commands.Command):
             demands.root_user = True
         if cmd == 'remove':
             demands.allow_erasing = True
-            demands.available_repos = False
+            # temporary fix for 1214968
+            demands.available_repos = True
         else:
             demands.available_repos = True
 
