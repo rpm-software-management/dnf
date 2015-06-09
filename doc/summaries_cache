@@ -1130,5 +1130,41 @@
     [
         1215289, 
         "bash completion file adds a shell alias for python"
+    ], 
+    [
+        1214968, 
+        "dnf reports installed group does not exist"
+    ], 
+    [
+        1222694, 
+        "[abrt] python-dnf: comps.py:86:install_or_skip:TypeError: unsupported operand type(s) for +=: 'int' and 'TransactionBunch'"
+    ], 
+    [
+        1225246, 
+        "yum2dnf manpage: too much underlining"
+    ], 
+    [
+        1213985, 
+        "[rfe] add equivalent of \"random_sleep\" to dnf-automatic"
+    ], 
+    [
+        1225277, 
+        "python(abi) = 3.3 is needed by (installed)"
+    ], 
+    [
+        1223932, 
+        "UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe1' in position 19: ordinal not in range(128)"
+    ], 
+    [
+        1223614, 
+        "dnf groupinstall fails and returns success"
+    ], 
+    [
+        1203661, 
+        "[CRY] sslclientcert and sslclientkey not supported"
+    ], 
+    [
+        1187741, 
+        "dnf should state if packages explicitly requested for update aren't installed"
     ]
 ]

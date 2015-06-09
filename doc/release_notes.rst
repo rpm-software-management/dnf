@@ -1093,3 +1093,29 @@ Bugs fixed in 1.0.0:
 * :rhbug:`1191275`
 * :rhbug:`1207965`
 * :rhbug:`1215289`
+
+===================
+1.0.1 Release Notes
+===================
+
+DNF follows the Semantic Versioning as defined at `<http://semver.org/>`_.
+
+Documented SSL :doc:`configuration <conf_ref>` and :doc:`repository <api_repos>` options.
+
+Added virtual provides allowing installation of DNF commands by their name in the form of
+``dnf install dnf-command(name)``.
+
+:doc:`dnf-automatic <automatic>` now by default waits random interval between 0 and 300 seconds before any network communication is performed.
+
+
+Bugs fixed in 1.0.1:
+
+* :rhbug:`1214968`
+* :rhbug:`1222694`
+* :rhbug:`1225246`
+* :rhbug:`1213985`
+* :rhbug:`1225277`
+* :rhbug:`1223932`
+* :rhbug:`1223614`
+* :rhbug:`1203661`
+* :rhbug:`1187741`
