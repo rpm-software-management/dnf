@@ -294,7 +294,7 @@ configuration.
 ``minrate``
     storage size
 
-    This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 0. Valid units are 'k', 'M', 'G'.
+    This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 1000. Valid units are 'k', 'M', 'G'.
 
 ``proxy``
     string
