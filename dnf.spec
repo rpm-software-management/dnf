@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.0.0
+Version:	1.0.1
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -241,6 +241,60 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Jun 09 2015 Michal Luscon <mluscon@redhat.com> 1.0.1-1
+- doc: document variables in repo conf (Michal Luscon)
+- groups: temporary fix for group remove (RhBug:1214968) (Michal Luscon)
+- group: print summary of marked groups / environments together at the end (Jan
+  Silhan)
+- group: fixed marking as installed (RhBug:1222694) (Jan Silhan)
+- doc: Spelling fixes (Ville Skyttä)
+- dnf-automatic: Fix systemd service description (thanks Ville Skyttä) (Jan
+  Silhan)
+- doc: assumeyes added to Base.conf and config option (Jan Silhan)
+- optionparser: deleted --obsoletes option that conflicted with repoquery
+  plugin (Jan Silhan)
+- dnf-automatic: Document emit_via default (Ville Skyttä)
+- man: yum2dnf don;t show content (RhBug:1225246) (Thanks Adam Salih) (Jan
+  Silhan)
+- doc: allowed chars of repo ID (Jan Silhan)
+- doc: minimal repo config file (Jan Silhan)
+- doc: configuration files replacement policy (Jan Silhan)
+- fixed typo in man page (RhBug:1225168) (Michael Mraka)
+- Update authors (Michal Luscon)
+- dnf-automatic: add random_sleep option (RhBug:1213985) (Vladan Kudlac)
+- don't print bug report statement when rpmdb is corrupted
+  (Related:RhBug:1225277) (Jan Silhan)
+- comps: fix unicode issue (RhBug:1223932) (Thanks Parag) (Parag Nemade)
+- logging: setup librepo log in verbose mode (Michal Luscon)
+- doc: document the versioning scheme (Radek Holy)
+- groups: end up empty group removal before solving (Michal Luscon)
+- groups: end up empty installation before solving (RhBug:1223614) (Michal
+  Luscon)
+- doc: add support for transactions/packages/ranges in "dnf history list"
+  (Radek Holy)
+- doc: add support for transaction ranges in "dnf history info" (Radek Holy)
+- support ssl client certificates (RhBug:1203661) (Michael Mraka)
+- doc: document the "mirrorlist" configuration option (Radek Holy)
+- doc: document the "metalink" configuration option (Radek Holy)
+- doc: document the "baseurl" configuration option (Radek Holy)
+- doc: document the "enabled" configuration option (Radek Holy)
+- doc: document the "name" configuration option (Radek Holy)
+- Revert "spec: added sqlite requirement" (Jan Silhan)
+- spec: added sqlite requirement (Jan Silhan)
+- cosmetic: fixed typo in comment (Jan Silhan)
+- man: added reference to bug reporting guide (Jan Silhan)
+- test: ignore user terminal width (Jan Silhan)
+- cosmetic: base: import dnf.util.first (Jan Silhan)
+- base.upgrade: inform user when pkg not installed and skipped (RhBug:1187741)
+  (Jan Silhan)
+- disable buildtime c/c++ dependency (Michael Mraka)
+- doc: document the new virtual provides (Radek Holy)
+- AUTHORS: updated (Jan Silhan)
+- AUTHORS: distuinguish authors and contributors (Jan Silhan)
+- Create ka.po (George Machitidze)
+- Parser: fix path handling (Haikel Guemar)
+- doc: metadata_timer_sync checked every hour (Jan Silhan)
+
 * Wed Apr 29 2015 Michal Luscon <mluscon@redhat.com> 1.0.0-1
 - doc: release notes dnf-1.0.0 (Michal Luscon)
 - completion: don't do aliases (RhBug:1215289) (Jan Silhan)
