@@ -1193,8 +1193,9 @@ class Base(object):
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver.environment_install,
                                           env, types, exclude or set())
-        if trans:
-            return self._add_comps_trans(trans)
+        if not trans:
+            return 0
+        return self._add_comps_trans(trans)
 
     def environment_remove(self, env):
         solver = self.build_comps_solver()
