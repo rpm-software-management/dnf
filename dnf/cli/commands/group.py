@@ -394,10 +394,7 @@ class GroupCommand(commands.Command):
         if cmd == 'upgrade':
             return self._upgrade(extcmds)
         if cmd == 'remove':
-            removed = self.base.env_group_remove(extcmds)
-            if removed == 0:
-                raise dnf.exceptions.Error(_('No groups marked for removal.'))
-            return removed
+            return self.base.env_group_remove(extcmds)
 
     def run_transaction(self):
         if not self._remark:

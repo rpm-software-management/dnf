@@ -1274,7 +1274,7 @@ class Base(object):
             res = q.get(*patterns)
         except dnf.exceptions.CompsError as err:
             logger.error("Warning: %s", ucd(err))
-            return 0
+            raise dnf.exceptions.Error(_('No groups marked for removal.'))
         cnt = 0
         for env in res.environments:
             cnt += self.environment_remove(env)
