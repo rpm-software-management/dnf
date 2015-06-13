@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Piotr Drąg <piotrdrag@gmail.com>, 2011,2014
+# Piotr Drąg <piotrdrag@gmail.com>, 2011,2014,2015
 msgid ""
 msgstr ""
 "Project-Id-Version: dnf\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-16 17:46+0100\n"
-"PO-Revision-Date: 2015-03-16 16:46+0000\n"
-"Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
+"PO-Revision-Date: 2015-06-13 12:14+0200\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,7 +47,7 @@ msgstr "Suma kontrolna pakietu RPM przebudowanego z delty się nie powiodła"
 #: ../dnf/comps.py:150
 #, python-format
 msgid "Group '%s' does not exist."
-msgstr ""
+msgstr "Grupa \"%s\" nie istnieje."
 
 #: ../dnf/comps.py:417
 #, python-format
@@ -92,12 +92,12 @@ msgstr "Repozytorium %r nie posiada nazwy w konfiguracji, używanie identyfikato
 #: ../dnf/conf/__init__.py:74
 #, python-format
 msgid "Could not set cachedir: %s"
-msgstr "Nie można ustawić katalogu pamięci podręcznej: %s "
+msgstr "Nie można ustawić katalogu pamięci podręcznej: %s"
 
 #: ../dnf/lock.py:123
 #, python-format
 msgid "Waiting for process with pid %d to finish."
-msgstr ""
+msgstr "Oczekiwanie na zakończenie procesu o numerze PID %d."
 
 #: ../dnf/yum/rpmtrans.py:111
 msgid "Cleanup"
@@ -395,7 +395,7 @@ msgstr "Dostępne pakiety"
 
 #: ../dnf/cli/cli.py:426
 msgid "Autoremove Packages"
-msgstr ""
+msgstr "Automatycznie usuwane pakiety"
 
 #: ../dnf/cli/cli.py:428
 msgid "Extra Packages"
@@ -459,7 +459,7 @@ msgstr "Nieznane repozytorium: \"%s\""
 #: ../dnf/cli/cli.py:797
 #, python-format
 msgid "Using metadata from %s (%s hours old)"
-msgstr ""
+msgstr "Używanie metadanych z %s (mających %s h)"
 
 #: ../dnf/cli/cli.py:829
 msgid "You need to give some command"
@@ -639,15 +639,15 @@ msgstr "Grupa środowiska: %s"
 #: ../dnf/cli/output.py:746
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Identyfikator środowiska: %s"
+msgstr " Identyfikator środowiska: %s"
 
 #: ../dnf/cli/output.py:752
 msgid " Mandatory Groups:"
-msgstr "Obowiązkowe grupy:"
+msgstr " Obowiązkowe grupy:"
 
 #: ../dnf/cli/output.py:753
 msgid " Optional Groups:"
-msgstr "Opcjonalne grupy:"
+msgstr " Opcjonalne grupy:"
 
 #: ../dnf/cli/output.py:788
 #, python-format
@@ -849,7 +849,7 @@ msgstr "Data i czas"
 #: ../dnf/cli/output.py:1355 ../dnf/cli/output.py:1737
 #: ../dnf/cli/output.py:1857
 msgid "Action(s)"
-msgstr "Czynności"
+msgstr "Działania"
 
 #: ../dnf/cli/output.py:1356 ../dnf/cli/output.py:1738
 msgid "Altered"
@@ -891,22 +891,22 @@ msgstr "Rozpoczęcie bazy danych RPM:"
 #: ../dnf/cli/output.py:1563
 #, python-format
 msgid "(%u seconds)"
-msgstr "(%u sekund)"
+msgstr "(sekundy: %u)"
 
 #: ../dnf/cli/output.py:1565
 #, python-format
 msgid "(%u minutes)"
-msgstr "(%u minut)"
+msgstr "(minuty: %u)"
 
 #: ../dnf/cli/output.py:1567
 #, python-format
 msgid "(%u hours)"
-msgstr "(%u godzin)"
+msgstr "(godziny: %u)"
 
 #: ../dnf/cli/output.py:1569
 #, python-format
 msgid "(%u days)"
-msgstr "(%u dni)"
+msgstr "(dni: %u)"
 
 #: ../dnf/cli/output.py:1570
 msgid "End time       :"
@@ -1439,7 +1439,7 @@ msgstr "Natychmiast (ostatnio: %s)"
 #: ../dnf/cli/commands/repolist.py:43
 #, python-format
 msgid "%s second(s) (last: %s)"
-msgstr "%s sekundy (ostatnio: %s)"
+msgstr "sekundy: %s (ostatnio: %s)"
 
 #: ../dnf/cli/commands/repolist.py:74
 msgid "Display the configured software repositories"
@@ -1797,7 +1797,7 @@ msgstr "Wyświetla doradcze informacje o pakietach"
 
 #: ../dnf/cli/commands/updateinfo.py:177
 msgid "Updates Information Summary: "
-msgstr "Podsumowanie informacji o aktualizacjach:"
+msgstr "Podsumowanie informacji o aktualizacjach: "
 
 #: ../dnf/cli/commands/updateinfo.py:180
 msgid "Security notice(s)"
@@ -1999,7 +1999,7 @@ msgstr "Usunięto %s"
 
 #: ../dnf/base.py:1351 ../dnf/base.py:1363
 msgid "no package matched"
-msgstr ""
+msgstr "brak pasujących pakietów"
 
 #: ../dnf/base.py:1401
 #, python-format
