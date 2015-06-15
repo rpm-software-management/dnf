@@ -88,6 +88,8 @@ class Base(object):
         self._repos = dnf.repodict.RepoDict()
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
+        self.clean_tempfiles = False
+        self._tempfile_persistor = None
 
     def __enter__(self):
         return self
@@ -175,6 +177,9 @@ class Base(object):
         if self.group_persistor:
             self.group_persistor.save()
 
+        if self._tempfile_persistor:
+            self._tempfile_persistor.save()
+
     @property
     def comps(self):
         # :api
@@ -260,10 +265,20 @@ class Base(object):
             return
         logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
         self._closed = True
+        self._tempfile_persistor = dnf.persistor.TempfilePersistor(
+            self.conf.cachedir)
 
-        if (not self.conf.keepcache and
-                not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)):
-            self.clean_used_packages()
+        if self.clean_tempfiles:
+            # delete all packages from last unsuccessful transactions
+            self._tempfiles.update(
+                self._tempfile_persistor.get_saved_tempfiles())
+            self._tempfile_persistor.empty()
+        if not self.conf.keepcache:
+            if self.clean_tempfiles:
+                self.clean_used_packages()
+            else:
+                self._tempfile_persistor.tempfiles_to_add.update(
+                    self._tempfiles)
 
         # Do not trigger the lazy creation:
         if self._history is not None:
@@ -813,6 +828,7 @@ class Base(object):
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.history.end(rpmdbv, 0)
         timer()
+        self.clean_tempfiles = True
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api

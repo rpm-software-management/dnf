@@ -365,3 +365,52 @@ class RepoPersistor(object):
         except OSError:
             logger.info("Failed determining last makecache time.")
             return None
+
+
+class TempfilePersistor(object):
+
+    def __init__(self, cachedir):
+        self.db_path = os.path.join(cachedir, "tempfiles.json")
+        self.tempfiles_to_add = set()
+        self._empty = False
+
+    def get_saved_tempfiles(self):
+        self._check_json_db(self.db_path)
+        return self._get_json_db(self.db_path)
+
+    def save(self):
+        if not self._empty and not self.tempfiles_to_add:
+            return
+        self._check_json_db(self.db_path)
+        if self._empty:
+            self._write_json_db(self.db_path, [])
+            return
+        if self.tempfiles_to_add:
+            data = set(self._get_json_db(self.db_path))
+            data.update(self.tempfiles_to_add)
+            self._write_json_db(self.db_path, list(data))
+
+    def _check_json_db(self, json_path):
+        if not os.path.isfile(json_path):
+            # initialize new db
+            dnf.util.ensure_dir(os.path.dirname(json_path))
+            self._write_json_db(json_path, [])
+
+    def _get_json_db(self, json_path, default=[]):
+        with open(json_path, 'r') as f:
+            content = f.read()
+        if content == "":
+            # empty file is invalid json format
+            logger.warning(_("%s is empty file"), json_path)
+            self._write_json_db(json_path, default)
+        else:
+            default = json.loads(content)
+        return default
+
+    @staticmethod
+    def _write_json_db(json_path, content):
+        with open(json_path, 'w') as f:
+            json.dump(content, f)
+
+    def empty(self):
+        self._empty = True

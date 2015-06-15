@@ -107,7 +107,9 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``keepcache``
     boolean
 
-    Keep downloaded packages in the cache. The default is False.
+    Keep downloaded packages in the cache. If set to False and packages have not been
+    installed they will still persist until next successful transaction. The default
+    is False.
 
 .. _metadata_timer_sync-label:
 
