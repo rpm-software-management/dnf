@@ -50,7 +50,7 @@ Setting the mode of operation of the program.
 ``apply_updates``
     boolean, default: False
 
-    Whether packages comprising the available should be applied (i.e. installed via RPM). Implies ``download_updates``.
+    Whether packages comprising the available should be applied (i.e. installed via RPM). Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache to the next successful DNF transaction.
 
 ``download_updates``
     boolean, default: False
