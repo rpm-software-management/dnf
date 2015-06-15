@@ -303,92 +303,7 @@ class GroupPersistor(object):
         return True
 
 
-class RepoPersistor(object):
-    """Persistent data kept for repositories.
-
-    Is arch/releasever specific and stores to cachedir.
-
-    """
-
-    def __init__(self, cachedir):
-        self.cachedir = cachedir
-
-    def _check_json_db(self):
-        json_path = os.path.join(self.cachedir, "expired_repos.json")
-        if not os.path.isfile(json_path):
-            # inicialize new db
-            dnf.util.ensure_dir(self.cachedir)
-            self._write_json_data(json_path, [])
-
-    def _get_expired_from_json(self):
-        json_path = os.path.join(self.cachedir, "expired_repos.json")
-        f = open(json_path, 'r')
-        content = f.read()
-        f.close()
-        if content == "":
-            data = []
-            logger.warning(_("%s is empty file"), "expired_repos.json")
-            self._write_json_data(json_path, data)
-        else:
-            data = json.loads(content)
-        return set(data)
-
-    def _write_json_data(self, path, expired_repos):
-        f = open(path, 'w')
-        json.dump(expired_repos, f)
-        f.close()
-
-    @property
-    def _last_makecache_path(self):
-        return os.path.join(self.cachedir, "last_makecache")
-
-    def get_expired_repos(self):
-        self._check_json_db()
-        return self._get_expired_from_json()
-
-    def reset_last_makecache(self):
-        try:
-            dnf.util.touch(self._last_makecache_path)
-            return True
-        except IOError:
-            logger.info("Failed storing last makecache time.")
-            return False
-
-    def set_expired_repos(self, expired_iterable):
-        self._check_json_db()
-        json_path = os.path.join(self.cachedir, "expired_repos.json")
-        self._write_json_data(json_path, list(set(expired_iterable)))
-
-    def since_last_makecache(self):
-        try:
-            return int(dnf.util.file_age(self._last_makecache_path))
-        except OSError:
-            logger.info("Failed determining last makecache time.")
-            return None
-
-
-class TempfilePersistor(object):
-
-    def __init__(self, cachedir):
-        self.db_path = os.path.join(cachedir, "tempfiles.json")
-        self.tempfiles_to_add = set()
-        self._empty = False
-
-    def get_saved_tempfiles(self):
-        self._check_json_db(self.db_path)
-        return self._get_json_db(self.db_path)
-
-    def save(self):
-        if not self._empty and not self.tempfiles_to_add:
-            return
-        self._check_json_db(self.db_path)
-        if self._empty:
-            self._write_json_db(self.db_path, [])
-            return
-        if self.tempfiles_to_add:
-            data = set(self._get_json_db(self.db_path))
-            data.update(self.tempfiles_to_add)
-            self._write_json_db(self.db_path, list(data))
+class JSONDB(object):
 
     def _check_json_db(self, json_path):
         if not os.path.isfile(json_path):
@@ -411,6 +326,70 @@ class TempfilePersistor(object):
     def _write_json_db(json_path, content):
         with open(json_path, 'w') as f:
             json.dump(content, f)
+
+
+class RepoPersistor(JSONDB):
+    """Persistent data kept for repositories.
+
+    Is arch/releasever specific and stores to cachedir.
+
+    """
+
+    def __init__(self, cachedir):
+        self.cachedir = cachedir
+        self.db_path = os.path.join(self.cachedir, "expired_repos.json")
+
+    @property
+    def _last_makecache_path(self):
+        return os.path.join(self.cachedir, "last_makecache")
+
+    def get_expired_repos(self):
+        self._check_json_db(self.db_path)
+        return set(self._get_json_db(self.db_path))
+
+    def reset_last_makecache(self):
+        try:
+            dnf.util.touch(self._last_makecache_path)
+            return True
+        except IOError:
+            logger.info("Failed storing last makecache time.")
+            return False
+
+    def set_expired_repos(self, expired_iterable):
+        self._check_json_db(self.db_path)
+        json_path = os.path.join(self.cachedir, "expired_repos.json")
+        self._write_json_db(json_path, list(set(expired_iterable)))
+
+    def since_last_makecache(self):
+        try:
+            return int(dnf.util.file_age(self._last_makecache_path))
+        except OSError:
+            logger.info("Failed determining last makecache time.")
+            return None
+
+
+class TempfilePersistor(JSONDB):
+
+    def __init__(self, cachedir):
+        self.db_path = os.path.join(cachedir, "tempfiles.json")
+        self.tempfiles_to_add = set()
+        self._empty = False
+
+    def get_saved_tempfiles(self):
+        self._check_json_db(self.db_path)
+        return self._get_json_db(self.db_path)
+
+    def save(self):
+        if not self._empty and not self.tempfiles_to_add:
+            return
+        self._check_json_db(self.db_path)
+        if self._empty:
+            self._write_json_db(self.db_path, [])
+            return
+        if self.tempfiles_to_add:
+            data = set(self._get_json_db(self.db_path))
+            data.update(self.tempfiles_to_add)
+            self._write_json_db(self.db_path, list(data))
 
     def empty(self):
         self._empty = True
