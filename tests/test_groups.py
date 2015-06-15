@@ -87,6 +87,8 @@ class PresetPersistorTest(support.ResultTestCase):
 
     def test_environment_remove(self):
         comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        self.assertGreater(self.base.group_remove(grp), 0)
         env = comps.environment_by_pattern("sugar-desktop-environment")
         self.assertGreater(self.base.environment_remove(env), 0)
         prst = self.base.group_persistor

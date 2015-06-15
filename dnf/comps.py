@@ -428,6 +428,8 @@ class Solver(object):
     def _removable_grp(self, grp_name):
         prst = self.persistor
         count = 0
+        if not prst.group(grp_name).installed:
+            return False
         for id_ in prst.environments:
             p_env = prst.environment(id_)
             count += sum(1 for grp in p_env.full_list if grp == grp_name)
