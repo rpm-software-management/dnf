@@ -1156,11 +1156,13 @@ class Base(object):
 
     def _add_comps_trans(self, trans):
         cnt = 0
+        clean_deps = self.conf.clean_requirements_on_remove
         attr_fn = ((trans.install, self._goal.install),
                    (trans.install_opt,
                     functools.partial(self._goal.install, optional=True)),
                    (trans.upgrade, self._goal.upgrade),
-                   (trans.remove, self._goal.erase))
+                   (trans.remove,
+                    functools.partial(self._goal.erase, clean_deps=clean_deps)))
 
         for (attr, fn) in attr_fn:
             for it in attr:
