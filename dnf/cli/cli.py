@@ -723,6 +723,15 @@ class Cli(object):
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(self.repo_setopts)
+        if opts.repofrompath:
+            for label, path in opts.repofrompath.items():
+                if path[0] == '/':
+                    path = 'file://' + path
+                repofp = dnf.repo.Repo(label, self.base.conf.cachedir)
+                repofp.baseurl = path
+                self.base.repos.add(repofp)
+                logger.info(_("Added %s repo from %s") % (label, path))
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
