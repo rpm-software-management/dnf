@@ -36,6 +36,7 @@ Requires:   python-dnf = %{version}-%{release}
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
+Obsoletes:  dnf <= 0.6.4
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
