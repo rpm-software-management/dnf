@@ -129,6 +129,13 @@ Options
 ``--refresh``
     set metadata as expired before running the command
 
+``--repofrompath <repo>,<path/url>``
+    Specify a path or url to a repository (same path as in a baseurl) to add to
+    the repositories for this query. This option can be used multiple times.
+    If you want to view only the packages from this repository combine this
+    with ``--disablerepo``/``--enablerepo``. The repo label for the repository
+    is specified by <repo>.
+
 ``--nogpgcheck``
     skip checking GPG signatures on packages
 
