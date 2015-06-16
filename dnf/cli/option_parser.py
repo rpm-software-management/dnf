@@ -130,6 +130,20 @@ class OptionParser(argparse.ArgumentParser):
             res = getattr(namespace, self.dest)
             res.extend(re.split("\s*,?\s*", values))
 
+    class _SplitExtendDictCallback(argparse.Action):
+        """ Split string at "," or whitespace to (key, value).
+        Extends dict with {key: value}."""
+        def __call__(self, parser, namespace, values, opt_str):
+            try:
+                key, val = values.split(',')
+                if not key or not val:
+                    raise ValueError
+            except ValueError:
+                msg = _('bad format: %s') % values
+                raise argparse.ArgumentError(self, msg)
+            dct = getattr(namespace, self.dest)
+            dct[key] = val
+
     def _addYumBasicOptions(self):
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
@@ -191,6 +205,11 @@ class OptionParser(argparse.ArgumentParser):
                           action=self._SplitCallback,
                           help=_("disable excludes"),
                           metavar='[repo]')
+        self.add_argument("--repofrompath", default={},
+                          action=self._SplitExtendDictCallback,
+                          metavar='[repo,path]',
+                          help=_("label and path to additional repository," \
+                                 " can be specified multiple times."))
         self.add_argument("--noplugins", action="store_false", default=None,
                           dest='plugins', help=_("disable all plugins"))
         self.add_argument("--nogpgcheck", action="store_true", default=None,
