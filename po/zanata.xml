@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+  <url>https://fedora.zanata.org/</url>
+  <project>dnf</project>
+  <project-version>master</project-version>
+  <project-type>gettext</project-type>
+  <locales>
+    <locale>af</locale>
+    <locale>am</locale>
+    <locale>ar</locale>
+    <locale>as</locale>
+    <locale>ast</locale>
+    <locale>bal</locale>
+    <locale>be</locale>
+    <locale>bg</locale>
+    <locale>bn</locale>
+    <locale map-from="bn_IN">bn-IN</locale>
+    <locale>bo</locale>
+    <locale>br</locale>
+    <locale>brx</locale>
+    <locale>bs</locale>
+    <locale>ca</locale>
+    <locale>cs</locale>
+    <locale>cy</locale>
+    <locale>da</locale>
+    <locale>de</locale>
+    <locale map-from="de_CH">de-CH</locale>
+    <locale>el</locale>
+    <locale map-from="en_GB">en-GB</locale>
+    <locale>eo</locale>
+    <locale>es</locale>
+    <locale>et</locale>
+    <locale>eu</locale>
+    <locale>fa</locale>
+    <locale>fi</locale>
+    <locale>fr</locale>
+    <locale>gl</locale>
+    <locale>gu</locale>
+    <locale>he</locale>
+    <locale>hi</locale>
+    <locale>hr</locale>
+    <locale>hu</locale>
+    <locale>ia</locale>
+    <locale>id</locale>
+    <locale>ilo</locale>
+    <locale>is</locale>
+    <locale>it</locale>
+    <locale>ja</locale>
+    <locale>ka</locale>
+    <locale>kk</locale>
+    <locale>km</locale>
+    <locale>kn</locale>
+    <locale>ko</locale>
+    <locale>kw</locale>
+    <locale map-from="kw_GB">kw-GB</locale>
+    <locale>kw@kkcor</locale>
+    <locale>kw@uccor</locale>
+    <locale>ky</locale>
+    <locale>lt</locale>
+    <locale>lv</locale>
+    <locale>mai</locale>
+    <locale>mk</locale>
+    <locale>ml</locale>
+    <locale>mn</locale>
+    <locale>mr</locale>
+    <locale>ms</locale>
+    <locale>nb</locale>
+    <locale>nds</locale>
+    <locale>ne</locale>
+    <locale>nl</locale>
+    <locale>nn</locale>
+    <locale>nso</locale>
+    <locale>or</locale>
+    <locale>pa</locale>
+    <locale>pl</locale>
+    <locale>pt</locale>
+    <locale map-from="pt_BR">pt-BR</locale>
+    <locale>ro</locale>
+    <locale>ru</locale>
+    <locale>si</locale>
+    <locale>sk</locale>
+    <locale>sl</locale>
+    <locale>sq</locale>
+    <locale>sr</locale>
+    <locale map-from="sr@Latn">sr@latin</locale>
+    <locale>sv</locale>
+    <locale>ta</locale>
+    <locale>te</locale>
+    <locale>tg</locale>
+    <locale>th</locale>
+    <locale>tr</locale>
+    <locale>tw</locale>
+    <locale>uk</locale>
+    <locale>ur</locale>
+    <locale>vi</locale>
+    <locale>wba</locale>
+    <locale>yo</locale>
+    <locale map-from="zh_CN">zh-CN</locale>
+    <locale map-from="zh_HK">zh-HK</locale>
+    <locale map-from="zh_TW">zh-TW</locale>
+    <locale>zu</locale>
+  </locales>
+
+</config>
