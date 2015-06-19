@@ -148,10 +148,11 @@ class BaseCli(dnf.Base):
             return None
         return self.group_persistor.diff()
 
-    def do_transaction(self):
+    def do_transaction(self, display='DEFAULT'):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
 
+        :param display: a `TransactionDisplay` object
         :return: a numeric return code, and optionally a list of
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
@@ -215,7 +216,8 @@ class BaseCli(dnf.Base):
             # Check GPG signatures
             self.gpgsigcheck(downloadpkgs)
 
-        display = output.CliTransactionDisplay()
+        if display is 'DEFAULT':
+            display = output.CliTransactionDisplay()
         super(BaseCli, self).do_transaction(display)
         if trans:
             msg = self.output.post_transaction_output(trans)

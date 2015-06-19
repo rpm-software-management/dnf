@@ -20,6 +20,8 @@
 
 from __future__ import unicode_literals
 
+from . import output
+
 class _BoolDefault(object):
     def __init__(self, default):
         self.default = default
@@ -53,3 +55,5 @@ class DemandSheet(object):
     cacheonly = _BoolDefault(False)
     fresh_metadata = _BoolDefault(True)
     freshest_metadata = _BoolDefault(False)
+
+    transaction_display = output.CliTransactionDisplay()

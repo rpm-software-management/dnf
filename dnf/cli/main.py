@@ -157,7 +157,7 @@ def resolving(cli, base):
 
     # Run the transaction
     try:
-        base.do_transaction()
+        base.do_transaction(display=cli.demands.transaction_display)
     except dnf.cli.CliError as exc:
         logger.error(ucd(exc))
         return 1
