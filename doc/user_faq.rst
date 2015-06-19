@@ -125,7 +125,7 @@ For my stable Fedora release, can I install the rawhide packages for testing pur
 
 Yes, in two steps: first install the necessary ``.repo`` files::
 
-    dnf install fedora-release-rawhide
+    dnf install fedora-repos-rawhide
 
 Then, when you want to include the packages from the rawhide repo, execute a DNF command with Rawhide enabled::
 
