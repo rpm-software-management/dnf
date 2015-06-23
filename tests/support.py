@@ -179,7 +179,7 @@ class _BaseStubMixin(object):
             repo.enable()
             self._repos.add(repo)
 
-        self._persistor = FakePersistor()
+        self.repo_persistor = FakePersistor()
         self._yumdb = MockYumDB()
         self.ds_callback = mock.Mock()
 

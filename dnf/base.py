@@ -75,7 +75,7 @@ class Base(object):
         self._closed = False
         self._conf = conf or self._setup_default_conf()
         self._goal = None
-        self._persistor = None
+        self.repo_persistor = None
         self._sack = None
         self._transaction = None
         self._ts = None
@@ -169,10 +169,10 @@ class Base(object):
             except dnf.exceptions.MetadataError:
                 return False
 
-        if self._persistor:
+        if self.repo_persistor:
             expired = [r.id for r in self.repos.iter_enabled()
                        if check_expired(r)]
-            self._persistor.set_expired_repos(expired)
+            self.repo_persistor.set_expired_repos(expired)
 
         if self.group_persistor:
             self.group_persistor.save()
@@ -224,7 +224,7 @@ class Base(object):
         self._transaction = value
 
     def activate_persistor(self):
-        self._persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
+        self.repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""

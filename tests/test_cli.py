@@ -164,7 +164,7 @@ class CliTest(TestCase):
         opts.cacheonly = True
         opts.repofrompath = {}
 
-        pers = self.base._persistor
+        pers = self.base.repo_persistor
         pers.get_expired_repos = mock.Mock(return_value=('one',))
         self.base._repos = dnf.repodict.RepoDict()
         self.base._repos.add(support.MockRepo('one', None))

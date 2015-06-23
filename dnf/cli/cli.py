@@ -753,7 +753,7 @@ class Cli(object):
                 repo.gpgcheck = False
                 repo.repo_gpgcheck = False
 
-        for rid in self.base._persistor.get_expired_repos():
+        for rid in self.base.repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
                 repo.md_expire_cache()
