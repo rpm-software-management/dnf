@@ -279,6 +279,11 @@ class Base(object):
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
                     self._tempfiles)
+        if self._tempfile_persistor.tempfiles_to_add:
+            logger.info(_("The downloaded packages were saved in cache "
+                          "till the next successful transaction."))
+            logger.info(_("You can remove cached packages by executing "
+                          "'%s'"), "dnf clean packages")
 
         # Do not trigger the lazy creation:
         if self._history is not None:
