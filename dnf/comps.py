@@ -196,7 +196,24 @@ class Forwarder(object):
 
 class Category(Forwarder):
     # :api
-    pass
+    def __init__(self, iobj, langs, group_factory):
+        super(Category, self).__init__(iobj, langs)
+        self._group_factory = group_factory
+
+    def _build_group(self, grp_id):
+        grp = self._group_factory(grp_id.name)
+        if grp is None:
+            msg = "no group '%s' from category '%s'"
+            raise ValueError(msg % (grp_id.name, self.id))
+        return grp
+
+    def groups_iter(self):
+        for grp_id in self.group_ids:
+            yield self._build_group(grp_id)
+
+    @property
+    def groups(self):
+        return list(self.groups_iter())
 
 class Environment(Forwarder):
     # :api
@@ -292,7 +309,7 @@ class Comps(object):
         return _internal_comps_length(self._i)
 
     def _build_category(self, icategory):
-        return Category(icategory, self._langs)
+        return Category(icategory, self._langs, self.group_by_id)
 
     def _build_environment(self, ienvironment):
         return Environment(ienvironment, self._langs, self.group_by_id)
