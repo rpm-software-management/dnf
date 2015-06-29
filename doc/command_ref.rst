@@ -136,7 +136,7 @@ Options
     Disable all plugins.
 
 ``-q, --quiet``
-    quiet operation
+    In combination with a non-interactive command it shows just the relevant content. It suppresses messages notifying about current state or actions of DNF.
 
 ``-R <minutes>, --randomwait=<minutes>``
     maximum command wait time
