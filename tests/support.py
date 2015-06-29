@@ -200,7 +200,8 @@ class _BaseStubMixin(object):
         return MockGroupPersistor()
 
     def build_comps_solver(self):
-        return dnf.comps.Solver(self.group_persistor, REASONS.get)
+        return dnf.comps.Solver(self.group_persistor, self._comps,
+                                REASONS.get)
 
     def activate_persistor(self):
         pass
@@ -233,7 +234,7 @@ class _BaseStubMixin(object):
                          nogpgcheck=True, demands=dnf.cli.demand.DemandSheet())
 
     def read_mock_comps(self, seed_persistor=True):
-        self._comps, self.group_persistor = mock_comps(seed_persistor)
+        self._comps, self._group_persistor = mock_comps(seed_persistor)
         return self._comps
 
     def read_all_repos(self, repo_setopts=None):

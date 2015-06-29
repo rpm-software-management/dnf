@@ -84,7 +84,7 @@ class Base(object):
         self._history = None
         self._tempfiles = set()
         self.ds_callback = dnf.callback.Depsolve()
-        self.group_persistor = None
+        self._group_persistor = None
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
@@ -175,8 +175,8 @@ class Base(object):
                        if check_expired(r)]
             self.repo_persistor.set_expired_repos(expired)
 
-        if self.group_persistor:
-            self.group_persistor.save()
+        if self._group_persistor:
+            self._group_persistor.save()
 
         if self._tempfile_persistor:
             self._tempfile_persistor.save()
@@ -194,6 +194,10 @@ class Base(object):
     @property
     def goal(self):
         return self._goal
+
+    @property
+    def group_persistor(self):
+        return self._group_persistor
 
     @property
     def repos(self):
@@ -313,8 +317,8 @@ class Base(object):
             self._goal = None
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
-            if self.group_persistor is not None:
-                self.group_persistor = self._activate_group_persistor()
+            if self._group_persistor is not None:
+                self._group_persistor = self._activate_group_persistor()
 
     def closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
@@ -369,7 +373,7 @@ class Base(object):
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
         timer = dnf.logging.Timer('loading comps')
-        self.group_persistor = self._activate_group_persistor()
+        self._group_persistor = self._activate_group_persistor()
         self._comps = dnf.comps.Comps()
 
         logger.log(dnf.logging.DDEBUG, 'Getting group metadata')
@@ -537,7 +541,7 @@ class Base(object):
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
-        persistor = self.group_persistor
+        persistor = self._group_persistor
         if persistor:
             persistor.commit()
 
@@ -1214,21 +1218,21 @@ class Base(object):
             except AttributeError:
                 return 'unknown'
 
-        return dnf.comps.Solver(self.group_persistor, reason_fn)
+        return dnf.comps.Solver(self._group_persistor, self._comps, reason_fn)
 
-    def environment_install(self, env, types, exclude=None, strict=True):
+    def environment_install(self, env_id, types, exclude=None, strict=True):
         solver = self.build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver.environment_install,
-                                          env, types, exclude or set(),
+                                          env_id, types, exclude or set(),
                                           strict)
         if not trans:
             return 0
         return self._add_comps_trans(trans)
 
-    def environment_remove(self, env):
+    def environment_remove(self, env_id):
         solver = self.build_comps_solver()
-        trans = solver.environment_remove(env)
+        trans = solver.environment_remove(env_id)
         return self._add_comps_trans(trans)
 
     _COMPS_TRANSLATION = {
@@ -1245,7 +1249,7 @@ class Base(object):
                 ret |= enum
         return ret
 
-    def group_install(self, grp, pkg_types, exclude=None, strict=True):
+    def group_install(self, grp_id, pkg_types, exclude=None, strict=True):
         """Installs packages of selected group
         :param exclude: list of package name glob patterns
             that will be excluded from install set
@@ -1266,12 +1270,12 @@ class Base(object):
         solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = dnf.comps.install_or_skip(solver.group_install,
-                                          grp, pkg_types, exclude_pkgnames,
+                                          grp_id, pkg_types, exclude_pkgnames,
                                           strict)
         if not trans:
             return 0
         logger.debug("Adding packages from group '%s': %s",
-                     grp.id, trans.install)
+                     grp_id, trans.install)
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types, strict=True):
@@ -1287,18 +1291,18 @@ class Base(object):
                 logger.error("Warning: %s", ucd(err))
                 done = False
                 continue
-            for group in res.groups:
-                cnt += self.group_install(group, types, strict=strict)
-            for env in res.environments:
-                cnt += self.environment_install(env, types, strict=strict)
+            for group_id in res.groups:
+                cnt += self.group_install(group_id, types, strict=strict)
+            for env_id in res.environments:
+                cnt += self.environment_install(env_id, types, strict=strict)
         if not done and strict:
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
-    def group_remove(self, grp):
+    def group_remove(self, grp_id):
         # :api
         solver = self.build_comps_solver()
-        trans = solver.group_remove(grp)
+        trans = solver.group_remove(grp_id)
         return self._add_comps_trans(trans)
 
     def env_group_remove(self, patterns):
@@ -1317,10 +1321,10 @@ class Base(object):
             cnt += self.group_remove(grp)
         return cnt
 
-    def group_upgrade(self, grp):
+    def group_upgrade(self, grp_id):
         # :api
         solver = self.build_comps_solver()
-        trans = solver.group_upgrade(grp)
+        trans = solver.group_upgrade(grp_id)
         return self._add_comps_trans(trans)
 
     def gpgKeyCheck(self):

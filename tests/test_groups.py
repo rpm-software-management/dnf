@@ -34,26 +34,26 @@ class EmptyPersistorTest(support.ResultTestCase):
     def test_group_install_exclude(self):
         comps = self.base.comps
         grp = comps.group_by_pattern('somerset')
-        cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
+        cnt = self.base.group_install(grp.id, ('optional',), exclude=('lotus',))
         self.assertEqual(cnt, 0)
 
     @support.mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
     def test_group_install_locale(self, _unused):
         comps = self.base.comps
         grp = comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
-        cnt = self.base.group_install(grp, ('mandatory',))
+        cnt = self.base.group_install(grp.id, ('mandatory',))
         self.assertEqual(cnt, 2)
 
     def test_group_install_exclude_glob(self):
         comps = self.base.comps
         grp = comps.group_by_pattern('somerset')
-        cnt = self.base.group_install(grp, ('optional',), exclude=('lo*',))
+        cnt = self.base.group_install(grp.id, ('optional',), exclude=('lo*',))
         self.assertEqual(cnt, 0)
 
     def test_group_install_exclude_notexist(self):
         comps = self.base.comps
         grp = comps.group_by_pattern('somerset')
-        cnt = self.base.group_install(grp, ('optional',), exclude=('x*',))
+        cnt = self.base.group_install(grp.id, ('optional',), exclude=('x*',))
         self.assertEqual(cnt, 1)
 
     def test_add_comps_trans(self):
@@ -86,13 +86,12 @@ class PresetPersistorTest(support.ResultTestCase):
                           ['nonexistent'])
 
     def test_environment_remove(self):
-        comps = self.base.comps
-        grp = comps.group_by_pattern('somerset')
-        self.assertGreater(self.base.group_remove(grp), 0)
-        env = comps.environment_by_pattern("sugar-desktop-environment")
-        self.assertGreater(self.base.environment_remove(env), 0)
         prst = self.base.group_persistor
-        p_env = prst.environment(env.id)
+        env_ids = prst.environments_by_pattern("sugar-desktop-environment")
+        self.assertEqual(env_ids, set(['sugar-desktop-environment']))
+        env_id = dnf.util.first(env_ids)
+        self.assertGreater(self.base.environment_remove(env_id), 0)
+        p_env = prst.environment(env_id)
         self.assertFalse(p_env.installed)
         peppers = prst.group('Peppers')
         somerset = prst.group('somerset')
@@ -105,7 +104,7 @@ class PresetPersistorTest(support.ResultTestCase):
         p_grp = prst.group('base')
         self.assertFalse(p_grp.installed)
 
-        self.assertEqual(self.base.group_install(grp, ('mandatory',)), 2)
+        self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertEmpty(removed)
@@ -113,10 +112,12 @@ class PresetPersistorTest(support.ResultTestCase):
 
     def test_group_remove(self):
         prst = self.base.group_persistor
-        grp = self.base.comps.group_by_pattern('somerset')
+        grp_ids = prst.groups_by_pattern('somerset')
+        self.assertEqual(grp_ids, set(['somerset']))
+        grp_id = dnf.util.first(grp_ids)
         p_grp = prst.group('somerset')
 
-        self.assertGreater(self.base.group_remove(grp), 0)
+        self.assertGreater(self.base.group_remove(grp_id), 0)
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
@@ -141,7 +142,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
     def test_environment_install(self):
         comps = self.base.comps
         env = comps.environment_by_pattern("sugar-desktop-environment")
-        self.base.environment_install(env, ('mandatory',))
+        self.base.environment_install(env.id, ('mandatory',))
         installed, _ = self.installed_removed(self.base)
         self.assertCountEqual(map(operator.attrgetter('name'), installed),
                               ('trampoline',))
