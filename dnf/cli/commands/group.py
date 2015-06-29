@@ -230,50 +230,53 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        persistor = self.base.group_persistor
-        q = CompsQuery(self.base.comps, persistor,
+        prst = self.base.group_persistor
+        q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         solver = self.base.build_comps_solver()
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
-        for env in res.environments:
+        for env_id in res.environments:
             if not dnf.comps.install_or_skip(solver.environment_install,
-                                             env, types):
-                res.environments.remove(env)
-        for group in res.groups:
+                                             env_id, types):
+                res.environments.remove(env_id)
+        for group_id in res.groups:
             if not dnf.comps.install_or_skip(solver.group_install,
-                                             group, types):
-                res.groups.remove(group)
+                                             group_id, types):
+                res.groups.remove(group_id)
 
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
-                        ','.join([g.ui_name for g in res.environments]))
+                        ','.join([prst.environement(g).ui_name
+                                  for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
-                        ','.join([g.ui_name for g in res.groups]))
-        persistor.commit()
+                        ','.join([prst.group(g).ui_name for g in res.groups]))
+        prst.commit()
 
     def _mark_remove(self, patterns):
-        persistor = self.base.group_persistor
-        q = CompsQuery(self.base.comps, persistor,
+        prst = self.base.group_persistor
+        q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
         solver = self.base.build_comps_solver()
         res = q.get(*patterns)
-        for env in res.environments:
-            solver.environment_remove(env)
-        for grp in res.groups:
-            solver.group_remove(grp)
+        for env_id in res.environments:
+            solver.environment_remove(env_id)
+        for grp_id in res.groups:
+            solver.group_remove(grp_id)
 
         if res.environments:
             logger.info(_('Environments marked removed: %s'),
-                        ','.join([g.ui_name for g in res.environments]))
+                        ','.join([prst.environment(e_id).ui_name
+                                  for e_id in res.environments]))
         if res.groups:
             logger.info(_('Groups marked removed: %s'),
-                        ','.join([g.ui_name for g in res.groups]))
-        persistor.commit()
+                        ','.join([prst.group(g_id).ui_name
+                                  for g_id in res.groups]))
+        prst.commit()
 
     def _mark_subcmd(self, extcmds):
         if extcmds[0] in self._MARK_CMDS:
@@ -331,7 +334,7 @@ class GroupCommand(commands.Command):
         res = q.get(*patterns)
         cnt = 0
         for grp in res.groups:
-            cnt += self.base.group_upgrade(grp)
+            cnt += self.base.group_upgrade(grp.id)
         if not cnt:
             msg = _('No packages marked for upgrade.')
             raise dnf.cli.CliError(msg)
@@ -344,8 +347,7 @@ class GroupCommand(commands.Command):
             demands.root_user = True
         if cmd == 'remove':
             demands.allow_erasing = True
-            # temporary fix for 1214968
-            demands.available_repos = True
+            demands.available_repos = False
         else:
             demands.available_repos = True
 

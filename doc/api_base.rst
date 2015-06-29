@@ -86,17 +86,17 @@
 
     Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. Raises :exc:`.DownloadError` if some packages failed to download.
 
-  .. method:: group_install(group, pkg_types, exclude=None)
+  .. method:: group_install(group_id, pkg_types, exclude=None)
 
-    Mark `group` (a :class:`dnf.comps.Group` instance) installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible (but e.g. packages tagged *mandatory* will be marked for installation no matter the value of `exclude`)
+    Mark group with corresponding `group_id` installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible (but e.g. packages tagged *mandatory* will be marked for installation no matter the value of `exclude`)
 
-  .. method:: group_remove(group)
+  .. method:: group_remove(group_id)
 
-    Mark `group` (a :class:`dnf.comps.Group` instance) not installed. All the packages marked as belonging to this group will be marked for removal. Return the number of packages marked for removal in this call.
+    Mark group with corresponding `group_id` not installed. All the packages marked as belonging to this group will be marked for removal. Return the number of packages marked for removal in this call.
 
-  .. method:: group_upgrade(group)
+  .. method:: group_upgrade(group_id)
 
-    Upgrade `group` (a :class:`dnf.comps.Group` instance). If there has been packages added to the group's comps information since installing on the system, they will be marked for installation. Similarly, removed packages get marked for removal. The remaining packages in the group are marked for an upgrade. The operation respects the package types from the original installation of the group.
+    Upgrade group with corresponding `group_id`. If there has been packages added to the group's comps information since installing on the system, they will be marked for installation. Similarly, removed packages get marked for removal. The remaining packages in the group are marked for an upgrade. The operation respects the package types from the original installation of the group.
 
   .. method:: read_all_repos()
 

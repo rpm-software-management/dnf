@@ -904,7 +904,7 @@ class Output(object):
         if not error:
             logger.info(_("Installed size: %s"), format_number(totsize))
 
-    def list_group_transaction(self, comps, diff):
+    def list_group_transaction(self, comps, prst, diff):
         if not diff:
             return None
 
@@ -921,7 +921,7 @@ class Output(object):
             out.append(_('Marking removed:'))
         for grp_id in diff.removed_groups:
             pkgs = list(diff.removed_packages(grp_id))
-            grp_name = comps.group_by_id(grp_id).ui_name
+            grp_name = prst.group(grp_id).ui_name
             rows.extend(_spread_in_columns(4, grp_name, pkgs))
 
         if rows:

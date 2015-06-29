@@ -31,12 +31,31 @@ import collections
 import distutils.version
 import dnf.util
 import errno
+import fnmatch
 import itertools
 import json
 import logging
 import os
+import re
 
 logger = logging.getLogger("dnf")
+
+
+def _by_pattern(pattern, ids, lookup_fn, case_sensitive):
+    pattern = dnf.i18n.ucd(pattern)
+
+    exact = {id for id in ids if lookup_fn(id).name == pattern or id == pattern}
+    if exact:
+        return exact
+
+    if case_sensitive:
+        match = re.compile(fnmatch.translate(pattern)).match
+    else:
+        match = re.compile(fnmatch.translate(pattern), flags=re.I).match
+
+    return {id for id in ids if match(lookup_fn(id).name) or
+            match(lookup_fn(id).ui_name) or match(id)}
+
 
 def _clone_dct(dct):
     cln = {}
@@ -324,12 +343,20 @@ class GroupPersistor(object):
     def environments(self):
         return self.db['ENVIRONMENTS']
 
+    def environments_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(pattern, self.environments,
+                           self.environment, case_sensitive)
+
     def group(self, id_):
         return self._access('GROUPS', id_)
 
     @property
     def groups(self):
         return self.db['GROUPS']
+
+    def groups_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(pattern, self.groups,
+                           self.group, case_sensitive)
 
     def save(self):
         if not self._commit:
