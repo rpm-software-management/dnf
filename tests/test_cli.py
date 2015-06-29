@@ -142,6 +142,7 @@ class CliTest(TestCase):
         opts = Namespace()
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
+        opts.repofrompath = {}
         self.base._repos = dnf.repodict.RepoDict()
         self.base._repos.add(support.MockRepo('one', None))
         self.base._repos.add(support.MockRepo('two', None))
@@ -161,6 +162,7 @@ class CliTest(TestCase):
         opts = Namespace()
         opts.repos_ed = []
         opts.cacheonly = True
+        opts.repofrompath = {}
 
         pers = self.base._persistor
         pers.get_expired_repos = mock.Mock(return_value=('one',))
