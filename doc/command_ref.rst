@@ -77,7 +77,7 @@ Options
 ``--assumeno``
     answer no for all questions
 
-``--best``
+``-b, --best``
     Try the best available package versions in transactions. Specifically during ``dnf upgrade``, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages and possibly fail giving a reason why the latest version can not be installed.
 
 ``-C, --cacheonly``
