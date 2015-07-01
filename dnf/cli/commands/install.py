@@ -68,10 +68,9 @@ class InstallCommand(commands.Command):
         # Install groups.
         if grp_specs:
             self.base.read_comps()
-            cnt = self.base.env_group_install(grp_specs,
-                                              dnf.const.GROUP_PACKAGE_TYPES)
-            if cnt:
-                done = True
+            self.base.env_group_install(grp_specs,
+                                        dnf.const.GROUP_PACKAGE_TYPES)
+            done = True
 
         # Install packages.
         for pkg_spec in pkg_specs:
