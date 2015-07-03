@@ -397,10 +397,10 @@ List Command
 ------------
 
 Dumps lists of packages depending on the packages' relation to the
-system. Generally packages are available (it is present in a repository we know
-about) or installed (present in the RPMDB). The list command can also limit the
-displayed packages according to other criteria, e.g. to only those that update
-an installed package.
+system. A package is ``installed`` if it is present in the RPMDB, and it is ``available``
+if it is not installed but it is present in a repository that DNF knows about.
+The list command can also limit the displayed packages according to other criteria,
+e.g. to only those that update an installed package.
 
 All the forms take a ``[<package-specs>...]`` parameter to further limit the
 result to only those packages matching it.
@@ -507,7 +507,7 @@ The repository-packages command allows the user to run commands on top of all pa
     List packages installed from the repository.
 
 ``dnf [options] repository-packages <repoid> info available [<package-name-spec>...]``
-    List packages available in the repository.
+    List packages available in the repository but not currently installed on the system.
 
 ``dnf [options] repository-packages <repoid> info extras [<package-name-specs>...]``
     List packages installed from the repository that are not available in any repository.
@@ -531,7 +531,7 @@ The repository-packages command allows the user to run commands on top of all pa
     List packages installed from the repository.
 
 ``dnf [options] repository-packages <repoid> list available [<package-name-spec>...]``
-    List packages available in the repository.
+    List packages available in the repository but not currently installed on the system.
 
 ``dnf [options] repository-packages <repoid> list extras [<package-name-specs>...]``
     List packages installed from the repository that are not available in any repository.
