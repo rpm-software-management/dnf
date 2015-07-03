@@ -21,6 +21,7 @@
 from gettext import NullTranslations
 from sys import version_info
 import base64
+import email.mime.text
 import itertools
 import locale
 import types
@@ -58,6 +59,8 @@ if PY3:
         locale.setlocale(category, loc)
     def write_to_file(f, content):
         f.write(content)
+    def email_mime(body):
+        return email.mime.text.MIMEText(body)
 
 else:
     # functions renamed in py3
@@ -86,3 +89,5 @@ else:
         locale.setlocale(category, loc.encode('utf-8'))
     def write_to_file(f, content):
         f.write(content.encode('utf-8'))
+    def email_mime(body):
+        return email.mime.text.MIMEText(body.encode('utf-8'))

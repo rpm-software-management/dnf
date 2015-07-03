@@ -22,8 +22,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.i18n import _
-import email.mime.text
 import logging
+import dnf.pycomp
 import smtplib
 
 APPLIED = _("The following updates have been applied on '%s':")
@@ -86,7 +86,7 @@ class EmailEmitter(Emitter):
 
     def commit(self):
         subj, body = self._prepare_msg()
-        message = email.mime.text.MIMEText(body)
+        message = dnf.pycomp.email_mime(body)
         email_from = self._conf.email_from
         email_to = self._conf.email_to
         message['Subject'] = subj
