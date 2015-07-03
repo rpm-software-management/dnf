@@ -235,7 +235,7 @@ When one executes::
 
   yum provides sandbox
 
-Yum applies extra heuristics to determine what the user meant by ``sandbox``, for instance it sequentially prepends entries from the ``PATH`` environment variable to it to see if it matches a file provided by some package. This is an undocumented behaivor that DNF does not emulate. Just typically use::
+Yum applies extra heuristics to determine what the user meant by ``sandbox``, for instance it sequentially prepends entries from the ``PATH`` environment variable to it to see if it matches a file provided by some package. This is an undocumented behavior that DNF does not emulate. Just typically use::
 
   dnf provides /usr/bin/sandbox
 
