@@ -101,7 +101,7 @@ _dnf()
     if [[ $command ]]; then
 
         case $command in
-            install|update|upgrade|reinstall)
+            install|update|upgrade|reinstall|info)
                 if ! _is_path "$cur"; then
                     if [ -r $cache_file ] && ! _modified_sack words[@]; then
                         COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
