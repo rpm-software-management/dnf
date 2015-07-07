@@ -282,6 +282,11 @@ configuration.
 
     Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
+``max_parallel_downloads``
+    integer
+
+    Maximum number of simultaneous package downloads. Defaults to 3.
+
 .. _metadata_expire-label:
 
 ``metadata_expire``
