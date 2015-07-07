@@ -53,6 +53,18 @@ class CompsTest(support.TestCase):
         group = dnf.util.first(comps.groups_by_pattern('Base'))
         self.assertIsInstance(group, dnf.comps.Group)
 
+    def test_categories(self):
+        cat = self.comps.categories[0]
+        self.assertEqual(cat.name_by_lang['cs'], u'Základ systému')
+        self.assertEqual(cat.desc_by_lang['de'],
+                         u'Verschiedene Kernstücke des Systems.')
+        self.assertCountEqual((id_.name for id_ in cat.group_ids),
+                              ('base', ))
+        self.assertCountEqual((id_.default for id_ in cat.group_ids),
+                              (False, ))
+        self.assertTrue(all(isinstance(grp, dnf.comps.Group)
+                            for grp in cat.groups_iter()))
+
     def test_environments(self):
         env = self.comps.environments[0]
         self.assertEqual(env.name_by_lang['cs'], u'Prostředí Sugar')
