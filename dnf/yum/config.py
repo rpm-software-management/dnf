@@ -778,6 +778,7 @@ class YumConf(BaseConfig):
             mapper={'4': 'ipv4', '6': 'ipv6'})
     throttle = ThrottleOption(0)
     timeout = SecondsOption(120)
+    max_parallel_downloads = IntOption(None, range_min=1)
 
     metadata_expire = SecondsOption(60 * 60 * 48)    # 48 hours
     metadata_timer_sync = SecondsOption(60 * 60 * 3) #  3 hours
@@ -916,6 +917,7 @@ class RepoConf(BaseConfig):
     ip_resolve = Inherit(YumConf.ip_resolve)
     throttle = Inherit(YumConf.throttle)
     timeout = Inherit(YumConf.timeout)
+    max_parallel_downloads = Inherit(YumConf.max_parallel_downloads)
 
     metadata_expire = Inherit(YumConf.metadata_expire)
     cost = IntOption(1000)

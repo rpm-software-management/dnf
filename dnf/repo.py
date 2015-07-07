@@ -163,13 +163,14 @@ class _DetailedLibrepoError(Exception):
 
 
 class _Handle(librepo.Handle):
-    def __init__(self, gpgcheck, max_mirror_tries):
+    def __init__(self, gpgcheck, max_mirror_tries, max_parallel_downloads=None):
         super(_Handle, self).__init__()
         self.gpgcheck = gpgcheck
         self.maxmirrortries = max_mirror_tries
         self.interruptible = True
         self.repotype = librepo.LR_YUMREPO
         self.useragent = dnf.const.USER_AGENT
+        self.maxparalleldownloads = max_parallel_downloads
         self.yumdlist = [
             "primary", "filelists", "prestodelta", "group_gz", "updateinfo"]
 
@@ -581,7 +582,8 @@ class Repo(dnf.yum.config.RepoConf):
         return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
     def _handle_new_remote(self, destdir, mirror_setup=True):
-        h = _Handle(self.repo_gpgcheck, self.max_mirror_tries)
+        h = _Handle(self.repo_gpgcheck, self.max_mirror_tries,
+                    self.max_parallel_downloads)
         h.varsub = _subst2tuples(self.substitutions)
         h.destdir = destdir
         self._set_ip_resolve(h)
