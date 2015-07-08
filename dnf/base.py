@@ -1441,7 +1441,7 @@ class Base(object):
         # :api
         def is_installed_by_name(pkg_name):
             return first(self.sack.query().installed().filter(name=pkg_name))
-
+        wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
         sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
         match = reduce(lambda x, y: y.matches() or x, sltrs, [])
         if match:
@@ -1451,8 +1451,9 @@ class Base(object):
                     continue
                 pkg_name = sltr.matches()[0].name
                 if not is_installed_by_name(pkg_name):
-                    msg = _("Package %s not installed, cannot update it.")
-                    logger.warning(msg, pkg_name)
+                    if not wildcard: # wildcard shouldn't print not installed packages
+                        msg = _("Package %s not installed, cannot update it.")
+                        logger.warning(msg, pkg_name)
                     continue
                 if reponame is not None:
                     sltr = sltr.set(reponame=reponame)

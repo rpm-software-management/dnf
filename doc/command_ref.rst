@@ -633,7 +633,7 @@ Upgrade Command
     Updates each package to a highest version that is both available and
     resolvable.
 
-``dnf [options] upgrade <package-specs>...``
+``dnf [options] upgrade <package-installed-specs>...``
     Updates each specified package to the latest available version. Updates
     dependencies as necessary.
 
@@ -688,6 +688,9 @@ expanded ``<package-spec>``.
 
 ``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
 matching is never attempted there.
+
+``<package-installed-specs>`` is similar to ``<package-specs>`` except it
+considers only installed packages.
 
 .. _specifying_packages_versions-label:
 
