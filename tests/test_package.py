@@ -74,7 +74,8 @@ class PackageTest(support.TestCase):
         self.assertEquals(self.pkg.localPkg(), '/mnt/cd/f/foo.rpm')
         self.pkg.repo.baseurl = ['http://remote']
         self.assertFalse(self.pkg.repo.local)
-        self.assertEquals(self.pkg.localPkg(), '/cachedir/main/packages/foo.rpm')
+        self.assertEquals(self.pkg.localPkg(),
+                          self.pkg.repo.cachedir + '/packages/foo.rpm')
 
     def test_verify(self):
         with mock.patch.object(self.pkg, 'localPkg',

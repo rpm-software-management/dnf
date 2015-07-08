@@ -127,9 +127,8 @@ class Base(object):
         subst = conf.substitutions
         if 'releasever' not in subst:
             subst['releasever'] = \
-                dnf.rpm.detect_releasever(conf.installroot) or ''
-        suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
-        cache_dirs = dnf.conf.CliCache(conf.cachedir, suffix)
+                dnf.rpm.detect_releasever(conf.installroot)
+        cache_dirs = dnf.conf.CliCache(conf.cachedir)
 
         conf.cachedir = cache_dirs.cachedir
         return conf

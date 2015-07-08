@@ -42,7 +42,7 @@ class BaseTest(support.TestCase):
         base = dnf.Base()
         self.assertIsNotNone(base.conf)
         self.assertIsNotNone(base.conf.cachedir)
-        reg = re.compile('/var/cache/dnf/[a-zA-Z0-9_]+/x')
+        reg = re.compile('/var/cache/dnf')
         self.assertIsNotNone(reg.match(base.conf.cachedir))
 
     @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
@@ -51,7 +51,7 @@ class BaseTest(support.TestCase):
         base = dnf.Base()
         self.assertIsNotNone(base.conf)
         self.assertIsNotNone(base.conf.cachedir)
-        reg = re.compile('/var/tmp/dnf-[a-zA-Z0-9_-]+/[a-zA-Z0-9_]+/x')
+        reg = re.compile('/var/tmp/dnf-[a-zA-Z0-9_-]+')
         self.assertIsNotNone(reg.match(base.conf.cachedir))
 
     def test_reset(self):

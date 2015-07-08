@@ -142,9 +142,12 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def setUp(self):
         self.repo = self.build_repo('r', 'r for riot')
 
+    def tearDown(self):
+        dnf.util.rm_rf(self.repo.cachedir)
+
     def test_cachedir(self):
         self.assertEqual(self.repo.cachedir,
-                         os.path.join(self.TMP_CACHEDIR, self.repo.id))
+                         os.path.join(self.TMP_CACHEDIR, 'r-618824234336026c'))
 
     def test_dump(self):
         dump = self.repo.dump()
@@ -198,6 +201,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         # the second time we only hit the cache:
         del self.repo
         self.repo = dnf.repo.Repo("r", self.TMP_CACHEDIR)
+        self.repo.baseurl = [BASEURL]
         self.assertFalse(self.repo.load())
         self.assertIsNotNone(self.repo.metadata)
 
@@ -206,7 +210,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertIsNone(repo.metadata)
         self.assertTrue(repo.load())
         self.assertIsNotNone(repo.metadata)
-        repomd = os.path.join(self.TMP_CACHEDIR, "r/repodata/repomd.xml")
+        repomd = os.path.join(self.repo.cachedir, "repodata/repomd.xml")
         self.assertTrue(os.path.isfile(repomd))
         self.assertTrue(repo.metadata.fresh)
 
@@ -339,7 +343,8 @@ class LocalRepoTest(support.TestCase):
                         ('sha1', 'd5f18c856e765cd88a50dbf1bfaea51de3b5e516'),
                         ('sha256', 'ead48d5c448a481bd66a4413d7be28bd44ce5de1ee59ecb723c78dcf4e441696'),
                         ('sha512', '9a3131485c0c0a3f65bb5f25155e89d2d6b09e74ffdaa1c3339d3874885d160d8b4667a4a83dbd7d2702a5d41a4e1bc5622c4783b77dcf1f69626c68975202ce')]}
-        self.assertTrue(self.repo.load())
+        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+            self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertFalse(self.repo._expired)
         reset_age_m.assert_called()
@@ -422,7 +427,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         errs = dnf.repo.download_payloads([pload], drpm)
         self.assertEmpty(errs.recoverable)
         self.assertEmpty(errs.irrecoverable)
-        path = os.path.join(self.TMP_CACHEDIR, 'r/packages/tour-4-4.noarch.rpm')
+        path = os.path.join(repo.cachedir, 'packages/tour-4-4.noarch.rpm')
         self.assertFile(path)
 
 

@@ -39,23 +39,26 @@ class OptionTest(unittest.TestCase):
             self.fail("option should be deleted now.")
 
 class CacheTest(TestCase):
-     @mock.patch('dnf.util.am_i_root', return_value=True)
-     def test_root(self, unused_am_i_root):
-         cache = CliCache('/var/lib/spinning', 'i286/20')
-         self.assertEqual(cache.system_cachedir, '/var/lib/spinning/i286/20')
-         self.assertEqual(cache.cachedir, '/var/lib/spinning/i286/20')
 
-     @mock.patch('dnf.yum.misc.getCacheDir', return_value="/notmp/dnf-walr-yeAH")
-     @mock.patch('dnf.util.am_i_root', return_value=False)
-     def test_noroot(self, fn_root, fn_getcachedir):
-         cache = CliCache('/var/lib/spinning', 'i286/20')
-         self.assertEqual(fn_getcachedir.call_count, 0)
-         self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
-         self.assertEqual(fn_getcachedir.call_count, 1)
+    @mock.patch('dnf.util.am_i_root', return_value=True)
+    def test_root(self, unused_am_i_root):
+        cache = CliCache('/var/lib/spinning')
+        self.assertEqual(cache.system_cachedir, '/var/lib/spinning')
+        self.assertEqual(cache.cachedir, '/var/lib/spinning')
 
-         # the cachedirs are cached now, getCacheDir is not called again:
-         self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH/i286/20')
-         self.assertEqual(fn_getcachedir.call_count, 1)
+    @mock.patch('dnf.yum.misc.getCacheDir',
+                return_value="/notmp/dnf-walr-yeAH")
+    @mock.patch('dnf.util.am_i_root', return_value=False)
+    def test_noroot(self, fn_root, fn_getcachedir):
+        cache = CliCache('/var/lib/spinning')
+        self.assertEqual(fn_getcachedir.call_count, 0)
+        self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH')
+        self.assertEqual(fn_getcachedir.call_count, 1)
+
+        # the cachedirs are cached now, getCacheDir is not called again:
+        self.assertEqual(cache.cachedir, '/notmp/dnf-walr-yeAH')
+        self.assertEqual(fn_getcachedir.call_count, 1)
+
 
 class YumConfTest(TestCase):
     def test_bugtracker(self):

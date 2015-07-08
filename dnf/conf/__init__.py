@@ -49,10 +49,9 @@ logger = logging.getLogger('dnf')
 
 
 class CliCache(object):
-    def __init__(self, prefix, suffix):
+    def __init__(self, prefix):
         # set from the client, at most once:
         self.prefix = prefix
-        self.suffix = suffix
         # internal:
         self._ready = False
         self._cachedir = None
@@ -63,18 +62,15 @@ class CliCache(object):
             return
 
         self._ready = True
-        self._system_cachedir = self._retdir(self.prefix)
+        self._system_cachedir = self.prefix
         if util.am_i_root():
             self._cachedir = self._system_cachedir
         else:
             try:
                 user_prefix = misc.getCacheDir()
-                self._cachedir = self._retdir(user_prefix)
+                self._cachedir = user_prefix
             except (IOError, OSError) as e:
                 logger.critical(_('Could not set cachedir: %s'), ucd(e))
-
-    def _retdir(self, dir):
-        return os.path.join(dir, self.suffix)
 
     @property
     def cachedir(self):
