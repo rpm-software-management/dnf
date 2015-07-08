@@ -101,9 +101,7 @@ def _list_cmd_calc_columns(output, ypl):
 
 
 def cachedir_fit(conf):
-    subst = conf.substitutions
-    suffix = dnf.conf.parser.substitute(dnf.const.CACHEDIR_SUFFIX, subst)
-    cli_cache = dnf.conf.CliCache(conf.cachedir, suffix)
+    cli_cache = dnf.conf.CliCache(conf.cachedir)
     return cli_cache.cachedir, cli_cache.system_cachedir
 
 
@@ -1038,10 +1036,6 @@ class Cli(object):
         conf.read(path)
         if releasever is None:
             releasever = dnf.rpm.detect_releasever(root)
-            if releasever is None:
-                msg = _('releasever not given and can not be detected '
-                        'from the installroot.')
-                raise dnf.exceptions.ConfigError(msg)
         conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(root)
@@ -1055,12 +1049,6 @@ class Cli(object):
             conf._var_replace(opt)
 
         self.base.logging.setup_from_dnf_conf(conf)
-
-        # repos are ver/arch specific so add $basearch/$releasever
-        conf._repos_persistdir = os.path.normpath(
-            '%s/repos/%s/%s/' % (conf.persistdir,
-                                 subst.get('basearch', '$basearch'),
-                                 subst.get('releasever', '$releasever')))
 
         timer()
         return conf

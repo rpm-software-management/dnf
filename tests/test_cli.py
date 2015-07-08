@@ -190,7 +190,7 @@ class ConfigureTest(TestCase):
     def test_configure_user(self):
         """ Test Cli.configure as user."""
         self.cli.configure(['update', '-c', self.conffile])
-        reg = re.compile('^/var/tmp/dnf-[a-zA-Z0-9_-]+/[a-zA-Z0-9_]+/[0-9]+$')
+        reg = re.compile('^/var/tmp/dnf-[a-zA-Z0-9_-]+$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
 
@@ -198,7 +198,7 @@ class ConfigureTest(TestCase):
     def test_configure_root(self):
         """ Test Cli.configure as root."""
         self.cli.configure(['update', '-c', self.conffile])
-        reg = re.compile('^/var/cache/dnf/[a-zA-Z0-9_]+/[0-9]+$')
+        reg = re.compile('^/var/cache/dnf$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
 

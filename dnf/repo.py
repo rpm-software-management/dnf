@@ -33,6 +33,7 @@ import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
 import functools
+import hashlib
 import hawkey
 import logging
 import librepo
@@ -453,7 +454,14 @@ class Repo(dnf.yum.config.RepoConf):
 
     @property
     def cachedir(self):
-        return os.path.join(self.basecachedir, self.id)
+        url = self.metalink or self.mirrorlist \
+              or (self.baseurl and self.baseurl[0])
+        if url:
+            digest = hashlib.sha256(url.encode('utf8')).hexdigest()[:16]
+            repodir = "%s-%s" % (self.id, digest)
+        else:
+            repodir = self.id
+        return os.path.join(self.basecachedir, repodir)
 
     @property
     def filelists_fn(self):

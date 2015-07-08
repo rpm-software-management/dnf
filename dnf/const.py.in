@@ -21,7 +21,6 @@
 from __future__ import unicode_literals
 import distutils.sysconfig
 
-CACHEDIR_SUFFIX='$basearch/$releasever'
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
 DISTROVERPKG=('system-release(releasever)', 'redhat-release')
