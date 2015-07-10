@@ -89,6 +89,11 @@ def main(args):
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
         return 1
+    except dnf.exceptions.DepsolveError as e:
+        ex_Error(e)
+        logger.info(_("(try to add '--allowerasing' to command line to "
+                      "replace conflicting packages)"))
+        return 1
     except dnf.exceptions.Error as e:
         return ex_Error(e)
     except IOError as e:
