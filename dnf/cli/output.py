@@ -928,6 +928,15 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
+    def _skipped_upgrades(self):
+        def is_better_version((pkg1, pkg2)):
+            if not pkg2 or (pkg1 and pkg1 > pkg2):
+                return False
+            return True
+
+        return map(lambda t: t[1], filter(is_better_version,
+                   self.base._goal.best_run_diff()))
+
     def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
         easy-to-read format.
@@ -977,6 +986,16 @@ class Output(object):
                 a_wid = _add_line(lines, data, a_wid, active, tsi.obsoleted)
 
             pkglist_lines.append((action, lines))
+
+        # show skipped packages
+        if not self.conf.best and hawkey.UPGRADE in self.base._goal.actions:
+            lines = []
+            for pkg in self._skipped_upgrades():
+                a_wid = _add_line(lines, data, a_wid, pkg, [])
+            skip_str = "Skipping upgrades (dependency issues):\n" + \
+                "(add '--best --allowerasing' to command line " \
+                "to force their upgrade)"
+            pkglist_lines.append((skip_str, lines))
 
         if not data['n']:
             return u''
