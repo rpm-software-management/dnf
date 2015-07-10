@@ -20,6 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from copy import deepcopy
 from dnf.i18n import _
 import logging
 import hawkey
@@ -54,3 +55,26 @@ class Goal(hawkey.Goal):
             reason = getattr(yumdb_info, 'reason', 'user')
             if reason != 'dep':
                 self.userinstalled(pkg)
+
+    def best_run_diff(self):
+
+        def pop_from_set(pkg_set, name, arch):
+            for pkg in pkg_set:
+                if pkg.name == name and pkg.arch == arch:
+                    pkg_set.remove(pkg)
+                    return pkg
+            return None
+
+        pkgs_run1 = set(self.list_upgrades()).union(set(self.list_installs()))
+        ng = deepcopy(self)
+        if not ng.run(allow_uninstall=True, force_best=True):
+            return map(lambda p: (p, None), pkgs_run1)
+        pkgs_run2 = set(ng.list_upgrades()).union(set(ng.list_installs()))
+        pkgs_diff_run1 = pkgs_run1 - pkgs_run2
+        pkgs_diff_run2 = pkgs_run2 - pkgs_run1
+        res = []
+        for pkg in pkgs_diff_run1:
+            res.append((pkg, pop_from_set(pkgs_diff_run2, pkg.name, pkg.arch)))
+        for pkg in pkgs_diff_run2:
+            res.append((pop_from_set(pkgs_diff_run1, pkg.name, pkg.arch), pkg))
+        return res
