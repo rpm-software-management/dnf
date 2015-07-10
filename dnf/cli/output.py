@@ -928,7 +928,7 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_upgrades(self):
+    def _skipped_conflicts(self):
         def is_better_version((pkg1, pkg2)):
             if not pkg2 or (pkg1 and pkg1 > pkg2):
                 return False
@@ -941,6 +941,15 @@ class Output(object):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
+
+        forward_actions = {
+            hawkey.UPGRADE,
+            hawkey.UPGRADE_ALL,
+            hawkey.DISTUPGRADE,
+            hawkey.DISTUPGRADE_ALL,
+            hawkey.DOWNGRADE,
+            hawkey.INSTALL
+        }
 
         if transaction is None:
             return None
@@ -988,11 +997,11 @@ class Output(object):
             pkglist_lines.append((action, lines))
 
         # show skipped packages
-        if not self.conf.best and hawkey.UPGRADE in self.base._goal.actions:
+        if not self.conf.best and forward_actions & self.base._goal.actions:
             lines = []
-            for pkg in self._skipped_upgrades():
+            for pkg in self._skipped_conflicts():
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
-            skip_str = "Skipping upgrades (dependency issues):\n" + \
+            skip_str = "Skipping packages with dependency issues:\n" + \
                 "(add '--best --allowerasing' to command line " \
                 "to force their upgrade)"
             pkglist_lines.append((skip_str, lines))
