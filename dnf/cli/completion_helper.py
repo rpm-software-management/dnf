@@ -89,6 +89,8 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
                 pkgs = self.available(self.base, args[1])
             elif args[0] == "updates":
                 pkgs = self.updates(self.base, args[1])
+            else:
+                return
             for pkg in pkgs:
                 print(str(pkg))
 
