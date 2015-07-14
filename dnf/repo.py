@@ -629,6 +629,7 @@ class Repo(dnf.yum.config.RepoConf):
         # apply repo options
         h.maxspeed = self.throttle if type(self.throttle) is int \
                      else int(self.bandwidth * self.throttle)
+        h.setopt(librepo.LRO_PROXYAUTH, True)
         h.proxy = self.proxy
         h.lowspeedlimit = self.minrate
         h.lowspeedtime = self.timeout
