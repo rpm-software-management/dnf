@@ -22,6 +22,8 @@ from tests import support
 import dnf.comps
 import dnf.util
 import operator
+import warnings
+
 
 class EmptyPersistorTest(support.ResultTestCase):
     """Test group operations with empty persistor."""
@@ -154,3 +156,83 @@ class EnvironmentInstallTest(support.ResultTestCase):
         peppers = self.prst.group('Peppers')
         somerset = self.prst.group('somerset')
         self.assertTrue(all((peppers.installed, somerset.installed)))
+
+
+class EmptyPersistorTestDeprecated(support.ResultTestCase):
+    """Test group operations with empty persistor."""
+    # testing deprecated interface
+    # remove in dnf-2.0.0
+
+    def setUp(self):
+        self.base = support.MockBase('main')
+        self.base.read_mock_comps(False)
+        self.base.init_sack()
+
+    def test_group_install_exclude(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cnt = self.base.group_install(grp, ('optional',), exclude=('lotus',))
+            self.assertEqual(cnt, 0)
+
+    @support.mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    def test_group_install_locale(self, _unused):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cnt = self.base.group_install(grp, ('mandatory',))
+            self.assertEqual(cnt, 2)
+
+    def test_group_install_exclude_glob(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cnt = self.base.group_install(grp, ('optional',), exclude=('lo*',))
+            self.assertEqual(cnt, 0)
+
+    def test_group_install_exclude_notexist(self):
+        comps = self.base.comps
+        grp = comps.group_by_pattern('somerset')
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cnt = self.base.group_install(grp, ('optional',), exclude=('x*',))
+            self.assertEqual(cnt, 1)
+
+
+class PresetPersistorTestDeprecated(support.ResultTestCase):
+    """Test group operations with some data in the persistor."""
+    # testing deprecated interface
+    # remove in dnf-2.0.0
+
+    def setUp(self):
+        self.base = support.MockBase("main")
+        self.base.read_mock_comps()
+        self.base.init_sack()
+
+    def test_group_install(self):
+        prst = self.base.group_persistor
+        grp = self.base.comps.group_by_pattern('Base')
+        p_grp = prst.group('base')
+        self.assertFalse(p_grp.installed)
+        with warnings.catch_warnings():
+            self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)
+        inst, removed = self.installed_removed(self.base)
+        self.assertEmpty(inst)
+        self.assertEmpty(removed)
+        self.assertTrue(p_grp.installed)
+
+    def test_group_remove(self):
+        prst = self.base.group_persistor
+        grp_ids = prst.groups_by_pattern('somerset')
+        self.assertEqual(grp_ids, set(['somerset']))
+        grp_id = dnf.util.first(grp_ids)
+        p_grp = prst.group('somerset')
+        with warnings.catch_warnings():
+            self.assertGreater(self.base.group_remove(grp_id), 0)
+        inst, removed = self.installed_removed(self.base)
+        self.assertEmpty(inst)
+        self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
+        self.assertFalse(p_grp.installed)

@@ -1262,6 +1262,14 @@ class Base(object):
             else:
                 return (pattern,)
 
+        # compat: erase in 2.0.0
+        if isinstance(grp_id, dnf.comps.Environment) or \
+           isinstance(grp_id, dnf.comps.Group):
+                grp_id = grp_id.id
+                msg = "group_install() expects group id \
+                       instead of Comps object."
+                dnf.logging.depr(msg)
+
         exclude_pkgnames = None
         if exclude:
             nested_excludes = [_pattern_to_pkgname(p) for p in exclude]
@@ -1301,6 +1309,14 @@ class Base(object):
 
     def group_remove(self, grp_id):
         # :api
+        # compat: erase in 2.0.0
+        if isinstance(grp_id, dnf.comps.Environment) or \
+           isinstance(grp_id, dnf.comps.Group):
+                msg = "group_remove() expects group id \
+                       instead of Comps object."
+                dnf.logging.depr(msg)
+                grp_id = grp_id.id
+
         solver = self.build_comps_solver()
         trans = solver.group_remove(grp_id)
         return self._add_comps_trans(trans)
@@ -1323,6 +1339,14 @@ class Base(object):
 
     def group_upgrade(self, grp_id):
         # :api
+        # compat: erase in 2.0.0
+        if isinstance(grp_id, dnf.comps.Environment) or \
+           isinstance(grp_id, dnf.comps.Group):
+                msg = "group_upgrade() expects group id \
+                       instead of Comps object."
+                dnf.logging.depr(msg)
+                grp_id = grp_id.id
+
         solver = self.build_comps_solver()
         trans = solver.group_upgrade(grp_id)
         return self._add_comps_trans(trans)
