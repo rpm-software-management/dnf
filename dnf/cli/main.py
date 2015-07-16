@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -161,8 +161,11 @@ def resolving(cli, base):
     base.plugins.run_resolved()
 
     # Run the transaction
+    displays = []
+    if cli.demands.transaction_display is not None:
+        displays.append(cli.demands.transaction_display)
     try:
-        base.do_transaction(display=cli.demands.transaction_display)
+        base.do_transaction(display=displays)
     except dnf.cli.CliError as exc:
         logger.error(ucd(exc))
         return 1
