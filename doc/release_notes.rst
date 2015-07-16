@@ -21,6 +21,14 @@
 
 .. contents::
 
+======================
+Upcoming Release Notes
+======================
+
+API additions in X.X.0:
+
+:meth:`dnf.Base.do_transaction` now accepts multiple displays.
+
 ===================
 1.0.2 Release Notes
 ===================
