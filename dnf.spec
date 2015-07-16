@@ -233,6 +233,13 @@ popd
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
 
+%posttrans
+# cleanup pre-1.0.2 style cache
+for arch in armv7hl i686 x86_64 ; do
+    rm -rf /var/cache/dnf/$arch
+done
+exit 0
+
 %post automatic
 %systemd_post dnf-automatic.timer
 
