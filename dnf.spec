@@ -144,6 +144,7 @@ mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
+mkdir -p $RPM_BUILD_ROOT%{_var}/cache/dnf
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 %if 0%{?fedora} >= 23
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf-3 $RPM_BUILD_ROOT%{_bindir}/dnf
@@ -168,6 +169,7 @@ popd
 %{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{_var}/cache/dnf
 
 %files conf
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
