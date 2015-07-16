@@ -1001,9 +1001,9 @@ class Output(object):
             lines = []
             for pkg in self._skipped_conflicts():
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
-            skip_str = "Skipping packages with dependency issues:\n" + \
-                "(add '--best --allowerasing' to command line " \
-                "to force their upgrade)"
+            skip_str = _("Skipping packages with dependency issues:\n"
+                         "(add '%s' to command line "
+                         "to force their upgrade)") % "--best --allowerasing"
             pkglist_lines.append((skip_str, lines))
 
         if not data['n']:
