@@ -125,6 +125,7 @@ mkdir -p $RPM_BUILD_ROOT%{pluginconfpath}
 mkdir -p $RPM_BUILD_ROOT%{py2pluginpath}
 mkdir -p $RPM_BUILD_ROOT%{py3pluginpath}/__pycache__
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log
+mkdir -p $RPM_BUILD_ROOT%{_var}/cache/dnf
 touch $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}.log
 ln -sr $RPM_BUILD_ROOT%{_bindir}/dnf $RPM_BUILD_ROOT%{_bindir}/yum
 
@@ -152,6 +153,7 @@ popd
 %{_mandir}/man5/dnf.conf.5.gz
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
+%{_var}/cache/dnf
 %{_tmpfilesdir}/dnf.conf
 %exclude %{python_sitelib}/dnf/automatic
 %{python_sitelib}/dnf/
@@ -202,7 +204,7 @@ popd
 - Revert "bash-completion: use python method to get commands (RhBug:1187579)"
 
 * Thu Apr 16 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-4
-- upload correct source archive 0.6.4 
+- upload correct source archive 0.6.4
 
 * Mon Apr 13 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-3
 - rel-eng: use distro releaser
