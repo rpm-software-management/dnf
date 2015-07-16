@@ -368,12 +368,11 @@ class Base(object):
         self._ts = None
 
     def _activate_group_persistor(self):
-        return dnf.persistor.GroupPersistor(self.conf.persistdir)
+        return dnf.persistor.GroupPersistor(self.conf.persistdir, self._comps)
 
     def read_comps(self):
         """Create the groups object to access the comps metadata. :api"""
         timer = dnf.logging.Timer('loading comps')
-        self._group_persistor = self._activate_group_persistor()
         self._comps = dnf.comps.Comps()
 
         logger.log(dnf.logging.DDEBUG, 'Getting group metadata')
@@ -403,6 +402,7 @@ class Base(object):
                 msg = _('Failed to add groups file for repository: %s - %s')
                 logger.critical(msg % (repo.id, e))
 
+        self._group_persistor = self._activate_group_persistor()
         timer()
         return self._comps
 

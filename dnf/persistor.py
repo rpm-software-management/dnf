@@ -254,8 +254,9 @@ class GroupPersistor(object):
             'meta' : {'version' : '0.6.0'}
         })
 
-    def __init__(self, persistdir):
+    def __init__(self, persistdir, comps=None):
         self._commit = False
+        self._comps = comps
         self._dbfile = os.path.join(persistdir, 'groups.json')
         self.db = None
         self._original = None
@@ -272,14 +273,40 @@ class GroupPersistor(object):
         return _PersistMember(dct)
 
     def _add_missing_entries(self):
-        envs = [self.environment(env) for env in self.db['ENVIRONMENTS']]
-        grps = [self.group(grp) for grp in self.db['GROUPS']]
-        for item in itertools.chain(envs, grps):
-            for key in item.DEFAULTS.keys():
+        for env_id in self.db['ENVIRONMENTS']:
+            env = self.environment(env_id)
+            for key in env.DEFAULTS.keys():
                 try:
-                    getattr(item, key)
+                    getattr(env, key)
                 except KeyError:
-                    setattr(item, key, item.DEFAULTS[key])
+                    if self._comps:
+                        try:
+                            comps_env = self._comps.environment_by_id(env_id)
+                            if comps_env:
+                                value = getattr(comps_env, key)
+                                setattr(env, key, value)
+                                continue
+                        except KeyError:
+                            # set default if env is not pressent in comps
+                            pass
+                    setattr(env, key, env.DEFAULTS[key])
+        for grp_id in self.db['GROUPS']:
+            grp = self.group(grp_id)
+            for key in grp.DEFAULTS.keys():
+                try:
+                    getattr(grp, key)
+                except KeyError:
+                    if self._comps:
+                        try:
+                            comps_grp = self._comps.group_by_id(grp_id)
+                            if comps_grp:
+                                value = getattr(comps_grp, key)
+                                setattr(grp, key, value)
+                                continue
+                        except KeyError:
+                            # set default if grp is not pressent in comps
+                            pass
+                    setattr(grp, key, grp.DEFAULTS[key])
 
     def _ensure_sanity(self):
         """Make sure the input db is valid."""
