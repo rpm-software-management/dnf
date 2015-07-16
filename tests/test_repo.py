@@ -146,8 +146,9 @@ class RepoTest(RepoTestMixin, support.TestCase):
         dnf.util.rm_rf(self.repo.cachedir)
 
     def test_cachedir(self):
+        self.repo.baseurl = ["http://download.repo.org/r"]
         self.assertEqual(self.repo.cachedir,
-                         os.path.join(self.TMP_CACHEDIR, 'r-618824234336026c'))
+                         os.path.join(self.TMP_CACHEDIR, 'r-0824b1db602c8695'))
 
     def test_dump(self):
         dump = self.repo.dump()
