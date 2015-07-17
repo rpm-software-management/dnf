@@ -71,7 +71,7 @@
     requires     string         match against packages' requirements
     requires*    Hawkey.Reldep  match against packages' requirements
     upgrades     boolean        see :meth:`upgrades`. Defaults to ``False``.
-    ==========   ============== =====================================================
+    ==========   ============== ======================================================
 
     *The key can also accept a list of values with specified type.
 
