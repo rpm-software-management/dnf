@@ -47,16 +47,17 @@ logger = logging.getLogger('dnf')
 
 class TransactionDisplay(object):
     # per-package events
-    PKG_CLEANUP   = 1
+    PKG_CLEANUP = 1
     PKG_DOWNGRADE = 2
-    PKG_ERASE     = 3
-    PKG_INSTALL   = 4
-    PKG_OBSOLETE  = 5
+    PKG_ERASE = 3
+    PKG_INSTALL = 4
+    PKG_OBSOLETE = 5
     PKG_REINSTALL = 6
-    PKG_UPGRADE   = 7
+    PKG_UPGRADE = 7
+    PKG_VERIFY = 8
 
     # transaction-wide events
-    TRANS_POST      = 10
+    TRANS_POST = 10
 
     ACTION_FROM_OP_TYPE = {
         dnf.transaction.DOWNGRADE : PKG_DOWNGRADE,
@@ -99,7 +100,7 @@ class TransactionDisplay(object):
         pass
 
     def verify_tsi_package(self, pkg, count, total):
-        pass
+        self.progress(pkg, self.PKG_VERIFY, 100, 100, count, total)
 
 
 class LoggingTransactionDisplay(TransactionDisplay):
@@ -108,20 +109,22 @@ class LoggingTransactionDisplay(TransactionDisplay):
     '''
     def __init__(self):
         super(LoggingTransactionDisplay, self).__init__()
-        self.action = {self.PKG_CLEANUP   : _('Cleanup'),
-                       self.PKG_DOWNGRADE : _('Downgrading'),
-                       self.PKG_ERASE     : _('Erasing'),
-                       self.PKG_INSTALL   : _('Installing'),
-                       self.PKG_OBSOLETE  : _('Obsoleting'),
-                       self.PKG_REINSTALL : _('Reinstalling'),
-                       self.PKG_UPGRADE   : _('Upgrading')}
-        self.fileaction = {self.PKG_CLEANUP   : 'Cleanup',
-                           self.PKG_DOWNGRADE : 'Downgraded',
-                           self.PKG_ERASE     : 'Erased',
-                           self.PKG_INSTALL   : 'Installed',
-                           self.PKG_OBSOLETE  : 'Obsoleted',
-                           self.PKG_REINSTALL : 'Reinstalled',
-                           self.PKG_UPGRADE   :  'Upgraded'}
+        self.action = {self.PKG_CLEANUP: _('Cleanup'),
+                       self.PKG_DOWNGRADE: _('Downgrading'),
+                       self.PKG_ERASE: _('Erasing'),
+                       self.PKG_INSTALL: _('Installing'),
+                       self.PKG_OBSOLETE: _('Obsoleting'),
+                       self.PKG_REINSTALL: _('Reinstalling'),
+                       self.PKG_UPGRADE: _('Upgrading'),
+                       self.PKG_VERIFY: _('Verifying')}
+        self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
+                           self.PKG_DOWNGRADE: 'Downgraded',
+                           self.PKG_ERASE: 'Erased',
+                           self.PKG_INSTALL: 'Installed',
+                           self.PKG_OBSOLETE: 'Obsoleted',
+                           self.PKG_REINSTALL: 'Reinstalled',
+                           self.PKG_UPGRADE:  'Upgraded',
+                           self.PKG_VERIFY: 'Verified'}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def errorlog(self, msg):

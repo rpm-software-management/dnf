@@ -2214,13 +2214,6 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             wid2 = pnl
         return fmt, wid1, wid2
 
-    def verify_tsi_package(self, pkg, count, total):
-        percent = 100
-        process = _('Verifying')
-        wid1 = max(exact_width(process), self._max_action_width())
-        self._out_progress(
-            100, 100, count, total, percent, process, ucd(pkg), wid1)
-
 def progressbar(current, total, name=None):
     """Output the current status to the terminal using a simple
     text progress bar consisting of 50 # marks.
