@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -60,6 +60,10 @@ When packaging your custom command, we recommend you to define a virtual provide
     .. attribute:: success_exit_status
 
       The return status of the DNF command on success. Defaults to ``0``.
+
+    .. attribute:: transaction_display
+
+      An additional instance of a subclass of :class:`dnf.callback.TransactionProgress` used to report information about an ongoing transaction.
 .. class:: Command
 
   Base class of every DNF command.
