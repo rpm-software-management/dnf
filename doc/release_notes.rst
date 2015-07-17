@@ -22,6 +22,42 @@
 .. contents::
 
 ===================
+1.0.2 Release Notes
+===================
+
+When a transaction is not successfully finished, DNF preserves downloaded packages
+until the next successful transaction even if ``keepcache`` option is set to ``False``.
+
+Maximum number of simultaneous package downloads can be adjusted by newly added
+``max_parallel_downloads`` :doc:`configuration <conf_ref>` option.
+
+``--repofrompath`` :doc:`command line argument <command_ref>` was introduced for temporary configuration of repositories.
+
+API additions in 1.0.2:
+
+Newly added package attributes: :attr:`dnf.package.Package.obsoletes`,
+:attr:`dnf.package.Package.provides` and :attr:`dnf.package.Package.requires`.
+
+:attr:`dnf.package.Query.filter`'s keys ``requires`` and ``provides`` now accepts
+list of ``Hawkey.Reldep`` type.
+
+Bugs fixed in 1.0.2:
+
+* :rhbug:`1148630`
+* :rhbug:`1176351`
+* :rhbug:`1210445`
+* :rhbug:`1173107`
+* :rhbug:`1219199`
+* :rhbug:`1220040`
+* :rhbug:`1230975`
+* :rhbug:`1232815`
+* :rhbug:`1113384`
+* :rhbug:`1133979`
+* :rhbug:`1238958`
+* :rhbug:`1238252`
+* :rhbug:`1212320`
+
+===================
 1.0.1 Release Notes
 ===================
 

@@ -1166,5 +1166,57 @@
     [
         1187741, 
         "dnf should state if packages explicitly requested for update aren't installed"
+    ], 
+    [
+        1148630, 
+        "add --allowerasing hint for conflict problems"
+    ], 
+    [
+        1176351, 
+        "[RFC] print warning message when we're going to install not latest version"
+    ], 
+    [
+        1210445, 
+        "[rfe] report when skipping available updates due to dependency reasons"
+    ], 
+    [
+        1173107, 
+        "mock: use of \"dnf --installroot ...\" yields \"releasever not given\" error"
+    ], 
+    [
+        1219199, 
+        "Problem when using proxy authentication in dnf.conf"
+    ], 
+    [
+        1220040, 
+        "[abrt] python-dnf: completion_helper.py:92:run:UnboundLocalError: local variable 'pkgs' referenced before assignment"
+    ], 
+    [
+        1230975, 
+        "[rfe] configurable parallel downloads (like yum's max_connections)"
+    ], 
+    [
+        1232815, 
+        "'dnf install @group' returns error code 1 if all packages are already installed"
+    ], 
+    [
+        1113384, 
+        "[rfe] repofrompath option to specify ad-hoc repo"
+    ], 
+    [
+        1133979, 
+        "yum/dnf --quiet option not working for check-update command"
+    ], 
+    [
+        1238958, 
+        "dnf-automatic fails to send mail"
+    ], 
+    [
+        1238252, 
+        "Typo in dnf man page"
+    ], 
+    [
+        1212320, 
+        "[metadata] dnf makecache never timeouts"
     ]
 ]
