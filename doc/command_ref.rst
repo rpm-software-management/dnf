@@ -269,7 +269,7 @@ Distribution-synchronization command
 Downgrade Command
 -----------------
 
-``dnf [options] downgrade <package-specs>...``
+``dnf [options] downgrade <package-installed-specs>...``
     Downgrades the specified packages to the highest of all known lower versions if possible. When version is given and is lower than version of installed package then it downgrades to target version.
 
 .. _erase_command-label:
