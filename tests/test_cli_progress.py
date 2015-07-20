@@ -62,12 +62,12 @@ class ProgressTest(tests.support.TestCase):
             p.end(pload, None, None)
 
         self.assertEquals(fo.lines(), [
-            'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
-            'dummy-text 20% [==        ] 1.0  B/s |   1  B     00:04 ETA\r',
-            'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
-            'dummy-text 60% [======    ] 1.0  B/s |   3  B     00:02 ETA\r',
-            'dummy-text 80% [========  ] 1.0  B/s |   4  B     00:01 ETA\r',
-            'dummy-text100% [==========] 1.0  B/s |   5  B     00:00 ETA\r',
+            'dummy-text                       ---  B/s |   0  B     --:-- ETA\r',
+            'dummy-text                       1.0  B/s |   1  B     00:04 ETA\r',
+            'dummy-text                       1.0  B/s |   2  B     00:03 ETA\r',
+            'dummy-text                       1.0  B/s |   3  B     00:02 ETA\r',
+            'dummy-text                       1.0  B/s |   4  B     00:01 ETA\r',
+            'dummy-text                       1.0  B/s |   5  B     00:00 ETA\r',
             'dummy-text                  1.0  B/s |   5  B     00:05    \n'])
 
     def test_mirror(self):
@@ -84,21 +84,21 @@ class ProgressTest(tests.support.TestCase):
             p.progress(pload, 4)
         self.assertEqual(fo.visible_lines(), [
             '[MIRROR] foo: Timeout.                                     ',
-            'foo        80% [========  ] ---  B/s |   4  B     --:-- ETA'])
+            'foo                              ---  B/s |   4  B     --:-- ETA'])
 
     _REFERENCE_TAB = [
-        ['(1-2/2): f  0% [          ] ---  B/s |   0  B     --:-- ETA'],
-        ['(1-2/2): b 10% [=         ] 2.2  B/s |   3  B     00:12 ETA'],
-        ['(1-2/2): f 20% [==        ] 2.4  B/s |   6  B     00:10 ETA'],
-        ['(1-2/2): b 30% [===       ] 2.5  B/s |   9  B     00:08 ETA'],
-        ['(1-2/2): f 40% [====      ] 2.6  B/s |  12  B     00:06 ETA'],
-        ['(1-2/2): b 50% [=====     ] 2.7  B/s |  15  B     00:05 ETA'],
-        ['(1-2/2): f 60% [======    ] 2.8  B/s |  18  B     00:04 ETA'],
-        ['(1-2/2): b 70% [=======   ] 2.8  B/s |  21  B     00:03 ETA'],
-        ['(1-2/2): f 80% [========  ] 2.9  B/s |  24  B     00:02 ETA'],
-        ['(1-2/2): b 90% [========= ] 2.9  B/s |  27  B     00:01 ETA'],
+        ['(1-2/2): foo                     ---  B/s |   0  B     --:-- ETA'],
+        ['(1-2/2): bar                     2.2  B/s |   3  B     00:12 ETA'],
+        ['(1-2/2): foo                     2.4  B/s |   6  B     00:10 ETA'],
+        ['(1-2/2): bar                     2.5  B/s |   9  B     00:08 ETA'],
+        ['(1-2/2): foo                     2.6  B/s |  12  B     00:06 ETA'],
+        ['(1-2/2): bar                     2.7  B/s |  15  B     00:05 ETA'],
+        ['(1-2/2): foo                     2.8  B/s |  18  B     00:04 ETA'],
+        ['(1-2/2): bar                     2.8  B/s |  21  B     00:03 ETA'],
+        ['(1-2/2): foo                     2.9  B/s |  24  B     00:02 ETA'],
+        ['(1-2/2): bar                     2.9  B/s |  27  B     00:01 ETA'],
         ['(1/2): foo                  1.0  B/s |  10  B     00:10    ',
-         '(2/2): bar100% [==========] 2.9  B/s |  30  B     00:00 ETA']]
+         '(2/2): bar                       2.9  B/s |  30  B     00:00 ETA']]
 
     def test_multi(self):
         now = 1379406823.9
