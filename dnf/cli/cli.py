@@ -341,6 +341,7 @@ class BaseCli(dnf.Base):
         oldcount = self._goal.req_length()
 
         for arg in userlist:
+            wildcard = True if dnf.util.is_glob_pattern(arg) else False
             if arg.endswith('.rpm'):
                 pkg = self.add_remote_rpm(arg)
                 self.package_downgrade(pkg)
@@ -354,8 +355,10 @@ class BaseCli(dnf.Base):
                 logger.info(msg, self.output.term.MODE['bold'], arg,
                                  self.output.term.MODE['normal'])
             except dnf.exceptions.PackagesNotInstalledError as err:
-                for pkg in err.packages:
-                    logger.info(_('No match for available package: %s'), pkg)
+                if not wildcard: 
+                # glob pattern should not match not installed packages -> ignore error
+                    for pkg in err.packages:
+                        logger.info(_('No match for available package: %s'), pkg)
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
