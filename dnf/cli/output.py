@@ -929,7 +929,8 @@ class Output(object):
         return '\n'.join(out)
 
     def _skipped_conflicts(self):
-        def is_better_version((pkg1, pkg2)):
+        def is_better_version(same_name_pkgs):
+            pkg1, pkg2 = same_name_pkgs
             if not pkg2 or (pkg1 and pkg1 > pkg2):
                 return False
             return True
