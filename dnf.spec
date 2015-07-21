@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.0.2
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -250,6 +250,9 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Jul 21 2015 Jan Silhan <jsilhan@redhat.com> 1.0.2-2
+- fixed python3 syntax error from f427aa2 (Jan Silhan)
+
 * Fri Jul 17 2015 Michal Luscon <mluscon@redhat.com> 1.0.2-1
 - give --allowerasing hint when error occurs during resolution (RhBug:1148630)
   (Jan Silhan)
