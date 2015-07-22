@@ -83,6 +83,7 @@ def build_sack(base):
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
     return Sack(pkgcls=dnf.package.Package, pkginitval=base,
+                arch=base.conf.substitutions["arch"],
                 cachedir=cachedir, rootdir=base.conf.installroot,
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
 
