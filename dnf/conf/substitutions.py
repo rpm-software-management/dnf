@@ -26,9 +26,10 @@ import os
 
 class Substitutions(dict):
 
-    def __init__(self):
+    def __init__(self, arch=None):
         super(Substitutions, self).__init__()
-        arch = hawkey.detect_arch()
+        if arch is None:
+            arch = hawkey.detect_arch()
         self['arch'] = arch
         self['basearch'] = dnf.arch.basearch(arch)
         self._update_from_env()

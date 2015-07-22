@@ -703,9 +703,9 @@ class YumConf(BaseConfig):
     pluginconfpath = ListOption([dnf.const.PLUGINCONFPATH])  # :api
     persistdir = Option(dnf.const.PERSISTDIR) # :api
 
-    def __init__(self):
+    def __init__(self, arch=None):
         super(YumConf, self).__init__()
-        self.substitutions = dnf.conf.substitutions.Substitutions()
+        self.substitutions = dnf.conf.substitutions.Substitutions(arch)
 
     def _var_replace(self, option):
         path = getattr(self, option)
