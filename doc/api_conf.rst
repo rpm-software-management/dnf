@@ -127,6 +127,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     :func:`dnf.rpm.detect_releasever` can be used to detect the ``releasever`` value.
 
+    Following example shows recommended method how to override autodetected architectures::
+
+        import dnf
+        import dnf.arch
+
+        base = dnf.Base()
+        base.conf.substitutions['arch'] = arch
+        base.conf.substitutions['basearch'] = dnf.arch.basearch(arch)
+        base.fill_sack()
+        ...
+
+
   .. attribute:: tsflags
 
     List of strings adding extra flags for the RPM transaction.
