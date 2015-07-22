@@ -23,6 +23,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
 .. class:: dnf.conf.Conf
 
+  .. method:: __init__(arch=None)
+
+    Arch passed to :attr:`dnf.conf.Conf.substitutions` and :attr:`dnf.Base.sack`.
+    If not specified, arch is detected from running system.
+
   .. attribute:: assumeyes
 
     Boolean option, if set to ``True`` on any user input asking for confirmation
