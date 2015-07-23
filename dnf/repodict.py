@@ -21,10 +21,11 @@
 from __future__ import unicode_literals
 from dnf.exceptions import ConfigError
 import dnf.util
+import collections
 import fnmatch
 
 
-class RepoDict(dict):
+class RepoDict(collections.OrderedDict):
     # :api
     def add(self, repo):
         # :api
