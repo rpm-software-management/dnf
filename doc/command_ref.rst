@@ -760,6 +760,14 @@ should maintain the true name after transaction is not controlled by package man
 but is specified by each package itself, following packaging guideline.
 
 ========
+Files
+========
+
+/var/cache/dnf
+/etc/dnf/dnf.conf
+/etc/yum.repos.d/
+
+========
 See Also
 ========
 
