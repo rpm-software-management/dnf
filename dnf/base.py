@@ -582,12 +582,13 @@ class Base(object):
         # put back our depcheck callback
         self.ds_callback = dscb
         # setup our rpm ts callback
-        if display is None:
-            cb = dnf.yum.rpmtrans.RPMTransaction(self)
-        else:
-            cb = dnf.yum.rpmtrans.RPMTransaction(self, display=display)
+        displays = []
+        if display is not None:
+            displays.append(display)
+        cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=displays)
         if self.conf.debuglevel < 2:
-            cb.display.output = False
+            for display in cb.displays:
+                display.output = False
 
         logger.info(_('Running transaction'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
