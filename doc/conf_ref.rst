@@ -381,6 +381,13 @@ configuration.
     The password to use for connecting to repo with basic HTTP authentication. Empty by default.
 
 ==========
+Files
+==========
+
+/etc/dnf/dnf.conf
+/etc/yum.repos.d/
+
+==========
  See Also
 ==========
 
