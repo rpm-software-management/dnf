@@ -1,7 +1,7 @@
 # callbacks.py
 # Abstract interfaces to communicate progress on tasks.
 #
-# Copyright (C) 2014  Red Hat, Inc.
+# Copyright (C) 2014-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -100,5 +100,6 @@ class Depsolve(object):
     def end(self):
         pass
 
-# alias for RPM transaction callback that logs things to a file
+# :deprecated in 1.1.0, eligible for dropping in 2.0
+# de facto API - never documented but used by Anaconda thanks to us
 LoggingTransactionDisplay = dnf.yum.rpmtrans.LoggingTransactionDisplay
