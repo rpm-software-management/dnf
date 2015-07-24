@@ -69,15 +69,15 @@ class TransactionDisplay(object):
     def __init__(self):
         pass
 
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
+    def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
         """
         @param package: A DNF package object or simple string of a package name
         @param action: A constant transaction set state
-        @param te_current: current number of bytes processed in the transaction
-                           element being processed
-        @param te_total: total number of bytes in the transaction element being
+        @param ti_done: current number of bytes processed in the transaction
+                        item being processed
+        @param ti_total: total number of bytes in the transaction item being
                          processed
-        @param ts_current: number of processes completed in whole transaction
+        @param ts_done: number of processes completed in whole transaction
         @param ts_total: total number of processes in the transaction.
         """
         # this is where a progress bar would be called
@@ -94,8 +94,8 @@ class TransactionDisplay(object):
 
     def filelog(self, package, action):
         # check package object type - if it is a string - just output it
-        """package is the same as in event() - a package object or simple string
-           action is also the same as in event()"""
+        """package is the same as in progress() - a package object or simple
+           string action is also the same as in progress()"""
         pass
 
     def verify_tsi_package(self, pkg, count, total):
@@ -468,13 +468,13 @@ class RPMTransaction(object):
             # RPM doesn't explicitly report when post-trans phase starts
             action = TransactionDisplay.TRANS_POST
             for display in self.displays:
-                display.event(None, action, None, None, None, None)
+                display.progress(None, action, None, None, None, None)
 
     def _instProgress(self, bytes, total, h):
         pkg, _, tsi = self._extract_tsi_cbkey(h)
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         for display in self.displays:
-            display.event(
+            display.progress(
                 pkg, action, bytes, total, self.complete_actions,
                 self.total_actions)
 
@@ -496,8 +496,8 @@ class RPMTransaction(object):
             action = TransactionDisplay.PKG_ERASE
         for display in self.displays:
             display.filelog(pkg, action)
-            display.event(pkg, action, 100, 100, self.complete_actions,
-                          self.total_actions)
+            display.progress(pkg, action, 100, 100, self.complete_actions,
+                             self.total_actions)
 
         if self.test:
             return
