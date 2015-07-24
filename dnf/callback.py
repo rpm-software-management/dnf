@@ -104,6 +104,17 @@ class Depsolve(object):
 # de facto API - never documented but used by Anaconda thanks to us
 class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
 
+    def error(self, message):
+        super(LoggingTransactionDisplay, self).error(message)
+        # Compatibility: Originally, "error" was "errorlog". Let's call it in
+        # case somebody overrides it.
+        self.errorlog(message)
+
+    def errorlog(self, msg):
+        # Compatibility: Originally, "error" was "errorlog". Let's define it in
+        # case somebody extends it.
+        pass
+
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # Compatibility: Originally, "progress" was "event". Let's define it in
         # case somebody extends it.
