@@ -89,9 +89,9 @@ class TransactionDisplay(object):
         """msgs is the messages that were output (if any)."""
         pass
 
-    def errorlog(self, msg):
-        """takes a simple error msg string"""
-        print(msg, file=sys.stderr)
+    def error(self, message):
+        """takes a simple error message string"""
+        print(message, file=sys.stderr)
 
     def filelog(self, package, action):
         # check package object type - if it is a string - just output it
@@ -127,9 +127,9 @@ class LoggingTransactionDisplay(TransactionDisplay):
                            self.PKG_VERIFY: 'Verified'}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
-    def errorlog(self, msg):
-        super(LoggingTransactionDisplay, self).errorlog(msg)
-        self.rpm_logger.error(msg)
+    def error(self, message):
+        super(LoggingTransactionDisplay, self).error(message)
+        self.rpm_logger.error(message)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -264,7 +264,7 @@ class RPMTransaction(object):
             self._ts_done = open(ts_done_fn, 'w')
         except (IOError, OSError) as e:
             for display in self.displays:
-                display.errorlog('could not open ts_done file: %s' % e)
+                display.error('could not open ts_done file: %s' % e)
             self._ts_done = None
             return False
         self._fdSetCloseOnExec(self._ts_done.fileno())
@@ -282,7 +282,7 @@ class RPMTransaction(object):
             #  Having incomplete transactions is probably worse than having
             # nothing.
             for display in self.displays:
-                display.errorlog('could not write to ts_done file: %s' % e)
+                display.error('could not write to ts_done file: %s' % e)
             self._ts_done = None
             misc.unlink_f(self.ts_done_fn)
 
@@ -369,7 +369,7 @@ class RPMTransaction(object):
             fo = open(tsfn, 'w')
         except (IOError, OSError) as e:
             for display in self.displays:
-                display.errorlog('could not open ts_all file: %s' % e)
+                display.error('could not open ts_all file: %s' % e)
             self._ts_done = None
             return
 
@@ -383,7 +383,7 @@ class RPMTransaction(object):
             #  Having incomplete transactions is probably worse than having
             # nothing.
             for display in self.displays:
-                display.errorlog('could not write to ts_all file: %s' % e)
+                display.error('could not write to ts_all file: %s' % e)
             misc.unlink_f(tsfn)
             self._ts_done = None
 
@@ -442,7 +442,7 @@ class RPMTransaction(object):
             self.fd = open(rpmloc)
         except IOError as e:
             for display in self.displays:
-                display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
+                display.error("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:
             if self.trans_running:
                 self.total_installed += 1
@@ -530,13 +530,13 @@ class RPMTransaction(object):
         pkg, _, _ = self._extract_cbkey(h)
         msg = "Error in cpio payload of rpm package %s" % pkg
         for display in self.displays:
-            display.errorlog(msg)
+            display.error(msg)
 
     def _unpackError(self, bytes, total, h):
         pkg, _, _ = self._extract_cbkey(h)
         msg = "Error unpacking rpm package %s" % pkg
         for display in self.displays:
-            display.errorlog(msg)
+            display.error(msg)
 
     def _scriptError(self, bytes, total, h):
         # "bytes" carries the failed scriptlet tag,
@@ -553,7 +553,7 @@ class RPMTransaction(object):
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
                    (scriptlet_name, name))
         for display in self.displays:
-            display.errorlog(msg)
+            display.error(msg)
 
     def _scriptStart(self, bytes, total, h):
         pass
