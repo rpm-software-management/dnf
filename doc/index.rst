@@ -15,9 +15,9 @@
   License and may only be used or replicated with the express permission of
   Red Hat, Inc.
 
-###################################
- DNF, Experimental Yum Replacement
-###################################
+#############################################
+ DNF, the next-generation replacement for Yum
+#############################################
 
 Contents:
 
