@@ -29,6 +29,10 @@ API additions in X.X.0:
 
 :meth:`dnf.Base.do_transaction` now accepts multiple displays.
 
+API deprecations in X.X.0:
+
+* ``dnf.callback.LoggingTransactionDisplay`` is deprecated now. It was considered part of API despite the fact that it has never been documented.
+
 ===================
 1.0.2 Release Notes
 ===================
