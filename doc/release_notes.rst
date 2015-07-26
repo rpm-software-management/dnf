@@ -31,7 +31,7 @@ API additions in X.X.0:
 
 API deprecations in X.X.0:
 
-* ``dnf.callback.LoggingTransactionDisplay`` is deprecated now. It was considered part of API despite the fact that it has never been documented.
+* ``dnf.callback.LoggingTransactionDisplay`` is deprecated now. It was considered part of API despite the fact that it has never been documented. Use :class:`dnf.callback.TransactionProgress` instead.
 
 ===================
 1.0.2 Release Notes
