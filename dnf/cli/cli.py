@@ -62,7 +62,6 @@ import dnf.sack
 import dnf.util
 import dnf.yum.config
 import dnf.yum.misc
-import dnf.yum.rpmtrans
 import hawkey
 import logging
 import operator
@@ -218,10 +217,7 @@ class BaseCli(dnf.Base):
 
         if not isinstance(display, collections.Sequence):
             display = [display]
-        display = [
-            dnf.yum.rpmtrans.LoggingTransactionDisplay(),
-            output.CliTransactionDisplay()] + \
-            list(display)
+        display = [output.CliTransactionDisplay()] + list(display)
         super(BaseCli, self).do_transaction(display)
         if trans:
             msg = self.output.post_transaction_output(trans)
