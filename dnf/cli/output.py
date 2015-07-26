@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
-from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -35,6 +34,7 @@ import dnf.util
 import dnf.yum.history
 import dnf.yum.misc
 import dnf.yum.packages
+import dnf.yum.rpmtrans
 import hawkey
 import itertools
 import logging
@@ -2083,13 +2083,21 @@ class CliKeyImport(dnf.callback.KeyImport):
         return self.output.userconfirm()
 
 
-class CliTransactionDisplay(LoggingTransactionDisplay):
+class CliTransactionDisplay(dnf.yum.rpmtrans.ErrorTransactionDisplay):
     """A Yum specific callback class for RPM operations."""
 
     width = property(lambda self: dnf.cli.term._term_width())
 
     def __init__(self):
         super(CliTransactionDisplay, self).__init__()
+        self.action = {self.PKG_CLEANUP: _('Cleanup'),
+                       self.PKG_DOWNGRADE: _('Downgrading'),
+                       self.PKG_ERASE: _('Erasing'),
+                       self.PKG_INSTALL: _('Installing'),
+                       self.PKG_OBSOLETE: _('Obsoleting'),
+                       self.PKG_REINSTALL: _('Reinstalling'),
+                       self.PKG_UPGRADE: _('Upgrading'),
+                       self.PKG_VERIFY: _('Verifying')}
         self.lastmsg = ""
         self.lastpackage = None # name of last package we looked at
         self.output = True

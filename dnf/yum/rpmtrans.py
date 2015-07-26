@@ -16,7 +16,7 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-from dnf.i18n import _, ucd
+from dnf.i18n import ucd
 from dnf.pycomp import basestring
 import dnf.transaction
 import rpm
@@ -114,20 +114,12 @@ class ErrorTransactionDisplay(TransactionDisplay):
         print(message, file=sys.stderr)
 
 
-class LoggingTransactionDisplay(ErrorTransactionDisplay):
+class LoggingTransactionDisplay(TransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''
     def __init__(self):
         super(LoggingTransactionDisplay, self).__init__()
-        self.action = {self.PKG_CLEANUP: _('Cleanup'),
-                       self.PKG_DOWNGRADE: _('Downgrading'),
-                       self.PKG_ERASE: _('Erasing'),
-                       self.PKG_INSTALL: _('Installing'),
-                       self.PKG_OBSOLETE: _('Obsoleting'),
-                       self.PKG_REINSTALL: _('Reinstalling'),
-                       self.PKG_UPGRADE: _('Upgrading'),
-                       self.PKG_VERIFY: _('Verifying')}
         self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
                            self.PKG_DOWNGRADE: 'Downgraded',
                            self.PKG_ERASE: 'Erased',

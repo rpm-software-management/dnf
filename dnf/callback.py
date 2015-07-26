@@ -18,8 +18,11 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.i18n import _
 import dnf.yum.rpmtrans
+import sys
 
 PKG_CLEANUP = dnf.yum.rpmtrans.TransactionDisplay.PKG_CLEANUP  # :api
 PKG_DOWNGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_DOWNGRADE  # :api
@@ -115,6 +118,17 @@ class Depsolve(object):
 # de facto API - never documented but used by Anaconda thanks to us
 class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
 
+    def __init__(self):
+        super(LoggingTransactionDisplay, self).__init__()
+        self.action = {self.PKG_CLEANUP: _('Cleanup'),
+                       self.PKG_DOWNGRADE: _('Downgrading'),
+                       self.PKG_ERASE: _('Erasing'),
+                       self.PKG_INSTALL: _('Installing'),
+                       self.PKG_OBSOLETE: _('Obsoleting'),
+                       self.PKG_REINSTALL: _('Reinstalling'),
+                       self.PKG_UPGRADE: _('Upgrading'),
+                       self.PKG_VERIFY: _('Verifying')}
+
     def error(self, message):
         super(LoggingTransactionDisplay, self).error(message)
         # Compatibility: Originally, "error" was "errorlog". Let's call it in
@@ -124,7 +138,7 @@ class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
     def errorlog(self, msg):
         # Compatibility: Originally, "error" was "errorlog". Let's define it in
         # case somebody extends it.
-        pass
+        print(msg, file=sys.stderr)
 
     def event(self, package, action, te_current, te_total, ts_current, ts_total):
         # Compatibility: Originally, "progress" was "event". Let's define it in
