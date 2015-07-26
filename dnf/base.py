@@ -533,6 +533,8 @@ class Base(object):
         # :api
         if not isinstance(display, collections.Sequence):
             display = [display]
+        display = \
+            [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
         persistor = self.group_persistor
         if persistor:
