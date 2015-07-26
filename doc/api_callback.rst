@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -61,3 +61,31 @@
   .. method:: start(total_files, total_size)
 
     Report start of a download batch. `total_files` is the total number of payloads in the batch. `total_size` is the total number of bytes to be downloaded.
+
+.. class:: TransactionProgress
+
+  Base class providing callbacks to receive information about an ongoing transaction.
+
+  .. method:: error(message)
+
+    Report an error that occurred during the transaction. `message` is a string which describes the error.
+
+  .. method:: progress(package, action, ti_done, ti_total, ts_done, ts_total)
+
+    Report ongoing progress on the given transaction item. `package` is the :class:`dnf.package.Package` being processed and `action` is a constant with the following meaning:
+
+    ============== =================================================================================
+    `action` value meaning
+    ============== =================================================================================
+    PKG_CLEANUP    `package` cleanup is being performed.
+    PKG_DOWNGRADE  `package` is being downgraded.
+    PKG_INSTALL    `package` is being installed.
+    PKG_OBSOLETE   `package` is being obsoleted.
+    PKG_REINSTALL  `package` is being reinstalled.
+    PKG_REMOVE     `package` is being removed.
+    PKG_UPGRADE    `package` is being upgraded.
+    PKG_VERIFY     `package` is being verified.
+    TRANS_POST     The post-trans phase started. In this case, all the other arguments are ``None``.
+    ============== =================================================================================
+
+  `ti_done` is the number of processed bytes of the transaction item, `ti_total` is the total number of bytes of the transaction item, `ts_done` is the number of actions processed in the whole transaction and `ts_total` is the total number of actions in the whole transaction.

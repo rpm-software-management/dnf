@@ -151,7 +151,7 @@ class BaseCli(dnf.Base):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
 
-        :param display: `TransactionDisplay` object(s)
+        :param display: `rpm.callback.TransactionProgress` object(s)
         :return: a numeric return code, and optionally a list of
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks

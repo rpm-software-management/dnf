@@ -21,11 +21,22 @@
 from __future__ import unicode_literals
 import dnf.yum.rpmtrans
 
+PKG_CLEANUP = dnf.yum.rpmtrans.TransactionDisplay.PKG_CLEANUP  # :api
+PKG_DOWNGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_DOWNGRADE  # :api
+PKG_INSTALL = dnf.yum.rpmtrans.TransactionDisplay.PKG_INSTALL  # :api
+PKG_OBSOLETE = dnf.yum.rpmtrans.TransactionDisplay.PKG_OBSOLETE  # :api
+PKG_REINSTALL = dnf.yum.rpmtrans.TransactionDisplay.PKG_REINSTALL  # :api
+PKG_REMOVE = dnf.yum.rpmtrans.TransactionDisplay.PKG_ERASE  # :api
+PKG_UPGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_UPGRADE  # :api
+PKG_VERIFY = dnf.yum.rpmtrans.TransactionDisplay.PKG_VERIFY  # :api
+
 STATUS_OK = None # :api
 STATUS_FAILED = 1 # :api
 STATUS_ALREADY_EXISTS = 2 # :api
 STATUS_MIRROR = 3  # :api
 STATUS_DRPM = 4    # :api
+
+TRANS_POST = dnf.yum.rpmtrans.TransactionDisplay.TRANS_POST  # :api
 
 
 class KeyImport(object):
@@ -126,3 +137,6 @@ class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
         # Compatibility: Originally, "progress" was "event". Let's call it in
         # case somebody overrides it.
         self.event(package, action, ti_done, ti_total, ts_done, ts_total)
+
+
+TransactionProgress = dnf.yum.rpmtrans.TransactionDisplay  # :api

@@ -71,18 +71,20 @@ class TransactionDisplay(object):
         pass
 
     def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
-        """
-        @param package: A DNF package object or simple string of a package name
-        @param action: A constant transaction set state
-        @param ti_done: current number of bytes processed in the transaction
-                        item being processed
-        @param ti_total: total number of bytes in the transaction item being
-                         processed
-        @param ts_done: number of processes completed in whole transaction
-        @param ts_total: total number of processes in the transaction.
-        """
-        # this is where a progress bar would be called
+        """Report ongoing progress on a transaction item. :api
 
+        :param package: a package being processed
+        :param action: the action being performed
+        :param ti_done: number of processed bytes of the transaction
+           item being processed
+        :param ti_total: total number of bytes of the transaction item
+           being processed
+        :param ts_done: number of actions processed in the whole
+           transaction
+        :param ts_total: total number of actions in the whole
+           transaction
+
+        """
         pass
 
     def scriptout(self, msgs):
@@ -90,7 +92,7 @@ class TransactionDisplay(object):
         pass
 
     def error(self, message):
-        """takes a simple error message string"""
+        """Report an error that occurred during the transaction. :api"""
         pass
 
     def filelog(self, package, action):
