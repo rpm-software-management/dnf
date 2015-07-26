@@ -91,7 +91,7 @@ class TransactionDisplay(object):
 
     def error(self, message):
         """takes a simple error message string"""
-        print(message, file=sys.stderr)
+        pass
 
     def filelog(self, package, action):
         # check package object type - if it is a string - just output it
@@ -103,7 +103,16 @@ class TransactionDisplay(object):
         self.progress(pkg, self.PKG_VERIFY, 100, 100, count, total)
 
 
-class LoggingTransactionDisplay(TransactionDisplay):
+class ErrorTransactionDisplay(TransactionDisplay):
+
+    """An RPMTransaction display that prints errors to standard output."""
+
+    def error(self, message):
+        super(ErrorTransactionDisplay, self).error(message)
+        print(message, file=sys.stderr)
+
+
+class LoggingTransactionDisplay(ErrorTransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''
@@ -143,7 +152,7 @@ class LoggingTransactionDisplay(TransactionDisplay):
 class RPMTransaction(object):
     def __init__(self, base, test=False, displays=()):
         if not displays:
-            displays = [TransactionDisplay()]
+            displays = [ErrorTransactionDisplay()]
         self.displays = displays
         self.base = base
         self.test = test  # are we a test?
