@@ -78,3 +78,6 @@ class Goal(hawkey.Goal):
         for pkg in pkgs_diff_run2:
             res.append((pop_from_set(pkgs_diff_run1, pkg.name, pkg.arch), pkg))
         return res
+
+    def available_updates_diff(self, query):
+        return set(query.upgrades().latest().run()) - set(self.list_upgrades())
