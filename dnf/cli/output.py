@@ -938,6 +938,12 @@ class Output(object):
         return map(lambda t: t[1], filter(is_better_version,
                    self.base._goal.best_run_diff()))
 
+    def _skipped_broken_deps(self, skipped_conflicts):
+        goal_diff = self.base._goal.available_updates_diff(self.base.sack.query())
+        if skipped_conflicts:
+            goal_diff -= skipped_conflicts
+        return goal_diff
+
     def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
         easy-to-read format.
@@ -951,6 +957,7 @@ class Output(object):
             hawkey.DOWNGRADE,
             hawkey.INSTALL
         }
+        skipped_conflicts = []
 
         if transaction is None:
             return None
@@ -997,14 +1004,23 @@ class Output(object):
 
             pkglist_lines.append((action, lines))
 
-        # show skipped packages
+        # show skipped conflicting packages
         if not self.conf.best and forward_actions & self.base._goal.actions:
             lines = []
-            for pkg in self._skipped_conflicts():
+            skipped_conflicts = self._skipped_conflicts()
+            for pkg in skipped_conflicts:
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
-            skip_str = _("Skipping packages with dependency issues:\n"
+            skip_str = _("Skipping packages with conflicts:\n"
                          "(add '%s' to command line "
                          "to force their upgrade)") % "--best --allowerasing"
+            pkglist_lines.append((skip_str, lines))
+
+        # show skipped packages with broken dependencies
+        if hawkey.UPGRADE_ALL in self.base._goal.actions:
+            lines = []
+            for pkg in self._skipped_broken_deps(skipped_conflicts):
+                a_wid = _add_line(lines, data, a_wid, pkg, [])
+            skip_str = _("Skipping packages with broken dependencies")
             pkglist_lines.append((skip_str, lines))
 
         if not data['n']:
