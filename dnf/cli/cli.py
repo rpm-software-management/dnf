@@ -28,6 +28,7 @@ from . import output
 from dnf.cli import CliError
 from dnf.i18n import ucd, _
 
+import collections
 import datetime
 import dnf
 import dnf.cli.commands
@@ -146,11 +147,11 @@ class BaseCli(dnf.Base):
             return None
         return self.group_persistor.diff()
 
-    def do_transaction(self, display='DEFAULT'):
+    def do_transaction(self, display=()):
         """Take care of package downloading, checking, user
         confirmation and actually running the transaction.
 
-        :param display: a `TransactionDisplay` object
+        :param display: `rpm.callback.TransactionProgress` object(s)
         :return: a numeric return code, and optionally a list of
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
@@ -214,8 +215,9 @@ class BaseCli(dnf.Base):
             # Check GPG signatures
             self.gpgsigcheck(downloadpkgs)
 
-        if display is 'DEFAULT':
-            display = output.CliTransactionDisplay()
+        if not isinstance(display, collections.Sequence):
+            display = [display]
+        display = [output.CliTransactionDisplay()] + list(display)
         super(BaseCli, self).do_transaction(display)
         if trans:
             msg = self.output.post_transaction_output(trans)

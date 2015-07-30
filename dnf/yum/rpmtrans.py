@@ -16,7 +16,7 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-from dnf.i18n import _, ucd
+from dnf.i18n import ucd
 from dnf.pycomp import basestring
 import dnf.transaction
 import rpm
@@ -47,16 +47,17 @@ logger = logging.getLogger('dnf')
 
 class TransactionDisplay(object):
     # per-package events
-    PKG_CLEANUP   = 1
+    PKG_CLEANUP = 1
     PKG_DOWNGRADE = 2
-    PKG_ERASE     = 3
-    PKG_INSTALL   = 4
-    PKG_OBSOLETE  = 5
+    PKG_ERASE = 3
+    PKG_INSTALL = 4
+    PKG_OBSOLETE = 5
     PKG_REINSTALL = 6
-    PKG_UPGRADE   = 7
+    PKG_UPGRADE = 7
+    PKG_VERIFY = 8
 
     # transaction-wide events
-    TRANS_POST      = 10
+    TRANS_POST = 10
 
     ACTION_FROM_OP_TYPE = {
         dnf.transaction.DOWNGRADE : PKG_DOWNGRADE,
@@ -69,37 +70,48 @@ class TransactionDisplay(object):
     def __init__(self):
         pass
 
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        """
-        @param package: A DNF package object or simple string of a package name
-        @param action: A constant transaction set state
-        @param te_current: current number of bytes processed in the transaction
-                           element being processed
-        @param te_total: total number of bytes in the transaction element being
-                         processed
-        @param ts_current: number of processes completed in whole transaction
-        @param ts_total: total number of processes in the transaction.
-        """
-        # this is where a progress bar would be called
+    def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
+        """Report ongoing progress on a transaction item. :api
 
+        :param package: a package being processed
+        :param action: the action being performed
+        :param ti_done: number of processed bytes of the transaction
+           item being processed
+        :param ti_total: total number of bytes of the transaction item
+           being processed
+        :param ts_done: number of actions processed in the whole
+           transaction
+        :param ts_total: total number of actions in the whole
+           transaction
+
+        """
         pass
 
     def scriptout(self, msgs):
         """msgs is the messages that were output (if any)."""
         pass
 
-    def errorlog(self, msg):
-        """takes a simple error msg string"""
-        print(msg, file=sys.stderr)
+    def error(self, message):
+        """Report an error that occurred during the transaction. :api"""
+        pass
 
     def filelog(self, package, action):
         # check package object type - if it is a string - just output it
-        """package is the same as in event() - a package object or simple string
-           action is also the same as in event()"""
+        """package is the same as in progress() - a package object or simple
+           string action is also the same as in progress()"""
         pass
 
     def verify_tsi_package(self, pkg, count, total):
-        pass
+        self.progress(pkg, self.PKG_VERIFY, 100, 100, count, total)
+
+
+class ErrorTransactionDisplay(TransactionDisplay):
+
+    """An RPMTransaction display that prints errors to standard output."""
+
+    def error(self, message):
+        super(ErrorTransactionDisplay, self).error(message)
+        print(message, file=sys.stderr)
 
 
 class LoggingTransactionDisplay(TransactionDisplay):
@@ -108,25 +120,19 @@ class LoggingTransactionDisplay(TransactionDisplay):
     '''
     def __init__(self):
         super(LoggingTransactionDisplay, self).__init__()
-        self.action = {self.PKG_CLEANUP   : _('Cleanup'),
-                       self.PKG_DOWNGRADE : _('Downgrading'),
-                       self.PKG_ERASE     : _('Erasing'),
-                       self.PKG_INSTALL   : _('Installing'),
-                       self.PKG_OBSOLETE  : _('Obsoleting'),
-                       self.PKG_REINSTALL : _('Reinstalling'),
-                       self.PKG_UPGRADE   : _('Upgrading')}
-        self.fileaction = {self.PKG_CLEANUP   : 'Cleanup',
-                           self.PKG_DOWNGRADE : 'Downgraded',
-                           self.PKG_ERASE     : 'Erased',
-                           self.PKG_INSTALL   : 'Installed',
-                           self.PKG_OBSOLETE  : 'Obsoleted',
-                           self.PKG_REINSTALL : 'Reinstalled',
-                           self.PKG_UPGRADE   :  'Upgraded'}
+        self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
+                           self.PKG_DOWNGRADE: 'Downgraded',
+                           self.PKG_ERASE: 'Erased',
+                           self.PKG_INSTALL: 'Installed',
+                           self.PKG_OBSOLETE: 'Obsoleted',
+                           self.PKG_REINSTALL: 'Reinstalled',
+                           self.PKG_UPGRADE:  'Upgraded',
+                           self.PKG_VERIFY: 'Verified'}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
-    def errorlog(self, msg):
-        super(LoggingTransactionDisplay, self).errorlog(msg)
-        self.rpm_logger.error(msg)
+    def error(self, message):
+        super(LoggingTransactionDisplay, self).error(message)
+        self.rpm_logger.error(message)
 
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
@@ -138,10 +144,10 @@ class LoggingTransactionDisplay(TransactionDisplay):
         self.rpm_logger.info(msg)
 
 class RPMTransaction(object):
-    def __init__(self, base, test=False, display=TransactionDisplay):
-        self.display = display
-        if isinstance(display, collections.Callable):
-            self.display = display()
+    def __init__(self, base, test=False, displays=()):
+        if not displays:
+            displays = [ErrorTransactionDisplay()]
+        self.displays = displays
         self.base = base
         self.test = test  # are we a test?
         self.trans_running = False
@@ -201,7 +207,8 @@ class RPMTransaction(object):
 
     def _scriptout(self):
         msgs = self._scriptOutput()
-        self.display.scriptout(msgs)
+        for display in self.displays:
+            display.scriptout(msgs)
         self.base.history.log_scriptlet_output(msgs)
 
     def __del__(self):
@@ -259,7 +266,8 @@ class RPMTransaction(object):
         try:
             self._ts_done = open(ts_done_fn, 'w')
         except (IOError, OSError) as e:
-            self.display.errorlog('could not open ts_done file: %s' % e)
+            for display in self.displays:
+                display.error('could not open ts_done file: %s' % e)
             self._ts_done = None
             return False
         self._fdSetCloseOnExec(self._ts_done.fileno())
@@ -276,7 +284,8 @@ class RPMTransaction(object):
         except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
-            self.display.errorlog('could not write to ts_done file: %s' % e)
+            for display in self.displays:
+                display.error('could not write to ts_done file: %s' % e)
             self._ts_done = None
             misc.unlink_f(self.ts_done_fn)
 
@@ -302,10 +311,12 @@ class RPMTransaction(object):
         msg = 'ts_done state is %s %s should be %s %s' % (package, action, t, n)
         if action in TS_REMOVE_STATES:
             if t != 'erase':
-                self.display.filelog(package, msg)
+                for display in self.displays:
+                    display.filelog(package, msg)
         if action in TS_INSTALL_STATES:
             if t != 'install':
-                self.display.filelog(package, msg)
+                for display in self.displays:
+                    display.filelog(package, msg)
 
         # check the pkg name out to make sure it matches
         if isinstance(package, basestring):
@@ -315,7 +326,8 @@ class RPMTransaction(object):
 
         if n != name:
             msg = 'ts_done name in te is %s should be %s' % (n, package)
-            self.display.filelog(package, msg)
+            for display in self.displays:
+                display.filelog(package, msg)
 
         # hope springs eternal that this isn't wrong
         msg = '%s %s:%s-%s-%s.%s\n' % (t,e,n,v,r,a)
@@ -359,7 +371,8 @@ class RPMTransaction(object):
                 os.makedirs(os.path.dirname(tsfn)) # make the dir,
             fo = open(tsfn, 'w')
         except (IOError, OSError) as e:
-            self.display.errorlog('could not open ts_all file: %s' % e)
+            for display in self.displays:
+                display.error('could not open ts_all file: %s' % e)
             self._ts_done = None
             return
 
@@ -372,7 +385,8 @@ class RPMTransaction(object):
         except (IOError, OSError) as e:
             #  Having incomplete transactions is probably worse than having
             # nothing.
-            self.display.errorlog('could not write to ts_all file: %s' % e)
+            for display in self.displays:
+                display.error('could not write to ts_all file: %s' % e)
             misc.unlink_f(tsfn)
             self._ts_done = None
 
@@ -430,7 +444,8 @@ class RPMTransaction(object):
         try:
             self.fd = open(rpmloc)
         except IOError as e:
-            self.display.errorlog("Error: Cannot open file %s: %s" % (rpmloc, e))
+            for display in self.displays:
+                display.error("Error: Cannot open file %s: %s" % (rpmloc, e))
         else:
             if self.trans_running:
                 self.total_installed += 1
@@ -447,7 +462,8 @@ class RPMTransaction(object):
             return
 
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
-        self.display.filelog(pkg, action)
+        for display in self.displays:
+            display.filelog(pkg, action)
         self._scriptout()
         pid = self.base.history.pkg2pid(pkg)
         self.base.history.trans_data_pid_end(pid, state)
@@ -457,13 +473,16 @@ class RPMTransaction(object):
         if self.complete_actions == self.total_actions:
             # RPM doesn't explicitly report when post-trans phase starts
             action = TransactionDisplay.TRANS_POST
-            self.display.event(None, action, None, None, None, None)
+            for display in self.displays:
+                display.progress(None, action, None, None, None, None)
 
     def _instProgress(self, bytes, total, h):
         pkg, _, tsi = self._extract_tsi_cbkey(h)
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
-        self.display.event(pkg, action, bytes, total, self.complete_actions,
-                           self.total_actions)
+        for display in self.displays:
+            display.progress(
+                pkg, action, bytes, total, self.complete_actions,
+                self.total_actions)
 
     def _unInstStart(self, bytes, total, h):
         pass
@@ -481,9 +500,10 @@ class RPMTransaction(object):
             action = TransactionDisplay.PKG_CLEANUP
         else:
             action = TransactionDisplay.PKG_ERASE
-        self.display.filelog(pkg, action)
-        self.display.event(pkg, action, 100, 100, self.complete_actions,
-                           self.total_actions)
+        for display in self.displays:
+            display.filelog(pkg, action)
+            display.progress(pkg, action, 100, 100, self.complete_actions,
+                             self.total_actions)
 
         if self.test:
             return
@@ -512,12 +532,14 @@ class RPMTransaction(object):
         # In the case of a remove, we only have a name, not a tsi:
         pkg, _, _ = self._extract_cbkey(h)
         msg = "Error in cpio payload of rpm package %s" % pkg
-        self.display.errorlog(msg)
+        for display in self.displays:
+            display.error(msg)
 
     def _unpackError(self, bytes, total, h):
         pkg, _, _ = self._extract_cbkey(h)
         msg = "Error unpacking rpm package %s" % pkg
-        self.display.errorlog(msg)
+        for display in self.displays:
+            display.error(msg)
 
     def _scriptError(self, bytes, total, h):
         # "bytes" carries the failed scriptlet tag,
@@ -533,7 +555,8 @@ class RPMTransaction(object):
         else:
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
                    (scriptlet_name, name))
-        self.display.errorlog(msg)
+        for display in self.displays:
+            display.error(msg)
 
     def _scriptStart(self, bytes, total, h):
         pass
@@ -542,4 +565,5 @@ class RPMTransaction(object):
         self._scriptout()
 
     def verify_tsi_package(self, pkg, count, total):
-        self.display.verify_tsi_package(pkg, count, total)
+        for display in self.displays:
+            display.verify_tsi_package(pkg, count, total)

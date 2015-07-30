@@ -1,7 +1,7 @@
 # demand.py
 # Demand sheet and related classes.
 #
-# Copyright (C) 2014  Red Hat, Inc.
+# Copyright (C) 2014-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -56,4 +56,4 @@ class DemandSheet(object):
     fresh_metadata = _BoolDefault(True)
     freshest_metadata = _BoolDefault(False)
 
-    transaction_display = output.CliTransactionDisplay()
+    transaction_display = None

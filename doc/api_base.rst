@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014  Red Hat, Inc.
+  Copyright (C) 2014-2015  Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -80,7 +80,7 @@
 
   .. method:: do_transaction([display])
 
-    Perform the resolved transaction. Use the optional `display` object to report the progress.
+    Perform the resolved transaction. Use the optional `display` object(s) to report the progress. `display` can be either an instance of a subclass of :class:`dnf.callback.TransactionProgress` or a sequence of such instances.
 
   .. method:: download_packages(pkglist, progress=None)
 

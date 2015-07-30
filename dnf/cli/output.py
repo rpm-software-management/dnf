@@ -1,5 +1,5 @@
 # Copyright 2005 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2015  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
-from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -35,6 +34,7 @@ import dnf.util
 import dnf.yum.history
 import dnf.yum.misc
 import dnf.yum.packages
+import dnf.yum.rpmtrans
 import hawkey
 import itertools
 import logging
@@ -2083,13 +2083,21 @@ class CliKeyImport(dnf.callback.KeyImport):
         return self.output.userconfirm()
 
 
-class CliTransactionDisplay(LoggingTransactionDisplay):
+class CliTransactionDisplay(dnf.yum.rpmtrans.ErrorTransactionDisplay):
     """A Yum specific callback class for RPM operations."""
 
     width = property(lambda self: dnf.cli.term._term_width())
 
     def __init__(self):
         super(CliTransactionDisplay, self).__init__()
+        self.action = {self.PKG_CLEANUP: _('Cleanup'),
+                       self.PKG_DOWNGRADE: _('Downgrading'),
+                       self.PKG_ERASE: _('Erasing'),
+                       self.PKG_INSTALL: _('Installing'),
+                       self.PKG_OBSOLETE: _('Obsoleting'),
+                       self.PKG_REINSTALL: _('Reinstalling'),
+                       self.PKG_UPGRADE: _('Upgrading'),
+                       self.PKG_VERIFY: _('Verifying')}
         self.lastmsg = ""
         self.lastpackage = None # name of last package we looked at
         self.output = True
@@ -2098,7 +2106,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         self.mark = "#"
         self.marks = 22
 
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
+    def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
         """Output information about an rpm operation.  This may
         include a text progress bar.
 
@@ -2106,11 +2114,11 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param action: the type of action that is taking place.  Valid
            values are given by
            :func:`rpmtrans.LoggingTransactionDisplay.action.keys()`
-        :param te_current: a number representing the amount of work
+        :param ti_done: a number representing the amount of work
            already done in the current transaction
-        :param te_total: a number representing the total amount of work
+        :param ti_total: a number representing the total amount of work
            to be done in the current transaction
-        :param ts_current: the number of the current transaction in
+        :param ts_done: the number of the current transaction in
            transaction set
         :param ts_total: the total number of transactions in the
            transaction set
@@ -2123,12 +2131,12 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
 
         pkgname = ucd(package)
         self.lastpackage = package
-        if te_total == 0:
+        if ti_total == 0:
             percent = 0
         else:
-            percent = (te_current*long(100))//te_total
-        self._out_event(te_current, te_total, ts_current, ts_total,
-                        percent, process, pkgname, wid1)
+            percent = (ti_done*long(100))//ti_total
+        self._out_progress(ti_done, ti_total, ts_done, ts_total,
+                           percent, process, pkgname, wid1)
 
     def _max_action_width(self):
         if not hasattr(self, '_max_action_wid_cache'):
@@ -2141,10 +2149,10 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         wid1 = self._max_action_wid_cache
         return wid1
 
-    def _out_event(self, te_current, te_total, ts_current, ts_total,
-                   percent, process, pkgname, wid1):
-        if self.output and (sys.stdout.isatty() or te_current == te_total):
-            (fmt, wid1, wid2) = self._makefmt(percent, ts_current, ts_total,
+    def _out_progress(self, ti_done, ti_total, ts_done, ts_total,
+                      percent, process, pkgname, wid1):
+        if self.output and (sys.stdout.isatty() or ti_done == ti_total):
+            (fmt, wid1, wid2) = self._makefmt(percent, ts_done, ts_total,
                                               progress=sys.stdout.isatty(),
                                               pkgname=pkgname, wid1=wid1)
             pkgname = ucd(pkgname)
@@ -2154,7 +2162,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
                 sys.stdout.write(msg)
                 sys.stdout.flush()
                 self.lastmsg = msg
-            if te_current == te_total:
+            if ti_done == ti_total:
                 print(" ")
 
     def scriptout(self, msgs):
@@ -2166,12 +2174,12 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             sys.stdout.write(ucd(msgs))
             sys.stdout.flush()
 
-    def _makefmt(self, percent, ts_current, ts_total, progress=True,
+    def _makefmt(self, percent, ts_done, ts_total, progress=True,
                  pkgname=None, wid1=15):
         l = len(str(ts_total))
         size = "%s.%s" % (l, l)
         fmt_done = "%" + size + "s/%" + size + "s"
-        done = fmt_done % (ts_current, ts_total)
+        done = fmt_done % (ts_done, ts_total)
 
         #  This should probably use TerminLine, but we don't want to dep. on
         # that. So we kind do an ok job by hand ... at least it's dynamic now.
@@ -2213,12 +2221,6 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             fmt = "  %s: %s " + bar + " " + done
             wid2 = pnl
         return fmt, wid1, wid2
-
-    def verify_tsi_package(self, pkg, count, total):
-        percent = 100
-        process = _('Verifying')
-        wid1 = max(exact_width(process), self._max_action_width())
-        self._out_event(100, 100, count, total, percent, process, ucd(pkg), wid1)
 
 def progressbar(current, total, name=None):
     """Output the current status to the terminal using a simple

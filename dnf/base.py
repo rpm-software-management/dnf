@@ -30,6 +30,7 @@ from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
 from functools import reduce
+import collections
 import dnf.callback
 import dnf.comps
 import dnf.conf
@@ -528,8 +529,12 @@ class Base(object):
             raise exc
         return got_transaction
 
-    def do_transaction(self, display=None):
+    def do_transaction(self, display=()):
         # :api
+        if not isinstance(display, collections.Sequence):
+            display = [display]
+        display = \
+            [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
         persistor = self.group_persistor
         if persistor:
@@ -582,12 +587,10 @@ class Base(object):
         # put back our depcheck callback
         self.ds_callback = dscb
         # setup our rpm ts callback
-        if display is None:
-            cb = dnf.yum.rpmtrans.RPMTransaction(self)
-        else:
-            cb = dnf.yum.rpmtrans.RPMTransaction(self, display=display)
+        cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=display)
         if self.conf.debuglevel < 2:
-            cb.display.output = False
+            for display_ in cb.displays:
+                display_.output = False
 
         logger.info(_('Running transaction'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)

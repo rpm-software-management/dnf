@@ -1,7 +1,7 @@
 # callbacks.py
 # Abstract interfaces to communicate progress on tasks.
 #
-# Copyright (C) 2014  Red Hat, Inc.
+# Copyright (C) 2014-2015  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,14 +18,28 @@
 # Red Hat, Inc.
 #
 
+from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.i18n import _
 import dnf.yum.rpmtrans
+import sys
+
+PKG_CLEANUP = dnf.yum.rpmtrans.TransactionDisplay.PKG_CLEANUP  # :api
+PKG_DOWNGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_DOWNGRADE  # :api
+PKG_INSTALL = dnf.yum.rpmtrans.TransactionDisplay.PKG_INSTALL  # :api
+PKG_OBSOLETE = dnf.yum.rpmtrans.TransactionDisplay.PKG_OBSOLETE  # :api
+PKG_REINSTALL = dnf.yum.rpmtrans.TransactionDisplay.PKG_REINSTALL  # :api
+PKG_REMOVE = dnf.yum.rpmtrans.TransactionDisplay.PKG_ERASE  # :api
+PKG_UPGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_UPGRADE  # :api
+PKG_VERIFY = dnf.yum.rpmtrans.TransactionDisplay.PKG_VERIFY  # :api
 
 STATUS_OK = None # :api
 STATUS_FAILED = 1 # :api
 STATUS_ALREADY_EXISTS = 2 # :api
 STATUS_MIRROR = 3  # :api
 STATUS_DRPM = 4    # :api
+
+TRANS_POST = dnf.yum.rpmtrans.TransactionDisplay.TRANS_POST  # :api
 
 
 class KeyImport(object):
@@ -100,5 +114,43 @@ class Depsolve(object):
     def end(self):
         pass
 
-# alias for RPM transaction callback that logs things to a file
-LoggingTransactionDisplay = dnf.yum.rpmtrans.LoggingTransactionDisplay
+# :deprecated in 1.1.0, eligible for dropping in 2.0
+# de facto API - never documented but used by Anaconda thanks to us
+class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
+
+    def __init__(self):
+        super(LoggingTransactionDisplay, self).__init__()
+        self.action = {self.PKG_CLEANUP: _('Cleanup'),
+                       self.PKG_DOWNGRADE: _('Downgrading'),
+                       self.PKG_ERASE: _('Erasing'),
+                       self.PKG_INSTALL: _('Installing'),
+                       self.PKG_OBSOLETE: _('Obsoleting'),
+                       self.PKG_REINSTALL: _('Reinstalling'),
+                       self.PKG_UPGRADE: _('Upgrading'),
+                       self.PKG_VERIFY: _('Verifying')}
+
+    def error(self, message):
+        super(LoggingTransactionDisplay, self).error(message)
+        # Compatibility: Originally, "error" was "errorlog". Let's call it in
+        # case somebody overrides it.
+        self.errorlog(message)
+
+    def errorlog(self, msg):
+        # Compatibility: Originally, "error" was "errorlog". Let's define it in
+        # case somebody extends it.
+        print(msg, file=sys.stderr)
+
+    def event(self, package, action, te_current, te_total, ts_current, ts_total):
+        # Compatibility: Originally, "progress" was "event". Let's define it in
+        # case somebody extends it.
+        pass
+
+    def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
+        super(LoggingTransactionDisplay, self).progress(
+            package, action, ti_done, ti_total, ts_done, ts_total)
+        # Compatibility: Originally, "progress" was "event". Let's call it in
+        # case somebody overrides it.
+        self.event(package, action, ti_done, ti_total, ts_done, ts_total)
+
+
+TransactionProgress = dnf.yum.rpmtrans.TransactionDisplay  # :api
