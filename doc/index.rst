@@ -29,6 +29,7 @@ Contents:
    conf_ref
    release_notes
    cli_vs_yum
+   api_vs_yum
    api
    user_faq
    automatic
