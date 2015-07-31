@@ -22,7 +22,7 @@ import dnf.arch
 import tests.support
 
 
-class ArchTest(tests.support.TestCase):
+class FunctionsTest(tests.support.TestCase):
 
     def test_basearch(self):
         fn = dnf.arch.basearch
@@ -31,5 +31,206 @@ class ArchTest(tests.support.TestCase):
         self.assertEqual(fn('i686'), 'i386')
         self.assertEqual(fn('noarch'), 'noarch')
         self.assertEqual(fn('ppc64iseries'), 'ppc64')
-        self.assertEqual(fn('sparc64v'), 'sparc')
+        self.assertEqual(fn('sparc64v'), 'sparc64')
         self.assertEqual(fn('x86_64'), 'x86_64')
+
+    def test_is_valid_arch(self):
+        self.assertTrue(dnf.arch.is_valid_arch("i386"))
+        self.assertTrue(dnf.arch.is_valid_arch("i686"))
+        self.assertTrue(dnf.arch.is_valid_arch("x86_64"))
+        self.assertFalse(dnf.arch.is_valid_arch("armhfp"))
+        self.assertFalse(dnf.arch.is_valid_arch("foo"))
+
+    def test_is_valid_basearch(self):
+        self.assertTrue(dnf.arch.is_valid_basearch("i386"))
+        self.assertFalse(dnf.arch.is_valid_basearch("i686"))
+        self.assertTrue(dnf.arch.is_valid_basearch("x86_64"))
+        self.assertTrue(dnf.arch.is_valid_basearch("armhfp"))
+        self.assertFalse(dnf.arch.is_valid_basearch("foo"))
+
+
+class ArchTest(tests.support.TestCase):
+
+    def test_src(self):
+        a = dnf.arch.Arch("src")
+        self.assertEqual(a.arches, ["src", "nosrc"])
+        self.assertEqual(a.native_arches, ["src", "nosrc"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, True)
+
+    def test_noarch(self):
+        a = dnf.arch.Arch("noarch")
+        self.assertEqual(a.arches, ["noarch"])
+        self.assertEqual(a.native_arches, ["noarch"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, True)
+        self.assertEqual(a.is_source, False)
+
+    def test_i386(self):
+        a = dnf.arch.Arch("i386")
+        self.assertEqual(a.arches, ["i386", "noarch"])
+        self.assertEqual(a.native_arches, ["i386"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_i686(self):
+        a = dnf.arch.Arch("i686")
+        self.assertEqual(a.arches, ["i686", "i586", "i486", "i386", "noarch"])
+        self.assertEqual(a.native_arches, ["i686", "i586", "i486", "i386"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_i686_all(self):
+        a = dnf.arch.Arch("i686", just_compatible=False)
+        self.assertEqual(a.arches, ["athlon", "geode", "i686", "i586", "i486", "i386", "noarch"])
+        self.assertEqual(a.native_arches, ["athlon", "geode", "i686", "i586", "i486", "i386"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_x86_64(self):
+        a = dnf.arch.Arch("x86_64")
+        self.assertEqual(a.arches, ["x86_64", "athlon", "i686", "i586", "i486", "i386", "noarch"])
+        self.assertEqual(a.native_arches, ["x86_64"])
+        self.assertEqual(a.multilib_arches, ["athlon", "i686", "i586", "i486", "i386"])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, True)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_x86_64_all(self):
+        a = dnf.arch.Arch("x86_64", just_compatible=False)
+        self.assertEqual(a.arches, ["amd64", "ia32e", "x86_64", "athlon", "geode", "i686", "i586", "i486", "i386", "noarch"])
+        self.assertEqual(a.native_arches, ["amd64", "ia32e", "x86_64"])
+        self.assertEqual(a.multilib_arches, ["athlon", "geode", "i686", "i586", "i486", "i386"])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, True)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_armhfp(self):
+        a = dnf.arch.Arch("armhfp", basearch=True)
+        self.assertEqual(a.arches, ["armv7hnl", "armv7hl", "armv6hl", "noarch"])
+        self.assertEqual(a.native_arches, ["armv7hnl", "armv7hl", "armv6hl"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparc(self):
+        a = dnf.arch.Arch("sparc")
+        self.assertEqual(a.arches, ["sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparc"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparcv8(self):
+        a = dnf.arch.Arch("sparcv8")
+        self.assertEqual(a.arches, ["sparcv8", "sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparcv8", "sparc"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparcv9(self):
+        a = dnf.arch.Arch("sparcv9")
+        self.assertEqual(a.arches, ["sparcv9", "sparcv8", "sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparcv9", "sparcv8", "sparc"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparcv9v(self):
+        a = dnf.arch.Arch("sparcv9v")
+        self.assertEqual(a.arches, ["sparcv9v", "sparcv9", "sparcv8", "sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparcv9v", "sparcv9", "sparcv8", "sparc"])
+        self.assertEqual(a.multilib_arches, [])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, False)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparc64(self):
+        a = dnf.arch.Arch("sparc64")
+        self.assertEqual(a.arches, ["sparc64", "sparcv9", "sparcv8", "sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparc64"])
+        self.assertEqual(a.multilib_arches, ["sparcv9", "sparcv8", "sparc"])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, True)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_sparc64v(self):
+        a = dnf.arch.Arch("sparc64v")
+        self.assertEqual(a.arches, ["sparc64v", "sparc64", "sparcv9v", "sparcv9", "sparcv8", "sparc", "noarch"])
+        self.assertEqual(a.native_arches, ["sparc64v", "sparc64"])
+        self.assertEqual(a.multilib_arches, ["sparcv9v", "sparcv9", "sparcv8", "sparc"])
+        self.assertEqual(a.noarch_arches, ["noarch"])
+        self.assertEqual(a.source_arches, ["src", "nosrc"])
+        self.assertEqual(a.is_multilib, True)
+        self.assertEqual(a.is_noarch, False)
+        self.assertEqual(a.is_source, False)
+
+    def test_cmp(self):
+        a_i386 = dnf.arch.Arch("i386")
+        a_i686 = dnf.arch.Arch("i686")
+        a_x86_64 = dnf.arch.Arch("x86_64")
+        a_ppc64 = dnf.arch.Arch("ppc64")
+
+        self.assertTrue(a_i386 == a_i386)
+
+        self.assertFalse(a_i386 > a_i386)
+        self.assertFalse(a_i386 < a_i386)
+
+        self.assertTrue(a_i386 >= a_i386)
+        self.assertTrue(a_i386 <= a_i386)
+
+        self.assertTrue(a_i386 < a_i686)
+        self.assertTrue(a_i686 > a_i386)
+
+        self.assertTrue(a_i386 <= a_i686)
+        self.assertTrue(a_i686 >= a_i386)
+
+        self.assertTrue(a_i386 < a_x86_64)
+        self.assertTrue(a_x86_64 > a_i386)
+
+        self.assertTrue(a_i386 <= a_x86_64)
+        self.assertTrue(a_x86_64 >= a_i386)
+
+        self.assertTrue(a_x86_64 != a_ppc64)
+        self.assertRaises(ValueError, a_x86_64.__lt__, a_ppc64)
+        self.assertRaises(ValueError, a_x86_64.__gt__, a_ppc64)
