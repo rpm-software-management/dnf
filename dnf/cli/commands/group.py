@@ -164,14 +164,15 @@ class GroupCommand(commands.Command):
             userlist = None # Match everything...
 
         errs = False
-        for group in userlist:
-            in_group = len(self.base.comps.groups_by_pattern(group)) > 0
-            in_environment = len(self.base.comps.environments_by_pattern(group)) > 0
-            if not in_group and not in_environment:
-                logger.error(_('Warning: No groups match:\n   %s'), group)
-                errs = True
-        if errs:
-            return 0, []
+        if userlist is not None:
+            for group in userlist:
+                in_group = len(self.base.comps.groups_by_pattern(group)) > 0
+                in_environment = len(self.base.comps.environments_by_pattern(group)) > 0
+                if not in_group and not in_environment:
+                    logger.error(_('Warning: No groups match:\n   %s'), group)
+                    errs = True
+            if errs:
+                return 0, []
 
         env_inst, env_avail = self._environment_lists(userlist)
         installed, available = self._group_lists(uservisible, userlist)
