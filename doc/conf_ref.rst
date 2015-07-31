@@ -82,6 +82,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Error messages output level, in the range 0 to 10. The higher the number the
     more error output is put to stderr. Default is 2. This is deprecated in DNF.
 
+``install_weak_deps``
+    boolean
+
+    When this option is set to True and a new package is about to be
+    installed, all packages linked by weak dependency relation (Recommends or Supplements flags) with this package will pulled into the transaction.
+    Default is True.
+
 .. _installonlypkgs-label:
 
 ``installonlypkgs``

@@ -413,6 +413,7 @@ class FakeConf(object):
         self.disable_excludes = []
         self.exclude = []
         self.include = []
+        self.install_weak_deps = True
         self.history_record = False
         self.installonly_limit = 0
         self.installonlypkgs = ['kernel']

@@ -785,6 +785,7 @@ class YumConf(BaseConfig):
     disable_excludes = ListOption()
     multilib_policy = SelectionOption('best', ('best', 'all')) # :api
     best = BoolOption(False) # :api
+    install_weak_deps = BoolOption(True)
     bugtracker_url = Option(dnf.const.BUGTRACKER)
 
     color = SelectionOption('auto', ('auto', 'never', 'always'),

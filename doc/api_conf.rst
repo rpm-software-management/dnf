@@ -48,6 +48,12 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
 
+  .. attribute:: install_weak_deps
+
+    When this boolean option is set to True and a new package is about to be
+    installed, all packages linked by weak dependency relation (Recommends or Supplements flags) with this package will pulled into the transaction.
+    Default is True.
+
   .. attribute:: installroot
 
     The root of the filesystem for all packaging operations.

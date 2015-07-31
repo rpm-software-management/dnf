@@ -494,7 +494,8 @@ class Base(object):
 
     def run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(
-            allow_uninstall=allow_erasing, force_best=self.conf.best)
+            allow_uninstall=allow_erasing, force_best=self.conf.best,
+            ignore_weak_deps=(not self.conf.install_weak_deps))
         if self.conf.debug_solver:
             goal.write_debugdata('./debugdata')
         return ret
