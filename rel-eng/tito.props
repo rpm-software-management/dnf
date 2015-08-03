@@ -1,6 +1,6 @@
 [buildconfig]
-builder = tito.distributionbuilder.DistributionBuilder
-tagger =  tito.tagger.ReleaseTagger
+builder = tito.builder.Builder
+tagger = tito.tagger.VersionTagger
 changelog_do_not_remove_cherrypick = 1
 changelog_format = %s (%an)
 
