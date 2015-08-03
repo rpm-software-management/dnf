@@ -817,6 +817,7 @@ class YumConf(BaseConfig):
     history_record_packages = ListOption(['dnf', 'rpm'])
 
     rpmverbosity = Option('info')
+    strict = BoolOption(True)  # :api
     clean_requirements_on_remove = BoolOption(False)
     history_list_view = SelectionOption('single-user-commands',
                                         ('single-user-commands', 'users',
