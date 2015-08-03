@@ -68,8 +68,12 @@ class InstallCommand(commands.Command):
         # Install groups.
         if grp_specs:
             self.base.read_comps()
-            self.base.env_group_install(grp_specs,
-                                        dnf.const.GROUP_PACKAGE_TYPES)
+            try:
+                self.base.env_group_install(grp_specs,
+                                            dnf.const.GROUP_PACKAGE_TYPES)
+            except dnf.exceptions.Error:
+                if self.base.conf.strict:
+                    raise
             done = True
 
         # Install packages.
@@ -83,7 +87,7 @@ class InstallCommand(commands.Command):
                             self.base.output.term.MODE['normal'])
                 errs.append(pkg_spec)
             done = True
-        if len(errs) != 0:
+        if len(errs) != 0 and self.base.conf.strict:
             raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match."), packages=errs)
 
         if not done:
