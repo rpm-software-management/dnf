@@ -205,6 +205,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
 
+``strict``
+    boolean
+
+    If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
+
 ================
  Repo Variables
 ================
