@@ -60,10 +60,14 @@ class InstallCommand(commands.Command):
         pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
             extcmds)
         optional = (not self.base.conf.strict)
+        package_install_fnc = functools.partial(self.base.package_install,
+                                                optional=optional)
 
         # Install files.
         local_pkgs = map(self.base.add_remote_rpm, filenames)
-        results = map(self.base.package_install, local_pkgs)
+        # try to install packages with higher version first
+        local_pkgs = sorted(local_pkgs, reverse=True)
+        results = map(package_install_fnc, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
 
         # Install groups.

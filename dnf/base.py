@@ -1422,14 +1422,14 @@ class Base(object):
             logger.warning(msg)
             return 0
 
-    def package_install(self, pkg):
+    def package_install(self, pkg, optional=False):
         # :api
         q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
         already_inst, _ = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
         else:
-            self._goal.install(pkg)
+            self._goal.install(pkg, optional=optional)
         return 1
 
     def package_reinstall(self, pkg):
