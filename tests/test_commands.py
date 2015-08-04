@@ -137,8 +137,10 @@ class InstallCommandTest(support.ResultTestCase):
 
         self.assertEqual(stdout.getvalue(),
                          'No package non-existent available.\n')
-        self.assertResult(self._cmd.cli.base,
-                          self._cmd.cli.base.sack.query().installed())
+        base = self._cmd.cli.base
+        self.assertResult(base, itertools.chain(
+              base.sack.query().installed(),
+              dnf.subject.Subject('lotus.x86_64').get_best_query(base.sack)))
 
 class ReinstallCommandTest(support.ResultTestCase):
 
