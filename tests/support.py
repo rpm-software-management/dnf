@@ -427,6 +427,7 @@ class FakeConf(object):
         self.tsflags = []
         self.verbose = False
         self.substitutions = {'releasever' : 'Fedora69'}
+        self.strict = True
 
     @property
     def releasever(self):

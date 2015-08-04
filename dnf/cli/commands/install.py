@@ -59,6 +59,7 @@ class InstallCommand(commands.Command):
     def run(self, extcmds):
         pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
             extcmds)
+        optional = (not self.base.conf.strict)
 
         # Install files.
         local_pkgs = map(self.base.add_remote_rpm, filenames)
@@ -80,7 +81,7 @@ class InstallCommand(commands.Command):
         errs = []
         for pkg_spec in pkg_specs:
             try:
-                self.base.install(pkg_spec)
+                self.base.install(pkg_spec, optional=optional)
             except dnf.exceptions.MarkingError:
                 msg = _('No package %s%s%s available.')
                 logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
