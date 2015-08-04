@@ -1345,7 +1345,7 @@ class Base(object):
             del fo
             return 1
 
-    def install(self, pkg_spec, reponame=None):
+    def install(self, pkg_spec, reponame=None, optional=False):
         """Mark package(s) given by pkg_spec and reponame for installation.:api
         """
 
@@ -1362,7 +1362,7 @@ class Base(object):
             for i in already_inst:
                 _msg_installed(i)
             for a in available:
-                self._goal.install(a)
+                self._goal.install(a, optional=optional)
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltrs = subj.get_best_selectors(self.sack)
@@ -1379,7 +1379,7 @@ class Base(object):
                 if already_inst:
                     for package in already_inst:
                         _msg_installed(package)
-                self._goal.install(select=sltr)
+                self._goal.install(select=sltr, optional=optional)
             return 1
         return 0
 
