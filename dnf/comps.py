@@ -79,14 +79,15 @@ def _fn_display_order(group):
     return sys.maxsize if group.display_order is None else group.display_order
 
 
-def install_or_skip(install_fnc, grp_or_env, types, exclude=None):
+def install_or_skip(install_fnc, grp_or_env, types, exclude=None,
+                    optional=False):
     """Either mark in persistor as installed given `grp_or_env` (group
        or environment) or skip it (if it's already installed).
        `install_fnc` has to be Solver.group_install
        or Solver.environment_install.
        """
     try:
-        return install_fnc(grp_or_env, types, exclude)
+        return install_fnc(grp_or_env, types, exclude, optional)
     except dnf.comps.CompsError as e:
         logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
 
@@ -452,7 +453,7 @@ class Solver(object):
             count += sum(1 for grp in p_env.full_list if grp == grp_name)
         return count < 2
 
-    def environment_install(self, env, pkg_types, exclude):
+    def environment_install(self, env, pkg_types, exclude, optional=False):
         p_env = self.persistor.environment(env.id)
         if p_env.installed:
             raise CompsError(_("Environment '%s' is already installed.") %
@@ -467,7 +468,7 @@ class Solver(object):
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
             try:
-                trans += self.group_install(grp, pkg_types, exclude)
+                trans += self.group_install(grp, pkg_types, exclude, optional)
             except dnf.exceptions.CompsError:
                 pass
         return trans
@@ -518,7 +519,7 @@ class Solver(object):
                 trans += self.group_install(grp, pkg_types, exclude)
         return trans
 
-    def group_install(self, group, pkg_types, exclude):
+    def group_install(self, group, pkg_types, exclude, optional=False):
         p_grp = self.persistor.group(group.id)
         if p_grp.installed:
             raise CompsError(_("Group '%s' is already installed.") %
@@ -531,9 +532,14 @@ class Solver(object):
 
         trans = TransactionBunch()
         types = pkg_types & MANDATORY
-        trans.install = self._pkgs_of_type(group, types, exclude)
+        mandatory = self._pkgs_of_type(group, types, exclude)
         types = pkg_types & (DEFAULT | OPTIONAL)
         trans.install_opt = self._pkgs_of_type(group, types, exclude)
+
+        if optional:
+            trans.install_opt.update(mandatory)
+        else:
+            trans.install = mandatory
         return trans
 
     def group_remove(self, group):

@@ -1215,11 +1215,12 @@ class Base(object):
 
         return dnf.comps.Solver(self.group_persistor, reason_fn)
 
-    def environment_install(self, env, types, exclude=None):
+    def environment_install(self, env, types, exclude=None, optional=False):
         solver = self.build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver.environment_install,
-                                          env, types, exclude or set())
+                                          env, types, exclude or set(),
+                                          optional)
         if not trans:
             return 0
         return self._add_comps_trans(trans)
@@ -1243,7 +1244,7 @@ class Base(object):
                 ret |= enum
         return ret
 
-    def group_install(self, grp, pkg_types, exclude=None):
+    def group_install(self, grp, pkg_types, exclude=None, optional=False):
         """Installs packages of selected group
         :param exclude: list of package name glob patterns
             that will be excluded from install set
@@ -1264,14 +1265,15 @@ class Base(object):
         solver = self.build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = dnf.comps.install_or_skip(solver.group_install,
-                                          grp, pkg_types, exclude_pkgnames)
+                                          grp, pkg_types, exclude_pkgnames,
+                                          optional)
         if not trans:
             return 0
         logger.debug("Adding packages from group '%s': %s",
                      grp.id, trans.install)
         return self._add_comps_trans(trans)
 
-    def env_group_install(self, patterns, types):
+    def env_group_install(self, patterns, types, optional=False):
         q = CompsQuery(self.comps, self.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -1282,9 +1284,9 @@ class Base(object):
             raise dnf.exceptions.Error(_('Nothing to do.'))
         cnt = 0
         for group in res.groups:
-            cnt += self.group_install(group, types)
+            cnt += self.group_install(group, types, optional=optional)
         for env in res.environments:
-            cnt += self.environment_install(env, types)
+            cnt += self.environment_install(env, types, optional=optional)
         return cnt
 
     def group_remove(self, grp):
