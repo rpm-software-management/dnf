@@ -1861,7 +1861,7 @@ msgstr "¡se suponía que %s estuviera eliminado, pero no lo está! "
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
-"Delta RPMs redujo %.1f MB de actualizaciones a %.1f MB (%d.1%% guardados)"
+"Delta RPMs redujo %.1f MB de actualizaciones a %.1f MB (%d.1%% de ahorro)"
 
 #: ../dnf/base.py:929
 #, python-format
