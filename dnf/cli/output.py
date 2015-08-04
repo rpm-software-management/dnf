@@ -50,7 +50,7 @@ def _make_lists(transaction):
     def tsi_cmp_key(tsi):
         return str(tsi.active)
 
-    TYPES = ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded')
+    TYPES = ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded', 'failed')
     b = dnf.util.Bunch()
     for ttype in TYPES:
         b[ttype] = []
@@ -65,6 +65,9 @@ def _make_lists(transaction):
             b.reinstalled.append(tsi)
         elif tsi.op_type == dnf.transaction.UPGRADE:
             b.upgraded.append(tsi)
+        elif tsi.op_type == dnf.transaction.FAIL:
+            b.failed.append(tsi)
+
     for ttype in TYPES:
         b[ttype].sort(key=tsi_cmp_key)
     return b
@@ -1141,7 +1144,8 @@ Transaction Summary
                                (_('Removed'), list_bunch.erased),
                                (_('Installed'), list_bunch.installed),
                                (_('Upgraded'), list_bunch.upgraded),
-                               (_('Downgraded'), list_bunch.downgraded)]:
+                               (_('Downgraded'), list_bunch.downgraded),
+                               (_('Failed'), list_bunch.failed)]:
             if not tsis:
                 continue
             msgs = []

@@ -29,6 +29,7 @@ ERASE     = 2
 INSTALL   = 3
 REINSTALL = 4
 UPGRADE   = 5
+FAIL      = 6
 
 
 class TransactionItem(object):
