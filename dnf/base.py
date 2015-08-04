@@ -760,6 +760,7 @@ class Base(object):
             installed = rpmdb_sack.query().installed().nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
+                tsi.op_type = dnf.transaction.FAIL
                 logger.critical(_('%s was supposed to be installed'
                                   ' but is not!' % rpo))
                 count = display_banner(rpo, count)
