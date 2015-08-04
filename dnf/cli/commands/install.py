@@ -73,6 +73,7 @@ class InstallCommand(commands.Command):
             done = True
 
         # Install packages.
+        errs = []
         for pkg_spec in pkg_specs:
             try:
                 self.base.install(pkg_spec)
@@ -80,8 +81,10 @@ class InstallCommand(commands.Command):
                 msg = _('No package %s%s%s available.')
                 logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
                             self.base.output.term.MODE['normal'])
-                raise
+                errs.append(pkg_spec)
             done = True
+        if len(errs) != 0:
+            raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match."), packages=errs)
 
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
