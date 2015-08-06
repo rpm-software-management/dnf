@@ -23,6 +23,7 @@ from dnf.pycomp import PY3, is_py3bytes, unicode, setlocale
 import gettext
 import locale
 import os
+import signal
 import sys
 import unicodedata
 
@@ -85,6 +86,8 @@ def setup_stdout():
         were needed.
     """
     stdout = sys.stdout
+    if not stdout.isatty():
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
     try:
         encoding = stdout.encoding
     except AttributeError:
