@@ -1277,16 +1277,21 @@ class Base(object):
         q = CompsQuery(self.comps, self.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
-        try:
-            res = q.get(*patterns)
-        except dnf.exceptions.CompsError as err:
-            logger.error("Warning: %s", ucd(err))
-            raise dnf.exceptions.Error(_('Nothing to do.'))
         cnt = 0
-        for group in res.groups:
-            cnt += self.group_install(group, types, optional=optional)
-        for env in res.environments:
-            cnt += self.environment_install(env, types, optional=optional)
+        done = True
+        for pattern in patterns:
+            try:
+                res = q.get(pattern)
+            except dnf.exceptions.CompsError as err:
+                logger.error("Warning: %s", ucd(err))
+                done = False
+                continue
+            for group in res.groups:
+                cnt += self.group_install(group, types, optional=optional)
+            for env in res.environments:
+                cnt += self.environment_install(env, types, optional=optional)
+        if not done and not optional:
+            raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
     def group_remove(self, grp):
