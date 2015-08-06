@@ -160,7 +160,11 @@ class Package(hawkey.Package):
         """
         if self.from_cmdline:
             return self.location
-
+        if self.baseurl:
+            path = os.path.join(self.baseurl, self.location)
+            if path.startswith("file://"):
+                path = path[7:]
+            return path
         loc = self.location
         if not self.repo.local:
             loc = os.path.basename(loc)
