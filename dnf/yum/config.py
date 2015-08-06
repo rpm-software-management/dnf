@@ -817,11 +817,11 @@ class YumConf(BaseConfig):
 
     rpmverbosity = Option('info')
     clean_requirements_on_remove = BoolOption(False)
-    history_list_view = SelectionOption('single-user-commands',
+    history_list_view = SelectionOption('commands',
                                         ('single-user-commands', 'users',
                                          'commands'),
-                                     mapper={'cmds'          : 'commands',
-                                             'default' :'single-user-commands'})
+                                        mapper={'cmds': 'commands',
+                                                'default': 'commands'})
 
     def dump(self):
         """Return a string representing the values of all the
