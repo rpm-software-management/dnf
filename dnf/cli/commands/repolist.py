@@ -254,19 +254,19 @@ class RepoListCommand(commands.Command):
             txt_rid = fill_exact_width(_('repo id'), id_len)
             txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
             if arg == 'disabled': # Don't output a status column.
-                logger.info("%s %s", txt_rid, txt_rnam)
+                print("%s %s" % (txt_rid, txt_rnam))
             else:
-                logger.info("%s %s %s", txt_rid, txt_rnam, _('status'))
+                print("%s %s %s" % (txt_rid, txt_rnam, _('status')))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
-                    logger.info("%s %s", fill_exact_width(rid, id_len),
-                                fill_exact_width(rname, nm_len, -nm_len))
+                    print("%s %s" % (fill_exact_width(rid, id_len),
+                                fill_exact_width(rname, nm_len, -nm_len)))
                     continue
 
                 if ui_num:
                     ui_num = fill_exact_width(ui_num, ui_len, left=False)
-                logger.info("%s %s %s%s", fill_exact_width(rid, id_len),
+                print("%s %s %s%s" % (fill_exact_width(rid, id_len),
                             fill_exact_width(rname, nm_len, nm_len),
-                            ui_enabled, ui_num)
+                            ui_enabled, ui_num))
         msg = 'Total packages: %s' % _num2ui_num(tot_num)
         logger.debug(msg)
