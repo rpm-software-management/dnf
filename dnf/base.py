@@ -1215,12 +1215,12 @@ class Base(object):
 
         return dnf.comps.Solver(self.group_persistor, reason_fn)
 
-    def environment_install(self, env, types, exclude=None, optional=False):
+    def environment_install(self, env, types, exclude=None, strict=True):
         solver = self.build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver.environment_install,
                                           env, types, exclude or set(),
-                                          optional)
+                                          strict)
         if not trans:
             return 0
         return self._add_comps_trans(trans)
@@ -1244,7 +1244,7 @@ class Base(object):
                 ret |= enum
         return ret
 
-    def group_install(self, grp, pkg_types, exclude=None, optional=False):
+    def group_install(self, grp, pkg_types, exclude=None, strict=True):
         """Installs packages of selected group
         :param exclude: list of package name glob patterns
             that will be excluded from install set
@@ -1266,14 +1266,14 @@ class Base(object):
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = dnf.comps.install_or_skip(solver.group_install,
                                           grp, pkg_types, exclude_pkgnames,
-                                          optional)
+                                          strict)
         if not trans:
             return 0
         logger.debug("Adding packages from group '%s': %s",
                      grp.id, trans.install)
         return self._add_comps_trans(trans)
 
-    def env_group_install(self, patterns, types, optional=False):
+    def env_group_install(self, patterns, types, strict=True):
         q = CompsQuery(self.comps, self.group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -1287,10 +1287,10 @@ class Base(object):
                 done = False
                 continue
             for group in res.groups:
-                cnt += self.group_install(group, types, optional=optional)
+                cnt += self.group_install(group, types, strict=strict)
             for env in res.environments:
-                cnt += self.environment_install(env, types, optional=optional)
-        if not done and not optional:
+                cnt += self.environment_install(env, types, strict=strict)
+        if not done and strict:
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
@@ -1352,7 +1352,7 @@ class Base(object):
             del fo
             return 1
 
-    def install(self, pkg_spec, reponame=None, optional=False):
+    def install(self, pkg_spec, reponame=None, strict=True):
         """Mark package(s) given by pkg_spec and reponame for installation.:api
         """
 
@@ -1369,7 +1369,7 @@ class Base(object):
             for i in already_inst:
                 _msg_installed(i)
             for a in available:
-                self._goal.install(a, optional=optional)
+                self._goal.install(a, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltrs = subj.get_best_selectors(self.sack)
@@ -1386,7 +1386,7 @@ class Base(object):
                 if already_inst:
                     for package in already_inst:
                         _msg_installed(package)
-                self._goal.install(select=sltr, optional=optional)
+                self._goal.install(select=sltr, optional=(not strict))
             return 1
         return 0
 
@@ -1427,14 +1427,14 @@ class Base(object):
             logger.warning(msg)
             return 0
 
-    def package_install(self, pkg, optional=False):
+    def package_install(self, pkg, strict=True):
         # :api
         q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
         already_inst, _ = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
         else:
-            self._goal.install(pkg, optional=optional)
+            self._goal.install(pkg, optional=(not strict))
         return 1
 
     def package_reinstall(self, pkg):
