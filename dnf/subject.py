@@ -93,44 +93,59 @@ class Subject(object):
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
         pat = self.subj.pattern
-        if self.filename_pattern:
-            return sack.query().filter_autoglob(file=pat)
-
-        kwargs = {'allow_globs' : True,
-                  'icase'	: self.icase}
-        if forms:
-            kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            return self._nevra_to_filters(sack.query(), nevra)
 
         if with_provides:
             reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
             reldep = first(reldeps)
             if reldep:
-                return sack.query().filter(provides=reldep)
+                q = sack.query().filter(provides=reldep)
+                if len(q.run()) > 0:
+                    return q
+
+        kwargs = {'allow_globs' : True,
+                  'icase' : self.icase}
+        if forms:
+            kwargs['form'] = forms
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        if nevra:
+            q = self._nevra_to_filters(sack.query(), nevra)
+            if len(q.run()) > 0:
+                return q
+
+        if self.filename_pattern:
+            return sack.query().filter_autoglob(file=pat)
+
         return sack.query().filter(empty=True)
 
     def get_best_selector(self, sack, forms=None):
         # :api
         sltr = dnf.selector.Selector(sack)
-        kwargs = {'allow_globs': True}
-        if self.filename_pattern:
-            key = "file__glob" if is_glob_pattern(self.pattern) else "file"
-            return sltr.set(**{key: self.pattern})
-        if forms:
-            kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            return self._nevra_to_selector(sltr, nevra)
 
         if is_glob_pattern(self.pattern):
-            return sltr.set(provides__glob=self.pattern)
+            s = sltr.set(provides__glob=self.pattern)
+            if len(s.matches()) > 0:
+                return s
 
         reldep = first(self.subj.reldep_possibilities_real(sack))
         if reldep:
             dep = str(reldep)
-            return sltr.set(provides=dep)
+            s = sltr.set(provides=dep)
+            if len(s.matches()) > 0:
+                return s
+
+        if forms:
+            kwargs['form'] = forms
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        if nevra:
+            s = self._nevra_to_selector(sltr, nevra)
+            if len(s.matches()) > 0:
+                return s
+
+        kwargs = {'allow_globs': True}
+        if self.filename_pattern:
+            key = "file__glob" if is_glob_pattern(self.pattern) else "file"
+            return sltr.set(**{key: self.pattern})
+
         return sltr
 
     def get_best_selectors(self, sack, forms=None):
