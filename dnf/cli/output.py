@@ -932,17 +932,22 @@ class Output(object):
         return '\n'.join(out)
 
     def _skipped_conflicts(self):
+        """returns set of packages that would be additionally installed
+           when --best and --allowerasing is set"""
         def is_better_version(same_name_pkgs):
             pkg1, pkg2 = same_name_pkgs
             if not pkg2 or (pkg1 and pkg1 > pkg2):
                 return False
             return True
 
-        return map(lambda t: t[1], filter(is_better_version,
-                   self.base._goal.best_run_diff()))
+        return set(map(lambda t: t[1], filter(is_better_version,
+                   self.base._goal.best_run_diff())))
 
     def _skipped_broken_deps(self, skipped_conflicts):
-        goal_diff = self.base._goal.available_updates_diff(self.base.sack.query())
+        """returns set of packages that are available updates
+           but cannot be upgraded"""
+        goal_diff = self.base._goal.available_updates_diff(
+            self.base.sack.query())
         if skipped_conflicts:
             goal_diff -= skipped_conflicts
         return goal_diff
