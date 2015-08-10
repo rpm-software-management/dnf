@@ -453,7 +453,7 @@ Makecache Command
     Like plain ``makecache`` but instructs DNF to be more resource-aware,
     meaning will not do anything if running on battery power and will terminate
     immediately if it's too soon after the last successful ``makecache`` run
-    (see :manpage:`dnf.conf(8)`, :ref:`metadata_timer_sync
+    (see :manpage:`dnf.conf(5)`, :ref:`metadata_timer_sync
     <metadata_timer_sync-label>`).
 
 ----------------
@@ -743,7 +743,7 @@ the most recent transaction.
 Metadata Synchronization
 ========================
 
-Correct operation of DNF depends on having access to up-to-date data from all enabled repositories but contacting remote mirrors on every operation considerably slows it down and costs bandwidth for both the client and the repository provider. The :ref:`metadata_expire <metadata_expire-label>` (see :manpage:`dnf.conf(8)`) repo config option is used by DNF to determine whether particular local copy of repository data is due to be re-synced. It is crucial that the repository providers set the option well, namely to a value where it is guaranteed that if particular metadata was available in time ``T`` on the server, then all packages it references will still be available for download from the server in time ``T + metadata_expire``.
+Correct operation of DNF depends on having access to up-to-date data from all enabled repositories but contacting remote mirrors on every operation considerably slows it down and costs bandwidth for both the client and the repository provider. The :ref:`metadata_expire <metadata_expire-label>` (see :manpage:`dnf.conf(5)`) repo config option is used by DNF to determine whether particular local copy of repository data is due to be re-synced. It is crucial that the repository providers set the option well, namely to a value where it is guaranteed that if particular metadata was available in time ``T`` on the server, then all packages it references will still be available for download from the server in time ``T + metadata_expire``.
 
 To further reduce the bandwidth load, some of the commands where having up-to-date metadata is not critical (e.g. the ``list`` command) do not look at whether a repository is expired and whenever any version of it is locally available, it will be used. Note that in all situations the user can force synchronization of all enabled repositories with the ``--refresh`` switch.
 
@@ -771,7 +771,7 @@ Files
 See Also
 ========
 
-* :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
+* :manpage:`dnf.conf(5)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
