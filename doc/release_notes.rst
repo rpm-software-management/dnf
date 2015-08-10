@@ -21,11 +21,11 @@
 
 .. contents::
 
-======================
-Upcoming Release Notes
-======================
+===================
+1.1.0 Release Notes
+===================
 
-API additions in X.X.0:
+API additions in 1.1.0:
 
 :meth:`dnf.Base.do_transaction` now accepts multiple displays.
 
@@ -33,9 +33,27 @@ Introduced ``install_weak_deps`` :doc:`configuration <conf_ref>` option.
 
 Implemented ``strict`` :doc:`configuration <conf_ref>` option.
 
-API deprecations in X.X.0:
+API deprecations in 1.1.0:
 
 * ``dnf.callback.LoggingTransactionDisplay`` is deprecated now. It was considered part of API despite the fact that it has never been documented. Use :class:`dnf.callback.TransactionProgress` instead.
+
+Bugs fixed in 1.1.0
+
+* :rhbug:`1210445`
+* :rhbug:`1218401`
+* :rhbug:`1227952`
+* :rhbug:`1197456`
+* :rhbug:`1236310`
+* :rhbug:`1219638`
+* :rhbug:`1207981`
+* :rhbug:`1208918`
+* :rhbug:`1221635`
+* :rhbug:`1236306`
+* :rhbug:`1234639`
+* :rhbug:`1244486`
+* :rhbug:`1224248`
+* :rhbug:`1243501`
+* :rhbug:`1225237`
 
 ===================
 1.0.2 Release Notes

@@ -1218,5 +1218,61 @@
     [
         1212320, 
         "[metadata] dnf makecache never timeouts"
+    ], 
+    [
+        1218401, 
+        "[doc] document history_list_view and set it to cmd by default"
+    ], 
+    [
+        1227952, 
+        "dnf update on a local directory does not handle mutliple versions of the same package"
+    ], 
+    [
+        1197456, 
+        "[RFE] implement `strict` config option (defaults=True)"
+    ], 
+    [
+        1236310, 
+        "dnf --quiet repolist doesn't output anything"
+    ], 
+    [
+        1219638, 
+        "DNF doesn't use xml:base in repodata"
+    ], 
+    [
+        1207981, 
+        "[UX] error during unpacking archive does not fail the installation"
+    ], 
+    [
+        1208918, 
+        "RFE: dnf shouldn't stop processing the command line at the first unknown package"
+    ], 
+    [
+        1221635, 
+        "add dnf config option to (not)obey weak deps"
+    ], 
+    [
+        1236306, 
+        "Some of dnf's subcommands can't handle pipe"
+    ], 
+    [
+        1234639, 
+        "dnf package actions triggered by dnf-automatic aren't logged to dnf.rpm.log"
+    ], 
+    [
+        1244486, 
+        "[doc] Add yum vs dnf hooks information in dnf documentation"
+    ], 
+    [
+        1224248, 
+        "[UX] Error message doesn't show names of packages well"
+    ], 
+    [
+        1243501, 
+        "`dnf downgrade' treats installed packages as not installed"
+    ], 
+    [
+        1225237, 
+        "[UX] [doc] FILES section missing from manual pages"
     ]
 ]
