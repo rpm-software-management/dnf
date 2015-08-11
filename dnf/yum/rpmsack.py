@@ -292,7 +292,8 @@ class RPMDBAdditionalDataPackage(object):
 
     def __setattr__(self, attr, value):
         if not attr.startswith('_'):
-            self._write(attr, value)
+            if value is not None:
+                self._write(attr, value)
         else:
             object.__setattr__(self, attr, value)
 
