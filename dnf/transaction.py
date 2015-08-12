@@ -176,7 +176,7 @@ class Transaction(object):
             if tsi.op_type == DOWNGRADE:
                 ts.addErase(tsi.erased.idx)
                 hdr = tsi.installed.header
-                ts.addInstall(hdr, tsi, 'i')
+                ts.addInstall(hdr, tsi, 'u')
             elif tsi.op_type == ERASE:
                 ts.addErase(tsi.erased.idx)
             elif tsi.op_type == INSTALL:
