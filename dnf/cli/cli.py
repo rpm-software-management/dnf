@@ -988,6 +988,14 @@ class Cli(object):
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
         self.nogpgcheck = opts.nogpgcheck
 
+        # store the main commands & summaries, before plugins are loaded
+        self.optparser.add_commands(self.cli_commands, 'main')
+        if self.base.conf.plugins:
+            self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
+        self.base.plugins.run_init(self.base, self)
+        # store the plugin commands & summaries
+        self.optparser.add_commands(self.cli_commands,'plugin')
+
         # the configuration reading phase is now concluded, finish the init
         self._configure_cachedir()
         # with cachedir in place we can configure stuff depending on it:
@@ -999,13 +1007,6 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        # store the main commands & summaries, before plugins are loaded
-        self.optparser.add_commands(self.cli_commands, 'main')
-        if self.base.conf.plugins:
-            self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
-        self.base.plugins.run_init(self.base, self)
-        # store the plugin commands & summaries
-        self.optparser.add_commands(self.cli_commands,'plugin')
 
         # build the usage info and put it into the optparser.
         self.optparser.usage = self.optparser.get_usage()
