@@ -1011,7 +1011,7 @@ class Output(object):
         if not self.conf.best and forward_actions & self.base._goal.actions:
             lines = []
             skipped_conflicts = self._skipped_conflicts()
-            for pkg in skipped_conflicts:
+            for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with conflicts:\n"
                          "(add '%s' to command line "
@@ -1021,7 +1021,7 @@ class Output(object):
         # show skipped packages with broken dependencies
         if hawkey.UPGRADE_ALL in self.base._goal.actions:
             lines = []
-            for pkg in self._skipped_broken_deps(skipped_conflicts):
+            for pkg in sorted(self._skipped_broken_deps(skipped_conflicts)):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with broken dependencies")
             pkglist_lines.append((skip_str, lines))
