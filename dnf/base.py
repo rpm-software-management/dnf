@@ -544,58 +544,58 @@ class Base(object):
         if not self.transaction:
             return
 
-        # save our ds_callback out
-        dscb = self.ds_callback
-        self.ds_callback = None
-        self.transaction.populate_rpm_ts(self.ts)
-
-        logger.info(_('Running transaction check'))
-        msgs = self._run_rpm_check()
-        if msgs:
-            msg = _('Error: transaction check vs depsolve:')
-            logger.error(msg)
-            for msg in msgs:
-                logger.error(msg)
-            raise dnf.exceptions.TransactionCheckError(msg)
-
-        logger.info(_('Transaction check succeeded.'))
-
-        timer = dnf.logging.Timer('transaction test')
-        logger.info(_('Running transaction test'))
-        if not self.conf.diskspacecheck:
-            self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
-
-        self.ts.order()  # order the transaction
-        self.ts.clean()  # release memory not needed beyond this point
-
-        testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
-        tserrors = self.ts.test(testcb)
-        del testcb
-
-        if len(tserrors) > 0:
-            errstring = _('Transaction check error:\n')
-            for descr in tserrors:
-                errstring += '  %s\n' % ucd(descr)
-
-            raise dnf.exceptions.Error(errstring + '\n' +
-                                       self._trans_error_summary(errstring))
-
-        logger.info(_('Transaction test succeeded.'))
-        timer()
-
-        # unset the sigquit handler
-        timer = dnf.logging.Timer('transaction')
-        # put back our depcheck callback
-        self.ds_callback = dscb
-        # setup our rpm ts callback
-        cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=display)
-        if self.conf.debuglevel < 2:
-            for display_ in cb.displays:
-                display_.output = False
-
-        logger.info(_('Running transaction'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
         with lock:
+            # save our ds_callback out
+            dscb = self.ds_callback
+            self.ds_callback = None
+            self.transaction.populate_rpm_ts(self.ts)
+
+            logger.info(_('Running transaction check'))
+            msgs = self._run_rpm_check()
+            if msgs:
+                msg = _('Error: transaction check vs depsolve:')
+                logger.error(msg)
+                for msg in msgs:
+                    logger.error(msg)
+                raise dnf.exceptions.TransactionCheckError(msg)
+
+            logger.info(_('Transaction check succeeded.'))
+
+            timer = dnf.logging.Timer('transaction test')
+            logger.info(_('Running transaction test'))
+            if not self.conf.diskspacecheck:
+                self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
+
+            self.ts.order()  # order the transaction
+            self.ts.clean()  # release memory not needed beyond this point
+
+            testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
+            tserrors = self.ts.test(testcb)
+            del testcb
+
+            if len(tserrors) > 0:
+                errstring = _('Transaction check error:\n')
+                for descr in tserrors:
+                    errstring += '  %s\n' % ucd(descr)
+
+                raise dnf.exceptions.Error(errstring + '\n' +
+                                        self._trans_error_summary(errstring))
+
+            logger.info(_('Transaction test succeeded.'))
+            timer()
+
+            # unset the sigquit handler
+            timer = dnf.logging.Timer('transaction')
+            # put back our depcheck callback
+            self.ds_callback = dscb
+            # setup our rpm ts callback
+            cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=display)
+            if self.conf.debuglevel < 2:
+                for display_ in cb.displays:
+                    display_.output = False
+
+            logger.info(_('Running transaction'))
             self._run_transaction(cb=cb)
         timer()
 
@@ -938,10 +938,11 @@ class Base(object):
             hasgpgkey = not not repo.gpgkey
 
         if check:
-            ts = self.rpmconn.readonly_ts
+            root = self.conf.installroot
+            ts = dnf.rpm.transaction.initReadOnlyTransaction(root)
             sigresult = dnf.rpm.miscutils.checkSig(ts, po.localPkg())
             localfn = os.path.basename(po.localPkg())
-
+            del ts
             if sigresult == 0:
                 result = 0
                 msg = ''
