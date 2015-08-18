@@ -53,7 +53,7 @@ def build_metadata_lock(cachedir):
 
 def build_rpmdb_lock(persistdir):
     return ProcessLock(os.path.join(_fit_lock_dir(persistdir), 'rpmdb_lock.pid'),
-                       'RPMDB')
+                       'RPMDB', True)
 
 
 class ProcessLock(object):
