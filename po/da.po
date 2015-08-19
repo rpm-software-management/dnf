@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-16 17:49-0400\n"
+"POT-Creation-Date: 2015-08-19 11:38+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,17 +19,292 @@ msgstr ""
 "Language-Team: Danish (http://www.transifex.com/projects/p/dnf/language/da/)\n"
 "Language: da\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.6.2\n"
+"X-Generator: Zanata 3.7.1\n"
 
-#: ../dnf/repo.py:354 ../dnf/drpm.py:63
+#: ../dnf/persistor.py:239
+msgid "Invalid groups database, clearing."
+msgstr "Ugyldig gruppedatabase, rydder."
+
+#: ../dnf/persistor.py:258
+msgid "Unsupported installed groups database found, resetting."
+msgstr ""
+
+#: ../dnf/persistor.py:319
+#, python-format
+msgid "%s is empty file"
+msgstr "%s er en tom fil"
+
+#: ../dnf/drpm.py:63 ../dnf/repo.py:356
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "ikke-understøttet tjeksums-type: %s "
 
-#: ../dnf/repo.py:803
+#: ../dnf/drpm.py:135
+msgid "Delta RPM rebuild failed"
+msgstr "Genbygning af delta-RPM mislykkedes"
+
+#: ../dnf/drpm.py:137
+msgid "Checksum of the delta-rebuilt RPM failed"
+msgstr ""
+
+#: ../dnf/comps.py:92
+msgid "skipping."
+msgstr ""
+
+#: ../dnf/comps.py:168
+#, python-format
+msgid "Group '%s' is not installed."
+msgstr ""
+
+#: ../dnf/comps.py:170
+#, python-format
+msgid "Group '%s' does not exist."
+msgstr ""
+
+#: ../dnf/comps.py:459
+#, python-format
+msgid "Environment '%s' is already installed."
+msgstr "Miljøet '%s' er allerede installeret."
+
+#: ../dnf/comps.py:479 ../dnf/comps.py:501
+#, python-format
+msgid "Environment '%s' is not installed."
+msgstr "Miljøet '%s' er ikke installeret."
+
+#: ../dnf/comps.py:525
+#, python-format
+msgid "Group '%s' is already installed."
+msgstr "Gruppen '%s' er allerede installeret."
+
+#: ../dnf/comps.py:548 ../dnf/comps.py:563
+#, python-format
+msgid "Group '%s' not installed."
+msgstr "Gruppen '%s' er ikke installeret."
+
+#: ../dnf/repo.py:814
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
 msgstr ""
+
+#: ../dnf/conf/read.py:51
+#, python-format
+msgid "Warning: failed loading '%s', skipping."
+msgstr "Advarsel: kunne ikke indlæse '%s', springer over."
+
+#: ../dnf/conf/read.py:61
+#, python-format
+msgid "Repository %r: Error parsing config: %s"
+msgstr "Pakkearkiv %r: Fejl under læsning af konfiguration: %s"
+
+#: ../dnf/conf/read.py:67
+#, python-format
+msgid "Repository %r is missing name in configuration, using id."
+msgstr "Pakkearkivet %r mangler navn i konfigurationen, bruger id."
+
+#: ../dnf/conf/__init__.py:73
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Kunne ikke sætte mellemlagermappe: %s"
+
+#: ../dnf/goal.py:51
+msgid "--> Finding unneeded leftover dependencies"
+msgstr ""
+
+#: ../dnf/lock.py:97
+#, python-format
+msgid ""
+"Malformed lock file found: %s.\n"
+"Ensure no other dnf process is running and remove the lock file manually or "
+"run systemd-tmpfiles --remove dnf.conf."
+msgstr ""
+
+#: ../dnf/lock.py:136
+#, python-format
+msgid "Waiting for process with pid %d to finish."
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:123
+msgid "Cleanup"
+msgstr "Oprydning af"
+
+#: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1002
+msgid "Downgrading"
+msgstr "Nedgraderer"
+
+#: ../dnf/yum/rpmtrans.py:125
+msgid "Erasing"
+msgstr "Sletter"
+
+#: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:998
+msgid "Installing"
+msgstr "Installerer"
+
+#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1706
+msgid "Obsoleting"
+msgstr "Forælder"
+
+#: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1000
+msgid "Reinstalling"
+msgstr "Geninstallerer"
+
+#: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:999
+msgid "Upgrading"
+msgstr "Opgrader"
+
+#: ../dnf/yum/rpmtrans.py:130
+msgid "Verifying"
+msgstr "Bekræfter"
+
+#: ../dnf/yum/history.py:758
+#, python-format
+msgid "Unable to initialize DNF DB history: %s"
+msgstr ""
+
+#: ../dnf/yum/history.py:1675
+#, python-format
+msgid "Can not create history database at '%s'."
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:51
+#, python-format
+msgid "Command line error: %s"
+msgstr "Kommandoliniefejl: %s"
+
+#: ../dnf/cli/option_parser.py:88
+msgid "--color takes one of: auto, always, never"
+msgstr "--color tager en af: auto, altid, aldrig"
+
+#: ../dnf/cli/option_parser.py:105
+#, python-format
+msgid "Options Error: %s"
+msgstr "Fejl i indstilling: %s"
+
+#: ../dnf/cli/option_parser.py:116
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr "--installroot skal være en absolut sti: %s"
+
+#: ../dnf/cli/option_parser.py:142
+#, python-format
+msgid "bad format: %s"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:154
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:157
+msgid "try the best available package versions in transactions."
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:161
+msgid "run entirely from system cache, don't update cache"
+msgstr "kør udelukkende fra systemmellemlager, opdatér ikke mellemlager"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "config file location"
+msgstr "placering af konfigurationsfil"
+
+#: ../dnf/cli/option_parser.py:168
+msgid "debugging output level"
+msgstr "debug-visningsniveau"
+
+#: ../dnf/cli/option_parser.py:171
+msgid "dumps detailed solving results into files"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:174
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "vis gengangere, i pakkearkiver, i list/search-kommandoer"
+
+#: ../dnf/cli/option_parser.py:177
+msgid "error output level"
+msgstr "fejlvisningsniveau"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "debugging output level for rpm"
+msgstr "outputniveau for fejlsøgning af rpm"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "quiet operation"
+msgstr "stille operation"
+
+#: ../dnf/cli/option_parser.py:184
+msgid "verbose operation"
+msgstr "uddybende operation"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "answer yes for all questions"
+msgstr "svar ja til alle spørgsmål"
+
+#: ../dnf/cli/option_parser.py:188
+msgid "answer no for all questions"
+msgstr "Svar nej til alle spørgsmål"
+
+#: ../dnf/cli/option_parser.py:190
+msgid "show DNF version and exit"
+msgstr "vis DNF-version og afslut"
+
+#: ../dnf/cli/option_parser.py:191
+msgid "set install root"
+msgstr "sæt installationsroden"
+
+#: ../dnf/cli/option_parser.py:201
+msgid "exclude packages by name or glob"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:206
+msgid "disable excludes"
+msgstr "deaktivér ekskluderinger"
+
+#: ../dnf/cli/option_parser.py:211
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:214
+msgid "disable all plugins"
+msgstr "Deaktivér alle plugins"
+
+#: ../dnf/cli/option_parser.py:216
+msgid "disable gpg signature checking"
+msgstr "deaktivér kontrol af gpg-signaturer"
+
+#: ../dnf/cli/option_parser.py:219
+msgid "disable plugins by name"
+msgstr "deaktivér udvidelsesmoduler ved navn"
+
+#: ../dnf/cli/option_parser.py:222
+msgid "control whether color is used"
+msgstr "kontrollér om farve er brugt"
+
+#: ../dnf/cli/option_parser.py:224
+msgid "override the value of $releasever in config and repo files"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:228
+msgid "set arbitrary config and repo options"
+msgstr "indstil arbitrærkonfiguration og indstillinger for pakkearkiv"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "set metadata as expired before running the command"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:233
+msgid "resolve to IPv4 addresses only"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:236
+msgid "resolve to IPv6 addresses only"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:262
+msgid "List of Main Commands"
+msgstr "Liste over primære kommandoer"
+
+#: ../dnf/cli/option_parser.py:263
+msgid "List of Plugin Commands"
+msgstr "Liste over plugin-kommandoer"
 
 #: ../dnf/cli/utils.py:96
 msgid "Running"
@@ -80,12 +355,12 @@ msgstr "    Startede: %s - %s siden"
 msgid "    State  : %s"
 msgstr "Status : %s"
 
-#: ../dnf/cli/cli.py:129
+#: ../dnf/cli/cli.py:128
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Installeret: %s-%s på %s"
 
-#: ../dnf/cli/cli.py:131
+#: ../dnf/cli/cli.py:130
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Bygget    : %s på %s"
@@ -94,12 +369,12 @@ msgstr "  Bygget    : %s på %s"
 msgid "Operation aborted."
 msgstr "Operation afbrudt."
 
-#: ../dnf/cli/cli.py:201 ../dnf/cli/cli.py:361
-#: ../dnf/cli/commands/reinstall.py:100 ../dnf/cli/commands/install.py:88
+#: ../dnf/cli/cli.py:201 ../dnf/cli/cli.py:368
+#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/reinstall.py:100
 #: ../dnf/cli/commands/__init__.py:447 ../dnf/cli/commands/__init__.py:535
 #: ../dnf/cli/commands/__init__.py:601 ../dnf/cli/commands/__init__.py:646
 #: ../dnf/cli/commands/__init__.py:719 ../dnf/cli/commands/__init__.py:777
-#: ../dnf/base.py:1255
+#: ../dnf/base.py:1294
 msgid "Nothing to do."
 msgstr "Intet at udføre."
 
@@ -114,7 +389,7 @@ msgid "Error downloading packages:\n"
 msgstr "Fejl ved hentning af pakker:\n"
 "%s"
 
-#: ../dnf/cli/cli.py:243
+#: ../dnf/cli/cli.py:247
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -122,285 +397,880 @@ msgstr ""
 "Afviser automatisk importering af nøgler ved baggrundskørsel.\n"
 "Brug \"-y\" til at overskrive."
 
-#: ../dnf/cli/cli.py:283 ../dnf/cli/cli.py:438 ../dnf/cli/cli.py:444
+#: ../dnf/cli/cli.py:287 ../dnf/cli/cli.py:445 ../dnf/cli/cli.py:451
 msgid "Obsoleting Packages"
 msgstr "Overflødiggør pakker"
 
-#: ../dnf/cli/cli.py:298 ../dnf/cli/commands/upgrade.py:91
-#: ../dnf/cli/commands/__init__.py:871 ../dnf/cli/commands/group.py:330
+#: ../dnf/cli/cli.py:302 ../dnf/cli/commands/group.py:336
+#: ../dnf/cli/commands/upgrade.py:91 ../dnf/cli/commands/__init__.py:871
 msgid "No packages marked for upgrade."
 msgstr "Ingen pakker markeret til opgradering."
 
-#: ../dnf/cli/cli.py:320
+#: ../dnf/cli/cli.py:324
 msgid "No packages marked for distribution synchronization."
 msgstr "Ingen pakker er markeret til distributionssynkronisering."
 
-#: ../dnf/cli/cli.py:351 ../dnf/cli/cli.py:648 ../dnf/cli/cli.py:677
-#: ../dnf/cli/commands/install.py:81 ../dnf/cli/commands/__init__.py:439
+#: ../dnf/cli/cli.py:356 ../dnf/cli/cli.py:655 ../dnf/cli/cli.py:684
+#: ../dnf/cli/commands/install.py:91 ../dnf/cli/commands/__init__.py:439
 #: ../dnf/cli/commands/__init__.py:1104
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Pakken %s%s%s er ikke tilgængelig."
 
-#: ../dnf/cli/cli.py:356
+#: ../dnf/cli/cli.py:363
 #, python-format
 msgid "No match for available package: %s"
 msgstr "Ingen match for tilgængelig pakke: %s"
 
-#: ../dnf/cli/cli.py:412
+#: ../dnf/cli/cli.py:419
 msgid "Installed Packages"
 msgstr "Installerede pakker"
 
-#: ../dnf/cli/cli.py:420
+#: ../dnf/cli/cli.py:427
 msgid "Available Packages"
 msgstr "Tilgængelige pakker"
 
-#: ../dnf/cli/cli.py:424
+#: ../dnf/cli/cli.py:431
 msgid "Autoremove Packages"
 msgstr ""
 
-#: ../dnf/cli/cli.py:426
+#: ../dnf/cli/cli.py:433
 msgid "Extra Packages"
 msgstr "Ekstra pakker"
 
-#: ../dnf/cli/cli.py:430
+#: ../dnf/cli/cli.py:437
 msgid "Upgraded Packages"
 msgstr "Opgraderede Pakker"
 
-#: ../dnf/cli/cli.py:446
+#: ../dnf/cli/cli.py:453
 msgid "Recently Added Packages"
 msgstr "Pakker som er tilføjet for nyligt"
 
-#: ../dnf/cli/cli.py:451
+#: ../dnf/cli/cli.py:458
 msgid "No matching Packages to list"
 msgstr "Ingen matchende pakker til liste"
 
-#: ../dnf/cli/cli.py:527
+#: ../dnf/cli/cli.py:534
 msgid "No Matches found"
 msgstr "Ingen match fundet"
 
-#: ../dnf/cli/cli.py:568 ../dnf/cli/commands/__init__.py:1079
+#: ../dnf/cli/cli.py:575 ../dnf/cli/commands/__init__.py:1079
 #: ../dnf/cli/commands/__init__.py:1116 ../dnf/cli/commands/__init__.py:1132
 msgid "No transaction ID given"
 msgstr "Intet overførsels-id givet"
 
-#: ../dnf/cli/cli.py:577 ../dnf/cli/cli.py:585 ../dnf/cli/output.py:1803
+#: ../dnf/cli/cli.py:584 ../dnf/cli/cli.py:592 ../dnf/cli/output.py:1852
 msgid "Bad transaction ID given"
 msgstr "Dårlig overførsels-id givet"
 
-#: ../dnf/cli/cli.py:593
+#: ../dnf/cli/cli.py:600
 msgid "Not found given transaction ID"
 msgstr "Det angivne overførsels-id ikke fundet"
 
-#: ../dnf/cli/cli.py:602 ../dnf/cli/commands/__init__.py:1081
+#: ../dnf/cli/cli.py:609 ../dnf/cli/commands/__init__.py:1081
 #: ../dnf/cli/commands/__init__.py:1118 ../dnf/cli/commands/__init__.py:1134
 msgid "Found more than one transaction ID!"
 msgstr "Fandt mere end ét overførsels-id!"
 
-#: ../dnf/cli/cli.py:619
+#: ../dnf/cli/cli.py:626
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Overførselshistorikken er ufuldstændig før %u."
 
-#: ../dnf/cli/cli.py:621
+#: ../dnf/cli/cli.py:628
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Overførselshistorikken er ufuldstændig efter %u."
 
-#: ../dnf/cli/cli.py:644 ../dnf/cli/cli.py:673
+#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:680
 #: ../dnf/cli/commands/__init__.py:1100
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr "Pakken %s%s%s ikke installeret."
 
-#: ../dnf/cli/cli.py:731
+#: ../dnf/cli/cli.py:740
+#, python-format
+msgid "Added %s repo from %s"
+msgstr ""
+
+#: ../dnf/cli/cli.py:747
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Ukendt pakkearkiv: *%s'"
 
-#: ../dnf/cli/cli.py:796
+#: ../dnf/cli/cli.py:812
 #, python-format
 msgid "%s: using metadata from %s."
 msgstr ""
 
-#: ../dnf/cli/cli.py:799
+#: ../dnf/cli/cli.py:815
 #, python-format
 msgid "Last metadata expiration check performed %s ago on %s."
 msgstr ""
 
-#: ../dnf/cli/cli.py:832
+#: ../dnf/cli/cli.py:848
 msgid "You need to give some command"
 msgstr "Du skal angive en kommando"
 
-#: ../dnf/cli/cli.py:839
+#: ../dnf/cli/cli.py:855
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Ingen sådan kommando: %s. Brug %s --help"
 
-#: ../dnf/cli/cli.py:841
+#: ../dnf/cli/cli.py:857
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 
-#: ../dnf/cli/cli.py:943 ../dnf/cli/cli.py:947
+#: ../dnf/cli/cli.py:959 ../dnf/cli/cli.py:963
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigurationsfejl: %s"
 
-#: ../dnf/cli/cli.py:1031
-msgid "releasever not given and can not be detected from the installroot."
-msgstr ""
-
-#: ../dnf/cli/cli.py:1061
+#: ../dnf/cli/cli.py:1067
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Kommandoen \"%s\" er allerede defineret"
 
-#: ../dnf/cli/commands/updateinfo.py:45
-msgid "bugfix"
-msgstr "fejlrettelse"
+#: ../dnf/cli/main.py:77 ../dnf/automatic/main.py:170
+#, python-format
+msgid "Error: %s"
+msgstr "Fejl: %s"
 
-#: ../dnf/cli/commands/updateinfo.py:46
-msgid "enhancement"
-msgstr "forbedring"
-
-#: ../dnf/cli/commands/updateinfo.py:47
-msgid "security"
-msgstr "sikkerhed"
-
-#: ../dnf/cli/commands/updateinfo.py:48 ../dnf/cli/commands/repolist.py:36
-msgid "unknown"
-msgstr "ukendt"
-
-#: ../dnf/cli/commands/updateinfo.py:51
-msgid "Display advisories about packages"
+#: ../dnf/cli/main.py:94
+msgid ""
+"(try to add '--allowerasing' to command line to replace conflicting "
+"packages)"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:177
-msgid "Updates Information Summary: "
-msgstr "Informationsresumé for opdateringer:"
+#: ../dnf/cli/main.py:102
+msgid "Terminated."
+msgstr "Afsluttet."
 
-#: ../dnf/cli/commands/updateinfo.py:180
-msgid "Security notice(s)"
+#: ../dnf/cli/main.py:133
+msgid "No read/execute access in current directory, moving to /"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:181
-msgid "Bugfix notice(s)"
+#: ../dnf/cli/main.py:159
+msgid "Dependencies resolved."
+msgstr "Afhængigheder løst."
+
+#: ../dnf/cli/main.py:179
+msgid "Complete!"
+msgstr "Afsluttet!"
+
+#: ../dnf/cli/output.py:466
+msgid "Name"
+msgstr "Navn"
+
+#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1043
+msgid "Arch"
+msgstr "Arkitektur"
+
+#: ../dnf/cli/output.py:469
+msgid "Epoch"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:182
-msgid "Enhancement notice(s)"
-msgstr ""
+#: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1044
+msgid "Version"
+msgstr "Version"
 
-#: ../dnf/cli/commands/updateinfo.py:183
-msgid "other notice(s)"
-msgstr ""
+#: ../dnf/cli/output.py:471
+msgid "Release"
+msgstr "Udgivelse"
 
-#: ../dnf/cli/commands/updateinfo.py:292
-msgid "true"
-msgstr "sand"
+#: ../dnf/cli/output.py:472 ../dnf/cli/output.py:1045
+msgid "Size"
+msgstr "Størrelse"
 
-#: ../dnf/cli/commands/updateinfo.py:292
-msgid "false"
-msgstr "falsk"
+#: ../dnf/cli/output.py:473
+msgid "Repo"
+msgstr "Arkiv"
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Update ID"
-msgstr "Opdaterings-id"
+#: ../dnf/cli/output.py:475
+msgid "From repo"
+msgstr "Fra arkiv"
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Type"
-msgstr "Type"
+#: ../dnf/cli/output.py:480
+msgid "Buildtime"
+msgstr "Byggetid"
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Updated"
-msgstr "Opdateret"
+#: ../dnf/cli/output.py:482
+msgid "Install time"
+msgstr "Installationstid"
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Bugs"
-msgstr "Fejl"
+#: ../dnf/cli/output.py:490
+msgid "Installed by"
+msgstr "Installeret af"
 
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "CVEs"
-msgstr "CVE'er"
+#: ../dnf/cli/output.py:497
+msgid "Changed by"
+msgstr "Ændret af"
 
-#: ../dnf/cli/commands/updateinfo.py:295 ../dnf/cli/output.py:499
+#: ../dnf/cli/output.py:498
+msgid "Summary"
+msgstr "Resumé"
+
+#: ../dnf/cli/output.py:500
+msgid "URL"
+msgstr "URL"
+
+#: ../dnf/cli/output.py:501
+msgid "License"
+msgstr "Licens"
+
+#: ../dnf/cli/output.py:502 ../dnf/cli/commands/updateinfo.py:295
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "Rights"
-msgstr "Rettigheder"
+#: ../dnf/cli/output.py:622
+msgid "y"
+msgstr "j"
 
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "Files"
-msgstr "Filer"
+#: ../dnf/cli/output.py:622
+msgid "yes"
+msgstr "ja"
 
-#: ../dnf/cli/commands/updateinfo.py:296 ../dnf/cli/output.py:1113
-#: ../dnf/cli/output.py:1498 ../dnf/cli/output.py:1500
+#: ../dnf/cli/output.py:623
+msgid "n"
+msgstr "n"
+
+#: ../dnf/cli/output.py:623
+msgid "no"
+msgstr "nej"
+
+#: ../dnf/cli/output.py:626
+msgid "Is this ok [y/N]: "
+msgstr "Er dette o.k? [j/N]: "
+
+#: ../dnf/cli/output.py:629
+msgid "Is this ok [Y/n]: "
+msgstr "Er dette o.k? [J/n]: "
+
+#: ../dnf/cli/output.py:707
+#, python-format
+msgid "\n"
+"Group: %s"
+msgstr "\n"
+"Gruppe: %s"
+
+#: ../dnf/cli/output.py:711
+#, python-format
+msgid " Group-Id: %s"
+msgstr " Gruppeid: %s"
+
+#: ../dnf/cli/output.py:713 ../dnf/cli/output.py:752
+#, python-format
+msgid " Description: %s"
+msgstr " Beskrivelse: %s"
+
+#: ../dnf/cli/output.py:715
+#, python-format
+msgid " Language: %s"
+msgstr "Sprog: %s"
+
+#: ../dnf/cli/output.py:718
+msgid " Mandatory Packages:"
+msgstr " Tvungne pakker:"
+
+#: ../dnf/cli/output.py:719
+msgid " Default Packages:"
+msgstr " Standardpakker:"
+
+#: ../dnf/cli/output.py:720
+msgid " Optional Packages:"
+msgstr " Valgfrie pakker:"
+
+#: ../dnf/cli/output.py:721
+msgid " Conditional Packages:"
+msgstr " Afhængige pakker:"
+
+#: ../dnf/cli/output.py:746
+#, python-format
+msgid "Environment Group: %s"
+msgstr ""
+
+#: ../dnf/cli/output.py:749
+#, python-format
+msgid " Environment-Id: %s"
+msgstr ""
+
+#: ../dnf/cli/output.py:755
+msgid " Mandatory Groups:"
+msgstr ""
+
+#: ../dnf/cli/output.py:756
+msgid " Optional Groups:"
+msgstr ""
+
+#: ../dnf/cli/output.py:791
+#, python-format
+msgid "Repo        : %s"
+msgstr "Kilde       : %s"
+
+#: ../dnf/cli/output.py:798
+msgid "Matched from:"
+msgstr "Matchet af:"
+
+#: ../dnf/cli/output.py:802
+msgid "Description : "
+msgstr "Beskrivelse : "
+
+#: ../dnf/cli/output.py:805
+#, python-format
+msgid "URL         : %s"
+msgstr "URL         : %s"
+
+#: ../dnf/cli/output.py:808
+#, python-format
+msgid "License     : %s"
+msgstr "Licens      : %s"
+
+#: ../dnf/cli/output.py:811
+#, python-format
+msgid "Filename    : %s"
+msgstr "Filnavn     : %s"
+
+#: ../dnf/cli/output.py:815
+msgid "Other       : "
+msgstr "Andre       : "
+
+#: ../dnf/cli/output.py:871
+msgid "There was an error calculating total download size"
+msgstr "Der opstod en fejl i beregning af den totale nedhentningsstørrelse"
+
+#: ../dnf/cli/output.py:877
+#, python-format
+msgid "Total size: %s"
+msgstr "Total størrelse: %s"
+
+#: ../dnf/cli/output.py:880
+#, python-format
+msgid "Total download size: %s"
+msgstr "Total nedhentningsstørrelse: %s"
+
+#: ../dnf/cli/output.py:883 ../dnf/cli/output.py:905
+#, python-format
+msgid "Installed size: %s"
+msgstr "Installationsstørrelse: %s"
+
+#: ../dnf/cli/output.py:901
+msgid "There was an error calculating installed size"
+msgstr "Der opstod en fejl ved udregning af installeret størrelse"
+
+#: ../dnf/cli/output.py:914
+msgid "Marking installed:"
+msgstr "Markeret til installation:"
+
+#: ../dnf/cli/output.py:921
+msgid "Marking removed:"
+msgstr "Markeret til fjernelse:"
+
+#: ../dnf/cli/output.py:931
+msgid "Group"
+msgstr "Gruppe"
+
+#: ../dnf/cli/output.py:931
+msgid "Packages"
+msgstr "Pakker"
+
+#: ../dnf/cli/output.py:1001
+msgid "Removing"
+msgstr "Fjerner"
+
+#: ../dnf/cli/output.py:1016
+#, python-format
+msgid ""
+"Skipping packages with conflicts:\n"
+"(add '%s' to command line to force their upgrade)"
+msgstr ""
+
+#: ../dnf/cli/output.py:1026
+msgid "Skipping packages with broken dependencies"
+msgstr ""
+
+#: ../dnf/cli/output.py:1043 ../dnf/cli/output.py:1907
+msgid "Package"
+msgstr "Pakke"
+
+#: ../dnf/cli/output.py:1044
+msgid "Repository"
+msgstr "Pakkearkiv"
+
+#: ../dnf/cli/output.py:1057
+#, python-format
+msgid "     replacing  %s%s%s.%s %s\n"
+msgstr "     erstatter  %s%s%s.%s %s\n"
+
+#: ../dnf/cli/output.py:1065
+#, python-format
+msgid "\n"
+"Transaction Summary\n"
+"%s\n"
+msgstr "\n"
+"Overførselsopsummering\n"
+"%s\n"
+
+#: ../dnf/cli/output.py:1070 ../dnf/cli/output.py:1702
+#: ../dnf/cli/output.py:1703
+msgid "Install"
+msgstr "Installér"
+
+#: ../dnf/cli/output.py:1071 ../dnf/cli/output.py:1711
+msgid "Upgrade"
+msgstr "Opgrader"
+
+#: ../dnf/cli/output.py:1072
+msgid "Remove"
+msgstr "Fjern"
+
+#: ../dnf/cli/output.py:1073 ../dnf/cli/output.py:1709
+msgid "Downgrade"
+msgstr "Nedgradér"
+
+#: ../dnf/cli/output.py:1159
+msgid "Reinstalled"
+msgstr "Geninstalleret"
+
+#: ../dnf/cli/output.py:1160
+msgid "Removed"
+msgstr "Fjernet"
+
+#: ../dnf/cli/output.py:1161 ../dnf/cli/output.py:1547
+#: ../dnf/cli/output.py:1549 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Installeret"
 
-#: ../dnf/cli/commands/updateinfo.py:328 ../dnf/cli/output.py:2017
+#: ../dnf/cli/output.py:1162 ../dnf/cli/output.py:1548
+#: ../dnf/cli/output.py:1712
+msgid "Upgraded"
+msgstr "Opgraderet"
+
+#: ../dnf/cli/output.py:1163 ../dnf/cli/output.py:1548
+#: ../dnf/cli/output.py:1710
+msgid "Downgraded"
+msgstr "Nedgraderet"
+
+#: ../dnf/cli/output.py:1164
+msgid "Failed"
+msgstr ""
+
+#: ../dnf/cli/output.py:1218
+msgid "Total"
+msgstr "Ialt"
+
+#: ../dnf/cli/output.py:1239
+msgid "I"
+msgstr "I"
+
+#: ../dnf/cli/output.py:1240
+msgid "O"
+msgstr "O"
+
+#: ../dnf/cli/output.py:1241
+msgid "E"
+msgstr "E"
+
+#: ../dnf/cli/output.py:1242
+msgid "R"
+msgstr "R"
+
+#: ../dnf/cli/output.py:1243
+msgid "D"
+msgstr "D"
+
+#: ../dnf/cli/output.py:1244
+msgid "U"
+msgstr "U"
+
+#: ../dnf/cli/output.py:1258
+msgid "<unset>"
+msgstr "<ikke angivet>"
+
+#: ../dnf/cli/output.py:1259
+msgid "System"
+msgstr "System"
+
+#: ../dnf/cli/output.py:1340 ../dnf/cli/output.py:1453
+msgid "No transactions"
+msgstr "Ingen overførseler"
+
+#: ../dnf/cli/output.py:1360 ../dnf/cli/output.py:1896
+#: ../dnf/cli/output.py:1973
+msgid "Bad transaction IDs, or package(s), given"
+msgstr "Dårlige overførsels-id'er eller pakker givet"
+
+#: ../dnf/cli/output.py:1398
+msgid "Command line"
+msgstr "Kommandolinje"
+
+#: ../dnf/cli/output.py:1400 ../dnf/cli/output.py:1784
+msgid "Login user"
+msgstr "Log bruger ind"
+
+#: ../dnf/cli/output.py:1401 ../dnf/cli/output.py:1905
+msgid "ID"
+msgstr "ID"
+
+#: ../dnf/cli/output.py:1403
+msgid "Date and time"
+msgstr "Dato og tid"
+
+#: ../dnf/cli/output.py:1404 ../dnf/cli/output.py:1786
+#: ../dnf/cli/output.py:1906
+msgid "Action(s)"
+msgstr "Handling(er)"
+
+#: ../dnf/cli/output.py:1405 ../dnf/cli/output.py:1787
+msgid "Altered"
+msgstr "Ændret"
+
+#: ../dnf/cli/output.py:1486 ../dnf/cli/output.py:1860
+msgid "No transaction ID, or package, given"
+msgstr "Intet overførsels-id eller pakke givet"
+
+#: ../dnf/cli/output.py:1547
+msgid "Erased"
+msgstr "Slettet"
+
+#: ../dnf/cli/output.py:1549
+msgid "Not installed"
+msgstr "Ikke installeret"
+
+#: ../dnf/cli/output.py:1550
+msgid "Older"
+msgstr "Ældre"
+
+#: ../dnf/cli/output.py:1550
+msgid "Newer"
+msgstr "Nyere"
+
+#: ../dnf/cli/output.py:1587 ../dnf/cli/output.py:1589
+#: ../dnf/cli/output.py:1994
+msgid "Transaction ID :"
+msgstr "Overførsels-id:"
+
+#: ../dnf/cli/output.py:1591 ../dnf/cli/output.py:1996
+msgid "Begin time     :"
+msgstr "Starttidspunkt     :"
+
+#: ../dnf/cli/output.py:1594 ../dnf/cli/output.py:1596
+msgid "Begin rpmdb    :"
+msgstr "Start rpmdb    :"
+
+#: ../dnf/cli/output.py:1612
+#, python-format
+msgid "(%u seconds)"
+msgstr "(%u sekunder)"
+
+#: ../dnf/cli/output.py:1614
+#, python-format
+msgid "(%u minutes)"
+msgstr "(%u minutter)"
+
+#: ../dnf/cli/output.py:1616
+#, python-format
+msgid "(%u hours)"
+msgstr "(%u timer)"
+
+#: ../dnf/cli/output.py:1618
+#, python-format
+msgid "(%u days)"
+msgstr "(%u dage)"
+
+#: ../dnf/cli/output.py:1619
+msgid "End time       :"
+msgstr "Sluttidspunkt       :"
+
+#: ../dnf/cli/output.py:1622 ../dnf/cli/output.py:1624
+msgid "End rpmdb      :"
+msgstr "Slut rpmdb      :"
+
+#: ../dnf/cli/output.py:1627 ../dnf/cli/output.py:1629
+msgid "User           :"
+msgstr "Bruger           :"
+
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1636
+#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:1640
+#: ../dnf/cli/output.py:1642
+msgid "Return-Code    :"
+msgstr "Returkode    :"
+
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1638
+msgid "Aborted"
+msgstr "Afbrudt"
+
+#: ../dnf/cli/output.py:1636
+msgid "Failures:"
+msgstr "Fejl:"
+
+#: ../dnf/cli/output.py:1640
+msgid "Failure:"
+msgstr "Fejl:"
+
+#: ../dnf/cli/output.py:1642
+msgid "Success"
+msgstr "Succes"
+
+#: ../dnf/cli/output.py:1647 ../dnf/cli/output.py:1649
+#: ../dnf/cli/output.py:2025
+msgid "Command Line   :"
+msgstr "Kommandolinje   :"
+
+#: ../dnf/cli/output.py:1658
+#, python-format
+msgid "Additional non-default information stored: %d"
+msgstr "Yderligere ikke-standard information gemt: %d"
+
+#: ../dnf/cli/output.py:1663
+msgid "Transaction performed with:"
+msgstr "Overførsel udført med"
+
+#: ../dnf/cli/output.py:1667
+msgid "Packages Altered:"
+msgstr "Pakker ændret:"
+
+#: ../dnf/cli/output.py:1671
+msgid "Packages Skipped:"
+msgstr "Pakker sprunget over:"
+
+#: ../dnf/cli/output.py:1679
+msgid "Rpmdb Problems:"
+msgstr "Problemer med rpmdb:"
+
+#: ../dnf/cli/output.py:1690
+msgid "Scriptlet output:"
+msgstr "Scriptletoutput:"
+
+#: ../dnf/cli/output.py:1696
+msgid "Errors:"
+msgstr "Fejl:"
+
+#: ../dnf/cli/output.py:1704
+msgid "Dep-Install"
+msgstr "Installér afhængigheder"
+
+#: ../dnf/cli/output.py:1705
+msgid "Obsoleted"
+msgstr "Overflødiggjort"
+
+#: ../dnf/cli/output.py:1707
+msgid "Erase"
+msgstr "Slet"
+
+#: ../dnf/cli/output.py:1708
+msgid "Reinstall"
+msgstr "Geninstallér"
+
+#: ../dnf/cli/output.py:1785
+msgid "Time"
+msgstr "Tid"
+
+#: ../dnf/cli/output.py:1811
+msgid "Last day"
+msgstr "Sidste dag"
+
+#: ../dnf/cli/output.py:1812
+msgid "Last week"
+msgstr "Sidste uge"
+
+#: ../dnf/cli/output.py:1813
+msgid "Last 2 weeks"
+msgstr "Seneste to uger"
+
+#: ../dnf/cli/output.py:1814
+msgid "Last 3 months"
+msgstr "Seneste tre måneder"
+
+#: ../dnf/cli/output.py:1815
+msgid "Last 6 months"
+msgstr "Seneste seks måneder"
+
+#: ../dnf/cli/output.py:1816
+msgid "Last year"
+msgstr "Sidste år"
+
+#: ../dnf/cli/output.py:1817
+msgid "Over a year ago"
+msgstr "Over et år siden"
+
+#: ../dnf/cli/output.py:1864
+#, python-format
+msgid "No Transaction %s found"
+msgstr "Ingen overførsel %s fundet"
+
+#: ../dnf/cli/output.py:1870
+msgid "Transaction ID:"
+msgstr "Overførsels-id:"
+
+#: ../dnf/cli/output.py:1871
+msgid "Available additional history information:"
+msgstr "Yderligere historikinformation tilgængelig:"
+
+#: ../dnf/cli/output.py:1884
+#, python-format
+msgid "%s: No additional data found by this name"
+msgstr "%s: Intet yderligere data fundet med dette navn"
+
+#: ../dnf/cli/output.py:1997
+msgid "Package        :"
+msgstr "Pakke :"
+
+#: ../dnf/cli/output.py:1998
+msgid "State          :"
+msgstr "Status :"
+
+#: ../dnf/cli/output.py:2001
+msgid "Size           :"
+msgstr "Størrelse :"
+
+#: ../dnf/cli/output.py:2003
+msgid "Build host     :"
+msgstr "Byggevært :"
+
+#: ../dnf/cli/output.py:2006
+msgid "Build time     :"
+msgstr "Byggetid :"
+
+#: ../dnf/cli/output.py:2008
+msgid "Packager       :"
+msgstr "Pakker :"
+
+#: ../dnf/cli/output.py:2010
+msgid "Vendor         :"
+msgstr "Leverandør :"
+
+#: ../dnf/cli/output.py:2012
+msgid "License        :"
+msgstr "Licens :"
+
+#: ../dnf/cli/output.py:2014
+msgid "URL            :"
+msgstr "URL            :"
+
+#: ../dnf/cli/output.py:2016
+msgid "Source RPM     :"
+msgstr "Source RPM :"
+
+#: ../dnf/cli/output.py:2019
+msgid "Commit Time    :"
+msgstr ""
+
+#: ../dnf/cli/output.py:2021
+msgid "Committer      :"
+msgstr ""
+
+#: ../dnf/cli/output.py:2023
+msgid "Reason         :"
+msgstr "Årsag:"
+
+#: ../dnf/cli/output.py:2027
+msgid "From repo      :"
+msgstr "Fra pakkearkiv :"
+
+#: ../dnf/cli/output.py:2031
+msgid "Installed by   :"
+msgstr "Installeret af :"
+
+#: ../dnf/cli/output.py:2035
+msgid "Changed by     :"
+msgstr "Ændret af :"
+
+#: ../dnf/cli/output.py:2066 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "installeret"
 
-#: ../dnf/cli/commands/updateinfo.py:331
-msgid "updates"
-msgstr "opdateringer"
+#: ../dnf/cli/output.py:2067
+msgid "an upgrade"
+msgstr "en opgradering"
 
-#: ../dnf/cli/commands/updateinfo.py:334
-msgid "all"
-msgstr "alle"
+#: ../dnf/cli/output.py:2068
+msgid "erased"
+msgstr "slettet"
 
-#: ../dnf/cli/commands/updateinfo.py:339
-msgid "available"
-msgstr "tilgængelige"
+#: ../dnf/cli/output.py:2069
+msgid "reinstalled"
+msgstr "geninstalleret"
 
-#: ../dnf/cli/commands/search.py:42
-msgid "Search package details for the given string"
-msgstr "Søger efter en given streng i pakkeinformationerne"
+#: ../dnf/cli/output.py:2070
+msgid "a downgrade"
+msgstr "en nedgradering"
 
-#: ../dnf/cli/commands/search.py:43
-msgid "QUERY_STRING"
-msgstr ""
+#: ../dnf/cli/output.py:2071
+msgid "obsoleting"
+msgstr "afskaffer"
 
-#: ../dnf/cli/commands/search.py:65
+#: ../dnf/cli/output.py:2072
+msgid "upgraded"
+msgstr "Opgraderet"
+
+#: ../dnf/cli/output.py:2073
+msgid "obsoleted"
+msgstr "overflødiggjort"
+
+#: ../dnf/cli/output.py:2074
+msgid "downgraded"
+msgstr "nedgraderet"
+
+#: ../dnf/cli/output.py:2077
 #, python-format
-msgid "N/S Matched: %s"
-msgstr "N/S Matchede: %s"
+msgid "---> Package %s.%s %s will be %s"
+msgstr "---> Pakken %s.%s %s vil blive %s"
 
-#: ../dnf/cli/commands/search.py:67
-#, python-format
-msgid "Matched: %s"
-msgstr "Matchede: %s"
+#: ../dnf/cli/output.py:2084
+msgid "--> Starting dependency resolution"
+msgstr "--> Starter afhængighedssøgning"
 
-#: ../dnf/cli/commands/search.py:84
-msgid "No matches found."
+#: ../dnf/cli/output.py:2089
+msgid "--> Finished dependency resolution"
+msgstr "--> Afsluttede afhængighedssøgning"
+
+#: ../dnf/cli/commands/makecache.py:36
+msgid "Generate the metadata cache"
+msgstr "Opretter mellemlager for metadata"
+
+#: ../dnf/cli/commands/makecache.py:49
+msgid "Making cache files for all metadata files."
+msgstr "Opretter mellemlagerfiler til alle metadatafiler."
+
+#: ../dnf/cli/commands/makecache.py:56
+msgid "Metadata timer caching disabled when running on a battery."
 msgstr ""
 
-#: ../dnf/cli/commands/search.py:105
-msgid "Searching Packages: "
-msgstr "Søger i pakkerne: "
-
-#: ../dnf/cli/commands/upgradeto.py:31
-msgid "Upgrade a package on your system to the specified version"
+#: ../dnf/cli/commands/makecache.py:61
+msgid "Metadata timer caching disabled."
 msgstr ""
 
-#: ../dnf/cli/commands/upgradeto.py:32 ../dnf/cli/commands/reinstall.py:43
-#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/install.py:43
-#: ../dnf/cli/commands/upgrade.py:42 ../dnf/cli/commands/remove.py:37
-#: ../dnf/cli/commands/__init__.py:232 ../dnf/cli/commands/__init__.py:309
-#: ../dnf/cli/commands/downgrade.py:35
+#: ../dnf/cli/commands/makecache.py:66
+msgid "Metadata cache refreshed recently."
+msgstr "Metadata cache genopfrisket fornylig-"
+
+#: ../dnf/cli/commands/makecache.py:88
+msgid "Metadata cache created."
+msgstr "Metadata cache oprettet."
+
+#: ../dnf/cli/commands/install.py:42
+msgid "Install a package or packages on your system"
+msgstr "Installerer en eller flere pakker på systemet"
+
+#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/reinstall.py:43
+#: ../dnf/cli/commands/remove.py:37 ../dnf/cli/commands/upgrade.py:42
+#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/upgradeto.py:32
+#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:232
+#: ../dnf/cli/commands/__init__.py:309
 msgid "PACKAGE"
 msgstr "PAKKE"
+
+#: ../dnf/cli/commands/install.py:97
+msgid "Unable to find a match."
+msgstr ""
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "reinstall a package"
 msgstr "geninstallér en pakke"
 
-#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/upgrade.py:86
-#: ../dnf/cli/commands/remove.py:76 ../dnf/cli/commands/__init__.py:517
+#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
+#: ../dnf/cli/commands/upgrade.py:86 ../dnf/cli/commands/__init__.py:517
 #: ../dnf/cli/commands/__init__.py:583 ../dnf/cli/commands/__init__.py:713
 #: ../dnf/cli/commands/__init__.py:769 ../dnf/cli/commands/__init__.py:820
 #: ../dnf/cli/commands/__init__.py:865
@@ -419,6 +1289,114 @@ msgstr " (fra %s)"
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "Installeret pakke %s%s%s%s er ikke tilgængelig."
+
+#: ../dnf/cli/commands/remove.py:36
+msgid "Remove a package or packages from your system"
+msgstr "Fjern en eller flere pakker fra dit system"
+
+#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:826
+msgid "No packages marked for removal."
+msgstr "Ingen pakker markeret til fjernelse."
+
+#: ../dnf/cli/commands/group.py:45
+msgid "Error: Need a group or list of groups"
+msgstr "Fejl: Behøver en gruppe eller liste af grupper"
+
+#: ../dnf/cli/commands/group.py:60
+msgid "Display, or use, the groups information"
+msgstr "Vis, eller brug, gruppeinformationen"
+
+#: ../dnf/cli/commands/group.py:61
+msgid "GROUP"
+msgstr "GRUPPE"
+
+#: ../dnf/cli/commands/group.py:99
+msgid "No group data available for configured repositories."
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:152
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Advarsel: Gruppen %s findes ikke."
+
+#: ../dnf/cli/commands/group.py:172
+#, python-format
+msgid "Warning: No groups match:\n"
+"   %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:199
+msgid "Available environment groups:"
+msgstr "Tilgængelige miljøgrupper:"
+
+#: ../dnf/cli/commands/group.py:200
+msgid "Installed environment groups:"
+msgstr "Installerede miljøgrupper:"
+
+#: ../dnf/cli/commands/group.py:206
+msgid "Installed groups:"
+msgstr "Installerede grupper:"
+
+#: ../dnf/cli/commands/group.py:213
+msgid "Installed language groups:"
+msgstr "Installerede sproggrupper:"
+
+#: ../dnf/cli/commands/group.py:220
+msgid "Available groups:"
+msgstr "Tilgængelige grupper:"
+
+#: ../dnf/cli/commands/group.py:227
+msgid "Available language groups:"
+msgstr "Tilgængelige sproggrupper:"
+
+#: ../dnf/cli/commands/group.py:251
+#, python-format
+msgid "Environments marked installed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:254
+#, python-format
+msgid "Groups marked installed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:271
+#, python-format
+msgid "Environments marked removed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:274
+#, python-format
+msgid "Groups marked removed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:303
+msgid "Installed Groups:"
+msgstr "Installerede grupper:"
+
+#: ../dnf/cli/commands/group.py:310
+msgid "Installed Language Groups:"
+msgstr "Installerede Sproggrupper: "
+
+#: ../dnf/cli/commands/group.py:317
+msgid "Available Groups:"
+msgstr "Tilgængelige grupper:"
+
+#: ../dnf/cli/commands/group.py:324
+msgid "Available Language Groups:"
+msgstr "Tilgængelige Sproggrupper:"
+
+#: ../dnf/cli/commands/group.py:372
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr ""
+
+#: ../dnf/cli/commands/upgrade.py:41
+msgid "Upgrade a package or packages on your system"
+msgstr ""
+
+#: ../dnf/cli/commands/distrosync.py:34
+msgid "Synchronize installed packages to the latest available versions"
+msgstr "Synkronisér installerede pakker til de senest tilgængelige versioner"
 
 #: ../dnf/cli/commands/clean.py:43
 #, python-format
@@ -476,25 +1454,155 @@ msgstr "Oprydning af udløbet mellemlager til metadata"
 msgid "Cleaning up cached rpmdb data"
 msgstr "Rydder mellemlagret rpmdb-data op"
 
-#: ../dnf/cli/commands/distrosync.py:34
-msgid "Synchronize installed packages to the latest available versions"
-msgstr "Synkronisér installerede pakker til de senest tilgængelige versioner"
+#: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
+msgid "unknown"
+msgstr "ukendt"
 
-#: ../dnf/cli/commands/install.py:42
-msgid "Install a package or packages on your system"
-msgstr "Installerer en eller flere pakker på systemet"
+#: ../dnf/cli/commands/repolist.py:38
+#, python-format
+msgid "Never (last: %s)"
+msgstr "Aldrig (senest: %s)"
 
-#: ../dnf/cli/commands/upgrade.py:41
-msgid "Upgrade a package or packages on your system"
+#: ../dnf/cli/commands/repolist.py:40
+#, python-format
+msgid "Instant (last: %s)"
+msgstr "Med det samme (senest: %s)"
+
+#: ../dnf/cli/commands/repolist.py:43
+#, python-format
+msgid "%s second(s) (last: %s)"
+msgstr "%s sekund(er) (senest: %s)"
+
+#: ../dnf/cli/commands/repolist.py:74
+msgid "Display the configured software repositories"
+msgstr "Viser de konfigurerede pakkearkiver"
+
+#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
+msgid "enabled"
+msgstr "aktiveret"
+
+#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
+msgid "disabled"
+msgstr "deaktiveret"
+
+#: ../dnf/cli/commands/repolist.py:156
+msgid "Repo-id      : "
+msgstr "Pakkearkivs-id      : "
+
+#: ../dnf/cli/commands/repolist.py:157
+msgid "Repo-name    : "
+msgstr "Pakkearkivnavn    : "
+
+#: ../dnf/cli/commands/repolist.py:160
+msgid "Repo-status  : "
+msgstr "Pakkearkivstatus  : "
+
+#: ../dnf/cli/commands/repolist.py:163
+msgid "Repo-revision: "
+msgstr "Pakkearkivsversion: "
+
+#: ../dnf/cli/commands/repolist.py:167
+msgid "Repo-tags    : "
+msgstr "Pakkearkivflag    : "
+
+#: ../dnf/cli/commands/repolist.py:172
+msgid "Repo-distro-tags: "
+msgstr "Kildedistroflag: "
+
+#: ../dnf/cli/commands/repolist.py:178
+msgid "Repo-updated : "
+msgstr "Pakkearkiv opdateret : "
+
+#: ../dnf/cli/commands/repolist.py:180
+msgid "Repo-pkgs    : "
+msgstr "Pakkearkivpakker    : "
+
+#: ../dnf/cli/commands/repolist.py:181
+msgid "Repo-size    : "
+msgstr "Pakkearkivstørrelse    : "
+
+#: ../dnf/cli/commands/repolist.py:184
+msgid "Repo-metalink: "
+msgstr "Pakkearkivsmetahenvisning: "
+
+#: ../dnf/cli/commands/repolist.py:188
+msgid "  Updated    : "
+msgstr "  Opdateret    : "
+
+#: ../dnf/cli/commands/repolist.py:191
+msgid "Repo-mirrors : "
+msgstr "Pakkearkivspejle: "
+
+#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
+msgid "Repo-baseurl : "
+msgstr "Pakkearkivbaseurl : "
+
+#: ../dnf/cli/commands/repolist.py:202
+msgid "Repo-expire  : "
+msgstr "Pakkearkiv udløber  : "
+
+#: ../dnf/cli/commands/repolist.py:205
+msgid "Repo-exclude : "
+msgstr "Pakkearkiv ekskluderer : "
+
+#: ../dnf/cli/commands/repolist.py:209
+msgid "Repo-include : "
+msgstr "Pakkearkiv inkluderer : "
+
+#: ../dnf/cli/commands/repolist.py:213
+msgid "Repo-excluded: "
+msgstr "Pakkearkiv ekskluderet: "
+
+#: ../dnf/cli/commands/repolist.py:217
+msgid "Repo-filename: "
 msgstr ""
 
-#: ../dnf/cli/commands/remove.py:36
-msgid "Remove a package or packages from your system"
-msgstr "Fjern en eller flere pakker fra dit system"
+#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
+msgid "repo id"
+msgstr "kildeid"
 
-#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:826
-msgid "No packages marked for removal."
-msgstr "Ingen pakker markeret til fjernelse."
+#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
+#: ../dnf/cli/commands/repolist.py:259
+msgid "status"
+msgstr "status"
+
+#: ../dnf/cli/commands/repolist.py:255
+msgid "repo name"
+msgstr "kildenavn"
+
+#: ../dnf/cli/commands/upgradeto.py:31
+msgid "Upgrade a package on your system to the specified version"
+msgstr ""
+
+#: ../dnf/cli/commands/downgrade.py:34
+msgid "downgrade a package"
+msgstr "nedgradér en pakke"
+
+#: ../dnf/cli/commands/search.py:42
+msgid "Search package details for the given string"
+msgstr "Søger efter en given streng i pakkeinformationerne"
+
+#: ../dnf/cli/commands/search.py:43
+msgid "QUERY_STRING"
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:65
+#, python-format
+msgid "N/S Matched: %s"
+msgstr "N/S Matchede: %s"
+
+#: ../dnf/cli/commands/search.py:67
+#, python-format
+msgid "Matched: %s"
+msgstr "Matchede: %s"
+
+#: ../dnf/cli/commands/search.py:84
+msgid "No matches found."
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:105
+msgid "Searching Packages: "
+msgstr "Søger i pakkerne: "
 
 #: ../dnf/cli/commands/__init__.py:42
 #, python-format
@@ -700,1339 +1808,89 @@ msgstr "Ugyldig underkommando for historik, brug: %s."
 msgid "You don't have access to the history DB."
 msgstr "Du har ikke adgang til historikdatabasen."
 
-#: ../dnf/cli/commands/group.py:45
-msgid "Error: Need a group or list of groups"
-msgstr "Fejl: Behøver en gruppe eller liste af grupper"
+#: ../dnf/cli/commands/updateinfo.py:45
+msgid "bugfix"
+msgstr "fejlrettelse"
 
-#: ../dnf/cli/commands/group.py:60
-msgid "Display, or use, the groups information"
-msgstr "Vis, eller brug, gruppeinformationen"
+#: ../dnf/cli/commands/updateinfo.py:46
+msgid "enhancement"
+msgstr "forbedring"
 
-#: ../dnf/cli/commands/group.py:61
-msgid "GROUP"
-msgstr "GRUPPE"
+#: ../dnf/cli/commands/updateinfo.py:47
+msgid "security"
+msgstr "sikkerhed"
 
-#: ../dnf/cli/commands/group.py:99
-msgid "No group data available for configured repositories."
+#: ../dnf/cli/commands/updateinfo.py:51
+msgid "Display advisories about packages"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:152
-#, python-format
-msgid "Warning: Group %s does not exist."
-msgstr "Advarsel: Gruppen %s findes ikke."
+#: ../dnf/cli/commands/updateinfo.py:177
+msgid "Updates Information Summary: "
+msgstr "Informationsresumé for opdateringer:"
 
-#: ../dnf/cli/commands/group.py:170
-#, python-format
-msgid "Warning: No groups match: %s"
-msgstr "Advarsel: Ingen grupper matcher: %s"
-
-#: ../dnf/cli/commands/group.py:193
-msgid "Available environment groups:"
-msgstr "Tilgængelige miljøgrupper:"
-
-#: ../dnf/cli/commands/group.py:194
-msgid "Installed environment groups:"
-msgstr "Installerede miljøgrupper:"
-
-#: ../dnf/cli/commands/group.py:200
-msgid "Installed groups:"
-msgstr "Installerede grupper:"
-
-#: ../dnf/cli/commands/group.py:207
-msgid "Installed language groups:"
-msgstr "Installerede sproggrupper:"
-
-#: ../dnf/cli/commands/group.py:214
-msgid "Available groups:"
-msgstr "Tilgængelige grupper:"
-
-#: ../dnf/cli/commands/group.py:221
-msgid "Available language groups:"
-msgstr "Tilgængelige sproggrupper:"
-
-#: ../dnf/cli/commands/group.py:245
-#, python-format
-msgid "Environments marked installed: %s"
+#: ../dnf/cli/commands/updateinfo.py:180
+msgid "Security notice(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:248
-#, python-format
-msgid "Groups marked installed: %s"
+#: ../dnf/cli/commands/updateinfo.py:181
+msgid "Bugfix notice(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:265
-#, python-format
-msgid "Environments marked removed: %s"
+#: ../dnf/cli/commands/updateinfo.py:182
+msgid "Enhancement notice(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:268
-#, python-format
-msgid "Groups marked removed: %s"
+#: ../dnf/cli/commands/updateinfo.py:183
+msgid "other notice(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:297
-msgid "Installed Groups:"
-msgstr "Installerede grupper:"
-
-#: ../dnf/cli/commands/group.py:304
-msgid "Installed Language Groups:"
-msgstr "Installerede Sproggrupper: "
-
-#: ../dnf/cli/commands/group.py:311
-msgid "Available Groups:"
-msgstr "Tilgængelige grupper:"
-
-#: ../dnf/cli/commands/group.py:318
-msgid "Available Language Groups:"
-msgstr "Tilgængelige Sproggrupper:"
-
-#: ../dnf/cli/commands/group.py:366
-#, python-format
-msgid "Invalid groups sub-command, use: %s."
-msgstr ""
-
-#: ../dnf/cli/commands/group.py:399
-msgid "No groups marked for removal."
-msgstr ""
-
-#: ../dnf/cli/commands/repolist.py:38
-#, python-format
-msgid "Never (last: %s)"
-msgstr "Aldrig (senest: %s)"
-
-#: ../dnf/cli/commands/repolist.py:40
-#, python-format
-msgid "Instant (last: %s)"
-msgstr "Med det samme (senest: %s)"
-
-#: ../dnf/cli/commands/repolist.py:43
-#, python-format
-msgid "%s second(s) (last: %s)"
-msgstr "%s sekund(er) (senest: %s)"
-
-#: ../dnf/cli/commands/repolist.py:74
-msgid "Display the configured software repositories"
-msgstr "Viser de konfigurerede pakkearkiver"
-
-#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
-msgid "enabled"
-msgstr "aktiveret"
-
-#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
-msgid "disabled"
-msgstr "deaktiveret"
-
-#: ../dnf/cli/commands/repolist.py:156
-msgid "Repo-id      : "
-msgstr "Pakkearkivs-id      : "
-
-#: ../dnf/cli/commands/repolist.py:157
-msgid "Repo-name    : "
-msgstr "Pakkearkivnavn    : "
-
-#: ../dnf/cli/commands/repolist.py:160
-msgid "Repo-status  : "
-msgstr "Pakkearkivstatus  : "
-
-#: ../dnf/cli/commands/repolist.py:163
-msgid "Repo-revision: "
-msgstr "Pakkearkivsversion: "
-
-#: ../dnf/cli/commands/repolist.py:167
-msgid "Repo-tags    : "
-msgstr "Pakkearkivflag    : "
-
-#: ../dnf/cli/commands/repolist.py:172
-msgid "Repo-distro-tags: "
-msgstr "Kildedistroflag: "
-
-#: ../dnf/cli/commands/repolist.py:178
-msgid "Repo-updated : "
-msgstr "Pakkearkiv opdateret : "
-
-#: ../dnf/cli/commands/repolist.py:180
-msgid "Repo-pkgs    : "
-msgstr "Pakkearkivpakker    : "
-
-#: ../dnf/cli/commands/repolist.py:181
-msgid "Repo-size    : "
-msgstr "Pakkearkivstørrelse    : "
-
-#: ../dnf/cli/commands/repolist.py:184
-msgid "Repo-metalink: "
-msgstr "Pakkearkivsmetahenvisning: "
-
-#: ../dnf/cli/commands/repolist.py:188
-msgid "  Updated    : "
-msgstr "  Opdateret    : "
-
-#: ../dnf/cli/commands/repolist.py:191
-msgid "Repo-mirrors : "
-msgstr "Pakkearkivspejle: "
-
-#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
-msgid "Repo-baseurl : "
-msgstr "Pakkearkivbaseurl : "
-
-#: ../dnf/cli/commands/repolist.py:202
-msgid "Repo-expire  : "
-msgstr "Pakkearkiv udløber  : "
-
-#: ../dnf/cli/commands/repolist.py:205
-msgid "Repo-exclude : "
-msgstr "Pakkearkiv ekskluderer : "
-
-#: ../dnf/cli/commands/repolist.py:209
-msgid "Repo-include : "
-msgstr "Pakkearkiv inkluderer : "
-
-#: ../dnf/cli/commands/repolist.py:213
-msgid "Repo-excluded: "
-msgstr "Pakkearkiv ekskluderet: "
-
-#: ../dnf/cli/commands/repolist.py:217
-msgid "Repo-filename: "
-msgstr ""
-
-#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
-msgid "repo id"
-msgstr "kildeid"
-
-#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
-#: ../dnf/cli/commands/repolist.py:259
-msgid "status"
-msgstr "status"
-
-#: ../dnf/cli/commands/repolist.py:255
-msgid "repo name"
-msgstr "kildenavn"
-
-#: ../dnf/cli/commands/downgrade.py:34
-msgid "downgrade a package"
-msgstr "nedgradér en pakke"
-
-#: ../dnf/cli/commands/makecache.py:36
-msgid "Generate the metadata cache"
-msgstr "Opretter mellemlager for metadata"
-
-#: ../dnf/cli/commands/makecache.py:49
-msgid "Making cache files for all metadata files."
-msgstr "Opretter mellemlagerfiler til alle metadatafiler."
-
-#: ../dnf/cli/commands/makecache.py:56
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr ""
-
-#: ../dnf/cli/commands/makecache.py:61
-msgid "Metadata timer caching disabled."
-msgstr ""
-
-#: ../dnf/cli/commands/makecache.py:66
-msgid "Metadata cache refreshed recently."
-msgstr "Metadata cache genopfrisket fornylig-"
-
-#: ../dnf/cli/commands/makecache.py:88
-msgid "Metadata cache created."
-msgstr "Metadata cache oprettet."
-
-#: ../dnf/cli/main.py:77 ../dnf/automatic/main.py:170
-#, python-format
-msgid "Error: %s"
-msgstr "Fejl: %s"
-
-#: ../dnf/cli/main.py:97
-msgid "Terminated."
-msgstr "Afsluttet."
-
-#: ../dnf/cli/main.py:128
-msgid "No read/execute access in current directory, moving to /"
-msgstr ""
-
-#: ../dnf/cli/main.py:154
-msgid "Dependencies resolved."
-msgstr "Afhængigheder løst."
-
-#: ../dnf/cli/main.py:171
-msgid "Complete!"
-msgstr "Afsluttet!"
-
-#: ../dnf/cli/option_parser.py:51
-#, python-format
-msgid "Command line error: %s"
-msgstr "Kommandoliniefejl: %s"
-
-#: ../dnf/cli/option_parser.py:88
-msgid "--color takes one of: auto, always, never"
-msgstr "--color tager en af: auto, altid, aldrig"
-
-#: ../dnf/cli/option_parser.py:105
-#, python-format
-msgid "Options Error: %s"
-msgstr "Fejl i indstilling: %s"
-
-#: ../dnf/cli/option_parser.py:116
-#, python-format
-msgid "--installroot must be an absolute path: %s"
-msgstr "--installroot skal være en absolut sti: %s"
-
-#: ../dnf/cli/option_parser.py:140
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:143
-msgid "try the best available package versions in transactions."
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:147
-msgid "run entirely from system cache, don't update cache"
-msgstr "kør udelukkende fra systemmellemlager, opdatér ikke mellemlager"
-
-#: ../dnf/cli/option_parser.py:151
-msgid "config file location"
-msgstr "placering af konfigurationsfil"
-
-#: ../dnf/cli/option_parser.py:154
-msgid "debugging output level"
-msgstr "debug-visningsniveau"
-
-#: ../dnf/cli/option_parser.py:157
-msgid "dumps detailed solving results into files"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:160
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "vis gengangere, i pakkearkiver, i list/search-kommandoer"
-
-#: ../dnf/cli/option_parser.py:163
-msgid "error output level"
-msgstr "fejlvisningsniveau"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "debugging output level for rpm"
-msgstr "outputniveau for fejlsøgning af rpm"
-
-#: ../dnf/cli/option_parser.py:168
-msgid "quiet operation"
-msgstr "stille operation"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "verbose operation"
-msgstr "uddybende operation"
-
-#: ../dnf/cli/option_parser.py:172
-msgid "answer yes for all questions"
-msgstr "svar ja til alle spørgsmål"
-
-#: ../dnf/cli/option_parser.py:174
-msgid "answer no for all questions"
-msgstr "Svar nej til alle spørgsmål"
-
-#: ../dnf/cli/option_parser.py:176
-msgid "show DNF version and exit"
-msgstr "vis DNF-version og afslut"
-
-#: ../dnf/cli/option_parser.py:177
-msgid "set install root"
-msgstr "sæt installationsroden"
-
-#: ../dnf/cli/option_parser.py:187
-msgid "exclude packages by name or glob"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:192
-msgid "disable excludes"
-msgstr "deaktivér ekskluderinger"
-
-#: ../dnf/cli/option_parser.py:195
-msgid "disable all plugins"
-msgstr "Deaktivér alle plugins"
-
-#: ../dnf/cli/option_parser.py:197
-msgid "disable gpg signature checking"
-msgstr "deaktivér kontrol af gpg-signaturer"
-
-#: ../dnf/cli/option_parser.py:200
-msgid "disable plugins by name"
-msgstr "deaktivér udvidelsesmoduler ved navn"
-
-#: ../dnf/cli/option_parser.py:203
-msgid "control whether color is used"
-msgstr "kontrollér om farve er brugt"
-
-#: ../dnf/cli/option_parser.py:205
-msgid "override the value of $releasever in config and repo files"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:209
-msgid "set arbitrary config and repo options"
-msgstr "indstil arbitrærkonfiguration og indstillinger for pakkearkiv"
-
-#: ../dnf/cli/option_parser.py:212
-msgid "set metadata as expired before running the command"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:214
-msgid "resolve to IPv4 addresses only"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:217
-msgid "resolve to IPv6 addresses only"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:243
-msgid "List of Main Commands"
-msgstr "Liste over primære kommandoer"
-
-#: ../dnf/cli/option_parser.py:244
-msgid "List of Plugin Commands"
-msgstr "Liste over plugin-kommandoer"
-
-#: ../dnf/cli/output.py:463
-msgid "Name"
-msgstr "Navn"
-
-#: ../dnf/cli/output.py:464 ../dnf/cli/output.py:995
-msgid "Arch"
-msgstr "Arkitektur"
-
-#: ../dnf/cli/output.py:466
-msgid "Epoch"
-msgstr ""
-
-#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:996
-msgid "Version"
-msgstr "Version"
-
-#: ../dnf/cli/output.py:468
-msgid "Release"
-msgstr "Udgivelse"
-
-#: ../dnf/cli/output.py:469 ../dnf/cli/output.py:997
-msgid "Size"
-msgstr "Størrelse"
-
-#: ../dnf/cli/output.py:470
-msgid "Repo"
-msgstr "Arkiv"
-
-#: ../dnf/cli/output.py:472
-msgid "From repo"
-msgstr "Fra arkiv"
-
-#: ../dnf/cli/output.py:477
-msgid "Buildtime"
-msgstr "Byggetid"
-
-#: ../dnf/cli/output.py:479
-msgid "Install time"
-msgstr "Installationstid"
-
-#: ../dnf/cli/output.py:487
-msgid "Installed by"
-msgstr "Installeret af"
-
-#: ../dnf/cli/output.py:494
-msgid "Changed by"
-msgstr "Ændret af"
-
-#: ../dnf/cli/output.py:495
-msgid "Summary"
-msgstr "Resumé"
-
-#: ../dnf/cli/output.py:497
-msgid "URL"
-msgstr "URL"
-
-#: ../dnf/cli/output.py:498
-msgid "License"
-msgstr "Licens"
-
-#: ../dnf/cli/output.py:619
-msgid "y"
-msgstr "j"
-
-#: ../dnf/cli/output.py:619
-msgid "yes"
-msgstr "ja"
-
-#: ../dnf/cli/output.py:620
-msgid "n"
-msgstr "n"
-
-#: ../dnf/cli/output.py:620
-msgid "no"
-msgstr "nej"
-
-#: ../dnf/cli/output.py:623
-msgid "Is this ok [y/N]: "
-msgstr "Er dette o.k? [j/N]: "
-
-#: ../dnf/cli/output.py:626
-msgid "Is this ok [Y/n]: "
-msgstr "Er dette o.k? [J/n]: "
-
-#: ../dnf/cli/output.py:704
-#, python-format
-msgid "\n"
-"Group: %s"
-msgstr "\n"
-"Gruppe: %s"
-
-#: ../dnf/cli/output.py:708
-#, python-format
-msgid " Group-Id: %s"
-msgstr " Gruppeid: %s"
-
-#: ../dnf/cli/output.py:710 ../dnf/cli/output.py:749
-#, python-format
-msgid " Description: %s"
-msgstr " Beskrivelse: %s"
-
-#: ../dnf/cli/output.py:712
-#, python-format
-msgid " Language: %s"
-msgstr "Sprog: %s"
-
-#: ../dnf/cli/output.py:715
-msgid " Mandatory Packages:"
-msgstr " Tvungne pakker:"
-
-#: ../dnf/cli/output.py:716
-msgid " Default Packages:"
-msgstr " Standardpakker:"
-
-#: ../dnf/cli/output.py:717
-msgid " Optional Packages:"
-msgstr " Valgfrie pakker:"
-
-#: ../dnf/cli/output.py:718
-msgid " Conditional Packages:"
-msgstr " Afhængige pakker:"
-
-#: ../dnf/cli/output.py:743
-#, python-format
-msgid "Environment Group: %s"
-msgstr ""
-
-#: ../dnf/cli/output.py:746
-#, python-format
-msgid " Environment-Id: %s"
-msgstr ""
-
-#: ../dnf/cli/output.py:752
-msgid " Mandatory Groups:"
-msgstr ""
-
-#: ../dnf/cli/output.py:753
-msgid " Optional Groups:"
-msgstr ""
-
-#: ../dnf/cli/output.py:788
-#, python-format
-msgid "Repo        : %s"
-msgstr "Kilde       : %s"
-
-#: ../dnf/cli/output.py:795
-msgid "Matched from:"
-msgstr "Matchet af:"
-
-#: ../dnf/cli/output.py:799
-msgid "Description : "
-msgstr "Beskrivelse : "
-
-#: ../dnf/cli/output.py:802
-#, python-format
-msgid "URL         : %s"
-msgstr "URL         : %s"
-
-#: ../dnf/cli/output.py:805
-#, python-format
-msgid "License     : %s"
-msgstr "Licens      : %s"
-
-#: ../dnf/cli/output.py:808
-#, python-format
-msgid "Filename    : %s"
-msgstr "Filnavn     : %s"
-
-#: ../dnf/cli/output.py:812
-msgid "Other       : "
-msgstr "Andre       : "
-
-#: ../dnf/cli/output.py:868
-msgid "There was an error calculating total download size"
-msgstr "Der opstod en fejl i beregning af den totale nedhentningsstørrelse"
-
-#: ../dnf/cli/output.py:874
-#, python-format
-msgid "Total size: %s"
-msgstr "Total størrelse: %s"
-
-#: ../dnf/cli/output.py:877
-#, python-format
-msgid "Total download size: %s"
-msgstr "Total nedhentningsstørrelse: %s"
-
-#: ../dnf/cli/output.py:880 ../dnf/cli/output.py:902
-#, python-format
-msgid "Installed size: %s"
-msgstr "Installationsstørrelse: %s"
-
-#: ../dnf/cli/output.py:898
-msgid "There was an error calculating installed size"
-msgstr "Der opstod en fejl ved udregning af installeret størrelse"
-
-#: ../dnf/cli/output.py:911
-msgid "Marking installed:"
-msgstr "Markeret til installation:"
-
-#: ../dnf/cli/output.py:918
-msgid "Marking removed:"
-msgstr "Markeret til fjernelse:"
-
-#: ../dnf/cli/output.py:928
-msgid "Group"
-msgstr "Gruppe"
-
-#: ../dnf/cli/output.py:928
-msgid "Packages"
-msgstr "Pakker"
-
-#: ../dnf/cli/output.py:969 ../dnf/yum/rpmtrans.py:114
-msgid "Installing"
-msgstr "Installerer"
-
-#: ../dnf/cli/output.py:970 ../dnf/yum/rpmtrans.py:117
-msgid "Upgrading"
-msgstr "Opgrader"
-
-#: ../dnf/cli/output.py:971 ../dnf/yum/rpmtrans.py:116
-msgid "Reinstalling"
-msgstr "Geninstallerer"
-
-#: ../dnf/cli/output.py:972
-msgid "Removing"
-msgstr "Fjerner"
-
-#: ../dnf/cli/output.py:973 ../dnf/yum/rpmtrans.py:112
-msgid "Downgrading"
-msgstr "Nedgraderer"
-
-#: ../dnf/cli/output.py:995 ../dnf/cli/output.py:1858
-msgid "Package"
-msgstr "Pakke"
-
-#: ../dnf/cli/output.py:996
-msgid "Repository"
-msgstr "Pakkearkiv"
-
-#: ../dnf/cli/output.py:1009
-#, python-format
-msgid "     replacing  %s%s%s.%s %s\n"
-msgstr "     erstatter  %s%s%s.%s %s\n"
-
-#: ../dnf/cli/output.py:1017
-#, python-format
-msgid "\n"
-"Transaction Summary\n"
-"%s\n"
-msgstr "\n"
-"Overførselsopsummering\n"
-"%s\n"
-
-#: ../dnf/cli/output.py:1022 ../dnf/cli/output.py:1653
-#: ../dnf/cli/output.py:1654
-msgid "Install"
-msgstr "Installér"
-
-#: ../dnf/cli/output.py:1023 ../dnf/cli/output.py:1662
-msgid "Upgrade"
-msgstr "Opgrader"
-
-#: ../dnf/cli/output.py:1024
-msgid "Remove"
-msgstr "Fjern"
-
-#: ../dnf/cli/output.py:1025 ../dnf/cli/output.py:1660
-msgid "Downgrade"
-msgstr "Nedgradér"
-
-#: ../dnf/cli/output.py:1111
-msgid "Reinstalled"
-msgstr "Geninstalleret"
-
-#: ../dnf/cli/output.py:1112
-msgid "Removed"
-msgstr "Fjernet"
-
-#: ../dnf/cli/output.py:1114 ../dnf/cli/output.py:1499
-#: ../dnf/cli/output.py:1663
-msgid "Upgraded"
-msgstr "Opgraderet"
-
-#: ../dnf/cli/output.py:1115 ../dnf/cli/output.py:1499
-#: ../dnf/cli/output.py:1661
-msgid "Downgraded"
-msgstr "Nedgraderet"
-
-#: ../dnf/cli/output.py:1169
-msgid "Total"
-msgstr "Ialt"
-
-#: ../dnf/cli/output.py:1190
-msgid "I"
-msgstr "I"
-
-#: ../dnf/cli/output.py:1191
-msgid "O"
-msgstr "O"
-
-#: ../dnf/cli/output.py:1192
-msgid "E"
-msgstr "E"
-
-#: ../dnf/cli/output.py:1193
-msgid "R"
-msgstr "R"
-
-#: ../dnf/cli/output.py:1194
-msgid "D"
-msgstr "D"
-
-#: ../dnf/cli/output.py:1195
-msgid "U"
-msgstr "U"
-
-#: ../dnf/cli/output.py:1209
-msgid "<unset>"
-msgstr "<ikke angivet>"
-
-#: ../dnf/cli/output.py:1210
-msgid "System"
-msgstr "System"
-
-#: ../dnf/cli/output.py:1291 ../dnf/cli/output.py:1404
-msgid "No transactions"
-msgstr "Ingen overførseler"
-
-#: ../dnf/cli/output.py:1311 ../dnf/cli/output.py:1847
-#: ../dnf/cli/output.py:1924
-msgid "Bad transaction IDs, or package(s), given"
-msgstr "Dårlige overførsels-id'er eller pakker givet"
-
-#: ../dnf/cli/output.py:1349
-msgid "Command line"
-msgstr "Kommandolinje"
-
-#: ../dnf/cli/output.py:1351 ../dnf/cli/output.py:1735
-msgid "Login user"
-msgstr "Log bruger ind"
-
-#: ../dnf/cli/output.py:1352 ../dnf/cli/output.py:1856
-msgid "ID"
-msgstr "ID"
-
-#: ../dnf/cli/output.py:1354
-msgid "Date and time"
-msgstr "Dato og tid"
-
-#: ../dnf/cli/output.py:1355 ../dnf/cli/output.py:1737
-#: ../dnf/cli/output.py:1857
-msgid "Action(s)"
-msgstr "Handling(er)"
-
-#: ../dnf/cli/output.py:1356 ../dnf/cli/output.py:1738
-msgid "Altered"
-msgstr "Ændret"
-
-#: ../dnf/cli/output.py:1437 ../dnf/cli/output.py:1811
-msgid "No transaction ID, or package, given"
-msgstr "Intet overførsels-id eller pakke givet"
-
-#: ../dnf/cli/output.py:1498
-msgid "Erased"
-msgstr "Slettet"
-
-#: ../dnf/cli/output.py:1500
-msgid "Not installed"
-msgstr "Ikke installeret"
-
-#: ../dnf/cli/output.py:1501
-msgid "Older"
-msgstr "Ældre"
-
-#: ../dnf/cli/output.py:1501
-msgid "Newer"
-msgstr "Nyere"
-
-#: ../dnf/cli/output.py:1538 ../dnf/cli/output.py:1540
-#: ../dnf/cli/output.py:1945
-msgid "Transaction ID :"
-msgstr "Overførsels-id:"
-
-#: ../dnf/cli/output.py:1542 ../dnf/cli/output.py:1947
-msgid "Begin time     :"
-msgstr "Starttidspunkt     :"
-
-#: ../dnf/cli/output.py:1545 ../dnf/cli/output.py:1547
-msgid "Begin rpmdb    :"
-msgstr "Start rpmdb    :"
-
-#: ../dnf/cli/output.py:1563
-#, python-format
-msgid "(%u seconds)"
-msgstr "(%u sekunder)"
-
-#: ../dnf/cli/output.py:1565
-#, python-format
-msgid "(%u minutes)"
-msgstr "(%u minutter)"
-
-#: ../dnf/cli/output.py:1567
-#, python-format
-msgid "(%u hours)"
-msgstr "(%u timer)"
-
-#: ../dnf/cli/output.py:1569
-#, python-format
-msgid "(%u days)"
-msgstr "(%u dage)"
-
-#: ../dnf/cli/output.py:1570
-msgid "End time       :"
-msgstr "Sluttidspunkt       :"
-
-#: ../dnf/cli/output.py:1573 ../dnf/cli/output.py:1575
-msgid "End rpmdb      :"
-msgstr "Slut rpmdb      :"
-
-#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1580
-msgid "User           :"
-msgstr "Bruger           :"
-
-#: ../dnf/cli/output.py:1584 ../dnf/cli/output.py:1587
-#: ../dnf/cli/output.py:1589 ../dnf/cli/output.py:1591
-#: ../dnf/cli/output.py:1593
-msgid "Return-Code    :"
-msgstr "Returkode    :"
-
-#: ../dnf/cli/output.py:1584 ../dnf/cli/output.py:1589
-msgid "Aborted"
-msgstr "Afbrudt"
-
-#: ../dnf/cli/output.py:1587
-msgid "Failures:"
-msgstr "Fejl:"
-
-#: ../dnf/cli/output.py:1591
-msgid "Failure:"
-msgstr "Fejl:"
-
-#: ../dnf/cli/output.py:1593
-msgid "Success"
-msgstr "Succes"
-
-#: ../dnf/cli/output.py:1598 ../dnf/cli/output.py:1600
-#: ../dnf/cli/output.py:1976
-msgid "Command Line   :"
-msgstr "Kommandolinje   :"
-
-#: ../dnf/cli/output.py:1609
-#, python-format
-msgid "Additional non-default information stored: %d"
-msgstr "Yderligere ikke-standard information gemt: %d"
-
-#: ../dnf/cli/output.py:1614
-msgid "Transaction performed with:"
-msgstr "Overførsel udført med"
-
-#: ../dnf/cli/output.py:1618
-msgid "Packages Altered:"
-msgstr "Pakker ændret:"
-
-#: ../dnf/cli/output.py:1622
-msgid "Packages Skipped:"
-msgstr "Pakker sprunget over:"
-
-#: ../dnf/cli/output.py:1630
-msgid "Rpmdb Problems:"
-msgstr "Problemer med rpmdb:"
-
-#: ../dnf/cli/output.py:1641
-msgid "Scriptlet output:"
-msgstr "Scriptletoutput:"
-
-#: ../dnf/cli/output.py:1647
-msgid "Errors:"
-msgstr "Fejl:"
-
-#: ../dnf/cli/output.py:1655
-msgid "Dep-Install"
-msgstr "Installér afhængigheder"
-
-#: ../dnf/cli/output.py:1656
-msgid "Obsoleted"
-msgstr "Overflødiggjort"
-
-#: ../dnf/cli/output.py:1657 ../dnf/yum/rpmtrans.py:115
-msgid "Obsoleting"
-msgstr "Forælder"
-
-#: ../dnf/cli/output.py:1658
-msgid "Erase"
-msgstr "Slet"
-
-#: ../dnf/cli/output.py:1659
-msgid "Reinstall"
-msgstr "Geninstallér"
-
-#: ../dnf/cli/output.py:1736
-msgid "Time"
-msgstr "Tid"
-
-#: ../dnf/cli/output.py:1762
-msgid "Last day"
-msgstr "Sidste dag"
-
-#: ../dnf/cli/output.py:1763
-msgid "Last week"
-msgstr "Sidste uge"
-
-#: ../dnf/cli/output.py:1764
-msgid "Last 2 weeks"
-msgstr "Seneste to uger"
-
-#: ../dnf/cli/output.py:1765
-msgid "Last 3 months"
-msgstr "Seneste tre måneder"
-
-#: ../dnf/cli/output.py:1766
-msgid "Last 6 months"
-msgstr "Seneste seks måneder"
-
-#: ../dnf/cli/output.py:1767
-msgid "Last year"
-msgstr "Sidste år"
-
-#: ../dnf/cli/output.py:1768
-msgid "Over a year ago"
-msgstr "Over et år siden"
-
-#: ../dnf/cli/output.py:1815
-#, python-format
-msgid "No Transaction %s found"
-msgstr "Ingen overførsel %s fundet"
-
-#: ../dnf/cli/output.py:1821
-msgid "Transaction ID:"
-msgstr "Overførsels-id:"
-
-#: ../dnf/cli/output.py:1822
-msgid "Available additional history information:"
-msgstr "Yderligere historikinformation tilgængelig:"
-
-#: ../dnf/cli/output.py:1835
-#, python-format
-msgid "%s: No additional data found by this name"
-msgstr "%s: Intet yderligere data fundet med dette navn"
-
-#: ../dnf/cli/output.py:1948
-msgid "Package        :"
-msgstr "Pakke :"
-
-#: ../dnf/cli/output.py:1949
-msgid "State          :"
-msgstr "Status :"
-
-#: ../dnf/cli/output.py:1952
-msgid "Size           :"
-msgstr "Størrelse :"
-
-#: ../dnf/cli/output.py:1954
-msgid "Build host     :"
-msgstr "Byggevært :"
-
-#: ../dnf/cli/output.py:1957
-msgid "Build time     :"
-msgstr "Byggetid :"
-
-#: ../dnf/cli/output.py:1959
-msgid "Packager       :"
-msgstr "Pakker :"
-
-#: ../dnf/cli/output.py:1961
-msgid "Vendor         :"
-msgstr "Leverandør :"
-
-#: ../dnf/cli/output.py:1963
-msgid "License        :"
-msgstr "Licens :"
-
-#: ../dnf/cli/output.py:1965
-msgid "URL            :"
-msgstr "URL            :"
-
-#: ../dnf/cli/output.py:1967
-msgid "Source RPM     :"
-msgstr "Source RPM :"
-
-#: ../dnf/cli/output.py:1970
-msgid "Commit Time    :"
-msgstr ""
-
-#: ../dnf/cli/output.py:1972
-msgid "Committer      :"
-msgstr ""
-
-#: ../dnf/cli/output.py:1974
-msgid "Reason         :"
-msgstr "Årsag:"
-
-#: ../dnf/cli/output.py:1978
-msgid "From repo      :"
-msgstr "Fra pakkearkiv :"
-
-#: ../dnf/cli/output.py:1982
-msgid "Installed by   :"
-msgstr "Installeret af :"
-
-#: ../dnf/cli/output.py:1986
-msgid "Changed by     :"
-msgstr "Ændret af :"
-
-#: ../dnf/cli/output.py:2018
-msgid "an upgrade"
-msgstr "en opgradering"
-
-#: ../dnf/cli/output.py:2019
-msgid "erased"
-msgstr "slettet"
-
-#: ../dnf/cli/output.py:2020
-msgid "reinstalled"
-msgstr "geninstalleret"
-
-#: ../dnf/cli/output.py:2021
-msgid "a downgrade"
-msgstr "en nedgradering"
-
-#: ../dnf/cli/output.py:2022
-msgid "obsoleting"
-msgstr "afskaffer"
-
-#: ../dnf/cli/output.py:2023
-msgid "upgraded"
-msgstr "Opgraderet"
-
-#: ../dnf/cli/output.py:2024
-msgid "obsoleted"
-msgstr "overflødiggjort"
-
-#: ../dnf/cli/output.py:2025
-msgid "downgraded"
-msgstr "nedgraderet"
-
-#: ../dnf/cli/output.py:2028
-#, python-format
-msgid "---> Package %s.%s %s will be %s"
-msgstr "---> Pakken %s.%s %s vil blive %s"
-
-#: ../dnf/cli/output.py:2035
-msgid "--> Starting dependency resolution"
-msgstr "--> Starter afhængighedssøgning"
-
-#: ../dnf/cli/output.py:2040
-msgid "--> Finished dependency resolution"
-msgstr "--> Afsluttede afhængighedssøgning"
-
-#: ../dnf/cli/output.py:2190
-msgid "Verifying"
-msgstr "Bekræfter"
-
-#: ../dnf/base.py:105
-#, python-format
-msgid "%s, disabling."
-msgstr "%s, deaktiverer."
-
-#: ../dnf/base.py:326
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "Invalid tsflag i konfigurationsfilen: %s"
-
-#: ../dnf/base.py:379
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Tilføjelse af gruppefil fejlede for følgende pakkearkiv: %s - %s"
-
-#: ../dnf/base.py:527
-msgid "Running transaction check"
-msgstr "Kører transaktionskontrol"
-
-#: ../dnf/base.py:530
-msgid "Error: transaction check vs depsolve:"
-msgstr ""
-
-#: ../dnf/base.py:536
-msgid "Transaction check succeeded."
-msgstr "Overførselstest afsluttet uden fejl."
-
-#: ../dnf/base.py:539
-msgid "Running transaction test"
-msgstr "Kører overførselstest"
-
-#: ../dnf/base.py:551
-msgid "Transaction check error:\n"
-msgstr "Fejl i overførselskontrol:\n"
-
-#: ../dnf/base.py:558
-msgid "Transaction test succeeded."
-msgstr "Overførselstest afsluttet uden fejl."
-
-#: ../dnf/base.py:573
-msgid "Running transaction"
-msgstr "Kører overførsel"
-
-#: ../dnf/base.py:597
-msgid "Disk Requirements:\n"
-msgstr "Behov for diskplads:\n"
-
-#: ../dnf/base.py:604
-msgid "Error Summary\n"
-"-------------\n"
-msgstr "Fejlopsummering\n"
-"---------------\n"
-
-#: ../dnf/base.py:666
-msgid ""
-"Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr ""
-"Advarsel: skriptlet eller andre ikke-fatale fejl opstod under overførslen."
-
-#: ../dnf/base.py:671
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr ""
-
-#: ../dnf/base.py:674 ../dnf/base.py:684
-msgid "Could not run transaction."
-msgstr "Kunne ikke køre overførsel."
-
-#: ../dnf/base.py:681
-msgid "Transaction couldn't start:"
-msgstr "Overførsel kunne ikke starte:"
-
-#: ../dnf/base.py:693
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "Kunne ikke slette transaktionsfilen %s"
-
-#: ../dnf/base.py:744
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr "%s skulle være blevet installeret, men det blev den ikke!"
-
-#: ../dnf/base.py:805
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr "%s skulle være blevet fjernet, men det blev den ikke!"
-
-#: ../dnf/base.py:882
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr ""
-"Delta RPMs reducerede %.1f MB af opdateringen til %.1f MB (%d.1%% sparet)"
-
-#: ../dnf/base.py:929
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "Offentlig nøgle for %s er ikke installeret"
-
-#: ../dnf/base.py:933
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Kunne ikke åbne pakke %s"
-
-#: ../dnf/base.py:941
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "Offentlig nøgle for %s er ikke sikker"
-
-#: ../dnf/base.py:945
-#, python-format
-msgid "Package %s is not signed"
-msgstr "Pakken %s er ikke signeret"
-
-#: ../dnf/base.py:963
-#, python-format
-msgid "Cannot remove %s"
-msgstr "Kan ikke fjerne %s"
-
-#: ../dnf/base.py:967
-#, python-format
-msgid "%s removed"
-msgstr "%s fjernet"
-
-#: ../dnf/base.py:1333 ../dnf/base.py:1345
-msgid "no package matched"
-msgstr ""
-
-#: ../dnf/base.py:1384
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1391
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1410
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr ""
-
-#: ../dnf/base.py:1426 ../dnf/base.py:1452
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "Pakken %s er ikke installeret, så den kan ikke opdateres."
-
-#: ../dnf/base.py:1433
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr ""
-
-#: ../dnf/base.py:1497
-#, python-format
-msgid "No package %s installed."
-msgstr "Pakken %s ikke installeret."
-
-#: ../dnf/base.py:1608
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1744
-#, python-format
-msgid "\n"
-"\n"
-"\n"
-" Failing package is: %s\n"
-" GPG Keys are configured as: %s\n"
-msgstr ""
-
-#: ../dnf/base.py:1758
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "GPG-nøgle på %s (0x%s) er allerede installeret"
-
-#: ../dnf/base.py:1792
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "Importering af nøgle mislykkedes (kode %d)"
-
-#: ../dnf/base.py:1794
-msgid "Key imported successfully"
-msgstr "Nøglen blev importet med succes"
-
-#: ../dnf/base.py:1798
-msgid "Didn't install any keys"
-msgstr "Installerede ingen nøgler"
-
-#: ../dnf/base.py:1801
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"GPG-nøglen er vist for \"%s\" pakkearkivet er allerede installeret, men den "
-"er ikke korrekt for denne pakke.\n"
-"Kontrollér at konfigurationen af nøgle-URL'er er korrekt for denne kilde."
-
-#: ../dnf/base.py:1811
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Importering af nøgle(r) hjalp ikke, forkerte nøgle(r)?"
-
-#: ../dnf/base.py:1838
-#, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "Pakken %s er allerede installeret, springer over."
-
-#: ../dnf/goal.py:50
-msgid "--> Finding unneeded leftover dependencies"
-msgstr ""
-
-#: ../dnf/plugin.py:126
-#, python-format
-msgid "Failed loading plugin: %s"
-msgstr "Kunne ikke indlæse plugin: %s"
-
-#: ../dnf/persistor.py:239
-msgid "Invalid groups database, clearing."
-msgstr "Ugyldig gruppedatabase, rydder."
-
-#: ../dnf/persistor.py:258
-msgid "Unsupported installed groups database found, resetting."
-msgstr ""
-
-#: ../dnf/persistor.py:330
-#, python-format
-msgid "%s is empty file"
-msgstr "%s er en tom fil"
-
-#: ../dnf/comps.py:91
-msgid "skipping."
-msgstr ""
-
-#: ../dnf/comps.py:167
-#, python-format
-msgid "Group '%s' is not installed."
-msgstr ""
-
-#: ../dnf/comps.py:169
-#, python-format
-msgid "Group '%s' does not exist."
-msgstr ""
-
-#: ../dnf/comps.py:439
-#, python-format
-msgid "Environment '%s' is already installed."
-msgstr "Miljøet '%s' er allerede installeret."
-
-#: ../dnf/comps.py:459 ../dnf/comps.py:481
-#, python-format
-msgid "Environment '%s' is not installed."
-msgstr "Miljøet '%s' er ikke installeret."
-
-#: ../dnf/comps.py:505
-#, python-format
-msgid "Group '%s' is already installed."
-msgstr "Gruppen '%s' er allerede installeret."
-
-#: ../dnf/comps.py:523 ../dnf/comps.py:538
-#, python-format
-msgid "Group '%s' not installed."
-msgstr "Gruppen '%s' er ikke installeret."
-
-#: ../dnf/conf/read.py:51
-#, python-format
-msgid "Warning: failed loading '%s', skipping."
-msgstr "Advarsel: kunne ikke indlæse '%s', springer over."
-
-#: ../dnf/conf/read.py:61
-#, python-format
-msgid "Repository %r: Error parsing config: %s"
-msgstr "Pakkearkiv %r: Fejl under læsning af konfiguration: %s"
-
-#: ../dnf/conf/read.py:67
-#, python-format
-msgid "Repository %r is missing name in configuration, using id."
-msgstr "Pakkearkivet %r mangler navn i konfigurationen, bruger id."
-
-#: ../dnf/conf/__init__.py:74
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Kunne ikke sætte mellemlagermappe: %s"
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "true"
+msgstr "sand"
+
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "false"
+msgstr "falsk"
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Update ID"
+msgstr "Opdaterings-id"
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Type"
+msgstr "Type"
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Updated"
+msgstr "Opdateret"
+
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Bugs"
+msgstr "Fejl"
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "CVEs"
+msgstr "CVE'er"
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Rights"
+msgstr "Rettigheder"
+
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Files"
+msgstr "Filer"
+
+#: ../dnf/cli/commands/updateinfo.py:331
+msgid "updates"
+msgstr "opdateringer"
+
+#: ../dnf/cli/commands/updateinfo.py:334
+msgid "all"
+msgstr "alle"
+
+#: ../dnf/cli/commands/updateinfo.py:339
+msgid "available"
+msgstr "tilgængelige"
 
 #: ../dnf/crypto.py:81
 #, python-format
@@ -2043,18 +1901,239 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/transaction.py:208
+#: ../dnf/base.py:108
+#, python-format
+msgid "%s, disabling."
+msgstr "%s, deaktiverer."
+
+#: ../dnf/base.py:284
+msgid ""
+"The downloaded packages were saved in cache till the next successful "
+"transaction."
+msgstr ""
+
+#: ../dnf/base.py:286
+#, python-format
+msgid "You can remove cached packages by executing '%s'"
+msgstr ""
+
+#: ../dnf/base.py:346
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Invalid tsflag i konfigurationsfilen: %s"
+
+#: ../dnf/base.py:399
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Tilføjelse af gruppefil fejlede for følgende pakkearkiv: %s - %s"
+
+#: ../dnf/base.py:552
+msgid "Running transaction check"
+msgstr "Kører transaktionskontrol"
+
+#: ../dnf/base.py:555
+msgid "Error: transaction check vs depsolve:"
+msgstr ""
+
+#: ../dnf/base.py:561
+msgid "Transaction check succeeded."
+msgstr "Overførselstest afsluttet uden fejl."
+
+#: ../dnf/base.py:564
+msgid "Running transaction test"
+msgstr "Kører overførselstest"
+
+#: ../dnf/base.py:576
+msgid "Transaction check error:\n"
+msgstr "Fejl i overførselskontrol:\n"
+
+#: ../dnf/base.py:583
+msgid "Transaction test succeeded."
+msgstr "Overførselstest afsluttet uden fejl."
+
+#: ../dnf/base.py:596
+msgid "Running transaction"
+msgstr "Kører overførsel"
+
+#: ../dnf/base.py:620
+msgid "Disk Requirements:\n"
+msgstr "Behov for diskplads:\n"
+
+#: ../dnf/base.py:627
+msgid "Error Summary\n"
+"-------------\n"
+msgstr "Fejlopsummering\n"
+"---------------\n"
+
+#: ../dnf/base.py:689
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr ""
+"Advarsel: skriptlet eller andre ikke-fatale fejl opstod under overførslen."
+
+#: ../dnf/base.py:694
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr ""
+
+#: ../dnf/base.py:697 ../dnf/base.py:707
+msgid "Could not run transaction."
+msgstr "Kunne ikke køre overførsel."
+
+#: ../dnf/base.py:704
+msgid "Transaction couldn't start:"
+msgstr "Overførsel kunne ikke starte:"
+
+#: ../dnf/base.py:716
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "Kunne ikke slette transaktionsfilen %s"
+
+#: ../dnf/base.py:768
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s skulle være blevet installeret, men det blev den ikke!"
+
+#: ../dnf/base.py:829
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s skulle være blevet fjernet, men det blev den ikke!"
+
+#: ../dnf/base.py:907
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr ""
+"Delta RPMs reducerede %.1f MB af opdateringen til %.1f MB (%d.1%% sparet)"
+
+#: ../dnf/base.py:954
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "Offentlig nøgle for %s er ikke installeret"
+
+#: ../dnf/base.py:958
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Kunne ikke åbne pakke %s"
+
+#: ../dnf/base.py:966
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "Offentlig nøgle for %s er ikke sikker"
+
+#: ../dnf/base.py:970
+#, python-format
+msgid "Package %s is not signed"
+msgstr "Pakken %s er ikke signeret"
+
+#: ../dnf/base.py:988
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Kan ikke fjerne %s"
+
+#: ../dnf/base.py:992
+#, python-format
+msgid "%s removed"
+msgstr "%s fjernet"
+
+#: ../dnf/base.py:1311
+msgid "No groups marked for removal."
+msgstr ""
+
+#: ../dnf/base.py:1367 ../dnf/base.py:1379
+msgid "no package matched"
+msgstr ""
+
+#: ../dnf/base.py:1418
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr ""
+
+#: ../dnf/base.py:1425
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr ""
+
+#: ../dnf/base.py:1444
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr ""
+
+#: ../dnf/base.py:1460 ../dnf/base.py:1487
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "Pakken %s er ikke installeret, så den kan ikke opdateres."
+
+#: ../dnf/base.py:1467
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr ""
+
+#: ../dnf/base.py:1532
+#, python-format
+msgid "No package %s installed."
+msgstr "Pakken %s ikke installeret."
+
+#: ../dnf/base.py:1643
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr ""
+
+#: ../dnf/base.py:1779
+#, python-format
+msgid "\n"
+"\n"
+"\n"
+" Failing package is: %s\n"
+" GPG Keys are configured as: %s\n"
+msgstr ""
+
+#: ../dnf/base.py:1793
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "GPG-nøgle på %s (0x%s) er allerede installeret"
+
+#: ../dnf/base.py:1827
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "Importering af nøgle mislykkedes (kode %d)"
+
+#: ../dnf/base.py:1829
+msgid "Key imported successfully"
+msgstr "Nøglen blev importet med succes"
+
+#: ../dnf/base.py:1833
+msgid "Didn't install any keys"
+msgstr "Installerede ingen nøgler"
+
+#: ../dnf/base.py:1836
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"GPG-nøglen er vist for \"%s\" pakkearkivet er allerede installeret, men den "
+"er ikke korrekt for denne pakke.\n"
+"Kontrollér at konfigurationen af nøgle-URL'er er korrekt for denne kilde."
+
+#: ../dnf/base.py:1846
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "Importering af nøgle(r) hjalp ikke, forkerte nøgle(r)?"
+
+#: ../dnf/base.py:1873
+#, python-format
+msgid "Package %s is already installed, skipping."
+msgstr "Pakken %s er allerede installeret, springer over."
+
+#: ../dnf/transaction.py:209
 #, python-format
 msgid "Will not install a source rpm package (%s)."
 msgstr "Vil ikke installere en kilde-rpm-pakke (%s)."
 
-#: ../dnf/drpm.py:135
-msgid "Delta RPM rebuild failed"
-msgstr "Genbygning af delta-RPM mislykkedes"
-
-#: ../dnf/drpm.py:137
-msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr ""
+#: ../dnf/plugin.py:126
+#, python-format
+msgid "Failed loading plugin: %s"
+msgstr "Kunne ikke indlæse plugin: %s"
 
 #: ../dnf/automatic/emitter.py:29
 #, python-format
@@ -2090,34 +2169,3 @@ msgstr "Opdateringer tilgængelige på \"%s\"."
 #, python-format
 msgid "Failed to send an email via '%s': %s"
 msgstr "Kunne ikke sende en email via \"%s\": %s"
-
-#: ../dnf/yum/history.py:758
-#, python-format
-msgid "Unable to initialize DNF DB history: %s"
-msgstr ""
-
-#: ../dnf/yum/history.py:1675
-#, python-format
-msgid "Can not create history database at '%s'."
-msgstr ""
-
-#: ../dnf/yum/rpmtrans.py:111
-msgid "Cleanup"
-msgstr "Oprydning af"
-
-#: ../dnf/yum/rpmtrans.py:113
-msgid "Erasing"
-msgstr "Sletter"
-
-#: ../dnf/lock.py:97
-#, python-format
-msgid ""
-"Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
-msgstr ""
-
-#: ../dnf/lock.py:136
-#, python-format
-msgid "Waiting for process with pid %d to finish."
-msgstr ""
