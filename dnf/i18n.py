@@ -19,8 +19,7 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.pycomp import PY3, is_py3bytes, unicode, setlocale
-import gettext
+from dnf.pycomp import PY3, is_py3bytes, unicode, setlocale, gettext
 import locale
 import os
 import signal
@@ -279,7 +278,6 @@ def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
         ret.append(indent.rstrip(' '))
 
     return '\n'.join(ret)
-
 
 # setup translation
 t = gettext.translation('dnf', fallback=True)

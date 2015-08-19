@@ -22,6 +22,7 @@ from gettext import NullTranslations
 from sys import version_info
 import base64
 import email.mime.text
+import gettext
 import itertools
 import locale
 import types
