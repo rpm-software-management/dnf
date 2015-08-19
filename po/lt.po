@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-16 17:49-0400\n"
+"POT-Creation-Date: 2015-08-19 11:38+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,16 +21,291 @@ msgstr ""
 "Language: lt\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "(n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.6.2\n"
+"X-Generator: Zanata 3.7.1\n"
 
-#: ../dnf/repo.py:354 ../dnf/drpm.py:63
+#: ../dnf/persistor.py:239
+msgid "Invalid groups database, clearing."
+msgstr "Netinkama grupių duomenų bazė, išvaloma."
+
+#: ../dnf/persistor.py:258
+msgid "Unsupported installed groups database found, resetting."
+msgstr ""
+
+#: ../dnf/persistor.py:319
+#, python-format
+msgid "%s is empty file"
+msgstr "%s yra tuščias failas"
+
+#: ../dnf/drpm.py:63 ../dnf/repo.py:356
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "nepalaikomas kontrolinės sumos tipas: %s"
 
-#: ../dnf/repo.py:803
+#: ../dnf/drpm.py:135
+msgid "Delta RPM rebuild failed"
+msgstr "Nepavyko delta RPM perkūrimas"
+
+#: ../dnf/drpm.py:137
+msgid "Checksum of the delta-rebuilt RPM failed"
+msgstr "Nesutapo RPM delta-perkūrimo kontrolinė suma"
+
+#: ../dnf/comps.py:92
+msgid "skipping."
+msgstr ""
+
+#: ../dnf/comps.py:168
+#, python-format
+msgid "Group '%s' is not installed."
+msgstr ""
+
+#: ../dnf/comps.py:170
+#, python-format
+msgid "Group '%s' does not exist."
+msgstr ""
+
+#: ../dnf/comps.py:459
+#, python-format
+msgid "Environment '%s' is already installed."
+msgstr ""
+
+#: ../dnf/comps.py:479 ../dnf/comps.py:501
+#, python-format
+msgid "Environment '%s' is not installed."
+msgstr ""
+
+#: ../dnf/comps.py:525
+#, python-format
+msgid "Group '%s' is already installed."
+msgstr ""
+
+#: ../dnf/comps.py:548 ../dnf/comps.py:563
+#, python-format
+msgid "Group '%s' not installed."
+msgstr ""
+
+#: ../dnf/repo.py:814
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
+msgstr ""
+
+#: ../dnf/conf/read.py:51
+#, python-format
+msgid "Warning: failed loading '%s', skipping."
+msgstr "Įspėjimas: nepavyko įkelti „%s“, praleidžiama."
+
+#: ../dnf/conf/read.py:61
+#, python-format
+msgid "Repository %r: Error parsing config: %s"
+msgstr "Saugykla %r: klaida skaitant konfigūraciją: %s"
+
+#: ../dnf/conf/read.py:67
+#, python-format
+msgid "Repository %r is missing name in configuration, using id."
+msgstr ""
+
+#: ../dnf/conf/__init__.py:73
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Nepavyko nustatyti podėlio katalogo: %s"
+
+#: ../dnf/goal.py:51
+msgid "--> Finding unneeded leftover dependencies"
+msgstr "--> Randamos nereikalingos paliktos priklausomybės"
+
+#: ../dnf/lock.py:97
+#, python-format
+msgid ""
+"Malformed lock file found: %s.\n"
+"Ensure no other dnf process is running and remove the lock file manually or "
+"run systemd-tmpfiles --remove dnf.conf."
+msgstr ""
+
+#: ../dnf/lock.py:136
+#, python-format
+msgid "Waiting for process with pid %d to finish."
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:123
+msgid "Cleanup"
+msgstr "Valymas"
+
+#: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1002
+msgid "Downgrading"
+msgstr "Grąžinama"
+
+#: ../dnf/yum/rpmtrans.py:125
+msgid "Erasing"
+msgstr "Šalinama"
+
+#: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:998
+msgid "Installing"
+msgstr "Diegiama"
+
+#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1706
+msgid "Obsoleting"
+msgstr "Pažymima pasenusiu"
+
+#: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1000
+msgid "Reinstalling"
+msgstr "Perdiegiama"
+
+#: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:999
+msgid "Upgrading"
+msgstr "Atnaujinama"
+
+#: ../dnf/yum/rpmtrans.py:130
+msgid "Verifying"
+msgstr "Tikrinama"
+
+#: ../dnf/yum/history.py:758
+#, python-format
+msgid "Unable to initialize DNF DB history: %s"
+msgstr ""
+
+#: ../dnf/yum/history.py:1675
+#, python-format
+msgid "Can not create history database at '%s'."
+msgstr "Nepavyksta sukurti istorijos duomenų bazės „%s“."
+
+#: ../dnf/cli/option_parser.py:51
+#, python-format
+msgid "Command line error: %s"
+msgstr "Komandinės eilutės klaida: %s"
+
+#: ../dnf/cli/option_parser.py:88
+msgid "--color takes one of: auto, always, never"
+msgstr "--color gali būti: auto, always, never"
+
+#: ../dnf/cli/option_parser.py:105
+#, python-format
+msgid "Options Error: %s"
+msgstr "Parinkčių klaida: %s"
+
+#: ../dnf/cli/option_parser.py:116
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr "--installroot turi būti absoliutus kelias: %s"
+
+#: ../dnf/cli/option_parser.py:142
+#, python-format
+msgid "bad format: %s"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:154
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "leisti ištrinti įdiegtus paketus priklausomybių išsprendimui"
+
+#: ../dnf/cli/option_parser.py:157
+msgid "try the best available package versions in transactions."
+msgstr "bandyti geriausias prieinamas paketų versijas tranzakcijose."
+
+#: ../dnf/cli/option_parser.py:161
+msgid "run entirely from system cache, don't update cache"
+msgstr "vykdyti tik iš sistemos podėlio jo neatnaujinant"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "config file location"
+msgstr "konfigūracijos failo vieta"
+
+#: ../dnf/cli/option_parser.py:168
+msgid "debugging output level"
+msgstr "derinimo išvesties lygmuo"
+
+#: ../dnf/cli/option_parser.py:171
+msgid "dumps detailed solving results into files"
+msgstr "išrašo detalius sprendimo rezultatus į failus"
+
+#: ../dnf/cli/option_parser.py:174
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "rodyti dublikatus saugyklose, sąrašo/paieškos komandose"
+
+#: ../dnf/cli/option_parser.py:177
+msgid "error output level"
+msgstr "klaidų išvesties lygmuo"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "debugging output level for rpm"
+msgstr "derinimo išvesties lygmuo rpm komandai"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "quiet operation"
+msgstr "tyli operacija"
+
+#: ../dnf/cli/option_parser.py:184
+msgid "verbose operation"
+msgstr "išsami operacija"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "answer yes for all questions"
+msgstr "atsakyti „taip“ į visus klausimus"
+
+#: ../dnf/cli/option_parser.py:188
+msgid "answer no for all questions"
+msgstr "atsakyti ne į visus klausimus"
+
+#: ../dnf/cli/option_parser.py:190
+msgid "show DNF version and exit"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:191
+msgid "set install root"
+msgstr "nustatyti diegimo šaknį"
+
+#: ../dnf/cli/option_parser.py:201
+msgid "exclude packages by name or glob"
+msgstr "išskirti paketus pagal pavadinimą arba glob"
+
+#: ../dnf/cli/option_parser.py:206
+msgid "disable excludes"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:211
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:214
+msgid "disable all plugins"
+msgstr "išjungti visus įskiepius"
+
+#: ../dnf/cli/option_parser.py:216
+msgid "disable gpg signature checking"
+msgstr "drausti gpg parašo tikrinimą"
+
+#: ../dnf/cli/option_parser.py:219
+msgid "disable plugins by name"
+msgstr "drausti įskiepius pagal pavadinimą"
+
+#: ../dnf/cli/option_parser.py:222
+msgid "control whether color is used"
+msgstr "valdyti, ar naudojama spalva"
+
+#: ../dnf/cli/option_parser.py:224
+msgid "override the value of $releasever in config and repo files"
+msgstr "naudoti vietoj $releasever konfigūracijos ir saugyklos failuose"
+
+#: ../dnf/cli/option_parser.py:228
+msgid "set arbitrary config and repo options"
+msgstr "nustatyti savavališkas konfigūracijos ir saugyklų parinktis"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "set metadata as expired before running the command"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:233
+msgid "resolve to IPv4 addresses only"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:236
+msgid "resolve to IPv6 addresses only"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:262
+msgid "List of Main Commands"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:263
+msgid "List of Plugin Commands"
 msgstr ""
 
 #: ../dnf/cli/utils.py:96
@@ -82,12 +357,12 @@ msgstr "   Paleista: %s - prieš %s"
 msgid "    State  : %s"
 msgstr "    Būsena : %s"
 
-#: ../dnf/cli/cli.py:129
+#: ../dnf/cli/cli.py:128
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Įdiegta: %s-%s %s"
 
-#: ../dnf/cli/cli.py:131
+#: ../dnf/cli/cli.py:130
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Sukurta  : %s %s"
@@ -96,12 +371,12 @@ msgstr "  Sukurta  : %s %s"
 msgid "Operation aborted."
 msgstr ""
 
-#: ../dnf/cli/cli.py:201 ../dnf/cli/cli.py:361
-#: ../dnf/cli/commands/reinstall.py:100 ../dnf/cli/commands/install.py:88
+#: ../dnf/cli/cli.py:201 ../dnf/cli/cli.py:368
+#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/reinstall.py:100
 #: ../dnf/cli/commands/__init__.py:447 ../dnf/cli/commands/__init__.py:535
 #: ../dnf/cli/commands/__init__.py:601 ../dnf/cli/commands/__init__.py:646
 #: ../dnf/cli/commands/__init__.py:719 ../dnf/cli/commands/__init__.py:777
-#: ../dnf/base.py:1255
+#: ../dnf/base.py:1294
 msgid "Nothing to do."
 msgstr "Nereikia nieko daryti."
 
@@ -116,7 +391,7 @@ msgid "Error downloading packages:\n"
 msgstr "Klaida parsiunčiant paketus:\n"
 "%s"
 
-#: ../dnf/cli/cli.py:243
+#: ../dnf/cli/cli.py:247
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -124,285 +399,880 @@ msgstr ""
 "Atsisakoma automatiškai importuoti raktus, kai vykdoma neprižiūrint.\n"
 "Naudokite „-y“ veiksenos pakeitimui."
 
-#: ../dnf/cli/cli.py:283 ../dnf/cli/cli.py:438 ../dnf/cli/cli.py:444
+#: ../dnf/cli/cli.py:287 ../dnf/cli/cli.py:445 ../dnf/cli/cli.py:451
 msgid "Obsoleting Packages"
 msgstr "Paketai žymimi pasenusiais"
 
-#: ../dnf/cli/cli.py:298 ../dnf/cli/commands/upgrade.py:91
-#: ../dnf/cli/commands/__init__.py:871 ../dnf/cli/commands/group.py:330
+#: ../dnf/cli/cli.py:302 ../dnf/cli/commands/group.py:336
+#: ../dnf/cli/commands/upgrade.py:91 ../dnf/cli/commands/__init__.py:871
 msgid "No packages marked for upgrade."
 msgstr "Nėra paketų, pažymėtų atnaujinimui."
 
-#: ../dnf/cli/cli.py:320
+#: ../dnf/cli/cli.py:324
 msgid "No packages marked for distribution synchronization."
 msgstr "Nėra paketų, pažymėtų distribucijos sinchronizacijai."
 
-#: ../dnf/cli/cli.py:351 ../dnf/cli/cli.py:648 ../dnf/cli/cli.py:677
-#: ../dnf/cli/commands/install.py:81 ../dnf/cli/commands/__init__.py:439
+#: ../dnf/cli/cli.py:356 ../dnf/cli/cli.py:655 ../dnf/cli/cli.py:684
+#: ../dnf/cli/commands/install.py:91 ../dnf/cli/commands/__init__.py:439
 #: ../dnf/cli/commands/__init__.py:1104
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Nėra prieinamo paketo %s%s%s."
 
-#: ../dnf/cli/cli.py:356
+#: ../dnf/cli/cli.py:363
 #, python-format
 msgid "No match for available package: %s"
 msgstr "Nėra atitikmens prieinamam paketui: %s"
 
-#: ../dnf/cli/cli.py:412
+#: ../dnf/cli/cli.py:419
 msgid "Installed Packages"
 msgstr "Įdiegti paketai"
 
-#: ../dnf/cli/cli.py:420
+#: ../dnf/cli/cli.py:427
 msgid "Available Packages"
 msgstr "Prieinami paketai"
 
-#: ../dnf/cli/cli.py:424
+#: ../dnf/cli/cli.py:431
 msgid "Autoremove Packages"
 msgstr ""
 
-#: ../dnf/cli/cli.py:426
+#: ../dnf/cli/cli.py:433
 msgid "Extra Packages"
 msgstr "Papildomi paketai"
 
-#: ../dnf/cli/cli.py:430
+#: ../dnf/cli/cli.py:437
 msgid "Upgraded Packages"
 msgstr "Atnaujinti paketai"
 
-#: ../dnf/cli/cli.py:446
+#: ../dnf/cli/cli.py:453
 msgid "Recently Added Packages"
 msgstr "Neseniai pridėti paketai"
 
-#: ../dnf/cli/cli.py:451
+#: ../dnf/cli/cli.py:458
 msgid "No matching Packages to list"
 msgstr "Nėra atitinkančių paketų išvardinimui"
 
-#: ../dnf/cli/cli.py:527
+#: ../dnf/cli/cli.py:534
 msgid "No Matches found"
 msgstr "Nerasta atitikmenų"
 
-#: ../dnf/cli/cli.py:568 ../dnf/cli/commands/__init__.py:1079
+#: ../dnf/cli/cli.py:575 ../dnf/cli/commands/__init__.py:1079
 #: ../dnf/cli/commands/__init__.py:1116 ../dnf/cli/commands/__init__.py:1132
 msgid "No transaction ID given"
 msgstr "Nepateiktas tranzakcijos ID"
 
-#: ../dnf/cli/cli.py:577 ../dnf/cli/cli.py:585 ../dnf/cli/output.py:1803
+#: ../dnf/cli/cli.py:584 ../dnf/cli/cli.py:592 ../dnf/cli/output.py:1852
 msgid "Bad transaction ID given"
 msgstr "Pateiktas blogas tranzakcijos ID"
 
-#: ../dnf/cli/cli.py:593
+#: ../dnf/cli/cli.py:600
 msgid "Not found given transaction ID"
 msgstr "Nerastas pateiktas tranzakcijos ID"
 
-#: ../dnf/cli/cli.py:602 ../dnf/cli/commands/__init__.py:1081
+#: ../dnf/cli/cli.py:609 ../dnf/cli/commands/__init__.py:1081
 #: ../dnf/cli/commands/__init__.py:1118 ../dnf/cli/commands/__init__.py:1134
 msgid "Found more than one transaction ID!"
 msgstr "Rastas daugiau nei vienas tranzakcijos ID!"
 
-#: ../dnf/cli/cli.py:619
+#: ../dnf/cli/cli.py:626
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Tranzakcijos istorija nepilna, prieš %u."
 
-#: ../dnf/cli/cli.py:621
+#: ../dnf/cli/cli.py:628
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Tranzakcijos istorija nepilna, po %u."
 
-#: ../dnf/cli/cli.py:644 ../dnf/cli/cli.py:673
+#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:680
 #: ../dnf/cli/commands/__init__.py:1100
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr "Neįdiegtas paketas %s%s%s."
 
-#: ../dnf/cli/cli.py:731
+#: ../dnf/cli/cli.py:740
+#, python-format
+msgid "Added %s repo from %s"
+msgstr ""
+
+#: ../dnf/cli/cli.py:747
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Nežinoma saugykla: „%s“"
 
-#: ../dnf/cli/cli.py:796
+#: ../dnf/cli/cli.py:812
 #, python-format
 msgid "%s: using metadata from %s."
 msgstr ""
 
-#: ../dnf/cli/cli.py:799
+#: ../dnf/cli/cli.py:815
 #, python-format
 msgid "Last metadata expiration check performed %s ago on %s."
 msgstr ""
 
-#: ../dnf/cli/cli.py:832
+#: ../dnf/cli/cli.py:848
 msgid "You need to give some command"
 msgstr "Reikia pateikti kokią nors komandą"
 
-#: ../dnf/cli/cli.py:839
+#: ../dnf/cli/cli.py:855
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Nėra komandos: %s. Naudokite %s --help"
 
-#: ../dnf/cli/cli.py:841
+#: ../dnf/cli/cli.py:857
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 
-#: ../dnf/cli/cli.py:943 ../dnf/cli/cli.py:947
+#: ../dnf/cli/cli.py:959 ../dnf/cli/cli.py:963
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigūracijos klaida: %s"
 
-#: ../dnf/cli/cli.py:1031
-msgid "releasever not given and can not be detected from the installroot."
-msgstr ""
-
-#: ../dnf/cli/cli.py:1061
+#: ../dnf/cli/cli.py:1067
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Komanda „%s“ jau apibrėžta"
 
-#: ../dnf/cli/commands/updateinfo.py:45
-msgid "bugfix"
+#: ../dnf/cli/main.py:77 ../dnf/automatic/main.py:170
+#, python-format
+msgid "Error: %s"
+msgstr "Klaida: %s"
+
+#: ../dnf/cli/main.py:94
+msgid ""
+"(try to add '--allowerasing' to command line to replace conflicting "
+"packages)"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:46
-msgid "enhancement"
+#: ../dnf/cli/main.py:102
+msgid "Terminated."
+msgstr "Nutraukta."
+
+#: ../dnf/cli/main.py:133
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Nėra skaitymo/rašymo prieigos esamame kataloge, perkeliama į /"
+
+#: ../dnf/cli/main.py:159
+msgid "Dependencies resolved."
+msgstr "Priklausomybės išspręstos."
+
+#: ../dnf/cli/main.py:179
+msgid "Complete!"
+msgstr "Baigta!"
+
+#: ../dnf/cli/output.py:466
+msgid "Name"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:47
-msgid "security"
+#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1043
+msgid "Arch"
+msgstr "Architektūra"
+
+#: ../dnf/cli/output.py:469
+msgid "Epoch"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:48 ../dnf/cli/commands/repolist.py:36
-msgid "unknown"
+#: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1044
+msgid "Version"
+msgstr "Versija"
+
+#: ../dnf/cli/output.py:471
+msgid "Release"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:51
-msgid "Display advisories about packages"
+#: ../dnf/cli/output.py:472 ../dnf/cli/output.py:1045
+msgid "Size"
+msgstr "Dydis"
+
+#: ../dnf/cli/output.py:473
+msgid "Repo"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:177
-msgid "Updates Information Summary: "
+#: ../dnf/cli/output.py:475
+msgid "From repo"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:180
-msgid "Security notice(s)"
+#: ../dnf/cli/output.py:480
+msgid "Buildtime"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:181
-msgid "Bugfix notice(s)"
+#: ../dnf/cli/output.py:482
+msgid "Install time"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:182
-msgid "Enhancement notice(s)"
+#: ../dnf/cli/output.py:490
+msgid "Installed by"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:183
-msgid "other notice(s)"
+#: ../dnf/cli/output.py:497
+msgid "Changed by"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:292
-msgid "true"
+#: ../dnf/cli/output.py:498
+msgid "Summary"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:292
-msgid "false"
+#: ../dnf/cli/output.py:500
+msgid "URL"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Update ID"
+#: ../dnf/cli/output.py:501
+msgid "License"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Type"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Updated"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:294
-msgid "Bugs"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "CVEs"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:295 ../dnf/cli/output.py:499
+#: ../dnf/cli/output.py:502 ../dnf/cli/commands/updateinfo.py:295
 msgid "Description"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "Rights"
+#: ../dnf/cli/output.py:622
+msgid "y"
+msgstr "t"
+
+#: ../dnf/cli/output.py:622
+msgid "yes"
+msgstr "taip"
+
+#: ../dnf/cli/output.py:623
+msgid "n"
+msgstr "n"
+
+#: ../dnf/cli/output.py:623
+msgid "no"
+msgstr "ne"
+
+#: ../dnf/cli/output.py:626
+msgid "Is this ok [y/N]: "
+msgstr "Ar tai tinka [t/N]: "
+
+#: ../dnf/cli/output.py:629
+msgid "Is this ok [Y/n]: "
+msgstr "Ar tai tinka [T/n]: "
+
+#: ../dnf/cli/output.py:707
+#, python-format
+msgid "\n"
+"Group: %s"
+msgstr "\n"
+"Grupė: %s"
+
+#: ../dnf/cli/output.py:711
+#, python-format
+msgid " Group-Id: %s"
+msgstr " Grupės id: %s"
+
+#: ../dnf/cli/output.py:713 ../dnf/cli/output.py:752
+#, python-format
+msgid " Description: %s"
+msgstr " Aprašymas: %s"
+
+#: ../dnf/cli/output.py:715
+#, python-format
+msgid " Language: %s"
+msgstr "Kalba: %s"
+
+#: ../dnf/cli/output.py:718
+msgid " Mandatory Packages:"
+msgstr " Privalomi paketai:"
+
+#: ../dnf/cli/output.py:719
+msgid " Default Packages:"
+msgstr " Numatytieji paketai:"
+
+#: ../dnf/cli/output.py:720
+msgid " Optional Packages:"
+msgstr " Papildomi paketai:"
+
+#: ../dnf/cli/output.py:721
+msgid " Conditional Packages:"
+msgstr " Sąlyginiai paketai:"
+
+#: ../dnf/cli/output.py:746
+#, python-format
+msgid "Environment Group: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:295
-msgid "Files"
+#: ../dnf/cli/output.py:749
+#, python-format
+msgid " Environment-Id: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/updateinfo.py:296 ../dnf/cli/output.py:1113
-#: ../dnf/cli/output.py:1498 ../dnf/cli/output.py:1500
+#: ../dnf/cli/output.py:755
+msgid " Mandatory Groups:"
+msgstr ""
+
+#: ../dnf/cli/output.py:756
+msgid " Optional Groups:"
+msgstr ""
+
+#: ../dnf/cli/output.py:791
+#, python-format
+msgid "Repo        : %s"
+msgstr "Saugykla    : %s"
+
+#: ../dnf/cli/output.py:798
+msgid "Matched from:"
+msgstr "Atitinka:"
+
+#: ../dnf/cli/output.py:802
+msgid "Description : "
+msgstr "Aprašymas   : "
+
+#: ../dnf/cli/output.py:805
+#, python-format
+msgid "URL         : %s"
+msgstr "URL         : %s"
+
+#: ../dnf/cli/output.py:808
+#, python-format
+msgid "License     : %s"
+msgstr "Licencija   : %s"
+
+#: ../dnf/cli/output.py:811
+#, python-format
+msgid "Filename    : %s"
+msgstr "Failo pavadinimas: %s"
+
+#: ../dnf/cli/output.py:815
+msgid "Other       : "
+msgstr "Kita        : "
+
+#: ../dnf/cli/output.py:871
+msgid "There was an error calculating total download size"
+msgstr "Įvyko klaida skaičiuojant visą parsiuntimo dydį"
+
+#: ../dnf/cli/output.py:877
+#, python-format
+msgid "Total size: %s"
+msgstr "Visas dydis: %s"
+
+#: ../dnf/cli/output.py:880
+#, python-format
+msgid "Total download size: %s"
+msgstr "Visas parsiuntimo dydis: %s"
+
+#: ../dnf/cli/output.py:883 ../dnf/cli/output.py:905
+#, python-format
+msgid "Installed size: %s"
+msgstr "Įdiegimo dydis: %s"
+
+#: ../dnf/cli/output.py:901
+msgid "There was an error calculating installed size"
+msgstr "Įvyko klaida skaičiuojant įdiegimo dydį"
+
+#: ../dnf/cli/output.py:914
+msgid "Marking installed:"
+msgstr ""
+
+#: ../dnf/cli/output.py:921
+msgid "Marking removed:"
+msgstr ""
+
+#: ../dnf/cli/output.py:931
+msgid "Group"
+msgstr ""
+
+#: ../dnf/cli/output.py:931
+msgid "Packages"
+msgstr ""
+
+#: ../dnf/cli/output.py:1001
+msgid "Removing"
+msgstr "Šalinama"
+
+#: ../dnf/cli/output.py:1016
+#, python-format
+msgid ""
+"Skipping packages with conflicts:\n"
+"(add '%s' to command line to force their upgrade)"
+msgstr ""
+
+#: ../dnf/cli/output.py:1026
+msgid "Skipping packages with broken dependencies"
+msgstr ""
+
+#: ../dnf/cli/output.py:1043 ../dnf/cli/output.py:1907
+msgid "Package"
+msgstr "Paketas"
+
+#: ../dnf/cli/output.py:1044
+msgid "Repository"
+msgstr "Saugykla"
+
+#: ../dnf/cli/output.py:1057
+#, python-format
+msgid "     replacing  %s%s%s.%s %s\n"
+msgstr "      pakeičiama  %s%s%s.%s %s\n"
+
+#: ../dnf/cli/output.py:1065
+#, python-format
+msgid "\n"
+"Transaction Summary\n"
+"%s\n"
+msgstr "\n"
+"Tranzakcijos santrauka\n"
+"%s\n"
+
+#: ../dnf/cli/output.py:1070 ../dnf/cli/output.py:1702
+#: ../dnf/cli/output.py:1703
+msgid "Install"
+msgstr "Įdiegti"
+
+#: ../dnf/cli/output.py:1071 ../dnf/cli/output.py:1711
+msgid "Upgrade"
+msgstr "Atnaujinti"
+
+#: ../dnf/cli/output.py:1072
+msgid "Remove"
+msgstr "Pašalinti"
+
+#: ../dnf/cli/output.py:1073 ../dnf/cli/output.py:1709
+msgid "Downgrade"
+msgstr "Grąžinti"
+
+#: ../dnf/cli/output.py:1159
+msgid "Reinstalled"
+msgstr "Įdiegta iš naujo"
+
+#: ../dnf/cli/output.py:1160
+msgid "Removed"
+msgstr "Pašalinta"
+
+#: ../dnf/cli/output.py:1161 ../dnf/cli/output.py:1547
+#: ../dnf/cli/output.py:1549 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Įdiegta"
 
-#: ../dnf/cli/commands/updateinfo.py:328 ../dnf/cli/output.py:2017
+#: ../dnf/cli/output.py:1162 ../dnf/cli/output.py:1548
+#: ../dnf/cli/output.py:1712
+msgid "Upgraded"
+msgstr "Atnaujinta"
+
+#: ../dnf/cli/output.py:1163 ../dnf/cli/output.py:1548
+#: ../dnf/cli/output.py:1710
+msgid "Downgraded"
+msgstr "Grąžintas"
+
+#: ../dnf/cli/output.py:1164
+msgid "Failed"
+msgstr ""
+
+#: ../dnf/cli/output.py:1218
+msgid "Total"
+msgstr "Iš viso"
+
+#: ../dnf/cli/output.py:1239
+msgid "I"
+msgstr "I"
+
+#: ../dnf/cli/output.py:1240
+msgid "O"
+msgstr "O"
+
+#: ../dnf/cli/output.py:1241
+msgid "E"
+msgstr "E"
+
+#: ../dnf/cli/output.py:1242
+msgid "R"
+msgstr "R"
+
+#: ../dnf/cli/output.py:1243
+msgid "D"
+msgstr "D"
+
+#: ../dnf/cli/output.py:1244
+msgid "U"
+msgstr "U"
+
+#: ../dnf/cli/output.py:1258
+msgid "<unset>"
+msgstr "<atstatyti>"
+
+#: ../dnf/cli/output.py:1259
+msgid "System"
+msgstr "Sistema"
+
+#: ../dnf/cli/output.py:1340 ../dnf/cli/output.py:1453
+msgid "No transactions"
+msgstr "Nėra tranzakcijų"
+
+#: ../dnf/cli/output.py:1360 ../dnf/cli/output.py:1896
+#: ../dnf/cli/output.py:1973
+msgid "Bad transaction IDs, or package(s), given"
+msgstr "Pateikti blogi tranzakcijų ID arba paketai"
+
+#: ../dnf/cli/output.py:1398
+msgid "Command line"
+msgstr "Komandų eilutė"
+
+#: ../dnf/cli/output.py:1400 ../dnf/cli/output.py:1784
+msgid "Login user"
+msgstr "Prisijungęs naudotojas"
+
+#: ../dnf/cli/output.py:1401 ../dnf/cli/output.py:1905
+msgid "ID"
+msgstr "ID"
+
+#: ../dnf/cli/output.py:1403
+msgid "Date and time"
+msgstr "Data ir laikas"
+
+#: ../dnf/cli/output.py:1404 ../dnf/cli/output.py:1786
+#: ../dnf/cli/output.py:1906
+msgid "Action(s)"
+msgstr "Veiksmas(-ai)"
+
+#: ../dnf/cli/output.py:1405 ../dnf/cli/output.py:1787
+msgid "Altered"
+msgstr "Pakeista"
+
+#: ../dnf/cli/output.py:1486 ../dnf/cli/output.py:1860
+msgid "No transaction ID, or package, given"
+msgstr "Nepateiktas tranzakcijos ID arba paketas"
+
+#: ../dnf/cli/output.py:1547
+msgid "Erased"
+msgstr "Pašalinta"
+
+#: ../dnf/cli/output.py:1549
+msgid "Not installed"
+msgstr "Neįdiegtas"
+
+#: ../dnf/cli/output.py:1550
+msgid "Older"
+msgstr "Senesnis"
+
+#: ../dnf/cli/output.py:1550
+msgid "Newer"
+msgstr "Naujesnis"
+
+#: ../dnf/cli/output.py:1587 ../dnf/cli/output.py:1589
+#: ../dnf/cli/output.py:1994
+msgid "Transaction ID :"
+msgstr "Tranzakcijos ID:"
+
+#: ../dnf/cli/output.py:1591 ../dnf/cli/output.py:1996
+msgid "Begin time     :"
+msgstr "Pradžios laikas:"
+
+#: ../dnf/cli/output.py:1594 ../dnf/cli/output.py:1596
+msgid "Begin rpmdb    :"
+msgstr "Pradėti rpmdb  :"
+
+#: ../dnf/cli/output.py:1612
+#, python-format
+msgid "(%u seconds)"
+msgstr "(%u sekundžių)"
+
+#: ../dnf/cli/output.py:1614
+#, python-format
+msgid "(%u minutes)"
+msgstr "(%u minučių)"
+
+#: ../dnf/cli/output.py:1616
+#, python-format
+msgid "(%u hours)"
+msgstr "(%u valandų)"
+
+#: ../dnf/cli/output.py:1618
+#, python-format
+msgid "(%u days)"
+msgstr "(%u dienų)"
+
+#: ../dnf/cli/output.py:1619
+msgid "End time       :"
+msgstr "Pabaigos laikas:"
+
+#: ../dnf/cli/output.py:1622 ../dnf/cli/output.py:1624
+msgid "End rpmdb      :"
+msgstr "Baigti rpmdb   :"
+
+#: ../dnf/cli/output.py:1627 ../dnf/cli/output.py:1629
+msgid "User           :"
+msgstr "Naudotojas     :"
+
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1636
+#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:1640
+#: ../dnf/cli/output.py:1642
+msgid "Return-Code    :"
+msgstr "Grąžinimo kodas:"
+
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1638
+msgid "Aborted"
+msgstr "Nutraukta"
+
+#: ../dnf/cli/output.py:1636
+msgid "Failures:"
+msgstr "Klaidos:"
+
+#: ../dnf/cli/output.py:1640
+msgid "Failure:"
+msgstr "Klaida:"
+
+#: ../dnf/cli/output.py:1642
+msgid "Success"
+msgstr "Sėkminga"
+
+#: ../dnf/cli/output.py:1647 ../dnf/cli/output.py:1649
+#: ../dnf/cli/output.py:2025
+msgid "Command Line   :"
+msgstr "Komandų eilutė :"
+
+#: ../dnf/cli/output.py:1658
+#, python-format
+msgid "Additional non-default information stored: %d"
+msgstr "Išsaugota papildoma nenumatyta informacija: %d"
+
+#: ../dnf/cli/output.py:1663
+msgid "Transaction performed with:"
+msgstr "Tranzakcija atlikta su:"
+
+#: ../dnf/cli/output.py:1667
+msgid "Packages Altered:"
+msgstr "Pakeisti paketai:"
+
+#: ../dnf/cli/output.py:1671
+msgid "Packages Skipped:"
+msgstr "Praleisti paketai:"
+
+#: ../dnf/cli/output.py:1679
+msgid "Rpmdb Problems:"
+msgstr "Rpmdb problemos:"
+
+#: ../dnf/cli/output.py:1690
+msgid "Scriptlet output:"
+msgstr "Scenarijaus išvestis:"
+
+#: ../dnf/cli/output.py:1696
+msgid "Errors:"
+msgstr "Klaidos:"
+
+#: ../dnf/cli/output.py:1704
+msgid "Dep-Install"
+msgstr "Įdiegti priklausomybes"
+
+#: ../dnf/cli/output.py:1705
+msgid "Obsoleted"
+msgstr "Pažymėta pasenusiu"
+
+#: ../dnf/cli/output.py:1707
+msgid "Erase"
+msgstr "Pašalinti"
+
+#: ../dnf/cli/output.py:1708
+msgid "Reinstall"
+msgstr "Perdiegti"
+
+#: ../dnf/cli/output.py:1785
+msgid "Time"
+msgstr "Laikas"
+
+#: ../dnf/cli/output.py:1811
+msgid "Last day"
+msgstr "Vakar"
+
+#: ../dnf/cli/output.py:1812
+msgid "Last week"
+msgstr "Praėjusią savaitę"
+
+#: ../dnf/cli/output.py:1813
+msgid "Last 2 weeks"
+msgstr "Praėjusias 2 savaites"
+
+#: ../dnf/cli/output.py:1814
+msgid "Last 3 months"
+msgstr "Praėjusius 3 mėnesius"
+
+#: ../dnf/cli/output.py:1815
+msgid "Last 6 months"
+msgstr "Praėjusius 6 mėnesius"
+
+#: ../dnf/cli/output.py:1816
+msgid "Last year"
+msgstr "Praėjusiais metais"
+
+#: ../dnf/cli/output.py:1817
+msgid "Over a year ago"
+msgstr "Daugiau nei prieš metus"
+
+#: ../dnf/cli/output.py:1864
+#, python-format
+msgid "No Transaction %s found"
+msgstr "Nerasta tranzakcija %s"
+
+#: ../dnf/cli/output.py:1870
+msgid "Transaction ID:"
+msgstr "Tranzakcijos ID:"
+
+#: ../dnf/cli/output.py:1871
+msgid "Available additional history information:"
+msgstr "Prieinama papildoma istorijos informacija:"
+
+#: ../dnf/cli/output.py:1884
+#, python-format
+msgid "%s: No additional data found by this name"
+msgstr "%s: nerasta papildomų duomenų su šiuo pavadinimu"
+
+#: ../dnf/cli/output.py:1997
+msgid "Package        :"
+msgstr "Paketas        :"
+
+#: ../dnf/cli/output.py:1998
+msgid "State          :"
+msgstr "Būsena         :"
+
+#: ../dnf/cli/output.py:2001
+msgid "Size           :"
+msgstr "Dydis          :"
+
+#: ../dnf/cli/output.py:2003
+msgid "Build host     :"
+msgstr "Sukūrimo vieta :"
+
+#: ../dnf/cli/output.py:2006
+msgid "Build time     :"
+msgstr "Sukūrimo laikas:"
+
+#: ../dnf/cli/output.py:2008
+msgid "Packager       :"
+msgstr "Supakavo       :"
+
+#: ../dnf/cli/output.py:2010
+msgid "Vendor         :"
+msgstr "Tiekėjas       :"
+
+#: ../dnf/cli/output.py:2012
+msgid "License        :"
+msgstr "Licencija      :"
+
+#: ../dnf/cli/output.py:2014
+msgid "URL            :"
+msgstr "URL            :"
+
+#: ../dnf/cli/output.py:2016
+msgid "Source RPM     :"
+msgstr "Išeities RPM   :"
+
+#: ../dnf/cli/output.py:2019
+msgid "Commit Time    :"
+msgstr "Įdėjimo laikas :"
+
+#: ../dnf/cli/output.py:2021
+msgid "Committer      :"
+msgstr "Įdėjo          :"
+
+#: ../dnf/cli/output.py:2023
+msgid "Reason         :"
+msgstr "Priežastis     :"
+
+#: ../dnf/cli/output.py:2027
+msgid "From repo      :"
+msgstr "Iš saugyklos   :"
+
+#: ../dnf/cli/output.py:2031
+msgid "Installed by   :"
+msgstr "Įdiegė         :"
+
+#: ../dnf/cli/output.py:2035
+msgid "Changed by     :"
+msgstr "Pakeitė        :"
+
+#: ../dnf/cli/output.py:2066 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "įdiegta"
 
-#: ../dnf/cli/commands/updateinfo.py:331
-msgid "updates"
-msgstr ""
+#: ../dnf/cli/output.py:2067
+msgid "an upgrade"
+msgstr "atnaujinimas"
 
-#: ../dnf/cli/commands/updateinfo.py:334
-msgid "all"
-msgstr ""
+#: ../dnf/cli/output.py:2068
+msgid "erased"
+msgstr "pašalinta"
 
-#: ../dnf/cli/commands/updateinfo.py:339
-msgid "available"
-msgstr ""
+#: ../dnf/cli/output.py:2069
+msgid "reinstalled"
+msgstr "perdiegta"
 
-#: ../dnf/cli/commands/search.py:42
-msgid "Search package details for the given string"
-msgstr "Ieškoti paketų informacijos pateiktai eilutei"
+#: ../dnf/cli/output.py:2070
+msgid "a downgrade"
+msgstr "grąžinimas"
 
-#: ../dnf/cli/commands/search.py:43
-msgid "QUERY_STRING"
-msgstr ""
+#: ../dnf/cli/output.py:2071
+msgid "obsoleting"
+msgstr "žymima pasenusiu"
 
-#: ../dnf/cli/commands/search.py:65
+#: ../dnf/cli/output.py:2072
+msgid "upgraded"
+msgstr "atnaujintas"
+
+#: ../dnf/cli/output.py:2073
+msgid "obsoleted"
+msgstr "pažymėta pasenusiu"
+
+#: ../dnf/cli/output.py:2074
+msgid "downgraded"
+msgstr "pasendintas"
+
+#: ../dnf/cli/output.py:2077
 #, python-format
-msgid "N/S Matched: %s"
-msgstr "Paieškos atitikmenų: %s"
+msgid "---> Package %s.%s %s will be %s"
+msgstr "---> Paketas %s.%s %s bus %s"
 
-#: ../dnf/cli/commands/search.py:67
-#, python-format
-msgid "Matched: %s"
-msgstr "Atitinka: %s"
+#: ../dnf/cli/output.py:2084
+msgid "--> Starting dependency resolution"
+msgstr "--> Pradedamas priklausomybių sprendimas"
 
-#: ../dnf/cli/commands/search.py:84
-msgid "No matches found."
-msgstr ""
+#: ../dnf/cli/output.py:2089
+msgid "--> Finished dependency resolution"
+msgstr "--> Baigtas priklausomybių sprendimas"
 
-#: ../dnf/cli/commands/search.py:105
-msgid "Searching Packages: "
-msgstr "Ieškoma paketų:"
+#: ../dnf/cli/commands/makecache.py:36
+msgid "Generate the metadata cache"
+msgstr "Generuoti metaduomenų podėlį"
 
-#: ../dnf/cli/commands/upgradeto.py:31
-msgid "Upgrade a package on your system to the specified version"
-msgstr "Atnaujinti sistemos paketą į nurodytą versiją"
+#: ../dnf/cli/commands/makecache.py:49
+msgid "Making cache files for all metadata files."
+msgstr "Kuriami podėlio failai visiems metaduomenų failams."
 
-#: ../dnf/cli/commands/upgradeto.py:32 ../dnf/cli/commands/reinstall.py:43
-#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/install.py:43
-#: ../dnf/cli/commands/upgrade.py:42 ../dnf/cli/commands/remove.py:37
-#: ../dnf/cli/commands/__init__.py:232 ../dnf/cli/commands/__init__.py:309
-#: ../dnf/cli/commands/downgrade.py:35
+#: ../dnf/cli/commands/makecache.py:56
+msgid "Metadata timer caching disabled when running on a battery."
+msgstr "Metaduomenų laikmačio podėlis išjungtas naudojant baterijos energiją."
+
+#: ../dnf/cli/commands/makecache.py:61
+msgid "Metadata timer caching disabled."
+msgstr "Metaduomenų laikmačio podėlis išjungtas."
+
+#: ../dnf/cli/commands/makecache.py:66
+msgid "Metadata cache refreshed recently."
+msgstr "Metaduomenų podėlis neseniai atnaujintas."
+
+#: ../dnf/cli/commands/makecache.py:88
+msgid "Metadata cache created."
+msgstr "Metaduomenų podėlis sukurtas."
+
+#: ../dnf/cli/commands/install.py:42
+msgid "Install a package or packages on your system"
+msgstr "Įdiegti paketą arba paketus jūsų sistemoje"
+
+#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/reinstall.py:43
+#: ../dnf/cli/commands/remove.py:37 ../dnf/cli/commands/upgrade.py:42
+#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/upgradeto.py:32
+#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:232
+#: ../dnf/cli/commands/__init__.py:309
 msgid "PACKAGE"
+msgstr ""
+
+#: ../dnf/cli/commands/install.py:97
+msgid "Unable to find a match."
 msgstr ""
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "reinstall a package"
 msgstr "perdiegti paketą"
 
-#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/upgrade.py:86
-#: ../dnf/cli/commands/remove.py:76 ../dnf/cli/commands/__init__.py:517
+#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
+#: ../dnf/cli/commands/upgrade.py:86 ../dnf/cli/commands/__init__.py:517
 #: ../dnf/cli/commands/__init__.py:583 ../dnf/cli/commands/__init__.py:713
 #: ../dnf/cli/commands/__init__.py:769 ../dnf/cli/commands/__init__.py:820
 #: ../dnf/cli/commands/__init__.py:865
@@ -421,6 +1291,114 @@ msgstr " (iš %s)"
 #, python-format
 msgid "Installed package %s%s%s%s not available."
 msgstr "Įdiegtas paketas %s%s%s%s neprieinamas."
+
+#: ../dnf/cli/commands/remove.py:36
+msgid "Remove a package or packages from your system"
+msgstr "Pašalinti paketą arba paketus iš sistemos"
+
+#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:826
+msgid "No packages marked for removal."
+msgstr "Nėra paketų, pažymėtų pašalinimui."
+
+#: ../dnf/cli/commands/group.py:45
+msgid "Error: Need a group or list of groups"
+msgstr "Klaida: reikia grupės arba grupių sąrašo"
+
+#: ../dnf/cli/commands/group.py:60
+msgid "Display, or use, the groups information"
+msgstr "Rodyti arba naudoti grupių informaciją"
+
+#: ../dnf/cli/commands/group.py:61
+msgid "GROUP"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:99
+msgid "No group data available for configured repositories."
+msgstr "Sukonfigūruotoms saugykloms nėra grupių duomenų."
+
+#: ../dnf/cli/commands/group.py:152
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Įspėjimas: nėra grupės %s."
+
+#: ../dnf/cli/commands/group.py:172
+#, python-format
+msgid "Warning: No groups match:\n"
+"   %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:199
+msgid "Available environment groups:"
+msgstr "Prieinamos aplinkos grupės:"
+
+#: ../dnf/cli/commands/group.py:200
+msgid "Installed environment groups:"
+msgstr "Įdiegtos aplinkos grupės:"
+
+#: ../dnf/cli/commands/group.py:206
+msgid "Installed groups:"
+msgstr "Įdiegtos grupės:"
+
+#: ../dnf/cli/commands/group.py:213
+msgid "Installed language groups:"
+msgstr "Įdiegtos kalbos grupės:"
+
+#: ../dnf/cli/commands/group.py:220
+msgid "Available groups:"
+msgstr "Prieinamos grupės:"
+
+#: ../dnf/cli/commands/group.py:227
+msgid "Available language groups:"
+msgstr "Prieinamos kalbos grupės:"
+
+#: ../dnf/cli/commands/group.py:251
+#, python-format
+msgid "Environments marked installed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:254
+#, python-format
+msgid "Groups marked installed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:271
+#, python-format
+msgid "Environments marked removed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:274
+#, python-format
+msgid "Groups marked removed: %s"
+msgstr ""
+
+#: ../dnf/cli/commands/group.py:303
+msgid "Installed Groups:"
+msgstr "Įdiegto grupės:"
+
+#: ../dnf/cli/commands/group.py:310
+msgid "Installed Language Groups:"
+msgstr "Įdiegtos kalbų grupės:"
+
+#: ../dnf/cli/commands/group.py:317
+msgid "Available Groups:"
+msgstr "Prieinamos grupės:"
+
+#: ../dnf/cli/commands/group.py:324
+msgid "Available Language Groups:"
+msgstr "Prieinamos kalbų grupės:"
+
+#: ../dnf/cli/commands/group.py:372
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr "Netinkama grupių po-komanda, naudokite: %s."
+
+#: ../dnf/cli/commands/upgrade.py:41
+msgid "Upgrade a package or packages on your system"
+msgstr "Atnaujinti paketą ar paketus jūsų sistemoje"
+
+#: ../dnf/cli/commands/distrosync.py:34
+msgid "Synchronize installed packages to the latest available versions"
+msgstr "Sinchronizuoti įdiegtus paketus į naujausias prieinamas versijas"
 
 #: ../dnf/cli/commands/clean.py:43
 #, python-format
@@ -478,25 +1456,155 @@ msgstr "Išvalomas pasenę podėlio metaduomenys"
 msgid "Cleaning up cached rpmdb data"
 msgstr "Išvalomi podėlio rpmdb duomenys"
 
-#: ../dnf/cli/commands/distrosync.py:34
-msgid "Synchronize installed packages to the latest available versions"
-msgstr "Sinchronizuoti įdiegtus paketus į naujausias prieinamas versijas"
+#: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
+msgid "unknown"
+msgstr ""
 
-#: ../dnf/cli/commands/install.py:42
-msgid "Install a package or packages on your system"
-msgstr "Įdiegti paketą arba paketus jūsų sistemoje"
+#: ../dnf/cli/commands/repolist.py:38
+#, python-format
+msgid "Never (last: %s)"
+msgstr "Niekada (paskutinis: %s)"
 
-#: ../dnf/cli/commands/upgrade.py:41
-msgid "Upgrade a package or packages on your system"
-msgstr "Atnaujinti paketą ar paketus jūsų sistemoje"
+#: ../dnf/cli/commands/repolist.py:40
+#, python-format
+msgid "Instant (last: %s)"
+msgstr "Neatdėliotinas (paskutinis: %s)"
 
-#: ../dnf/cli/commands/remove.py:36
-msgid "Remove a package or packages from your system"
-msgstr "Pašalinti paketą arba paketus iš sistemos"
+#: ../dnf/cli/commands/repolist.py:43
+#, python-format
+msgid "%s second(s) (last: %s)"
+msgstr "%s sekundė(s) (paskutinis: %s)"
 
-#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:826
-msgid "No packages marked for removal."
-msgstr "Nėra paketų, pažymėtų pašalinimui."
+#: ../dnf/cli/commands/repolist.py:74
+msgid "Display the configured software repositories"
+msgstr "Rodyti nustatytas programinės įrangos saugyklas"
+
+#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
+msgid "enabled"
+msgstr "įjungta"
+
+#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
+msgid "disabled"
+msgstr "išjungta"
+
+#: ../dnf/cli/commands/repolist.py:156
+msgid "Repo-id      : "
+msgstr "Saugyklos id : "
+
+#: ../dnf/cli/commands/repolist.py:157
+msgid "Repo-name    : "
+msgstr "Saugyklos pavadinimas: "
+
+#: ../dnf/cli/commands/repolist.py:160
+msgid "Repo-status  : "
+msgstr "Saugyklos būsena: "
+
+#: ../dnf/cli/commands/repolist.py:163
+msgid "Repo-revision: "
+msgstr "Saugyklos po-versija: "
+
+#: ../dnf/cli/commands/repolist.py:167
+msgid "Repo-tags    : "
+msgstr "Saugyklos žymos: "
+
+#: ../dnf/cli/commands/repolist.py:172
+msgid "Repo-distro-tags: "
+msgstr "Saugyklos distribucijos žymos: "
+
+#: ../dnf/cli/commands/repolist.py:178
+msgid "Repo-updated : "
+msgstr "Saugykla atnaujinta: "
+
+#: ../dnf/cli/commands/repolist.py:180
+msgid "Repo-pkgs    : "
+msgstr "Saugyklos paketai: "
+
+#: ../dnf/cli/commands/repolist.py:181
+msgid "Repo-size    : "
+msgstr "Saugyklos dydis: "
+
+#: ../dnf/cli/commands/repolist.py:184
+msgid "Repo-metalink: "
+msgstr "Saugyklos metasaitas: "
+
+#: ../dnf/cli/commands/repolist.py:188
+msgid "  Updated    : "
+msgstr "  Atnaujinta : "
+
+#: ../dnf/cli/commands/repolist.py:191
+msgid "Repo-mirrors : "
+msgstr "Saugyklos tinklavietės: "
+
+#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
+msgid "Repo-baseurl : "
+msgstr "Saugyklos bazinis url: "
+
+#: ../dnf/cli/commands/repolist.py:202
+msgid "Repo-expire  : "
+msgstr "Saugykla pasensta: "
+
+#: ../dnf/cli/commands/repolist.py:205
+msgid "Repo-exclude : "
+msgstr "Saugykla išskiria: "
+
+#: ../dnf/cli/commands/repolist.py:209
+msgid "Repo-include : "
+msgstr "Saugykla įtraukia: "
+
+#: ../dnf/cli/commands/repolist.py:213
+msgid "Repo-excluded: "
+msgstr "Saugykloje išskirta: "
+
+#: ../dnf/cli/commands/repolist.py:217
+msgid "Repo-filename: "
+msgstr "Saugyklos failas: "
+
+#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
+msgid "repo id"
+msgstr "Saugyklos id"
+
+#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
+#: ../dnf/cli/commands/repolist.py:259
+msgid "status"
+msgstr "būsena"
+
+#: ../dnf/cli/commands/repolist.py:255
+msgid "repo name"
+msgstr "saugyklos pavadinimas"
+
+#: ../dnf/cli/commands/upgradeto.py:31
+msgid "Upgrade a package on your system to the specified version"
+msgstr "Atnaujinti sistemos paketą į nurodytą versiją"
+
+#: ../dnf/cli/commands/downgrade.py:34
+msgid "downgrade a package"
+msgstr "grąžinti paketą"
+
+#: ../dnf/cli/commands/search.py:42
+msgid "Search package details for the given string"
+msgstr "Ieškoti paketų informacijos pateiktai eilutei"
+
+#: ../dnf/cli/commands/search.py:43
+msgid "QUERY_STRING"
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:65
+#, python-format
+msgid "N/S Matched: %s"
+msgstr "Paieškos atitikmenų: %s"
+
+#: ../dnf/cli/commands/search.py:67
+#, python-format
+msgid "Matched: %s"
+msgstr "Atitinka: %s"
+
+#: ../dnf/cli/commands/search.py:84
+msgid "No matches found."
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:105
+msgid "Searching Packages: "
+msgstr "Ieškoma paketų:"
 
 #: ../dnf/cli/commands/__init__.py:42
 #, python-format
@@ -706,1218 +1814,277 @@ msgstr "Netinkama istorijos po-komanda, naudokite: %s."
 msgid "You don't have access to the history DB."
 msgstr "Jūs neturite priėjimo prie istorijos DB."
 
-#: ../dnf/cli/commands/group.py:45
-msgid "Error: Need a group or list of groups"
-msgstr "Klaida: reikia grupės arba grupių sąrašo"
-
-#: ../dnf/cli/commands/group.py:60
-msgid "Display, or use, the groups information"
-msgstr "Rodyti arba naudoti grupių informaciją"
-
-#: ../dnf/cli/commands/group.py:61
-msgid "GROUP"
+#: ../dnf/cli/commands/updateinfo.py:45
+msgid "bugfix"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:99
-msgid "No group data available for configured repositories."
-msgstr "Sukonfigūruotoms saugykloms nėra grupių duomenų."
-
-#: ../dnf/cli/commands/group.py:152
-#, python-format
-msgid "Warning: Group %s does not exist."
-msgstr "Įspėjimas: nėra grupės %s."
-
-#: ../dnf/cli/commands/group.py:170
-#, python-format
-msgid "Warning: No groups match: %s"
-msgstr "Įspėjimas: nėra grupių atitikmenų: %s"
-
-#: ../dnf/cli/commands/group.py:193
-msgid "Available environment groups:"
-msgstr "Prieinamos aplinkos grupės:"
-
-#: ../dnf/cli/commands/group.py:194
-msgid "Installed environment groups:"
-msgstr "Įdiegtos aplinkos grupės:"
-
-#: ../dnf/cli/commands/group.py:200
-msgid "Installed groups:"
-msgstr "Įdiegtos grupės:"
-
-#: ../dnf/cli/commands/group.py:207
-msgid "Installed language groups:"
-msgstr "Įdiegtos kalbos grupės:"
-
-#: ../dnf/cli/commands/group.py:214
-msgid "Available groups:"
-msgstr "Prieinamos grupės:"
-
-#: ../dnf/cli/commands/group.py:221
-msgid "Available language groups:"
-msgstr "Prieinamos kalbos grupės:"
-
-#: ../dnf/cli/commands/group.py:245
-#, python-format
-msgid "Environments marked installed: %s"
+#: ../dnf/cli/commands/updateinfo.py:46
+msgid "enhancement"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:248
-#, python-format
-msgid "Groups marked installed: %s"
+#: ../dnf/cli/commands/updateinfo.py:47
+msgid "security"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:265
-#, python-format
-msgid "Environments marked removed: %s"
+#: ../dnf/cli/commands/updateinfo.py:51
+msgid "Display advisories about packages"
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:268
-#, python-format
-msgid "Groups marked removed: %s"
+#: ../dnf/cli/commands/updateinfo.py:177
+msgid "Updates Information Summary: "
 msgstr ""
 
-#: ../dnf/cli/commands/group.py:297
-msgid "Installed Groups:"
-msgstr "Įdiegto grupės:"
-
-#: ../dnf/cli/commands/group.py:304
-msgid "Installed Language Groups:"
-msgstr "Įdiegtos kalbų grupės:"
-
-#: ../dnf/cli/commands/group.py:311
-msgid "Available Groups:"
-msgstr "Prieinamos grupės:"
-
-#: ../dnf/cli/commands/group.py:318
-msgid "Available Language Groups:"
-msgstr "Prieinamos kalbų grupės:"
-
-#: ../dnf/cli/commands/group.py:366
-#, python-format
-msgid "Invalid groups sub-command, use: %s."
-msgstr "Netinkama grupių po-komanda, naudokite: %s."
-
-#: ../dnf/cli/commands/group.py:399
-msgid "No groups marked for removal."
+#: ../dnf/cli/commands/updateinfo.py:180
+msgid "Security notice(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/repolist.py:38
-#, python-format
-msgid "Never (last: %s)"
-msgstr "Niekada (paskutinis: %s)"
-
-#: ../dnf/cli/commands/repolist.py:40
-#, python-format
-msgid "Instant (last: %s)"
-msgstr "Neatdėliotinas (paskutinis: %s)"
-
-#: ../dnf/cli/commands/repolist.py:43
-#, python-format
-msgid "%s second(s) (last: %s)"
-msgstr "%s sekundė(s) (paskutinis: %s)"
-
-#: ../dnf/cli/commands/repolist.py:74
-msgid "Display the configured software repositories"
-msgstr "Rodyti nustatytas programinės įrangos saugyklas"
-
-#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
-msgid "enabled"
-msgstr "įjungta"
-
-#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
-msgid "disabled"
-msgstr "išjungta"
-
-#: ../dnf/cli/commands/repolist.py:156
-msgid "Repo-id      : "
-msgstr "Saugyklos id : "
-
-#: ../dnf/cli/commands/repolist.py:157
-msgid "Repo-name    : "
-msgstr "Saugyklos pavadinimas: "
-
-#: ../dnf/cli/commands/repolist.py:160
-msgid "Repo-status  : "
-msgstr "Saugyklos būsena: "
-
-#: ../dnf/cli/commands/repolist.py:163
-msgid "Repo-revision: "
-msgstr "Saugyklos po-versija: "
-
-#: ../dnf/cli/commands/repolist.py:167
-msgid "Repo-tags    : "
-msgstr "Saugyklos žymos: "
-
-#: ../dnf/cli/commands/repolist.py:172
-msgid "Repo-distro-tags: "
-msgstr "Saugyklos distribucijos žymos: "
-
-#: ../dnf/cli/commands/repolist.py:178
-msgid "Repo-updated : "
-msgstr "Saugykla atnaujinta: "
-
-#: ../dnf/cli/commands/repolist.py:180
-msgid "Repo-pkgs    : "
-msgstr "Saugyklos paketai: "
-
-#: ../dnf/cli/commands/repolist.py:181
-msgid "Repo-size    : "
-msgstr "Saugyklos dydis: "
-
-#: ../dnf/cli/commands/repolist.py:184
-msgid "Repo-metalink: "
-msgstr "Saugyklos metasaitas: "
-
-#: ../dnf/cli/commands/repolist.py:188
-msgid "  Updated    : "
-msgstr "  Atnaujinta : "
-
-#: ../dnf/cli/commands/repolist.py:191
-msgid "Repo-mirrors : "
-msgstr "Saugyklos tinklavietės: "
-
-#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
-msgid "Repo-baseurl : "
-msgstr "Saugyklos bazinis url: "
-
-#: ../dnf/cli/commands/repolist.py:202
-msgid "Repo-expire  : "
-msgstr "Saugykla pasensta: "
-
-#: ../dnf/cli/commands/repolist.py:205
-msgid "Repo-exclude : "
-msgstr "Saugykla išskiria: "
-
-#: ../dnf/cli/commands/repolist.py:209
-msgid "Repo-include : "
-msgstr "Saugykla įtraukia: "
-
-#: ../dnf/cli/commands/repolist.py:213
-msgid "Repo-excluded: "
-msgstr "Saugykloje išskirta: "
-
-#: ../dnf/cli/commands/repolist.py:217
-msgid "Repo-filename: "
-msgstr "Saugyklos failas: "
-
-#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
-msgid "repo id"
-msgstr "Saugyklos id"
-
-#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
-#: ../dnf/cli/commands/repolist.py:259
-msgid "status"
-msgstr "būsena"
-
-#: ../dnf/cli/commands/repolist.py:255
-msgid "repo name"
-msgstr "saugyklos pavadinimas"
-
-#: ../dnf/cli/commands/downgrade.py:34
-msgid "downgrade a package"
-msgstr "grąžinti paketą"
-
-#: ../dnf/cli/commands/makecache.py:36
-msgid "Generate the metadata cache"
-msgstr "Generuoti metaduomenų podėlį"
-
-#: ../dnf/cli/commands/makecache.py:49
-msgid "Making cache files for all metadata files."
-msgstr "Kuriami podėlio failai visiems metaduomenų failams."
-
-#: ../dnf/cli/commands/makecache.py:56
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr "Metaduomenų laikmačio podėlis išjungtas naudojant baterijos energiją."
-
-#: ../dnf/cli/commands/makecache.py:61
-msgid "Metadata timer caching disabled."
-msgstr "Metaduomenų laikmačio podėlis išjungtas."
-
-#: ../dnf/cli/commands/makecache.py:66
-msgid "Metadata cache refreshed recently."
-msgstr "Metaduomenų podėlis neseniai atnaujintas."
-
-#: ../dnf/cli/commands/makecache.py:88
-msgid "Metadata cache created."
-msgstr "Metaduomenų podėlis sukurtas."
-
-#: ../dnf/cli/main.py:77 ../dnf/automatic/main.py:170
-#, python-format
-msgid "Error: %s"
-msgstr "Klaida: %s"
-
-#: ../dnf/cli/main.py:97
-msgid "Terminated."
-msgstr "Nutraukta."
-
-#: ../dnf/cli/main.py:128
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Nėra skaitymo/rašymo prieigos esamame kataloge, perkeliama į /"
-
-#: ../dnf/cli/main.py:154
-msgid "Dependencies resolved."
-msgstr "Priklausomybės išspręstos."
-
-#: ../dnf/cli/main.py:171
-msgid "Complete!"
-msgstr "Baigta!"
-
-#: ../dnf/cli/option_parser.py:51
-#, python-format
-msgid "Command line error: %s"
-msgstr "Komandinės eilutės klaida: %s"
-
-#: ../dnf/cli/option_parser.py:88
-msgid "--color takes one of: auto, always, never"
-msgstr "--color gali būti: auto, always, never"
-
-#: ../dnf/cli/option_parser.py:105
-#, python-format
-msgid "Options Error: %s"
-msgstr "Parinkčių klaida: %s"
-
-#: ../dnf/cli/option_parser.py:116
-#, python-format
-msgid "--installroot must be an absolute path: %s"
-msgstr "--installroot turi būti absoliutus kelias: %s"
-
-#: ../dnf/cli/option_parser.py:140
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "leisti ištrinti įdiegtus paketus priklausomybių išsprendimui"
-
-#: ../dnf/cli/option_parser.py:143
-msgid "try the best available package versions in transactions."
-msgstr "bandyti geriausias prieinamas paketų versijas tranzakcijose."
-
-#: ../dnf/cli/option_parser.py:147
-msgid "run entirely from system cache, don't update cache"
-msgstr "vykdyti tik iš sistemos podėlio jo neatnaujinant"
-
-#: ../dnf/cli/option_parser.py:151
-msgid "config file location"
-msgstr "konfigūracijos failo vieta"
-
-#: ../dnf/cli/option_parser.py:154
-msgid "debugging output level"
-msgstr "derinimo išvesties lygmuo"
-
-#: ../dnf/cli/option_parser.py:157
-msgid "dumps detailed solving results into files"
-msgstr "išrašo detalius sprendimo rezultatus į failus"
-
-#: ../dnf/cli/option_parser.py:160
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "rodyti dublikatus saugyklose, sąrašo/paieškos komandose"
-
-#: ../dnf/cli/option_parser.py:163
-msgid "error output level"
-msgstr "klaidų išvesties lygmuo"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "debugging output level for rpm"
-msgstr "derinimo išvesties lygmuo rpm komandai"
-
-#: ../dnf/cli/option_parser.py:168
-msgid "quiet operation"
-msgstr "tyli operacija"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "verbose operation"
-msgstr "išsami operacija"
-
-#: ../dnf/cli/option_parser.py:172
-msgid "answer yes for all questions"
-msgstr "atsakyti „taip“ į visus klausimus"
-
-#: ../dnf/cli/option_parser.py:174
-msgid "answer no for all questions"
-msgstr "atsakyti ne į visus klausimus"
-
-#: ../dnf/cli/option_parser.py:176
-msgid "show DNF version and exit"
+#: ../dnf/cli/commands/updateinfo.py:181
+msgid "Bugfix notice(s)"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:177
-msgid "set install root"
-msgstr "nustatyti diegimo šaknį"
-
-#: ../dnf/cli/option_parser.py:187
-msgid "exclude packages by name or glob"
-msgstr "išskirti paketus pagal pavadinimą arba glob"
-
-#: ../dnf/cli/option_parser.py:192
-msgid "disable excludes"
+#: ../dnf/cli/commands/updateinfo.py:182
+msgid "Enhancement notice(s)"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:195
-msgid "disable all plugins"
-msgstr "išjungti visus įskiepius"
-
-#: ../dnf/cli/option_parser.py:197
-msgid "disable gpg signature checking"
-msgstr "drausti gpg parašo tikrinimą"
-
-#: ../dnf/cli/option_parser.py:200
-msgid "disable plugins by name"
-msgstr "drausti įskiepius pagal pavadinimą"
-
-#: ../dnf/cli/option_parser.py:203
-msgid "control whether color is used"
-msgstr "valdyti, ar naudojama spalva"
-
-#: ../dnf/cli/option_parser.py:205
-msgid "override the value of $releasever in config and repo files"
-msgstr "naudoti vietoj $releasever konfigūracijos ir saugyklos failuose"
-
-#: ../dnf/cli/option_parser.py:209
-msgid "set arbitrary config and repo options"
-msgstr "nustatyti savavališkas konfigūracijos ir saugyklų parinktis"
-
-#: ../dnf/cli/option_parser.py:212
-msgid "set metadata as expired before running the command"
+#: ../dnf/cli/commands/updateinfo.py:183
+msgid "other notice(s)"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:214
-msgid "resolve to IPv4 addresses only"
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "true"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:217
-msgid "resolve to IPv6 addresses only"
+#: ../dnf/cli/commands/updateinfo.py:292
+msgid "false"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:243
-msgid "List of Main Commands"
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Update ID"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:244
-msgid "List of Plugin Commands"
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Type"
 msgstr ""
 
-#: ../dnf/cli/output.py:463
-msgid "Name"
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Updated"
 msgstr ""
 
-#: ../dnf/cli/output.py:464 ../dnf/cli/output.py:995
-msgid "Arch"
-msgstr "Architektūra"
-
-#: ../dnf/cli/output.py:466
-msgid "Epoch"
+#: ../dnf/cli/commands/updateinfo.py:294
+msgid "Bugs"
 msgstr ""
 
-#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:996
-msgid "Version"
-msgstr "Versija"
-
-#: ../dnf/cli/output.py:468
-msgid "Release"
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "CVEs"
 msgstr ""
 
-#: ../dnf/cli/output.py:469 ../dnf/cli/output.py:997
-msgid "Size"
-msgstr "Dydis"
-
-#: ../dnf/cli/output.py:470
-msgid "Repo"
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Rights"
 msgstr ""
 
-#: ../dnf/cli/output.py:472
-msgid "From repo"
+#: ../dnf/cli/commands/updateinfo.py:295
+msgid "Files"
 msgstr ""
 
-#: ../dnf/cli/output.py:477
-msgid "Buildtime"
+#: ../dnf/cli/commands/updateinfo.py:331
+msgid "updates"
 msgstr ""
 
-#: ../dnf/cli/output.py:479
-msgid "Install time"
+#: ../dnf/cli/commands/updateinfo.py:334
+msgid "all"
 msgstr ""
 
-#: ../dnf/cli/output.py:487
-msgid "Installed by"
+#: ../dnf/cli/commands/updateinfo.py:339
+msgid "available"
 msgstr ""
 
-#: ../dnf/cli/output.py:494
-msgid "Changed by"
-msgstr ""
-
-#: ../dnf/cli/output.py:495
-msgid "Summary"
-msgstr ""
-
-#: ../dnf/cli/output.py:497
-msgid "URL"
-msgstr ""
-
-#: ../dnf/cli/output.py:498
-msgid "License"
-msgstr ""
-
-#: ../dnf/cli/output.py:619
-msgid "y"
-msgstr "t"
-
-#: ../dnf/cli/output.py:619
-msgid "yes"
-msgstr "taip"
-
-#: ../dnf/cli/output.py:620
-msgid "n"
-msgstr "n"
-
-#: ../dnf/cli/output.py:620
-msgid "no"
-msgstr "ne"
-
-#: ../dnf/cli/output.py:623
-msgid "Is this ok [y/N]: "
-msgstr "Ar tai tinka [t/N]: "
-
-#: ../dnf/cli/output.py:626
-msgid "Is this ok [Y/n]: "
-msgstr "Ar tai tinka [T/n]: "
-
-#: ../dnf/cli/output.py:704
+#: ../dnf/crypto.py:81
 #, python-format
-msgid "\n"
-"Group: %s"
-msgstr "\n"
-"Grupė: %s"
-
-#: ../dnf/cli/output.py:708
-#, python-format
-msgid " Group-Id: %s"
-msgstr " Grupės id: %s"
-
-#: ../dnf/cli/output.py:710 ../dnf/cli/output.py:749
-#, python-format
-msgid " Description: %s"
-msgstr " Aprašymas: %s"
-
-#: ../dnf/cli/output.py:712
-#, python-format
-msgid " Language: %s"
-msgstr "Kalba: %s"
-
-#: ../dnf/cli/output.py:715
-msgid " Mandatory Packages:"
-msgstr " Privalomi paketai:"
-
-#: ../dnf/cli/output.py:716
-msgid " Default Packages:"
-msgstr " Numatytieji paketai:"
-
-#: ../dnf/cli/output.py:717
-msgid " Optional Packages:"
-msgstr " Papildomi paketai:"
-
-#: ../dnf/cli/output.py:718
-msgid " Conditional Packages:"
-msgstr " Sąlyginiai paketai:"
-
-#: ../dnf/cli/output.py:743
-#, python-format
-msgid "Environment Group: %s"
+msgid ""
+"Importing GPG key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
 msgstr ""
 
-#: ../dnf/cli/output.py:746
-#, python-format
-msgid " Environment-Id: %s"
-msgstr ""
-
-#: ../dnf/cli/output.py:752
-msgid " Mandatory Groups:"
-msgstr ""
-
-#: ../dnf/cli/output.py:753
-msgid " Optional Groups:"
-msgstr ""
-
-#: ../dnf/cli/output.py:788
-#, python-format
-msgid "Repo        : %s"
-msgstr "Saugykla    : %s"
-
-#: ../dnf/cli/output.py:795
-msgid "Matched from:"
-msgstr "Atitinka:"
-
-#: ../dnf/cli/output.py:799
-msgid "Description : "
-msgstr "Aprašymas   : "
-
-#: ../dnf/cli/output.py:802
-#, python-format
-msgid "URL         : %s"
-msgstr "URL         : %s"
-
-#: ../dnf/cli/output.py:805
-#, python-format
-msgid "License     : %s"
-msgstr "Licencija   : %s"
-
-#: ../dnf/cli/output.py:808
-#, python-format
-msgid "Filename    : %s"
-msgstr "Failo pavadinimas: %s"
-
-#: ../dnf/cli/output.py:812
-msgid "Other       : "
-msgstr "Kita        : "
-
-#: ../dnf/cli/output.py:868
-msgid "There was an error calculating total download size"
-msgstr "Įvyko klaida skaičiuojant visą parsiuntimo dydį"
-
-#: ../dnf/cli/output.py:874
-#, python-format
-msgid "Total size: %s"
-msgstr "Visas dydis: %s"
-
-#: ../dnf/cli/output.py:877
-#, python-format
-msgid "Total download size: %s"
-msgstr "Visas parsiuntimo dydis: %s"
-
-#: ../dnf/cli/output.py:880 ../dnf/cli/output.py:902
-#, python-format
-msgid "Installed size: %s"
-msgstr "Įdiegimo dydis: %s"
-
-#: ../dnf/cli/output.py:898
-msgid "There was an error calculating installed size"
-msgstr "Įvyko klaida skaičiuojant įdiegimo dydį"
-
-#: ../dnf/cli/output.py:911
-msgid "Marking installed:"
-msgstr ""
-
-#: ../dnf/cli/output.py:918
-msgid "Marking removed:"
-msgstr ""
-
-#: ../dnf/cli/output.py:928
-msgid "Group"
-msgstr ""
-
-#: ../dnf/cli/output.py:928
-msgid "Packages"
-msgstr ""
-
-#: ../dnf/cli/output.py:969 ../dnf/yum/rpmtrans.py:114
-msgid "Installing"
-msgstr "Diegiama"
-
-#: ../dnf/cli/output.py:970 ../dnf/yum/rpmtrans.py:117
-msgid "Upgrading"
-msgstr "Atnaujinama"
-
-#: ../dnf/cli/output.py:971 ../dnf/yum/rpmtrans.py:116
-msgid "Reinstalling"
-msgstr "Perdiegiama"
-
-#: ../dnf/cli/output.py:972
-msgid "Removing"
-msgstr "Šalinama"
-
-#: ../dnf/cli/output.py:973 ../dnf/yum/rpmtrans.py:112
-msgid "Downgrading"
-msgstr "Grąžinama"
-
-#: ../dnf/cli/output.py:995 ../dnf/cli/output.py:1858
-msgid "Package"
-msgstr "Paketas"
-
-#: ../dnf/cli/output.py:996
-msgid "Repository"
-msgstr "Saugykla"
-
-#: ../dnf/cli/output.py:1009
-#, python-format
-msgid "     replacing  %s%s%s.%s %s\n"
-msgstr "      pakeičiama  %s%s%s.%s %s\n"
-
-#: ../dnf/cli/output.py:1017
-#, python-format
-msgid "\n"
-"Transaction Summary\n"
-"%s\n"
-msgstr "\n"
-"Tranzakcijos santrauka\n"
-"%s\n"
-
-#: ../dnf/cli/output.py:1022 ../dnf/cli/output.py:1653
-#: ../dnf/cli/output.py:1654
-msgid "Install"
-msgstr "Įdiegti"
-
-#: ../dnf/cli/output.py:1023 ../dnf/cli/output.py:1662
-msgid "Upgrade"
-msgstr "Atnaujinti"
-
-#: ../dnf/cli/output.py:1024
-msgid "Remove"
-msgstr "Pašalinti"
-
-#: ../dnf/cli/output.py:1025 ../dnf/cli/output.py:1660
-msgid "Downgrade"
-msgstr "Grąžinti"
-
-#: ../dnf/cli/output.py:1111
-msgid "Reinstalled"
-msgstr "Įdiegta iš naujo"
-
-#: ../dnf/cli/output.py:1112
-msgid "Removed"
-msgstr "Pašalinta"
-
-#: ../dnf/cli/output.py:1114 ../dnf/cli/output.py:1499
-#: ../dnf/cli/output.py:1663
-msgid "Upgraded"
-msgstr "Atnaujinta"
-
-#: ../dnf/cli/output.py:1115 ../dnf/cli/output.py:1499
-#: ../dnf/cli/output.py:1661
-msgid "Downgraded"
-msgstr "Grąžintas"
-
-#: ../dnf/cli/output.py:1169
-msgid "Total"
-msgstr "Iš viso"
-
-#: ../dnf/cli/output.py:1190
-msgid "I"
-msgstr "I"
-
-#: ../dnf/cli/output.py:1191
-msgid "O"
-msgstr "O"
-
-#: ../dnf/cli/output.py:1192
-msgid "E"
-msgstr "E"
-
-#: ../dnf/cli/output.py:1193
-msgid "R"
-msgstr "R"
-
-#: ../dnf/cli/output.py:1194
-msgid "D"
-msgstr "D"
-
-#: ../dnf/cli/output.py:1195
-msgid "U"
-msgstr "U"
-
-#: ../dnf/cli/output.py:1209
-msgid "<unset>"
-msgstr "<atstatyti>"
-
-#: ../dnf/cli/output.py:1210
-msgid "System"
-msgstr "Sistema"
-
-#: ../dnf/cli/output.py:1291 ../dnf/cli/output.py:1404
-msgid "No transactions"
-msgstr "Nėra tranzakcijų"
-
-#: ../dnf/cli/output.py:1311 ../dnf/cli/output.py:1847
-#: ../dnf/cli/output.py:1924
-msgid "Bad transaction IDs, or package(s), given"
-msgstr "Pateikti blogi tranzakcijų ID arba paketai"
-
-#: ../dnf/cli/output.py:1349
-msgid "Command line"
-msgstr "Komandų eilutė"
-
-#: ../dnf/cli/output.py:1351 ../dnf/cli/output.py:1735
-msgid "Login user"
-msgstr "Prisijungęs naudotojas"
-
-#: ../dnf/cli/output.py:1352 ../dnf/cli/output.py:1856
-msgid "ID"
-msgstr "ID"
-
-#: ../dnf/cli/output.py:1354
-msgid "Date and time"
-msgstr "Data ir laikas"
-
-#: ../dnf/cli/output.py:1355 ../dnf/cli/output.py:1737
-#: ../dnf/cli/output.py:1857
-msgid "Action(s)"
-msgstr "Veiksmas(-ai)"
-
-#: ../dnf/cli/output.py:1356 ../dnf/cli/output.py:1738
-msgid "Altered"
-msgstr "Pakeista"
-
-#: ../dnf/cli/output.py:1437 ../dnf/cli/output.py:1811
-msgid "No transaction ID, or package, given"
-msgstr "Nepateiktas tranzakcijos ID arba paketas"
-
-#: ../dnf/cli/output.py:1498
-msgid "Erased"
-msgstr "Pašalinta"
-
-#: ../dnf/cli/output.py:1500
-msgid "Not installed"
-msgstr "Neįdiegtas"
-
-#: ../dnf/cli/output.py:1501
-msgid "Older"
-msgstr "Senesnis"
-
-#: ../dnf/cli/output.py:1501
-msgid "Newer"
-msgstr "Naujesnis"
-
-#: ../dnf/cli/output.py:1538 ../dnf/cli/output.py:1540
-#: ../dnf/cli/output.py:1945
-msgid "Transaction ID :"
-msgstr "Tranzakcijos ID:"
-
-#: ../dnf/cli/output.py:1542 ../dnf/cli/output.py:1947
-msgid "Begin time     :"
-msgstr "Pradžios laikas:"
-
-#: ../dnf/cli/output.py:1545 ../dnf/cli/output.py:1547
-msgid "Begin rpmdb    :"
-msgstr "Pradėti rpmdb  :"
-
-#: ../dnf/cli/output.py:1563
-#, python-format
-msgid "(%u seconds)"
-msgstr "(%u sekundžių)"
-
-#: ../dnf/cli/output.py:1565
-#, python-format
-msgid "(%u minutes)"
-msgstr "(%u minučių)"
-
-#: ../dnf/cli/output.py:1567
-#, python-format
-msgid "(%u hours)"
-msgstr "(%u valandų)"
-
-#: ../dnf/cli/output.py:1569
-#, python-format
-msgid "(%u days)"
-msgstr "(%u dienų)"
-
-#: ../dnf/cli/output.py:1570
-msgid "End time       :"
-msgstr "Pabaigos laikas:"
-
-#: ../dnf/cli/output.py:1573 ../dnf/cli/output.py:1575
-msgid "End rpmdb      :"
-msgstr "Baigti rpmdb   :"
-
-#: ../dnf/cli/output.py:1578 ../dnf/cli/output.py:1580
-msgid "User           :"
-msgstr "Naudotojas     :"
-
-#: ../dnf/cli/output.py:1584 ../dnf/cli/output.py:1587
-#: ../dnf/cli/output.py:1589 ../dnf/cli/output.py:1591
-#: ../dnf/cli/output.py:1593
-msgid "Return-Code    :"
-msgstr "Grąžinimo kodas:"
-
-#: ../dnf/cli/output.py:1584 ../dnf/cli/output.py:1589
-msgid "Aborted"
-msgstr "Nutraukta"
-
-#: ../dnf/cli/output.py:1587
-msgid "Failures:"
-msgstr "Klaidos:"
-
-#: ../dnf/cli/output.py:1591
-msgid "Failure:"
-msgstr "Klaida:"
-
-#: ../dnf/cli/output.py:1593
-msgid "Success"
-msgstr "Sėkminga"
-
-#: ../dnf/cli/output.py:1598 ../dnf/cli/output.py:1600
-#: ../dnf/cli/output.py:1976
-msgid "Command Line   :"
-msgstr "Komandų eilutė :"
-
-#: ../dnf/cli/output.py:1609
-#, python-format
-msgid "Additional non-default information stored: %d"
-msgstr "Išsaugota papildoma nenumatyta informacija: %d"
-
-#: ../dnf/cli/output.py:1614
-msgid "Transaction performed with:"
-msgstr "Tranzakcija atlikta su:"
-
-#: ../dnf/cli/output.py:1618
-msgid "Packages Altered:"
-msgstr "Pakeisti paketai:"
-
-#: ../dnf/cli/output.py:1622
-msgid "Packages Skipped:"
-msgstr "Praleisti paketai:"
-
-#: ../dnf/cli/output.py:1630
-msgid "Rpmdb Problems:"
-msgstr "Rpmdb problemos:"
-
-#: ../dnf/cli/output.py:1641
-msgid "Scriptlet output:"
-msgstr "Scenarijaus išvestis:"
-
-#: ../dnf/cli/output.py:1647
-msgid "Errors:"
-msgstr "Klaidos:"
-
-#: ../dnf/cli/output.py:1655
-msgid "Dep-Install"
-msgstr "Įdiegti priklausomybes"
-
-#: ../dnf/cli/output.py:1656
-msgid "Obsoleted"
-msgstr "Pažymėta pasenusiu"
-
-#: ../dnf/cli/output.py:1657 ../dnf/yum/rpmtrans.py:115
-msgid "Obsoleting"
-msgstr "Pažymima pasenusiu"
-
-#: ../dnf/cli/output.py:1658
-msgid "Erase"
-msgstr "Pašalinti"
-
-#: ../dnf/cli/output.py:1659
-msgid "Reinstall"
-msgstr "Perdiegti"
-
-#: ../dnf/cli/output.py:1736
-msgid "Time"
-msgstr "Laikas"
-
-#: ../dnf/cli/output.py:1762
-msgid "Last day"
-msgstr "Vakar"
-
-#: ../dnf/cli/output.py:1763
-msgid "Last week"
-msgstr "Praėjusią savaitę"
-
-#: ../dnf/cli/output.py:1764
-msgid "Last 2 weeks"
-msgstr "Praėjusias 2 savaites"
-
-#: ../dnf/cli/output.py:1765
-msgid "Last 3 months"
-msgstr "Praėjusius 3 mėnesius"
-
-#: ../dnf/cli/output.py:1766
-msgid "Last 6 months"
-msgstr "Praėjusius 6 mėnesius"
-
-#: ../dnf/cli/output.py:1767
-msgid "Last year"
-msgstr "Praėjusiais metais"
-
-#: ../dnf/cli/output.py:1768
-msgid "Over a year ago"
-msgstr "Daugiau nei prieš metus"
-
-#: ../dnf/cli/output.py:1815
-#, python-format
-msgid "No Transaction %s found"
-msgstr "Nerasta tranzakcija %s"
-
-#: ../dnf/cli/output.py:1821
-msgid "Transaction ID:"
-msgstr "Tranzakcijos ID:"
-
-#: ../dnf/cli/output.py:1822
-msgid "Available additional history information:"
-msgstr "Prieinama papildoma istorijos informacija:"
-
-#: ../dnf/cli/output.py:1835
-#, python-format
-msgid "%s: No additional data found by this name"
-msgstr "%s: nerasta papildomų duomenų su šiuo pavadinimu"
-
-#: ../dnf/cli/output.py:1948
-msgid "Package        :"
-msgstr "Paketas        :"
-
-#: ../dnf/cli/output.py:1949
-msgid "State          :"
-msgstr "Būsena         :"
-
-#: ../dnf/cli/output.py:1952
-msgid "Size           :"
-msgstr "Dydis          :"
-
-#: ../dnf/cli/output.py:1954
-msgid "Build host     :"
-msgstr "Sukūrimo vieta :"
-
-#: ../dnf/cli/output.py:1957
-msgid "Build time     :"
-msgstr "Sukūrimo laikas:"
-
-#: ../dnf/cli/output.py:1959
-msgid "Packager       :"
-msgstr "Supakavo       :"
-
-#: ../dnf/cli/output.py:1961
-msgid "Vendor         :"
-msgstr "Tiekėjas       :"
-
-#: ../dnf/cli/output.py:1963
-msgid "License        :"
-msgstr "Licencija      :"
-
-#: ../dnf/cli/output.py:1965
-msgid "URL            :"
-msgstr "URL            :"
-
-#: ../dnf/cli/output.py:1967
-msgid "Source RPM     :"
-msgstr "Išeities RPM   :"
-
-#: ../dnf/cli/output.py:1970
-msgid "Commit Time    :"
-msgstr "Įdėjimo laikas :"
-
-#: ../dnf/cli/output.py:1972
-msgid "Committer      :"
-msgstr "Įdėjo          :"
-
-#: ../dnf/cli/output.py:1974
-msgid "Reason         :"
-msgstr "Priežastis     :"
-
-#: ../dnf/cli/output.py:1978
-msgid "From repo      :"
-msgstr "Iš saugyklos   :"
-
-#: ../dnf/cli/output.py:1982
-msgid "Installed by   :"
-msgstr "Įdiegė         :"
-
-#: ../dnf/cli/output.py:1986
-msgid "Changed by     :"
-msgstr "Pakeitė        :"
-
-#: ../dnf/cli/output.py:2018
-msgid "an upgrade"
-msgstr "atnaujinimas"
-
-#: ../dnf/cli/output.py:2019
-msgid "erased"
-msgstr "pašalinta"
-
-#: ../dnf/cli/output.py:2020
-msgid "reinstalled"
-msgstr "perdiegta"
-
-#: ../dnf/cli/output.py:2021
-msgid "a downgrade"
-msgstr "grąžinimas"
-
-#: ../dnf/cli/output.py:2022
-msgid "obsoleting"
-msgstr "žymima pasenusiu"
-
-#: ../dnf/cli/output.py:2023
-msgid "upgraded"
-msgstr "atnaujintas"
-
-#: ../dnf/cli/output.py:2024
-msgid "obsoleted"
-msgstr "pažymėta pasenusiu"
-
-#: ../dnf/cli/output.py:2025
-msgid "downgraded"
-msgstr "pasendintas"
-
-#: ../dnf/cli/output.py:2028
-#, python-format
-msgid "---> Package %s.%s %s will be %s"
-msgstr "---> Paketas %s.%s %s bus %s"
-
-#: ../dnf/cli/output.py:2035
-msgid "--> Starting dependency resolution"
-msgstr "--> Pradedamas priklausomybių sprendimas"
-
-#: ../dnf/cli/output.py:2040
-msgid "--> Finished dependency resolution"
-msgstr "--> Baigtas priklausomybių sprendimas"
-
-#: ../dnf/cli/output.py:2190
-msgid "Verifying"
-msgstr "Tikrinama"
-
-#: ../dnf/base.py:105
+#: ../dnf/base.py:108
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, išjungiama."
 
-#: ../dnf/base.py:326
+#: ../dnf/base.py:284
+msgid ""
+"The downloaded packages were saved in cache till the next successful "
+"transaction."
+msgstr ""
+
+#: ../dnf/base.py:286
+#, python-format
+msgid "You can remove cached packages by executing '%s'"
+msgstr ""
+
+#: ../dnf/base.py:346
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Netinkama tsflag konfigūracijos faile: %s"
 
-#: ../dnf/base.py:379
+#: ../dnf/base.py:399
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Nepavyko pridėti grupių failo saugyklai: %s - %s"
 
-#: ../dnf/base.py:527
+#: ../dnf/base.py:552
 msgid "Running transaction check"
 msgstr "Vykdomas tranzakcijos tikrinimas"
 
-#: ../dnf/base.py:530
+#: ../dnf/base.py:555
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:536
+#: ../dnf/base.py:561
 msgid "Transaction check succeeded."
 msgstr "Tranzakcijos tikrinimas sėkmingas."
 
-#: ../dnf/base.py:539
+#: ../dnf/base.py:564
 msgid "Running transaction test"
 msgstr "Vykdomas tranzakcijos testas"
 
-#: ../dnf/base.py:551
+#: ../dnf/base.py:576
 msgid "Transaction check error:\n"
 msgstr "Tranzakcijos tikrinimo klaida:\n"
 
-#: ../dnf/base.py:558
+#: ../dnf/base.py:583
 msgid "Transaction test succeeded."
 msgstr "Tranzakcijos testas sėkmingas."
 
-#: ../dnf/base.py:573
+#: ../dnf/base.py:596
 msgid "Running transaction"
 msgstr "Vykdoma tranzakcija"
 
-#: ../dnf/base.py:597
+#: ../dnf/base.py:620
 msgid "Disk Requirements:\n"
 msgstr "Disko reikalavimai:\n"
 
-#: ../dnf/base.py:604
+#: ../dnf/base.py:627
 msgid "Error Summary\n"
 "-------------\n"
 msgstr "Klaidos santrauka\n"
 "-------------\n"
 
-#: ../dnf/base.py:666
+#: ../dnf/base.py:689
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Įspėjimas: scenarijaus arba kitos negalutinės klaidos įvyko tranzakcijos "
 "metu."
 
-#: ../dnf/base.py:671
+#: ../dnf/base.py:694
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr ""
 
-#: ../dnf/base.py:674 ../dnf/base.py:684
+#: ../dnf/base.py:697 ../dnf/base.py:707
 msgid "Could not run transaction."
 msgstr "Nepavyko paleisti tranzakcijos."
 
-#: ../dnf/base.py:681
+#: ../dnf/base.py:704
 msgid "Transaction couldn't start:"
 msgstr "Tranzakcijos paleisti nepavyko:"
 
-#: ../dnf/base.py:693
+#: ../dnf/base.py:716
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Nepavyko pašalinti tranzakcijos failo %s"
 
-#: ../dnf/base.py:744
+#: ../dnf/base.py:768
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s turėjo būti įdiegtas, bet nebuvo!"
 
-#: ../dnf/base.py:805
+#: ../dnf/base.py:829
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s turėjo būti pašalintas, bet nebuvo!"
 
-#: ../dnf/base.py:882
+#: ../dnf/base.py:907
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 
-#: ../dnf/base.py:929
+#: ../dnf/base.py:954
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s viešas raktas neįdiegtas"
 
-#: ../dnf/base.py:933
+#: ../dnf/base.py:958
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problema atveriant paketą %s"
 
-#: ../dnf/base.py:941
+#: ../dnf/base.py:966
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s viešasis raktas nepatikimas"
 
-#: ../dnf/base.py:945
+#: ../dnf/base.py:970
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Paketas %s nepasirašytas"
 
-#: ../dnf/base.py:963
+#: ../dnf/base.py:988
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Nepavyksta pašalinti %s"
 
-#: ../dnf/base.py:967
+#: ../dnf/base.py:992
 #, python-format
 msgid "%s removed"
 msgstr "%s pašalintas"
 
-#: ../dnf/base.py:1333 ../dnf/base.py:1345
+#: ../dnf/base.py:1311
+msgid "No groups marked for removal."
+msgstr ""
+
+#: ../dnf/base.py:1367 ../dnf/base.py:1379
 msgid "no package matched"
 msgstr ""
 
-#: ../dnf/base.py:1384
+#: ../dnf/base.py:1418
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1391
+#: ../dnf/base.py:1425
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1410
+#: ../dnf/base.py:1444
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr ""
 
-#: ../dnf/base.py:1426 ../dnf/base.py:1452
+#: ../dnf/base.py:1460 ../dnf/base.py:1487
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr ""
 
-#: ../dnf/base.py:1433
+#: ../dnf/base.py:1467
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 
-#: ../dnf/base.py:1497
+#: ../dnf/base.py:1532
 #, python-format
 msgid "No package %s installed."
 msgstr "Nėra įdiegto paketo %s"
 
-#: ../dnf/base.py:1608
+#: ../dnf/base.py:1643
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1744
+#: ../dnf/base.py:1779
 #, python-format
 msgid "\n"
 "\n"
@@ -1930,25 +2097,25 @@ msgstr "\n"
 " Nepavykęs paketas yra: %s\n"
 " GPG raktai sukonfigūruoti taip: %s\n"
 
-#: ../dnf/base.py:1758
+#: ../dnf/base.py:1793
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG raktas iš %s (0x%s) jau įdiegtas"
 
-#: ../dnf/base.py:1792
+#: ../dnf/base.py:1827
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Rakto importas neapvyko (kodas %d)"
 
-#: ../dnf/base.py:1794
+#: ../dnf/base.py:1829
 msgid "Key imported successfully"
 msgstr "Raktas sėkmingai importuotas"
 
-#: ../dnf/base.py:1798
+#: ../dnf/base.py:1833
 msgid "Didn't install any keys"
 msgstr "Neįdiegta jokių raktų"
 
-#: ../dnf/base.py:1801
+#: ../dnf/base.py:1836
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -1959,112 +2126,24 @@ msgstr ""
 "šiam paketui.\n"
 "Patikrinkite, ar teisingi URL yra nustatyti šiai saugyklai."
 
-#: ../dnf/base.py:1811
+#: ../dnf/base.py:1846
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Rakto(-ų) importas nepadėjo, neteisingas(-i) raktas(-ai)?"
 
-#: ../dnf/base.py:1838
+#: ../dnf/base.py:1873
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Paketas %s jau įdiegtas, praleidžiama."
 
-#: ../dnf/goal.py:50
-msgid "--> Finding unneeded leftover dependencies"
-msgstr "--> Randamos nereikalingos paliktos priklausomybės"
+#: ../dnf/transaction.py:209
+#, python-format
+msgid "Will not install a source rpm package (%s)."
+msgstr "Neįdiegs kodo rpm paketo (%s)."
 
 #: ../dnf/plugin.py:126
 #, python-format
 msgid "Failed loading plugin: %s"
 msgstr "Nepavyko įkelti įskiepio: %s"
-
-#: ../dnf/persistor.py:239
-msgid "Invalid groups database, clearing."
-msgstr "Netinkama grupių duomenų bazė, išvaloma."
-
-#: ../dnf/persistor.py:258
-msgid "Unsupported installed groups database found, resetting."
-msgstr ""
-
-#: ../dnf/persistor.py:330
-#, python-format
-msgid "%s is empty file"
-msgstr "%s yra tuščias failas"
-
-#: ../dnf/comps.py:91
-msgid "skipping."
-msgstr ""
-
-#: ../dnf/comps.py:167
-#, python-format
-msgid "Group '%s' is not installed."
-msgstr ""
-
-#: ../dnf/comps.py:169
-#, python-format
-msgid "Group '%s' does not exist."
-msgstr ""
-
-#: ../dnf/comps.py:439
-#, python-format
-msgid "Environment '%s' is already installed."
-msgstr ""
-
-#: ../dnf/comps.py:459 ../dnf/comps.py:481
-#, python-format
-msgid "Environment '%s' is not installed."
-msgstr ""
-
-#: ../dnf/comps.py:505
-#, python-format
-msgid "Group '%s' is already installed."
-msgstr ""
-
-#: ../dnf/comps.py:523 ../dnf/comps.py:538
-#, python-format
-msgid "Group '%s' not installed."
-msgstr ""
-
-#: ../dnf/conf/read.py:51
-#, python-format
-msgid "Warning: failed loading '%s', skipping."
-msgstr "Įspėjimas: nepavyko įkelti „%s“, praleidžiama."
-
-#: ../dnf/conf/read.py:61
-#, python-format
-msgid "Repository %r: Error parsing config: %s"
-msgstr "Saugykla %r: klaida skaitant konfigūraciją: %s"
-
-#: ../dnf/conf/read.py:67
-#, python-format
-msgid "Repository %r is missing name in configuration, using id."
-msgstr ""
-
-#: ../dnf/conf/__init__.py:74
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Nepavyko nustatyti podėlio katalogo: %s"
-
-#: ../dnf/crypto.py:81
-#, python-format
-msgid ""
-"Importing GPG key 0x%s:\n"
-" Userid     : \"%s\"\n"
-" Fingerprint: %s\n"
-" From       : %s"
-msgstr ""
-
-#: ../dnf/transaction.py:208
-#, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "Neįdiegs kodo rpm paketo (%s)."
-
-#: ../dnf/drpm.py:135
-msgid "Delta RPM rebuild failed"
-msgstr "Nepavyko delta RPM perkūrimas"
-
-#: ../dnf/drpm.py:137
-msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr "Nesutapo RPM delta-perkūrimo kontrolinė suma"
 
 #: ../dnf/automatic/emitter.py:29
 #, python-format
@@ -2099,35 +2178,4 @@ msgstr ""
 #: ../dnf/automatic/emitter.py:102
 #, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr ""
-
-#: ../dnf/yum/history.py:758
-#, python-format
-msgid "Unable to initialize DNF DB history: %s"
-msgstr ""
-
-#: ../dnf/yum/history.py:1675
-#, python-format
-msgid "Can not create history database at '%s'."
-msgstr "Nepavyksta sukurti istorijos duomenų bazės „%s“."
-
-#: ../dnf/yum/rpmtrans.py:111
-msgid "Cleanup"
-msgstr "Valymas"
-
-#: ../dnf/yum/rpmtrans.py:113
-msgid "Erasing"
-msgstr "Šalinama"
-
-#: ../dnf/lock.py:97
-#, python-format
-msgid ""
-"Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
-msgstr ""
-
-#: ../dnf/lock.py:136
-#, python-format
-msgid "Waiting for process with pid %d to finish."
 msgstr ""
