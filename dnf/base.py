@@ -1635,7 +1635,8 @@ class Base(object):
 
         q = subj._nevra_to_filters(self.sack.query(), nevra)
         available_pkgs = q.available()
-        if not self.sack.query().filter(name=nevra.name).installed():
+        test_q = dnf.subject.Subject(nevra.name).get_best_query(self.sack)
+        if not test_q.installed():
             raise dnf.exceptions.PackagesNotInstalledError(
                 'no package matched', pkg_spec, available_pkgs)
         downgrade_pkgs = available_pkgs.downgrades().latest()
