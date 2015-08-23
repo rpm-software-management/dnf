@@ -91,8 +91,10 @@ def main(args):
         return 1
     except dnf.exceptions.DepsolveError as e:
         ex_Error(e)
-        logger.info(_("(try to add '--allowerasing' to command line to "
-                      "replace conflicting packages)"))
+        demands = self.cli.demands
+        if not demands.allow_erasing:
+            logger.info(_("(try to add '--allowerasing' to command line to "
+                          "replace conflicting packages)"))
         return 1
     except dnf.exceptions.Error as e:
         return ex_Error(e)
