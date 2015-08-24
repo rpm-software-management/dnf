@@ -139,6 +139,7 @@ class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
 
     def __init__(self, conf=None):
+        self.cmd_conf = CmdConf()
         conf = conf or dnf.conf.Conf()
         super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
@@ -217,6 +218,9 @@ class BaseCli(dnf.Base):
                 raise dnf.exceptions.Error(errstring)
             # Check GPG signatures
             self.gpgsigcheck(downloadpkgs)
+
+        if self.cmd_conf.downloadonly:
+            return
 
         if not isinstance(display, collections.Sequence):
             display = [display]
@@ -1031,6 +1035,8 @@ class Cli(object):
         if opts.debugsolver:
             self.base.conf.debug_solver = True
 
+        self.base.cmd_conf.downloadonly = opts.downloadonly
+
         self.base.plugins.run_config()
 
     def check(self):
@@ -1086,3 +1092,8 @@ class Cli(object):
 
     def print_usage(self):
         return self.optparser.print_usage()
+
+
+class CmdConf(object):
+    """Class for storing nonpersistent configuration"""
+    downloadonly = False

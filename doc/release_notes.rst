@@ -21,6 +21,12 @@
 
 .. contents::
 
+======================
+Upcoming Release Notes
+======================
+
+Implemented :ref:`--downloadonly <downloadonly-label>` command line option.
+
 ===================
 1.1.1 Release Notes
 ===================

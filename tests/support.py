@@ -173,6 +173,7 @@ class _BaseStubMixin(object):
 
     """
     def __init__(self, *extra_repos):
+        self.cmd_conf = dnf.cli.cli.CmdConf()
         super(_BaseStubMixin, self).__init__(FakeConf())
         for r in extra_repos:
             repo = MockRepo(r, None)
