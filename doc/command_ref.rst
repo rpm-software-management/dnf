@@ -109,6 +109,11 @@ Options
 ``--disablerepo=<repoid>``
     Disable specific repositories by an id or a glob.
 
+.. _downloadonly-label:
+
+``--downloadonly``
+    Download resolved package set without performing any rpm transaction (install/upgrade/erase).
+
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
