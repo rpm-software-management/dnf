@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
+import dnf.exceptions
 import dnf.cli
 import re
 import sys
@@ -184,7 +185,10 @@ def main(args):
     cli.register_command(CleanCompletionCommand)
     cli.register_command(HistoryCompletionCommand)
     cli.configure(args)
-    cli.run()
+    try:
+        cli.run()
+    except dnf.exceptions.Exception:
+        sys.exit(0)
 
 if __name__ == "__main__":
     try:
