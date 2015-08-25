@@ -49,6 +49,7 @@ Available commands are:
 * install
 * list
 * makecache
+* mark
 * provides
 * reinstall
 * remove
@@ -455,6 +456,16 @@ Makecache Command
     immediately if it's too soon after the last successful ``makecache`` run
     (see :manpage:`dnf.conf(5)`, :ref:`metadata_timer_sync
     <metadata_timer_sync-label>`).
+
+-------------
+Mark Command
+-------------
+
+``dnf mark install <package-specs>...``
+    Marks the specified packages as installed by user.
+
+``dnf mark remove <package-specs>...``
+    Unmarks the specified packages as installed by user.
 
 ----------------
 Provides Command
