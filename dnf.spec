@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	0.6.4
-Release:	5%{?snapshot}%{?dist}
+Release:	6%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -206,6 +206,13 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Wed Aug 26 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-6
+- test: don't compute hash from absolute local file path (introduced in
+  10518b6) 
+- cleanup old cache in posttrans 
+- include /var/cache/dnf into rpm 
+- do not use releasever in cache path (related to RhBug:1173107)
+
 * Thu Apr 16 2015 Michal Luscon <mluscon@redhat.com> 0.6.4-5
 - Revert "completion: work with just python(3)-dnf"
 - Revert "bash-completion: use python method to get commands (RhBug:1187579)"
