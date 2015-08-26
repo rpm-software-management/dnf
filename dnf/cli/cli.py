@@ -40,6 +40,7 @@ import dnf.cli.commands.remove
 import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.makecache
+import dnf.cli.commands.mark
 import dnf.cli.commands.reinstall
 import dnf.cli.commands.repolist
 import dnf.cli.commands.search
@@ -357,7 +358,7 @@ class BaseCli(dnf.Base):
                 logger.info(msg, self.output.term.MODE['bold'], arg,
                                  self.output.term.MODE['normal'])
             except dnf.exceptions.PackagesNotInstalledError as err:
-                if not wildcard: 
+                if not wildcard:
                 # glob pattern should not match not installed packages -> ignore error
                     for pkg in err.packages:
                         logger.info(_('No match for available package: %s'), pkg)
@@ -707,6 +708,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.makecache.MakeCacheCommand)
+        self.register_command(dnf.cli.commands.mark.MarkCommand)
         self.register_command(dnf.cli.commands.reinstall.ReinstallCommand)
         self.register_command(dnf.cli.commands.remove.RemoveCommand)
         self.register_command(dnf.cli.commands.repolist.RepoListCommand)

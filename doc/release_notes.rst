@@ -21,6 +21,12 @@
 
 .. contents::
 
+======================
+Upcoming Release Notes
+======================
+
+Implemented ``dnf mark`` :doc:`command <command_ref>`.
+
 ===================
 1.1.0 Release Notes
 ===================
