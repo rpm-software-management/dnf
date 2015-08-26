@@ -28,13 +28,34 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import collections
+import distutils.version
 import dnf.util
 import errno
+import fnmatch
+import itertools
 import json
 import logging
 import os
+import re
 
 logger = logging.getLogger("dnf")
+
+
+def _by_pattern(pattern, ids, lookup_fn, case_sensitive):
+    pattern = dnf.i18n.ucd(pattern)
+
+    exact = {id for id in ids if lookup_fn(id).name == pattern or id == pattern}
+    if exact:
+        return exact
+
+    if case_sensitive:
+        match = re.compile(fnmatch.translate(pattern)).match
+    else:
+        match = re.compile(fnmatch.translate(pattern), flags=re.I).match
+
+    return {id for id in ids if match(lookup_fn(id).name) or
+            match(lookup_fn(id).ui_name) or match(id)}
+
 
 def _clone_dct(dct):
     cln = {}
@@ -123,6 +144,8 @@ class ClonableDict(collections.MutableMapping):
 
 class _PersistMember(object):
     DEFAULTS = ClonableDict({
+        'name' : '',
+        'ui_name' : '',
         'full_list' : [],
         'grp_types' : 0,
         'pkg_exclude' : [],
@@ -135,6 +158,22 @@ class _PersistMember(object):
 
     def __init__(self, param_dct):
         self.param_dct = param_dct
+
+    @property
+    def name(self):
+        return self.param_dct['name']
+
+    @name.setter
+    def name(self, val):
+        self.param_dct['name'] = val
+
+    @property
+    def ui_name(self):
+        return self.param_dct['ui_name']
+
+    @ui_name.setter
+    def ui_name(self, val):
+        self.param_dct['ui_name'] = val
 
     @property
     def pkg_exclude(self):
@@ -212,11 +251,12 @@ class GroupPersistor(object):
         return ClonableDict({
             'ENVIRONMENTS' : {},
             'GROUPS' : {},
-            'meta' : {'version' : '0.5.0'}
+            'meta' : {'version' : '0.6.0'}
         })
 
-    def __init__(self, persistdir):
+    def __init__(self, persistdir, comps=None):
         self._commit = False
+        self._comps = comps
         self._dbfile = os.path.join(persistdir, 'groups.json')
         self.db = None
         self._original = None
@@ -231,6 +271,42 @@ class GroupPersistor(object):
             subdict[id_] = dct
 
         return _PersistMember(dct)
+
+    def _add_missing_entries(self):
+        for env_id in self.db['ENVIRONMENTS']:
+            env = self.environment(env_id)
+            for key in env.DEFAULTS.keys():
+                try:
+                    getattr(env, key)
+                except KeyError:
+                    if self._comps:
+                        try:
+                            comps_env = self._comps.environment_by_id(env_id)
+                            if comps_env:
+                                value = getattr(comps_env, key)
+                                setattr(env, key, value)
+                                continue
+                        except KeyError:
+                            # set default if env is not pressent in comps
+                            pass
+                    setattr(env, key, env.DEFAULTS[key])
+        for grp_id in self.db['GROUPS']:
+            grp = self.group(grp_id)
+            for key in grp.DEFAULTS.keys():
+                try:
+                    getattr(grp, key)
+                except KeyError:
+                    if self._comps:
+                        try:
+                            comps_grp = self._comps.group_by_id(grp_id)
+                            if comps_grp:
+                                value = getattr(comps_grp, key)
+                                setattr(grp, key, value)
+                                continue
+                        except KeyError:
+                            # set default if grp is not pressent in comps
+                            pass
+                    setattr(grp, key, grp.DEFAULTS[key])
 
     def _ensure_sanity(self):
         """Make sure the input db is valid."""
@@ -259,6 +335,17 @@ class GroupPersistor(object):
             logger.warning(msg)
             self.db = self._empty_db()
             version = self.db['meta']['version']
+        else:
+            current = self._empty_db()['meta']['version']
+            dist = distutils.version.LooseVersion
+            if dist(version) < dist(current):
+                logger.debug('Migrating group persistor from %s to %s. ',
+                             version, current)
+                self._add_missing_entries()
+                self.db['meta']['version'] = current
+                self.commit()
+                self.save()
+
         logger.debug('group persistor md version: %s', version)
 
     def _prune_db(self):
@@ -283,12 +370,20 @@ class GroupPersistor(object):
     def environments(self):
         return self.db['ENVIRONMENTS']
 
+    def environments_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(pattern, self.environments,
+                           self.environment, case_sensitive)
+
     def group(self, id_):
         return self._access('GROUPS', id_)
 
     @property
     def groups(self):
         return self.db['GROUPS']
+
+    def groups_by_pattern(self, pattern, case_sensitive=False):
+        return _by_pattern(pattern, self.groups,
+                           self.group, case_sensitive)
 
     def save(self):
         if not self._commit:

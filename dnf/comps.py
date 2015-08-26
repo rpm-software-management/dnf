@@ -79,7 +79,7 @@ def _fn_display_order(group):
     return sys.maxsize if group.display_order is None else group.display_order
 
 
-def install_or_skip(install_fnc, grp_or_env, types, exclude=None,
+def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
                     strict=True):
     """Either mark in persistor as installed given `grp_or_env` (group
        or environment) or skip it (if it's already installed).
@@ -87,7 +87,7 @@ def install_or_skip(install_fnc, grp_or_env, types, exclude=None,
        or Solver.environment_install.
        """
     try:
-        return install_fnc(grp_or_env, types, exclude, strict)
+        return install_fnc(grp_or_env_id, types, exclude, strict)
     except dnf.comps.CompsError as e:
         logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
 
@@ -139,29 +139,31 @@ class CompsQuery(object):
         self.kinds = kinds
         self.status = status
 
-    def _get(self, items, persistence_fn):
-        lst = []
-        for it in items:
-            installed = persistence_fn(it.id).installed
-            if self.status & self.INSTALLED and installed:
-                lst.append(it)
-            if self.status & self.AVAILABLE and not installed:
-                lst.append(it)
-        return lst
+    def _get(self, available, installed):
+        result = set()
+        if self.status & self.AVAILABLE:
+            result.update({g.id for g in available})
+        if self.status & self.INSTALLED:
+            result.update(installed)
+        return result
 
     def get(self, *patterns):
         res = dnf.util.Bunch()
         res.environments = []
         res.groups = []
         for pat in patterns:
-            envs = grps = None
+            envs = grps = []
             if self.kinds & self.ENVIRONMENTS:
-                envs = self._get(self.comps.environments_by_pattern(pat),
-                                 self.prst.environment)
+                available = self.comps.environments_by_pattern(pat)
+                installed = self.prst.environments_by_pattern(pat)
+                envs = self._get(available,
+                                 installed)
                 res.environments.extend(envs)
             if self.kinds & self.GROUPS:
-                grps = self._get(self.comps.groups_by_pattern(pat),
-                                 self.prst.group)
+                available = self.comps.groups_by_pattern(pat)
+                installed = self.prst.groups_by_pattern(pat)
+                grps = self._get(available,
+                                 installed)
                 res.groups.extend(grps)
             if not envs and not grps:
                 if self.status == self.INSTALLED:
@@ -352,6 +354,9 @@ class Comps(object):
         # :api
         return sorted(self.environments_iter(), key=_fn_display_order)
 
+    def environment_by_id(self, id):
+        return dnf.util.first(g for g in self.environments_iter() if g.id == id)
+
     def environment_by_pattern(self, pattern, case_sensitive=False):
         # :api
         envs = self.environments_by_pattern(pattern, case_sensitive)
@@ -407,7 +412,8 @@ class TransactionBunch(object):
 
 
 class Solver(object):
-    def __init__(self, persistor, reason_fn):
+    def __init__(self, persistor, comps, reason_fn):
+        self.comps = comps
         self.persistor = persistor
         self._reason_fn = reason_fn
 
@@ -453,14 +459,17 @@ class Solver(object):
             count += sum(1 for grp in p_env.full_list if grp == grp_name)
         return count < 2
 
-    def environment_install(self, env, pkg_types, exclude, strict=True):
-        p_env = self.persistor.environment(env.id)
+    def environment_install(self, env_id, pkg_types, exclude, strict=True):
+        env = self.comps.environment_by_id(env_id)
+        p_env = self.persistor.environment(env_id)
         if p_env.installed:
             raise CompsError(_("Environment '%s' is already installed.") %
                              env.ui_name)
 
         p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = set() if exclude is None else set(exclude)
+        p_env.name = env.name
+        p_env.ui_name = env.ui_name
         p_env.pkg_exclude.extend(exclude)
         p_env.pkg_types = pkg_types
         p_env.full_list.extend(self._mandatory_group_set(env))
@@ -468,24 +477,22 @@ class Solver(object):
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
             try:
-                trans += self.group_install(grp, pkg_types, exclude, strict)
+                trans += self.group_install(grp.id, pkg_types, exclude, strict)
             except dnf.exceptions.CompsError:
                 pass
         return trans
 
-    def environment_remove(self, env):
-        p_env = self.persistor.environment(env.id)
+    def environment_remove(self, env_id):
+        p_env = self.persistor.environment(env_id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %
-                             env.ui_name)
+                             p_env.ui_name)
 
         trans = TransactionBunch()
-        group_names = set(p_env.full_list)
+        group_ids = set(p_env.full_list)
 
-        for grp in env.mandatory_groups:
-            if grp.id not in group_names:
-                continue
-            if not self._removable_grp(grp.id):
+        for grp in group_ids:
+            if not self._removable_grp(grp):
                 continue
             trans += self.group_remove(grp)
 
@@ -495,7 +502,8 @@ class Solver(object):
         p_env.pkg_types = 0
         return trans
 
-    def environment_upgrade(self, env):
+    def environment_upgrade(self, env_id):
+        env = self.comps.environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %
@@ -510,22 +518,25 @@ class Solver(object):
             if grp.id in old_set:
                 # upgrade
                 try:
-                    trans += self.group_upgrade(grp)
+                    trans += self.group_upgrade(grp.id)
                 except dnf.exceptions.CompsError:
                     # might no longer be installed
                     pass
             else:
                 # install
-                trans += self.group_install(grp, pkg_types, exclude)
+                trans += self.group_install(grp.id, pkg_types, exclude)
         return trans
 
-    def group_install(self, group, pkg_types, exclude, strict=True):
-        p_grp = self.persistor.group(group.id)
+    def group_install(self, group_id, pkg_types, exclude, strict=True):
+        group = self.comps.group_by_id(group_id)
+        p_grp = self.persistor.group(group_id)
         if p_grp.installed:
             raise CompsError(_("Group '%s' is already installed.") %
                              group.ui_name)
 
         exclude = set() if exclude is None else set(exclude)
+        p_grp.name = group.name
+        p_grp.ui_name = group.ui_name
         p_grp.pkg_exclude.extend(exclude)
         p_grp.pkg_types = pkg_types
         p_grp.full_list.extend(self._full_package_set(group))
@@ -542,11 +553,11 @@ class Solver(object):
             trans.install_opt.update(mandatory)
         return trans
 
-    def group_remove(self, group):
-        p_grp = self.persistor.group(group.id)
+    def group_remove(self, group_id):
+        p_grp = self.persistor.group(group_id)
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %
-                             group.ui_name)
+                             p_grp.ui_name)
 
         trans = TransactionBunch()
         exclude = p_grp.pkg_exclude
@@ -557,7 +568,8 @@ class Solver(object):
         del p_grp.pkg_exclude[:]
         return trans
 
-    def group_upgrade(self, group):
+    def group_upgrade(self, group_id):
+        group = self.comps.group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %

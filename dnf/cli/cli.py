@@ -158,7 +158,7 @@ class BaseCli(dnf.Base):
         """
 
         grp_diff = self._groups_diff()
-        grp_str = self.output.list_group_transaction(self.comps, grp_diff)
+        grp_str = self.output.list_group_transaction(self.comps, self.group_persistor, grp_diff)
         if grp_str:
             logger.info(grp_str)
         trans = self.transaction

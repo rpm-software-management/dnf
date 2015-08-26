@@ -24,9 +24,6 @@ import dnf.comps
 import dnf.exceptions
 
 
-def names(items):
-    return (it.name for it in items)
-
 class GroupCommandStaticTest(support.TestCase):
 
     def test_canonical(self):
@@ -82,9 +79,9 @@ class CompsQueryTest(support.TestCase):
         q = CompsQuery(self.comps, self.prst, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
-        self.assertCountEqual(names(res.environments),
-                              ('Sugar Desktop Environment',))
-        self.assertCountEqual(names(res.groups), ("Pepper's", 'Solid Ground'))
+        self.assertCountEqual(res.environments,
+                              ('sugar-desktop-environment',))
+        self.assertCountEqual(res.groups, ("Peppers", 'somerset'))
 
     def test_err(self):
         q = CompsQuery(self.comps, self.prst, CompsQuery.ENVIRONMENTS,
@@ -97,4 +94,4 @@ class CompsQueryTest(support.TestCase):
                        CompsQuery.INSTALLED)
         res = q.get('somerset')
         self.assertEmpty(res.environments)
-        self.assertCountEqual(names(res.groups), ('Solid Ground',))
+        self.assertCountEqual(res.groups, ('somerset',))
