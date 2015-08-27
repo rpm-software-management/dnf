@@ -462,10 +462,10 @@ Mark Command
 -------------
 
 ``dnf mark install <package-specs>...``
-    Marks the specified packages as installed by user.
+    Marks the specified packages as installed by user. This can be useful if any package was installed as a dependency and is desired to stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed.
 
 ``dnf mark remove <package-specs>...``
-    Unmarks the specified packages as installed by user.
+    Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stay still installed on the system and will removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed. You should use this operation instead of :ref:`\remove_command-label` if your not sure whether the package is a requirement of other user installed package on the system.
 
 ----------------
 Provides Command
