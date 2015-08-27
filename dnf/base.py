@@ -103,6 +103,7 @@ class Base(object):
         try:
             repo.load()
         except dnf.exceptions.RepoError as e:
+            repo.md_expire_cache()
             if repo.skip_if_unavailable is False:
                 raise
             logger.warning(_("%s, disabling."), e)
