@@ -1,39 +1,39 @@
 /var/log/dnf.log {
     missingok
     notifempty
-    maxsize 30k
-    yearly
+    rotate 4
+    weekly
     create 0600 root root
 }
 
 /var/log/dnf.librepo.log {
     missingok
     notifempty
-    maxsize 5000k
-    yearly
+    rotate 4
+    weekly
     create 0600 root root
 }
 
 /var/log/dnf.rpm.log {
     missingok
     notifempty
-    maxsize 30k
-    yearly
+    rotate 4
+    weekly
     create 0600 root root
 }
 
 /var/log/dnf.plugin.log {
     missingok
     notifempty
-    maxsize 30k
-    yearly
+    rotate 4
+    weekly
     create 0600 root root
 }
 
 /var/log/hawkey.log {
     missingok
     notifempty
-    maxsize 30k
-    yearly
+    rotate 4
+    weekly
     create 0600 root root
 }
