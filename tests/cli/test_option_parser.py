@@ -28,29 +28,31 @@ import dnf.util
 
 
 class OptionParserTest(support.TestCase):
+
+    def setUp(self):
+        self.parser = OptionParser()
+        self.ap = self.parser.argparser
+
     def test_parse(self):
-        parser = OptionParser()
-        opts, cmds = parser.parse_known_args(['update', '--nogpgcheck'])
+        opts, cmds = self.ap.parse_known_args(['update', '--nogpgcheck'])
         self.assertEqual(cmds, ['update'])
         self.assertTrue(opts.nogpgcheck)
         self.assertIsNone(opts.color)
 
     def test_configure_from_options(self):
-        parser = OptionParser()
-        opts, _ = parser.parse_known_args(['update', '-y', '--allowerasing'])
+        opts, _ = self.ap.parse_known_args(['update', '-y', '--allowerasing'])
         conf = dnf.util.Bunch()
         conf.color = 'auto'
         conf.exclude = []
         demands = dnf.util.Bunch()
-        parser.configure_from_options(opts, conf, demands, None)
+        self.parser.configure_from_options(opts, conf, demands, None)
         self.assertTrue(demands.allow_erasing)
         self.assertTrue(conf.assumeyes)
 
     def test_non_nones2dict(self):
-        parser = OptionParser()
-        values = parser.parse_args(args=['-y'])
+        values = self.ap.parse_args(args=['-y'])
         self.assertIsInstance(values, argparse.Namespace)
-        dct = parser._non_nones2dict(values.__dict__)
+        dct = self.parser._non_nones2dict(values.__dict__)
         self.assertTrue(dct['assumeyes'])
 
 
@@ -119,11 +121,11 @@ class OptionParserAddCmdTest(support.TestCase):
         self.assertEqual(self.parser._cmd_groups, set(['main', 'plugin']))
 
     def test_help_option_set(self):
-        opts, cmds = self.parser.parse_known_args(['-h'])
+        opts, cmds = self.parser.argparser.parse_known_args(['-h'])
         self.assertTrue(opts.help)
 
     def test_help_option_notset(self):
-        opts, cmds = self.parser.parse_known_args(['foo', 'bar'])
+        opts, cmds = self.parser.argparser.parse_known_args(['foo', 'bar'])
         self.assertFalse(opts.help)
 
     def test_get_usage(self):

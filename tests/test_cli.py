@@ -132,11 +132,19 @@ class CliTest(TestCase):
         self.cli.configure(['update', '-y'])
         self.assertTrue(self.base.conf.assumeyes)
 
-    def test_opt_between_cmds(self, _):
-        self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
-        self.assertTrue(self.base.conf.assumeyes)
-        self.assertEqual(self.base.basecmd, "install")
-        self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
+    def test_glob_options_cmds(self, _):
+        params = [
+            ['install', '-y', 'pkg1', 'pkg2'],
+            ['install', 'pkg1', 'pkg2', '-y'],
+            ['-y', 'install', 'pkg1', 'pkg2']
+        ]
+        # argparser doesn't allow glob option between cmd parameters
+
+        for param in params:
+            self.cli.configure(args=param)
+            self.assertTrue(self.base.conf.assumeyes)
+            self.assertEqual(self.base.basecmd, "install")
+            self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
 
     def test_configure_repos(self, _):
         opts = Namespace()
