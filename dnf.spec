@@ -10,8 +10,8 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.0
-Release:	2%{?snapshot}%{?dist}
+Version:	1.1.1
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -250,6 +250,26 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Mon Aug 31 2015 Michal Luscon <mluscon@redhat.com> 1.1.1-1
+- Fixed typo (RhBug:1249319) (Adam Salih)
+- fixed downgrade with wildcard (RhBug:1234763) (Adam Salih)
+- reorganize logic of get_best_selector(s) and query (RhBug:1242946) (Adam
+  Salih)
+- completion_helper: don't crash if exception was occured (RhBug:1225225) (Igor
+  Gnatenko)
+- base: expire cache if repo is not available (Michal Luscon)
+- Don't suggest --allowerasing if it is enabled (Christian Stadelmann)
+- translation works in python3 (RhBug:1254687) (Jan Silhan)
+- logrotate less often (RhBug:1247766) (Jan Silhan)
+- implement dnf mark command (RhBug:1125925) (Michal Luscon)
+- groups: use comps data to migrate persistor (Michal Luscon)
+- groups: preserve api compatibility (Michal Luscon)
+- groups: use persistor data for removing env/group (Michal Luscon)
+- persistor: add migration and bump version (Michal Luscon)
+- persistor: store name and ui_name of group (Michal Luscon)
+- show real metadata timestamp on the server in verbose mode (Jan Silhan)
+- lock: make rpmdb lock blocking (RhBug:1210289) (Michal Luscon)
+
 * Wed Aug 12 2015 Michal Luscon <mluscon@redhat.com> 1.1.0-2
 - update: installonly pkgs are not shown in both install and skipped section
   (RhBug:1252415) (Jan Silhan)
