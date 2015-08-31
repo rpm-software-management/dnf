@@ -21,11 +21,22 @@
 
 .. contents::
 
-======================
-Upcoming Release Notes
-======================
+===================
+1.1.1 Release Notes
+===================
 
 Implemented ``dnf mark`` :doc:`command <command_ref>`.
+
+Bugs fixed in 1.1.1
+
+* :rhbug:`1249319`
+* :rhbug:`1234763`
+* :rhbug:`1242946`
+* :rhbug:`1225225`
+* :rhbug:`1254687`
+* :rhbug:`1247766`
+* :rhbug:`1125925`
+* :rhbug:`1210289`
 
 ===================
 1.1.0 Release Notes

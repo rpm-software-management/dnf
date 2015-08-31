@@ -1274,5 +1274,37 @@
     [
         1225237, 
         "[UX] [doc] FILES section missing from manual pages"
+    ], 
+    [
+        1249319, 
+        "dnf says \"downloaded packages were saved in cache\" before actually downloading any packages"
+    ], 
+    [
+        1234763, 
+        "wildcard in dnf update/downgrade should match installed packages only"
+    ], 
+    [
+        1242946, 
+        "[depsolv] dnf prefers package names over provide names"
+    ], 
+    [
+        1225225, 
+        "[abrt] python-dnf: repo.py:774:load:RepoError: Cache-only enabled but no cache for 'fedora'"
+    ], 
+    [
+        1254687, 
+        "DNF does not display any translations"
+    ], 
+    [
+        1247766, 
+        "dnf logrotate.d rotates logs too fast in many cases"
+    ], 
+    [
+        1125925, 
+        "[RFE] provide a 'add to user-installed-list' command"
+    ], 
+    [
+        1210289, 
+        "RFE: Have a way to wait on dnf lock rather than terminate"
     ]
 ]
