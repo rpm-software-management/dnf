@@ -10,30 +10,31 @@
 # Jérôme Fenal <jfenal@gmail.com>, 2014
 # Kévin Raymond <shaiton@fedoraproject.org>, 2011
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
+# Jérôme Fenal <jfenal@gmail.com>, 2015. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-19 11:38+0200\n"
+"POT-Creation-Date: 2015-08-31 17:00+0200\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-03-16 12:46-0400\n"
-"Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
+"PO-Revision-Date: 2015-08-19 12:11-0400\n"
+"Last-Translator: Jérôme Fenal <jfenal@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dnf/language/fr/)\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Zanata 3.7.1\n"
 
-#: ../dnf/persistor.py:239
+#: ../dnf/persistor.py:315
 msgid "Invalid groups database, clearing."
 msgstr "Base de données des groupes invalide, nettoyage."
 
-#: ../dnf/persistor.py:258
+#: ../dnf/persistor.py:334
 msgid "Unsupported installed groups database found, resetting."
 msgstr "Base de données des groupes installés non supportée : remise à zéro."
 
-#: ../dnf/persistor.py:319
+#: ../dnf/persistor.py:414
 #, python-format
 msgid "%s is empty file"
 msgstr "%s est un fichier vide"
@@ -53,34 +54,34 @@ msgstr "Le contrôle du delta RPM reconstruit a échoué"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
-msgstr ""
-
-#: ../dnf/comps.py:168
-#, python-format
-msgid "Group '%s' is not installed."
-msgstr ""
+msgstr "ignoré."
 
 #: ../dnf/comps.py:170
 #, python-format
-msgid "Group '%s' does not exist."
-msgstr ""
+msgid "Group '%s' is not installed."
+msgstr "Le groupe « %s » n'est pas installé."
 
-#: ../dnf/comps.py:459
+#: ../dnf/comps.py:172
+#, python-format
+msgid "Group '%s' does not exist."
+msgstr "Le groupe « %s » n'existe pas."
+
+#: ../dnf/comps.py:466
 #, python-format
 msgid "Environment '%s' is already installed."
 msgstr "L'environnement « %s » est déjà installé."
 
-#: ../dnf/comps.py:479 ../dnf/comps.py:501
+#: ../dnf/comps.py:488 ../dnf/comps.py:509
 #, python-format
 msgid "Environment '%s' is not installed."
 msgstr "L'environnement « %s » n'est pas installé."
 
-#: ../dnf/comps.py:525
+#: ../dnf/comps.py:534
 #, python-format
 msgid "Group '%s' is already installed."
 msgstr "Le groupe « %s » est déjà installé."
 
-#: ../dnf/comps.py:548 ../dnf/comps.py:563
+#: ../dnf/comps.py:559 ../dnf/comps.py:575
 #, python-format
 msgid "Group '%s' not installed."
 msgstr "Le groupe « %s » n'est pas installé."
@@ -124,17 +125,20 @@ msgid ""
 "Ensure no other dnf process is running and remove the lock file manually or "
 "run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
+"Fichier verrou malformé trouvé : %s.\n"
+"Assurez-vous qu'aucun autre processus dnf n'est en cours d'exécution et "
+"supprimer le fichier verrou, ou exécuter systemd-tmpfiles --remove dnf.conf."
 
 #: ../dnf/lock.py:136
 #, python-format
 msgid "Waiting for process with pid %d to finish."
-msgstr ""
+msgstr "En attente de la fin d'exécution du processus ayant le pid %d."
 
 #: ../dnf/yum/rpmtrans.py:123
 msgid "Cleanup"
 msgstr "Nettoyage "
 
-#: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1002
+#: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1007
 msgid "Downgrading"
 msgstr "Retour à la version précédente "
 
@@ -142,19 +146,19 @@ msgstr "Retour à la version précédente "
 msgid "Erasing"
 msgstr "Suppression "
 
-#: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:998
+#: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:1003
 msgid "Installing"
 msgstr "Installation de "
 
-#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1706
+#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1711
 msgid "Obsoleting"
 msgstr "Obsolète"
 
-#: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1000
+#: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1005
 msgid "Reinstalling"
 msgstr "Réinstallation "
 
-#: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:999
+#: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:1004
 msgid "Upgrading"
 msgstr "Mise à jour"
 
@@ -165,7 +169,7 @@ msgstr "Vérifie"
 #: ../dnf/yum/history.py:758
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
-msgstr ""
+msgstr "Impossible d'initialiser l'historique DNF DB : %s"
 
 #: ../dnf/yum/history.py:1675
 #, python-format
@@ -194,7 +198,7 @@ msgstr "--installroot doit correspondre à un chemin absolu : %s"
 #: ../dnf/cli/option_parser.py:142
 #, python-format
 msgid "bad format: %s"
-msgstr ""
+msgstr "format incorrect : %s"
 
 #: ../dnf/cli/option_parser.py:154
 msgid "allow erasing of installed packages to resolve dependencies"
@@ -273,6 +277,8 @@ msgstr "désactiver les exclusions"
 msgid ""
 "label and path to additional repository, can be specified multiple times."
 msgstr ""
+"étiquette et chemin vers un dépôt additionnel, peut être indiqué plusieurs "
+"fois."
 
 #: ../dnf/cli/option_parser.py:214
 msgid "disable all plugins"
@@ -303,6 +309,7 @@ msgstr "réinitialise la configuration ainsi que les options des dépôts"
 #: ../dnf/cli/option_parser.py:231
 msgid "set metadata as expired before running the command"
 msgstr ""
+"configure les metadonnées comme étant expirées avant d'exécuter la commande"
 
 #: ../dnf/cli/option_parser.py:233
 msgid "resolve to IPv4 addresses only"
@@ -371,41 +378,41 @@ msgstr "    Débuté  : %s - il y a %s"
 msgid "    State  : %s"
 msgstr "État : %s"
 
-#: ../dnf/cli/cli.py:128
+#: ../dnf/cli/cli.py:129
 #, python-format
 msgid "  Installed: %s-%s at %s"
 msgstr "  Installés : %s-%s à %s"
 
-#: ../dnf/cli/cli.py:130
+#: ../dnf/cli/cli.py:131
 #, python-format
 msgid "  Built    : %s at %s"
 msgstr "  Compilé   : %s à %s"
 
-#: ../dnf/cli/cli.py:199
+#: ../dnf/cli/cli.py:200
 msgid "Operation aborted."
 msgstr "Opération annulée."
 
-#: ../dnf/cli/cli.py:201 ../dnf/cli/cli.py:368
+#: ../dnf/cli/cli.py:202 ../dnf/cli/cli.py:369
 #: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/reinstall.py:100
 #: ../dnf/cli/commands/__init__.py:447 ../dnf/cli/commands/__init__.py:535
 #: ../dnf/cli/commands/__init__.py:601 ../dnf/cli/commands/__init__.py:646
 #: ../dnf/cli/commands/__init__.py:719 ../dnf/cli/commands/__init__.py:777
-#: ../dnf/base.py:1294
+#: ../dnf/base.py:1308
 msgid "Nothing to do."
 msgstr "Rien à faire"
 
-#: ../dnf/cli/cli.py:206
+#: ../dnf/cli/cli.py:207
 msgid "Downloading Packages:"
 msgstr "Téléchargement des paquets :"
 
-#: ../dnf/cli/cli.py:213
+#: ../dnf/cli/cli.py:214
 #, python-format
 msgid "Error downloading packages:\n"
 "%s"
 msgstr "Erreur de téléchargement des paquets :\n"
 "%s"
 
-#: ../dnf/cli/cli.py:247
+#: ../dnf/cli/cli.py:248
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -413,137 +420,140 @@ msgstr ""
 "Refus de l'importation automatique des clés lors d'une exécution inattendue.\n"
 "Utilisez l'option « -y » pour passer outre."
 
-#: ../dnf/cli/cli.py:287 ../dnf/cli/cli.py:445 ../dnf/cli/cli.py:451
+#: ../dnf/cli/cli.py:288 ../dnf/cli/cli.py:446 ../dnf/cli/cli.py:452
 msgid "Obsoleting Packages"
 msgstr "Obsolescence des paquets"
 
-#: ../dnf/cli/cli.py:302 ../dnf/cli/commands/group.py:336
+#: ../dnf/cli/cli.py:303 ../dnf/cli/commands/group.py:339
 #: ../dnf/cli/commands/upgrade.py:91 ../dnf/cli/commands/__init__.py:871
 msgid "No packages marked for upgrade."
 msgstr "Aucun paquet marqué pour mise à jour"
 
-#: ../dnf/cli/cli.py:324
+#: ../dnf/cli/cli.py:325
 msgid "No packages marked for distribution synchronization."
 msgstr "Aucun paquet marqué pour la synchronisation de la distribution"
 
-#: ../dnf/cli/cli.py:356 ../dnf/cli/cli.py:655 ../dnf/cli/cli.py:684
+#: ../dnf/cli/cli.py:357 ../dnf/cli/cli.py:656 ../dnf/cli/cli.py:685
 #: ../dnf/cli/commands/install.py:91 ../dnf/cli/commands/__init__.py:439
 #: ../dnf/cli/commands/__init__.py:1104
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Aucun paquet %s%s%s disponible."
 
-#: ../dnf/cli/cli.py:363
+#: ../dnf/cli/cli.py:364
 #, python-format
 msgid "No match for available package: %s"
 msgstr "Aucune correspondance pour le paquet disponible : %s"
 
-#: ../dnf/cli/cli.py:419
+#: ../dnf/cli/cli.py:420
 msgid "Installed Packages"
 msgstr "Paquets installés"
 
-#: ../dnf/cli/cli.py:427
+#: ../dnf/cli/cli.py:428
 msgid "Available Packages"
 msgstr "Paquets disponibles"
 
-#: ../dnf/cli/cli.py:431
+#: ../dnf/cli/cli.py:432
 msgid "Autoremove Packages"
-msgstr ""
+msgstr "Suppression automatique des paquets"
 
-#: ../dnf/cli/cli.py:433
+#: ../dnf/cli/cli.py:434
 msgid "Extra Packages"
 msgstr "Paquets supplémentaires"
 
-#: ../dnf/cli/cli.py:437
+#: ../dnf/cli/cli.py:438
 msgid "Upgraded Packages"
 msgstr "Paquets mis à jours"
 
-#: ../dnf/cli/cli.py:453
+#: ../dnf/cli/cli.py:454
 msgid "Recently Added Packages"
 msgstr "Paquets récemment ajoutés"
 
-#: ../dnf/cli/cli.py:458
+#: ../dnf/cli/cli.py:459
 msgid "No matching Packages to list"
 msgstr "Aucun paquet correspondant à lister"
 
-#: ../dnf/cli/cli.py:534
+#: ../dnf/cli/cli.py:535
 msgid "No Matches found"
 msgstr "Aucune correspondance trouvée"
 
-#: ../dnf/cli/cli.py:575 ../dnf/cli/commands/__init__.py:1079
+#: ../dnf/cli/cli.py:576 ../dnf/cli/commands/__init__.py:1079
 #: ../dnf/cli/commands/__init__.py:1116 ../dnf/cli/commands/__init__.py:1132
 msgid "No transaction ID given"
 msgstr "Aucun identifiant de transaction n'a été fourni"
 
-#: ../dnf/cli/cli.py:584 ../dnf/cli/cli.py:592 ../dnf/cli/output.py:1852
+#: ../dnf/cli/cli.py:585 ../dnf/cli/cli.py:593 ../dnf/cli/output.py:1857
 msgid "Bad transaction ID given"
 msgstr "L'identifiant de transaction fourni est erroné"
 
-#: ../dnf/cli/cli.py:600
+#: ../dnf/cli/cli.py:601
 msgid "Not found given transaction ID"
 msgstr "L'identifiant de transaction fourni est introuvable"
 
-#: ../dnf/cli/cli.py:609 ../dnf/cli/commands/__init__.py:1081
+#: ../dnf/cli/cli.py:610 ../dnf/cli/commands/__init__.py:1081
 #: ../dnf/cli/commands/__init__.py:1118 ../dnf/cli/commands/__init__.py:1134
 msgid "Found more than one transaction ID!"
 msgstr "Plus d'un identifiant de transaction a été trouvé !"
 
-#: ../dnf/cli/cli.py:626
+#: ../dnf/cli/cli.py:627
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "L'historique des transactions est incomplet, avant %u."
 
-#: ../dnf/cli/cli.py:628
+#: ../dnf/cli/cli.py:629
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "L'historique des transactions est incomplet, après %u."
 
-#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:680
+#: ../dnf/cli/cli.py:652 ../dnf/cli/cli.py:681
 #: ../dnf/cli/commands/__init__.py:1100
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr "Aucun paquet %s%s%s installé."
 
-#: ../dnf/cli/cli.py:740
+#: ../dnf/cli/cli.py:742
 #, python-format
 msgid "Added %s repo from %s"
-msgstr ""
+msgstr "Ajout du dépôt %s depuis %s"
 
-#: ../dnf/cli/cli.py:747
+#: ../dnf/cli/cli.py:749
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Dépôt inconnu : « %s »"
 
-#: ../dnf/cli/cli.py:812
+#: ../dnf/cli/cli.py:814
 #, python-format
 msgid "%s: using metadata from %s."
-msgstr ""
+msgstr "%s : utilisation des métadonnées depuis %s."
 
-#: ../dnf/cli/cli.py:815
+#: ../dnf/cli/cli.py:817
 #, python-format
 msgid "Last metadata expiration check performed %s ago on %s."
 msgstr ""
+"Vérification de l'expiration des métadonnées effectuée il y a %s sur %s."
 
-#: ../dnf/cli/cli.py:848
+#: ../dnf/cli/cli.py:850
 msgid "You need to give some command"
 msgstr "Vous devez spécifier des commandes"
 
-#: ../dnf/cli/cli.py:855
+#: ../dnf/cli/cli.py:857
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Aucune commande telle que : %s. Veuillez utiliser %s --help"
 
-#: ../dnf/cli/cli.py:857
+#: ../dnf/cli/cli.py:859
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
+"Cela est peut-être une commande d'un greffon DNF, essayez : \"dnf install "
+"'dnf-command(%s)'\""
 
-#: ../dnf/cli/cli.py:959 ../dnf/cli/cli.py:963
+#: ../dnf/cli/cli.py:961 ../dnf/cli/cli.py:965
 #, python-format
 msgid "Config error: %s"
 msgstr "Erreur de configuration : %s"
 
-#: ../dnf/cli/cli.py:1067
+#: ../dnf/cli/cli.py:1069
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Commande « %s » déjà définie"
@@ -553,27 +563,29 @@ msgstr "Commande « %s » déjà définie"
 msgid "Error: %s"
 msgstr "Erreur : %s"
 
-#: ../dnf/cli/main.py:94
+#: ../dnf/cli/main.py:96
 msgid ""
 "(try to add '--allowerasing' to command line to replace conflicting "
 "packages)"
 msgstr ""
+"(essayez d'ajouter « --allowerasing » à la ligne de commande pour remplacer "
+"les paquets en conflit)"
 
-#: ../dnf/cli/main.py:102
+#: ../dnf/cli/main.py:104
 msgid "Terminated."
 msgstr "Terminé"
 
-#: ../dnf/cli/main.py:133
+#: ../dnf/cli/main.py:135
 msgid "No read/execute access in current directory, moving to /"
 msgstr ""
 "Pas d'accès en lecture/écriture sur le répertoire courant, on se déblace "
 "dans /"
 
-#: ../dnf/cli/main.py:159
+#: ../dnf/cli/main.py:161
 msgid "Dependencies resolved."
 msgstr "Dépendances résolues."
 
-#: ../dnf/cli/main.py:179
+#: ../dnf/cli/main.py:181
 msgid "Complete!"
 msgstr "Terminé !"
 
@@ -581,7 +593,7 @@ msgstr "Terminé !"
 msgid "Name"
 msgstr "Nom"
 
-#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1043
+#: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1048
 msgid "Arch"
 msgstr "Architecture"
 
@@ -589,7 +601,7 @@ msgstr "Architecture"
 msgid "Epoch"
 msgstr "Époque"
 
-#: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1044
+#: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1049
 msgid "Version"
 msgstr "Version"
 
@@ -597,7 +609,7 @@ msgstr "Version"
 msgid "Release"
 msgstr "Révision"
 
-#: ../dnf/cli/output.py:472 ../dnf/cli/output.py:1045
+#: ../dnf/cli/output.py:472 ../dnf/cli/output.py:1050
 msgid "Size"
 msgstr "Taille"
 
@@ -706,20 +718,20 @@ msgstr " Paquets conditionnels :"
 #: ../dnf/cli/output.py:746
 #, python-format
 msgid "Environment Group: %s"
-msgstr ""
+msgstr "Groupe d'environnement : %s"
 
 #: ../dnf/cli/output.py:749
 #, python-format
 msgid " Environment-Id: %s"
-msgstr ""
+msgstr "Identifiant d'environnement : %s"
 
 #: ../dnf/cli/output.py:755
 msgid " Mandatory Groups:"
-msgstr ""
+msgstr "Groupes obligatoires :"
 
 #: ../dnf/cli/output.py:756
 msgid " Optional Groups:"
-msgstr ""
+msgstr "Groupes optionnels :"
 
 #: ../dnf/cli/output.py:791
 #, python-format
@@ -796,35 +808,37 @@ msgstr "Groupe"
 msgid "Packages"
 msgstr "Paquets"
 
-#: ../dnf/cli/output.py:1001
+#: ../dnf/cli/output.py:1006
 msgid "Removing"
 msgstr "Suppression "
 
-#: ../dnf/cli/output.py:1016
+#: ../dnf/cli/output.py:1021
 #, python-format
 msgid ""
 "Skipping packages with conflicts:\n"
 "(add '%s' to command line to force their upgrade)"
 msgstr ""
+"Paquets ignorés suite à conflit :\n"
+"(ajouter « %s » à la ligne de commande pour forcer leur mise à niveau)"
 
-#: ../dnf/cli/output.py:1026
+#: ../dnf/cli/output.py:1031
 msgid "Skipping packages with broken dependencies"
-msgstr ""
+msgstr "Paquets ignorés suite à dépendances cassées"
 
-#: ../dnf/cli/output.py:1043 ../dnf/cli/output.py:1907
+#: ../dnf/cli/output.py:1048 ../dnf/cli/output.py:1912
 msgid "Package"
 msgstr "Paquet"
 
-#: ../dnf/cli/output.py:1044
+#: ../dnf/cli/output.py:1049
 msgid "Repository"
 msgstr "Dépôt"
 
-#: ../dnf/cli/output.py:1057
+#: ../dnf/cli/output.py:1062
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
 msgstr "     remplacement de  %s%s%s.%s %s\n"
 
-#: ../dnf/cli/output.py:1065
+#: ../dnf/cli/output.py:1070
 #, python-format
 msgid "\n"
 "Transaction Summary\n"
@@ -833,417 +847,417 @@ msgstr "\n"
 "Résumé de la transaction\n"
 "%s\n"
 
-#: ../dnf/cli/output.py:1070 ../dnf/cli/output.py:1702
-#: ../dnf/cli/output.py:1703
+#: ../dnf/cli/output.py:1075 ../dnf/cli/output.py:1707
+#: ../dnf/cli/output.py:1708
 msgid "Install"
 msgstr "Installation "
 
-#: ../dnf/cli/output.py:1071 ../dnf/cli/output.py:1711
+#: ../dnf/cli/output.py:1076 ../dnf/cli/output.py:1716
 msgid "Upgrade"
 msgstr "Mettre à jour"
 
-#: ../dnf/cli/output.py:1072
+#: ../dnf/cli/output.py:1077
 msgid "Remove"
 msgstr "Supprimer"
 
-#: ../dnf/cli/output.py:1073 ../dnf/cli/output.py:1709
+#: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1714
 msgid "Downgrade"
 msgstr "Retour à la version précédente"
 
-#: ../dnf/cli/output.py:1159
+#: ../dnf/cli/output.py:1164
 msgid "Reinstalled"
 msgstr "Réinstallé"
 
-#: ../dnf/cli/output.py:1160
+#: ../dnf/cli/output.py:1165
 msgid "Removed"
 msgstr "Supprimés "
 
-#: ../dnf/cli/output.py:1161 ../dnf/cli/output.py:1547
-#: ../dnf/cli/output.py:1549 ../dnf/cli/commands/updateinfo.py:296
+#: ../dnf/cli/output.py:1166 ../dnf/cli/output.py:1552
+#: ../dnf/cli/output.py:1554 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Installé "
 
-#: ../dnf/cli/output.py:1162 ../dnf/cli/output.py:1548
-#: ../dnf/cli/output.py:1712
+#: ../dnf/cli/output.py:1167 ../dnf/cli/output.py:1553
+#: ../dnf/cli/output.py:1717
 msgid "Upgraded"
 msgstr "Mise à niveau"
 
-#: ../dnf/cli/output.py:1163 ../dnf/cli/output.py:1548
-#: ../dnf/cli/output.py:1710
+#: ../dnf/cli/output.py:1168 ../dnf/cli/output.py:1553
+#: ../dnf/cli/output.py:1715
 msgid "Downgraded"
 msgstr "Rétrogradé"
 
-#: ../dnf/cli/output.py:1164
+#: ../dnf/cli/output.py:1169
 msgid "Failed"
-msgstr ""
+msgstr "Échec"
 
-#: ../dnf/cli/output.py:1218
+#: ../dnf/cli/output.py:1223
 msgid "Total"
 msgstr "Total"
 
-#: ../dnf/cli/output.py:1239
+#: ../dnf/cli/output.py:1244
 msgid "I"
 msgstr "I"
 
-#: ../dnf/cli/output.py:1240
+#: ../dnf/cli/output.py:1245
 msgid "O"
 msgstr "O"
 
-#: ../dnf/cli/output.py:1241
+#: ../dnf/cli/output.py:1246
 msgid "E"
 msgstr "E"
 
-#: ../dnf/cli/output.py:1242
+#: ../dnf/cli/output.py:1247
 msgid "R"
 msgstr "R"
 
-#: ../dnf/cli/output.py:1243
+#: ../dnf/cli/output.py:1248
 msgid "D"
 msgstr "D"
 
-#: ../dnf/cli/output.py:1244
+#: ../dnf/cli/output.py:1249
 msgid "U"
 msgstr "U"
 
-#: ../dnf/cli/output.py:1258
+#: ../dnf/cli/output.py:1263
 msgid "<unset>"
 msgstr "<indéfini>"
 
-#: ../dnf/cli/output.py:1259
+#: ../dnf/cli/output.py:1264
 msgid "System"
 msgstr "Système"
 
-#: ../dnf/cli/output.py:1340 ../dnf/cli/output.py:1453
+#: ../dnf/cli/output.py:1345 ../dnf/cli/output.py:1458
 msgid "No transactions"
 msgstr "Pas de transaction"
 
-#: ../dnf/cli/output.py:1360 ../dnf/cli/output.py:1896
-#: ../dnf/cli/output.py:1973
+#: ../dnf/cli/output.py:1365 ../dnf/cli/output.py:1901
+#: ../dnf/cli/output.py:1978
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Le ou les paquets ou identifiants de transaction fournis sont erronés"
 
-#: ../dnf/cli/output.py:1398
+#: ../dnf/cli/output.py:1403
 msgid "Command line"
 msgstr "Ligne de commande"
 
-#: ../dnf/cli/output.py:1400 ../dnf/cli/output.py:1784
+#: ../dnf/cli/output.py:1405 ../dnf/cli/output.py:1789
 msgid "Login user"
 msgstr "Identifiant utilisateur"
 
-#: ../dnf/cli/output.py:1401 ../dnf/cli/output.py:1905
+#: ../dnf/cli/output.py:1406 ../dnf/cli/output.py:1910
 msgid "ID"
 msgstr "ID"
 
-#: ../dnf/cli/output.py:1403
+#: ../dnf/cli/output.py:1408
 msgid "Date and time"
 msgstr "Date et heure"
 
-#: ../dnf/cli/output.py:1404 ../dnf/cli/output.py:1786
-#: ../dnf/cli/output.py:1906
+#: ../dnf/cli/output.py:1409 ../dnf/cli/output.py:1791
+#: ../dnf/cli/output.py:1911
 msgid "Action(s)"
 msgstr "Action"
 
-#: ../dnf/cli/output.py:1405 ../dnf/cli/output.py:1787
+#: ../dnf/cli/output.py:1410 ../dnf/cli/output.py:1792
 msgid "Altered"
 msgstr "Modifié"
 
-#: ../dnf/cli/output.py:1486 ../dnf/cli/output.py:1860
+#: ../dnf/cli/output.py:1491 ../dnf/cli/output.py:1865
 msgid "No transaction ID, or package, given"
 msgstr "Le paquet ou l'identifiant de transaction fourni sont absents"
 
-#: ../dnf/cli/output.py:1547
+#: ../dnf/cli/output.py:1552
 msgid "Erased"
 msgstr "Supprimés "
 
-#: ../dnf/cli/output.py:1549
+#: ../dnf/cli/output.py:1554
 msgid "Not installed"
 msgstr "Non installé"
 
-#: ../dnf/cli/output.py:1550
+#: ../dnf/cli/output.py:1555
 msgid "Older"
 msgstr "Plus ancien"
 
-#: ../dnf/cli/output.py:1550
+#: ../dnf/cli/output.py:1555
 msgid "Newer"
 msgstr "Plus récent"
 
-#: ../dnf/cli/output.py:1587 ../dnf/cli/output.py:1589
-#: ../dnf/cli/output.py:1994
+#: ../dnf/cli/output.py:1592 ../dnf/cli/output.py:1594
+#: ../dnf/cli/output.py:1999
 msgid "Transaction ID :"
 msgstr "ID de transaction :"
 
-#: ../dnf/cli/output.py:1591 ../dnf/cli/output.py:1996
+#: ../dnf/cli/output.py:1596 ../dnf/cli/output.py:2001
 msgid "Begin time     :"
 msgstr "Temps de début    :"
 
-#: ../dnf/cli/output.py:1594 ../dnf/cli/output.py:1596
+#: ../dnf/cli/output.py:1599 ../dnf/cli/output.py:1601
 msgid "Begin rpmdb    :"
 msgstr "Début de RPMDB    :"
 
-#: ../dnf/cli/output.py:1612
+#: ../dnf/cli/output.py:1617
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u secondes)"
 
-#: ../dnf/cli/output.py:1614
+#: ../dnf/cli/output.py:1619
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minutes)"
 
-#: ../dnf/cli/output.py:1616
+#: ../dnf/cli/output.py:1621
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u heures)"
 
-#: ../dnf/cli/output.py:1618
+#: ../dnf/cli/output.py:1623
 #, python-format
 msgid "(%u days)"
 msgstr "(%u jours)"
 
-#: ../dnf/cli/output.py:1619
+#: ../dnf/cli/output.py:1624
 msgid "End time       :"
 msgstr "Temps de fin :"
 
-#: ../dnf/cli/output.py:1622 ../dnf/cli/output.py:1624
+#: ../dnf/cli/output.py:1627 ../dnf/cli/output.py:1629
 msgid "End rpmdb      :"
 msgstr "Fin de RPMDB :"
 
-#: ../dnf/cli/output.py:1627 ../dnf/cli/output.py:1629
+#: ../dnf/cli/output.py:1632 ../dnf/cli/output.py:1634
 msgid "User           :"
 msgstr "Utilisateur  :"
 
-#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1636
-#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:1640
-#: ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:1641
+#: ../dnf/cli/output.py:1643 ../dnf/cli/output.py:1645
+#: ../dnf/cli/output.py:1647
 msgid "Return-Code    :"
 msgstr "Code retour  :"
 
-#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1638
+#: ../dnf/cli/output.py:1638 ../dnf/cli/output.py:1643
 msgid "Aborted"
 msgstr "Avorté"
 
-#: ../dnf/cli/output.py:1636
+#: ../dnf/cli/output.py:1641
 msgid "Failures:"
 msgstr "Échecs :"
 
-#: ../dnf/cli/output.py:1640
+#: ../dnf/cli/output.py:1645
 msgid "Failure:"
 msgstr "Échec :"
 
-#: ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1647
 msgid "Success"
 msgstr "Réussi"
 
-#: ../dnf/cli/output.py:1647 ../dnf/cli/output.py:1649
-#: ../dnf/cli/output.py:2025
+#: ../dnf/cli/output.py:1652 ../dnf/cli/output.py:1654
+#: ../dnf/cli/output.py:2030
 msgid "Command Line   :"
 msgstr "Ligne de commande :"
 
-#: ../dnf/cli/output.py:1658
+#: ../dnf/cli/output.py:1663
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Informations supplémentaires stockées : %d"
 
-#: ../dnf/cli/output.py:1663
+#: ../dnf/cli/output.py:1668
 msgid "Transaction performed with:"
 msgstr "Transaction effectuée avec :"
 
-#: ../dnf/cli/output.py:1667
+#: ../dnf/cli/output.py:1672
 msgid "Packages Altered:"
 msgstr "Paquets modifiés :"
 
-#: ../dnf/cli/output.py:1671
+#: ../dnf/cli/output.py:1676
 msgid "Packages Skipped:"
 msgstr "Paquets ignorés :"
 
-#: ../dnf/cli/output.py:1679
+#: ../dnf/cli/output.py:1684
 msgid "Rpmdb Problems:"
 msgstr "Problèmes RPMDB :"
 
-#: ../dnf/cli/output.py:1690
+#: ../dnf/cli/output.py:1695
 msgid "Scriptlet output:"
 msgstr "Sortie du scriplet :"
 
-#: ../dnf/cli/output.py:1696
+#: ../dnf/cli/output.py:1701
 msgid "Errors:"
 msgstr "Erreurs :"
 
-#: ../dnf/cli/output.py:1704
+#: ../dnf/cli/output.py:1709
 msgid "Dep-Install"
 msgstr "Installation déps."
 
-#: ../dnf/cli/output.py:1705
+#: ../dnf/cli/output.py:1710
 msgid "Obsoleted"
 msgstr "Obsolète "
 
-#: ../dnf/cli/output.py:1707
+#: ../dnf/cli/output.py:1712
 msgid "Erase"
 msgstr "Supprimé"
 
-#: ../dnf/cli/output.py:1708
+#: ../dnf/cli/output.py:1713
 msgid "Reinstall"
 msgstr "Réinstallation"
 
-#: ../dnf/cli/output.py:1785
+#: ../dnf/cli/output.py:1790
 msgid "Time"
 msgstr "Heure"
 
-#: ../dnf/cli/output.py:1811
+#: ../dnf/cli/output.py:1816
 msgid "Last day"
 msgstr "Dernier jour"
 
-#: ../dnf/cli/output.py:1812
+#: ../dnf/cli/output.py:1817
 msgid "Last week"
 msgstr "Semaine dernière"
 
-#: ../dnf/cli/output.py:1813
+#: ../dnf/cli/output.py:1818
 msgid "Last 2 weeks"
 msgstr "Deux dernières semaines"
 
-#: ../dnf/cli/output.py:1814
+#: ../dnf/cli/output.py:1819
 msgid "Last 3 months"
 msgstr "Trois derniers mois"
 
-#: ../dnf/cli/output.py:1815
+#: ../dnf/cli/output.py:1820
 msgid "Last 6 months"
 msgstr "Six derniers mois"
 
-#: ../dnf/cli/output.py:1816
+#: ../dnf/cli/output.py:1821
 msgid "Last year"
 msgstr "L'année dernière"
 
-#: ../dnf/cli/output.py:1817
+#: ../dnf/cli/output.py:1822
 msgid "Over a year ago"
 msgstr "Il y a plus d'un an"
 
-#: ../dnf/cli/output.py:1864
+#: ../dnf/cli/output.py:1869
 #, python-format
 msgid "No Transaction %s found"
 msgstr "Aucune transaction %s n'a été trouvée"
 
-#: ../dnf/cli/output.py:1870
+#: ../dnf/cli/output.py:1875
 msgid "Transaction ID:"
 msgstr "Identifiant de transaction :"
 
-#: ../dnf/cli/output.py:1871
+#: ../dnf/cli/output.py:1876
 msgid "Available additional history information:"
 msgstr "Informations additionnelles disponibles dans l'historique :"
 
-#: ../dnf/cli/output.py:1884
+#: ../dnf/cli/output.py:1889
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s : aucune donnée supplémentaire trouvée avec ce nom"
 
-#: ../dnf/cli/output.py:1997
+#: ../dnf/cli/output.py:2002
 msgid "Package        :"
 msgstr "Paquet             :"
 
-#: ../dnf/cli/output.py:1998
+#: ../dnf/cli/output.py:2003
 msgid "State          :"
 msgstr "État                 :"
 
-#: ../dnf/cli/output.py:2001
+#: ../dnf/cli/output.py:2006
 msgid "Size           :"
 msgstr "Taille               :"
 
-#: ../dnf/cli/output.py:2003
+#: ../dnf/cli/output.py:2008
 msgid "Build host     :"
 msgstr "Hôte de construction :"
 
-#: ../dnf/cli/output.py:2006
+#: ../dnf/cli/output.py:2011
 msgid "Build time     :"
 msgstr "Date de compilation  :"
 
-#: ../dnf/cli/output.py:2008
+#: ../dnf/cli/output.py:2013
 msgid "Packager       :"
 msgstr "Empaqueteur          :"
 
-#: ../dnf/cli/output.py:2010
+#: ../dnf/cli/output.py:2015
 msgid "Vendor         :"
 msgstr "Vendeur              :"
 
-#: ../dnf/cli/output.py:2012
+#: ../dnf/cli/output.py:2017
 msgid "License        :"
 msgstr "Licence              :"
 
-#: ../dnf/cli/output.py:2014
+#: ../dnf/cli/output.py:2019
 msgid "URL            :"
 msgstr "URL                  :"
 
-#: ../dnf/cli/output.py:2016
+#: ../dnf/cli/output.py:2021
 msgid "Source RPM     :"
 msgstr "source du RPM        :"
 
-#: ../dnf/cli/output.py:2019
+#: ../dnf/cli/output.py:2024
 msgid "Commit Time    :"
 msgstr "Heure de commit      :"
 
-#: ../dnf/cli/output.py:2021
+#: ../dnf/cli/output.py:2026
 msgid "Committer      :"
 msgstr "Committer            :"
 
-#: ../dnf/cli/output.py:2023
+#: ../dnf/cli/output.py:2028
 msgid "Reason         :"
 msgstr "Raison               :"
 
-#: ../dnf/cli/output.py:2027
+#: ../dnf/cli/output.py:2032
 msgid "From repo      :"
 msgstr "Depuis le dépôt      :"
 
-#: ../dnf/cli/output.py:2031
+#: ../dnf/cli/output.py:2036
 msgid "Installed by   :"
 msgstr "Installé par         :"
 
-#: ../dnf/cli/output.py:2035
+#: ../dnf/cli/output.py:2040
 msgid "Changed by     :"
 msgstr "Modifié par          :"
 
-#: ../dnf/cli/output.py:2066 ../dnf/cli/commands/updateinfo.py:328
+#: ../dnf/cli/output.py:2071 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "installé"
 
-#: ../dnf/cli/output.py:2067
+#: ../dnf/cli/output.py:2072
 msgid "an upgrade"
 msgstr "une mise à niveau"
 
-#: ../dnf/cli/output.py:2068
+#: ../dnf/cli/output.py:2073
 msgid "erased"
 msgstr "effacé"
 
-#: ../dnf/cli/output.py:2069
+#: ../dnf/cli/output.py:2074
 msgid "reinstalled"
 msgstr "réinstallé"
 
-#: ../dnf/cli/output.py:2070
+#: ../dnf/cli/output.py:2075
 msgid "a downgrade"
 msgstr "une rétrogradation"
 
-#: ../dnf/cli/output.py:2071
+#: ../dnf/cli/output.py:2076
 msgid "obsoleting"
 msgstr "obsolète"
 
-#: ../dnf/cli/output.py:2072
+#: ../dnf/cli/output.py:2077
 msgid "upgraded"
 msgstr "mise à niveau"
 
-#: ../dnf/cli/output.py:2073
+#: ../dnf/cli/output.py:2078
 msgid "obsoleted"
 msgstr "obsolète"
 
-#: ../dnf/cli/output.py:2074
+#: ../dnf/cli/output.py:2079
 msgid "downgraded"
 msgstr "rétrogradé"
 
-#: ../dnf/cli/output.py:2077
+#: ../dnf/cli/output.py:2082
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr "---> Le paquet %s.%s %s deviendra %s"
 
-#: ../dnf/cli/output.py:2084
+#: ../dnf/cli/output.py:2089
 msgid "--> Starting dependency resolution"
 msgstr "--> Début de la résolution des dépendances"
 
-#: ../dnf/cli/output.py:2089
+#: ../dnf/cli/output.py:2094
 msgid "--> Finished dependency resolution"
 msgstr "--> Résolution des dépendances terminées"
 
@@ -1282,13 +1296,13 @@ msgstr "Installe un ou plusieurs paquets sur votre système"
 #: ../dnf/cli/commands/remove.py:37 ../dnf/cli/commands/upgrade.py:42
 #: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/upgradeto.py:32
 #: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:232
-#: ../dnf/cli/commands/__init__.py:309
+#: ../dnf/cli/commands/__init__.py:309 ../dnf/cli/commands/mark.py:38
 msgid "PACKAGE"
 msgstr "PAQUET"
 
 #: ../dnf/cli/commands/install.py:97
 msgid "Unable to find a match."
-msgstr ""
+msgstr "Impossible de trouver une correspondance."
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "reinstall a package"
@@ -1348,7 +1362,8 @@ msgstr "Attention : le groupe %s n'existe pas."
 #, python-format
 msgid "Warning: No groups match:\n"
 "   %s"
-msgstr ""
+msgstr "Avertissement :  aucun groupe ne correspond :\n"
+"   %s"
 
 #: ../dnf/cli/commands/group.py:199
 msgid "Available environment groups:"
@@ -1379,38 +1394,38 @@ msgstr "Groupes de langue disponibles :"
 msgid "Environments marked installed: %s"
 msgstr "Environnements marqués comme installés : %s"
 
-#: ../dnf/cli/commands/group.py:254
+#: ../dnf/cli/commands/group.py:255
 #, python-format
 msgid "Groups marked installed: %s"
 msgstr "Groupes marqués comme installés : %s"
 
-#: ../dnf/cli/commands/group.py:271
+#: ../dnf/cli/commands/group.py:272
 #, python-format
 msgid "Environments marked removed: %s"
 msgstr "Environnements marqués comme supprimés : %s"
 
-#: ../dnf/cli/commands/group.py:274
+#: ../dnf/cli/commands/group.py:276
 #, python-format
 msgid "Groups marked removed: %s"
 msgstr "Groupes marqués comme supprimés : %s"
 
-#: ../dnf/cli/commands/group.py:303
+#: ../dnf/cli/commands/group.py:306
 msgid "Installed Groups:"
 msgstr "Groupes installés :"
 
-#: ../dnf/cli/commands/group.py:310
+#: ../dnf/cli/commands/group.py:313
 msgid "Installed Language Groups:"
 msgstr "Groupes de langues installés :"
 
-#: ../dnf/cli/commands/group.py:317
+#: ../dnf/cli/commands/group.py:320
 msgid "Available Groups:"
 msgstr "Groupes disponibles :"
 
-#: ../dnf/cli/commands/group.py:324
+#: ../dnf/cli/commands/group.py:327
 msgid "Available Language Groups:"
 msgstr "Groupes de langues disponibles :"
 
-#: ../dnf/cli/commands/group.py:372
+#: ../dnf/cli/commands/group.py:377
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
 msgstr "Sous-commande de groupe invalide : %s."
@@ -1639,6 +1654,8 @@ msgstr "Pour diagnostiquer le problème, essayez de lancer : « %s »."
 #, python-format
 msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
 msgstr ""
+"La base RPMDB est probablement corrompue, l'exécution de « %s » pourra "
+"résoudre ce problème."
 
 #: ../dnf/cli/commands/__init__.py:53
 msgid " Mini usage:\n"
@@ -1660,6 +1677,22 @@ msgid ""
 "\n"
 "For more information contact your distribution or package provider.\n"
 msgstr ""
+"\n"
+"Vous avez activé la vérification des paquets via clés GPG. C'est une bonne "
+"chose.\n"
+"Cependant, vous n'avez aucune clé GPG publique installée. Vous devez "
+"télécharger\n"
+"et installer les clés pour les paquets que vous souhaitez installer.. \n"
+"Vous pouvez le faire en lançant la commande :\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Vous pouvez aussi spécifier l'URL de la clé que vous souhaitez utiliser\n"
+"pour un dépôt dans l'option « gpgkey » dans une section de configuration du\n"
+"dépôt et DNF l'installera pour vous.\n"
+"\n"
+"Pour plus de renseignements, contactez le fournisseur de paquets de votre "
+"distribution.\n"
 
 #: ../dnf/cli/commands/__init__.py:83
 #, python-format
@@ -1823,7 +1856,7 @@ msgstr "  rpm DB :"
 
 #: ../dnf/cli/commands/__init__.py:1163
 msgid "  DNF DB :"
-msgstr ""
+msgstr "  DNF DB :"
 
 #: ../dnf/cli/commands/__init__.py:1182
 #, python-format
@@ -1923,6 +1956,33 @@ msgstr "tout"
 msgid "available"
 msgstr "disponible"
 
+#: ../dnf/cli/commands/mark.py:37
+msgid "Mark or unmark installed packages as installed by user."
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:50
+#, python-format
+msgid "%s marked as user installed."
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:55
+#, python-format
+msgid "%s unmarked as user installed."
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:66
+msgid "Error: Need a package or list of packages"
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:91
+msgid "Error:"
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:93
+#, python-format
+msgid "Package %s is not installed."
+msgstr ""
+
 #: ../dnf/crypto.py:81
 #, python-format
 msgid ""
@@ -1936,28 +1996,30 @@ msgstr ""
 "Empreinte : %s\n"
 "Provenance : %s"
 
-#: ../dnf/base.py:108
+#: ../dnf/base.py:109
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, désactivation."
 
-#: ../dnf/base.py:284
+#: ../dnf/base.py:289
 msgid ""
 "The downloaded packages were saved in cache till the next successful "
 "transaction."
 msgstr ""
+"Les paquets téléchargés ont été enregistrés dans le cache jusqu'à la "
+"prochaine transaction réussie."
 
-#: ../dnf/base.py:286
+#: ../dnf/base.py:291
 #, python-format
 msgid "You can remove cached packages by executing '%s'"
-msgstr ""
+msgstr "Vous pouvez supprimer les paquets en cache en exécutant « %s »"
 
-#: ../dnf/base.py:346
+#: ../dnf/base.py:351
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "tsflag invalide dans le fichier de configuration : %s"
 
-#: ../dnf/base.py:399
+#: ../dnf/base.py:403
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Échec d'ajout du fichier de groupes pour le dépôt : %s - %s"
@@ -1966,157 +2028,163 @@ msgstr "Échec d'ajout du fichier de groupes pour le dépôt : %s - %s"
 msgid "Running transaction check"
 msgstr "Test de la transaction en cours"
 
-#: ../dnf/base.py:555
+#: ../dnf/base.py:562
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 "Erreur : vérification de transaction contre résolution des dépendances :"
 
-#: ../dnf/base.py:561
+#: ../dnf/base.py:568
 msgid "Transaction check succeeded."
 msgstr "La vérification de la transaction a réussi."
 
-#: ../dnf/base.py:564
+#: ../dnf/base.py:571
 msgid "Running transaction test"
 msgstr "Lancement de la transaction de test"
 
-#: ../dnf/base.py:576
+#: ../dnf/base.py:583
 msgid "Transaction check error:\n"
 msgstr "Erreur du contrôle de transaction\n"
 
-#: ../dnf/base.py:583
+#: ../dnf/base.py:590
 msgid "Transaction test succeeded."
 msgstr "Transaction de test réussie."
 
-#: ../dnf/base.py:596
+#: ../dnf/base.py:603
 msgid "Running transaction"
 msgstr "Exécution de la transaction"
 
-#: ../dnf/base.py:620
+#: ../dnf/base.py:625
 msgid "Disk Requirements:\n"
 msgstr "Besoins en espace disque :\n"
 
-#: ../dnf/base.py:627
+#: ../dnf/base.py:632
 msgid "Error Summary\n"
 "-------------\n"
 msgstr "Résumé des erreurs\n"
 "-------------\n"
 
-#: ../dnf/base.py:689
+#: ../dnf/base.py:694
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Attention : scriptlet ou autres erreurs non fatales apparues pendant la "
 "transaction."
 
-#: ../dnf/base.py:694
+#: ../dnf/base.py:699
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Impossible d'obtenir le verrou de transaction (utilisateur : %s)."
 
-#: ../dnf/base.py:697 ../dnf/base.py:707
+#: ../dnf/base.py:702 ../dnf/base.py:712
 msgid "Could not run transaction."
 msgstr "Impossible d'exécuter la transaction."
 
-#: ../dnf/base.py:704
+#: ../dnf/base.py:709
 msgid "Transaction couldn't start:"
 msgstr "La transaction n'a pas pu démarrer :"
 
-#: ../dnf/base.py:716
+#: ../dnf/base.py:721
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Échec de la suppression du fichier de transaction %s"
 
-#: ../dnf/base.py:768
+#: ../dnf/base.py:773
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s est censé être installé, mais ne l'est pas !"
 
-#: ../dnf/base.py:829
+#: ../dnf/base.py:834
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s est censé être supprimé, mais ne l'est pas !"
 
-#: ../dnf/base.py:907
+#: ../dnf/base.py:912
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta RPMs a réduit la taille des mises à jour de %.1f Mio à %.1f Mio (%d."
 "1%%  économisés)"
 
-#: ../dnf/base.py:954
+#: ../dnf/base.py:960
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "La clé publique pour %s n'est pas installée"
 
-#: ../dnf/base.py:958
+#: ../dnf/base.py:964
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problème à l'ouverture du paquet %s"
 
-#: ../dnf/base.py:966
+#: ../dnf/base.py:972
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "La clé publique pour %s n'est pas de confiance"
 
-#: ../dnf/base.py:970
+#: ../dnf/base.py:976
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Le paquet %s n'est pas signé"
 
-#: ../dnf/base.py:988
+#: ../dnf/base.py:994
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Impossible de supprimer %s"
 
-#: ../dnf/base.py:992
+#: ../dnf/base.py:998
 #, python-format
 msgid "%s removed"
 msgstr "%s supprimé"
 
-#: ../dnf/base.py:1311
+#: ../dnf/base.py:1333
 msgid "No groups marked for removal."
-msgstr ""
+msgstr "Aucun groupe marqué pour suppression."
 
-#: ../dnf/base.py:1367 ../dnf/base.py:1379
+#: ../dnf/base.py:1397 ../dnf/base.py:1409
 msgid "no package matched"
-msgstr ""
+msgstr "aucun paquet correspondant"
 
-#: ../dnf/base.py:1418
+#: ../dnf/base.py:1448
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
-msgstr ""
+msgstr "Le paquet %s n'est pas installé, impossible de le rétrograder."
 
-#: ../dnf/base.py:1425
+#: ../dnf/base.py:1455
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
+"Le paquet %s est déjà installé dans une version inférieure, impossible de le "
+"rétrograder."
 
-#: ../dnf/base.py:1444
+#: ../dnf/base.py:1474
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
-msgstr ""
+msgstr "Impossible de réinstaller le paquet non-installé %s."
 
-#: ../dnf/base.py:1460 ../dnf/base.py:1487
+#: ../dnf/base.py:1490 ../dnf/base.py:1517
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Impossible de mettre à jour le paquet non-installé %s."
 
-#: ../dnf/base.py:1467
+#: ../dnf/base.py:1497
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
+"Le paquet %s est déjà installé dans une version ultérieure, impossible de le "
+"mettre à jour."
 
-#: ../dnf/base.py:1532
+#: ../dnf/base.py:1562
 #, python-format
 msgid "No package %s installed."
 msgstr "Pas de paquet %s à installer"
 
-#: ../dnf/base.py:1643
+#: ../dnf/base.py:1673
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
+"La version la plus ancienne du paquet %s est déjà installée, impossible de "
+"le rétrograder."
 
-#: ../dnf/base.py:1779
+#: ../dnf/base.py:1809
 #, python-format
 msgid "\n"
 "\n"
@@ -2130,25 +2198,25 @@ msgstr ""
 " Le paquet en erreur est : %s\n"
 " Les clés GPG sont configurés comme : %s\n"
 
-#: ../dnf/base.py:1793
+#: ../dnf/base.py:1823
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "La clé GPG %s (0x%s) est déjà installée"
 
-#: ../dnf/base.py:1827
+#: ../dnf/base.py:1857
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "L'import de la clé à échoué (code %d)"
 
-#: ../dnf/base.py:1829
+#: ../dnf/base.py:1859
 msgid "Key imported successfully"
 msgstr "La clé a été importée avec succès"
 
-#: ../dnf/base.py:1833
+#: ../dnf/base.py:1863
 msgid "Didn't install any keys"
 msgstr "Toutes les clés n'ont pas été installées"
 
-#: ../dnf/base.py:1836
+#: ../dnf/base.py:1866
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2159,12 +2227,12 @@ msgstr ""
 "incorrectes pour ce paquet.\n"
 "Vérifiez que les URL des clés pour ce dépôt soient correctes."
 
-#: ../dnf/base.py:1846
+#: ../dnf/base.py:1876
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 "L'import de la ou des clés n'a pas résolu le problème, clés incorrectes ?"
 
-#: ../dnf/base.py:1873
+#: ../dnf/base.py:1903
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Le paquet %s est déjà installé, ignorer"
