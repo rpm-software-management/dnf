@@ -1,4 +1,5 @@
 [Unit]
+After=akmods.service akmods-shutdown.service
 Description=dnf makecache
 
 [Service]
