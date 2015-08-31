@@ -218,6 +218,11 @@ class BaseCli(dnf.Base):
             # Check GPG signatures
             self.gpgsigcheck(downloadpkgs)
 
+        if self.downloadonly:
+            msg = _('exiting because "Download Only" specified')
+            logger.info(msg)
+            return
+
         if not isinstance(display, collections.Sequence):
             display = [display]
         display = [output.CliTransactionDisplay()] + list(display)
@@ -1030,6 +1035,8 @@ class Cli(object):
 
         if opts.debugsolver:
             self.base.conf.debug_solver = True
+
+        self.base.downloadonly = opts.downloadonly
 
         self.base.plugins.run_config()
 

@@ -113,14 +113,16 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
             format_time((self.total_size - self.done_size) / self.rate) if self.rate else '--:--')
         left = _term_width() - len(msg)
         bl = (left - 7)//2
-        if bl > 8:
+        # the progressbar is way too big when installing in parallel
+        indent = int(bl / 2) if _term_width() <= 120 else 0
+        if (bl - indent) > 8:
             # use part of the remaining space for progress bar
             pct = self.done_size*100 // self.total_size
-            n, p = divmod(self.done_size*bl*2 // self.total_size, 2)
+            n, p = divmod(self.done_size*(bl - indent)*2 // self.total_size, 2)
             bar = '='*n + '-'*p
-            msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
+            msg = '%3d%% [%-*s]%s' % (pct, bl - indent, bar, msg)
             left -= bl + 7
-        self.fo.write('%-*.*s%s' % (left, left, text, msg))
+        self.fo.write('%-*.*s%s' % (left + indent, left + indent, text, msg))
         self.fo.flush()
 
     def end(self, payload, status, err_msg):

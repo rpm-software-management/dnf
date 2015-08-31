@@ -38,6 +38,14 @@ class DowngradeTo(support.ResultTestCase):
         self.assertCountEqual(map(str, removed),
                               ('tour-5-0.noarch',))
 
+    def test_downgrade_to_wildcard_name(self):
+        self.base.downgrade_to('tour*')
+        (installed, removed) = self.installed_removed(self.base)
+        self.assertCountEqual(map(str, installed),
+                              ('tour-4.9-1.noarch',))
+        self.assertCountEqual(map(str, removed),
+                              ('tour-5-0.noarch',))
+
     def test_downgrade_to_version(self):
         self.base.downgrade_to('tour-4.6')
         (installed, removed) = self.installed_removed(self.base)
