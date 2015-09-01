@@ -139,6 +139,7 @@ def download_payloads(payloads, drpm):
         if err == 'Already downloaded':
             errs.skipped.add(pkg)
             continue
+        pkg.repo.md_expire_cache()
         errs.irrecoverable[pkg] = [err]
 
     return errs
