@@ -87,6 +87,7 @@ class EmailEmitter(Emitter):
     def commit(self):
         subj, body = self._prepare_msg()
         message = dnf.pycomp.email_mime(body)
+        message.set_charset('utf-8')
         email_from = self._conf.email_from
         email_to = self._conf.email_to
         message['Subject'] = subj
