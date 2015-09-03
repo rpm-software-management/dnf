@@ -67,6 +67,13 @@ class Package(hawkey.Package):
         return self.reponame == hawkey.SYSTEM_REPO_NAME
 
     @property
+    def from_repo(self):
+        yumdb_info = self.base.yumdb.get_package(self) if self.from_system else {}
+        if 'from_repo' in yumdb_info:
+            return '@'+yumdb_info.from_repo
+        return self.reponame
+
+    @property
     def header(self):
         return dnf.rpm.header(self.localPkg())
 
