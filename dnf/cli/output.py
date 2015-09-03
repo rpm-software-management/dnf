@@ -373,7 +373,7 @@ class Output(object):
             columns = (-40, -22, -16) # Old default
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((na, pkg.evr, pkg.reponame), columns, hi_cols)
+        columns = zip((na, pkg.evr, pkg.from_repo), columns, hi_cols)
         print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
