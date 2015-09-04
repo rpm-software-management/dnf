@@ -285,8 +285,8 @@ configuration.
 ``include``
     list
 
-    Include packages of this repository, specified by a name or a glob and separated by a comma, from all operations.
-    Inverse of :ref:`exclude <exclude-label>`, DNF will exclude any package in the repo. that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'exclude=*.i386' and 'include=python*' then only packages starting with python that do not have an i386 arch. will be seen by DNF in this repo.
+    Include packages of this repository, specified by a name or a glob and separated by a comma, in all operations.
+    Inverse of :ref:`exclude <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'exclude=*.i386' and 'include=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
     Can be disabled using ``--disableexcludes`` command line switch.
 
 .. _ip-resolve-label:
