@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
+import argparse
 import dnf.cli.commands
 import dnf.cli.commands.group
 import dnf.cli.commands.install
@@ -85,6 +86,10 @@ class InstallCommandTest(support.ResultTestCase):
         base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
         base.init_sack()
         self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
+        self._cmd.opts = argparse.Namespace()
+        self._cmd.opts.filenames = []
+        self._cmd.opts.grp_specs = []
+        self._cmd.opts.pkg_specs = []
 
     def test_configure(self):
         cli = self._cmd.cli
@@ -94,7 +99,8 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_group(self):
         """Test whether a group is installed."""
-        self._cmd.run(['@Solid Ground'])
+        self._cmd.opts.grp_specs = ['Solid Ground']
+        self._cmd.run([])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -106,10 +112,11 @@ class InstallCommandTest(support.ResultTestCase):
     def test_run_group_notfound(self):
         """Test whether it fails if the group cannot be found."""
         stdout = dnf.pycomp.StringIO()
+        self._cmd.opts.grp_specs = ['non-existent']
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self._cmd.run, ['@non-existent'])
+                              self._cmd.run, [])
 
         self.assertEqual(stdout.getvalue(),
                          "Warning: Group 'non-existent' does not exist.\n")
@@ -118,7 +125,8 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_package(self):
         """Test whether a package is installed."""
-        self._cmd.run(['lotus'])
+        self._cmd.opts.pkg_specs = ['lotus']
+        self._cmd.run([])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -130,10 +138,11 @@ class InstallCommandTest(support.ResultTestCase):
     def test_run_package_notfound(self):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
+        self._cmd.opts.pkg_specs = ['non-existent', 'lotus']
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self._cmd.run, ['non-existent', 'lotus'])
+                              self._cmd.run, [])
 
         self.assertEqual(stdout.getvalue(),
                          'No package non-existent available.\n')
