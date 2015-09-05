@@ -178,14 +178,15 @@ class OptionParser:
         # has set something or whether we are getting a default.
 
         opt_parser = argparse.ArgumentParser(add_help=False)
-        opt_parser.add_argument('--allowerasing', action='store_true',
-                                default=None,
-                                help=_('allow erasing of installed packages to '
-                                'resolve dependencies'))
-        opt_parser.add_argument("-b", "--best", action="store_true",
-                                default=None,
-                                help=_("try the best available package versions
-                                       " in transactions."))
+        opt_parser.add_argument(
+            '--allowerasing', action='store_true',
+            default=None,
+            help=_('allow erasing of installed packages to '
+                   'resolve dependencies'))
+        opt_parser.add_argument(
+            "-b", "--best", action="store_true",
+            default=None,
+            help=_("try the best available package versions in transactions."))
         opt_parser.add_argument("-C", "--cacheonly", dest="cacheonly",
                                 action="store_true", default=None,
                                 help=_("run entirely from system cache, "
@@ -280,6 +281,8 @@ class OptionParser:
         # but first after plugins are loaded.
         opt_parser.add_argument('-h', '--help', action="store_true",
                                 help="show help")
+        opt_parser.add_argument('--help-cmd', action="store_true",
+                                help="show command help")
         self.argparser = argparse.ArgumentParser(
             self, add_help=False,
             usage="dnf [options] COMMAND", parents=[opt_parser])
@@ -323,6 +326,7 @@ class OptionParser:
                                                **kwargs)
                 if getattr(cmd, "set_argparse_subparser", None):
                     cmd.set_argparse_subparser(parser)
+                cmd.parser = parser
 
 
     def get_usage(self):
