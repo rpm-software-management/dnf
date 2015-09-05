@@ -1003,7 +1003,19 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        # show help if the user requests it
+        # subparsers needs to be added before printing the command help
+        self.optparser.init_subparser_commands(set(self.cli_commands.values()))
+
+        # temporary backwards compatible help-cmd help for commands
+        if (opts.help or opts.help_cmd) and len(cmds):
+            command_cls = self.cli_commands.get(cmds[0])
+            if not command_cls:
+                self.optparser.argparser.usage = self.optparser.get_usage()
+                self.optparser.argparser.print_help()
+                raise CliError
+            print(command_cls.parser.format_help())
+            sys.exit(0)
+        # show the global dnf help if the user requests it
         # this is done here, because we first have the full
         # usage info after the plugins are loaded.
         if opts.help:
@@ -1012,8 +1024,6 @@ class Cli(object):
             self.optparser.argparser.usage = self.optparser.get_usage()
             self.optparser.argparser.print_help()
             sys.exit(0)
-
-        self.optparser.init_subparser_commands(set(self.cli_commands.values()))
 
         # parse again with all command subparsers set
         opts, cmds = self.optparser.argparser.parse_known_args(args)
