@@ -88,6 +88,10 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     Usage string for the command used as displayed by the CLI help.
 
+  .. staticmethod:: set_argparse_subparser(parser)
+
+    Static method used for argparser subparser setup of command options. Usage and description are added automatically from attributes of the class. When this method is implemented, ``opts`` and ``parser`` will be added as attributes of the object maintaining :class:`argparse.Namespace` of parsed options and subparser of the command respectively.
+
   .. method:: configure(args)
 
     Perform any configuration on the command itself and on the CLI. `args` is a list of additional arguments to the command. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>` it has on the way the :class:`.Sack` will be initialized. Default no-op implementation is provided.
