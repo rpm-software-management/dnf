@@ -818,7 +818,7 @@ class YumConf(BaseConfig):
 
     rpmverbosity = Option('info')
     strict = BoolOption(True)  # :api
-    clean_requirements_on_remove = BoolOption(False)
+    clean_requirements_on_remove = BoolOption(True)
     history_list_view = SelectionOption('commands',
                                         ('single-user-commands', 'users',
                                          'commands'),
