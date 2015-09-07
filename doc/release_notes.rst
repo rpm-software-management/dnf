@@ -21,6 +21,16 @@
 
 .. contents::
 
+======================
+Upcoming Release Notes
+======================
+
+API additions in 1.2.0:
+
+Implemented ``--repo`` :doc:`configuration <conf_ref>` option.
+
+Added set_argparse_subparser static method for defining command subparser into :doc:`Command class <api_cli>`. This is the preferred way for plugins to deal with command line arguments.
+
 ===================
 1.1.2 Release Notes
 ===================
