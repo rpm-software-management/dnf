@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.1.1
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -250,6 +250,10 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Sep 08 2015 Michal Luscon <mluscon@redhat.com> 1.1.1-2
+- fix access to demands (RhBug:1259194) (Jan Silhan)
+- make clean_requiremets_on_remove=True (RhBug:1260280) (Jan Silhan)
+
 * Mon Aug 31 2015 Michal Luscon <mluscon@redhat.com> 1.1.1-1
 - Fixed typo (RhBug:1249319) (Adam Salih)
 - fixed downgrade with wildcard (RhBug:1234763) (Adam Salih)
