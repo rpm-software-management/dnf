@@ -978,7 +978,7 @@ class Output(object):
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
             (n, a, e, v, r) = po.pkgtup
             evr = po.evr
-            repoid = po.reponame
+            repoid = po.from_repo
             size = format_number(po.size)
 
             if a is None: # gpgkeys are weird
