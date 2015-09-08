@@ -16,12 +16,8 @@ Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
 URL:		https://github.com/rpm-software-management/dnf
-# The Source0 tarball can be generated using following commands:
-# git clone http://github.com/rpm-software-management/dnf.git
-# cd dnf/package
-# ./archive
-# tarball will be generated in $HOME/rpmbuild/sources/
-Source0:    http://rpm-software-management.fedorapeople.org/dnf-%{version}.tar.gz
+# Into distgit it is always uploaded only -1 release of sources
+Source0:    https://github.com/rpm-software-management/dnf/archive/%{name}-%{version}-1.tar.gz
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
