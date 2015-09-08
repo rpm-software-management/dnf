@@ -90,11 +90,6 @@ def main(args):
         logger.critical(e.value)
         return 1
     except dnf.exceptions.DepsolveError as e:
-        ex_Error(e)
-        demands = self.cli.demands
-        if not demands.allow_erasing:
-            logger.info(_("(try to add '--allowerasing' to command line to "
-                          "replace conflicting packages)"))
         return 1
     except dnf.exceptions.Error as e:
         return ex_Error(e)
@@ -145,7 +140,15 @@ def _main(base, args):
         return ex_IOError(e)
 
     if cli.demands.resolving:
-        ret = resolving(cli, base)
+        try:
+            ret = resolving(cli, base)
+        except dnf.exceptions.DepsolveError as e:
+            ex_Error(e)
+            if not cli.demands.allow_erasing:
+                logger.info(_("(try to add '%s' to command line to"
+                              " replace conflicting packages)"),
+                            "--allowerasing")
+            raise
         if ret:
             return ret
 
