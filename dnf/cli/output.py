@@ -2227,14 +2227,20 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             fmt = "\r  %s: %s   " + done
             wid2 = full_pnl
         elif progress:
-            bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
+            if marks > 5:
+                bar = fmt_bar % (self.mark * int(marks * (percent / 100.0)), )
+            else:
+                bar = ""
             fmt = "\r  %s: %s " + bar + " " + done
             wid2 = pnl
         elif percent == 100:
             fmt = "  %s: %s   " + done
             wid2 = full_pnl
         else:
-            bar = fmt_bar % (self.mark * marks, )
+            if marks > 5:
+                bar = fmt_bar % (self.mark * marks, )
+            else:
+                bar = ""
             fmt = "  %s: %s " + bar + " " + done
             wid2 = pnl
         return fmt, wid1, wid2
