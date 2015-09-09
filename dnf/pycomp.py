@@ -47,6 +47,11 @@ if PY3:
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
 
+    def gettext_setup(t):
+        _ = t.gettext
+        P_ = t.ngettext
+        return (_, P_)
+
     # string helpers
     def is_py2str_py3bytes(o):
         return isinstance(o, bytes)
@@ -75,6 +80,11 @@ else:
     filterfalse = itertools.ifilterfalse
     base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote
+
+    def gettext_setup(t):
+        _ = t.ugettext
+        P_ = t.ungettext
+        return (_, P_)
 
     # string helpers
     def is_py2str_py3bytes(o):
