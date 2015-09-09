@@ -2120,7 +2120,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         self.output = True
 
         # for a progress bar
-        self.mark = "#"
+        self.mark = "="
         self.marks = 22
 
     def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
