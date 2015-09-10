@@ -334,7 +334,7 @@ class GroupCommand(commands.Command):
         res = q.get(*patterns)
         cnt = 0
         for grp in res.groups:
-            cnt += self.base.group_upgrade(grp.id)
+            cnt += self.base.group_upgrade(grp)
         if not cnt:
             msg = _('No packages marked for upgrade.')
             raise dnf.cli.CliError(msg)
