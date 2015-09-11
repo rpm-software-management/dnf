@@ -187,7 +187,7 @@ def main(args):
     cli.configure(args)
     try:
         cli.run()
-    except dnf.exceptions.Exception:
+    except dnf.exceptions.Error:
         sys.exit(0)
 
 if __name__ == "__main__":
