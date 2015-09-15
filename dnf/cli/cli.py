@@ -745,6 +745,10 @@ class Cli(object):
                 self.base.repos.add(repofp)
                 logger.info(_("Added %s repo from %s") % (label, path))
 
+        if opts.repo:
+            opts.repos_ed.insert(0, ("*", "disable"))
+            opts.repos_ed.extend([(r, "enable") for r in opts.repo])
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
