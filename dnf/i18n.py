@@ -26,6 +26,7 @@ import os
 import signal
 import sys
 import unicodedata
+import readline  # workaround of raw_input() bug (RhBug:1258364)
 
 """
 Centralize i18n stuff here. Must be unittested.
@@ -283,3 +284,4 @@ def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
 # setup translation
 t = gettext.translation('dnf', fallback=True)
 _, P_ = gettext_setup(t)
+
