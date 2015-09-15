@@ -213,8 +213,9 @@ Options
     Specify a path or url to a repository (same path as in a baseurl) to add to
     the repositories for this query. This option can be used multiple times. The
     repo label for the repository is specified by <repo>. If you want to view
-    only the packages from this repository, combine this with options
-    ``--disablerepo=*`` and ``--enablerepo=<repo>``.
+    only the packages from this repository, combine this with
+    with ``--repo=<repo>`` or ``--disablerepo="*"`` switches.
+    The repo label for the repository is specified by <repo>.
 
 ``--repo=<repoid>``
     Enable just specific repositories by an id or a glob. Can be used multiple
