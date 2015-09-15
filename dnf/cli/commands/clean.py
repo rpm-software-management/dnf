@@ -141,7 +141,7 @@ class CleanCommand(commands.Command):
 
     aliases = ('clean',)
     summary = _("Remove cached data")
-    usage = "[packages|metadata|dbcache|plugins|expire-cache|all]"
+    usage = "[packages|metadata|dbcache|plugins|expire-cache|rpmdb|all]"
 
 
     def clean(self, userlist):
