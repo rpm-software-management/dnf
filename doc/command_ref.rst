@@ -139,7 +139,7 @@ Options
     Specify a path or url to a repository (same path as in a baseurl) to add to
     the repositories for this query. This option can be used multiple times.
     If you want to view only the packages from this repository combine this
-    with ``--disablerepo``/``--enablerepo``. The repo label for the repository
+    with ``--repo=<repo>`` or ``--disablerepo="*"`` switches. The repo label for the repository
     is specified by <repo>.
 
 ``--nogpgcheck``
