@@ -140,6 +140,7 @@ class CliTest(TestCase):
 
     def test_configure_repos(self, _):
         opts = Namespace()
+        opts.repo = []
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
         opts.repofrompath = {}
@@ -160,6 +161,7 @@ class CliTest(TestCase):
     def test_configure_repos_expired(self, _):
         """Ensure that --cacheonly beats the expired status."""
         opts = Namespace()
+        opts.repo = []
         opts.repos_ed = []
         opts.cacheonly = True
         opts.repofrompath = {}
