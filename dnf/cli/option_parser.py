@@ -227,9 +227,16 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--enablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        main_parser.add_argument("--disablerepo", action=self._RepoCallback,
+        repo_group = main_parser.add_mutually_exclusive_group()
+        repo_group.add_argument("--disablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
+        repo_group.add_argument('--repo', metavar='[repo]', action='append',
+                          help=_('enable just specific repositories by an id or a glob, '
+                                 'can be specified multiple times'))
+        #  compat: erase in 2.0.0 --repoid hidden compatibility alias for --repo
+        repo_group.add_argument('--repoid', dest='repo', action='append',
+                          help=argparse.SUPPRESS)
         main_parser.add_argument("-x", "--exclude", default=[], dest='excludepkgs',
                           action=self._SplitCallback,
                           help=_("exclude packages by name or glob"),
