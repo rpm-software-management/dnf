@@ -1,0 +1,214 @@
+..
+  Copyright (C) 2015  Red Hat, Inc.
+
+  This copyrighted material is made available to anyone wishing to use,
+  modify, copy, or redistribute it subject to the terms and conditions of
+  the GNU General Public License v.2, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY expressed or implied, including the implied warranties of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+  Public License for more details.  You should have received a copy of the
+  GNU General Public License along with this program; if not, write to the
+  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+  02110-1301, USA.  Any Red Hat trademarks that are incorporated in the
+  source code or documentation are not subject to the GNU General Public
+  License and may only be used or replicated with the express permission of
+  Red Hat, Inc.
+
+
+########
+stack-ci
+########
+
+stack-ci is a script that allow continuous testing of the DNF stack.
+
+This serves as an ad hoc solution to where to store routines that belong
+to all the components of the stack. It would be nice to merge them into
+the respective components.
+
+
+========
+Features
+========
+
+Refer to the test suite for the complete list of all the features. I
+have, nevertheless, mentioned few of them below in hope of gaining your
+attention:
+
+- create Copr projects
+- add repositories to Copr projects
+- build RPMs of tito-enabled projects
+- build RPMs of librepo project forks
+- build RPMs of libcomps project forks
+- configure release numbers of librepo and libcomps RPMs
+
+
+=======
+License
+=======
+
+The project is licensed under the copyleft GNU General Public License;
+either version 2, or (at your option) any later version. See the
+COPYING file found in the top-level directory of this distribution and
+at https://github.com/rpm-software-management/dnf. No part of stack-ci,
+including this file, may be copied, modified, propagated, or distributed
+except according to the terms contained in the COPYING file.
+
+
+============
+Requirements
+============
+
+stack-ci works on Python 2.7.
+
+Following executables and Python modules are required to run stack-ci:
+
+- `git executable <http://git-scm.com/>`_
+- `python executable <http://www.python.org/>`_
+- `rpmbuild executable <http://www.rpm.org/>`_
+- sh executable
+- `tito executable <http://rm-rf.ca/tito>`_
+- `xz executable <http://tukaani.org/xz/>`_
+- `copr Python module <https://fedorahosted.org/copr/>`_
+- `rpm Python module <http://www.rpm.org/>`_
+
+Following additional executables and Python modules are required to run
+a test suite:
+
+- `behave Python module <http://github.com/behave/behave/>`_
+- `pygit2 Python module <http://www.pygit2.org/>`_
+
+
+============
+Installation
+============
+
+Install the requirements mentioned above and copy the distribution into
+any directory you like.
+
+
+=============
+Jenkins Setup
+=============
+
+------------
+Installation
+------------
+
+#. ``sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo`` [CIT1]_
+
+#. ``sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key`` [CIT1]_
+
+#. ``sudo yum install jenkins`` [CIT1]_
+
+#. ``sudo service jenkins start`` [CIT1]_
+
+#. http://localhost:8080/pluginManager/available
+
+#. install *GIT plugin*
+
+#. (if needed) install *Multiple SCMs plugin*
+
+.. [CIT1] https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Red+Hat+distributions
+
+
+------------
+Job creation
+------------
+
+#. http://localhost:8080/view/All/newJob
+
+#. Item name: ``dnf-nightly-fedora-rawhide``
+
+#. Freestyle project
+
+#. OK
+
+
+-----------------
+Job configuration
+-----------------
+
+#. Project name: ``dnf-nightly-fedora-rawhide``
+
+#. Description: ``Nightly builds of DNF for Fedora Rawhide.``
+
+#. GitHub project: ``https://github.com/rpm-software-management/dnf/``
+
+#. (if DNF):
+
+    #. Source Code Management: *Git*
+
+    #. Repository URL: ``https://github.com/rpm-software-management/dnf.git``
+
+#. (else):
+
+    #. Source Code Management: *Multiple SCMs*
+
+        #. Add SCM: *GIT*
+
+            #. Repository URL: ``https://github.com/rpm-software-management/dnf-plugins-core.git``
+
+            #. Add: *Check out to a sub-directory*: ``dnf-plugins-core``
+
+        #. Add SCM: *GIT*
+
+            #. Repository URL: ``https://github.com/rpm-software-management/dnf.git``
+
+            #. Add: *Check out to a sub-directory*: ``dnf``
+
+#. Build Triggers:
+
+    #. (optional) Trigger builds remotely (e.g., from scripts): *check*
+
+        #. Authentication Token: ``GIT_PUSH_NOTIFY``
+
+    #. Poll SCM: *check*
+
+        #. Schedule: ``H/20 * * * *``
+
+#. (if DNF):
+
+    #. Build: Add build step: *Execute shell*::
+
+        #!/usr/bin/env bash
+        python2 ci/stackci.py build dnf-plugins-core-nightly-fedora-rawhide tito
+
+#. (else):
+
+    #. Build: Add build step: *Execute shell*::
+
+        #!/usr/bin/env bash
+        cd dnf-plugins-core
+        python2 ../dnf/ci/stackci.py build dnf-plugins-core-nightly-fedora-rawhide tito
+
+#. (optional) Post-build Actions
+
+    #. Add post-build action: *Archive the artifacts*
+
+        #. Files to archive: ``*.log``
+
+    #. Add post-build action: *Build other projects*
+
+        #. Projects to build: ``dnf-plugins-core-nightly-fedora-rawhide``
+
+    #. Email Notification
+
+
+==========
+Copr Setup
+==========
+
+
+---------
+API token
+---------
+
+#. follow the instructions at https://copr.fedoraproject.org/api/
+
+
+------
+Server
+------
+
+#. Create a new project ``dnf-nightly-fedora-rawhide`` (e.g. ``python2 stackci.py setup --add-repository copr://rpmsoftwaremanagement/hawkey-nightly-fedora-rawhide --add-repository copr://rpmsoftwaremanagement/librepo-nightly-fedora-rawhide --add-repository copr://rpmsoftwaremanagement/libcomps-nightly-fedora-rawhide rawhide dnf-nightly-fedora-rawhide``)
