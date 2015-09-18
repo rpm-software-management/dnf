@@ -113,15 +113,18 @@ def autoremove_pkgs(query, sack, yumdb, debug_solver=False):
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
-    try:
-        reldeps = list(map(functools.partial(hawkey.Reldep, sack), patterns))
-    except hawkey.ValueException:
-        return sack.query().filter(empty=True)
+
     q = sack.query()
     flags = []
     if ignore_case:
         flags.append(hawkey.ICASE)
-    q.filterm(*flags, provides=reldeps)
+
+    if any(map(dnf.util.is_glob_pattern, patterns)):
+        kw = 'provides__glob'
+    else:
+        kw = 'provides'
+
+    q.filterm(*flags, **{kw: patterns})
     if get_query:
         return q
     return q.run()
