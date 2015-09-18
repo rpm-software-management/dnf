@@ -6,7 +6,7 @@
 %global confdir %{_sysconfdir}/dnf
 
 %global pluginconfpath %{confdir}/plugins
-%global py2pluginpath %{python_sitelib}/dnf-plugins
+%global py2pluginpath %{python2_sitelib}/dnf-plugins
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
@@ -36,6 +36,7 @@ Requires:   python-dnf = %{version}-%{release}
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
+Obsoletes:  dnf <= 0.6.4
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
@@ -198,8 +199,8 @@ popd
 %files -n python-dnf
 %{_bindir}/dnf-2
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
-%exclude %{python_sitelib}/dnf/automatic
-%{python_sitelib}/dnf/
+%exclude %{python2_sitelib}/dnf/automatic
+%{python2_sitelib}/dnf/
 %dir %{py2pluginpath}
 
 %files -n python3-dnf
@@ -221,7 +222,7 @@ popd
 %{python3_sitelib}/dnf/automatic
 %{python3_sitelib}/dnf/automatic/__pycache__/*
 %else
-%{python_sitelib}/dnf/automatic
+%{python2_sitelib}/dnf/automatic
 %endif
 
 %post
