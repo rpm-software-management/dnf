@@ -30,3 +30,8 @@ class ProvidesTest(support.TestCase):
     def test_name(self):
         self.assertLength(self.base.provides("henry(the_horse)"), 1)
         self.assertLength(self.base.provides("lotus"), 2)
+
+    def test_glob(self):
+        self.assertLength(self.base.provides("henry(*)"), 1)
+        self.assertEqual(set(self.base.provides("dup*")), set(self.base.provides('dup')))
+        self.assertEqual(set(self.base.provides(["dup*"])), set(self.base.provides('dup')))
