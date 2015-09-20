@@ -84,6 +84,17 @@ def _active_pkg(tsi):
     """
     return _ACTIVE_DCT[tsi.op_type](tsi)
 
+_PREVIOUS_DCT = {
+    dnf.transaction.DOWNGRADE : operator.attrgetter('erased'),
+    dnf.transaction.ERASE : operator.attrgetter('installed'),
+    dnf.transaction.INSTALL : operator.attrgetter('erased'),
+    dnf.transaction.REINSTALL : operator.attrgetter('installed'),
+    dnf.transaction.UPGRADE : operator.attrgetter('erased'),
+    }
+def _previous_pkg(tsi):
+    """Return the package from tsi that will be replaced by the active one.
+    """
+    return _PREVIOUS_DCT[tsi.op_type](tsi)
 
 def _spread_in_columns(cols_count, label, lst):
     left = itertools.chain((label,), itertools.repeat(''))
@@ -299,14 +310,19 @@ class Output(object):
         return (False, width)
 
     def _col_data(self, col_data):
-        assert len(col_data) == 2 or len(col_data) == 3
+        assert len(col_data) >= 2 and len(col_data) <= 4
         if len(col_data) == 2:
             (val, width) = col_data
             hibeg = hiend = ''
-        if len(col_data) == 3:
+            hiidx = -1
+        elif len(col_data) == 3:
             (val, width, highlight) = col_data
             (hibeg, hiend) = self._highlight(highlight)
-        return (ucd(val), width, hibeg, hiend)
+            hiidx = -1
+        elif len(col_data) == 4:
+            (val, width, highlight, hiidx) = col_data
+            (hibeg, hiend) = self._highlight(highlight)
+        return (ucd(val), width, hibeg, hiend, hiidx)
 
     def fmtColumns(self, columns, msg=u'', end=u''):
         """Return a row of data formatted into a string for output.
@@ -324,7 +340,7 @@ class Output(object):
         total_width = len(msg)
         data = []
         for col_data in columns[:-1]:
-            (val, width, hibeg, hiend) = self._col_data(col_data)
+            (val, width, hibeg, hiend, hiidx) = self._col_data(col_data)
 
             if not width: # Don't count this column, invisible text
                 msg += u"%s"
@@ -333,21 +349,25 @@ class Output(object):
 
             (align_left, width) = self._fmt_column_align_width(width)
             val_width = exact_width(val)
+            if (hiidx != -1):
+                val_hi = u"%s%s%s%s" % (val[:hiidx], hibeg, val[hiidx:], hiend)
+            else:
+                val_hi = u"%s%s%s" % (hibeg, val, hiend)
             if val_width <= width:
                 #  Don't use fill_exact_width() because it sucks performance
                 # wise for 1,000s of rows. Also allows us to use len(), when
                 # we can.
-                msg += u"%s%s%s%s "
+                msg += u"%s%s "
                 if align_left:
-                    data.extend([hibeg, val, " " * (width - val_width), hiend])
+                    data.extend([val_hi, " " * (width - val_width)])
                 else:
-                    data.extend([hibeg, " " * (width - val_width), val, hiend])
+                    data.extend([" " * (width - val_width), val_hi])
             else:
-                msg += u"%s%s%s\n" + " " * (total_width + width + 1)
-                data.extend([hibeg, val, hiend])
+                msg += u"%s\n" + " " * (total_width + width + 1)
+                data.append(val)
             total_width += width
             total_width += 1
-        (val, width, hibeg, hiend) = self._col_data(columns[-1])
+        (val, width, hibeg, hiend, hiidx) = self._col_data(columns[-1])
         (align_left, width) = self._fmt_column_align_width(width)
         val = fill_exact_width(val, width, left=align_left,
                               prefix=hibeg, suffix=hiend)
@@ -975,23 +995,24 @@ class Output(object):
         data = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
 
-        def _add_line(lines, data, a_wid, po, obsoletes=[]):
-            (n, a, e, v, r) = po.pkgtup
-            evr = po.evr
-            repoid = po.from_repo
-            size = format_number(po.size)
+        def _add_line(lines, data, a_wid, prevpo, activepo, obsoletes=[]):
+            prev_evr = None if prevpo == None else prevpo.evr
+            (n, a, e, v, r) = activepo.pkgtup
+            evr = activepo.evr
+            repoid = activepo.from_repo
+            size = format_number(activepo.size)
 
             if a is None: # gpgkeys are weird
                 a = 'noarch'
 
             # none, partial, full?
-            if po.from_system:
+            if activepo.from_system:
                 hi = self.conf.color_update_installed
-            elif po.from_cmdline:
+            elif activepo.from_cmdline:
                 hi = self.conf.color_update_local
             else:
                 hi = self.conf.color_update_remote
-            lines.append((n, a, evr, repoid, size, obsoletes, hi))
+            lines.append((n, a, prev_evr, evr, repoid, size, obsoletes, hi))
             #  Create a dict of field_length => number of packages, for
             # each field.
             for (d, v) in (("n", len(n)), ("v", len(evr)), ("r", len(repoid))):
@@ -1007,8 +1028,9 @@ class Output(object):
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
             for tsi in pkglist:
+                previous = _previous_pkg(tsi)
                 active = _active_pkg(tsi)
-                a_wid = _add_line(lines, data, a_wid, active, tsi.obsoleted)
+                a_wid = _add_line(lines, data, a_wid, previous, active, tsi.obsoleted)
 
             pkglist_lines.append((action, lines))
 
@@ -1017,7 +1039,7 @@ class Output(object):
             lines = []
             skipped_conflicts = self._skipped_conflicts()
             for pkg in sorted(skipped_conflicts):
-                a_wid = _add_line(lines, data, a_wid, pkg, [])
+                a_wid = _add_line(lines, data, a_wid, None, pkg, [])
             skip_str = _("Skipping packages with conflicts:\n"
                          "(add '%s' to command line "
                          "to force their upgrade)") % "--best --allowerasing"
@@ -1027,7 +1049,7 @@ class Output(object):
         if hawkey.UPGRADE_ALL in self.base._goal.actions:
             lines = []
             for pkg in sorted(self._skipped_broken_deps(skipped_conflicts)):
-                a_wid = _add_line(lines, data, a_wid, pkg, [])
+                a_wid = _add_line(lines, data, a_wid, None, pkg, [])
             skip_str = _("Skipping packages with broken dependencies")
             pkglist_lines.append((skip_str, lines))
 
@@ -1050,12 +1072,25 @@ class Output(object):
                         (_('Size'), s_wid)), u" "),
        '=' * self.term.columns)]
 
+        def _verdiff(prev_evr, evr):
+            idx = 0
+            for i in range(min(len(prev_evr), len(evr))):
+                if (prev_evr[i] != evr[i]):
+                    break
+                idx += 1
+            return idx
+
         for (action, lines) in pkglist_lines:
             if lines:
                 totalmsg = u"%s:\n" % action
-            for (n, a, evr, repoid, size, obsoletes, hi) in lines:
+            for (n, a, prev_evr, evr, repoid, size, obsoletes, hi) in lines:
+                evr_hi = "normal";
+                evr_hiidx = -1
+                if (prev_evr != None):
+                    evr_hi = "bold"
+                    evr_hiidx = _verdiff(prev_evr, evr)
                 columns = ((n, -n_wid, hi), (a, -a_wid),
-                           (evr, -v_wid), (repoid, -r_wid), (size, s_wid))
+                           (evr, -v_wid, evr_hi, evr_hiidx), (repoid, -r_wid), (size, s_wid))
                 msg = self.fmtColumns(columns, u" ", u"\n")
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in sorted(obsoletes):
