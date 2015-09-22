@@ -1,4 +1,4 @@
-%global hawkey_version 0.6.0
+%global hawkey_version 0.6.1
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
@@ -11,13 +11,12 @@
 
 Name:		dnf
 Version:	1.1.2
-Release:	1%{?snapshot}%{?dist}
+Release:	2%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
 URL:		https://github.com/rpm-software-management/dnf
-# Into distgit it is always uploaded only -1 release of sources
-Source0:    https://github.com/rpm-software-management/dnf/archive/%{name}-%{version}-1.tar.gz
+Source0:    https://github.com/rpm-software-management/dnf/archive/%{name}-%{version}.tar.gz
 BuildArch:  noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -269,6 +268,10 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Sep 22 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-2
+- add hawkey version requirement
+- revert commit #70956
+
 * Tue Sep 22 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-1
 - doc: release notes 1.1.2 (Michal Luscon)
 - sanitize non Unicode command attributes (RhBug:1262082) (Jan Silhan)

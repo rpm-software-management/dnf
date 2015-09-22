@@ -1306,5 +1306,53 @@
     [
         1210289, 
         "RFE: Have a way to wait on dnf lock rather than terminate"
+    ], 
+    [
+        1262082, 
+        "'ascii' codec can't decode byte 0xc3 in position 40: ordinal not in range(128)"
+    ], 
+    [
+        1250038, 
+        "[abrt] python-dnf: completion_helper.py:84:run:IndexError: list index out of range"
+    ], 
+    [
+        1048433, 
+        "RFE --downloadonly"
+    ], 
+    [
+        1259650, 
+        "\"dnf provides\" or \"dnf repoquery --whatprovides\" does not support globs"
+    ], 
+    [
+        1260198, 
+        "python-dnf should provide python2-dnf"
+    ], 
+    [
+        1259657, 
+        "No dnf-command() provides for dnf commands"
+    ], 
+    [
+        1254982, 
+        "dnf-automatic generates emails with broken charset"
+    ], 
+    [
+        1261766, 
+        "RFE: way to force no metadata expiration system-wide"
+    ], 
+    [
+        1234491, 
+        "[UX] dnf list installed: show repo id the package was installed from"
+    ], 
+    [
+        1256531, 
+        "dnf install crashes if terminal window is too small"
+    ], 
+    [
+        1261656, 
+        "DNF group update doesn't work"
+    ], 
+    [
+        1258364, 
+        "Some important dnf output goes to STDERR and not to STDOUT"
     ]
 ]

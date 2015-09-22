@@ -34,7 +34,6 @@ Bugs fixed in 1.1.2:
 * :rhbug:`1048433`
 * :rhbug:`1259650`
 * :rhbug:`1260198`
-* :rhbug:`126255`
 * :rhbug:`1259657`
 * :rhbug:`1254982`
 * :rhbug:`1261766`
