@@ -26,8 +26,8 @@ import hawkey
 import itertools
 import shutil
 import tempfile
-import tests.mock
 import tests.support
+from tests.support import mock
 
 
 class UpdateInfoCommandTest(tests.support.TestCase):
@@ -42,7 +42,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         self.cli = tests.support.MockBase().mock_cli()
         self.cli.base.add_test_dir_repo('rpm', cachedir)
         self._stdout = dnf.pycomp.StringIO()
-        self.addCleanup(tests.mock.patch.stopall)
+        self.addCleanup(mock.patch.stopall)
         tests.support.mock.patch(
             'dnf.cli.commands.updateinfo._',
             dnf.pycomp.NullTranslations().ugettext).start()

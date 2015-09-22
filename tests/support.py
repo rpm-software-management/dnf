@@ -44,8 +44,8 @@ if dnf.pycomp.PY3:
     from unittest import mock
     from unittest.mock import MagicMock, mock_open
 else:
-    from tests import mock
-    from tests.mock import MagicMock
+    import mock
+    from mock import MagicMock
 
     def mock_open(mock=None, data=None):
         if mock is None:

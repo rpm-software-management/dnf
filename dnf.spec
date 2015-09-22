@@ -80,6 +80,7 @@ BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
+BuildRequires:  python-mock
 BuildRequires:  rpm-python >= %{rpm_version}
 %if 0%{?fedora} >= 21
 Recommends: bash-completion
@@ -108,6 +109,8 @@ BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
+# not needed b/c on PY3 we use unittest.mock
+#BuildRequires:  python3-mock
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
 %if 0%{?fedora} >= 21

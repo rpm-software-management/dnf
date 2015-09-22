@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import
 from tests import support
-from tests import mock
+from tests.support import mock
 
 import dnf.cli.commands.search as search
 import dnf.match_counter
