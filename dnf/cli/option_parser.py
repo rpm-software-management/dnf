@@ -244,8 +244,8 @@ class OptionParser(argparse.ArgumentParser):
 
     def _add_cmd_usage(self, cmd, group):
         """ store usage info about a single dnf command."""
-        summary = cmd.summary
-        name = cmd.aliases[0]
+        summary = dnf.i18n.ucd(cmd.summary)
+        name = dnf.i18n.ucd(cmd.aliases[0])
         if not name in self._cmd_usage:
             self._cmd_usage[name] = (group, summary)
             self._cmd_groups.add(group)
