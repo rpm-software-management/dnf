@@ -21,11 +21,28 @@
 
 .. contents::
 
-======================
-Upcoming Release Notes
-======================
+===================
+1.1.2 Release Notes
+===================
 
 Implemented :ref:`--downloadonly <downloadonly-label>` command line option.
+
+Bugs fixed in 1.1.2:
+
+* :rhbug:`1262082`
+* :rhbug:`1250038`
+* :rhbug:`1048433`
+* :rhbug:`1259650`
+* :rhbug:`1260198`
+* :rhbug:`126255`
+* :rhbug:`1259657`
+* :rhbug:`1254982`
+* :rhbug:`1261766`
+* :rhbug:`1234491`
+* :rhbug:`1256531`
+* :rhbug:`1254687`
+* :rhbug:`1261656`
+* :rhbug:`1258364`
 
 ===================
 1.1.1 Release Notes
@@ -33,7 +50,7 @@ Implemented :ref:`--downloadonly <downloadonly-label>` command line option.
 
 Implemented ``dnf mark`` :doc:`command <command_ref>`.
 
-Bugs fixed in 1.1.1
+Bugs fixed in 1.1.1:
 
 * :rhbug:`1249319`
 * :rhbug:`1234763`
