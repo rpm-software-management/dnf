@@ -262,7 +262,7 @@ class OptionParser(argparse.ArgumentParser):
     def get_usage(self):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands'),
-                'plugin': _('List of Plugin Commands')}
+                'plugin': _('List of Plugin Commands\n\nuse dnf PLUGIN --help-cmd for more info')}
         name = dnf.const.PROGRAM_NAME
         usage = '%s [options] COMMAND\n' % name
         for grp in ['main', 'plugin']:
