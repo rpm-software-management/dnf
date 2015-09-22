@@ -10,8 +10,8 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.1
-Release:	2%{?snapshot}%{?dist}
+Version:	1.1.2
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -269,6 +269,35 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Sep 22 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-1
+- doc: release notes 1.1.2 (Michal Luscon)
+- sanitize non Unicode command attributes (RhBug:1262082) (Jan Silhan)
+- don't redirect confirmation to stderr RhBug(1258364) (Vladan Kudlac)
+- clean: add rpmdb to usage (Vladan Kudlac)
+- completion_helper: don't get IndexError (RhBug:1250038) (Vladan Kudlac)
+- add --downloadonly switch (RhBug:1048433) (Adam Salih)
+- Add globbing support to base.by_provides() (RhBug:11259650) (Valentina
+  Mukhamedzhanova)
+- spec: packaging python(3)-dnf according to new Fedora guidelines
+  (RhBug:1260198) (Jaroslav Mracek)
+- Bug in Source0: URL in dnf.spec fixed (RhBug:126255) (Jaroslav Mracek)
+- To dnf.spec added provides dnf-command(command name) for 21 dnf commands
+  (RhBug:1259657) (jmracek)
+- Expire repo cache on failed package download (Valentina Mukhamedzhanova)
+- cosmetic: ci: fix the Copr name in the README (Radek Holy)
+- Add the continuous integration script (Radek Holy)
+- Set proper charset on email in dnf-automatic (RhBug:1254982) (Valentina
+  Mukhamedzhanova)
+- doc: improve configuration description (RhBug:1261766) (Michal Luscon)
+- remove: show from which repo a package is (Vladan Kudlac)
+- list: show from which repo a package is (RhBug:1234491) (Vladan Kudlac)
+- Spelling/grammar fixes (Ville Skyttä)
+- install: fix crash when terminal window is small (RhBug:1256531) (Vladan
+  Kudlac)
+- install: mark unification of the progress bar (Vladan Kudlac)
+- fix translations in python3 (RhBug:1254687) (Michal Luscon)
+- group: CompsQuery now returns group ids (RhBug:1261656) (Michal Luscon)
+
 * Tue Sep 08 2015 Michal Luscon <mluscon@redhat.com> 1.1.1-2
 - fix access to demands (RhBug:1259194) (Jan Silhan)
 - make clean_requiremets_on_remove=True (RhBug:1260280) (Jan Silhan)
