@@ -11,7 +11,7 @@
 
 Name:		dnf
 Version:	1.1.2
-Release:	2%{?snapshot}%{?dist}
+Release:	3%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -268,6 +268,9 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Sep 22 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-3
+- Revert "completion_helper: don't get IndexError (RhBug:1250038)"
+
 * Tue Sep 22 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-2
 - add hawkey version requirement
 - revert commit #70956

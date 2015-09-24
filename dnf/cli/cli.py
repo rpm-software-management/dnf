@@ -1088,17 +1088,7 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         self._process_demands()
-        classTuple = (dnf.cli.commands.ListCommand,
-            dnf.cli.commands.repolist.RepoListCommand,
-            dnf.cli.commands.clean.CleanCommand,
-            dnf.cli.commands.HistoryCommand)
-        if isinstance(self.command, classTuple):
-            if len(self.base.extcmds) > 1:
-                return self.command.run(self.base.extcmds)
-        else:
-            if len(self.base.extcmds) > 0:
-                return self.command.run(self.base.extcmds)
-        return
+        return self.command.run(self.base.extcmds)
 
     def print_usage(self):
         return self.optparser.print_usage()
