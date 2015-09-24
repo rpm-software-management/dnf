@@ -170,7 +170,7 @@ class Command(object):
 
     @classmethod
     def canonical(cls, command_list):
-        """Turn list of comamnds into a canonical form.
+        """Turn list of commands into a canonical form.
 
         Returns the base command and a list of extra commands.
 
