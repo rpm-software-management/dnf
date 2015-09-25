@@ -26,7 +26,6 @@ import os
 import signal
 import sys
 import unicodedata
-import readline  # workaround of raw_input() bug (RhBug:1258364)
 
 """
 Centralize i18n stuff here. Must be unittested.
@@ -98,20 +97,6 @@ def setup_stdout():
         return False
     return True
 
-def ucd_input(ucstring):
-    """ Take input from user.
-
-        What the raw_input() built-in does, but encode the prompt first
-        (raw_input() won't check sys.stdout.encoding as e.g. print does, see
-        test_i18n.TestInput.test_assumption()).
-    """
-    if not isinstance(ucstring, unicode):
-        raise TypeError("input() accepts Unicode strings")
-    if PY3:
-        return input(ucstring)
-    enc = sys.stdout.encoding if sys.stdout.encoding else 'utf8'
-    s = ucstring.encode(enc, 'strict')
-    return raw_input(s)
 
 def ucd(obj):
     """ Like the builtin unicode() but tries to use a reasonable encoding. """

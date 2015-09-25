@@ -78,19 +78,6 @@ class TestInput(TestCase):
             # way, for instance when nosetests is run without the -s switch).
             self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
 
-    @unittest.skipIf(PY3, "in python3 there's no conversion in dnf.i18n.input")
-    @mock.patch('sys.stdout')
-    @mock.patch('__builtin__.raw_input', lambda x: x)
-    def test_input(self, stdout):
-        stdout.encoding = None
-        s = dnf.i18n.ucd_input(UC_TEXT)
-        self.assertEqual(s, UC_TEXT.encode('utf8'))
-
-        stdout.encoding = 'iso-8859-2'
-        s = dnf.i18n.ucd_input(UC_TEXT)
-        self.assertEqual(s, UC_TEXT.encode('iso-8859-2'))
-
-        self.assertRaises(TypeError, dnf.i18n.ucd_input, b"string")
 
 class TestConversion(TestCase):
     @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')

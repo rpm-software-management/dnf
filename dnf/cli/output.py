@@ -22,7 +22,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
-from dnf.pycomp import xrange, basestring, long, unicode
+from dnf.pycomp import xrange, basestring, long, unicode, raw_input
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 import dnf.callback
 import dnf.cli.progress
@@ -628,7 +628,8 @@ class Output(object):
             if self.conf.defaultyes:
                 msg = _('Is this ok [Y/n]: ')
             try:
-                choice = dnf.i18n.ucd_input(msg)
+                print(msg, end='')
+                choice = raw_input()
             except EOFError:
                 pass
             except KeyboardInterrupt:
