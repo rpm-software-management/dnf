@@ -109,7 +109,7 @@ class OutputTest(support.TestCase):
                          LIST_TRANSACTION_OUTPUT)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.i18n.ucd_input')
+    @mock.patch('__builtin__.raw_input', create=True)
     def test_userconfirm(self, input_fnc):
         # with defaultyes==False
         input_fnc.return_value = 'y'
@@ -146,7 +146,7 @@ class OutputTest(support.TestCase):
         return {'y': 'a', 'yes': 'ano', 'n': 'e', 'no': 'ee'}.get(str, str)
 
     @mock.patch('dnf.cli.output._', _to_unicode_mock)
-    @mock.patch('dnf.i18n.ucd_input')
+    @mock.patch('__builtin__.raw_input', create=True)
     def test_userconfirm_translated(self, input_fnc):
         input_fnc.return_value = 'ee'
         self.assertFalse(self.output.userconfirm())
