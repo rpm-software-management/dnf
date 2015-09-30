@@ -27,12 +27,18 @@ Contents:
    use_cases
    command_ref
    conf_ref
+   automatic
+   api
+   user_faq
    release_notes
    cli_vs_yum
    api_vs_yum
-   api
-   user_faq
-   automatic
+
+DNF Plugins
+
+
+* `DNF Plugins Core`_
+* `DNF Plugins Extras`_
 
 Indices and tables
 
@@ -40,4 +46,7 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.org/en/latest/
+.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.org/en/latest/
 

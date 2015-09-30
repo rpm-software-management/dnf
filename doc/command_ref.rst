@@ -35,30 +35,30 @@ Description
 
 `DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below. If you know the name of such a command, you may find/install the package which provides it using the appropriate virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the name of the command; e.g. ``dnf-command(repoquery)`` for a ``repoquery`` command (the same applies to specifying dependencies of packages that require a particular command).
 
-Available commands are:
+Available commands:
 
-* autoremove
-* check-update
-* clean
-* distro-sync
-* downgrade
-* group
-* help
-* history
-* info
-* install
-* list
-* makecache
-* mark
-* provides
-* reinstall
-* remove
-* repolist
-* repository-packages
-* search
-* updateinfo
-* upgrade
-* upgrade-to
+* :ref:`autoremove <autoremove_command-label>`
+* :ref:`check-update <check_update_command-label>`
+* :ref:`clean <clean_command-label>`
+* :ref:`distro-sync <distro_sync_command-label>`
+* :ref:`downgrade <downgrade_command-label>`
+* :ref:`group <group_command-label>`
+* :ref:`help <help_command-label>`
+* :ref:`history <history_command-label>`
+* :ref:`info <info_command-label>`
+* :ref:`install <install_command-label>`
+* :ref:`list <list_command-label>`
+* :ref:`makecache <makecache_command-label>`
+* :ref:`mark <mark_command-label>`
+* :ref:`provides <provides_command-label>`
+* :ref:`reinstall <reinstall_command-label>`
+* :ref:`remove <remove_command-label>`
+* :ref:`repolist <repolist_command-label>`
+* :ref:`repository-packages <repository-packages_command-label>`
+* :ref:`search <search_command-label>`
+* :ref:`updateinfo <updateinfo_command-label>`
+* :ref:`upgrade <upgrade_command-label>`
+* :ref:`upgrade-to <upgrade_to_command-label>`
 
 See the reference for each command below.
 
@@ -211,6 +211,7 @@ this command.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
+.. _check_update_command-label:
 
 --------------------
 Check Update Command
@@ -221,6 +222,8 @@ Check Update Command
     Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` must also ensure the satisfiability of all dependencies and other restrictions.
+
+.. _clean_command-label:
 
 -------------
 Clean Command
@@ -287,6 +290,8 @@ Erase Command
 ``dnf [options] erase <spec>...``
     Deprecated alias for the :ref:`\remove_command-label`.
 
+.. _group_command-label:
+
 -------------
 Group Command
 -------------
@@ -327,6 +332,8 @@ Groups can be also be marked installed or removed without physically manipualtin
 
 See also :ref:`\configuration_files_replacement_policy-label`.
 
+.. _help_command-label:
+
 ------------
 Help Command
 ------------
@@ -334,6 +341,8 @@ Help Command
 ``dnf help [<command>]``
     Displays the help text for all commands. If given a command name then only
     displays the help for that particular command.
+
+.. _history_command-label:
 
 ---------------
 History Command
@@ -384,21 +393,25 @@ This command by default does not force a sync of expired metadata.
 See also :ref:`\metadata_synchronization-label`
 and :ref:`\configuration_files_replacement_policy-label`.
 
+.. _info_command-label:
+
 ------------
 Info Command
 ------------
 
 ``dnf [options] info [<package-spec>...]``
-    Is used to list description and summary information about available packages.
+    Is used to list description and summary information about installed and available packages.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _install_command-label:
 
 ---------------
 Install Command
 ---------------
 
 ``dnf [options] install <spec>...``
-    Make sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
+    DNF makes sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or an URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
 
     Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`). See also :ref:`\configuration_files_replacement_policy-label`.
@@ -446,6 +459,8 @@ result to only those packages matching it.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
+.. _makecache_command-label:
+
 -----------------
 Makecache Command
 -----------------
@@ -462,6 +477,8 @@ Makecache Command
     (see :manpage:`dnf.conf(5)`, :ref:`metadata_timer_sync
     <metadata_timer_sync-label>`).
 
+.. _mark_command-label:
+
 -------------
 Mark Command
 -------------
@@ -471,6 +488,8 @@ Mark Command
 
 ``dnf mark remove <package-specs>...``
     Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stay still installed on the system and will removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed. You should use this operation instead of :ref:`\remove_command-label` if your not sure whether the package is a requirement of other user installed package on the system.
+
+.. _provides_command-label:
 
 ----------------
 Provides Command
@@ -482,6 +501,8 @@ Provides Command
     provides this file.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _reinstall_command-label:
 
 -----------------
 Reinstall Command
@@ -501,6 +522,8 @@ Remove Command
 ``dnf [options] remove <package-specs>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
+.. _repolist_command-label:
+
 ----------------
 Repolist Command
 ----------------
@@ -511,6 +534,8 @@ Repolist Command
     detailed information when ``-v`` option is used.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _repository-packages_command-label:
 
 ---------------------------
 Repository-Packages Command
@@ -592,6 +617,7 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
     Update packages to the specified versions that are available in the repository.
 
+.. _search_command-label:
 
 --------------
 Search Command
@@ -601,6 +627,8 @@ Search Command
     Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever ``all`` was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _update_command-label:
 
 --------------
 Update Command
@@ -779,9 +807,14 @@ but is specified by each package itself, following packaging guideline.
 Files
 ========
 
-/var/cache/dnf
-/etc/dnf/dnf.conf
-/etc/yum.repos.d/
+``Cache Files``
+    /var/cache/dnf
+
+``Main Configuration``
+    /etc/dnf/dnf.conf
+
+``Repository``
+    /etc/yum.repos.d/
 
 ========
 See Also

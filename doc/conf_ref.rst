@@ -47,12 +47,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ================
 
 ``assumeyes``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     If enabled then on any user input asking for confirmation (e.g. after transaction summary) the answer is implicitly ``yes``. The default is False.
 
 ``best``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     When upgrading a package, always try to install its highest version
     available, even only to find out some of its deps are not
@@ -62,7 +62,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 .. _clean_requirements_on_remove-label:
 
 ``clean_requirements_on_remove``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Remove dependencies that are no longer used during ``dnf remove``. A package
     only qualifies for removal via ``clean_requirements_on_remove`` if it was
@@ -71,19 +71,19 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     (:ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed.)
 
 ``debuglevel``
-    integer
+    :ref:`integer <integer-label>`
 
     Debug messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to stdout. Default is 2.
 
 ``errorlevel``
-    integer
+    :ref:`integer <integer-label>`
 
     Error messages output level, in the range 0 to 10. The higher the number the
     more error output is put to stderr. Default is 2. This is deprecated in DNF.
 
 ``install_weak_deps``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     When this option is set to True and a new package is about to be
     installed, all packages linked by weak dependency relation (Recommends or Supplements flags) with this package will pulled into the transaction.
@@ -92,27 +92,27 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 .. _installonlypkgs-label:
 
 ``installonlypkgs``
-    list
+    :ref:`list <list-label>`
 
     List of provide names of packages that should only ever be installed, never
     upgraded. Kernels in particular fall into this category.
     These packages are never removed by ``dnf autoremove`` even if they were
     installed as dependencies (see
     :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
-    for auto removal details).
+    for auto removal details). The number of kept package versions is regulated by :ref:`installonly_limit <installonly-limit-label>`.
 
 .. _installonly-limit-label:
 
 ``installonly_limit``
-    integer
+    :ref:`integer <integer-label>`
 
-    Number of installonly packages allowed to be installed
+    Number of :ref:`installonly packages <installonlypkgs-label>` allowed to be installed
     concurrently. Defaults to 3.
 
 .. _keepcache-label:
 
 ``keepcache``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Keep downloaded packages in the cache. If set to False and packages have not been
     installed they will still persist until next successful transaction. The default
@@ -130,12 +130,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     hours. The value is rounded to the next commenced hour.
 
 ``pluginconfpath``
-    list
+    :ref:`list <list-label>`
 
     List of directories that are searched for plugin configuration to load. All configuration files found in these directories, that are named same as a plugin, are parsed. The default contains ``/etc/dnf/plugins`` path.
 
 ``pluginpath``
-    list
+    :ref:`list <list-label>`
 
     List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
 
@@ -146,7 +146,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 .. _repo_cost-label:
 
 ``cost``
-    integer
+    :ref:`integer <integer-label>`
 
     The relative cost of accessing this repository, defaulting to 1000. This
     value is compared when the priorities of two repositories are the same. The
@@ -156,57 +156,57 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 .. _baseurl-label:
 
 ``baseurl``
-    list
+    :ref:`list <list-label>`
 
     URLs for the repository.
 
 ``enabled``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Include this repository as a package source. The default is True.
 
 .. _repo_gpgkey-label:
 
 ``gpgkey``
-    list of strings
+    :ref:`list <list-label>` of strings
 
     URLs of a GPG key files that can be used for signing metadata and packages of this repository, empty by default. If a file can not be verified using the already imported keys, import of keys from this option is attempted and the keys are then used for verification.
 
 .. _metalink-label:
 
 ``metalink``
-    string
+    :ref:`string <string-label>`
 
     URL of a metalink for the repository.
 
 .. _mirrorlist-label:
 
 ``mirrorlist``
-    string
+    :ref:`string <string-label>`
 
     URL of a mirrorlist for the repository.
 
 ``name``
-    string
+    :ref:`string <string-label>`
 
     A human-readable name of the repository. Defaults to the ID of the repository. 
 
 .. _repo_priority-label:
 
 ``priority``
-    integer
+    :ref:`integer <integer-label>`
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
 
 .. _skip_if_unavailable-label:
 
 ``skip_if_unavailable``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
 
 ``strict``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
 
@@ -248,42 +248,42 @@ configuration.
 .. _deltarpm-label:
 
 ``deltarpm``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is True.
 
 ``enablegroups``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Determines whether DNF will allow the use of package groups for this repository. Default is True (package groups are allowed).
 
 .. _exclude-label:
 
 ``exclude``
-    list
+    :ref:`list <list-label>`
 
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
     Can be disabled using ``--disableexcludes`` command line switch.
 
 ``fastestmirror``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     If enabled a metric is used to find the fastest available mirror. This overrides the order provided by the mirrorlist/metalink file itself. This file is often dynamically generated by the server to provide the best download speeds and enabling fastestmirror overrides this. The default is False.
 
 .. _gpgcheck-label:
 
 ``gpgcheck``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Whether to perform GPG signature check on packages found in this repository. The default is False.
 
 .. _include-label:
 
 ``include``
-    list
+    :ref:`list <list-label>`
 
     Include packages of this repository, specified by a name or a glob and separated by a comma, in all operations.
     Inverse of :ref:`exclude <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'exclude=*.i386' and 'include=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
@@ -297,7 +297,7 @@ configuration.
     Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
 ``max_parallel_downloads``
-    integer
+    :ref:`integer <integer-label>`
 
     Maximum number of simultaneous package downloads. Defaults to 3.
 
@@ -316,31 +316,31 @@ configuration.
     This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 1000. Valid units are 'k', 'M', 'G'.
 
 ``proxy``
-    string
+    :ref:`string <string-label>`
 
     URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
 
 ``proxy_username``
-    string
+    :ref:`string <string-label>`
 
     The username to use for connecting to the proxy server. Empty by default.
 
 ``proxy_password``
-    string
+    :ref:`string <string-label>`
 
     The password to use for connecting to the proxy server. Empty by default.
 
 .. _repo_gpgcheck-label:
 
 ``repo_gpgcheck``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     Whether to perform GPG signature check on this repository's metadata. The default is False.
 
 .. _sslcacert-label:
 
 ``sslcacert``
-    string
+    :ref:`string <string-label>`
 
     Path to the directory or file containing the certificate authorities to verify SSL certificates.
     Empty by default - uses system default.
@@ -348,14 +348,14 @@ configuration.
 .. _sslverify-label:
 
 ``sslverify``
-    boolean
+    :ref:`boolean <boolean-label>`
 
     When enabled, remote SSL connections are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is True.
 
 .. _sslclientcert-label:
 
 ``sslclientcert``
-    string
+    :ref:`string <string-label>`
 
     Path to the SSL client certificate used to connect to remote sites.
     Empty by default.
@@ -363,7 +363,7 @@ configuration.
 .. _sslclientkey-label:
 
 ``sslclientkey``
-    string
+    :ref:`string <string-label>`
 
     Path to the SSL client key used to connect to remote sites.
     Empty by default.
@@ -383,21 +383,53 @@ configuration.
     Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 30 seconds.
 
 ``username``
-    string
+    :ref:`string <string-label>`
 
     The username to use for connecting to repo with basic HTTP authentication. Empty by default.
 
 ``password``
-    string
+    :ref:`string <string-label>`
 
     The password to use for connecting to repo with basic HTTP authentication. Empty by default.
+
+=================
+Types of Options
+=================
+
+.. _boolean-label:
+
+``boolean``
+    This is a data type with only two possible values.
+
+    One of following options can be used: 1, 0, True, False, yes, no
+
+.. _integer-label:
+
+``integer``
+    It is a whole number that can be written without a fractional component.
+
+.. _list-label:
+
+``list``
+    It is an option that could represent one or more strings separated by space or comma characters.
+
+.. _string-label:
+
+``string``
+    It is a sequence of symbols or digits without any whitespace character.
 
 ==========
 Files
 ==========
 
-/etc/dnf/dnf.conf
-/etc/yum.repos.d/
+``Cache Files``
+    /var/cache/dnf
+
+``Main Configuration File``
+    /etc/dnf/dnf.conf
+
+``Repository``
+    /etc/yum.repos.d/
 
 ==========
  See Also
