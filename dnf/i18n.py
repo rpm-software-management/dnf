@@ -19,8 +19,9 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.pycomp import (PY3, is_py3bytes, unicode, setlocale, gettext,
-                        gettext_setup, raw_input)
+from dnf.pycomp import unicode
+
+import dnf
 import locale
 import os
 import signal
@@ -38,7 +39,7 @@ class UnicodeStream(object):
 
     def write(self, s):
         if not isinstance(s, str):
-            s = (s.decode(self.encoding, 'replace') if PY3 else
+            s = (s.decode(self.encoding, 'replace') if dnf.pycomp.PY3 else
                  s.encode(self.encoding, 'replace'))
         self.stream.write(s)
 
@@ -69,14 +70,14 @@ def _guess_encoding():
 
 def setup_locale():
     try:
-        setlocale(locale.LC_ALL, '')
+        dnf.pycomp.setlocale(locale.LC_ALL, '')
         # set time to C so that we output sane things in the logs (#433091)
-        setlocale(locale.LC_TIME, 'C')
+        dnf.pycomp.setlocale(locale.LC_TIME, 'C')
     except locale.Error as e:
         # default to C locale if we get a failure.
         print('Failed to set locale, defaulting to C', file=sys.stderr)
         os.environ['LC_ALL'] = 'C'
-        setlocale(locale.LC_ALL, 'C')
+        dnf.pycomp.setlocale(locale.LC_ALL, 'C')
 
 def setup_stdout():
     """ Check that stdout is of suitable encoding and handle the situation if
@@ -105,29 +106,29 @@ def ucd_input(ucstring):
         goes into stderr
     """
     print(ucstring, end='')
-    return raw_input()
+    return dnf.pycomp.raw_input()
 
 
 def ucd(obj):
     """ Like the builtin unicode() but tries to use a reasonable encoding. """
-    if PY3:
-        if is_py3bytes(obj):
+    if dnf.pycomp.PY3:
+        if dnf.pycomp.is_py3bytes(obj):
             return str(obj, _guess_encoding(), errors='ignore')
         elif isinstance(obj, str):
             return obj
         return str(obj)
     else:
-        if isinstance(obj, unicode):
+        if isinstance(obj, dnf.pycomp.unicode):
             return obj
         if hasattr(obj, '__unicode__'):
             # see the doc for the unicode() built-in. The logic here is: if obj
             # implements __unicode__, let it take a crack at it, but handle the
             # situation if it fails:
             try:
-                return unicode(obj)
+                return dnf.pycomp.unicode(obj)
             except UnicodeError:
                 pass
-        return unicode(str(obj), _guess_encoding(), errors='ignore')
+        return dnf.pycomp.unicode(str(obj), _guess_encoding(), errors='ignore')
 
 
 # functions for formating output according to terminal width,
@@ -277,6 +278,6 @@ def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
     return '\n'.join(ret)
 
 # setup translation
-t = gettext.translation('dnf', fallback=True)
-_, P_ = gettext_setup(t)
+t = dnf.pycomp.gettext.translation('dnf', fallback=True)
+_, P_ = dnf.pycomp.gettext_setup(t)
 
