@@ -60,9 +60,9 @@ class QueriesTest(support.TestCase):
         pkgs = sack.query().filter(reponame__eq="main")
         self.assertEqual(len(pkgs), support.MAIN_NSOLVABLES)
 
-    def test_duplicated_pkgs(self):
+    def test_duplicated(self):
         sack = support.mock_sack()
-        pkgs = dnf.query.duplicated_pkgs(sack.query(), [])
+        pkgs = sack.query().duplicated()
         self.assertEqual(len(pkgs), 3)
 
     def test_extras_pkgs(self):
@@ -79,20 +79,15 @@ class QueriesTest(support.TestCase):
         pkgs = sack.query().installed().nevra("tour-5-0.noarch")
         self.assertEqual(len(pkgs), 1)
 
-    def test_installonly_pkgs(self):
-        sack = support.mock_sack()
-        pkgs = dnf.query.installonly_pkgs(sack.query(), ['tour'])
-        self.assertEqual(len(pkgs), 1)
-
-    def test_latest_limit_pkgs(self):
+    def test_latest(self):
         sack = support.mock_sack("old_versions")
         tours = sack.query().filter(name="tour")
         all_tours = sorted(tours.run(), reverse=True)
         head2 = all_tours[0:2]
         tail2 = all_tours[2:]
-        pkgs = dnf.query.latest_limit_pkgs(tours, 2)
+        pkgs = tours.latest(2).run()
         self.assertEqual(pkgs, head2)
-        pkgs = dnf.query.latest_limit_pkgs(tours, -2)
+        pkgs = tours.latest(-2).run()
         self.assertEqual(pkgs, tail2)
 
     def test_recent_pkgs(self):

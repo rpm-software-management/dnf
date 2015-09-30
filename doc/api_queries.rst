@@ -45,6 +45,10 @@
 
     Return a new query that limits the result only to packages that can be downgrade candidates to other packages in the current set. Downgrade candidate has the same name, lower EVR and the architecture of the original and the downgrade candidate are suitable for a downgrade. Specifically, the filtering does not take any steps to establish that the downgrade candidate can actually be installed.
 
+  .. method:: duplicated()
+
+    Return a new query that limits the result only to installed packages of same name and different version. Optional argument exclude accepts a list of package names that will be excluded from result.
+
   .. method:: filter(**kwargs)
 
     Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). Values inside of list or query are cumulative (logical OR).
@@ -98,9 +102,9 @@
 
     Return a new query that limits the result to the installed packages only.
 
-  .. method:: latest
+  .. method:: latest(limit=1)
 
-    Return a new query that limits the result to packages with the highest version per package name and per architecture.
+    Return a new query that limits the result to ``limit`` highest version of packages per package name and per architecture.
 
   .. method:: run
 
