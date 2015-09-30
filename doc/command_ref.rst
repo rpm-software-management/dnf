@@ -398,7 +398,7 @@ Install Command
 ---------------
 
 ``dnf [options] install <spec>...``
-    Make sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
+    DNF makes sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
     either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or an URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
 
     Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`). See also :ref:`\configuration_files_replacement_policy-label`.
