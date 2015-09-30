@@ -21,6 +21,15 @@
 
 .. contents::
 
+======================
+Upcoming Release Notes
+======================
+
+API additions in X.Y.Z:
+
+* newly added :meth:`dnf.Query.duplicated`
+* extended :meth:`dnf.Query.latest
+
 ===================
 1.1.3 Release Notes
 ===================

@@ -49,6 +49,15 @@ class Query(hawkey.Query):
         # :api
         return self.filter(downgrades=True)
 
+    def duplicated(self):
+        # :api
+        installed_na = self.installed().na_dict()
+        duplicated = []
+        for (name, arch), pkgs in installed_na.items():
+            if len(pkgs) > 1:
+                duplicated.extend(pkgs)
+        return self.filter(pkg=duplicated)
+
     def filter_autoglob(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
@@ -62,9 +71,20 @@ class Query(hawkey.Query):
         # :api
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
 
-    def latest(self):
+    def latest(self, limit=1):
         # :api
-        return self.filter(latest_per_arch=True)
+        if limit == 1:
+            return self.filter(latest_per_arch=True)
+        else:
+            pkgs_na = self.na_dict()
+            latest_pkgs = []
+            for pkg_list in pkgs_na.values():
+                pkg_list.sort(reverse=True)
+                if limit > 0:
+                    latest_pkgs.extend(pkg_list[0:limit])
+                else:
+                    latest_pkgs.extend(pkg_list[-limit:])
+            return self.filter(pkg=latest_pkgs)
 
     def upgrades(self):
         # :api
@@ -129,14 +149,6 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
-def duplicated_pkgs(query, installonlypkgs):
-    installed_na = query.installed().na_dict()
-    duplicated = []
-    for (name, arch), pkgs in installed_na.items():
-        if len(pkgs) > 1 and name not in installonlypkgs:
-            duplicated.extend(pkgs)
-    return duplicated
-
 def extras_pkgs(query):
     # anything installed but not in a repo is an extra
     avail_dict = query.available().pkgtup_dict()
@@ -146,24 +158,6 @@ def extras_pkgs(query):
         if pkgtup not in avail_dict:
             extras.extend(pkgs)
     return extras
-
-def installonly_pkgs(query, installonlypkgs):
-    q = query.filter(name=installonlypkgs).installed()
-    return q.run()
-
-def latest_limit_pkgs(query, limit):
-    """ filter to `limit` latest packages per (name,arch)
-        or skip first `limit` latest packages if limit is negative
-    """
-    pkgs_na = query.na_dict()
-    latest_pkgs = []
-    for pkg_list in pkgs_na.values():
-        pkg_list.sort(reverse=True)
-        if limit > 0:
-            latest_pkgs.extend(pkg_list[0:limit])
-        else:
-            latest_pkgs.extend(pkg_list[-limit:])
-    return latest_pkgs
 
 def per_pkgtup_dict(pkg_list):
     d = {}
