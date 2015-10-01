@@ -172,7 +172,7 @@ Job configuration
     #. Build: Add build step: *Execute shell*::
 
         #!/usr/bin/env bash
-        python2 ci/stackci.py build dnf-nightly-fedora-rawhide tito
+        python2 ci/stackci.py build dnf-plugins-core-nightly-fedora-rawhide tito
 
 #. (else):
 
