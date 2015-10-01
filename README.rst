@@ -11,14 +11,9 @@ Dandified Yum (DNF) is the next upcoming major version of `Yum <http://yum.baseu
 DNF and all its dependencies are available in Fedora 18 and later, including the
 rawhide Fedora.
 
-Optionally you use repositories with DNF nightly builds for last 2 stable Fedora versions::
+Optionally you can use repositories with DNF nightly builds for last 2 stable Fedora versions available at copr://rpmsoftwaremanagement/dnf-nightly. You can enable the repository e.g. using:: 
 
-    sudo cat << 'EOF' > /etc/yum.repos.d/dnf-nightly.repo
-    [dnf-nightly]
-    name=DNF nightly $releasever - $basearch
-    baseurl=http://jenkins.cloud.fedoraproject.org/job/DNF/lastSuccessfulBuild/artifact/fedora-$releasever-$basearch-build
-    enabled=1
-    EOF
+    dnf copr enable rpmsoftwaremanagement/dnf-nightly
 
 Then install DNF typing::
 
