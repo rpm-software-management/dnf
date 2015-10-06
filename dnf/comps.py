@@ -428,15 +428,17 @@ class Solver(object):
 
     @staticmethod
     def _pkgs_of_type(group, pkg_types, exclude):
+        def pkgs_update(pkgs, group):
+            pkgs.update(pkg.name for pkg in group
+                        if pkg.name not in exclude)
+
         pkgs = set()
         if pkg_types & MANDATORY:
-            pkgs.update(pkg.name for pkg in group.mandatory_packages)
+            pkgs_update(pkgs, group.mandatory_packages)
         if pkg_types & DEFAULT:
-            pkgs.update(pkg.name for pkg in group.default_packages
-                        if pkg.name not in exclude)
+            pkgs_update(pkgs, group.default_packages)
         if pkg_types & OPTIONAL:
-            pkgs.update(pkg.name for pkg in group.optional_packages
-                        if pkg.name not in exclude)
+            pkgs_update(pkgs, group.optional_packages)
         return pkgs
 
     def _removable_pkg(self, pkg_name):

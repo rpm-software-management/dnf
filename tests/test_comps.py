@@ -236,8 +236,7 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
     def test_install(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
-        self.assertCountEqual(trans.install, ('pepper', 'trampoline', 'hole',
-                                              'lotus'))
+        self.assertCountEqual(trans.install, ('pepper', 'trampoline', 'hole'))
         sugar = self.persistor.environment('sugar-desktop-environment')
         self.assertCountEqual(sugar.full_list, ('Peppers', 'somerset'))
         somerset = self.persistor.group('somerset')
