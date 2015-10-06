@@ -22,6 +22,12 @@
 .. contents::
 
 ===================
+Upstream Release Notes
+===================
+
+Now :meth:`dnf.Base.group_install` is able to exclude mandatory packages of the group from transaction.
+
+===================
 1.1.2 Release Notes
 ===================
 
