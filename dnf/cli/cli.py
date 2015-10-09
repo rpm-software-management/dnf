@@ -857,6 +857,7 @@ class Cli(object):
         basecmd = opts.command
         command_cls = self.cli_commands.get(basecmd)
         if command_cls is None:
+            self.optparser.print_help()
             logger.critical(_('No such command: %s. Please use %s --help'),
                             basecmd, sys.argv[0])
             if self.base.conf.plugins:
