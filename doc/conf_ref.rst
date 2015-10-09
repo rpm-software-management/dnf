@@ -99,14 +99,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     These packages are never removed by ``dnf autoremove`` even if they were
     installed as dependencies (see
     :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
-    for auto removal details).
+    for auto removal details). The number of kept package versions is regulated by :ref:`installonly_limit <installonly-limit-label>`.
 
 .. _installonly-limit-label:
 
 ``installonly_limit``
     integer
 
-    Number of installonly packages allowed to be installed
+    Number of :ref:`installonly packages <installonlypkgs-label>` allowed to be installed
     concurrently. Defaults to 3.
 
 .. _keepcache-label:
