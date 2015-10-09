@@ -1012,12 +1012,12 @@ class Cli(object):
 
         # subparsers needs to be added before printing the command help
         self.optparser.init_subparser_commands(set(self.cli_commands.values()))
+        self.optparser.argparser.usage = self.optparser.get_usage()
 
         # temporary backwards compatible help-cmd help for commands
         if (opts.help or opts.help_cmd) and len(cmds):
             command_cls = self.cli_commands.get(cmds[0])
             if not command_cls:
-                self.optparser.argparser.usage = self.optparser.get_usage()
                 self.optparser.argparser.print_help()
                 raise CliError
             print(command_cls.parser.format_help())
@@ -1028,7 +1028,6 @@ class Cli(object):
         if opts.help:
             # build the usage info and put it into the optparser.
             # will be erased once we use default --help
-            self.optparser.argparser.usage = self.optparser.get_usage()
             self.optparser.argparser.print_help()
             sys.exit(0)
 
