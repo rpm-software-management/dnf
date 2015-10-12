@@ -353,7 +353,7 @@ class LocalRepoTest(support.TestCase):
             self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertFalse(self.repo._expired)
-        reset_age_m.assert_called()
+        reset_age_m.assert_called_with()
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
