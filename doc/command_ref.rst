@@ -807,9 +807,14 @@ but is specified by each package itself, following packaging guideline.
 Files
 ========
 
-/var/cache/dnf
-/etc/dnf/dnf.conf
-/etc/yum.repos.d/
+``Cache Files``
+    /var/cache/dnf
+
+``Main Configuration``
+    /etc/dnf/dnf.conf
+
+``Repository``
+    /etc/yum.repos.d/
 
 ========
 See Also
