@@ -389,7 +389,7 @@ Info Command
 ------------
 
 ``dnf [options] info [<package-spec>...]``
-    Is used to list description and summary information about available packages.
+    Is used to list description and summary information about installed and available packages.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
