@@ -107,7 +107,7 @@ Options
     Disable the listed plugins specified by names or globs.
 
 ``--disablerepo=<repoid>``
-    Disable specific repositories by an id or a glob.
+    Disable specific repositories by an id or a glob. This option is mutually exclusive with ``--repo``.
 
 .. _downloadonly-label:
 
@@ -119,7 +119,7 @@ Options
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
 
 ``--enablerepo=<repoid>``
-    Enable specific repositories by an id or a glob.
+    Enable additional repositories by an id or a glob.
 
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by ``<package-spec>`` from the operation.
@@ -139,7 +139,7 @@ Options
     Specify a path or url to a repository (same path as in a baseurl) to add to
     the repositories for this query. This option can be used multiple times.
     If you want to view only the packages from this repository combine this
-    with ``--disablerepo``/``--enablerepo``. The repo label for the repository
+    with ``--repo=<repo>`` or ``--disablerepo="*"`` switches. The repo label for the repository
     is specified by <repo>.
 
 ``--nogpgcheck``
@@ -159,6 +159,9 @@ Options
     affect cache paths, values in configuration files and mirrorlist URLs. Using
     '/' for this value makes DNF detect the release number from the running
     system.
+
+``--repo=<repoid>``
+    Enable just specific repositories by an id or a glob. Can be used multiple times with accumulative effect. It is basically shortcut for ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with ``--disablerepo`` option.
 
 ``--rpmverbosity=<debug level name>``
     debugging output level for rpm

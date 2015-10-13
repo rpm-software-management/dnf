@@ -48,7 +48,7 @@ class OptionParserTest(support.TestCase):
 
     def test_non_nones2dict(self):
         parser = OptionParser()
-        values = parser.parse_args(args=['-y'])
+        values = parser.argparser.parse_args(args=['-y'])
         self.assertIsInstance(values, argparse.Namespace)
         dct = parser._non_nones2dict(values.__dict__)
         self.assertTrue(dct['assumeyes'])

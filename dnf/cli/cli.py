@@ -745,6 +745,13 @@ class Cli(object):
                 self.base.repos.add(repofp)
                 logger.info(_("Added %s repo from %s") % (label, path))
 
+                # do not let this repo to be disabled
+                opts.repos_ed.append((label, "enable"))
+
+        if opts.repo:
+            opts.repos_ed.insert(0, ("*", "disable"))
+            opts.repos_ed.extend([(r, "enable") for r in opts.repo])
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
@@ -847,23 +854,18 @@ class Cli(object):
             conffile = dnf.const.CONF_FILENAME
         return installroot, conffile
 
-    def _parse_commands(self):
+    def _parse_commands(self, cmds, opts):
         """Check that the requested CLI command exists."""
-
-        if len(self.base.cmds) < 1:
-            logger.critical(_('You need to give some command'))
-            self.print_usage()
+        basecmd = opts.cmd
+        # invalid options in commands without subparser
+        if cmds and getattr(basecmd, "set_argparse_subparser", None):
+            logger.critical(_('Unrecognized arguments given: %s. '
+                              'Please use %s --help'),
+                            cmds, sys.argv[0])
             raise CliError
-
-        basecmd = self.base.cmds[0] # our base command
         command_cls = self.cli_commands.get(basecmd)
-        if command_cls is None:
-            logger.critical(_('No such command: %s. Please use %s --help'),
-                            basecmd, sys.argv[0])
-            logger.info(_("It could be a DNF plugin command, "
-                          "try: \"dnf install 'dnf-command(%s)'\""), basecmd)
-            raise CliError
         self.command = command_cls(self)
+        self.command.opts = opts
 
         (base, ext) = self.command.canonical(self.base.cmds)
         self.base.basecmd, self.base.extcmds = (base, ext)
@@ -988,6 +990,15 @@ class Cli(object):
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
         self.nogpgcheck = opts.nogpgcheck
 
+        # store the main commands & summaries, before plugins are loaded
+        self.optparser.add_commands(self.cli_commands, 'main')
+        if self.base.conf.plugins:
+            self.base.plugins.load(self.base.conf.pluginpath,
+                                   opts.disableplugins)
+        self.base.plugins.run_init(self.base, self)
+        # store the plugin commands & summaries
+        self.optparser.add_commands(self.cli_commands, 'plugin')
+
         # the configuration reading phase is now concluded, finish the init
         self._configure_cachedir()
         # with cachedir in place we can configure stuff depending on it:
@@ -999,23 +1010,29 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        # store the main commands & summaries, before plugins are loaded
-        self.optparser.add_commands(self.cli_commands, 'main')
-        if self.base.conf.plugins:
-            self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
-        self.base.plugins.run_init(self.base, self)
-        # store the plugin commands & summaries
-        self.optparser.add_commands(self.cli_commands,'plugin')
+        # subparsers needs to be added before printing the command help
+        self.optparser.init_subparser_commands(set(self.cli_commands.values()))
+        self.optparser.argparser.usage = self.optparser.get_usage()
 
-        # build the usage info and put it into the optparser.
-        self.optparser.usage = self.optparser.get_usage()
-
-        # show help if the user requests it
+        # temporary backwards compatible help-cmd help for commands
+        if (opts.help or opts.help_cmd) and len(cmds):
+            command_cls = self.cli_commands.get(cmds[0])
+            if not command_cls:
+                self.optparser.argparser.print_help()
+                raise CliError
+            print(command_cls.parser.format_help())
+            sys.exit(0)
+        # show the global dnf help if the user requests it
         # this is done here, because we first have the full
         # usage info after the plugins are loaded.
         if opts.help:
-            self.optparser.print_help()
+            # build the usage info and put it into the optparser.
+            # will be erased once we use default --help
+            self.optparser.argparser.print_help()
             sys.exit(0)
+
+        # parse again with all command subparsers set
+        opts, cmds = self.optparser.parse_known_args(args)
 
         # save our original args out
         self.base.args = args
@@ -1026,8 +1043,9 @@ class Cli(object):
 
         self._log_essentials()
         try:
-            self._parse_commands() # before we return check over the base command
-                                  # + args make sure they match/make sense
+            # before we return check over the base command
+            # args make sure they match/make sense
+            self._parse_commands(cmds, opts)
         except CliError:
             sys.exit(1)
         self.command.configure(self.base.extcmds)
@@ -1091,7 +1109,7 @@ class Cli(object):
         return self.command.run(self.base.extcmds)
 
     def print_usage(self):
-        return self.optparser.print_usage()
+        return self.optparser.argparser.print_usage()
 
 
 class CmdConf(object):

@@ -179,6 +179,12 @@ class Command(object):
         extra = command_list[1:]
         return (base, extra)
 
+    # @staticmethod
+    # def set_argparse_subparser(parsers):
+    #     # commented out to identify commands using new API
+    #     # :api
+    #     pass
+
     def configure(self, args):
         """Do any command-specific configuration. #:api"""
 
