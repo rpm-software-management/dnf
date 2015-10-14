@@ -10,8 +10,8 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.2
-Release:	4%{?snapshot}%{?dist}
+Version:	1.1.3
+Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:	GPLv2+ and GPLv2 and GPL
@@ -268,6 +268,20 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Wed Oct 14 2015 Michal Luscon <mluscon@redhat.com> 1.1.3-1
+- Update command_ref.rst (Jaroslav Mracek)
+- Change in automatic.conf email settings to prevent email error with default
+  sender name (Jaroslav Mracek)
+- Replace assert_called() with assert_called_with() for Py35 support (Neal
+  Gompa (ニール・ゴンパ))
+- doc: improve documentation (Jaroslav Mracek)
+- doc: update the instructions related to nightly builds (Radek Holy)
+- Revert "Add the continuous integration script" (Radek Holy)
+- Revert "cosmetic: ci: fix the Copr name in the README" (Radek Holy)
+- Fix typo in Command.canonical's doctring (Timo Wilken)
+- base: group_install is able to exclude mandatory packages
+  (Related:RhBug:1199868) (Jan Silhan)
+
 * Tue Sep 30 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-4
 - don't import readline as it causes crashes in Anaconda
   (related:RhBug:1258364)
