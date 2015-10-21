@@ -1146,12 +1146,12 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove = dnf.query.autoremove_pkgs(query_for_repo(q),
-                                                   self.sack, self.yumdb)
+            autoremove_q = query_for_repo(q).unneeded(self.sack, self.yumdb)
+            autoremove = autoremove_q.run()
 
         # not in a repo but installed
         elif pkgnarrow == 'extras':
-            extras = [pkg for pkg in dnf.query.extras_pkgs(q) if is_from_repo(pkg)]
+            extras = [pkg for pkg in q.extras() if is_from_repo(pkg)]
 
         # obsoleting packages (and what they obsolete)
         elif pkgnarrow == 'obsoletes':
@@ -1170,7 +1170,7 @@ class Base(object):
             avail = q.available()
             if not showdups:
                 avail = avail.latest()
-            recent = dnf.query.recent_pkgs(query_for_repo(avail), self.conf.recent)
+            recent = query_for_repo(avail).recent(self.conf.recent)
 
         ygh.installed = installed
         ygh.available = available

@@ -45,6 +45,16 @@ class Query(hawkey.Query):
         # :api
         return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
+    def unneeded(self, sack, yumdb, debug_solver=False):
+        goal = dnf.goal.Goal(sack)
+        goal.push_userinstalled(self.installed(), yumdb)
+        solved = goal.run()
+        if debug_solver:
+            goal.write_debugdata('./debugdata-autoremove')
+        assert solved
+        unneeded = goal.list_unneeded()
+        return self.filter(pkg=unneeded)
+
     def downgrades(self):
         # :api
         return self.filter(downgrades=True)
@@ -57,6 +67,16 @@ class Query(hawkey.Query):
             if len(pkgs) > 1:
                 duplicated.extend(pkgs)
         return self.filter(pkg=duplicated)
+
+    def extras(self):
+        # anything installed but not in a repo is an extra
+        avail_dict = self.available().pkgtup_dict()
+        inst_dict = self.installed().pkgtup_dict()
+        extras = []
+        for pkgtup, pkgs in inst_dict.items():
+            if pkgtup not in avail_dict:
+                extras.extend(pkgs)
+        return self.filter(pkg=extras)
 
     def filter_autoglob(self, *args, **kwargs):
         nargs = {}
@@ -106,6 +126,12 @@ class Query(hawkey.Query):
     def pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
+    def recent(self, recent):
+        now = time.time()
+        recentlimit = now - (recent*86400)
+        recent = [po for po in self if int(po.buildtime) > recentlimit]
+        return self.filter(pkg=recent)
+
     def nevra(self, *args):
         args_len = len(args)
         if args_len == 3:
@@ -120,15 +146,6 @@ class Query(hawkey.Query):
             name=nevra.name, epoch=nevra.epoch, version=nevra.version,
             release=nevra.release, arch=nevra.arch)
 
-
-def autoremove_pkgs(query, sack, yumdb, debug_solver=False):
-    goal = dnf.goal.Goal(sack)
-    goal.push_userinstalled(query.installed(), yumdb)
-    solved = goal.run()
-    if debug_solver:
-        goal.write_debugdata('./debugdata-autoremove')
-    assert solved
-    return goal.list_unneeded()
 
 def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
@@ -149,15 +166,6 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
         return q
     return q.run()
 
-def extras_pkgs(query):
-    # anything installed but not in a repo is an extra
-    avail_dict = query.available().pkgtup_dict()
-    inst_dict = query.installed().pkgtup_dict()
-    extras = []
-    for pkgtup, pkgs in inst_dict.items():
-        if pkgtup not in avail_dict:
-            extras.extend(pkgs)
-    return extras
 
 def per_pkgtup_dict(pkg_list):
     d = {}
@@ -165,11 +173,6 @@ def per_pkgtup_dict(pkg_list):
         d.setdefault(pkg.pkgtup, []).append(pkg)
     return d
 
+
 def per_nevra_dict(pkg_list):
     return {ucd(pkg):pkg for pkg in pkg_list}
-
-def recent_pkgs(query, recent):
-    now = time.time()
-    recentlimit = now - (recent*86400)
-    recent = [po for po in query if int(po.buildtime) > recentlimit]
-    return recent
