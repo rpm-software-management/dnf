@@ -35,7 +35,7 @@ class QueriesTest(support.TestCase):
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))
 
-    def test_autoremove_pkgs(self):
+    def test_autoremove(self):
         sack = support.mock_sack("main")
         base = support.MockBase("main")
         installed = sack.query().installed()
@@ -43,7 +43,7 @@ class QueriesTest(support.TestCase):
             base.yumdb.get_package(pkg).reason = "dep"
         hole = installed.filter(name="hole")[0]
         base.yumdb.get_package(hole).reason = "user"
-        pkgs = dnf.query.autoremove_pkgs(installed, sack, base.yumdb)
+        pkgs = installed.unneeded(sack, base.yumdb)
         self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-1)
 
     def test_by_file(self):
@@ -65,9 +65,9 @@ class QueriesTest(support.TestCase):
         pkgs = sack.query().duplicated()
         self.assertEqual(len(pkgs), 3)
 
-    def test_extras_pkgs(self):
+    def test_extras(self):
         sack = support.mock_sack("main")
-        pkgs = dnf.query.extras_pkgs(sack.query())
+        pkgs = sack.query().extras()
         self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-2)
 
     def test_installed_exact(self):
@@ -90,13 +90,12 @@ class QueriesTest(support.TestCase):
         pkgs = tours.latest(-2).run()
         self.assertEqual(pkgs, tail2)
 
-    def test_recent_pkgs(self):
+    def test_recent(self):
         sack = support.mock_sack("main")
         now = time.time()
-        installed = [support.MockPackage(str(p))
-                     for p in sack.query().installed().run()]
+        installed = support.MockQuery(sack.query().installed())
         installed[0].buildtime = now - 86400/2
-        pkgs = dnf.query.recent_pkgs(installed, 1)
+        pkgs = installed.recent(1)
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
