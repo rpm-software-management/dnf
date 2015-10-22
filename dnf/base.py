@@ -845,7 +845,8 @@ class Base(object):
         timer()
         self.clean_tempfiles = True
 
-    def download_packages(self, pkglist, progress=None, callback_total=None):
+    def download_packages(self, pkglist, progress=None, callback_total=None,
+                          backup=True):
         """Download the packages specified by the given list of packages. :api
 
         `pkglist` is a list of packages to download, `progress` is an optional
@@ -863,8 +864,9 @@ class Base(object):
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist
                            if not (po.from_cmdline or po.repo.local)]
-            for pkg in remote_pkgs:
-                self._tempfiles.add(pkg.localPkg())
+            if backup:
+                for pkg in remote_pkgs:
+                    self._tempfiles.add(pkg.localPkg())
             payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
                                              dnf.repo.RPMPayload)
                         for pkg in remote_pkgs]
