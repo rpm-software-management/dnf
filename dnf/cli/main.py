@@ -23,31 +23,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import ucd
-
-import sys
-
-
-def suppress_keyboard_interrupt_message():
-    """Prevent unsightly KeyboardInterrupt tracebacks.
-
-    Nothing will be printed to the terminal after an uncaught
-    :class:`exceptions.KeyboardInterrupt`.
-
-    """
-    old_excepthook = sys.excepthook
-
-    def new_hook(type, value, traceback):
-        if type != KeyboardInterrupt:
-            old_excepthook(type, value, traceback)
-        else:
-            pass
-
-    sys.excepthook = new_hook
-
-
-# do this ASAP to prevent tracebacks after ^C during imports
-suppress_keyboard_interrupt_message()
-
 from dnf.cli.utils import show_lock_owner
 from dnf.i18n import _
 
@@ -61,6 +36,7 @@ import errno
 import logging
 import os
 import os.path
+import sys
 
 logger = logging.getLogger("dnf")
 

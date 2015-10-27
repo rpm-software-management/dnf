@@ -18,8 +18,29 @@
 # Red Hat, Inc.
 #
 
-import os
 import sys
+
+
+def suppress_keyboard_interrupt_message():
+    """Prevent unsightly KeyboardInterrupt tracebacks.
+
+    Nothing will be printed to the terminal after an uncaught
+    :class:`exceptions.KeyboardInterrupt`.
+
+    """
+    old_excepthook = sys.excepthook
+
+    def new_hook(type, value, traceback):
+        if type != KeyboardInterrupt:
+            old_excepthook(type, value, traceback)
+        else:
+            pass
+
+    sys.excepthook = new_hook
+
+
+# do this ASAP to prevent tracebacks after ^C during imports
+suppress_keyboard_interrupt_message()
 
 if __name__ != "__main__":
     sys.stderr.write('The executable DNF module must not be imported.')
@@ -28,6 +49,7 @@ if __name__ != "__main__":
 here = sys.path[0]
 if here != '/usr/bin':
     # git checkout
+    import os
     dnf_toplevel = os.path.dirname(here)
     sys.path[0] = dnf_toplevel
 
