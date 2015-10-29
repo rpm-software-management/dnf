@@ -223,13 +223,17 @@ class OptionParser:
                                 help=_("show DNF version and exit"))
         opt_parser.add_argument("--installroot", help=_("set install root"),
                                 metavar='[path]')
-        opt_parser.add_argument("--enablerepo", action=self._RepoCallback,
-                                dest='repos_ed', default=[],
-                                metavar='[repo]')
+        opt_parser.add_argument(
+            "--enablerepo", action=self._RepoCallback,
+            dest='repos_ed', default=[], metavar='[repo]',
+            help=_('enable specific repositories by an id or a glob, '
+                   'can be specified multiple times'))
         repo_group = opt_parser.add_mutually_exclusive_group()
-        repo_group.add_argument("--disablerepo", action=self._RepoCallback,
-                                dest='repos_ed', default=[],
-                                metavar='[repo]')
+        repo_group.add_argument(
+            "--disablerepo", action=self._RepoCallback,
+            dest='repos_ed', default=[], metavar='[repo]',
+            help=_('disable specific repositories by an id or a glob, '
+                   'can be specified multiple times'))
         repo_group.add_argument(
             '--repo', metavar='[repo]', action='append',
             help=_('enable just specific repositories by an id or a glob, '
