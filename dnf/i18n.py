@@ -277,7 +277,15 @@ def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
 
     return '\n'.join(ret)
 
-# setup translation
-t = dnf.pycomp.gettext.translation('dnf', fallback=True)
-_, P_ = dnf.pycomp.gettext_setup(t)
 
+def translation(name):
+    # :api, deprecated in 2.0.0, will be erased when python2 is abandoned
+    """ Easy gettext translations setup based on given domain name """
+
+    def ucd_wrapper(fnc):
+        return lambda *w: ucd(fnc(*w))
+    t = dnf.pycomp.gettext.translation(name, fallback=True)
+    return map(ucd_wrapper, dnf.pycomp.gettext_setup(t))
+
+# setup translations
+_, P_ = translation("dnf")
