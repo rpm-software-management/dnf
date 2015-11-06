@@ -100,6 +100,7 @@ def setup_stdout():
 
 
 def ucd_input(ucstring):
+    # :api, deprecated in 2.0.0, will be erased when python2 is abandoned
     """ It uses print instead of passing the prompt to raw_input.
 
         raw_input doesn't encode the passed string and the output
@@ -110,6 +111,7 @@ def ucd_input(ucstring):
 
 
 def ucd(obj):
+    # :api, deprecated in 2.0.0, will be erased when python2 is abandoned
     """ Like the builtin unicode() but tries to use a reasonable encoding. """
     if dnf.pycomp.PY3:
         if dnf.pycomp.is_py3bytes(obj):
