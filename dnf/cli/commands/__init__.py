@@ -44,6 +44,21 @@ _RPM_VERIFY = _("To diagnose the problem, try running: '%s'.") % \
 _RPM_REBUILDDB = _("You probably have corrupted RPMDB, running '%s'"
                    " might fix the issue.") % 'rpm --rebuilddb'
 
+gpg_msg = \
+    _("""You have enabled checking of packages via GPG keys. This is a good thing.
+However, you do not have any GPG public keys installed. You need to download
+the keys for packages you wish to install and install them.
+You can do that by running the command:
+    rpm --import public.gpg.key
+
+
+Alternatively you can specify the url to the key you would like to use
+for a repository in the 'gpgkey' option in a repository section and DNF
+will install it for you.
+
+For more information contact your distribution or package provider.""")
+
+
 def err_mini_usage(cli, basecmd):
     if basecmd not in cli.cli_commands:
         cli.print_usage()
@@ -65,21 +80,7 @@ def checkGPGKey(base, cli):
     if not base.gpgKeyCheck():
         for repo in base.repos.iter_enabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
-                msg = _("""
-You have enabled checking of packages via GPG keys. This is a good thing.
-However, you do not have any GPG public keys installed. You need to download
-the keys for packages you wish to install and install them.
-You can do that by running the command:
-    rpm --import public.gpg.key
-
-
-Alternatively you can specify the url to the key you would like to use
-for a repository in the 'gpgkey' option in a repository section and DNF
-will install it for you.
-
-For more information contact your distribution or package provider.
-""")
-                logger.critical(msg)
+                logger.critical("\n%s\n", gpg_msg)
                 logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
