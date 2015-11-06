@@ -1671,7 +1671,7 @@ msgid ""
 "will install it for you.\n"
 "\n"
 "For more information contact your distribution or package provider.\n"
-msgstr ""
+msgstr "\n"
 "Usted tiene activada la verificación de paquetes via claves GPG. Esta es una "
 "buena idea. Pero usted no tiene ninguna llave pública GPG instalada. "
 "Necesita descargas las de los paquetes que desea instalar para luego "
@@ -1684,7 +1684,7 @@ msgstr ""
 "para un repositorio en la opción 'gpgkey ' en una sección del repositorio y "
 "DNF la va a instalar para usted.\n"
 "\n"
-"Para mas información contacte a su distribución o proveedor de paquetes."
+"Para mas información contacte a su distribución o proveedor de paquetes.\n"
 
 #: ../dnf/cli/commands/__init__.py:83
 #, python-format
