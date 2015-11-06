@@ -282,7 +282,7 @@ exit 0
 - base: group_install is able to exclude mandatory packages
   (Related:RhBug:1199868) (Jan Silhan)
 
-* Tue Sep 30 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-4
+* Wed Sep 30 2015 Michal Luscon <mluscon@redhat.com> 1.1.2-4
 - don't import readline as it causes crashes in Anaconda
   (related:RhBug:1258364)
 
