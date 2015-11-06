@@ -23,6 +23,7 @@ from dnf.i18n import ucd
 
 class DeprecationWarning(DeprecationWarning):
     # :api
+    # bla
     pass
 
 
