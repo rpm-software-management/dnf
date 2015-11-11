@@ -96,6 +96,10 @@ Yes, clear the cache first::
     $ dnf clean metadata
     $ dnf upgrade
 
+or by one command line simply put::
+
+    $ dnf upgrade --refresh
+
 An alternative is to shorten the default expiry time of repos, for that edit ``/etc/dnf/dnf.conf`` and set::
 
     metadata_expire=0
