@@ -100,6 +100,15 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(peppers.installed)
         self.assertFalse(somerset.installed)
 
+    def test_env_upgrade(self):
+        prst = self.base.group_persistor
+        cnt = self.base.environment_upgrade("sugar-desktop-environment")
+        self.assertEqual(4, cnt)
+        peppers = prst.group('Peppers')
+        somerset = prst.group('somerset')
+        self.assertTrue(peppers.installed)
+        self.assertTrue(somerset.installed)
+
     def test_group_install(self):
         prst = self.base.group_persistor
         grp = self.base.comps.group_by_pattern('Base')

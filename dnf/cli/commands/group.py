@@ -328,17 +328,6 @@ class GroupCommand(commands.Command):
 
         return 0, []
 
-    def _upgrade(self, patterns):
-        q = CompsQuery(self.base.comps, self.base.group_persistor,
-                       CompsQuery.GROUPS, CompsQuery.INSTALLED)
-        res = q.get(*patterns)
-        cnt = 0
-        for grp in res.groups:
-            cnt += self.base.group_upgrade(grp)
-        if not cnt:
-            msg = _('No packages marked for upgrade.')
-            raise dnf.cli.CliError(msg)
-
     def configure(self, extcmds):
         cmd = extcmds[0]
         demands = self.cli.demands
@@ -403,7 +392,7 @@ class GroupCommand(commands.Command):
             self._remark = True
             return self.base.env_group_install(patterns, types)
         if cmd == 'upgrade':
-            return self._upgrade(extcmds)
+            return self.base.env_group_upgrade(extcmds)
         if cmd == 'remove':
             return self.base.env_group_remove(extcmds)
 
