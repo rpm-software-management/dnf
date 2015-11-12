@@ -77,7 +77,7 @@ It might seem odd but in fact this can happen quite easily: what the first comma
 
     $ dnf upgrade --best
 
-In DNF version 1.1 and above, you can see the skipped packages the the special transaction summary section. In order to pull these packages into transaction one has to remove conflicting packages, to do that execute::
+In DNF version 1.1 and above, you can see the skipped packages in the special transaction summary section. In order to pull these packages into transaction one has to remove conflicting packages, to do that execute::
 
     $ dnf upgrade --best --allowerasing
 
