@@ -966,6 +966,7 @@ class Output(object):
             hawkey.INSTALL
         }
         skipped_conflicts = []
+        skipped_broken = []
 
         if transaction is None:
             return None
@@ -1026,7 +1027,8 @@ class Output(object):
         # show skipped packages with broken dependencies
         if hawkey.UPGRADE_ALL in self.base._goal.actions:
             lines = []
-            for pkg in sorted(self._skipped_broken_deps(skipped_conflicts)):
+            skipped_broken = self._skipped_broken_deps(skipped_conflicts)
+            for pkg in sorted(skipped_broken):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with broken dependencies")
             pkglist_lines.append((skip_str, lines))
@@ -1075,7 +1077,8 @@ Transaction Summary
             (_('Install'), len(list_bunch.installed), 0),
             (_('Upgrade'), len(list_bunch.upgraded), 0),
             (_('Remove'), len(list_bunch.erased), 0),
-            (_('Downgrade'), len(list_bunch.downgraded), 0))
+            (_('Downgrade'), len(list_bunch.downgraded), 0),
+            (_('Skip'), len(skipped_conflicts) + len(skipped_broken), 0))
         max_msg_action = 0
         max_msg_count = 0
         max_msg_pkgs = 0
