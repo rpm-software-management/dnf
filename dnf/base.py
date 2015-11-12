@@ -1338,6 +1338,25 @@ class Base(object):
             cnt += self.group_remove(grp)
         return cnt
 
+    def env_group_upgrade(self, patterns):
+        q = CompsQuery(self.comps, self.group_persistor,
+                       CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
+                       CompsQuery.INSTALLED)
+        res = q.get(*patterns)
+        cnt = 0
+        for env in res.environments:
+            cnt += self.environment_upgrade(env)
+        for grp in res.groups:
+            cnt += self.group_upgrade(grp)
+        if not cnt:
+            msg = _('No group marked for upgrade.')
+            raise dnf.cli.CliError(msg)
+
+    def environment_upgrade(self, env_id):
+        solver = self.build_comps_solver()
+        trans = solver.environment_upgrade(env_id)
+        return self._add_comps_trans(trans)
+
     def group_upgrade(self, grp_id):
         # :api
         # compat: erase in 2.0.0
