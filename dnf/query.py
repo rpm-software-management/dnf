@@ -176,3 +176,41 @@ def per_pkgtup_dict(pkg_list):
 
 def per_nevra_dict(pkg_list):
     return {ucd(pkg):pkg for pkg in pkg_list}
+
+
+def autoremove_pkgs(query, sack, yumdb, debug_solver=False):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    return query.unneeded(sack, yumdb, debug_solver).run()
+
+
+def duplicated_pkgs(query, installonlypkgs):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    installonly = query.installed().filter(provides__glob=installonlypkgs)
+    exclude = [pkg.name for pkg in installonly]
+    return query.filter(name__neq=exclude).duplicated().run()
+
+
+def extras_pkgs(query):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    return query.extras.run()
+
+
+def installonly_pkgs(query, installonlypkgs):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    return query.installed().filter(provides__glob=installonlypkgs).run()
+
+
+def latest_limit_pkgs(query, limit):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    return query.latest(limit).run()
+
+
+def recent_pkgs(query, recent):
+    # compat: erase in 2.0.0
+    # required by dnf-plugins-core =< 0.1.12-2
+    return query.recent(recent).run()
