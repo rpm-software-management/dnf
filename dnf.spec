@@ -268,6 +268,22 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Mon Nov 16 2015 Michal Luscon <mluscon@redhat.com> 1.1.4-1
+- AUTHORS: updated (Jan Silhan)
+- query: add compatibility methods (Michal Luscon)
+- query: add recent, extras and autoremove methods to Query (Michal Luscon)
+- query: add duplicated and latest-limit queries into api (Michal Luscon)
+- format the email message with its as_string method (Olivier Andrieu)
+- added dnf.i18n.ucd* functions as deprecated API (Jan Silhan)
+- i18n: unicode resulting translations (RhBug:1278031) (Jan Silhan)
+- po: get rid of new lines in translation (Jan Silhan)
+- output: add skip count to summary (RhBug:1264032) (Michal Domonkos)
+- groups: fix environment upgrade (Michal Luscon)
+- Fix plural strings extraction (RhBug:1209056) (Baurzhan Muftakhidinov)
+- po: fixed malformed beginning / ending (Jan Silhan)
+- zanata update (Jan Silhan)
+- cli: prevent tracebacks after C^ (RhBug:1274946) (Michal Luscon)
+
 * Wed Oct 14 2015 Michal Luscon <mluscon@redhat.com> 1.1.3-1
 - Update command_ref.rst (Jaroslav Mracek)
 - Change in automatic.conf email settings to prevent email error with default
