@@ -114,7 +114,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``keepcache``
     :ref:`boolean <boolean-label>`
 
-    Keep downloaded packages in the cache. If set to False and packages have not been
+    Keeps downloaded packages in the cache when set to True. Even if it is set to False and packages have not been
     installed they will still persist until next successful transaction. The default
     is False.
 
