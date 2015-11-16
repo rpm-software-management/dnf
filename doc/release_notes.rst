@@ -21,14 +21,21 @@
 
 .. contents::
 
-======================
-Upcoming Release Notes
-======================
+===================
+1.1.4 Release Notes
+===================
 
-API additions in X.Y.Z:
+API additions in 1.1.4:
 
 * newly added :meth:`dnf.Query.duplicated`
 * extended :meth:`dnf.Query.latest
+
+Bugs fixed in 1.1.4:
+
+* :rhbug:`1278031`
+* :rhbug:`1264032`
+* :rhbug:`1209056`
+* :rhbug:`1274946`
 
 ===================
 1.1.3 Release Notes

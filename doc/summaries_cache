@@ -1354,5 +1354,21 @@
     [
         1258364, 
         "Some important dnf output goes to STDERR and not to STDOUT"
+    ], 
+    [
+        1278031, 
+        "dnf fails to find system-upgrade plugin with certain locales (Chinese, Japanese and maybe more)"
+    ], 
+    [
+        1264032, 
+        "RFE: add \"Skipped\" into Transaction Summary"
+    ], 
+    [
+        1209056, 
+        "[UX] [TRANS] Plural strings are not extracted properly"
+    ], 
+    [
+        1274946, 
+        "[abrt] dnf: main.py:99:main:IOError: [Errno 5] Input/output error"
     ]
 ]
