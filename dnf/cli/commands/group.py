@@ -249,7 +249,7 @@ class GroupCommand(commands.Command):
 
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
-                        ','.join([prst.environement(g).ui_name
+                        ','.join([prst.environment(g).ui_name
                                   for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
