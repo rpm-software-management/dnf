@@ -83,13 +83,14 @@ class Base(object):
         self._comps = None
         self._history = None
         self._tempfiles = set()
+        self._trans_tempfiles = set()
         self.ds_callback = dnf.callback.Depsolve()
         self._group_persistor = None
         self.logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
-        self.clean_tempfiles = False
+        self.clean_trans_tempfiles = False
         self._tempfile_persistor = None
 
     def __enter__(self):
@@ -274,17 +275,19 @@ class Base(object):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
-        if self.clean_tempfiles:
+        if self.clean_trans_tempfiles:
             # delete all packages from last unsuccessful transactions
-            self._tempfiles.update(
+            self._trans_tempfiles.update(
                 self._tempfile_persistor.get_saved_tempfiles())
             self._tempfile_persistor.empty()
         if not self.conf.keepcache:
-            if self.clean_tempfiles:
-                self.clean_used_packages()
+            if self._tempfiles:
+                self.clean_packages(self._tempfiles)
+            if self.clean_trans_tempfiles:
+                self.clean_packages(self._trans_tempfiles)
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
-                    self._tempfiles)
+                    self._trans_tempfiles)
         if self._tempfile_persistor.tempfiles_to_add:
             logger.info(_("The downloaded packages were saved in cache "
                           "till the next successful transaction."))
@@ -843,7 +846,7 @@ class Base(object):
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.history.end(rpmdbv, 0)
         timer()
-        self.clean_tempfiles = True
+        self.clean_trans_tempfiles = True
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api
@@ -863,8 +866,13 @@ class Base(object):
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist
                            if not (po.from_cmdline or po.repo.local)]
+
             for pkg in remote_pkgs:
-                self._tempfiles.add(pkg.localPkg())
+                if self._transaction:
+                    self._trans_tempfiles.add(pkg.localPkg())
+                else:
+                    self._tempfiles.add(pkg.localPkg())
+
             payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
                                              dnf.repo.RPMPayload)
                         for pkg in remote_pkgs]
@@ -919,7 +927,10 @@ class Base(object):
         if not os.path.exists(path) and '://' in path:
             # download remote rpm to a tempfile
             path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
-            self._tempfiles.add(path)
+            if self._transaction:
+                self._trans_tempfiles.add(path)
+            else:
+                self._tempfiles.add(path)
         return self.sack.add_cmdline_package(path)
 
     def sigCheckPkg(self, po):
@@ -981,11 +992,11 @@ class Base(object):
 
         return result, msg
 
-    def clean_used_packages(self):
+    def clean_packages(self, packages):
         """Delete the header and package files used in the
         transaction from the yum cache.
         """
-        for fn in self._tempfiles:
+        for fn in packages:
             if not os.path.exists(fn):
                 continue
             try:
