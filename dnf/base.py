@@ -90,7 +90,7 @@ class Base(object):
         self._repos = dnf.repodict.RepoDict()
         self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self.plugins = dnf.plugin.Plugins()
-        self.clean_trans_tempfiles = False
+        self.trans_success = False
         self._tempfile_persistor = None
 
     def __enter__(self):
@@ -98,6 +98,12 @@ class Base(object):
 
     def __exit__(self, *exc_args):
         self.close()
+
+    def _add_tempfiles(self, files):
+        if self._transaction:
+            self._trans_tempfiles.update(files)
+        else:
+            self._tempfiles.update(files)
 
     def _add_repo_to_sack(self, name):
         repo = self.repos[name]
@@ -275,19 +281,18 @@ class Base(object):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
-        if self.clean_trans_tempfiles:
-            # delete all packages from last unsuccessful transactions
-            self._trans_tempfiles.update(
-                self._tempfile_persistor.get_saved_tempfiles())
-            self._tempfile_persistor.empty()
         if not self.conf.keepcache:
-            if self._tempfiles:
-                self.clean_packages(self._tempfiles)
-            if self.clean_trans_tempfiles:
-                self.clean_packages(self._trans_tempfiles)
+            self.clean_packages(self._tempfiles)
+            if self.trans_success:
+                self._trans_tempfiles.update(
+                    self._tempfile_persistor.get_saved_tempfiles())
+                self._tempfile_persistor.empty()
+                if self._transaction.install_set:
+                    self.clean_packages(self._trans_tempfiles)
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
                     self._trans_tempfiles)
+
         if self._tempfile_persistor.tempfiles_to_add:
             logger.info(_("The downloaded packages were saved in cache "
                           "till the next successful transaction."))
@@ -846,7 +851,7 @@ class Base(object):
             rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
             self.history.end(rpmdbv, 0)
         timer()
-        self.clean_trans_tempfiles = True
+        self.trans_success = True
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api
@@ -866,12 +871,7 @@ class Base(object):
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist
                            if not (po.from_cmdline or po.repo.local)]
-
-            for pkg in remote_pkgs:
-                if self._transaction:
-                    self._trans_tempfiles.add(pkg.localPkg())
-                else:
-                    self._tempfiles.add(pkg.localPkg())
+            self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
 
             payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
                                              dnf.repo.RPMPayload)
@@ -927,10 +927,7 @@ class Base(object):
         if not os.path.exists(path) and '://' in path:
             # download remote rpm to a tempfile
             path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
-            if self._transaction:
-                self._trans_tempfiles.add(path)
-            else:
-                self._tempfiles.add(path)
+            self._add_tempfiles([path])
         return self.sack.add_cmdline_package(path)
 
     def sigCheckPkg(self, po):
@@ -993,9 +990,6 @@ class Base(object):
         return result, msg
 
     def clean_packages(self, packages):
-        """Delete the header and package files used in the
-        transaction from the yum cache.
-        """
         for fn in packages:
             if not os.path.exists(fn):
                 continue
