@@ -25,7 +25,7 @@ import dnf.util
 import os.path
 import re
 
-_KEYCRE = re.compile(r"\$(\w+)")
+_KEYCRE = re.compile(r"\$(\w+)|\${(\w+)}")
 
 
 def substitute(raw, substs):
@@ -47,7 +47,7 @@ def substitute(raw, substs):
 
         # Determine replacement value (if unknown variable then preserve
         # original)
-        varname = m.group(1).lower()
+        varname = m.group(2).lower() if m.group(2) else m.group(1).lower()
         replacement = substs.get(varname, m.group())
 
         start, end = m.span()
