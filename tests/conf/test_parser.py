@@ -35,3 +35,13 @@ class SubstituteTest(tests.support.TestCase):
         rawstr = '$Substitute some ${lies}withoutspace.'
         result = '$Substitute some factwithoutspace.'
         self.assertEqual(substitute(rawstr, substs), result)
+
+        # Tests a single brace before (no substitution)
+        rawstr = '$Substitute some ${lieswithoutspace.'
+        result = '$Substitute some ${lieswithoutspace.'
+        self.assertEqual(substitute(rawstr, substs), result)
+
+        # Tests a single brace after (substitution and leave the brace)
+        rawstr = '$Substitute some $lies}withoutspace.'
+        result = '$Substitute some fact}withoutspace.'
+        self.assertEqual(substitute(rawstr, substs), result)
