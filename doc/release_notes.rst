@@ -28,7 +28,7 @@
 API additions in 1.1.4:
 
 * newly added :meth:`dnf.Query.duplicated`
-* extended :meth:`dnf.Query.latest
+* extended :meth:`dnf.Query.latest`
 
 Bugs fixed in 1.1.4:
 
