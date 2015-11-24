@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -OO
+#!/usr/bin/python3
 # dnf-automatic executable.
 #
 # Copyright (C) 2014 Red Hat, Inc.
