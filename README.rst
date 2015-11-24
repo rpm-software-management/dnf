@@ -58,8 +58,6 @@ From the DNF git checkout directory::
     cmake .. && make ARGS="-V" test;
     popd;
 
-.. _contribution-label:
-
 ==============
  Contribution
 ==============
