@@ -281,6 +281,10 @@ class Base(object):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
+        if self._group_persistor and \
+                (not self._transaction or self.trans_success):
+            self._group_persistor.commit()
+
         if not self.conf.keepcache:
             self.clean_packages(self._tempfiles)
             if self.trans_success:
@@ -549,10 +553,6 @@ class Base(object):
             display = [display]
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
-
-        persistor = self._group_persistor
-        if persistor:
-            persistor.commit()
 
         if not self.transaction:
             return
