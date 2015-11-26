@@ -54,25 +54,11 @@ class UpgradeCommand(commands.Command):
         commands.checkGPGKey(self.base, self.cli)
         commands.checkEnabledRepo(self.base, extcmds)
 
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        pkg_specs, filenames = [], []
-        for argument in extcmds:
-            if argument.endswith('.rpm'):
-                filenames.append(argument)
-            else:
-                pkg_specs.append(argument)
-        return pkg_specs, filenames
-
     def run(self, extcmds):
-        pkg_specs, filenames = self.parse_extcmds(extcmds)
+        pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
+            extcmds)
 
-        if not pkg_specs and not filenames:
-            # Update all packages.
-            self.base.upgrade_all()
-            done = True
-        else:
+        if pkg_specs or grp_specs or filenames:
             # Update files.
             local_pkgs = map(self.base.add_remote_rpm, filenames)
             results = map(self.base.package_upgrade, local_pkgs)
@@ -86,6 +72,16 @@ class UpgradeCommand(commands.Command):
                     logger.info(_('No match for argument: %s'), pkg_spec)
                 else:
                     done = True
+
+            # Update groups.
+            if grp_specs:
+                self.base.read_comps()
+                self.base.env_group_upgrade(grp_specs)
+                done = True
+        else:
+            # Update all packages.
+            self.base.upgrade_all()
+            done = True
 
         if not done:
             raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
