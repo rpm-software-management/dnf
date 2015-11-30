@@ -411,10 +411,18 @@ Install Command
 ---------------
 
 ``dnf [options] install <spec>...``
-    DNF makes sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
-    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or a URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
+    DNF makes sure that the given packages and their dependencies are installed
+    on the system. Each ``<spec>`` can be either a :ref:`<package-spec>
+    <specifying_packages-label>`, or a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`.
+    If a given package or provide cannot be (and is not already) installed,
+    the exit code will be non-zero.
 
-    Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`). See also :ref:`\configuration_files_replacement_policy-label`.
+    When :ref:`<package-spec> <specifying_packages-label>` that specify exact version
+    of the package is given, DNF will install the desired version, no matter which
+    version of the package is already installed. The former version of the package
+    will be removed in the case of non-installonly package.
+
+    See also :ref:`\configuration_files_replacement_policy-label`.
 
 .. _list_command-label:
 
