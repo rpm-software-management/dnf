@@ -80,12 +80,17 @@ Choosing how the results should be reported.
 ``emit_via``
     list, default: ``email, stdio, motd``
 
-    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
+    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file. If emit_via is ``None``, no messages will be sent.
 
 ``system_name``
     string, default: hostname of the given system
 
     How the system is called in the reports.
+
+``output_width``
+    number, default: 80
+
+    The width, in characters, that messages that are emitted should be formatted to.
 
 -------------------
 ``[email]`` section
@@ -112,7 +117,7 @@ The email emitter configuration.
 ``[base]`` section
 ------------------
 
-Can be used to override settings from DNF's main configuration file. See :doc:`command_ref`.
+Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
 
 ===================
  Run dnf-automatic
