@@ -60,7 +60,20 @@ Available commands:
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-to <upgrade_to_command-label>`
 
-See the reference for each command below.
+Additional informations:
+
+* :ref:`Options <options-label>`
+* :ref:`Specifying Packages <specifying_packages-label>`
+* :ref:`Specifying Exact Versions of Packages <specifying_packages_versions-label>`
+* :ref:`Specifying Provides <specifying_provides-label>`
+* :ref:`Specifying Groups <specifying_groups-label>`
+* :ref:`Specifying Transactions <specifying_transactions-label>`
+* :ref:`Metadata Synchronization <metadata_synchronization-label>`
+* :ref:`Configuration Files Replacement Policy <configuration_files_replacement_policy-label>`
+* :ref:`Files <files-label>`
+* :ref:`See Also <see_also-label>`
+
+.. _options-label:
 
 =======
 Options
@@ -811,6 +824,8 @@ To the conflicting ones RPM gives additional suffix to the origin name. Which fi
 should maintain the true name after transaction is not controlled by package manager
 but is specified by each package itself, following packaging guideline.
 
+.. _files-label:
+
 ========
 Files
 ========
@@ -823,6 +838,8 @@ Files
 
 ``Repository``
     /etc/yum.repos.d/
+
+.. _see_also-label:
 
 ========
 See Also
