@@ -17,9 +17,11 @@ from __future__ import unicode_literals
 from . import misc
 import dnf.pycomp
 import glob
+import logging
 import os
 import rpm
 
+logger = logging.getLogger('dnf')
 
 # For returnPackages(patterns=)
 flags = {"GT": rpm.RPMSENSE_GREATER,
@@ -231,7 +233,7 @@ class RPMDBAdditionalDataPackage(object):
         try:
             dnf.pycomp.write_to_file(fo, value)
         except (OSError, IOError) as e:
-            raise AttributeError("Cannot set attribute %s on %s" % (attr, self))
+            logger.error("Cannot set attribute %s on %s due to:  %s" % (attr, self, e.strerror))
 
         fo.flush()
         fo.close()
@@ -284,8 +286,8 @@ class RPMDBAdditionalDataPackage(object):
         if os.path.exists(fn):
             try:
                 os.unlink(fn)
-            except (IOError, OSError):
-                raise AttributeError("Cannot delete attribute %s on %s " % (attr, self))
+            except (IOError, OSError) as e:
+                logger.error("Cannot delete attribute %s on %s at %s due to: %s" % (attr, self, fn, e.strerror))
 
     def __getattr__(self, attr):
         return self._read(attr)
