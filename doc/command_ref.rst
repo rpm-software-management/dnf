@@ -426,7 +426,7 @@ Install Command
 ``dnf [options] install <spec>...``
     DNF makes sure that the given packages and their dependencies are installed
     on the system. Each ``<spec>`` can be either a :ref:`<package-spec>
-    <specifying_packages-label>`, or a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`.
+    <specifying_packages-label>`, or a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`. See :ref:`\Install Examples\ <install_examples-label>`.
     If a given package or provide cannot be (and is not already) installed,
     the exit code will be non-zero.
 
@@ -436,6 +436,39 @@ Install Command
     will be removed in the case of non-installonly package.
 
     See also :ref:`\configuration_files_replacement_policy-label`.
+
+.. _install_examples-label:
+
+Install Examples
+----------------
+
+``dnf install tito``
+    Install package tito (tito is package name).
+
+``dnf install ~/Downloads/tito-0.6.2-1.fc22.noarch.rpm``
+    Install local rpm file tito-0.6.2-1.fc22.noarch.rpm from ~/Downloads/
+    directory.
+
+``dnf install tito-0.5.6-1.fc22``
+    Install package with specific version. If the package is already installed it
+    will automatically try to downgrade or upgrade to specific version.
+
+``dnf --best install tito``
+    Install the latest available version of package. If the package is already installed it
+    will automatically try to upgrade to the latest version. If the latest version
+    of package cannot be installed, the installation fail.
+
+``dnf install vim``
+    DNF will automatically recognize that vim is not a package name, but
+    provide, and install a package that provides vim with all required
+    dependencies. Note: Package name match has precedence over package provides
+    match.
+
+``dnf install https://kojipkgs.fedoraproject.org//packages/tito/0.6.0/1.fc22/noarch/tito-0.6.0-1.fc22.noarch.rpm``
+    Install package directly from URL.
+
+``dnf install '@Web Server'``
+    Install environmental group 'Web Server'
 
 .. _list_command-label:
 
